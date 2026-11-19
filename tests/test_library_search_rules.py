@@ -234,6 +234,25 @@ class LibrarySearchRuleTests(unittest.TestCase):
         options=session.engine._semantic_search_options('A',{'zone':'graveyard','selector':{'types':['creature']}})
         self.assertIn(card.ref,{r['id'] for r in options})
 
+    def test_builtin_fetch_keeps_the_compiled_entry_setting_through_resume_and_replay(self):
+        session = self.session(761042)
+        source = self.add(session.engine, "Evolving Wilds")
+        result = self.add(session.engine, "Forest", zone="library", ref="fetch-tapped-result")
+        self.prepare(session)
+        self.checkpoint(session)
+        self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+        self.activate(session, source)
+        self.assertEqual("fetch_land", session.state.stack[-1].context["builtin"])
+        self.assertIs(session.state.stack[-1].context["fetch_entry_tapped"], True)
+        self.assertIsNotNone(self.resolve(session))
+        session = self.replay(session, load=True)
+        found = session.act("pilot:A", {"action_id": "choose", "search_card": result.ref})
+        self.assertTrue(found.ok, found.summary)
+        self.assertIsNone(self.resolve(session))
+        card = session.state.cards[result.object_id]
+        self.assertEqual(("battlefield", "A", True), (card.zone, card.controller, card.tapped))
+        self.replay(session)
+
     def test_actual_builtin_fetch_pays_life_and_sacrifice_when_prohibited(self):
         session=self.session(761040);self.add(session.engine,'Mindlock Orb')
         land=self.add(session.engine,'Flooded Strand')
@@ -265,6 +284,7 @@ class LibrarySearchRuleTests(unittest.TestCase):
         result=session.act('pilot:B',{'action_id':'choose','search_card':visible[1].ref})
         self.assertTrue(result.ok,result.summary);self.assertIsNone(self.resolve(session))
         self.assertEqual('battlefield',session.state.cards[visible[1].object_id].zone)
+        self.assertFalse(session.state.cards[visible[1].object_id].tapped)
         self.assertEqual('library',session.state.cards[fifth.object_id].zone)
         self.assertEqual(39,session.state.players['B'].life)
         self.replay(session)

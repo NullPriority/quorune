@@ -14,6 +14,12 @@ from ..announced_damage import (
     variable_damage_allocation,
 )
 from ..compiler.direct_target import DirectPermanentTargetSpec
+from ..damage_prevention_permission import (
+    TEMPORARY_DAMAGE_PROHIBITION_FIELD, UNPREVENTABLE_CAPABILITY,
+    validate_temporary_damage_prevention_prohibition,
+)
+from ..life_gain_permission import LIFE_GAIN_PROHIBITION_CAPABILITY, validate_temporary_life_gain_effect
+from ..replacement.immutable import thaw_value
 from ..damage_death_exile_model import (
     DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_FIELD, DAMAGE_DEATH_EXILE_MECHANIC,
     DamageDeathExileScope, damage_death_exile_scope,
@@ -284,6 +290,46 @@ def variable_damage_allocation_program_requirements(program) -> tuple[str, ...]:
     return required
 
 
+def _turn_damage_prevention_capabilities(effects, target_schema):
+    try:
+        if len(effects) == 1 and target_schema is None:
+            validate_temporary_damage_prevention_prohibition(effects[0])
+            return (UNPREVENTABLE_CAPABILITY,)
+        if len(effects) != 3:
+            return ()
+        life, prohibition, damage = effects
+        if validate_temporary_life_gain_effect(life).affected_player_relation != "any":
+            return ()
+        validate_temporary_damage_prevention_prohibition(prohibition)
+    except (TypeError, ValueError):
+        return ()
+    schema = thaw_value(target_schema)
+    if schema not in (_FIXED_DAMAGE_TARGET_SCHEMAS["any_target"], _FIXED_DAMAGE_TARGET_SCHEMAS["player_or_planeswalker"]):
+        return ()
+    damage_capabilities = _fixed_direct_damage_capabilities(damage, schema, {"cr-115-targets"})
+    if not damage_capabilities:
+        return ()
+    return tuple(sorted({
+        *damage_capabilities, UNPREVENTABLE_CAPABILITY, LIFE_GAIN_PROHIBITION_CAPABILITY,
+        "life.change.effect", "target.revalidate_resolution",
+    }))
+
+
+def turn_damage_prevention_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    handlers = tuple(getattr(program, "handlers", ()))
+    effects = (*program.effects, *handlers)
+    if not any(TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect for effect in nested_effects(effects)):
+        return ()
+    if (program.event, program.active_zone) != ("resolve", "stack") or handlers:
+        raise ValueError("Turn damage prevention prohibition requires a complete spell resolution")
+    required = _turn_damage_prevention_capabilities(program.effects, program.target_schema)
+    if not required:
+        raise ValueError("Turn damage prevention prohibition requires the exact order and target domain")
+    return required
+
+
 def fixed_damage_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -291,6 +337,17 @@ def fixed_damage_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed fixed-damage vocabulary."""
+    # Delegating recognizers may inspect an iterable before declining it.
+    # Preserve the same mechanics for every independently owned shape.
+    mechanic_ids = tuple(mechanic_ids)
+    if any(TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect for effect in effects):
+        return _turn_damage_prevention_capabilities(effects, target_schema)
+    from .event_damage_sources import event_damage_source_node_capabilities
+    dealer = event_damage_source_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if dealer:return dealer
+    from .referenced_damage_shapes import referenced_damage_node_capabilities
+    referenced=referenced_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if referenced:return referenced
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if "cr-120-damage" not in mechanics or len(effects) != 1:

@@ -5,7 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..util import mana_cost_to_vector, stable_json

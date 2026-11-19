@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed public player-status conditions and Max Speed prefix parsing."""
 
-import re
+from . import regex_working_set as re
 from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicStateConditionSpec,FixedPublicStateFact
 from ..dungeon_catalog import DUNGEON_CATALOG
 

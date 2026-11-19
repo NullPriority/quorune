@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Bounded Boolean composition of independently closed public-state leaves."""
 
-import re
+from . import regex_working_set as re
 
 from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicStateConditionSpec,FixedPublicStateFact
 from ..external_entry_state_model import PERMANENT_CARD_TYPES

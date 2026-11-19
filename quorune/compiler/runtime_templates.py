@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from dataclasses import dataclass
 from typing import Any, Mapping
@@ -25,8 +25,8 @@ from .cast_cost_modifier_templates import (
 from .static_cast_rule_templates import static_cast_rule_handler
 from .combat_metadata_templates import attached_goad_handler, static_goad_prohibition_handler
 from .fixed_characteristic_settings import fixed_characteristic_setting_handler
+from .qualified_attached_settings import attached_characteristics_handler
 from .continuous_templates import (
-    attached_fixed_characteristics_handler,
     basic_land_type_addition_handler,
     conditional_self_keyword_handler,
     dynamic_self_power_toughness_handler,
@@ -77,6 +77,14 @@ class StaticRuntimeTemplate:
     active_zone: str = "battlefield"
     runtime_coverage: tuple[str, ...] = ()
     mechanics: tuple[str, ...] = ()
+
+
+def _zone_destination_template(compiled):
+    from ..graveyard_exile_model import GRAVEYARD_EXILE_HANDLER
+    current=compiled[1].get('handler_id')==GRAVEYARD_EXILE_HANDLER
+    return StaticRuntimeTemplate(compiled=compiled,kind='replacement_effect',event='zone.change',
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,) if current else (),
+        dependency_reason='Generic destination replacement depends on an untrusted rules capability')
 
 
 def _trigger_multiplier_template(text: str,source_name=None) -> StaticRuntimeTemplate | None:
@@ -561,6 +569,12 @@ def _continuous_static_runtime_template(
 
 
 def _constant_static_characteristic_template(text, *, source_name, source_is_class):
+    from .fixed_characteristic_settings import nonowner_creature_modifier_handler
+    modifier = None if source_is_class else nonowner_creature_modifier_handler(text)
+    if modifier is not None:
+        return StaticRuntimeTemplate(compiled=modifier, kind='static_ability', event='characteristics.evaluate',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Nonowner creature modifiers require the shared layer and owner query capabilities')
     from .cross_zone_type_addition_templates import cross_zone_type_addition_handler
     cross_zone = None if source_is_class else cross_zone_type_addition_handler(text)
     if cross_zone is not None:
@@ -577,7 +591,7 @@ def _constant_static_characteristic_template(text, *, source_name, source_is_cla
     if control is not None:
         return StaticRuntimeTemplate(compiled=control, kind="static_ability", event="characteristics.evaluate",
             dependency_reason="Static attached control requires its typed layer-two capability")
-    attached = attached_fixed_characteristics_handler(text, source_name=source_name or "source")
+    attached = attached_characteristics_handler(text, source_name=source_name or "source")
     if attached is not None:
         return StaticRuntimeTemplate(compiled=attached, kind="static_ability", event="characteristics.evaluate",
             dependency_reason="Generic attached characteristics require a trusted continuous-effect capability")
@@ -791,15 +805,7 @@ def static_runtime_template(
             )
         zone_replacement = static_zone_destination_replacement_handler(text)
         if zone_replacement is not None:
-            return StaticRuntimeTemplate(
-                compiled=zone_replacement,
-                kind="replacement_effect",
-                event="zone.change",
-                dependency_reason=(
-                    "generic destination replacement depends on an untrusted "
-                    "rules capability"
-                ),
-            )
+            return _zone_destination_template(zone_replacement)
         draw = _draw_template(text)
         if draw is not None:
             return draw

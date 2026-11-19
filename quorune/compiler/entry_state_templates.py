@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for battlefield entry tap-state replacements."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..landwalk import BASIC_LAND_TYPES

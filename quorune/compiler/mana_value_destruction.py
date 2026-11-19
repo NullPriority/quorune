@@ -1,6 +1,6 @@
 """Mana-value destruction bounds reuse fixed sets and existing amount values."""
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..mana_value_filter import ManaValueFilter,ManaValueComparison
 from ..query_effect_amount_model import CastXAmountSpec

@@ -3,7 +3,7 @@ from __future__ import annotations
 """An explicit anaphor retains one already declared public target role."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from .fixed_numbers import FIXED_COUNT_PATTERN,fixed_number
 

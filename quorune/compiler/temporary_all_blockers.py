@@ -3,7 +3,7 @@ from __future__ import annotations
 """Exact target or source instructions that require all able blockers this turn."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from ..temporary_all_blocker_model import TemporaryAllBlockerSpec

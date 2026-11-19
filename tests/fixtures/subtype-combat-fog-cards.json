@@ -1,0 +1,1532 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Moonmist",
+      "oracle_id": "2c306e87-e3c8-4066-9be5-570e2f2d6bad",
+      "oracle_text": "Transform all Humans. Prevent all combat damage that would be dealt this turn by creatures other than Werewolves and Wolves. (Only double-faced cards can be transformed.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Galadhrim Ambush",
+      "oracle_id": "3b22d21f-e19a-40df-840b-a2b7f11f79c2",
+      "oracle_text": "Create X 1/1 green Elf Warrior creature tokens, where X is the number of attacking creatures.\nPrevent all combat damage that would be dealt this turn by non-Elf creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-06-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Arachnogenesis",
+      "oracle_id": "b655bee5-52d3-467e-b16c-cfc2edf2b1a1",
+      "oracle_text": "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you. Prevent all combat damage that would be dealt this turn by non-Spider creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Morph"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Frontline Strategist",
+      "oracle_id": "6e202114-48f3-46d2-bc54-df766d149d9d",
+      "oracle_text": "Morph {W} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, prevent all combat damage non-Soldier creatures would deal this turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2003-05-26",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Soldier"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Lambholt Elder",
+          "oracle_text": "At the beginning of each upkeep, if no spells were cast last turn, transform this creature.",
+          "power": "1",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human Werewolf"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Silverpelt Werewolf",
+          "oracle_text": "Whenever this creature deals combat damage to a player, draw a card.\nAt the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+          "power": "4",
+          "toughness": "5",
+          "type_line": "Creature \u2014 Werewolf"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G} // ",
+      "name": "Lambholt Elder // Silverpelt Werewolf",
+      "oracle_id": "12330f42-0e3f-40e1-86f3-57a34403d143",
+      "oracle_text": "Lambholt Elder: At the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n//\nSilverpelt Werewolf: Whenever this creature deals combat damage to a player, draw a card.\nAt the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-02-03",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Werewolf // Creature \u2014 Werewolf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{W}",
+          "name": "Thraben Sentry",
+          "oracle_text": "Vigilance\nWhenever another creature you control dies, you may transform this creature.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Human Soldier"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Thraben Militia",
+          "oracle_text": "Trample",
+          "power": "5",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Human Soldier"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Transform",
+        "Trample"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W} // ",
+      "name": "Thraben Sentry // Thraben Militia",
+      "oracle_id": "9636073e-e361-4d2a-92f6-5fe049e5eb23",
+      "oracle_text": "Thraben Sentry: Vigilance\nWhenever another creature you control dies, you may transform this creature.\n//\nThraben Militia: Trample",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Soldier // Creature \u2014 Human Soldier"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{R}",
+          "name": "Tavern Ruffian",
+          "oracle_text": "Daybound (If a player casts no spells during their own turn, it becomes night next turn.)",
+          "power": "2",
+          "toughness": "5",
+          "type_line": "Creature \u2014 Human Warrior Werewolf"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Tavern Smasher",
+          "oracle_text": "Nightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+          "power": "6",
+          "toughness": "5",
+          "type_line": "Creature \u2014 Werewolf"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Daybound",
+        "Nightbound"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R} // ",
+      "name": "Tavern Ruffian // Tavern Smasher",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "oracle_text": "Tavern Ruffian: Daybound (If a player casts no spells during their own turn, it becomes night next turn.)\n//\nTavern Smasher: Nightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Warrior Werewolf // Creature \u2014 Werewolf"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Standardize",
+      "oracle_id": "2d4e0e0f-7167-40a4-ad76-2d5b45223eaa",
+      "oracle_text": "Choose a creature type other than Wall. Each creature becomes that type until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2002-10-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Unnatural Selection",
+      "oracle_id": "0be10525-09dc-4970-b495-2db7d4d3c3e7",
+      "oracle_text": "{1}: Choose a creature type other than Wall. Target creature becomes that type until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2001-06-04",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bear"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Llanowar Elves",
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Druid"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Prodigal Pyromancer",
+      "oracle_id": "29b3cb3e-aeb1-43eb-8095-9f7881aa34bd",
+      "oracle_text": "{T}: This creature deals 1 damage to any target.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2021-03-19",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Wizard"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Fervor",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "oracle_text": "Creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Plains"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Forest"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Haste",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Questing Beast",
+      "oracle_id": "b685757b-521e-4353-a233-97052359723d",
+      "oracle_text": "Vigilance, deathtouch, haste\nQuesting Beast can't be blocked by creatures with power 2 or less.\nCombat damage that would be dealt by creatures you control can't be prevented.\nWhenever Questing Beast deals combat damage to an opponent, it deals that much damage to target planeswalker that player controls.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": "4",
+      "type_line": "Legendary Creature \u2014 Beast"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Changeling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Changeling Outcast",
+      "oracle_id": "a61ef0cc-1da9-49f9-b0dc-01cf9f6205be",
+      "oracle_text": "Changeling (This card is every creature type.)\nThis creature can't block and can't be blocked.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Shapeshifter"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Imagecrafter",
+      "oracle_id": "9a0c6b4d-b16a-4849-9106-047b009a99b3",
+      "oracle_text": "{T}: Choose a creature type other than Wall. Target creature becomes that type until end of turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2002-10-07",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Human Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Momentary Blink",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nFlashback {3}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{W}",
+          "name": "Avacynian Missionaries",
+          "oracle_text": "At the beginning of your end step, if this creature is equipped, transform it.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature \u2014 Human Cleric"
+        },
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Lunarch Inquisitors",
+          "oracle_text": "When this creature transforms into Lunarch Inquisitors, you may exile another target creature until this creature leaves the battlefield.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature \u2014 Human Cleric"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W} // ",
+      "name": "Avacynian Missionaries // Lunarch Inquisitors",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "oracle_text": "Avacynian Missionaries: At the beginning of your end step, if this creature is equipped, transform it.\n//\nLunarch Inquisitors: When this creature transforms into Lunarch Inquisitors, you may exile another target creature until this creature leaves the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-04-08",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Cleric // Creature \u2014 Human Cleric"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{W}",
+      "name": "Watchwolf",
+      "oracle_id": "a35c2e20-eb90-4132-b65f-be1fcb569819",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2018-03-16",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Wolf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{R}",
+          "name": "Reckless Waif",
+          "oracle_text": "At the beginning of each upkeep, if no spells were cast last turn, transform this creature.",
+          "power": "1",
+          "toughness": "1",
+          "type_line": "Creature \u2014 Human Rogue Werewolf"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Merciless Predator",
+          "oracle_text": "At the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+          "power": "3",
+          "toughness": "2",
+          "type_line": "Creature \u2014 Werewolf"
+        }
+      ],
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R} // ",
+      "name": "Reckless Waif // Merciless Predator",
+      "oracle_id": "ba57df46-11c9-4f28-8818-175fb52e67bc",
+      "oracle_text": "Reckless Waif: At the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n//\nMerciless Predator: At the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Creature \u2014 Human Rogue Werewolf // Creature \u2014 Werewolf"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Terrifying Presence",
+      "oracle_id": "ca8f6e19-6ef3-4d77-8312-867767ffeda6",
+      "oracle_text": "Prevent all combat damage that would be dealt by creatures other than target creature this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2013-09-06",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Whether or not a creature is a Werewolf or a Wolf is checked only as combat damage is dealt. If the creature isn\u2019t a Werewolf or a Wolf at that time, its combat damage will be prevented.",
+      "oracle_id": "2c306e87-e3c8-4066-9be5-570e2f2d6bad",
+      "published_at": "2011-09-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Moonmist causes any double-faced Human to transform, not just Werewolves.",
+      "oracle_id": "2c306e87-e3c8-4066-9be5-570e2f2d6bad",
+      "published_at": "2011-09-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Moonmist will prevent combat damage dealt by a creature that isn\u2019t a Werewolf or a Wolf even if that creature wasn\u2019t on the battlefield (or was a Werewolf or a Wolf) when Moonmist resolved.",
+      "oracle_id": "2c306e87-e3c8-4066-9be5-570e2f2d6bad",
+      "published_at": "2011-09-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Galadhrim Ambush counts all attacking creatures no matter which player, planeswalker, or battle they're attacking, including attacking creatures you control if Galadhrim Ambush is cast during your combat phase.",
+      "oracle_id": "3b22d21f-e19a-40df-840b-a2b7f11f79c2",
+      "published_at": "2023-06-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature type is checked for \u201cnon-Soldier\u201d at the time the damage would be dealt. If the creature that is dealing the damage is not on the battlefield, use its creature type right before it left the battlefield.",
+      "oracle_id": "6e202114-48f3-46d2-bc54-df766d149d9d",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "For more information on double-faced cards, see the Shadows over Innistrad mechanics article (http://magic.wizards.com/en/articles/archive/feature/shadows-over-innistrad-mechanics).",
+      "oracle_id": "12330f42-0e3f-40e1-86f3-57a34403d143",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures you control die simultaneously, Thraben Sentry's ability will trigger that many times. Only the first one to resolve will cause it to transform.",
+      "oracle_id": "9636073e-e361-4d2a-92f6-5fe049e5eb23",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Before a player untaps their permanents during the untap step, the game checks to see if the day/night designation should change.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is night, and the active player of the previous turn cast two or more spells during their turn, it becomes day.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell with daybound during night, that spell will be front face up (that is, daybound face up) on the stack. However, it will enter the battlefield with its back face up (that is, with its nightbound face up). It won't enter with its daybound face up and then transform.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Day and night are designations that the game itself can have. The game starts as neither. Once the game becomes day (or less commonly, night), the game will be exactly one of them\u2014day or night\u2014going back and forth for the rest of the game.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is day, and the active player of the previous turn cast no spells during their turn, it becomes night.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it is night, permanents with daybound that enter the battlefield without being cast will enter with their nightbound faces up.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Double-faced permanents with daybound transform to their nightbound faces as it becomes night. Similarly, double-faced permanents with nightbound transform to their daybound faces as it becomes day. This happens immediately and is not a state-based action. It happens any time it becomes day or night, not just during the untap step.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If it's neither day nor night, and a creature with daybound and a creature with nightbound somehow appear on the battlefield at the same time, it becomes day. The creature with nightbound will transform.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Permanents with daybound and nightbound can't transform via any means other than their daybound and nightbound abilities. Notably, older cards such as Moonmist that instruct a player to transform permanents don't affect permanents with daybound or nightbound.",
+      "oracle_id": "73a3b9a1-37a0-469a-9557-8c118a1ee78f",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "This spell only affects creatures on the battlefield when it resolves.",
+      "oracle_id": "2d4e0e0f-7167-40a4-ad76-2d5b45223eaa",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must choose a creature type that already exists in Magic.",
+      "oracle_id": "0be10525-09dc-4970-b495-2db7d4d3c3e7",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature loses haste, perhaps because Fervor leaves the battlefield after attackers have been declared, it won't be removed from combat.",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The damage Questing Beast deals to the target planeswalker as its last ability resolves isn't combat damage.",
+      "oracle_id": "b685757b-521e-4353-a233-97052359723d",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a creature with power 3 or greater has blocked this creature, changing the power of the blocking creature won't cause this creature to become unblocked.",
+      "oracle_id": "b685757b-521e-4353-a233-97052359723d",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Questing Beast only stops combat damage from being prevented by effects that specifically use the word \u201cprevent.\u201d",
+      "oracle_id": "b685757b-521e-4353-a233-97052359723d",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the opponent dealt damage controls no planeswalkers, Questing Beast's last ability simply does nothing.",
+      "oracle_id": "b685757b-521e-4353-a233-97052359723d",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\"",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the card returns to the battlefield, it will be a new object with no connection to the card that was exiled. Auras attached to the exiled creature will be put into their owners' graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "a3ec6b5d-08ec-4ae0-b1db-c4b87a1849c7",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Lunarch Inquisitors leaves the battlefield before its triggered ability resolves, the target creature won't be exiled.",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Equipment attached to Avacynian Missionaries remains attached after it transforms into Lunarch Inquisitors.",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if Lunarch Inquisitors's owner leaves the game, the exiled card will return to the battlefield. Because the one-shot effect that returns the card isn't an ability that goes on the stack, it won't cease to exist along with the leaving player's spells and abilities on the stack.",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature token is exiled, it ceases to exist. It won't be returned to the battlefield.",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Lunarch Inquisitors somehow transforms into Avacynian Missionaries, the creature will remain exiled. If Avacynian Missionaries later leaves the battlefield, the creature will return to the battlefield.",
+      "oracle_id": "5b356a01-900c-4fe5-93bd-45629528c484",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "For more information on double-faced cards, see the Shadows over Innistrad mechanics article (http://magic.wizards.com/en/articles/archive/feature/shadows-over-innistrad-mechanics).",
+      "oracle_id": "ba57df46-11c9-4f28-8818-175fb52e67bc",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although Terrifying Presence doesn\u2019t affect the target creature, if that creature is an illegal target when Terrifying Presence tries to resolve, it won\u2019t resolve and none of its effects will happen. No damage will be prevented.",
+      "oracle_id": "ca8f6e19-6ef3-4d77-8312-867767ffeda6",
+      "published_at": "2012-05-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed same-zone multi-event grammar for typed triggered abilities."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..rules.event_subscriptions import (

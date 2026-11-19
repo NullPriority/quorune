@@ -19,6 +19,7 @@ from scripts.compact_ci_dependencies import (
 )
 from scripts.compact_ci_report import (
     build_dependency_report,
+    reuse_local_dependency_artifact,
     store_dependency_artifact,
     verify_dependency_artifact,
 )
@@ -280,6 +281,7 @@ def main() -> int:
     artifact_mode = validate_dependencies.add_mutually_exclusive_group()
     artifact_mode.add_argument("--emit-artifact", type=Path)
     artifact_mode.add_argument("--verify-artifact", type=Path)
+    artifact_mode.add_argument("--reuse-local-artifact", action="store_true")
 
     args = parser.parse_args()
     if args.command == "export":
@@ -306,11 +308,14 @@ def main() -> int:
     elif args.command == "validate-ci":
         result = validate_compact_ci_consumers()
     else:
-        result = (
-            verify_dependency_artifact(artifact_dir=args.verify_artifact, root=ROOT)
-            if args.verify_artifact is not None
-            else build_dependency_report(root=ROOT)
-        )
+        if args.verify_artifact is not None:
+            result = verify_dependency_artifact(artifact_dir=args.verify_artifact, root=ROOT)
+        else:
+            result = reuse_local_dependency_artifact(root=ROOT) if args.reuse_local_artifact else None
+            if result is None:
+                result = build_dependency_report(root=ROOT)
+            else:
+                print("Verified an exact local compact dependency artifact.", file=sys.stderr)
         if not result["closed"]:
             print(json.dumps(result, indent=2, sort_keys=True))
             return 1

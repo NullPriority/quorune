@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Named source-counter scaling over an independently closed live anthem."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Callable
 
 from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantityReduction

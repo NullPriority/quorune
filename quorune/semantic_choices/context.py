@@ -8,6 +8,7 @@ from ..ring_model import RingBearerChoicePlan, RingStateError
 from ..drawing.restrictions import DrawPermission
 from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
+from ..life_gain_permission import ALLOW_ALL_LIFE_GAIN,LifeGainPermissionSnapshot
 from ..semantic_runtime.context import SemanticSourceContext
 from ..explore_action_model import explore_action_version
 from ..dungeon_progress import DungeonJourney
@@ -118,6 +119,11 @@ class SemanticChoiceQuery(
     @property
     def explore_source_types(self) -> tuple[str, ...] | None: ...
 
+    @property
+    def shared_type_library_source(self): ...
+
+    def life_gain_allowed(self,seat:str)->bool: ...
+
     def player_life(self, seat: str) -> int: ...
 
     def player_counter(self, seat: str, counter: str) -> int: ...
@@ -207,6 +213,7 @@ class SnapshotSemanticChoiceQuery:
     resolution_source: SemanticSourceContext | None = None
     explore_action_version: int | None = None
     explore_source_types: tuple[str, ...] | None = None
+    shared_type_library_source: Any = None
     resolution_source_is_physical_card: bool | None = None
     apnap_order: tuple[str, ...] = ()
     discard_hand_inputs: FrozenMap | None = None
@@ -214,6 +221,7 @@ class SnapshotSemanticChoiceQuery:
     attacking_card_entry_status: str | None = None
     venture_journey: DungeonJourney | None = None
     venture_allowed: bool = True
+    life_gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN
 
     def __post_init__(self) -> None:
         if type(self.attacking_token_entry_allowed) is not bool:
@@ -224,6 +232,10 @@ class SnapshotSemanticChoiceQuery:
             object.__setattr__(self, 'discard_hand_inputs', FrozenMap(self.discard_hand_inputs))
         if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
             raise ValueError('Physical resolving-card facts must be boolean or absent')
+        if self.shared_type_library_source is not None:
+            from ..shared_creature_type_model import SharedCreatureTypeObject
+            if not isinstance(self.shared_type_library_source, SharedCreatureTypeObject):
+                raise ValueError("Shared-type library information requires its typed source snapshot")
         explore_action_version(self.explore_action_version)
         if self.explore_source_types is not None and (
             type(self.explore_source_types) is not tuple
@@ -234,6 +246,8 @@ class SnapshotSemanticChoiceQuery:
             raise ValueError('Explore source types require immutable canonical terms or unavailable')
         if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
             raise ValueError('Choice resolution source requires an immutable typed snapshot')
+        if not isinstance(self.life_gain_permissions,LifeGainPermissionSnapshot):
+            raise ValueError('Choice life-gain permissions require an immutable typed snapshot')
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
             raise ValueError('Choice counter permissions require an immutable typed snapshot')
         for field_name in (
@@ -326,6 +340,9 @@ class SnapshotSemanticChoiceQuery:
     def authorized_cast_options(self) -> tuple[Mapping[str, Any], ...]:
         return tuple(self.authorized_cast_option_rows)
 
+    def life_gain_allowed(self,seat:str)->bool:
+        return seat in self.active_seats and self.life_gain_permissions.allows_gain(seat)
+
     def counter_placement_allowed(self, subject: str, counter: str, amount: int,
                                   *, subject_kind: str = 'permanent') -> bool:
         if subject_kind == 'player':
@@ -338,7 +355,7 @@ class SnapshotSemanticChoiceQuery:
                 return False
             fact = CounterPlacementFact('permanent', row.object_id, counter, amount,
                 controller=row.controller if row.zone == 'battlefield' else None,
-                zone=row.zone, types=row.types)
+                zone=row.zone, types=row.types, logical_object_id=row.logical_object_id)
         else:
             raise ValueError('Unknown counter-placement choice subject kind')
         return self.counter_permissions.allows(fact)

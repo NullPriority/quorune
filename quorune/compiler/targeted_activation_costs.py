@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Target-conditioned costs compose existing source and target query grammars."""
 
-import re
+from . import regex_working_set as re
 
 from ..activation_cost_modifiers import (
     ACTIVATION_GENERIC_COST_EVENT, TARGETED_ACTIVATION_COST_CAPABILITY,

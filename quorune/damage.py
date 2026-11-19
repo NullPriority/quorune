@@ -5,6 +5,7 @@ from .rules.damage_snapshots import source_snapshot,recipient_snapshot
 import hashlib
 from typing import Any, Mapping, Protocol, Sequence
 from .counter_placement_event_model import CounterPlacementOccurrence
+from .counter_prevention import collect_shield_counter_effects
 from .model import StackItem
 
 from .counter_state import (
@@ -711,6 +712,7 @@ def prepare_damage_batch(
             source_zones=source_zones,
         ),
         *collect_damage_modifier_effects(host, snapshot=current_modifiers),
+        *collect_shield_counter_effects(host),
         *_protection_prevention_effects(host, nonzero),
     )
     events = tuple(proposal.event() for proposal in nonzero)

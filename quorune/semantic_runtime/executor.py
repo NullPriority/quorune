@@ -1,5 +1,12 @@
 from __future__ import annotations
+from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
+from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
 from .composition_intent import ResumeCompositionOrderIntent
+from .graveyard_card_result_intent import GraveyardCardCounterLifeIntent
+from .graveyard_exile_branch_intent import GraveyardExileBranchIntent
+from .graveyard_exile_token_intent import GraveyardExileTokenIntent
+from .graveyard_exile_type_outcome_intent import GraveyardExileTypeOutcomeIntent
 from .mutate_intent import SelectMutateMergeIntent
 from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
@@ -12,20 +19,30 @@ from ..initiative_model import TakeInitiativeIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 from .life_batch_intent import LifeLossBatchIntent
+from .life_gain_cost_intent import LifeGainCostBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
-from .control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent
+from .control_intents import (
+    GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
+    GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+)
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
+from ..hand_library_redraw_model import HandLibraryRedrawIntent
+from .colored_hand_reveal import RevealColoredHandCardsIntent
 from ..rules.discard_results import execute_discard_result
 from .whole_hand_discard import execute_whole_hand_discard
 from ..random_discard import RandomDiscardIntent
 from .random_discard import execute_random_discard
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
+from .graveyard_recycling import GraveyardRecyclingIntent
+from ..target_land_type_model import TargetLandTypeSettingIntent
+from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
+from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
 from ..preparation_model import PrepareSourceIntent
@@ -190,7 +207,7 @@ class SemanticIntentSink(
     def move_objects_simultaneously_intent(
         self,
         intent: MoveObjectsSimultaneouslyIntent,
-    ) -> tuple[str, ...]: ...
+    ) -> tuple[str, ...] | CommittedQuantityFollowup: ...
 
     def madness_choice_intent(self, intent: MadnessChoiceIntent) -> None: ...
 
@@ -209,6 +226,8 @@ class SemanticIntentSink(
     def record_zone_move_intent(self, intent: RecordZoneMoveIntent) -> None: ...
 
     def apply_life_change_intent(self, intent: LifeChangeIntent) -> int: ...
+    def apply_life_gain_cost_batch_intent(self, intent: LifeGainCostBatchIntent) -> int: ...
+
     def apply_life_loss_batch_intent(self, intent: LifeLossBatchIntent) -> int: ...
 
     def pay_life_intent(self, intent: PayLifeIntent) -> int: ...
@@ -224,6 +243,8 @@ class SemanticIntentSink(
         self,
         intent: InspectHandIntent,
     ) -> tuple[str, ...]: ...
+
+    def reveal_colored_hand_cards_intent(self, intent: RevealColoredHandCardsIntent) -> tuple[str, ...]: ...
 
     def move_library_cards_to_bottom_intent(
         self,
@@ -252,7 +273,7 @@ class SemanticIntentSink(
 
     def pay_mana_cost_intent(self, intent: PayManaCostIntent) -> None: ...
 
-    def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent) -> object: ...
+    def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent | GainSpellControlIntent) -> object: ...
 
     def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent) -> object: ...
 
@@ -402,7 +423,7 @@ def prepare_draw_resolution(
 PermanentObjectIntent = (
     SelectMutateMergeIntent |
     ResumeCompositionOrderIntent |
-    PairSoulbondIntent | GainControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | CreateRegenerationShieldIntent
+    PairSoulbondIntent | GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
     | PrepareSourceIntent
@@ -423,7 +444,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     PrepareSourceIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
-    GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent,
+    GainControlIntent, GainSpellControlIntent, GainControlSetIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
     CreateRegenerationShieldIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
@@ -465,7 +486,7 @@ def _execute_permanent_object_intent(
             source_identity=intent.source_identity, partner_identity=intent.partner_identity,
             entered_ref=intent.entered_ref, entered_identity=intent.entered_identity)
         return 'pair', pair.pair_id
-    if isinstance(intent, (GainControlIntent,GiveControlIntent)):
+    if isinstance(intent, (GainControlIntent, GiveControlIntent, GainSpellControlIntent)):
         return intent.object_ref, sink.gain_control_intent(intent)
     if isinstance(intent, (GainControlSetIntent,GiveControlSetIntent,RestoreOwnerControlIntent)):
         return intent.actor, sink.gain_control_set_intent(intent)
@@ -517,6 +538,21 @@ def _execute_permanent_object_intent(
                 replacement_selections=intent.replacement_selections,
             ),
         )
+    if isinstance(intent, GraveyardCardCounterLifeIntent):
+        from ..rules.graveyard_card_results import commit_graveyard_card_counter_life
+        return intent.object_ref, commit_graveyard_card_counter_life(sink, intent)
+    if isinstance(intent, GraveyardExileBranchIntent):
+        from ..rules.graveyard_exile_branches import commit_graveyard_exile_branch
+
+        return intent.object_ref, commit_graveyard_exile_branch(sink, intent)
+    if isinstance(intent, GraveyardExileTokenIntent):
+        from ..rules.graveyard_exile_tokens import commit_graveyard_exile_token
+
+        return intent.object_ref, commit_graveyard_exile_token(sink, intent)
+    if isinstance(intent, GraveyardExileTypeOutcomeIntent):
+        from ..rules.graveyard_exile_type_outcomes import commit_graveyard_exile_type_outcomes
+
+        return intent.object_ref, commit_graveyard_exile_type_outcomes(sink, intent)
     if isinstance(intent, ExilePublicGraveyardCardIntent):
         return (
             intent.object_ref,
@@ -555,12 +591,13 @@ def _execute_permanent_object_intent(
     )
 
 
-RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | ConniveCompletedIntent | InspectHandIntent
+RecordingIntent = RecordChoiceIntent | ExploreCompletedIntent | ConniveCompletedIntent | InspectHandIntent | RevealColoredHandCardsIntent
 RECORDING_INTENT_TYPES = (
     RecordChoiceIntent,
     ExploreCompletedIntent,
     ConniveCompletedIntent,
     InspectHandIntent,
+    RevealColoredHandCardsIntent,
 )
 
 
@@ -573,6 +610,8 @@ def _execute_recording_intent(
         return intent.actor, None
     if isinstance(intent, InspectHandIntent):
         return intent.player, sink.inspect_hand_intent(intent)
+    if isinstance(intent,RevealColoredHandCardsIntent):
+        return intent.actor,sink.reveal_colored_hand_cards_intent(intent)
     if isinstance(intent, ConniveCompletedIntent):
         sink.complete_connive_intent(intent)
         return intent.conniver.ref, None
@@ -666,14 +705,16 @@ def _execute_counter_placement_intent(
 
 PlayerIntent = (
     BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
-    | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
+    | DiscardWholeHandsResultIntent | HandLibraryRedrawIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
+    | GraveyardRecyclingIntent | FixedSourceSacrificeIntent
     | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
     | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent
     | VentureProgressIntent | TakeInitiativeIntent
 )
 PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
-    DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
+    DiscardWholeHandsResultIntent, HandLibraryRedrawIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
+    GraveyardRecyclingIntent, TargetLandTypeSettingIntent, FixedSourceSacrificeIntent,
     TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
     EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent,
     VentureProgressIntent, TakeInitiativeIntent,
@@ -681,12 +722,14 @@ PLAYER_INTENT_TYPES = (
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
+    | ProhibitNextPlayerUntapIntent
     | SetPermanentsTappedIntent
     | SetPublicPermanentsTappedIntent
 )
 TAP_STATE_INTENT_TYPES = (
     SetPermanentTappedIntent,
     ProhibitNextUntapIntent,
+    ProhibitNextPlayerUntapIntent,
     SetPermanentsTappedIntent,
     SetPublicPermanentsTappedIntent,
 )
@@ -696,6 +739,15 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, FixedSourceSacrificeIntent):
+        from .source_sacrifice import apply_fixed_source_sacrifice
+        return intent.actor, apply_fixed_source_sacrifice(sink, intent)
+    if isinstance(intent, TargetLandTypeSettingIntent):
+        from ..rules.target_land_type import apply_target_land_type
+        return intent.actor, apply_target_land_type(sink, intent)
+    if isinstance(intent, GraveyardRecyclingIntent):
+        from ..rules.graveyard_recycling import execute_graveyard_recycling
+        return intent.actor, execute_graveyard_recycling(sink, intent)
     if isinstance(intent, TakeInitiativeIntent):
         from ..initiative_runtime import commit_take_initiative
 
@@ -729,6 +781,9 @@ def _execute_player_intent(
     if isinstance(intent, DiscardWholeHandsIntent):
         return intent.actor, execute_whole_hand_discard(sink, intent)
     if isinstance(intent, DiscardWholeHandsResultIntent):return intent.actor, execute_discard_result(sink, intent)
+    if isinstance(intent, HandLibraryRedrawIntent):
+        from ..rules.hand_library_redraw import execute_hand_library_redraw
+        return intent.actor, execute_hand_library_redraw(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):
         return intent.player, sink.become_monarch(
             intent.player,
@@ -777,6 +832,8 @@ def _execute_tap_state_intent(
     sink: SemanticIntentSink,
     intent: TapStateIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, ProhibitNextPlayerUntapIntent):
+        return intent.restriction.player, tap_state.schedule_next_player_untap(sink, intent)
     if isinstance(intent, ProhibitNextUntapIntent):
         return intent.object_ref, tap_state.prohibit_next_untap(sink, intent.object_ref,
             actor=intent.actor, reason=intent.reason, logical_object_id=intent.logical_object_id)
@@ -833,6 +890,15 @@ def _execute_tap_state_intent(
 
 
 def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent,ResolveRippleCastIntent):
+        from ..rules.ripple_casting import execute_ripple_cast
+        return intent.actor,execute_ripple_cast(sink,intent)
+    if isinstance(intent,RippleBottomIntent):
+        from ..rules.revealed_library_bottom import execute_ripple_bottom
+        return intent.actor,execute_ripple_bottom(sink,intent)
+    if isinstance(intent, ResolveBoundedHandCastIntent):
+        from ..rules.bounded_hand_cast import execute_bounded_hand_cast
+        return intent.actor, execute_bounded_hand_cast(sink, intent)
     if isinstance(intent, RevealCapturedDrawsIntent):
         from ..drawing.captured_hand_casting import commit_captured_draw_reveal
         return intent.actor, commit_captured_draw_reveal(sink, intent)
@@ -900,6 +966,14 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
     from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION_FIELD, bind_checked_entry_return_payment
     from ..scheduled_player import scheduled_player_instruction_is_impossible
 
+    if 'optional_target_result' in raw_effect:
+        from ..rules.optional_target_results import bind_optional_target_result
+        try:
+            raw_effect = bind_optional_target_result(raw_effect, item.targets)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        if raw_effect is None:return None
+
     if scheduled_player_instruction_is_impossible(host, item, raw_effect):
         host._log(
             item.controller, 'effect.player.skipped',
@@ -910,10 +984,15 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         )
         return None
 
+    from ..rules.event_player_result_shapes import bind_spell_cast_count_life_effect
+
     try:
         scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
+        raw_effect = bind_spell_cast_count_life_effect(host.state, scoped_item, raw_effect)
     except ValueError as exc:
         raise SemanticNodeError(str(exc)) from exc
+    if raw_effect is None:
+        return None
     optional_usage = None
     if raw_effect.get('op') == 'offer_optional_effect':
         from ..rules.trigger_limits import optional_result_usage_available, optional_result_usage_binding
@@ -924,7 +1003,15 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
                 return None
         except (ValueError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+    from ..stack_counter import bind_announced_x_counter, bind_no_mana_spent_counter
+
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
+    effect = bind_no_mana_spent_counter(host.state, raw_effect, effect)
+    if effect is None:
+        return None
+    effect = bind_announced_x_counter(host, scoped_item, raw_effect, effect)
+    if effect is None:
+        return None
     if ENTRY_RETURN_PAYMENT_VERSION_FIELD in raw_effect:
         effect = bind_checked_entry_return_payment(host, scoped_item, raw_effect, effect)
     if optional_usage is not None and not _can_choose_limited_optional_result(host, effect):
@@ -956,6 +1043,25 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         raw_amount = raw_effect.get("amount")
         if (isinstance(raw_amount, Mapping) and raw_amount.get("kind") == SCALAR_AMOUNT_KIND
             and raw_amount.get("origin") == ScalarAmountOrigin.CAST_SPELL_MANA_VALUE.value):
+            return None
+    if effect.get("op") == "place_player_counters":
+        from ..rules.unblocked_attackers import unblocked_poison_recipient_has_left
+        if unblocked_poison_recipient_has_left(host, item, raw_effect, effect):
+            return None
+    if effect.get("op") == "prohibit_casting_until_end_of_turn":
+        from ..rules.temporary_cast_restrictions import attacked_defender_cast_recipient_has_left
+
+        if attacked_defender_cast_recipient_has_left(host, raw_effect, effect):
+            return None
+    if effect.get("op") == "choose_cards_apnap" and effect.get("then") in {"exile", "return_owner_hand"}:
+        from ..rules.event_player_choice_shapes import event_bound_public_choice_recipient_has_left
+
+        if event_bound_public_choice_recipient_has_left(host, raw_effect, effect):
+            return None
+    if effect.get("op") == "discard_random_cards":
+        from ..random_discard import blocked_defender_discard_recipient_has_left
+
+        if blocked_defender_discard_recipient_has_left(host, raw_effect, effect):
             return None
     if effect.get("op") == "mill":
         from ..milling import event_mill_recipient_has_left
@@ -1056,7 +1162,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             continue
         if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
                                GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent,
-                               RevealCapturedDrawsIntent,ResolveCapturedDrawCastIntent)):
+                               RevealCapturedDrawsIntent,ResolveCapturedDrawCastIntent,ResolveBoundedHandCastIntent,
+                               ResolveRippleCastIntent,RippleBottomIntent)):
             results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):

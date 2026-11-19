@@ -3,11 +3,12 @@ from __future__ import annotations
 """Public activation reductions from providers and ability-local counts."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..activation_cost_modifiers import (FixedActivationCostModifierSpec, ACTIVATION_GENERIC_COST_EVENT,
     PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_CAPABILITY,
-    ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, ability_local_reduction_origin_is_supported,
+    ConditionalActivationReduction, OpponentControlledActivationReduction,
+    AbilityLocalPublicManaAdjustment, ability_local_reduction_origin_is_supported,
     validate_ability_local_mana_reduction)
 from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
@@ -68,6 +69,12 @@ def _activation_discount_operand(match, *, source_name):
     text = match['condition'] or match['turn']
     if text is None or amount == 'X':
         return None
+    opponent = re.fullmatch(r'an opponent controls (one|two|three|four|five|six|seven|eight|nine|ten) '
+                            r'or more nonbasic lands', text, re.I)
+    if opponent is not None and amount is not None and match['direction'].casefold() == 'less':
+        minimum = ('one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten').index(
+            opponent[1].casefold()) + 1
+        return OpponentControlledActivationReduction(int(amount), minimum)
     condition = fixed_public_state_condition(text, source_name=source_name)
     if condition is None and text.casefold() == 'you control a legendary creature':
         quantity = _activation_discount_quantity('legendary creatures you control', source_name=source_name)
@@ -98,6 +105,12 @@ def compile_ability_local_mana_reduction(ability, *, source_name):
         validate_ability_local_mana_reduction(reduction)
     except ValueError:
         return ability
+    if isinstance(reduction, OpponentControlledActivationReduction):
+        from ..self_zone_move import compile_self_zone_move
+        movement = compile_self_zone_move(replace(ability,
+            effect_text=(material[:match.start() + 1] + material[match.end():]).strip()))
+        if movement is None or movement.origin != 'graveyard':return ability
+        ability = replace(ability, zones=movement.ability.zones)
     if not ability_local_reduction_origin_is_supported(ability.zones, ability.discard_source, reduction):
         return ability
     return replace(ability, effect_text=(material[:match.start() + 1] + material[match.end():]).strip(),

@@ -1,5 +1,5 @@
 """Spell-cast subscriptions over an existing per-object color designation."""
-import re
+from . import regex_working_set as re
 
 from ..rules.chosen_color_events import CHOSEN_COLOR_CAST_CAPABILITY
 from .fixed_public_event_trigger_bindings import _spec

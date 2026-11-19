@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 import hashlib
 import inspect
-import re
+from . import regex_working_set as re
 from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
 
 from ..abilities import parse_activated_abilities
@@ -764,7 +764,8 @@ def _compiled_source_template(body, *, record, node, face_index, face_name):
         text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
         or (None, (), None, ()))
     return declared or compiled, activation_x_capabilities(symbols=ability.announced_x_symbols,
-        sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices))
+        sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices),
+            discard_source=ability.discard_source)
 
 
 def _clause_count(body: str, template_id: str) -> int:

@@ -30,6 +30,11 @@ from ..evoke import (
     EvokeError,
     FixedManaEvokeSpec,
 )
+from ..hand_exile_evoke_model import (
+    HandExileEvokeSpec, HAND_EXILE_EVOKE_CAPABILITY, HAND_EXILE_EVOKE_HANDLER_ID,
+    HAND_EXILE_EVOKE_DEPENDENCIES,
+)
+from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..self_cast_reductions import (
@@ -413,6 +418,29 @@ class EvokeCostHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class HandExileEvokeCostHandler:
+    handler_id: str = HAND_EXILE_EVOKE_HANDLER_ID
+    schema_version: int = 1
+    family: str = HAND_EXILE_EVOKE_CAPABILITY
+    event: str = EVOKE_RUNTIME_EVENT
+    rule_references: tuple[str, ...] = ("118.9", "601.2b", "601.2f", "601.2h", "701.13a", "702.74a")
+    capability_dependencies: tuple[str, ...] = HAND_EXILE_EVOKE_DEPENDENCIES
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id","schema_version","event","evoke",REQUIRES_COMPLETE_CARD_PROGRAM_FIELD},
+            field="fixed hand-exile Evoke handler")
+        if (descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != 1 or descriptor["event"] != self.event
+                or descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True):
+            raise SemanticNodeError("Hand-exile Evoke identity, version or complete-program boundary changed")
+        try:return HandExileEvokeSpec.from_dict(descriptor["evoke"])
+        except (TypeError, ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
 class FixedSpellCostReductionHandler:
     handler_id: str = FIXED_SPELL_COST_REDUCTION_HANDLER_ID
     schema_version: int = 3
@@ -576,6 +604,7 @@ class CastCostComponentRegistry(
         | ImproviseSpec
         | DelveSpec
         | FixedManaEvokeSpec
+        | HandExileEvokeSpec
         | FixedSpellCostReductionSpec
         | SelfSpellCostReductionSpec
         | FixedManaMultikickerSpec
@@ -609,6 +638,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             ConvokeCostHandler(),
             DelveCostHandler(),
             EvokeCostHandler(),
+            HandExileEvokeCostHandler(),
             FixedSpellCostReductionHandler(),
             TargetedSpellCostHandler(),
             ConditionalSpellCostModifierHandler(),
@@ -703,6 +733,11 @@ def evoke_handler_descriptor(spec: FixedManaEvokeSpec) -> dict[str, Any]:
         "event": EVOKE_RUNTIME_EVENT,
         "evoke": spec.to_dict(),
     }
+
+
+def hand_exile_evoke_handler_descriptor(spec: HandExileEvokeSpec) -> dict[str, Any]:
+    return {"handler_id":HAND_EXILE_EVOKE_HANDLER_ID,"schema_version":1,"event":EVOKE_RUNTIME_EVENT,
+        "evoke":spec.to_dict(),REQUIRES_COMPLETE_CARD_PROGRAM_FIELD:True}
 
 
 class FixedSpellCostReductionHost(Protocol):

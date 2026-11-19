@@ -220,13 +220,18 @@ def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackI
     observe_stack_resolution(host, item, host.state.cards.get(item.card_object_id))
     from .rules.entry_cast_information import resolving_entry_cast_information
     from .rules.ravenous import resolving_ravenous_entry
+    from .rules.paid_alternative_cast_facts import resolving_paid_alternative_entry
+    from .rules.paradigm import schedule_paradigm_resolution
+    schedule_paradigm_resolution(host, item)
     shuffle_owner = _printed_shuffle_owner(host, item, destination)
     library_position = _printed_library_position(host, item, destination)
-    with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item):
+    with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item),resolving_paid_alternative_entry(host,item):
         _complete_stack_resolution(host, item=item, destination=destination,
             prepared_replacement=prepared_replacement, library_position=library_position)
         if shuffle_owner is not None:
             host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library", actor=item.controller)
+        from .spell_resolution_names import finish_spell_resolution_names
+        finish_spell_resolution_names(host, item)
 
 
 def _complete_stack_resolution(

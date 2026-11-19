@@ -207,6 +207,7 @@ class FixedHandInspectionHandler:
             refs=inspection_refs,
             reason=context.stack_label,
             public=mode == HandInspectionMode.REVEAL,
+            keep_revealed=action != HandInspectionAction.OBSERVE,
         )
         if action == HandInspectionAction.OBSERVE or not legal_refs:
             return SemanticChoicePreparation(

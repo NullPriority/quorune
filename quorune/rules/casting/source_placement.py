@@ -24,7 +24,10 @@ def revalidate_cast_source(host, proposal, details, response):
     record = host.card_record(card)
     if record is None:
         raise CastProposalError('The casting card record is unavailable')
-    if card.zone == 'library':
+    if details.get('resolving_library_authority') is True and (
+            card.zone!='library' or details.get('during_resolution') is not True):
+        raise CastProposalError('Resolving library authority changed its original source')
+    if card.zone == 'library' and details.get('resolving_library_authority') is not True:
         from ...morph import FACE_DOWN_CAST_METHODS
         from .face_queries import selected_cast_card_view, validate_library_top_cast_commit
 

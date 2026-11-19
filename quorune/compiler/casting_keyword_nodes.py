@@ -16,6 +16,10 @@ from .bargain_nodes import bargain_static_node
 
 
 def casting_keyword_node(*, record, face_id, printed_power, **values):
+    if values['mechanics'] == ('reinforce',):
+        from .announced_reinforce_nodes import announced_reinforce_activation_node
+        node = announced_reinforce_activation_node(record=record, **values)
+        if node is not None:return node
     if values['mechanics'] == ('bargain',):
         return bargain_static_node(record=record, **{key: value for key, value in values.items() if key != 'mechanics'})
     if values['mechanics'] == ('casualty',):

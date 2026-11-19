@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
@@ -161,6 +161,9 @@ def fixed_private_hand_entry_effect_template(
         if match.group('subject').casefold() == 'historic permanent'
         else _hand_entry_query(match.group("subject"))
     )
+    if query is None:
+        from ..rules.permanent_subtype_hand_queries import permanent_subtype_hand_descriptor
+        query=permanent_subtype_hand_descriptor(match.group('subject'))
     return (
         FixedPrivateHandEntryTemplate(
             query=query,

@@ -28,6 +28,14 @@ An unqualified one-or-more-counters subscription consumes only the first kind
 in that subject's simultaneous placement, so a multi-kind instruction does not
 duplicate its trigger.
 
+An Aura can supply a counter placement prohibition for its currently enchanted
+creature alongside a separate absolute untap restraint. The counter permission
+snapshot carries the Aura as the rule source and the enchanted creature's
+logical incarnation as the recipient. Snapshots with an attached rule use
+schema version two. Other rule sets use the version-one encoding. The sealed
+recipient also feeds damage-result counter permissions before quantity
+replacement discovery. Damage and lifelink retain their ordinary facts.
+
 Numeric power/toughness counters apply each signed dimension independently
 under CR 122.1a and layer 7c. The canonical numeric characteristic query
 includes zero-valued dimensions such as `-0/-2`, alongside ordinary `+1/+1`

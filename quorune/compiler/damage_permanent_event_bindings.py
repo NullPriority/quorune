@@ -1,5 +1,5 @@
 """A closed damage head predicates source and damaged-creature facts separately."""
-import re
+from . import regex_working_set as re
 from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT,DAMAGE_PERMANENT_CAPABILITY
 from ..rules.source_references import SourceReferenceSpec,source_self_permanent_type
 

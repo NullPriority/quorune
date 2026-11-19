@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact
 from .fixed_numbers import fixed_number

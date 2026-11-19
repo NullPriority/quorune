@@ -3,10 +3,10 @@ from __future__ import annotations
 """Closed compiler grammar for fixed all-damage prevention scopes."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
-from ..creature_subtypes import canonical_creature_subtype
+from ..creature_subtypes import canonical_creature_subtype, canonical_creature_subtype_surface
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
 
@@ -290,6 +290,8 @@ def _source_scope(
             controller_relation=relation,
             characteristics_all=("creature",),
         ),
+        "attacking creatures": _canonical_scope(
+            controller_relation=relation,characteristics_all=('attacking','creature')),
         "other creatures": _canonical_scope(
             controller_relation=relation,
             characteristics_all=("creature",),
@@ -373,7 +375,25 @@ def _source_scope(
             characteristics_none=("trample",),
         ),
     }
-    return exact.get(normalized)
+    if normalized in exact:
+        return exact[normalized]
+    excluded = re.fullmatch(r"non-(?P<type>[a-z][a-z'-]*) creatures", normalized)
+    if excluded is not None:
+        subtype = canonical_creature_subtype(excluded.group("type"))
+        if subtype is not None:
+            return _canonical_scope(controller_relation=relation,
+                characteristics_all=("creature",), characteristics_none=(subtype,))
+    exceptions = re.fullmatch(
+        r"creatures other than (?P<first>[a-z][a-z'-]*)(?: and (?P<second>[a-z][a-z'-]*))?",
+        normalized,
+    )
+    if exceptions is not None:
+        subtypes = tuple(canonical_creature_subtype_surface(value)
+            for value in exceptions.groups() if value is not None)
+        if all(subtypes) and len(set(subtypes)) == len(subtypes):
+            return _canonical_scope(controller_relation=relation,
+                characteristics_all=("creature",), characteristics_none=subtypes)
+    return None
 
 
 def _split_recipient_and_source(

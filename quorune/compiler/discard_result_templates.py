@@ -1,5 +1,5 @@
 """Complete whole-hand discard instructions with explicitly linked draw counts."""
-import re
+from . import regex_working_set as re
 from ..discard_result_model import DISCARD_RESULT_MECHANIC, DISCARD_RESULT_OPERATION
 from ..discard_result_model import FIXED_SUBSET_DISCARD_DRAW_MECHANIC
 from ..discard_result_model import VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC
@@ -20,7 +20,7 @@ def discard_result_draw_template(text):
         return None
     match = re.fullmatch(r'(?:(?P<subject>Each player|You) )?discards? '
         r'(?:(?:all the cards in )?(?P<hand>their|your)(?: entire)? hands?)'
-        r'(?:, then| and|\. Then) draws? (?P<count>that many cards(?: plus one)?|'
+        r'(?:, then| and|\. Then) draws? (?P<count>that many cards(?: plus one| minus one)?|'
         r'cards equal to the (?:greatest number of cards a player discarded this way|number of cards you discarded this way))\.', body, re.I)
     if match is None:return None
     subject = (match['subject'] or 'You').casefold()
@@ -28,7 +28,9 @@ def discard_result_draw_template(text):
     count = match['count'].casefold()
     if 'greatest' in count and subject != 'each player':return None
     if 'you discarded' in count and subject != 'you':return None
-    effect = {'op': DISCARD_RESULT_OPERATION, 'schema_version': 1, 'actor': '$controller',
+    reduced = count.endswith('minus one')
+    version = 2 if reduced else 1
+    effect = {'op': DISCARD_RESULT_OPERATION, 'schema_version': version, 'actor': '$controller',
         'players': 'all' if subject == 'each player' else ['$controller'],
-        'reduction': 'greatest' if 'greatest' in count else 'own', 'offset': int(count.endswith('plus one'))}
-    return 'whole-hand-discard-result-draw-v1', (effect,), None, (DISCARD_RESULT_MECHANIC,)
+        'reduction': 'greatest' if 'greatest' in count else 'own', 'offset': -1 if reduced else int(count.endswith('plus one'))}
+    return f'whole-hand-discard-result-draw-v{version}', (effect,), None, (DISCARD_RESULT_MECHANIC,)

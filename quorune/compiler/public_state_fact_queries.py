@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed non-object public facts for conditional static characteristics."""
 
-import re
+from . import regex_working_set as re
 
 from ..characteristic_fragments import (
     CharacteristicQuantityScope,
@@ -136,6 +136,16 @@ def fixed_graveyard_condition_query(
 def fixed_public_condition_query_extension(
     normalized: str,
 ) -> FixedPublicStateConditionSpec | None:
+    empty = re.fullmatch(
+        r"no (?P<subject>creatures|artifacts|enchantments|lands|planeswalkers|battles|permanents) are on the battlefield",
+        normalized, re.IGNORECASE,
+    )
+    if empty is not None:
+        subject = empty['subject'].casefold()
+        return _query_condition(amount=0, at_most=True,
+            scope=CharacteristicQuantityScope.ALL_ZONES,
+            query=ObjectQuerySpec(zones=('battlefield',),
+                types_all=() if subject == 'permanents' else (subject[:-1],)))
     from .collection_quantity_templates import fixed_devotion_condition
     devotion = fixed_devotion_condition(normalized)
     if devotion is not None:

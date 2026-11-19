@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from contextlib import closing
 from dataclasses import replace
 import json
 from pathlib import Path
+import sqlite3
 import subprocess
 from tempfile import TemporaryDirectory
 import unittest
@@ -15,7 +17,10 @@ from scripts.generated_artifacts import (
     load_input_groups,
     load_manifest,
 )
+from scripts.generated_cache_identity import _DATABASE_BUILDER_INPUTS
 from scripts.generated_owner_cache import (
+    database_builder_input_fingerprint,
+    pinned_database_identity,
     GeneratedOwnerCacheError,
     _python_import_closure,
     _ref_text_cache,
@@ -89,6 +94,29 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
                 with mock.patch("scripts.generated_owner_cache._run_git", return_value=b"truncated"):
                     with self.assertRaisesRegex(GeneratedOwnerCacheError, "incomplete.*source batch"):
                         _ref_text_cache(root, "HEAD", ("quorune/oracle_ir.py",))
+
+    def test_cached_import_candidates_follow_exact_source_and_available_modules(self):
+        cache = {}
+        root = "scripts/generate.py"
+        prior = "quorune/prior.py"
+        current = "quorune/current.py"
+
+        def closure(source, available):
+            texts = {root: source, prior: "", current: ""}
+            return _python_import_closure(
+                {root}, available=available, read_text=texts.__getitem__,
+                content_import_cache=cache,
+            )
+
+        prior_import = "from quorune import prior\n"
+        current_import = "from quorune import current\n"
+        self.assertEqual({root, prior}, closure(prior_import, {root, prior}))
+        self.assertEqual({root}, closure(prior_import, {root, current}))
+        self.assertEqual(
+            {root, current}, closure(current_import, {root, prior, current})
+        )
+        with self.assertRaisesRegex(GeneratedOwnerCacheError, "unable to parse"):
+            closure("from quorune import (", {root, prior, current})
 
     def test_validation_only_owner_change_fans_out_only_when_output_changes(self):
         capability = GeneratorSpec(
@@ -170,6 +198,78 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
         )
         return spec, groups
 
+    def _pinned_database_sources(self, root: Path) -> None:
+        self._repository(root)
+        for relative in _DATABASE_BUILDER_INPUTS:
+            path = root / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(relative + "\n", encoding="utf-8")
+
+    def test_pinned_database_key_tracks_builder_sources_and_excludes_planning(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._pinned_database_sources(root)
+            planner = root / "scripts/generated_owner_cache.py"
+            planner.write_text("plan = 1\n", encoding="utf-8")
+            baseline = database_builder_input_fingerprint(root=root)
+            planner.write_text("plan = 2\n", encoding="utf-8")
+            self.assertEqual(baseline, database_builder_input_fingerprint(root=root))
+            for source in ("rules/manifest.json", "quorune/carddb.py", "scripts/generated_cache_identity.py"):
+                with self.subTest(source=source):
+                    path = root / source
+                    original = path.read_bytes()
+                    path.write_bytes(original + b"changed\n")
+                    self.assertNotEqual(baseline, database_builder_input_fingerprint(root=root))
+                    path.write_bytes(original)
+
+    def test_pinned_database_requires_exact_snapshot_provenance_and_counts(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            self._pinned_database_sources(root)
+            snapshot = {
+                "available": True,
+                "database_schema_version": "2",
+                "oracle_bulk": {
+                    "download_uri": "https://data.scryfall.io/oracle-test.jsonl.gz",
+                    "sha256": "1" * 64, "oracle_id_count": 1,
+                },
+                "rulings_bulk": {
+                    "download_uri": "https://data.scryfall.io/rulings-test.jsonl.gz",
+                    "sha256": "2" * 64, "ruling_count": 0,
+                },
+            }
+            (root / "rules/manifest.json").write_text(
+                json.dumps({"card_data_snapshot": snapshot}), encoding="utf-8"
+            )
+            path = root / "pinned copy #1.sqlite3"
+            with closing(sqlite3.connect(path)) as db:
+                db.executescript(
+                    "CREATE TABLE metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);"
+                    "CREATE TABLE cards(id TEXT PRIMARY KEY);"
+                    "CREATE TABLE rulings(id TEXT PRIMARY KEY);"
+                    "INSERT INTO cards VALUES ('fixture');"
+                )
+                db.executemany("INSERT INTO metadata VALUES (?, ?)", (
+                    ("schema_version", "2"), ("oracle_source_sha256", "1" * 64),
+                    ("rulings_source_sha256", "2" * 64), ("card_count", "1"), ("ruling_count", "0"),
+                ))
+                db.commit()
+                identity = pinned_database_identity(path, root=root)
+                self.assertRegex(identity, r"^[0-9a-f]{64}$")
+                for field in ("oracle_source_sha256", "rulings_source_sha256", "schema_version"):
+                    with self.subTest(field=field):
+                        value = db.execute("SELECT value FROM metadata WHERE key=?", (field,)).fetchone()[0]
+                        db.execute("UPDATE metadata SET value='mismatched' WHERE key=?", (field,))
+                        db.commit()
+                        with self.assertRaisesRegex(GeneratedOwnerCacheError, field):
+                            pinned_database_identity(path, root=root)
+                        db.execute("UPDATE metadata SET value=? WHERE key=?", (value, field))
+                        db.commit()
+                db.execute("INSERT INTO rulings VALUES ('fixture')")
+                db.commit()
+                with self.assertRaisesRegex(GeneratedOwnerCacheError, "row counts differ"):
+                    pinned_database_identity(path, root=root)
+
     def test_owner_input_identity_is_content_bound_not_commit_bound(self):
         with TemporaryDirectory() as raw:
             root = Path(raw)
@@ -235,7 +335,7 @@ class GeneratedOwnerCacheTests(unittest.TestCase):
                 root=root,
             )
             self.assertEqual(stored, restored)
-            self.assertEqual("generated\n", (root / "output.txt").read_text())
+            self.assertEqual("generated\n", (root / "output.txt").read_text(encoding="utf-8"))
 
             (artifact / "output.txt").write_text("corrupt\n", encoding="utf-8")
             with self.assertRaisesRegex(

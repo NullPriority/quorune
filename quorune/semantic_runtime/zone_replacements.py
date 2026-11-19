@@ -112,6 +112,9 @@ from .zone_replacement_inputs import (
 )
 
 
+from .graveyard_exile import GraveyardExileReplacementHandler
+
+
 _DESTINATION_HANDLER_ID = "replacement.zone.destination.v1"
 _COUNTERS_FIELD = "counters"
 
@@ -502,6 +505,7 @@ def default_zone_change_replacement_registry(
             SelfTappedCounterEntryHandler(),
             SunburstEntryCounterHandler(),
             ZoneDestinationReplacementHandler(),
+            GraveyardExileReplacementHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -1361,6 +1365,7 @@ def prepare_zone_change_replacement_snapshot(
     *,
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     error_type: type[Exception] = ZoneReplacementError,
+    event_ids: Mapping[str, str] | None = None,
 ) -> dict[str, PreparedZoneChange]:
     """Resolve a captured batch without consulting mutable game state."""
 
@@ -1370,9 +1375,17 @@ def prepare_zone_change_replacement_snapshot(
         )
     from ..replacement.operations import DevourEntryOperation
     if any(isinstance(op,DevourEntryOperation) for effect in snapshot.effects for op in effect.operations):
+        if event_ids is not None:raise error_type('Explicit zone event identities do not represent Devour entry')
         from .devour_preparation import prepare_devour_snapshot
         return prepare_devour_snapshot(snapshot,selections=selections,error_type=error_type)
     events = zone_change_snapshot_events(snapshot)
+    if event_ids is not None:
+        refs = {event.payload['object_ref'] for event in events}
+        if (not isinstance(event_ids, Mapping) or set(event_ids) != refs
+                or any(type(value) is not str or not value for value in event_ids.values())
+                or len(set(event_ids.values())) != len(event_ids)):
+            raise error_type('Explicit zone event identities must cover each original subject exactly once')
+        events = tuple(replace(event, event_id=event_ids[event.payload['object_ref']]) for event in events)
     applicable = tuple(
         (subject, event)
         for subject, event in zip(snapshot.subjects, events, strict=True)
@@ -1408,6 +1421,7 @@ def prepare_zone_change_replacement_snapshot(
         ),
         snapshot.effects,
         selections=tuple(selections),
+        allow_bound_single_event=event_ids is not None,
     )
     if progress.pending is not None:
         raise ReplacementChoiceRequired(

@@ -252,7 +252,9 @@ def prepare_life_payment(
         raise LifeStateError(
             "Life payment amounts must be nonnegative integers"
         )
-    if _current_life(host, player) < amount:
+    current = _current_life(host, player)
+    # CR 119.4b permits zero life even when the current total is negative.
+    if amount > 0 and current < amount:
         raise LifeStateError("Cannot pay more life than the player has")
     plan = plan_life_changes(host, (LifeChange(player, -amount),))
     return PreparedLifePayment(player=player, amount=amount, plan=plan)
@@ -273,7 +275,7 @@ def validate_life_payment(
     if (
         transition.player != prepared.player
         or transition.requested_delta != -prepared.amount
-        or transition.before < prepared.amount
+        or (prepared.amount > 0 and transition.before < prepared.amount)
     ):
         raise LifeStateError("Life payment plan does not match its request")
     validate_life_changes(host, prepared.plan)

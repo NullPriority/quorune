@@ -19,6 +19,12 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
     item = next((item for item in host.state.stack if item.ref == stack_ref), None)
     if item is None or item.controller != actor:
         raise TokenCopyRecipeError("Copy recipe requires its authoritative resolving stack item")
+    recipient = actor
+    if 'copy_recipient_binding' in effect:
+        from .rules.token_copy_recipients import resolved_copy_recipient
+        recipient = resolved_copy_recipient(effect, item)
+        if recipient is None:return []
+        effect = {**effect, '_copy_target': {'schema_version': 1, 'index': 1}}
     target=effect.get('_copy_target')
     if target is not None and (not isinstance(target,Mapping) or set(target)!={'schema_version','index'}
             or type(target['schema_version']) is not int or target['schema_version']!=1
@@ -26,6 +32,8 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
         raise TokenCopyRecipeError('Modal copy target lost its bound announcement slot')
     if target is not None and item.targets[target['index']] is None:return []
     reference = copy_reference_snapshot(host, item, recipe,target_index=None if target is None else target['index'])
+    if reference is None:
+        return []
     snapshot = deepcopy(dict(reference["snapshot"]))
     modified = apply_copy_exception(snapshot["characteristics"], recipe.exception)
     snapshot["characteristics"] = modified
@@ -39,7 +47,7 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
             "keyword_duration": recipe.keyword_duration, "source": dict(source)}
     from .copied_token_aura_entry import copied_aura_token_selections, clear_copied_aura_token_selections
     from .token_creation import create_tokens
-    created = create_tokens(host, actor, name="", quantity=effect["quantity"],
+    created = create_tokens(host, recipient, name="", quantity=effect["quantity"],
         copy_of=reference["ref"], copy_snapshot=snapshot, copy_source_zone=reference["zone"],
         tapped=effect.get("tapped", False),
         reason=reason, replacement_selections=tuple(effect.get("_replacement_selections") or ()),

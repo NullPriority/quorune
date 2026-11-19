@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compose complete additive static clauses over existing characteristic owners."""
 
-import re
+from . import regex_working_set as re
 
 from .closed_effect_programs import _top_level_positions
 from .continuous_templates import (

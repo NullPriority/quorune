@@ -25,7 +25,7 @@ fi
 # The finalizer also validates the reviewed architecture baseline after every
 # generated writer/check, so a new typed operation cannot first fail in CI.
 "$PYTHON" "$ROOT/scripts/test_shards.py" validate
-"$PYTHON" "$ROOT/scripts/build_test_database.py" validate-ci-dependencies
+"$PYTHON" "$ROOT/scripts/build_test_database.py" validate-ci-dependencies --reuse-local-artifact
 
 # A deliberately named feature-branch checkpoint may be pushed before the
 # generated bundle exists so GitHub can perform the expensive writers. This is

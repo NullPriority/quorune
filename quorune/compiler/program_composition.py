@@ -403,7 +403,8 @@ def _node_group_provenance(
     ]
     from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
     from ..stack_spell_copy_model import STACK_SPELL_COPY_MECHANIC
-    copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics for node in nodes)
+    copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics
+        or 'stack.copy.fixed_qualified_target' in node.capability_dependencies for node in nodes)
     from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC
     face_up_requires_complete_source = any(FACE_UP_EFFECT_MECHANIC in node.mechanics for node in nodes)
     from ..spell_text_variants import SpellTextVariantKind
@@ -414,9 +415,17 @@ def _node_group_provenance(
     preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
     from ..rules.graveyard_self_return import GRAVEYARD_SELF_ENTRY_MECHANIC
     graveyard_entry_requires_complete_source = any(GRAVEYARD_SELF_ENTRY_MECHANIC in node.mechanics for node in nodes)
+    from ..paid_alternative_cast_model import PAID_ALTERNATIVE_CAST_MECHANIC
+    paid_alternative_requires_complete_source=any(PAID_ALTERNATIVE_CAST_MECHANIC in node.mechanics for node in nodes)
+    from ..stack_target_change_model import STACK_TARGET_CHANGE_FIELDS, is_stack_target_change_payment
+    stack_change_requires_complete_source = any(
+        STACK_TARGET_CHANGE_FIELDS.intersection(effect) or is_stack_target_change_payment(effect)
+        for node in nodes for effect in node.effects
+    )
     requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
+                                or stack_change_requires_complete_source
                                 or text_variant_requires_complete_source or preparation_requires_complete_source
-                                or graveyard_entry_requires_complete_source)
+                                or graveyard_entry_requires_complete_source or paid_alternative_requires_complete_source)
     requires_complete_card_program = requires_declared_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes

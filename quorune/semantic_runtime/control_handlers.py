@@ -9,7 +9,11 @@ from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
 from .context import ReadOnlyHandlerContext, SemanticNodeError
-from .control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent
+from .control_intents import (
+    GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
+    GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+)
+from ..stack_target_change_model import STACK_SPELL_CONTROL_FIELD, validate_stack_spell_control_effect
 from .direct_target_fields import validate_direct_target_effect
 from .intents import IntentPlan
 
@@ -18,6 +22,18 @@ def _source(context: ReadOnlyHandlerContext) -> ResolutionEffectSource:
     if context.source is None:
         raise SemanticNodeError("Control requires the resolving stack source")
     return ResolutionEffectSource(**context.source.to_dict())
+
+
+def _spell_control_intent(effect, context):
+    try:
+        validate_stack_spell_control_effect(effect, resolved=True)
+        if effect["controller"] != context.actor:
+            raise ValueError("Spell control must be acquired by the resolving controller")
+        return GainSpellControlIntent(
+            context.actor, effect["stack"], _source(context), effect.get("reason", context.default_reason),
+        )
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
 
 
 @dataclass(frozen=True, slots=True)
@@ -30,6 +46,8 @@ class FixedControlHandler:
     capability_dependencies: tuple[str, ...] = ("continuous.control.fixed_resolution",)
 
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
+        if STACK_SPELL_CONTROL_FIELD in effect:
+            return IntentPlan(self.operation, self.handler_id, (_spell_control_intent(effect, context),))
         fields = validate_direct_target_effect(
             effect, context, operation=self.operation, reference_field="card",
             family_label="Control", allow_replacement_selections=False,

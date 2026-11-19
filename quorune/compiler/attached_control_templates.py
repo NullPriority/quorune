@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..rules.attached_control import AttachedControlSpec, ATTACHED_CONTROL_CAPABILITY
 

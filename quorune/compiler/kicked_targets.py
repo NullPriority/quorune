@@ -3,7 +3,7 @@ from __future__ import annotations
 """A complete fixed Kicker-dependent target with an independent prefix."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from ..kicked_target_model import scope_target_role,bound_kicked_target_schema,validate_kicked_target_instruction
 from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC,CAST_FACT_CONDITION_MECHANIC
 from .closed_effect_programs import _top_level_positions

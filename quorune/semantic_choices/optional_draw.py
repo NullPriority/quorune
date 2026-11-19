@@ -58,6 +58,7 @@ class OptionalDrawHandler:
         "drawer",
         "count",
         "private",
+        "event_optional_draw_version",
     )
     private_data: tuple[str, ...] = ("drawn card",)
     projected_fields: tuple[str, ...] = (
@@ -81,6 +82,11 @@ class OptionalDrawHandler:
         active_seats: tuple[str, ...],
     ) -> tuple[str, str, int, bool]:
         allowed = {"op", "player", "drawer", "count", "private"}
+        if 'event_optional_draw_version' in effect:
+            from ..rules.event_optional_draw_shapes import validate_event_optional_draw_payload
+            try:validate_event_optional_draw_payload(effect, materialized=True)
+            except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+            allowed.add('event_optional_draw_version')
         if set(effect) - allowed:
             raise SemanticChoiceError("Optional draw fields are invalid")
         if effect.get("op") != self.operation:
@@ -108,21 +114,30 @@ class OptionalDrawHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if effect.get('event_optional_draw_version') == 2:
+            from ..rules.event_creature_controller_results import death_controller_draw_is_unavailable
+            try:
+                unavailable = death_controller_draw_is_unavailable(effect, actor=context.actor,
+                    seats=context.query.seats, active_seats=context.query.active_seats)
+            except (KeyError, TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+            if unavailable:
+                return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                    auto_continue=AutoContinue('The original prospective drawer has left the game'))
         chooser, drawer, count, private = self._resolved(
             effect,
             actor=context.actor,
             active_seats=context.query.active_seats,
         )
         permission = context.query.draw_permission(drawer)
-        continuation = FrozenMap(
-            {
+        values = {
                 "op": self.operation,
                 "player": chooser,
                 "drawer": drawer,
                 "count": count,
                 "private": private,
             }
-        )
+        if 'event_optional_draw_version' in effect:values['event_optional_draw_version'] = effect['event_optional_draw_version']
+        continuation = FrozenMap(values)
         if not permission.allows_complete_draw(count):
             return SemanticChoicePreparation(
                 request=None,
@@ -163,6 +178,10 @@ class OptionalDrawHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if 'event_optional_draw_version' in continuation.effect:
+            allowed = {'choice', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema', 'label'}
+            if set(response) - allowed:
+                raise SemanticChoiceError('The event draw response cannot change its participant or instruction')
         actor = continuation.effect.get("player")
         if type(actor) is not str:
             raise SemanticChoiceError(

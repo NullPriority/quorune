@@ -1,5 +1,5 @@
 """Fixed printed-order atomic clauses sharing one targeted player."""
-import re
+from . import regex_working_set as re
 from .draw_templates import fixed_draw_effect_template
 from .mill_templates import fixed_mill_effect_template
 from .life_templates import fixed_life_effect_template
@@ -14,6 +14,12 @@ TARGET_PLAYER_SEQUENCE_MECHANIC='fixed-target-player-effect-sequence'
 
 
 def _leaf(text):
+    if re.fullmatch(r"Target player reveals their hand[.]?", text, re.I):
+        from .hand_inspection_templates import FixedHandInspectionTemplate, HandInspectionAction, HandInspectionMode
+
+        return FixedHandInspectionTemplate(
+            relation="any", mode=HandInspectionMode.REVEAL, action=HandInspectionAction.OBSERVE,
+        ).compiled()
     for compiler in (fixed_draw_effect_template,fixed_mill_effect_template,fixed_life_effect_template,
             fixed_affected_player_discard_effect_template,fixed_affected_player_hand_exile_effect_template,
             fixed_affected_player_hand_top_effect_template, fixed_player_counter_placement_effect_template):
@@ -26,7 +32,7 @@ def fixed_target_player_sequence_template(text):
     normalized=' '.join(text.strip().split())
     match=re.fullmatch(r'Target (?P<relation>player|opponent) (?P<body>.+)',normalized,re.I)
     if match is None or any(token in normalized for token in ('"','(',')','{')):return None
-    verbs = r"(?:draws|mills|discards|exiles|loses|gains|gets|chooses|puts(?=\s+(?:a|one|two|three)\s))"
+    verbs = r"(?:draws|mills|discards|exiles|loses|gains|gets|chooses|reveals|puts(?=\s+(?:a|one|two|three)\s))"
     parts = re.split(
         rf",?\s+(?:and|then)\s+(?={verbs}\b)|,\s+(?={verbs}\b)|\.\s+(?=You (?:gain|lose)\b)",
         match["body"].replace(", and ", " and "), flags=re.I,

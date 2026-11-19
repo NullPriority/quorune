@@ -20,6 +20,7 @@ from ..additional_cost_vocabulary import (
     ZONE_CHANGE_COST_KIND,
 )
 from .reveal_additional_cost import FixedRevealAdditionalCost,REVEAL_ADDITIONAL_COST_CAPABILITY,fixed_reveal_additional_cost
+from .behold_additional_cost import FixedBeholdAdditionalCost, BEHOLD_ADDITIONAL_COST_KIND, fixed_behold_additional_cost, behold_cost_dependencies
 from .tap_additional_cost import FixedTapAdditionalCost,TAP_ADDITIONAL_COST_CAPABILITY,fixed_tap_additional_cost
 from .casting_additional_costs import (
     AdditionalCostError, announced_cost_x, ANNOUNCED_X_EXILE_CAPABILITY, ANNOUNCED_X_LIFE_CAPABILITY,announced_zone_cost_capabilities,
@@ -203,6 +204,7 @@ FixedAdditionalCostLeaf: TypeAlias = (
     | FixedLifePaymentAdditionalCost
     | FixedManaPaymentAdditionalCost
     | FixedRevealAdditionalCost
+    | FixedBeholdAdditionalCost
     | FixedTapAdditionalCost
     | FixedCounterPlacementAdditionalCost
 )
@@ -215,6 +217,8 @@ def fixed_additional_cost_leaf(
 
     reveal=fixed_reveal_additional_cost(value)
     if reveal is not None:return reveal
+    behold=fixed_behold_additional_cost(value)
+    if behold is not None:return behold
     tap=fixed_tap_additional_cost(value)
     if tap is not None:return tap
     try:
@@ -332,6 +336,9 @@ def fixed_zone_change_additional_cost_capability(
 ) -> str:
     """Return the one reviewed capability owned by a typed zone-change leaf."""
 
+    if cost.schema_version == 8:
+        from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
+        return KEYWORD_SACRIFICE_CAPABILITY
     if cost.schema_version == 4:
         from ..power_sacrifice_model import POWER_SACRIFICE_CAPABILITY
         return POWER_SACRIFICE_CAPABILITY
@@ -411,6 +418,8 @@ def fixed_alternative_additional_cost_node_capabilities(
             capabilities.add("casting.additional_cost.fixed_life_payment")
         elif isinstance(option,FixedRevealAdditionalCost):
             capabilities.add(REVEAL_ADDITIONAL_COST_CAPABILITY)
+        elif isinstance(option,FixedBeholdAdditionalCost):
+            capabilities.update(behold_cost_dependencies())
         elif isinstance(option,FixedTapAdditionalCost):
             capabilities.add(TAP_ADDITIONAL_COST_CAPABILITY)
         elif isinstance(option, FixedCounterPlacementAdditionalCost):
@@ -436,6 +445,10 @@ def selected_zone_cost_payload_dependencies(value: Any) -> tuple[str, ...]:
         if not isinstance(raw, Mapping):
             continue
         kind = raw.get("kind")
+        if kind == BEHOLD_ADDITIONAL_COST_KIND:
+            FixedBeholdAdditionalCost.from_descriptor(thaw_value(freeze_value(raw)))
+            required.update(behold_cost_dependencies())
+            continue
         if kind not in {ZONE_CHANGE_COST_KIND, ALTERNATIVE_ADDITIONAL_COST_KIND}:
             continue
         descriptor = thaw_value(freeze_value(raw))
@@ -460,6 +473,7 @@ def fixed_additional_cost_option_label(
     """Describe typed cost data for presentation without granting authority."""
 
     if isinstance(cost,FixedRevealAdditionalCost):return f'Reveal one {cost.subtype} card from your hand'
+    if isinstance(cost,FixedBeholdAdditionalCost):return f'Behold a matching {cost.subtype}'
     if isinstance(cost,FixedTapAdditionalCost):return f'Tap {cost.count} matching untapped permanent(s)'
     if isinstance(cost, FixedCounterPlacementAdditionalCost):
         return f"Blight {cost.amount}"

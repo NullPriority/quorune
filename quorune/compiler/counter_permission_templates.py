@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed source productions for static counter-placement prohibitions."""
 
-import re
+from . import regex_working_set as re
 from ..counter_permission import (
     COUNTER_PROHIBITION_CAPABILITY, COUNTER_PROHIBITION_EVENT,
     COUNTER_PROHIBITION_HANDLER, FixedCounterProhibitionSpec,
@@ -39,12 +39,15 @@ def fixed_counter_prohibition(text, *, source_name):
     return None
 
 
+def counter_prohibition_descriptor(spec: FixedCounterProhibitionSpec) -> dict:
+    from ..ability_fragments import ability_fragment_to_dict
+
+    return dict(handler_id=COUNTER_PROHIBITION_HANDLER, schema_version=1,
+        event=COUNTER_PROHIBITION_EVENT, fragment=ability_fragment_to_dict(spec))
+
+
 def static_counter_prohibition_handler(text, *, source_name):
     spec = fixed_counter_prohibition(text, source_name=source_name)
     if spec is None:
         return None
-    from ..ability_fragments import ability_fragment_to_dict
-    return ('static-fixed-counter-prohibition-v1',
-        dict(handler_id=COUNTER_PROHIBITION_HANDLER, schema_version=1,
-            event=COUNTER_PROHIBITION_EVENT, fragment=ability_fragment_to_dict(spec)),
-        COUNTER_PROHIBITION_CAPABILITY)
+    return ('static-fixed-counter-prohibition-v1', counter_prohibition_descriptor(spec), COUNTER_PROHIBITION_CAPABILITY)

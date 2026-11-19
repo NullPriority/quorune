@@ -26,10 +26,15 @@ class EvidenceStorageTests(unittest.TestCase):
 
     def test_grouping_preserves_every_field_and_original_noncanonical_row_order(self):
         value = self.document()
+        value['declarations'][1]['test_id'] = value['declarations'][0]['test_id']
         before = deepcopy(value)
         stored = pack_evidence_document(value)
         self.assertEqual(2, len(stored['groups']))
         self.assertEqual([0, 2], [r[0] for r in stored['groups'][0]['references']])
+        self.assertEqual([value['declarations'][0]['test_id'], value['declarations'][2]['test_id']],
+            stored['test_ids'])
+        self.assertEqual(0, stored['groups'][0]['references'][0][2])
+        self.assertEqual(0, stored['groups'][1]['references'][0][2])
         self.assertEqual(value, unpack_evidence_document(stored))
         self.assertEqual(before, value)
         self.assertEqual(stored, pack_evidence_document(stored))
@@ -57,6 +62,8 @@ class EvidenceStorageTests(unittest.TestCase):
         decoded['declarations'][0]['metadata']['nested'][-1]['quoted'] = 'changed'
         self.assertEqual(before, value)
         self.assertEqual(stored, json.loads(text))
+        stored['groups'][0]['common']['metadata']['nested'][-1]['quoted'] = 'changed'
+        self.assertEqual(before, value)
 
     def test_current_evidence_documents_fit_the_repository_blob_budget(self):
         from scripts.validate_repository import MAX_SOURCE_BLOB_BYTES
@@ -83,7 +90,9 @@ class EvidenceStorageTests(unittest.TestCase):
         stored = pack_evidence_document(self.document())
         mutations = []
         for key, value in (('future', True), ('storage_schema_version', True),
-                ('storage_schema_version', 2), ('document', []), ('groups', {})):
+                ('storage_schema_version', 3), ('document', []), ('groups', {}),
+                ('test_ids', {}), ('test_ids', [True]), ('test_ids', ['same', 'same']),
+                ('test_ids', [*stored['test_ids'], 'unreferenced'])):
             mutations.append({**deepcopy(stored), key: value})
         changed = deepcopy(stored)
         changed['document']['declarations'] = []
@@ -92,7 +101,9 @@ class EvidenceStorageTests(unittest.TestCase):
                 ('references', [[0, 'positive']]), ('references', [[True, 'positive', 'test']]),
                 ('references', [[-1, 'positive', 'test']]), ('references', [[99, 'positive', 'test']]),
                 ('references', [[0, 'positive', False]]),
-                ('references', [[0, 'positive', 'a'], [0, 'replay', 'b']])):
+                ('references', [[0, 'positive', 'a']]), ('references', [[0, 'positive', -1]]),
+                ('references', [[0, 'positive', len(stored['test_ids'])]]),
+                ('references', [[0, 'positive', 0], [0, 'replay', 1]])):
             changed = deepcopy(stored)
             changed['groups'][0][field] = value
             mutations.append(changed)
@@ -102,6 +113,25 @@ class EvidenceStorageTests(unittest.TestCase):
         for value in mutations:
             with self.subTest(value=value), self.assertRaises(EvidenceStorageError):
                 unpack_evidence_document(value)
+
+    def test_legacy_grouped_storage_remains_readable_and_reencodes_losslessly(self):
+        legacy = {
+            'storage_schema_version': 1,
+            'document': {'schema_version': 1},
+            'groups': [{
+                'common': {'applicability_note': 'Original scope'},
+                'references': [[0, 'positive', 'tests.test_example.Case.test_positive']],
+            }],
+        }
+        expanded = {
+            'schema_version': 1,
+            'declarations': [{'applicability_note': 'Original scope',
+                'evidence_class': 'positive', 'test_id': 'tests.test_example.Case.test_positive'}],
+        }
+        self.assertEqual(expanded, unpack_evidence_document(legacy))
+        current = json.loads(evidence_document_text(legacy))
+        self.assertEqual(2, current['storage_schema_version'])
+        self.assertEqual(expanded, unpack_evidence_document(current))
 
     def test_flat_and_grouped_utf8_files_share_the_existing_expanded_interface(self):
         value = self.document()
@@ -145,7 +175,7 @@ class EvidenceStorageTests(unittest.TestCase):
             self.assertEqual(before.st_size, path.stat().st_size)
             self.assertEqual(before.st_mtime_ns, path.stat().st_mtime_ns)
             self.assertEqual('Changed  scope', read_evidence_document(path)['declarations'][1]['applicability_note'])
-            path.write_text(text.replace('"storage_schema_version": 1', '"storage_schema_version": 9'), encoding='utf-8')
+            path.write_text(text.replace('"storage_schema_version": 2', '"storage_schema_version": 9'), encoding='utf-8')
             with self.assertRaises(EvidenceStorageError):
                 read_evidence_document(path)
 

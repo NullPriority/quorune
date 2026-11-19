@@ -117,6 +117,7 @@ class CastProposalHost(CastCostHost, Protocol):
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
         resolving_exile_authority: bool = False,
+        resolving_library_authority: bool = False,
         ignore_timing: bool = False,
     ) -> list[dict[str, Any]]: ...
 
@@ -249,6 +250,21 @@ def _validate_declared_cost(
         )
 
 
+def _legacy_commander_free_option(options):
+    """Resolve the previous option ID through an exact currently payable typed price."""
+    from ...public_alternative_costs import FixedPublicAlternativeCostSpec
+
+    matches = []
+    for option in options:
+        value = option.to_dict().get("fixed_public_alternative_cost")
+        if option.kind != "alternate" or not isinstance(value, Mapping):
+            continue
+        spec = FixedPublicAlternativeCostSpec.from_dict(value)
+        if spec.condition.kind.value == "controlled_commander" and spec.cost_text == "{0}":
+            matches.append(option)
+    return matches[0] if len(matches) == 1 else None
+
+
 def _selected_cost_option(
     request: CastProposalRequest,
     options: tuple[Any, ...],
@@ -274,6 +290,8 @@ def _selected_cost_option(
     selected = next(
         (option for option in options if option.option_id == option_id), None
     )
+    if selected is None and option_id == "commander_free":
+        selected = _legacy_commander_free_option(options)
     if selected is None:
         raise CastProposalError(
             "The selected casting-cost option is not currently legal and payable",
@@ -438,13 +456,14 @@ def _static_cast_rule_state(
     face: Mapping[str, Any] | None,
     face_name: str | None,
     face_down: bool,
+    x_value: int | None = None,
 ) -> tuple[str | None, tuple[Any, ...]]:
     rule_face = _static_rule_face(face, face_down=face_down)
     return (
         aftermath_cast_prohibition_reason(host,card)
         or (None if face_down else compiled_self_cast_restriction_reason(
             host, actor, card, face_name=face_name))
-        or static_cast_prohibition_reason(host, actor, card, face=rule_face),
+        or static_cast_prohibition_reason(host, actor, card, face=rule_face, x_value=x_value),
         _combined_cast_timing_permissions(
             host,
             actor,
@@ -518,6 +537,7 @@ def _cast_program_and_cost(
         face=face,
         face_name=face_name,
         face_down=method_spec is not None,
+        x_value=response.get("x"),
     )
     if response.get("protector") is not None:
         raise CastProposalError(
@@ -586,6 +606,9 @@ def _cast_program_and_cost(
         alternative_base=alternative_base, cast_type_line=type_line if method_spec is not None else None,
         suppress_source_costs=suppress_source_costs)
     if request.ignore_timing:cost_query['ignore_timing']=True
+    resolving_library=(request.during_resolution and request.authorized_from_zone=='library'
+        and request.force_without_mana_cost and request.ignore_timing)
+    if resolving_library:cost_query['resolving_library_authority']=True
     if (request.during_resolution and request.authorized_from_zone == "exile"
             and request.authorized_cost_option is None and not request.force_without_mana_cost):
         cost_query["resolving_exile_authority"] = True
@@ -841,6 +864,9 @@ def build_cast_proposal(
                 "commander_tax": commander_tax,
                 "mana_cost": mana_cost,
                 "during_resolution": request.during_resolution,
+                **({'resolving_library_authority':True} if request.during_resolution
+                    and request.authorized_from_zone=='library' and request.force_without_mana_cost
+                    and request.ignore_timing else {}),
                 "cast_method": request.cast_method,
                 **({'prototype':compiled_prototype_spec(host,card).to_dict()} if request.cast_method=='prototype' else {}),
                 **({'fuse':card.annotations['fused_spell_characteristics']} if request.cast_method=='fuse' else {}),
@@ -938,7 +964,7 @@ def _cast_offer_payload(
 
 
 def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type_line, declaration,
-                      resolving_payment):
+                      resolving_payment, resolving_origin):
     alternative = None
     if face_down:
         alternative = {
@@ -950,6 +976,7 @@ def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type
     authority = {"force_without_mana_cost": True} if resolving_payment == "free" else (
         {"resolving_exile_authority": True} if resolving_payment == "paid" else {})
     if resolving_payment is not None:authority['ignore_timing']=True
+    if resolving_payment=='free' and resolving_origin=='library':authority['resolving_library_authority']=True
     return tuple(
         CastCostOption.from_dict(value)
         for value in host._cast_cost_options(
@@ -968,14 +995,14 @@ def build_cast_offer(
     face_name: str | None = None,
     splice_declaration: Mapping[str, Any] | None = None,
     resolving_payment: Literal["free", "paid"] | None = None,
-    resolving_origin: Literal["exile", "graveyard", "hand"] = "exile",
+    resolving_origin: Literal["exile", "graveyard", "hand", "library"] = "exile",
 ) -> CastProposalResult:
     """Use the casting proposal queries to advertise one executable action."""
 
     if resolving_payment is not None and (
         card.zone != resolving_origin
         or resolving_payment not in ("free", "paid")
-        or resolving_origin not in {"exile", "graveyard", "hand"}
+        or resolving_origin not in {"exile", "graveyard", "hand", "library"}
         or resolving_payment == "paid" and resolving_origin != "exile"
     ):
         return CastProposalResult("unavailable", "zone_permission")
@@ -1058,7 +1085,7 @@ def build_cast_offer(
     if method_spec is None and host.state.config.semantic_policy == "trusted_only" and not cast_resolution_is_trusted(host,record,front,program):
         return CastProposalResult("unresolved", "semantic_policy_requires_trusted")
     options = _cast_offer_costs(host, seat, card, program, cast_method=cast_method, face_down=method_spec is not None,
-        type_line=type_line, declaration=splice_declaration, resolving_payment=resolving_payment)
+        type_line=type_line, declaration=splice_declaration, resolving_payment=resolving_payment,resolving_origin=resolving_origin)
     if not options:
         return CastProposalResult("unpayable", "mandatory_cost_unpayable")
     payload, legal = _cast_offer_payload(

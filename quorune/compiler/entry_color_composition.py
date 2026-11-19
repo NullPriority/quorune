@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete fixed color choices, optionally beside a closed tapped entry leaf."""
 
-import re
+from . import regex_working_set as re
 
 from ..entry_designations import (
     ENTRY_COLOR_COMPOSITION_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,

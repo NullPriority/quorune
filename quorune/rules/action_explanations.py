@@ -57,6 +57,11 @@ def projected_action_explanations(
             card = host.state.cards[object_id]
             if card.owner != seat:
                 continue
+            if zone == 'library':
+                from ..semantic_runtime.action_permissions import library_top_visibility
+                if (seat not in card.known_to and seat not in card.revealed_to
+                        and library_top_visibility(host, seat, seat) is None):
+                    continue
             record = host.card_record(card)
             faces = host._land_play_faces(record) if record else []
             if not faces:

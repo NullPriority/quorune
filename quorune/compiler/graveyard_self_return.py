@@ -1,5 +1,5 @@
 """An existing event head with a source-self graveyard-to-hand result."""
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 from ..rules.source_references import SourceReferenceSpec
 from ..rules.graveyard_self_return import (

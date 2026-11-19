@@ -310,6 +310,7 @@ class StateProjector:
                 runtime_effects=active_resolution_effects(
                     self.state, card
                 ),
+                dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
             )
         )
         characteristic_override = any(

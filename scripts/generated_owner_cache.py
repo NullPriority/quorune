@@ -8,7 +8,6 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import shutil
-import sqlite3
 import subprocess
 from typing import Any, Callable, Mapping, Sequence
 
@@ -23,27 +22,30 @@ from scripts.generated_artifacts import (
     parse_manifest,
     topological_order,
 )
-from scripts.source_tree_fingerprint import canonical_tracked_blob_oids
+from scripts.generated_cache_identity import (
+    DATABASE_IDENTITY_ALGORITHM,
+    GeneratedOwnerCacheError,
+    canonical_json_fingerprint as _canonical_json_fingerprint,
+    database_builder_input_fingerprint,
+    path_entries as _path_entries,
+    pinned_database_identity,
+)
 
 
 OWNER_INPUT_ALGORITHM = "generated-owner-input-closure-sha256-v1"
 OWNER_OUTPUT_ALGORITHM = "generated-owner-output-git-clean-sha256-v1"
 OWNER_RECEIPT_SCHEMA_VERSION = 1
-DATABASE_IDENTITY_ALGORITHM = "pinned-card-database-provenance-sha256-v1"
 MANIFEST_GIT_PATH = "platform/generated-artifacts.json"
 _IDENTITY_IMPLEMENTATION_PATHS = frozenset(
     {
         "scripts/generated_artifacts.py",
+        "scripts/generated_cache_identity.py",
         "scripts/generated_owner_cache.py",
         "scripts/source_tree_fingerprint.py",
     }
 )
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _GIT_OID = re.compile(r"[0-9a-f]{40,64}")
-
-
-class GeneratedOwnerCacheError(RuntimeError):
-    """An owner input closure, receipt, or reusable artifact is invalid."""
 
 
 @dataclass(frozen=True)
@@ -202,18 +204,6 @@ def _fingerprint_mapping(
             )
         rows.append((key, fingerprint))
     return tuple(sorted(rows))
-
-
-def _canonical_json_fingerprint(algorithm: str, value: object) -> str:
-    encoded = json.dumps(
-        value,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
-    digest = hashlib.sha256()
-    digest.update((algorithm + "\0").encode("ascii"))
-    digest.update(encoded)
-    return digest.hexdigest()
 
 
 def _run_git(
@@ -403,6 +393,7 @@ def _python_import_closure(
     available: set[str],
     read_text: Callable[[str], str],
     import_cache: dict[str, tuple[str, ...]] | None = None,
+    content_import_cache: dict[tuple[str, str], tuple[str, ...]] | None = None,
     traverse_package_initializers: bool = True,
 ) -> set[str]:
     cached_imports = import_cache if import_cache is not None else {}
@@ -422,21 +413,28 @@ def _python_import_closure(
         candidates = cached_imports.get(relative)
         if candidates is None:
             try:
-                tree = ast.parse(read_text(relative), filename=relative)
+                text = read_text(relative)
+                identity = (relative, text)
+                if content_import_cache is not None:
+                    candidates = content_import_cache.get(identity)
+                if candidates is None:
+                    tree = ast.parse(text, filename=relative)
+                    candidates = tuple(
+                        sorted(
+                            {
+                                candidate
+                                for node in ast.walk(tree)
+                                if isinstance(node, (ast.Import, ast.ImportFrom))
+                                for candidate in _module_candidates(relative, node)
+                            }
+                        )
+                    )
+                    if content_import_cache is not None:
+                        content_import_cache[identity] = candidates
             except (OSError, UnicodeDecodeError, SyntaxError) as exc:
                 raise GeneratedOwnerCacheError(
                     f"unable to parse generated owner implementation input: {relative}"
                 ) from exc
-            candidates = tuple(
-                sorted(
-                    {
-                        candidate
-                        for node in ast.walk(tree)
-                        if isinstance(node, (ast.Import, ast.ImportFrom))
-                        for candidate in _module_candidates(relative, node)
-                    }
-                )
-            )
             cached_imports[relative] = candidates
         for candidate in candidates:
             if candidate in available and candidate not in closure:
@@ -465,6 +463,7 @@ def resolved_worktree_inputs(
     root: Path,
     available_paths: Sequence[str] | None = None,
     import_cache: dict[str, tuple[str, ...]] | None = None,
+    content_import_cache: dict[tuple[str, str], tuple[str, ...]] | None = None,
 ) -> tuple[str, ...]:
     paths = (
         tuple(available_paths)
@@ -481,6 +480,7 @@ def resolved_worktree_inputs(
         available=available,
         read_text=lambda relative: (root / relative).read_text(encoding="utf-8"),
         import_cache=import_cache,
+        content_import_cache=content_import_cache,
         traverse_package_initializers=(
             spec.implementation_import_policy == "runtime_imports"
         ),
@@ -488,16 +488,6 @@ def resolved_worktree_inputs(
     return tuple(
         sorted(direct | implementation | (available & _IDENTITY_IMPLEMENTATION_PATHS))
     )
-
-
-def _path_entries(root: Path, paths: Sequence[str]) -> tuple[tuple[str, str], ...]:
-    try:
-        identities = canonical_tracked_blob_oids(root, list(paths))
-    except (OSError, RuntimeError, subprocess.CalledProcessError) as exc:
-        raise GeneratedOwnerCacheError(
-            "unable to compute Git-clean generated owner inputs"
-        ) from exc
-    return tuple(zip(paths, identities, strict=True))
 
 
 def _sha256_file(path: Path) -> str:
@@ -533,78 +523,6 @@ def owner_output_fingerprint(spec: GeneratorSpec, *, root: Path) -> str:
     return _canonical_json_fingerprint(
         OWNER_OUTPUT_ALGORITHM,
         [{"path": path, "git_blob_oid": blob} for path, _raw, blob in rows],
-    )
-
-
-def database_builder_input_fingerprint(*, root: Path) -> str:
-    paths = (
-        "quorune/bulk.py",
-        "rules/manifest.json",
-        "scripts/bootstrap_data.py",
-        "scripts/generated_owner_cache.py",
-    )
-    for relative in paths:
-        if not (root / relative).is_file():
-            raise GeneratedOwnerCacheError(
-                f"pinned database builder input is missing: {relative}"
-            )
-    return _canonical_json_fingerprint(
-        DATABASE_IDENTITY_ALGORITHM,
-        dict(_path_entries(root, paths)),
-    )
-
-
-def pinned_database_identity(database: Path, *, root: Path) -> str:
-    try:
-        manifest = json.loads(
-            (root / "rules" / "manifest.json").read_text(encoding="utf-8")
-        )
-    except (OSError, json.JSONDecodeError) as exc:
-        raise GeneratedOwnerCacheError("pinned rules manifest is unavailable") from exc
-    snapshot = manifest.get("card_data_snapshot")
-    if not isinstance(snapshot, Mapping):
-        raise GeneratedOwnerCacheError(
-            "pinned rules manifest has no card-data snapshot"
-        )
-    try:
-        connection = sqlite3.connect(
-            f"file:{database.resolve(strict=True).as_posix()}?mode=ro",
-            uri=True,
-        )
-        connection.execute("PRAGMA query_only=ON")
-        quick_check = connection.execute("PRAGMA quick_check").fetchone()
-        if quick_check != ("ok",):
-            raise GeneratedOwnerCacheError("pinned card database failed quick_check")
-        schema_rows = connection.execute(
-            "SELECT type, name, tbl_name, sql FROM sqlite_schema "
-            "WHERE name NOT LIKE 'sqlite_%' ORDER BY type, name"
-        ).fetchall()
-        table_names = [
-            str(row[1]) for row in schema_rows if row[0] == "table"
-        ]
-        counts = {
-            name: int(
-                connection.execute(
-                    'SELECT COUNT(*) FROM "' + name.replace('"', '""') + '"'
-                ).fetchone()[0]
-            )
-            for name in table_names
-        }
-    except (OSError, sqlite3.Error) as exc:
-        raise GeneratedOwnerCacheError(
-            "pinned card database is unavailable or invalid"
-        ) from exc
-    finally:
-        if "connection" in locals():
-            connection.close()
-    return _canonical_json_fingerprint(
-        DATABASE_IDENTITY_ALGORITHM,
-        {
-            "builder_inputs": database_builder_input_fingerprint(root=root),
-            "snapshot": snapshot,
-            "schema": schema_rows,
-            "row_counts": counts,
-        },
     )
 
 
@@ -820,6 +738,7 @@ def _resolved_ref_inputs(
     entries: Mapping[str, str],
     content_cache: dict[str, str] | None = None,
     import_cache: dict[str, tuple[str, ...]] | None = None,
+    content_import_cache: dict[tuple[str, str], tuple[str, ...]] | None = None,
 ) -> tuple[str, ...]:
     paths = tuple(sorted(entries))
     available = set(paths)
@@ -843,6 +762,7 @@ def _resolved_ref_inputs(
         available=available,
         read_text=read_text,
         import_cache=import_cache,
+        content_import_cache=content_import_cache,
         traverse_package_initializers=(
             spec.implementation_import_policy == "runtime_imports"
         ),
@@ -926,6 +846,7 @@ def affected_owner_plan(
         base_entries = _ref_entries(root, base_ref)
         worktree_paths = _worktree_paths(root)
         worktree_import_cache: dict[str, tuple[str, ...]] = {}
+        content_import_cache: dict[tuple[str, str], tuple[str, ...]] = {}
         base_content_cache = _ref_text_cache(
             root,
             base_ref,
@@ -951,6 +872,7 @@ def affected_owner_plan(
                     root=root,
                     available_paths=worktree_paths,
                     import_cache=worktree_import_cache,
+                    content_import_cache=content_import_cache,
                 )
                 if path not in _IDENTITY_IMPLEMENTATION_PATHS
             )
@@ -982,6 +904,7 @@ def affected_owner_plan(
                     entries=base_entries,
                     content_cache=base_content_cache,
                     import_cache=base_import_cache,
+                    content_import_cache=content_import_cache,
                 )
                 if path not in _IDENTITY_IMPLEMENTATION_PATHS
             )
@@ -1149,6 +1072,7 @@ def compiler_identity_status(
         candidate for candidate in specs if candidate.id == "compiler-corpus-coverage"
     )
     current_available = set(_worktree_paths(root))
+    content_import_cache: dict[tuple[str, str], tuple[str, ...]] = {}
     current_implementation = _python_import_closure(
         _match_patterns(
             tuple(current_available),
@@ -1156,6 +1080,7 @@ def compiler_identity_status(
         ),
         available=current_available,
         read_text=lambda relative: (root / relative).read_text(encoding="utf-8"),
+        content_import_cache=content_import_cache,
         traverse_package_initializers=(
             spec.implementation_import_policy == "runtime_imports"
         ),
@@ -1186,6 +1111,7 @@ def compiler_identity_status(
             ),
             available=set(base_entries),
             read_text=base_content_cache.__getitem__,
+            content_import_cache=content_import_cache,
             traverse_package_initializers=(
                 base_spec.implementation_import_policy == "runtime_imports"
             ),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Lower one counter followed by closed results for the same object's controller."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.stack_counter_followup import (
     STACK_COUNTER_FOLLOWUP_OPERATION, STACK_TARGET_CONTROLLER, STACK_FOLLOWUP_PLAYER_SCHEMA,

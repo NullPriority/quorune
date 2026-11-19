@@ -6,6 +6,7 @@ from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
 from ..rules.event_subscriptions import LAND_PLAY_EVENT
 from ..life_change import FIRST_LIFE_GAIN_EVENT
 from ..shared_type_doors import DOOR_UNLOCKED_EVENT
+from ..source_sacrifice_model import UNATTACHMENT_EVENT
 
 
 from ..transform_timestamp_model import TRANSFORM_EVENT
@@ -67,6 +68,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CLASS_LEVEL_CHANGED = "permanent.class_level_changed.self"
     PERMANENT_TAPPED = "permanent.tap"
     PERMANENT_UNTAPPED = "permanent.untap"
+    ATTACHMENT_UNATTACHED = UNATTACHMENT_EVENT
     COUNTER_PLACED = 'counter.put'
     SINGLE_COUNTER_PLACED = 'counter.single_put'
     CREATURE_EXPLOITS = 'creature.exploits'

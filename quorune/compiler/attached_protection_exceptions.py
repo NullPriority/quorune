@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed color and enchantment-type grants retaining one source Aura."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_from_dict,ability_fragment_to_dict,ProtectionSpec
 from ..protection_attachment_exceptions import CAPABILITY,SOURCE_AURA,CHOSEN_AURA_PROTECTION_CAPABILITY,CHOSEN_AURA_PROTECTION_HANDLER,FIXED_TYPE_AURA_PROTECTION_CAPABILITY
 

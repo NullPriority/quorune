@@ -95,7 +95,7 @@ def with_turn_cast_grant_choices(host, seat, card, options, *, cast_type_line, f
     from ...preparation import preparation_cast_permission
     from .disturb_costs import disturb_back_cast_permission
     independent = (force_without_mana_cost or card.zone in {'hand', 'command'}
-        or compiled_zone_cast_permission(host, seat, card, include_source_grants=False)
+        or compiled_zone_cast_permission(host, seat, card, include_source_grants=False,include_qualified_death=False)
         or preparation_cast_permission(host,seat,card) or disturb_back_cast_permission(host,seat,card))
     if not providers:
         printed = current_turn_cast_grants(host, seat, card) if cast_type_line is not None else ()
@@ -161,6 +161,8 @@ def finalize_turn_cast_grant_option(option):
 def underlying_cast_cost_option_id(option):
     from ..optional_life_cost_model import optional_life_base_option_id
     current = optional_life_base_option_id(option)
+    from ..death_cast_permissions import underlying_qualified_death_option
+    current = underlying_qualified_death_option(option,current)
     use = option.get(TURN_CAST_GRANT_FIELD)
     if use is None:
         return current

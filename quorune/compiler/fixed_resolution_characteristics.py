@@ -3,7 +3,7 @@ from __future__ import annotations
 """Fixed animation and base-setting through the existing characteristic owner."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
@@ -232,6 +232,22 @@ def fixed_resolution_characteristics_effect_template(
     cast_x_available: bool = False,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
+    other = re.fullmatch(
+        r"All other creatures get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) until end of turn\.?",
+        text.strip(), re.I,
+    )
+    if other is not None:
+        if source_is_permanent is not True:
+            return None
+        power, toughness = int(other["p"]), int(other["t"])
+        if not (power or toughness):
+            return None
+        query = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+                                exclude_ref="$source.zone_object")
+        effect = {"op": "modify_all_matching_permanents_until_end_of_turn",
+                  "predicate": query.to_dict(), "power": power, "toughness": toughness}
+        return ("source-excluded-public-fixed-stats-eot-v1", (effect,), None,
+                ("cr-611-continuous-effects",))
     chosen = _chosen_subtype_template(text, source_is_permanent=source_is_permanent,
                                      source_attachment_relation=source_attachment_relation)
     if chosen is not None:

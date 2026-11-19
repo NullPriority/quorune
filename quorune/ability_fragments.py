@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 import hashlib
 import re
-from typing import Any, Iterable, Mapping, TypeAlias
+from typing import Any, Iterable, Mapping, TypeAlias, get_args
 
 from .ability_fragment_primitives import (
     AbilityFragmentError,
@@ -48,6 +48,7 @@ from .deck_copy_limits import DeckCopyLimitSpec
 from .defender_permission import DefenderAttackPermission
 from .block_capacity_model import BlockCapacitySpec
 from .landwalk_permission_model import LandwalkBlockPermission
+from .block_as_though_model import BlockAsThoughPermission,blocking_permission_from_dict
 from .enlist_model import EnlistSpec
 from .exert_model import ExertAttackSpec
 from .mutate_model import MutateSpec
@@ -98,6 +99,8 @@ class SpellCastKeywordTriggerKind(str, Enum):
     CASCADE = "cascade"
     PROWESS = "prowess"
     STORM = "storm"
+    COMMANDER_CAST_COPY = "commander_cast_copy"
+    COMMANDER_CAST_COPY_NEW_TARGETS = "commander_cast_copy_new_targets"
 
 
 class DamageKeywordTriggerKind(str, Enum):
@@ -820,6 +823,7 @@ StaticAbilityFragment: TypeAlias = (
     | DefenderAttackPermission
     | BlockCapacitySpec
     | LandwalkBlockPermission
+    | BlockAsThoughPermission
     | EnlistSpec
     | ExertAttackSpec
     | MutateSpec
@@ -832,6 +836,8 @@ StaticAbilityFragment: TypeAlias = (
     | DeclarationRestrictionTemplate
     | ActivationProhibitionSpec
 )
+
+_STATIC_ABILITY_FRAGMENT_TYPES = get_args(StaticAbilityFragment)
 
 
 def ability_fragment_to_dict(
@@ -905,6 +911,8 @@ def ability_fragment_to_dict(
         kind = "defender_attack_permission"
     elif isinstance(fragment, BlockCapacitySpec):
         kind = "block_capacity"
+    elif isinstance(fragment, BlockAsThoughPermission):
+        kind = "bounded_block_as_though"
     elif isinstance(fragment, LandwalkBlockPermission):
         kind = "landwalk_block_permission"
     elif isinstance(fragment, EnlistSpec):
@@ -1047,9 +1055,9 @@ def ability_fragment_from_dict(
         return DefenderAttackPermission.from_dict(value["value"])
     if value["kind"] == "block_capacity":
         return BlockCapacitySpec.from_dict(value["value"])
-    if value["kind"] == "landwalk_block_permission":
+    if value["kind"] in {"bounded_block_as_though","landwalk_block_permission"}:
         try:
-            return LandwalkBlockPermission.from_dict(value["value"])
+            return blocking_permission_from_dict(value)
         except ValueError as exc:
             raise AbilityFragmentError(str(exc)) from exc
     if value['kind']=='enlist':return EnlistSpec.from_dict(dict(value['value']))
@@ -1092,60 +1100,12 @@ def canonical_ability_fragments(
 ) -> tuple[StaticAbilityFragment, ...]:
     fragments = [
         value
-        if isinstance(
-            value,
-            (
-                SimpleEnchantSpec,
-                CopiableProgramSourceSpec,
-                CopiableStaticInstanceSpec,
-                TypedEnchantSpec,
-                LinkedGraveyardCreatureEnchantSpec,
-                ProtectionSpec,
-                GrantedActivatedAbilitySpec,
-                CrewPowerBonusSpec,
-                AttachedUntapRestraintSpec,
-                EnchantedPlayerAttackRequirementSpec,
-                BoundStaticDeclarationRulesSpec,
-                GrantedTriggeredAbilitySpec,
-                CombatKeywordTriggerSpec,
-                DamageKeywordTriggerSpec,
-                SpellCastKeywordTriggerSpec,
-                ToxicSpec,
-                PartnerWithSpec,
-                DeckCopyLimitSpec,
-                StaticComponentSpec,
-                StaticComponentScopeSpec,
-                CounterMaximumSpec,
-                LegendRuleExemptionSpec,
-                FixedCounterProhibitionSpec,
-                TriggerMultiplierSpec,
-                WardSpec,
-                AllCreatureTypesCharacteristicDefinitionSpec,
-                ColorlessCharacteristicDefinitionSpec,
-                AllColorsCharacteristicDefinitionSpec,
-                ConditionalKeywordSpec,
-                DynamicPowerToughnessSpec,
-                QueryCharacteristicModifierSpec,
-                QueryPowerToughnessDefinitionSpec,
-                DefenderAttackPermission,
-                BlockCapacitySpec,
-                LandwalkBlockPermission,
-                EnlistSpec,
-                ExertAttackSpec,
-                MutateSpec,
-                AsUnblockedAssignmentPermission,
-                ToughnessAssignmentSpec,
-                AttachedGoadSpec,
-                UmbraArmorSpec,
-                DeclarationCostTemplate,
-                DeclarationRequirementTemplate,
-                DeclarationRestrictionTemplate,
-                ActivationProhibitionSpec,
-            ),
-        )
+        if isinstance(value, _STATIC_ABILITY_FRAGMENT_TYPES)
         else ability_fragment_from_dict(value)
         for value in values
     ]
+    if not fragments:
+        return ()
     keyed = [
         (stable_json(ability_fragment_to_dict(fragment)), fragment)
         for fragment in fragments

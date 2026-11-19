@@ -15,7 +15,7 @@ from .relative_power_target import (
     bound_relative_power_condition,
 )
 from .target_forms import TargetCharacteristicForm
-from .target_history import TargetDamageHistorySpec
+from .target_history import PLAYER_HISTORY_FIELD, TargetDamageHistorySpec, TargetPlayerHistorySpec
 from .target_numeric import TargetNumericCharacteristicSpec
 
 
@@ -345,6 +345,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "characteristic_forms_any",
         "numeric_characteristic",
         "damage_history",
+        PLAYER_HISTORY_FIELD,
         "id",
         "group",
         # Validated by the owning compiler/capability shape rather than by
@@ -426,6 +427,7 @@ class TargetGroup:
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     damage_history: TargetDamageHistorySpec | None = None
+    player_history: TargetPlayerHistorySpec | None = None
 
     def __post_init__(self) -> None:
         if any(type(value)is not bool for value in (self.distinct_controllers,self.retain_controller)):
@@ -488,6 +490,13 @@ class TargetGroup:
             raise ValueError(
                 "Damage-history predicates require one battlefield permanent"
             )
+
+        if self.player_history is not None and (
+            not isinstance(self.player_history, TargetPlayerHistorySpec)
+            or self.zones != ("player",) or self.categories != ("player",)
+            or self.min_targets != 1 or self.max_targets != 1
+        ):
+            raise ValueError("Player history requires one typed player target")
 
     def matches_type_characteristics(
         self,
@@ -614,6 +623,8 @@ class TargetGroup:
             ),
             "numeric_characteristic": _target_numeric_characteristic(raw),
             "damage_history": _target_damage_history(raw),
+            "player_history": (TargetPlayerHistorySpec.from_mapping(raw[PLAYER_HISTORY_FIELD])
+                if PLAYER_HISTORY_FIELD in raw else None),
         }
         return cls(**fields)
 

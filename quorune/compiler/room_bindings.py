@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned Room form and unlock grammar over the existing event owners."""
 
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..characteristic_evaluation import type_parts

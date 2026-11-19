@@ -20,6 +20,7 @@ from ..zone_trigger_events import cost_transition_kind
 
 FIXED_TAP_ACTIVATION_COST_KIND = "tap"
 COLORED_TAP_ACTIVATION_CAPABILITY = 'activation.selected_tap.fixed_color'
+LEGENDARY_TAP_ACTIVATION_CAPABILITY = 'activation.selected_tap.fixed_legendary'
 _FIXED_TAP_FIELDS = frozenset(
     {"schema_version", "kind", "count", "zone", "another", "predicate"}
 )
@@ -108,7 +109,7 @@ class FixedTapActivationCost:
     zone: str = "battlefield"
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3}:
             raise FixedTapActivationCostError(
                 "Fixed tap activation-cost schema version is unsupported"
             )
@@ -130,7 +131,12 @@ class FixedTapActivationCost:
             )
         type_axis = self.predicate.types_all
         subtype_axis = self.predicate.subtypes_all
-        if (len(type_axis) == 1) is (len(subtype_axis) == 1):
+        if self.schema_version == 3:
+            if (self.count != 1 or self.another or subtype_axis
+                    or type_axis not in ((), ("creature",))
+                    or self.predicate.supertypes_all != ("legendary",)):
+                raise FixedTapActivationCostError("Legendary tap costs require one legendary permanent or creature")
+        elif (len(type_axis) == 1) is (len(subtype_axis) == 1):
             raise FixedTapActivationCostError(
                 "Fixed tap activation costs require one type or one subtype"
             )
@@ -147,6 +153,7 @@ class FixedTapActivationCost:
             types_all=type_axis,
             subtypes_all=subtype_axis,
             colors_any=colors,
+            supertypes_all=("legendary",) if self.schema_version == 3 else (),
             tapped=False,
             known_to_actor=True,
             exclude_ref="$source" if self.another else None,

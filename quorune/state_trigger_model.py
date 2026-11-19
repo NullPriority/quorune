@@ -5,7 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 from .continuous_conditions import FixedPublicStateConditionSpec,FixedPublicStateConditionKind as K
-from .characteristic_fragments import CharacteristicQuantityScope
+from .characteristic_fragments import CharacteristicQuantityScope,CharacteristicQuantitySpec
+from .object_predicate import ObjectQuerySpec
 
 STATE_TRIGGER_CAPABILITY='trigger.state.fixed_public_condition'
 STATE_TRIGGER_MECHANIC='fixed-public-state-trigger'
@@ -27,16 +28,33 @@ def _validate_condition(condition):
         raise ValueError('State trigger condition is outside current controlled battlefield queries')
 
 
+def _validate_global_empty_condition(condition):
+    if (not isinstance(condition,FixedPublicStateConditionSpec)
+            or condition.kind is not K.QUERY_COUNT_AT_MOST or condition.amount != 0
+            or condition.quantity is None or condition.quantity.query is None):
+        raise ValueError('Global state trigger requires one closed empty battlefield domain')
+    quantity = condition.quantity
+    types = quantity.query.types_all
+    if (types not in ((),('artifact',),('battle',),('creature',),('enchantment',),('land',),('planeswalker',))
+            or quantity.query != ObjectQuerySpec(zones=('battlefield',),types_all=types)
+            or quantity != CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.ALL_ZONES,query=quantity.query)):
+        raise ValueError('Global state trigger cannot change zone, ownership, type domain or source exclusion')
+
+
 @dataclass(frozen=True,slots=True)
 class PublicStateTriggerSpec:
     condition: FixedPublicStateConditionSpec
     schema_version: int=1
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version!=1:raise ValueError('State trigger has one closed version')
-        _validate_condition(self.condition)
+        if type(self.schema_version) is not int or self.schema_version not in (1,2):
+            raise ValueError('State trigger has closed controlled and global-empty versions')
+        if self.schema_version == 1:
+            _validate_condition(self.condition)
+        else:
+            _validate_global_empty_condition(self.condition)
 
-    def to_dict(self):return {'schema_version':1,'condition':self.condition.to_dict()}
+    def to_dict(self):return {'schema_version':self.schema_version,'condition':self.condition.to_dict()}
 
     @classmethod
     def from_dict(cls,value):

@@ -1,0 +1,759 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "17da3654-7517-473b-89e7-0303f6f030cb",
+      "name": "Deathgorge Scavenger",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Whenever this creature enters or attacks, you may exile target card from a graveyard. If a creature card is exiled this way, you gain 2 life. If a noncreature card is exiled this way, this creature gets +1/+1 until end of turn.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "54731e3f-a84a-4fc9-8c02-2f769133c71c",
+      "name": "Diregraf Scavenger",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature — Zombie Bear",
+      "oracle_text": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhen this creature enters, exile up to one target card from a graveyard. If a creature card was exiled this way, each opponent loses 2 life and you gain 2 life.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "name": "Graveyard Trespasser // Graveyard Glutton",
+      "mana_cost": "{2}{B} // ",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Werewolf // Creature — Werewolf",
+      "oracle_text": "Graveyard Trespasser: Ward—Discard a card.\nWhenever this creature enters or attacks, exile up to one target card from a graveyard. If a creature card was exiled this way, each opponent loses 1 life and you gain 1 life.\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)\n//\nGraveyard Glutton: Ward—Discard a card.\nWhenever this creature enters or attacks, exile up to two target cards from graveyards. For each creature card exiled this way, each opponent loses 1 life and you gain 1 life.\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Transform",
+        "Daybound",
+        "Ward",
+        "Nightbound"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Graveyard Trespasser",
+          "oracle_text": "Ward—Discard a card.\nWhenever this creature enters or attacks, exile up to one target card from a graveyard. If a creature card was exiled this way, each opponent loses 1 life and you gain 1 life.\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Human Werewolf"
+        },
+        {
+          "colors": [
+            "B"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Graveyard Glutton",
+          "oracle_text": "Ward—Discard a card.\nWhenever this creature enters or attacks, exile up to two target cards from graveyards. For each creature card exiled this way, each opponent loses 1 life and you gain 1 life.\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature — Werewolf"
+        }
+      ]
+    },
+    {
+      "oracle_id": "23320d55-80cb-4da3-a53c-8c75abdc8c8f",
+      "name": "Ignis Scientia",
+      "mana_cost": "{1}{G}{U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Advisor",
+      "oracle_text": "When Ignis Scientia enters, look at the top six cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.\nI've Come Up with a New Recipe! — {1}{G}{U}, {T}: Exile target card from a graveyard. If a creature card was exiled this way, create a Food token.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Food"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}{G}",
+          "name": "Kazandu Mammoth",
+          "oracle_text": "Landfall — Whenever a land you control enters, this creature gets +2/+2 until end of turn.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Elephant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Kazandu Valley",
+          "oracle_text": "This land enters tapped.\n{T}: Add {G}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Landfall"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{G} // ",
+      "name": "Kazandu Mammoth // Kazandu Valley",
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "oracle_text": "Kazandu Mammoth: Landfall — Whenever a land you control enters, this creature gets +2/+2 until end of turn.\n//\nKazandu Valley: This land enters tapped.\n{T}: Add {G}.",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Creature — Elephant // Land"
+    },
+    {
+      "oracle_id": "f75ac0a3-8795-48b4-91fd-4717900ef5b7",
+      "name": "Raven Eagle",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Bird Assassin",
+      "oracle_text": "Flying\nWhenever this creature enters or attacks, exile up to one target card from a graveyard. If a creature card is exiled this way, create a Clue token. (It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you draw your second card each turn, each opponent loses 1 life and you gain 1 life.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f81ca3a5-356d-4b5d-afc2-a33aa774816b",
+      "name": "Soul-Shackled Zombie",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature — Zombie",
+      "oracle_text": "When this creature enters, exile up to two target cards from a single graveyard. If at least one creature card was exiled this way, each opponent loses 2 life and you gain 2 life.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "name": "The Binding of the Titans",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Saga",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Each player mills three cards.\nII — Exile up to two target cards from graveyards. For each creature card exiled this way, you gain 1 life.\nIII — Return target creature or land card from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "saga",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "name": "Tymaret, Chosen from Death",
+      "mana_cost": "{B}{B}",
+      "cmc": 2.0,
+      "type_line": "Legendary Enchantment Creature — Demigod",
+      "oracle_text": "Tymaret's toughness is equal to your devotion to black. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)\n{1}{B}: Exile up to two target cards from graveyards. You gain 1 life for each creature card exiled this way.",
+      "power": "2",
+      "toughness": "*",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Before a player untaps their permanents during the untap step, the game checks to see if the day/night designation should change."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Day and night are designations that the game itself can have. The game starts as neither. Once the game becomes day (or less commonly, night), the game will be exactly one of them—day or night—going back and forth for the rest of the game."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Double-faced permanents with daybound transform to their nightbound faces as it becomes night. Similarly, double-faced permanents with nightbound transform to their daybound faces as it becomes day. This happens immediately and is not a state-based action. It happens any time it becomes day or night, not just during the untap step."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If it is day, and the active player of the previous turn cast no spells during their turn, it becomes night."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If it is night, and the active player of the previous turn cast two or more spells during their turn, it becomes day."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If it is night, permanents with daybound that enter the battlefield without being cast will enter with their nightbound faces up."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If it's neither day nor night, and a creature with daybound and a creature with nightbound somehow appear on the battlefield at the same time, it becomes day. The creature with nightbound will transform."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with daybound during night, that spell will be front face up (that is, daybound face up) on the stack. However, it will enter the battlefield with its back face up (that is, with its nightbound face up). It won't enter with its daybound face up and then transform."
+    },
+    {
+      "oracle_id": "0bbd6cad-9b6f-45a6-9f2e-d7b4853586ae",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Permanents with daybound and nightbound can't transform via any means other than their daybound and nightbound abilities. Notably, older cards such as Moonmist that instruct a player to transform permanents don't affect permanents with daybound or nightbound."
+    },
+    {
+      "oracle_id": "17da3654-7517-473b-89e7-0303f6f030cb",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "There's no way to get both bonuses at once while Deathgorge Scavenger's ability is resolving. If an artifact creature card is exiled this way, it's a creature card and not a noncreature card."
+    },
+    {
+      "oracle_id": "23320d55-80cb-4da3-a53c-8c75abdc8c8f",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "A Food token is an artifact token with \"{2}, {T}, Sacrifice this token: You gain 3 life.\""
+    },
+    {
+      "oracle_id": "23320d55-80cb-4da3-a53c-8c75abdc8c8f",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If the target card is an illegal target as Ignis Scientia's last ability resolves, it won't resolve and none of its effects will happen. You won't create a Food token even if the target card was a creature card."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face's name."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can't be put onto the battlefield, it doesn't enter the battlefield."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A landfall ability doesn't trigger if a permanent already on the battlefield becomes a land."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A landfall ability triggers whenever a land you control enters for any reason. It triggers whenever you play a land, as well as whenever a spell or ability puts a land onto the battlefield under your control."
+    },
+    {
+      "oracle_id": "2ac1c95c-2a9d-40bc-9cad-9cadfa3f19f7",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whenever a land you control enters, each landfall ability of the permanents you control will trigger. You can put them   on the stack in any order. The last ability you put on the stack will be the first one to resolve (As a result, you can have those abilities resolve in the order of your choosing.)."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to Tymaret may become lethal if your devotion to black decreases during that turn."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Colorless and generic mana symbols ({C}, {0}, {1}, {2}, {X}, and so on) in mana costs of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you put an Aura on an opponent's permanent, you still control the Aura, and mana symbols in its mana cost count towards your devotion."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "64b4e91f-83a4-4b3f-87d4-8c48907e628d",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The ability that defines Tymaret's toughness works in all zones, not just the battlefield."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "A chapter ability doesn’t trigger if a lore counter is put on a Saga that already had a number of lore counters greater than or equal to that chapter’s number. For example, the third lore counter put on a Saga causes the III chapter ability to trigger, but I and II won’t trigger again."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As a Saga enters the battlefield, its controller puts a lore counter on it. As your precombat main phase begins (immediately after your draw step), you put another lore counter on each Saga you control. Putting a lore counter on a Saga in either of these ways doesn’t use the stack."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Each symbol on the left of a Saga’s text box represents a chapter ability. A chapter ability is a triggered ability that triggers when a lore counter that is put on the Saga causes the number of lore counters on the Saga to become equal to or greater than the ability’s chapter number. Chapter abilities are put onto the stack and may be responded to."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If multiple chapter abilities trigger at the same time, their controller puts them on the stack in any order. If any of them require targets, those targets are chosen as you put the abilities on the stack, before any of those abilities resolve."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once a chapter ability has triggered, the ability on the stack won’t be affected if the Saga gains or loses counters, or if it leaves the battlefield."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once the number of lore counters on a Saga is greater than or equal to the greatest number among its chapter abilities, the Saga’s controller sacrifices it as soon as its chapter ability has left the stack, most likely by resolving or being countered. This state-based action doesn’t use the stack."
+    },
+    {
+      "oracle_id": "f0435065-a8ca-4b4d-a7da-0ef41749118f",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Removing lore counters won’t cause a previous chapter ability to trigger. If lore counters are removed from a Saga, the appropriate chapter abilities will trigger again when the Saga receives lore counters."
+    },
+    {
+      "oracle_id": "f75ac0a3-8795-48b4-91fd-4717900ef5b7",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clue tokens are artifact tokens with \"{2}, Sacrifice this token: Draw a card.\""
+    },
+    {
+      "oracle_id": "f75ac0a3-8795-48b4-91fd-4717900ef5b7",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Creating a Clue token this way isn't the same thing as investigating. Notably, an ability that triggers whenever you investigate won't trigger because of creating a Clue token this way."
+    },
+    {
+      "oracle_id": "f75ac0a3-8795-48b4-91fd-4717900ef5b7",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If a card or ability instructs you to put cards into your hand without specifically using the word \"draw,\" it's not a card drawn."
+    },
+    {
+      "oracle_id": "f75ac0a3-8795-48b4-91fd-4717900ef5b7",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If an effect instructs you to draw multiple cards, the ability triggers after you draw whichever is the second one for the turn. It goes on the stack after you've drawn and looked at all the cards and finished resolving the spell or ability that caused you to draw them."
+    },
+    {
+      "oracle_id": "f75ac0a3-8795-48b4-91fd-4717900ef5b7",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The second triggered ability can trigger only once each turn. It doesn't matter whether Raven Eagle was on the battlefield when the first card was drawn. If it's not on the battlefield when the second card is drawn, the ability can't trigger at all that turn. It won't trigger when the third or fourth card is drawn."
+    }
+  ]
+}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for casting and activation runtime metadata."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
@@ -42,6 +42,9 @@ def static_self_zone_cast_permission_handler(
 ) -> CastingActivationMetadataTemplate | None:
     """Lower explicit self-graveyard permission behind a closed public condition."""
 
+    from .death_cast_permissions import qualified_death_cast_template
+    qualified = qualified_death_cast_template(text)
+    if qualified is not None:return qualified
     from .self_graveyard_discard_templates import self_graveyard_discard_template
     paid = self_graveyard_discard_template(text)
     if paid is not None:

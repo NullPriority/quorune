@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole-line lowering for fixed global and attached-blocker Landwalk rules."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import ability_fragment_to_dict
 from ..landwalk import LANDWALK_KEYWORDS

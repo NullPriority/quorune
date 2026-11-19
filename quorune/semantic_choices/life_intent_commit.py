@@ -82,3 +82,16 @@ def apply_life_change_intent(host, intent: LifeChangeIntent) -> int:
     )
     dispatch_life_gain_records(host, committed.records)
     return host.state.players[intent.player].life
+
+
+def apply_life_gain_cost_batch_intent(host,intent):
+    from ..effect_runtime.life_effects import _commit
+    from ..life_state import LifeChange
+    permissions=collect_life_gain_permissions(host)
+    if intent.actor not in host.active_seats or any(p not in host.active_seats or p==intent.actor or not permissions.allows_gain(p) for p in intent.players):
+        raise GameRuleError('Life-gain cost has an inactive, own or prohibited recipient')
+    prepared=_commit(host,tuple(LifeChange(p,intent.amount) for p in intent.players),
+        effect={'source':intent.source_ref,'cause':'cost','_replacement_selections':intent.replacement_selections},actor=intent.actor,reason=intent.reason)
+    host._log(intent.actor,'cost.opponent_life_gain','The complete opponent life-gain cost was paid.',
+        {'players':list(intent.players),'unit_amount':intent.amount,'source':intent.source_ref},importance=1,changed_players=list(dict.fromkeys(intent.players)))
+    return sum(record.amount for record in prepared.records if record.direction=='gain')

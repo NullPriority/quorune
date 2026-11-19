@@ -26,9 +26,30 @@ the chosen source.
 
 During damage preparation, `damage_prevention.py` discovers applicable
 modifiers, applies affected-player ordering, allocates bounded amounts, and
-produces a mutation-only commit plan. Unpreventable damage does not consume a
-shield. Finite modifiers retain their exact remainder across events; expired
-or exhausted modifiers are removed by their declared lifecycle owner.
+produces a mutation-only commit plan. Finite modifiers retain their exact
+remainder across events, including when damage is unpreventable. Their
+lifecycle owner removes expired or exhausted modifiers.
+
+A permanent with a shield counter can contribute an additional prevention
+effect for its current incarnation. The affected player orders this effect
+with other applicable replacements. An applied effect removes one counter
+per simultaneous damage batch through the canonical counter transaction.
+Unpreventable damage still deals its full amount and spends the counter if
+the effect applies. Damage reduced to zero by another replacement leaves
+the counter in place. The commit check binds the available effects to the
+current counter counts and incarnations.
+
+Mandatory ordered programs can compose the existing unscoped global or
+resolving-controller all-damage shield with another independently closed
+instruction. The component checker retains its fixed source, subject, damage
+kind and end-of-turn lifetime. Public-query life amounts keep their quantity
+owners and are evaluated at their printed position; gaining life is separate
+from any damage subsequently prevented. Unknown fields or unowned sibling
+instructions keep the complete program untrusted.
+Runtime admission re-derives the ordered program's child owners through the
+same validated scalar projection. Removing a prevention, life, quantity or
+parent capability cannot retain strict admission, and deleting coverage hints
+cannot hide a persisted ordered-program template.
 
 Each durable shield carries closed damage and recipient scope. The represented
 scope distinguishes any damage from combat damage and all recipients from
@@ -60,7 +81,10 @@ Awaken land target can still resolve. Historical scope records omit this
 optional binding and preserve their previous encoding.
 Negative type, subtype, keyword, and color predicates distinguish an explicitly
 known empty collection from unavailable current or last-known facts. Missing
-facts fail closed instead of satisfying a `contains none` predicate. When two
+facts fail closed instead of satisfying a `contains none` predicate. Fixed negative
+creature-subtype source scopes test current damage-time facts, including later
+entrants and later type changes. A pair of excluded subtypes exempts either
+subtype. Token production remains an earlier, independently owned instruction. When two
 sibling scopes lowered from one `dealt to and dealt by` instruction both match
 the same damage event, their explicit semantic application-group identity
 collapses them to one ordering option and one public application. Independently
@@ -158,3 +182,13 @@ combat-source exceptions and "all but N" quantities.
 See [ADR 0012](../adr/0012-damage-transaction-and-static-prevention.md),
 [ADR 0015](../adr/0015-durable-damage-modifier-ownership.md), and
 [ADR 0017](../adr/0017-prevention-continuations-and-aftermath.md).
+
+Live attacking-creature source prevention checks combat participation on each
+damage event. Proved self block triggers use `source_subject_version: 3` with
+an explicit to/from direction and resolving application group. The runtime
+requires that exact source occurrence independently of coverage, resolves the
+original battlefield incarnation, and delegates pinned recipient or chosen-source
+shields to the canonical creation owner. A returned source cannot inherit an old
+shield or create an unrestricted one. Incoming/outgoing siblings retain one
+semantic application group; noncombat damage stays outside their scope. Earlier
+source-subject versions keep their fields and behavior.

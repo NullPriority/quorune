@@ -3,7 +3,7 @@ from __future__ import annotations
 """Typed structural helpers for independently owned direct-target grammars."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping, Sequence
 
 from ..object_predicate import (

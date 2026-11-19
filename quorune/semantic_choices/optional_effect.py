@@ -113,6 +113,11 @@ def _represented_effect(
         if effect.get('actor')!=actor or not isinstance(effect.get('players'),(list,tuple)) or list(effect['players'])!=[actor] or not fixed_affected_player_discard_node_capabilities(effects=(restored,),target_schema=None,mechanic_ids=('fixed-affected-player-discard','cr-402-hand'),allow_controller=True):
             raise SemanticChoiceError("Optional controller discard instruction is malformed")
         return
+    if operation == "search" and effect.get('schema_version') == 7:
+        from ..qualified_library_search_model import QualifiedLibrarySearchSpec
+        try:QualifiedLibrarySearchSpec.from_effect(effect)
+        except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError("Optional qualified search is malformed") from exc
+        return
     if operation == "search" and is_counted_library_search(effect):
         try:
             FixedCountedLibrarySearchTemplate.from_effect(effect)

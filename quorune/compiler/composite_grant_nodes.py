@@ -3,7 +3,7 @@ from __future__ import annotations
 """Complete multi-quote and ability-replacement clauses over existing grant children."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from ..basic_land_types import LAND_SUBTYPES
 from ..object_predicate import ObjectQuerySpec
 from ..semantic_runtime.composite_grants import (COMPOSITE_GRANT_HANDLER,COMPOSITE_GRANT_CAPABILITY,

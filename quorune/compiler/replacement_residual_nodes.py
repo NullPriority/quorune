@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Keep unowned replacement ordering residual after closed static dispatch."""
 
-import re
+from . import regex_working_set as re
 
 from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
 from ..turn_skip_model import TURN_SKIP_MECHANIC

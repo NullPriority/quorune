@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile a literal optional collection without serializing its zone entries."""
 
-import re
+from . import regex_working_set as re
 
 from ..private_hand_entry_model import (
     PRIVATE_HAND_COLLECTION_MECHANICS, PRIVATE_HAND_COLLECTION_OPERATION,

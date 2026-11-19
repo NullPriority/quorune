@@ -16,7 +16,9 @@ from .paid_sacrifice_amount_templates import _paid_sacrifice_stat_template
 def compile_activation_result(ability, *, source_name, text, compile_fixed):
     """Choose an owned activation quantity before the ordinary fixed result."""
     from .activation_x_costs import announced_x_activation_effect
-    return (activation_paid_sacrifice_result(ability, source_name=source_name,
+    from .temporary_keyword_removal_templates import chosen_temporary_keyword_removal_template
+    return (chosen_temporary_keyword_removal_template(ability, text=text, source_name=source_name)
+        or activation_paid_sacrifice_result(ability, source_name=source_name,
                 text=text, compile_fixed=compile_fixed)
         or announced_x_activation_effect(ability, source_name=source_name,
                 text=text, compile_fixed=compile_fixed)

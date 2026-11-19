@@ -562,10 +562,14 @@ def current_untap_step_plan(
                 ),
             )
         )
+    types = next((row.scope.permanent_types for row in getattr(host.state, "next_player_untap_restrictions", ())
+        if row.player == active_player), frozenset())
+    prohibited = (row.object_id for row in rows if row.controller == active_player and not types.isdisjoint(row.types))
     return plan_untap_step(
         active_player,
         rows,
         collect_untap_step_participations(host),
+        prohibited_object_ids=prohibited,
     )
 
 

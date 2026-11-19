@@ -364,6 +364,12 @@ def _apply_create_token(
     reason: str,
 ) -> Any:
     controller = str(effect.get("controller") or actor)
+    from ..reflexive_trigger_model import TOKEN_CREATION_REFLEXIVE_FIELD
+    reflexive = None
+    if TOKEN_CREATION_REFLEXIVE_FIELD in effect:
+        from ..rules.token_creation_reflexive import authorize_token_creation_reflexive
+
+        reflexive = authorize_token_creation_reflexive(host, effect, actor=actor)
     if "target" in effect:
         allowed = {
             "op", "target", "name", "quantity", "characteristics", "tapped",
@@ -390,7 +396,7 @@ def _apply_create_token(
         if "name" in effect
         else ("" if copy_source else "Token")
     )
-    return host.create_token(
+    created = host.create_token(
         controller,
         name=token_name,
         quantity=int(effect.get("quantity", 1)),
@@ -405,6 +411,11 @@ def _apply_create_token(
             effect.get("_replacement_selections") or ()
         ),
     )
+    if reflexive is not None and created:
+        from ..rules.reflexive_triggers import enqueue_token_creation_reflexive
+
+        enqueue_token_creation_reflexive(host, *reflexive)
+    return created
 
 
 def _apply_create_token_batch(
@@ -1307,6 +1318,9 @@ def _apply_transform(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.subtype_transform import SUBTYPE_TRANSFORM_VERSION, apply_subtype_transform
+    if SUBTYPE_TRANSFORM_VERSION in effect:
+        return apply_subtype_transform(host, effect, actor=actor, reason=reason)
     op = operation
     allowed = {
         "op",
@@ -1354,7 +1368,13 @@ def _apply_turn_face_up(host,effect,**context):
     return apply_targeted_face_up(host,effect,**context)
 
 
+def _apply_phase_out(host, effect, **context):
+    from ..phasing import apply_phase_out_effect
+    return apply_phase_out_effect(host, effect, **context)
+
+
 HANDLERS = {
+    'phase_out_permanent': _apply_phase_out,
     'turn_face_up': _apply_turn_face_up,
     'add_subtype': _apply_add_subtype,
     'add_subtype_until_end_of_turn': _apply_add_subtype_until_end_of_turn,

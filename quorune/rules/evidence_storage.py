@@ -18,10 +18,21 @@ def unpack_evidence_document(value):
         raise EvidenceStorageError('Evidence document must be an object')
     if 'storage_schema_version' not in value:
         return dict(value)
-    if (set(value) != {'storage_schema_version', 'document', 'groups'}
-            or type(value['storage_schema_version']) is not int
-            or value['storage_schema_version'] != 1):
+    version = value['storage_schema_version']
+    fields = {'storage_schema_version', 'document', 'groups'}
+    if version == 2:
+        fields.add('test_ids')
+    if type(version) is not int or version not in (1, 2) or set(value) != fields:
         raise EvidenceStorageError('Unsupported evidence storage envelope')
+
+    test_ids = None
+    referenced_test_ids = set()
+    if version == 2:
+        test_ids = value['test_ids']
+        if (not isinstance(test_ids, list)
+                or any(type(test_id) is not str for test_id in test_ids)
+                or len(set(test_ids)) != len(test_ids)):
+            raise EvidenceStorageError('Invalid evidence test identity table')
     document, groups = value['document'], value['groups']
     if (not isinstance(document, Mapping) or 'declarations' in document
             or 'storage_schema_version' in document or not isinstance(groups, list)):
@@ -46,11 +57,23 @@ def unpack_evidence_document(value):
         for reference in group['references']:
             if (not isinstance(reference, list) or len(reference) != 3
                     or type(reference[0]) is not int or reference[0] < 0
-                    or type(reference[1]) is not str or type(reference[2]) is not str):
+                    or type(reference[1]) is not str):
                 raise EvidenceStorageError('Invalid evidence reference')
-            rows.append((reference[0], {**scalars, **{key: list(item) for key, item in arrays.items()},
+            position, evidence_class, test = reference
+            if test_ids is None:
+                if type(test) is not str:
+                    raise EvidenceStorageError('Invalid evidence test identity')
+                test_id = test
+            else:
+                if type(test) is not int or not 0 <= test < len(test_ids):
+                    raise EvidenceStorageError('Invalid evidence test identity reference')
+                referenced_test_ids.add(test)
+                test_id = test_ids[test]
+            rows.append((position, {**scalars, **{key: list(item) for key, item in arrays.items()},
                 **{key: deepcopy(item) for key, item in nested.items()},
-                'evidence_class': reference[1], 'test_id': reference[2]}))
+                'evidence_class': evidence_class, 'test_id': test_id}))
+    if test_ids is not None and len(referenced_test_ids) != len(test_ids):
+        raise EvidenceStorageError('Evidence test identity table includes unreferenced entries')
     rows.sort(key=lambda row: row[0])
     if [position for position, _row in rows] != list(range(len(rows))):
         raise EvidenceStorageError('Evidence ordinals must be unique and contiguous')
@@ -63,18 +86,22 @@ def pack_evidence_document(value):
     if not isinstance(declarations, list):
         raise EvidenceStorageError('Evidence declarations must be a list')
     groups, positions = [], {}
+    test_positions = {}
     for position, row in enumerate(declarations):
         if (not isinstance(row, Mapping) or type(row.get('evidence_class')) is not str
                 or type(row.get('test_id')) is not str):
             raise EvidenceStorageError('Evidence declaration must include its class and test')
-        common = {key: deepcopy(item) for key, item in row.items()
+        common = {key: item for key, item in row.items()
             if key not in {'evidence_class', 'test_id'}}
         key = json.dumps(common, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
         if key not in positions:
             positions[key] = len(groups)
-            groups.append({'common': common, 'references': []})
-        groups[positions[key]]['references'].append([position, row['evidence_class'], row['test_id']])
-    return {'storage_schema_version': 1, 'document': document, 'groups': groups}
+            copied_common = {name: deepcopy(item) for name, item in common.items()}
+            groups.append({'common': copied_common, 'references': []})
+        test_index = test_positions.setdefault(row['test_id'], len(test_positions))
+        groups[positions[key]]['references'].append([position, row['evidence_class'], test_index])
+    return {'storage_schema_version': 2, 'document': document, 'groups': groups,
+        'test_ids': list(test_positions)}
 
 
 @lru_cache(maxsize=2)
@@ -105,5 +132,7 @@ def evidence_document_text(value):
         groups.append('    {\n      "common": ' + encoded(group['common'])
             + ',\n      "references": [\n' + references + '\n      ]\n    }')
     body = '[\n' + ',\n'.join(groups) + '\n  ]' if groups else '[]'
+    test_ids = encoded(stored['test_ids'], pretty=True).replace('\n', '\n  ')
     return ('{\n  "document": ' + document + ',\n  "groups": ' + body
-        + ',\n  "storage_schema_version": 1\n}\n')
+        + ',\n  "storage_schema_version": ' + str(stored['storage_schema_version'])
+        + ',\n  "test_ids": ' + test_ids + '\n}\n')

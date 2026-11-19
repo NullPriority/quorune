@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..rules.global_alternative_cost_model import (
     GLOBAL_ALTERNATIVE_CAPABILITY,GLOBAL_ALTERNATIVE_HANDLER,GLOBAL_ALTERNATIVE_EVENT,GlobalAlternativeCostSpec,
 )

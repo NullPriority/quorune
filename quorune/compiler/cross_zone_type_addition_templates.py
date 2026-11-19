@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed source text for static card-type additions across game zones."""
 
-import re
+from . import regex_working_set as re
 
 from ..semantic_runtime.cross_zone_type_additions import (
     CROSS_ZONE_TYPE_ADDITION_CAPABILITY, CROSS_ZONE_TYPE_ADDITION_HANDLER, CrossZoneTypeAdditionSpec,

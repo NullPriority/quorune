@@ -1,5 +1,5 @@
 """Compile a fixed Awaken alternative and its separately bound land result."""
-import re
+from . import regex_working_set as re
 from collections.abc import Mapping
 from ..awaken_model import FixedManaAwakenSpec,AWAKEN_PAID_MECHANIC
 from ..rules.awaken_shapes import awaken_land_target_schema,awaken_result_effects

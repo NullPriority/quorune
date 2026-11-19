@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed blocking capacity composed through existing source/query/attachment grants."""
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict
 from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY, BLOCK_CAPACITY_HANDLER
 from ..declaration_costs import normalized_oracle_line

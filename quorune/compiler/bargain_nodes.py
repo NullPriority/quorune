@@ -1,5 +1,5 @@
 """Source-pinned optional Bargain and linked self-entry results."""
-import re
+from . import regex_working_set as re
 from ..bargain_model import BARGAIN_CAPABILITY, BARGAIN_HANDLER, FixedBargainSpec
 from ..declared_cast_cost_model import DECLARED_CAST_COST_CAPABILITY, DECLARED_CAST_COST_MECHANIC
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD

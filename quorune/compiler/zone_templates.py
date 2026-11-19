@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 
@@ -17,9 +17,12 @@ _EXILE_ZONE = "exile"
 
 def static_zone_destination_replacement_handler(
     text: str,
-) -> tuple[str, Mapping[str, Any], str] | None:
+) -> tuple[str, Mapping[str, Any], str | tuple[str,...]] | None:
     """Lower one closed opponent-card destination replacement family."""
 
+    from .graveyard_exile_templates import graveyard_exile_template
+    qualified=graveyard_exile_template(text)
+    if qualified is not None:return qualified
     match = _OPPONENT_CARD_TO_EXILE_WITH_COUNTER.fullmatch(text.strip())
     if match is None:
         return None

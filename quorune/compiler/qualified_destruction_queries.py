@@ -1,5 +1,5 @@
 """Fixed destruction selections expressed by existing immutable query fields."""
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 from ..object_predicate import ObjectQuerySpec
 from ..target_numeric import TargetNumericCharacteristic,TargetNumericCharacteristicSpec,TargetNumericComparison

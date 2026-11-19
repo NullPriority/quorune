@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle grammar for reusable spell additional costs."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..additional_cost_vocabulary import (
@@ -25,6 +25,7 @@ from .creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .counted_zone_costs import fixed_counted_zone_change_cost_clause
 from ..rules.reveal_additional_cost import FixedRevealAdditionalCost
+from .behold_cost_templates import FixedBeholdAdditionalCostTemplate, fixed_behold_cost_leaf, without_fixed_behold_reminder
 from ..rules.tap_additional_cost import COLOR_TAP_SCHEMA_VERSION, FixedTapAdditionalCost
 from ..rules.casting_additional_costs import COLOR_RETURN_SCHEMA_VERSION
 from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
@@ -74,7 +75,7 @@ _FIXED_BATTLEFIELD_EXILE_COST = re.compile(
 )
 _FIXED_RETURN_COST = re.compile(
     r"As an additional cost to cast this spell, return "
-    r"(?P<article>a|an) (?P<quality>[A-Za-z ]+) you control "
+    r"(?P<article>a|an) (?P<quality>[A-Za-z][A-Za-z '\u2019-]*) you control "
     r"to its owner's hand\.?",
     re.IGNORECASE,
 )
@@ -453,6 +454,7 @@ FixedAlternativeLeafTemplate = (
     | FixedLifePaymentAdditionalCostTemplate
     | FixedManaPaymentAdditionalCostTemplate
     | FixedRevealAdditionalCostTemplate
+    | FixedBeholdAdditionalCostTemplate
     | FixedTapAdditionalCostTemplate
     | FixedCounterAdditionalCostTemplate
 )
@@ -760,11 +762,16 @@ def fixed_zone_change_additional_cost_template(
             predicate = _controlled_permanent_query(types_all=("creature",), colors_all=(_COLOR_WORDS[words[0]],))
             return FixedZoneChangeAdditionalCostTemplate(RETURN_ONE_TO_OWNER_HAND_COST,
                 predicate, schema_version=COLOR_RETURN_SCHEMA_VERSION)
-        if quality not in {"land", "creature", "permanent"}:
-            return None
-        predicate = _controlled_permanent_query(
-            types_all=(() if quality == "permanent" else (quality,))
-        )
+        if quality in {"land", "creature", "permanent"}:
+            predicate = _controlled_permanent_query(
+                types_all=(() if quality == "permanent" else (quality,)))
+        else:
+            from .qualified_return_costs import qualified_return_cost_query
+            predicate = qualified_return_cost_query(quality)
+            if predicate is None:return None
+            from ..qualified_return_cost_model import QUALIFIED_RETURN_COST_VERSION
+            return FixedZoneChangeAdditionalCostTemplate(RETURN_ONE_TO_OWNER_HAND_COST,
+                predicate, schema_version=QUALIFIED_RETURN_COST_VERSION)
         return FixedZoneChangeAdditionalCostTemplate(
             RETURN_ONE_TO_OWNER_HAND_COST, predicate
         )
@@ -841,6 +848,8 @@ def _fixed_alternative_leaf_template(
         return FixedCounterAdditionalCostTemplate(int(blight[1]), BLIGHT_COUNTER, schema_version=2)
     tap=fixed_tap_additional_cost_template('As an additional cost to cast this spell, '+text.strip()+'.')
     if tap is not None:return tap
+    behold=fixed_behold_cost_leaf(text)
+    if behold is not None:return behold
     reveal=re.fullmatch(r'reveal (?P<article>a|an) (?P<subtype>.+?) card from your hand',text.strip(),re.I)
     if reveal is not None:
         subtype=canonical_creature_subtype(reveal['subtype'])
@@ -864,6 +873,7 @@ def fixed_alternative_additional_cost_template(
 ) -> FixedAlternativeAdditionalCostTemplate | None:
     """Parse one unambiguous printed binary fixed additional-cost choice."""
 
+    text = without_fixed_behold_reminder(text)
     match = _ADDITIONAL_COST_CLAUSE.fullmatch(text.strip())
     if match is None:
         return None

@@ -126,6 +126,14 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
 
 
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..public_zone_moves import STACK_SPELL_EXILE_FIELD, stack_spell_exile_node_capabilities
+
+    if any(STACK_SPELL_EXILE_FIELD in effect for effect in effects):
+        if target_schema is None:
+            return ()
+        return stack_spell_exile_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     from ..resolution_color_model import TARGET_COLOR_SET_VERSION,TARGET_COLOR_SCOPE_MECHANIC
     if any(e.get('schema_version')==TARGET_COLOR_SET_VERSION and e.get('op')=='apply_source_characteristics_until_end_of_turn' for e in effects):
         from .resolution_colors import resolution_color_node_capabilities

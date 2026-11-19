@@ -788,6 +788,15 @@ def _component_public_state_snapshot(
         # These components emit only layers 6/7; their query conditions must
         # not recurse through the layer-5 characteristic boundary.
         return True, None
+    if handler_id == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID and 'condition_subject' in descriptor:
+        from ..semantic_runtime.conditional_continuous import FixedPublicStateCharacteristicsHandler
+
+        node = FixedPublicStateCharacteristicsHandler().validate(descriptor)
+        cards = public_state_resolver.state.cards
+        attachment = attached_object_identity(cards, source)
+        if attachment is None:
+            return True, None
+        return False, public_state_resolver.snapshot(cards[attachment.object_id], node.source_condition)
     return False, (public_state_resolver.snapshot(source,
         FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])) if is_conditional else None)
 
@@ -795,9 +804,10 @@ def _component_public_state_snapshot(
 def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,maximum_layer):
     """Project supported continuous quantities once through the layer-safe owner."""
     from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
+    from ..semantic_runtime.qualified_attached_settings import HANDLER as QUALIFIED_ATTACHMENT_HANDLER
     modifier=descriptor.get('modifier')
     raw=modifier.get('quantity') if isinstance(modifier,Mapping) else None
-    if (descriptor.get('handler_id') in {ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,QUANTIFIED_ANTHEM_HANDLER}
+    if (descriptor.get('handler_id') in {ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,QUANTIFIED_ANTHEM_HANDLER,QUALIFIED_ATTACHMENT_HANDLER}
             and isinstance(raw,Mapping) and quantity_resolver is not None
             and (maximum_layer is None or maximum_layer>=Layer.POWER_TOUGHNESS)):
         return quantity_resolver(source,CharacteristicQuantitySpec.from_dict(raw))

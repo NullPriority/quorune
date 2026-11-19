@@ -1,6 +1,6 @@
 """Lower a fixed color setting for one spell or permanent."""
 
-import re
+from . import regex_working_set as re
 
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_MECHANIC, FIXED_TARGET_COLOR_VERSION,

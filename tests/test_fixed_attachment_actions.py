@@ -30,6 +30,7 @@ from quorune.record import (
     replay_record,
 )
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.evidence import _capability_validation_snapshot
 from quorune.rules.attachment_action_capability_shapes import is_closed_fixed_source_equipment_activation_program
 from scripts.build_test_database import build_fixture_database
 
@@ -2138,7 +2139,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
 
         self.assertEqual(target.object_id, aura.attached_to)
         expected_hash = authoritative_state_hash(engine.state)
-        with tempfile.TemporaryDirectory() as temporary:
+        with tempfile.TemporaryDirectory() as temporary, _capability_validation_snapshot():
             directory = Path(temporary) / "aura-controller-change-replay"
             session.save(directory)
             replay = replay_record(directory, self.db, verify=True)

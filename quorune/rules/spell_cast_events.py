@@ -5,6 +5,7 @@ import hashlib
 import math
 from typing import Any, Iterable, Mapping
 
+from ..mana_value_limit import ManaValueLimitSpec
 from ..util import stable_json
 
 
@@ -542,17 +543,53 @@ def spell_cast_keyword_condition_dependencies(value: Any) -> tuple[str, ...]:
                          for cap in spell_cast_keyword_condition_dependencies(value.get(key))}))
 
 
+def _uses_spell_cast_mana_value_limit(condition):
+    if isinstance(condition, (tuple, list)):
+        return any(_uses_spell_cast_mana_value_limit(child) for child in condition)
+    if not isinstance(condition, Mapping):
+        return False
+    return (
+        condition.get("field") == "mana_value" and condition.get("op") == "lte"
+        or any(_uses_spell_cast_mana_value_limit(condition.get(key)) for key in ("all", "any", "not"))
+    )
+
+
+def _validate_spell_cast_mana_value_limit(condition):
+    if isinstance(condition, Mapping) and set(condition) == {"all"}:
+        clauses = condition["all"]
+        if (
+            not isinstance(clauses, (tuple, list)) or len(clauses) != 2
+            or clauses[0] != {"field": "controller", "op": "ne", "value": "$source.controller"}
+        ):
+            raise SpellCastEventError("Mana-value limit requires one ordinary opponent relation")
+        condition = clauses[1]
+    if (
+        not isinstance(condition, Mapping) or set(condition) != {"field", "op", "value"}
+        or (condition["field"], condition["op"]) != ("mana_value", "lte")
+    ):
+        raise SpellCastEventError("Mana-value limit requires its exact inclusive spell predicate")
+    ManaValueLimitSpec(condition["value"])
+
+
 def spell_cast_event_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
-    normalized = "trigger.event.normalized_spell_cast"
     if subscriptions is None:
         if program.event != "spell.cast":
             return ()
-        keywords = spell_cast_keyword_condition_dependencies(program.event_condition)
-        return (normalized, *keywords) if keywords else ()
-    cast_conditions = tuple(child.condition for child in subscriptions.subscriptions if child.event == "spell.cast")
+        cast_conditions = (program.event_condition,)
+    else:
+        cast_conditions = tuple(child.condition for child in subscriptions.subscriptions if child.event == "spell.cast")
     if not cast_conditions:
         return ()
-    return (normalized, *spell_cast_keyword_condition_dependencies(cast_conditions))
+    keywords = spell_cast_keyword_condition_dependencies(cast_conditions)
+    limits = tuple(condition for condition in cast_conditions if _uses_spell_cast_mana_value_limit(condition))
+    if limits:
+        if program.active_zone != "battlefield":
+            raise SpellCastEventError("Mana-value limits require a battlefield source")
+        for condition in limits:
+            _validate_spell_cast_mana_value_limit(condition)
+    if subscriptions is not None or keywords or limits:
+        return ("trigger.event.normalized_spell_cast", *keywords)
+    return ()
 
 
 __all__ = ["SpellCastEvent", "SpellCastEventError", "SpellCopyEvent", "cast_creature_target_controllers"]

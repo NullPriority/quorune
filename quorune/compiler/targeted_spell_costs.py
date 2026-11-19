@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed spell taxes and source-face fixed generic target reductions."""
 
-import re
+from . import regex_working_set as re
 from ..targeted_spell_costs import TargetedSpellCostSpec,TargetedCostSubject,TARGETED_SPELL_COST_HANDLER,TARGETED_SPELL_COST_EVENT,TARGETED_SPELL_COST_CAPABILITY
 from ..rules.source_references import SourceReferenceSpec
 from ..targeted_spell_costs import SELF_TARGET_REDUCTION_CAPABILITY

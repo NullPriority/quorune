@@ -28,9 +28,39 @@ def copy_source_context(host: Any, source: Any, effects: Sequence[Mapping[str, A
     return {COPY_REFERENCE_CONTEXT: {"source": _snapshot(host, source)}}
 
 
+def _attachment_identity(host: Any, item: Any) -> tuple[str, str, str] | None:
+    """Read the canonical relation, keeping the original source incarnation."""
+    from .attachment_references import (
+        ATTACHMENT_INFORMATION_VERSION, AttachmentReferenceKind,
+        AttachmentReferenceSpec, SourceAttachmentSnapshot, resolve_source_attachment,
+    )
+    version = item.context.get(ATTACHMENT_INFORMATION_VERSION)
+    if type(version) is not int or version != 1:
+        raise TokenCopyRecipeError("Enchanted copy requires versioned attachment information")
+    snapshot = SourceAttachmentSnapshot.from_dict(item.context.get("source_attachment_snapshot"))
+    source_id = item.source_object_id or item.card_object_id
+    logical_id = item.context.get("source_logical_object_id")
+    spec = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "creature", schema_version=2)
+    # This validates the source identity even when the referenced creature left.
+    current = resolve_source_attachment(
+        host.state.cards, snapshot.to_dict(), spec,
+        source_object_id=source_id, source_logical_object_id=logical_id,
+    )
+    if current is not None:
+        return current.object_id, current.logical_object_id, "battlefield"
+    source = host.state.cards.get(source_id)
+    if source is not None and source.logical_object_id == logical_id:
+        return None
+    identity = snapshot.attached_object
+    return ((identity.object_id, identity.logical_object_id, "battlefield")
+            if identity is not None else None)
+
+
 def _identity(host: Any, item: Any, origin: str, *, target_index=None) -> tuple[str, str, str] | None:
     if target_index is not None and (origin!='target' or type(target_index) is not int or not 0<=target_index<len(item.targets)):
         raise TokenCopyRecipeError('Copy target index is invalid')
+    if origin == "source_attachment":
+        return _attachment_identity(host, item)
     context = item.context.get(COPY_REFERENCE_CONTEXT)
     key=origin if target_index is None else f'target:{target_index}'
     cached = context.get(key) if isinstance(context, Mapping) else None
@@ -64,8 +94,49 @@ def _identity(host: Any, item: Any, origin: str, *, target_index=None) -> tuple[
     return None
 
 
-def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *, target_index=None) -> Mapping[str, Any]:
+def _cast_spell_token_reference(host, trigger):
+    """Adapt the exact public cast observation to the existing token identity owner."""
+    from .entry_copy import COPIABLE_ORACLE_FIELD
+    from .event_spell_copy_model import CAST_SPELL_TOKEN_ORACLE_CONTEXT, EVENT_SPELL_COPY_CONTEXT
+    from .rules.event_spell_copy import decode_event_spell_copy_source, resolve_event_spell_copy_source
+    from .replacement.immutable import thaw_value
+    from .characteristic_evaluation import type_parts
+
+    occurrence = trigger.context.get("event_context", trigger.context)
+    raw = trigger.context.get(EVENT_SPELL_COPY_CONTEXT)
+    original = decode_event_spell_copy_source(raw)
+    spell = original.item()
+    if (spell.kind != "spell" or not isinstance(occurrence, Mapping)
+            or occurrence.get("stack") != spell.ref
+            or occurrence.get("logical_object_id") != original.logical_object_id
+            or trigger.source_object_id != spell.card_object_id):
+        raise TokenCopyRecipeError("Direct token creation needs the original cast source")
+    resolved = resolve_event_spell_copy_source(host, {"stack": spell.ref, "copy_source": raw})
+    values = thaw_value(resolved.characteristics)
+    types, _subtypes, _supertypes = type_parts(values["type_line"])
+    if (not types.intersection({"artifact","battle","creature","enchantment","planeswalker"})
+            or types.intersection({"instant","sorcery","land"})):
+        raise TokenCopyRecipeError("Direct token creation requires a represented permanent spell")
+    captured_id = trigger.context.get(CAST_SPELL_TOKEN_ORACLE_CONTEXT)
+    oracle_id = values.get(COPIABLE_ORACLE_FIELD, captured_id)
+    name = values.get("name")
+    if (type(captured_id) is not str or not captured_id
+            or type(oracle_id) is not str or not oracle_id or type(name) is not str or not name):
+        raise TokenCopyRecipeError("Cast spell copy requires exact copiable identity values")
+    return {"object_id":spell.card_object_id,"logical_object_id":resolved.logical_object_id,
+            "ref":spell.ref,"zone":"stack",
+            "snapshot":{"oracle_id":oracle_id,"printed_name":name,"characteristics":values,
+                        "annotations":{"copied_from":spell.card_object_id,"copy_overrides":values}}}
+
+
+def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *, target_index=None) -> Mapping[str, Any] | None:
+    if recipe.origin == "event_spell":
+        if target_index is not None:
+            raise TokenCopyRecipeError("The original cast spell is not a selected target")
+        return _cast_spell_token_reference(host,item)
     identity = _identity(host, item, recipe.origin,target_index=target_index)
+    if identity is None and recipe.origin == "source_attachment":
+        return None
     if identity is None:
         raise TokenCopyRecipeError("Copy reference identity is unavailable")
     object_id, logical_object_id, zone = identity
@@ -75,6 +146,9 @@ def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *
     else:
         key=recipe.origin if target_index is None else f'target:{target_index}'
         value = item.context.get(COPY_REFERENCE_CONTEXT, {}).get(key)
+        if recipe.origin == "source_attachment" and isinstance(value, Mapping):
+            if (value.get("object_id"), value.get("logical_object_id"), value.get("zone")) != identity:
+                value = None
         if value is None and recipe.origin == "event_object":
             context = item.context.get("event_context", item.context)
             snapshot = context.get("copiable_snapshot")

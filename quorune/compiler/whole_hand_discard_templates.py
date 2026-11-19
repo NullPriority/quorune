@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete mandatory whole-hand discard instructions and fixed draw tails."""
 
-import re
+from . import regex_working_set as re
 from copy import deepcopy
 from ..whole_hand_discard_model import WHOLE_HAND_DISCARD_OPERATION,WHOLE_HAND_DISCARD_MECHANIC
 from .draw_templates import fixed_draw_effect_template

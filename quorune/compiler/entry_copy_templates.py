@@ -3,7 +3,7 @@ from __future__ import annotations
 """Full-consumption intrinsic copy-entry syntax with no runtime admission."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
     ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY,

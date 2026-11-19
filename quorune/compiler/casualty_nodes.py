@@ -1,5 +1,5 @@
 """Source-spanned fixed Casualty declaration, independently of the spell body."""
-import re
+from . import regex_working_set as re
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..characteristic_evaluation import type_parts
 from ..casualty_model import FixedCasualtySpec, CASUALTY_CAPABILITY, CASUALTY_HANDLER

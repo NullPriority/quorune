@@ -142,13 +142,17 @@ def _trigger_attachment_context(
     from .designation_prevention import capture_designation_information, DESIGNATION_INFORMATION_FIELD
     designation=capture_designation_information(source,program.effects)
     extra={DESIGNATION_INFORMATION_FIELD:designation} if designation is not None else {}
+    from .attachment_source_return import attachment_source_return_context
+    extra.update(attachment_source_return_context(source, program))
     snapshot = _trigger_attachment_snapshot(host, source, program)
     if snapshot is None:
         return {"source_logical_object_id": source.logical_object_id,**extra}
+    from .rules.attachment_controller_information import capture_attachment_controller_context
     return {
         "source_logical_object_id": snapshot.source.logical_object_id,
         "source_attachment_snapshot": snapshot.to_dict(),
         **_versioned_attachment_information(program),
+        **capture_attachment_controller_context(host.state.cards,program,snapshot),
         **extra,
     }
 
@@ -342,9 +346,13 @@ def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
     from .attack_batch_model import ATTACK_BATCH_CONDITION, DECLARED_ATTACK_POWER_FIELD
     from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
+    from .qualified_attack_model import ATTACK_FACT_EQUAL_POWER_TOUGHNESS, declared_attacker_has_equal_power_and_toughness
     from .rules.attacked_player_life import ATTACKED_PLAYER_LIFE_FIELD, attacked_player_life_holds
     from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
     try:
+        if field == 'cast_mana_value_matches_source_counter':
+            from .rules.source_counter_cast_value import SourceCounterCastValueSpec
+            return True,SourceCounterCastValueSpec.from_condition(condition).matches(source,context)
         if field == ATTACKED_PLAYER_LIFE_FIELD:
             return True, attacked_player_life_holds(host, context, source_object_id=source.object_id, controller=source.controller)
         if field==BLOCK_CHARACTERISTIC_CONDITION:
@@ -353,6 +361,8 @@ def _extended_action_condition_actual(host,condition,*,source,context):
         if field==QUALIFIED_SPELL_ORDINAL_FIELD:
             from .rules.spell_history_ordinals import qualified_spell_cast_number
             return True,qualified_spell_cast_number(host.state,condition,context)
+        if field == ATTACK_FACT_EQUAL_POWER_TOUGHNESS:
+            return True, declared_attacker_has_equal_power_and_toughness(context)
         if field==ATTACK_BATCH_CONDITION:
             from .rules.attack_batches import qualified_attack_match_count
             return True,qualified_attack_match_count(source,condition,context)
@@ -943,6 +953,8 @@ def _uses_specialized_stack_spell_cast_owner(program: SemanticProgram) -> bool:
         in {
             SpellCastKeywordTriggerKind.CASCADE,
             SpellCastKeywordTriggerKind.STORM,
+            SpellCastKeywordTriggerKind.COMMANDER_CAST_COPY,
+            SpellCastKeywordTriggerKind.COMMANDER_CAST_COPY_NEW_TARGETS,
         }
         for fragment in fragments_from_descriptors(program.handlers)
     )
@@ -1152,27 +1164,14 @@ def _semantic_trigger_context(
         stack_context["source_transform_count"] = source.transform_count
     if "identity_pinned_exile_cast_choice" in program.coverage:
         stack_context["source_logical_object_id"] = source.logical_object_id
-    source_lki = capture_creature_power_damage_source_lki(
-        host,
-        source,
-        program.effects,
-        characteristics=source_characteristics,
-    )
-    if source_lki is not None:
-        stack_context[CREATURE_POWER_DAMAGE_LKI_CONTEXT] = source_lki
-    from .scalar_effect_amounts import scalar_source_context
-    stack_context.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
-    from .target_source import capture_targeting_source, TARGETING_SOURCE_CONTEXT
-    from .ability_source_information import complete_ability_source_information
-    from .rules.endure_model import ENDURE_CAPABILITY
-    if program.target_schema or complete_ability_source_information(host.state) or ENDURE_CAPABILITY in program.capability_dependencies:
-        stack_context[TARGETING_SOURCE_CONTEXT] = capture_targeting_source(
-            host, source, characteristics=source_characteristics, zone=active_zone,
-        ).to_dict()
-    from .rules.stack_damage_sources import fixed_damage_source_context
-    stack_context.update(fixed_damage_source_context(host, source, (program.effects, program.target_schema), characteristics=source_characteristics))
-    from .token_copy_references import copy_source_context
-    stack_context.update(copy_source_context(host, source, program.effects))
+    if event == "creature.dies":
+        from .event_card_return import DEATH_EXILE_ARRIVALS, DEATH_LAND_EXILE_CAPABILITY
+
+        if DEATH_LAND_EXILE_CAPABILITY not in program.capability_dependencies:
+            stack_context.pop(DEATH_EXILE_ARRIVALS, None)
+    from .rules.trigger_source_information import trigger_result_source_information
+    stack_context.update(trigger_result_source_information(host, source=source, program=program,
+        event=event, stack_context=stack_context, source_characteristics=source_characteristics, active_zone=active_zone))
     return stack_context
 
 

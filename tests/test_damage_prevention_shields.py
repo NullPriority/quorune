@@ -76,6 +76,79 @@ class DamagePreventionShieldTests(DamageReplacementPipelineBase):
         engine.state.damage_prevention_shields.append(value)
         return value
 
+    def test_shield_counter_damage_uses_current_record_version(self):
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        for unpreventable, historical, marked, counters in (
+            (False, False, 0, 0),
+            (True, False, 2, 0),
+            (False, True, 2, 1),
+        ):
+            with self.subTest(unpreventable=unpreventable, historical=historical):
+                engine = self.session(615021).engine
+                source = self.add_permanent(engine, seat="A", name="Mishra, Eminent One", ref="counter-source")
+                target = self.add_permanent(engine, seat="B", name="Zimone and Dina", ref="counter-target")
+                target.counters["shield"] = 1
+                raw = engine.state.to_dict()
+                if historical:
+                    del raw["shield_counter_damage_version"]
+                engine.state = GameState.from_dict(raw)
+                format_value = format_state_versions(engine.state)
+                validate_state_versions({"format": format_value}, engine.state)
+                self.assertEqual(not historical, "shield_counter_damage_version" in engine.state.to_dict())
+                self.assertEqual(not historical, "shield_counter_damage_version" in format_value)
+                for wrong in (True, None, 2, 1 if historical else 0):
+                    with self.assertRaisesRegex(ValueError, "shield counter damage|Shield counter damage"):
+                        validate_state_versions({"format": {**format_value, "shield_counter_damage_version": wrong}}, engine.state)
+                proposal = self.proposal(engine, source=source, target=target, amount=2, unpreventable=unpreventable)
+                before = authoritative_state_hash(engine.state)
+                prepared = prepare_damage_batch(engine, (proposal,))
+                self.assertEqual(before, authoritative_state_hash(engine.state))
+                commit_prepared_damage_batch(engine, prepared)
+                current = engine.state.cards[target.object_id]
+                self.assertEqual((marked, counters), (current.marked_damage, current.counters.get("shield", 0)))
+
+    def test_shield_counter_batch_spends_one_and_rejects_drift(self):
+        engine = self.session(615022).engine
+        source = self.add_permanent(engine, seat="A", name="Mishra, Eminent One", ref="batch-source")
+        target = self.add_permanent(engine, seat="B", name="Zimone and Dina", ref="batch-target")
+        target.counters["shield"] = 2
+        proposals = tuple(self.proposal(engine, source=source, target=target, amount=1, event_id=f"shield:batch:{i}")
+                          for i in range(2))
+        prepared = prepare_damage_batch(engine, proposals)
+        self.assertEqual([0, 0], [event.payload["amount"] for event in prepared.events])
+        self.assertEqual(2, target.counters["shield"])
+        target.counters["shield"] = 3
+        before = authoritative_state_hash(engine.state)
+        with self.assertRaisesRegex(DamageError, "shield counters changed"):
+            commit_prepared_damage_batch(engine, prepared)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        target.counters["shield"] = 2
+        commit_prepared_damage_batch(engine, prepared)
+        self.assertEqual(1, target.counters["shield"])
+        self.assertEqual(0, target.marked_damage)
+        commit_prepared_damage_batch(engine, prepare_damage_batch(engine, (self.proposal(
+            engine, source=source, target=target, amount=0),)))
+        self.assertEqual(1, target.counters["shield"])
+
+    def test_finite_prevention_can_be_ordered_ahead_of_permanent_shield_counter(self):
+        engine = self.session(615023, players=4).engine
+        source = self.add_permanent(engine, seat="A", name="Mishra, Eminent One", ref="ordering-source")
+        target = self.add_permanent(engine, seat="B", name="Zimone and Dina", ref="ordering-target")
+        target.counters["shield"] = 1
+        finite = self.shield(engine, subject="*", remaining=3)
+        proposal = self.proposal(engine, source=source, target=target, amount=2)
+        before = authoritative_state_hash(engine.state)
+        with self.assertRaises(ReplacementChoiceRequired) as caught:
+            prepare_damage_batch(engine, (proposal,))
+        self.assertEqual("B", caught.exception.pending.choice.chooser)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        prepared = prepare_damage_batch(engine, (proposal,), selections=(finite.effect_id,))
+        commit_prepared_damage_batch(engine, prepared)
+        self.assertEqual(0, target.marked_damage)
+        self.assertEqual(1, target.counters["shield"])
+        self.assertEqual(1, engine.state.damage_prevention_shields[0].remaining)
+
     def test_amount_shield_is_prepared_without_mutation_then_consumed(self):
         engine = self.session(615001).engine
         source = self.add_permanent(

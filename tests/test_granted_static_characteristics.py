@@ -69,7 +69,8 @@ class GrantedStaticCharacteristicModelTests(unittest.TestCase):
             printed_name='Generic Equipment Source', owner='A', controller='A', zone='battlefield')
         instances = _continuous_program_instances(semantics, source, (child,), lambda source:(('child',3),('child',5)))
         self.assertEqual(((child,3,0),(child,5,1)), instances)
-        legacy=replace_namespace(child,ability_id='static:front:n4:role:1',coverage=())
+        legacy=replace_namespace(child, ability_id='static:front:n4:role:1', coverage=(),
+            cost_schema=None, target_schema=None)
         self.assertEqual(((legacy,None,None),),_continuous_program_instances(semantics,source,(legacy,),lambda source:()))
         from quorune.rules.keyword_runtime_requirements import keyword_runtime_dependencies
         self.assertNotIn(CAPABILITY,keyword_runtime_dependencies(legacy))

@@ -28,6 +28,17 @@ class RuntimeComponentHandler(Protocol):
     ) -> tuple[Any, ...]: ...
 
 
+def _describe_handler(handler: RuntimeComponentHandler) -> dict[str, Any]:
+    return {
+        "handler_id": handler.handler_id,
+        "schema_version": handler.schema_version,
+        "family": handler.family,
+        "event": handler.event,
+        "rule_references": list(handler.rule_references),
+        "capability_dependencies": list(handler.capability_dependencies),
+    }
+
+
 ContextT = TypeVar("ContextT")
 IntentT = TypeVar("IntentT")
 
@@ -119,31 +130,16 @@ class RuntimeComponentRegistry(Generic[ContextT, IntentT]):
 
     def inventory(self) -> list[dict[str, Any]]:
         return [
-            {
-                "handler_id": handler.handler_id,
-                "schema_version": handler.schema_version,
-                "family": handler.family,
-                "event": handler.event,
-                "rule_references": list(handler.rule_references),
-                "capability_dependencies": list(
-                    handler.capability_dependencies
-                ),
-            }
-            for handler in (
-                self._handlers[handler_id]
-                for handler_id in sorted(self._handlers)
-            )
+            _describe_handler(self._handlers[handler_id])
+            for handler_id in sorted(self._handlers)
         ]
 
     def describe(self, handler_id: str) -> dict[str, Any] | None:
-        return next(
-            (
-                descriptor
-                for descriptor in self.inventory()
-                if descriptor["handler_id"] == handler_id
-            ),
-            None,
-        )
+        for registered_id in sorted(self._handlers):
+            handler = self._handlers[registered_id]
+            if handler.handler_id == handler_id:
+                return _describe_handler(handler)
+        return None
 
     @property
     def fingerprint(self) -> str:

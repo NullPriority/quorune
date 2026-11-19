@@ -51,6 +51,9 @@ def _single_hand_query_is_closed(query: ObjectQuerySpec) -> bool:
 def decode_hand_entry_queries(value: Mapping[str, Any]) -> tuple[ObjectQuerySpec, ...]:
     if not isinstance(value, Mapping):
         raise ValueError('Hand entry query must be an object')
+    from .rules.permanent_subtype_hand_queries import PERMANENT_SUBTYPE_HAND_KIND, decode_permanent_subtype_hand_query
+    if value.get('kind')==PERMANENT_SUBTYPE_HAND_KIND:
+        return (decode_permanent_subtype_hand_query(value),)
     if value.get('kind') == HISTORIC_QUERY_KIND:
         if (
             set(value) != {'kind', 'schema_version', 'alternatives'}
@@ -71,3 +74,13 @@ def decode_hand_entry_queries(value: Mapping[str, Any]) -> tuple[ObjectQuerySpec
 
 def hand_entry_matches(row, queries: tuple[ObjectQuerySpec, ...]) -> bool:
     return any(object_matches_query(row, query) for query in queries)
+
+
+def hand_entry_query_capabilities(value):
+    from .rules.permanent_subtype_hand_queries import (
+        PERMANENT_SUBTYPE_HAND_KIND, PERMANENT_SUBTYPE_HAND_CAPABILITY, decode_permanent_subtype_hand_query,
+    )
+    if isinstance(value,Mapping) and value.get('kind')==PERMANENT_SUBTYPE_HAND_KIND:
+        decode_permanent_subtype_hand_query(value)
+        return (PERMANENT_SUBTYPE_HAND_CAPABILITY,)
+    return ()

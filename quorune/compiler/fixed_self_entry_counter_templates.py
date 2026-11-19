@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle lowering for mandatory fixed self-entry counters."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..entry_counter_model import (

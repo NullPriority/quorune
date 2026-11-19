@@ -48,6 +48,19 @@ class GainControlIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class GainSpellControlIntent:
+    actor: str
+    object_ref: str
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        _validate_control(self.actor, self.actor, ContinuousEffectDuration.ZONE_OBJECT, self.source, self.reason)
+        if type(self.object_ref) is not str or not self.object_ref:
+            raise ValueError("Spell control requires one current public stack reference")
+
+
+@dataclass(frozen=True, slots=True)
 class GainControlSetIntent:
     actor: str
     predicate: ObjectQuerySpec
@@ -119,4 +132,4 @@ class RestoreOwnerControlIntent:
         if not isinstance(self.spec,OwnerControlSpec):raise ValueError('Owner control requires its typed scope')
 
 
-ControlIntent = GainControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent
+ControlIntent = GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent

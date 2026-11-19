@@ -143,12 +143,14 @@ def prepare_resolving_entry_replacement(
         )
         from .entry_copy import restore_prepared_copy_entry
         retained = item.context.get('copied_aura_prepared_entry')
+        from .rules.death_cast_permissions import qualified_death_entry_counters
         prepared = prepare_zone_change_replacement(
             host,
             entry_card,
             entry_destination,
             destination_controller=item.controller,
             entry_characteristics=entry_characteristics,
+            effect_entry_counters=qualified_death_entry_counters(host,item),
             self_entry_counter_amounts=(
                 frozen_amounts if frozen_amounts else None
             ),

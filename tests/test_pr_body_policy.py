@@ -323,6 +323,20 @@ class PullRequestBodyPolicyTests(unittest.TestCase):
         )
         self.assertNotIn("missing-finalizer", self.codes(finalized))
 
+        generator_row = "- Generators run: N/A — no generated source or output changed."
+        for commands, complete in (
+            ("python scripts/finalize_generated.py --assemble", False),
+            ("python scripts/cloud_generated_artifacts.py install-bundle", False),
+            (
+                "python scripts/finalize_generated.py --assemble and "
+                "python scripts/cloud_generated_artifacts.py install-bundle",
+                True,
+            ),
+        ):
+            with self.subTest(commands=commands):
+                cloud = claimed.replace(generator_row, "- Generators run: " + commands)
+                self.assertEqual(not complete, "missing-finalizer" in self.codes(cloud))
+
     def test_pr_evidence_reconciles_cardprogram_and_architecture_deltas(self) -> None:
         catalog = json.loads(
             (ROOT / "platform" / "rules-subsystems.json").read_text(

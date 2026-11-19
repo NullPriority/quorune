@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile both source-bound Overload bodies before admitting either one."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import asdict
 from ..overload_model import (
     FixedManaOverloadSpec, OVERLOAD_CAPABILITY, OVERLOAD_FIELD, OVERLOAD_BOUNDARY,

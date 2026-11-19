@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle lowering for one ordinary fixed Bolster instruction."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number

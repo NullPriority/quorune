@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..object_predicate import ObjectQuerySpec
@@ -11,6 +11,8 @@ from ..type_subtype_vocabulary import MOUNT_VEHICLE_SUBTYPES
 _COLORS = {'white': 'W', 'blue': 'U', 'black': 'B', 'red': 'R', 'green': 'G'}
 _LANDS = {'plains': 'plains', 'islands': 'island', 'swamps': 'swamp',
           'mountains': 'mountain', 'forests': 'forest'}
+_PERMANENT_TYPE_PLURALS = {kind + 's': kind for kind in (
+    'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker')}
 _MOUNT_VEHICLE_RECEIVERS = re.compile(
     r'(?P<other>other )?(?:mounts (?:and|and/or) vehicles|mount or vehicle) you control'
 )
@@ -38,6 +40,9 @@ def fixed_receiver_union_subject(subject: str) -> tuple[str, ObjectQuerySpec, bo
     """Parse a flat union with shared or explicitly repeated controller scope."""
     text = ' '.join(subject.casefold().split())
     text = text.removeprefix('each ')
+    listed = _fixed_card_type_list_subject(text)
+    if listed is not None:
+        return listed
     mixed = _MOUNT_VEHICLE_RECEIVERS.fullmatch(text)
     if mixed is not None:
         return ('source_controller', ObjectQuerySpec(zones=('battlefield',), subtypes_any=MOUNT_VEHICLE_SUBTYPES),
@@ -70,6 +75,25 @@ def fixed_receiver_union_subject(subject: str) -> tuple[str, ObjectQuerySpec, bo
     if len(set(leaves)) != len(leaves):
         return None
     return relation, ObjectQuerySpec(zones=('battlefield',), any_of=tuple(leaves)), global_other
+
+
+def _fixed_card_type_list_subject(text: str) -> tuple[str, ObjectQuerySpec, bool] | None:
+    """Keep three/four listed card types in one shared public receiver scope."""
+    noun = '(?:' + '|'.join(_PERMANENT_TYPE_PLURALS) + ')'
+    match = re.fullmatch(
+        rf'(?P<other>other )?(?P<body>{noun}(?:, {noun}){{1,2}}, and {noun})'
+        r'(?P<controlled> you control)?', text,
+    )
+    if match is None:
+        return None
+    parts = match['body'].replace(', and ', ', ').split(', ')
+    if len(set(parts)) != len(parts):
+        return None
+    query = ObjectQuerySpec(zones=('battlefield',), any_of=tuple(
+        ObjectQuerySpec(zones=('battlefield',), types_all=(_PERMANENT_TYPE_PLURALS[part],))
+        for part in parts
+    ))
+    return ('source_controller' if match['controlled'] else 'any', query, bool(match['other']))
 
 
 def characteristic_quantity_union(text: str, *, zone: str) -> ObjectQuerySpec | None:

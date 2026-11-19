@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..public_alternative_costs import FixedPublicAlternativeCondition, FixedPublicAlternativeConditionKind
 

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from ..block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
+from ..phasing_model import (PHASE_OUT_CAPABILITY, PHASE_OUT_OPERATION,
+                            PHASING_CAPABILITY, validate_phase_out_effect)
 from .event_subscriptions import FixedEventSubscriptionSet
 from .tap_state_capability_shapes import event_next_untap_node_capabilities
 
@@ -30,6 +32,54 @@ def _permanent_occurrence_subscriptions(program):
     return True
 
 
+_PHASE_OUT_CREATURE = {"zones": ["battlefield"], "categories": ["permanent"],
+                       "count": 1, "types_any": ["creature"]}
+
+
+def phase_out_node_capabilities(effects, target_schema):
+    if len(effects) != 1:
+        return ()
+    effect = effects[0]
+    try:
+        subject = validate_phase_out_effect(effect)
+    except ValueError:
+        return ()
+    required = (PHASE_OUT_CAPABILITY, PHASING_CAPABILITY)
+    if subject == "source":
+        return required if target_schema is None else ()
+    if (effect["card"] != "$target.0" or not isinstance(target_schema, Mapping)
+            or type(target_schema.get("count")) is not int):
+        return ()
+    from ..replacement.immutable import FrozenMap
+    allowed = (_PHASE_OUT_CREATURE, {**_PHASE_OUT_CREATURE, "controller_relation": "you"},
+               {**_PHASE_OUT_CREATURE, "types_any": ["artifact", "creature", "land"]})
+    if not any(FrozenMap(target_schema) == FrozenMap(schema) for schema in allowed):
+        return ()
+    from .permanent_predicate_capability_shapes import direct_target_predicate_capabilities
+    return (*required, "target.revalidate_resolution", *direct_target_predicate_capabilities(target_schema))
+
+
+def phase_out_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effect_operations
+    if PHASE_OUT_OPERATION not in nested_effect_operations(program.effects):
+        return ()
+    required = phase_out_node_capabilities(program.effects, program.target_schema)
+    if (not required or program.active_zone not in ("battlefield", "stack")
+            or (program.effects[0]["subject"] == "source" and program.active_zone != "battlefield")):
+        raise ValueError("Phase out requires one complete battlefield-source or single-target result")
+    return required
+
+
+def is_closed_phase_out_program(program):
+    if len(program.effects) != 1 or program.effects[0].get("op") != PHASE_OUT_OPERATION:
+        return False
+    try:
+        required = phase_out_runtime_dependencies(program)
+    except ValueError:
+        return False
+    return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
 def occurrence_object_runtime_dependencies(program):
     from .attachment_action_capability_shapes import targeted_equipment_attachment_runtime_dependencies
     from .attachment_actions import entry_equipment_attachment_runtime_dependencies
@@ -41,6 +91,8 @@ def occurrence_object_runtime_dependencies(program):
         return required
     from .creature_power_damage_capability_shapes import occurrence_power_damage_runtime_dependencies
     if required := occurrence_power_damage_runtime_dependencies(program):
+        return required
+    if required := phase_out_runtime_dependencies(program):
         return required
     from .combat_removal_shapes import combat_removal_runtime_dependencies
     combat_removal = combat_removal_runtime_dependencies(program)
@@ -104,10 +156,10 @@ def occurrence_object_runtime_dependencies(program):
         for e in program.effects for field in ('target','player'))
     if controller:
         if program.event == 'creature.attacks':
-            from .event_player_result_shapes import attached_combat_controller_runtime_dependencies
-            required = attached_combat_controller_runtime_dependencies(program)
+            from .event_player_result_shapes import attack_occurrence_controller_runtime_dependencies
+            required = attack_occurrence_controller_runtime_dependencies(program)
             if not required:
-                raise ValueError('Attached combat controller information requires a closed life instruction')
+                raise ValueError('Attack controller information requires a closed life instruction')
             return required
         if program.event == 'creature.blocks':
             from .event_player_result_shapes import blocking_controller_runtime_dependencies
@@ -133,6 +185,9 @@ def occurrence_object_runtime_dependencies(program):
         return required
     if not contains(program.effects):return ()
     if program.event=='creature.attacks':
+        from .referenced_damage_shapes import referenced_damage_node_capabilities,referenced_damage_runtime_dependencies
+        if referenced_damage_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=('cr-120-damage',)):
+            return referenced_damage_runtime_dependencies(program)
         from .attack_event_results import attack_event_characteristic_capabilities
         required=attack_event_characteristic_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
         if not required:raise ValueError('Attack occurrence characteristics require one closed untargeted result')

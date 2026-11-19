@@ -78,50 +78,39 @@ def compiled_static_ability_fragments(
     from .card_program_faces import current_shared_type_doors, room_program_face_is_active
     doors = current_shared_type_doors(card)
     fragments: list[StaticAbilityFragment] = []
-    programs_by_key = {
-        program.key: program
-        for program in host.semantics.runtime_handler_programs_for_oracle(
-            record.oracle_id,
-            active_zone="battlefield",
-            event="continuous",
+    semantics = host.semantics
+    programs_by_key = {}
+    if getattr(semantics, "runtime_handler_compatibility_enabled", True):
+        programs_by_key = {
+            program.key: program
+            for program in semantics.runtime_handler_programs_for_oracle(
+                record.oracle_id,
+                active_zone="battlefield",
+                event="continuous",
+            )
+        }
+        programs_by_key.update(
+            {
+                program.key: program
+                for program in semantics.runtime_handler_programs_for_oracle(
+                    record.oracle_id,
+                    active_zone="battlefield",
+                    event="characteristics.evaluate",
+                )
+                if program.handlers
+            }
         )
-    }
-    programs_by_key.update(
-        {
-            program.key: program
-            for program in host.semantics.runtime_handler_programs_for_oracle(
-                record.oracle_id,
-                active_zone="battlefield",
-                event="characteristics.evaluate",
-            )
-            if program.handlers
-        }
-    )
-    programs_by_key.update(
-        {
-            program.key: program
-            for program in host.semantics.programs_for_oracle(
-                record.oracle_id,
-                active_zone="battlefield",
-            )
-            if program.handlers
-            or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
-        }
-    )
-    programs_by_key.update(
-        {
-            program.key: program
-            for program in host.semantics.programs_for_oracle(
-                record.oracle_id,
-                active_zone="all",
-            )
-            if program.handlers
-            or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
-        }
-    )
-    if card.zone=='graveyard':
+    for zone in ("battlefield", "all"):
+        programs_by_key.update(
+            {
+                program.key: program
+                for program in semantics.programs_for_oracle(record.oracle_id, active_zone=zone)
+                if program.handlers or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
+            }
+        )
+    if card.zone in {'graveyard','stack'}:
         programs_by_key.update({program.key:program for program in host.semantics.programs_for_oracle(
-            record.oracle_id,active_zone='graveyard') if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage})
+            record.oracle_id,active_zone=card.zone) if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage})
     for program in (
         programs_by_key[key] for key in sorted(programs_by_key)
     ):

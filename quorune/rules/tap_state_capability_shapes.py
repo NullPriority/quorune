@@ -13,6 +13,11 @@ from ..damage_recipient_model import DAMAGE_PERMANENT_CAPABILITY, DAMAGE_PERMANE
 from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
 from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
 from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
+from ..next_player_untap_model import (
+    decode_next_player_untap_instruction, is_next_player_untap_instruction,
+    next_player_untap_target_schema,
+)
+from .effect_shape_walkers import nested_effects
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
@@ -55,6 +60,30 @@ def event_next_untap_node_capabilities(*, effects, target_schema, mechanic_ids):
     return ('permanent.tap.effect', 'untap.step.prohibit_next_controller', binding)
 
 
+def _next_player_untap_capabilities(effect, target_schema, mechanics):
+    try:
+        instruction = decode_next_player_untap_instruction(effect)
+    except (TypeError, ValueError, KeyError):
+        return ()
+    if (not {"tap-and-untap", "cr-115-targets"} <= mechanics or instruction.player != "$target.0"
+            or not isinstance(target_schema, Mapping) or type(target_schema.get("count")) is not int
+            or target_schema != next_player_untap_target_schema(instruction.scope)):
+        return ()
+    return ("untap.step.prohibit_next_controller", "target.revalidate_resolution")
+
+
+def untap_runtime_dependencies(program):
+    required = target_set_next_untap_dependencies(program.effects)
+    if not any(is_next_player_untap_instruction(effect) for effect in nested_effects(program.effects)):
+        return required
+    next_step = (targeted_tap_state_node_capabilities(effects=program.effects,
+        target_schema=program.target_schema, mechanic_ids=program.coverage)
+        if len(program.effects) == 1 and is_next_player_untap_instruction(program.effects[0]) else ())
+    if not next_step or (program.event, program.active_zone) != ("resolve", "stack"):
+        raise ValueError("A next-player untap restriction requires the exact resolving spell and player target")
+    return tuple(sorted({*required, *next_step}))
+
+
 def targeted_tap_state_node_capabilities(
     *,
     effects: Sequence[Mapping[str, object]],
@@ -74,6 +103,8 @@ def targeted_tap_state_node_capabilities(
                 *direct_target_predicate_capabilities(target_schema), 'target.revalidate_resolution')
     if "tap-and-untap" not in mechanics or len(effects) != 1:
         return ()
+    if is_next_player_untap_instruction(effects[0]):
+        return _next_player_untap_capabilities(effects[0], target_schema, mechanics)
     try:
         effect, restraint = split_source_tap_untap_restraint(effects[0])
     except ValueError:

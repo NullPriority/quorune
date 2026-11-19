@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass
 from typing import Any, Mapping
+from .attached_destruction_sets import AttachedDestructionEffectTemplate, attached_destruction_set_template
 
 from ..affected_permanents import (
     AffectedPermanentSetSpec,
@@ -375,7 +376,9 @@ def fixed_affected_permanent_query(
 
 def mass_destruction_effect_template(
     text: str,
-) -> MassDestructionEffectTemplate | None:
+) -> MassDestructionEffectTemplate | AttachedDestructionEffectTemplate | None:
+    if attached := attached_destruction_set_template(text):
+        return attached
     split = _split_regeneration_prohibition(text)
     if split is None:
         return None
@@ -430,7 +433,7 @@ def mass_destruction_effect_template(
 
 def destruction_effect_template(
     text: str,
-) -> MassDestructionEffectTemplate | TargetedDestructionEffectTemplate | None:
+) -> MassDestructionEffectTemplate | AttachedDestructionEffectTemplate | TargetedDestructionEffectTemplate | None:
     """Lower the closed targeted or fixed-set destruction grammar."""
 
     return (

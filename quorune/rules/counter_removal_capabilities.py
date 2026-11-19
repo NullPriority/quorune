@@ -64,6 +64,11 @@ def all_counter_removal_node_capabilities(
     """Return capabilities only for one direct all-counter removal."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (len(effects) == 1 and (effects[0].get('schema_version') == 3
+            or isinstance(target_schema, Mapping) and 'up_to' in target_schema)):
+        from .target_all_counter_removal import target_all_counter_variant_capabilities
+        return target_all_counter_variant_capabilities(effects=effects, target_schema=target_schema,
+            mechanic_ids=mechanics)
     if len(effects) == 1 and 'cr-122-counters' in mechanics and target_schema is None:
         from ..counter_names import normalized_counter_name
         effect = effects[0]

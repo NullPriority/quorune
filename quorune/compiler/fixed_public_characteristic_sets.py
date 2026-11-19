@@ -3,7 +3,7 @@ from __future__ import annotations
 """Fixed resolution-locked public characteristic-set grammar."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec

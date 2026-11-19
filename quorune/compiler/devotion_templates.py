@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed static devotion adjustments and existing current-quantity grammar."""
 
-import re
+from . import regex_working_set as re
 
 from ..devotion import DEVOTION_CAPABILITY, DEVOTION_EVENT, DEVOTION_MODIFIER_HANDLER
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle lowering for legacy upkeep self-transform triggers."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.capabilities import CapabilityRegistry

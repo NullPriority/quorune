@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for fixed power and toughness multipliers."""
 
-import re
+from . import regex_working_set as re
 
 from ..attachment_references import AttachmentReferenceKind
 from ..creature_subtypes import canonical_creature_subtype_surface

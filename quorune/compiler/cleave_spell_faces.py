@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Derive ordinary and bracket-removed Cleave bodies at the compiler boundary."""
 
-import re
+from . import regex_working_set as re
 from .ir_model import OracleNode, append_residual
 from .paired_spell_faces import paired_spell_face
 from ..cleave_model import FixedManaCleaveSpec

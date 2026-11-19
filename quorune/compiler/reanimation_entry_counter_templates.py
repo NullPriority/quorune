@@ -1,6 +1,6 @@
 """Compose fixed entry counters with the existing exact targeted return."""
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from .fixed_numbers import FIXED_COUNT_PATTERN,fixed_number
 from .reanimation_templates import (
     FixedTargetReanimationTemplate, fixed_target_reanimation_effect_template, relative_target_reanimation_template,

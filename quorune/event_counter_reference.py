@@ -40,8 +40,14 @@ def event_counter_recipient_context(program,event,context):
         if isinstance(value,(list,tuple)):return any(contains(v) for v in value)
         return value in (EVENT_COUNTER_OBJECT,'$event.permanent_object')
     if not contains(program.effects):return {}
+    return {EVENT_COUNTER_CONTEXT:event_object_identity(event,context)}
+
+
+def event_object_identity(event,context):
+    """Seal the existing single public occurrence without a result-family dependency."""
     reference=context.get('card');identity=None
-    if event=='damage.dealt':identity=context.get('source_logical_object_id')
+    if event in {'creature.enter','permanent.enter'}:identity=context.get('card_object_identity')
+    elif event=='damage.dealt':identity=context.get('source_logical_object_id')
     elif event in {'damage.received','combat.damage.received'}:
         if context.get('target_kind')!='permanent':raise ValueError('Received event object must be a permanent')
         identity=context.get('target_logical_object_id')
@@ -61,7 +67,7 @@ def event_counter_recipient_context(program,event,context):
         identity = participant.logical_object_id if participant is not None else None
     if type(reference) is not str or not reference or type(identity) is not str or not identity:
         raise ValueError('Counter event recipient has no sealed public incarnation')
-    return {EVENT_COUNTER_CONTEXT:{'reference':reference,'logical_object_id':identity}}
+    return {'reference':reference,'logical_object_id':identity}
 
 
 def _resolve_public_incarnation(host,value):

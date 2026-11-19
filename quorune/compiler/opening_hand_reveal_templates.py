@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..opening_reveal_model import OpeningRevealSpec,OPENING_REVEAL_CAPABILITY,OPENING_REVEAL_HANDLER
 from ..replacement.immutable import FrozenMap
 from ..rules.source_references import SourceReferenceSpec

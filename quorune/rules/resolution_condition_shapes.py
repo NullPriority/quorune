@@ -31,6 +31,30 @@ def _same_target_result_closed(effects):
         and all(effect.get('card')=='$target.0' for effect in effects))
 
 
+def _same_target_condition_branches_closed(wrapper, conditional, otherwise, target_schema):
+    if wrapper.get("schema_version") == 8:
+        from ..public_replacement_model import public_replacement_target_closed
+        from ..replacement.immutable import thaw_value
+
+        return thaw_value(wrapper["target_binding"]) == thaw_value(target_schema) and all(
+            public_replacement_target_closed(branch, target_schema) for branch in (conditional, otherwise)
+        )
+    if wrapper.get("schema_version") == 5:
+        from ..compiler.bound_effect_programs import BOUND_EFFECT_PROGRAM_MECHANIC, CLOSED_EFFECT_PROGRAM_MECHANIC
+        from ..compiler.direct_target import DirectPermanentTargetSpec
+
+        schema = DirectPermanentTargetSpec(types_any=("creature",)).to_target_schema()
+        ordered = {BOUND_EFFECT_PROGRAM_MECHANIC, CLOSED_EFFECT_PROGRAM_MECHANIC}
+        scoped = all(ordered <= set(wrapper[field]) for field in ("mechanic_ids", "otherwise_mechanic_ids"))
+        if target_schema == schema and scoped and all(
+            len(branch) == 2 and branch[0] == {"op": "untap", "card": "$target.0"}
+            and branch[1].get("op") == "modify_stats_until_end_of_turn" and branch[1].get("card") == "$target.0"
+            for branch in (conditional, otherwise)
+        ):
+            return True
+    return _same_target_result_closed(conditional) and _same_target_result_closed(otherwise)
+
+
 def resolution_condition_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
@@ -38,6 +62,10 @@ def resolution_condition_node_capabilities(
     cost_schema: Mapping[str, Any] | None = None,
 ) -> tuple[str, ...]:
     from .capabilities import capability_dependencies_for_node
+
+    if effects and effects[-1].get('op')==RESOLUTION_CONDITION_OPERATION and effects[-1].get('schema_version')==18:
+        from .paid_alternative_cast_facts import paid_alternative_result_capabilities
+        return paid_alternative_result_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 
     if effects and effects[-1].get('schema_version') == 17:
         from .target_replacements import current_target_replacement_capabilities
@@ -85,13 +113,9 @@ def resolution_condition_node_capabilities(
     ):
         return ()
     if same_target:
-        from ..public_replacement_model import public_replacement_target_closed
-        from ..replacement.immutable import thaw_value
-        if wrapper.get('schema_version')==8 and thaw_value(wrapper['target_binding'])!=thaw_value(target_schema):return ()
-        closed=lambda value:public_replacement_target_closed(value,target_schema) if wrapper.get('schema_version')==8 else _same_target_result_closed(value)
         if (prefix or target_schema is None or type(target_schema.get('count')) is not int
-                or target_schema['count']!=1 or not closed(conditional)
-                or not closed(otherwise)):
+                or target_schema['count']!=1
+                or not _same_target_condition_branches_closed(wrapper, conditional, otherwise, target_schema)):
             return ()
     elif _contains_target_reference(conditional) or _contains_target_reference(otherwise):
         return ()
@@ -165,6 +189,9 @@ def resolution_condition_node_capabilities(
 
 
 def bound_resolution_condition_runtime_dependencies(program):
+    from .paid_alternative_cast_facts import paid_alternative_program_dependencies
+    paid_alternative=paid_alternative_program_dependencies(program)
+    if paid_alternative:return paid_alternative
     if any(effect.get('op') == RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') == 17
            for effect in program.effects):
         from .target_replacements import current_target_replacement_capabilities

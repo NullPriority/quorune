@@ -57,7 +57,18 @@ class StaticCastCondition(StrEnum):
     SOURCE_CONTROLLER_TURN = "source_controller_turn"
     SOURCE_TAPPED = "source_tapped"
     OPPONENT_CAST_SPELL_THIS_TURN = "opponent_cast_spell_this_turn"
+    PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN = "player_attacked_with_creature_this_turn"
     OPPONENT_END_STEP = "opponent_end_step"
+    CASTER_LAND_MANA_VALUE_LIMIT = "caster_land_mana_value_limit"
+    NONCREATURE_MANA_VALUE_AT_LEAST_FOUR = "noncreature_mana_value_at_least_four"
+    NONCREATURE_MANA_COST_HAS_X = "noncreature_mana_cost_has_x"
+
+
+_MANA_VALUE_CAST_CONDITIONS = frozenset({
+    StaticCastCondition.CASTER_LAND_MANA_VALUE_LIMIT,
+    StaticCastCondition.NONCREATURE_MANA_VALUE_AT_LEAST_FOUR,
+    StaticCastCondition.NONCREATURE_MANA_COST_HAS_X,
+})
 
 
 @dataclass(frozen=True, slots=True)
@@ -185,6 +196,11 @@ class StaticCastRuleHandler:
             raise SemanticNodeError("Only cast prohibitions use a chosen name")
         if descriptor["affects_abilities"] and kind is not StaticCastRuleKind.UNCOUNTERABLE:
             raise SemanticNodeError("Only uncounterable rules may affect abilities")
+        if condition is StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN and (
+            kind is not StaticCastRuleKind.CAST_PROHIBITION or scope is not StaticCastPlayerScope.SOURCE_OPPONENTS
+            or queries != (ObjectQuerySpec(excluded_types=('land',)),) or zones or descriptor['chosen_name']
+        ):
+            raise SemanticNodeError('Attack history requires an all-spell prohibition for the source opponents')
         if restriction is not None:
             expected_kind = (StaticCastRuleKind.CAST_LIMIT if restriction.kind is StaticPlayerRestrictionKind.NONARTIFACT_LIMIT
                 else StaticCastRuleKind.CAST_PROHIBITION)
@@ -208,6 +224,18 @@ class StaticCastRuleHandler:
                 raise SemanticNodeError(
                     "Only static timing permissions use an Enchant restriction"
                 )
+        if condition in _MANA_VALUE_CAST_CONDITIONS:
+            expected_scope = (
+                StaticCastPlayerScope.SOURCE_OPPONENTS
+                if condition is StaticCastCondition.CASTER_LAND_MANA_VALUE_LIMIT
+                else StaticCastPlayerScope.ALL_PLAYERS
+            )
+            if (
+                kind is not StaticCastRuleKind.CAST_PROHIBITION or scope is not expected_scope
+                or queries != (ObjectQuerySpec(excluded_types=("creature", "land")),)
+                or zones or descriptor["chosen_name"] or required_enchant_spec is not None or restriction is not None
+            ):
+                raise SemanticNodeError("Mana-value cast conditions require their exact noncreature prohibitions")
         return {
             "kind": kind,
             "scope": scope,
@@ -320,6 +348,8 @@ class StaticCastRuleHost(Protocol):
 
     def _type_parts(self, value: str) -> tuple[set[str], set[str], set[str]]: ...
 
+    def _public_object_query_result(self, card: Any) -> ObjectQueryResult: ...
+
     def _current_turn_history(self, kind: str) -> Sequence[Any]: ...
 
     def card_record(self, card: Any) -> Any: ...
@@ -423,7 +453,10 @@ def _scope_applies(rule: StaticCastRule, player: str) -> bool:
     return player != rule.source_controller
 
 
-def _condition_applies(host: StaticCastRuleHost, rule: StaticCastRule) -> bool:
+def _condition_applies(host: StaticCastRuleHost, rule: StaticCastRule, *, player: str | None = None) -> bool:
+    if rule.condition in _MANA_VALUE_CAST_CONDITIONS:
+        # These conditions use the selected spell mana cost.
+        return False
     if rule.condition is StaticCastCondition.ALWAYS:
         return True
     if rule.condition is StaticCastCondition.COMBAT:
@@ -432,6 +465,9 @@ def _condition_applies(host: StaticCastRuleHost, rule: StaticCastRule) -> bool:
         return host.state.active_player == rule.source_controller
     if rule.condition is StaticCastCondition.SOURCE_TAPPED:
         return rule.source_tapped
+    if rule.condition is StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN:
+        return player is not None and any(
+            event.actor == player for event in host._current_turn_history('creature_attacked'))
     if rule.condition is StaticCastCondition.OPPONENT_END_STEP:
         return bool(
             host.state.step == "end_step"
@@ -533,25 +569,77 @@ def static_cast_timing_permissions(
     )
 
 
+def _static_cast_maximum_x(host, rules, player, card, face):
+    scoped = tuple(rule for rule in rules if rule.condition in _MANA_VALUE_CAST_CONDITIONS and _scope_applies(rule, player))
+    if not scoped:
+        return None
+    row = spell_query_result(host, card, face=face, casting_player=player)
+    conditions = {rule.condition for rule in scoped if _rule_matches_spell(rule, row, spell_name=row.printed_name)}
+    if not conditions:
+        return None
+
+    from ..rules.casting.face_queries import current_printed_cast_mana_cost
+    from ..selection.exile_cast import mana_value_of_cost
+
+    record = host.card_record(card)
+    if record is None:
+        return -1
+    mana_cost = (
+        face["mana_cost"] if face is not None and "mana_cost" in face
+        else current_printed_cast_mana_cost(host, card, record)
+    )
+    base = mana_value_of_cost(mana_cost, x_value=0)
+    per_x = mana_value_of_cost(mana_cost, x_value=1) - base
+    if per_x and StaticCastCondition.NONCREATURE_MANA_COST_HAS_X in conditions:
+        return -1
+
+    maxima = [3] if StaticCastCondition.NONCREATURE_MANA_VALUE_AT_LEAST_FOUR in conditions else []
+    if StaticCastCondition.CASTER_LAND_MANA_VALUE_LIMIT in conditions:
+        from ..player_maximum import current_player_metric_values
+        from ..player_maximum_model import LAND_COUNT_METRIC
+
+        land_counts = dict(current_player_metric_values(
+            host.state, LAND_COUNT_METRIC, public_object_resolver=host._public_object_query_result,
+        ))
+        if player not in land_counts:
+            return -1
+        maxima.append(land_counts[player])
+    if not maxima:
+        return None
+    remaining = min(maxima) - base
+    if remaining < 0:
+        return -1
+    return int(remaining // per_x) if per_x else None
+
+
+def static_cast_maximum_x(host, player, card, *, face=None):
+    return _static_cast_maximum_x(host, active_static_cast_rules(host), player, card, face)
+
+
 def static_cast_prohibition_reason(
     host: StaticCastRuleHost,
     player: str,
     card: Any,
     *,
     face: Mapping[str, Any] | None = None,
+    x_value: int | None = None,
 ) -> str | None:
     if split_second_is_active(host):return 'split_second'
+    active_rules = active_static_cast_rules(host)
+    maximum_x = _static_cast_maximum_x(host, active_rules, player, card, face)
+    if maximum_x is not None and int(x_value or 0) > maximum_x:
+        return "static_cast_prohibition"
     from ..rules.temporary_cast_restrictions import active_temporary_cast_restrictions,restriction_matches_spell
     temporary=active_temporary_cast_restrictions(host,player)
     rules = tuple(
         rule
-        for rule in active_static_cast_rules(host)
+        for rule in active_rules
         if rule.kind in {
             StaticCastRuleKind.CAST_PROHIBITION,
             StaticCastRuleKind.CAST_LIMIT,
         }
         and _scope_applies(rule, player)
-        and _condition_applies(host, rule)
+        and _condition_applies(host, rule, player=player)
     )
     if not rules and not temporary:
         return None

@@ -19,6 +19,7 @@ from ..damage import (
     source_snapshot,
 )
 from ..damage_source import DamageSourceSnapshot
+from ..damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_FIELD
 from ..damage_death_exile_model import DamageDeathExileScope, damage_death_exile_scope
 from ..rules.damage_death_exile import commit_damage_death_exile
 from ..destruction import destroy_permanent_refs
@@ -88,6 +89,10 @@ def _apply_damage(
     operation: str,
     reason: str,
 ) -> Any:
+    if TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect:
+        from ..semantic_runtime.damage_permissions import apply_temporary_damage_prevention_prohibition
+
+        return apply_temporary_damage_prevention_prohibition(host, actor, effect)
     target = str(effect["target"])
     amount = int(effect.get("amount", 0))
     if amount < 0:

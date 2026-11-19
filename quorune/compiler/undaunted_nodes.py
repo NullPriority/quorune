@@ -1,7 +1,7 @@
 """Source-spanned Undaunted instances reuse the canonical self-cost owner."""
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from .cast_cost_modifier_templates import self_spell_cost_reduction_handler
 from .static_runtime_nodes import runtime_handler_node
 

@@ -70,6 +70,22 @@ class QuickGatePlanTests(unittest.TestCase):
         unrelated=build_plan(('docs/index.md',),phase='pre-corpus')
         self.assertNotIn('target-player-sequence-owner-contract',[row.name for row in unrelated['steps']])
 
+    @patch("scripts.quick_gate.validate_partition")
+    def test_changed_workflows_run_the_generated_contract_early(self, _partition):
+        for phase in ("normal", "pre-corpus"):
+            with self.subTest(phase=phase):
+                changed = build_plan((".github/workflows/ci.yml",), phase=phase)["steps"]
+                names = [step.name for step in changed]
+                contract = names.index("generated-workflow-contract")
+                self.assertLess(contract, names.index("generated-owner-plan"))
+                self.assertEqual(
+                    "tests.test_generated_artifacts.GeneratedArtifactFinalizationTests."
+                    "test_broad_generated_ci_uses_the_canonical_finalizer_only",
+                    changed[contract].command[-1],
+                )
+                docs = build_plan(("docs/index.md",), phase=phase)["steps"]
+                self.assertNotIn("generated-workflow-contract", [step.name for step in docs])
+
     def test_normal_inventory_contains_the_same_pre_corpus_obligations(self):
         paths=("quorune/compiler/collection_quantity_templates.py", "tests/test_quick_gate.py")
         pre=build_plan(paths,phase="pre-corpus")

@@ -1,5 +1,5 @@
 """A fixed source counter prefix before one independently read scalar result."""
-import re
+from . import regex_working_set as re
 from .closed_effect_programs import ClosedEffectProgramTemplate,_candidate_partitions
 from .counter_placement_templates import fixed_counter_placement_effect_template
 from .scalar_effect_amounts import scalar_effect_amount_template

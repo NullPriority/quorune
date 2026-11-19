@@ -35,13 +35,28 @@ def capture_event_spell_copy_source(host,item,*,departed=False):
 
 
 def event_spell_copy_trigger_context(host,program,event,context):
-    if not event_spell_copy_runtime_dependencies(program):return {}
+    dependencies = event_spell_copy_runtime_dependencies(program)
+    if not dependencies:return {}
     if event!='spell.cast':raise ValueError('Event spell copy requires a cast occurrence')
     target=next((i for i in host.state.stack if i.ref==context.get('stack')),None)
     if target is None:raise ValueError('Event spell-copy occurrence lost its exact stack spell')
     source=capture_event_spell_copy_source(host,target)
     if source.logical_object_id!=context.get('logical_object_id'):raise ValueError('Event spell-copy cast incarnation disagrees')
-    return {EVENT_SPELL_COPY_CONTEXT:source.to_dict()}
+    receipt = {EVENT_SPELL_COPY_CONTEXT:source.to_dict()}
+    from .token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY
+    if CAST_PERMANENT_TOKEN_COPY_CAPABILITY in dependencies:
+        from ..entry_copy import COPIABLE_ORACLE_FIELD
+        from ..event_spell_copy_model import CAST_SPELL_TOKEN_ORACLE_CONTEXT
+        if target.kind != "spell":
+            raise ValueError("Direct cast token requires the committed original spell")
+        card = host.state.cards[target.card_object_id]
+        # Retain the public copy identity with the cast so departure needs no card lookup.
+        # A represented alternate copiable identity can replace the physical identity.
+        oracle_id = source.characteristics.get(COPIABLE_ORACLE_FIELD, card.oracle_id)
+        if type(oracle_id) is not str or not oracle_id:
+            raise ValueError("Direct cast token copy requires a copiable Oracle identity")
+        receipt[CAST_SPELL_TOKEN_ORACLE_CONTEXT] = oracle_id
+    return receipt
 
 
 def resolve_event_spell_copy_source(host,effect):
@@ -99,18 +114,47 @@ def pin_event_spell_copy_departure(host,target):
 
 
 def event_spell_copy_runtime_dependencies(program):
-    marked=EVENT_SPELL_COPY_MECHANIC in program.coverage
-    def contains(value):
-        if isinstance(value,Mapping):
-            if value.get('op')=='copy_stack_item' and 'copy_source' in value:
-                if not any(dict(value)==event_spell_copy_effect(retain_targets_only=retain) for retain in (False,True)):raise ValueError('Event spell-copy instruction has a closed source reference')
-                return True
-            return any(contains(v) for v in value.values())
-        return any(contains(v) for v in value) if isinstance(value,(list,tuple)) else False
-    if not contains(program.effects):
-        if marked:raise ValueError('Event spell-copy marker lacks a represented instruction')
+    from ..event_spell_copy_model import cast_spell_token_condition
+    from ..replacement.immutable import FrozenMap
+    from .token_creation_capability_shapes import cast_spell_token_copy_payload_dependencies
+
+    marked = EVENT_SPELL_COPY_MECHANIC in program.coverage
+    stack_copy = False
+    direct_token = False
+
+    def visit(value):
+        nonlocal stack_copy, direct_token
+        if isinstance(value, Mapping):
+            if value.get("op") == "copy_stack_item" and "copy_source" in value:
+                if not any(dict(value) == event_spell_copy_effect(retain_targets_only=retain) for retain in (False,True)):
+                    raise ValueError("Event spell-copy instruction has a closed source reference")
+                stack_copy = True
+            elif value.get("op") == "create_token" and cast_spell_token_copy_payload_dependencies(value):
+                direct_token = True
+            else:
+                for child in value.values():
+                    visit(child)
+        elif isinstance(value, (list, tuple)):
+            for child in value:
+                visit(child)
+
+    visit(program.effects)
+    if not stack_copy and not direct_token:
+        if marked:
+            raise ValueError("Event spell-copy marker lacks a represented instruction")
         return ()
-    if program.event!='spell.cast':raise ValueError('Event spell-copy instruction requires its normalized cast event')
+    if program.event != "spell.cast":
+        raise ValueError("Event spell-copy instruction requires its normalized cast event")
+    if direct_token:
+        if (stack_copy or len(program.effects) != 1 or program.active_zone != "stack"
+                or program.target_schema is not None
+                or FrozenMap(program.event_condition or {}) != FrozenMap(cast_spell_token_condition())):
+            raise ValueError("Direct cast spell copy requires its exact intrinsic nontargeted cast")
+        required = cast_spell_token_copy_payload_dependencies(program.effects[0])
+        if not required:
+            raise ValueError("Direct cast spell copy must be the complete trigger result")
+        return (*required, "trigger.event.normalized_spell_cast", "trigger.effect.fixed_event",
+                "trigger.placement.apnap")
     return (EVENT_SPELL_COPY_CAPABILITY,)
 
 

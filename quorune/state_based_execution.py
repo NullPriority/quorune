@@ -472,6 +472,26 @@ def commit_state_based_zone_changes(
     finish_conditional_cost_returns(host,waiting)
 
 
+def commit_state_based_zone_and_attachment_changes(
+    host: DestructionHost, plan: StateBasedExecutionPlan, detach_ids: Sequence[str],
+) -> list[str]:
+    from .unattachment_triggers import dispatch_unattachment, prepare_equipment_unattachment
+    from .attachments import detach_object
+
+    former = {object_id: prepare_equipment_unattachment(host, host.state.cards[object_id])
+              for object_id in detach_ids}
+    commit_state_based_zone_changes(host, plan)
+    detached = []
+    for object_id in detach_ids:
+        card = host.state.cards[object_id]
+        if card.zone == "battlefield" and card.attached_to is not None:
+            detach_object(host.state.cards, card, players=host.state.players)
+            detached.append(object_id)
+    for object_id in detached:
+        dispatch_unattachment(host, former[object_id])
+    return detached
+
+
 def _commit_state_based_zone_changes(
     host: DestructionHost,
     plan: StateBasedExecutionPlan,

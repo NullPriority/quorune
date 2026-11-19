@@ -243,7 +243,8 @@
       "quorune/record.py",
       "quorune/commander.py",
       "quorune/state_based_actions.py",
-      "quorune/emblems.py"
+      "quorune/emblems.py",
+      "quorune/spell_resolution_names.py"
     ]
   },
   "subsystem_ownership": [

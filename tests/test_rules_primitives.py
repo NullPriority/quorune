@@ -184,6 +184,24 @@ class ContinuousLayerTests(unittest.TestCase):
         ])
         self.assertEqual([("right", "left")], cycles)
 
+    def test_cycle_fallback_preserves_dependencies_from_outside_the_cycle(self):
+        left = effect("left", Layer.COLOR, "5", 3, "set_colors", ["R"], depends_on=("right",))
+        right = effect("right", Layer.COLOR, "5", 2, "set_colors", ["G"], depends_on=("left",))
+        dependent = effect("dependent", Layer.COLOR, "5", 1, "set_colors", ["U"], depends_on=("left",))
+        for values in ((left, right, dependent), (dependent, right, left)):
+            with self.subTest(order=[value.effect_id for value in values]):
+                result = evaluate_continuous_effects(CharacteristicState(name="Synthetic"), values)
+                self.assertEqual(("right", "left", "dependent"), result.applied_effects)
+                self.assertEqual((("right", "left"),), result.dependency_cycles)
+                self.assertEqual(["U"], result.characteristics["colors"])
+        legacy = evaluate_continuous_effects(
+            CharacteristicState(name="Synthetic"), (left, right, dependent),
+            context={"continuous_dependency_order_version": None},
+        )
+        self.assertEqual(("dependent", "right", "left"), legacy.applied_effects)
+        self.assertEqual((("dependent", "right", "left"),), legacy.dependency_cycles)
+        self.assertEqual(["R"], legacy.characteristics["colors"])
+
     def test_absent_source_and_predicate_are_inapplicable(self):
         result = evaluate_continuous_effects(
             CharacteristicState(

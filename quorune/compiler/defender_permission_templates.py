@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Defender-only static grants through existing layer-six query owners."""
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict
 from ..defender_permission import (
     DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY,

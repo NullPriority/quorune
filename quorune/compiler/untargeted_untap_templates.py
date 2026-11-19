@@ -1,5 +1,5 @@
 """Fixed non-target land untap instructions, distinct from target grammar."""
-import re
+from . import regex_working_set as re
 
 from ..untargeted_untap_model import FixedLandUntapChoiceSpec, UNTARGETED_UNTAP_MECHANIC
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number

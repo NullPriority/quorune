@@ -17,7 +17,8 @@ from ..compiler.affected_player_discard_templates import (
 )
 from ..compiler.affected_player_sacrifice_templates import (
     FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
-    FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC,
+    FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, MOST_LANDS_ATTACK_SACRIFICE_MECHANIC,
+    SOURCE_EXCLUDED_SACRIFICE_CAPABILITY, SOURCE_EXCLUDED_SACRIFICE_MECHANIC,
 )
 from .hand_inspection_capability_shapes import (
     FIXED_HAND_INSPECTION_CAPABILITY,
@@ -37,7 +38,8 @@ def affected_player_choice_covered_mechanics(supplied: set[str]) -> set[str]:
         ('zone.discard.whole_hand', {'whole-hand-discard', 'cr-402-hand'}),
         ('zone.discard.fixed_random', {'fixed-random-discard', 'cr-402-hand'}),
         (FIXED_HAND_INSPECTION_CAPABILITY, {FIXED_HAND_INSPECTION_MECHANIC, 'cr-402-hand'}),
-        (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, 'sacrifice'}),
+        (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, MOST_LANDS_ATTACK_SACRIFICE_MECHANIC, 'sacrifice'}),
+        (SOURCE_EXCLUDED_SACRIFICE_CAPABILITY, {SOURCE_EXCLUDED_SACRIFICE_MECHANIC}),
     ):
         if capability in supplied:
             covered.update(mechanics)

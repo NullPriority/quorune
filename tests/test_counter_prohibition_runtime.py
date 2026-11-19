@@ -23,7 +23,7 @@ import test_life_gain_prohibitions as controls
 import test_counter_permissions as models
 
 
-NAMES = ("Melira's Keepers", 'Tatterkite', 'Melira, Sylvok Outcast', 'Blightbeetle', 'Solemnity')
+NAMES = ("Melira's Keepers", 'Tatterkite', 'Melira, Sylvok Outcast', 'Blightbeetle', 'Solemnity', 'Blossombind')
 
 
 class CounterProhibitionRuntimeTests(unittest.TestCase):
@@ -79,7 +79,7 @@ class CounterProhibitionRuntimeTests(unittest.TestCase):
                 bound = bind_semantic_program_runtime(missing,capability_registry=self.registry,profile='commander_review')
                 self.assertFalse(bound['strict'])
                 self.assertIn('capability:undeclared_runtime_dependency:'+CAP,bound['blockers'])
-        for name in ('Blossombind','Suncleanser','Melira, the Living Cure'):
+        for name in ('Suncleanser','Melira, the Living Cure'):
             s = self.session(122500009)
             self.assertFalse(self.binding(s,self.add(s.engine,name,zone='hand'))['strict_capability_ready'])
 

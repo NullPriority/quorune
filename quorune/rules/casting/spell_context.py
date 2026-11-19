@@ -21,6 +21,7 @@ from ...paid_sacrifice_conditions import (
     PAID_SACRIFICE_CHARACTERISTICS_CONTEXT, PAID_SACRIFICE_CONDITION_CAPABILITY, PaidSacrificeCharacteristics,
 )
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
+from ..death_cast_permissions import qualified_death_stack_context
 from .multikicker_costs import multikicker_cast_context
 from .replicate_costs import replicate_cast_context
 from .conspire_costs import conspire_cast_context
@@ -114,6 +115,7 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         **provenance,
         **({ANNOUNCED_DAMAGE_CONTEXT: copy.deepcopy(details[ANNOUNCED_DAMAGE_CONTEXT])}
            if ANNOUNCED_DAMAGE_CONTEXT in details else {}),
+        **qualified_death_stack_context(selected_option),
         **paid_entry_copy_cast_context(selected_option),
         **multikicker_cast_context(selected_option),
         **replicate_cast_context(selected_option),

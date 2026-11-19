@@ -94,10 +94,25 @@ class SelfZoneMoveEffectHandler:
     capability_dependencies: tuple[str, ...] = (SELF_ZONE_MOVE_CAPABILITY_ID,)
 
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
+        from ..source_sacrifice_model import SOURCE_SACRIFICE_FIELD
+        if SOURCE_SACRIFICE_FIELD in effect:
+            from .source_sacrifice import lower_fixed_source_sacrifice
+            return lower_fixed_source_sacrifice(effect, context, handler_id=self.handler_id)
         from ..rules.graveyard_self_return import GRAVEYARD_SELF_RETURN_VERSION,GRAVEYARD_SELF_ENTRY_VERSION,graveyard_self_return_dependencies
         try:graveyard_self_return_dependencies(effect)
         except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+        from ..self_zone_move_followups import FIELD, decode_self_entry_followup
+        if FIELD in effect:
+            try:decode_self_entry_followup(effect)
+            except (ValueError, TypeError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
         allowed = {"op", "origin", "destination", "tapped", "source_form", "_replacement_selections"}
+        allowed.add(FIELD)
+        from ..source_self_entry_counter_model import FIELD as COUNTER_FIELD, source_self_entry_counter_from_effect
+        entry_counter = None
+        if COUNTER_FIELD in effect:
+            try:entry_counter = source_self_entry_counter_from_effect(effect)
+            except (ValueError, TypeError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+        allowed.add(COUNTER_FIELD)
         allowed.add(GRAVEYARD_SELF_RETURN_VERSION)
         allowed.add(GRAVEYARD_SELF_ENTRY_VERSION)
         allowed.add('_aura_target_ref')
@@ -124,6 +139,8 @@ class SelfZoneMoveEffectHandler:
                 source_form=effect["source_form"],
                 replacement_selections=tuple(selections),
                 aura_target_ref=effect.get('_aura_target_ref'),
+                effect_entry_counters=((entry_counter.materialize(actor=context.actor, source=source.stack_ref),)
+                                       if entry_counter is not None else ()),
             )
         except SelfZoneMoveError as exc:
             raise SemanticNodeError(str(exc)) from exc

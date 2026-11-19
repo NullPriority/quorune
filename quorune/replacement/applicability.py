@@ -34,6 +34,10 @@ def canonical_effects(
 
 
 def event_field(event: ReplaceableEvent, field_name: str) -> Any:
+    if field_name == 'zone_object_qualifications_v1':
+        from ..zone_object_qualifications import zone_object_qualifications_v1
+        try:return zone_object_qualifications_v1(event)
+        except (ValueError,TypeError) as exc:raise ReplacementEffectError(str(exc)) from exc
     if field_name == "kind":
         return event.kind
     if field_name == "affected_player":

@@ -14,6 +14,7 @@ from typing import Any, Mapping, Sequence
 
 from ..errors import GameRuleError
 from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
+from ..rules.target_library_inspection import scoped_target_library_inspection_libraries
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
 from ..connive import connive_discard_characteristic_ids, bind_connive_instruction
@@ -23,13 +24,17 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
 from ..semantic_runtime.context import semantic_source_context
 from ..semantic_runtime.hand_visibility import hand_card_is_known_to, public_hand_owners
-from ..rules.discard_results import discard_result_hand_snapshot
+from ..rules.hand_library_redraw import result_hand_snapshot as discard_result_hand_snapshot
 from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
 )
 from ..replacement_effects import ReplacementChoiceRequired
-from ..selection.copy_targets import copy_target_public_schema, prepare_copy_targets
+from ..selection.copy_targets import (
+    copy_target_public_schema, materialize_optional_stack_target_change,
+    materialize_single_stack_target_change, prepare_copy_targets,
+)
+from ..stack_target_change_model import is_mandatory_single_stack_target_change, is_optional_stack_target_change
 from ..targets import TargetGroup, available_modes, target_plan
 from ..util import unique_preserving_order
 from ..util import stable_json
@@ -64,6 +69,8 @@ class SemanticChoiceCoordinationMixin:
             "battlefield", "graveyard", "exile", "command", "stack"
         }
         choice_effect = effect or {}
+        from ..rules.target_library_inspection import scoped_target_library_inspection_refs
+        inspected_library_refs = set(scoped_target_library_inspection_refs(self, actor, choice_effect))
         from ..discover_casting import resolving_exile_library_refs
         scan_refs = {ref for refs in resolving_exile_library_refs(self, actor=actor, effect=choice_effect).values()
                      for ref in refs}
@@ -87,6 +94,7 @@ class SemanticChoiceCoordinationMixin:
                 and not inspected_hidden_card
                 and not known_hand
                 and not (card.zone == 'library' and card.ref in scan_refs)
+                and not (card.zone == 'library' and card.ref in inspected_library_refs)
             ):
                 continue
             effective = self._effective_card_data(card)
@@ -101,6 +109,7 @@ class SemanticChoiceCoordinationMixin:
                     actor in card.known_to
                     or card.zone in public_zones
                     or inspected_hidden_card
+                    or card.zone == 'library' and card.ref in inspected_library_refs
                     or known_hand
                 ),
                 attached_to_ref=(
@@ -224,6 +233,10 @@ class SemanticChoiceCoordinationMixin:
     ) -> tuple[str, ...]:
         from ..rules.attachment_actions import ATTACH_CREATED_TOKEN
         from ..rules.graveyard_return_choices import OPERATION, graveyard_return_candidates
+        from ..rules.targeted_graveyard_exile import targeted_graveyard_exile_candidates
+        if effect.get('op') == 'choose_target_player_graveyard_exile':
+            try:return targeted_graveyard_exile_candidates(self, actor, effect)
+            except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
         if effect.get("op") == ATTACH_CREATED_TOKEN:
             return attached_token_candidate_refs(self, effect)
         if effect.get('op') == OPERATION:
@@ -265,6 +278,10 @@ class SemanticChoiceCoordinationMixin:
         operation = str(effect.get("op") or "")
         if operation not in {"copy_stack_item", "retarget_stack_item"}:
             return target_schemas, validated_targets
+        if is_mandatory_single_stack_target_change(effect):
+            return materialize_single_stack_target_change(self, effect, response)
+        if is_optional_stack_target_change(effect):
+            return materialize_optional_stack_target_change(self, effect, response)
         target_ref = str(
             effect.get("_target_stack_ref") or effect.get("stack") or ""
         )
@@ -471,6 +488,14 @@ class SemanticChoiceCoordinationMixin:
     ) -> tuple[Mapping[str, Any], ...]:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
         from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
+        from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD
+        from ..rules.ripple import RIPPLE_FIELD
+        if RIPPLE_FIELD in effect:
+            from ..rules.ripple_casting import ripple_cast_options
+            return ripple_cast_options(self,item=stack_item,actor=actor,effect=effect)
+        if BOUNDED_HAND_CAST_FIELD in effect:
+            from ..rules.bounded_hand_cast import bounded_hand_cast_options
+            return bounded_hand_cast_options(self, item=stack_item, actor=actor, effect=effect)
         from ..fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
         from ..targeted_graveyard_cast_model import GRAVEYARD_CAST_OPERATION
         from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_OFFER
@@ -527,6 +552,26 @@ class SemanticChoiceCoordinationMixin:
 
     _semantic_choice_token_creation_preview = semantic_choice_token_creation_preview
 
+    def _semantic_choice_resolution_condition_facts(self,actor,choice_effect):
+        """Snapshot a resolution condition through its existing rules owner."""
+        condition_facts = {}
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,18,PAID_SACRIFICE_CONDITION_VERSION}:
+            try:
+                condition, _effects = validate_resolution_condition_instruction(choice_effect)
+                if choice_effect["player"] != actor:
+                    raise SemanticChoiceError("Resolution condition controller binding changed")
+                if choice_effect.get('schema_version') == 17:
+                    matched = self.state.day_night == 'night' if condition.scope == 'night' else False
+                elif choice_effect.get('schema_version') == 16:
+                    from ..conditional_target_preparation import preparation_condition_matches
+                    matched = preparation_condition_matches(self, actor, choice_effect)
+                else:
+                    matched = self._fixed_public_state_condition_holds(ResolutionConditionBinding(controller=actor), condition, require_available=True)
+                condition_facts[stable_json(condition.to_dict())] = matched
+            except (ValueError, TypeError, KeyError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+        return condition_facts
+
     def _semantic_choice_query(
         self,
         actor: str,
@@ -548,38 +593,27 @@ class SemanticChoiceCoordinationMixin:
                 actor, choice_effect, response
             )
         )
-        condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,PAID_SACRIFICE_CONDITION_VERSION}:
-            try:
-                condition, _effects = validate_resolution_condition_instruction(choice_effect)
-                if choice_effect["player"] != actor:
-                    raise SemanticChoiceError("Resolution condition controller binding changed")
-                if choice_effect.get('schema_version') == 17:
-                    matched = self.state.day_night == 'night' if condition.scope == 'night' else False
-                elif choice_effect.get('schema_version') == 16:
-                    from ..conditional_target_preparation import preparation_condition_matches
-                    matched = preparation_condition_matches(self, actor, choice_effect)
-                else:
-                    matched = self._fixed_public_state_condition_holds(ResolutionConditionBinding(controller=actor), condition, require_available=True)
-                condition_facts[stable_json(condition.to_dict())] = matched
-            except (ValueError, TypeError, KeyError) as exc:
-                raise SemanticChoiceError(str(exc)) from exc
         from ..rules.library_search_rules import optional_search_permissions
         from ..rules.attacking_card_entry import attacking_card_entry_choice_facts
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
+        from ..semantic_runtime.life_prohibitions import collect_life_gain_permissions
+        from ..life_gain_permission import ALLOW_ALL_LIFE_GAIN
         from ..semantic_runtime.explore import materialize_explore_source_types
+        from ..rules.shared_type_library import materialize_shared_type_library_source
         return SnapshotSemanticChoiceQuery(
             resolution_source_is_physical_card=(
                 (self.state.cards[stack_item.card_object_id].object_kind == 'card')
                 if stack_item is not None and stack_item.card_object_id in self.state.cards else False),
             explore_action_version=getattr(self.state, 'explore_action_version', None),
             explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
+            shared_type_library_source=materialize_shared_type_library_source(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             venture_journey=((self.state.players[actor].dungeon_journey or DungeonJourney())
                              if DUNGEON_VENTURE_FIELD in choice_effect else None),
             venture_allowed=DUNGEON_VENTURE_FIELD not in choice_effect or current_venture_allowed(self, actor),
             counter_permissions=collect_counter_permissions(self),
+            life_gain_permissions=(collect_life_gain_permissions(self) if choice_effect.get('op')=='offer_optional_mana_payment' and choice_effect.get('schema_version')==10 and isinstance(choice_effect.get('upkeep_effect_cost'),Mapping) and choice_effect['upkeep_effect_cost'].get('kind')=='opponent_life_gain' else ALLOW_ALL_LIFE_GAIN),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),
             seat_order=tuple(self.seats),
@@ -601,6 +635,7 @@ class SemanticChoiceCoordinationMixin:
                     for object_id in self.state.players[actor].zones["library"]
                 ],
                 **resolving_exile_library_refs(self, actor=actor, effect=choice_effect),
+                **scoped_target_library_inspection_libraries(self, actor, choice_effect),
             },
             mana_by_seat={
                 actor: dict(self.state.players[actor].mana_pool)
@@ -672,7 +707,7 @@ class SemanticChoiceCoordinationMixin:
                 connive_discard_characteristic_ids(self, actor, choice_effect)
                 if choice_effect.get('op') == 'connive' else ()
             ),
-            resolution_condition_facts=condition_facts,
+            resolution_condition_facts=self._semantic_choice_resolution_condition_facts(actor,choice_effect),
         )
     def _semantic_choice_context(
         self,
@@ -723,6 +758,8 @@ class SemanticChoiceCoordinationMixin:
     ) -> None:
         registry = default_semantic_choice_registry()
         try:
+            from ..rules.gravestorm import bind_gravestorm_instruction
+            effect = bind_gravestorm_instruction(self,item,effect)
             effect = bind_connive_instruction(self, item, effect)
             effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction

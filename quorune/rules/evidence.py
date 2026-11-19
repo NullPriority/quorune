@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from contextlib import contextmanager
 from contextvars import ContextVar
+from collections import OrderedDict
 import hashlib
 import json
 from pathlib import Path
 import re
+from threading import RLock
 from typing import Any, Mapping
 
 from ..util import stable_json
+from . import evidence_storage
 from .evidence_storage import read_evidence_document
 
 
@@ -72,6 +75,20 @@ def _strings(value: Any, *, field: str) -> tuple[str, ...]:
     return result
 
 
+def _verified_strings(
+    value: Any, *, field: str, verified: dict[tuple[str, ...], tuple[str, ...]],
+) -> tuple[str, ...]:
+    # Per-index cache of validated immutable string lists from decoded JSON.
+    if isinstance(value, list):
+        try:
+            return verified[tuple(value)]
+        except (KeyError, TypeError):
+            pass
+    result = _strings(value, field=field)
+    verified[result] = result
+    return result
+
+
 def _exact_fields(
     value: Mapping[str, Any],
     expected: set[str],
@@ -122,13 +139,13 @@ def validate_capability_evidence_index(
         tuple[str, str], set[str]
     ] = {}
     identities: set[tuple[str, str, str]] = set()
+    verified_strings: dict[tuple[str, ...], tuple[str, ...]] = {}
     normalized: list[dict[str, Any]] = []
-    for index, candidate in enumerate(declarations):
-        if not isinstance(candidate, Mapping):
+    for index, row in enumerate(declarations):
+        if not isinstance(row, Mapping):
             raise CapabilityEvidenceError(
                 f"declarations[{index}] must be an object"
             )
-        row = dict(candidate)
         _exact_fields(
             row, _DECLARATION_FIELDS, field=f"declarations[{index}]"
         )
@@ -155,13 +172,15 @@ def validate_capability_evidence_index(
                 + ":".join(identity)
             )
         identities.add(identity)
-        rules = _strings(
+        rules = _verified_strings(
             row.get("official_rule_ids"),
             field=f"declarations[{index}].official_rule_ids",
+            verified=verified_strings,
         )
-        profiles = _strings(
+        profiles = _verified_strings(
             row.get("supported_profiles"),
             field=f"declarations[{index}].supported_profiles",
+            verified=verified_strings,
         )
         if not rules:
             raise CapabilityEvidenceError(
@@ -238,9 +257,8 @@ def validate_capability_evidence_index(
                     "does not cover supported profiles: "
                     + ", ".join(sorted(missing_profiles))
                 )
-    payload = dict(raw)
-    fingerprint = str(payload.pop("fingerprint") or "")
-    if fingerprint != _hash(payload):
+    fingerprint = str(raw.pop("fingerprint") or "")
+    if fingerprint != _hash(raw):
         raise CapabilityEvidenceError(
             "Capability evidence fingerprint does not match"
         )
@@ -283,6 +301,51 @@ def _capability_validation_snapshot():
         _VALIDATION_REGISTRY.reset(token)
 
 
+class _VerifiedEvidenceFingerprintCache:
+    """Bound successful validation to exact current bytes and policy, never mutable objects."""
+
+    def __init__(self, capacity=4):
+        if type(capacity) is not int or capacity < 1:
+            raise ValueError("Cache capacity must be a positive integer")
+        self.capacity = capacity
+        self._entries = OrderedDict()
+        self._lock = RLock()
+
+    def fingerprint(self, registry, path):
+        path = Path(path)
+        text = path.read_text(encoding="utf-8")
+        functions = (
+            validate_capability_evidence_index, _exact_fields, _strings, _hash,
+            stable_json, evidence_storage.unpack_evidence_document,
+            json.loads, json.dumps, hashlib.sha256, type(registry).capabilities,
+            type(registry).profiles.fget, type(registry).fingerprint.fget,
+        )
+        policy = (
+            tuple((function, getattr(function, '__code__', None)) for function in functions),
+            _TEST_ID, Mapping,
+            CAPABILITY_EVIDENCE_SCHEMA_VERSION, frozenset(EVIDENCE_CLASSES),
+            frozenset(MINIMUM_TRUSTED_EVIDENCE), frozenset(_INDEX_FIELDS),
+            frozenset(_DECLARATION_FIELDS), type(registry),
+        )
+        key = (str(path.resolve()), registry.fingerprint,
+               hashlib.sha256(text.encode("utf-8")).hexdigest(), policy)
+        with self._lock:
+            if key in self._entries:
+                self._entries.move_to_end(key)
+                return self._entries[key]
+            # Validate the same captured bytes that established identity; a
+            # second path read could certify different content under this key.
+            value = evidence_storage.unpack_evidence_document(json.loads(text))
+            fingerprint = validate_capability_evidence_index(value, registry=registry)
+            self._entries[key] = fingerprint
+            while len(self._entries) > self.capacity:
+                self._entries.popitem(last=False)
+            return fingerprint
+
+
+_DEFAULT_EVIDENCE_FINGERPRINT_CACHE = _VerifiedEvidenceFingerprintCache()
+
+
 def _load_verified_default_capability_registry(registry_path):
     from .capabilities import CapabilityRegistry
 
@@ -290,7 +353,9 @@ def _load_verified_default_capability_registry(registry_path):
     if batch is not None and "registry" in batch:
         return batch["registry"]
     registry = CapabilityRegistry.from_path(registry_path)
-    _, fingerprint = load_capability_evidence_index(registry=registry)
+    fingerprint = _DEFAULT_EVIDENCE_FINGERPRINT_CACHE.fingerprint(
+        registry, DEFAULT_CAPABILITY_EVIDENCE
+    )
     registry.mark_evidence_verified(fingerprint)
     if batch is not None:
         batch["registry"] = registry

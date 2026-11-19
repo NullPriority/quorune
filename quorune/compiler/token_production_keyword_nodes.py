@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed keyword lowering for token-producing triggered abilities."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..fixed_token_production import (

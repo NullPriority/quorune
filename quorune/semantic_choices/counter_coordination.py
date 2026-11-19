@@ -1,4 +1,6 @@
 from __future__ import annotations
+from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
+from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
@@ -193,11 +195,12 @@ def _with_committed_quantity_followup(completion, intent, index, result):
     from dataclasses import replace
     from ..rules.committed_quantity_followups import CommittedQuantityFollowup
     from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
+    from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
 
     if not isinstance(result, CommittedQuantityFollowup):
         return completion
-    if not isinstance(intent, ResumeCompositionOrderIntent) or index != len(completion.intents) - 1:
-        raise SemanticChoiceError("A committed destruction follow-up needs its exact resumed parent")
+    if not isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent)) or index != len(completion.intents) - 1:
+        raise SemanticChoiceError("A committed result follow-up needs its exact final typed parent")
     return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
 
 
@@ -287,10 +290,12 @@ def continue_semantic_completion(
                     DiscoverCastIntent,
                     ResolvingExileLandPlayIntent,
                     ResolveCapturedDrawCastIntent,
+                    ResolveBoundedHandCastIntent,
                     GraveyardCastIntent,
                     PlaceCountersOnSetIntent,
                     MoveCountersIntent,
                     LifeChangeIntent,
+                    LifeGainCostBatchIntent,
                     PlaceCounterBatchIntent,
                     PlaceCountersOnTargetsIntent,
                     PlacePlayerCountersIntent,

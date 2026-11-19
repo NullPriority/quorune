@@ -27,9 +27,6 @@ from .ability_fragment_host import AbilityFragmentHostMixin
 from .ability_fragments import (
     declaration_cost_specs,
 )
-from .attachments import (
-    detach_object,
-)
 from .carddb import CardDatabase, CardRecord
 from .casting_cost_host import CastingCostHostMixin
 from .compiled_cast_lifecycles import (
@@ -120,6 +117,7 @@ from .declaration_restrictions import (
     DeclarationTurnHistoryCondition,
 )
 from .rules.block_prohibitions import block_prohibition_verdict
+from .rules.block_as_though import blocker_tap_allows_block
 from .rules.temporary_declaration_restrictions import (
     current_declaration_restrictions,
 )
@@ -365,7 +363,7 @@ from .state_based_execution import (
     synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
-    commit_state_based_zone_changes,
+    commit_state_based_zone_and_attachment_changes,
     prepare_state_based_execution,
     permanent_sba_snapshots,
 )
@@ -471,6 +469,9 @@ class CommanderEngine(
             return False
         if ("continuous.control.fixed_resolution" in program.capability_dependencies
                 and self.state.control_history_version != control_history.CONTROL_HISTORY_VERSION):
+            return False
+        if ("history.spell_resolution.names" in program.capability_dependencies
+                and self.state.spell_resolution_name_ledger is None):
             return False
         current_programs = self.semantics.programs_for_oracle(
             program.oracle_id or ""
@@ -614,6 +615,8 @@ class CommanderEngine(
         origin: str | None = None,
         creature_subtypes: tuple[str, ...] | None = None,
         token: bool | None = None,
+        rules_names: tuple[str, ...] | None = None,
+        spell_colors: tuple[str, ...] | None = None,
     ) -> None:
         """Append one authoritative current-turn look-back fact.
 
@@ -638,7 +641,7 @@ class CommanderEngine(
                 target_object_incarnation=target_object_incarnation,
                 types=tuple(sorted({str(value).casefold() for value in types})),
                 creature_subtypes=creature_subtypes,
-                token=token,
+                token=token, rules_names=rules_names, spell_colors=spell_colors,
                 amount=max(0, int(amount)),
             )
         )
@@ -3816,6 +3819,8 @@ class CommanderEngine(
             )
         if not self._revalidate_resolution_targets(item):
             return
+        from .spell_resolution_names import begin_spell_resolution_names
+        begin_spell_resolution_names(self, item)
         control_effects.begin_control_duration_resolution(self, item)
         self._continue_resolution(
             stack_ref=item.ref,
@@ -4009,6 +4014,7 @@ class CommanderEngine(
         reason: str = "countered",
         as_rule: bool = False,
         countered_by: str | None = None,
+        source_controller: str | None = None,
     ) -> StackItem:
         return counter_stack_item(
             self,
@@ -4017,6 +4023,7 @@ class CommanderEngine(
             reason=reason,
             as_rule=as_rule,
             countered_by=countered_by,
+            source_controller=source_controller,
         )
 
     # ------------------------------------------------------------------
@@ -5076,7 +5083,7 @@ class CommanderEngine(
             )
             if (
                 blocker.controller != defender
-                or blocker.tapped
+                or not blocker_tap_allows_block(self,blocker)
                 or blocker.phased_out
                 or "creature" not in blocker_types
                 or "battle" in blocker_types
@@ -6310,13 +6317,6 @@ class CommanderEngine(
             if card.zone != "outside"
         ]
 
-    def _detach_permanent(self, card: CardInstance) -> None:
-        detach_object(
-            self.state.cards,
-            card,
-            players=self.state.players,
-        )
-
     @characteristic_read_method
     def _legend_groups(self) -> list[tuple[str, str, list[str]]]:
         groups: dict[tuple[str, str], list[str]] = {}
@@ -6484,16 +6484,7 @@ class CommanderEngine(
                     and card.world_supertype_timestamp is not None
                     and card.object_id not in world_rule_ids
                 ]
-                commit_state_based_zone_changes(self, execution)
-                detached: list[str] = []
-                for object_id in sba_batch.detach:
-                    card = self.state.cards[object_id]
-                    if (
-                        card.zone == "battlefield"
-                        and card.attached_to is not None
-                    ):
-                        self._detach_permanent(card)
-                        detached.append(object_id)
+                detached = commit_state_based_zone_and_attachment_changes(self, execution, sba_batch.detach)
                 counter_result = commit_state_based_counter_removals(
                     self, execution.counter_removals
                 )
@@ -6680,7 +6671,10 @@ class CommanderEngine(
         unique = [seat for seat in unique_preserving_order(seats) if seat in self.active_seats]
         if not unique:
             return
+        from .unattachment_triggers import prepare_player_departure_unattachments, dispatch_player_departure_unattachments
+
         pin_player_departure_trigger_facts(self, unique)
+        attachment_departures = prepare_player_departure_unattachments(self, unique)
         departing_monarch = self.state.monarch in unique
         monarch_before_departure = self.state.monarch
         active_before_departure = self.state.active_player
@@ -6725,6 +6719,7 @@ class CommanderEngine(
                     else:
                         ZoneTransitionOwner(self).move_card(card.object_id, "outside", reason="owner left game", log=False, defer_control_sync=True)
             control_effects.end_player_control_effects(self.state, seat)
+            expired_spell_copies = control_effects.end_player_stack_control_effects(self, unique)
             control_effects.synchronize_control_effects(self, reason="control effect controller left game")
             # Preserve owner-based restoration for historical unjournaled control.
             # Current retained custody has settled; exile any surviving permanent
@@ -6744,11 +6739,15 @@ class CommanderEngine(
                         self.change_control(card.object_id, owner, reason="controller left game")
                     else:
                         self.move_card(card.object_id, "exile", reason="controller left game", log=False)
-            self.state.stack = [item for item in self.state.stack if item.controller != seat or item.card_object_id is not None]
+            self.state.stack = [
+                item for item in self.state.stack
+                if (item.controller != seat or item.card_object_id is not None) and item.ref not in expired_spell_copies
+            ]
             self.turn_steps.retire_departed_turns(seat)
             self.state.priority_passes = [passed for passed in self.state.priority_passes if passed != seat]
             self._log(seat, "player.eliminated", f"{seat} left the game: {reason}.", {"reason": reason}, importance=3, changed_players=[seat])
 
+        dispatch_player_departure_unattachments(self, attachment_departures)
         remaining = self.active_seats
         from .initiative_runtime import transfer_departing_initiative
         transfer_departing_initiative(self, active_before_departure)

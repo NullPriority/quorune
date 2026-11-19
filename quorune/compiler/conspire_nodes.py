@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned paired cost and copy-trigger authority for Conspire."""
 
-import re
+from . import regex_working_set as re
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..characteristic_evaluation import type_parts
 from ..conspire_model import FixedConspireSpec, CONSPIRE_CAPABILITY, CONSPIRE_HANDLER

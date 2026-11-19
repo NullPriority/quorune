@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """One source-spanned conditional timing clause with optional real Flash."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..cast_timing import CAST_PERMISSION_ACTIVE_ZONE, CAST_PERMISSION_EVENT

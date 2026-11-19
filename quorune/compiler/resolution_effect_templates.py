@@ -1,10 +1,13 @@
 from __future__ import annotations
+from .fixed_hand_putback_templates import fixed_draw_hand_putback_template
+from .hand_library_redraw_templates import hand_library_redraw_template
 from ..random_discard import random_discard_effect_template
 from .counter_resolution_effect_templates import counter_resolution_effect_template
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
+from .tap_state_templates import next_player_untap_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
 from .day_night_nodes import fixed_day_night_designation_template
@@ -54,13 +57,15 @@ from .counter_removal_templates import (
     all_counter_removal_effect_template,
     fixed_counter_removal_effect_template,
 )
-from .counter_templates import targeted_counter_effect_template, targeted_controller_payment_template
+from .counter_templates import (
+    spell_targeting_counter_effect_template, targeted_counter_effect_template, targeted_controller_payment_template,
+)
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
 from .damage_templates import fixed_damage_effect_template
 from .destruction_templates import destruction_effect_template
-from .exile_templates import targeted_exile_effect_template
+from .exile_templates import stack_spell_exile_template, targeted_exile_effect_template
 from .fixed_target_effect_sequences import (
     fixed_source_characteristics_effect_template,
     fixed_target_characteristics_effect_template,
@@ -157,6 +162,8 @@ def _attachment_or_zone_result(
 
 
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
+    fixed_draw_hand_putback_template,
+    hand_library_redraw_template,
     fixed_reanimation_followup_template,
     fixed_reanimation_entry_counter_template,
     fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
@@ -166,14 +173,99 @@ _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
     targeted_own_graveyard_return_to_hand_effect_template,
     targeted_public_graveyard_return_to_hand_effect_template,
     targeted_counter_effect_template,
+    spell_targeting_counter_effect_template,
     targeted_controller_payment_template,
 )
+
+
+def _single_stack_target_change_template(text, *, source_is_permanent):
+    from . import regex_working_set as re
+    from ..stack_target_change_model import SingleStackTargetChangeSpec
+
+    if source_is_permanent is not False:
+        return None
+    match = re.fullmatch(
+        r"Change the target of target spell(?P<ability> or ability)? with a single target\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    spec = SingleStackTargetChangeSpec(bool(match["ability"]))
+    return "mandatory-single-stack-target-change-v1", spec.effects, spec.target_schema, ("cr-115-targets",)
+
+
+def _optional_stack_target_change_template(text, *, source_is_permanent):
+    from . import regex_working_set as re
+    from ..stack_target_change_model import OptionalStackTargetChangeSpec
+
+    if source_is_permanent is not False:
+        return None
+    match = re.fullmatch(
+        r"You may choose new targets for target spell(?P<ability> or ability)?\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    spec = OptionalStackTargetChangeSpec(bool(match["ability"]))
+    return "optional-stack-target-change-v1", spec.effects, spec.target_schema, ("cr-115-targets",)
+
+
+def _stack_spell_control_template(text, *, source_is_permanent):
+    from . import regex_working_set as re
+    from ..stack_target_change_model import StackSpellControlSpec
+
+    if source_is_permanent is not False:
+        return None
+    normalized = " ".join(text.strip().split())
+    match = re.fullmatch(
+        r"Gain control of target (?P<noncreature>noncreature )?spell\. You may choose new targets for it\.?"
+        r"(?: \((?P<reminder>[^()]+)\))?",
+        normalized, re.I,
+    )
+    if match is None:
+        return None
+    noncreature = bool(match["noncreature"])
+    expected = ("If that spell is an artifact, enchantment, or planeswalker, the permanent enters under your control."
+                if noncreature else "If that spell becomes a permanent, it enters under your control.")
+    if match["reminder"] is not None and match["reminder"].casefold() != expected.casefold():
+        return None
+    spec = StackSpellControlSpec(noncreature)
+    return "stack-spell-control-and-optional-targets-v1", spec.effects, spec.target_schema, ("cr-115-targets",)
+
+
+def _stack_target_change_payment_template(text, *, source_is_permanent):
+    from . import regex_working_set as re
+    from ..stack_target_change_model import SingleStackTargetChangeSpec, stack_target_change_payment_effect
+
+    if source_is_permanent is not False or re.fullmatch(
+        r"Change the target of target spell with a single target unless that spell['’]s controller pays \{2\}\.?",
+        text.strip(), re.I,
+    ) is None:
+        return None
+    return ("stack-target-change-controller-payment-v1", (stack_target_change_payment_effect(),),
+            SingleStackTargetChangeSpec(False).target_schema, ("cr-115-targets",))
 
 
 def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    stack_change = (
+        _single_stack_target_change_template(text, source_is_permanent=source_is_permanent)
+        or _optional_stack_target_change_template(text, source_is_permanent=source_is_permanent)
+        or _stack_spell_control_template(text, source_is_permanent=source_is_permanent)
+        or _stack_target_change_payment_template(text, source_is_permanent=source_is_permanent)
+        or stack_spell_exile_template(text, source_is_permanent=source_is_permanent)
+    )
+    if stack_change is not None:
+        return stack_change
+    from .damage_permission_templates import turn_damage_prevention_template
+    turn_damage = turn_damage_prevention_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    if turn_damage is not None:return turn_damage
+    from .source_sacrifice_templates import fixed_source_sacrifice_template
+    sacrifice = fixed_source_sacrifice_template(text, source_name=card_name,
+        source_is_permanent=source_is_permanent)
+    if sacrifice is not None:return sacrifice
     color = fixed_target_color_template(text)
     if color is not None:
         return color
@@ -202,6 +294,9 @@ def _source_context_resolution_template(
     scheduled_skip = scheduled_turn_skip_effect_template(text)
     if scheduled_skip is not None:
         return scheduled_skip
+    untap_restriction = next_player_untap_effect_template(text)
+    if untap_restriction is not None:
+        return untap_restriction
     capacity = temporary_block_capacity_template(text, source_name=card_name,
         source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if capacity is not None:return capacity
@@ -243,6 +338,21 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .bounded_hand_cast_templates import bounded_hand_cast_template
+    hand_cast = bounded_hand_cast_template(text)
+    if hand_cast is not None:return hand_cast.compiled()
+    from .subtype_transform_templates import fixed_subtype_transform_effect_template
+    transform = fixed_subtype_transform_effect_template(text)
+    if transform is not None:return transform
+    from .target_land_type_templates import fixed_target_land_type_template, target_land_type_choice_template
+    fixed = fixed_target_land_type_template(text)
+    if fixed is not None:
+        return fixed
+    choice = target_land_type_choice_template(text)
+    if choice is not None:return choice
+    from .graveyard_recycling_templates import graveyard_recycling_template
+    recycling = graveyard_recycling_template(text)
+    if recycling is not None:return recycling.compiled()
     from .search_allocation_templates import search_allocation_template
     allocation = search_allocation_template(text)
     if allocation is not None:return allocation
@@ -350,6 +460,27 @@ def _temporary_characteristic_resolution_template(
     return None
 
 
+def _fixed_phase_out_template(text, *, card_name, source_is_permanent):
+    from . import regex_working_set as re
+    from ..phasing_model import PHASE_OUT_MECHANIC, phase_out_effect
+    from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+    from .direct_target import direct_permanent_target_spec
+
+    match = re.fullmatch(r"(?P<subject>.+?) phases out\.?", " ".join(text.split()), re.I)
+    if match is None:
+        return None
+    subject = match["subject"]
+    if subject.casefold() in ("target creature", "target creature you control", "target artifact, creature, or land"):
+        target = direct_permanent_target_spec(subject)
+        return ("fixed-target-phase-out-v1", (phase_out_effect(targeted=True),),
+                target.to_target_schema(), (PHASE_OUT_MECHANIC, "cr-115-targets"))
+    if source_is_permanent is True and (
+        source_self_permanent_type(subject) is not None or SourceReferenceSpec(card_name).matches(subject)
+    ):
+        return ("fixed-source-phase-out-v1", (phase_out_effect(),), None, (PHASE_OUT_MECHANIC,))
+    return None
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -359,6 +490,10 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .referenced_damage_templates import attachment_fixed_damage_template
+    referenced=attachment_fixed_damage_template(text,card_name=card_name,
+        source_is_permanent=source_is_permanent,relation=source_attachment_relation)
+    if referenced is not None:return referenced
     from .scoped_target_colors import scoped_target_color_template
     color=scoped_target_color_template(text,compile_leaf=lambda clause:typed_resolution_effect_template(clause,
         card_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types,
@@ -367,6 +502,9 @@ def typed_resolution_effect_template(
     suspect = suspect_effect_template(text, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
     if suspect is not None:
         return suspect
+    from .targeted_graveyard_exile_templates import targeted_graveyard_exile_template
+    exile_choice = targeted_graveyard_exile_template(text)
+    if exile_choice is not None:return exile_choice
     from .graveyard_return_choice_templates import graveyard_return_choice_template
     returned = graveyard_return_choice_template(text)
     if returned is not None:return returned
@@ -374,6 +512,9 @@ def typed_resolution_effect_template(
     combat_removal = combat_removal_effect_template(text)
     if combat_removal is not None:
         return combat_removal
+    phase_out = _fixed_phase_out_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+    if phase_out is not None:
+        return phase_out
     independent = _source_independent_resolution_template(text)
     if independent is not None:
         return independent

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for static CR 502 participation."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype, canonical_creature_subtype_surface

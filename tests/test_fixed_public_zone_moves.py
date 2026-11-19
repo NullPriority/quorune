@@ -3276,6 +3276,47 @@ class TargetedOwnerLibraryRuntimeTests(unittest.TestCase):
                         self.assertNotIn("lib", player)
                 self.replay(session, load=True)
 
+    def test_original_graveyard_library_move_revalidates_exiled_target_and_replays(self):
+        self.register_fixture_cards_on_add = True
+        session = self.session(33886381)
+        source = self.add(session.engine, "Noxious Revival", zone="hand")
+        target = self.add(session.engine, "Murder", seat="B", zone="graveyard")
+        response_source = self.add(session.engine, "Crypt Creeper", seat="B")
+        self.assert_whole_admission(session, source.printed_name)
+        self.assert_whole_admission(session, response_source.printed_name)
+        resolution, = [program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                       if program.event == "resolve"]
+        self.assertLessEqual(
+            {"target.revalidate_resolution", "zone.single_owner_move.graveyard_library_target"},
+            set(resolution.capability_dependencies),
+        )
+        action = self._witnesses.BoundEffectProgramRuntimeTests.ready(self, session, source, {"G": 1})
+        option = next(option for option in action["cost_options"] if option["requirements"]["G"] == 1)
+        self.assertIn(target.ref, option["target_schema"]["legal_refs"])
+        original_library = tuple(session.state.players["B"].zones["library"])
+        self.checkpoint(session)
+
+        cast = session.act("pilot:A", {"action_id": action["id"], "cost_option": option["id"],
+                                      "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        stack_ref = next(item.ref for item in session.state.stack if item.card_object_id == source.object_id)
+        self.assertTrue(session.act("pilot:A", {"action_id": "pass"}).ok)
+        legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        activation = next(row for row in legal if row["id"].startswith(f"activate:{response_source.ref}:"))
+        response = session.act("pilot:B", {"action_id": activation["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(response.ok, response.summary)
+
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[target.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(original_library, tuple(session.state.players["B"].zones["library"]))
+        counters = [event.details for event in session.state.events
+                    if event.code == "stack.counter" and event.details["stack"] == stack_ref]
+        self.assertEqual([{"stack": stack_ref, "destination": "graveyard",
+                           "reason": "all targets illegal on resolution", "counter_kind": "rules"}], counters)
+        self.replay(session, load=True)
+
     def test_original_noxious_revival_life_payment_and_versioned_offer(self):
         from quorune.printed_mana_cost_model import PHYREXIAN_MANA_COST_VERSION
         from quorune.rules.casting.proposal import build_cast_offer

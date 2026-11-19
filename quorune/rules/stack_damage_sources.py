@@ -90,6 +90,9 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
         frames = [item.to_dict() for item in host.state.stack]
         for batch in host.state.pending_trigger_batches:
             frames.extend(item for group in batch.to_dict()['groups'] for item in group['items'])
+        from .event_damage_sources import event_damage_departure_updates
+        from ..event_damage_source_model import EVENT_DAMAGE_SOURCE_CONTEXT
+        dealer_updates = event_damage_departure_updates(host, frames, departing)
         for item in frames:
             context = item.get('context', {})
             prior = context.get(SOURCE_DAMAGE_CONTEXT)
@@ -117,11 +120,15 @@ def pin_stack_damage_departures(host, cards, *, error_type=DamageError):
                 for item in group['items']:
                     if item['ref'] in updates:
                         item.setdefault('context', {})[SOURCE_DAMAGE_CONTEXT] = deepcopy(updates[item['ref']]); changed = True
+                    if item['ref'] in dealer_updates:
+                        item.setdefault('context', {})[EVENT_DAMAGE_SOURCE_CONTEXT] = deepcopy(dealer_updates[item['ref']]); changed = True
             if changed:
                 pending.append((index, PendingTriggerBatch.from_dict(data)))
         for item in host.state.stack:
             if item.ref in updates:
                 item.context[SOURCE_DAMAGE_CONTEXT] = deepcopy(updates[item.ref])
+            if item.ref in dealer_updates:
+                item.context[EVENT_DAMAGE_SOURCE_CONTEXT] = deepcopy(dealer_updates[item.ref])
         from ..trigger_processing import replace_pending_trigger_batch
         for index, batch in pending:
             replace_pending_trigger_batch(host, index, batch)
@@ -200,6 +207,9 @@ def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError)
 
 def bound_stack_damage_source(host, effect, item):
     """Bind only the source; targets and amounts keep their ordinary owners."""
+    if effect.get('op') in _OPERATIONS and isinstance(effect.get('source'), Mapping):
+        from .event_damage_sources import bind_event_damage_source
+        return bind_event_damage_source(host, effect, item)
     if (effect.get('op') == CREATURE_POWER_DAMAGE_OPERATION and effect.get('schema_version') == OCCURRENCE_POWER_DAMAGE_VERSION
             and effect.get('source') == OCCURRENCE_POWER_DAMAGE_SOURCE):
         from ..creature_power_damage import validate_occurrence_power_snapshot

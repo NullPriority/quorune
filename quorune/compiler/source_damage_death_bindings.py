@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..rules.source_references import SourceReferenceSpec
 from ..source_damage_death import SOURCE_DAMAGE_DEATH_CAPABILITY, SOURCE_DAMAGE_DEATH_FIELD
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec

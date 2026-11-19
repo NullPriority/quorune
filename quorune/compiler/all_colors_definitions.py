@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned unconditional self color definition."""
 
-import re
+from . import regex_working_set as re
 from ..all_colors import ALL_COLORS_CAPABILITY,ALL_COLORS_HANDLER,AllColorsCharacteristicDefinitionSpec
 from ..ability_fragments import ability_fragment_to_dict
 from ..rules.source_references import SourceReferenceSpec

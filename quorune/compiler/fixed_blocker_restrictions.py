@@ -3,7 +3,7 @@ from __future__ import annotations
 """Fixed blocker predicates for one targeted creature or the original source."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..fixed_blocker_restrictions import FixedBlockerRestrictionSpec

@@ -10,18 +10,23 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..semantic_runtime import intents as typed
 from ..semantic_runtime.domain_intent import DomainEffectIntent
+from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
+from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
 from ..zone_trigger_events import ZoneTransitionKind
 from .model import SemanticChoiceCompletion, SemanticChoiceContinuation, SemanticChoiceError
 
 
 def _intent_types():
+    from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
     from ..targeted_graveyard_cast_model import GraveyardCastIntent
     from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
+    from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
     return {cls.__name__:cls for cls in (
-        GraveyardCastIntent,
+        GraveyardCastIntent, GraveyardLibraryCostBatchIntent, GraveyardExileLifeResultIntent,
         ExileGraveyardCopiesIntent,
-        typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
+        ResolveRippleCastIntent,RippleBottomIntent,
+        LifeGainCostBatchIntent, typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
         typed.RecordChoiceIntent, typed.ExploreCompletedIntent, typed.ConniveCompletedIntent,
@@ -33,6 +38,10 @@ def _intent_types():
 
 
 def _value_types():
+    from ..graveyard_exile_result_model import GraveyardExileLifeResultSpec
+    from ..fixed_hand_putback_model import FixedHandPutbackOrder
+    from ..ripple_model import RippleSpec,RippleCastSnapshot
+    from ..rules.ripple_resolution_model import RippleResolutionState
     from ..connive import ConnivingObject
     from ..rules.library_selection import LibrarySelectionObjectIdentity
     from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
@@ -40,9 +49,9 @@ def _value_types():
     from ..entry_counter_model import EffectEntryCounter
     from ..reflexive_trigger_model import ReflexivePaidCreatureSnapshot
     from ..scalar_effect_amount_model import PaidCreatureStatSnapshot
-    return {cls.__name__:cls for cls in (ConnivingObject, CounterPlacementAmount, EffectEntryCounter, LibraryArrivalOrder,
+    return {cls.__name__:cls for cls in (RippleSpec,RippleCastSnapshot,RippleResolutionState,FixedHandPutbackOrder, ConnivingObject, CounterPlacementAmount, EffectEntryCounter, LibraryArrivalOrder,
                                          DepartedLibraryArrivalOrder, LibrarySelectionObjectIdentity,
-                                         ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot)}
+                                         ReflexivePaidCreatureSnapshot, PaidCreatureStatSnapshot, GraveyardExileLifeResultSpec)}
 
 
 def _data(value):
@@ -155,6 +164,9 @@ def decode_remaining_completion(value):
             if values["scope"] != GraveyardReturnScope.PUBLIC.value:
                 raise SemanticChoiceError("Completed choice has an invalid graveyard-return scope")
             values["scope"] = GraveyardReturnScope.PUBLIC
+        if cls is typed.ResolveRippleCastIntent:
+            if not isinstance(values['response'],Mapping):raise SemanticChoiceError('Ripple cast response is malformed')
+            values['response']=FrozenMap(values['response'])
         intent=cls(**values)
         if _intent_data(intent) != _data(encoded['fields']):
             raise SemanticChoiceError('Completed choice intent data are not canonical')

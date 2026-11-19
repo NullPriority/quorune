@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import CombatKeywordTriggerKind, CombatKeywordTriggerSpec, ability_fragment_to_dict
 from .ability_keyword_fragment_model import AbilityKeywordFragmentLowering
 

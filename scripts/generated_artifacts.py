@@ -543,32 +543,18 @@ def discover_tracked_generated_artifacts(
             or relative in globbed
         )
         path = root / relative
-        prefix = ""
         if not matched and path.is_file():
+            with path.open("rb") as handle:
+                prefix_bytes = handle.read(4096)
             try:
-                prefix = path.read_bytes()[:4096].decode(
-                    "utf-8", errors="strict"
-                )
+                prefix = prefix_bytes.decode("utf-8", errors="strict")
             except UnicodeDecodeError:
                 prefix = ""
             matched = any(
                 marker in prefix for marker in discovery.content_markers
-            )
-        if (
-            not matched
-            and pure.suffix.lower() == ".md"
-            and path.is_file()
-        ):
-            if not prefix:
-                try:
-                    prefix = path.read_bytes()[:4096].decode(
-                        "utf-8", errors="strict"
-                    )
-                except UnicodeDecodeError:
-                    prefix = ""
-            matched = _markdown_has_generated_status(
-                prefix,
-                discovery.markdown_statuses,
+            ) or (
+                pure.suffix.lower() == ".md"
+                and _markdown_has_generated_status(prefix, discovery.markdown_statuses)
             )
         if matched:
             generated.append(relative)

@@ -1,6 +1,11 @@
 from __future__ import annotations
+from ..bounded_hand_cast_model import bounded_hand_cast_node_capabilities
+from .ripple import ripple_node_capabilities
+from .demonstrate import demonstrate_node_capabilities
+from .gravestorm import gravestorm_node_capabilities
 from .control_capability_shapes import resolution_control_node_capabilities
 from .graveyard_return_choices import graveyard_return_choice_node_capabilities
+from .targeted_graveyard_exile import targeted_graveyard_exile_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .next_spell_payment import temporary_player_rule_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
@@ -15,6 +20,12 @@ from .resolution_characteristic_shapes import fixed_resolution_characteristic_ca
 from typing import Any, Iterable, Mapping, Sequence
 from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
+from .target_library_inspection import target_library_inspection_node_capabilities
+from .graveyard_recycling import graveyard_recycling_node_capabilities
+from .target_land_type import target_land_type_node_capabilities
+from .source_sacrifice_shapes import fixed_source_sacrifice_node_capabilities
+from .chosen_counter_removal import chosen_counter_removal_node_capabilities
+from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 
 from .affected_player_sacrifice_capability_shapes import (
     fixed_affected_player_sacrifice_node_capabilities,
@@ -92,6 +103,7 @@ from .library_search_capability_shapes import (
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
 from .fractional_player_result_shapes import half_choice_node_capabilities, half_life_node_capabilities
+from .third_life_shapes import third_life_node_capabilities
 from .public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
     public_graveyard_card_exile_node_capabilities,
@@ -110,6 +122,7 @@ from ..initiative_model import dungeon_choice_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
 from .transform_capability_shapes import source_transform_node_capabilities
+from .subtype_transform import subtype_transform_node_capabilities
 from ..preparation_model import preparation_result_node_capabilities
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
 from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabilities
@@ -143,9 +156,19 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    gravestorm_node_capabilities,
+    demonstrate_node_capabilities,
+    ripple_node_capabilities,
+    bounded_hand_cast_node_capabilities,
+    fixed_source_sacrifice_node_capabilities,
+    chosen_counter_removal_node_capabilities,
+    target_land_type_node_capabilities,
+    graveyard_recycling_node_capabilities,
+    target_library_inspection_node_capabilities,
     fixed_day_night_designation_capabilities,
     preparation_result_node_capabilities,
     graveyard_return_choice_node_capabilities,
+    targeted_graveyard_exile_node_capabilities,
     fixed_land_untap_choice_capabilities,
     fixed_library_order_capabilities,
     fixed_stack_spell_copy_node_capabilities,
@@ -187,6 +210,7 @@ _COMPONENT_RESOLVERS = (
     ring_temptation_node_capabilities,
     event_player_sacrifice_node_capabilities,
     source_transform_node_capabilities,
+    subtype_transform_node_capabilities,
     fixed_library_selection_node_capabilities,
     fixed_hand_inspection_node_capabilities,
     fixed_target_reanimation_node_capabilities,
@@ -199,6 +223,7 @@ _COMPONENT_RESOLVERS = (
     fixed_affected_player_sacrifice_node_capabilities,
     half_choice_node_capabilities,
     half_life_node_capabilities,
+    third_life_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
     fixed_counter_placement_group_node_capabilities,
     fixed_counter_placement_node_capabilities,
@@ -318,10 +343,25 @@ def fixed_optional_mana_payment_node_capabilities(
 ) -> tuple[str, ...]:
     """Recognize one positive fixed-mana wrapper around one closed effect."""
 
+    if any(effect.get('schema_version') == 13 and effect.get('op') == OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
+        from .optional_sacrifice_stats import optional_sacrifice_stat_node_capabilities
+        return optional_sacrifice_stat_node_capabilities(effects=effects, target_schema=target_schema)
+
+    if any('life_gain_counter_result_version' in effect for effect in effects):
+        from .life_gain_counted_results import life_gain_counter_payment_node_capabilities
+        return life_gain_counter_payment_node_capabilities(effects=effects, target_schema=target_schema)
+
     if any(effect.get('schema_version') == 5 and effect.get('op') == OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
         from .commander_learn_shapes import commander_learn_node_capabilities
         return commander_learn_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
-    if any(effect.get('schema_version') in (2, 3, 4) and effect.get('op')==OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
+    from ..spell_caster_sacrifice_payment import SPELL_CASTER_SACRIFICE_PAYMENT_VERSION
+
+    fixed_payment_versions = (2, 3, 4, 6, 7, 8, 9, 10, 11, SPELL_CASTER_SACRIFICE_PAYMENT_VERSION)
+    if any(
+        effect.get("schema_version") in fixed_payment_versions
+        and effect.get("op") == OPTIONAL_MANA_PAYMENT_OPERATION
+        for effect in effects
+    ):
         from .fixed_effect_payment_shapes import fixed_effect_payment_node_capabilities
         return fixed_effect_payment_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 
@@ -465,6 +505,12 @@ def fixed_effect_clause_sequence_node_capabilities(
             ),
             mechanics=mechanics - {FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC},
         )
+        if not component and index == 1 and target_land_type_node_capabilities(
+            effects=(effects[0],), target_schema=target_schema, mechanic_ids=mechanics
+        ):
+            component = fixed_next_turn_draw_node_capabilities(
+                effects=(effect,), target_schema=None, mechanic_ids=mechanics
+            )
         if not component:
             return ()
         dependencies.update(component)

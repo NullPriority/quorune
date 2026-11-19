@@ -1,8 +1,10 @@
 """Full-consumption next-spell reductions over existing public spell queries."""
 from __future__ import annotations
-import re
+from . import regex_working_set as re
 
-from ..next_spell_cost_model import OPERATION,MECHANIC,validate_next_spell_cost_instruction
+from ..next_spell_cost_model import (
+    OPERATION, MECHANIC, recurring_spell_cost_query, validate_next_spell_cost_instruction,
+)
 from ..query_effect_amount_model import PublicQueryAmountSpec
 from ..scalar_effect_amount_model import ScalarAmountOrigin,ScalarEffectAmountSpec
 from .cast_cost_modifier_templates import fixed_spell_predicate
@@ -35,3 +37,25 @@ def next_spell_cost_reduction_template(text,*,source_name,source_is_permanent=No
     try:validate_next_spell_cost_instruction(effect)
     except (ValueError,TypeError):return None
     return 'next-eligible-spell-cost-reduction-v1',(effect,),None,tuple(mechanics)
+
+
+def recurring_attack_spell_cost_template(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("creature.attacks", "source_attacks", "battlefield")
+        or binding.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+        or body != binding.body
+    ):
+        return None
+    matched = re.fullmatch(
+        r"(?P<scope>Instant and sorcery|Face-down) spells you cast this turn cost \{1\} less to cast[.]?",
+        body, re.I,
+    )
+    if matched is None:
+        return None
+    face_down_only = matched["scope"].casefold() == "face-down"
+    effect = {
+        "op": OPERATION, "schema_version": 2, "amount": 1, "face_down_only": face_down_only,
+        "spell_query": recurring_spell_cost_query(face_down_only).to_dict(),
+    }
+    return "attack-recurring-spell-cost-reduction-v2", (effect,), None, (MECHANIC,)

@@ -30,14 +30,17 @@ def validate_variable_subset_discard_draw(effect):
 def validate_discard_draw(effect):
     if not isinstance(effect, Mapping) or set(effect) != {'op', 'schema_version', 'actor', 'players', 'reduction', 'offset'}:
         raise ValueError('Discard-result instruction has a closed schema')
-    if effect['op'] != DISCARD_RESULT_OPERATION or type(effect['schema_version']) is not int or effect['schema_version'] != 1:
+    if effect['op'] != DISCARD_RESULT_OPERATION or type(effect['schema_version']) is not int or effect['schema_version'] not in (1, 2):
         raise ValueError('Unsupported discard-result instruction')
     if type(effect['actor']) is not str or not effect['actor']:
         raise ValueError('Discard-result actor is required')
     players = effect['players']
     if players != 'all' and (not isinstance(players, (list, tuple)) or len(players) != 1 or type(players[0]) is not str or not players[0]):
         raise ValueError('Discard results require all players or one bound player')
-    if effect['reduction'] not in {'own', 'greatest'} or type(effect['offset']) is not int or effect['offset'] not in (0, 1):
+    if effect['schema_version'] == 2:
+        if effect['reduction'] != 'own' or type(effect['offset']) is not int or effect['offset'] != -1:
+            raise ValueError('Schema-two discard results require own count minus one')
+    elif effect['reduction'] not in {'own', 'greatest'} or type(effect['offset']) is not int or effect['offset'] not in (0, 1):
         raise ValueError('Discard-result quantity is unrepresented')
 
 
@@ -108,3 +111,19 @@ class IntentResultPlayerDraws:
         greatest = max((count for _, count in result.counts), default=0)
         return tuple(FrozenMap({'op': 'draw', 'player': player, 'count': (greatest if self.reduction == 'greatest' else count) + self.offset, 'private': True})
             for player, count in result.counts)
+
+
+@dataclass(frozen=True, slots=True)
+class ReducedDiscardResultDraws(IntentResultPlayerDraws):
+    """Explicit schema-two binding; historical result bindings stay closed."""
+
+    def __post_init__(self):
+        if (type(self.intent_index) is not int or self.intent_index < 0
+                or self.reduction != 'own' or type(self.offset) is not int or self.offset != -1):
+            raise ValueError('Reduced discard draws require own committed count minus one')
+
+    def resolved_effects(self, result):
+        if not isinstance(result, PlayerDiscardCounts):
+            raise ValueError('Reduced discard draws require committed discard counts')
+        return tuple(FrozenMap({'op':'draw','player':player,'count':max(0,count-1),'private':True})
+            for player,count in result.counts)

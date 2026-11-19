@@ -1,5 +1,5 @@
 """Exact source and public-creature permanent designation trigger heads."""
-import re
+from . import regex_working_set as re
 from ..designation_event_model import (DESIGNATION_EVENT_CAPABILITY, DESIGNATION_EVENT_MECHANIC,
                                        MONSTROUS_EVENT, RENOWNED_EVENT, DESIGNATION_EVENTS)
 from ..rules.source_references import SourceReferenceSpec

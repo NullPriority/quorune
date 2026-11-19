@@ -1,5 +1,5 @@
 """Compose fixed damage and independent fixed life gain in source context."""
-import re
+from . import regex_working_set as re
 
 
 def fixed_damage_life_clauses(text):

@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compile a fixed-duration quoted ability through its independent child."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.temporary_ability_grant import TEMPORARY_QUOTED_GRANT_CAPABILITY, TEMPORARY_QUOTED_GRANT_MECHANIC

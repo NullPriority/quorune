@@ -13,6 +13,11 @@ def registered_component_capabilities(descriptor,registered):
         TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID,TriggerMultiplierAbilityFragmentHandler,
     )
     dependencies=tuple(registered['capability_dependencies'])
+    from ..semantic_runtime.fixed_characteristic_settings import (
+        NONOWNER_CREATURE_MODIFIER_HANDLER, NonownerCreatureModifierHandler,
+    )
+    if descriptor.get("handler_id") == NONOWNER_CREATURE_MODIFIER_HANDLER:
+        return NonownerCreatureModifierHandler().required_capabilities(descriptor)
     if descriptor.get('handler_id')!=TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID:return dependencies
     fragment=TriggerMultiplierAbilityFragmentHandler().validate(descriptor)
     if fragment.capability_id not in dependencies:
@@ -48,6 +53,9 @@ def _fragment_descriptor_requirements(value):
         keyword_arrays = (value.get(field, ()) for field in ('keywords', 'add_abilities', 'remove_abilities'))
         own = {'combat.banding'} if any(isinstance(words, (list, tuple)) and 'Banding' in words
             for words in keyword_arrays) else set()
+        if value.get('kind') == 'enchant_typed':
+            from .enchant_public_state import public_state_enchant_descriptor_dependencies
+            own.update(public_state_enchant_descriptor_dependencies(value))
         if value.get('kind') == 'public_fact_at_least' and value.get('fact') == 'source_renowned':
             from ..continuous_conditions import FixedPublicStateConditionSpec
             FixedPublicStateConditionSpec.from_dict(value)
@@ -92,6 +100,8 @@ def _fragment_descriptor_requirements(value):
 def keyword_runtime_dependencies(program):
     from ..cipher_model import CIPHER_CAPABILITY
     required = set(attached_keyword_runtime_dependencies(program))
+    from .recover import recover_program_dependencies
+    required.update(recover_program_dependencies(program))
     from ..declared_cast_cost_model import declared_cost_event_dependencies
     required.update(declared_cost_event_dependencies(getattr(program, 'condition', None)))
     if any(effect.get('op') == 'encode_cipher' for effect in program.effects):

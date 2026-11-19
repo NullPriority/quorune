@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Untargeted results on one sealed permanent occurrence incarnation."""
 
-import re
+from . import regex_working_set as re
 from ..damage_recipient_model import DAMAGE_PERMANENT_OBJECT, DAMAGE_PERMANENT_VARIANT
 from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
 from ..creature_power_damage_model import (

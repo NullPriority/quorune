@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
     QUALIFIED_SCAN_MECHANIC, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_TARGET, discover_payload_dependencies)
 from ..replacement.immutable import FrozenMap
+from ..mana_value_exile_model import TOTAL_MANA_EXILE_SCOPE, TOTAL_MANA_EXILE_MECHANIC
 from ..fixed_top_exile import (
     CHOSEN_IMPULSE_MECHANIC, CHOSEN_IMPULSE_SCOPE, FIXED_TOP_EXILE_MECHANIC, FIXED_TOP_EXILE_OPERATION,
     OWN_LIBRARY_EXILE_SCOPES, RESOLVING_TOP_PLAY_MECHANIC, RESOLVING_TOP_PLAY_SCOPE, validate_fixed_top_exile,
@@ -21,7 +22,7 @@ def discover_node_capabilities(*,effects,target_schema,mechanic_ids):
                 QUALIFIED_SCAN_OPERATION: QUALIFIED_SCAN_MECHANIC,
                 FIXED_TOP_EXILE_OPERATION: FIXED_TOP_EXILE_MECHANIC}.get(operation)
     if operation == FIXED_TOP_EXILE_OPERATION:
-        mechanic = {CHOSEN_IMPULSE_SCOPE: CHOSEN_IMPULSE_MECHANIC,
+        mechanic = {TOTAL_MANA_EXILE_SCOPE: TOTAL_MANA_EXILE_MECHANIC, CHOSEN_IMPULSE_SCOPE: CHOSEN_IMPULSE_MECHANIC,
                     RESOLVING_TOP_PLAY_SCOPE: RESOLVING_TOP_PLAY_MECHANIC}.get(effects[0].get("scope"), mechanic)
     if mechanic is None or mechanic not in mechanic_ids:
         return ()

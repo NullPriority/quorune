@@ -1,7 +1,7 @@
 """Resolve a source-cost anaphor only when every occurrence proves its subject."""
 
 from collections.abc import Mapping
-import re
+from . import regex_working_set as re
 
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from ..rules.source_references import SourceReferenceSpec

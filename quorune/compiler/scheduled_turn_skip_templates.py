@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed scheduled skips with explicit recipient and occurrence scope."""
 
-import re
+from . import regex_working_set as re
 
 from ..turn_skip_model import (
     MAX_PRINTED_SKIP_COUNT, TURN_SKIP_MECHANIC, TURN_SKIP_OPERATION,

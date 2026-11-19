@@ -6,7 +6,7 @@ from copy import deepcopy
 from dataclasses import replace
 from functools import partial
 import hashlib
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..query_effect_amount_model import (
@@ -226,7 +226,7 @@ def _bargain_declaration_available(record, text):
 
 
 def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: str,
-                                   compile_effect: Callable[..., Any]) -> Callable[..., Any]:
+                                   compile_effect: Callable[..., Any], face_name: str | None = None) -> Callable[..., Any]:
     """Compile the effect with the declarations available during casting."""
     _, symbols = mana_cost_to_vector(record.mana_cost)
     available = bool(is_spell and not record.faces and 'X' in symbols
@@ -239,8 +239,9 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         kicked_self_replacement_available=bool(is_spell and not record.faces),
         bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
     from .spell_self_exile import terminal_spell_move_effect_compiler
-    terminal = terminal_spell_move_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
-        ordinary_spell=bool(is_spell and not record.faces))
+    matched_face = any(face.get('name') == face_name and re.search(r'\b(?:Instant|Sorcery)\b',str(face.get('type_line',''))) for face in record.faces)
+    terminal = terminal_spell_move_effect_compiler(selected,source_name=face_name or record.name,oracle_text=oracle_text,
+        ordinary_spell=bool(is_spell and (not record.faces or matched_face)))
     if not is_spell or " damage divided as you choose among " not in oracle_text.casefold():
         return terminal
 
@@ -361,6 +362,11 @@ def declared_amount_shape_context(
             return deepcopy(effect)
         if effect.get("op") == "search":
             counted_search_bound_dependencies(effect)
+            from ..library_search_model import QUERY_BOUND_SEARCH_VERSION, QUERY_BOUND_SEARCH_MECHANIC
+            if effect.get("schema_version") == QUERY_BOUND_SEARCH_VERSION:
+                if QUERY_BOUND_SEARCH_MECHANIC not in mechanics:
+                    raise PublicQueryAmountError("Search quantity lacks its typed search owner")
+                return deepcopy(effect)
         if effect.get("op") == "fixed_impulse_access":
             from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies
             if declared_impulse_access_dependencies(effect):

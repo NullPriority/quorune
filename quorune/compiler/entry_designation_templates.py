@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned entry designations and fixed chosen-value characteristics."""
 
-import re
+from . import regex_working_set as re
 from collections import Counter
 from dataclasses import replace
 from typing import Mapping, Sequence

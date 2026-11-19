@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed compiler grammar for one unmodified Proliferate instruction."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 

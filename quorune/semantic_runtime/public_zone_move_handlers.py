@@ -13,6 +13,10 @@ from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import IntentPlan
 from .zone_move_intent import ExilePublicGraveyardCardIntent, MovePublicZoneSetIntent
+from .graveyard_card_result_handlers import GraveyardCardCounterLifeHandler
+from .graveyard_exile_branch_handlers import GraveyardExileBranchHandler
+from .graveyard_exile_token_handlers import GraveyardExileTokenHandler
+from .graveyard_exile_type_outcome_handlers import GraveyardExileTypeOutcomeHandler
 
 
 @dataclass(frozen=True, slots=True)
@@ -152,6 +156,10 @@ class MovePublicZoneSetHandler:
 PUBLIC_ZONE_MOVE_HANDLERS = (
     ExilePublicGraveyardCardHandler(),
     MovePublicZoneSetHandler(),
+    GraveyardCardCounterLifeHandler(),
+    GraveyardExileBranchHandler(),
+    GraveyardExileTokenHandler(),
+    GraveyardExileTypeOutcomeHandler(),
 )
 
 

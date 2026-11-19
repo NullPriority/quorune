@@ -1,6 +1,6 @@
 """One optional permanent per player over existing announced target-set owners."""
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from .any_number_target_sets import any_number_target_set_template
 
 PER_PLAYER_TARGET_CAPABILITY='target.set.one_per_player'

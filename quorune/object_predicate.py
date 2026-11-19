@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Iterable, Mapping
 
 from .counter_names import CounterStateError, normalized_counter_name
@@ -49,7 +49,10 @@ _NUMERIC_QUERY_FIELDS = _DESIGNATION_QUERY_FIELDS | {"numeric_characteristic"}
 _SUPERTYPE_EXCLUSION_QUERY_FIELDS = _NUMERIC_QUERY_FIELDS | {"excluded_supertypes"}
 _COLOR_EXCLUSION_QUERY_FIELDS = _SUPERTYPE_EXCLUSION_QUERY_FIELDS | {"colors_none"}
 _CARD_MANA_VALUE_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"mana_value_max"}
+_PERMANENT_MANA_VALUE_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"permanent_mana_value_max"}
 _RECEIVER_UNION_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"any_of"}
+_NONOWNER_CONTROL_QUERY_FIELDS = _QUERY_FIELDS | {"controlled_by_nonowner"}
+NONOWNER_CONTROL_QUERY_CAPABILITY = "state_query.permanent.controlled_by_nonowner"
 NEGATIVE_COLOR_QUERY_CAPABILITY = "state_query.permanent.negative_color"
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
@@ -331,6 +334,17 @@ def _validate_card_mana_value_query(query: Any) -> None:
         raise ObjectQueryError("Fixed card mana-value queries require physical graveyard cards and a bound from zero through twenty")
 
 
+def _normalized_excluded_controllers(values: Any) -> tuple[str, ...]:
+    """Validate controller identities without changing their spelling."""
+    if not isinstance(values, (list, tuple)):
+        raise ObjectQueryError("Object query excluded_controllers must be an array")
+    if any(type(value) is not str or not value for value in values):
+        raise ObjectQueryError("Object query excluded_controllers requires nonempty strings")
+    if len(set(values)) != len(values):
+        raise ObjectQueryError("Object query excluded_controllers requires unique strings")
+    return tuple(sorted(values))
+
+
 @dataclass(frozen=True, slots=True)
 class ObjectQuerySpec:
     zones: tuple[str, ...] = ()
@@ -362,15 +376,21 @@ class ObjectQuerySpec:
     colors_none: tuple[str, ...] = ()
     any_of: tuple[ObjectQuerySpec, ...] = ()
     mana_value_max: int | None = None
+    permanent_mana_value_max: int | None = None
     _serialization_version: int = field(
         default=2,
         repr=False,
         compare=False,
         hash=False,
     )
+    controlled_by_nonowner: bool = False
 
     def __post_init__(self) -> None:
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}:
+        if type(self.controlled_by_nonowner) is not bool or (
+            self._serialization_version == 12 and not self.controlled_by_nonowner
+        ):
+            raise ObjectQueryError("A nonowner-control query requires the explicit true predicate")
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}:
             raise ObjectQueryError('Object query serialization version is unsupported')
         card_mana_bound = self.mana_value_max is not None or self._serialization_version == 10
         for field_name in (
@@ -416,25 +436,7 @@ class ObjectQuerySpec:
                     raise ObjectQueryError(
                         f"Object query {field_name} must be a nonempty string or null"
                     )
-        excluded_controllers: list[str] = []
-        if not isinstance(self.excluded_controllers, (list, tuple)):
-            raise ObjectQueryError(
-                "Object query excluded_controllers must be an array"
-            )
-        for value in self.excluded_controllers:
-            if type(value) is not str or not value:
-                raise ObjectQueryError(
-                    "Object query excluded_controllers requires nonempty strings"
-                )
-            excluded_controllers.append(value)
-        excluded_controllers.sort()
-        if len(set(excluded_controllers)) != len(excluded_controllers):
-            raise ObjectQueryError(
-                "Object query excluded_controllers requires unique strings"
-            )
-        object.__setattr__(
-            self, "excluded_controllers", tuple(excluded_controllers)
-        )
+        object.__setattr__(self, "excluded_controllers", _normalized_excluded_controllers(self.excluded_controllers))
         for field_name in (
             "token",
             "tapped",
@@ -495,11 +497,11 @@ class ObjectQuerySpec:
             object.__setattr__(self, "_serialization_version", 8)
         if self.colors_none:
             object.__setattr__(self, "_serialization_version", 9)
-        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}:
+        if type(self._serialization_version) is not int or self._serialization_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}:
             raise ObjectQueryError(
                 "Object query serialization version is unsupported"
             )
-        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8, 9, 10}:
+        if extended and self._serialization_version not in {3, 4, 5, 6, 7, 8, 9, 10, 11}:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
@@ -512,6 +514,13 @@ class ObjectQuerySpec:
         if card_mana_bound:
             _validate_card_mana_value_query(self)
             object.__setattr__(self, "_serialization_version", 10)
+        if self.permanent_mana_value_max is not None or self._serialization_version == 11:
+            from .battlefield_mana_value_query import validate_permanent_mana_value_query
+            validate_permanent_mana_value_query(self)
+            object.__setattr__(self, '_serialization_version', 11)
+        if self.controlled_by_nonowner:
+            _validate_nonowner_control_query(self)
+            object.__setattr__(self, "_serialization_version", 12)
 
     def canonical_dict(self) -> dict[str, Any]:
         """Return the complete current semantic descriptor."""
@@ -547,7 +556,7 @@ class ObjectQuerySpec:
                     ),
                 }
             )
-        elif self._serialization_version in {4, 5, 6, 7, 8, 9, 10}:
+        elif self._serialization_version in {4, 5, 6, 7, 8, 9, 10, 11}:
             value.update(
                 {
                     "subtypes_any": list(self.subtypes_any),
@@ -564,19 +573,23 @@ class ObjectQuerySpec:
                     "minimum_color_count": self.minimum_color_count,
                 }
             )
-            if self._serialization_version in {5, 6, 7, 8, 9, 10}:
+            if self._serialization_version in {5, 6, 7, 8, 9, 10, 11}:
                 value["keywords_none"] = list(self.keywords_none)
-            if self._serialization_version in {6, 7, 8, 9, 10}:
+            if self._serialization_version in {6, 7, 8, 9, 10, 11}:
                 value["commander"] = self.commander
-            if self._serialization_version in {7, 8, 9, 10}:
+            if self._serialization_version in {7, 8, 9, 10, 11}:
                 value["numeric_characteristic"] = (
                     self.numeric_characteristic.to_dict() if self.numeric_characteristic is not None else None)
-            if self._serialization_version in {8, 9, 10}:
+            if self._serialization_version in {8, 9, 10, 11}:
                 value['excluded_supertypes'] = list(self.excluded_supertypes)
-            if self._serialization_version in {9, 10}:
+            if self._serialization_version in {9, 10, 11}:
                 value['colors_none'] = list(self.colors_none)
             if self._serialization_version == 10:
                 value['mana_value_max'] = self.mana_value_max
+            if self._serialization_version == 11:
+                value['permanent_mana_value_max'] = self.permanent_mana_value_max
+        if self.controlled_by_nonowner:
+            value["controlled_by_nonowner"] = True
         if self.any_of:
             value['any_of'] = [part.to_dict() for part in self.any_of]
         return value
@@ -613,6 +626,8 @@ class ObjectQuerySpec:
             _SUPERTYPE_EXCLUSION_QUERY_FIELDS,
             _COLOR_EXCLUSION_QUERY_FIELDS,
             _CARD_MANA_VALUE_QUERY_FIELDS,
+            _PERMANENT_MANA_VALUE_QUERY_FIELDS,
+            _NONOWNER_CONTROL_QUERY_FIELDS,
             _RECEIVER_UNION_QUERY_FIELDS,
         }:
             expected = (
@@ -681,9 +696,15 @@ class ObjectQuerySpec:
             state_predicate=state_predicate,
             numeric_characteristic=numeric,
             mana_value_max=value.get("mana_value_max"),
+            permanent_mana_value_max=value.get('permanent_mana_value_max'),
             any_of=tuple(cls.from_dict(part) for part in value['any_of']) if 'any_of' in value else (),
+            controlled_by_nonowner=value.get("controlled_by_nonowner", False),
             _serialization_version=(
-                10
+                12
+                if actual == _NONOWNER_CONTROL_QUERY_FIELDS
+                else 11
+                if actual == _PERMANENT_MANA_VALUE_QUERY_FIELDS
+                else 10
                 if actual == _CARD_MANA_VALUE_QUERY_FIELDS
                 else 9
                 if actual == _COLOR_EXCLUSION_QUERY_FIELDS
@@ -762,14 +783,26 @@ def validate_chosen_damage_source_predicate(
     return spec
 
 
+def _validate_nonowner_control_query(query: ObjectQuerySpec) -> None:
+    """Keep this relationship limited to ordinary public battlefield recipients."""
+    unqualified = replace(query, controlled_by_nonowner=False, _serialization_version=2)
+    if query.types_all not in ((), ("creature",), ("land",)) or unqualified != ObjectQuerySpec(
+        zones=("battlefield",), controller=query.controller, types_all=query.types_all,
+    ):
+        raise ObjectQueryError("Nonowner control requires a plain public battlefield query")
+
+
 def object_query_capabilities(value: Any) -> tuple[str, ...]:
     """Derive authority only from complete typed public-query descriptors."""
     if isinstance(value, PermanentStatePredicateSpec):
         return (ANY_COUNTER_QUERY_CAPABILITY,) if value.minimum_total_counter_count is not None else ()
     if isinstance(value, ObjectQuerySpec):
         from .object_query_union import RECEIVER_UNION_CAPABILITY
+        from .battlefield_mana_value_query import PERMANENT_MANA_VALUE_QUERY_CAPABILITY
         return tuple(sorted({*((NEGATIVE_COLOR_QUERY_CAPABILITY,) if value.colors_none else ()),
             *((RECEIVER_UNION_CAPABILITY,) if value.any_of else ()),
+            *((PERMANENT_MANA_VALUE_QUERY_CAPABILITY,) if value.permanent_mana_value_max is not None else ()),
+            *((NONOWNER_CONTROL_QUERY_CAPABILITY,) if value.controlled_by_nonowner else ()),
             *object_query_capabilities(value.state_predicate)}))
     if isinstance(value, Mapping):
         own = (COUNTER_TOTAL_CAPABILITY,) if value.get('reduction') == 'total_counters' else ()
@@ -781,6 +814,13 @@ def object_query_capabilities(value: Any) -> tuple[str, ...]:
             own = (NEGATIVE_COLOR_QUERY_CAPABILITY,) if query.colors_none else ()
         if frozenset(value) == _CARD_MANA_VALUE_QUERY_FIELDS:
             ObjectQuerySpec.from_dict(value)
+        if "controlled_by_nonowner" in value:
+            ObjectQuerySpec.from_dict(value)
+            own = (NONOWNER_CONTROL_QUERY_CAPABILITY,)
+        if frozenset(value) == _PERMANENT_MANA_VALUE_QUERY_FIELDS:
+            from .battlefield_mana_value_query import PERMANENT_MANA_VALUE_QUERY_CAPABILITY
+            ObjectQuerySpec.from_dict(value)
+            own = (PERMANENT_MANA_VALUE_QUERY_CAPABILITY,)
         if frozenset(value) == _RECEIVER_UNION_QUERY_FIELDS:
             from .object_query_union import RECEIVER_UNION_CAPABILITY
             query = ObjectQuerySpec.from_dict(value)

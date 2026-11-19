@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole fixed counter result on one typed public occurrence."""
 
-import re
+from . import regex_working_set as re
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
 from ..face_up_effect_model import TURN_FACE_UP_EVENT
 from ..transform_timestamp_model import TRANSFORM_EVENT

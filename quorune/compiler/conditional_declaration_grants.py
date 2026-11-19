@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile declaration grants behind one independently closed public condition."""
 
-import re
+from . import regex_working_set as re
 from collections.abc import Mapping
 
 from ..ability_fragments import ability_fragment_to_dict

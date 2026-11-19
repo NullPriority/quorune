@@ -3,7 +3,7 @@ from __future__ import annotations
 """One closed blink grammar across existing spell, trigger and activation shells."""
 
 import hashlib
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..linked_exile_return_model import (

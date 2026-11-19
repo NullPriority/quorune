@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 from typing import Any, Mapping
 
@@ -289,6 +289,10 @@ def query_characteristic_quantity(
     def compile_count(objects):
         return query_characteristic_quantity(objects, source_name=source_name, definition_extensions=definition_extensions)
 
+    from .commander_cast_quantity_templates import commander_cast_quantity
+    commander_count = commander_cast_quantity(text)
+    if commander_count is not None:
+        return commander_count
     named = named_collection_quantity(text, compile_count=compile_count)
     if named is not None:
         return named

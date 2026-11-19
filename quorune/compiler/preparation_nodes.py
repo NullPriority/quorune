@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-pinned preparation entry and alternative spell characteristics."""
 
-import re
+from . import regex_working_set as re
 
 from ..preparation_model import (
     PrepareSpellSpec, PREPARATION_HANDLER, PREPARATION_CAPABILITY,

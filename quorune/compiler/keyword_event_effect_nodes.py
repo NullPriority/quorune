@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed keyword triggers over normalized public event owners."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
@@ -45,6 +45,10 @@ def fixed_keyword_event_effect_mechanics(
     ):
         return ("cycling",)
     keyword_values = {str(keyword).casefold() for keyword in keywords}
+    from .repeated_keyword_event_nodes import numeric_keyword_clause_parts
+    repeated = numeric_keyword_clause_parts(material_line)
+    if repeated is not None and all(spec.keyword in keyword_values for _, _, _, spec in repeated):
+        return tuple(spec.keyword for _, _, _, spec in repeated)
     event_effect = fixed_keyword_event_effect_spec(material_line)
     if event_effect is not None and event_effect.keyword in keyword_values:
         return (event_effect.keyword,)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_CAPABILITY, MULTIKICKER_AMOUNT_MECHANIC
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec

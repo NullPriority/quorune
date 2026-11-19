@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Typed current-turn history predicates for public permanent targets."""
+"""Typed current-turn history predicates for public targets."""
 
 from dataclasses import dataclass
 from enum import Enum
@@ -94,7 +94,62 @@ def target_damage_history_matches(
     )
 
 
+PLAYER_HISTORY_FIELD = "player_history"
+
+
+class TargetPlayerHistoryKind(str, Enum):
+    LOST_LIFE = "lost_life_this_turn"
+    DAMAGED_BY_SOURCE = "damaged_by_source_this_turn"
+
+
+@dataclass(frozen=True, slots=True)
+class TargetPlayerHistorySpec:
+    """One exact fact about a player in the current turn."""
+
+    kind: TargetPlayerHistoryKind
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.kind, TargetPlayerHistoryKind):
+            raise ValueError("Target player history requires a typed kind")
+
+    def to_dict(self) -> dict[str, str]:
+        return {"kind": self.kind.value}
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, Any]) -> "TargetPlayerHistorySpec":
+        if not isinstance(value, Mapping) or set(value) != {"kind"} or type(value["kind"]) is not str:
+            raise ValueError("Target player history requires an exact kind")
+        return cls(TargetPlayerHistoryKind(value["kind"]))
+
+
+def target_player_history_matches(
+    spec: TargetPlayerHistorySpec,
+    *,
+    history: TurnHistory | None,
+    turn_sequence: int,
+    player: str,
+    source_incarnation: str | None,
+) -> bool:
+    """Match the positive public result and any required source incarnation."""
+    if not isinstance(spec, TargetPlayerHistorySpec):
+        raise ValueError("Target player history matching requires a typed spec")
+    if spec.kind is TargetPlayerHistoryKind.LOST_LIFE:
+        return any(event.target == player and event.amount > 0 for event in current_turn_history_events(
+            history, turn_sequence=turn_sequence, kind="player_lost_life",
+        ))
+    if source_incarnation is None:
+        return False
+    return any(
+        event.target == player and event.amount > 0 and event.object_incarnation == source_incarnation
+        for event in current_turn_history_events(history, turn_sequence=turn_sequence, kind="player_damaged")
+    )
+
+
 __all__ = [
+    "PLAYER_HISTORY_FIELD",
+    "TargetPlayerHistoryKind",
+    "TargetPlayerHistorySpec",
+    "target_player_history_matches",
     "TargetDamageHistoryKind",
     "TargetDamageHistorySpec",
     "target_damage_history_matches",

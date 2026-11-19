@@ -37,6 +37,7 @@ def _compiled(spec: Any) -> tuple[str, dict[str, Any], tuple[str, ...]]:
         f"fixed-public-alternative-cost-{spec.kind.value}-v1",
         fixed_public_alternative_cost_handler_descriptor(spec),
         (FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY,
+            *spec.condition.capability_dependencies,
             *selected_zone_cost_payload_dependencies(costs),
             *fixed_life_payment_additional_cost_node_capabilities(cost_schema=costs)),
     )

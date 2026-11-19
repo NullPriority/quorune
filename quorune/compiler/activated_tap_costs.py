@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed fixed selected-permanent tap costs for activated abilities."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..abilities import ActivatedAbility, CostChoice
 from ..creature_subtypes import canonical_creature_subtype
@@ -107,7 +107,14 @@ def fixed_tap_activation_cost_choice(cost_text: str) -> CostChoice | None:
         fields['colors_any'] = tuple(dict.fromkeys(symbols[name] for name in (color['first'], color['second']) if name))
         quality = color['body']
     singular_type = quality.removesuffix("s")
-    if singular_type in _PERMANENT_CARD_TYPES and (
+    legendary = quality in {"legendary permanent", "legendary creature"}
+    if legendary:
+        if count != 1 or another or color is not None:
+            return None
+        fields["supertypes_all"] = ("legendary",)
+        if quality == "legendary creature":
+            fields["types_all"] = ("creature",)
+    elif singular_type in _PERMANENT_CARD_TYPES and (
         (count == 1 and quality == singular_type)
         or (count > 1 and quality == f"{singular_type}s")
     ):
@@ -138,6 +145,7 @@ def fixed_tap_activation_cost_choice(cost_text: str) -> CostChoice | None:
         zone="battlefield",
         another=another,
         predicate=FrozenMap(predicate.to_dict()),
+        tap_schema_version=3 if legendary else None,
     )
 
 
@@ -161,6 +169,8 @@ def fixed_activated_tap_cost(ability: ActivatedAbility) -> ActivatedAbility:
         return ability
     choice = fixed_tap_activation_cost_choice(ability.uncompiled_costs[0])
     if choice is None:
+        return ability
+    if choice.tap_schema_version == 3 and ability.tap_source:
         return ability
     if ability.tap_source:
         choice = replace(choice,another=True,predicate=FrozenMap({**dict(choice.predicate),'exclude_ref':'$source'}))

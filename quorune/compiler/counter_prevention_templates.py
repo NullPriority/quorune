@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type

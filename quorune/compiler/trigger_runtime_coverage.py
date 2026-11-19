@@ -4,6 +4,10 @@ from __future__ import annotations
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
 from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
+from ..controller_creature_keyword_absence import (
+    CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE, ControllerCreatureKeywordAbsence,
+)
+from ..death_keyword_absence import DEATH_KEYWORD_ABSENCE_COVERAGE, DeathKeywordAbsence
 from ..life_change import FIRST_LIFE_GAIN_EVENT
 from ..preparation_model import PREPARATION_RESULT_MECHANIC
 from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE
@@ -21,8 +25,14 @@ def trigger_runtime_coverage(binding, *, current_ability, qualified_zone_variant
         values.append('one_or_more_event_batch')
     if binding.variant in multi_event_variants:
         values.append('fixed_multi_event_subscription')
+    if getattr(getattr(binding, "spell_subject", None), "requires_no_mana_spent", False):
+        values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition"))
     if binding.public_state_condition is not None:
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, 'intervening_condition', FIXED_PUBLIC_STATE_INTERVENING_COVERAGE))
+    if isinstance(binding.public_state_condition, ControllerCreatureKeywordAbsence):
+        values.append(CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE)
+    if isinstance(binding.public_state_condition, DeathKeywordAbsence):
+        values.append(DEATH_KEYWORD_ABSENCE_COVERAGE)
     if binding.attacked_player_life:
         values.extend((CURRENT_ABILITY_FRAGMENT_COVERAGE, 'intervening_condition', ATTACKED_PLAYER_LIFE_COVERAGE))
     if binding.minimum_declared_attack_power is not None:

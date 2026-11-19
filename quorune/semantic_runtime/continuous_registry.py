@@ -25,9 +25,11 @@ def default_continuous_effect_component_registry(
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .qualified_attached_settings import QualifiedAttachedCharacteristicsHandler
     from .chosen_aura_protection import SourceChosenAuraProtectionHandler
     from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
+    from .fixed_characteristic_settings import NonownerCreatureModifierHandler
     from .attached_control import AttachedControlHandler
     from .quantified_anthems import QuantifiedAnthemHandler
     from .recipient_anthems import RecipientAnthemHandler
@@ -90,9 +92,11 @@ def default_continuous_effect_component_registry(
             GraveyardConditionalAbilityGrantHandler(),
             ConditionalTypedKeywordHandler(),
             AttachedFixedCharacteristicsHandler(),
+            QualifiedAttachedCharacteristicsHandler(),
             SourceChosenAuraProtectionHandler(),
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
+            NonownerCreatureModifierHandler(),
             EnchantedPlayerCharacteristicsHandler(),
             DisjointNegativeKeywordGrantHandler(),
             ConditionalCharacteristicSettingsHandler(),

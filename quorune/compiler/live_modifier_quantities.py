@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed live player and attached-recipient quantities for static modifiers."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 from ..characteristic_fragments import (CharacteristicQuantitySpec,CharacteristicQuantityScope as Scope,
     CharacteristicQuantityReduction as Reduction)

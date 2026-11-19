@@ -5,6 +5,7 @@ from typing import Any, Protocol
 from .casting_payment_keywords import AssistSpec, DelveSpec, ImproviseSpec
 from .convoke import ConvokeSpec
 from .evoke import FixedManaEvokeSpec
+from .hand_exile_evoke_model import HandExileEvokeSpec
 from .semantic_runtime.cast_costs import (
     AffinitySpec,
     CONVOKE_ACTIVE_ZONE,
@@ -140,14 +141,14 @@ def compiled_evoke_specs(
     oracle_id: str,
     *,
     spell_program: Any,
-) -> tuple[FixedManaEvokeSpec, ...]:
-    """Return the selected face's trusted fixed-mana Evoke descriptor."""
+) -> tuple[FixedManaEvokeSpec | HandExileEvokeSpec, ...]:
+    """Return the selected face's trusted typed Evoke descriptor."""
 
     return _compiled_specs(
         host,
         oracle_id,
         spell_program=spell_program,
-        spec_type=FixedManaEvokeSpec,
+        spec_type=(FixedManaEvokeSpec, HandExileEvokeSpec),
     )
 
 
@@ -188,7 +189,7 @@ def _compiled_specs(
     oracle_id: str,
     *,
     spell_program: Any,
-    spec_type: type[Any],
+    spec_type: type[Any] | tuple[type[Any], ...],
 ) -> tuple[Any, ...]:
     expected_face = _selected_face_id(spell_program)
     registry = default_cast_cost_component_registry()

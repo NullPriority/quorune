@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed live land-creature settings that explicitly retain land types."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from .continuous_templates import (

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned fixed Amplify keyword productions."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.amplify import AMPLIFY_CAPABILITY, AMPLIFY_HANDLER, AmplifySpec

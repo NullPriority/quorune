@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole-sentence Oracle lowering for unconditional external entry tap state."""
 
-import re
+from . import regex_working_set as re
 
 from ..external_entry_state_model import (
     EXTERNAL_ENTRY_STATE_CAPABILITY,EXTERNAL_ENTRY_STATE_HANDLER_ID,

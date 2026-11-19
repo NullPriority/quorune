@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed source-self combat growth bodies over normalized public events."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 

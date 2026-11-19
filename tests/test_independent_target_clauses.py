@@ -82,6 +82,22 @@ class IndependentTargetClauseCompilerTests(unittest.TestCase):
                 'Target creature gets +1/+1 until end of turn. Another target creature gets -1/-1 until end of turn. Another target creature gains flying until end of turn.'):
             self.assertNotEqual('exact',compile_oracle_card(record(text,'Instant'),capability_registry=registry).status)
 
+    def test_composed_public_query_clause_closes_without_activation_context(self):
+        from quorune.compiler.program_composition import (
+            COMPOSED_SPELL_EFFECT_SEQUENCE,
+            is_closed_composed_spell_effect_program,
+        )
+        from quorune.compiler.program_generation import _closed_effect_recognizers
+
+        _, program = self.program(
+            "Target creature gets +1/+1 until end of turn. "
+            "Put a +1/+1 counter on target creature for each Elf you control."
+        )
+        self.assertEqual(COMPOSED_SPELL_EFFECT_SEQUENCE, program.provenance["template_id"])
+        self.assertTrue(is_closed_composed_spell_effect_program(
+            program, component_recognizers=_closed_effect_recognizers(),
+        ))
+
     def test_existing_composition_certificate_rejects_a_dropped_distinct_constraint_or_marker(self):
         from dataclasses import replace
         from copy import deepcopy

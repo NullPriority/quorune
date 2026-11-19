@@ -83,3 +83,17 @@ __all__ = [
     "fixed_life_cumulative_upkeep_node_capabilities",
     "fixed_mana_cumulative_upkeep_node_capabilities",
 ]
+
+
+def cumulative_upkeep_covered_mechanics(supplied):
+    """Keep fixed upkeep producers behind their existing counter/keyword coverage."""
+    producers={
+        'counter.producer.cumulative_upkeep_fixed_life',
+        'counter.producer.cumulative_upkeep_fixed_mana',
+        'counter.producer.cumulative_upkeep_fixed_objects',
+        'counter.producer.cumulative_upkeep_counter_costs',
+        'counter.producer.cumulative_upkeep_alternative_mana',
+        'counter.producer.cumulative_upkeep_effect_costs',
+        'counter.producer.cumulative_upkeep_graveyard_library',
+    }
+    return {'cr-122-counters','cumulative upkeep'} if producers.intersection(supplied) else set()

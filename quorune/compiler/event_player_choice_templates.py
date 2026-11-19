@@ -1,15 +1,61 @@
-"""Closed sacrifice choices addressed by the established occurrence-player binder."""
+"""Closed public choices addressed by the established occurrence-player binder."""
 from __future__ import annotations
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from .affected_player_sacrifice_templates import fixed_affected_player_sacrifice_effect_template
 from .event_player_results import _event_player, _occurrence_player
+from .fixed_entry_return_requirements import FIXED_ENTRY_RETURN_MECHANIC, FixedEntryReturnRequirementSpec
+from .spell_cast_predicates import FixedSpellCastController, FixedSpellCastQuality, FixedSpellCastSubject
+from ..object_predicate import ObjectQuerySpec
+from ..spell_caster_sacrifice_payment import (
+    SPELL_CASTER_SACRIFICE_PAYMENT_MECHANICS, spell_caster_sacrifice_cast_condition_is_closed,
+    spell_caster_sacrifice_payment_effect,
+)
 
 
 EVENT_PLAYER_CHOICE_CAPABILITY = 'resolution.event_player.fixed_sacrifice'
 EVENT_PLAYER_CHOICE_MECHANIC = 'fixed-event-player-sacrifice'
+
+SPELL_CASTER_LAND_RETURN_MECHANIC = "spell-caster-land-return"
+_SPELL_CASTER_LAND_RETURN = FixedEntryReturnRequirementSpec(
+    count=1, predicate=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+    excludes_source=False, sacrifice_source_unless_paid=False,
+)
+_UNQUALIFIED_CAST = FixedSpellCastSubject(FixedSpellCastController.ANY, FixedSpellCastQuality.ANY)
+
+
+def spell_caster_land_return_effect():
+    return {**_SPELL_CASTER_LAND_RETURN.effects[0], "players": ["$context.player"]}
+
+
+def _spell_caster_land_return_result(binding, body):
+    if (
+        (binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+        or binding.spell_subject != _UNQUALIFIED_CAST or binding.event_condition is not None
+        or body != binding.body
+        or re.fullmatch(r"That player returns a land they control to its owner['’]s hand[.]?", body, re.I) is None
+    ):
+        return None
+    return (
+        "fixed-spell-caster-land-return-v1", (spell_caster_land_return_effect(),), None,
+        (FIXED_ENTRY_RETURN_MECHANIC, SPELL_CASTER_LAND_RETURN_MECHANIC),
+    )
+
+def _spell_caster_sacrifice_payment_result(binding, body):
+    if (
+        (binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+        or binding.spell_subject is None
+        or not spell_caster_sacrifice_cast_condition_is_closed(binding.event_condition)
+        or body != binding.body
+        or re.fullmatch(r"That player sacrifices a permanent of their choice unless they pay \{1\}[.]?", body, re.I) is None
+    ):
+        return None
+    return (
+        "fixed-spell-caster-sacrifice-payment-v14", (spell_caster_sacrifice_payment_effect(),),
+        None, SPELL_CASTER_SACRIFICE_PAYMENT_MECHANICS,
+    )
 
 
 def _sacrifice_clause(body):
@@ -32,8 +78,10 @@ def _compiled_sacrifice(match, player):
                                  EVENT_PLAYER_CHOICE_MECHANIC))))
 
 
-def fixed_event_player_sacrifice_result(binding, body, *, card_name, effect_template):
-    del card_name, effect_template
+def fixed_event_player_choice_result(binding, body):
+    caster_choice = _spell_caster_land_return_result(binding, body) or _spell_caster_sacrifice_payment_result(binding, body)
+    if caster_choice is not None:
+        return caster_choice, False
     match = _sacrifice_clause(body)
     if match is None:
         return None
@@ -48,3 +96,20 @@ def source_death_player_sacrifice_result(body, *, event_phrase):
         return None
     return _compiled_sacrifice(match, _occurrence_player(
         'creature.dies', None, 'source_dies', match['subject'].casefold()))
+
+
+def attacked_defender_exile_result(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("creature.attacks", "source_attacks", "battlefield")
+        or binding.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+        or body != binding.body
+        or re.fullmatch(r"Defending player exiles two permanents they control[.]?", body, re.I) is None
+    ):
+        return None
+    from ..rules.event_player_choice_shapes import attacked_defender_exile_effect
+
+    return (
+        "fixed-attacked-defender-battlefield-exile-v1", (attacked_defender_exile_effect(),), None,
+        (),
+    )

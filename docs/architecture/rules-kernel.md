@@ -128,6 +128,49 @@ orders finish. Unknown scopes, changed actors and incomplete permutations
 reject before movement. See
 [ADR 0155](../adr/0155-token-parent-card-replacement-scope.md).
 
+Fixed draw/putback compositions append a separate closed current-hand choice
+after ordinary drawing. Exact selection clamps to the available hand and remains
+private. A chosen group shares one edge; a nonempty selected shuffle is queued
+after movement, while an impossible empty-hand singular selection does not
+shuffle. An explicit hand-order tag and completed-choice codec preserve old
+top-order/redraw data. Failed-draw state actions remain deferred until the parent
+has completed its required putback. See
+[ADR 0176](../adr/0176-fixed-draw-hand-putback.md).
+
+Hand-library redraw uses a closed version-one source instruction and a typed
+private hand-return snapshot. Canonical committed library arrivals determine
+each draw packet; intended hand size does not count redirected commanders.
+All affected hands move and their libraries shuffle before APNAP draws.
+Private bottom order uses an explicit hand-origin library-order tag. Existing
+movement, shuffle, draw and preparation-replacement owners remain authoritative;
+old discard/recycling/order wire layouts keep their prior meaning. The library
+capability facade delegates existing validators and coverage identities. See
+[ADR 0175](../adr/0175-hand-library-redraw.md).
+
+Attachment-selected destruction uses an explicitly tagged version-one
+AttachmentDestructionSetSpec within the existing affected-set and destroy_all
+owners. Current reciprocal object or player attachments and effective types
+select one immutable set before destruction. Targeted anchors retain ordinary
+target legality; affected attachments remain untargeted. Historical set codecs,
+intent fields and operation identities remain unchanged. See
+[ADR 0174](../adr/0174-attached-permanent-destruction.md).
+
+Qualified graveyard exile uses a separate explicit handler identity and closed
+`GraveyardExileSpec`. Its pre-move subject distinguishes physical cards,
+battlefield permanents, tokens, effective types, owner and current controller.
+The canonical matcher derives version-one qualifications from existing immutable
+zone facts. Those qualifications add no serialized event fields and reject
+spoofed or inconsistent identities. Source discovery retains current admitted
+ability, face, phasing and simultaneous-departure authority.
+
+Card-only exile still uses the physical component adapter. A whole card-or-token
+replacement affects both scopes together. The explicit nontoken-creature
+battlefield clause stays outside that card-only adapter when a token carries
+physical cards. A distinct off-battlefield creature-card clause retains its own
+current characteristics. The historical counter-bearing opponent-card handler
+and its event fields retain their meanings. See
+[ADR 0173](../adr/0173-qualified-graveyard-exile.md).
+
 Composed graveyard and exile departures restore each physical card's own
 commander designation. The existing commander state-action owner then offers
 that card's owner its ordinary command-or-remain choice for the new incarnation.
@@ -411,6 +454,24 @@ target revalidation and incarnation checks remain authoritative. Spell copies
 retain the combined characteristics and target roles through the existing copy
 owner. The canonical zone reset removes the original spell's Fuse annotation
 when it leaves the stack.
+
+`BoundedHandCastSpec` expresses one optional hand spell cast during resolution.
+The fixed ceiling uses `ManaValueLimitSpec` over the proposed spell's current
+characteristics: a chosen split half or face is evaluated separately, while a
+fused spell uses combined mana value. The existing casting offer and payment
+owners retain restrictions, legal targets, mandatory and optional additional
+costs, cost increases and the forced zero value of X. Prototype and face-down
+alternative costs are not offered alongside the free alternative price.
+
+The current resolving controller privately sees the current hand's legal
+options after preceding results. Offered IDs bind logical incarnations and
+canonical price choices; completion rechecks the original stack/controller,
+permission and option fingerprint. `ResolveBoundedHandCastIntent` delegates to
+`commit_resolving_cast` with hand origin, retaining replacement suspension,
+rollback and replay. The parent stays on the stack during the cast and finishes
+before the child resolves. Existing trigger and state-based-action boundaries
+remain authoritative. Declining or having no legal spell grants no future
+permission. See [ADR 0172](../adr/0172-fixed-bounded-hand-casting.md).
 
 `opening_hand.py` owns optional battlefield-entry actions after all multiplayer
 mulligans and bottoming finish. It snapshots eligible final hand incarnations
@@ -1486,6 +1547,15 @@ predicate whose applicability it changes, respecting relation and locked-object
 identity. Existing explicit dependencies and cycle timestamp fallback remain
 authoritative; the pass does not create a general Oracle dependency parser.
 
+A resolving target-land instruction may ask its controller to choose one of
+the five basic land types. The choice pins the original land incarnation and
+delegates to the same layer-four setting operation in a resolution-created
+continuous effect through cleanup. It preserves other card types, nonland
+subtypes, supertypes, name and counters while replacing land subtypes and
+printed abilities; later granted abilities remain separate. The activated
+ability survives departure of its source. A wholly illegal target prevents
+the choice and subsequent instructions.
+
 The bounded enchanted-permanent conversion sets the affected object to a
 colorless Forest land. It replaces old card types and subtypes in layer 4,
 applies the existing basic-type printed-ability rule, and removes colors in
@@ -2494,7 +2564,7 @@ source-owned rule fragments: the block evaluator ignores only the selected
 Landwalk variants and never removes an attacker ability. Attached-blocker
 permissions consult the reciprocal current attachment identity, and cannot
 follow a returned incarnation. Effective source ability loss ends a live
-permission; ability loss on the recipient does not erase an Aura-owned rule. Positive ability presence is evaluated
+permission; ability loss on the recipient does not erase an Aura-owned rule. Bounded block-as-though rules likewise remain giver-owned: ignoring attacker Shadow differs from assuming blocker Shadow, Dragon reach applies only against a current Dragon, and controlled tapped blockers use the same eligibility reader in offers and commands. These assumptions affect only blocking, preserve other restrictions and do not change actual keywords or tap state. Positive ability presence is evaluated
 after generic same-layer additions and removals of the required ability.
 Resolution-time characteristic selection rejects ability-qualified sets.
 Its explicit numeric creature filter reads completed effective power/toughness
@@ -2622,3 +2692,31 @@ physical cards. The shared entry-result owner validates and commits copied
 values before token entry observers, while the token owner retains allocation,
 counter and trigger ownership. Added Changeling is the existing copiable
 layer-4 CDA, so layer-6 ability removal does not undo its earlier type effect.
+
+`rules/optional_target_results.py` validates the explicit dependency of a fixed
+controller-and-power life result on one optionally announced original target.
+Its guard runs before semantic value evaluation, so a zero-target instruction
+does not query a missing object. Selected targets retain the ordinary resolution
+legality, exile, departure-information, scalar and life-change authorities.
+The guard owns no zone or life mutation and does not reinterpret historical
+mandatory instructions.
+
+The [chosen-counter decision](../adr/0167-chosen-counter-removal.md) uses a public
+scalar choice at resolution. Its immutable continuation pins the target
+incarnation and offered kinds, then rechecks current counters and the resolving
+controller. Completion returns the existing counter-removal intent. Counterless
+recipients continue without a choice; the counter transition owner retains all
+mutation and event authority.
+
+Target all-counter variants preserve the existing `RemoveAllCountersIntent`
+and counter transition owner. Named-target codec3 carries one canonical kind;
+its payload requires independent runtime authority without coverage. Optional
+all-kind removal uses zero-or-one target validation and the existing missing-card
+resolution guard. Neither path adds a counter mutation owner or changes legacy
+named-source codec2 behavior.
+
+Event optional draws keep the ability controller distinct from the sealed
+defending chooser and drawer. The existing optional-draw handler preserves
+marker1 in its immutable continuation and delegates accepted draws to ordinary
+permissions, replacements and projection. Empty libraries permit the choice;
+draw prohibitions do not. Unversioned optional draws retain their prior payloads.

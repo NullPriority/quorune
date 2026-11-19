@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed fixed homogeneous zone-change costs for activated abilities."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..abilities import ActivatedAbility, CostChoice
 from ..additional_cost_vocabulary import (
@@ -51,6 +51,10 @@ def _activation_cost_clause(
 
 def _zone_change_descriptor(cost_text: str) -> dict[str, object] | None:
     cost_clause, another = _activation_cost_clause(cost_text)
+    if re.fullmatch(r'Sacrifice a creature with defender',cost_clause,re.I):
+        from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_COST_VERSION, keyword_sacrifice_predicate
+        return {'operation':SACRIFICE_ONE_COST,'predicate':keyword_sacrifice_predicate('defender').to_dict(),
+            'another':another,'count':1,'schema_version':KEYWORD_SACRIFICE_COST_VERSION}
     clause = (
         "As an additional cost to cast this spell, "
         + cost_clause
@@ -130,6 +134,8 @@ def fixed_activated_zone_change_cost(
                 zone=contract[0],
                 another=another,
                 predicate=FrozenMap(predicate),
+                return_schema_version=(7 if descriptor.get('schema_version') == 7 else None),
+                sacrifice_schema_version=(8 if descriptor.get('schema_version') == 8 else None),
             ),
         ),
         uncompiled_costs=(),

@@ -1,5 +1,5 @@
 """Closed source/other-creature heads over the existing block relationship owner."""
-import re
+from . import regex_working_set as re
 from ..object_predicate import ObjectQuerySpec
 from ..block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION,BLOCK_CHARACTERISTIC_CAPABILITY,block_counterpart_query
 from .direct_target import direct_permanent_target_spec

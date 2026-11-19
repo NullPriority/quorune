@@ -6,6 +6,7 @@ from .spell_context import (
     PAID_SACRIFICE_FACT_FIELDS, capture_paid_sacrifice_facts,
     declared_spell_context, fixed_cast_cost_object_context, require_paid_sacrifice_facts,
 )
+from ..paid_alternative_cast_facts import paid_alternative_cast_context
 from ...scalar_effect_amount_model import (
     PAID_SACRIFICE_STAT_CAPABILITY,
     PaidCreatureStatSnapshot,
@@ -19,6 +20,7 @@ from ...printed_mana_cost_model import printed_phyrexian_life_payment
 from .turn_cast_grants import underlying_cast_cost_option_id, commit_turn_cast_grant_use
 
 from ..reveal_additional_cost import REVEAL_ADDITIONAL_COST_KIND
+from ..behold_additional_cost import BEHOLD_ADDITIONAL_COST_KIND, BEHOLD_COST_INFORMATION_FIELD
 from .reveal_costs import commit_reveal_additional_costs
 from ...trigger_discovery import _ordered_event_sources
 
@@ -73,7 +75,7 @@ from ...morph import (
     MorphError,
 )
 from ...cast_event_type_model import CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD, cast_event_type_line
-from ..spell_cast_events import SpellCastEvent, cast_creature_target_controllers
+from ..spell_cast_events import SpellCastEvent, _colors, cast_creature_target_controllers
 from ...selection.exile_cast import mana_value_of_cost
 from ...zone_object_state import (
     mark_card_face_down_for_morph,
@@ -507,6 +509,12 @@ def _resolve_fixed_zone_change_additional_cost(
             cost=cost,
             exclude_object_id=proposal.object_id,
         )
+    from .additional_zone_costs import ANNOUNCED_PITCH_X, announced_pitch_candidates
+    if ANNOUNCED_PITCH_X in selected_option and (
+        type(response.get("x")) is not int or response["x"] != selected_option[ANNOUNCED_PITCH_X]
+    ):
+        raise CastProposalError("Announced pitch X changed before commit", reason="stale_pitch_x")
+    candidates = announced_pitch_candidates(host, proposal.seat, selected_option, candidates)
     if (
         not isinstance(raw_refs, (list, tuple))
         or len(raw_refs) != count
@@ -656,6 +664,8 @@ def _commit_card_cost_changes(
         destination,
         replacement_selections,
     ) in changes:
+        from ...death_history_names import capture_departure_rules_names
+        data = capture_departure_rules_names(host, paid, data)
         if required_paid_facts and kind == "sacrifice":
             capture_paid_sacrifice_facts(host, paid, logical_id, data, result, required_paid_facts)
         result.paid_contexts.append(
@@ -781,6 +791,7 @@ def _commit_additional_costs(
             normalized,selection=ordinary_random_spell_cost_selection(host,proposal,response,selected_option,selected)
             changes.extend(_fixed_zone_change_commit_entries(host,proposal,response,normalized,selection));continue
         if kind==REVEAL_ADDITIONAL_COST_KIND:continue
+        if kind==BEHOLD_ADDITIONAL_COST_KIND:continue
         if kind == "counter_placement":
             result.paid_refs.append(
                 _commit_counter_placement_additional_cost(
@@ -999,6 +1010,7 @@ def _create_spell_item(
             provenance=_cast_provenance_context(proposal,spent,state=host.state,record=record,card=card),
             lifecycle_context=lifecycle_context,method_spec=method_spec,used_uncounterable=used_uncounterable,
             intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise,next_payments=next_payments),
+            **paid_alternative_cast_context(host,card,selected_option),
             **({} if preparing else consume_paid_mana_protection(host.state.players[proposal.seat].stats))},
     )
 
@@ -1087,6 +1099,8 @@ def _dispatch_cast_events(
     trigger_batch.extend(replicate_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(conspire_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(casualty_trigger_items(host, spell=item, card=card, program=program))
+    from ...commander_cast_copies import commander_cast_copy_trigger_items
+    trigger_batch.extend(commander_cast_copy_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(
         storm_trigger_items(
             host,
@@ -1140,6 +1154,8 @@ def _dispatch_cast_events(
         object_incarnation=card.logical_object_id,
         types=cast_types,
         origin=proposal.origin if getattr(host.state.turn_history,'spell_origin_history_version',None)==1 else None,
+        spell_colors=(_colors(cast_colors)
+                      if getattr(host.state.turn_history, "spell_color_history_version", None) == 1 else None),
     )
     lifecycle = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if isinstance(lifecycle, Mapping) and lifecycle.get("kind") == FixedCastLifecycleKind.WARP.value:
@@ -1207,7 +1223,10 @@ def _revalidate_fixed_lifecycle_contract(
     selected_option: Mapping[str, Any],
 ) -> None:
     from ..self_graveyard_discard import validate_self_graveyard_discard_option
+    from ..death_cast_permissions import validate_qualified_death_option
     try:
+        validate_qualified_death_option(host,proposal.seat,prospective_cast_card(host,card,proposal.face),
+            selected_option,origin=proposal.origin)
         validate_self_graveyard_discard_option(host,proposal.seat,prospective_cast_card(host,card,proposal.face),
             selected_option,origin=proposal.origin)
     except ValueError as exc:
@@ -1341,7 +1360,7 @@ def _revalidate_cast_contracts(
             )
         }:
             raise CastProposalError(
-                "The fixed-mana Evoke contract changed before commit",
+                "The Evoke contract changed before commit",
                 reason="stale_evoke_contract",
             )
     try:
@@ -1511,6 +1530,10 @@ def _commit_cast_costs_and_stack(
     item.x_value = selected_option.get("announced_target_x",
         selected_option.get("announced_additional_x", response.get("x")))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
+    from .behold_costs import commit_behold_additional_costs
+    beheld = commit_behold_additional_costs(host, proposal, card, item, selected_option)
+    if beheld is not None:
+        item.context[BEHOLD_COST_INFORMATION_FIELD] = beheld
     try:
         grants.commit(host, proposal)
     except ValueError as exc:

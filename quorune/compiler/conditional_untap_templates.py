@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Bind fixed current public conditions to ordinary untap-step prohibitions."""
 
-import re
+from . import regex_working_set as re
 
 from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec

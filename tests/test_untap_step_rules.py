@@ -589,5 +589,297 @@ class UntapStepRuleTests(unittest.TestCase):
             self.assertEqual(2, replay["commands"])
 
 
+class NextUntapOriginalAdmissionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'next-untap-originals.sqlite3'
+        build_fixture_database(ROOT / 'tests/fixtures/bound-effect-program-cards.json', path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def program(self, name):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+        from quorune.semantics import SemanticRegistry
+        semantics = SemanticRegistry()
+        card = self.db.lookup(name, fuzzy=False)
+        register_generated_programs(self.db, semantics, (card,), trust_level='provisional',
+            capability_registry=self.registry, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        program = compile_best_available_card_program(self.db, card, semantic_registry=semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        bound = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(bound['strict_capability_ready'], bound['blockers'])
+        self.assertEqual('capability_closed', bound['trust_basis'])
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        return card, ir, program
+
+    def test_verified_next_untap_owner_closes_only_its_instruction_coverage(self):
+        from quorune.rules.capabilities import capability_covered_mechanics
+        self.assertIn('tap-and-untap', capability_covered_mechanics(('untap.step.prohibit_next_controller',)))
+        self.assertNotIn('tap-and-untap', capability_covered_mechanics(()))
+        self.assertNotIn('tap-and-untap', capability_covered_mechanics(('life.change.effect',)))
+
+    def test_all_original_bodies_keep_entry_keyword_cost_and_mana_siblings(self):
+        expected_kinds = {
+            'Skyline Cascade': {'replacement_effect', 'triggered_ability', 'mana_ability'},
+            "Kefnet's Monument": {'static_ability', 'triggered_ability'},
+            'Fogwalker': {'keyword_ability', 'triggered_ability'},
+        }
+        for name, kinds in expected_kinds.items():
+            with self.subTest(name=name):
+                card, ir, _ = self.program(name)
+                self.assertEqual(kinds, {node.kind for node in ir.faces[0].nodes})
+                node, = [node for node in ir.faces[0].nodes
+                    if any(effect.get('op') == 'prohibit_next_untap' for effect in node.effects)]
+                self.assertEqual(card.oracle_text[node.span.start:node.span.end], node.text)
+                self.assertIn('untap.step.prohibit_next_controller', node.capability_dependencies)
+                self.assertIn('target.revalidate_resolution', node.capability_dependencies)
+                self.assertEqual('opponent', node.target_schema['controller_relation'])
+
+    def test_single_target_descriptor_rejects_bool_counts_foreign_bindings_and_future_steps(self):
+        from quorune.rules.tap_state_capability_shapes import targeted_tap_state_node_capabilities
+        schema = {'zones': ['battlefield'], 'categories': ['permanent'], 'count': 1,
+            'types_any': ['creature'], 'controller_relation': 'opponent'}
+        effect = {'op': 'prohibit_next_untap', 'card': '$target.0'}
+        def owned(effect, schema):
+            return targeted_tap_state_node_capabilities(effects=(effect,), target_schema=schema,
+                mechanic_ids=('tap-and-untap', 'cr-115-targets'))
+        self.assertIn('untap.step.prohibit_next_controller', owned(effect, schema))
+        for changed in ({**schema, 'count': True}, {**schema, 'count': 2},
+                        {**schema, 'controller_relation': 'owner_opponent'}):
+            with self.subTest(schema=changed):
+                self.assertEqual((), owned(effect, changed))
+        for changed in ({**effect, 'card': '$source'}, {**effect, 'steps': 2},
+                        {**effect, 'player': '$controller'}):
+            with self.subTest(effect=changed):
+                self.assertEqual((), owned(changed, schema))
+
+    def test_registered_minimum_cannot_be_removed_with_coverage_hints(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        _, _, program = self.program('Fogwalker')
+        ability, = [ability for ability in program.abilities
+            if any(effect.get('op') == 'prohibit_next_untap' for effect in ability.effects)]
+        dependencies = tuple(value for value in ability.capability_dependencies
+            if value != 'untap.step.prohibit_next_controller')
+        changed = replace(ability, coverage=(), capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+        bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(bound['strict'], bound)
+        self.assertIn('capability:undeclared_runtime_dependency:untap.step.prohibit_next_controller', bound['blockers'])
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+class NextUntapOriginalNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'next-untap-native.sqlite3'
+        build_fixture_database(ROOT / 'tests/fixtures/bound-effect-program-cards.json', path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Next untap originals', [
+            DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30),
+        ], ['Generic Bound Commander'])
+
+    def reject(self, session, seat, command):
+        from quorune.record import authoritative_state_hash
+        before = authoritative_state_hash(session.state)
+        result = session.act('pilot:' + seat, command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def mark(self, session, card):
+        from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
+        return session.state.cards[card.object_id].annotations.get(NEXT_UNTAP_PROHIBITION_ANNOTATION)
+
+    def finish(self, session, private):
+        for seat in 'ABC':
+            self.assertNotIn(private.ref, str(session.packet('pilot:' + seat, full=True)))
+        self.replay(session, load=True)
+
+    def advance(self, session, seat, phase=None):
+        def reached(current):
+            return current.state.active_player == seat and (phase is None or current.state.phase == phase)
+        for _ in range(8):
+            self.until(session, lambda current: reached(current)
+                or (current.state.pending_decision is not None
+                    and current.state.pending_decision.kind == 'cleanup.discard'))
+            if reached(session):
+                return
+            principal = session.pending_principals()[0]
+            context = session.packet(principal, full=True)['decision']['ctx']
+            hand = [row for row in context['hand'] if row.get('name') == 'Generic Bound Plains']
+            self.assertGreaterEqual(len(hand), context['count'])
+            result = session.act(principal, {'action_id': 'discard',
+                'cards': [row['id'] for row in hand[:context['count']]]})
+            self.assertTrue(result.ok, result.summary)
+        self.fail('Native next-untap turn advance did not settle')
+
+    def test_all_originals_use_real_actions_and_follow_current_controller_once(self):
+        session = self.session(50283001)
+        skyline = self.add(session.engine, 'Skyline Cascade', zone='hand', ref='next-skyline')
+        monument = self.add(session.engine, "Kefnet's Monument", zone='hand', ref='next-monument')
+        fogwalker = self.add(session.engine, 'Fogwalker', zone='hand', ref='next-fogwalker')
+        green = self.add(session.engine, 'Grizzly Bears', zone='hand', ref='next-green-cast')
+        own = self.add(session.engine, 'Grizzly Bears', ref='next-own'); own.owner = 'B'
+        untapped = self.add(session.engine, 'Grizzly Bears', seat='B', ref='next-untapped')
+        moving = self.add(session.engine, 'Grizzly Bears', seat='C', ref='next-controller'); moving.tapped = True
+        moving.counters['stun'] = 1
+        departed = self.add(session.engine, 'Grizzly Bears', seat='D', ref='next-incarnation'); departed.tapped = True
+        other = self.add(session.engine, 'Grizzly Bears', seat='B', ref='next-other-color'); other.tapped = True
+        forest = self.add(session.engine, 'Forest', ref='next-forest')
+        plains = self.add(session.engine, 'Generic Bound Plains', ref='next-plains')
+        self.add(session.engine, 'Forest', seat='D', ref='next-return-forest')
+        self.add(session.engine, 'Generic Bound Plains', seat='D', ref='next-return-plains')
+        control = self.add(session.engine, 'Control Magic', zone='hand', ref='next-control')
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand', ref='next-bounce')
+        destroy = self.add(session.engine, 'Disenchant', seat='B', zone='hand', ref='next-destroy')
+        private = self.add(session.engine, 'Unsummon', seat='D', zone='hand', ref='next-private')
+        for card in (skyline, monument, fogwalker, control, bounce, destroy):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={'C': 5, 'U': 3})
+        session.state.players['B'].mana_pool.update({'U': 1, 'W': 1, 'C': 1})
+        self.checkpoint(session)
+
+        offered = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+            if row['id'] == 'play-land:' + skyline.ref)
+        self.reject(session, 'C', {'action_id': offered['id']})
+        accepted = session.act('pilot:A', {'action_id': offered['id']})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual('battlefield', session.state.cards[skyline.object_id].zone)
+        self.assertTrue(session.state.cards[skyline.object_id].tapped)
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        self.reject(session, 'A', {'action_id': 'choose', 'targets': [own.ref]})
+        self.target(session, 'A', [untapped.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.cards[untapped.object_id].tapped)
+        self.assertIs(self.mark(session, untapped), True)
+
+        def resources():
+            return (sum(session.state.players['A'].mana_pool.values())
+                + int(not session.state.cards[forest.object_id].tapped)
+                + int(not session.state.cards[plains.object_id].tapped))
+        before_resources = resources()
+        self.cast_for(session, 'A', monument, reserve={'G': 1, 'U': 3})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before_resources - 3, resources())
+        before_resources = resources()
+        self.cast_for(session, 'A', fogwalker, reserve={'G': 1, 'U': 2})
+        self.assertEqual('stack', session.state.cards[fogwalker.object_id].zone)
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        self.assertEqual(before_resources - 1, resources())
+        self.target(session, 'A', [moving.ref])
+        self.resolve_top(session)
+        self.assertEqual('stack', session.state.cards[fogwalker.object_id].zone)
+        self.assertIs(self.mark(session, moving), True)
+        self.assertIsNone(self.mark(session, departed))
+        self.assertEqual('semantic.target', self.resolve(session).kind)
+        self.target(session, 'A', [departed.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertIs(self.mark(session, departed), True)
+        self.assertIn('skulk', session.engine._combat_keywords(session.state.cards[fogwalker.object_id]))
+        session = self.replay(session, load=True)
+
+        before_resources = resources()
+        self.cast_for(session, 'A', green, reserve={'C': 2, 'U': 2})
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        self.assertEqual(before_resources - 2, resources())
+        self.assertIsNone(self.mark(session, other))
+        self.target(session, 'A', [other.ref])
+        self.resolve_top(session)
+        self.assertEqual('stack', session.state.cards[green.object_id].zone)
+        self.assertIs(self.mark(session, other), True)
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, 'A', control, [moving.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('A', session.state.cards[moving.object_id].controller)
+        self.assertIs(self.mark(session, moving), True)
+        old_identity = session.state.cards[departed.object_id].logical_object_id
+        self.cast_for(session, 'B', bounce, [departed.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('hand', session.state.cards[departed.object_id].zone)
+        self.assertIsNone(self.mark(session, departed))
+        self.cast_for(session, 'B', destroy, [monument.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('graveyard', session.state.cards[monument.object_id].zone)
+        self.assertIs(self.mark(session, moving), True)
+        session = self.replay(session, load=True)
+
+        self.advance(session, 'B')
+        self.assertFalse(session.state.cards[untapped.object_id].tapped)
+        self.assertIsNone(self.mark(session, untapped))
+        self.assertTrue(session.state.cards[other.object_id].tapped)
+        self.assertIsNone(self.mark(session, other))
+        self.advance(session, 'C')
+        self.assertTrue(session.state.cards[moving.object_id].tapped)
+        self.assertIs(self.mark(session, moving), True)
+        self.advance(session, 'D', 'precombat_main')
+        self.cast_for(session, 'D', session.state.cards[departed.object_id])
+        self.assertEqual(1, len(session.state.stack))
+        self.assertIsNone(self.resolve(session))
+        returned = session.state.cards[departed.object_id]
+        self.assertNotEqual(old_identity, returned.logical_object_id)
+        self.assertFalse(returned.tapped)
+        self.assertIsNone(self.mark(session, departed))
+        self.advance(session, 'A')
+        self.assertTrue(session.state.cards[moving.object_id].tapped)
+        self.assertEqual(1, session.state.cards[moving.object_id].counters['stun'])
+        self.assertIsNone(self.mark(session, moving))
+        self.assertFalse(session.state.cards[skyline.object_id].tapped)
+        before_blue = session.state.players['A'].mana_pool.get('U', 0)
+        offered = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+            if row['id'].startswith('activate:' + skyline.ref + ':'))
+        result = session.act('pilot:A', {'action_id': offered['id']})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(before_blue + 1, session.state.players['A'].mana_pool.get('U', 0))
+        self.assertTrue(session.state.cards[skyline.object_id].tapped)
+        self.finish(session, private)
+
+    def test_departed_single_target_fizzles_after_real_fogwalker_entry(self):
+        session = self.session(50283002)
+        source = self.add(session.engine, 'Fogwalker', zone='hand', ref='next-fizzle-source')
+        target = self.add(session.engine, 'Grizzly Bears', seat='B', ref='next-fizzle-target'); target.tapped = True
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand', ref='next-fizzle-bounce')
+        private = self.add(session.engine, 'Unsummon', seat='D', zone='hand', ref='next-fizzle-private')
+        self.assert_closed(session, source)
+        self.prepare(session, mana={'C': 1, 'U': 1})
+        session.state.players['B'].mana_pool.update({'U': 1})
+        self.checkpoint(session)
+        self.cast_for(session, 'A', source)
+        self.assertEqual('semantic.target', self.resolve(session).kind)
+        self.target(session, 'A', [target.ref])
+        self.cast_for(session, 'B', bounce, [target.ref])
+        self.resolve_top(session)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('hand', session.state.cards[target.object_id].zone)
+        self.assertIsNone(self.mark(session, target))
+        self.assertEqual('battlefield', session.state.cards[source.object_id].zone)
+        self.assertIn('skulk', session.engine._combat_keywords(session.state.cards[source.object_id]))
+        self.finish(session, private)
+
+
 if __name__ == "__main__":
     unittest.main()

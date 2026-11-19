@@ -35,6 +35,36 @@
   ],
   "path_rules": [
     {
+      "id": "activation-fetch-retention",
+      "patterns": [
+        "quorune/rules/activation/proposal.py"
+      ],
+      "test_modules": [
+        "test_decision_opportunities",
+        "test_library_search_rules"
+      ]
+    },
+    {
+      "id": "continuous-effect-order-retention",
+      "patterns": [
+        "quorune/continuous_effects.py"
+      ],
+      "test_modules": [
+        "test_rules_primitives"
+      ]
+    },
+    {
+      "id": "casting-price-retention",
+      "patterns": [
+        "quorune/rules/casting/costs.py"
+      ],
+      "test_modules": [
+        "test_fixed_cleave",
+        "test_fixed_entwine",
+        "test_fixed_overload"
+      ]
+    },
+    {
       "id": "intrinsic-exploit-sacrifice-contract",
       "patterns": [
         "quorune/compiler/target_effect_corpus_assurance.py",
@@ -222,10 +252,16 @@
       "id": "fixed-prevention-component-composition",
       "patterns": [
         "quorune/rules/prevention_component_shapes.py",
+        "quorune/rules/bound_effect_program_shapes.py",
+        "tests/test_combat_untap_prevention.py",
+        "tests/fixtures/combat-untap-prevention-cards.json",
         "tests/fixtures/prevention-composition-cards.json"
       ],
       "test_modules": [
         "test_scoped_damage_prevention",
+        "test_combat_prevention_source_scopes",
+        "test_combat_untap_prevention",
+        "test_suspend_rules",
         "test_bound_effect_programs",
         "test_fixed_effect_clause_sequences",
         "test_closed_effect_programs",
@@ -328,9 +364,38 @@
       ]
     },
     {
+      "id": "next-player-untap-restrictions",
+      "patterns": [
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/tap_state_templates.py",
+        "quorune/model.py",
+        "quorune/next_player_untap_model.py",
+        "quorune/rules/tap_state_capability_shapes.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_runtime/tap_state_handlers.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/tap_state.py",
+        "quorune/untap_step.py",
+        "quorune/untap_step_coordination.py",
+        "tests/fixtures/next-player-untap-restrictions-cards.json",
+        "tests/test_next_player_untap_restrictions.py"
+      ],
+      "test_modules": [
+        "test_next_player_untap_restrictions",
+        "test_targeted_tap_state_effect_clauses",
+        "test_untap_selection_limits",
+        "test_untap_step_rules"
+      ]
+    },
+    {
       "id": "next-controller-untap-contract",
       "patterns": [
         "quorune/compiler/tap_state_templates.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "tests/test_targeted_controller_untap.py",
+        "tests/fixtures/targeted-controller-untap-cards.json",
         "quorune/rules/tap_state_capability_shapes.py",
         "quorune/semantic_runtime/tap_state_handlers.py",
         "quorune/tap_state.py"
@@ -339,6 +404,7 @@
         "test_bound_effect_programs",
         "test_card_program_trust",
         "test_targeted_tap_state_effect_clauses",
+        "test_targeted_controller_untap",
         "test_typed_untap_step_participation",
         "test_untap_step_rules"
       ]
@@ -380,6 +446,9 @@
         "quorune/rules/stack_controller_payment_cost.py",
         "quorune/rules/stack_controller_payment_shapes.py",
         "quorune/compiler/counter_templates.py",
+        "quorune/compiler/target_announcement_bindings.py",
+        "tests/test_target_announcement_counter_payment.py",
+        "tests/fixtures/target-announcement-counter-payment-cards.json",
         "quorune/compiler/independent_target_rows.py",
         "quorune/compiler/resolution_effect_templates.py",
         "quorune/compiler/program_composition.py",
@@ -390,6 +459,8 @@
       ],
       "test_modules": [
         "test_targeted_counter_effect_clauses",
+        "test_target_announcement_counter_payment",
+        "test_target_announcements",
         "test_cast_creature_targets",
         "test_fixed_control_effects",
         "test_stack_counter_rules",
@@ -624,7 +695,8 @@
       "test_modules": [
         "test_rule_capabilities",
         "test_capability_evidence",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_game_record_v3"
       ]
     },
     {
@@ -901,10 +973,14 @@
         "quorune/compiler/linked_exile_return_templates.py",
         "quorune/linked_exile_return.py",
         "quorune/linked_exile_return_model.py",
+        "quorune/rules/closed_effect_program_shapes.py",
         "quorune/rules/linked_exile_return_shapes.py",
+        "tests/fixtures/linked-exile-and-life-cards.json",
         "tests/fixtures/linked-exile-return-cards.json"
       ],
       "test_modules": [
+        "test_closed_effect_programs",
+        "test_linked_exile_and_life",
         "test_linked_exile_return",
         "test_targeted_exile_effect_clauses",
         "test_high_risk_interaction_assurance",
@@ -974,6 +1050,15 @@
       ]
     },
     {
+      "id": "combat-damage-energy-fixture",
+      "patterns": [
+        "tests/fixtures/combat-damage-energy-cards.json"
+      ],
+      "test_modules": [
+        "test_counted_energy_actions"
+      ]
+    },
+    {
       "id": "scalar-effect-amount-contract",
       "patterns": [
         "quorune/scalar_effect_amount_model.py",
@@ -993,6 +1078,7 @@
       "test_modules": [
         "test_qualified_zone_event_queries",
         "test_scalar_effect_amounts",
+        "test_counted_energy_actions",
         "test_declared_effect_amounts",
         "test_public_query_effect_amounts",
         "test_public_query_action_registration",
@@ -1619,6 +1705,15 @@
       ]
     },
     {
+      "id": "direct-cast-spell-token-fixture",
+      "patterns": [
+        "tests/fixtures/self-cast-permanent-token-copy-cards.json"
+      ],
+      "test_modules": [
+        "test_event_spell_copy"
+      ]
+    },
+    {
       "id": "fixed-token-production-contract",
       "patterns": [
         "quorune/compiler/static_runtime_nodes.py",
@@ -1628,6 +1723,7 @@
         "quorune/zone_object_cleanup.py",
         "quorune/compiler/token_copy_templates.py",
         "tests/fixtures/token-copy-recipe-cards.json",
+        "tests/fixtures/event-referent-copy-cards.json",
         "quorune/token_creation.py",
         "tests/fixtures/token-copy-boundary-cards.json",
         "quorune/fixed_token_production.py",
@@ -2110,6 +2206,15 @@
       ]
     },
     {
+      "id": "nonowner-creature-modifier-fixture",
+      "patterns": [
+        "tests/fixtures/nonowner-creature-modifier-cards.json"
+      ],
+      "test_modules": [
+        "test_continuous_effect_components"
+      ]
+    },
+    {
       "id": "static-characteristic-setting-contract",
       "patterns": [
         "quorune/compiler/conditional_granted_ability_templates.py",
@@ -2374,7 +2479,8 @@
         "quorune/mana_activation.py",
         "quorune/choice_forms.py",
         "tests/test_public_quantity_mana.py",
-        "tests/fixtures/public-quantity-mana-cards.json"
+        "tests/fixtures/public-quantity-mana-cards.json",
+        "quorune/rules/activation/restriction_requirements.py"
       ],
       "test_modules": [
         "test_public_quantity_mana",
@@ -2438,6 +2544,24 @@
       "test_suites": [
         "casting-costs-mana",
         "compiler-cardprogram"
+      ]
+    },
+    {
+      "id": "granted-source-counter-cost",
+      "patterns": [
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/granted_activation_model.py",
+        "quorune/rules/activation/query.py",
+        "quorune/rules/activation/counter_costs.py",
+        "quorune/rules/activation_counter_cost.py",
+        "tests/fixtures/granted-source-counter-cost-cards.json",
+        "tests/test_granted_source_counter_cost.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_source_counter_activation_costs",
+        "test_granted_source_counter_cost",
+        "test_typed_grant_carriers"
       ]
     },
     {
@@ -2998,6 +3122,23 @@
         "test_card_program_trust",
         "test_limited_event_triggers",
         "test_game_record_v3"
+      ]
+    },
+    {
+      "id": "attached-controller-intimidate",
+      "patterns": [
+        "quorune/conditional_recipient_model.py",
+        "quorune/compiler/continuous_templates.py",
+        "quorune/semantic_runtime/conditional_continuous.py",
+        "quorune/card_programs/runtime.py",
+        "tests/fixtures/attached-controller-intimidate-cards.json",
+        "tests/test_attached_controller_intimidate.py"
+      ],
+      "test_modules": [
+        "test_attached_controller_intimidate",
+        "test_fixed_public_state_characteristics",
+        "test_combat_evasion_restrictions",
+        "test_card_program_trust"
       ]
     },
     {
@@ -6064,6 +6205,15 @@
       ]
     },
     {
+      "id": "direct-phasing-fixture",
+      "patterns": [
+        "tests/fixtures/fixed-direct-phasing-cards.json"
+      ],
+      "test_modules": [
+        "test_phasing"
+      ]
+    },
+    {
       "id": "printed-phasing-lifecycle",
       "patterns": [
         "quorune/phasing.py",
@@ -7549,21 +7699,772 @@
       "patterns": [
         "quorune/compiler/temporary_keyword_removal_templates.py",
         "quorune/rules/temporary_keyword_removal.py",
+        "quorune/continuous_effect_model.py",
+        "quorune/continuous_effects.py",
         "quorune/effect_runtime/characteristic_version_dispatch.py",
         "quorune/compiler/preflight_keyword_coverage.py",
         "quorune/compiler/activated_ability_catalog.py",
         "quorune/preflight.py",
         "tests/test_temporary_keyword_removal.py",
+        "tests/test_temporary_black_protection_removal.py",
+        "tests/test_temporary_landwalk_removal.py",
+        "tests/fixtures/temporary-landwalk-removal-cards.json",
+        "tests/fixtures/temporary-black-protection-removal-cards.json",
         "tests/fixtures/temporary-keyword-removal-cards.json"
       ],
       "test_modules": [
         "test_temporary_keyword_removal",
+        "test_temporary_black_protection_removal",
+        "test_temporary_landwalk_removal",
+        "test_landwalk",
+        "test_source_fixed_protection",
         "test_fixed_source_characteristic_effects",
         "test_static_keyword_removal",
         "test_fixed_public_state_characteristics",
         "test_cleanup_step_rules",
         "test_preflight_v080",
         "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "sacrificed-source-bound-damage-contract",
+      "patterns": [
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/activated_zone_change_costs.py",
+        "quorune/rules/bound_effect_program_shapes.py",
+        "quorune/rules/temporary_keyword_removal.py",
+        "tests/fixtures/source-sacrifice-bound-damage-cards.json",
+        "tests/test_source_sacrifice_bound_damage.py"
+      ],
+      "test_modules": [
+        "test_source_sacrifice_bound_damage",
+        "test_damage_then_keyword_removal",
+        "test_fixed_activated_zone_change_costs"
+      ]
+    },
+    {
+      "id": "sealed-becomes-blocked-result-contract",
+      "patterns": [
+        "quorune/block_transition_engine_adapter.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/random_discard.py",
+        "quorune/rules/combat_defending_players.py",
+        "quorune/semantic_runtime/executor.py",
+        "tests/fixtures/source-becomes-blocked-result-cards.json",
+        "tests/test_source_becomes_blocked_results.py"
+      ],
+      "test_modules": [
+        "test_source_becomes_blocked_results",
+        "test_block_transitions",
+        "test_random_discard",
+        "test_batch_admission_retention",
+        "test_regeneration_rules"
+      ]
+    },
+    {
+      "id": "attacked-defender-cast-prohibition-contract",
+      "patterns": [
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/temporary_cast_restrictions.py",
+        "quorune/rules/temporary_cast_restrictions.py",
+        "quorune/semantic_runtime/executor.py",
+        "tests/fixtures/attack-defender-cast-prohibition-cards.json",
+        "tests/test_attack_defender_cast_prohibition.py"
+      ],
+      "test_modules": [
+        "test_attack_defender_cast_prohibition",
+        "test_temporary_cast_restrictions",
+        "test_qualified_attack_subjects",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "attacked-defender-public-exile-contract",
+      "patterns": [
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/event_player_choice_templates.py",
+        "quorune/rules/event_player_choice_shapes.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/rules/combat_defending_players.py",
+        "quorune/selection/apnap_contract.py",
+        "quorune/selection/apnap.py",
+        "quorune/semantic_choices/apnap_commit.py",
+        "quorune/semantic_runtime/executor.py",
+        "tests/fixtures/attack-defender-public-exile-cards.json",
+        "tests/test_attack_defender_public_exile.py"
+      ],
+      "test_modules": [
+        "test_attack_defender_public_exile",
+        "test_fixed_affected_player_sacrifices",
+        "test_attack_defender_cast_prohibition",
+        "test_fixed_affected_player_discards"
+      ]
+    },
+    {
+      "id": "targeted-loss-public-hand-observation-contract",
+      "patterns": [
+        "quorune/compiler/target_player_sequences.py",
+        "quorune/rules/target_player_sequences.py",
+        "quorune/rules/hand_inspection_capability_shapes.py",
+        "quorune/rules/hand_inspection.py",
+        "quorune/semantic_choices/hand_inspection.py",
+        "quorune/effect_runtime/hand_inspection.py",
+        "tests/fixtures/targeted-life-loss-public-hand-observation-cards.json",
+        "tests/test_targeted_life_loss_public_hand_observation.py"
+      ],
+      "test_modules": [
+        "test_targeted_life_loss_public_hand_observation",
+        "test_target_player_sequences",
+        "test_fixed_hand_inspection"
+      ]
+    },
+    {
+      "id": "current-turn-player-history-target-contract",
+      "patterns": [
+        "quorune/target_history.py",
+        "quorune/turn_history.py",
+        "quorune/targets.py",
+        "quorune/target_source.py",
+        "quorune/selection/targeting.py",
+        "quorune/compiler/life_templates.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/fixtures/current-turn-player-history-target-cards.json",
+        "tests/test_current_turn_player_history_targets.py"
+      ],
+      "test_modules": [
+        "test_current_turn_player_history_targets",
+        "test_fixed_damage_history_targets",
+        "test_target_restrictions",
+        "test_targeted_life_loss_public_hand_observation"
+      ]
+    },
+    {
+      "id": "kicked-additive-target-lifelink-contract",
+      "patterns": [
+        "quorune/compiler/kicked_self_replacement_templates.py",
+        "quorune/compiler/kicked_spell_conditions.py",
+        "quorune/resolution_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/semantic_choices/resolution_result_validation.py",
+        "tests/fixtures/kicked-additive-target-lifelink-cards.json",
+        "tests/test_kicked_additive_target_lifelink.py"
+      ],
+      "test_modules": [
+        "test_kicked_additive_target_lifelink",
+        "test_kicked_self_replacements",
+        "test_kicked_damage_replacements",
+        "test_kicked_target_replacements"
+      ]
+    },
+    {
+      "id": "kicked-shared-untap-modifier-contract",
+      "patterns": [
+        "quorune/compiler/kicked_self_replacement_templates.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/rules/closed_effect_program_shapes.py",
+        "quorune/resolution_conditions.py",
+        "quorune/semantic_choices/resolution_result_validation.py",
+        "quorune/tap_state.py",
+        "tests/fixtures/kicked-shared-untap-and-modifier-cards.json",
+        "tests/test_kicked_shared_untap_and_modifier.py"
+      ],
+      "test_modules": [
+        "test_kicked_shared_untap_and_modifier",
+        "test_kicked_additive_target_lifelink",
+        "test_kicked_self_replacements",
+        "test_closed_effect_programs"
+      ]
+    },
+    {
+      "id": "repeated-source-attack-cast-cost-contract",
+      "patterns": [
+        "quorune/next_spell_cost_model.py",
+        "quorune/next_spell_costs.py",
+        "quorune/compiler/next_spell_cost_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/temporary_cast_restrictions.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/commit.py",
+        "tests/fixtures/repeated-source-attack-cast-cost-reduction-cards.json",
+        "tests/test_repeated_source_attack_cast_cost_reduction.py"
+      ],
+      "test_modules": [
+        "test_repeated_source_attack_cast_cost_reduction",
+        "test_next_spell_cost_reductions",
+        "test_qualified_attack_subjects",
+        "test_temporary_cast_restrictions"
+      ]
+    },
+    {
+      "id": "most-lands-attack-sacrifice-contract",
+      "patterns": [
+        "quorune/player_maximum.py",
+        "quorune/player_maximum_model.py",
+        "quorune/compiler/affected_player_sacrifice_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/affected_player_sacrifice_capability_shapes.py",
+        "quorune/rules/affected_player_choice_coverage.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/selection/apnap.py",
+        "quorune/selection/apnap_contract.py",
+        "tests/test_most_lands_attack_sacrifice.py",
+        "tests/fixtures/most-lands-attack-sacrifice-cards.json",
+        "quorune/semantic_choices/apnap_commit.py"
+      ],
+      "test_modules": [
+        "test_most_lands_attack_sacrifice",
+        "test_fixed_affected_player_sacrifices",
+        "test_player_maximum_control",
+        "test_attack_defender_public_exile"
+      ]
+    },
+    {
+      "id": "spell-caster-land-return-contract",
+      "patterns": [
+        "quorune/compiler/event_player_choice_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/event_player_choice_shapes.py",
+        "quorune/rules/capabilities.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_runtime/executor.py",
+        "tests/test_spell_caster_land_return.py",
+        "tests/fixtures/spell-caster-land-return-cards.json",
+        "quorune/semantic_choices/apnap_commit.py"
+      ],
+      "test_modules": [
+        "test_spell_caster_land_return",
+        "test_fixed_entry_return_triggers",
+        "test_attack_defender_public_exile",
+        "test_fixed_stack_spell_copy"
+      ]
+    },
+    {
+      "id": "spell-cast-mana-value-limits-contract",
+      "patterns": [
+        "quorune/compiler/spell_cast_predicates.py",
+        "quorune/rules/spell_cast_events.py",
+        "tests/test_spell_cast_mana_value_limits.py",
+        "quorune/mana_value_limit.py",
+        "tests/fixtures/event-player-fixed-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_spell_cast_mana_value_limits",
+        "test_cast_spell_mana_values",
+        "test_event_player_fixed_damage",
+        "test_fixed_counter_event_triggers"
+      ]
+    },
+    {
+      "id": "spell-caster-sacrifice-payment-contract",
+      "patterns": [
+        "quorune/spell_caster_sacrifice_payment.py",
+        "quorune/compiler/event_player_choice_templates.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/semantic_choices/spell_caster_sacrifice_payment.py",
+        "tests/test_spell_caster_sacrifice_payment.py",
+        "tests/fixtures/spell-caster-sacrifice-payment-cards.json",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/semantic_choices/apnap_commit.py",
+        "quorune/semantic_choices/fixed_effect_payment.py"
+      ],
+      "test_modules": [
+        "test_spell_caster_sacrifice_payment",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_optional_sacrifice_stat_results",
+        "test_event_player_sacrifices"
+      ]
+    },
+    {
+      "id": "current-turn-spell-count-life-contract",
+      "patterns": [
+        "quorune/event_player_result_values.py",
+        "quorune/rules/event_player_result_shapes.py",
+        "quorune/compiler/event_player_results.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_runtime/executor.py",
+        "tests/test_current_turn_spell_count_life.py",
+        "tests/fixtures/current-turn-spell-count-life-cards.json",
+        "quorune/public_history_query_model.py",
+        "quorune/turn_history.py"
+      ],
+      "test_modules": [
+        "test_current_turn_spell_count_life",
+        "test_turn_history_rules",
+        "test_qualified_spell_ordinals",
+        "test_event_player_fixed_damage"
+      ]
+    },
+    {
+      "id": "zero-mana-cast-counter-contract",
+      "patterns": [
+        "quorune/compiler/spell_cast_predicates.py",
+        "quorune/compiler/public_trigger_conditions.py",
+        "quorune/compiler/trigger_runtime_coverage.py",
+        "quorune/rules/event_outcome_shapes.py",
+        "quorune/rules/event_subscriptions.py",
+        "tests/test_zero_mana_cast_counters.py",
+        "tests/fixtures/zero-mana-cast-counter-cards.json",
+        "quorune/rules/spell_cast_events.py",
+        "quorune/compiler/event_outcome_templates.py"
+      ],
+      "test_modules": [
+        "test_zero_mana_cast_counters",
+        "test_increment",
+        "test_ring_native_actions",
+        "test_event_spell_copy"
+      ]
+    },
+    {
+      "id": "zero-mana-damage-and-life-gain-permission-contract",
+      "patterns": [
+        "quorune/compiler/public_trigger_conditions.py",
+        "quorune/rules/event_outcome_shapes.py",
+        "quorune/rules/event_subscriptions.py",
+        "quorune/life_gain_permission.py",
+        "quorune/declaration_rule_effects.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/semantic_runtime/life_prohibitions.py",
+        "quorune/effect_runtime/life_effects.py",
+        "quorune/compiler/life_templates.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_zero_mana_damage_and_life_gain_permission.py",
+        "tests/fixtures/event-player-fixed-damage-cards.json",
+        "quorune/life_change.py",
+        "quorune/turn_step_owner.py"
+      ],
+      "test_modules": [
+        "test_zero_mana_damage_and_life_gain_permission",
+        "test_zero_mana_cast_counters",
+        "test_life_gain_prohibitions",
+        "test_public_life_gain_scopes",
+        "test_event_player_fixed_damage"
+      ]
+    },
+    {
+      "id": "mandatory-single-stack-target-changes-contract",
+      "patterns": [
+        "quorune/semantic_choices/stack_targets.py",
+        "tests/test_mandatory_single_stack_target_changes.py",
+        "tests/fixtures/mandatory-single-stack-target-change-cards.json",
+        "quorune/stack_target_change_model.py",
+        "quorune/rules/stack_target_change_shapes.py",
+        "quorune/selection/copy_targets.py",
+        "quorune/target_predicates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/selection/targeting.py",
+        "quorune/selection/target_query.py",
+        "quorune/rules/target_announcements.py",
+        "quorune/trigger_processing.py"
+      ],
+      "test_modules": [
+        "test_mandatory_single_stack_target_changes",
+        "test_target_announcements",
+        "test_fixed_stack_spell_copy",
+        "test_copy_objects"
+      ]
+    },
+    {
+      "id": "optional-stack-target-changes-contract",
+      "patterns": [
+        "quorune/stack_target_change_model.py",
+        "quorune/rules/stack_target_change_shapes.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/selection/copy_targets.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/stack_targets.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/rules/target_announcements.py",
+        "quorune/trigger_processing.py",
+        "tests/test_optional_stack_target_changes.py",
+        "quorune/card_programs/alternative_price_overlay.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/selection/targeting.py",
+        "quorune/selection/target_query.py"
+      ],
+      "test_modules": [
+        "test_optional_stack_target_changes",
+        "test_mandatory_single_stack_target_changes",
+        "test_target_announcements",
+        "test_fixed_stack_spell_copy",
+        "test_exact_mishra_closure",
+        "test_fixed_public_alternative_costs"
+      ]
+    },
+    {
+      "id": "targeted-spell-control-contract",
+      "patterns": [
+        "quorune/control_effects.py",
+        "quorune/semantic_runtime/control_handlers.py",
+        "quorune/semantic_runtime/control_intents.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_choices/intent_host.py",
+        "tests/test_targeted_spell_control.py",
+        "tests/fixtures/targeted-spell-control-cards.json",
+        "quorune/stack_target_change_model.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/rules/stack_target_change_shapes.py",
+        "quorune/engine.py",
+        "quorune/stack_resolution.py",
+        "quorune/projection.py",
+        "quorune/rules/stack_damage_sources.py"
+      ],
+      "test_modules": [
+        "test_targeted_spell_control",
+        "test_fixed_control_effects",
+        "test_optional_stack_target_changes",
+        "test_targeted_zero_mana_counter",
+        "test_morph_rules"
+      ]
+    },
+    {
+      "id": "stack-target-change-payment-contract",
+      "patterns": [
+        "quorune/stack_target_change_model.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "quorune/rules/stack_target_change_shapes.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/program_composition.py",
+        "tests/test_stack_target_change_payment.py",
+        "tests/fixtures/stack-target-change-payment-cards.json",
+        "quorune/semantic_choices/stack_targets.py",
+        "quorune/selection/copy_targets.py",
+        "quorune/rules/stack_controller_payment_cost.py"
+      ],
+      "test_modules": [
+        "test_stack_target_change_payment",
+        "test_spell_caster_sacrifice_payment",
+        "test_mandatory_single_stack_target_changes",
+        "test_targeted_spell_control"
+      ]
+    },
+    {
+      "id": "opponent-history-alternative-prices-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/compiler/public_alternative_cost_nodes.py",
+        "tests/test_opponent_history_alternative_prices.py",
+        "tests/fixtures/opponent-history-alternative-price-cards.json",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/public_history_query_model.py",
+        "quorune/drawing/restrictions.py",
+        "quorune/zone_trigger_processing.py",
+        "quorune/rules/casting/alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_opponent_history_alternative_prices",
+        "test_fixed_public_alternative_costs",
+        "test_optional_stack_target_changes"
+      ]
+    },
+    {
+      "id": "cast-color-alternative-price-contract",
+      "patterns": [
+        "quorune/turn_history_model.py",
+        "quorune/turn_history.py",
+        "quorune/engine.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/record_state_provenance.py",
+        "quorune/commander.py",
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "tests/test_cast_color_alternative_price.py",
+        "tests/fixtures/cast-color-alternative-price-cards.json",
+        "quorune/public_history_query_model.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/rules/casting/alternative_costs.py",
+        "quorune/rules/spell_cast_events.py"
+      ],
+      "test_modules": [
+        "test_cast_color_alternative_price",
+        "test_opponent_history_alternative_prices",
+        "test_stack_target_change_payment"
+      ]
+    },
+    {
+      "id": "creature-counter-alternative-price-contract",
+      "patterns": [
+        "quorune/stack_counter.py",
+        "quorune/engine.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/commander.py",
+        "quorune/turn_history.py",
+        "quorune/turn_history_model.py",
+        "quorune/record_state_provenance.py",
+        "quorune/public_history_query_model.py",
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "tests/test_creature_counter_alternative_price.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/semantic_runtime/stack_counter_handlers.py",
+        "quorune/rules/casting/alternative_costs.py",
+        "quorune/stack_target_change_model.py"
+      ],
+      "test_modules": [
+        "test_creature_counter_alternative_price",
+        "test_cast_color_alternative_price",
+        "test_stack_counter_rules",
+        "test_battlefield_library_selection"
+      ]
+    },
+    {
+      "id": "life-and-land-alternative-prices-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "tests/test_life_and_land_alternative_prices.py",
+        "tests/fixtures/life-and-land-alternative-price-cards.json",
+        "quorune/public_history_query_model.py",
+        "quorune/life_state.py",
+        "quorune/zone_trigger_processing.py",
+        "quorune/rules/casting/alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_life_and_land_alternative_prices",
+        "test_opponent_history_alternative_prices",
+        "test_creature_counter_alternative_price"
+      ]
+    },
+    {
+      "id": "live-attacking-alternative-prices-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/compiler/public_alternative_cost_nodes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_live_attacking_alternative_prices.py",
+        "tests/fixtures/live-attacking-alternative-price-cards.json",
+        "quorune/live_battlefield_quantity_model.py",
+        "quorune/live_battlefield_quantities.py",
+        "quorune/object_query.py",
+        "quorune/rules/casting/alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_live_attacking_alternative_prices",
+        "test_life_and_land_alternative_prices",
+        "test_qualified_attack_subjects"
+      ]
+    },
+    {
+      "id": "distinct-creature-damage-alternative-price-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/public_history_query_model.py",
+        "tests/test_distinct_creature_damage_alternative_price.py",
+        "tests/fixtures/distinct-creature-damage-alternative-price-cards.json",
+        "quorune/damage_turn_history.py",
+        "quorune/damage.py",
+        "quorune/rules/stack_damage_sources.py",
+        "quorune/rules/casting/alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_distinct_creature_damage_alternative_price",
+        "test_live_attacking_alternative_prices",
+        "test_life_and_land_alternative_prices"
+      ]
+    },
+    {
+      "id": "attacking-divided-damage-alternative-price-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/compiler/announced_damage_templates.py",
+        "tests/test_attacking_divided_damage_alternative_price.py",
+        "tests/fixtures/attacking-divided-damage-price-cards.json",
+        "quorune/announced_damage.py",
+        "quorune/live_battlefield_quantities.py",
+        "quorune/selection/targeting.py",
+        "quorune/rules/casting/alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_attacking_divided_damage_alternative_price",
+        "test_announced_damage",
+        "test_live_attacking_alternative_prices"
+      ]
+    },
+    {
+      "id": "announced-x-pitch-alternatives-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/additional_zone_costs.py",
+        "tests/test_announced_x_pitch_alternatives.py",
+        "tests/fixtures/announced-x-pitch-alternative-cards.json",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/compiled_public_alternative_costs.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/rules/casting/model.py",
+        "quorune/rules/casting/alternative_costs.py"
+      ],
+      "test_modules": [
+        "test_announced_x_pitch_alternatives",
+        "test_fixed_public_alternative_costs",
+        "test_announced_x_source_discard"
+      ]
+    },
+    {
+      "id": "resolution-mana-value-x-counter-contract",
+      "patterns": [
+        "quorune/compiler/counter_templates.py",
+        "quorune/stack_counter.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_announced_x_conditional_counter.py",
+        "tests/test_announced_x_pitch_alternatives.py",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "quorune/rules/stack_controller_payment_cost.py",
+        "quorune/selection/targeting.py"
+      ],
+      "test_modules": [
+        "test_announced_x_conditional_counter",
+        "test_targeted_zero_mana_counter",
+        "test_announced_x_pitch_alternatives"
+      ]
+    },
+    {
+      "id": "stack-spell-exile-contract",
+      "patterns": [
+        "quorune/public_alternative_costs.py",
+        "quorune/compiler/fixed_public_alternative_costs.py",
+        "quorune/compiler/exile_templates.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
+        "tests/test_stack_spell_exile.py",
+        "tests/fixtures/stack-spell-exile-cards.json",
+        "quorune/public_zone_moves.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/rules/public_zone_move_capability_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/rules/any_number_target_shapes.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/zone_transitions.py",
+        "quorune/stack_counter.py",
+        "quorune/target_cardinality.py",
+        "quorune/rules/spell_cast_events.py"
+      ],
+      "test_modules": [
+        "test_stack_spell_exile",
+        "test_announced_x_conditional_counter",
+        "test_any_number_targets"
+      ]
+    },
+    {
+      "id": "spell-targeting-counter-contract",
+      "patterns": [
+        "quorune/selection/target_query.py",
+        "quorune/selection/targeting.py",
+        "quorune/target_predicates.py",
+        "quorune/compiler/counter_templates.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/stack_spell_targeting.py",
+        "tests/test_spell_targeting_counters.py",
+        "tests/fixtures/spell-targeting-counter-cards.json",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/stack_counter.py",
+        "quorune/stack_target_change_model.py",
+        "quorune/semantic_choices/stack_targets.py"
+      ],
+      "test_modules": [
+        "test_spell_targeting_counters",
+        "test_mixed_stack_counter_targets",
+        "test_mandatory_single_stack_target_changes",
+        "test_stack_spell_exile"
+      ]
+    },
+    {
+      "id": "targeted-zero-mana-counter-contract",
+      "patterns": [
+        "quorune/compiler/counter_templates.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/stack_counter.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_runtime/executor.py",
+        "tests/test_targeted_zero_mana_counter.py",
+        "tests/fixtures/targeted-zero-mana-counter-cards.json",
+        "quorune/spell_mana_counts.py",
+        "quorune/semantic_runtime/stack_counter_handlers.py"
+      ],
+      "test_modules": [
+        "test_targeted_zero_mana_counter",
+        "test_stack_counter_rules",
+        "test_fixed_stack_spell_copy",
+        "test_zero_mana_cast_counters"
+      ]
+    },
+    {
+      "id": "lands-cast-mana-value-limit-contract",
+      "patterns": [
+        "quorune/compiler/static_cast_rule_templates.py",
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "quorune/rules/casting/proposal.py",
+        "tests/test_lands_cast_mana_value_limit.py",
+        "tests/fixtures/lands-cast-mana-value-limit-cards.json",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/player_maximum.py",
+        "quorune/player_maximum_model.py"
+      ],
+      "test_modules": [
+        "test_lands_cast_mana_value_limit",
+        "test_bound_static_declarations",
+        "test_action_proposals",
+        "test_zero_mana_cast_counters"
+      ]
+    },
+    {
+      "id": "fixed-noncreature-mana-cast-restrictions-contract",
+      "patterns": [
+        "quorune/compiler/static_cast_rule_templates.py",
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "quorune/rules/casting/face_queries.py",
+        "tests/test_fixed_noncreature_mana_cast_restrictions.py",
+        "tests/fixtures/fixed-noncreature-mana-cast-restriction-cards.json",
+        "quorune/rules/casting/proposal.py",
+        "quorune/selection/exile_cast.py"
+      ],
+      "test_modules": [
+        "test_fixed_noncreature_mana_cast_restrictions",
+        "test_lands_cast_mana_value_limit",
+        "test_action_proposals",
+        "test_multikicker_entry_counters"
+      ]
+    },
+    {
+      "id": "ordered-damage-keyword-removal-contract",
+      "patterns": [
+        "quorune/rules/bound_effect_program_shapes.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "quorune/rules/temporary_keyword_removal.py",
+        "tests/fixtures/damage-then-keyword-removal-cards.json",
+        "tests/test_damage_then_keyword_removal.py"
+      ],
+      "test_modules": [
+        "test_damage_then_keyword_removal",
+        "test_damage_death_exile",
+        "test_temporary_keyword_removal",
+        "test_bound_effect_programs"
       ]
     },
     {
@@ -7749,6 +8650,25 @@
         "test_complex_activation_mana_costs",
         "test_any_source_counter_costs",
         "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "chosen-temporary-keyword-removal",
+      "patterns": [
+        "quorune/compiler/activation_paid_sacrifice_results.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/temporary_keyword_removal_templates.py",
+        "quorune/continuous_effects.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/rules/temporary_keyword_removal.py",
+        "tests/fixtures/chosen-temporary-keyword-removal-cards.json",
+        "tests/test_chosen_temporary_keyword_removal.py"
+      ],
+      "test_modules": [
+        "test_chosen_temporary_keyword_removal",
+        "test_temporary_keyword_removal",
+        "test_source_keyword_choices",
+        "test_landwalk"
       ]
     },
     {
@@ -9518,6 +10438,35 @@
       ]
     },
     {
+      "id": "turn-damage-prevention-prohibition-contract",
+      "patterns": [
+        "quorune/damage_prevention_permission.py",
+        "quorune/life_gain_permission.py",
+        "quorune/declaration_rule_effects.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/semantic_runtime/damage_permissions.py",
+        "quorune/semantic_runtime/life_prohibitions.py",
+        "quorune/effect_runtime/damage_life_and_turns.py",
+        "quorune/compiler/damage_permission_templates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_turn_damage_prevention_prohibition.py",
+        "tests/fixtures/turn-damage-prevention-prohibition-cards.json",
+        "quorune/damage.py",
+        "quorune/counter_prevention.py",
+        "quorune/turn_step_owner.py"
+      ],
+      "test_modules": [
+        "test_turn_damage_prevention_prohibition",
+        "test_unpreventable_damage_permissions",
+        "test_damage_prevention_shields",
+        "test_life_gain_prohibitions",
+        "test_zero_mana_damage_and_life_gain_permission"
+      ]
+    },
+    {
       "id": "scheduled-half-life-values",
       "patterns": [
         "quorune/compiler/scheduled_player_triggers.py",
@@ -9896,10 +10845,10 @@
       "patterns": [
         "quorune/compiler/closed_static_nodes.py",
         "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/compiler/program_generation.py",
         "quorune/rules/fixed_resolution_characteristic_shapes.py",
-        "tests/test_support_integration_retention.py",
         "tests/fixtures/support-integration-retention-cards.json",
-        "quorune/compiler/program_generation.py"
+        "tests/test_support_integration_retention.py"
       ],
       "test_modules": [
         "test_support_integration_retention",
@@ -9942,6 +10891,20 @@
       ]
     },
     {
+      "id": "granted-untapped-hexproof",
+      "patterns": [
+        "quorune/compiler/granted_characteristic_nodes.py",
+        "quorune/rules/granted_characteristic_shapes.py",
+        "tests/fixtures/granted-untapped-hexproof-cards.json",
+        "tests/test_granted_untapped_hexproof.py"
+      ],
+      "test_modules": [
+        "test_granted_untapped_hexproof",
+        "test_granted_static_characteristics",
+        "test_attached_quote_delimiters"
+      ]
+    },
+    {
       "id": "granted-static-characteristic-components",
       "patterns": [
         "quorune/ability_fragments.py",
@@ -9959,12 +10922,16 @@
         "quorune/compiler/granted_static_costs.py",
         "quorune/rules/granted_characteristic_shapes.py",
         "tests/test_granted_static_characteristics.py",
+        "tests/test_granted_swamp_characteristic.py",
+        "tests/fixtures/granted-swamp-characteristic-cards.json",
         "tests/test_characteristic_read_frames.py",
         "tests/test_activation_cost_modifiers.py",
         "tests/fixtures/granted-static-characteristic-cards.json"
       ],
       "test_modules": [
         "test_granted_static_characteristics",
+        "test_granted_swamp_characteristic",
+        "test_granted_untapped_hexproof",
         "test_characteristic_read_frames",
         "test_activation_cost_modifiers",
         "test_granted_static_costs",
@@ -10363,6 +11330,58 @@
         "test_public_query_effect_amounts",
         "test_fixed_source_characteristic_effects",
         "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "declared-attacker-keyword-grants",
+      "patterns": [
+        "quorune/compiler/qualified_attack_subjects.py",
+        "quorune/compiler/attack_event_results.py",
+        "tests/test_declared_attacker_keyword_grants.py",
+        "tests/fixtures/declared-attacker-keyword-grants-cards.json"
+      ],
+      "test_modules": [
+        "test_declared_attacker_keyword_grants",
+        "test_qualified_attack_subjects",
+        "test_qualified_attack_defender_results",
+        "test_source_attack_alone"
+      ]
+    },
+    {
+      "id": "declared-attacker-equal-stats",
+      "patterns": [
+        "quorune/qualified_attack_model.py",
+        "quorune/compiler/qualified_attack_subjects.py",
+        "quorune/rules/qualified_attacks.py",
+        "quorune/trigger_discovery.py",
+        "tests/test_declared_attacker_equal_stats.py",
+        "tests/fixtures/declared-attacker-equal-stats-cards.json"
+      ],
+      "test_modules": [
+        "test_declared_attacker_equal_stats",
+        "test_declared_attacker_keyword_grants",
+        "test_qualified_attack_subjects"
+      ]
+    },
+    {
+      "id": "fixed-power-qualified-attacks",
+      "patterns": [
+        "quorune/qualified_attack_model.py",
+        "quorune/compiler/qualified_attack_subjects.py",
+        "quorune/rules/qualified_attacks.py",
+        "quorune/compiler/event_player_results.py",
+        "quorune/rules/event_player_result_shapes.py",
+        "quorune/rules/occurrence_object_results.py",
+        "tests/test_fixed_power_qualified_attacks.py",
+        "tests/test_declared_attacker_equal_stats.py"
+      ],
+      "test_modules": [
+        "test_fixed_power_qualified_attacks",
+        "test_declared_attacker_equal_stats",
+        "test_qualified_attack_subjects",
+        "test_qualified_attack_defender_results",
+        "test_event_creature_controller_results",
+        "test_granted_skulk"
       ]
     },
     {
@@ -11437,16 +12456,16 @@
     {
       "id": "qualified-quantity-retention",
       "patterns": [
-        "quorune/compiler/query_characteristic_templates.py",
-        "quorune/compiler/public_quantity_mana.py",
-        "quorune/compiler/live_battlefield_quantities.py",
-        "tests/test_qualified_quantity_retention.py",
-        "tests/qualified_quantity_retention_fixture.py",
-        "tests/fixtures/qualified-quantity-retention-cards.json",
         "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/live_battlefield_quantities.py",
         "quorune/compiler/nonleaf_effect_closure.py",
         "quorune/compiler/program_generation.py",
-        "quorune/rules/effect_node_capabilities.py"
+        "quorune/compiler/public_quantity_mana.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "tests/fixtures/qualified-quantity-retention-cards.json",
+        "tests/qualified_quantity_retention_fixture.py",
+        "tests/test_qualified_quantity_retention.py"
       ],
       "test_modules": [
         "test_qualified_quantity_retention",
@@ -12274,6 +13293,44 @@
       ]
     },
     {
+      "id": "reflexive-live-count-stat-results",
+      "patterns": [
+        "quorune/rules/reflexive_payment_shapes.py",
+        "quorune/rules/token_creation_reflexive.py",
+        "tests/test_reflexive_live_count_stat_results.py",
+        "tests/test_token_creation_reflexive_results.py"
+      ],
+      "test_modules": [
+        "test_reflexive_live_count_stat_results",
+        "test_token_creation_reflexive_results",
+        "test_public_query_effect_amounts",
+        "test_reflexive_payments"
+      ]
+    },
+    {
+      "id": "token-creation-reflexive-results",
+      "patterns": [
+        "quorune/compiler/token_creation_reflexive_templates.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/fixed_instruction_program_closure.py",
+        "quorune/reflexive_trigger_model.py",
+        "quorune/rules/token_creation_reflexive.py",
+        "quorune/rules/reflexive_triggers.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/effect_runtime/objects_stack_and_tokens.py",
+        "tests/test_token_creation_reflexive_results.py",
+        "tests/fixtures/token-creation-reflexive-results-cards.json"
+      ],
+      "test_modules": [
+        "test_token_creation_reflexive_results",
+        "test_controller_creature_keyword_absence",
+        "test_token_creation_triggers",
+        "test_reflexive_payments"
+      ]
+    },
+    {
       "id": "true-token-creation-event-bindings",
       "patterns": [
         "quorune/token_creation_batch_model.py",
@@ -12703,6 +13760,25 @@
         "test_event_player_sacrifices",
         "test_fixed_affected_player_discards",
         "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "defending-player-creature-untap",
+      "patterns": [
+        "quorune/affected_permanents.py",
+        "quorune/compiler/event_player_modifiers.py",
+        "quorune/rules/combat_defending_players.py",
+        "quorune/rules/public_zone_move_capability_shapes.py",
+        "quorune/semantic_runtime/tap_state_handlers.py",
+        "tests/fixtures/defending-player-creature-untap-cards.json",
+        "tests/test_defending_player_creature_untap.py"
+      ],
+      "test_modules": [
+        "test_defending_player_creature_untap",
+        "test_defending_player_target_native",
+        "test_combat_defending_player_results",
+        "test_event_player_modifiers",
+        "test_fixed_public_zone_moves"
       ]
     },
     {
@@ -13498,17 +14574,17 @@
     {
       "id": "batch-retained-result-ownership-scopes",
       "patterns": [
+        "quorune/compiler/nonleaf_effect_closure.py",
         "quorune/compiler/program_composition.py",
-        "quorune/rules/target_player_sequences.py",
-        "quorune/rules/target_set_result_sequences.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/rules/effect_node_capabilities.py",
         "quorune/rules/fixed_effect_clause_shapes.py",
         "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/rules/target_player_sequences.py",
+        "quorune/rules/target_set_result_sequences.py",
         "quorune/rules/temporary_target_interaction_shapes.py",
-        "tests/test_batch_admission_retention.py",
         "tests/fixtures/batch-admission-retention-cards.json",
-        "quorune/compiler/nonleaf_effect_closure.py",
-        "quorune/compiler/program_generation.py",
-        "quorune/rules/effect_node_capabilities.py"
+        "tests/test_batch_admission_retention.py"
       ],
       "test_modules": [
         "test_batch_admission_retention",
@@ -13908,6 +14984,7 @@
         ".github/workflows/generated-artifacts.yml",
         "platform/generated-artifacts.json",
         "scripts/validate_cloud_generation.py",
+        "scripts/generated_cache_identity.py",
         "scripts/quick_gate.py",
         "tests/test_ci_pipeline.py"
       ],
@@ -15078,6 +16155,20 @@
       ]
     },
     {
+      "id": "granted-paid-creature-toughness",
+      "patterns": [
+        "quorune/rules/activation/paid_characteristic_results.py",
+        "quorune/rules/activation/proposal.py",
+        "tests/fixtures/granted-paid-creature-toughness-cards.json",
+        "tests/test_granted_paid_creature_toughness.py"
+      ],
+      "test_modules": [
+        "test_granted_paid_creature_toughness",
+        "test_activation_paid_sacrifice_stats",
+        "test_activation_paid_result_slots"
+      ]
+    },
+    {
       "id": "activation-paid-creature-stat-contract",
       "patterns": [
         "quorune/activation_paid_characteristic_model.py",
@@ -15198,6 +16289,1821 @@
       ]
     },
     {
+      "id": "named-library-graveyard-searches",
+      "patterns": [
+        "quorune/named_search_model.py",
+        "quorune/compiler/named_search_templates.py",
+        "quorune/rules/named_searches.py",
+        "quorune/semantic_choices/named_zone_search.py",
+        "quorune/selection/searching.py",
+        "tests/test_named_zone_searches.py",
+        "tests/fixtures/named-zone-search-cards.json"
+      ],
+      "test_modules": [
+        "test_named_zone_searches",
+        "test_counted_library_searches",
+        "test_library_search_rules",
+        "test_semantic_searches",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "qualified-library-card-searches",
+      "patterns": [
+        "quorune/qualified_library_search_model.py",
+        "quorune/compiler/qualified_library_search_templates.py",
+        "quorune/rules/qualified_library_search.py",
+        "tests/test_qualified_library_searches.py",
+        "tests/fixtures/qualified-library-search-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_library_searches",
+        "test_library_search_qualifiers",
+        "test_fixed_library_searches",
+        "test_counted_library_searches",
+        "test_named_zone_searches"
+      ]
+    },
+    {
+      "id": "fixed-target-library-inspection",
+      "patterns": [
+        "quorune/target_library_inspection_model.py",
+        "quorune/compiler/target_library_inspection_templates.py",
+        "quorune/rules/target_library_inspection.py",
+        "quorune/semantic_choices/target_library_inspection.py",
+        "tests/test_target_library_inspection.py",
+        "tests/fixtures/target-library-inspection-cards.json"
+      ],
+      "test_modules": [
+        "test_target_library_inspection",
+        "test_fixed_top_order",
+        "test_top_order_native",
+        "test_fixed_library_selection",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "whole-graveyard-recycling",
+      "patterns": [
+        "quorune/graveyard_recycling_model.py",
+        "quorune/compiler/graveyard_recycling_templates.py",
+        "quorune/rules/graveyard_recycling.py",
+        "quorune/semantic_runtime/graveyard_recycling.py",
+        "tests/test_graveyard_recycling.py",
+        "tests/fixtures/graveyard-recycling-cards.json"
+      ],
+      "test_modules": [
+        "test_graveyard_recycling",
+        "test_fixed_effect_clause_sequences",
+        "test_fixed_public_zone_moves",
+        "test_random_graveyard_returns",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "legendary-selected-tap-costs",
+      "patterns": [
+        "quorune/activation_cost_choice.py",
+        "quorune/compiler/activated_tap_costs.py",
+        "quorune/rules/activation_costs.py",
+        "tests/test_legendary_tap_activation_costs.py",
+        "tests/fixtures/legendary-tap-activation-costs.json",
+        "quorune/rules/activation/restriction_requirements.py"
+      ],
+      "test_modules": [
+        "test_legendary_tap_activation_costs",
+        "test_fixed_activation_tap_costs",
+        "test_combined_tap_activation_costs",
+        "test_fixed_mana_abilities",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-hand-exile-evoke",
+      "patterns": [
+        "quorune/hand_exile_evoke_model.py",
+        "quorune/evoke.py",
+        "quorune/compiler/casting_payment_keyword_nodes.py",
+        "quorune/compiled_cast_costs.py",
+        "quorune/semantic_runtime/cast_costs.py",
+        "tests/test_hand_exile_evoke.py",
+        "tests/fixtures/hand-exile-evoke-cards.json"
+      ],
+      "test_modules": [
+        "test_hand_exile_evoke",
+        "test_casting_payment_keywords",
+        "test_fixed_public_alternative_costs",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "temporary-target-basic-land-type-choice",
+      "patterns": [
+        "quorune/target_land_type_model.py",
+        "quorune/compiler/target_land_type_templates.py",
+        "quorune/rules/target_land_type.py",
+        "quorune/semantic_choices/target_land_type.py",
+        "tests/test_target_land_type_choices.py",
+        "tests/fixtures/target-land-type-choice-cards.json"
+      ],
+      "test_modules": [
+        "test_target_land_type_choices",
+        "test_fixed_basic_type_setting",
+        "test_expanded_basic_type_setting",
+        "test_intrinsic_basic_land_mana",
+        "test_fixed_effect_clause_sequences",
+        "test_card_program_trust",
+        "test_delayed_triggers"
+      ]
+    },
+    {
+      "id": "optional-original-target-characteristic-result",
+      "patterns": [
+        "quorune/optional_target_result_model.py",
+        "quorune/compiler/optional_target_result_templates.py",
+        "quorune/rules/optional_target_results.py",
+        "quorune/compiler/effect_template_composition.py",
+        "tests/test_optional_target_results.py",
+        "tests/fixtures/optional-target-results-cards.json"
+      ],
+      "test_modules": [
+        "test_optional_target_results",
+        "test_hand_exile_evoke",
+        "test_bound_effect_programs",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "chosen-single-counter-removal",
+      "patterns": [
+        "quorune/chosen_counter_removal_model.py",
+        "quorune/compiler/chosen_counter_removal_templates.py",
+        "quorune/compiler/counter_removal_templates.py",
+        "quorune/rules/chosen_counter_removal.py",
+        "quorune/semantic_choices/chosen_counter_removal.py",
+        "tests/test_chosen_counter_removal.py",
+        "tests/fixtures/chosen-counter-removal-cards.json"
+      ],
+      "test_modules": [
+        "test_chosen_counter_removal",
+        "test_fixed_counter_removal_effects",
+        "test_rule_generated_counter_removals",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-card-type-receiver-lists",
+      "patterns": [
+        "quorune/compiler/receiver_union_queries.py",
+        "tests/test_card_type_receiver_unions.py",
+        "tests/fixtures/card-type-receiver-union-cards.json"
+      ],
+      "test_modules": [
+        "test_card_type_receiver_unions",
+        "test_receiver_query_unions",
+        "test_fixed_query_keyword_grants",
+        "test_compiled_emblems",
+        "test_characteristic_query_unions"
+      ]
+    },
+    {
+      "id": "target-all-counter-kind-and-cardinality",
+      "patterns": [
+        "quorune/compiler/target_all_counter_templates.py",
+        "quorune/compiler/counter_removal_templates.py",
+        "quorune/rules/target_all_counter_removal.py",
+        "quorune/rules/counter_removal_capabilities.py",
+        "quorune/semantic_runtime/counter_removal_handlers.py",
+        "tests/test_target_all_counter_variants.py",
+        "tests/fixtures/target-all-counter-variants-cards.json"
+      ],
+      "test_modules": [
+        "test_target_all_counter_variants",
+        "test_fixed_counter_removal_effects",
+        "test_bound_effect_programs",
+        "test_omen_resolution",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "source-unattachment-sacrifice",
+      "patterns": [
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "quorune/compiler/trigger_event_vocabulary.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
+        "quorune/engine.py",
+        "quorune/rules/activation/granting_attachment.py",
+        "quorune/rules/source_sacrifice_shapes.py",
+        "quorune/semantic_runtime/source_sacrifice.py",
+        "quorune/source_sacrifice_model.py",
+        "quorune/state_based_execution.py",
+        "quorune/turn_priority_owner.py",
+        "quorune/unattachment_triggers.py",
+        "quorune/zone_trigger_processing.py",
+        "tests/fixtures/source-unattachment-sacrifice-cards.json",
+        "tests/test_source_unattachment_sacrifice.py"
+      ],
+      "test_modules": [
+        "test_source_unattachment_sacrifice",
+        "test_fixed_source_sacrifice",
+        "test_granted_static_characteristics",
+        "test_attachment_followup_bindings"
+      ]
+    },
+    {
+      "id": "fixed-source-sacrifice-instruction",
+      "patterns": [
+        "quorune/source_sacrifice_model.py",
+        "quorune/compiler/source_sacrifice_templates.py",
+        "quorune/semantic_runtime/source_sacrifice.py",
+        "quorune/rules/source_sacrifice_shapes.py",
+        "tests/test_fixed_source_sacrifice.py",
+        "tests/fixtures/fixed-source-sacrifice-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_source_sacrifice",
+        "test_self_zone_move_rules",
+        "test_source_sacrifice_payments",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "event-bound-defender-optional-draw",
+      "patterns": [
+        "quorune/compiler/event_optional_draw_results.py",
+        "quorune/compiler/event_player_results.py",
+        "quorune/rules/event_optional_draw_shapes.py",
+        "quorune/semantic_choices/optional_draw.py",
+        "tests/test_event_player_optional_draw.py",
+        "tests/fixtures/event-player-optional-draw-cards.json"
+      ],
+      "test_modules": [
+        "test_event_player_optional_draw",
+        "test_optional_draw_choices",
+        "test_fixed_counter_player_cast_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-public-sacrifice-predicates",
+      "patterns": [
+        "quorune/compiler/affected_player_sacrifice_templates.py",
+        "tests/test_fixed_public_sacrifice_predicates.py",
+        "tests/fixtures/fixed-public-sacrifice-predicates-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_public_sacrifice_predicates",
+        "test_fixed_affected_player_sacrifices",
+        "test_controller_sacrifices",
+        "test_fixed_sacrifice_counts"
+      ]
+    },
+    {
+      "id": "fixed-public-life-gain-scopes",
+      "patterns": [
+        "quorune/compiler/public_life_gain_scopes.py",
+        "quorune/compiler/life_templates.py",
+        "quorune/rules/public_life_gain_scopes.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "quorune/effect_runtime/life_effects.py",
+        "tests/test_public_life_gain_scopes.py",
+        "tests/fixtures/public-life-gain-scopes-cards.json",
+        "quorune/compiler/declared_effect_amounts.py"
+      ],
+      "test_modules": [
+        "test_public_life_gain_scopes",
+        "test_fixed_player_life_effects",
+        "test_life_effect_runtime",
+        "test_life_gain_prohibitions",
+        "test_card_program_trust",
+        "test_terminal_spell_shuffle",
+        "test_self_exile_return_spells"
+      ]
+    },
+    {
+      "id": "intrinsic-public-cast-count-and-death-conditions",
+      "patterns": [
+        "quorune/compiler/self_cast_restriction_nodes.py",
+        "quorune/semantic_runtime/self_cast_restrictions.py",
+        "tests/test_intrinsic_public_cast_conditions.py",
+        "tests/fixtures/intrinsic-public-cast-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_intrinsic_public_cast_conditions",
+        "test_self_cast_restrictions",
+        "test_changeling_characteristics",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-target-player-library-shuffle",
+      "patterns": [
+        "quorune/compiler/target_library_shuffle.py",
+        "quorune/rules/target_library_shuffle.py",
+        "quorune/compiler/fixed_top_order_templates.py",
+        "quorune/rules/library_order_shapes.py",
+        "quorune/semantic_runtime/library_shuffle.py",
+        "tests/test_target_library_shuffle.py",
+        "tests/fixtures/target-library-shuffle-cards.json"
+      ],
+      "test_modules": [
+        "test_target_library_shuffle",
+        "test_fixed_top_order",
+        "test_top_order_native",
+        "test_revealed_library_top",
+        "test_player_target_protection",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-permanent-subtype-private-hand-entry",
+      "patterns": [
+        "quorune/rules/permanent_subtype_hand_queries.py",
+        "quorune/hand_entry_queries.py",
+        "quorune/compiler/hand_entry_templates.py",
+        "quorune/semantic_choices/object_selection.py",
+        "tests/test_permanent_subtype_hand_entry.py",
+        "tests/fixtures/permanent-subtype-hand-entry-cards.json"
+      ],
+      "test_modules": [
+        "test_permanent_subtype_hand_entry",
+        "test_hand_entry_expansion",
+        "test_hand_entry_followup",
+        "test_fixed_public_zone_moves",
+        "test_choice_forms",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-combat-prevention-source-scopes",
+      "patterns": [
+        "quorune/compiler/combat_prevention_source_results.py",
+        "quorune/compiler/fixed_all_damage_prevention.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/source_prevention.py",
+        "quorune/effect_runtime/damage_modifiers.py",
+        "quorune/rules/prevention_component_shapes.py",
+        "tests/test_combat_prevention_source_scopes.py",
+        "tests/fixtures/combat-prevention-source-scopes-cards.json"
+      ],
+      "test_modules": [
+        "test_combat_prevention_source_scopes",
+        "test_scoped_damage_prevention",
+        "test_compiled_emblems",
+        "test_enlist_rules",
+        "test_damage_prevention_creation",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "explicit-controller-extra-turn-source",
+      "patterns": [
+        "quorune/compiler/extra_turn_templates.py",
+        "tests/test_explicit_controller_extra_turns.py",
+        "tests/fixtures/explicit-controller-extra-turn-cards.json"
+      ],
+      "test_modules": [
+        "test_explicit_controller_extra_turns",
+        "test_fixed_extra_turns",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "self-graveyard-entry-independent-followups",
+      "patterns": [
+        "quorune/self_zone_move.py",
+        "quorune/self_zone_move_followups.py",
+        "quorune/rules/self_zone_move_followups.py",
+        "quorune/semantic_runtime/self_zone_move.py",
+        "tests/test_self_graveyard_return_followups.py",
+        "tests/fixtures/self-graveyard-return-followups-cards.json"
+      ],
+      "test_modules": [
+        "test_self_graveyard_return_followups",
+        "test_self_zone_move_rules",
+        "test_fixed_extra_turns",
+        "test_activation_public_state",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "source-self-fixed-entry-counter",
+      "patterns": [
+        "quorune/source_self_entry_counter_model.py",
+        "quorune/rules/source_self_entry_counters.py",
+        "quorune/self_zone_move.py",
+        "quorune/semantic_runtime/self_zone_move.py",
+        "quorune/self_zone_move_followups.py",
+        "tests/test_source_self_entry_fixed_counters.py",
+        "tests/fixtures/source-self-entry-fixed-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_source_self_entry_fixed_counters",
+        "test_self_zone_move_rules",
+        "test_self_graveyard_return_followups",
+        "test_reanimation_entry_counters",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-subtype-combat-fogs",
+      "patterns": [
+        "quorune/rules/subtype_transform.py",
+        "quorune/compiler/subtype_transform_templates.py",
+        "quorune/compiler/fixed_all_damage_prevention.py",
+        "quorune/compiler/source_transform_program_closure.py",
+        "quorune/rules/fixed_rule_action_coverage.py",
+        "tests/test_subtype_combat_fogs.py",
+        "tests/fixtures/subtype-combat-fog-cards.json",
+        "quorune/transform_order_model.py",
+        "quorune/transform_timestamp_order.py",
+        "quorune/replacement_decisions.py"
+      ],
+      "test_modules": [
+        "test_subtype_combat_fogs",
+        "test_activated_self_transform",
+        "test_scoped_damage_prevention",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "opponent-controlled-graveyard-activation-price",
+      "patterns": [
+        "quorune/activation_cost_modifiers.py",
+        "quorune/compiler/public_quantity_activation_costs.py",
+        "quorune/rules/activation/cost_modifiers.py"
+      ],
+      "test_modules": [
+        "test_source_self_entry_fixed_counters",
+        "test_activation_cost_modifiers",
+        "test_local_public_activation_prices",
+        "test_self_zone_move_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "qualified-attached-characteristics",
+      "patterns": [
+        "quorune/compiler/qualified_attached_settings.py",
+        "quorune/semantic_runtime/qualified_attached_settings.py",
+        "tests/test_qualified_attached_settings.py",
+        "tests/fixtures/qualified-attached-setting-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_attached_settings",
+        "test_attached_static_characteristics",
+        "test_static_characteristic_settings",
+        "test_attached_permanent_modifiers",
+        "test_ordinary_crew",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "whole-hand-graveyard-library-reset",
+      "patterns": [
+        "quorune/graveyard_recycling_model.py",
+        "quorune/compiler/graveyard_recycling_templates.py",
+        "quorune/rules/graveyard_recycling.py",
+        "quorune/semantic_runtime/graveyard_recycling.py",
+        "tests/test_graveyard_recycling.py",
+        "tests/test_hand_graveyard_library_reset.py",
+        "tests/fixtures/hand-graveyard-library-reset-cards.json"
+      ],
+      "test_modules": [
+        "test_hand_graveyard_library_reset",
+        "test_graveyard_recycling",
+        "test_fixed_entwine",
+        "test_assist_payment",
+        "test_flashback_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "live-direct-player-attack-quantities",
+      "patterns": [
+        "quorune/live_battlefield_quantity_model.py",
+        "quorune/compiler/live_battlefield_quantities.py",
+        "quorune/live_battlefield_quantities.py",
+        "quorune/characteristic_fragments.py",
+        "tests/test_attacking_player_quantities.py",
+        "tests/fixtures/attacking-player-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_attacking_player_quantities",
+        "test_live_battlefield_quantities",
+        "test_qualified_characteristic_quantities",
+        "test_subtype_combat_fogs",
+        "test_public_query_effect_amounts",
+        "test_public_quantity_mana",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "compiler-regex-working-set",
+      "patterns": [
+        "quorune/compiler/regex_working_set.py",
+        "tests/test_compiler_regex_working_set.py"
+      ],
+      "test_modules": [
+        "test_compiler_regex_working_set",
+        "test_fixed_public_zone_moves",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "query-bounded-basic-land-searches",
+      "patterns": [
+        "quorune/compiler/query_bound_search_templates.py",
+        "quorune/rules/query_bound_library_search.py",
+        "tests/test_query_bounded_library_search.py",
+        "tests/fixtures/query-bounded-library-search-cards.json"
+      ],
+      "test_modules": [
+        "test_query_bounded_library_search",
+        "test_counted_library_searches",
+        "test_library_search_rules",
+        "test_qualified_library_searches"
+      ]
+    },
+    {
+      "id": "named-equipment-token-definition",
+      "patterns": [
+        "quorune/compiler/fixed_token_production_templates.py",
+        "quorune/compiler/typed_token_ability_nodes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/compiler/named_equipment_token_templates.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/rules/equipment_token_shapes.py",
+        "tests/test_named_equipment_tokens.py",
+        "tests/fixtures/named-equipment-token-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_quote_delimiters",
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_defending_player_targets",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_literal_token_source_names",
+        "test_named_equipment_tokens",
+        "test_predefined_roles"
+      ]
+    },
+    {
+      "id": "fixed-bounded-hand-free-cast",
+      "patterns": [
+        "quorune/bounded_hand_cast_model.py",
+        "quorune/compiler/bounded_hand_cast_templates.py",
+        "quorune/rules/bounded_hand_cast.py",
+        "quorune/semantic_choices/bounded_hand_cast.py",
+        "tests/test_bounded_hand_casts.py",
+        "tests/fixtures/bounded-hand-cast-cards.json"
+      ],
+      "test_modules": [
+        "test_bounded_hand_casts",
+        "test_discover_rules",
+        "test_action_proposals",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-keyword-activation-grant-contract",
+      "patterns": [
+        "quorune/compiler/granted_keyword_activation_nodes.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/named_equipment_token_templates.py",
+        "quorune/rules/activation/ability_kinds.py",
+        "tests/test_granted_keyword_activations.py",
+        "tests/fixtures/granted-keyword-activation-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_cost_modifiers",
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_fixed_query_quoted_ability_grants",
+        "test_fixed_token_creation_effects",
+        "test_granted_keyword_activations",
+        "test_granted_keyword_events",
+        "test_named_equipment_tokens",
+        "test_ordinary_crew",
+        "test_priced_equip"
+      ]
+    },
+    {
+      "id": "source-excluded-sacrifice-contract",
+      "patterns": [
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/affected_player_sacrifice_templates.py",
+        "quorune/rules/affected_player_choice_coverage.py",
+        "quorune/rules/affected_player_sacrifice_capability_shapes.py",
+        "quorune/semantic_runtime/values.py",
+        "tests/fixtures/source-excluded-sacrifice-cards.json",
+        "tests/test_source_excluded_sacrifices.py"
+      ],
+      "test_modules": [
+        "test_battlefield_library_selection",
+        "test_card_program_trust",
+        "test_entry_return_incarnation",
+        "test_fixed_affected_player_sacrifices",
+        "test_fixed_entry_return_triggers",
+        "test_fixed_public_sacrifice_predicates",
+        "test_fixed_source_sacrifice",
+        "test_source_excluded_sacrifices"
+      ]
+    },
+    {
+      "id": "qualified-graveyard-exile",
+      "patterns": [
+        "quorune/graveyard_exile_model.py",
+        "quorune/compiler/graveyard_exile_templates.py",
+        "quorune/compiler/zone_templates.py",
+        "quorune/semantic_runtime/graveyard_exile.py",
+        "tests/test_graveyard_exile_replacements.py",
+        "tests/fixtures/graveyard-exile-replacement-cards.json",
+        "quorune/zone_object_qualifications.py"
+      ],
+      "test_modules": [
+        "test_graveyard_exile_replacements",
+        "test_zone_replacement_compiler",
+        "test_replacement_model_hardening",
+        "test_replacement_event_ordering",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "referenced-fixed-damage-contract",
+      "patterns": [
+        "quorune/attachment_information.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/fixed_instruction_program_closure.py",
+        "quorune/compiler/referenced_damage_templates.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/activation/commit.py",
+        "quorune/rules/attachment_controller_information.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "quorune/rules/occurrence_object_results.py",
+        "quorune/rules/referenced_damage_shapes.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/referenced-fixed-damage-cards.json",
+        "tests/test_referenced_fixed_damage.py"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_damage_result_events",
+        "test_entry_return_incarnation",
+        "test_fixed_counter_event_triggers",
+        "test_referenced_fixed_damage",
+        "test_tap_controller_information",
+        "test_target_recipient_results"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "attached-permanent-destruction",
+      "patterns": [
+        "quorune/attachment_destruction_model.py",
+        "quorune/compiler/attached_destruction_sets.py",
+        "tests/test_attached_destruction_sets.py",
+        "tests/fixtures/attached-destruction-set-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_destruction_sets",
+        "test_mass_destruction_effect_clauses",
+        "test_qualified_destruction_queries",
+        "test_destruction_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "static-recipient-qualification-contract",
+      "patterns": [
+        "quorune/battlefield_mana_value_query.py",
+        "quorune/object_predicate.py",
+        "quorune/object_query.py",
+        "quorune/compiler/static_recipient_qualifiers.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/public_object_conditions.py",
+        "quorune/compiler/static_runtime_nodes.py",
+        "tests/test_static_recipient_qualifiers.py",
+        "tests/fixtures/static-recipient-qualifier-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_public_state_characteristics",
+        "test_leveler_bands",
+        "test_object_query",
+        "test_public_state_condition_compiler",
+        "test_static_recipient_qualifiers"
+      ]
+    },
+    {
+      "id": "fixed-behold-additional-cost-contract",
+      "patterns": [
+        "quorune/rules/behold_additional_cost.py",
+        "quorune/rules/casting/behold_costs.py",
+        "quorune/compiler/behold_cost_templates.py",
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/casting/nonmoving_additional_costs.py",
+        "quorune/rules/casting/commit.py",
+        "tests/test_fixed_behold_additional_costs.py",
+        "tests/fixtures/fixed-behold-additional-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_choice_forms",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_behold_additional_costs",
+        "test_fixed_reveal_additional_costs",
+        "test_permanent_additional_costs"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "hand-library-redraw",
+      "patterns": [
+        "quorune/hand_library_redraw_model.py",
+        "quorune/rules/hand_library_redraw.py",
+        "quorune/semantic_choices/hand_library_redraw.py",
+        "quorune/compiler/hand_library_redraw_templates.py",
+        "quorune/rules/library_result_capability_shapes.py",
+        "tests/test_hand_library_redraw.py",
+        "tests/fixtures/hand-library-redraw-cards.json"
+      ],
+      "test_modules": [
+        "test_hand_library_redraw",
+        "test_discard_results",
+        "test_discard_result_native",
+        "test_fixed_top_order",
+        "test_top_order_native",
+        "test_variable_library_selection",
+        "test_reveal_until_library_selection",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "fixed-draw-hand-putback",
+      "patterns": [
+        "quorune/fixed_hand_putback_model.py",
+        "quorune/rules/fixed_hand_putback.py",
+        "quorune/compiler/fixed_hand_putback_templates.py",
+        "quorune/semantic_choices/fixed_hand_putback.py",
+        "tests/test_fixed_draw_hand_putback.py",
+        "tests/fixtures/fixed-draw-hand-putback-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_draw_hand_putback",
+        "test_fixed_top_order",
+        "test_top_order_native",
+        "test_hand_library_redraw",
+        "test_card_program_trust",
+        "test_replacement_model_hardening"
+      ]
+    },
+    {
+      "id": "event-object-damage-dealer-contract",
+      "patterns": [
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/event_damage_source_templates.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/event_counter_reference.py",
+        "quorune/event_damage_source_model.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "quorune/rules/event_damage_sources.py",
+        "quorune/rules/stack_damage_sources.py",
+        "quorune/rules/trigger_source_information.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/event-damage-source-cards.json",
+        "tests/test_event_damage_sources.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_damage_source_identity",
+        "test_event_damage_sources",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_creature_power_damage",
+        "test_fixed_damage_source_lki",
+        "test_received_damage_events",
+        "test_referenced_fixed_damage"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "bounded-block-as-though",
+      "patterns": [
+        "quorune/block_as_though_model.py",
+        "quorune/rules/block_as_though.py",
+        "quorune/compiler/block_as_though_templates.py",
+        "quorune/semantic_runtime/block_as_though.py",
+        "tests/test_bounded_block_as_though.py",
+        "tests/fixtures/bounded-block-as-though-cards.json",
+        "quorune/ability_fragments.py",
+        "quorune/semantic_runtime/ability_fragments.py",
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/combat_evasion_engine_adapter.py",
+        "quorune/engine.py",
+        "quorune/rules/block_declaration.py"
+      ],
+      "test_modules": [
+        "test_bounded_block_as_though",
+        "test_landwalk",
+        "test_aerial_blocking",
+        "test_combat_evasion_restrictions",
+        "test_typed_ability_fragments",
+        "test_card_program_trust",
+        "test_block_transitions"
+      ]
+    },
+    {
+      "id": "commander-cast-scaled-results",
+      "patterns": [
+        "quorune/ability_fragments.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/characteristic_fragments.py",
+        "quorune/commander_cast_copies.py",
+        "quorune/commander_cast_count_model.py",
+        "quorune/commander_cast_counts.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/commander_cast_copy_nodes.py",
+        "quorune/compiler/commander_cast_quantity_templates.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/dynamic_characteristics.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/selection/storm.py",
+        "quorune/semantic_runtime/ability_fragments.py",
+        "quorune/semantic_runtime/commander_cast_copies.py",
+        "quorune/semantic_runtime/quantified_anthems.py",
+        "quorune/semantic_runtime/storm_fragment.py",
+        "quorune/storm.py",
+        "quorune/trigger_discovery.py",
+        "tests/fixtures/commander-cast-quantity-cards.json",
+        "tests/test_commander_cast_quantities.py"
+      ],
+      "test_modules": [
+        "test_commander_cast_quantities",
+        "test_storm_rules",
+        "test_live_modifier_quantities",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "announced-x-land-creature-token",
+      "patterns": [
+        "quorune/compiler/token_templates.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/query_effect_amount_model.py",
+        "quorune/fixed_token_production.py",
+        "quorune/intrinsic_land_abilities.py",
+        "tests/test_forest_dryad_x_tokens.py",
+        "tests/fixtures/forest-dryad-x-token-cards.json"
+      ],
+      "test_modules": [
+        "test_forest_dryad_x_tokens"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "bound-upkeep-hand-difference",
+      "patterns": [
+        "quorune/upkeep_hand_difference_model.py",
+        "quorune/rules/upkeep_hand_differences.py",
+        "quorune/compiler/upkeep_hand_difference_templates.py",
+        "tests/test_upkeep_hand_differences.py",
+        "tests/fixtures/upkeep-hand-difference-cards.json",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/rules/scheduled_player_shapes.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py"
+      ],
+      "test_modules": [
+        "test_upkeep_hand_differences",
+        "test_scalar_effect_amounts",
+        "test_scheduled_player_triggers",
+        "test_target_player_hand_counts",
+        "test_card_program_trust",
+        "test_fixed_counter_event_triggers"
+      ]
+    },
+    {
+      "id": "announced-x-hand-source-discard",
+      "patterns": [
+        "quorune/activation_x.py",
+        "quorune/compiler/activation_x_costs.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/card_programs/binding.py",
+        "quorune/compiler/target_effect_corpus_assurance.py",
+        "quorune/compiler/announced_target_sets.py",
+        "quorune/rules/fixed_homogeneous_target_set_capability_shapes.py",
+        "quorune/rules/target_characteristic_sets.py",
+        "tests/test_announced_x_source_discard.py",
+        "tests/fixtures/announced-x-source-discard-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_x_source_discard",
+        "test_announced_activation_x",
+        "test_announced_x_fixed_discard",
+        "test_announced_x_source_sacrifice"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "announced-x-public-damage-set",
+      "patterns": [
+        "quorune/rules/announced_x_damage_sets.py",
+        "quorune/rules/damage_capability_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "tests/test_announced_x_public_damage_sets.py",
+        "tests/fixtures/announced-x-public-damage-set-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_x_public_damage_sets",
+        "test_fixed_mass_damage",
+        "test_declared_effect_amounts",
+        "test_announced_damage",
+        "test_card_program_trust",
+        "test_announced_x_source_discard"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "announced-reinforce",
+      "patterns": [
+        "quorune/compiler/announced_reinforce_nodes.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/compiler/casting_keyword_nodes.py",
+        "quorune/compiler/activated_ability_catalog.py",
+        "quorune/compiler/activation_x_costs.py",
+        "quorune/activation_x.py",
+        "tests/test_announced_reinforce.py",
+        "tests/fixtures/announced-reinforce-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_reinforce",
+        "test_fixed_counter_keyword_activations",
+        "test_announced_x_source_discard",
+        "test_announced_activation_x",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-qualified-stack-copy",
+      "patterns": [
+        "quorune/stack_spell_copy_model.py",
+        "quorune/compiler/fixed_stack_spell_copy.py",
+        "quorune/rules/stack_spell_copy_shapes.py",
+        "quorune/ability_source_information.py",
+        "quorune/selection/targeting.py",
+        "quorune/target_predicates.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_fixed_qualified_stack_copy.py",
+        "tests/fixtures/fixed-qualified-stack-copy-cards.json",
+        "quorune/compiler/program_composition.py",
+        "quorune/card_programs/activation_view_equivalence.py"
+      ],
+      "test_modules": [
+        "test_fixed_qualified_stack_copy",
+        "test_fixed_stack_spell_copy",
+        "test_ability_source_counter_targets",
+        "test_copy_objects"
+      ]
+    },
+    {
+      "id": "fixed-emblem-event-programs",
+      "patterns": [
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/emblem_nodes.py",
+        "quorune/compiler/event_outcome_templates.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/rules/event_outcome_shapes.py",
+        "quorune/rules/scheduled_player_shapes.py",
+        "quorune/semantic_runtime/__init__.py",
+        "quorune/semantic_runtime/player_outcomes.py",
+        "tests/fixtures/fixed-emblem-event-cards.json",
+        "tests/test_fixed_emblem_event_programs.py"
+      ],
+      "test_modules": [
+        "test_fixed_emblem_event_programs",
+        "test_compiled_emblems",
+        "test_scheduled_player_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "subtype-qualified-return-cost",
+      "patterns": [
+        "quorune/compiler/qualified_return_costs.py",
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/compiler/activated_zone_change_costs.py",
+        "quorune/qualified_return_cost_model.py",
+        "quorune/activation_cost_choice.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_qualified_return_costs.py",
+        "tests/fixtures/qualified-return-cost-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_return_costs",
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_counted_activation_costs",
+        "test_counted_spell_additional_costs",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "ordinary-scheduled-sacrifice-originals",
+      "patterns": [
+        "tests/test_ordinary_scheduled_sacrifices.py",
+        "tests/fixtures/ordinary-scheduled-sacrifice-cards.json"
+      ],
+      "test_modules": [
+        "test_ordinary_scheduled_sacrifices",
+        "test_scheduled_player_triggers"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "colored-hand-reveal-results",
+      "patterns": [
+        "quorune/colored_hand_reveal_model.py",
+        "quorune/compiler/colored_hand_reveal_templates.py",
+        "quorune/rules/colored_hand_reveals.py",
+        "quorune/semantic_choices/colored_hand_reveals.py",
+        "quorune/semantic_runtime/colored_hand_reveal.py",
+        "quorune/effect_runtime/hand_inspection.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_colored_hand_reveals.py",
+        "tests/fixtures/colored-hand-reveal-cards.json"
+      ],
+      "test_modules": [
+        "test_colored_hand_reveals",
+        "test_card_program_trust",
+        "test_fixed_hand_inspection",
+        "test_hand_results_and_counter_payments",
+        "test_optional_counter_payments",
+        "test_declared_effect_amounts",
+        "test_fixed_draw_hand_putback",
+        "test_hand_library_redraw",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "global-empty-battlefield-intervening-condition",
+      "patterns": [
+        "quorune/compiler/public_state_fact_queries.py",
+        "tests/test_empty_battlefield_conditions.py",
+        "tests/fixtures/empty-battlefield-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_empty_battlefield_conditions",
+        "test_resolution_public_conditions",
+        "test_scheduled_player_triggers",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "discard-result-fixed-negative-offset",
+      "patterns": [
+        "quorune/discard_result_model.py",
+        "quorune/compiler/discard_result_templates.py",
+        "quorune/semantic_choices/discard_results.py",
+        "tests/test_discard_result_negative_offset.py",
+        "tests/fixtures/discard-result-negative-offset-cards.json"
+      ],
+      "test_modules": [
+        "test_discard_result_negative_offset",
+        "test_discard_results",
+        "test_discard_result_native",
+        "test_hand_library_redraw",
+        "test_hand_results_and_counter_payments",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "global-empty-state-subscription-and-cast-sacrifice-payment",
+      "patterns": [
+        "quorune/cast_source_sacrifice_payment.py",
+        "quorune/state_trigger_model.py",
+        "quorune/compiler/state_trigger_nodes.py",
+        "quorune/compiler/event_outcome_templates.py",
+        "quorune/rules/event_outcome_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "quorune/semantic_choices/payments.py",
+        "tests/test_global_empty_state_triggers.py",
+        "tests/fixtures/global-empty-state-trigger-cards.json"
+      ],
+      "test_modules": [
+        "test_global_empty_state_triggers",
+        "test_state_trigger_model",
+        "test_public_state_triggers",
+        "test_card_program_trust",
+        "test_support_integration_retention",
+        "test_ordinary_scheduled_sacrifices"
+      ]
+    },
+    {
+      "id": "global-empty-state-and-own-cast-payment",
+      "patterns": [
+        "quorune/state_trigger_model.py",
+        "quorune/compiler/state_trigger_nodes.py",
+        "quorune/cast_source_sacrifice_payment.py",
+        "quorune/compiler/event_outcome_templates.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/semantic_choices/fixed_effect_payment.py",
+        "quorune/semantic_choices/payments.py",
+        "tests/test_global_empty_state_triggers.py",
+        "tests/fixtures/global-empty-state-trigger-cards.json"
+      ],
+      "test_modules": [
+        "test_global_empty_state_triggers",
+        "test_state_trigger_model",
+        "test_public_state_triggers",
+        "test_another_sacrifice_payments",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "source-counter-cast-value-comparison",
+      "patterns": [
+        "quorune/rules/source_counter_cast_value.py",
+        "quorune/compiler/source_counter_cast_binding.py",
+        "tests/test_source_counter_cast_values.py",
+        "tests/fixtures/source-counter-cast-value-cards.json"
+      ],
+      "test_modules": [
+        "test_source_counter_cast_values",
+        "test_fixed_counter_player_cast_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "empty-battlefield-public-condition",
+      "patterns": [
+        "quorune/compiler/public_state_fact_queries.py",
+        "tests/test_empty_battlefield_conditions.py",
+        "tests/fixtures/empty-battlefield-condition-cards.json"
+      ],
+      "test_modules": [
+        "test_empty_battlefield_conditions",
+        "test_resolution_public_conditions",
+        "test_state_trigger_model"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "cumulative-upkeep-fixed-object-payments",
+      "patterns": [
+        "quorune/cumulative_object_upkeep.py",
+        "quorune/compiler/cumulative_object_upkeep.py",
+        "quorune/rules/cumulative_object_upkeep.py",
+        "quorune/rules/repeated_object_payment.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/semantic_choices/cumulative_object_upkeep.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_cumulative_object_upkeep.py",
+        "tests/fixtures/cumulative-object-upkeep-cards.json"
+      ],
+      "test_modules": [
+        "test_cumulative_object_upkeep",
+        "test_cumulative_upkeep_counter_placement",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_support_integration_retention",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "paid-alternative-cast-facts-and-results",
+      "patterns": [
+        "quorune/paid_alternative_cast_model.py",
+        "quorune/compiler/paid_alternative_cast_results.py",
+        "quorune/rules/paid_alternative_cast_facts.py",
+        "quorune/semantic_choices/paid_alternative_cast.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/stack_resolution.py",
+        "quorune/zone_trigger_events.py",
+        "quorune/zone_transitions.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/kicked_entry_trigger_nodes.py",
+        "quorune/resolution_conditions.py",
+        "quorune/semantic_choices/resolution_condition.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_paid_alternative_cast_results.py",
+        "tests/fixtures/paid-alternative-cast-result-cards.json",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py"
+      ],
+      "test_modules": [
+        "test_paid_alternative_cast_results",
+        "test_fixed_public_alternative_costs",
+        "test_kicked_entry_triggers",
+        "test_resolution_public_conditions",
+        "test_source_entry_cast_information",
+        "test_zone_trigger_events",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "cumulative-upkeep-counter-placement-costs",
+      "patterns": [
+        "quorune/cumulative_counter_upkeep.py",
+        "quorune/compiler/cumulative_counter_upkeep.py",
+        "quorune/rules/cumulative_counter_upkeep.py",
+        "quorune/semantic_choices/cumulative_counter_upkeep.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_runtime/intents.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "tests/test_cumulative_counter_upkeep.py",
+        "tests/fixtures/cumulative-counter-upkeep-cards.json"
+      ],
+      "test_modules": [
+        "test_cumulative_counter_upkeep",
+        "test_cumulative_upkeep_counter_placement",
+        "test_cumulative_object_upkeep",
+        "test_counter_placement_events",
+        "test_blight",
+        "test_semantic_counter_replacement_continuations",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "cumulative-upkeep-alternative-color-mana-and-source-counter-life",
+      "patterns": [
+        "quorune/cumulative_alternative_mana_upkeep.py",
+        "quorune/compiler/cumulative_alternative_mana_upkeep.py",
+        "quorune/rules/cumulative_alternative_mana_upkeep.py",
+        "quorune/semantic_choices/cumulative_alternative_mana_upkeep.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/test_cumulative_alternative_mana_upkeep.py",
+        "tests/fixtures/cumulative-alternative-mana-upkeep-cards.json"
+      ],
+      "test_modules": [
+        "test_cumulative_alternative_mana_upkeep",
+        "test_cumulative_upkeep_counter_placement",
+        "test_cumulative_object_upkeep",
+        "test_cumulative_counter_upkeep",
+        "test_source_maintenance",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "target-player-public-query-amounts",
+      "patterns": [
+        "quorune/rules/special_node_shapes.py",
+        "quorune/target_player_query_amount_model.py",
+        "quorune/compiler/target_player_query_amounts.py",
+        "quorune/rules/target_player_query_amounts.py",
+        "quorune/semantic_runtime/target_player_query_amounts.py",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/rules/capabilities.py",
+        "tests/test_target_player_query_amounts.py",
+        "tests/fixtures/target-player-query-amount-cards.json"
+      ],
+      "test_modules": [
+        "test_target_player_query_amounts",
+        "test_public_query_effect_amounts",
+        "test_target_player_hand_counts",
+        "test_target_recipient_results",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "per-player-public-query-damage",
+      "patterns": [
+        "quorune/per_player_query_damage_model.py",
+        "quorune/compiler/per_player_query_damage.py",
+        "quorune/rules/per_player_query_damage.py",
+        "quorune/semantic_runtime/per_player_query_damage.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/semantic_runtime/fixed_damage_set_handlers.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/rules/fixed_dual_damage.py",
+        "tests/test_per_player_query_damage.py",
+        "tests/fixtures/per-player-query-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_per_player_query_damage",
+        "test_fixed_mass_damage",
+        "test_announced_damage",
+        "test_announced_x_public_damage_sets",
+        "test_fixed_target_controller_damage",
+        "test_public_query_effect_amounts",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "cumulative-upkeep-beneficial-effect-costs",
+      "patterns": [
+        "quorune/cumulative_effect_cost_upkeep.py",
+        "quorune/compiler/cumulative_effect_cost_upkeep.py",
+        "quorune/rules/cumulative_effect_cost_upkeep.py",
+        "quorune/semantic_choices/cumulative_effect_cost_upkeep.py",
+        "quorune/semantic_runtime/life_gain_cost_intent.py",
+        "quorune/semantic_runtime/life_execution.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/semantic_choices/context.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/life_intent_commit.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "quorune/semantic_choices/completed_choice.py",
+        "quorune/semantic_choices/counter_coordination.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_cumulative_effect_cost_upkeep.py",
+        "tests/fixtures/cumulative-effect-cost-upkeep-cards.json"
+      ],
+      "test_modules": [
+        "test_cumulative_effect_cost_upkeep",
+        "test_cumulative_upkeep_counter_placement",
+        "test_life_gain_prohibitions",
+        "test_semantic_counter_replacement_continuations",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "per-player-public-query-life-loss",
+      "patterns": [
+        "quorune/effect_runtime/fractional_life.py",
+        "quorune/per_player_query_life_model.py",
+        "quorune/compiler/per_player_query_life.py",
+        "quorune/rules/per_player_query_life.py",
+        "quorune/semantic_runtime/per_player_query_life.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/effect_runtime/life_effects.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/rules/special_node_shapes.py",
+        "tests/test_per_player_query_life.py",
+        "tests/fixtures/per-player-query-life-cards.json"
+      ],
+      "test_modules": [
+        "test_per_player_query_life",
+        "test_transmute",
+        "test_life_effect_runtime",
+        "test_life_change",
+        "test_fixed_player_life_effects",
+        "test_public_query_effect_amounts",
+        "test_per_player_query_damage",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "turn-life-loss-recovery",
+      "patterns": [
+        "quorune/turn_life_loss_amount_model.py",
+        "quorune/compiler/turn_life_loss_recovery.py",
+        "quorune/rules/turn_life_loss_recovery.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_turn_life_loss_recovery.py",
+        "tests/fixtures/turn-life-loss-recovery-cards.json"
+      ],
+      "test_modules": [
+        "test_turn_life_loss_recovery",
+        "test_scalar_effect_amounts",
+        "test_scalar_history_quantities",
+        "test_turn_history_rules",
+        "test_life_change",
+        "test_life_gain_prohibitions",
+        "test_per_player_query_life",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "current-life-effect-amounts",
+      "patterns": [
+        "quorune/current_life_effect_amount_model.py",
+        "quorune/compiler/current_life_effect_amounts.py",
+        "quorune/rules/current_life_effect_amounts.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_current_life_effect_amounts.py",
+        "tests/fixtures/current-life-effect-amount-cards.json"
+      ],
+      "test_modules": [
+        "test_current_life_effect_amounts",
+        "test_declared_effect_amounts",
+        "test_scalar_effect_amounts",
+        "test_loyalty_abilities",
+        "test_fixed_token_production",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "paradigm-resolution-copy",
+      "patterns": [
+        "quorune/paradigm_model.py",
+        "quorune/spell_resolution_name_model.py",
+        "quorune/spell_resolution_names.py",
+        "quorune/spell_resolution_name_codec.py",
+        "quorune/rules/paradigm.py",
+        "quorune/semantic_runtime/paradigm.py",
+        "quorune/compiler/paradigm_nodes.py",
+        "quorune/compiler/spell_lifecycle_contexts.py",
+        "tests/test_paradigm_rules.py",
+        "tests/test_spell_resolution_names.py",
+        "tests/fixtures/paradigm-cards.json",
+        "quorune/token_copy_recipient_model.py",
+        "quorune/rules/token_copy_recipients.py",
+        "quorune/mana_value_exile_model.py",
+        "quorune/rules/mana_value_exile.py",
+        "quorune/semantic_choices/mana_value_exile.py"
+      ],
+      "test_modules": [
+        "test_paradigm_rules",
+        "test_spell_resolution_names",
+        "test_cipher_compiler",
+        "test_cipher_native",
+        "test_card_program_trust",
+        "test_support_integration_retention",
+        "test_fixed_token_creation_effects",
+        "test_discover_rules"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "recover-fixed-mana",
+      "patterns": [
+        "quorune/recover_model.py",
+        "quorune/rules/recover.py",
+        "quorune/compiler/recover_nodes.py",
+        "quorune/semantic_choices/recover.py",
+        "quorune/effect_runtime/recover.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/rules/keyword_runtime_requirements.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/effect_contracts.py",
+        "quorune/semantic_runtime/effect_handlers.py",
+        "quorune/effect_runtime/zones_and_attachments.py",
+        "tests/test_recover.py",
+        "tests/fixtures/recover-cards.json"
+      ],
+      "test_modules": [
+        "test_recover",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_graveyard_self_return_triggers",
+        "test_oracle_ir",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "qualified-death-graveyard-cast",
+      "patterns": [
+        "quorune/death_cast_permission_model.py",
+        "quorune/turn_history_model.py",
+        "quorune/death_history_name_model.py",
+        "quorune/death_history_names.py",
+        "tests/test_death_cast_permissions.py",
+        "tests/fixtures/death-cast-permission-cards.json"
+      ],
+      "test_modules": [
+        "test_death_cast_permissions",
+        "test_turn_history_rules",
+        "test_public_history_queries",
+        "test_qualified_public_history",
+        "test_permanent_death_amounts",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "repeated-numeric-keyword-events",
+      "patterns": [
+        "quorune/compiler/repeated_keyword_event_nodes.py",
+        "quorune/compiler/keyword_event_effect_nodes.py",
+        "quorune/compiler/multi_keyword_nodes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "tests/test_repeated_keyword_event_nodes.py",
+        "tests/fixtures/repeated-keyword-event-cards.json"
+      ],
+      "test_modules": [
+        "test_repeated_keyword_event_nodes",
+        "test_fixed_keyword_event_effects",
+        "test_myriad_keyword_composition",
+        "test_typecycling",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "capability-evidence",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
+      "id": "keyword-qualified-activation-sacrifice",
+      "patterns": [
+        "quorune/keyword_sacrifice_cost_model.py",
+        "quorune/rules/keyword_sacrifice_costs.py",
+        "quorune/activation_cost_choice.py",
+        "quorune/compiler/activated_zone_change_costs.py",
+        "quorune/compiler/activated_costs.py",
+        "quorune/rules/casting_additional_costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/rules/activation/restriction_requirements.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "tests/test_keyword_sacrifice_costs.py",
+        "tests/fixtures/keyword-sacrifice-cards.json"
+      ],
+      "test_modules": [
+        "test_keyword_sacrifice_costs",
+        "test_fixed_activated_zone_change_costs",
+        "test_fixed_zone_change_additional_costs",
+        "test_rules_scheduler",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "third-current-life-loss",
+      "patterns": [
+        "quorune/third_quantity_model.py",
+        "quorune/compiler/third_life_templates.py",
+        "quorune/rules/third_life_shapes.py",
+        "quorune/compiler/fractional_player_templates.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/effect_runtime/fractional_life.py",
+        "tests/test_third_current_life_loss.py",
+        "tests/fixtures/third-current-life-cards.json"
+      ],
+      "test_modules": [
+        "test_third_current_life_loss",
+        "test_fractional_player_results",
+        "test_half_event_player_results",
+        "test_scheduled_half_life",
+        "test_special_half_life_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "qualified-attack-defender-results",
+      "patterns": [
+        "quorune/compiler/event_player_results.py",
+        "quorune/rules/qualified_attacks.py",
+        "quorune/rules/combat_defending_players.py",
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "tests/test_qualified_attack_defender_results.py",
+        "tests/fixtures/qualified-attack-defender-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_attack_defender_results",
+        "test_qualified_attack_subjects",
+        "test_combat_defending_player_results",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "checks": [
+        "compile",
+        "compact-ci-dependencies",
+        "architecture",
+        "generated-finalization"
+      ],
       "id": "inactive-life-effect-recipient",
       "patterns": [
         "quorune/effect_runtime/life_effects.py",
@@ -15210,12 +18116,617 @@
         "test_life_state",
         "test_life_change",
         "test_fixed_player_life_effects"
+      ]
+    },
+    {
+      "id": "event-player-creature-modifiers",
+      "patterns": [
+        "quorune/event_player_modifier_model.py",
+        "quorune/compiler/event_player_modifiers.py",
+        "quorune/rules/event_player_modifiers.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/fixed_resolution_characteristic_shapes.py",
+        "tests/test_event_player_modifiers.py",
+        "tests/fixtures/event-player-modifier-cards.json"
       ],
-      "checks": [
-        "compile",
-        "compact-ci-dependencies",
-        "architecture",
-        "generated-finalization"
+      "test_modules": [
+        "test_event_player_modifiers",
+        "test_continuous_effect_duration",
+        "test_gain_and_get_sets",
+        "test_qualified_attack_subjects",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-numeric-ripple",
+      "patterns": [
+        "quorune/ripple_model.py",
+        "quorune/compiler/ripple_nodes.py",
+        "quorune/rules/ripple.py",
+        "quorune/rules/ripple_casting.py",
+        "quorune/rules/ripple_resolution_model.py",
+        "quorune/rules/revealed_library_bottom.py",
+        "quorune/semantic_choices/ripple.py",
+        "tests/test_ripple.py",
+        "tests/fixtures/ripple-cards.json",
+        "quorune/compiled_ability_fragments.py",
+        "quorune/casting_cost_host.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/rules/casting/source_placement.py",
+        "quorune/rules/casting/proposal.py",
+        "quorune/rules/resolving_cast_payments.py",
+        "quorune/rules/trigger_source_information.py",
+        "quorune/semantic_choices/completed_choice.py"
+      ],
+      "test_modules": [
+        "test_ripple",
+        "test_fixed_top_order",
+        "test_revealed_library_top",
+        "test_cipher_choices",
+        "test_cipher_native",
+        "test_cascade_rules",
+        "test_card_program_trust",
+        "test_bounded_hand_casts"
+      ]
+    },
+    {
+      "id": "source-attack-opponent-subtype-absence",
+      "patterns": [
+        "quorune/compiler/per_player_query_life.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/per_player_query_life_model.py",
+        "quorune/rules/per_player_query_life.py",
+        "quorune/semantic_runtime/per_player_query_life.py",
+        "tests/fixtures/source-attack-opponent-subtype-absence-cards.json",
+        "tests/test_source_attack_opponent_subtype_absence.py"
+      ],
+      "test_modules": [
+        "test_source_attack_opponent_subtype_absence",
+        "test_per_player_query_life",
+        "test_combat_defending_player_results"
+      ]
+    },
+    {
+      "id": "per-player-half-current-life-damage",
+      "patterns": [
+        "quorune/per_player_life_damage_model.py",
+        "quorune/compiler/per_player_life_damage.py",
+        "quorune/rules/per_player_life_damage.py",
+        "quorune/semantic_runtime/per_player_life_damage.py",
+        "quorune/rules/live_modifier_quantities.py",
+        "quorune/semantic_runtime/fixed_damage_set_handlers.py",
+        "quorune/semantic_runtime/values.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/rules/fixed_dual_damage.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "tests/test_per_player_life_damage.py",
+        "tests/fixtures/per-player-life-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_per_player_life_damage",
+        "test_per_player_query_damage",
+        "test_current_life_effect_amounts",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "fixed-per-opponent-attacking-tokens",
+      "patterns": [
+        "quorune/attacking_opponent_model.py",
+        "quorune/compiler/per_opponent_attacking_tokens.py",
+        "quorune/rules/per_opponent_attacking_tokens.py",
+        "quorune/semantic_choices/per_opponent_attacking_tokens.py",
+        "quorune/rules/attacking_token_results.py",
+        "quorune/semantic_choices/fixed_attacking_tokens.py",
+        "quorune/semantic_choices/token_creation_queries.py",
+        "tests/test_per_opponent_attacking_tokens.py",
+        "tests/fixtures/per-opponent-attacking-token-cards.json"
+      ],
+      "test_modules": [
+        "test_per_opponent_attacking_tokens",
+        "test_attacking_token_results",
+        "test_squad_paid_entry_copy",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "life-gain-counted-counter-results",
+      "patterns": [
+        "quorune/compiler/life_gain_counted_results.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/life_gain_counted_results.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/semantic_choices/life_gain_counted_results.py",
+        "quorune/semantic_choices/payments.py",
+        "tests/test_life_gain_counted_results.py",
+        "tests/fixtures/life-gain-counted-result-cards.json"
+      ],
+      "test_modules": [
+        "test_life_gain_counted_results",
+        "test_scalar_effect_amounts",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "intrinsic-demonstrate-copy",
+      "patterns": [
+        "quorune/demonstrate_model.py",
+        "quorune/compiler/demonstrate_nodes.py",
+        "quorune/rules/demonstrate.py",
+        "quorune/semantic_choices/demonstrate.py",
+        "tests/test_demonstrate.py",
+        "tests/fixtures/demonstrate-cards.json"
+      ],
+      "test_modules": [
+        "test_demonstrate",
+        "test_event_spell_copy",
+        "test_copy_objects",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "optional-sacrifice-stat-results",
+      "patterns": [
+        "quorune/optional_sacrifice_stat_model.py",
+        "quorune/compiler/optional_sacrifice_stat_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/rules/optional_sacrifice_stats.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/semantic_choices/optional_sacrifice_stats.py",
+        "tests/test_optional_sacrifice_stat_results.py",
+        "tests/fixtures/optional-sacrifice-stat-cards.json"
+      ],
+      "test_modules": [
+        "test_optional_sacrifice_stat_results",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "intrinsic-gravestorm-copy",
+      "patterns": [
+        "quorune/compiler/gravestorm_nodes.py",
+        "quorune/rules/gravestorm.py",
+        "quorune/semantic_choices/gravestorm.py",
+        "tests/test_gravestorm.py",
+        "tests/fixtures/gravestorm-cards.json"
+      ],
+      "test_modules": [
+        "test_gravestorm",
+        "test_event_spell_copy",
+        "test_turn_history_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "event-creature-controller-optional-results",
+      "patterns": [
+        "quorune/compiler/event_creature_controller_results.py",
+        "quorune/rules/event_creature_controller_results.py",
+        "quorune/compiler/event_optional_draw_results.py",
+        "quorune/rules/event_optional_draw_shapes.py",
+        "quorune/semantic_choices/optional_draw.py",
+        "tests/test_event_creature_controller_results.py",
+        "tests/fixtures/event-creature-controller-result-cards.json"
+      ],
+      "test_modules": [
+        "test_event_creature_controller_results",
+        "test_event_player_optional_draw",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "recover-half-current-life-payment",
+      "patterns": [
+        "quorune/fractional_life_payment_model.py",
+        "quorune/rules/fractional_life_payment.py",
+        "quorune/compiler/fractional_life_payment_templates.py",
+        "tests/test_fractional_life_payment.py",
+        "tests/fixtures/fractional-life-payment-cards.json",
+        "quorune/semantic_choices/fractional_life_payment.py",
+        "tests/test_fractional_life_payment_quotes.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/compiler/recover_nodes.py",
+        "quorune/rules/recover.py",
+        "quorune/semantic_choices/recover.py"
+      ],
+      "test_modules": [
+        "test_fractional_life_payment",
+        "test_fractional_life_payment_quotes",
+        "test_recover",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "targeted-library-exile-contract",
+      "patterns": [
+        "quorune/rules/targeted_library_exile.py",
+        "quorune/compiler/targeted_library_exile_templates.py",
+        "quorune/selection/searching.py",
+        "quorune/rules/library_search_rules.py",
+        "tests/test_targeted_library_exile.py",
+        "tests/fixtures/targeted-library-exile-cards.json",
+        "quorune/rules/action_explanations.py"
+      ],
+      "test_modules": [
+        "test_targeted_library_exile",
+        "test_library_search_rules",
+        "test_counted_library_searches",
+        "test_card_program_trust",
+        "test_oracle_ir"
+      ]
+    },
+    {
+      "id": "target-player-graveyard-exile-choice",
+      "patterns": [
+        "quorune/targeted_graveyard_exile_model.py",
+        "quorune/rules/targeted_graveyard_exile.py",
+        "quorune/compiler/targeted_graveyard_exile_templates.py",
+        "quorune/semantic_choices/targeted_graveyard_exile.py",
+        "tests/test_targeted_graveyard_exile.py",
+        "tests/fixtures/targeted-graveyard-exile-cards.json"
+      ],
+      "test_modules": [
+        "test_targeted_graveyard_exile",
+        "test_graveyard_return_choices",
+        "test_fixed_public_zone_moves",
+        "test_fixed_effect_clause_sequences",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "graveyard-target-mana-value-contract",
+      "patterns": [
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/return_to_hand_templates.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/zone_transitions.py",
+        "tests/test_scalar_effect_amounts.py",
+        "tests/test_demonstrate.py",
+        "tests/fixtures/demonstrate-cards.json"
+      ],
+      "test_modules": [
+        "test_scalar_effect_amounts",
+        "test_demonstrate",
+        "test_oracle_ir",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "qualified-enchant-public-state",
+      "patterns": [
+        "quorune/enchant_public_state_model.py",
+        "quorune/compiler/enchant_public_state_templates.py",
+        "quorune/rules/enchant_public_state.py",
+        "tests/test_enchant_public_state.py",
+        "tests/test_other_aura_enchant.py",
+        "tests/test_aura_targeting_entry.py",
+        "tests/fixtures/enchant-public-state-cards.json",
+        "quorune/enchant_spec.py",
+        "quorune/aura/typed_grammar.py",
+        "quorune/compiler/dependency_gate.py",
+        "quorune/rules/keyword_runtime_requirements.py",
+        "quorune/selection/targeting.py",
+        "quorune/target_predicates.py",
+        "tests/test_fixed_characteristic_enchant.py"
+      ],
+      "test_modules": [
+        "test_enchant_public_state",
+        "test_other_aura_enchant",
+        "test_public_graveyard_entry",
+        "test_fixed_characteristic_enchant",
+        "test_aura_targeting_entry",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "source-excluded-public-stat-group-retention",
+      "patterns": [
+        "quorune/compiler/fixed_resolution_characteristics.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "tests/fixtures/source-excluded-stat-group-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_public_state_characteristics",
+        "test_continuous_effect_duration",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "selected-graveyard-card-result-life",
+      "patterns": [
+        "quorune/graveyard_exile_result_model.py",
+        "quorune/compiler/graveyard_exile_result_templates.py",
+        "quorune/rules/graveyard_exile_results.py",
+        "quorune/semantic_runtime/graveyard_exile_result_intent.py",
+        "tests/test_graveyard_exile_result.py",
+        "tests/fixtures/graveyard-exile-result-cards.json",
+        "quorune/targeted_graveyard_exile_model.py",
+        "quorune/compiler/targeted_graveyard_exile_templates.py",
+        "quorune/rules/targeted_graveyard_exile.py",
+        "quorune/semantic_choices/targeted_graveyard_exile.py",
+        "quorune/semantic_choices/simultaneous_movement.py",
+        "quorune/semantic_choices/completed_choice.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "quorune/semantic_choices/counter_coordination.py",
+        "quorune/semantic_choices/intent_host.py",
+        "quorune/semantic_runtime/executor.py"
+      ],
+      "test_modules": [
+        "test_graveyard_exile_result",
+        "test_targeted_graveyard_exile",
+        "test_committed_destruction_followups",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "private-top-shared-type-reveal-retention",
+      "patterns": [
+        "quorune/rules/shared_type_library*.py",
+        "quorune/semantic_choices/shared_type_library.py",
+        "quorune/compiler/shared_type_library_templates.py",
+        "tests/fixtures/shared-type-library-cards.json"
+      ],
+      "test_modules": [
+        "test_shared_creature_type_quantities",
+        "test_fixed_optional_effect_choices",
+        "test_target_library_inspection"
+      ]
+    },
+    {
+      "id": "targeted-graveyard-card-counter-life",
+      "patterns": [
+        "quorune/graveyard_card_result_model.py",
+        "quorune/compiler/graveyard_card_result_templates.py",
+        "quorune/rules/graveyard_card_results.py",
+        "quorune/semantic_runtime/graveyard_card_result_intent.py",
+        "tests/test_graveyard_card_result.py",
+        "tests/fixtures/graveyard-card-result-cards.json",
+        "quorune/semantic_runtime/graveyard_card_result_handlers.py",
+        "quorune/compiler/public_zone_move_templates.py",
+        "quorune/semantic_runtime/public_zone_move_handlers.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/replacement_decisions.py",
+        "quorune/rules/public_zone_move_capability_shapes.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/card_programs/descriptor_requirements.py"
+      ],
+      "test_modules": [
+        "test_graveyard_card_result",
+        "test_graveyard_exile_result",
+        "test_support_integration_retention",
+        "test_fixed_public_zone_moves",
+        "test_public_exile_followups",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "targeted-graveyard-exile-outcomes",
+      "patterns": [
+        "quorune/targeted_graveyard_outcome_model.py",
+        "quorune/compiler/targeted_graveyard_outcome_templates.py",
+        "quorune/rules/targeted_graveyard_outcomes.py",
+        "quorune/semantic_runtime/targeted_graveyard_outcome_intent.py",
+        "quorune/semantic_runtime/targeted_graveyard_outcome_handlers.py",
+        "quorune/fixed_token_production.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/compiler/public_exile_followup_templates.py",
+        "quorune/semantic_runtime/fixed_target_set_handlers.py",
+        "quorune/semantic_choices/simultaneous_movement.py",
+        "quorune/replacement_decisions.py",
+        "quorune/rules/fixed_homogeneous_target_set_capability_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_targeted_graveyard_outcomes.py",
+        "tests/fixtures/targeted-graveyard-outcome-cards.json"
+      ],
+      "test_modules": [
+        "test_targeted_graveyard_outcomes",
+        "test_public_exile_followups",
+        "test_fixed_homogeneous_target_sets",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "exclusive-graveyard-exile-outcomes",
+      "patterns": [
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/graveyard_exile_branches_model.py",
+        "quorune/compiler/graveyard_exile_branch_templates.py",
+        "tests/test_graveyard_exile_branches.py",
+        "quorune/semantic_runtime/graveyard_exile_branch_intent.py",
+        "quorune/semantic_runtime/graveyard_exile_branch_handlers.py",
+        "quorune/rules/graveyard_exile_branches.py",
+        "quorune/public_zone_moves.py",
+        "quorune/semantic_runtime/public_zone_move_handlers.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/replacement_decisions.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/fixtures/graveyard-exile-branch-cards.json"
+      ],
+      "test_modules": [
+        "test_graveyard_exile_branches",
+        "test_graveyard_card_result",
+        "test_fixed_public_zone_moves",
+        "test_fixed_optional_effect_choices",
+        "test_escaped_entry_counters",
+        "test_card_program_trust",
+        "test_support_integration_retention"
+      ]
+    },
+    {
+      "id": "graveyard-exile-fixed-creature-token",
+      "patterns": [
+        "quorune/graveyard_exile_token_model.py",
+        "quorune/compiler/graveyard_exile_token_templates.py",
+        "tests/test_graveyard_exile_tokens.py",
+        "tests/fixtures/graveyard-exile-token-cards.json",
+        "quorune/rules/graveyard_exile_tokens.py",
+        "quorune/semantic_runtime/graveyard_exile_token_intent.py",
+        "quorune/semantic_runtime/graveyard_exile_token_handlers.py",
+        "quorune/rules/graveyard_exile_branches.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/replacement_decisions.py",
+        "quorune/semantic_runtime/values.py",
+        "tests/test_graveyard_exile_branches.py",
+        "docs/architecture/semantic-handlers.md",
+        "quorune/semantic_runtime/public_zone_move_handlers.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/rules/committed_quantity_followups.py",
+        "quorune/compiler/nonleaf_effect_closure.py"
+      ],
+      "test_modules": [
+        "test_graveyard_exile_tokens",
+        "test_graveyard_exile_branches",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "upkeep-subtype-creature-token-absence",
+      "patterns": [
+        "quorune/compiler/public_trigger_conditions.py",
+        "tests/test_upkeep_creature_token_absence.py",
+        "tests/fixtures/upkeep-creature-token-absence-cards.json"
+      ],
+      "test_modules": [
+        "test_upkeep_creature_token_absence",
+        "test_upkeep_participant_hand_conditions",
+        "test_empty_battlefield_conditions",
+        "test_fixed_token_creation_effects"
+      ]
+    },
+    {
+      "id": "controller-end-step-creature-keyword-absence",
+      "patterns": [
+        "quorune/controller_creature_keyword_absence.py",
+        "quorune/compiler/public_trigger_conditions.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/trigger_runtime_coverage.py",
+        "quorune/rules/event_subscriptions.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_controller_creature_keyword_absence.py",
+        "tests/fixtures/controller-creature-keyword-absence-cards.json"
+      ],
+      "test_modules": [
+        "test_controller_creature_keyword_absence",
+        "test_upkeep_creature_token_absence",
+        "test_empty_battlefield_conditions",
+        "test_ordinary_token_cleanup"
+      ]
+    },
+    {
+      "id": "departed-creature-keyword-absence",
+      "patterns": [
+        "quorune/death_keyword_absence.py",
+        "quorune/compiler/public_trigger_conditions.py",
+        "quorune/compiler/trigger_runtime_coverage.py",
+        "quorune/rules/event_subscriptions.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_death_keyword_absence.py",
+        "tests/fixtures/death-keyword-absence-cards.json"
+      ],
+      "test_modules": [
+        "test_death_keyword_absence",
+        "test_controller_creature_keyword_absence",
+        "test_counter_qualified_zone_events",
+        "test_ordinary_token_cleanup"
+      ]
+    },
+    {
+      "id": "graveyard-exile-overlapping-type-outcomes",
+      "patterns": [
+        "quorune/rules/graveyard_exile_type_outcomes.py",
+        "quorune/compiler/graveyard_exile_type_outcome_templates.py",
+        "tests/test_graveyard_exile_type_outcomes.py",
+        "tests/fixtures/graveyard-exile-type-outcome-cards.json",
+        "quorune/rules/graveyard_exile_branches.py",
+        "quorune/semantic_runtime/graveyard_exile_type_outcome_intent.py",
+        "quorune/semantic_runtime/graveyard_exile_type_outcome_handlers.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/replacement_decisions.py",
+        "quorune/semantic_runtime/values.py",
+        "tests/test_graveyard_exile_branches.py",
+        "tests/test_graveyard_exile_tokens.py",
+        "quorune/semantic_runtime/public_zone_move_handlers.py"
+      ],
+      "test_modules": [
+        "test_graveyard_exile_type_outcomes",
+        "test_graveyard_exile_branches",
+        "test_graveyard_exile_tokens",
+        "test_targeted_graveyard_outcomes",
+        "test_fixed_token_creation_effects"
+      ]
+    },
+    {
+      "id": "cast-prohibition-after-declared-creature-attack",
+      "patterns": [
+        "quorune/compiler/static_cast_rule_templates.py",
+        "quorune/semantic_runtime/static_cast_rules.py",
+        "tests/test_cast_after_attacking.py",
+        "tests/fixtures/cast-after-attacking-cards.json"
+      ],
+      "test_modules": [
+        "test_cast_after_attacking",
+        "test_static_player_restrictions",
+        "test_turn_history_rules"
+      ]
+    },
+    {
+      "id": "attached-creature-counter-prohibition",
+      "patterns": [
+        "quorune/counter_permission.py",
+        "quorune/counter_permission_events.py",
+        "quorune/semantic_runtime/counter_permissions.py",
+        "quorune/semantic_choices/context.py",
+        "tests/test_attached_counter_prohibitions.py",
+        "tests/fixtures/attached-counter-prohibition-cards.json",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/attached_untap_restraints.py",
+        "quorune/compiler/counter_permission_templates.py",
+        "quorune/compiler/generated_program_identity.py"
+      ],
+      "test_modules": [
+        "test_attached_counter_prohibitions",
+        "test_counter_permissions",
+        "test_counter_prohibition_runtime",
+        "test_cumulative_counter_upkeep",
+        "test_attached_untap_restraints"
       ]
     }
   ],
@@ -15245,6 +18756,7 @@
         "scripts/compact_ci_dependencies.py",
         "scripts/finalize_generated.py",
         "scripts/generated_artifacts.py",
+        "scripts/generated_cache_identity.py",
         "scripts/generated_owner_cache.py",
         "scripts/main_health.py",
         "scripts/main_broad_ci.py",

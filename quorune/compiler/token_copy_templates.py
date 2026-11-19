@@ -3,7 +3,7 @@ from __future__ import annotations
 """Full-consumption token-copy grammar over the shared target and copy model."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype
 from ..fixed_token_production import FIXED_TOKEN_PRODUCTION_MECHANIC_ID, FixedTokenCreationTemplate
@@ -76,8 +76,11 @@ def _fixed_exception(text: str) -> TokenCopyExceptionSpec | None:
 
 def token_copy_recipe_template(text: str, *, source_name: str,
                                source_is_permanent: bool | None = None,
-                               event: str | None = None) -> FixedTokenCreationTemplate | None:
+                               event: str | None = None,
+                               source_attachment_relation=None) -> FixedTokenCreationTemplate | None:
     normalized = " ".join(text.strip().split())
+    recipient = _target_player_copy_template(normalized, source_name=source_name)
+    if recipient is not None:return recipient
     if normalized.casefold().rstrip(".") == "populate":
         return FixedTokenCreationTemplate(template_id="populate-copiable-creature-token-v1",
             effect={"op":"populate"}, target_schema=None,
@@ -115,14 +118,23 @@ def token_copy_recipe_template(text: str, *, source_name: str,
         if source_is_permanent is not True:
             return None
         origin = "source"
-    elif subject.casefold() in {"that creature", "that artifact", "that permanent"} and event in {
+    elif subject.casefold() == "enchanted creature":
+        from ..attachment_references import AttachmentReferenceKind
+        if (source_is_permanent is not True
+                or source_attachment_relation is not AttachmentReferenceKind.ENCHANTED
+                or cleanup != "none" or temporary_keywords):
+            return None
+        origin = "source_attachment"
+    elif subject.casefold() in {"that creature", "that artifact", "that permanent", "it"} and event in {
         "permanent.enter", "artifact.enter", "creature.enter", "creature.dies", "permanent.graveyard", "permanent.leave",
     }:
         origin = "event_object"
     else:
         return None
     recipe = TokenCopyRecipeSpec(origin=origin, exception=exception, cleanup=cleanup,
-                                 temporary_keywords=temporary_keywords, keyword_duration=keyword_duration)
+                                 temporary_keywords=temporary_keywords, keyword_duration=keyword_duration,
+                                 **({"schema_version":3, "attachment_kind":"enchanted"}
+                                    if origin == "source_attachment" else {}))
     mechanics = {FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects"}
     if schema is not None:
         mechanics.add("cr-115-targets")
@@ -135,3 +147,16 @@ def token_copy_recipe_template(text: str, *, source_name: str,
                 "copy_spec": recipe.to_dict(), **({"tapped": True} if match["tapped"] else {})},
         target_schema=schema, mechanics=tuple(sorted(mechanics)),
     )
+
+
+def _target_player_copy_template(text, *, source_name):
+    match = re.fullmatch(r"Target player creates (?P<body>a token that's a copy of target creature you control)\.", text, re.I)
+    if match is None:return None
+    from ..token_copy_recipient_model import COPY_RECIPIENT_FIELD, COPY_RECIPIENT_MECHANIC, TokenCopyRecipientBinding
+    from ..rules.token_copy_recipients import COPY_TARGET_SCHEMA
+    from copy import deepcopy
+    base = token_copy_recipe_template('Create ' + match['body'] + '.', source_name=source_name)
+    if base is None:return None
+    return FixedTokenCreationTemplate(template_id='target-player-creature-copy-v1',
+        effect={**base.effect, 'controller': '$target.0', COPY_RECIPIENT_FIELD: TokenCopyRecipientBinding().to_dict()},
+        target_schema=deepcopy(COPY_TARGET_SCHEMA), mechanics=(*base.mechanics, COPY_RECIPIENT_MECHANIC))

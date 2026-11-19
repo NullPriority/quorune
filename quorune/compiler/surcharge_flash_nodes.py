@@ -1,5 +1,5 @@
 """Compile an exact additional-mana timing clause without granting Flash."""
-import re
+from . import regex_working_set as re
 from ..cast_timing import (
     CAST_PERMISSION_ACTIVE_ZONE,CAST_PERMISSION_EVENT,ManaSurchargeFlashSpec,
     SURCHARGE_FLASH_HANDLER,SURCHARGE_FLASH_CAPABILITY,

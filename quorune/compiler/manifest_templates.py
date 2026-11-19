@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed current-controller Manifest and Manifest dread instructions."""
 
-import re
+from . import regex_working_set as re
 from ..manifest import MANIFEST_ATTACHMENT_VERSION, MANIFEST_COUNTERS_FIELD
 from ..query_effect_amount_model import CastXAmountSpec
 

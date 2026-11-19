@@ -1,6 +1,6 @@
 """Compile CR721 striations around the ordinary source-spanned ability owners."""
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE, STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID, StaticComponentScopeSpec, ability_fragment_to_dict
 from ..station_symbol_model import STATION_SYMBOL_CAPABILITY, STATION_SYMBOL_MECHANIC, StationSymbolSpec, StationSymbolsSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS

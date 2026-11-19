@@ -41,6 +41,26 @@ def commit_selected_hand_reveal(host: Any, selection: Any, *, source_ref: str, s
         changed_objects=[selection['object_id']],changed_players=[actor])
 
 
+def commit_colored_hand_reveal(host: Any, intent: Any) -> tuple[str, ...]:
+    """Preflight the entire immutable group before publishing any card."""
+    from ..semantic_runtime.colored_hand_reveal import RevealColoredHandCardsIntent
+    if not isinstance(intent,RevealColoredHandCardsIntent):raise GameRuleError('Colored reveal intent must be typed')
+    selections=[]
+    for row in intent.snapshots:
+        card=host.state.cards.get(row['object_id'])
+        if card is None or not card.is_card_object:
+            raise GameRuleError('Colored reveal lost its original hand card')
+        selection={**dict(row),'oracle_id':card.oracle_id}
+        card=validate_entry_hand_reveal(host,selection)
+        if intent.color not in host._effective_card_data(card).get('colors',[]):
+            raise GameRuleError('Colored reveal card no longer matches its color')
+        selections.append(selection)
+    for selection in selections:
+        commit_selected_hand_reveal(host,selection,source_ref=intent.source_ref,
+            summary='A selected hand card was revealed.')
+    return tuple(selection['ref'] for selection in selections)
+
+
 def commit_hand_inspection(
     host: Any,
     intent: InspectHandIntent,
@@ -59,7 +79,7 @@ def commit_hand_inspection(
     viewers = set(host.seats) if intent.public else {intent.actor}
     for card in cards:
         card.known_to = sorted(set(card.known_to).union(viewers))
-        if intent.public:
+        if intent.public and intent.keep_revealed:
             card.revealed_to = sorted(
                 set(card.revealed_to).union(viewers)
             )

@@ -1,7 +1,7 @@
 """Result-bound discard preparation followed by ordinary drawing."""
 from dataclasses import dataclass
 from ..discard_result_model import (DISCARD_RESULT_CAPABILITY, DISCARD_RESULT_OPERATION,
-    DiscardWholeHandsResultIntent, IntentResultPlayerDraws, validate_discard_draw)
+    DiscardWholeHandsResultIntent, IntentResultPlayerDraws, ReducedDiscardResultDraws, validate_discard_draw)
 from ..replacement.immutable import FrozenMap
 from .model import AutoContinue, SemanticChoiceError, SemanticChoicePreparation
 
@@ -36,9 +36,10 @@ class DiscardResultDrawHandler:
             intent = DiscardWholeHandsResultIntent(context.actor, players, hands, context.stack_label)
         except (ValueError, TypeError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
+        binding = ReducedDiscardResultDraws if effect['schema_version'] == 2 else IntentResultPlayerDraws
         return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect), preparation_intents=(intent,),
             auto_continue=AutoContinue(reason='Whole-hand discard committed before result-bound draws',
-                player_draws_from_result=IntentResultPlayerDraws(0, effect['reduction'], effect['offset'])))
+                player_draws_from_result=binding(0, effect['reduction'], effect['offset'])))
 
     def complete(self, continuation, response, query):
         raise SemanticChoiceError('Discard-result instructions do not request a subset')

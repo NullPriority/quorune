@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed extra turns through the existing current-turn scheduling owner."""
 
-import re
+from . import regex_working_set as re
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
@@ -10,7 +10,7 @@ FIXED_EXTRA_TURN_MECHANIC = "fixed-extra-turn-after-current"
 FIXED_EXTRA_TURN_CAPABILITY = "turn.extra.fixed_after_current"
 
 _EXTRA_TURN = re.compile(
-    rf"(?P<subject>Take|Target player takes|Target opponent takes) "
+    rf"(?P<subject>Take|You take|Target player takes|Target opponent takes) "
     rf"(?P<count>an|{FIXED_COUNT_PATTERN}) extra turn(?P<plural>s)? after this one\.?",
     re.IGNORECASE,
 )
@@ -23,7 +23,7 @@ def fixed_extra_turn_effect_template(text: str):
     count = fixed_number(match["count"])
     if not 1 <= count <= 10 or bool(match["plural"]) != (count != 1):
         return None
-    targeted = match["subject"].casefold() != "take"
+    targeted = match["subject"].casefold() not in {"take", "you take"}
     relation = "opponent" if "opponent" in match["subject"].casefold() else "any"
     schema = ({"zones": ["player"], "categories": ["player"],
         "player_relation": relation, "count": 1} if targeted else None)

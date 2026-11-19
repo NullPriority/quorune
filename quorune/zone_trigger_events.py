@@ -219,6 +219,7 @@ class ZoneChangeOccurrence:
     source_entry_cast_information: Mapping[str,Any] | None = None
     source_entry_x_information: Mapping[str,Any] | None = None
     composition: CompositionZoneFact | Mapping[str,Any] | None = None
+    paid_alternative_entry_information: Mapping[str,Any] | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -265,6 +266,9 @@ class ZoneChangeOccurrence:
         object.__setattr__(self, 'declared_cast_costs', _validated_declared_cast_cost_metadata(self))
         object.__setattr__(self,'source_entry_cast_information',_validated_source_entry_cast_information(self))
         object.__setattr__(self,'source_entry_x_information',_validated_source_entry_x_information(self))
+        from .paid_alternative_cast_model import validated_paid_entry_occurrence
+        try:object.__setattr__(self,'paid_alternative_entry_information',validated_paid_entry_occurrence(self))
+        except (ValueError,TypeError) as exc:raise ZoneTriggerEventError(str(exc)) from exc
         if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ZoneTriggerEventError(
                 "Unsupported zone-trigger occurrence schema version"
@@ -368,6 +372,8 @@ class ZoneChangeOccurrence:
         if self.source_entry_cast_information is not None:
             result['source_entry_cast_information']=thaw_value(self.source_entry_cast_information)
         if self.source_entry_x_information is not None:result['source_entry_x_information']=thaw_value(self.source_entry_x_information)
+        if self.paid_alternative_entry_information is not None:
+            result['paid_alternative_entry_information']=thaw_value(self.paid_alternative_entry_information)
         if self.previous_copy_snapshot is not None:
             result["previous_copy_snapshot"] = thaw_value(self.previous_copy_snapshot)
         if self.current_copy_snapshot is not None:
@@ -466,6 +472,18 @@ class NormalizedZoneTriggerEvent:
             "source_timing": self.source_timing,
             "context": thaw_value(self.context),
         }
+
+
+def _paid_alternative_entry_context(occurrence: ZoneChangeOccurrence) -> dict[str, Any]:
+    """Project the separately sealed payment receipt into normalized event facts."""
+    if occurrence.paid_alternative_entry_information is None:
+        return {}
+    from .paid_alternative_cast_model import PaidAlternativeEntryInformation, PAID_ALTERNATIVE_ENTRY_CONDITION
+    info = PaidAlternativeEntryInformation.from_dict(occurrence.paid_alternative_entry_information)
+    return {
+        "paid_alternative_entry_information": info.to_dict(),
+        PAID_ALTERNATIVE_ENTRY_CONDITION: info.fact.method if info.fact.paid else None,
+    }
 
 
 def _type_parts(characteristics: Mapping[str, Any]) -> tuple[set[str], set[str]]:
@@ -567,6 +585,7 @@ def normalized_zone_trigger_events(
     if occurrence.source_entry_cast_information is not None:
         common['source_entry_cast_information']=thaw_value(occurrence.source_entry_cast_information)
     if occurrence.source_entry_x_information is not None:common['source_entry_x_information']=thaw_value(occurrence.source_entry_x_information)
+    common.update(_paid_alternative_entry_context(occurrence))
     if occurrence.declared_cast_costs is not None:
         from .declared_cast_cost_model import DeclaredCastCostFacts
         common['declared_cast_cost_instances'] = list(DeclaredCastCostFacts.from_dict(occurrence.declared_cast_costs).chosen_instances())

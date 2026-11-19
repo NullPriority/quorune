@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle lowering for fixed named counter-removal effects."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from .direct_target import (
@@ -11,6 +11,10 @@ from .direct_target import (
     direct_permanent_target_spec,
 )
 from .fixed_numbers import fixed_number
+from .chosen_counter_removal_templates import (
+    ChosenCounterRemovalTemplate, chosen_counter_removal_effect_template,
+)
+from .target_all_counter_templates import TargetAllCounterTemplate, target_all_counter_variant_template
 from ..rules.source_references import SourceReferenceSpec
 
 
@@ -142,14 +146,14 @@ class AllCounterRemovalTemplate:
 
 def fixed_counter_removal_effect_template(
     text: str,
-) -> FixedCounterRemovalTemplate | None:
-    """Parse only one closed fixed named-counter removal clause."""
+) -> FixedCounterRemovalTemplate | ChosenCounterRemovalTemplate | None:
+    """Parse one named removal or delegate the separately owned single-kind choice."""
 
     if type(text) is not str:
         return None
     match = _REMOVAL.fullmatch(text.strip())
     if match is None:
-        return None
+        return chosen_counter_removal_effect_template(text)
     count = fixed_number(match.group("count"))
     if count <= 0 or (match.group("plural").casefold() == "counter") != (
         count == 1
@@ -167,17 +171,17 @@ def fixed_counter_removal_effect_template(
 
 def all_counter_removal_effect_template(
     text: str,
-) -> AllCounterRemovalTemplate | None:
-    """Parse only mandatory all-counter removal from one direct target."""
+) -> AllCounterRemovalTemplate | TargetAllCounterTemplate | None:
+    """Retain the mandatory legacy leaf and delegate named/optional target variants."""
 
     if type(text) is not str:
         return None
     match = _ALL_REMOVAL.fullmatch(text.strip())
     if match is None:
-        return None
+        return target_all_counter_variant_template(text)
     target = direct_permanent_target_spec(match.group("subject"))
     if target is None:
-        return None
+        return target_all_counter_variant_template(text)
     return AllCounterRemovalTemplate(target_spec=target)
 
 

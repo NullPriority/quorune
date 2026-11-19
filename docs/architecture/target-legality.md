@@ -9,6 +9,22 @@ maintenance: "hand-maintained"
 
 # Target legality and protection
 
+Version-four typed Enchant represents a modified creature, a nonbasic land,
+or a creature with another Aura attached. The modified predicate uses the
+canonical attachment-state query, including the permanent controller's Auras,
+Equipment under any controller, and counters. The nonbasic predicate checks
+the Basic supertype.
+
+The other-Aura predicate requires a distinct phased-in Aura with a current
+reciprocal link to the creature. It uses effective types and accepts an Aura
+under any controller. Cast offers, commands, resolution, untargeted Aura entry
+and ongoing attachment legality share the same target owner. Simultaneous
+entry chooses recipients against the pre-batch battlefield. When the last
+other Aura stops enchanting the creature, the usual state-based action puts
+this Aura into its owner's graveyard.
+The capability is inferred from the exact typed fragment. Earlier Enchant
+encodings use their original payloads for replay.
+
 The target-language owner relation `spell_owner` reads the acting spell's explicit
 owner, independently of the spell controller and target controller. Live spell
 copies use their existing noncard object ownership; unavailable ownership rejects

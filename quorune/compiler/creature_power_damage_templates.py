@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Fight and one-way creature-power damage grammar."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec

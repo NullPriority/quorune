@@ -121,6 +121,24 @@ class CapabilityEvidenceTests(unittest.TestCase):
         with self.assertRaisesRegex(CapabilityEvidenceError, "registry fingerprint is stale"):
             validate_capability_evidence_index(value, registry=stale_registry)
 
+    def test_verified_strings_rechecks_an_edited_list_and_preserves_field_errors(self):
+        verified = {}
+        strings = ["400.7", "113.7a"]
+        verify = evidence_owner._verified_strings
+        self.assertEqual(("400.7", "113.7a"), verify(strings, field="rules", verified=verified))
+        self.assertEqual(("400.7", "113.7a"), verify(strings.copy(), field="rules", verified=verified))
+        for edited, message in (
+            (["400.7", " "], "profiles must be a list of nonempty strings"),
+            (["400.7", {}], "profiles must be a list of nonempty strings"),
+            (["400.7", True], "profiles must be a list of nonempty strings"),
+            (["400.7", "400.7"], "profiles must contain unique values"),
+        ):
+            with self.subTest(edited=edited):
+                strings[:] = edited
+                with self.assertRaisesRegex(CapabilityEvidenceError, message):
+                    verify(strings, field="profiles", verified=verified)
+        self.assertEqual({("400.7", "113.7a"): ("400.7", "113.7a")}, verified)
+
     def test_removed_or_renamed_test_invalidates_declaration(self):
         source = deepcopy(self.declaration_source)
         source["declarations"][0]["test_id"] += "_renamed"
@@ -280,6 +298,156 @@ class CapabilityEvidenceTests(unittest.TestCase):
             "positive evidence does not cover supported profiles",
         ):
             validate_capability_evidence_index(changed, registry=registry)
+
+import os
+import tempfile
+from quorune.rules import evidence, evidence_storage
+
+
+class VerifiedEvidenceFingerprintCacheTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.registry_source = Path("quorune/rules/capability-registry.json").read_text(encoding="utf-8")
+        cls.evidence_source = evidence.DEFAULT_CAPABILITY_EVIDENCE.read_text(encoding="utf-8")
+        cls.base = Path(tempfile.gettempdir()).resolve()
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory(prefix="quorune-evidence-cache-")
+        self.root = Path(self.directory.name).resolve()
+        self.registry_path = self.root / "registry.json"
+        self.evidence_path = self.root / "evidence.json"
+        self.registry_path.write_text(self.registry_source, encoding="utf-8", newline="\n")
+        self.evidence_path.write_text(self.evidence_source, encoding="utf-8", newline="\n")
+        self.registry = CapabilityRegistry.from_path(self.registry_path)
+        self.cache = evidence._VerifiedEvidenceFingerprintCache()
+
+    def tearDown(self):
+        self.assertTrue(self.root.is_relative_to(self.base))
+        self.assertTrue(self.root.name.startswith('quorune-evidence-cache-'))
+        self.directory.cleanup()
+
+    def test_identical_content_reuses_only_the_actual_validation_fingerprint(self):
+        original = evidence.validate_capability_evidence_index
+        with patch.object(evidence, "validate_capability_evidence_index", wraps=original) as validate:
+            first = self.cache.fingerprint(self.registry, self.evidence_path)
+            second = self.cache.fingerprint(self.registry, self.evidence_path)
+        self.assertEqual(first, second)
+        self.assertEqual(1, validate.call_count)
+        self.assertIsInstance(first, str)
+
+    def test_same_size_and_mtime_changed_content_cannot_reuse_trust(self):
+        fingerprint = self.cache.fingerprint(self.registry, self.evidence_path)
+        stat = self.evidence_path.stat()
+        self.assertEqual(1, self.evidence_source.count(fingerprint))
+        changed = self.evidence_source.replace(fingerprint, "0" * len(fingerprint), 1)
+        self.evidence_path.write_text(changed, encoding="utf-8", newline="\n")
+        os.utime(self.evidence_path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+        self.assertEqual(stat.st_size, self.evidence_path.stat().st_size)
+        self.assertEqual(stat.st_mtime_ns, self.evidence_path.stat().st_mtime_ns)
+        with self.assertRaises(evidence.CapabilityEvidenceError):
+            self.cache.fingerprint(self.registry, self.evidence_path)
+
+    def test_changed_registry_cannot_borrow_the_other_registry_certificate(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        value = json.loads(self.registry_source)
+        value["registry_version"] += 1
+        other = CapabilityRegistry(value)
+        self.assertNotEqual(self.registry.fingerprint, other.fingerprint)
+        with self.assertRaises(evidence.CapabilityEvidenceError):
+            self.cache.fingerprint(other, self.evidence_path)
+
+    def test_invalid_content_is_never_cached_and_restoring_valid_content_works(self):
+        fingerprint = self.cache.fingerprint(self.registry, self.evidence_path)
+        self.evidence_path.write_text("{malformed", encoding="utf-8")
+        for _ in range(2):
+            with self.assertRaises(json.JSONDecodeError):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+        self.evidence_path.write_text(self.evidence_source, encoding="utf-8", newline="\n")
+        self.assertEqual(fingerprint, self.cache.fingerprint(self.registry, self.evidence_path))
+
+    def test_current_validator_and_decoder_replacements_do_not_hit_old_certificates(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        with patch.object(evidence, "validate_capability_evidence_index",
+                          side_effect=evidence.CapabilityEvidenceError("policy withheld")) as validate:
+            with self.assertRaises(evidence.CapabilityEvidenceError):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+            self.assertEqual(1, validate.call_count)
+        with patch.object(evidence_storage, "unpack_evidence_document", side_effect=ValueError("codec withheld")):
+            with self.assertRaises(ValueError):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+
+    def test_deleted_source_is_not_hidden_by_a_warm_certificate(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        self.evidence_path.unlink()
+        with self.assertRaises(FileNotFoundError):
+            self.cache.fingerprint(self.registry, self.evidence_path)
+
+    def test_nested_field_validation_policy_changes_do_not_reuse_old_certificates(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        with patch.object(evidence, "_exact_fields",
+                          side_effect=evidence.CapabilityEvidenceError("field policy withheld")) as validate:
+            with self.assertRaises(evidence.CapabilityEvidenceError):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+            self.assertEqual(1, validate.call_count)
+
+    def test_bounded_eviction_revalidates_old_content(self):
+        cache = evidence._VerifiedEvidenceFingerprintCache(capacity=2)
+        paths = [self.root / (str(i) + ".json") for i in range(3)]
+        for path in paths:
+            path.write_text(self.evidence_source, encoding="utf-8", newline="\n")
+        original = evidence.validate_capability_evidence_index
+        with patch.object(evidence, "validate_capability_evidence_index", wraps=original) as validate:
+            for path in paths:
+                cache.fingerprint(self.registry, path)
+            self.assertEqual(3, validate.call_count)
+            cache.fingerprint(self.registry, paths[0])
+            self.assertEqual(4, validate.call_count)
+
+    def test_default_wrapper_keeps_distinct_registries_and_existing_nested_snapshot(self):
+        with patch.object(evidence, "_DEFAULT_EVIDENCE_FINGERPRINT_CACHE", self.cache), \
+                patch.object(evidence, "DEFAULT_CAPABILITY_EVIDENCE", self.evidence_path):
+            first = evidence._load_verified_default_capability_registry(self.registry_path)
+            expected = first.evidence_fingerprint
+            first._evidence_fingerprint = None
+            second = evidence._load_verified_default_capability_registry(self.registry_path)
+            self.assertIsNot(first, second)
+            self.assertIsNone(first.evidence_fingerprint)
+            self.assertEqual(expected, second.evidence_fingerprint)
+            with evidence._capability_validation_snapshot():
+                nested = evidence._load_verified_default_capability_registry(self.registry_path)
+                self.assertIs(nested, evidence._load_verified_default_capability_registry(self.registry_path))
+
+    def test_string_rule_policy_changes_do_not_reuse_a_warm_fingerprint(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        with patch.object(evidence, "_strings", side_effect=CapabilityEvidenceError("rules withheld")):
+            with self.assertRaisesRegex(CapabilityEvidenceError, "rules withheld"):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+
+    def test_test_identity_policy_changes_do_not_reuse_a_warm_fingerprint(self):
+        import re
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        with patch.object(evidence, "_TEST_ID", re.compile(r"never-valid")):
+            with self.assertRaisesRegex(CapabilityEvidenceError, "test_id"):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+
+    def test_registry_accessor_policy_changes_cannot_reuse_an_old_result(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        with patch.object(type(self.registry), "capabilities", side_effect=CapabilityEvidenceError("registry withheld")):
+            with self.assertRaisesRegex(CapabilityEvidenceError, "registry withheld"):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+
+    def test_in_place_validator_code_change_cannot_reuse_a_warm_fingerprint(self):
+        self.cache.fingerprint(self.registry, self.evidence_path)
+        def withheld(value, *, registry):
+            raise CapabilityEvidenceError('validator code withheld')
+        validator = evidence.validate_capability_evidence_index
+        original_code = validator.__code__
+        try:
+            validator.__code__ = withheld.__code__
+            with self.assertRaisesRegex(CapabilityEvidenceError, 'validator code withheld'):
+                self.cache.fingerprint(self.registry, self.evidence_path)
+        finally:
+            validator.__code__ = original_code
 
 
 

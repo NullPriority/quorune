@@ -25,12 +25,14 @@ class ScalarAmountHost(Protocol):
     def _type_parts(self, text: str) -> tuple[set[str], set[str], set[str]]: ...
 
 
-def _snapshot(host, card, *, characteristics=None, include_counters=False):
+def _snapshot(host, card, *, characteristics=None, include_counters=False, requested_characteristic=None):
     data = dict(characteristics) if characteristics is not None else host._effective_card_data(card)
-    types = host._type_parts(str(data.get("type_line") or ""))[0]
-    has_stats = "creature" in types or card.zone != "battlefield"
-    values = {field: (0 if "creature" not in types and data.get(field) is None else exact_numeric_characteristic(card, data, field)) if has_stats else 0
-              for field in ("power", "toughness")}
+    values = {'power': None, 'toughness': None}
+    if requested_characteristic != 'mana_value':
+        types = host._type_parts(str(data.get("type_line") or ""))[0]
+        has_stats = "creature" in types or card.zone != "battlefield"
+        values = {field: (0 if "creature" not in types and data.get(field) is None else exact_numeric_characteristic(card, data, field)) if has_stats else 0
+                  for field in ("power", "toughness")}
     values["mana_value"] = data.get("mana_value", data.get("cmc"))
     return {"object_id": card.object_id, "logical_object_id": card.logical_object_id,
             "ref": card.ref, "zone": card.zone, **values, **({"counters":dict(card.counters)} if include_counters else {})}
@@ -61,7 +63,7 @@ def _reference(host, item, spec):
             if card is None or card.logical_object_id != item.context.get("source_logical_object_id"):
                 raise PublicQueryAmountError("Scalar source identity is unavailable")
             initial = _snapshot(host, card,include_counters=spec.counter_name is not None)
-    elif spec.origin is ScalarAmountOrigin.TARGET:
+    elif spec.origin in {ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}:
         if len(item.targets) != 1 or item.targets[0] is None:
             raise PublicQueryAmountError("Scalar characteristic requires its single target")
         ref = item.targets[0]
@@ -71,7 +73,10 @@ def _reference(host, item, spec):
             card = _current_card(host, ref)
             if not isinstance(target, Mapping) or card is None or card.zone_change_counter != target.get("zone_change_counter"):
                 raise PublicQueryAmountError("Scalar target identity is unavailable")
-            initial = _snapshot(host, card)
+            if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE and card.zone != 'graveyard':
+                raise PublicQueryAmountError('Scalar graveyard target left its expected public zone')
+            initial = _snapshot(host, card, requested_characteristic='mana_value'
+                if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
     else:
         initial = snapshots.get(key)
         if initial is None:
@@ -90,12 +95,16 @@ def _reference(host, item, spec):
     fields={"ref", "object_id", "logical_object_id", "zone", "power", "toughness", "mana_value"}
     if not isinstance(initial, Mapping) or set(initial) not in (fields,fields|{'counters'}):
         raise PublicQueryAmountError("Scalar characteristic snapshot is malformed")
+    if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE and (
+            len(item.targets) != 1 or initial['ref'] != item.targets[0] or initial['zone'] != 'graveyard'):
+        raise PublicQueryAmountError('Scalar graveyard snapshot lost its target or expected public zone')
     snapshots[key] = dict(initial)
     card = host.state.cards.get(initial["object_id"])
     if card is not None and card.logical_object_id == initial["logical_object_id"] and card.zone == initial["zone"]:
         if card.phased_out:
             raise PublicQueryAmountError("Scalar characteristic object is phased out")
-        return _snapshot(host, card,include_counters='counters' in initial or spec.counter_name is not None)
+        return _snapshot(host, card,include_counters='counters' in initial or spec.counter_name is not None,
+            requested_characteristic='mana_value' if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
     return initial
 
 
@@ -116,7 +125,7 @@ def _reference_identity(host, item, spec):
             return None
         return card.object_id, expected_identity, card.zone
 
-    if spec.origin is ScalarAmountOrigin.TARGET:
+    if spec.origin in {ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}:
         if len(item.targets) != 1 or item.targets[0] is None:
             return None
         ref = item.targets[0]
@@ -125,7 +134,8 @@ def _reference_identity(host, item, spec):
         card = _current_card(host, ref)
         if not isinstance(target, Mapping) or card is None or card.zone_change_counter != target.get("zone_change_counter"):
             return None
-        return card.object_id, card.logical_object_id, "battlefield"
+        zone = 'graveyard' if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else 'battlefield'
+        return card.object_id, card.logical_object_id, zone
 
     context = item.context.get("event_context", item.context)
     if not isinstance(context, Mapping):
@@ -139,7 +149,7 @@ def _reference_identity(host, item, spec):
 def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_type=PublicQueryAmountError):
     """Use the existing zone batch's predeparture checkpoint for pending reads."""
     try:
-        departing = {card.object_id: card for card in cards if card.zone == "battlefield"}
+        departing = {card.object_id: card for card in cards if card.zone in {"battlefield", "graveyard"}}
         if not departing:
             return
         updates = []
@@ -149,14 +159,16 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
                 continue
             specs = scalar_amount_specs(program.effects)
             selected = [spec for spec in specs if spec.origin in {
-                ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT}]
+                ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
+                ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}]
             for spec in selected:
                 identity = _reference_identity(host, item, spec)
                 if identity is None:
                     continue
                 object_id, logical_object_id, zone = identity
                 card = departing.get(object_id)
-                if card is None or zone != "battlefield" or card.logical_object_id != logical_object_id:
+                expected_zone = 'graveyard' if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else 'battlefield'
+                if card is None or zone != expected_zone or card.zone != expected_zone or card.logical_object_id != logical_object_id:
                     continue
                 snapshot = _reference(host, item, spec)
                 key = "source" if spec.origin is ScalarAmountOrigin.SOURCE else spec.origin.value
@@ -284,6 +296,9 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
         amount = resolve_multikicker_amount(spec, item)
     elif spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT:
         amount=_current_target_hand_count(host,hand_target)
+    elif spec.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE:
+        from .rules.upkeep_hand_differences import resolve_upkeep_hand_difference
+        amount=resolve_upkeep_hand_difference(host,item,spec.hand_difference)
     elif spec.origin is ScalarAmountOrigin.EVENT_AMOUNT:
         context = item.context.get("event_context", item.context)
         amount = context.get("amount") if isinstance(context, Mapping) else None
@@ -293,6 +308,9 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate)
         except ValueError as exc:
             raise PublicQueryAmountError(str(exc)) from exc
+    elif spec.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT:
+        from .commander_cast_counts import controller_commander_cast_count
+        amount = controller_commander_cast_count(host.state, item.controller)
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     elif spec.origin is ScalarAmountOrigin.HISTORY_COUNT:
@@ -310,6 +328,8 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             amount = reference.get(spec.characteristic)
         if spec.characteristic == "mana_value" and type(amount) is float and amount.is_integer():
             amount = int(amount)
+    if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE and type(amount) is int and amount < 0:
+        raise PublicQueryAmountError('Intrinsic graveyard mana value cannot be negative')
     if type(amount) is not int:
         raise PublicQueryAmountError("Scalar information is unavailable or malformed")
     # Ordinary result amounts, including +X modifiers, use CR 107.1b's zero.

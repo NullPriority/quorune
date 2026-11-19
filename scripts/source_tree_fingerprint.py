@@ -137,24 +137,55 @@ def _ref_entries(root: Path, ref: str) -> list[tuple[str, str]]:
     return sorted(entries)
 
 
+def _markdown_blob_prefixes(root: Path, blob_oids: set[str]) -> dict[str, str]:
+    """Read committed Markdown prefixes from one Git object batch."""
+    if not blob_oids:
+        return {}
+    requested = sorted(blob_oids)
+    raw = _git(
+        root, "cat-file", "--batch",
+        input_bytes=("\n".join(requested) + "\n").encode("ascii"),
+    )
+    prefixes: dict[str, str] = {}
+    cursor = 0
+    for oid in requested:
+        header_end = raw.find(b"\n", cursor)
+        fields = raw[cursor:header_end].split() if header_end >= 0 else []
+        if (
+            len(fields) != 3
+            or fields[:2] != [oid.encode("ascii"), b"blob"]
+            or not fields[2].isdigit()
+        ):
+            raise RuntimeError("git cat-file returned an invalid Markdown blob header")
+        start = header_end + 1
+        end = start + int(fields[2])
+        if raw[end:end + 1] != b"\n":
+            raise RuntimeError("git cat-file returned an incomplete Markdown blob")
+        prefix = raw[start:min(end, start + 512)]
+        try:
+            prefixes[oid] = prefix.decode("utf-8", errors="strict")
+        except UnicodeDecodeError:
+            prefixes[oid] = ""
+        cursor = end + 1
+    if cursor != len(raw):
+        raise RuntimeError("git cat-file returned unexpected Markdown blob data")
+    return prefixes
+
+
 def tracked_ref_source_fingerprint(root: Path, ref: str) -> str:
     """Fingerprint the tracked source blobs committed at ``ref``."""
 
-    included: list[tuple[str, str]] = []
-    for relative, blob_oid in _ref_entries(root, ref):
-        prefix: str | None = None
-        if Path(relative).suffix.lower() == ".md" and not (
-            relative in TRACKED_PLATFORM_OUTPUTS
-            or relative.startswith("coverage/")
-        ):
-            raw = _git(root, "show", f"{ref}:{relative}")[:512]
-            try:
-                prefix = raw.decode("utf-8", errors="strict")
-            except UnicodeDecodeError:
-                prefix = ""
-        if not is_generated_report(relative, markdown_prefix=prefix):
-            included.append((relative, blob_oid))
-    return _fingerprint(included)
+    entries = _ref_entries(root, ref)
+    prefixes = _markdown_blob_prefixes(root, {
+        oid for relative, oid in entries
+        if Path(relative).suffix.lower() == ".md"
+        and not is_generated_report(relative)
+    })
+    return _fingerprint([
+        (relative, oid)
+        for relative, oid in entries
+        if not is_generated_report(relative, markdown_prefix=prefixes.get(oid))
+    ])
 
 
 __all__ = [

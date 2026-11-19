@@ -3,7 +3,7 @@ from __future__ import annotations
 """Gate exact Max Speed child abilities through shared layer-six scopes."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from ..abilities import parse_activated_abilities
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE,STATIC_COMPONENT_SCOPE_FRAGMENT_HANDLER_ID,ability_fragment_to_dict
 from ..static_component_scope import StaticComponentScopeSpec,StaticComponentApplicabilitySpec

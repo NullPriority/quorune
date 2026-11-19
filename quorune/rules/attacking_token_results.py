@@ -10,6 +10,9 @@ def attacking_token_result_closure(effect):
     from .token_creation_capability_shapes import _fixed_token_effect_closure
     from ..replacement.immutable import FrozenMap, thaw_value
     version = effect.get('token_entry_version') if isinstance(effect, Mapping) else None
+    if type(version) is int and version == 3:
+        from .per_opponent_attacking_tokens import per_opponent_attacking_token_closure
+        return per_opponent_attacking_token_closure(effect)
     expected = {'op', 'player', 'quantity', 'name', 'characteristics', 'tapped', 'token_entry_version'} | ({'token_cleanup'} if version == 2 else set())
     if (not isinstance(effect, Mapping) or set(effect) != expected
             or effect.get('op') != ATTACKING_TOKEN_OPERATION

@@ -25,6 +25,7 @@ from scripts.generated_owner_cache import (
     OwnerArtifactReceipt,
     OwnerInputIdentity,
     build_owner_receipt,
+    owner_cache_directory,
     owner_input_identity,
     read_owner_receipt,
     store_owner_artifact,
@@ -335,10 +336,9 @@ def current_dependency_report_receipt(*, root: Path) -> OwnerArtifactReceipt:
     return _dependency_report_receipt(root)
 
 
-def store_dependency_artifact(
-    report: Mapping[str, object], *, artifact_dir: Path, root: Path,
+def _require_canonical_dependency_report(
+    report: Mapping[str, object], *, root: Path,
 ) -> None:
-    """Publish the full audit using the existing generated-owner receipt."""
     _require_current_dependency_report(report, root=root)
     json_output = root / COMPACT_CI_REPORT_PATH
     if (
@@ -346,16 +346,67 @@ def store_dependency_artifact(
         or json_output.with_suffix(".md").read_text(encoding="utf-8") != report_markdown(report)
     ):
         raise GeneratedOwnerCacheError("Compact dependency report is open or stale")
+
+
+def store_dependency_artifact(
+    report: Mapping[str, object], *, artifact_dir: Path, root: Path,
+) -> None:
+    """Publish the full audit using the existing generated-owner receipt."""
+    _require_canonical_dependency_report(report, root=root)
     owner, identity = _dependency_artifact_owner(root)
     store_owner_artifact(owner, identity, artifact_dir=artifact_dir, root=root)
+
+
+def remember_bundled_dependency_artifact(*, root: Path, input_fingerprint: str) -> None:
+    """Store the compact report from an already verified cloud bundle."""
+    cache_root = root.resolve() / "local/generated-owner-cache"
+    try:
+        owner, identity = _dependency_artifact_owner(root)
+        if identity.fingerprint != input_fingerprint:
+            return
+        artifact_dir = owner_cache_directory(cache_root, identity)
+        if not artifact_dir.resolve().is_relative_to(cache_root) or artifact_dir.exists():
+            return
+        report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+        _require_canonical_dependency_report(report, root=root)
+        artifact_dir.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=artifact_dir.parent) as directory:
+            staged = Path(directory) / "artifact"
+            store_owner_artifact(owner, identity, artifact_dir=staged, root=root)
+            staged.rename(artifact_dir)
+    except (OSError, ValueError, GeneratedOwnerCacheError):
+        # Cache storage is optional. Pre-push will perform the complete audit.
+        return
+
+
+def reuse_local_dependency_artifact(*, root: Path) -> dict[str, object] | None:
+    cache_root = root / "local/generated-owner-cache"
+    if not (cache_root / "compact-ci-card-dependencies").is_dir():
+        return None
+    try:
+        report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+        _require_current_dependency_report(report, root=root)
+        owner, identity = _dependency_artifact_owner(root)
+        artifact_dir = owner_cache_directory(cache_root, identity)
+        current = build_owner_receipt(owner, identity, root=root)
+        return _verify_dependency_artifact(artifact_dir=artifact_dir, root=root, current=current)
+    except (OSError, ValueError, GeneratedOwnerCacheError):
+        return None
 
 
 def verify_dependency_artifact(
     *, artifact_dir: Path, root: Path,
 ) -> dict[str, object]:
     """Verify a trusted producer's compact audit against the current checkout."""
+    return _verify_dependency_artifact(
+        artifact_dir=artifact_dir, root=root, current=_dependency_report_receipt(root),
+    )
+
+
+def _verify_dependency_artifact(
+    *, artifact_dir: Path, root: Path, current: OwnerArtifactReceipt,
+) -> dict[str, object]:
     receipt = read_owner_receipt(artifact_dir / "_owner_receipt.json")
-    current = _dependency_report_receipt(root)
     current_outputs = tuple((path, oid) for path, _, oid in current.outputs)
     artifact_outputs = tuple((path, oid) for path, _, oid in receipt.outputs)
     if (

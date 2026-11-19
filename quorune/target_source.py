@@ -22,9 +22,14 @@ class TargetingSource:
     source_controller: str | None=None
     spell_owner: str | None=None
     protection_source: ProtectionSource | None = None
+    logical_object_id: str | None = None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
+        if self.logical_object_id is not None and (
+            type(self.logical_object_id) is not str or not self.logical_object_id
+        ):
+            raise ValueError("Targeting source incarnation must be explicit")
         if self.source_controller is not None and (type(self.source_controller) is not str or not self.source_controller):raise ValueError('Targeting source controller must be a seat or unavailable')
         if self.spell_owner is not None and (self.kind!='spell' or type(self.spell_owner) is not str
                 or not self.spell_owner or self.spell_owner.strip()!=self.spell_owner):
@@ -43,10 +48,10 @@ class TargetingSource:
             raise ValueError("Targeting protection requires the acting source's typed characteristics")
 
     @classmethod
-    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None,protection_source=None):
+    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None,protection_source=None,logical_object_id=None):
         types,subtypes,_=type_parts(str(value.get('type_line') or ''))
         return cls(kind, frozenset(str(v).upper() for v in value.get('colors',())), frozenset(types),
-                   frozenset(subtypes), controller, spell_owner, protection_source)
+                   frozenset(subtypes), controller, spell_owner, protection_source, logical_object_id)
 
 
 @dataclass(frozen=True,slots=True)
@@ -94,7 +99,7 @@ class TargetingSourceBinding:
         characteristics = {'type_line': self.type_line, 'colors': self.colors, 'mana_value': self.mana_value}
         protection = ProtectionSource.from_characteristics(characteristics) if self.schema_version == BOUND_TARGETING_SOURCE_VERSION else None
         return TargetingSource.from_characteristics('ability', characteristics, controller=self.controller,
-                                                    protection_source=protection)
+                                                    protection_source=protection,logical_object_id=self.logical_object_id)
 
 
 def capture_targeting_source(host,source,*,characteristics=None,zone=None,schema_version=1):

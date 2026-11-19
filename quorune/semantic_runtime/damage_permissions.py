@@ -5,7 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from ..ability_fragments import canonical_ability_fragments,static_component_keys
 from ..damage_prevention_permission import (DamagePreventionPermissionSnapshot,
-    UNPREVENTABLE_HANDLER,UNPREVENTABLE_EVENT,UNPREVENTABLE_CAPABILITY,decode_static_unpreventability)
+    UNPREVENTABLE_HANDLER,UNPREVENTABLE_EVENT,UNPREVENTABLE_CAPABILITY,decode_static_unpreventability,
+    ResolvedDamagePreventionProhibition, validate_temporary_damage_prevention_prohibition)
 from .context import SemanticNodeError
 
 
@@ -42,9 +43,28 @@ def source_has_unpreventable_damage(host,characteristics):
     return any(spec.scope == 'self' for spec in _current_specs(host,characteristics))
 
 
+def apply_temporary_damage_prevention_prohibition(host, actor, effect):
+    from ..continuous_effect_state import commit_continuous_effect
+    from ..errors import GameRuleError
+
+    try:
+        validate_temporary_damage_prevention_prohibition(effect, resolved=True)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    rule = ResolvedDamagePreventionProhibition(
+        host._next_ref("DP"), effect["source"], host._next_zone_timestamp(),
+    )
+    commit_continuous_effect(host.state, rule)
+    host._log(actor, "damage.prevention.prohibition.created", "Damage cannot be prevented this turn.",
+              {"effect": rule.effect_id}, importance=1)
+    return rule.effect_id
+
+
 def collect_damage_prevention_permissions(host,*,sources=None,source_zones=None):
     candidates = list(sources) if sources is not None else host._semantic_event_sources(zones={'battlefield'})
-    global_rule = False;controllers = set()
+    journal = getattr(getattr(host, "state", None), "continuous_effects", None)
+    global_rule = any(isinstance(effect, ResolvedDamagePreventionProhibition) for effect in journal or ())
+    controllers = set()
     for source in candidates:
         zone = source_zones.get(source.object_id,source.zone) if source_zones is not None else source.zone
         if zone != 'battlefield' or source.phased_out or source.controller not in host.active_seats:continue

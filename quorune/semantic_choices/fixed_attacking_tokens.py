@@ -30,7 +30,9 @@ class FixedAttackingTokenDestinationHandler:
     capability_dependencies: tuple[str, ...] = (ATTACKING_TOKEN_CAPABILITY,)
     continuation_fields: tuple[str, ...] = ('player', 'quantity', 'name', 'characteristics',
         'tapped', 'token_entry_version', '_choice_actor', '_token_ids', '_destinations',
-        '_stack_label', '_preview_specs', '_outside_combat', 'token_cleanup', '_token_cleanup_plan')
+        '_stack_label', '_preview_specs', '_outside_combat', 'token_cleanup', '_token_cleanup_plan',
+        'opponent_scope', '_opponents', '_opponent_by_token', '_assignments',
+        '_current_opponent', '_pending_token_ids')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ('prompt', 'destinations',
         'legal_actions.choice_schema.legal_refs', 'legal_actions.choice_schema.legal_values')
@@ -39,6 +41,9 @@ class FixedAttackingTokenDestinationHandler:
     test_modules: tuple[str, ...] = ('tests.test_attacking_token_results',)
 
     def prepare(self, effect, context):
+        if effect.get('token_entry_version') == 3:
+            from .per_opponent_attacking_tokens import prepare_per_opponent_tokens
+            return prepare_per_opponent_tokens(effect, context)
         _validate_effect(effect, context.actor)
         plan = None
         if effect.get('token_entry_version') == 2:
@@ -64,6 +69,12 @@ class FixedAttackingTokenDestinationHandler:
 
     def complete(self, continuation, response, query):
         effect = continuation.effect
+        if effect.get('token_entry_version') == 3:
+            from .per_opponent_attacking_tokens import complete_per_opponent_tokens
+            return complete_per_opponent_tokens(continuation, response, query)
+        if set(effect) & {'opponent_scope', '_opponents', '_opponent_by_token', '_assignments',
+                '_current_opponent', '_pending_token_ids'}:
+            raise SemanticChoiceError('Version-one/two token continuation contains per-opponent fields')
         actor = effect.get('_choice_actor')
         if (set(effect) - {'op', '_replacement_selections'} - set(self.continuation_fields)
                 or actor not in query.active_seats):

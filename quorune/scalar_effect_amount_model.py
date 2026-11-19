@@ -13,10 +13,12 @@ from .creature_subtypes import canonical_creature_subtype
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .multikicker_model import FixedManaMultikickerSpec
 from .public_history_query_model import PublicHistoryQuerySpec
+from .upkeep_hand_difference_model import UpkeepHandDifferenceSpec,UPKEEP_HAND_DIFFERENCE_CAPABILITY
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
 SCALAR_AMOUNT_MECHANIC = "scalar-effect-amount"
+GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY = "quantity_expression.graveyard_target_mana_value"
 SCALAR_REFERENCE_CONTEXT = "scalar_reference_snapshots"
 TARGET_HAND_COUNT_MECHANIC='target-player-hand-count-amount'
 TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
@@ -37,13 +39,16 @@ class ScalarAmountOrigin(StrEnum):
     CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
     MULTIKICKER_COUNT = 'multikicker_count'
     TARGET_HAND_COUNT='target_player_hand_count'
+    UPKEEP_HAND_DIFFERENCE='upkeep_participant_hand_difference'
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     SOURCE = "source_characteristic"
     TARGET = "target_characteristic"
+    TARGET_GRAVEYARD_MANA_VALUE = "target_graveyard_mana_value"
     EVENT_OBJECT = "event_object_characteristic"
     EVENT_AMOUNT = "committed_event_amount"
     HISTORY = "public_turn_history"
     HISTORY_COUNT = "public_turn_history_count"
+    CONTROLLER_COMMANDER_CAST_COUNT = "controller_commander_cast_count"
 
 
 CHARACTERISTICS = frozenset({"power", "toughness", "mana_value"})
@@ -68,16 +73,19 @@ class ScalarEffectAmountSpec:
     target_group: str | None = None
     history_count: PublicHistoryQuerySpec | None = None
     double_for_subtype: str | None = None
+    hand_difference: UpkeepHandDifferenceSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in range(1, 14):
+        if type(self.schema_version) is not int or self.schema_version not in range(1, 16):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
         if (self.schema_version == 13) != (self.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE):
             raise PublicQueryAmountError('Paid activation stats require their explicit scalar version')
         if self.schema_version == 13 and (self.characteristic not in ('power', 'toughness')
                 or self.binding_id is not None):
             raise PublicQueryAmountError('Paid activation stats read one sealed power or toughness')
+        _validate_graveyard_target_mana_value(self)
         _validate_reflexive_paid_power(self)
+        _validate_upkeep_hand_difference(self)
         _validate_paid_sacrifice_mana_value(self)
         if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
             raise PublicQueryAmountError("History counts require their explicit scalar version")
@@ -139,6 +147,7 @@ class ScalarEffectAmountSpec:
             ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE,
             ScalarAmountOrigin.PAID_ACTIVATION_CREATURE,
             ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE,
+            ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
@@ -158,7 +167,8 @@ class ScalarEffectAmountSpec:
                 **({'multikicker':self.multikicker.to_dict()} if self.schema_version==5 else {}),
                 **({'target_group':self.target_group} if self.schema_version==7 else {}),
                 **({"history_count": self.history_count.to_dict()} if self.history_count is not None else {}),
-                **({"double_for_subtype": self.double_for_subtype} if self.schema_version == 11 else {})}
+                **({"double_for_subtype": self.double_for_subtype} if self.schema_version == 11 else {}),
+                **({"hand_difference":self.hand_difference.to_dict()} if self.schema_version==14 else {})}
 
     @property
     def history_count_capabilities(self) -> tuple[str, ...]:
@@ -166,7 +176,11 @@ class ScalarEffectAmountSpec:
 
     @property
     def referenced_quantity_capabilities(self) -> tuple[str, ...]:
+        from .commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
         return tuple(sorted({*self.history_count_capabilities,
+            *((GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else ()),
+            *((UPKEEP_HAND_DIFFERENCE_CAPABILITY,) if self.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE else ()),
+            *((COMMANDER_CAST_COUNT_CAPABILITY,) if self.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT else ()),
             *(self.aggregate.capability_dependencies if self.aggregate is not None else ())}))
 
     def to_dict(self) -> dict[str, Any]:
@@ -189,6 +203,8 @@ class ScalarEffectAmountSpec:
             fields.add("history_count")
         if isinstance(value, Mapping) and value.get("schema_version") == 11:
             fields.add("double_for_subtype")
+        if isinstance(value,Mapping) and value.get("schema_version")==14:
+            fields.add("hand_difference")
         if not isinstance(value, Mapping) or set(value) != fields or value.get("kind") != SCALAR_AMOUNT_KIND:
             raise PublicQueryAmountError("Scalar amount fields are incomplete or unknown")
         try:
@@ -199,13 +215,33 @@ class ScalarEffectAmountSpec:
             multikicker = FixedManaMultikickerSpec.from_dict(value['multikicker']) if value['schema_version']==5 else None
             aggregate=PublicCharacteristicAggregateSpec.from_dict(value['aggregate']) if value['schema_version']==3 else None
             history_count = PublicHistoryQuerySpec.from_dict(value["history_count"]) if value["schema_version"] == 10 else None
+            difference=UpkeepHandDifferenceSpec.from_dict(value["hand_difference"]) if value["schema_version"]==14 else None
             return cls(origin=origin, characteristic=value["characteristic"], history_fact=value["history_fact"],
                        coefficient=value["coefficient"], binding_id=value["binding_id"], schema_version=value["schema_version"],
                        counter_name=value.get("counter_name"), aggregate=aggregate, multikicker=multikicker,
                        target_group=value.get("target_group"), history_count=history_count,
-                       double_for_subtype=value.get("double_for_subtype"))
+                       double_for_subtype=value.get("double_for_subtype"), hand_difference=difference)
         except (TypeError,ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
+
+
+
+def _validate_graveyard_target_mana_value(spec: ScalarEffectAmountSpec) -> None:
+    if (spec.schema_version == 15) != (spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE):
+        raise PublicQueryAmountError('Graveyard-target mana value requires its explicit scalar version')
+    if spec.schema_version == 15 and (
+            spec.characteristic != 'mana_value' or spec.coefficient != 1 or spec.binding_id is not None):
+        raise PublicQueryAmountError('Graveyard-target amount reads one unscaled intrinsic mana value')
+
+
+def _validate_upkeep_hand_difference(spec: ScalarEffectAmountSpec) -> None:
+    if (spec.schema_version==14)!=(spec.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE):
+        raise PublicQueryAmountError("Upkeep hand difference requires its explicit scalar version")
+    if spec.schema_version==14:
+        if not isinstance(spec.hand_difference,UpkeepHandDifferenceSpec) or spec.coefficient!=1 or spec.binding_id is not None:
+            raise PublicQueryAmountError("Upkeep hand difference reads one current uncached public hand count")
+    elif spec.hand_difference is not None:
+        raise PublicQueryAmountError("Legacy scalar versions cannot carry an upkeep hand difference")
 
 
 def _validate_paid_sacrifice_mana_value(spec: ScalarEffectAmountSpec) -> None:

@@ -15,8 +15,9 @@ from ..rules.temporary_cast_timing import is_closed_temporary_cast_timing_progra
 
 from collections import Counter
 from dataclasses import asdict
+from functools import partial
 import hashlib
-from typing import Any, Iterable, Mapping, TYPE_CHECKING
+from typing import Any, Callable, Iterable, Mapping, TYPE_CHECKING
 
 from ..carddb import CardDatabase, CardRecord
 from ..stack_resolution_authority_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
@@ -239,6 +240,7 @@ def _validate_generated_program_trust(
     *,
     trust_level: str,
     has_rules_derived_trust_carrier: bool,
+    is_independently_exact: Callable[[Any], bool],
 ) -> None:
     if trust_level != "trusted":
         return
@@ -264,7 +266,7 @@ def _validate_generated_program_trust(
         # validation owns trust only when the caller found such a declaration.
         return
     if generated_nodes and any(
-        _generated_node_is_independently_exact(node)
+        is_independently_exact(node)
         for node in generated_nodes
     ):
         return
@@ -295,12 +297,6 @@ def _independently_exact_protection_handler(node: Any) -> bool:
         )
         and tuple(node.capability_dependencies)
         == ("protection.typed.debt",)
-    )
-
-
-def _generated_node_is_independently_exact(node: Any) -> bool:
-    return bool(
-        node.exact or _independently_exact_protection_handler(node)
     )
 
 
@@ -1113,7 +1109,7 @@ def _is_closed_mass_destruction_program(
                 value
                 for value in program.coverage
                 if value in {
-                    "destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition",
+                    "destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition", "attached-destruction-set",
                     DESTRUCTION_RESULT_MECHANIC,
                 }
             ),
@@ -1232,6 +1228,7 @@ def _closed_effect_recognizers():
     from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
     from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
+    from ..public_zone_moves import is_closed_stack_spell_exile_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     from ..rules.next_cast_counter_protection import is_closed_next_cast_protection_program
@@ -1247,6 +1244,7 @@ def _closed_effect_recognizers():
         is_closed_all_kind_counter_program,
         is_closed_quantified_counter_target_program,
         is_closed_any_number_target_program,
+        is_closed_stack_spell_exile_program,
         is_closed_opposing_graveyard_return_program,
         _is_closed_targeted_graveyard_cast_program,
         _is_closed_graveyard_copy_cast_program,
@@ -1354,6 +1352,9 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
+    from ..rules.named_searches import is_closed_named_zone_search_program
+    if is_closed_named_zone_search_program(program):
+        return True
     from .nonleaf_effect_closure import effect_program_is_closed
     from ..rules.attachment_action_capability_shapes import (
         is_closed_fixed_source_equipment_activation_program, is_closed_targeted_equipment_attachment_program,
@@ -1412,17 +1413,28 @@ def _generated_programs_from_ir(
     """Lower the invocation's compiled IR through the existing trust boundary."""
     from ..oracle_ir import ORACLE_COMPILER_VERSION
 
+    def is_independently_exact(node: Any) -> bool:
+        if node.exact:
+            return True
+        if not _independently_exact_protection_handler(node):
+            return False
+        return capability_registry is None or capability_registry.closure(
+            node.capability_dependencies,
+            profile=capability_profile,
+        ).trusted
+
     _validate_generated_program_trust(
         ir,
         trust_level=trust_level,
         has_rules_derived_trust_carrier=has_rules_derived_trust_carrier,
+        is_independently_exact=is_independently_exact,
     )
     rulings_hash = rulings_source_hash(db, record)
     programs = programs_from_generated_ir(
         record=record, ir=ir, rulings_hash=rulings_hash, authored_by=ORACLE_COMPILER_VERSION,
         trust_level=trust_level, capability_registry=capability_registry, capability_profile=capability_profile,
         generated_ability_id=_generated_ability_id, is_static_declaration=_generated_static_declaration,
-        is_independently_exact=_generated_node_is_independently_exact,
+        is_independently_exact=is_independently_exact,
         represented_mechanics_for=lambda node: (
             capability_covered_mechanics(node.capability_dependencies)
             if trust_level == "trusted" and not node.exact and _independently_exact_protection_handler(node)
@@ -1467,15 +1479,12 @@ def _trusted_program_is_requested(
 
 
 def _trusted_generated_programs(
-    db: CardDatabase,
-    record: CardRecord,
+    lower_programs: Callable[..., list[SemanticProgram]],
     *,
     provisional_programs: list[SemanticProgram],
     promotable_effect_keys: set[str],
     trust_level: str,
-    trusted_mechanics: Iterable[str],
     capability_registry: CapabilityRegistry | None,
-    capability_profile: str,
     promote_exact_runtime_handlers: bool,
     promote_exact_trigger_programs: bool,
     promote_exact_effect_programs: bool,
@@ -1520,14 +1529,7 @@ def _trusted_generated_programs(
     ):
         return {}
     try:
-        candidates = generated_programs(
-            db,
-            record,
-            trust_level="trusted",
-            trusted_mechanics=trusted_mechanics,
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
-        )
+        candidates = lower_programs(trust_level="trusted")
     except ValueError as exc:
         if "cannot be promoted to trusted generated semantics" not in str(exc):
             raise
@@ -1563,7 +1565,7 @@ def register_generated_programs(
     promote_exact_effect_programs: bool = False,
     promote_exact_capability_declarations: bool = False,
 ) -> dict[str, Any]:
-    from ..oracle_ir import ORACLE_COMPILER_VERSION
+    from ..oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
 
     generated = 0
     skipped_existing = 0
@@ -1572,19 +1574,27 @@ def register_generated_programs(
     promoted_exact_effect_programs = 0
     promoted_exact_fixed_damage_programs = 0
     promoted_exact_fixed_draw_programs = 0
+    generation_parameters = dict(
+        capability_registry=capability_registry, capability_profile=capability_profile,
+    )
     cards_seen: set[str] = set()
     for record in records:
         if record.oracle_id in cards_seen:
             continue
         cards_seen.add(record.oracle_id)
-        provisional_programs = generated_programs(
-            db,
-            record,
-            trust_level=trust_level,
-            trusted_mechanics=trusted_mechanics,
-            capability_registry=capability_registry,
-            capability_profile=capability_profile,
-        )
+        # Custom mechanic iterables retain their original consumption order.
+        if type(trusted_mechanics) is tuple and not trusted_mechanics:
+            ir = compile_oracle_card(record, **generation_parameters)
+            lower_programs = partial(
+                _generated_programs_from_ir, db, record, ir,
+                has_rules_derived_trust_carrier=False, **generation_parameters,
+            )
+        else:
+            lower_programs = partial(
+                generated_programs, db, record,
+                trusted_mechanics=trusted_mechanics, **generation_parameters,
+            )
+        provisional_programs = lower_programs(trust_level=trust_level)
         existing_programs = registry.programs_for_oracle(record.oracle_id)
         for existing, augmented in zip(
             existing_programs,
@@ -1608,14 +1618,11 @@ def register_generated_programs(
             and program.ability_id.startswith(("spell:", "ability:"))
         }
         trusted_programs = _trusted_generated_programs(
-            db,
-            record,
+            lower_programs,
             provisional_programs=provisional_programs,
             promotable_effect_keys=promotable_effect_keys,
             trust_level=trust_level,
-            trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
-            capability_profile=capability_profile,
             promote_exact_runtime_handlers=promote_exact_runtime_handlers,
             promote_exact_trigger_programs=promote_exact_trigger_programs,
             promote_exact_effect_programs=(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed Detain and printed next-turn action prohibitions."""
 
-import re
+from . import regex_working_set as re
 
 from ..replacement.immutable import thaw_value
 from ..rules.detain import (

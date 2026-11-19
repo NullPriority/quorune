@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned reveal-or-tapped entry replacement grammar."""
 
-import re
+from . import regex_working_set as re
 from ..entry_reveal import EntryRevealSpec,ENTRY_REVEAL_CAPABILITY,ENTRY_REVEAL_HANDLER
 from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import canonical_creature_subtype

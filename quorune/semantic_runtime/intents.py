@@ -1,4 +1,5 @@
 from __future__ import annotations
+from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
 
 from ..fractional_quantity_model import HalfQuantitySpec
 from ..city_blessing_model import AscendIntent
@@ -10,14 +11,19 @@ from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
+from ..hand_library_redraw_model import HandLibraryRedrawIntent, HandLibraryArrivalOrder
 from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..dungeon_progress import VentureProgressIntent
 from ..initiative_model import TakeInitiativeIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.graveyard_card_targets import GraveyardReturnScope
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
+from .graveyard_recycling import GraveyardRecyclingIntent
+from ..target_land_type_model import TargetLandTypeSettingIntent
+from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
+from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
 from .control_intents import ControlIntent
@@ -50,8 +56,10 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
 from ..rules.library_selection import LibrarySelectionArrangement
+from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
 from ..rules.library_surveillance import SurveilArrangement
 from ..rules.hand_inspection import InspectHandIntent
+from .colored_hand_reveal import RevealColoredHandCardsIntent
 from ..zone_object_keyword_model import (
     ZoneObjectKeywordGrantError,
     normalized_zone_object_keyword,
@@ -644,7 +652,7 @@ class MoveObjectsSimultaneouslyIntent:
             raise ValueError("Simultaneous object-move intent is malformed")
         if self.library_order is not None and (
             not isinstance(self.library_order, LibraryArrivalOrder)
-            or not isinstance(self.library_order, DepartedLibraryArrivalOrder) and self.library_order.chooser != self.actor
+            or not isinstance(self.library_order, (DepartedLibraryArrivalOrder, HandLibraryArrivalOrder)) and self.library_order.chooser != self.actor
             or self.destination != "library"
             or tuple(self.expected_zones) != self.library_order.origin_zones
             or self.transition_kind is not ZoneTransitionKind.ORDINARY
@@ -923,8 +931,14 @@ class PlaceCountersIntent:
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     effect_generated: bool = True
+    ordered_cost_version: int | None = None
 
     def __post_init__(self) -> None:
+        if self.ordered_cost_version is not None and (
+            type(self.ordered_cost_version) is not int or self.ordered_cost_version != 2
+            or self.effect_generated is not False or type(self.amount) is not int or self.amount != 1
+        ):
+            raise ValueError("Ordered counter cost occurrences require explicit version two")
         if type(self.effect_generated) is not bool:
             raise ValueError("Counter placement provenance must be boolean")
         object.__setattr__(
@@ -1236,8 +1250,11 @@ class CounterStackIntent:
     countered_by: str
     counter_destination: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    source_controller: str | None = None
 
     def __post_init__(self) -> None:
+        if self.source_controller is not None and (type(self.source_controller) is not str or not self.source_controller):
+            raise ValueError("Counter source controller must be a player identity")
         if self.counter_destination is not None:
             from ..zone_trigger_events import counter_destination_fields
 
@@ -1285,8 +1302,17 @@ class RetargetStackItemIntent:
     targets: tuple[str, ...]
     target_groups: FrozenMap
     source_stack_ref: str
+    collect_single_target_ward: bool = False
+    target_snapshots: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if type(self.collect_single_target_ward) is not bool or self.collect_single_target_ward and len(self.targets) != 1:
+            raise ValueError("A mandatory changed-target Ward occurrence requires one target")
+        if self.target_snapshots is not None:
+            if not isinstance(self.target_snapshots, Mapping) or set(self.target_snapshots) != set(self.targets):
+                raise ValueError("Optional target changes require the exact selected snapshot identities")
+            if not isinstance(self.target_snapshots, FrozenMap):
+                object.__setattr__(self, "target_snapshots", FrozenMap(self.target_snapshots))
         if not isinstance(self.target_groups, FrozenMap):
             object.__setattr__(
                 self,
@@ -1484,6 +1510,7 @@ SemanticIntent: TypeAlias = (
     | TakeInitiativeIntent
     | SetPermanentTappedIntent
     | ProhibitNextUntapIntent
+    | ProhibitNextPlayerUntapIntent
     | SetPermanentsTappedIntent
     | UntapAllCreaturesIntent
     | CreateRegenerationShieldIntent
@@ -1519,6 +1546,9 @@ SemanticIntent: TypeAlias = (
     | ResolvingExileLandPlayIntent
     | RevealCapturedDrawsIntent
     | ResolveCapturedDrawCastIntent
+    | ResolveBoundedHandCastIntent
+    | ResolveRippleCastIntent
+    | RippleBottomIntent
     | GraveyardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
@@ -1532,6 +1562,7 @@ SemanticIntent: TypeAlias = (
     | RevealLibraryCardsIntent
     | RevealEachLibraryTopIntent
     | InspectHandIntent
+    | RevealColoredHandCardsIntent
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
     | SurveilLibraryIntent
@@ -1559,8 +1590,12 @@ SemanticIntent: TypeAlias = (
     | DomainEffectIntent
     | DiscardWholeHandsIntent
     | DiscardWholeHandsResultIntent
+    | HandLibraryRedrawIntent
     | RandomDiscardIntent
     | RandomGraveyardReturnIntent
+    | GraveyardRecyclingIntent
+    | TargetLandTypeSettingIntent
+    | FixedSourceSacrificeIntent
     | TemporaryCastRestrictionIntent
     | ScheduleTurnSkipIntent
     | EarthbendIntent

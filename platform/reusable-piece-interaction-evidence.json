@@ -22745,6 +22745,96 @@
       ],
       "interaction_order": 2,
       "assertion": "An explicitly constructed, normally complete-admitted carrier has separate per-opponent destruction and cycle-triggered mill abilities. Its spell rejects two same-controller targets, destroys only its announced set and mills nothing. Cycling another normally admitted copy then mills exactly three cards for each opponent before its separate private draw; its ordinary target schema does not limit that trigger. Actual costs, actor rejection, saved intermediate resolutions and exact private replay are asserted. This is a constructed composition control, not whole-card support for the unresolved original Saga carrier."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_target_colors.ScopedColorNativeTests.test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.object.fixed_resolution_color"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.object.fixed_resolution_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "The spell's sole target returns to hand before resolution. Reloading the pending stack preserves the target failure, the target retains its original color, and the linked draw stays suppressed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_target_colors.ScopedColorNativeTests.test_actual_all_illegal_color_target_does_not_draw_or_follow_the_new_incarnation",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.object.fixed_resolution_color_scope"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.object.fixed_resolution_color_scope"
+      ],
+      "interaction_order": 2,
+      "assertion": "The spell's sole target returns to hand before resolution. Reloading the pending stack preserves the target failure, the target retains its original color, and the linked draw stays suppressed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_target_colors.ScopedColorNativeTests.test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+      "piece_ids": [
+        "capability.target.cardinality.any_number",
+        "capability.zone.object.fixed_resolution_color"
+      ],
+      "capability_ids": [
+        "target.cardinality.any_number",
+        "zone.object.fixed_resolution_color"
+      ],
+      "interaction_order": 2,
+      "assertion": "The cast rejects zero targets and duplicate selections. One of seven distinct targets returns to hand before resolution and retains its original color. The six remaining targets change color and the unselected control retains its color after reload."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_scoped_target_colors.ScopedColorNativeTests.test_actual_minimum_one_accepts_seven_distinct_targets_and_skips_a_bounced_one",
+      "piece_ids": [
+        "capability.target.cardinality.any_number",
+        "capability.zone.object.fixed_resolution_color_scope"
+      ],
+      "capability_ids": [
+        "target.cardinality.any_number",
+        "zone.object.fixed_resolution_color_scope"
+      ],
+      "interaction_order": 2,
+      "assertion": "The cast rejects zero targets and duplicate selections. One of seven distinct targets returns to hand before resolution and retains its original color. The six remaining targets change color and the unselected control retains its color after reload."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_public_graveyard_entry.PublicGraveyardEntryRuntimeTests.test_original_open_vaults_orders_owner_aura_choices_before_simultaneous_entry",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.zone.move.fixed_public_set"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "zone.move.fixed_public_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Owners make private legal attachment choices in active-player order while every returning object remains in the graveyard. Illegal recipients and unauthorized actors are rejected. The whole set then enters with the chosen attachments, and replay preserves the choices and final state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_move_revalidates_exiled_target_and_replays",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.single_owner_move.graveyard_library_target"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.single_owner_move.graveyard_library_target"
+      ],
+      "interaction_order": 2,
+      "assertion": "A player exiles the targeted graveyard card with an actual response. After reloading the pending stack, target revalidation removes the original spell by rule, leaves the card in exile, and preserves the owner's private library order. The accepted history replays to the same state."
     }
   ],
   "schema_version": 2

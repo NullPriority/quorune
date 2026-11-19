@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from typing import Callable, Mapping, Sequence, Any
 
 from ..query_effect_amount_model import (
@@ -685,6 +685,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.casting_additional_costs import fixed_creature_sacrifice_price, fixed_single_sacrifice_price
     from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
     from ..rules.mill_capability_shapes import fixed_mill_node_capabilities
+    from .query_counter_sequences import is_source_counter_then_maximum_power_draw
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -714,7 +715,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     scalar_specs = scalar_amount_specs(program.effects)
     target_mana_value_sequence = (
         len(scalar_specs) == 1
-        and scalar_specs[0].origin is ScalarAmountOrigin.TARGET
+        and scalar_specs[0].origin in {ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}
         and scalar_specs[0].characteristic == "mana_value"
     )
     return any(
@@ -740,7 +741,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
               if ACTIVATION_PAID_STAT_MECHANIC in program.coverage else ()),
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
-              if target_mana_value_sequence or
+              if target_mana_value_sequence or is_source_counter_then_maximum_power_draw(program, scalar_specs) or
               {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC,
                ACTIVATION_PAID_STAT_MECHANIC}.intersection(program.coverage) else ()),
             *((fixed_controller_effect_sequence_node_capabilities,)

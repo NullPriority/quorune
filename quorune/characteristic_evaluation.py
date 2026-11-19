@@ -12,7 +12,9 @@ from .continuous_effects import (
     Layer,
     evaluate_continuous_effects,
 )
-from .continuous_effect_model import ContinuousEffectError
+from .continuous_effect_model import (
+    CONTINUOUS_DEPENDENCY_ORDER_FIELD, CONTINUOUS_DEPENDENCY_ORDER_VERSION, ContinuousEffectError,
+)
 from .model import CardInstance
 from .morph import MORPH_FACE_DOWN_ANNOTATION
 from .keyword_counters import keyword_counter_abilities
@@ -682,6 +684,49 @@ def _normalized_unlayered_characteristics(result):
     return result
 
 
+def _card_characteristic_query_context(card, *, enchanted=False, equipped=False, modified=False):
+    return {
+        "object_id": card.object_id,
+        "logical_object_id": card.logical_object_id,
+        "ref": card.ref,
+        "owner": card.owner,
+        "controller": card.controller,
+        "zone": card.zone,
+        "token": card.is_token,
+        "commander": card.is_commander,
+        "tapped": card.tapped,
+        "phased_out": card.phased_out,
+        "known_to_actor": True,
+        "counters": card.counters,
+        "attacking": card.attacking is not None,
+        "blocking": card.blocking is not None,
+        "enchanted": enchanted,
+        "equipped": equipped,
+        "modified": modified,
+        "monstrous": card.monstrous_value is not None,
+    }
+
+
+def battlefield_type_dependency_view(
+    card, base, *, runtime_effects=(), ignore_face_down=False,
+    dependency_order_version=CONTINUOUS_DEPENDENCY_ORDER_VERSION,
+):
+    """Prepare the real pre-type state and per-object operations without mutating the game."""
+    overrides, added_types, added_subtypes = _annotation_terms(card)
+    state = _base_characteristic_state(card, base, resolve_undefined_stats=False)
+    object_effects = _object_continuous_effects(
+        card, overrides, added_types, added_subtypes,
+        has_all_creature_types_definition=_has_all_creature_types_characteristic_definition(base, overrides),
+        has_colorless_definition=False, has_all_colors_definition=False, ignore_face_down=ignore_face_down,
+    )
+    effects = (*object_effects, *runtime_effects)
+    context = _card_characteristic_query_context(card)
+    context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
+    evaluate_continuous_effects(state, (effect for effect in effects if effect.layer < Layer.TYPE),
+                                context=context)
+    return state, context, tuple(effect for effect in effects if effect.layer is Layer.TYPE)
+
+
 def evaluate_card_characteristics(
     card: CardInstance,
     base: Mapping[str, Any],
@@ -696,6 +741,8 @@ def evaluate_card_characteristics(
     enchanted: bool = False,
     equipped: bool = False,
     modified: bool = False,
+    type_order=None,
+    dependency_order_version: int | None = CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ) -> dict[str, Any]:
     """Evaluate one object's declarative CR 613 characteristic state.
 
@@ -756,26 +803,10 @@ def evaluate_card_characteristics(
         ignore_face_down=ignore_face_down,
     )
     effects.extend(runtime_effects)
-    context = {
-        "object_id": card.object_id,
-        "logical_object_id": card.logical_object_id,
-        "ref": card.ref,
-        "owner": card.owner,
-        "controller": card.controller,
-        "zone": card.zone,
-        "token": card.is_token,
-        "commander": card.is_commander,
-        "tapped": card.tapped,
-        "phased_out": card.phased_out,
-        "known_to_actor": True,
-        "counters": card.counters,
-        "attacking": card.attacking is not None,
-        "blocking": card.blocking is not None,
-        "enchanted": enchanted,
-        "equipped": equipped,
-        "modified": modified,
-        "monstrous": card.monstrous_value is not None,
-    }
+    context = _card_characteristic_query_context(card, enchanted=enchanted, equipped=equipped, modified=modified)
+    context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
+    if type_order is not None:
+        context["type_order"] = type_order
     if query_count_resolver is not None and (
         maximum_layer is None or maximum_layer >= Layer.ABILITY
     ):

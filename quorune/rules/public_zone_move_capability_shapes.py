@@ -9,7 +9,9 @@ from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_E
 from ..affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
+    DEFENDING_PLAYER_UNTAP_SET_FIELD,
     PermanentControllerRelation,
+    decode_defending_player_creature_untap,
 )
 from ..attachment_references import (
     AttachmentReferenceError,
@@ -27,6 +29,7 @@ from ..public_zone_moves import (
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
     PublicZoneSeatRelation,
+    stack_spell_exile_node_capabilities,
 )
 from ..targets import TargetGroup
 from ..util import stable_json
@@ -355,6 +358,10 @@ def public_graveyard_card_exile_node_capabilities(
     except (GraveyardCardTargetError, TypeError):
         return ()
     effect = effects[0]
+    from ..graveyard_card_result_model import GRAVEYARD_CARD_COUNTER_LIFE_OPERATION
+    if effect.get('op') == GRAVEYARD_CARD_COUNTER_LIFE_OPERATION:
+        from .graveyard_card_results import graveyard_card_counter_life_node_capabilities
+        return graveyard_card_counter_life_node_capabilities(effects=effects, target_schema=target_schema)
     if (
         set(effect) != {"op", "card"}
         or effect.get("op") != "exile_public_graveyard_card"
@@ -427,6 +434,11 @@ def fixed_public_zone_move_set_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     mechanic_ids = tuple(mechanic_ids)
+    stack_exile = stack_spell_exile_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+    if stack_exile:
+        return stack_exile
     from .private_hand_entry_shapes import private_hand_collection_node_capabilities
     collection = private_hand_collection_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -519,14 +531,14 @@ def fixed_private_hand_entry_node_capabilities(
         or type(effect.get("tapped")) is not bool
     ):
         return ()
-    from ..hand_entry_queries import decode_hand_entry_queries
+    from ..hand_entry_queries import decode_hand_entry_queries, hand_entry_query_capabilities
     try:
         decode_hand_entry_queries(effect["query"])
         followup = decode_hand_entry_followup(effect)
         attacking = decode_hand_attacking_entry(effect)
     except (KeyError, TypeError, ValueError):
         return ()
-    base = ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement")
+    base = ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement", *hand_entry_query_capabilities(effect["query"]))
     if attacking:
         return (*base, ATTACKING_CARD_ENTRY_CAPABILITY)
     if followup is None:
@@ -548,6 +560,16 @@ def fixed_public_tap_state_set_node_capabilities(
         or len(effects) != 1
     ):
         return ()
+    if DEFENDING_PLAYER_UNTAP_SET_FIELD in effects[0]:
+        if target_schema is not None or "cr-115-targets" in mechanics:
+            return ()
+        try:
+            group = decode_defending_player_creature_untap(effects[0])
+        except (TypeError, ValueError, KeyError):
+            return ()
+        return ("permanent.tap_state.fixed_set", "trigger.event.normalized_self_attack",
+            *object_query_capabilities(group.query))
+
     from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
     try:
         effect, restraint = split_source_tap_untap_restraint(effects[0])

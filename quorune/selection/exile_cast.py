@@ -34,6 +34,7 @@ from ..suspend import (
 from ..util import stable_json
 from ..zone_transitions import ZoneTransitionOwner
 from ..cipher_model import CIPHER_CAST_PRODUCER, CIPHER_TRIGGER_KEY
+from ..paradigm_model import PARADIGM_CAST_PRODUCER, PARADIGM_TRIGGER_KEY
 from .model import (
     SelectionContinuation,
     SelectionContract,
@@ -50,6 +51,7 @@ _ONE_SHOT_EXILE_CAST_PRODUCERS = frozenset(
         REBOUND_EXILE_CAST_PRODUCER,
         SUSPEND_EXILE_CAST_PRODUCER,
         CIPHER_CAST_PRODUCER,
+        PARADIGM_CAST_PRODUCER,
     }
 )
 _MANA_SYMBOL_RE = re.compile(r"\{([^{}]+)\}")
@@ -62,6 +64,7 @@ def _one_shot_semantic_key(producer: str) -> str:
         REBOUND_EXILE_CAST_PRODUCER: REBOUND_CAST_SEMANTIC_KEY,
         SUSPEND_EXILE_CAST_PRODUCER: SUSPEND_CAST_SEMANTIC_KEY,
         CIPHER_CAST_PRODUCER: CIPHER_TRIGGER_KEY,
+        PARADIGM_CAST_PRODUCER: PARADIGM_TRIGGER_KEY,
     }.get(producer, "")
 
 
@@ -71,6 +74,7 @@ def _one_shot_log_code(producer: str) -> str:
         REBOUND_EXILE_CAST_PRODUCER: "rebound.cast.resolve",
         SUSPEND_EXILE_CAST_PRODUCER: "suspend.cast.resolve",
         CIPHER_CAST_PRODUCER: "cipher.cast.resolve",
+        PARADIGM_CAST_PRODUCER: "paradigm.cast.resolve",
     }.get(producer, "")
 
 
@@ -300,6 +304,10 @@ class OneShotExileCastChoiceOwnerMixin:
         )
 
     def _begin_intrinsic_exile_cast_resolution(self, item: StackItem) -> bool:
+        if item.semantic_key == PARADIGM_TRIGGER_KEY:
+            from ..rules.paradigm import begin_paradigm_copy_cast
+            begin_paradigm_copy_cast(self, item)
+            return True
         if str(item.semantic_key or '').startswith(CIPHER_TRIGGER_KEY + ':'):
             from ..rules.cipher import begin_cipher_copy_cast
             begin_cipher_copy_cast(self, item)
@@ -396,6 +404,12 @@ class OneShotExileCastChoiceOwnerMixin:
             if program is None and (
                 is_instant_or_sorcery or not self._trusted_generic_spell(record)
             ):
+                continue
+            from ..rules.casting.proposal import _static_cast_rule_state
+            prohibition, _permissions = _static_cast_rule_state(self, actor,
+                prospective_cast_card(self, card, face_name), face=face,
+                face_name=face_name, face_down=False)
+            if prohibition is not None:
                 continue
             options = self._cast_cost_options(
                 actor,
@@ -691,10 +705,11 @@ class OneShotExileCastChoiceOwnerMixin:
     ) -> None:
         if producer not in _ONE_SHOT_EXILE_CAST_PRODUCERS:
             raise StateInvariantError("Unsupported one-shot exile-cast producer")
-        if producer == CIPHER_CAST_PRODUCER and outcome == 'declined' and candidate_ref is not None:
+        if producer in {CIPHER_CAST_PRODUCER, PARADIGM_CAST_PRODUCER} and outcome == 'declined' and candidate_ref is not None:
             candidate = next((value for value in self.state.cards.values() if value.ref == candidate_ref), None)
             if candidate is not None and candidate.is_card_copy:
-                self.move_card(candidate.object_id, 'outside', reason='Cipher copy cast declined', log=False)
+                self.move_card(candidate.object_id, 'outside',
+                    reason='Cipher copy cast declined' if producer == CIPHER_CAST_PRODUCER else 'Paradigm copy cast declined', log=False)
         owners = {card.owner for card in cleanup_cards}
         if len(owners) > 1:
             raise StateInvariantError("Exile-cast cleanup must have one owner")

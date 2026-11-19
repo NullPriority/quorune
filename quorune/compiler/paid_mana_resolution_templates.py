@@ -3,7 +3,7 @@ from __future__ import annotations
 """Whole instructions gated by immutable actual spell-payment counts."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..spell_mana_conditions import ManaSpentCondition,PAID_MANA_CONDITION_MECHANIC
 from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC,RESOLUTION_CONDITION_OPERATION

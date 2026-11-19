@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Qualified source-owned spell costs through shared spell/target predicates."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import object_query_capabilities
 from ..targeted_spell_costs import (PUBLIC_TARGET_COST_CAPABILITY, TARGETED_SPELL_COST_CAPABILITY, TARGETED_SPELL_COST_HANDLER,

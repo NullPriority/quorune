@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source-spanned state conditions with the existing mandatory source sacrifice."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..state_trigger_model import PublicStateTriggerSpec,STATE_TRIGGER_EVENT,STATE_TRIGGER_MECHANIC
 from ..source_maintenance import SourceMaintenanceSpec
@@ -18,7 +18,9 @@ from .ir_model import OracleNode,append_residual
 
 
 def _state_condition(text,source_name):
-    condition=fixed_public_state_condition(text,source_name=source_name)
+    global_empty = re.fullmatch(r'there are no (?P<subject>creatures|artifacts|enchantments|lands|planeswalkers|battles|permanents) on the battlefield',text,re.I)
+    normalized = ('no ' + global_empty['subject'] + ' are on the battlefield') if global_empty is not None else text
+    condition=fixed_public_state_condition(normalized,source_name=source_name)
     if condition is None and text.casefold().startswith('you control no other '):
         condition=fixed_public_state_condition(re.sub('no other ','no ',text,count=1,flags=re.I),source_name=source_name)
         if condition is not None and condition.quantity is not None:
@@ -32,13 +34,14 @@ def _state_condition(text,source_name):
 
 def public_state_trigger_node(*,node_id,line,material_line,span,card_name,type_line,
         capability_registry,capability_profile,residuals):
-    match=re.fullmatch(r'When (?P<condition>you control .+?), sacrifice (?P<source>.+)\.',material_line,re.I)
+    match=re.fullmatch(r'When (?P<condition>you control .+?|there are no .+? on the battlefield), sacrifice (?P<source>.+)\.',material_line,re.I)
     if match is None or not re.search(r'\b(?:creature|artifact|enchantment|land|planeswalker|battle)\b',type_line,re.I):return None
     source=match['source']
     if not re.fullmatch(r'this (?:creature|artifact|enchantment|land|permanent)',source,re.I) and not SourceReferenceSpec(card_name).matches(source):return None
     condition=_state_condition(match['condition'],card_name)
     if condition is None:return None
-    try:spec=PublicStateTriggerSpec(condition)
+    version = 2 if condition.quantity is not None and condition.quantity.scope is CharacteristicQuantityScope.ALL_ZONES else 1
+    try:spec=PublicStateTriggerSpec(condition,schema_version=version)
     except ValueError:return None
     gate=explicit_capabilities_gate(state_trigger_capabilities(spec),capability_registry=capability_registry,capability_profile=capability_profile)
     residual_ids=(append_residual(residuals,kind='dependency_contract',text=line,span=span,

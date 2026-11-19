@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from .dependency_gate import dependency_gate
 from .ir_model import OracleFaceIR,OracleNode,SourceSpan,append_residual
-import re
+from . import regex_working_set as re
 
 
 def compile_paid_mana_spell_face(*,record,face_id,face_name,oracle_text,material_rows,effect_template,

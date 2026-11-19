@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from ..damage_modifier_state import DamagePreventionScope
+from ..replacement.immutable import thaw_value
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
 
 
@@ -24,8 +25,38 @@ def fixed_chosen_source_damageable_capabilities(*, effects, target_schema, mecha
             "target.public.player_or_damageable_permanent") if effects[0] == expected else ()
 
 
+def paired_target_combat_prevention_capabilities(*, effects, target_schema, mechanic_ids):
+    """Validate the complete ordered to/from pair sharing one stack group."""
+    if (len(effects) != 2 or "cr-615-prevention-effects" not in mechanic_ids
+            or target_schema is None or not direct_permanent_target_schema_is_closed(target_schema)):
+        return ()
+    base = {
+        "op": "create_damage_prevention_shield",
+        "source": "$source",
+        "subject": "*",
+        "mode": "all",
+        "duration": "until_end_of_turn",
+        "damage_kind": "combat",
+        "application_group_id": "$stack",
+    }
+    expected = (
+        {**base, "scope": DamagePreventionScope(target_ref="$target.0").to_dict()},
+        {**base, "scope": DamagePreventionScope(source_ref="$target.0").to_dict()},
+    )
+    if tuple(thaw_value(effect) for effect in effects) != expected:
+        return ()
+    return ("damage.prevention.persistent_amount", "target.revalidate_resolution")
+
+
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
-    if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
+    if 'cr-615-prevention-effects' not in set(mechanic_ids):return ()
+    if len(effects)==2 and target_schema is None:
+        from ..source_prevention import SOURCE_SUBJECT_VERSION,SOURCE_COMBAT_DIRECTION,source_prevention_dependencies
+        if (all(isinstance(effect,Mapping) and effect.get(SOURCE_SUBJECT_VERSION)==3 for effect in effects)
+                and tuple(effect.get(SOURCE_COMBAT_DIRECTION) for effect in effects)==('to','from')):
+            try:return tuple(sorted({cap for effect in effects for cap in source_prevention_dependencies(effect)}))
+            except (TypeError,ValueError):return ()
+    if len(effects)!=1:return ()
     effect=effects[0]
     if isinstance(effect,Mapping) and {'source_controller_target_version','source_controller_target'}.intersection(effect):
         from .target_controller_prevention import targeted_controller_prevention_capabilities
@@ -36,6 +67,17 @@ def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids
         try:return source_prevention_dependencies(effect)
         except (TypeError, ValueError):return ()
     direct_fields={'op','source','subject','mode','duration'}
+    # The ordinary global and resolving-controller shields have no additional
+    # scope descriptor. Their existing damage owner supplies that default.
+    if (isinstance(effect,Mapping) and target_schema is None
+            and set(effect) in (direct_fields,direct_fields|{'damage_kind'})
+            and effect.get('op')=='create_damage_prevention_shield'
+            and effect.get('source')=='$source' and effect.get('mode')=='all'
+            and effect.get('duration')=='until_end_of_turn'
+            and isinstance(effect.get('subject'),str) and effect['subject'] in {'*','$controller'}
+            and isinstance(effect.get('damage_kind','any'),str)
+            and effect.get('damage_kind','any') in {'any','combat','noncombat'}):
+        return ('damage.prevention.persistent_amount',)
     if (isinstance(effect,Mapping) and effect.get('op')=='create_damage_prevention_shield'
             and effect.get('source')=='$source' and effect.get('mode')=='all'
             and effect.get('duration')=='until_end_of_turn' and target_schema is not None

@@ -92,15 +92,31 @@ working set across repeated validation. A source edit, malformed replacement,
 unreadable file or deletion still changes the resolution result immediately;
 file size and timestamps do not establish trust. Default registry loads retain
 their existing capability and evidence validation scope.
+
+Default registry construction creates a fresh registry and rereads the current
+evidence bytes. A bounded cache reuses only a successful validation fingerprint
+for identical evidence content, registry identity and validation policy. Missing,
+unreadable, changed or malformed evidence still fails through the current
+reader and full validator. Failed validation is never cached. Mutable registry
+and game objects are not shared between constructions; the public evidence
+loader continues to return a fresh expanded document and perform full validation.
 Compound base-characteristic reads pass their already-read card definition to
 the static-fragment, activation, Station and Prepare readers. The record is local
 to that read and is not retained across operations. Each reader still applies
 its current face, source and trust checks; standalone calls read the definition
 through the ordinary card-record owner.
+Within a pure characteristic read frame, the database can reuse a row from
+its current connection. Each lookup still decodes an independent record.
+Open transactions read directly from SQLite.
 Typed trigger participation evaluates current characteristic inputs inside one
 existing read frame per collection pass. Explicit event-time source snapshots
 remain separate inputs. The frame ends before the caller resumes, so later
 ability removal, control changes and source departures receive fresh reads.
+Oracle program candidates can also share this frame. Registry loads and edits
+invalidate the candidates, and each lookup returns a fresh ordered list.
+Current static fragments use the registry's current programs. Historical
+replay registries can also contribute their legacy handlers, with the
+current program taking precedence for a shared key.
 
 The intrinsic layer is derived from the card's costs, targets, effects, event
 handlers, and runtime components. The format layer represents capabilities

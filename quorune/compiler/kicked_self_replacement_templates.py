@@ -3,7 +3,7 @@ from __future__ import annotations
 """Fixed result self-replacement using an already sealed Kicker choice."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..resolution_conditions import (
     RESOLUTION_CONDITION_OPERATION, RESOLUTION_CONDITION_MECHANIC,
@@ -45,7 +45,37 @@ def _replacement_component(alternative, normal, compile_component,source_name):
     return normal[0],(effect,),None,normal[3]
 
 
+def _kicked_untap_stat_replacement(text, compile_component):
+    match = re.fullmatch(
+        r"Untap target creature\. It gets (?P<ordinary>[+-]\d+/[+-]\d+) until end of turn\. "
+        r"If this spell was kicked, that creature gets (?P<kicked>[+-]\d+/[+-]\d+) until end of turn instead[.]?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    untap = compile_component("Untap target creature.")
+    normal_stats = compile_component(f'Target creature gets {match["ordinary"]} until end of turn.')
+    kicked_stats = compile_component(f'Target creature gets {match["kicked"]} until end of turn.')
+    if (
+        untap[0] is None or untap[2] is None or tuple(untap[1]) != ({"op": "untap", "card": "$target.0"},)
+        or any(result[0] is None or result[2] != untap[2] or len(result[1]) != 1
+               or result[1][0].get("op") != "modify_stats_until_end_of_turn"
+               or result[1][0].get("card") != "$target.0" for result in (normal_stats, kicked_stats))
+    ):
+        return None
+    from .bound_effect_programs import _program
+
+    normal = _program((untap, normal_stats), schema=untap[2])
+    kicked = _program((untap, kicked_stats), schema=untap[2])
+    if normal is None or kicked is None:
+        return None
+    return _kicked_condition_branches(normal.compiled(), kicked.compiled(), targeted=True)
+
+
 def kicked_self_replacement_template(text, *, source_name,compile_component):
+    shared = _kicked_untap_stat_replacement(text, compile_component)
+    if shared is not None:
+        return shared
     from .procedure_variants import literal_procedure_variant
     procedure = literal_procedure_variant(text)
     if procedure is not None and procedure.condition.casefold() == 'this spell was kicked':text = procedure.expanded()
@@ -71,6 +101,32 @@ def kicked_self_replacement_template(text, *, source_name,compile_component):
         replacement=_replacement_component(alternative,normal,compile_component,source_name)
     if replacement is None or not 1<=len(replacement[1])<=(3 if targeted else 1) or replacement[2]!=normal[2]:
         return None
+    return _kicked_condition_branches(normal, replacement, targeted=targeted)
+
+
+def kicked_additive_target_lifelink_template(text, *, compile_component):
+    """Keep the mandatory stat result in both arms of the immutable cast fact."""
+    match = re.fullmatch(
+        r"(?P<base>Target creature gets [+-]\d+/[+-]\d+ until end of turn\.) "
+        r"If this spell was kicked, that creature gains lifelink until end of turn[.]?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    normal = compile_component(match["base"])
+    rider = compile_component("Target creature gains lifelink until end of turn.")
+    if (
+        normal[0] is None or rider[0] is None or normal[2] is None or normal[2] != rider[2]
+        or len(normal[1]) != 1 or normal[1][0].get("op") != "modify_stats_until_end_of_turn"
+        or normal[1][0].get("card") != "$target.0"
+        or tuple(rider[1]) != ({"op": "grant_keyword_until_end_of_turn", "card": "$target.0", "keyword": "Lifelink"},)
+    ):
+        return None
+    kicked = (normal[0], (*normal[1], *rider[1]), normal[2], tuple(dict.fromkeys((*normal[3], *rider[3]))))
+    return _kicked_condition_branches(normal, kicked, targeted=True)
+
+
+def _kicked_condition_branches(normal, replacement, *, targeted):
     if not all(cast_fact_result_is_fixed(value[1],value[3],allow_fixed_damage_source=True,
             allow_targeted_damage_source=targeted) for value in (normal,replacement)):
         return None

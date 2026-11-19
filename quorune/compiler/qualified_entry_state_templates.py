@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compose existing public type queries with source-conditioned entry state."""
 
-import re
+from . import regex_working_set as re
 
 from ..qualified_entry_state_model import (
     QUALIFIED_ENTRY_STATE_CAPABILITY, QUALIFIED_ENTRY_STATE_HANDLER, QualifiedEntryStateSpec,

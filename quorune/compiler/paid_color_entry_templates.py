@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed source-entry counter clauses over actual colored mana units paid."""
 
-import re
+from . import regex_working_set as re
 
 from ..entry_counter_model import DynamicEntryCounterAmountSpec, DynamicEntryCounterCalculation, DynamicEntryCounterValueSource
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type

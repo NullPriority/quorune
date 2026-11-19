@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle lowering for fixed life-gain and life-loss effects."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -135,6 +135,20 @@ def fixed_actual_life_transfer_template(text: str,*,source_name=None):
         mechanic_ids=(LIFE_MECHANIC,))
 
 
+PLAYER_HISTORY_LIFE_LOSS_TEMPLATE = "fixed-player-history-life-loss-v1"
+
+
+def _temporary_opponent_life_gain_template(normalized):
+    if not re.fullmatch(r"Your opponents can['’]t gain life this turn[.]?", normalized, re.I):
+        return None
+    from ..life_gain_permission import temporary_opponent_life_gain_effect
+
+    return FixedLifeEffectTemplate(
+        template_id="temporary-opponent-life-gain-prohibition-v1",
+        effect=temporary_opponent_life_gain_effect(), mechanic_ids=(LIFE_MECHANIC,),
+    )
+
+
 def fixed_life_effect_template(
     text: str,
     *,source_name: str | None=None,
@@ -142,6 +156,9 @@ def fixed_life_effect_template(
     """Lower closed fixed controller, target-player, and opponent changes."""
 
     normalized = " ".join(text.strip().split())
+    from .public_life_gain_scopes import fixed_public_life_gain_template
+    public_rule = fixed_public_life_gain_template(normalized) or _temporary_opponent_life_gain_template(normalized)
+    if public_rule is not None:return public_rule
     from .life_total_setting_templates import life_total_setting_template
     setting=life_total_setting_template(normalized)
     if setting is not None:return setting
@@ -187,23 +204,19 @@ def fixed_life_effect_template(
                 "cr-101-the-magic-golden-rules",
             ),
         )
-    match = re.fullmatch(
-        rf"target player gains (?P<count>{FIXED_COUNT_PATTERN}) life\.?",
-        normalized,
-        re.IGNORECASE,
+    historical = re.fullmatch(
+        r"Target player (?P<condition>who lost life this turn|dealt damage by this creature this turn)"
+        r" loses (?:1|one) life[.]?", normalized, re.IGNORECASE,
     )
-    if match:
-        count = fixed_number(match.group("count"))
-        if count <= 0:
-            return None
+    if historical is not None:
+        from ..target_history import PLAYER_HISTORY_FIELD, TargetPlayerHistoryKind, TargetPlayerHistorySpec
+
+        kind = (TargetPlayerHistoryKind.LOST_LIFE if historical["condition"].casefold().startswith("who lost")
+                else TargetPlayerHistoryKind.DAMAGED_BY_SOURCE)
         return FixedLifeEffectTemplate(
-            template_id="gain-life-target-player-v1",
-            effect={
-                "op": _LIFE_OPERATION,
-                "player": "$target.0",
-                "delta": count,
-            },
-            target_schema=_player_target_schema("any"),
+            template_id=PLAYER_HISTORY_LIFE_LOSS_TEMPLATE,
+            effect={"op": "lose_life", "player": "$target.0", "amount": 1},
+            target_schema={**_player_target_schema("any"), PLAYER_HISTORY_FIELD: TargetPlayerHistorySpec(kind).to_dict()},
             mechanic_ids=(LIFE_MECHANIC, "cr-115-targets"),
         )
     match = re.fullmatch(

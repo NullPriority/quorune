@@ -38,9 +38,29 @@ class _CharacteristicReadFrame:
     values: dict = field(default_factory=dict)
     active: set = field(default_factory=set)
     identities: dict = field(default_factory=dict)
+    oracle_programs: dict[tuple[object, str], tuple[Any, ...]] | None = None
+    card_rows: dict[tuple[object, int, str], Any] | None = None
 
 
 _FRAME = ContextVar('quorune_characteristic_read_frame', default=None)
+
+
+def characteristic_oracle_program_cache(registry):
+    frame = _FRAME.get()
+    if frame is None or getattr(frame.host, "semantics", None) is not registry:
+        return None
+    if frame.oracle_programs is None:
+        frame.oracle_programs = {}
+    return frame.oracle_programs
+
+
+def characteristic_card_row_cache(database):
+    frame = _FRAME.get()
+    if frame is None or getattr(frame.host, "card_db", None) is not database:
+        return None
+    if frame.card_rows is None:
+        frame.card_rows = {}
+    return frame.card_rows
 
 
 @contextmanager

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .death_history_names import occurrence_death_name_fields
 
 import copy
 from collections.abc import Collection, Iterable, Mapping, Sequence
@@ -58,6 +59,7 @@ class ZoneTriggerProcessingHost(Protocol):
         origin: str | None = None,
         creature_subtypes: tuple[str, ...] | None = None,
         token: bool | None = None,
+        rules_names: tuple[str, ...] | None = None,
     ) -> None: ...
 
 @dataclass(frozen=True, slots=True)
@@ -147,11 +149,19 @@ def dispatch_zone_change_occurrence(
     events = normalized_zone_trigger_events(occurrence)
     if not history_pre_recorded:
         record_zone_change_history(host, occurrence, events=events)
+    from .unattachment_triggers import dispatch_departure_unattachments
+    dispatch_departure_unattachments(host, occurrence, DepartureTriggerSnapshot(
+        tuple(departure_sources), departure_source_zones, departure_source_characteristics,
+    ), trigger_batch=pending)
     for event in events:
         context = event.context
         if event.kind=='permanent.enter':
             from .tribute_entry_results import tribute_entry_context
             context={**dict(context),**tribute_entry_context(card,occurrence)}
+        if event.kind == "creature.dies":
+            from .event_card_return import death_source_exile_context
+
+            context = death_source_exile_context(host, context, occurrence, composition_departures)
         if composition_departures and event.kind == "permanent.leave":
             from .event_card_return import event_library_departure_context
 
@@ -241,6 +251,7 @@ def record_zone_change_history(
                     types=set(event.context["types"]),
                     creature_subtypes=canonical_creature_types(event.context["subtypes"]),
                     token=occurrence.token,
+                    **occurrence_death_name_fields(history, occurrence.previous_characteristics),
                 )
     previous_types = set(
         str(value)

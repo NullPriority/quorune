@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile complete fixed nonmana Buyback cost clauses into typed prices."""
 
-import re
+from . import regex_working_set as re
 
 from ..additional_cost_vocabulary import DISCARD_ONE_COST, SACRIFICE_ONE_COST
 from ..cast_lifecycles import FixedCastLifecycleKind, FixedCastLifecycleSpec

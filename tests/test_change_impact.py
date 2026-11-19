@@ -25,6 +25,18 @@ class ChangeImpactTests(unittest.TestCase):
             with self.subTest(owner=path):
                 self.assertLessEqual(expected, set(classify_changes([path]).test_modules))
 
+    def test_shared_execution_owners_add_retained_native_routes(self):
+        expected = {
+            "quorune/rules/activation/proposal.py": {"test_decision_opportunities", "test_library_search_rules"},
+            "quorune/continuous_effects.py": {"test_rules_primitives"},
+            "quorune/rules/casting/costs.py": {"test_fixed_cleave", "test_fixed_entwine", "test_fixed_overload"},
+        }
+        for owner, required in expected.items():
+            with self.subTest(owner=owner):
+                impact = classify_changes([owner])
+                self.assertEqual("ordinary_source", impact.risk_class)
+                self.assertLessEqual(required, set(impact.test_modules))
+
     def test_manifest_zone_sources_select_current_zone_contracts(self):
         expected = {
             "test_entry_designations",
@@ -66,7 +78,12 @@ class ChangeImpactTests(unittest.TestCase):
             with self.subTest(owner=owner):
                 plan = classify_changes([owner])
                 self.assertLessEqual(
-                    {"test_rule_capabilities", "test_capability_evidence", "test_card_program_trust"},
+                    {
+                        "test_rule_capabilities",
+                        "test_capability_evidence",
+                        "test_card_program_trust",
+                        "test_game_record_v3",
+                    },
                     set(plan.test_modules),
                 )
                 self.assertLessEqual(

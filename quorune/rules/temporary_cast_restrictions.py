@@ -40,6 +40,11 @@ def temporary_cast_node_capabilities(*,effects,target_schema,mechanic_ids,**kwar
     try:spec=TemporaryCastRestrictionSpec.from_dict(effect['restriction'])
     except (TypeError,ValueError):return ()
     if spec.player_scope=='target':
+        if effect['player'] == '$context.defending_player':
+            if (target_schema is None and spec.spell_kind == 'any'
+                    and 'trigger-event-normalized-self-attack' in mechanic_ids):
+                return (CAPABILITY, 'trigger.event.normalized_self_attack', 'trigger.placement.apnap')
+            return ()
         if effect['player']!='$target.0' or target_schema not in (
                 {'zones':['player'],'categories':['player'],'count':1,'player_relation':'any'},
                 {'zones':['player'],'categories':['player'],'count':1,'player_relation':'opponent'}):return ()
@@ -54,9 +59,25 @@ def temporary_cast_runtime_dependencies(program):
         if isinstance(value,Mapping):
             if value.get('op') == STACK_COUNTER_FOLLOWUP_OPERATION:
                 return {CAPABILITY} & set(stack_counter_followup_runtime_dependencies(program))
-            if value.get('op')==NEXT_COST_OPERATION:return set(validate_next_spell_cost_instruction(value)[1])
+            if value.get('op') == NEXT_COST_OPERATION:
+                if value.get('schema_version') == 2 and (
+                    (program.event, program.active_zone) != ('creature.attacks', 'battlefield')
+                    or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}
+                    or program.target_schema is not None or getattr(program, 'cost_schema', None) is not None
+                    or len(program.effects) != 1 or value is not program.effects[0] or program.handlers
+                    or 'trigger-event-normalized-self-attack' not in program.coverage or NEXT_COST_MECHANIC not in program.coverage
+                ):
+                    raise ValueError('Recurring spell costs require one exact source attack result')
+                return set(validate_next_spell_cost_instruction(value)[1])
             if value.get('op')==OPERATION:
                 spec=TemporaryCastRestrictionSpec.from_dict(value.get('restriction'))
+                if value.get('player') == '$context.defending_player' and (
+                    (program.event, program.active_zone) != ('creature.attacks', 'battlefield')
+                    or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}
+                    or program.target_schema is not None or getattr(program, 'cost_schema', None) is not None
+                    or len(program.effects) != 1 or value is not program.effects[0] or program.handlers
+                ):
+                    raise ValueError('Casting prohibition requires one sealed source attack without targets')
                 required=temporary_cast_node_capabilities(effects=(value,),target_schema=program.target_schema if spec.player_scope=='target' else None,mechanic_ids=program.coverage)
                 if not required:raise ValueError('Temporary casting restriction lacks an owned player, spell subject or target')
                 return set(required)
@@ -64,3 +85,12 @@ def temporary_cast_runtime_dependencies(program):
         if isinstance(value,(tuple,list)):return {cap for child in value for cap in walk(child)}
         return set()
     return tuple(sorted(walk((program.effects,program.handlers))))
+
+
+
+def attacked_defender_cast_recipient_has_left(host, raw_effect, effect):
+    """A resolved attack occurrence can outlive its defending player."""
+    recipient = effect.get('player')
+    return (raw_effect.get('player') == '$context.defending_player'
+        and isinstance(recipient, str) and recipient in host.state.players
+        and not host.state.players[recipient].in_game)

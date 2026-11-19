@@ -1,5 +1,5 @@
 """Matching unique-maximum intervening conditions and control recipients."""
-import re
+from . import regex_working_set as re
 from ..player_maximum_model import PlayerMaximumSpec,PLAYER_MAXIMUM_MECHANIC
 from ..continuous_conditions import FixedPublicStateConditionSpec,FixedPublicStateConditionKind,FixedPublicStateFact
 from ..recipient_control_model import recipient_control_effect,RECIPIENT_CONTROL_MECHANIC

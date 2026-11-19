@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed mixed type/subtype leaves for the existing target-form model."""
 
 from dataclasses import fields
-import re
+from . import regex_working_set as re
 
 from ..target_forms import TargetCharacteristicForm
 from .creature_subtypes import canonical_creature_subtype

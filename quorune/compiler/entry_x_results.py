@@ -1,6 +1,6 @@
 """Bind an ordinary X-cost permanent's self-entry instruction to sealed entry X."""
 from collections.abc import Mapping
-import re
+from . import regex_working_set as re
 from ..entry_x_amount_model import EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND,CastXAmountSpec
 from .declared_effect_amounts import declared_effect_amount_template

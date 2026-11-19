@@ -263,6 +263,7 @@ from .return_to_hand_handlers import (
     ReturnGraveyardCardToOwnerHandHandler,
     ReturnPermanentToOwnerHandHandler,
 )
+from .player_outcomes import PLAYER_OUTCOME_HANDLERS
 from .stack_counter_handlers import (
     CounterStackTargetHandler,
     STACK_COUNTER_HANDLERS,
@@ -400,6 +401,7 @@ from .zone_replacements import (
 
 @lru_cache(maxsize=1)
 def default_semantic_handler_registry() -> SemanticHandlerRegistry:
+    from .graveyard_recycling import GraveyardRecyclingHandler
     from .private_hand_collections import SelectedHandEntryHandler
     from .distributed_token_creation import DistributedTokenCreationHandler
     from .earthbend_handlers import EARTHBEND_HANDLERS
@@ -410,6 +412,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .combat_removal_handler import CombatRemovalHandler
     registry = SemanticHandlerRegistry(
         (
+            GraveyardRecyclingHandler(),
             SelectedHandEntryHandler(),
             CreateCompiledEmblemHandler(),
             DistributedTokenCreationHandler(),
@@ -436,6 +439,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             *IMPULSE_ACCESS_HANDLERS,
             *RETURN_TO_HAND_HANDLERS,
             *STACK_COUNTER_HANDLERS,
+            *PLAYER_OUTCOME_HANDLERS,
             *COUNTER_PLACEMENT_HANDLERS,
             *CONTROL_HANDLERS,
             *COUNTER_REMOVAL_HANDLERS,

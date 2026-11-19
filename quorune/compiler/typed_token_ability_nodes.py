@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import copy
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import ability_fragment_to_dict, canonical_ability_fragments
@@ -31,7 +31,7 @@ _POSTPOSED = re.compile(
     r'\.\s+(?:It|They)\s+(?:has|have)\s+"[^"]+"\.?',
     re.IGNORECASE,
 )
-_AND_QUOTED = re.compile(r'\s+and\s+"[^"]+"', re.IGNORECASE)
+_AND_QUOTED = re.compile(r',?\s+and\s+"[^"]+"', re.IGNORECASE)
 _WITH_QUOTED = re.compile(r'\s+with\s+"[^"]+"', re.IGNORECASE)
 _ABILITY_WORD = re.compile(r"^[A-Za-z][A-Za-z ']+\s+[—-]\s+(?P<body>.+)$")
 _PERMANENT_CARD_TYPES = frozenset(
@@ -74,7 +74,7 @@ def _token_ability_shell(text: str) -> tuple[str, tuple[str, ...]] | None:
         return None
     prefix = normalized[: matches[0].start()]
     if (
-        re.search(r"\bcreate\b", prefix, re.IGNORECASE) is None
+        re.search(r"\bcreates?\b", prefix, re.IGNORECASE) is None
         or re.search(r"\btokens?\b", prefix, re.IGNORECASE) is None
     ):
         return None
@@ -580,7 +580,9 @@ def typed_token_ability_nodes(
 ) -> tuple[OracleNode, ...] | None:
     """Compile one closed token shell plus independently exact abilities."""
 
-    parsed = _token_ability_shell(material_line)
+    from .named_equipment_token_templates import named_equipment_ability_shell, equipment_token_children
+    equipment_shell = named_equipment_ability_shell(material_line)
+    parsed = equipment_shell[:2] if equipment_shell is not None else _token_ability_shell(material_line)
     if parsed is None or capability_registry is None:
         return None
     shell, quoted_abilities = parsed
@@ -640,7 +642,12 @@ def typed_token_ability_nodes(
         characteristics = {"type_line": "Token Creature", "keywords": []}
     if not isinstance(characteristics, Mapping):
         return None
-    compiled = _token_fragments_and_children(
+    compiled = equipment_token_children(
+        record=record, characteristics=characteristics, name=created[0]['name'],
+        quoted=quoted_abilities, equip_cost=equipment_shell[2], face_id=face_id,
+        node_id=node_id, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    ) if equipment_shell is not None else _token_fragments_and_children(
         quoted_abilities=quoted_abilities,
         characteristics=characteristics,
         oracle_id=record.oracle_id,

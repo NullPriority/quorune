@@ -1,6 +1,6 @@
 """Fixed removal followups addressed to the same target's player information."""
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..target_controller_information import (
     TARGET_CONTROLLER_INFORMATION_MECHANIC, TARGET_OWNER_INFORMATION_MECHANIC,

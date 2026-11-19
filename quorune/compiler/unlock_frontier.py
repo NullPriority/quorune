@@ -4,7 +4,7 @@ from collections import Counter, defaultdict
 from dataclasses import asdict
 import hashlib
 from itertools import combinations
-import re
+from . import regex_working_set as re
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..card_programs.adapters import _compile_best_available_card_program_from_ir

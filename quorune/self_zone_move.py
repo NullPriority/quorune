@@ -10,6 +10,13 @@ from .abilities import ActivatedAbility
 from .activation_condition_model import activation_restriction_spec
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .replacement.immutable import FrozenMap, freeze_value
+from .entry_counter_model import EffectEntryCounter
+from .source_self_entry_counter_model import (
+    FIELD as SELF_ENTRY_COUNTER_FIELD, FixedSelfEntryCounter, compile_source_self_entry_counter,
+)
+from .self_zone_move_followups import (
+    SelfEntryFollowup, compile_self_entry_followup, FIELD as SELF_ENTRY_FOLLOWUP_FIELD,
+)
 
 
 SELF_ZONE_MOVE_CAPABILITY_ID = "zone.self_move.activated"
@@ -37,10 +44,19 @@ class SelfZoneMoveSpec:
     source_form: str
     requires_complete_card_program: bool
     schema_version: int = 1
+    followup: SelfEntryFollowup | None = None
+    entry_counter: FixedSelfEntryCounter | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise SelfZoneMoveError("Unsupported self-zone-move schema version")
+        if ((self.schema_version == 1 and self.followup is not None)
+                or (self.schema_version == 2 and not isinstance(self.followup, SelfEntryFollowup))
+                or (self.schema_version == 3 and self.followup is not None)):
+            raise SelfZoneMoveError('Self-entry follow-ups require their explicit version-two spec')
+        if ((self.schema_version != 3 and self.entry_counter is not None)
+                or (self.schema_version == 3 and not isinstance(self.entry_counter, FixedSelfEntryCounter))):
+            raise SelfZoneMoveError('Source entry counters require their explicit version-three spec')
         if not isinstance(self.ability, ActivatedAbility):
             raise SelfZoneMoveError("Self-zone movement requires a typed ability")
         if any(
@@ -61,9 +77,25 @@ class SelfZoneMoveSpec:
             raise SelfZoneMoveError(
                 "Self-zone movement ability has the wrong active zone"
             )
+        if self.schema_version == 2:
+            material = _self_zone_effect_material(self.ability)
+            movement, separator, continuation = material.partition('. ')
+            if (not separator or compile_self_entry_followup(continuation) is not self.followup
+                    or self.origin != 'graveyard' or self.destination != 'battlefield'
+                    or self.source_form != 'card' or movement+'.' != (
+                        'Return this card from your graveyard to the battlefield'
+                        + (' tapped.' if self.tapped else '.'))):
+                raise SelfZoneMoveError('Self-entry continuation does not match its complete printed body')
+        if self.schema_version == 3 and (
+                compile_source_self_entry_counter(_self_zone_effect_material(self.ability))
+                != (self.tapped, self.entry_counter)
+                or (self.origin, self.destination, self.source_form) != ('graveyard', 'battlefield', 'card')):
+            raise SelfZoneMoveError('Source entry counters do not match the complete printed body')
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "SelfZoneMoveSpec":
+        if not isinstance(value, Mapping):
+            raise SelfZoneMoveError('Self-zone movement spec must be an object')
         expected = {
             "schema_version",
             "ability",
@@ -73,8 +105,18 @@ class SelfZoneMoveSpec:
             "source_form",
             "requires_complete_card_program",
         }
+        if value.get('schema_version') == 2:
+            expected.add('followup')
+        if value.get('schema_version') == 3:
+            expected.add('entry_counter')
         if set(value) != expected or not isinstance(value.get("ability"), Mapping):
             raise SelfZoneMoveError("Self-zone movement descriptors have a closed shape")
+        try:
+            followup = SelfEntryFollowup(value['followup']) if 'followup' in value else None
+            entry_counter = (FixedSelfEntryCounter.from_dict(value['entry_counter'])
+                             if 'entry_counter' in value else None)
+        except (ValueError, TypeError) as exc:
+            raise SelfZoneMoveError('Unsupported self-entry follow-up') from exc
         return cls(
             ability=ActivatedAbility.from_dict(value["ability"]),
             origin=value["origin"],
@@ -83,6 +125,8 @@ class SelfZoneMoveSpec:
             source_form=value["source_form"],
             requires_complete_card_program=value["requires_complete_card_program"],
             schema_version=value["schema_version"],
+            followup=followup,
+            entry_counter=entry_counter,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -94,6 +138,8 @@ class SelfZoneMoveSpec:
             "tapped": self.tapped,
             "source_form": self.source_form,
             "requires_complete_card_program": self.requires_complete_card_program,
+            **({'followup': self.followup.value} if self.followup is not None else {}),
+            **({'entry_counter': self.entry_counter.to_dict()} if self.entry_counter is not None else {}),
         }
 
     def effect(self) -> dict[str, Any]:
@@ -103,15 +149,16 @@ class SelfZoneMoveSpec:
             "destination": self.destination,
             "tapped": self.tapped,
             "source_form": self.source_form,
+            **({SELF_ENTRY_FOLLOWUP_FIELD: {'version': 1, 'kind': self.followup.value}}
+               if self.followup is not None else {}),
+            **({SELF_ENTRY_COUNTER_FIELD: self.entry_counter.to_dict()} if self.entry_counter is not None else {}),
         }
 
     def to_activated_ability(self) -> ActivatedAbility:
         return self.ability
 
 
-def compile_self_zone_move(
-    ability: ActivatedAbility,
-) -> SelfZoneMoveSpec | None:
+def _self_zone_effect_material(ability: ActivatedAbility) -> str:
     effect = " ".join(ability.effect_text.split())
     restricted = re.fullmatch(r"(?P<effect>.+?\.) Activate only (?P<restriction>.+)\.", effect)
     if restricted is not None:
@@ -121,8 +168,28 @@ def compile_self_zone_move(
             or ability.activation_limit is not restriction.activation_limit
             or ability.activation_conditions != restriction.conditions
         ):
-            return None
+            return ''
         effect = restricted['effect']
+    return effect
+
+
+def compile_self_zone_move(
+    ability: ActivatedAbility,
+) -> SelfZoneMoveSpec | None:
+    effect = _self_zone_effect_material(ability)
+    counter_entry = compile_source_self_entry_counter(effect)
+    if counter_entry is not None:
+        tapped, entry_counter = counter_entry
+        return SelfZoneMoveSpec(ability=replace(ability, zones=('graveyard',)),
+            origin='graveyard', destination='battlefield', tapped=tapped, source_form='card',
+            requires_complete_card_program=True, schema_version=3, entry_counter=entry_counter)
+    followup = None
+    movement, separator, continuation = effect.partition('. ')
+    if separator:
+        followup = compile_self_entry_followup(continuation)
+        if followup is None:
+            return None
+        effect = movement+'.'
     result: tuple[str, str, bool, str] | None = None
     if effect == "Return this card from your graveyard to your hand.":
         result = ("graveyard", "hand", False, "card")
@@ -135,6 +202,8 @@ def compile_self_zone_move(
     if result is None:
         return None
     origin, destination, tapped, source_form = result
+    if followup is not None and (origin, destination, source_form) != ('graveyard', 'battlefield', 'card'):
+        return None
     return SelfZoneMoveSpec(
         ability=replace(ability, zones=(origin,)),
         origin=origin,
@@ -142,6 +211,8 @@ def compile_self_zone_move(
         tapped=tapped,
         source_form=source_form,
         requires_complete_card_program=destination == "battlefield",
+        schema_version=2 if followup is not None else 1,
+        followup=followup,
     )
 
 
@@ -168,8 +239,17 @@ class SelfZoneMoveIntent:
     source_form: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     aura_target_ref: str | None = None
+    effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
 
     def __post_init__(self) -> None:
+        if (not isinstance(self.effect_entry_counters, tuple)
+                or any(not isinstance(counter, EffectEntryCounter) for counter in self.effect_entry_counters)
+                or self.effect_entry_counters and (
+                    len(self.effect_entry_counters) != 1
+                    or (self.origin, self.destination, self.source_form) != ('graveyard', 'battlefield', 'card')
+                    or self.effect_entry_counters[0].placing_player != self.actor
+                    or self.effect_entry_counters[0].source_ref != self.stack_ref)):
+            raise SelfZoneMoveError('Self-zone entry counters require their typed placing player and stack source')
         if self.aura_target_ref is not None and (
             self.destination != 'battlefield' or type(self.aura_target_ref) is not str or not self.aura_target_ref
         ):
@@ -208,6 +288,8 @@ class SelfZoneMoveHost(Protocol):
 
     def move_card(self, object_id: str, destination: str, **kwargs: Any) -> Any: ...
 
+    def move_object_intent(self, intent: Any) -> Any: ...
+
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
     def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
@@ -235,6 +317,16 @@ def resolve_self_zone_move(
         )
         if "aura" not in subtypes:
             return None
+    if intent.effect_entry_counters:
+        from .semantic_runtime.zone_move_intent import ZoneMoveIntent
+        host.move_object_intent(ZoneMoveIntent(actor=intent.actor, object_ref=card.ref,
+            expected_zones=(intent.origin,), destination=intent.destination,
+            reason='Activated self-zone movement resolved', new_controller=intent.actor,
+            tapped_policy='tapped' if intent.tapped else 'untapped', optional_if_missing=True,
+            expected_zone_change_counter=card.zone_change_counter,
+            effect_entry_counters=intent.effect_entry_counters,
+            replacement_selections=intent.replacement_selections))
+        return card.ref if card.zone == intent.destination else None
     host.move_card(
         card.object_id,
         intent.destination,

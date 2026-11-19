@@ -65,6 +65,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "exile_top_library_card",
                 "linked_exile_return",
                 "return_linked_exiled_objects",
+                "recover_source_result",
                 "mill",
                 "modify_all_matching_permanents_until_end_of_turn",
                 "move",
@@ -201,6 +202,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "reorder_top",
                 "transform",
                 "turn_face_up",
+                "phase_out_permanent",
             }
         ),
     ),

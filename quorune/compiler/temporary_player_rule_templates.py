@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Ordered temporary player-rule productions with independent typed owners."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.cast_cascade_grants import CAST_CASCADE_MECHANIC, CAST_CASCADE_OPERATION, CastCascadeScope
 from ..rules.next_cast_counter_protection import (

@@ -1,5 +1,5 @@
 """Revealed found-card placement after a single closed library search."""
-import re
+from . import regex_working_set as re
 from ..conditional_search_model import ConditionalSearchSpec,CONDITIONAL_SEARCH_MECHANIC
 from ..library_search_model import FixedCountedLibrarySearchTemplate,search_selector,FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID
 from ..replacement.immutable import FrozenMap

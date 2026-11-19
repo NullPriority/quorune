@@ -1,5 +1,5 @@
 """A complete cleanup clause over an already-closed ordinary token producer."""
-import re
+from . import regex_working_set as re
 from ..created_token_cleanup_model import CreatedTokenCleanupSpec, TOKEN_CLEANUP_MECHANIC
 
 

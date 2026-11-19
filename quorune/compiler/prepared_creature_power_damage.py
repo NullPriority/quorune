@@ -1,5 +1,5 @@
 """Compose fixed target preparation with its one-way creature-power damage."""
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..targets import TargetGroup

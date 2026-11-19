@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..ring_model import RING_MECHANIC, RING_TEMPTATION_OPERATION
 

@@ -1,0 +1,783 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned complete attached-characteristic qualifier originals and controls",
+  "cards": [
+    {
+      "oracle_id": "290cd0b1-55d6-4b30-962d-075a6f75d562",
+      "name": "Aerial Modification",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant creature or Vehicle\nAs long as enchanted permanent is a Vehicle, it's a creature in addition to its other types.\nEnchanted creature gets +2/+2 and has flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ac6cf9a7-732d-4ff0-9e88-aae97a2ff169",
+      "name": "Siege Modification",
+      "mana_cost": "{1}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant creature or Vehicle\nAs long as enchanted permanent is a Vehicle, it's a creature in addition to its other types.\nEnchanted creature gets +3/+0 and has first strike.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5ea0e3a5-9c38-4da4-98a6-41c14be512d9",
+      "name": "Short Circuit",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Flash\nEnchant artifact or creature\nAs long as enchanted permanent is a creature, it gets -3/-0 and loses flying.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6629e5f3-ac59-48f8-b09c-3b98f59b9922",
+      "name": "Awakened Awareness",
+      "mana_cost": "{X}{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant artifact or creature\nWhen this Aura enters, put X +1/+1 counters on enchanted permanent.\nAs long as enchanted permanent is a creature, it has base power and toughness 1/1.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7ddd84d2-1a6d-43f5-a42d-3c66eee5f7e5",
+      "name": "Born to Drive",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment \u2014 Aura",
+      "oracle_text": "Enchant artifact or creature\nAs long as enchanted permanent is a creature, it gets +1/+1 for each creature and/or Vehicle you control.\nChannel \u2014 {2}{W}, Discard this card: Create two 1/1 colorless Pilot creature tokens with \"This token crews Vehicles as though its power were 2 greater.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant",
+        "Channel"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sky Skiff",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "oracle_text": "Flying\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "3",
+      "type_line": "Artifact \u2014 Vehicle"
+    },
+    {
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "name": "Memnite",
+      "mana_cost": "{0}",
+      "type_line": "Artifact Creature \u2014 Construct",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Donate",
+      "oracle_id": "049d1fb2-cce7-40e7-a633-e84cf9782d89",
+      "oracle_text": "Target player gains control of target permanent you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1999-06-07",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Renegade Freighter",
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "oracle_text": "Whenever this Vehicle attacks, it gets +1/+1 and gains trample until end of turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "3",
+      "type_line": "Artifact \u2014 Vehicle"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "290cd0b1-55d6-4b30-962d-075a6f75d562",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "If Aerial Modification becomes unattached from a Vehicle that\u2019s attacking or blocking, that Vehicle will be removed from combat unless another effect (such as its crew ability) is also making it a creature."
+    },
+    {
+      "oracle_id": "ac6cf9a7-732d-4ff0-9e88-aae97a2ff169",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "If Siege Modification becomes unattached from a Vehicle that\u2019s attacking or blocking, that Vehicle will be removed from combat unless another effect (such as its crew ability) is also making it a creature."
+    },
+    {
+      "oracle_id": "6629e5f3-ac59-48f8-b09c-3b98f59b9922",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If Awakened Awareness is enchanting a Vehicle that is currently a creature or it becomes a creature later, its base power and toughness will be 1/1, not the power and toughness printed on the Vehicle."
+    },
+    {
+      "oracle_id": "6629e5f3-ac59-48f8-b09c-3b98f59b9922",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "You may cast this spell with X equal to 0 if, for example, you just want an opponent's creature to have base power and toughness 1/1 but not give it counters."
+    },
+    {
+      "oracle_id": "6629e5f3-ac59-48f8-b09c-3b98f59b9922",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The enchanted creature's toughness becomes 1 before the triggered ability that puts counters on it goes on the stack. If it has damage equal to or greater than its toughness at that point, it will be destroyed before the triggered ability that puts counters on it resolves."
+    },
+    {
+      "oracle_id": "6629e5f3-ac59-48f8-b09c-3b98f59b9922",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Awakened Awareness will overwrite any previous effects that set the enchanted creature's power and toughness to specific numbers. Effects that otherwise modify the enchanted creature's power and toughness will still apply no matter when they took effect. The same is true for +1/+1 counters."
+    },
+    {
+      "oracle_id": "7ddd84d2-1a6d-43f5-a42d-3c66eee5f7e5",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Discarding the card is part of the cost to activate a channel ability."
+    },
+    {
+      "oracle_id": "7ddd84d2-1a6d-43f5-a42d-3c66eee5f7e5",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a channel ability requires a target, you may not activate it without a target just to discard the card."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it."
+    },
+    {
+      "oracle_id": "049d1fb2-cce7-40e7-a633-e84cf9782d89",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you Donate an Aura, it stays where it is, but the targeted player now controls it."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "5e73c8d2-5cad-4201-b9ef-32be82797e3b",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    }
+  ]
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 """One-or-more public zone predicates over the existing sealed occurrence owner."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from .creature_subtypes import canonical_creature_subtype_surface
 from .qualified_zone_event_bindings import qualified_public_zone_event_binding_spec

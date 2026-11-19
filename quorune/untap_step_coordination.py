@@ -10,6 +10,7 @@ from .semantic_runtime.untap_steps import current_untap_step_plan
 from .tap_state import (
     consume_next_untap_prohibition,
     expire_exert_untap_restrictions,
+    expire_next_player_untap,
     REASON_FIELD,
     untap_permanent,
     tap_state_occurrence_context,
@@ -260,6 +261,7 @@ def commit_untap_step(
             tap_state_occurrence_context(host, card, reason="untap step"),
             held_triggers=waiting_triggers,
         )
+    expire_next_player_untap(host, active_player)
     host._advance_step(held_triggers=waiting_triggers)
 
 

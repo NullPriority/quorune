@@ -362,6 +362,17 @@ independent.
   components, but those components receive bounded immutable contexts and do
   not mutate state.
 
+Fixed-subtype mass transformation uses a closed version-one `transform`
+instruction. It selects current effective battlefield subtypes at resolution and
+uses the canonical simultaneous transform, timestamp and event owner. A version-two
+timestamp continuation suspends and validates its current trusted resolving
+instruction before resumption; historical untap and state-action continuation
+records keep their version-one fields. The
+producer has an independent runtime capability even when coverage hints are
+absent. Historical unmarked source instructions retain their original source
+incarnation and captured-count contract; spells select current counts only when
+the instruction resolves. See [ADR 0168](../adr/0168-fixed-subtype-transform.md).
+
 Paired Daybound/Nightbound programs and legacy previous-turn self-transform
 programs carry the shared current-ability fragment marker. Runtime face and
 trigger discovery therefore consult the same layer-6 component applicability
@@ -445,3 +456,7 @@ See [ADR 0005](../adr/0005-card-program-v2.md),
 [typed-handler boundary](semantic-handlers.md), the
 [runtime-component boundary](runtime-components.md), and the
 [trust-closure model](trust-closure.md).
+
+Fixed-subtype transformation currently requires a direct resolution instruction.
+Nested optional, conditional, payment and modal carriers fail runtime admission
+until their timestamp suspension has a represented continuation.

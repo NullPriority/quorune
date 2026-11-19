@@ -6,7 +6,7 @@ The descriptor uses existing public quantity producers and closed color choices;
 cost and gameplay admission remain separately capability gated.
 """
 
-import re
+from . import regex_working_set as re
 
 from ..characteristic_fragments import (
     CharacteristicQuantityScope,

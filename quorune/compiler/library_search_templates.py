@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle lowering for fixed library searches to the battlefield."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import CREATURE_SUBTYPES
@@ -392,6 +392,18 @@ def fixed_library_search_effect_template(
     """Lower one fixed restrictive library search directly to the battlefield."""
 
     normalized = " ".join(text.strip().split())
+    from .query_bound_search_templates import query_bound_library_search_template
+    bounded = query_bound_library_search_template(normalized)
+    if bounded is not None:
+        return bounded
+    from .qualified_library_search_templates import qualified_library_search_template
+    qualified = qualified_library_search_template(normalized)
+    if qualified is not None:
+        return qualified
+    from .named_search_templates import named_zone_search_template
+    named = named_zone_search_template(normalized)
+    if named is not None:
+        return named
     match = _FIXED_SEARCH.fullmatch(normalized)
     if match is None:
         coordinated = _FIXED_SEARCH_AND_PUT.fullmatch(normalized)

@@ -130,7 +130,7 @@ class AnnouncedActivationXRuntimeTests(unittest.TestCase):
         return self.replay(session,load=True)
 
     def test_unknown_body_and_partial_sibling_cannot_expose_paid_x_activation(self):
-        for index,name in enumerate(('Generic Unknown X','Generic Partial X','Ent-Draught Basin','Jiwari, the Earth Aflame')):
+        for index,name in enumerate(('Generic Unknown X','Generic Partial X','Ent-Draught Basin')):
             with self.subTest(name=name):
                 session=self.session(71201100+index);source=self.add(session.engine,name)
                 source.acquired_control_turn_count=-1

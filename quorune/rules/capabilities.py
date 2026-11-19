@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .library_result_capability_shapes import LIBRARY_RESULT_MECHANICS
 
 from .tap_additional_cost import PAYMENT_COMPOSITION_CAPABILITY,PAYMENT_COMPOSITION_MECHANIC
 from .casting_additional_cost_groups import fixed_additional_cost_node_capabilities
@@ -146,8 +147,10 @@ from ..delayed_object_model import DELAYED_OBJECT_CAPABILITY,DELAYED_OBJECT_MECH
 from ..compiler.monarch_templates import MONARCH_MECHANIC
 from ..ring_model import RING_MECHANIC, RING_TEMPTATION_CAPABILITY
 from ..champion_model import CHAMPION_MECHANIC, CHAMPION_CAPABILITY
-from ..compiler.event_player_choice_templates import EVENT_PLAYER_CHOICE_CAPABILITY, EVENT_PLAYER_CHOICE_MECHANIC
-from ..compiler.self_return_templates import FIXED_SELF_RETURN_MECHANIC
+from ..compiler.event_player_choice_templates import (
+    EVENT_PLAYER_CHOICE_CAPABILITY, EVENT_PLAYER_CHOICE_MECHANIC, SPELL_CASTER_LAND_RETURN_MECHANIC,
+)
+from ..self_zone_move_followups import FIXED_SELF_RETURN_MECHANIC, SELF_ZONE_MOVE_MECHANIC_CAPABILITIES, SELF_ZONE_MOVE_SHAPE_GATED_MECHANICS
 from ..compiler.impulse_access_templates import (
     IMPULSE_ACCESS_CAPABILITY_ID,
     IMPULSE_ACCESS_MECHANIC_ID,
@@ -287,6 +290,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'mana-source-counter-depletion': ('mana.activated.counter_depletion_result',),
     'commander-learn': ('keyword_action.learn.commander',),
     'half-current-player-life-loss': ('life.loss.half_current_player',),
+    'third-current-player-life-loss': ('life.loss.third_current_player',),
+    'event-player-fixed-creature-stat-set': ('resolution.event_player.fixed_creature_stat_set',),
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
     'alternative-quality-discard': ('choice.affected_player.alternative_discard',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
@@ -295,6 +300,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'sequential-reciprocal-power-damage': ('damage.creature_power.reciprocal_sequence',),
     'conditional-target-power-preparation': ('resolution.effect_program.conditional_target_preparation',),
     'current-target-self-replacement': ('resolution.effect.current_target_self_replacement',),
+    'named-library-graveyard-search': ('library.search.named_library_graveyard',),
+    'qualified-library-card-search': ('library.search.qualified_card',),
+    'fixed-target-library-inspection': ('library.inspect.fixed_target_player',),
     'ordered-search-destination-allocation': ('library.search.ordered_destination_allocation',),
     'overload': ('casting.alternative_cost.overload_fixed_mana',),
     'cleave': ('casting.alternative_cost.cleave_fixed_mana',),
@@ -342,8 +350,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         mechanic: ("casting.lifecycle.fixed_public",)
         for mechanic in _FIXED_CAST_LIFECYCLE_MECHANICS
     },
-    "self-zone-move": ("zone.self_move.activated",), "source-graveyard-hand-return": ("zone.return.triggered_self_graveyard_hand",),
-    "source-graveyard-battlefield-return": ("zone.return.triggered_self_graveyard_battlefield",),
+    **SELF_ZONE_MOVE_MECHANIC_CAPABILITIES,
     "fixed-target-player-effect-sequence": ("resolution.effect.fixed_target_player_sequence",), "madness": ("casting.madness.fixed_mana",), "typed-discard-cause": ("zone.discard.typed_cause",),
     'public-quantity-mana': ('mana.production.public_quantity',),
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
@@ -351,6 +358,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'ravenous':('keyword.ravenous.entry_x_and_draw',),
     'source-entry-x-result-amount':('quantity_expression.source_entry_x',),
     'fixed-attacking-token-result':('token.creation.fixed_attacking_definition',),
+    'fixed-per-opponent-attacking-token-result':('token.creation.fixed_per_opponent_attacking_definition',),
     'ordinary-created-token-cleanup':('token.creation.fixed_definition_cleanup',),
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'incubate':('token.creation.incubate',),
@@ -524,6 +532,14 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'attachment-departure-source-return',
+        *SELF_ZONE_MOVE_SHAPE_GATED_MECHANICS,
+        'fixed-bounded-hand-free-cast',
+        'fixed-event-player-optional-draw',
+        'all-named-target-counter-removal',
+        'optional-target-all-counter-removal',
+        'chosen-counter-removal',
+        'fixed-optional-target-characteristic-result',
         'alternative-quality-discard',
         'shared-target-set-result-sequence',
         'fixed-target-entry-counter-reanimation',
@@ -551,6 +567,8 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'paid-entry-copy-offspring',
         'paid-entry-copy-squad',
         'half-current-player-life-loss',
+        'third-current-player-life-loss',
+        'event-player-fixed-creature-stat-set',
         'half-affected-player-domain-choice',
         'fixed-token-typed-ability-definition',
         'fixed-spree-mode-costs',
@@ -1303,14 +1321,18 @@ def capability_dependencies_for_node(
 
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
+    from .special_node_shapes import special_node_covered_mechanics
+    from .target_library_shuffle import shuffle_covered_mechanics
     from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_MECHANIC
     from ..resolution_conditions import CAST_FACT_CONDITION_MECHANICS
     from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
     from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
     from .revealed_library_top import REVEAL_TOP_CAPABILITY, REVEAL_TOP_MECHANIC
+    from ..event_card_return import DEATH_LAND_EXILE_CAPABILITY, DEATH_LAND_EXILE_MECHANIC
 
     mapping = {
         DAMAGE_DEATH_EXILE_CAPABILITY: DAMAGE_DEATH_EXILE_MECHANIC,
+        DEATH_LAND_EXILE_CAPABILITY: DEATH_LAND_EXILE_MECHANIC,
         DESTRUCTION_RESULT_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
         PUBLIC_EXILE_RESULT_CAPABILITY: PUBLIC_EXILE_RESULT_MECHANIC,
         REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,
@@ -1324,17 +1346,9 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'damage.creature_power.reciprocal_sequence': 'sequential-reciprocal-power-damage',
         'resolution.effect_program.conditional_target_preparation': 'conditional-target-power-preparation',
         'resolution.effect.current_target_self_replacement': 'current-target-self-replacement',
-        'library.search.ordered_destination_allocation': 'ordered-search-destination-allocation',
         PREPARATION_RESULT_CAPABILITY: PREPARATION_RESULT_MECHANIC,
-        'library.order.fixed_controller':'fixed-controller-top-order',
-        'library.order.fixed_hand_to_top': 'fixed-hand-to-library-top',
-        'library.order.affected_player_hand_to_top': 'fixed-affected-player-hand-to-top',
-        'library.order.graveyard_targets': 'ordered-graveyard-library-targets',
         'card.return.opponent_graveyard_to_owner_hand': 'opposing-graveyard-return-then-targeted-result',
-        'casting.resolution.targeted_graveyard': 'targeted-resolving-graveyard-cast',
-        'casting.resolution.graveyard_copies': 'resolving-graveyard-copy-cast',
         'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
-        'library.shuffle.fixed_controller':'fixed-controller-shuffle',
         'trigger.state.fixed_public_condition':'fixed-public-state-trigger',
         FIXED_OPTIONAL_EFFECT_CAPABILITY: FIXED_OPTIONAL_EFFECT_MECHANIC,
         FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
@@ -1351,6 +1365,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'choice.controller.bounded_return_owner_hand': 'bounded-controlled-return',
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
+        'zone.return.attachment_departure_source': 'attachment-departure-source-return',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         "library.select.fixed_controller": FIXED_LIBRARY_SELECTION_MECHANIC,
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
@@ -1366,12 +1381,19 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         "continuous.resolution.source_protection_choice": "temporary-source-protection-choice",
         "continuous.resolution.source_fixed_protection": "temporary-source-fixed-protection",
         "resolution.effect_program.bound_references": "bound-effect-program",
+        "counter.removal.all_named_target_effect": "all-named-target-counter-removal",
+        "counter.removal.optional_target_all_effect": "optional-target-all-counter-removal",
+        "life.gain.fixed_public_scope": "fixed-public-life-gain",
+        "hand.reveal.colored_count_result": "colored-hand-reveal-results",
+        "casting.fact.fixed_alternative_paid": "paid-alternative-cast-results",
     }
     return {
         mechanic
         for capability, mechanic in mapping.items()
         if capability in supplied
-    } | fixed_library_search_covered_mechanics(supplied) | control_covered_mechanics(supplied) | fixed_event_player_result_covered_mechanics(supplied)
+    } | fixed_library_search_covered_mechanics(supplied) | control_covered_mechanics(supplied) | fixed_event_player_result_covered_mechanics(supplied) | shuffle_covered_mechanics(supplied) | special_node_covered_mechanics(supplied) | {
+        mechanic for capability, mechanic in LIBRARY_RESULT_MECHANICS.items() if capability in supplied
+    }
 
 
 def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
@@ -1397,7 +1419,7 @@ def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add("return-to-owner-hand")
     if _entry.FIXED_ENTRY_RETURN_CAPABILITY in supplied:
         covered.update(
-            {_entry.FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand"}
+            {_entry.FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand", SPELL_CASTER_LAND_RETURN_MECHANIC}
         )
     return covered
 
@@ -1420,10 +1442,12 @@ def capability_covered_mechanics(
         covered.update({'fixed-activated-source-transform', TRIGGERED_SOURCE_TRANSFORM_MECHANIC, 'cr-701-transform'})
     if supplied.intersection({"target.public.player_or_damageable_permanent", "target.revalidate_resolution"}):
         covered.add("cr-115-targets")
+    if 'permanent.sacrifice.fixed_source' in supplied:
+        covered.update({'fixed-source-sacrifice', 'sacrifice'})
     if "resolution.effect.fixed_homogeneous_target_set" in supplied:
         covered.add("fixed-homogeneous-target-set")
     if supplied.intersection(
-        {"permanent.tap.effect", "permanent.untap.effect"}
+        {"permanent.tap.effect", "permanent.untap.effect", "untap.step.prohibit_next_controller"}
     ):
         covered.add("tap-and-untap")
     if supplied.intersection(
@@ -1478,6 +1502,8 @@ def capability_covered_mechanics(
         covered.add("cr-603-handling-triggered-abilities")
     from .resolution_characteristic_shapes import continuous_resolution_covered_mechanics
     covered.update(continuous_resolution_covered_mechanics(supplied))
+    from .event_player_modifiers import event_player_modifier_covered_mechanics
+    covered.update(event_player_modifier_covered_mechanics(supplied))
     if "combat.declaration.typed_components" in supplied:
         covered.update(
             {
@@ -1529,13 +1555,8 @@ def capability_covered_mechanics(
         }
     ):
         covered.add("cr-601-casting-spells")
-    if supplied.intersection(
-        {
-            "counter.producer.cumulative_upkeep_fixed_life",
-            "counter.producer.cumulative_upkeep_fixed_mana",
-        }
-    ):
-        covered.update({"cr-122-counters", "cumulative upkeep"})
+    from .cumulative_upkeep_capability_shapes import cumulative_upkeep_covered_mechanics
+    covered.update(cumulative_upkeep_covered_mechanics(supplied))
     if "trigger.keyword.echo.fixed_mana" in supplied:
         covered.add(_ECHO_MECHANIC)
     if "keyword_action.explore.single" in supplied:

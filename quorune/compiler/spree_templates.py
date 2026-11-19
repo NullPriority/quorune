@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-import re
+from . import regex_working_set as re
 
 from ..spree_model import SPREE_FIXED_MECHANIC, SpreeModeCosts
 from ..util import mana_cost_to_vector, stable_json

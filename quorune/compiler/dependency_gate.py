@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..aura import is_enchant_keyword_line, parse_enchant_line
@@ -240,6 +240,11 @@ def _enchant_dependency_gate(
     capability_profile: str,
 ) -> DependencyGate | None:
     enchant_spec = parse_enchant_line(material_line)
+    from ..rules.enchant_public_state import public_state_enchant_spec_dependencies
+    public_state = public_state_enchant_spec_dependencies(enchant_spec)
+    if public_state:
+        return explicit_capabilities_gate(public_state, capability_registry=capability_registry,
+            capability_profile=capability_profile)
     if enchant_spec is not None:
         return explicit_capability_gate(
             (

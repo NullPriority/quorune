@@ -25,6 +25,7 @@ def regeneration_covered_mechanics(supplied: set[str]) -> set[str]:
     """Project the regeneration owners back to their existing mechanic names."""
     mapping = {
         'regenerate': {'permanent.regeneration.fixed_effect', 'permanent.regeneration.self_activation'},
+        'attached-destruction-set': {'permanent.destroy.attached_set'},
         'regeneration-prohibition': {'permanent.destroy.regeneration_prohibition'},
     }
     return {mechanic for mechanic, capabilities in mapping.items() if supplied.intersection(capabilities)}
@@ -178,6 +179,20 @@ def mass_destruction_node_capabilities(
     except (AffectedPermanentSetError, KeyError, TypeError):
         return ()
     targeted = spec.controller_relation is AffectedControllerRelation.TARGET_PLAYER
+    from ..attachment_destruction_model import AttachmentDestructionSetSpec, ATTACHED_DESTRUCTION_CAPABILITY, AttachedDestructionScope
+    if isinstance(spec, AttachmentDestructionSetSpec):
+        if has_followup or regeneration_prohibited is not None or 'attached-destruction-set' not in mechanics:
+            return ()
+        expected = None
+        if spec.targeted:
+            kind = 'land' if spec.scope is AttachedDestructionScope.AURAS_ON_LAND else 'creature'
+            expected = {'zones':['battlefield'],'categories':['permanent'],'count':1,'types_any':[kind]}
+        if target_schema != expected or ('cr-115-targets' in mechanics) is not spec.targeted:
+            return ()
+        if spec.targeted and spec.target_ref != '$target.0':
+            return ()
+        return ('permanent.destroy.fixed_set', ATTACHED_DESTRUCTION_CAPABILITY,
+                *(('target.revalidate_resolution',) if spec.targeted else ()))
     schema = dict(target_schema or {})
     valid_player_schemas = (
         {

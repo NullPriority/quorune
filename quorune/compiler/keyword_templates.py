@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Sequence
 
 from ..commander_pairing import (
@@ -19,14 +19,14 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|rampage|cycling|crew|saddle|dredge|kicker|toxic|"
-    r"casualty|champion|cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|tribute|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|mutate|awaken|evoke|offspring|squad|flashback|unearth|embalm|eternalize|blitz|buyback|commander ninjutsu|dash|encore|escape|foretell|freerunning|madness|miracle|mayhem|myriad|ninjutsu|plot|prototype|prowl|sneak|spectacle|surge|warp|web-slinging|suspend|level up|outlast|reinforce|scavenge|transmute)"
+    r"casualty|champion|cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|tribute|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|mutate|awaken|evoke|offspring|squad|flashback|unearth|embalm|eternalize|blitz|buyback|commander ninjutsu|dash|encore|escape|foretell|freerunning|madness|miracle|mayhem|myriad|ninjutsu|plot|prototype|prowl|sneak|spectacle|surge|warp|web-slinging|suspend|level up|outlast|recover|ripple|reinforce|scavenge|transmute)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )
 _KNOWN_BARE_KEYWORDS = frozenset(
     "deathtouch|defender|double strike|first strike|flash|flying|haste|"
     "flanking|hexproof|indestructible|infect|lifelink|menace|reach|shadow|shroud|"
-    "trample|vigilance|wither|umbra armor|split second|extort|increment|aftermath|start your engines!|bargain".split("|")
+    "trample|vigilance|wither|umbra armor|split second|extort|increment|demonstrate|gravestorm|aftermath|start your engines!|bargain".split("|")
 ) | frozenset(QUALIFIED_LANDWALK_KEYWORDS)
 _TYPECYCLING = re.compile(
     r"^(?:basic land|plains|island|swamp|mountain|forest|artifact land|"
@@ -54,12 +54,17 @@ def keyword_mechanics(
         if pairing_kind in TAGGED_PARTNER_KINDS:
             return (pairing_kind.value,)
     material = text.rstrip(".").strip()
+    if 'recover' in known:
+        from .fractional_life_payment_templates import recover_half_life_price_from_line
+        if recover_half_life_price_from_line(text.strip()) is not None:return ('recover',)
     if "equip" in known and fixed_equip_ability_spec(material) is not None:
         return ("equip",)
     if 'morph' in known and re.match(r'Morph[—-]', material, re.I):
         return ('morph',)
     if 'kicker' in known and re.match(r'Kicker—',material,re.I):
         return ('kicker',)
+    if "evoke" in known and re.match(r"Evoke\s*[—–-]", material, re.I):
+        return ("evoke",)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
     cycling_parts = [part.strip() for part in material.split(",")]

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed public-state shells around separately compiled typed abilities."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..continuous_conditions import (

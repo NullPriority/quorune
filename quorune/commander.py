@@ -18,6 +18,7 @@ from .model import (
     TurnHistory,
 )
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
+from .spell_resolution_name_model import SpellResolutionNameLedger
 
 
 COMMANDER_DAMAGE_IDENTITY_VERSION = 2
@@ -313,6 +314,7 @@ def initial_commander_state(
         last_normal_turn_player=None,
         departed_turn_boundary_version=1,
         mandatory_linked_loop=MandatoryLinkedLoopWatch(),
+        spell_resolution_name_ledger=SpellResolutionNameLedger(),
         commander_damage_identity_version=(
             COMMANDER_DAMAGE_IDENTITY_VERSION
         ),
@@ -320,9 +322,11 @@ def initial_commander_state(
         tap_state_event_version=1,
         target_announcement_timing_version=1,
         turn_history=TurnHistory(departure_history_version=1,arrival_history_version=1,mill_history_version=1,
-            spell_origin_history_version=1,graveyard_type_history_version=1,spell_mana_history_version=1,crime_history_version=1,
+            spell_origin_history_version=1, spell_color_history_version=1,
+            creature_spell_counter_history_version=1,
+            graveyard_type_history_version=1,spell_mana_history_version=1,crime_history_version=1,
             committed_occurrence_history_version=1, damage_life_history_version=1,
-            permanent_death_history_version=1, public_movement_history_version=1,
+            permanent_death_history_version=1, death_name_history_version=1, public_movement_history_version=1,
             first_life_gain_history_version=1, venture_history_version=1),
         active_player=None,
         phase="setup",

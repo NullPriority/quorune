@@ -11,7 +11,11 @@ from ..next_spell_cost_model import CAPABILITY as NEXT_COST_CAPABILITY, MECHANIC
 from ..day_night_model import DAY_NIGHT_DESIGNATION_CAPABILITY, DAY_NIGHT_DESIGNATION_MECHANIC, validate_day_night_designation
 
 
+from .subtype_transform import SUBTYPE_TRANSFORM_MECHANIC, SUBTYPE_TRANSFORM_CAPABILITY
+
+
 FIXED_RULE_ACTION_CAPABILITIES = {
+    SUBTYPE_TRANSFORM_MECHANIC: (SUBTYPE_TRANSFORM_CAPABILITY,),
     EARTHBEND_MECHANIC: (EARTHBEND_CAPABILITY,),
     COMBAT_REMOVAL_MECHANIC: (COMBAT_REMOVAL_CAPABILITY,),
     SUSPECT_MECHANIC: (SUSPECT_CAPABILITY,),
@@ -34,4 +38,7 @@ def fixed_day_night_designation_capabilities(*,effects,target_schema,mechanic_id
 def transform_rule_action_capabilities(**kwargs):
     """Own the related direct-face and world-designation rule-action shapes."""
     from .transform_capability_shapes import source_transform_node_capabilities
-    return source_transform_node_capabilities(**kwargs) or fixed_day_night_designation_capabilities(**kwargs)
+    from .subtype_transform import subtype_transform_node_capabilities
+    return (source_transform_node_capabilities(**kwargs)
+        or subtype_transform_node_capabilities(**kwargs)
+        or fixed_day_night_designation_capabilities(**kwargs))

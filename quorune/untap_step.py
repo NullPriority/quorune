@@ -203,6 +203,8 @@ def plan_untap_step(
     active_player: str,
     rows: Iterable[ObjectQueryResult],
     participations: Iterable[UntapStepParticipation],
+    *,
+    prohibited_object_ids: Iterable[str] = (),
 ) -> UntapStepPlan:
     """Resolve one deterministic, mutation-free untap participation plan."""
 
@@ -225,7 +227,9 @@ def plan_untap_step(
             "Untap-step participation identities must be unique"
         )
 
-    prohibited: set[str] = set()
+    prohibited = set(prohibited_object_ids)
+    if not prohibited.issubset(object_ids):
+        raise UntapStepError("Untap prohibitions must name objects in the current snapshot")
     additional: set[str] = set()
     optional: set[str] = set()
     supporting_refs: set[str] = set()

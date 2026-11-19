@@ -3,7 +3,7 @@ from __future__ import annotations
 """Mana-announced X target sets over existing single-target productions."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..query_effect_amount_model import CastXAmountSpec
@@ -20,9 +20,32 @@ _PATTERN = re.compile(
 )
 
 
+def _announced_characteristic_targets(text):
+    from .target_characteristic_sets import target_characteristic_set_template
+
+    match = re.fullmatch(r'(?P<prefix>Until end of turn, )?(?P<up_to>up to )?X '
+        r'(?P<body>(?:other )?target .+)', ' '.join(text.strip().split()), re.I)
+    if match is None:
+        return None
+    prototype = (match['prefix'] or '') + ('Up to two ' if match['up_to'] else 'Two ') + match['body']
+    compiled = target_characteristic_set_template(prototype)
+    if compiled is None or len(compiled[1]) != 1:
+        return None
+    effect = deepcopy(dict(compiled[1][0])); schema = deepcopy(dict(compiled[2]))
+    if schema.pop('up_to' if match['up_to'] else 'count', None) != 2:
+        return None
+    schema['count_parameter'] = AnnouncedTargetCardinality(selection='up_to' if match['up_to'] else 'exact').to_dict()
+    effect.update(maximum_targets=CastXAmountSpec().to_dict(), announced_target_count=True)
+    return (compiled[0] + '-mana-x-v1', (effect,), schema,
+        tuple(dict.fromkeys((*compiled[3], ANNOUNCED_TARGET_SET_MECHANIC, 'cr-115-targets'))))
+
+
 def announced_target_set_effect_template(text: str) -> Any:
     """Lower cardinality only; the caller must establish mana-announced X."""
 
+    characteristic = _announced_characteristic_targets(text)
+    if characteristic is not None:
+        return characteristic
     match = _PATTERN.fullmatch(" ".join(text.strip().split()))
     if match is None:
         return None

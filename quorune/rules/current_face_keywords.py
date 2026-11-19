@@ -7,6 +7,9 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS
 
+_KNOWN_PRINTED_KEYWORDS = frozenset(str(value).casefold() for value in FIXED_CHARACTERISTIC_KEYWORDS) | {"protection"}
+_QUALIFIED_PRINTED_KEYWORDS = frozenset(QUALIFIED_LANDWALK_KEYWORDS) | QUALIFIED_HEXPROOF_KEYWORDS
+
 
 def current_printed_face_keywords(host,card,record,base):
     if card.annotations.get('copy_overrides') is not None or card.is_token or card.object_kind in {'card_copy','spell_copy'}:
@@ -17,16 +20,18 @@ def current_printed_face_keywords(host,card,record,base):
     qualified=set()
     # The record keyword index combines faces; qualified Protection also needs
     # the current face's trusted printed declaration before retaining its label.
-    known={str(value).casefold() for value in FIXED_CHARACTERISTIC_KEYWORDS} | {'protection'}
     for program in host.semantics.programs_for_oracle(record.oracle_id):
         if (program.provenance.get('template_id')=='printed-keyword-list-v1'
                 and program_matches_face(record,program,card)
                 and host.semantic_program_is_current_trusted(program)):
-            current.update(str(value).casefold() for value in program.coverage if str(value).casefold() in known)
-            qualified.update(str(value).casefold() for value in program.coverage
-                if str(value).casefold() in frozenset(QUALIFIED_LANDWALK_KEYWORDS)|QUALIFIED_HEXPROOF_KEYWORDS)
+            for value in program.coverage:
+                keyword = str(value).casefold()
+                if keyword in _KNOWN_PRINTED_KEYWORDS:
+                    current.add(keyword)
+                if keyword in _QUALIFIED_PRINTED_KEYWORDS:
+                    qualified.add(keyword)
     result = ([keyword for keyword in base.get('keywords',())
-        if str(keyword).casefold() not in known or str(keyword).casefold() in current]
+        if str(keyword).casefold() not in _KNOWN_PRINTED_KEYWORDS or str(keyword).casefold() in current]
         if record.faces else list(base.get('keywords',())))
     present={str(value).casefold() for value in result}
     if qualified.intersection(QUALIFIED_HEXPROOF_KEYWORDS) and 'hexproof' not in current:

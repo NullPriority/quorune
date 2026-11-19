@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile a printed Splice declaration through existing price owners."""
 
-import re
+from . import regex_working_set as re
 
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost

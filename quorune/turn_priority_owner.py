@@ -6,6 +6,7 @@ import copy
 import hashlib
 from typing import Any, Mapping
 
+from .unattachment_triggers import pending_unattachment_snapshots
 from .errors import GameRuleError, StateInvariantError
 from .mana_payment_continuations import (
     execute_mana_choice_capable_priority_action,
@@ -263,7 +264,9 @@ class TurnPriorityDecisionOwner:
                 )
             self.state.priority_passes = []
             self.host._eliminate_players([seat], reason="conceded")
-            if getattr(self.state, "initiative", None) is not None and self.state.pending_trigger_batches and not self.state.game_over:
+            if self.state.pending_trigger_batches and not self.state.game_over and (
+                getattr(self.state, "initiative", None) is not None or pending_unattachment_snapshots(self.state)
+            ):
                 self.complete_special_action(self.host._next_active_after(seat))
         else:
             raise GameRuleError(f"Unsupported priority action {action}")

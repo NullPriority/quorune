@@ -1,6 +1,6 @@
 """Exact printed combat-removal instructions and becoming-blocked results."""
 
-import re
+from . import regex_working_set as re
 
 from ..combat_removal import (
     BLOCKED_ATTACKER_REFERENCE, COMBAT_REMOVAL_MECHANIC, COMBAT_REMOVAL_OPERATION,

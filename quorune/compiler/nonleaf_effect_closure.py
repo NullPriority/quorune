@@ -7,6 +7,27 @@ from ..rules.self_return_capability_shapes import fixed_self_return_node_capabil
 
 def effect_program_is_closed(program, *, recognizers, recursive_is_closed, composed_is_closed):
     """Apply the shared promotion policy to a complete effect program."""
+    from ..rules.graveyard_exile_branches import is_closed_graveyard_exile_branch_spell
+    from ..rules.graveyard_exile_tokens import is_closed_graveyard_exile_token_activation
+
+    if is_closed_graveyard_exile_branch_spell(program) or is_closed_graveyard_exile_token_activation(program):
+        return True
+    from ..rules.optional_sacrifice_stats import is_closed_optional_sacrifice_stat_program
+    if is_closed_optional_sacrifice_stat_program(program):return True
+    from ..rules.recover import is_closed_recover_program
+    if is_closed_recover_program(program):return True
+    from ..rules.paradigm import is_closed_paradigm_program
+    if 'paradigm' in program.coverage:return is_closed_paradigm_program(program, recursive_is_closed)
+    from ..rules.current_life_effect_amounts import is_closed_current_life_program
+    if is_closed_current_life_program(program):return True
+    from ..rules.turn_life_loss_recovery import is_closed_turn_life_loss_program
+    if is_closed_turn_life_loss_program(program):return True
+    from ..rules.per_player_query_life import is_closed_per_player_query_life_program
+    if is_closed_per_player_query_life_program(program):return True
+    from ..rules.per_player_query_damage import is_closed_per_player_query_damage_program
+    if is_closed_per_player_query_damage_program(program):return True
+    from ..rules.per_player_life_damage import is_closed_per_player_life_damage_program
+    if is_closed_per_player_life_damage_program(program):return True
     if 'cipher_spell_resolution' in program.coverage:
         from dataclasses import replace
         from ..cipher_model import CIPHER_CAPABILITY, CIPHER_HANDLER
@@ -34,6 +55,16 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
+    from ..rules.temporary_keyword_removal import is_closed_chosen_keyword_removal_program
+    from ..rules.targeted_graveyard_exile import is_closed_targeted_graveyard_exile_program
+    if is_closed_chosen_keyword_removal_program(program) or is_closed_targeted_graveyard_exile_program(program):
+        return True
+    from ..rules.event_player_modifiers import is_closed_event_player_modifier_program
+    if is_closed_event_player_modifier_program(program):return True
+    from ..rules.target_player_query_amounts import is_closed_target_player_query_program
+    if is_closed_target_player_query_program(program):return True
+    from ..rules.colored_hand_reveals import is_closed_colored_hand_reveal_program
+    if is_closed_colored_hand_reveal_program(program):return True
     from ..saddle import is_closed_saddle_program
     if is_closed_saddle_program(program):return True
     from .fixed_sacrifice_result_promotion import closed_alternative_damage_death_exile_result, closed_fixed_sacrifice_spell_result
@@ -57,8 +88,12 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     from ..rules.spell_text_variant_shapes import fixed_variant_program_is_closed
     from ..spell_text_variants import SpellTextVariantKind
     if any(fixed_variant_program_is_closed(program,kind) for kind in SpellTextVariantKind):return True
+    from ..rules.event_outcome_shapes import event_outcome_program_is_closed
+    if event_outcome_program_is_closed(program): return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
+    from ..rules.stack_target_change_shapes import single_stack_target_change_program_is_closed
+    if single_stack_target_change_program_is_closed(program):return True
     from ..face_up_effect_model import face_up_node_capabilities
     from ..card_programs.admission import program_has_declared_complete_source_admission
     face_up=face_up_node_capabilities(effects=program.effects,target_schema=program.target_schema,
@@ -79,6 +114,7 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     from ..rules.resolution_condition_shapes import resolution_condition_node_capabilities
     from ..rules.affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
     from ..rules.fractional_player_result_shapes import half_life_node_capabilities, half_choice_node_capabilities
+    from ..rules.third_life_shapes import third_life_node_capabilities
     from ..rules.prepared_creature_power_damage_shapes import prepared_creature_power_damage_capabilities
     from ..rules.conditional_target_preparation import conditional_prepared_power_capabilities
     conditional = resolution_condition_node_capabilities(
@@ -87,7 +123,7 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     if conditional and set(conditional).issubset(program.capability_dependencies):
         return True
     for resolver in (fixed_self_return_node_capabilities,random_discard_node_capabilities,linked_exile_return_node_capabilities,
-                     fixed_affected_player_sacrifice_node_capabilities, half_life_node_capabilities, half_choice_node_capabilities,
+                     fixed_affected_player_sacrifice_node_capabilities, half_life_node_capabilities, half_choice_node_capabilities, third_life_node_capabilities,
                      prepared_creature_power_damage_capabilities, conditional_prepared_power_capabilities):
         required=resolver(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
         if required and set(required).issubset(program.capability_dependencies):return True

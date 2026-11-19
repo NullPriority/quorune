@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned fixed Disturb authority from a transforming front face."""
 
-import re
+from . import regex_working_set as re
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..disturb_model import DISTURB_CAPABILITY, DISTURB_HANDLER, FixedManaDisturbSpec
 from ..util import mana_cost_to_vector

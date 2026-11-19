@@ -13,10 +13,16 @@ def apply_next_spell_cost_reduction(host,effect,*,actor,reason,operation=None):
     host._require_seat(actor,in_game=True)
     source=resolution_effect_source(host,effect)
     pending=ResolvedNextSpellCostReduction(host._next_ref('NC'),source.stack_ref,
-        host._next_zone_timestamp(),actor,query,public['amount'])
+        host._next_zone_timestamp(),actor,query,public['amount'],schema_version=public['schema_version'],
+        face_down_only=public.get('face_down_only',False))
     commit_continuous_effect(host.state,pending)
-    host._log(actor,'casting.next_cost.created','A next-spell cost reduction applies.',
-        {'effect_id':pending.effect_id,'amount':pending.amount,'spell_query':query.to_dict()},importance=1)
+    if pending.schema_version == 2:
+        host._log(actor,'casting.turn_cost.created','A casting cost reduction applies this turn.',
+            {'effect_id':pending.effect_id,'amount':pending.amount,'spell_query':query.to_dict(),
+             'face_down_only':pending.face_down_only},importance=1)
+    else:
+        host._log(actor,'casting.next_cost.created','A next-spell cost reduction applies.',
+            {'effect_id':pending.effect_id,'amount':pending.amount,'spell_query':query.to_dict()},importance=1)
     return pending.effect_id
 
 
@@ -29,7 +35,11 @@ def matching_next_spell_cost_reductions(host,seat,card,cast_type_line=None,face_
     if cast_type_line is not None:data['type_line']=cast_type_line
     row=object_query_result(card,data,type_parts=host._type_parts(str(data.get('type_line') or '')),
         known_to_actor=True,attached_to_ref=None)
-    return tuple(effect for effect in pending if object_matches_query(row,effect.spell_query))
+    from .morph import FACE_DOWN_CAST_METHODS
+
+    return tuple(effect for effect in pending
+        if (not effect.face_down_only or face_down_method in FACE_DOWN_CAST_METHODS)
+        and object_matches_query(row,effect.spell_query))
 
 
 def active_next_spell_cost_reductions(host,seat,card,cast_type_line=None,face_down_method=None):
@@ -48,5 +58,5 @@ def consume_next_spell_rules(host,proposal,card,*,preparing):
     if not preparing:
         from .continuous_effect_state import consume_continuous_effects
         matched=matching_next_spell_cost_reductions(host,proposal.seat,card,proposal.type_line)
-        consume_continuous_effects(host.state,tuple(effect.effect_id for effect in matched))
+        consume_continuous_effects(host.state,tuple(effect.effect_id for effect in matched if effect.schema_version == 1))
     return used_improvise,used_uncounterable,next_payments

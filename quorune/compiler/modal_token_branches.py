@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compose existing typed token nodes into closed modal effect branches."""
 
-import re
+from . import regex_working_set as re
 
 from .modal_templates import _mode_body
 from .typed_token_ability_nodes import typed_token_ability_nodes

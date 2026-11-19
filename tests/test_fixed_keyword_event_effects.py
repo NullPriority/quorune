@@ -352,12 +352,21 @@ class FixedKeywordEventEffectCompilerTests(unittest.TestCase):
                 )
 
         base = self.db.lookup("Afflict Event Fixture")
+        # The leaf still rejects a compound clause; composition preserves both instances.
+        self.assertIsNone(fixed_keyword_event_effect_spec("Afflict 2, afflict 2"))
+        repeated = compile_oracle_card(
+            replace(base, oracle_text="Afflict 2, afflict 2"),
+            capability_registry=self.capabilities, capability_profile="commander_review",
+        )
+        self.assertEqual("exact", repeated.status, repeated.material_residuals)
+        self.assertEqual(2, len(repeated.faces[0].nodes))
+        self.assertEqual(2, len({node.node_id for node in repeated.faces[0].nodes}))
         for index, text in enumerate(
             (
                 "Afflict X",
                 "Afflict 0",
                 "Afflict 21",
-                "Afflict 2, afflict 2",
+                "Afflict 2, afflict X",
                 "Ingest 2",
                 "Mobilize X, where X is this creature's power.",
                 "Soulshift X",

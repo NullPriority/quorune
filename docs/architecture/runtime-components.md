@@ -187,6 +187,23 @@ limits the source tap symbol but does not prevent paying a selected-creature tap
 Legacy versions retain their output and result-rider schemas. Multiple selected
 costs, discard or exile costs, and selected-cost result riders remain excluded.
 
+Legendary selected taps use a separate version-three cost with an explicit
+`tap_schema_version: 3` choice marker. One current untapped controlled legendary
+permanent, or one legendary creature, pays the cost through the existing query
+and tap transaction. The resolving source can already be tapped when the
+printed cost has no source tap symbol. A newly controlled creature can pay this
+selected tap cost. A fixed mana result retains its immediate mana owner; an
+ordinary untap result retains the stack and original source identity.
+
+`activation.selected_tap.fixed_legendary` is required by the compiler and the
+descriptor-derived runtime minimum, including mana without a catalog carrier.
+Fixed-output, public-quantity, and chosen-color mana descriptors expose their
+selected costs through the shared typed activation adapter. Earlier cost
+versions keep their serialized shape and reject the new
+supertype query. Missing or malformed new-version markers reject before payment.
+Other fixed counts, color combinations, type unions and unrelated characteristic
+filters are outside this legendary selector.
+
 Fixed energy activation clauses decode before generic mana-symbol stripping.
 Each literal `{E}` contributes one counter; the existing counted-word format
 retains its typed amount and payload. Multiple exact clauses add their amounts.
@@ -1542,3 +1559,19 @@ through the existing life owner at instruction time. The damaged player's
 identity remains sealed while that player's current life can change before
 resolution. No object-controller reference is replaced with a damaged player,
 and unsupported antecedents or amount fields remain residual.
+
+Fixed public life gain uses the existing life DomainEffect and canonical
+replacement-aware batch. `public_life_gain_version: 1` seals either all current
+active players or the resolving controller's opponents. All affected-player
+replacement choices finish before any life total changes. The runtime derives
+its capability minimum from the executable scope even without coverage metadata.
+The existing single-player payload and its historical replay format are unchanged;
+unknown versions and conflicting recipient fields reject before mutation.
+
+The versioned permanent-subtype hand query reuses the existing private
+`put_card_from_hand` choice and canonical hand-entry move. It reads the original
+controller's current hand, permits decline, and seals every offered card
+incarnation. The new query requires that seal when completing a saved choice;
+historical unversioned query continuations keep their prior compatibility.
+Executable query metadata independently requires
+`zone.move.private_hand_permanent_subtype`, including without coverage.

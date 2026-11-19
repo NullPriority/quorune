@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Ordered existing leaf owners around independently evaluated result quantities."""
 
-import re
+from . import regex_working_set as re
 from functools import partial
 from .closed_effect_programs import ClosedEffectProgramTemplate, _candidate_partitions, _NESTED_SEQUENCE_MECHANICS
 from .public_query_effect_amounts import public_query_effect_amount_template
@@ -54,3 +54,27 @@ def ordered_quantity_sequence_template(text: str, *, source_name: str, compile_a
 
 
 query_counter_sequence_template = ordered_quantity_sequence_template
+
+def is_source_counter_then_maximum_power_draw(program, scalar_specs) -> bool:
+    """Limit activation promotion to a closed counter instruction before private draw."""
+    from collections.abc import Mapping
+
+    from ..public_characteristic_aggregate_model import (
+        CONTROLLED_CREATURES_POWER_QUERY,
+        PublicCharacteristicAggregateSpec,
+    )
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    if getattr(program, "event", None) != "activate" or program.target_schema is not None or len(program.effects) != 2:
+        return False
+    counter, draw = program.effects
+    amount = draw.get("count")
+    if (counter.get("op") != "place_counters" or counter.get("card") != "$source.zone_object"
+            or draw.get("op") != "draw" or draw.get("player") != "$controller" or draw.get("private") is not True
+            or not isinstance(amount, Mapping) or amount.get("kind") != SCALAR_AMOUNT_KIND):
+        return False
+    aggregate = PublicCharacteristicAggregateSpec(
+        "power", "maximum", "source_controller", CONTROLLED_CREATURES_POWER_QUERY,
+    )
+    expected = ScalarEffectAmountSpec(ScalarAmountOrigin.PUBLIC_AGGREGATE, schema_version=3, aggregate=aggregate)
+    return scalar_specs == (expected,)

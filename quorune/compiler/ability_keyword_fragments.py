@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..ability_fragments import (
@@ -175,7 +175,7 @@ def _lower_enchant_fragment(
             {
                 "handler_id": (
                     "ability.static.enchant.typed.v2"
-                    if enchant_spec.schema_version in {2, 3}
+                    if enchant_spec.schema_version in {2, 3, 4}
                     else "ability.static.enchant.v1"
                 ),
                 "schema_version": 1,

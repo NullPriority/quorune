@@ -1458,3 +1458,153 @@ class EventPlayerSubjectActionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GraveyardTargetManaValueSpecTests(unittest.TestCase):
+    def spec(self):
+        return ScalarEffectAmountSpec(ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE,
+            characteristic='mana_value',schema_version=15)
+
+    def test_new_quantity_is_immutable_exact_version15_and_round_trips_without_new_wire_fields(self):
+        from dataclasses import FrozenInstanceError
+        spec=self.spec();wire=spec.to_dict()
+        self.assertEqual(spec,ScalarEffectAmountSpec.from_dict(wire))
+        self.assertEqual({'kind','schema_version','origin','characteristic','history_fact','coefficient','binding_id'},set(wire))
+        self.assertEqual((15,'target_graveyard_mana_value','mana_value',1),(wire['schema_version'],wire['origin'],wire['characteristic'],wire['coefficient']))
+        with self.assertRaises(FrozenInstanceError):spec.coefficient=2
+
+    def test_historical_scalar_versions_cannot_carry_new_graveyard_authority_and_new_version_cannot_relabel_old_target(self):
+        wire=self.spec().to_dict()
+        for version in range(1,15):
+            with self.subTest(version=version),self.assertRaises(PublicQueryAmountError):
+                ScalarEffectAmountSpec.from_dict({**wire,'schema_version':version})
+        with self.assertRaises(PublicQueryAmountError):
+            ScalarEffectAmountSpec.from_dict({**wire,'origin':ScalarAmountOrigin.TARGET.value})
+        old=ScalarEffectAmountSpec(ScalarAmountOrigin.TARGET,characteristic='mana_value')
+        self.assertEqual(old,ScalarEffectAmountSpec.from_dict(old.to_dict()))
+        self.assertNotIn('quantity_expression.graveyard_target_mana_value',old.referenced_quantity_capabilities)
+
+    def test_unrepresented_characteristic_scaling_binding_and_unknown_fields_fail_closed(self):
+        wire=self.spec().to_dict()
+        for change in ({'characteristic':'power'},{'characteristic':'toughness'},{'coefficient':2},
+                {'coefficient':-1},{'coefficient':True},{'binding_id':'another-target'},{'history_fact':'cards_drawn'},
+                {'schema_version':True},{'schema_version':16},{'target_group':'target_1'},{'unknown':None}):
+            with self.subTest(change=change),self.assertRaises(PublicQueryAmountError):
+                ScalarEffectAmountSpec.from_dict({**wire,**change})
+
+    def test_raw_quantity_minimum_requires_fine_owner_without_a_coverage_annotation(self):
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.scalar_effect_amount_model import GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY
+        from quorune.rules.capabilities import load_default_capability_registry
+        required=typed_result_amount_runtime_dependencies(self.spec().to_dict())
+        self.assertIn(GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY,required)
+        self.assertIn('quantity_expression.scalar_effect_amount',required)
+
+
+class GraveyardTargetManaValueLifecycleTests(unittest.TestCase):
+    def fixture(self):
+        host,item,card,data,_=ScalarEffectAmountValueTests().host_and_item()
+        card.zone='graveyard';card.zone_change_counter=0
+        spec=ScalarEffectAmountSpec(ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE,
+            characteristic='mana_value',schema_version=15)
+        effects=({'op':'gain_life','amount':spec.to_dict()},)
+        host.semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=effects))
+        item.targets=[card.ref];item.context={'target_snapshots':{card.ref:{'zone_change_counter':0}}}
+        return host,item,card,data,spec
+
+    def test_current_public_mana_value_is_pinned_before_return_to_hidden_hand_and_never_reads_new_incarnation(self):
+        host,item,card,data,spec=self.fixture()
+        self.assertEqual(3,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+        data['mana_value']=7.0;pin_scalar_characteristic_departures(host,[card])
+        card.zone='hand';card.logical_object_id='source:2';card.zone_change_counter=1;data['mana_value']=999.0
+        with mock.patch.object(host,'_effective_card_data',side_effect=AssertionError('Read a hidden replacement incarnation')):
+            self.assertEqual(7,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+        self.assertEqual('graveyard',item.context[SCALAR_REFERENCE_CONTEXT][spec.origin.value]['zone'])
+
+    def test_departure_pin_captures_an_unread_target_and_survives_context_round_trip(self):
+        import json
+        host,item,card,data,spec=self.fixture();data['mana_value']=0.0
+        pin_scalar_characteristic_departures(host,[card]);card.zone='hand';card.logical_object_id='source:2'
+        item.context=json.loads(json.dumps(item.context))
+        with mock.patch.object(host,'_effective_card_data',side_effect=AssertionError('Hidden information was reread')):
+            self.assertEqual(0,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+
+    def test_mana_value_read_does_not_require_unrelated_power_toughness_or_type_information(self):
+        host,item,card,data,spec=self.fixture();data['power']='*';data['toughness']='*'
+        with mock.patch.object(host,'_type_parts',side_effect=AssertionError('Unrelated characteristic requested')):
+            self.assertEqual(3,resolve_scalar_effect_amount(host,spec.to_dict(),item))
+            pin_scalar_characteristic_departures(host,[card])
+        saved=item.context[SCALAR_REFERENCE_CONTEXT][spec.origin.value]
+        self.assertIsNone(saved['power']);self.assertIsNone(saved['toughness'])
+
+    def test_unrelated_graveyard_departures_do_not_evaluate_or_cache_the_target(self):
+        host,item,card,data,spec=self.fixture();other=SimpleNamespace(object_id='other',logical_object_id='other:1',zone='graveyard')
+        before=deepcopy(item.context)
+        with mock.patch.object(host,'_effective_card_data') as read:
+            pin_scalar_characteristic_departures(host,[other])
+        read.assert_not_called();self.assertEqual(before,item.context)
+
+    def test_changed_target_incarnation_or_non_graveyard_origin_rejects_before_reading_characteristics(self):
+        for mode in ('reentered','hand','exile','no-target','two-targets'):
+            with self.subTest(mode=mode):
+                host,item,card,data,spec=self.fixture()
+                if mode=='reentered':card.zone_change_counter=1;card.logical_object_id='source:2'
+                elif mode in ('hand','exile'):card.zone=mode
+                elif mode=='no-target':item.targets=[]
+                else:item.targets=[card.ref,card.ref]
+                with mock.patch.object(host,'_effective_card_data') as read,self.assertRaises(PublicQueryAmountError):
+                    resolve_scalar_effect_amount(host,spec.to_dict(),item)
+                read.assert_not_called()
+
+    def test_forged_snapshot_scope_or_reference_and_unavailable_intrinsic_values_fail_closed(self):
+        for field,value in (('zone','hand'),('ref','another-target')):
+            with self.subTest(field=field):
+                host,item,card,data,spec=self.fixture();pin_scalar_characteristic_departures(host,[card])
+                item.context[SCALAR_REFERENCE_CONTEXT][spec.origin.value][field]=value
+                with self.assertRaises(PublicQueryAmountError):resolve_scalar_effect_amount(host,spec.to_dict(),item)
+        for value in (None,True,-1,1.5,'3'):
+            with self.subTest(value=value):
+                host,item,card,data,spec=self.fixture();data['mana_value']=value
+                with self.assertRaises(PublicQueryAmountError):resolve_scalar_effect_amount(host,spec.to_dict(),item)
+
+    def test_fresh_missing_graveyard_departure_pin_mutant_is_killed_by_public_to_hidden_witness(self):
+        witness=GraveyardTargetManaValueLifecycleTests('test_current_public_mana_value_is_pinned_before_return_to_hidden_hand_and_never_reads_new_incarnation')
+        witness.test_current_public_mana_value_is_pinned_before_return_to_hidden_hand_and_never_reads_new_incarnation()
+        with mock.patch(__name__+'.pin_scalar_characteristic_departures',return_value=None),self.assertRaises(AssertionError):
+            witness.test_current_public_mana_value_is_pinned_before_return_to_hidden_hand_and_never_reads_new_incarnation()
+
+
+class GraveyardTargetManaValueCompilerTests(unittest.TestCase):
+    def test_complete_return_then_life_reuses_original_target_query_and_order_without_accepting_new_riders(self):
+        from quorune.compiler.return_to_hand_templates import targeted_own_graveyard_return_to_hand_effect_template as parse
+        text="Return target card from your graveyard to your hand. You gain life equal to that card's mana value."
+        template=parse(text);self.assertIsNotNone(template)
+        _name,effects,schema,mechanics=template.compiled()
+        self.assertEqual(['return_graveyard_card_to_owner_hand','life'],[e['op'] for e in effects])
+        self.assertEqual(['graveyard'],schema['zones']);self.assertEqual(15,effects[1]['delta']['schema_version'])
+        self.assertEqual('$controller',effects[1]['player'])
+        for wrong in (text+' Draw a card.',text.replace('your graveyard','a graveyard'),
+                text.replace('target card','up to one target card'),text.replace('mana value','power'),
+                text.replace('You gain','Target player gains')):
+            with self.subTest(wrong=wrong):self.assertIsNone(parse(wrong))
+
+    def test_default_compiler_keeps_complete_span_and_quantity_requires_fine_owner(self):
+        from dataclasses import replace
+        from test_qualified_zone_event_queries import query_record
+        text="Return target card from your graveyard to your hand. You gain life equal to that card's mana value."
+        record=replace(query_record(text),type_line='Sorcery',power=None,toughness=None)
+        ir=compile_oracle_card(record,capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        node,=ir.faces[0].nodes
+        self.assertTrue(node.lowerable);self.assertEqual(text,node.text)
+        self.assertEqual(15,node.effects[1]['delta']['schema_version'])
+        self.assertIn('quantity_expression.graveyard_target_mana_value',node.capability_dependencies)
+        self.assertIn('card.return.own_graveyard_to_owner_hand',node.capability_dependencies)
+        self.assertIn('target.revalidate_resolution',node.capability_dependencies)
+        self.assertIn('cr-119-life',node.mechanics)
+
+    def test_new_quantity_cannot_escape_the_closed_life_result_slot(self):
+        from quorune.compiler.scalar_effect_amounts import scalar_amount_shape_context
+        from quorune.scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+        spec=GraveyardTargetManaValueSpecTests().spec()
+        effect={'op':'draw','player':'$controller','count':spec.to_dict()}
+        self.assertIsNone(scalar_amount_shape_context((effect,),{SCALAR_AMOUNT_MECHANIC}))

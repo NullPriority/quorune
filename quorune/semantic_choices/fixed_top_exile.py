@@ -7,7 +7,7 @@ from ..discover_model import DiscoverCastIntent, ExileCastProgress, discover_opt
 from ..fixed_top_exile import (
     CHOSEN_IMPULSE_GRANT_FIELD, CHOSEN_IMPULSE_SCOPE,
     FIXED_TOP_EXILE_CAPABILITY, FIXED_TOP_EXILE_OPERATION, FIXED_TOP_EXILE_OFFER_OPERATION,
-    FIXED_TOP_EXILE_RULES, RESOLVING_TOP_PLAY_SCOPE, ResolvingExileLandPlayIntent,
+    FIXED_TOP_EXILE_RULES, RESOLVING_TOP_PLAY_SCOPE, TOTAL_MANA_EXILE_SCOPE, ResolvingExileLandPlayIntent,
     fixed_top_exile_result_rows, validate_fixed_top_exile,
 )
 from ..replacement.immutable import FrozenMap
@@ -37,6 +37,10 @@ def _capture_library_tops(query, owner, count):
 
 
 def _prepare_exile(effect, context):
+    from ..mana_value_exile_model import TOTAL_MANA_EXILE_SCOPE
+    if effect.get('scope') == TOTAL_MANA_EXILE_SCOPE:
+        from .mana_value_exile import prepare_total_mana_exile
+        return prepare_total_mana_exile(effect, context)
     scope = validate_fixed_top_exile(effect, resolved=True)
     if effect["player"] != context.actor or context.actor != context.stack_controller:
         raise SemanticChoiceError("Fixed top exile requires the resolving controller")
@@ -192,7 +196,7 @@ def _complete_offer(continuation, response, query):
     owner, identity = candidates[0]
     intent = _play_intent(actor, continuation.stack_ref, scope, owner, identity, chosen, options, cast)
     remaining = [row for row in effect["results"] if row["identity"]["ref"] != identity.ref]
-    follow = (_offer(effect["instruction"], remaining),) if remaining and scope in {"each_library", RESOLVING_TOP_PLAY_SCOPE} else ()
+    follow = (_offer(effect["instruction"], remaining),) if remaining and scope in {"each_library", RESOLVING_TOP_PLAY_SCOPE, TOTAL_MANA_EXILE_SCOPE} else ()
     return SemanticChoiceCompletion(intents=(intent,), prepend_effects=follow)
 
 
@@ -203,10 +207,10 @@ class FixedTopExileHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = FIXED_TOP_EXILE_RULES
     capability_dependencies: tuple[str, ...] = (FIXED_TOP_EXILE_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("instruction", "results", "_stack_ref", "_options_fingerprint")
+    continuation_fields: tuple[str, ...] = ("instruction", "results", "progress", "pending", "_stack_ref", "_options_fingerprint")
     private_data: tuple[str, ...] = ("unexiled library tops",)
     projected_fields: tuple[str, ...] = ("prompt", "cast_options")
-    mutation_path: tuple[str, ...] = ("MoveObjectsSimultaneouslyIntent", "DiscoverCastIntent")
+    mutation_path: tuple[str, ...] = ("MoveObjectsSimultaneouslyIntent", "ZoneMoveIntent", "DiscoverCastIntent")
     replay_fixture: str = "fixed-library-top-exile-and-resolving-cast"
     test_modules: tuple[str, ...] = ("tests.test_discover_rules",)
 

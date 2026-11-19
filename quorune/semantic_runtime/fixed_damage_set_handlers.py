@@ -41,6 +41,14 @@ def _sequence(value: Any, *, field: str) -> tuple[Any, ...]:
     return tuple(value)
 
 
+def _bound_player_damage_recipients(effect, *, context):
+    if effect['amount'].get('kind') == 'bound_per_player_current_life_damage_amount':
+        from ..rules.per_player_life_damage import bound_per_player_life_damage_recipients as resolve
+    else:
+        from ..rules.per_player_query_damage import bound_per_player_query_damage_recipients as resolve
+    return resolve(effect, context=context)
+
+
 @dataclass(frozen=True, slots=True)
 class FixedDamageSetHandler:
     handler_id: str = "generic.damage-fixed-set.v1"
@@ -75,13 +83,21 @@ class FixedDamageSetHandler:
                 "Fixed damage-set effects require one represented source"
             )
         amount = effect.get("amount")
-        if type(amount) is not int or amount < 0:
+        bound_recipients = None
+        if isinstance(amount, Mapping):
+            if any(field in effect for field in ('fixed_target_controller_damage',ANNOUNCED_DAMAGE_EFFECT_FIELD,DAMAGE_DEATH_EXILE_FIELD)):
+                raise SemanticNodeError('Per-player query damage cannot mix recipient encodings')
+            try:amount,bound_recipients=_bound_player_damage_recipients(effect,context=context)
+            except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+        elif type(amount) is not int or amount < 0:
             raise SemanticNodeError(
                 "Fixed damage-set amount must be a nonnegative integer"
             )
         spec = None
         allocated_recipients = None
-        if 'fixed_target_controller_damage' in effect:
+        if bound_recipients is not None:
+            allocated_recipients = bound_recipients
+        elif 'fixed_target_controller_damage' in effect:
             from ..rules.fixed_dual_damage import bound_fixed_dual_damage_recipients
             if any(field in effect for field in ('groups',ANNOUNCED_DAMAGE_EFFECT_FIELD,DAMAGE_DEATH_EXILE_FIELD)):
                 raise SemanticNodeError('Fixed target/controller damage cannot mix recipient encodings')

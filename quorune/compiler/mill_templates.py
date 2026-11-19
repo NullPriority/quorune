@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..fractional_quantity_model import HALF_MILL_MECHANIC, HalfQuantitySpec

@@ -7,14 +7,19 @@ from ..characteristic_fragments import CharacteristicQuantityScope,Characteristi
 from ..continuous_effects import Layer
 
 
+def current_player_life_total(host, seat):
+    player = host.state.players.get(seat)
+    if player is None or type(player.life) is not int:
+        raise ValueError('Current life total is unavailable')
+    return max(0, player.life)
+
+
 def current_modifier_quantity(host,source,quantity,*,enforce_applicability=True):
     controller=host.state.players.get(source.controller)
     if controller is None:
         raise ValueError('Current quantity source controller is unavailable')
     if quantity.scope is CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL:
-        if type(controller.life) is not int:
-            raise ValueError('Current life total is unavailable')
-        return max(0,controller.life)
+        return current_player_life_total(host,source.controller)
     if quantity.scope is CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS:
         values=[]
         for seat,player in host.state.players.items():

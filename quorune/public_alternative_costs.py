@@ -2,16 +2,20 @@ from __future__ import annotations
 
 """Typed fixed public alternative costs and their current eligibility."""
 
+from collections import Counter
 from dataclasses import dataclass
 from enum import Enum
 import re
 from typing import Any, Mapping, Protocol, Sequence
 
+from .additional_cost_vocabulary import EXILE_ONE_FROM_HAND_COST
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .damage_turn_history import (
     COMBAT_DAMAGE_HISTORY_MARKER,
     COMMANDER_DAMAGE_HISTORY_MARKER,
 )
+from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
+from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .replacement.immutable import FrozenMap, thaw_value
 from .rules.casting_additional_cost_groups import (
     fixed_life_payment_additional_cost,
@@ -30,6 +34,8 @@ FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID = (
     "casting.alternative-cost.fixed-public.v1"
 )
 FIXED_PUBLIC_ALTERNATIVE_COST_EVENT = "cast.cost"
+ANNOUNCED_X_PITCH_PRICE_VERSION = 2
+ANNOUNCED_X_PITCH_POLICY = "announced_x_pitch"
 FIXED_PUBLIC_ALTERNATIVE_COST_MECHANIC = "fixed-public-alternative-cost"
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 _MANA_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
@@ -60,8 +66,71 @@ class FixedPublicAlternativeConditionKind(str, Enum):
     FREERUNNING = "freerunning"
     NOT_YOUR_TURN = "not_your_turn"
     OPPONENT_LOST_LIFE = "opponent_lost_life"
+    OPPONENT_GAINED_LIFE = "opponent_gained_life"
+    OPPONENT_DREW_THREE = "opponent_drew_three"
+    OPPONENT_BLUE_CAST = "opponent_blue_cast"
+    OPPONENT_CAST_THREE_SPELLS = "opponent_cast_three_spells"
+    OPPONENT_COUNTERED_CREATURE_CAST = "opponent_countered_creature_cast"
+    OPPONENT_GRAVEYARD_ARRIVALS = "opponent_graveyard_arrivals"
+    OPPONENT_CREATURE_ARRIVALS = "opponent_creature_arrivals"
+    OPPONENT_LAND_ARRIVALS = "opponent_land_arrivals"
+    EXACTLY_ONE_ATTACKING_CREATURE = "exactly_one_attacking_creature"
+    AT_LEAST_THREE_ATTACKING_CREATURES = "at_least_three_attacking_creatures"
+    AT_LEAST_FOUR_ATTACKING_CREATURES = "at_least_four_attacking_creatures"
+    DAMAGED_BY_TWO_CREATURES = "damaged_by_two_creatures"
     PROWL = "prowl"
     YOUR_TURN = "your_turn"
+
+
+LIVE_ATTACKING_PRICE_VERSION = 5
+LIVE_ATTACKING_COSTS = {
+    FixedPublicAlternativeConditionKind.EXACTLY_ONE_ATTACKING_CREATURE: "{W}",
+    FixedPublicAlternativeConditionKind.AT_LEAST_THREE_ATTACKING_CREATURES: "{U}",
+    FixedPublicAlternativeConditionKind.AT_LEAST_FOUR_ATTACKING_CREATURES: "{1}{W}",
+}
+_LIVE_ATTACKING_MINIMUM_COUNTS = {
+    FixedPublicAlternativeConditionKind.AT_LEAST_THREE_ATTACKING_CREATURES: 3,
+    FixedPublicAlternativeConditionKind.AT_LEAST_FOUR_ATTACKING_CREATURES: 4,
+}
+CREATURE_DAMAGE_PRICE_VERSION = 6
+_CREATURE_DAMAGE_COSTS = {FixedPublicAlternativeConditionKind.DAMAGED_BY_TWO_CREATURES: "{R}"}
+_CLOSED_PLAIN_PRICE_COSTS = {
+    LIVE_ATTACKING_PRICE_VERSION: LIVE_ATTACKING_COSTS,
+    CREATURE_DAMAGE_PRICE_VERSION: _CREATURE_DAMAGE_COSTS,
+}
+_ATTACKING_CREATURE_COUNT = LiveBattlefieldQuantitySpec(
+    "any",
+    ObjectQuerySpec(
+        zones=("battlefield",), types_all=("creature",),
+        state_predicate=PermanentStatePredicateSpec(attacking=True),
+    ),
+)
+
+
+OPPONENT_HISTORY_PRICE_VERSION = 4
+_LEGACY_OPPONENT_HISTORY_PRICE_VERSION = 3
+_OPPONENT_HISTORY_PRICE_VERSIONS = (_LEGACY_OPPONENT_HISTORY_PRICE_VERSION, OPPONENT_HISTORY_PRICE_VERSION)
+OPPONENT_HISTORY_COSTS = {
+    FixedPublicAlternativeConditionKind.OPPONENT_DREW_THREE: "{R}",
+    FixedPublicAlternativeConditionKind.OPPONENT_BLUE_CAST: "{R}",
+    FixedPublicAlternativeConditionKind.OPPONENT_CAST_THREE_SPELLS: "{0}",
+    FixedPublicAlternativeConditionKind.OPPONENT_COUNTERED_CREATURE_CAST: "{0}",
+    FixedPublicAlternativeConditionKind.OPPONENT_GRAVEYARD_ARRIVALS: "{0}",
+    FixedPublicAlternativeConditionKind.OPPONENT_CREATURE_ARRIVALS: "{U}",
+    FixedPublicAlternativeConditionKind.OPPONENT_GAINED_LIFE: "{B}",
+    FixedPublicAlternativeConditionKind.OPPONENT_LAND_ARRIVALS: "{3}{R}{R}",
+}
+_V4_ONLY_OPPONENT_HISTORY_KINDS = frozenset({
+    FixedPublicAlternativeConditionKind.OPPONENT_GAINED_LIFE,
+    FixedPublicAlternativeConditionKind.OPPONENT_LAND_ARRIVALS,
+    FixedPublicAlternativeConditionKind.OPPONENT_CAST_THREE_SPELLS,
+})
+_OPPONENT_HISTORY_COUNTS = {
+    FixedPublicAlternativeConditionKind.OPPONENT_CAST_THREE_SPELLS: ("spell_cast", (), 3),
+    FixedPublicAlternativeConditionKind.OPPONENT_GRAVEYARD_ARRIVALS: ("card_arrived_graveyard", (), 3),
+    FixedPublicAlternativeConditionKind.OPPONENT_CREATURE_ARRIVALS: ("permanent_entered", ("creature",), 2),
+    FixedPublicAlternativeConditionKind.OPPONENT_LAND_ARRIVALS: ("permanent_entered", ("land",), 2),
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +141,20 @@ class FixedPublicAlternativeCondition:
     opponent_basic_land_type: str | None = None
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version in _OPPONENT_HISTORY_PRICE_VERSIONS:
+            if (not isinstance(self.kind, FixedPublicAlternativeConditionKind)
+                    or self.kind not in OPPONENT_HISTORY_COSTS
+                    or self.basic_land_type is not None or self.opponent_basic_land_type is not None
+                    or (self.schema_version == _LEGACY_OPPONENT_HISTORY_PRICE_VERSION
+                        and self.kind in _V4_ONLY_OPPONENT_HISTORY_KINDS)):
+                raise FixedPublicAlternativeCostError("Opponent history requires its exact fact and version")
+            return
+        if type(self.schema_version) is int and self.schema_version in _CLOSED_PLAIN_PRICE_COSTS:
+            if (not isinstance(self.kind, FixedPublicAlternativeConditionKind)
+                    or self.kind not in _CLOSED_PLAIN_PRICE_COSTS[self.schema_version]
+                    or self.basic_land_type is not None or self.opponent_basic_land_type is not None):
+                raise FixedPublicAlternativeCostError("Fixed-count prices require their exact condition")
+            return
         if self.schema_version == 2:
             from .conditional_free_cast_model import validate_free_cast_condition
             if not isinstance(self.kind, FixedPublicAlternativeConditionKind):
@@ -90,6 +173,10 @@ class FixedPublicAlternativeCondition:
             raise FixedPublicAlternativeCostError(
                 "Alternative-cost condition kind is unsupported"
             )
+        if self.kind in OPPONENT_HISTORY_COSTS:
+            raise FixedPublicAlternativeCostError("Opponent history prices require their explicit version")
+        if self.kind in LIVE_ATTACKING_COSTS or self.kind in _CREATURE_DAMAGE_COSTS:
+            raise FixedPublicAlternativeCostError("Fixed-count prices require their explicit version")
         if self.opponent_basic_land_type is not None or self.kind in {
                 FixedPublicAlternativeConditionKind.LAND_PAIR, FixedPublicAlternativeConditionKind.CONTROLLED_COMMANDER}:
             raise FixedPublicAlternativeCostError('Extended free-cast conditions require version2')
@@ -108,6 +195,22 @@ class FixedPublicAlternativeCondition:
             raise FixedPublicAlternativeCostError(
                 "Only a land condition may carry a basic land type"
             )
+
+    @property
+    def history_dependencies(self) -> tuple[str, ...]:
+        if (self.kind in _CREATURE_DAMAGE_COSTS
+                or self.kind in OPPONENT_HISTORY_COSTS
+                and self.kind is not FixedPublicAlternativeConditionKind.OPPONENT_DREW_THREE):
+            from .public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
+
+            return (PUBLIC_HISTORY_QUERY_CAPABILITY,)
+        return ()
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == LIVE_ATTACKING_PRICE_VERSION:
+            return _ATTACKING_CREATURE_COUNT.capability_dependencies
+        return self.history_dependencies
 
     def to_dict(self) -> dict[str, Any]:
         value = {
@@ -156,7 +259,7 @@ class FixedPublicAlternativeCostSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in (1, ANNOUNCED_X_PITCH_PRICE_VERSION):
             raise FixedPublicAlternativeCostError(
                 "Unsupported fixed alternative-cost version"
             )
@@ -211,6 +314,12 @@ class FixedPublicAlternativeCostSpec:
             raise FixedPublicAlternativeCostError(
                 "Fixed alternative costs support at most one nonmana payment"
             )
+        if self.schema_version == ANNOUNCED_X_PITCH_PRICE_VERSION and (
+            self.kind is not FixedPublicAlternativeCostKind.PLAIN
+            or self.condition != FixedPublicAlternativeCondition(FixedPublicAlternativeConditionKind.ALWAYS)
+            or self.cost_text is not None or len(self.additional_costs) != 1
+        ):
+            raise FixedPublicAlternativeCostError("Announced X requires exactly one hand-exile alternative")
         for raw in self.additional_costs:
             descriptor = thaw_value(raw)
             try:
@@ -222,6 +331,14 @@ class FixedPublicAlternativeCostSpec:
                 raise FixedPublicAlternativeCostError(
                     "Fixed alternative-cost payment is unsupported"
                 )
+            if self.schema_version == ANNOUNCED_X_PITCH_PRICE_VERSION:
+                colors = zone.predicate.colors_all if zone is not None else ()
+                if (zone is None or zone.schema_version != 1 or zone.operation != EXILE_ONE_FROM_HAND_COST
+                        or zone.count != 1 or len(colors) != 1 or colors[0] not in "WUBRG"
+                        or zone.predicate != ObjectQuerySpec(
+                            zones=("hand",), owner="$actor", known_to_actor=True, colors_all=colors,
+                        )):
+                    raise FixedPublicAlternativeCostError("Announced X requires one card of its stated hand color")
         if self.cost_text is None and not self.additional_costs:
             raise FixedPublicAlternativeCostError(
                 "Fixed alternative cost cannot be empty"
@@ -251,6 +368,9 @@ class FixedPublicAlternativeCostSpec:
             FixedPublicAlternativeConditionKind.CONTROLS_BASIC_LAND_TYPE,
             FixedPublicAlternativeConditionKind.NOT_YOUR_TURN,
             FixedPublicAlternativeConditionKind.YOUR_TURN,
+            *OPPONENT_HISTORY_COSTS,
+            *LIVE_ATTACKING_COSTS,
+            *_CREATURE_DAMAGE_COSTS,
         }:
             raise FixedPublicAlternativeCostError(
                 "Plain alternative cost has an unsupported condition"
@@ -259,6 +379,19 @@ class FixedPublicAlternativeCostSpec:
                 self.kind is not FixedPublicAlternativeCostKind.PLAIN or self.cost_text != '{0}'
                 or any(requirements.values()) or self.additional_costs):
             raise FixedPublicAlternativeCostError('Conditional zero-mana alternative requires exactly the zero replacement price')
+        closed_prices = _CLOSED_PLAIN_PRICE_COSTS.get(self.condition.schema_version)
+        if closed_prices is not None and (
+            self.kind is not FixedPublicAlternativeCostKind.PLAIN
+            or self.cost_text != closed_prices[self.condition.kind]
+            or self.additional_costs
+        ):
+            raise FixedPublicAlternativeCostError("Fixed-count prices require the exact ordinary mana alternative")
+        if self.condition.schema_version in _OPPONENT_HISTORY_PRICE_VERSIONS and (
+            self.kind is not FixedPublicAlternativeCostKind.PLAIN
+            or self.cost_text != OPPONENT_HISTORY_COSTS[self.condition.kind]
+            or self.additional_costs
+        ):
+            raise FixedPublicAlternativeCostError("Opponent history requires its exact ordinary mana alternative")
 
     @property
     def option_id(self) -> str:
@@ -339,6 +472,8 @@ class FixedPublicAlternativeCostSpec:
                 thaw_value(value) for value in self.additional_costs
             ],
             "fixed_public_alternative_cost": self.to_dict(),
+            **({"x_value_policy": ANNOUNCED_X_PITCH_POLICY}
+               if self.schema_version == ANNOUNCED_X_PITCH_PRICE_VERSION else {}),
         }
 
 
@@ -352,6 +487,36 @@ def fixed_public_alternative_cost_handler_descriptor(
         REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True,
         "alternative_cost": spec.to_dict(),
     }
+
+
+def opponent_history_price_payload_dependencies(value):
+    if value.get("handler_id") != FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID:
+        return ()
+    price = value.get("alternative_cost")
+    condition = price.get("condition") if isinstance(price, Mapping) else None
+    if not isinstance(condition, Mapping) or condition.get("schema_version") not in _OPPONENT_HISTORY_PRICE_VERSIONS:
+        return ()
+    return FixedPublicAlternativeCostSpec.from_dict(price).condition.history_dependencies
+
+
+def live_attacking_price_payload_dependencies(value):
+    if value.get("handler_id") != FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID:
+        return ()
+    price = value.get("alternative_cost")
+    condition = price.get("condition") if isinstance(price, Mapping) else None
+    if not isinstance(condition, Mapping) or condition.get("schema_version") != LIVE_ATTACKING_PRICE_VERSION:
+        return ()
+    return FixedPublicAlternativeCostSpec.from_dict(price).condition.capability_dependencies
+
+
+def creature_damage_price_payload_dependencies(value):
+    if value.get("handler_id") != FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID:
+        return ()
+    price = value.get("alternative_cost")
+    condition = price.get("condition") if isinstance(price, Mapping) else None
+    if not isinstance(condition, Mapping) or condition.get("schema_version") != CREATURE_DAMAGE_PRICE_VERSION:
+        return ()
+    return FixedPublicAlternativeCostSpec.from_dict(price).condition.history_dependencies
 
 
 class FixedPublicAlternativeCostHost(Protocol):
@@ -385,6 +550,62 @@ def _controlled_basic_land(
     return False
 
 
+def _opponent_history_price_met(host, seat, condition):
+    kind = condition.kind
+    # CR 800.4i keeps past actions after a player leaves. The recorded
+    # version-three condition retains its earlier live-opponent domain.
+    if condition.schema_version == _LEGACY_OPPONENT_HISTORY_PRICE_VERSION:
+        seats = host.active_seats
+    else:
+        seats = sorted(host.state.players)
+    opponents = tuple(player for player in seats if player != seat)
+    if kind is FixedPublicAlternativeConditionKind.OPPONENT_DREW_THREE:
+        from .drawing.restrictions import drawn_this_turn
+
+        return any(drawn_this_turn(host, opponent) >= 3 for opponent in opponents)
+    from .public_history_query_model import PublicHistoryQuerySpec, matching_public_history_events
+
+    if kind is FixedPublicAlternativeConditionKind.OPPONENT_BLUE_CAST:
+        if getattr(getattr(host.state, "turn_history", None), "spell_color_history_version", None) != 1:
+            return False
+        spec = PublicHistoryQuerySpec(event="spell_cast", relation="any_player")
+        occurrences = matching_public_history_events(host.state, seat, spec)
+        casts = [fact for fact in occurrences or () if fact.actor in opponents]
+        if any(fact.spell_colors is None for fact in casts):
+            return False
+        return any("U" in fact.spell_colors for fact in casts)
+
+    if kind is FixedPublicAlternativeConditionKind.OPPONENT_COUNTERED_CREATURE_CAST:
+        from .turn_history_model import CAST_CREATURE_COUNTERED_EVENT
+
+        spec = PublicHistoryQuerySpec(event=CAST_CREATURE_COUNTERED_EVENT, relation="controller")
+        occurrences = matching_public_history_events(host.state, seat, spec)
+        return any(fact.target in opponents for fact in occurrences or ())
+
+    if kind is FixedPublicAlternativeConditionKind.OPPONENT_GAINED_LIFE:
+        spec = PublicHistoryQuerySpec(event="player_gained_life", relation="any_player", reduction="sum_amount")
+        occurrences = matching_public_history_events(host.state, seat, spec)
+        return any(fact.target in opponents and fact.amount > 0 for fact in occurrences or ())
+
+    event, types, threshold = _OPPONENT_HISTORY_COUNTS[kind]
+    spec = PublicHistoryQuerySpec(event=event, relation="any_player", types_all=types)
+    occurrences = matching_public_history_events(host.state, seat, spec)
+    counts = Counter(fact.actor for fact in occurrences or () if fact.actor in opponents)
+    return any(count >= threshold for count in counts.values())
+
+
+def _creature_damage_price_met(host, seat):
+    from .public_history_query_model import PublicHistoryQuerySpec, matching_public_history_events
+
+    query = PublicHistoryQuerySpec(event="player_damaged", relation="controller", types_all=("creature",))
+    occurrences = matching_public_history_events(host.state, seat, query)
+    sources = [fact.object_incarnation for fact in occurrences or ()
+               if type(fact.amount) is int and fact.amount > 0 and fact.target_kind == "player"]
+    if any(type(source) is not str or not source for source in sources):
+        return False
+    return len(set(sources)) >= 2
+
+
 def fixed_public_alternative_condition_met(
     host: FixedPublicAlternativeCostHost,
     seat: str,
@@ -398,6 +619,17 @@ def fixed_public_alternative_condition_met(
     except (FixedPublicAlternativeCostError, TypeError):
         return False
     kind = condition.kind
+    if condition.schema_version in _OPPONENT_HISTORY_PRICE_VERSIONS:
+        return _opponent_history_price_met(host, seat, condition)
+    if condition.schema_version == CREATURE_DAMAGE_PRICE_VERSION:
+        return _creature_damage_price_met(host, seat)
+    if condition.schema_version == LIVE_ATTACKING_PRICE_VERSION:
+        from .live_battlefield_quantities import current_live_battlefield_count
+
+        count = current_live_battlefield_count(host, seat, _ATTACKING_CREATURE_COUNT)
+        if kind is FixedPublicAlternativeConditionKind.EXACTLY_ONE_ATTACKING_CREATURE:
+            return count == 1
+        return count >= _LIVE_ATTACKING_MINIMUM_COUNTS[kind]
     if kind is FixedPublicAlternativeConditionKind.CONTROLLED_COMMANDER:
         return any(candidate.zone == 'battlefield' and not candidate.phased_out
             and candidate.controller == seat and candidate.is_commander for candidate in host.state.cards.values())

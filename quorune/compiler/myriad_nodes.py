@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE

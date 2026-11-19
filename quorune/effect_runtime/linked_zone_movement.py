@@ -7,6 +7,7 @@ from typing import Any, Mapping
 from ..errors import GameRuleError
 from ..event_card_return import (
     EVENT_LIBRARY_MOVE_VERSION,
+    apply_death_source_exile, has_death_source_exile,
     available_event_library_components,
     is_event_library_move,
     validate_event_library_move,
@@ -20,6 +21,8 @@ from ..zone_trigger_events import ZoneTransitionKind
 def apply_move_if_in_zone(
     host: Any, effect: Mapping[str, Any], *, actor: str, operation: str, reason: str,
 ) -> Any:
+    if has_death_source_exile(effect):
+        return apply_death_source_exile(host, effect, actor=actor, reason=reason)
     if not is_event_library_move(effect):
         return _apply_move_if_in_zone(host, effect, actor=actor, operation=operation, reason=reason)
     try:

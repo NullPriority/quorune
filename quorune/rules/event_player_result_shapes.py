@@ -6,18 +6,106 @@ from ..compiler.event_player_results import (EVENT_PLAYER_RESULT_CAPABILITY,EVEN
     EVENT_PLAYER_DAMAGE_CAPABILITY,EVENT_PLAYER_DAMAGE_MECHANIC)
 from .mill_capability_shapes import fixed_mill_node_capabilities,mill_covered_mechanics
 from .received_damage_events import is_creature_receiving_event
-from ..event_player_result_values import event_result_value_capabilities
+from ..event_player_result_values import (
+    SPELL_CAST_COUNT_HISTORY, SpellCastCountLifeSpec, event_result_value_capabilities,
+    uses_spell_cast_count_life,
+)
+from ..public_history_query_model import public_history_query_value
+from .effect_shape_walkers import nested_effects
 from ..fractional_quantity_model import HALF_LIFE_CAPABILITY,HALF_LIFE_MECHANIC
+from collections.abc import Mapping
+
+from ..scalar_effect_amount_model import (
+    SCALAR_AMOUNT_CAPABILITY,
+    SCALAR_AMOUNT_KIND,
+    ScalarAmountOrigin,
+    ScalarEffectAmountSpec,
+)
 from ..target_controller_information import (
     OCCURRENCE_CONTROLLER_ENTRY_EVENTS, OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS,
     TARGET_CONTROLLER_INFORMATION_CAPABILITY, is_occurrence_controller_reference,
 )
 
 
+from ..unblocked_attacker_model import (
+    UNBLOCKED_ATTACKER_CAPABILITY, UNBLOCKED_ATTACKER_EVENT, UNBLOCKED_DEFENDER_POISON_CAPABILITY,
+    UNBLOCKED_DEFENDER_POISON_MECHANIC, intrinsic_unblocked_condition,
+    unblocked_defender_poison_effect,
+)
+
+
+def unblocked_defender_poison_node_capabilities(effects, target_schema):
+    if (target_schema is not None or tuple(effects) != (unblocked_defender_poison_effect(),)
+            or type(effects[0]["amount"]) is not int):
+        return ()
+    return (UNBLOCKED_DEFENDER_POISON_CAPABILITY, UNBLOCKED_ATTACKER_CAPABILITY,
+            "counter.producer.fixed_player_effect")
+
+
+def unblocked_defender_poison_program_capabilities(program):
+    from ..replacement.immutable import FrozenMap
+
+    required = unblocked_defender_poison_node_capabilities(program.effects, program.target_schema)
+    if (required and program.event == UNBLOCKED_ATTACKER_EVENT and program.active_zone == "battlefield"
+            and FrozenMap(program.event_condition or {}) == FrozenMap(intrinsic_unblocked_condition())):
+        return required
+    return ()
+
+
+def _spell_cast_count_life_capabilities():
+    return tuple(sorted({
+        EVENT_PLAYER_RESULT_CAPABILITY, *SPELL_CAST_COUNT_HISTORY.capability_dependencies,
+        "life.change.effect", "trigger.event.normalized_spell_cast", "trigger.placement.apnap",
+    }))
+
+
+def spell_cast_count_life_runtime_dependencies(program):
+    effects = (*program.effects, *getattr(program, "handlers", ()))
+    if not any(uses_spell_cast_count_life(effect) for effect in nested_effects(effects)):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("spell.cast", "battlefield")
+        or program.target_schema is not None or getattr(program, "cost_schema", None) is not None
+        or len(program.effects) != 1 or getattr(program, "handlers", ())
+    ):
+        raise ValueError("Spell-count life requires the complete battlefield cast trigger")
+    spec = SpellCastCountLifeSpec.from_effect(program.effects[0])
+    if program.event_condition != spec.event_condition:
+        raise ValueError("Spell-count life requires its matching caster relation")
+    return _spell_cast_count_life_capabilities()
+
+
+def bind_spell_cast_count_life_effect(state, item, effect):
+    if not uses_spell_cast_count_life(effect):
+        return effect
+    spec = SpellCastCountLifeSpec.from_effect(effect)
+    if item.context.get("event") != "spell.cast":
+        raise ValueError("Spell-count life lost its sealed cast occurrence")
+    seat = item.controller if spec.recipient == "controller" else item.context.get("player")
+    if type(seat) is not str or seat not in state.players:
+        raise ValueError("Spell-count life lost its represented recipient")
+    if not state.players[seat].in_game:
+        return None
+    count = public_history_query_value(state, seat, SPELL_CAST_COUNT_HISTORY)
+    if type(count) is not int or count < 0:
+        raise ValueError("Current spell-cast history is unavailable")
+    if count == 0:
+        return None
+    return {"op": effect["op"], "player": seat, spec.amount_field: count}
+
+
 def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic_ids):
+    if UNBLOCKED_DEFENDER_POISON_MECHANIC in mechanic_ids:
+        return unblocked_defender_poison_node_capabilities(effects, target_schema)
     if EVENT_PLAYER_DAMAGE_MECHANIC in set(mechanic_ids):
         return fixed_event_player_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if EVENT_PLAYER_RESULT_MECHANIC not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
+    if len(effects) == 1 and uses_spell_cast_count_life(effects[0]):
+        try:
+            SpellCastCountLifeSpec.from_effect(effects[0])
+        except (TypeError, ValueError, KeyError):
+            return ()
+        return _spell_cast_count_life_capabilities()
     if not any(effect.get('player')!='$controller' for effect in effects):return ()
     layouts={'draw':('count',{'op','player','count','private'},'zone.draw.library_to_hand'),
         'life':('delta',{'op','player','delta'},'life.change.effect'),
@@ -47,11 +135,15 @@ def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic
 
 
 def fixed_event_player_result_covered_mechanics(supplied):
-    return ({EVENT_PLAYER_RESULT_MECHANIC} if EVENT_PLAYER_RESULT_CAPABILITY in supplied else set()) | mill_covered_mechanics(supplied) | (
+    poison = {UNBLOCKED_DEFENDER_POISON_MECHANIC} if UNBLOCKED_DEFENDER_POISON_CAPABILITY in supplied else set()
+    return poison | ({EVENT_PLAYER_RESULT_MECHANIC} if EVENT_PLAYER_RESULT_CAPABILITY in supplied else set()) | mill_covered_mechanics(supplied) | (
         {EVENT_PLAYER_DAMAGE_MECHANIC} if EVENT_PLAYER_DAMAGE_CAPABILITY in supplied else set())
 
 
 def is_closed_fixed_event_player_result_program(program):
+    if UNBLOCKED_DEFENDER_POISON_MECHANIC in program.coverage:
+        required = unblocked_defender_poison_program_capabilities(program)
+        return bool(required) and set(required) <= set(program.capability_dependencies)
     required=fixed_event_player_result_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
     if not required or not set(required).issubset(program.capability_dependencies):return False
@@ -112,6 +204,25 @@ def attached_combat_controller_runtime_dependencies(program):
     return (*required, 'trigger.event.normalized_public_action', 'attachment.reference.current_or_lki', *subscription)
 
 
+def attack_occurrence_controller_runtime_dependencies(program):
+    attached = attached_combat_controller_runtime_dependencies(program)
+    if attached:
+        return attached
+
+    from .qualified_attacks import qualified_player_defense_is_closed
+    from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY
+
+    if (program.event != 'creature.attacks' or program.active_zone != 'battlefield' or program.target_schema is not None
+            or not qualified_player_defense_is_closed(program.event_condition) or not program.effects
+            or 'one_or_more_event_batch' in program.coverage
+            or not is_occurrence_controller_reference(program.effects[0].get('player'))):
+        return ()
+    required = fixed_event_player_result_node_capabilities(
+        effects=program.effects, target_schema=None, mechanic_ids=program.coverage,
+    )
+    return (*required, QUALIFIED_ATTACK_CAPABILITY, 'trigger.event.normalized_public_action') if required else ()
+
+
 def blocking_controller_runtime_dependencies(program):
     if not _blocking_controller_event_is_closed(program) or len(program.effects) != 1:
         return ()
@@ -126,10 +237,13 @@ def blocking_controller_runtime_dependencies(program):
 
 
 def event_player_damage_runtime_dependencies(program):
-    from collections.abc import Mapping
     required=set();has_marker=EVENT_PLAYER_DAMAGE_MECHANIC in program.coverage
+    energy=False
     def visit(node):
+        nonlocal energy
         if isinstance(node,Mapping):
+            if _is_scalar_player_counter(node):
+                energy=True
             if (node.get('op') == 'damage' and node.get('source') == '$source' and node.get('target') != '$controller'
                     and _event_player_reference_is_closed(program, node.get('target'), amount=node.get('amount'))
                     and event_result_value_capabilities('damage', 'amount', node.get('amount'), committed_damage=(
@@ -143,6 +257,8 @@ def event_player_damage_runtime_dependencies(program):
             for child in node:visit(child)
     visit(program.effects)
     if has_marker and not required:raise ValueError('Fixed event-player damage marker lacks a closed bound instruction')
+    if energy:
+        required.update(combat_damage_energy_runtime_dependencies(program))
     return tuple(sorted(required))
 
 
@@ -156,7 +272,7 @@ def _event_player_reference_is_closed(program,player,*,amount=None):
     except (TypeError,ValueError):return False
     if is_occurrence_controller_reference(player):
         if program.event == 'creature.attacks':
-            return bool(attached_combat_controller_runtime_dependencies(program))
+            return bool(attack_occurrence_controller_runtime_dependencies(program))
         return (subscriptions is None and program.active_zone == 'battlefield' and program.target_schema is None
                 and 'one_or_more_event_batch' not in program.coverage
                 and (program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS if type(amount) is int
@@ -191,3 +307,60 @@ def _occurrence_player_reference_is_closed(event,condition,coverage,player):
     return (player=='$context.defending_player' and event=='creature.attacks'
         and bool({'trigger-event-normalized-public-action','trigger-event-normalized-self-attack'} & set(coverage))
         and 'one_or_more_event_batch' not in coverage)
+
+
+def combat_damage_energy_effect():
+    """Use the committed scalar on the existing controller counter operation."""
+    return {
+        "op": "place_player_counters",
+        "subjects": "controller",
+        "counter": "energy",
+        "amount": ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT).to_dict(),
+        "source": "$source",
+    }
+
+
+def _is_scalar_player_counter(effect):
+    amount = effect.get("amount")
+    return (effect.get("op") == "place_player_counters" and isinstance(amount, Mapping)
+            and amount.get("kind") == SCALAR_AMOUNT_KIND)
+
+
+def _has_scalar_player_counter(value):
+    if isinstance(value, Mapping):
+        return _is_scalar_player_counter(value) or any(
+            _has_scalar_player_counter(child) for child in value.values()
+        )
+    return isinstance(value, (list, tuple)) and any(_has_scalar_player_counter(child) for child in value)
+
+
+def combat_damage_energy_fixed_projection(effect):
+    """Prove that the scalar varies only the amount of controller energy."""
+    if not _is_scalar_player_counter(effect):
+        return None
+    expected = combat_damage_energy_effect()
+    if effect != expected or ScalarEffectAmountSpec.from_dict(effect["amount"]) != ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT):
+        raise ValueError("Combat damage energy requires one unscaled committed amount and the ability controller")
+    return {**expected, "amount": 2}
+
+
+def combat_damage_energy_runtime_dependencies(program):
+    """Independently require the source incarnation and actual player damage event."""
+    if not _has_scalar_player_counter(program.effects):
+        return ()
+    if len(program.effects) != 1 or not combat_damage_energy_fixed_projection(program.effects[0]):
+        raise ValueError("Combat damage energy must be the complete triggered result")
+    condition = program.event_condition
+    expected = (
+        {"field": "target_kind", "op": "eq", "value": "player"},
+        {"field": "combat", "op": "truthy", "value": True},
+        {"field": "source_logical_object_id", "op": "eq", "value": "$source.logical_object_id"},
+    )
+    predicates = condition.get("all") if isinstance(condition, Mapping) and set(condition) == {"all"} else None
+    if (program.event != "damage.dealt.self" or program.active_zone != "battlefield"
+            or program.target_schema is not None or program.cost_schema is not None
+            or not isinstance(predicates, (list, tuple)) or tuple(predicates) != expected
+            or predicates[1]["value"] is not True):
+        raise ValueError("Combat damage energy requires the original creature's combat damage to a player")
+    return (SCALAR_AMOUNT_CAPABILITY, "counter.producer.fixed_player_effect",
+            "trigger.event.normalized_damage", "trigger.placement.apnap")

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned paired cost/cast-trigger authority for fixed Replicate."""
 
-import re
+from . import regex_working_set as re
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..characteristic_evaluation import type_parts
 from ..replicate_model import FixedManaReplicateSpec, REPLICATE_CAPABILITY, REPLICATE_HANDLER

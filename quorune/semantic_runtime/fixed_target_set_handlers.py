@@ -174,6 +174,10 @@ class MoveFixedTargetSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if self.operation == 'exile_public_graveyard_targets' and 'followup' in effect:
+            from .targeted_graveyard_outcome_handlers import lower_targeted_graveyard_outcome
+
+            return lower_targeted_graveyard_outcome(effect, context, handler_id=self.handler_id)
         cards, _maximum, reason, selections = _fixed_target_fields(
             effect,
             context,

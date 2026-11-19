@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed static setting grammar over the existing public and attachment queries."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import CREATURE_SUBTYPES
@@ -107,6 +107,33 @@ def _setting_part(modifier, part):
             value = base_definition[1]
         return _definition(modifier, value, addition=addition)
     return False
+
+
+def nonowner_creature_modifier_handler(text):
+    match = re.fullmatch(
+        r"Each creature you control but don['’]t own (?P<stats>gets [+-]\d+/[+-]\d+), "
+        r"(?P<abilities>has [^,]+), and (?P<type>is (?:a|an) .+? in addition to its other (?:creature )?types)\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    from ..semantic_runtime.fixed_characteristic_settings import NonownerCreatureModifierHandler
+
+    modifier = _attached_modifier()
+    if not all(_setting_part(modifier, match[key]) for key in ("stats","abilities","type")):
+        return None
+    handler = NonownerCreatureModifierHandler()
+    descriptor = {
+        "handler_id":handler.handler_id,"schema_version":handler.schema_version,"event":handler.event,
+        "predicate":ObjectQuerySpec(zones=("battlefield",),types_all=("creature",),
+                                    controlled_by_nonowner=True).to_dict(),
+        "modifier":modifier,
+    }
+    try:
+        required = handler.required_capabilities(descriptor)
+    except (TypeError,ValueError):
+        return None
+    return "static-nonowner-creature-modifier-v1", descriptor, required
 
 
 def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):

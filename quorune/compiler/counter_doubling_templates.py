@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed single-named-counter doubling over existing placement subjects."""
 
-import re
+from . import regex_working_set as re
 from ..counter_names import existing_counter_amount_descriptor
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN, fixed_counter_placement_effect_template, fixed_counter_placement_set_effect_template
 

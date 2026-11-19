@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed fixed symbol bundles through the existing resolution mana owner."""
 
 from collections import Counter
-import re
+from . import regex_working_set as re
 from ..abilities import _mana_spend_restriction
 
 FIXED_RESOLUTION_MANA_MECHANIC = 'fixed-resolution-mana'

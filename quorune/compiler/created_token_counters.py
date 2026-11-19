@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..created_token_counter_model import CREATE_THEN_COUNTER,CREATED_TOKEN_COUNTER_MECHANIC
 from .token_templates import fixed_token_creation_effect_template
 from .fixed_numbers import fixed_number

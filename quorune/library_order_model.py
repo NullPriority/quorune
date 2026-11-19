@@ -108,6 +108,12 @@ class LibraryArrivalOrder:
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "LibraryArrivalOrder":
         if isinstance(value, Mapping) and set(value) == {"chooser", "position", "members", "scope"}:
+            if value['scope']=='fixed_hand_putback_v1':
+                from .fixed_hand_putback_model import FixedHandPutbackOrder
+                return FixedHandPutbackOrder(value['chooser'],value['position'],value['members'])
+            if value['scope'] == 'hand_redraw_v1':
+                from .hand_library_redraw_model import HandLibraryArrivalOrder
+                return HandLibraryArrivalOrder(value['chooser'], value['position'], value['members'])
             if value["scope"] == "event_departure":
                 return DepartedLibraryArrivalOrder(value["chooser"], value["position"], value["members"])
         if not isinstance(value, Mapping) or set(value) != {"chooser", "position", "members"}:

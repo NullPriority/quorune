@@ -31,9 +31,11 @@ def counter_event_fact(event, *, amount=None):
     controller = payload.get('target_controller')
     if controller is None:
         controller = event.affected_object.controller or event.affected_object.owner
+    incarnation = payload.get('target_logical_object_id')
     return CounterPlacementFact('permanent', event.affected_object.object_id,
         payload.get('counter_name'), value,
-        controller=controller, zone=payload.get('target_zone'), types=tuple(types))
+        controller=controller, zone=payload.get('target_zone'), types=tuple(types),
+        logical_object_id=incarnation if type(incarnation) is str and incarnation else None)
 
 
 def apply_counter_permissions(event, permissions=None, *, excluded_sources=()):
@@ -84,7 +86,18 @@ def apply_counter_permissions_tree(event, permissions):
         raise CounterPermissionError('Counter event trees require typed permissions')
     if not permissions.rules:
         return event
-    children = tuple(apply_counter_permissions_tree(child, permissions) for child in event.children)
+    children = event.children
+    if (event.kind == 'damage.results' and event.affected_object is not None
+            and any(rule.attached_object_id == event.affected_object.object_id for rule in permissions.rules)):
+        # The result root seals the creature's identity before its counter
+        # children reach replacement discovery. Retain legacy leaf payloads.
+        incarnation = event.payload.get('subject_logical_object_id')
+        children = tuple(
+            replace(child, payload={**child.payload, 'target_logical_object_id': incarnation})
+            if child.kind == 'counter.place' and child.affected_object == event.affected_object else child
+            for child in children
+        )
+    children = tuple(apply_counter_permissions_tree(child, permissions) for child in children)
     event = replace(event, children=children) if children != event.children else event
     return apply_counter_permissions(event, permissions)
 

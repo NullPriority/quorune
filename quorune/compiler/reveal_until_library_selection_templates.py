@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed controller reveal-until instructions with independently owned results."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..reveal_until_library_selection_model import (

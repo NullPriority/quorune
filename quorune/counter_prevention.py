@@ -10,10 +10,44 @@ from .counter_removal import (
     CounterRemoval, CounterRemovalEffectPlan, CounterRemovalResult,
     plan_counter_removal_effect, validate_counter_removal_effect_plan, commit_counter_removal_effect,
 )
-from .replacement_effects import ReplaceableEvent, ReplacementEffect
+from .damage_modifier_state import SHIELD_COUNTER_DAMAGE_VERSION_FIELD, read_shield_counter_damage_version
+from .damage_source import DamageError
+from .replacement_effects import PreventAmount, ReplaceableEvent, ReplacementClass, ReplacementEffect
 
 
 HANDLER = 'prevention.damage.fixed-self-counter.v1'
+
+SHIELD_COUNTER_EFFECT_PREFIX = "prevention.damage.shield-counter.v1:"
+
+
+def collect_shield_counter_effects(host: Any) -> tuple[ReplacementEffect, ...]:
+    version = getattr(host.state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None)
+    if version is None:
+        return ()
+    read_shield_counter_damage_version({SHIELD_COUNTER_DAMAGE_VERSION_FIELD: version})
+    effects = []
+    for card in host.state.cards.values():
+        if card.zone != "battlefield" or card.phased_out:
+            continue
+        count = card.counters.get("shield", 0)
+        if type(count) is not int or count < 0:
+            raise DamageError("Shield counter count is malformed")
+        if count:
+            effects.append(ReplacementEffect(
+                effect_id=f"{SHIELD_COUNTER_EFFECT_PREFIX}{card.logical_object_id}:{count}",
+                source_id=card.ref,
+                event_kind="damage",
+                replacement_class=ReplacementClass.OTHER,
+                conditions={
+                    "amount": {"not_in": [0]},
+                    "target_kind": {"eq": "permanent"},
+                    "target_object_id": {"eq": card.object_id},
+                    "target_logical_object_id": {"eq": card.logical_object_id},
+                },
+                operations=(PreventAmount(),),
+                label=f"Remove a shield counter from {card.ref}",
+            ))
+    return tuple(sorted(effects, key=lambda effect: effect.effect_id))
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,10 +80,14 @@ def projected_counter_prevention_host(host: Any, prepared: Sequence[PreparedCoun
 def prepare_counter_prevention_results(host: Any, events: Sequence[ReplaceableEvent],
                                        effects: Sequence[ReplacementEffect]
                                        ) -> tuple[PreparedCounterPrevention, ...]:
-    """Remove once per applicable static instance across simultaneous sources."""
-    grouped: dict[tuple[str, str], list[tuple[ReplacementEffect, tuple[str, ...]]]] = {}
+    """Remove once per applied prevention effect across simultaneous sources."""
+    grouped: dict[tuple[str, str, str], list[tuple[ReplacementEffect, tuple[str, ...]]]] = {}
     for effect in effects:
-        if not effect.effect_id.startswith(HANDLER+':'):
+        if effect.effect_id.startswith(SHIELD_COUNTER_EFFECT_PREFIX):
+            counter_name = "shield"
+        elif effect.effect_id.startswith(HANDLER + ":"):
+            counter_name = "+1/+1"
+        else:
             continue
         matching = tuple(event.event_id for event in events
             if effect.effect_id in event.applied_effects
@@ -58,13 +96,13 @@ def prepare_counter_prevention_results(host: Any, events: Sequence[ReplaceableEv
             continue
         object_id = effect.conditions['target_object_id']['eq']
         logical_id = effect.conditions['target_logical_object_id']['eq']
-        grouped.setdefault((object_id, logical_id), []).append((effect, matching))
+        grouped.setdefault((object_id, logical_id, counter_name), []).append((effect, matching))
     results = []
-    for (object_id, logical_id), instances in sorted(grouped.items()):
+    for (object_id, logical_id, counter_name), instances in sorted(grouped.items()):
         effect = instances[0][0]
         event_ids = tuple(sorted({v for _, ids in instances for v in ids}))
         results.append(PreparedCounterPrevention(effect.effect_id, effect.source_id, event_ids,
-            plan_counter_removal_effect(host, CounterRemoval(object_id, '+1/+1', len(instances),
+            plan_counter_removal_effect(host, CounterRemoval(object_id, counter_name, len(instances),
                 expected_logical_object_id=logical_id))))
     return tuple(results)
 
@@ -75,6 +113,11 @@ def validate_counter_prevention_results(host: Any, prepared: Sequence[PreparedCo
 
 
 def validate_counter_prevention_snapshot(host: Any, prepared: Any) -> None:
+    if prepared.events:
+        recorded = tuple(effect for effect in prepared.effects
+                         if effect.effect_id.startswith(SHIELD_COUNTER_EFFECT_PREFIX))
+        if recorded != collect_shield_counter_effects(host):
+            raise DamageError("Prepared damage shield counters changed before commit")
     expected = prepare_counter_prevention_results(host, prepared.events, prepared.effects)
     if expected != prepared.aftermath.counter_removals:
         raise ValueError('Prepared prevention counter result does not match the applied source snapshot')
@@ -99,7 +142,7 @@ def commit_counter_prevention_results(host: Any, prepared: Sequence[PreparedCoun
         removed = commit_counter_removal_effect(host, result.plan)
         results.append(removed)
         host._log(None, 'damage.prevention.counter_removal',
-            f'{result.source_ref}: remove a +1/+1 counter after damage prevention',
+            f'{result.source_ref}: remove a {result.plan.removal.counter_name} counter after damage prevention',
             {'effect_id': result.effect_id, 'source': result.source_ref,
                 'removed': removed.removed, 'damage_event_ids': list(result.event_ids)}, importance=2)
     return tuple(results)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 from typing import Any
 
@@ -730,6 +730,10 @@ def fixed_battlefield_query_subject(
     """Parse one fixed public battlefield set shared by layers 6 and 7c."""
 
     text = subject.strip()
+    from .static_recipient_qualifiers import qualified_public_query
+    qualified = qualified_public_query(text, compile_base=fixed_battlefield_query_subject)
+    if qualified is not None:
+        return qualified
     if _STATE_QUALIFIED_BATTLEFIELD_SUBJECT.fullmatch(text):
         return _state_qualified_battlefield_query(text)
     controlled = _controlled_battlefield_query(text)
@@ -1014,6 +1018,9 @@ def _absence_query_count_condition(
     )
     if parsed is None or parsed[0] != "source_controller" or parsed[2]:
         return None
+    query = parsed[1]
+    if query.keywords_all or query.keywords_none:
+        return None
     return _query_count_condition(
         kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         amount=0,
@@ -1022,7 +1029,7 @@ def _absence_query_count_condition(
             if controlled is not None
             else CharacteristicQuantityScope.OPPONENT_ZONES
         ),
-        query=parsed[1],
+        query=query,
     )
 
 
@@ -1289,100 +1296,12 @@ def _legacy_public_state_condition(
     )
 
 
-def _object_public_state_condition(
-    normalized: str,
-    *,
-    source_name: str,
-) -> FixedPublicStateConditionSpec | None:
-    subject = _condition_source_subject_pattern(source_name)
-    if re.fullmatch(rf"(?:it['’]s|{subject} is) renowned",normalized,re.I):
-        from ..continuous_conditions import FixedPublicStateFact
-        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
-            amount=1,fact=FixedPublicStateFact.SOURCE_RENOWNED,schema_version=4)
-    source_state = re.fullmatch(
-        rf"(?:it['’]s|{subject} is) (?P<state>attacking|blocking|enchanted|"
-        r"equipped|modified|monstrous|tapped|untapped)",
-        normalized,
-        re.IGNORECASE,
-    )
-    if source_state is not None:
-        state = source_state.group("state").casefold()
-        state_fields = (
-            {"tapped": state == "tapped"}
-            if state in {"tapped", "untapped"}
-            else {state: True}
-        )
-        return FixedPublicStateConditionSpec(
-            FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
-            predicate=ObjectQuerySpec(
-                zones=("battlefield",),
-                state_predicate=PermanentStatePredicateSpec(**state_fields),
-            ),
-            schema_version=2,
-        )
-    source_quality = re.fullmatch(
-        rf"(?:it['’]s|{subject} is) (?P<quality>(?:a |an )?"
-        r"[A-Za-z][A-Za-z' -]+)",
-        normalized,
-        re.IGNORECASE,
-    )
-    if source_quality is not None:
-        predicate = _fixed_condition_object_query(
-            "permanent",
-            source_quality.group("quality"),
-        )
-        if predicate is not None:
-            return FixedPublicStateConditionSpec(
-                FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
-                predicate=predicate,
-                schema_version=2,
-            )
-    attached_state = re.fullmatch(
-        r"(?P<relation>enchanted|equipped) "
-        r"(?P<subject>creature|permanent|land) is (?P<quality>.+)",
-        normalized,
-        re.IGNORECASE,
-    )
-    if attached_state is None:
-        return _fixed_public_query_count_condition(normalized)
-    attached_quality = attached_state.group("quality").casefold()
-    if attached_quality in {
-        "attacking",
-        "blocking",
-        "enchanted",
-        "equipped",
-        "modified",
-        "monstrous",
-        "tapped",
-        "untapped",
-    }:
-        attached_subject = attached_state.group("subject").casefold()
-        state_fields = (
-            {"tapped": attached_quality == "tapped"}
-            if attached_quality in {"tapped", "untapped"}
-            else {attached_quality: True}
-        )
-        predicate = ObjectQuerySpec(
-            zones=("battlefield",),
-            types_all=(
-                ()
-                if attached_subject == "permanent"
-                else (attached_subject,)
-            ),
-            state_predicate=PermanentStatePredicateSpec(**state_fields),
-        )
-    else:
-        predicate = _fixed_condition_object_query(
-            attached_state.group("subject"),
-            attached_state.group("quality"),
-        )
-    if predicate is None:
-        return None
-    return FixedPublicStateConditionSpec(
-        FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
-        predicate=predicate,
-        schema_version=2,
-    )
+def _object_public_state_condition(normalized: str, *, source_name: str):
+    from .public_object_conditions import object_public_state_condition
+    return object_public_state_condition(normalized,
+        source_pattern=_condition_source_subject_pattern(source_name),
+        compile_object_query=_fixed_condition_object_query,
+        compile_count_condition=_fixed_public_query_count_condition)
 
 
 def _source_history_public_state_condition(
@@ -1496,6 +1415,10 @@ def fixed_public_state_condition(
     """Parse one closed condition without coupling it to a result body."""
 
     def compile_atomic(term):
+        from .static_recipient_qualifiers import negative_source_combat_condition
+        negative = negative_source_combat_condition(term, source_name=source_name)
+        if negative is not None:
+            return negative
         from .player_maximum_templates import player_maximum_condition,opponent_more_metric_condition
         maximum=player_maximum_condition(term) or opponent_more_metric_condition(term)
         if maximum is not None:return maximum

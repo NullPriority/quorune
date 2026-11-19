@@ -14,6 +14,10 @@ FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID = "fixed-counted-library-search"
 FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.fixed_counted"
 DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID = "disjunctive-counted-library-search"
 DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.counted_disjunction"
+QUERY_BOUND_SEARCH_VERSION = 8
+QUERY_BOUND_SEARCH_CAPABILITY = "library.search.public_query_bound"
+QUERY_BOUND_SEARCH_MECHANIC = "public-query-bounded-library-search"
+QUERY_BOUND_SEARCH_RESOLVED = "_resolved_query_bound"
 SEARCH_ALTERNATIVES = "alternatives"
 _MANA_VALUE_BOUNDS = frozenset({"equal", "minimum", "maximum"})
 LIBRARY_SEARCH_RULE_CAPABILITY='library.search.restriction.static'
@@ -21,6 +25,50 @@ LIBRARY_SEARCH_TEMP_CAPABILITY='library.search.prohibition.resolution_until_end_
 LIBRARY_SEARCH_RULE_HANDLER='permission.action.library-search-rule.v1'
 LIBRARY_SEARCH_TEMP_OPERATION='prohibit_library_search_until_end_of_turn'
 LIBRARY_SEARCH_TEMP_KIND='resolution_library_search_prohibition'
+
+
+FETCH_ENTRY_PLACEMENT_VERSION = 1
+FETCH_ENTRY_PLACEMENT_FIELD = "fetch_entry_placement_version"
+
+
+def read_fetch_entry_placement_version(data: Mapping[str, Any]) -> int | None:
+    if FETCH_ENTRY_PLACEMENT_FIELD not in data:
+        return None
+    value = data[FETCH_ENTRY_PLACEMENT_FIELD]
+    if type(value) is not int or value != FETCH_ENTRY_PLACEMENT_VERSION:
+        raise ValueError("Invalid fetch entry placement version")
+    return value
+
+
+def fetch_entry_placement_fields(version: int | None) -> dict[str, int]:
+    if version is None:
+        return {}
+    fields = {FETCH_ENTRY_PLACEMENT_FIELD: version}
+    read_fetch_entry_placement_version(fields)
+    return fields
+
+
+def decode_fixed_tapped_battlefield_search(effect: Any) -> FixedCountedLibrarySearchTemplate | None:
+    """Recognize the existing closed one-result placement instruction."""
+    required={'op','zone','selector','count','destination','shuffle_after','enters_tapped_override'}
+    optional={'searching_player','reveal'}
+    if (not isinstance(effect,Mapping) or not required<=set(effect) or set(effect)-required-optional
+            or effect['op']!='search' or effect['zone']!='library' or effect['destination']!='battlefield'
+            or effect['shuffle_after'] is not True or effect['enters_tapped_override'] is not True
+            or effect.get('searching_player','$controller')!='$controller'
+            or effect.get('reveal',False) is not False):return None
+    count=effect['count']
+    if (not isinstance(count,Mapping) or set(count)!={'minimum','maximum'}
+            or any(type(count[k]) is not int or count[k]!=1 for k in count)):return None
+    selector=effect['selector'];fields={'types':'types_all','types_any':'types_any','subtypes_any':'subtypes_any','supertypes':'supertypes_all','colors_any':'colors_any'}
+    if not isinstance(selector,Mapping) or not selector or set(selector)-set(fields):return None
+    if any(not isinstance(v,(list,tuple)) or any(type(x) is not str for x in v) for v in selector.values()):return None
+    try:
+        query=ObjectQuerySpec(zones=('library',),**{fields[k]:tuple(v) for k,v in selector.items()})
+        normalized={k:list(getattr(query,fields[k])) for k in selector}
+        return FixedCountedLibrarySearchTemplate(count=1,optional_count=False,
+            selector=FrozenMap(normalized),destination='battlefield',reveal=False,enters_tapped=True)
+    except (TypeError,ValueError):return None
 
 
 @dataclass(frozen=True,slots=True)
@@ -126,7 +174,7 @@ def counted_search_mana_value_slot(path: tuple[str, ...]) -> bool:
 
 def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
     selector = effect.get("selector")
-    return effect.get("schema_version") in (2, 3, 4, 5) or (
+    return effect.get("schema_version") in (2, 3, 4, 5, QUERY_BOUND_SEARCH_VERSION) or (
         isinstance(selector, Mapping) and SEARCH_ALTERNATIVES in selector
     )
 
@@ -135,6 +183,11 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     """Validate disjunctions and persisted X bounds before search opens."""
     if effect.get("op") != "search":
         return ()
+    if effect.get('schema_version') == QUERY_BOUND_SEARCH_VERSION:
+        return QueryBoundLibrarySearchSpec.from_effect(effect).capabilities()
+    if effect.get('schema_version') == 7:
+        from .qualified_library_search_model import QualifiedLibrarySearchSpec
+        return QualifiedLibrarySearchSpec.from_effect(effect).capabilities()
     if effect.get('schema_version') == 5:
         from .search_allocation_model import SearchAllocationSpec
         return SearchAllocationSpec.from_effect(effect).capabilities()
@@ -341,3 +394,101 @@ class FixedCountedLibrarySearchTemplate:
         if value.effect() != thaw_value(effect):
             raise ValueError("Counted search instruction contradicts its typed contract")
         return value
+
+
+@dataclass(frozen=True, slots=True)
+class QueryBoundLibrarySearchSpec:
+    """A closed basic-land search with an applied public-state maximum."""
+    amount: Any
+    destination: str = 'battlefield'
+    reveal: bool = False
+    enters_tapped: bool = True
+
+    def __post_init__(self):
+        from .query_effect_amount_model import PublicQueryAmountSpec
+        from .characteristic_fragments import (
+            CharacteristicQuantitySpec,CharacteristicQuantityScope,CharacteristicQuantityReduction,
+        )
+        from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
+        if (not isinstance(self.amount,PublicQueryAmountSpec) or self.amount.schema_version!=1
+                or self.amount.coefficient!=1 or self.amount.binding_id is not None):
+            raise ValueError('Query-bounded search requires one unbound positive public quantity')
+        allowed=(
+            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+                ObjectQuerySpec(zones=('battlefield',),types_all=('land',))),
+            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+                ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),tapped=True)),
+            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+                ObjectQuerySpec(zones=('battlefield',),types_all=('enchantment',),subtypes_all=('shrine',))),
+            CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_ZONE,
+                ObjectQuerySpec(zones=('battlefield',)),schema_version=2,
+                reduction=CharacteristicQuantityReduction.DISTINCT_COLORS),
+        )
+        q=self.amount.quantity
+        if q not in allowed and not (isinstance(q,LiveBattlefieldQuantitySpec) and q.schema_version==3):
+            raise ValueError('Query-bounded search maximum is outside the closed public profiles')
+        if (type(self.reveal) is not bool or type(self.enters_tapped) is not bool
+                or (self.destination,self.reveal,self.enters_tapped) not in {
+                    ('battlefield',False,True),('hand',True,False)}):
+            raise ValueError('Query-bounded search requires its complete printed placement')
+
+    def effect(self):
+        value={'op':'search','schema_version':QUERY_BOUND_SEARCH_VERSION,'zone':'library',
+            'selector':{'types':['land'],'supertypes':['basic']},
+            'count':{'minimum':0,'maximum':None},'destination':self.destination,
+            'reveal':self.reveal,'shuffle_after':True,'shuffle_before_placement':False,
+            'bound':self.amount.to_dict()}
+        if self.enters_tapped:value['enters_tapped_override']=True
+        return value
+
+    def resolved_effect(self,value,frozen_amount):
+        from .query_effect_amount_model import PublicQueryAmountSpec
+        if (type(value) is not int or value<0 or not isinstance(frozen_amount,PublicQueryAmountSpec)
+                or frozen_amount.schema_version!=2 or frozen_amount.quantity!=self.amount.quantity
+                or frozen_amount.coefficient!=1):
+            raise ValueError('Resolved query search limit is malformed')
+        return {**self.effect(),'count':{'minimum':0,'maximum':value},
+            QUERY_BOUND_SEARCH_RESOLVED:frozen_amount.to_dict()}
+
+    @classmethod
+    def from_effect(cls,effect,*,allow_resolved=False):
+        from .query_effect_amount_model import PublicQueryAmountSpec
+        fields={'op','schema_version','zone','selector','count','destination','reveal',
+            'shuffle_after','shuffle_before_placement','bound'}
+        if (not isinstance(effect,Mapping) or type(effect.get('schema_version')) is not int
+                or effect['schema_version']!=QUERY_BOUND_SEARCH_VERSION or effect.get('op')!='search'
+                or effect.get('zone')!='library'
+                or effect.get('selector')!={'types':['land'],'supertypes':['basic']}
+                or effect.get('shuffle_after') is not True or effect.get('shuffle_before_placement') is not False):
+            raise ValueError('Query-bounded search requires its complete version8 instruction')
+        expected=fields|({'enters_tapped_override'} if effect.get('destination')=='battlefield' else set())
+        resolved=QUERY_BOUND_SEARCH_RESOLVED in effect
+        if set(effect)!=expected|({QUERY_BOUND_SEARCH_RESOLVED} if resolved else set()):
+            raise ValueError('Query-bounded search has unknown or missing fields')
+        spec=cls(PublicQueryAmountSpec.from_dict(effect['bound']),effect['destination'],
+            effect['reveal'],effect.get('enters_tapped_override',False))
+        count=effect['count']
+        if (not isinstance(count,Mapping) or set(count)!={'minimum','maximum'}
+                or type(count['minimum']) is not int or count['minimum']!=0):
+            raise ValueError('Query-bounded search cardinality is malformed')
+        if not resolved:
+            if count['maximum'] is not None:raise ValueError('Unresolved search cannot inject a literal maximum')
+        else:
+            if not allow_resolved or type(count['maximum']) is not int or count['maximum']<0:
+                raise ValueError('Resolved search maximum is internal continuation data')
+            frozen=PublicQueryAmountSpec.from_dict(effect[QUERY_BOUND_SEARCH_RESOLVED])
+            if (frozen.schema_version!=2 or frozen.quantity!=spec.amount.quantity or frozen.coefficient!=1
+                    or not frozen.binding_id.startswith('query-search:')
+                    or not frozen.binding_id.removeprefix('query-search:').isdigit()):
+                raise ValueError('Resolved search lost its quantity and instruction identity')
+        return spec
+
+    def capabilities(self):
+        from .characteristic_fragments import characteristic_quantity_capabilities
+        return tuple(dict.fromkeys((QUERY_BOUND_SEARCH_CAPABILITY,
+            FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
+            "quantity_expression.public_query_effect_amount",*characteristic_quantity_capabilities(self.amount.to_dict()))))
+
+    def compiled(self):
+        return ('public-query-bounded-basic-land-search-v1',(self.effect(),),None,
+            (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,QUERY_BOUND_SEARCH_MECHANIC))

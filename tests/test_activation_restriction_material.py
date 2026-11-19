@@ -46,7 +46,8 @@ class ActivationRestrictionMaterialTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'activation-restriction-material.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/activation-restriction-material-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/activation-restriction-material-cards.json',
+            ROOT/'tests/fixtures/public-named-quantity-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Represented activation material',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
 
@@ -75,6 +76,54 @@ class ActivationRestrictionMaterialTests(unittest.TestCase):
             self.assertIsNotNone(command,decision.kind)
             result=s.act(s.pending_principals()[0],command);self.assertTrue(result.ok,result.summary)
         self.fail('A complete four-player turn cycle did not reach the upkeep trigger')
+
+    def test_all_mana_descriptor_shapes_retain_selected_legendary_tap_minima(self):
+        from types import SimpleNamespace
+        from quorune.chosen_color_mana_abilities import ChosenColorActivatedManaAbilitySpec, chosen_color_mana_handler_descriptor
+        from quorune.chosen_color_mana_model import ChosenColorManaOutput
+        from quorune.compiler.activated_tap_costs import fixed_tap_activation_cost_choice
+        from quorune.compiler.public_quantity_mana import public_quantity_mana_template
+        from quorune.fixed_mana_abilities import FixedActivatedManaAbilitySpec, FixedManaMode, MANA_COST_KEYS, fixed_mana_handler_descriptor
+        from quorune.public_quantity_mana_abilities import PublicQuantityActivatedManaAbilitySpec, public_quantity_mana_handler_descriptor
+        from quorune.replacement.immutable import FrozenMap
+        from quorune.rules.activation.restriction_requirements import activation_restriction_runtime_dependencies
+        choice=fixed_tap_activation_cost_choice('Tap an untapped legendary creature you control')
+        costs=FixedActivatedManaAbilitySpec(ability_id='ab1',line_index=0,
+            oracle_line='Tap an untapped legendary creature you control: Add {G}.',
+            cost_text='Tap an untapped legendary creature you control',effect_text='Add {G}.',
+            mana_cost=FrozenMap({key:0 for key in MANA_COST_KEYS}),tap_source=False,sacrifice_source=False,life_payment=0,
+            modes=(FixedManaMode(green=1),),choices=(choice,))
+        quantity=public_quantity_mana_template('Add {G} for each creature you control.',source_name='Generic Source')
+        for selected in (False,True):
+            actual=costs if selected else replace(costs,choices=())
+            descriptors=(fixed_mana_handler_descriptor(actual),
+                public_quantity_mana_handler_descriptor(PublicQuantityActivatedManaAbilitySpec(actual,quantity)),
+                chosen_color_mana_handler_descriptor(ChosenColorActivatedManaAbilitySpec(actual,ChosenColorManaOutput(1))))
+            for descriptor in descriptors:
+                with self.subTest(handler=descriptor['handler_id'],selected=selected):
+                    program=SimpleNamespace(handlers=(descriptor,),event='activate',cost_schema={},effects=())
+                    required=activation_restriction_runtime_dependencies(program)
+                    self.assertEqual(selected,'activation.selected_tap.fixed_legendary' in required)
+
+    def test_public_quantity_mana_uses_current_controlled_names_and_replays(self):
+        s=self.start(788130)
+        source=self.add(s.engine,'Powerstone Shard')
+        own=self.add(s.engine,'Powerstone Shard',ref='restriction-own-shard')
+        opponent=self.add(s.engine,'Powerstone Shard',seat='B',ref='restriction-opponent-shard')
+        self.add(s.engine,'Memnite',ref='restriction-other-artifact')
+        self.assertTrue(self.binding(s,source)['strict_capability_ready'])
+        private=self.private(s);self.ready(s)
+        row=self.action(s,source,'ab1');self.assertIsNotNone(row)
+        self.assertTrue(row['mana_ability'])
+        before=s.state.players['A'].mana_pool['C']
+        self.activate(s,source,'ab1')
+        self.assertEqual(before+2,s.state.players['A'].mana_pool['C'])
+        self.assertFalse(s.state.stack)
+        self.assertTrue(s.state.cards[source.object_id].tapped)
+        self.assertFalse(s.state.cards[own.object_id].tapped)
+        self.assertFalse(s.state.cards[opponent.object_id].tapped)
+        self.reject(s,{'action_id':row['id'],'pay':'auto'},'A')
+        self.private_replay(s,private)
 
     def test_recognized_effect_is_preserved_exactly_and_unknown_or_mismatched_restrictions_stay(self):
         for name in NAMES:

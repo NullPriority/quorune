@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, PERMANENT_CHARACTERISTIC_MECHANIC

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..attachment_references import AttachmentReferenceKind
@@ -15,11 +15,13 @@ from ..ability_fragments import (
 from ..fixed_mana_abilities import compile_fixed_activated_mana_ability
 from ..mana_restrictions import valid_mana_spend_restriction
 from ..granted_activation_model import (
+    GRANTED_SOURCE_COUNTER_CAPABILITY, GRANTED_SPORE_COUNTER_COST,
     GRANTING_ATTACHMENT_PAYMENT_CAPABILITY, GRANTING_ATTACHMENT_PAYMENT_FIELD,
     GrantingAttachmentPayment, GrantingAttachmentPaymentKind, RESTRICTED_MANA_GRANT_CAPABILITY,
 )
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.activation_counter_cost import SourceCounterRemovalCost
 from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE
 from .continuous_templates import (
     attached_quoted_ability_handler,
@@ -103,7 +105,11 @@ def attached_granted_program_ability_id(
     return None
 
 
-def _closed_granted_activation(ability: ActivatedAbility) -> bool:
+def _closed_granted_activation(
+    ability: ActivatedAbility,
+    *,
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None,
+) -> bool:
     """Keep grants inside the shared closed granted-activation schema."""
 
     from ..granted_activation_model import normalize_granted_cost_choices
@@ -120,7 +126,7 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and ability.energy_payment == 0
         and ability.random_discard_payment == 0
         and ability.loyalty_delta is None
-        and ability.source_counter_removal_cost is None
+        and ability.source_counter_removal_cost == source_counter_removal_cost
         and not ability.uncompiled_costs
         and ability.generic_reduction_per_legendary_creature == 0
         and (ability.crew_threshold is None or type(ability.crew_threshold) is int and ability.crew_threshold>=0)
@@ -149,6 +155,7 @@ def attached_granted_ability_plan(
     allow_static_cost: bool = False,
     granting_attachment_payment: GrantingAttachmentPayment | None = None,
     printed_cost_text: str | None = None,
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None,
 ) -> AttachedGrantedAbilityPlan | None:
     """Build one closed typed grant from an independently exact inner node."""
 
@@ -172,7 +179,9 @@ def attached_granted_ability_plan(
             oracle_text=quoted_text,
             keywords=keywords,
         )
-        if len(abilities) != 1 or not _closed_granted_activation(abilities[0]):
+        if len(abilities) != 1 or not _closed_granted_activation(
+            abilities[0], source_counter_removal_cost=source_counter_removal_cost,
+        ):
             return None
         ability = abilities[0]
         if granting_attachment_payment is not None and (not ability.tap_source or ability.mana_ability
@@ -230,7 +239,10 @@ def attached_granted_ability_plan(
                 mana_spend_restriction=ability.mana_spend_restriction,
                 crew_threshold=ability.crew_threshold,
                 granting_attachment_payment=granting_attachment_payment,
-                schema_version=(5 if granting_attachment_payment is not None else 4 if restricted_grant
+                source_counter_removal_cost=(source_counter_removal_cost.to_dict()
+                    if source_counter_removal_cost is not None else None),
+                schema_version=(6 if source_counter_removal_cost is not None else
+                                5 if granting_attachment_payment is not None else 4 if restricted_grant
                                 else 3 if ability.crew_threshold is not None else 2 if extended_cost else 1),
             )
         )
@@ -242,6 +254,7 @@ def attached_granted_ability_plan(
             capability_dependencies=(
                 *((RESTRICTED_MANA_GRANT_CAPABILITY,) if restricted_grant else ()),
                 *((GRANTING_ATTACHMENT_PAYMENT_CAPABILITY,) if granting_attachment_payment is not None else ()),
+                *((GRANTED_SOURCE_COUNTER_CAPABILITY,) if source_counter_removal_cost is not None else ()),
             ),
         )
     if node.kind != "triggered_ability" or not node.event:
@@ -296,6 +309,7 @@ def _compile_granted_ability_pair(
     material_line_for: Callable[[str], str],
     compiled_quote: str | None = None,
     granting_attachment_payment: GrantingAttachmentPayment | None = None,
+    source_counter_removal_cost: SourceCounterRemovalCost | None = None,
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile one accepted grant shell and one independent inner ability."""
 
@@ -351,6 +365,7 @@ def _compile_granted_ability_pair(
         allow_static_cost=True,
         granting_attachment_payment=granting_attachment_payment,
         printed_cost_text=printed_cost_text,
+        source_counter_removal_cost=source_counter_removal_cost,
     )
     if plan is None:
         return None
@@ -509,6 +524,14 @@ def compile_fixed_query_granted_ability_nodes(
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile a typed quoted ability granted to one closed live query."""
 
+    from .granted_keyword_activation_nodes import compile_granted_keyword_activation_nodes
+    activation_grant = compile_granted_keyword_activation_nodes(record=record, face_id=face_id,
+        node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals, effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template, material_line_for=material_line_for)
+    if activation_grant is not None:
+        return activation_grant
     from .granted_keyword_event_nodes import compile_granted_keyword_event_nodes
     keyword_grant = compile_granted_keyword_event_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
@@ -523,6 +546,14 @@ def compile_fixed_query_granted_ability_nodes(
     normalized_name = source_name.casefold().strip()
     if normalized_name and normalized_name in quoted.casefold():
         return None
+    spore_grant = (
+        'creatures you control have "remove two spore counters from this creature: '
+        'create a 1/1 green saproling creature token."'
+    )
+    material = ' '.join(material_line.casefold().split()).removesuffix('.')
+    source_counter_removal_cost = (
+        SourceCounterRemovalCost.from_dict(GRANTED_SPORE_COUNTER_COST) if material == spore_grant else None
+    )
     return _compile_granted_ability_pair(
         record=record,
         face_id=face_id,
@@ -551,6 +582,7 @@ def compile_fixed_query_granted_ability_nodes(
         effect_template=effect_template,
         trigger_effect_template=trigger_effect_template,
         material_line_for=material_line_for,
+        source_counter_removal_cost=source_counter_removal_cost,
     )
 
 
@@ -630,6 +662,12 @@ def compile_early_material_nodes(
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
     from .deck_copy_limits import DECK_COPY_LIMIT_PREFIX, printed_deck_copy_limit_node
+    from .commander_cast_copy_nodes import cast_source_copy_node
+    cast_copy = cast_source_copy_node(node_id=node_id,line=line,material_line=material_line,
+        printed_card_types=printed_card_types,span=span,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    if cast_copy is not None:
+        return (cast_copy,)
     if material_line.casefold().startswith(DECK_COPY_LIMIT_PREFIX):
         deck_limit = printed_deck_copy_limit_node(record=record, node_id=node_id, line=line,
             material_line=material_line, span=span, capability_registry=capability_registry,
@@ -700,7 +738,14 @@ def compile_early_material_nodes(
     )
     if typed_token_nodes is not None:
         return typed_token_nodes
-    from .attached_untap_restraints import attached_untap_restraint_node
+    from .attached_untap_restraints import attached_counter_prohibition_nodes, attached_untap_restraint_node
+    attached_rules = attached_counter_prohibition_nodes(
+        source_attachment_relation=source_attachment_relation, node_id=node_id, line=line,
+        material_line=material_line, span=span, source_name=source_name,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+    if attached_rules is not None:
+        return attached_rules
     restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
         source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if restraint is not None:return (restraint,)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned fixed spell/ability targeting prohibitions."""
 
-import re
+from . import regex_working_set as re
 from ..target_restrictions import TargetRestrictionSpec,TARGET_RESTRICTION_HANDLER,TARGET_RESTRICTION_CAPABILITY
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.source_references import SourceReferenceSpec

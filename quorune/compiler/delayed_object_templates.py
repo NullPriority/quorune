@@ -1,5 +1,5 @@
 """Closed future actions preserve their independently established object role."""
-import re
+from . import regex_working_set as re
 from ..delayed_object_model import DELAYED_OBJECT_MECHANIC,SCHEDULE_OBJECT_ACTION
 from ..rules.source_references import SourceReferenceSpec
 from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT,DAMAGE_PERMANENT_OBJECT

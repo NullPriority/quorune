@@ -26,3 +26,20 @@ class UnblockedAttackerOccurrence:
     def semantic_context(self):
         return {'card':self.reference,'card_object_id':self.object_id,'card_object_identity':self.logical_object_id,
             'controller':self.controller,'defending_player':self.defending_player,'types':['creature']}
+
+
+
+UNBLOCKED_DEFENDER_POISON_CAPABILITY = "counter.producer.fixed_unblocked_defender_poison"
+UNBLOCKED_DEFENDER_POISON_MECHANIC = "fixed-unblocked-defender-poison"
+
+
+def intrinsic_unblocked_condition():
+    return {"all": [
+        {"field":"card","op":"eq","value":"$source.ref"},
+        {"field":"card_object_identity","op":"eq","value":"$source.logical_object_id"},
+    ]}
+
+
+def unblocked_defender_poison_effect():
+    return {"op":"place_player_counters","subjects":"target","counter":"poison",
+            "amount":1,"source":"$source","target":"$context.defending_player"}

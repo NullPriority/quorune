@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole ordinary external entry-counter clauses, without runtime source text."""
 
-import re
+from . import regex_working_set as re
 from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_CAPABILITY,EXTERNAL_ENTRY_COUNTER_HANDLER,ExternalEntryCounterSpec
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype

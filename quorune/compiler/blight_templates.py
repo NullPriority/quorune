@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed controller Blight and its printed draw sequence."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.blight_model import BLIGHT_MECHANIC, BLIGHT_OPERATION
 from .fixed_numbers import FIXED_COUNT_PATTERN

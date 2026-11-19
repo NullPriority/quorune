@@ -1,6 +1,6 @@
 """Complete literal library procedures from printed shared tails or count overrides."""
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from copy import deepcopy
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number

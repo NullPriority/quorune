@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed fixed draw/life leaves addressed to sealed occurrence players."""
 
-import re
+from . import regex_working_set as re
 from collections.abc import Mapping
 from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT
 from ..rules.received_damage_events import is_creature_receiving_event
@@ -35,8 +35,19 @@ def _event_player(binding,subject):
     return players[0] if players and players[0] is not None and all(player==players[0] for player in players) else None
 
 
+def _qualified_attack_defender(event,condition,variant):
+    from ..qualified_attack_model import QUALIFIED_ATTACK_VARIANT
+    if variant!=QUALIFIED_ATTACK_VARIANT:return False
+    from ..rules.qualified_attacks import qualified_attack_defender_condition_is_closed
+    return qualified_attack_defender_condition_is_closed(event,condition)
+
+
 def _occurrence_player(event,condition,variant,subject):
     if subject=='you':return '$controller'
+    if event == 'creature.attacks' and subject in {'its controller', "that creature's controller", "that creature’s controller"}:
+        from ..rules.qualified_attacks import qualified_player_defense_is_closed
+        if qualified_player_defense_is_closed(condition):
+            return occurrence_controller_reference()
     if subject == 'its controller' and condition == {
         'field': 'source_attachment_target_ref', 'op': 'eq', 'value': '$context.card',
     } and (
@@ -52,6 +63,7 @@ def _occurrence_player(event,condition,variant,subject):
     if subject=='defending player':
         if event == 'creature.attacks' and (
             variant == 'source_attacks' or variant.startswith('public_attack_') or variant in ATTACHED_CREATURE_ATTACK_VARIANTS
+            or _qualified_attack_defender(event,condition,variant)
         ):
             player = '$context.defending_player'
         elif event=='creature.becomes_blocked' and variant in {'this_creature_becomes_blocked','this_creature_becomes_blocked_by_creature'}:player='$context.defending_player'
@@ -103,7 +115,44 @@ def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
     return {**effect,'player':player},compiled[3]
 
 
+def _spell_cast_count_life_result(binding, body):
+    if (
+        (binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+        or binding.spell_subject is None or body != binding.body
+    ):
+        return None
+    from ..event_player_result_values import SpellCastCountLifeSpec
+
+    cases = (
+        ("controller", r"You gain 1 life for each spell you['’]ve cast this turn[.]?"),
+        ("event_caster", r"They lose 1 life for each spell they['’]ve cast this turn[.]?"),
+    )
+    for recipient, pattern in cases:
+        spec = SpellCastCountLifeSpec(recipient)
+        if binding.event_condition == spec.event_condition and re.fullmatch(pattern, body, re.I):
+            return (
+                "fixed-current-turn-spell-count-life-v1", (spec.effect(),), None,
+                (EVENT_PLAYER_RESULT_MECHANIC,),
+            ), False
+    return None
+
+
 def fixed_event_player_result(binding,body,*,effect_template,card_name):
+    spell_count = _spell_cast_count_life_result(binding, body)
+    if spell_count is not None:
+        return spell_count
+    from ..unblocked_attacker_model import (
+        UNBLOCKED_ATTACKER_EVENT, UNBLOCKED_ATTACKER_VARIANT, UNBLOCKED_DEFENDER_POISON_MECHANIC,
+        unblocked_defender_poison_effect,
+    )
+    if (binding.event.value == UNBLOCKED_ATTACKER_EVENT and binding.variant == UNBLOCKED_ATTACKER_VARIANT
+            and re.fullmatch(r"Defending player gets a poison counter[.]?", body.strip(), re.I)
+            and _event_player(binding, "defending player") == "$context.defending_player"):
+        return ("fixed-unblocked-defender-poison-v1", (unblocked_defender_poison_effect(),), None,
+                (UNBLOCKED_DEFENDER_POISON_MECHANIC, "cr-122-counters")), False
+    from .event_optional_draw_results import fixed_event_optional_draw_result
+    optional = fixed_event_optional_draw_result(binding, body, effect_template=effect_template, card_name=card_name)
+    if optional is not None:return optional
     from .fixed_controller_effect_sequences import _clauses
     clauses=_clauses(body) or (body,)
     lowered=tuple(_fixed_event_player_clause(binding,clause,effect_template=effect_template,card_name=card_name) for clause in clauses)

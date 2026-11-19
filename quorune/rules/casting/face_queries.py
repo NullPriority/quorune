@@ -143,6 +143,21 @@ def _static_library_top_minimum_x(host, seat, card, *, face_down):
     return controller_library_top_spell_minimum_x(host, seat, card, face_down=face_down)
 
 
+def _limit_cast_cost_option_x(options, maximum):
+    if maximum is None:
+        return options
+    remaining = []
+    for option in options:
+        value = option.to_dict()
+        bounds = value.get("choice_schema", {}).get("x")
+        if bounds is None:
+            remaining.append(option)
+        elif bounds["minimum"] <= maximum:
+            bounds["maximum"] = min(bounds["maximum"], maximum)
+            remaining.append(CastCostOption.from_dict(value))
+    return tuple(remaining)
+
+
 def build_cast_cost_options(
     host: CastCostHost,
     seat: str,
@@ -156,19 +171,34 @@ def build_cast_cost_options(
     cast_type_line: str | None = None,
     suppress_source_costs: bool = False,
     resolving_exile_authority: bool = False,
+    resolving_library_authority: bool = False,
     ignore_timing: bool = False,
 ) -> tuple[CastCostOption, ...]:
     """Offer the selected face's payable choices under its current zone permission."""
     from .costs import _cast_cost_options_for_submission
     from .source_placement import casting_affordability_host
+    from ...semantic_runtime.static_cast_rules import static_cast_maximum_x
 
-    host = casting_affordability_host(host, card)
     submission = dict(response or {})
-    build = partial(_cast_cost_options_for_submission, host, seat, card, program,
+    face = {"type_line": cast_type_line} if cast_type_line is not None else None
+    maximum = static_cast_maximum_x(host, seat, card, face=face)
+    if maximum is not None and int(submission.get("x") or 0) > maximum:
+        return ()
+    host = casting_affordability_host(host, card)
+    price = partial(_cast_cost_options_for_submission, host, seat, card, program,
         hint=hint, force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
         cast_type_line=cast_type_line, suppress_source_costs=suppress_source_costs,
         resolving_exile_authority=resolving_exile_authority,ignore_timing=ignore_timing)
-    minimum = _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
+
+    def build(announcement, **options):
+        announced_x = announcement.get("x")
+        if maximum is not None and announced_x is not None and int(announced_x) > maximum:
+            return ()
+        return _limit_cast_cost_option_x(price(announcement, **options), maximum)
+
+    if resolving_library_authority and (card.zone!='library' or not force_without_mana_cost or not ignore_timing):
+        raise ValueError('Resolving library authority requires its explicit free resolution cast')
+    minimum = 0 if resolving_library_authority else _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
     if not (hint and minimum and submission.get('x') is None):
         return build(submission, minimum_library_x=minimum)
     static = build({**submission, 'x': minimum}, minimum_library_x=minimum, source_grant_only=False)
@@ -190,6 +220,14 @@ def bind_library_top_cost_option(option, submission, *, has_x, minimum, source_g
         return None
     if source_grant:
         return option
+    from ...public_alternative_costs import ANNOUNCED_X_PITCH_POLICY
+    from .additional_zone_costs import ANNOUNCED_PITCH_X
+
+    if option.get("x_value_policy") == ANNOUNCED_X_PITCH_POLICY:
+        announced = option.get(ANNOUNCED_PITCH_X)
+        if minimum is None or not has_x or type(announced) is not int or announced < minimum:
+            return None
+        return {**option, "library_top_minimum_x": minimum, "library_top_announced_x": announced}
     announced = submission.get('x')
     if (minimum is None or not has_x or option.get('x_value_policy') is not None
             or type(announced) is not int or announced < minimum):

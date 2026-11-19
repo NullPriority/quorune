@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
@@ -12,6 +12,8 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import ReplacementChoiceRequired
 from ..zone_transitions import ZoneTransitionOwner
 from ..library_search_model import (
+    FETCH_ENTRY_PLACEMENT_VERSION,
+    decode_fixed_tapped_battlefield_search,
     FixedCountedLibrarySearchTemplate, SEARCH_ALTERNATIVES, SEARCH_SUBTYPES, is_counted_library_search,
 )
 from ..rules.library_search_rules import library_search_constraint,library_search_object_ids
@@ -25,6 +27,7 @@ from .model import (
 
 SEARCH_OPERATION_ID = "selection.search.semantic.v1"
 FETCH_OPERATION_ID = "selection.search.fetch.v1"
+_FETCH_ENTRY_TAPPED = "fetch_entry_tapped"
 _SEARCH_COMPLETION_FIELD = "_search_completion"
 _SEARCH_COMPLETION_FIELDS = {"actor", "choice_id", "selected_refs"}
 _REPLACEMENT_SELECTIONS_FIELD = "_replacement_selections"
@@ -63,6 +66,42 @@ class HiddenSearchOwnerMixin:
 
     @staticmethod
     def _validate_counted_search_effect(effect: Mapping[str, Any]) -> None:
+        if type(effect.get('schema_version')) is int and effect['schema_version'] == 9:
+            from ..rules.targeted_library_exile import bound_target_library_exile
+            bound_target_library_exile(effect, effect.get('searching_player'))
+            raw = effect.get('_target_library_identities')
+            if raw is not None:
+                from ..rules.library_selection import LibrarySelectionObjectIdentity
+                if not isinstance(raw, (list, tuple)):
+                    raise GameRuleError('Target-library identities must be an array')
+                try:
+                    identities = tuple(LibrarySelectionObjectIdentity.from_dict(row) for row in raw)
+                except (ValueError, TypeError, KeyError) as exc:
+                    raise GameRuleError('Target-library identity is malformed') from exc
+                if len({row.object_id for row in identities}) != len(identities):
+                    raise GameRuleError('Target-library identities must be distinct')
+            return
+        if {'library_player', '_target_library_identities'} & set(effect):
+            raise GameRuleError('Historical search versions cannot carry target-library roles')
+        if effect.get('schema_version') == 8:
+            from ..library_search_model import QueryBoundLibrarySearchSpec
+            try:QueryBoundLibrarySearchSpec.from_effect({k:v for k,v in effect.items() if k not in {_SEARCH_COMPLETION_FIELD,_REPLACEMENT_SELECTIONS_FIELD}},allow_resolved=True)
+            except (ValueError,TypeError,KeyError) as exc:raise GameRuleError('Query-bounded search instruction is malformed') from exc
+            return
+        if effect.get('schema_version') == 7:
+            from ..qualified_library_search_model import QualifiedLibrarySearchSpec
+            try:
+                QualifiedLibrarySearchSpec.from_effect({key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
+            except (ValueError, TypeError, KeyError) as exc:
+                raise GameRuleError("Qualified library search instruction is malformed") from exc
+            return
+        if effect.get('schema_version') == 6:
+            from ..named_search_model import decode_named_zone_selection
+            try:
+                decode_named_zone_selection({key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
+            except (ValueError, TypeError, KeyError) as exc:
+                raise GameRuleError("Named zone search instruction is malformed") from exc
+            return
         if is_counted_library_search(effect):
             try:
                 FixedCountedLibrarySearchTemplate.from_effect(effect)
@@ -131,6 +170,8 @@ class HiddenSearchOwnerMixin:
         seat: str,
         ability: Any,
         response: Mapping[str, Any],
+        *,
+        program: Any = None,
     ) -> dict[str, Any]:
         land_types = tuple(ability.library_search_types)
         if not land_types:
@@ -141,13 +182,27 @@ class HiddenSearchOwnerMixin:
             raise GameRuleError(
                 "Selected fetchland result is not a legal card in your library"
             )
-        return {
+        context = {
             "builtin": "fetch_land",
             "land_types": list(land_types),
             "search_card": selected or None,
             "choice_made": bool(selected),
             "pay_life": bool(response.get("entry_pay_life", False)),
         }
+        if (getattr(self.state, "fetch_entry_placement_version", None) == FETCH_ENTRY_PLACEMENT_VERSION
+                and program is not None and len(program.effects) == 1
+                and decode_fixed_tapped_battlefield_search(program.effects[0]) is not None
+                and self.semantic_program_is_current_trusted(program)):
+            context[_FETCH_ENTRY_TAPPED] = True
+        return context
+
+    def _fetch_requested_tapped(self, item: StackItem) -> bool | None:
+        if _FETCH_ENTRY_TAPPED not in item.context:
+            return None
+        if (item.context[_FETCH_ENTRY_TAPPED] is not True
+                or getattr(self.state, "fetch_entry_placement_version", None) != FETCH_ENTRY_PLACEMENT_VERSION):
+            raise GameRuleError("Invalid fetch entry placement")
+        return True
 
     def _fetch_selection_continuation(
         self,
@@ -167,6 +222,7 @@ class HiddenSearchOwnerMixin:
                 {
                     "land_types": list(item.context.get("land_types") or []),
                     "legal_refs": list(legal_refs),
+                    **({_FETCH_ENTRY_TAPPED: True} if self._fetch_requested_tapped(item) else {}),
                 }
             ),
         )
@@ -268,8 +324,12 @@ class HiddenSearchOwnerMixin:
                 item.context.get("land_types", []),
             )
         }
+        entry_tapped = self._fetch_requested_tapped(item)
+        payload = thaw_value(selection.payload) if "selection" in raw_continuation else {}
+        if ((_FETCH_ENTRY_TAPPED in payload) != (entry_tapped is True)
+                or payload.get(_FETCH_ENTRY_TAPPED) is not entry_tapped):
+            raise GameRuleError("Fetch search entry placement changed")
         if "selection" in raw_continuation:
-            payload = thaw_value(selection.payload)
             if selection.source_ref != self._stack_source_ref(item):
                 raise GameRuleError("Fetch search source identity changed")
             if list(payload.get("land_types") or []) != list(
@@ -331,6 +391,7 @@ class HiddenSearchOwnerMixin:
                 found.object_id,
                 "battlefield",
                 controller=seat,
+                tapped=self._fetch_requested_tapped(item),
                 entry_pay_life=pay_entry_life,
                 reason=f"{item.label} search",
                 log=False,
@@ -468,6 +529,13 @@ class HiddenSearchOwnerMixin:
         seat: str,
         effect: Mapping[str, Any],
     ) -> list[dict[str, Any]]:
+        if effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import targeted_library_search_options
+            return targeted_library_search_options(self, seat, effect)
+        if effect.get('schema_version') == 7:
+            from ..rules.qualified_library_search import qualified_library_search_options
+            return qualified_library_search_options(self, seat,
+                {key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD})
         raw_zone = effect.get("zone") or "library"
         zones = (
             [str(value) for value in raw_zone]
@@ -582,9 +650,19 @@ class HiddenSearchOwnerMixin:
                 instruction_pointer=instruction_pointer,
             )
             return
+        if effect.get('schema_version') == 8:
+            from ..rules.query_bound_library_search import materialize_query_bound_search
+            effect=materialize_query_bound_search(self,item,effect,instruction_pointer)
         self._validate_counted_search_effect(effect)
         seat = str(effect.get("searching_player") or item.controller)
         self._require_seat(seat, in_game=True)
+        if effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import targeted_library_departed,bind_targeted_library_exile
+            if targeted_library_departed(self, seat, effect):
+                self._continue_resolution(stack_ref=item.ref, effects=list(remaining),
+                    destination=destination, note=note, instruction_pointer=instruction_pointer + 1)
+                return
+            effect = bind_targeted_library_exile(self, seat, effect)
         raw_zone=effect.get('zone','library')
         zones=[raw_zone] if isinstance(raw_zone,str) else list(raw_zone)
         if 'library' in zones and library_search_constraint(self,seat).prohibited:
@@ -612,6 +690,10 @@ class HiddenSearchOwnerMixin:
             and self._search_is_restrictive(selector)
         )
         minimum_choice = 0 if rules_may_fail else min(minimum, len(options))
+        if effect.get('schema_version') == 6:
+            from ..rules.named_searches import named_zone_search_minimum
+            minimum_choice = named_zone_search_minimum(self, seat, effect, options)
+            rules_may_fail = minimum_choice == 0
         choice_schema = self._semantic_search_choice_schema(
             effect=effect,
             options=options,
@@ -635,6 +717,9 @@ class HiddenSearchOwnerMixin:
                 ),
             },
         )
+        selection = self._search_selection_continuation(actor=seat, item=item,
+            effect=effect, remaining=remaining, destination=destination, note=note,
+            frame=frame, legal_refs=tuple(option['id'] for option in options))
         decision = self.permissions.issue(
             kind="semantic.search",
             role="pilot",
@@ -648,7 +733,9 @@ class HiddenSearchOwnerMixin:
                         effect.get("instruction")
                         or "Choose card(s) matching the search specification."
                     ),
-                    **(self._bounded_library_search_view(seat) if 'library' in search_zones else {}),
+                    **(self._bounded_library_search_view(seat,
+                        library_player=effect.get('library_player') if effect.get('schema_version') == 9 else None)
+                       if 'library' in search_zones else {}),
                     "search_cards": options,
                     "search_spec": {
                         "zone": copy.deepcopy(raw_search_zone),
@@ -673,43 +760,26 @@ class HiddenSearchOwnerMixin:
                     ],
                 }
             },
-            continuation={
-                "selection": self._search_selection_continuation(
-                    actor=seat,
-                    item=item,
-                    effect=effect,
-                    remaining=remaining,
-                    destination=destination,
-                    note=note,
-                    frame=frame,
-                    legal_refs=tuple(option["id"] for option in options),
-                ).to_dict()
-            },
+            continuation={'selection':selection.to_dict()},
         )
         frame["pending_choice_id"] = decision.decision_id
-        decision.continuation["selection"] = (
-            self._search_selection_continuation(
-                actor=seat,
-                item=item,
-                effect=effect,
-                remaining=remaining,
-                destination=destination,
-                note=note,
-                frame=frame,
-                legal_refs=tuple(option["id"] for option in options),
-            ).to_dict()
-        )
+        decision.continuation['selection'] = replace(selection,
+            payload=FrozenMap({**selection.payload, 'semantic_frame':frame})).to_dict()
 
-    def _bounded_library_search_view(self,seat):
+    def _bounded_library_search_view(self,seat,library_player=None):
         constraint=library_search_constraint(self,seat)
         if constraint.prohibited or constraint.top_count is None:return {}
+        owner = seat if library_player is None else library_player
         return {'search_window':[{'id':self.state.cards[oid].ref,'name':self.state.cards[oid].printed_name}
-            for oid in library_search_object_ids(self,seat,'library')]}
+            for oid in library_search_object_ids(self,owner,'library',searching_player=seat)]}
 
     def _finish_prohibited_library_search(self,*,item,effect,remaining,destination,note,instruction_pointer,seat):
         self._log(seat,'library.search.prohibited',f'{seat} could not search their library.',{'source':item.ref},importance=1)
         if not effect.get('optional',False) and (effect.get('shuffle_after',True) or effect.get('shuffle_before_placement',False)):
-            self.shuffle_library(seat,reason=f'{item.label} resolved')
+            if effect.get('schema_version') == 9:
+                from ..rules.targeted_library_exile import targeted_library_owner
+            owner = targeted_library_owner(self, seat, effect) if effect.get('schema_version') == 9 else seat
+            self.shuffle_library(owner,reason=f'{item.label} resolved')
         self._continue_resolution(stack_ref=item.ref,effects=[dict(value) for value in remaining],destination=destination,
             note=note,instruction_pointer=instruction_pointer+1)
 
@@ -779,7 +849,10 @@ class HiddenSearchOwnerMixin:
         issued_options = {
             str(value) for value in continuation.get("legal_refs", ())
         }
-        if "selection" in raw_continuation and issued_options != options:
+        if effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import targeted_library_departed
+        departed = effect.get('schema_version') == 9 and targeted_library_departed(self, seat, effect)
+        if "selection" in raw_continuation and issued_options != options and not departed:
             raise GameRuleError("Semantic search candidates changed")
         return SemanticSearchCompletionContext(
             seat=seat,
@@ -846,6 +919,10 @@ class HiddenSearchOwnerMixin:
             and self._search_is_restrictive(selector)
         )
         required = 0 if rules_may_fail else min(minimum, len(options))
+        if effect.get('schema_version') == 6:
+            from ..rules.named_searches import named_zone_search_minimum
+            required = named_zone_search_minimum(self, seat,
+                {key:value for key,value in effect.items() if key != _SEARCH_COMPLETION_FIELD}, options)
         if not required <= len(values) <= min(maximum, len(options)):
             raise GameRuleError(
                 f"Search requires between {required} and "
@@ -929,6 +1006,13 @@ class HiddenSearchOwnerMixin:
         response = context.response
         effect = context.effect
         item = context.item
+        if effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import move_targeted_library_exile
+            return move_targeted_library_exile(self, context, values, replacement_selections)
+        if effect.get('schema_version') == 8:
+            from ..rules.query_bound_library_search import materialize_query_bound_search
+            retained={k:v for k,v in effect.items() if k not in {_SEARCH_COMPLETION_FIELD,_REPLACEMENT_SELECTIONS_FIELD}}
+            materialize_query_bound_search(self,item,retained,context.frame['instruction_pointer'])
         reveal = bool(effect.get("reveal", False))
         selected_cards: list[CardInstance] = []
         for ref in values:
@@ -977,6 +1061,7 @@ class HiddenSearchOwnerMixin:
                 tapped=True,
                 reason=f"{item.label} search",
                 log=False,
+                replacement_selections=replacement_selections,
             )
 
         moved: list[CardInstance] = []
@@ -1043,13 +1128,17 @@ class HiddenSearchOwnerMixin:
             "count": len(moved),
             "revealed": reveal,
         }
+        if effect.get('schema_version') == 6:
+            public_details['searched_zones'] = list(effect['zone'])
         from ..search_allocation import allocated_search_result_details
         allocation_details = allocated_search_result_details(effect, moved)
         if reveal:public_details.update(allocation_details)
         if public_choice:
-            public_details["objects"] = [card.ref for card in moved]
-            if len(moved) == 1:
-                public_details["object"] = moved[0].ref
+            public_cards = ([card for card in moved if card.zone in {'battlefield','graveyard','exile','command'}
+                and not card.face_down] if effect.get('schema_version') == 9 else list(moved))
+            public_details["objects"] = [card.ref for card in public_cards]
+            if len(public_cards) == 1:
+                public_details["object"] = public_cards[0].ref
         self._log(
             seat,
             "library.search",
@@ -1075,7 +1164,10 @@ class HiddenSearchOwnerMixin:
             changed_players=[seat],
         )
         if bool(effect.get("shuffle_after", True)):
-            self.shuffle_library(seat, reason=f"{item.label} resolved")
+            if effect.get('schema_version') == 9:
+                from ..rules.targeted_library_exile import targeted_library_owner
+            owner = targeted_library_owner(self, seat, effect) if effect.get('schema_version') == 9 else seat
+            self.shuffle_library(owner, reason=f"{item.label} resolved")
         item.context.setdefault("semantic_continuations", []).append(
             {
                 **context.frame,
@@ -1137,8 +1229,10 @@ class HiddenSearchOwnerMixin:
         ):
             raise GameRuleError("Malformed semantic search completion identity")
         selected = list(raw_selected)
-        counted = is_counted_library_search(effect) and effect.get("destination") == "hand"
-        maximum = effect.get("count", {}).get("maximum", 1) if counted else 1
+        counted = is_counted_library_search(effect) and (
+            effect.get("destination") == "hand" or effect.get("schema_version") == 8
+        )
+        maximum = effect.get("count", {}).get("maximum", 1) if counted or effect.get('schema_version') == 9 else 1
         if type(maximum) is not int or len(selected) != len(set(selected)) or len(selected) > maximum:
             raise GameRuleError(
                 "Replacement-resumed semantic search changed its cardinality"
@@ -1160,14 +1254,19 @@ class HiddenSearchOwnerMixin:
             option["id"]
             for option in self._semantic_search_options(seat, base_effect)
         }
-        if any(value not in options for value in selected):
+        if base_effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import targeted_library_departed
+        departed = base_effect.get('schema_version') == 9 and targeted_library_departed(self, seat, base_effect)
+        if any(value not in options for value in selected) and not departed:
             raise GameRuleError("Semantic search completion candidate changed")
         destination_spec, resolved_destination, position = (
             self._semantic_search_destination(base_effect)
         )
-        if resolved_destination != "hand":
+        if (resolved_destination != "hand"
+                and not (base_effect.get("schema_version") == 8 and resolved_destination == "battlefield")
+                and not (base_effect.get("schema_version") == 9 and resolved_destination == "exile")):
             raise GameRuleError(
-                "Replacement-resumed semantic search must request the hand"
+                "Replacement-resumed semantic search changed its supported destination"
             )
         raw_zone = base_effect.get("zone") or "library"
         search_zones = (
@@ -1234,6 +1333,11 @@ class HiddenSearchOwnerMixin:
             note=note,
             instruction_pointer=instruction_pointer,
         )
+        if context.effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import targeted_library_departed,continue_departed_target_search
+        if context.effect.get('schema_version') == 9 and targeted_library_departed(self, context.seat, context.effect):
+            continue_departed_target_search(self, context)
+            return
         raw_selections = effect.get(_REPLACEMENT_SELECTIONS_FIELD, ())
         if (
             not isinstance(raw_selections, Sequence)
@@ -1273,6 +1377,11 @@ class HiddenSearchOwnerMixin:
 
     def _complete_semantic_search(self, decision: Any) -> None:
         context = self._semantic_search_completion_context(decision)
+        if context.effect.get('schema_version') == 9:
+            from ..rules.targeted_library_exile import targeted_library_departed,continue_departed_target_search
+        if context.effect.get('schema_version') == 9 and targeted_library_departed(self, context.seat, context.effect):
+            continue_departed_target_search(self, context)
+            return
         values, search_zones = self._semantic_search_selected_values(context)
         from ..conditional_search_placement import materialize_conditional_search
         context=materialize_conditional_search(self,context,values)
@@ -1288,7 +1397,9 @@ class HiddenSearchOwnerMixin:
                 position=position,
             )
         except ReplacementChoiceRequired as required:
-            if destination != "hand" or len(values) > 1 and not is_counted_library_search(context.effect):
+            targeted = context.effect.get('schema_version') == 9 and destination == 'exile'
+            if not targeted and ((destination != "hand" and not (destination=="battlefield" and context.effect.get("schema_version")==8))
+                    or len(values) > 1 and not is_counted_library_search(context.effect)):
                 raise
             from ..replacement_decisions import issue_replacement_order_choice
 

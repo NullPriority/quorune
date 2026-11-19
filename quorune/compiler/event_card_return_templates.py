@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Public death-event card returns through the existing zone mutation owner."""
 
-import re
+from . import regex_working_set as re
 
 from ..event_card_return import (EVENT_CARD_RETURN_MECHANIC, event_card_return_effect,
     EVENT_BATTLEFIELD_RETURN_MECHANIC, event_battlefield_return_effect,
@@ -90,6 +90,38 @@ def event_library_move_template(binding, body, *, card_name, effect_template):
     return template, (effect,), None, mechanics
 
 
+def _source_death_land_exile_result(body):
+    from .target_land_type_templates import fixed_target_land_type_template
+    from ..event_card_return import DEATH_LAND_EXILE_MECHANIC, death_source_exile_effect
+
+    first, separator, second = body.strip().partition(". ")
+    if not separator or re.fullmatch(r"Exile this card[.]?", second, re.I) is None:
+        return None
+    compiled = fixed_target_land_type_template(first + ".")
+    if compiled is None:
+        return None
+    _name, effects, schema, mechanics = compiled
+    characteristics = effects[0]["characteristics"]
+    if (characteristics["duration"] != "zone_object" or characteristics["retain_other_land_types"]
+            or characteristics["controller_relation"] != "any"):
+        return None
+    return ("fixed-death-land-type-and-exile-v1", (*effects, death_source_exile_effect()),
+            schema, (*mechanics, DEATH_LAND_EXILE_MECHANIC))
+
+
+def source_death_land_exile_binding(material_line, *, card_name=None):
+    from .fixed_public_event_trigger_bindings import _source_subject, _spec
+    from ..event_card_return import death_land_exile_condition
+
+    match = re.fullmatch(r"(?:When|Whenever) (?P<source>.+?) dies, (?P<body>.+)", material_line, re.I)
+    if (match is None or not _source_subject(match["source"], card_name=card_name)
+            or _source_death_land_exile_result(match["body"]) is None):
+        return None
+    return _spec("creature.dies", "source_death_land_exile", match["body"],
+                 "fixed-counter-source-death-land-exile-v1", "trigger-event-normalized-zone-change",
+                 condition=death_land_exile_condition())
+
+
 def self_death_return_binding(material_line: str, *, card_name: str | None = None):
     from .fixed_public_event_trigger_bindings import _spec
     match = re.fullmatch(r'(?:When|Whenever) (?P<source>this creature|.+?) dies, (?P<body>.+)', material_line, re.I)
@@ -108,6 +140,13 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
 
 
 def event_card_return_template(binding, body: str, *, card_name: str, effect_template):
+    if binding.variant == "source_death_land_exile":
+        return _source_death_land_exile_result(body) if body == binding.body else None
+    if binding.variant == 'enchanted_creature_dies' and body == binding.body:
+        from ..attachment_source_return_model import compile_attachment_source_return_body, MECHANIC
+        spec = compile_attachment_source_return_body(body)
+        if spec is not None:
+            return ('attachment-source-return-v1', (spec.effect(),), None, (MECHANIC,))
     if binding.variant == "source_library_departure":
         return event_library_move_template(binding, body, card_name=card_name, effect_template=effect_template)
     attached_graveyard = (binding.event.value == 'permanent.graveyard'

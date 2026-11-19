@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Iterator, Sequence
 
+from .characteristic_read_frames import characteristic_card_row_cache
 from .util import iter_jsonl, normalize_card_name, stable_json, truncate
 
 SCHEMA_VERSION = 2
@@ -496,11 +497,22 @@ class CardDatabase:
         )
 
     def by_oracle_id(self, oracle_id: str) -> CardRecord:
-        row = self.connection.execute(
-            "SELECT * FROM cards WHERE oracle_id = ?", (oracle_id,)
-        ).fetchone()
+        connection = self.connection
+        rows = characteristic_card_row_cache(self) if type(oracle_id) is str else None
+        if rows is not None and (connection.in_transaction or connection.row_factory is not sqlite3.Row):
+            rows = None
+        # The connection identity and change count exclude records from replaced
+        # handles and writes. Open transactions always use the ordinary lookup.
+        key = (connection, connection.total_changes, oracle_id) if rows is not None else None
+        row = rows.get(key) if rows is not None else None
         if row is None:
-            raise KeyError(f"Unknown oracle_id: {oracle_id}")
+            row = connection.execute(
+                "SELECT * FROM cards WHERE oracle_id = ?", (oracle_id,)
+            ).fetchone()
+            if row is None:
+                raise KeyError(f"Unknown oracle_id: {oracle_id}")
+            if rows is not None:
+                rows[key] = row
         return self._row_to_card(row)
 
     def image_uris(self, oracle_id_or_prefix: str) -> tuple[dict[str, Any], ...]:

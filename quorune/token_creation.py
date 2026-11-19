@@ -1120,8 +1120,10 @@ def create_tokens(
     if token_cleanup is not None:
         try:token_cleanup = capture_created_token_cleanup(host, token_cleanup, controller=controller)
         except (ValueError,TypeError) as exc:raise TokenCreationError(str(exc)) from exc
-    if copy_source_zone not in {"battlefield", "exile", "graveyard"}:
+    if copy_source_zone not in {"battlefield", "exile", "graveyard", "stack"}:
         raise TokenCreationError("Token-copy source zone is unsupported")
+    if copy_source_zone == "stack" and copy_snapshot is None:
+        raise TokenCreationError("Stack token-copy source requires a pinned snapshot")
     if copy_source_zone == "graveyard" and copy_snapshot is None:
         raise TokenCreationError("Graveyard token-copy source requires a pinned snapshot")
     if copy_source_zone != "battlefield" and not copy_of:

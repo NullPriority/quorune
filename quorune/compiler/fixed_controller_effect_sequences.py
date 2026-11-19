@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed ordered controller draw/life/Scry/discard effect sequences."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from .affected_player_discard_templates import (

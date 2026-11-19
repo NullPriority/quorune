@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """One printed fixed color grants protection to the source incarnation."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from .source_protection_choices import source_color_protection_effect

@@ -1,5 +1,5 @@
 """Both Ravenous components reuse dynamic entry counters and ordinary draw."""
-import re
+from . import regex_working_set as re
 from ..ravenous_model import RAVENOUS_CAPABILITY,ravenous_condition
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .fixed_self_entry_counter_templates import dynamic_self_entry_counter_handler

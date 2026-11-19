@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..carddb import CardRecord

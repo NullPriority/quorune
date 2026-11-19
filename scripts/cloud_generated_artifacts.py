@@ -539,6 +539,13 @@ def install_bundle(
             database=None,
             root=ROOT,
         )
+        owner_keys = receipt.get("owner_input_fingerprints")
+        if isinstance(owner_keys, Mapping):
+            compact_key = owner_keys.get("compact-ci-card-dependencies")
+            if isinstance(compact_key, str):
+                from scripts.compact_ci_report import remember_bundled_dependency_artifact
+
+                remember_bundled_dependency_artifact(root=ROOT, input_fingerprint=compact_key)
     return {
         "ok": True,
         "source_commit": receipt["source_commit"],

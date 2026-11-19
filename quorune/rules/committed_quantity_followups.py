@@ -16,7 +16,7 @@ _QUANTITY_FIELDS = {
 }
 
 
-def fixed_followup_capabilities(effect: Mapping[str, Any]) -> tuple[str, ...]:
+def fixed_followup_capabilities(effect: Mapping[str, Any], *, allow_typed_token_ability: bool = False) -> tuple[str, ...]:
     operation = effect.get("op")
     if operation == "draw" and dict(effect) == {
         "op": "draw", "player": "$controller", "count": 1, "private": True,
@@ -47,9 +47,11 @@ def fixed_followup_capabilities(effect: Mapping[str, Any]) -> tuple[str, ...]:
             )
 
             from .capabilities import capability_dependencies_for_node
+            from ..fixed_token_production import TYPED_TOKEN_ABILITY_MECHANIC_ID
 
             effects = (thaw_value(effect),)
-            mechanics = token_creation_component_mechanics(effects, set())
+            allowed_mechanics = {TYPED_TOKEN_ABILITY_MECHANIC_ID} if allow_typed_token_ability else set()
+            mechanics = token_creation_component_mechanics(effects, allowed_mechanics)
             if fixed_token_creation_node_capabilities(
                 effects=effects, target_schema=None, mechanic_ids=mechanics,
             ):
@@ -66,11 +68,11 @@ class CommittedQuantityFollowup:
     effects: tuple[FrozenMap, ...]
 
 
-def fixed_quantity_effect(effect: Mapping[str, Any]) -> FrozenMap:
+def fixed_quantity_effect(effect: Mapping[str, Any], *, allow_typed_token_ability: bool = False) -> FrozenMap:
     if not isinstance(effect, Mapping):
         raise ValueError("Committed result requires a typed follow-up instruction")
     effect = FrozenMap(effect)
-    if not fixed_followup_capabilities(effect):
+    if not fixed_followup_capabilities(effect, allow_typed_token_ability=allow_typed_token_ability):
         raise ValueError("Committed follow-up lacks a closed quantity slot")
     return effect
 

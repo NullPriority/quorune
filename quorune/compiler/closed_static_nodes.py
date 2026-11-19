@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Iterable
 from collections.abc import Mapping
-import re
+from . import regex_working_set as re
 
 from ..characteristic_evaluation import type_parts
 from ..rules.capabilities import CapabilityRegistry
@@ -19,6 +19,7 @@ from .as_unblocked_templates import static_as_unblocked_handler
 from .toughness_assignment_templates import static_toughness_assignment_handler
 from .block_capacity_templates import static_block_capacity_handler
 from .landwalk_permission_templates import static_landwalk_permission_handler
+from .block_as_though_templates import static_block_as_though_handler
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .oracle_source_text import without_ability_word_label
 from .kicker_nodes import fixed_kicked_entry_node
@@ -229,7 +230,7 @@ def _closed_static_body_node(
     )
     if no_maximum is not None:
         return no_maximum
-    declaration_grant = static_landwalk_permission_handler(material_line,source_name=source_name) or static_block_capacity_handler(material_line,source_name=source_name) or static_toughness_assignment_handler(material_line,source_name=source_name) or static_as_unblocked_handler(material_line,source_name=source_name) or static_defender_permission_handler(material_line, source_name=source_name) or fixed_static_declaration_grant_handler(
+    declaration_grant = static_block_as_though_handler(material_line,source_name=source_name) or static_landwalk_permission_handler(material_line,source_name=source_name) or static_block_capacity_handler(material_line,source_name=source_name) or static_toughness_assignment_handler(material_line,source_name=source_name) or static_as_unblocked_handler(material_line,source_name=source_name) or static_defender_permission_handler(material_line, source_name=source_name) or fixed_static_declaration_grant_handler(
         material_line,
         source_name=source_name,
     )

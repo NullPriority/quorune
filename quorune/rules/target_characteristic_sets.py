@@ -102,9 +102,15 @@ def characteristic_set_runtime_dependencies(program):
             if value.get('op')==OPERATION and value.get('schema_version')==6:
                 fixed=value
                 if 'announced_target_count' in value:
-                    from .any_number_target_shapes import any_number_target_node_capabilities
-                    required=any_number_target_node_capabilities(effects=(value,),target_schema=target_schema,mechanic_ids=coverage)
-                    if not required:raise ValueError('Any-number characteristic result lacks its cardinality owner')
+                    parameter = target_schema.get('count_parameter') if isinstance(target_schema, Mapping) else None
+                    if isinstance(parameter, Mapping) and parameter.get('parameter') == 'x':
+                        from .fixed_homogeneous_target_set_capability_shapes import announced_target_set_node_capabilities
+                        owner = announced_target_set_node_capabilities
+                    else:
+                        from .any_number_target_shapes import any_number_target_node_capabilities
+                        owner = any_number_target_node_capabilities
+                    required=owner(effects=(value,),target_schema=target_schema,mechanic_ids=coverage)
+                    if not required:raise ValueError('Variable characteristic result lacks its cardinality owner')
                     dependencies.update(required)
                     fixed={key:child for key,child in value.items() if key!='announced_target_count'}
                     fixed['maximum_targets']=2

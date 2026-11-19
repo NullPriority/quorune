@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Lower triggered mana before ordinary stack-trigger composition."""
 
-import re
+from . import regex_working_set as re
 from collections import Counter
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE

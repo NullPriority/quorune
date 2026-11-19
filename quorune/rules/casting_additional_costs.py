@@ -19,6 +19,8 @@ from ..additional_cost_vocabulary import (
     ZONE_CHANGE_COST_KIND,
 )
 from ..object_predicate import ObjectQuerySpec
+from ..qualified_return_cost_model import QUALIFIED_RETURN_COST_VERSION, validate_qualified_return_cost
+from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_COST_VERSION, validate_keyword_sacrifice_cost
 from ..sacrifice_union_model import SacrificePredicateUnion, validate_sacrifice_union_variant
 from ..object_query import object_query_result, query_objects
 
@@ -341,7 +343,7 @@ class FixedZoneChangeAdditionalCost:
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION}
+            or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -371,6 +373,11 @@ class FixedZoneChangeAdditionalCost:
             )
         if self.schema_version == COLOR_RETURN_SCHEMA_VERSION:
             _validate_color_return_cost(self)
+        if self.schema_version == QUALIFIED_RETURN_COST_VERSION:
+            validate_qualified_return_cost(self)
+        if self.schema_version == KEYWORD_SACRIFICE_COST_VERSION:
+            try:validate_keyword_sacrifice_cost(self)
+            except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
         from ..power_sacrifice_model import validate_power_sacrifice_variant
         try:validate_power_sacrifice_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter)
         except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
@@ -420,7 +427,7 @@ class FixedZoneChangeAdditionalCost:
             or self.predicate.controller != expected_controller
             or self.predicate.known_to_actor is not True
             or self.predicate.include_phased_out
-            or self.predicate.keywords_all
+            or (self.predicate.keywords_all and self.schema_version != KEYWORD_SACRIFICE_COST_VERSION)
             or self.predicate.colors_none
             or self.predicate.excluded_controllers
             or self.predicate.excluded_subtypes
@@ -498,7 +505,7 @@ class FixedZoneChangeAdditionalCost:
                 "Zone-change additional-cost descriptor fields are closed"
             )
         try:
-            if value["schema_version"] == COLOR_RETURN_SCHEMA_VERSION and set(value) != _FIXED_ZONE_CHANGE_FIELDS:
+            if value["schema_version"] in {COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION} and set(value) != _FIXED_ZONE_CHANGE_FIELDS:
                 raise ValueError("Color return fields are closed")
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
             if ('predicate_union' in value) != (value['schema_version'] == 5):

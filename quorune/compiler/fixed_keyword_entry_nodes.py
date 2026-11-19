@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile the fixed entry-counter component of compound keywords."""
 
-import re
+from . import regex_working_set as re
 
 from ..fixed_keyword_entry_counters import (
     FIXED_KEYWORD_ENTRY_CAPABILITY,

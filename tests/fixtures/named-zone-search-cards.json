@@ -1,0 +1,3578 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Vraska's Scorn",
+      "oracle_id": "020c26ba-ed46-47c3-925c-b9f32500f503",
+      "oracle_text": "Target opponent loses 4 life. You may search your library and/or graveyard for a card named Vraska, Scheming Gorgon, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{R}{W}",
+      "name": "Huatli, Dinosaur Knight",
+      "oracle_id": "04aa210a-235f-4e07-87d1-0d28cdf6888b",
+      "oracle_text": "+2: Put two +1/+1 counters on up to one target Dinosaur you control.\n−3: Target Dinosaur you control deals damage equal to its power to target creature you don't control.\n−7: Dinosaurs you control get +4/+4 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Huatli"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{B}",
+      "name": "Ashiok's Forerunner",
+      "oracle_id": "06d2a96c-4f4d-4a4a-ac48-6f0fbc9d0afd",
+      "oracle_text": "Flash\nWhen this creature enters, you may search your library and/or graveyard for a card named Ashiok, Sculptor of Fears, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": "3",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Command Tower",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{W}{U}",
+      "name": "Niambi, Faithful Healer",
+      "oracle_id": "0c107664-a9fc-4684-8a1b-fa750401a6dd",
+      "oracle_text": "When Niambi enters, you may search your library and/or graveyard for a card named Teferi, Timebender, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-04-27",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Cleric"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{R}{W}",
+      "name": "Sun-Blessed Mount",
+      "oracle_id": "139b0fd5-8aa7-4b36-ab5d-cbf398381c6d",
+      "oracle_text": "When this creature enters, you may search your library and/or graveyard for a card named Huatli, Dinosaur Knight, reveal it, then put it into your hand. If you searched your library this way, shuffle.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": "4",
+      "type_line": "Creature — Dinosaur"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Ajani, Inspiring Leader",
+      "oracle_id": "15474e82-94b4-47e1-b91c-3deaf4dbffd6",
+      "oracle_text": "+2: You gain 2 life. Put two +1/+1 counters on up to one target creature.\n−3: Exile target creature. Its controller gains 2 life.\n−10: Creatures you control gain flying and double strike until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Ajani"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Basri, Devoted Paladin",
+      "oracle_id": "1601e553-31c2-4e04-9f0c-bc17e49eeff7",
+      "oracle_text": "+1: Put a +1/+1 counter on up to one target creature. It gains vigilance until end of turn.\n−1: Whenever a creature attacks this turn, put a +1/+1 counter on it.\n−6: Creatures you control get +2/+2 and gain flying until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Basri"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Gideon, the Oathsworn",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "oracle_text": "Whenever you attack with two or more non-Gideon creatures, put a +1/+1 counter on each of those creatures.\n+2: Until end of turn, Gideon becomes a 5/5 white Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn. (He can't attack if he was cast this turn.)\n−9: Exile Gideon and each creature your opponents control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Gideon"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{W}",
+      "name": "Eivor, Battle-Ready",
+      "oracle_id": "1b4a07bd-5345-4520-bd05-b5173e08135c",
+      "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)\nHaste (This creature can attack as soon as it comes under your control.)\nWhenever Eivor attacks, it deals damage equal to the number of Equipment you control to each opponent.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Human Assassin Warrior"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Chandra, Bold Pyromancer",
+      "oracle_id": "1cdba3c1-19e1-43c3-a0d8-5fb2b88060d8",
+      "oracle_text": "+1: Add {R}{R}. Chandra deals 2 damage to target player.\n−3: Chandra deals 3 damage to target creature or planeswalker.\n−7: Chandra deals 10 damage to target player and each creature and planeswalker they control.",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2018-04-27",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Chandra"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "3",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Grand Master of Flowers",
+      "oracle_id": "1f3dbc53-4075-40b8-b70d-ce74d3ff5f6d",
+      "oracle_text": "As long as Grand Master of Flowers has seven or more loyalty counters on him, he's a 7/7 Dragon God creature with flying and indestructible.\n+1: Target creature without first strike, double strike, or vigilance can't attack or block until your next turn.\n+1: Search your library and/or graveyard for a card named Monk of the Open Hand, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Bahamut"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Visage of Bolas",
+      "oracle_id": "21bb3c03-c1c0-40ec-8df4-8d0054c3742b",
+      "oracle_text": "When this artifact enters, you may search your library and/or graveyard for a card named Nicol Bolas, the Deceiver, reveal it, and put it into your hand. If you search your library this way, shuffle.\n{T}: Add {U}, {B}, or {R}.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "R",
+        "U"
+      ],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Liliana's Scorn",
+      "oracle_id": "2359db1c-6029-4748-9f09-d57bb0ae92e9",
+      "oracle_text": "Destroy target creature. You may search your library and/or graveyard for a card named Liliana, Death Mage, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "5",
+      "mana_cost": "{4}{B}{R}",
+      "name": "Angrath, Minotaur Pirate",
+      "oracle_id": "2737a78c-77ed-4bd0-ac0d-39ca2d816e83",
+      "oracle_text": "+2: Angrath deals 1 damage to target opponent or planeswalker and each creature that player or that planeswalker's controller controls.\n−3: Return target Pirate card from your graveyard to the battlefield.\n−11: Destroy all creatures target opponent controls. Angrath deals damage to that player equal to their total power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Angrath"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Monk of the Open Hand",
+      "oracle_id": "2d3998fc-a68a-4923-a456-b3e43ab6decb",
+      "oracle_text": "Flurry of Blows — Whenever you cast your second spell each turn, put a +1/+1 counter on this creature.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": "1",
+      "type_line": "Creature — Elf Monk"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Mu Yanling",
+      "oracle_id": "34e1477a-c0fb-4364-bb93-04a85c0c2517",
+      "oracle_text": "+2: Target creature can't be blocked this turn.\n−3: Draw two cards.\n−10: Tap all creatures your opponents control. You take an extra turn after this one.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-06-22",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Yanling"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Sorin's Guide",
+      "oracle_id": "36f5f161-b25e-48e4-b8f9-e6c36dfefe5b",
+      "oracle_text": "When this creature enters, you may search your library and/or graveyard for a card named Sorin, Vampire Lord, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "2",
+      "type_line": "Creature — Vampire"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Rhythmic Water Vortex",
+      "oracle_id": "373c6cd0-0bf7-4dab-bc18-7ecf5f015e10",
+      "oracle_text": "Return up to two target creatures to their owner's hand.\nSearch your library and/or graveyard for a card named Mu Yanling, reveal it, and put it into your hand. If you searched your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-06-22",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{R}{G}",
+      "name": "Domri's Nodorog",
+      "oracle_id": "3992209a-0a28-449d-8ba5-f75e861a79b4",
+      "oracle_text": "Trample\nWhen this creature enters, you may search your library and/or graveyard for a card named Domri, City Smasher, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2019-01-25",
+      "toughness": "2",
+      "type_line": "Creature — Beast"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{2}{W}{W}{W}",
+      "name": "Elspeth, Undaunted Hero",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "oracle_text": "+2: Put a +1/+1 counter on each of up to two target creatures.\n−2: Search your library and/or graveyard for a card named Sunlit Hoplite and put it onto the battlefield. If you search your library this way, shuffle.\n−8: Until end of turn, creatures you control gain flying and get +X/+X, where X is your devotion to white.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Elspeth"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{U}{B}",
+      "name": "Tezzeret, Master of Metal",
+      "oracle_id": "3fba19a9-44c6-4771-9587-9d2c4009e996",
+      "oracle_text": "+1: Reveal cards from the top of your library until you reveal an artifact card. Put that card into your hand and the rest on the bottom of your library in a random order.\n−3: Target opponent loses life equal to the number of artifacts you control.\n−8: Gain control of all artifacts and creatures target opponent controls.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Tezzeret"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Chandra, Flame's Fury",
+      "oracle_id": "408966d2-08c0-4531-a3b4-e666840ee95c",
+      "oracle_text": "+1: Chandra deals 2 damage to any target.\n−2: Chandra deals 4 damage to target creature and 2 damage to that creature's controller.\n−8: Chandra deals 10 damage to target player and each creature that player controls.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Chandra"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Jace, Arcane Strategist",
+      "oracle_id": "4126bab7-6a2a-43b2-ba65-77299f9bb8cf",
+      "oracle_text": "Whenever you draw your second card each turn, put a +1/+1 counter on target creature you control.\n+1: Draw a card.\n−7: Creatures you control can't be blocked this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Jace"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{W}",
+      "name": "Gideon, Martial Paragon",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "oracle_text": "+2: Untap all creatures you control. Those creatures get +1/+1 until end of turn.\n0: Until end of turn, Gideon becomes a 5/5 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn.\n−10: Creatures you control get +2/+2 until end of turn. Tap all creatures your opponents control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Gideon"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{5}{U}{B}{R}",
+      "name": "Nicol Bolas, the Deceiver",
+      "oracle_id": "524b00ea-0372-40f9-a6a1-76a8497a1ea6",
+      "oracle_text": "+3: Each opponent loses 3 life unless that player sacrifices a nonland permanent of their choice or discards a card.\n−3: Destroy target creature. Draw a card.\n−11: Nicol Bolas deals 7 damage to each opponent. You draw seven cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Bolas"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Chandra's Firemaw",
+      "oracle_id": "53b17c51-a216-484f-80df-3904284df0ea",
+      "oracle_text": "Haste\nWhen this creature enters, you may search your library and/or graveyard for a card named Chandra, Flame's Catalyst, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "2",
+      "type_line": "Creature — Hellion"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{G}{W}",
+      "name": "Ajani, Valiant Protector",
+      "oracle_id": "542423cb-fbfb-4a2f-9f6d-87b273a95e96",
+      "oracle_text": "+2: Put two +1/+1 counters on up to one target creature.\n+1: Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order.\n−11: Put X +1/+1 counters on target creature, where X is your life total. That creature gains trample until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Ajani"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "3",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Vivien, Nature's Avenger",
+      "oracle_id": "5513b150-c08f-4f3e-8e41-fd7b43d00b78",
+      "oracle_text": "+1: Put three +1/+1 counters on up to one target creature.\n−1: Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order.\n−6: Target creature gets +10/+10 and gains trample until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Vivien"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{W}{U}",
+      "name": "The First Doctor",
+      "oracle_id": "5611b70d-f8d1-4a8f-b9a2-a356264a7c46",
+      "oracle_text": "When The First Doctor enters, search your library and/or graveyard for a card named TARDIS, reveal it, and put it into your hand. If you search your library this way, shuffle.\nWhenever you cast a spell with cascade, put a +1/+1 counter on target artifact or creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-10-13",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Time Lord Doctor"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Mindlock Orb",
+      "oracle_id": "5794b58e-f3b6-4637-b288-283b3a72a718",
+      "oracle_text": "Players can't search libraries.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2008-10-03",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Jace's Ruse",
+      "oracle_id": "59cbed39-a07e-491e-a95a-adafe19eb652",
+      "oracle_text": "Return up to two target creatures to their owner's hand. You may search your library and/or graveyard for a card named Jace, Arcane Strategist, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Mu Yanling, Celestial Wind",
+      "oracle_id": "5f39accf-62fd-407a-a147-781210569d33",
+      "oracle_text": "+1: Until your next turn, up to one target creature gets -5/-0.\n−3: Return up to two target creatures to their owners' hands.\n−7: Creatures you control with flying get +5/+5 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Yanling"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{B}{R}",
+      "name": "Angrath's Fury",
+      "oracle_id": "61f3a549-77b4-4403-afa2-a0f02603f2e6",
+      "oracle_text": "Destroy target creature. Angrath's Fury deals 3 damage to target player or planeswalker. You may search your library and/or graveyard for a card named Angrath, Minotaur Pirate, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Dovin's Dismissal",
+      "oracle_id": "6db5f1a7-4cd8-42e2-a5d8-1603206ad0cc",
+      "oracle_text": "Put up to one target tapped creature on top of its owner's library. You may search your library and/or graveyard for a card named Dovin, Architect of Law, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-01-25",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Gideon's Resolve",
+      "oracle_id": "71c5718f-580d-4993-8492-81b7a557d10c",
+      "oracle_text": "When this enchantment enters, you may search your library and/or graveyard for a card named Gideon, Martial Paragon, reveal it, and put it into your hand. If you search your library this way, shuffle.\nCreatures you control get +1/+1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Teferi, Timeless Voyager",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "oracle_text": "+1: Draw a card.\n−3: Put target creature on top of its owner's library.\n−8: Each creature target opponent controls phases out. Until the end of your next turn, they can't phase in. (Treat them and anything attached to them as though they don't exist.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Teferi"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Gideon's Battle Cry",
+      "oracle_id": "7528f47d-c758-42bc-bdfe-5aca805c4126",
+      "oracle_text": "Put a +1/+1 counter on each creature you control. You may search your library and/or graveyard for a card named Gideon, the Oathsworn, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Sorin, Vampire Lord",
+      "oracle_id": "753dcc18-3697-49c5-80c6-2d8dc8ee8c9a",
+      "oracle_text": "+1: Up to one target creature gets +2/+0 until end of turn.\n−2: Sorin deals 4 damage to any target. You gain 4 life.\n−8: Until end of turn, each Vampire you control gains \"{T}: Gain control of target creature.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Sorin"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{5}{B}{G}",
+      "name": "Vraska, Regal Gorgon",
+      "oracle_id": "7616e834-4852-40c8-9de6-d89f96119f12",
+      "oracle_text": "+2: Put a +1/+1 counter on up to one target creature. That creature gains menace until end of turn.\n−3: Destroy target creature.\n−10: For each creature card in your graveyard, put a +1/+1 counter on each creature you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-10-05",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Vraska"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{W}{U}",
+      "name": "Teferi, Timebender",
+      "oracle_id": "761bb894-d3f9-4248-af76-1559c502e342",
+      "oracle_text": "+2: Untap up to one target artifact or creature.\n−3: You gain 2 life and draw two cards.\n−9: Take an extra turn after this one.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-04-27",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Teferi"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Chandra, Flame's Catalyst",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "oracle_text": "+1: Chandra deals 3 damage to each opponent.\n−2: You may cast target red instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead.\n−8: Discard your hand, then draw seven cards. Until end of turn, you may cast spells from your hand without paying their mana costs.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Chandra"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Liliana's Influence",
+      "oracle_id": "7fe67cef-38c8-4071-86df-71053818d908",
+      "oracle_text": "Put a -1/-1 counter on each creature you don't control. You may search your library and/or graveyard for a card named Liliana, Death Wielder, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Ethereal Elk",
+      "oracle_id": "82d643ef-8380-4fdc-a88d-ed205324dbd9",
+      "oracle_text": "Trample\nWhen this creature enters, you may search your library and/or graveyard for a card named Vivien, Nature's Avenger, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "3",
+      "type_line": "Creature — Elk Spirit"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Vraska, Scheming Gorgon",
+      "oracle_id": "83045a9c-57da-411f-80aa-56178d14856b",
+      "oracle_text": "+2: Creatures you control get +1/+0 until end of turn.\n−3: Destroy target creature.\n−10: Until end of turn, creatures you control gain deathtouch and \"Whenever this creature deals damage to an opponent, that player loses the game.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Vraska"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Chandra's Outburst",
+      "oracle_id": "894a344e-a8a7-4ddc-833d-eea41f1918d7",
+      "oracle_text": "Chandra's Outburst deals 4 damage to target player or planeswalker.\nSearch your library and/or graveyard for a card named Chandra, Bold Pyromancer, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-04-27",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "TARDIS",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks, if you control a Time Lord, the next spell you cast this turn has cascade and you may planeswalk.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2023-10-13",
+      "toughness": "4",
+      "type_line": "Artifact — Vehicle"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Rowan's Stalwarts",
+      "oracle_id": "9171248e-045e-4ed4-aa06-eea3ae3d8df0",
+      "oracle_text": "When this creature enters, you may search your library and/or graveyard for a card named Rowan, Fearless Sparkmage, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": "2",
+      "type_line": "Creature — Human Knight"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Basri's Aegis",
+      "oracle_id": "9825dab8-ca1a-44ea-b1d7-77c66f00351f",
+      "oracle_text": "Put a +1/+1 counter on each of up to two target creatures. You may search your library and/or graveyard for a card named Basri, Devoted Paladin, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{R/P}{R/P}",
+      "name": "Act of Aggression",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "oracle_text": "({R/P} can be paid with either {R} or 2 life.)\nGain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-11-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Chandra's Flame Wave",
+      "oracle_id": "9f84fc91-8647-4cc8-9b57-d23a83f85ab1",
+      "oracle_text": "Chandra's Flame Wave deals 2 damage to target player and each creature that player controls. Search your library and/or graveyard for a card named Chandra, Flame's Fury, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}{U}",
+      "name": "Grasping Current",
+      "oracle_id": "a10a4bb2-c6fa-482b-9c8b-e64cbb8424ba",
+      "oracle_text": "Return up to two target creatures to their owner's hand.\nSearch your library and/or graveyard for a card named Jace, Ingenious Mind-Mage, reveal it, and put it into your hand. If you searched your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{W}{U}",
+      "name": "Dovin, Architect of Law",
+      "oracle_id": "a3386efe-d6c5-4853-a4db-61460da3364a",
+      "oracle_text": "+1: You gain 2 life and draw a card.\n−1: Tap target creature. It doesn't untap during its controller's next untap step.\n−9: Tap all permanents target opponent controls. That player skips their next untap step.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-01-25",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Dovin"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{B}",
+      "name": "Tezzeret's Betrayal",
+      "oracle_id": "a660e7a0-0750-475d-a4bd-de5b37d53e97",
+      "oracle_text": "Destroy target creature. You may search your library and/or graveyard for a card named Tezzeret, Master of Metal, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Ral's Dispersal",
+      "oracle_id": "a81b7629-9db9-4351-8d0e-c45a7a6167d4",
+      "oracle_text": "Return target creature to its owner's hand. You may search your library and/or graveyard for a card named Ral, Caller of Storms, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-10-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Ray of Command",
+      "oracle_id": "adf41d29-403d-4936-9689-3148d103e700",
+      "oracle_text": "Untap target creature an opponent controls and gain control of it until end of turn. That creature gains haste until end of turn. When you lose control of the creature, tap it.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-03-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Chandra, Pyrogenius",
+      "oracle_id": "ae2c89c2-66d6-484a-a176-9ea19e00f445",
+      "oracle_text": "+2: Chandra deals 2 damage to each opponent.\n−3: Chandra deals 4 damage to target creature.\n−10: Chandra deals 6 damage to target player or planeswalker and each creature that player or that planeswalker's controller controls.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Chandra"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{G}{W}",
+      "name": "Ajani's Aid",
+      "oracle_id": "b3779fbe-7701-433b-afad-bebd6096a3c8",
+      "oracle_text": "When this enchantment enters, you may search your library and/or graveyard for a card named Ajani, Valiant Protector, reveal it, and put it into your hand. If you search your library this way, shuffle.\nSacrifice this enchantment: Prevent all combat damage a creature of your choice would deal this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Teferi's Wavecaster",
+      "oracle_id": "b3f6e68e-9490-4719-8d2e-d1ec22a96132",
+      "oracle_text": "Flash\nWhen this creature enters, you may search your library and/or graveyard for a card named Teferi, Timeless Voyager, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "3",
+      "type_line": "Creature — Merfolk Wizard"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Reach",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Tower Winder",
+      "oracle_id": "c1aecc8a-db3a-4158-b1f1-bfe06d782482",
+      "oracle_text": "Reach, deathtouch\nWhen this creature enters, search your library and/or graveyard for a card named Command Tower, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "1",
+      "type_line": "Creature — Snake"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}{B}{G}",
+      "name": "Vraska's Stoneglare",
+      "oracle_id": "c39e2046-173a-44b6-8e93-b22ede35485d",
+      "oracle_text": "Destroy target creature. You gain life equal to its toughness. You may search your library and/or graveyard for a card named Vraska, Regal Gorgon, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-10-05",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Yanling's Harbinger",
+      "oracle_id": "c4bf4397-22e5-458d-b9d1-3f3a0a27e9e5",
+      "oracle_text": "Flying\nWhen this creature enters, you may search your library and/or graveyard for a card named Mu Yanling, Celestial Wind, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "4",
+      "type_line": "Creature — Bird"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Elspeth's Devotee",
+      "oracle_id": "cacbdbcf-b5d2-40b3-bd8a-93636a248d3c",
+      "oracle_text": "When this creature enters, you may search your library and/or graveyard for a card named Elspeth, Undaunted Hero, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": "3",
+      "type_line": "Creature — Human Soldier"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Rowan, Fearless Sparkmage",
+      "oracle_id": "cd83f886-c651-4ad7-82ca-2446c60c8f94",
+      "oracle_text": "+1: Up to one target creature gets +3/+0 and gains first strike until end of turn.\n−2: Rowan deals 1 damage to each of up to two target creatures. Those creatures can't block this turn.\n−9: Gain control of all creatures until end of turn. Untap them. They gain haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Rowan"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{U}{B}",
+      "name": "Ashiok, Sculptor of Fears",
+      "oracle_id": "ce79bbd2-edf0-4d5e-9aaf-717ec3960c48",
+      "oracle_text": "+2: Draw a card. Each player mills two cards.\n−5: Put target creature card from a graveyard onto the battlefield under your control.\n−11: Gain control of all creatures target opponent controls.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Ashiok"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{R}{W}",
+      "name": "Raven Clan War-Axe",
+      "oracle_id": "d306de95-a80e-4e85-b7d2-36c6ea769b15",
+      "oracle_text": "When this Equipment enters, you may search your library and/or graveyard for a card named Eivor, Battle-Ready, reveal it, and put it into your hand. If you search your library this way, shuffle.\nEquipped creature gets +2/+0 and has trample.\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-07-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Garruk's Warsteed",
+      "oracle_id": "d4911e00-eed1-4c8c-8779-8a3f9406ead7",
+      "oracle_text": "Vigilance\nWhen this creature enters, you may search your library and/or graveyard for a card named Garruk, Savage Herald, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "5",
+      "type_line": "Creature — Rhino"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Liliana, Death Mage",
+      "oracle_id": "d654dd73-763d-4dfb-a30f-a058fd7f27a6",
+      "oracle_text": "+1: Return up to one target creature card from your graveyard to your hand.\n−3: Destroy target creature. Its controller loses 2 life.\n−7: Target opponent loses 2 life for each creature card in their graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Liliana"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "4",
+      "mana_cost": "{4}{U}{R}",
+      "name": "Ral, Caller of Storms",
+      "oracle_id": "d7b10518-b6dc-4a39-881a-edd346034f28",
+      "oracle_text": "+1: Draw a card.\n−2: Ral deals 3 damage divided as you choose among one, two, or three targets.\n−7: Draw seven cards. Ral deals 7 damage to each creature your opponents control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-10-05",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Ral"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{G}{U}",
+      "name": "Oko's Hospitality",
+      "oracle_id": "d804b0e5-785a-4e6e-9fe7-38b8add826fa",
+      "oracle_text": "Creatures you control have base power and toughness 3/3 until end of turn. You may search your library and/or graveyard for a card named Oko, the Trickster, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{R}{G}",
+      "name": "Domri, City Smasher",
+      "oracle_id": "d8fe9672-0ead-4f47-abd8-e1ee133c5c60",
+      "oracle_text": "+2: Creatures you control get +1/+1 and gain haste until end of turn.\n−3: Domri deals 3 damage to any target.\n−8: Put three +1/+1 counters on each creature you control. Those creatures gain trample until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-01-25",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Domri"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Aven Mindcensor",
+      "oracle_id": "d9517c5d-66d0-4178-96fb-a8c04f311ad8",
+      "oracle_text": "Flash\nFlying\nIf an opponent would search a library, that player searches the top four cards of that library instead.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "1",
+      "type_line": "Creature — Bird Wizard"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{5}{B}{B}",
+      "name": "Liliana, Death Wielder",
+      "oracle_id": "e1b6cc44-41b6-43d0-9fe9-722cebb1c47b",
+      "oracle_text": "+2: Put a -1/-1 counter on up to one target creature.\n−3: Destroy target creature with a -1/-1 counter on it.\n−10: Return all creature cards from your graveyard to the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Liliana"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flying",
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Goldmane Griffin",
+      "oracle_id": "e32573e8-91a8-438b-966f-1c6d098d54ae",
+      "oracle_text": "Flying, vigilance\nWhen this creature enters, you may search your library and/or graveyard for a card named Ajani, Inspiring Leader, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "2",
+      "type_line": "Creature — Griffin"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{4}{R}",
+      "name": "Liberating Combustion",
+      "oracle_id": "e3b40e34-edad-4838-a4d5-c167037d9ff7",
+      "oracle_text": "Liberating Combustion deals 6 damage to target creature. You may search your library and/or graveyard for a card named Chandra, Pyrogenius, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Sunlit Hoplite",
+      "oracle_id": "e99c58bd-b405-4474-bd32-1a993c9f2979",
+      "oracle_text": "During your turn, this creature has first strike.\nThis creature gets +1/+0 as long as you control an Elspeth planeswalker.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": "1",
+      "type_line": "Creature — Human Soldier"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Solemnity",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "4",
+      "mana_cost": "{4}{G}{U}",
+      "name": "Oko, the Trickster",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "oracle_text": "+1: Put two +1/+1 counters on up to one target creature you control.\n0: Until end of turn, Oko becomes a copy of target creature you control. Prevent all damage that would be dealt to him this turn.\n−7: Until end of turn, each creature you control has base power and toughness 10/10 and gains trample.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Oko"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Darksteel Myr",
+      "oracle_id": "f90fe86c-5cca-483b-93c2-6e856fa01c88",
+      "oracle_text": "Indestructible (Damage and effects that say \"destroy\" don't destroy this creature. If its toughness is 0 or less, it still dies.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2010-10-01",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Myr"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Garruk, Savage Herald",
+      "oracle_id": "fc762e40-84c1-4762-82f7-a0fc4f6fd522",
+      "oracle_text": "+1: Reveal the top card of your library. If it's a creature card, put it into your hand. Otherwise, put it on the bottom of your library.\n−2: Target creature you control deals damage equal to its power to another target creature.\n−7: Until end of turn, creatures you control gain \"You may have this creature assign its combat damage as though it weren't blocked.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Garruk"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": "5",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Jace, Ingenious Mind-Mage",
+      "oracle_id": "fe0fcb4e-92fd-4e64-99d1-043092ea21e3",
+      "oracle_text": "+1: Draw a card.\n+1: Untap all creatures you control.\n−9: Gain control of up to three target creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Jace"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Huatli’s last ability affects only Dinosaurs you control at the time it resolves. Dinosaurs you begin to control later in the turn or creatures that become Dinosaurs later in the turn won’t get +4/+4.",
+      "oracle_id": "04aa210a-235f-4e07-87d1-0d28cdf6888b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If either creature is an illegal target as Huatli’s second ability resolves, the creature you control won’t deal damage.",
+      "oracle_id": "04aa210a-235f-4e07-87d1-0d28cdf6888b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't have a commander, Command Tower's ability produces no mana.",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have two commanders, the ability adds one mana of any color in their combined color identities.",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander is a card that has no colors in its color identity, Command Tower's ability produces no mana. It doesn't produce {C}.",
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ajani’s last ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won’t gain flying or double strike.",
+      "oracle_id": "15474e82-94b4-47e1-b91c-3deaf4dbffd6",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is an illegal target by the time Ajani’s second ability tries to resolve, the ability doesn’t resolve. No player will gain life.",
+      "oracle_id": "15474e82-94b4-47e1-b91c-3deaf4dbffd6",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate Ajani’s first ability without choosing any target. If you do, you will gain 2 life. However, if you do choose a target and the target creature is an illegal target by the time the ability tries to resolve, the ability doesn’t resolve. You won’t gain 2 life.",
+      "oracle_id": "15474e82-94b4-47e1-b91c-3deaf4dbffd6",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "After activating Basri's second ability, a creature that attacks gets a +1/+1 counter before blockers are chosen.",
+      "oracle_id": "1601e553-31c2-4e04-9f0c-bc17e49eeff7",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Basri's last ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won't get +2/+2 or gain flying.",
+      "oracle_id": "1601e553-31c2-4e04-9f0c-bc17e49eeff7",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "A non-Gideon creature is a creature that isn't also a Gideon planeswalker. For example, Gideon's Company is a non-Gideon creature.",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any attacking Gideon creatures won't get a +1/+1 counter, but as long as two or more attacking creatures aren't Gideons, those attacking creatures each get a +1/+1 counter.",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gideon's first loyalty ability causes him to become a creature with the creature type Soldier. He remains a planeswalker with the planeswalker type Gideon. (He also retains any other card types or subtypes he may have had.) Each subtype is correlated to the proper card type: planeswalker is only a type (not a creature type), and Soldier is just a creature type (not a planeswalker type).",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gideon's first loyalty ability doesn't count as a creature entering the battlefield. Gideon was already on the battlefield; he only changed his types.",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Gideon becomes a creature the same turn he enters the battlefield, you can't attack with him or use any of his {T} abilities (if he gains any).",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Gideon has 9 loyalty as you activate his last ability, he'll be put into your graveyard and won't be exiled.",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If damage that can't be prevented is dealt to Gideon after his first loyalty ability has resolved, that damage will have all applicable results: specifically, the damage is marked on Gideon (since he's a creature) and that damage causes that many loyalty counters to be removed from him (since he's a planeswalker). Even though he's also a creature, if Gideon has no loyalty counters on him, he's put into his owner's graveyard.",
+      "oracle_id": "19a81aa7-823b-43fa-abc2-b2700a122bc1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Chandra's first ability can't target a planeswalker.",
+      "oracle_id": "1cdba3c1-19e1-43c3-a0d8-5fb2b88060d8",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Chandra's last ability targets only the player. Creatures and planeswalkers that player controls with hexproof will be dealt damage.",
+      "oracle_id": "1cdba3c1-19e1-43c3-a0d8-5fb2b88060d8",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Grand Master of Flowers somehow gains enough loyalty to become a creature while it is being attacked, it is removed from combat. If blockers haven't been declared yet, it may then block. It may even block creatures that were previously attacking it. Creatures that were previously attacking it that go unblocked won't deal combat damage.",
+      "oracle_id": "1f3dbc53-4075-40b8-b70d-ce74d3ff5f6d",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The first ability of Grand Master of Flowers doesn't use the stack and can't be responded to. Similarly, players can't respond to paying the cost of adding loyalty counters for an ability. Therefore, if Grand Master of Flowers has six loyalty and you activate one of his abilities, he will be a 7/7 Dragon God with flying and indestructible before players can respond to the loyalty ability.",
+      "oracle_id": "1f3dbc53-4075-40b8-b70d-ce74d3ff5f6d",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Grand Master of Flowers is a creature, he is not a planeswalker. He cannot be attacked and damage dealt to him while he is a creature will not reduce the number of loyalty counters he has. However, you may still activate his loyalty abilities as normal.",
+      "oracle_id": "1f3dbc53-4075-40b8-b70d-ce74d3ff5f6d",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can activate the last ability of Grand Master of Flowers even if there isn't a card named Monk of the Open Hand in your library or graveyard.",
+      "oracle_id": "1f3dbc53-4075-40b8-b70d-ce74d3ff5f6d",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is an illegal target by the time Liliana's Scorn tries to resolve, the spell won't resolve. You won't search for Liliana, Death Mage. If the target is legal but not destroyed (most likely because it has indestructible), you do search for Liliana.",
+      "oracle_id": "2359db1c-6029-4748-9f09-d57bb0ae92e9",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Angrath's first and last abilities target only the player. Creatures with hexproof that player controls will be affected.",
+      "oracle_id": "2737a78c-77ed-4bd0-ac0d-39ca2d816e83",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Angrath's last ability uses the power of those creatures as they last existed on the battlefield to determine their total power. If a creature's power was somehow less than 0, it subtracts from the total power of the other creatures. If the total power of those creatures is 0 or less, Angrath doesn't deal damage.",
+      "oracle_id": "2737a78c-77ed-4bd0-ac0d-39ca2d816e83",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any abilities of the destroyed creatures that trigger when the player is dealt damage won't trigger.",
+      "oracle_id": "2737a78c-77ed-4bd0-ac0d-39ca2d816e83",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any abilities that trigger when creatures die while resolving Angrath's last ability won't be put on the stack until after the player is dealt damage. If the player's life total becomes 0 or less, those triggers won't resolve in time to save that player.",
+      "oracle_id": "2737a78c-77ed-4bd0-ac0d-39ca2d816e83",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature controlled by the target opponent isn't destroyed as Angrath's last ability resolves (most likely because it has indestructible), its power still contributes to the amount of damage dealt. Use its power as it currently exists on the battlefield to determine the total power of the creatures.",
+      "oracle_id": "2737a78c-77ed-4bd0-ac0d-39ca2d816e83",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Monk of the Open Hand is the second spell you cast in a turn, spells you cast after that point in the same turn will not cause the Flurry of Blows ability to trigger.",
+      "oracle_id": "2d3998fc-a68a-4923-a456-b3e43ab6decb",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Monk of the Open Hand doesn't need to have been on the battlefield as the first spell was cast. For example, if Monk of the Open Hand is the first spell you cast, and then you cast another spell after the Monk resolved, that spell would cause the Flurry of Blows ability to trigger.",
+      "oracle_id": "2d3998fc-a68a-4923-a456-b3e43ab6decb",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Colorless and generic mana symbols ({C}, {0}, {1}, {2}, {X}, and so on) in mana costs of permanents you control don’t count toward your devotion to any color.",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Elspeth’s last ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won’t get +X/+X or gain flying.",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s).",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it’s still on the battlefield at that time.",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put an Aura on an opponent’s permanent, you still control the Aura, and mana symbols in its mana cost count towards your devotion.",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mana symbols in the text boxes of permanents you control don’t count toward your devotion to any color.",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is determined only as Elspeth’s last ability resolves. Once that happens, the value of X won’t change later in the turn even if your devotion to white changes.",
+      "oracle_id": "3f9a797b-85e7-474e-aefe-7e2ec08fc5b7",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don’t have an artifact card in your library while resolving Tezzeret’s first ability, you’ll reveal your library and then randomize it.",
+      "oracle_id": "3fba19a9-44c6-4771-9587-9d2c4009e996",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effect of Tezzeret’s third ability lasts indefinitely.",
+      "oracle_id": "3fba19a9-44c6-4771-9587-9d2c4009e996",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Chandra's last ability targets the player, not their creatures. A creature with hexproof may be dealt damage this way.",
+      "oracle_id": "408966d2-08c0-4531-a3b4-e666840ee95c",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is an illegal target by the time Chandra's second ability resolves, the ability doesn't resolve. No player is dealt damage. Similarly, if the target player is an illegal target by the time Chandra's last ability resolves, no creatures are dealt damage.",
+      "oracle_id": "408966d2-08c0-4531-a3b4-e666840ee95c",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability causes you to put cards into your hand without specifically using the word “draw,” it’s not a card drawn.",
+      "oracle_id": "4126bab7-6a2a-43b2-ba65-77299f9bb8cf",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs you to draw multiple cards, Jace’s first ability triggers after you draw whichever is the second one for the turn (if any). You choose a target for the ability after you’ve drawn all of the cards.",
+      "oracle_id": "4126bab7-6a2a-43b2-ba65-77299f9bb8cf",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Jace’s first ability can trigger only once each turn. It doesn’t matter whether Jace was on the battlefield when the first card was drawn.",
+      "oracle_id": "4126bab7-6a2a-43b2-ba65-77299f9bb8cf",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Jace’s last ability has resolved, its effect applies even if Jace has left the battlefield.",
+      "oracle_id": "4126bab7-6a2a-43b2-ba65-77299f9bb8cf",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "All creatures you control get +1/+1 from Gideon's first ability, not just the ones that it untapped.",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gideon's second ability causes him to become a creature with the creature types Human and Soldier. He remains a planeswalker with the planeswalker type Gideon. (He also retains any other card types or subtypes he may have had.) Each subtype is correlated to the proper card type: planeswalker is only a type (not a creature type), and Human and Soldier are just creature types (not planeswalker types).",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gideon's second ability doesn't count as a creature entering the battlefield. Gideon was already on the battlefield; he only changed his types.",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Gideon becomes a creature the same turn he enters the battlefield, you can't attack with him or use any of his {T} abilities (if he gains any).",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If damage that can't be prevented is dealt to Gideon after his second ability has resolved, that damage will have all applicable results: specifically, the damage is marked on Gideon (since he's a creature) and that damage causes that many loyalty counters to be removed from him (since he's a planeswalker). Even though he has indestructible, if Gideon has no loyalty counters on him, he's put into his owner's graveyard.",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The set of creatures affected by Gideon's first and third abilities is determined as the abilities resolve. Creatures you begin to control later in the turn and permanents you control that become creatures later in the turn won't get +1/+1 or +2/+2.",
+      "oracle_id": "4cbce730-7b70-41bd-b463-bfec46afe3b0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Nicol Bolas's third ability causes each opponent to have 0 or less life, but it also causes you to try to draw more cards than you have in your library, the game ends in a draw.",
+      "oracle_id": "524b00ea-0372-40f9-a6a1-76a8497a1ea6",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target of Nicol Bolas's second ability becomes illegal, the ability doesn't resolve and you won't draw a card. If that target is legal but can't be destroyed, most likely because it has indestructible, you still draw a card.",
+      "oracle_id": "524b00ea-0372-40f9-a6a1-76a8497a1ea6",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, each opponent in turn order makes their choice for Nicol Bolas's first ability, then all of the actions occur simultaneously. Opponents will know choices made by earlier opponents when making their choices, although a card chosen to be discarded this way isn't revealed until it's discarded.",
+      "oracle_id": "524b00ea-0372-40f9-a6a1-76a8497a1ea6",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving Nicol Bolas's first ability, your opponent chooses a card to be discarded without revealing it, chooses a nonland permanent to be sacrificed, or chooses to do neither. Then that player discards that card, sacrifices that permanent, or loses 3 life. Your opponent can always choose to lose 3 life, even if they have cards to discard or nonland permanents to sacrifice.",
+      "oracle_id": "524b00ea-0372-40f9-a6a1-76a8497a1ea6",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don’t have a creature card in your library while resolving Ajani’s second ability, you’ll reveal your library and then randomize it.",
+      "oracle_id": "542423cb-fbfb-4a2f-9f6d-87b273a95e96",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X for Ajani’s third ability is determined only as it resolves. The number of +1/+1 counters on the creature won’t change later if your life total changes.",
+      "oracle_id": "542423cb-fbfb-4a2f-9f6d-87b273a95e96",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are no creature cards in your library as Vivien’s second ability resolves, you reveal your library then put it back in a random order.",
+      "oracle_id": "5513b150-c08f-4f3e-8e41-fd7b43d00b78",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs you to choose a creature type, you may choose Time Lord.",
+      "oracle_id": "5611b70d-f8d1-4a8f-b9a2-a356264a7c46",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Neither \"Time\" nor \"Lord\" are creature types. Some older cards were printed with the subtype \"Lord,\" but all of those cards have updated Oracle card text that removed that type.",
+      "oracle_id": "5611b70d-f8d1-4a8f-b9a2-a356264a7c46",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Unlike other creature types in Magic that are each only one word, the two words \"Time Lord\" represent a single creature subtype. Time Lord is the only two-word creature type.",
+      "oracle_id": "5611b70d-f8d1-4a8f-b9a2-a356264a7c46",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose the target for The First Doctor's last ability before revealing any cards for cascade.",
+      "oracle_id": "5611b70d-f8d1-4a8f-b9a2-a356264a7c46",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that instruct you to reveal or look at cards from the top of you library will still work. Only effects that use the word \"search\" are affected.",
+      "oracle_id": "5794b58e-f3b6-4637-b288-283b3a72a718",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says \"Search your library . . . then shuffle your library,\" you shuffle you libraries even though you can't search.",
+      "oracle_id": "5794b58e-f3b6-4637-b288-283b3a72a718",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says \"You may search your library . . . If you do, shuffle your library\" or \"You may search your library . . . then shuffle your library,\" you can't choose to search, so you won't shuffle.",
+      "oracle_id": "5794b58e-f3b6-4637-b288-283b3a72a718",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The only difference between a colored artifact and a colorless artifact is, obviously, its color. Unlike most artifacts, a colored artifact requires colored mana to cast. Also unlike most artifacts, a colored artifact has a color in all zones. It will interact with cards that care about color. Other than that, a colored artifact behaves just like any other artifact. It will interact as normal with any card that cares about artifacts, such as Shatter or Arcbound Ravager.",
+      "oracle_id": "5794b58e-f3b6-4637-b288-283b3a72a718",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may cast Jace’s Ruse without choosing any target creatures. You’ll just search for Jace, Arcane Strategist. However, if you choose any targets and all of those targets become illegal before Jace’s Ruse resolves, the spell won’t resolve and you won’t search.",
+      "oracle_id": "59cbed39-a07e-491e-a95a-adafe19eb652",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if you leave the game after Mu Yanling’s first ability resolves but before your next turn begins, its effect lasts until your next turn would have begun. It neither expires immediately nor lasts indefinitely.",
+      "oracle_id": "5f39accf-62fd-407a-a147-781210569d33",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mu Yanling’s last ability affects only creatures you control with flying at the time it resolves. Creatures you begin to control later in the turn (or creatures that that gain flying later in the turn) won’t get +5/+5.",
+      "oracle_id": "5f39accf-62fd-407a-a147-781210569d33",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If either target becomes illegal after you cast Angrath’s Fury but before it resolves, the other is still affected as appropriate and you’ll search for Angrath. However, if both targets become illegal, the spell doesn’t resolve and you won’t search.",
+      "oracle_id": "61f3a549-77b4-4403-afa2-a0f02603f2e6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can’t cast Angrath’s Fury unless you choose both a target creature and a target player or planeswalker.",
+      "oracle_id": "61f3a549-77b4-4403-afa2-a0f02603f2e6",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose a target tapped creature and it becomes an illegal target for Dovin’s Dismissal, the spell doesn’t resolve. You don’t search for Dovin.",
+      "oracle_id": "6db5f1a7-4cd8-42e2-a5d8-1603206ad0cc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "An attacking creature that phases out is removed from combat.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any continuous effects with a “for as long as” duration such as that of Awakener Druid ignore phased-out objects. Any such effects will expire if their conditions are no longer met after ignoring the phased-out objects.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any creatures that phase in during their controller's untap step will be able to attack and pay a cost of {T} during that turn.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any one-shot effects that are waiting “until [this] leaves the battlefield,” such as that of Kitesail Freebooter, won't happen when a permanent phases out.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Choices made for permanents as they entered the battlefield are remembered when they phase in.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Aura and Equipment attached to a permanent that's phasing out also phases out. They will phase in with that permanent and still be attached to it. Similarly, permanents that phase out with counters phase in with those counters.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an opponent gains control of your creature and it phases out and the duration of the control-change effect expires before it phases in, that permanent phases in under your control as that opponent's appropriate untap step begins. If they leave the game before that untap step, it phases in as the next untap step begins after that turn would have begun.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if you leave the game after Teferi's last ability resolves but before your next turn ends, its effect lasts until your next turn would have begun. It neither expires immediately nor lasts indefinitely.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Normally, phased-out permanents phase in during their controller's untap step. Teferi's last ability causes the phased-out permanents to not phase in until the duration has expired; they'll phase in during their controller's next untap step after your next turn.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "Phasing out doesn't cause any “leaves the battlefield” abilities to trigger. Similarly, phasing in won't cause any “enters the battlefield” abilities to trigger.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "While a permanent is phased out, it's treated as though it doesn't exist. It can't be the target of spells or abilities, its static abilities have no effect on the game, its triggered abilities can't trigger, it can't attack or block, and so on.",
+      "oracle_id": "7240037f-ddea-425e-9824-866e2bb0dc84",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may cast Gideon’s Battle Cry while you control no creatures. You’ll still search for Gideon.",
+      "oracle_id": "7528f47d-c758-42bc-bdfe-5aca805c4126",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen target is an illegal target by the time Sorin's second ability tries to resolve, the ability doesn't resolve. You won't gain 4 life.",
+      "oracle_id": "753dcc18-3697-49c5-80c6-2d8dc8ee8c9a",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The control-change effect from ability granted by Sorin's last ability lasts indefinitely. It doesn't wear off during the cleanup step, and it doesn't expire if Sorin or a Vampire whose ability was activated leaves the battlefield. In a multiplayer game, it does expire if you leave the game.",
+      "oracle_id": "753dcc18-3697-49c5-80c6-2d8dc8ee8c9a",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Chandra's last ability doesn't change when you may cast those spells. For example, you can't cast a sorcery spell from your hand during combat.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, those must be paid to cast the spell.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have no cards in hand while Chandra's last ability is resolving, you still draw seven cards and may cast spells from your hand without paying their mana costs this turn.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you wish to cast the target card, you must cast it while Chandra's second ability is resolving. You can't cast it later in the turn.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, Chandra's first ability causes the opposing team to lose 6 life.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must pay the costs for the spell you wish to cast with Chandra's second ability. If that spell has any alternative costs, you may pay those.",
+      "oracle_id": "7721e800-fba6-4ae7-855e-631b2ecc8d6b",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability Vraska grants to creatures with her third ability triggers on any damage those creatures deal, including noncombat damage. If multiple players are dealt damage simultaneously by affected creatures, you choose the order in which those triggers resolve. If all your opponents have lost the game, you’ll win the game before any more of the triggers resolve.",
+      "oracle_id": "83045a9c-57da-411f-80aa-56178d14856b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vraska’s first and last abilities affect only creatures you control at the time it resolves. Creatures you begin to control later in the turn won’t get +1/+0 or gain abilities.",
+      "oracle_id": "83045a9c-57da-411f-80aa-56178d14856b",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Cascade triggers when you cast the spell, meaning that it resolves before that spell. If you end up casting the exiled card, it will go on the stack above the spell with cascade.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Due to a 2021 rules change to cascade, not only do you stop exiling cards if you exile a nonland card with lesser mana value than the spell with cascade, but the resulting spell you cast must also have lesser mana value. Previously, in cases where a card's mana value differed from the resulting spell, such as with some modal double-faced cards or cards with an Adventure, you could cast a spell with a higher mana value than the exiled card.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with cascade is countered, the cascade ability will still resolve normally.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the card.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If cascade allows you to cast a split card, you may cast either half but not both halves.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the cascade ability resolves, you must exile cards. The only optional part of the ability is whether or not you cast the last card exiled.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You exile the cards face up. All players will be able to see them.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may planeswalk at the time TARDIS's triggered ability resolves, not at the time you cast the next spell.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may planeswalk only in games using the Planechase variant. If you are instructed to planeswalk in any other game, nothing happens.",
+      "oracle_id": "9167a585-b742-427d-b840-e024f6878a5c",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If do you choose targets and each target creature is an illegal target by the time Basri's Aegis tries to resolve, the spell won't resolve. You won't search for Basri. If just one target is still legal, however, you do put a +1/+1 counter on it and search for Basri.",
+      "oracle_id": "9825dab8-ca1a-44ea-b1d7-77c66f00351f",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can cast Basri's Aegis without any target creatures. You'll just search for Basri, Devoted Paladin.",
+      "oracle_id": "9825dab8-ca1a-44ea-b1d7-77c66f00351f",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card with Phyrexian mana symbols in its mana cost is each color that appears in that mana cost, regardless of how that cost may have been paid.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Aggression can target any creature an opponent controls, even one that's untapped.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "As you cast a spell or activate an activated ability with one or more Phyrexian mana symbols in its cost, you choose how to pay for each Phyrexian mana symbol at the same time you would choose modes or choose a value for X.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you're at 1 life or less, you can't pay 2 life.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Phyrexian mana is not a new color. Players can't produce Phyrexian mana.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "To calculate the mana value of a card with Phyrexian mana symbols in its cost, count each Phyrexian mana symbol as 1.",
+      "oracle_id": "9d7624ea-ffff-470b-928b-bbac66ddbd1c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Chandra’s Flame Wave targets the player, not their creatures. A creature with hexproof may be dealt damage this way.",
+      "oracle_id": "9f84fc91-8647-4cc8-9b57-d23a83f85ab1",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target player is an illegal target by the time Chandra’s Flame Wave resolves, the spell doesn’t resolve. No creatures or players are dealt damage, and you won’t search for Chandra, Flame’s Fury.",
+      "oracle_id": "9f84fc91-8647-4cc8-9b57-d23a83f85ab1",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may cast Grasping Current without choosing any target creatures. You’ll just search for Jace, Ingenious Mind-Mage. However, if you choose any targets and all of those targets become illegal before Grasping Current resolves, the spell won’t resolve and you won’t search.",
+      "oracle_id": "a10a4bb2-c6fa-482b-9c8b-e64cbb8424ba",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Dovin’s second ability can target a creature that’s already tapped. That creature won’t untap during its controller’s next untap step.",
+      "oracle_id": "a3386efe-d6c5-4853-a4db-61460da3364a",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, if a player is instructed to skip their next untap step, the entire team skips that step.",
+      "oracle_id": "a3386efe-d6c5-4853-a4db-61460da3364a",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature becomes an illegal target for Tezzeret’s Betrayal, the spell won’t resolve and none of its effects will happen. You won’t search for Tezzeret, Master of Metal.",
+      "oracle_id": "a660e7a0-0750-475d-a4bd-de5b37d53e97",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature becomes an illegal target for Ral’s Dispersal, the spell doesn’t resolve. You don’t search for Ral, Caller of Storms.",
+      "oracle_id": "a81b7629-9db9-4351-8d0e-c45a7a6167d4",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature returns to the opponent when the “until end of turn” effect wears off during the cleanup step. It taps during the Cleanup step (if it is not already tapped), so any abilities triggered off it tapping happen at that time.",
+      "oracle_id": "adf41d29-403d-4936-9689-3148d103e700",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may target an untapped creature with Ray of Command.",
+      "oracle_id": "adf41d29-403d-4936-9689-3148d103e700",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You tap the creature when you lose control of it for any reason — because Ray of Command’s effect ends, or because a spell or ability causes another player to gain control of it.",
+      "oracle_id": "adf41d29-403d-4936-9689-3148d103e700",
+      "published_at": "2008-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, Chandra's first ability causes 4 damage total to be dealt to the opposing team.",
+      "oracle_id": "ae2c89c2-66d6-484a-a176-9ea19e00f445",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability of Chandra, Pyrogenius doesn't target the creatures. A creature with hexproof the target player (or controller of the target planeswalker) controls will be dealt damage this way.",
+      "oracle_id": "ae2c89c2-66d6-484a-a176-9ea19e00f445",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "The last ability of Ajani’s Aid doesn’t target anything. You choose a source of damage as the ability resolves.",
+      "oracle_id": "b3779fbe-7701-433b-afad-bebd6096a3c8",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can activate the last ability even if there is no creature about to deal combat damage, or even no creature at all. No damage will be prevented, but it will enable your revolt abilities.",
+      "oracle_id": "b3779fbe-7701-433b-afad-bebd6096a3c8",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature becomes an illegal target for Vraska’s Stoneglare, the spell doesn’t resolve. You don’t gain life or search for Vraska, Regal Gorgon.",
+      "oracle_id": "c39e2046-173a-44b6-8e93-b22ede35485d",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life gained is equal to the destroyed creature’s toughness as it last existed on the battlefield. If it wasn’t destroyed (most likely because it has indestructible), you gain life equal to its toughness as it currently exists on the battlefield.",
+      "oracle_id": "c39e2046-173a-44b6-8e93-b22ede35485d",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "cd83f886-c651-4ad7-82ca-2446c60c8f94",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a target of Rowan's second ability is a legal target but an effect prevents the damage that would be dealt to it, that creature still can't block this turn.",
+      "oracle_id": "cd83f886-c651-4ad7-82ca-2446c60c8f94",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rowan's second ability can't target the same creature twice to deal 2 damage to it.",
+      "oracle_id": "cd83f886-c651-4ad7-82ca-2446c60c8f94",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rowan's third ability can affect creatures you already control or ones that are already untapped. It will untap them if applicable and give them haste.",
+      "oracle_id": "cd83f886-c651-4ad7-82ca-2446c60c8f94",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any permanents you control from Ashiok’s second ability are exiled, and the control effect of Ashiok’s last ability ends.",
+      "oracle_id": "ce79bbd2-edf0-4d5e-9aaf-717ec3960c48",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effect of Ashiok’s last ability lasts indefinitely. It doesn’t expire as the turn ends or if Ashiok leaves the battlefield.",
+      "oracle_id": "ce79bbd2-edf0-4d5e-9aaf-717ec3960c48",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is an illegal target by the time Liliana's second ability tries to resolve, the ability won't resolve. No player loses 2 life. If the target is legal but not destroyed (most likely because it has indestructible), its controller does lose 2 life.",
+      "oracle_id": "d654dd73-763d-4dfb-a30f-a058fd7f27a6",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets become illegal for Ral's second ability, the original division of damage still applies, and the damage that would have been dealt to illegal targets isn't dealt at all.",
+      "oracle_id": "d7b10518-b6dc-4a39-881a-edd346034f28",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that modify a creature's power and/or toughness, such as the effect of Festive Funeral, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness.",
+      "oracle_id": "d804b0e5-785a-4e6e-9fe7-38b8add826fa",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Oko's Hospitality overwrites all previous effects that set the creatures' base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Oko's Hospitality resolves will overwrite this effect.",
+      "oracle_id": "d804b0e5-785a-4e6e-9fe7-38b8add826fa",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may cast Oko's Hospitality even if you control no creatures. You'll just search for Oko, the Trickster.",
+      "oracle_id": "d804b0e5-785a-4e6e-9fe7-38b8add826fa",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Domri's first and third abilities affect only creatures you control at the time they resolve. Creatures you begin to control later in the turn won't get +1/+1 or gain haste if his first ability has resolved, and won't gain trample or get three +1/+1 counters if his third ability has resolved.",
+      "oracle_id": "d8fe9672-0ead-4f47-abd8-e1ee133c5c60",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "After the search is complete, the entire library is shuffled.",
+      "oracle_id": "d9517c5d-66d0-4178-96fb-a8c04f311ad8",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each search works exactly the same as normal except that the opponent doing the searching sees only the top four cards of that library. They can't look at the other cards in that library at all. Cards not in the top four cards of the library can't be found in the search, even if they're identifiable in some manner.",
+      "oracle_id": "d9517c5d-66d0-4178-96fb-a8c04f311ad8",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "For effects that check whether a player searched a library or may search a library, searching the top four cards of that library counts as searching that library.",
+      "oracle_id": "d9517c5d-66d0-4178-96fb-a8c04f311ad8",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect uses the word \"search\" once but allows an opponent to search for multiple cards, the top four cards remain the same throughout the entire search. Finding one card won't cause the fifth card to become included in the search.",
+      "oracle_id": "d9517c5d-66d0-4178-96fb-a8c04f311ad8",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature becomes an illegal target for Liberating Combustion, the spell won't resolve and none of its effects will happen. You won't search for Chandra, Pyrogenius.",
+      "oracle_id": "e3b40e34-edad-4838-a4d5-c167037d9ff7",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Counters can be put on cards that aren't on the battlefield. Notably, suspended cards will still get time counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect has no effect on creatures or players. No -1/-1 counters are put on creatures, and no damage is marked on them. Players don’t get poison counters and they don’t lose life. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with wither has no effect on creatures. No -1/-1 counters are put on them, and no damage is marked on them. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with tribute is entering the battlefield, the chosen opponent can’t pay tribute even if they want to.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect allows a player to modify or replace an event by putting counters on an artifact, creature, enchantment, or land, that player may apply that replacement effect. Counters won’t be put on the object, but if the original event is entirely replaced (such as by applying Soul-Scar Mage’s replacement effect), the original event won’t happen.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact, creature, enchantment, or land would enter the battlefield with counters on it at the same time that Solemnity enters the battlefield, Solemnity doesn’t stop it from getting those counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the cost of an ability or an additional cost of a spell requires putting counters on an artifact, creature, enchantment, or land, that cost can’t be paid. If a resolving spell or ability says that a player may put counters on one of those objects, that player can’t choose to do so.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity doesn’t remove any counters players or permanents already have.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity stops counters from being put on an artifact, creature, enchantment, or land as it enters the battlefield, as well as stopping counters from being put on them later.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving a cumulative upkeep trigger of a permanent, you’ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any effects that modify a creature's power and/or toughness without setting them to a specific number or value will apply after its base power and toughness are set, regardless of the order in which those effects were created. The same is true of counters that modify its power and toughness.",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Oko becomes a creature the same turn he enters the battlefield, you can't attack with him or use any of his {T} abilities (if he gains any).",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is an illegal target by the time Oko's second ability tries to resolve, the ability won't resolve. Damage that would be dealt to Oko won't be prevented.",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is copying something else, then Oko becomes a copy of whatever that creature copied.",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Oko copies the printed values of the target creature. It won't copy counters on that creature or effects that have changed its power, toughness, types, color, or so on. Notably, it won't copy effects that made the target creature become a creature if it isn't normally a creature.",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Oko's last ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won't be 10/10.",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "While Oko is a creature, he isn't a planeswalker. Damage dealt to him won't cause him to lose loyalty.",
+      "oracle_id": "f4bf8bd1-71b0-4eb1-976c-54677238b2a6",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Garruk's last ability affects only creatures you control at the time it resolves. Creatures you begin to control later in the turn won't gain the ability.",
+      "oracle_id": "fc762e40-84c1-4762-82f7-a0fc4f6fd522",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If either creature is an illegal target as Garruk's second ability tries to resolve, the creature you control won't deal damage to any creature.",
+      "oracle_id": "fc762e40-84c1-4762-82f7-a0fc4f6fd522",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "When assigning combat damage, you choose for each creature whether you want to assign its damage to the creature blocking it, or if you want to assign it to the player or planeswalker the creature is attacking. You can't split the damage assignment between them.",
+      "oracle_id": "fc762e40-84c1-4762-82f7-a0fc4f6fd522",
+      "published_at": "2020-06-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well, and any effects that give the player control of permanents immediately end.",
+      "oracle_id": "fe0fcb4e-92fd-4e64-99d1-043092ea21e3",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "The control-change effect of Jace’s last ability lasts indefinitely. It doesn’t wear off during the cleanup step or when you lose control of Jace.",
+      "oracle_id": "fe0fcb4e-92fd-4e64-99d1-043092ea21e3",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned complete named-zone sources, full named result cards and ordinary action/search-rule controls"
+}

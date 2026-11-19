@@ -82,8 +82,8 @@ def fixed_hand_inspection_node_capabilities(
     if (action == HandInspectionAction.OBSERVE) != (predicate is None):
         return ()
     if (
-        action == HandInspectionAction.OBSERVE
-        and mode != HandInspectionMode.LOOK
+        action == HandInspectionAction.OBSERVE and mode == HandInspectionMode.REVEAL
+        and target_schema.get("player_relation") != "any"
     ):
         return ()
     if (

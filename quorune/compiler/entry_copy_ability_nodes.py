@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source-spanned copy additions over independently admitted child nodes."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict
 from ..semantic_runtime.ability_fragments import fragments_from_descriptors
 from .attached_granted_ability_nodes import attached_granted_ability_plan

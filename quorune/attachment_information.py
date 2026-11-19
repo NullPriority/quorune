@@ -9,6 +9,9 @@ from .attachment_references import (
 
 
 def _departure_context(cards, context, departing):
+    from .rules.attachment_controller_information import CONTROLLER_VERSION,attachment_controller_departure_context
+    if CONTROLLER_VERSION in context:
+        return attachment_controller_departure_context(cards,context,departing)
     version=context.get(ATTACHMENT_INFORMATION_VERSION)
     if version is None:return None
     if type(version) is not int or version!=1:
