@@ -11,6 +11,7 @@ from ..entry_counter_model import (
     DynamicEntryCounterAmountSpec,
     DynamicEntryCounterCalculation,
     DynamicEntryCounterValueSource,
+    EntryCounterError,
     PAID_COLOR_ENTRY_CAPABILITY,
 )
 from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
@@ -296,15 +297,16 @@ def _counted_dynamic_amount_body(
             if quantity is None:
                 return None
             value_source = DynamicEntryCounterValueSource.PUBLIC_QUERY
-        return (
-            match.group("counter"),
-            DynamicEntryCounterAmountSpec(
+        try:
+            amount = DynamicEntryCounterAmountSpec(
                 value_source=value_source,
                 calculation=DynamicEntryCounterCalculation.MULTIPLY,
                 coefficient=coefficient,
                 quantity=quantity,
-            ),
-        )
+            )
+        except EntryCounterError:
+            return None
+        return match.group("counter"), amount
 
     additive = re.fullmatch(
         rf"a (?P<counter>{FIXED_COUNTER_NAME_PATTERN}) counter on it plus "
@@ -320,15 +322,16 @@ def _counted_dynamic_amount_body(
         )
         if quantity is None:
             return None
-        return (
-            additive.group("counter"),
-            DynamicEntryCounterAmountSpec(
+        try:
+            amount = DynamicEntryCounterAmountSpec(
                 value_source=DynamicEntryCounterValueSource.PUBLIC_QUERY,
                 calculation=DynamicEntryCounterCalculation.MULTIPLY,
                 offset=1,
                 quantity=quantity,
-            ),
-        )
+            )
+        except EntryCounterError:
+            return None
+        return additive.group("counter"), amount
     return None
 
 
