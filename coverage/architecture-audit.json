@@ -5684,166 +5684,154 @@
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:991dfd43c39a9b6e2c5a",
-          "line": 168,
+          "line": 169,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 168,
+          "source_line": 169,
           "symbol": "_printed_activated_abilities"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:8771abe14f32ad35c986",
-          "line": 173,
+          "line": 174,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 173,
+          "source_line": 174,
           "symbol": "_printed_activated_abilities"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:49f2f2ea4d015038a94f",
-          "line": 252,
+          "line": 253,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 252,
+          "source_line": 253,
           "symbol": "_static_lines_needing_program"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:2b872e102185ee430ff6",
-          "line": 330,
+          "line": 331,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 330,
+          "source_line": 331,
           "symbol": "_generic_land_status"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:cb7dd49b5b7782c579ed",
-          "line": 476,
+          "line": 477,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 476,
+          "source_line": 477,
           "symbol": "_trusted_generated_source_coverage"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:5ebf68541e69367b2026",
-          "line": 480,
+          "line": 481,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 480,
+          "source_line": 481,
           "symbol": "_trusted_generated_source_coverage"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:703cb1f5e4be37156c72",
-          "line": 484,
+          "line": 485,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 484,
+          "source_line": 485,
           "symbol": "_trusted_generated_source_coverage"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:1d253cbe28ed666c29d9",
-          "line": 492,
+          "line": 493,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 492,
+          "source_line": 493,
           "symbol": "_trusted_generated_source_coverage"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:5d63f879ef24e775e12f",
-          "line": 494,
+          "line": 495,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 494,
+          "source_line": 495,
           "symbol": "_trusted_generated_source_coverage"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:cdda0689f273c72690d6",
-          "line": 502,
+          "line": 503,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 502,
+          "source_line": 503,
           "symbol": "_trusted_generated_source_coverage"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:941b98fb3bb6dd536585",
-          "line": 577,
+          "line": 578,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 577,
+          "source_line": 578,
           "symbol": "card_semantic_status"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:de27a8303d3b6c821391",
-          "line": 611,
+          "line": 612,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 611,
+          "source_line": 612,
           "symbol": "card_semantic_status"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:6f2c53fe347b9d287764",
-          "line": 774,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "name",
-          "source_kind": "attribute",
-          "source_line": 774,
-          "symbol": "card_semantic_status"
-        },
-        {
-          "classification": "compiler_binding",
-          "file": "quorune/preflight.py",
-          "flow_id": "card-identity-flow:1a5f85a324c21c1f32cd",
           "line": 775,
           "selector": null,
           "sink_kind": "identity_as_data",
-          "source_field": "oracle_id",
+          "source_field": "name",
           "source_kind": "attribute",
           "source_line": 775,
           "symbol": "card_semantic_status"
@@ -5851,25 +5839,37 @@
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
-          "flow_id": "card-identity-flow:f543f3271dd266d31ea5",
-          "line": 878,
+          "flow_id": "card-identity-flow:1a5f85a324c21c1f32cd",
+          "line": 776,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 878,
+          "source_line": 776,
+          "symbol": "card_semantic_status"
+        },
+        {
+          "classification": "compiler_binding",
+          "file": "quorune/preflight.py",
+          "flow_id": "card-identity-flow:f543f3271dd266d31ea5",
+          "line": 879,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "attribute",
+          "source_line": 879,
           "symbol": "_deck_preflight_rows"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/preflight.py",
           "flow_id": "card-identity-flow:feb075e7bdb865821332",
-          "line": 880,
+          "line": 881,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 880,
+          "source_line": 881,
           "symbol": "_deck_preflight_rows"
         },
         {
@@ -6308,144 +6308,144 @@
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:550f2987e0274b0877fe",
-          "line": 102,
+          "line": 112,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 102,
+          "source_line": 112,
           "symbol": "card_program_trust_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:5c8a52c75a5dbe679645",
-          "line": 157,
+          "line": 167,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 157,
+          "source_line": 167,
           "symbol": "implicit_semantic_execution_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:6c2b7d6d21c8dee4efc0",
-          "line": 164,
+          "line": 174,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 164,
+          "source_line": 174,
           "symbol": "implicit_semantic_execution_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:40c0efee58b0c336a3b3",
-          "line": 186,
+          "line": 196,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 186,
+          "source_line": 196,
           "symbol": "semantic_execution_provenance_row"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:18f8931feebd8350f72e",
-          "line": 187,
+          "line": 197,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 187,
+          "source_line": 197,
           "symbol": "semantic_execution_provenance_row"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:d630321d2098978cb986",
-          "line": 192,
+          "line": 202,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 192,
+          "source_line": 202,
           "symbol": "semantic_execution_provenance_row"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:015e08ec7c628bf4feed",
-          "line": 378,
+          "line": 388,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 378,
+          "source_line": 388,
           "symbol": "validate_programs_used_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:d936842c5207e122e184",
-          "line": 379,
+          "line": 389,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 379,
+          "source_line": 389,
           "symbol": "validate_programs_used_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:827b780c0cbccc3e8fdd",
-          "line": 383,
+          "line": 393,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 383,
+          "source_line": 393,
           "symbol": "validate_programs_used_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:9791dba2f9c83857da0a",
-          "line": 437,
+          "line": 447,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 437,
+          "source_line": 447,
           "symbol": "rebase_command_semantics_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:844967c656c3de220310",
-          "line": 438,
+          "line": 448,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 438,
+          "source_line": 448,
           "symbol": "rebase_command_semantics_provenance"
         },
         {
           "classification": "generated_provenance",
           "file": "quorune/record_trust.py",
           "flow_id": "card-identity-flow:80f42bf53ec17ff61208",
-          "line": 443,
+          "line": 453,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 443,
+          "source_line": 453,
           "symbol": "rebase_command_semantics_provenance"
         },
         {
@@ -9344,12 +9344,12 @@
           "classification": "display_metadata",
           "file": "quorune/session.py",
           "flow_id": "card-identity-flow:4de63828a32c648445dc",
-          "line": 937,
+          "line": 940,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 937,
+          "source_line": 940,
           "symbol": "CommanderSession.rules"
         },
         {
@@ -9872,22 +9872,10 @@
           "classification": "rules_value",
           "file": "quorune/work_selection_bundles.py",
           "flow_id": "card-identity-flow:0b2e74cb537a09b59799",
-          "line": 443,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "oracle_id",
-          "source_kind": "mapping_get",
-          "source_line": 443,
-          "symbol": "_measurement_card_projection"
-        },
-        {
-          "classification": "rules_value",
-          "file": "quorune/work_selection_bundles.py",
-          "flow_id": "card-identity-flow:5c57325c69beaf743c24",
           "line": 444,
           "selector": null,
           "sink_kind": "identity_as_data",
-          "source_field": "card_name",
+          "source_field": "oracle_id",
           "source_kind": "mapping_get",
           "source_line": 444,
           "symbol": "_measurement_card_projection"
@@ -9895,25 +9883,37 @@
         {
           "classification": "rules_value",
           "file": "quorune/work_selection_bundles.py",
+          "flow_id": "card-identity-flow:5c57325c69beaf743c24",
+          "line": 445,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "card_name",
+          "source_kind": "mapping_get",
+          "source_line": 445,
+          "symbol": "_measurement_card_projection"
+        },
+        {
+          "classification": "rules_value",
+          "file": "quorune/work_selection_bundles.py",
           "flow_id": "card-identity-flow:eb685c4956ba8ea4b7c7",
-          "line": 482,
+          "line": 483,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "mapping_get",
-          "source_line": 482,
+          "source_line": 483,
           "symbol": "_bundle_measurement_fingerprint"
         },
         {
           "classification": "rules_value",
           "file": "quorune/work_selection_bundles.py",
           "flow_id": "card-identity-flow:c6ca7596d1cfe1becbd0",
-          "line": 592,
+          "line": 605,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "mapping_get",
-          "source_line": 592,
+          "source_line": 605,
           "symbol": "_bundle_measurement_fingerprints"
         },
         {
@@ -10016,12 +10016,12 @@
           "classification": "display_metadata",
           "file": "server/app.py",
           "flow_id": "card-identity-flow:ae8dec3711b2101c0abc",
-          "line": 964,
+          "line": 965,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 964,
+          "source_line": 965,
           "symbol": "create_app.upload_deck"
         },
         {
@@ -12769,7 +12769,7 @@
           "module": "quorune.zone_transitions"
         }
       ],
-      "internal_edges": 11999,
+      "internal_edges": 12001,
       "modules": [
         {
           "fan_in": 2,
@@ -17808,7 +17808,7 @@
         },
         {
           "fan_in": 4,
-          "fan_out": 18,
+          "fan_out": 19,
           "module": "quorune.preflight"
         },
         {
@@ -19292,7 +19292,7 @@
           "module": "quorune.rules.event_subscriptions"
         },
         {
-          "fan_in": 4,
+          "fan_in": 6,
           "fan_out": 3,
           "module": "quorune.rules.evidence"
         },
@@ -22678,7 +22678,7 @@
         },
         {
           "fan_in": 1,
-          "fan_out": 7,
+          "fan_out": 8,
           "module": "server.app"
         },
         {
@@ -22786,10 +22786,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 1349,
+          "end_line": 1350,
           "file": "server/app.py",
           "kind": "function",
-          "line": 586,
+          "line": 587,
           "logical_lines": 718,
           "name": "create_app",
           "physical_lines": 764,
@@ -22808,13 +22808,13 @@
           "visibility": "public"
         },
         {
-          "end_line": 923,
+          "end_line": 926,
           "file": "quorune/session.py",
           "kind": "method",
-          "line": 572,
-          "logical_lines": 348,
+          "line": 577,
+          "logical_lines": 346,
           "name": "act",
-          "physical_lines": 352,
+          "physical_lines": 350,
           "symbol": "CommanderSession.act",
           "visibility": "public"
         },
@@ -22830,10 +22830,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 830,
+          "end_line": 831,
           "file": "quorune/preflight.py",
           "kind": "function",
-          "line": 568,
+          "line": 569,
           "logical_lines": 262,
           "name": "card_semantic_status",
           "physical_lines": 263,
@@ -23017,10 +23017,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 1064,
+          "end_line": 1066,
           "file": "quorune/preflight.py",
           "kind": "function",
-          "line": 904,
+          "line": 906,
           "logical_lines": 161,
           "name": "semantic_preflight",
           "physical_lines": 161,
@@ -23094,7 +23094,7 @@
           "visibility": "dunder"
         }
       ],
-      "logical_lines": 343943,
+      "logical_lines": 344018,
       "methods": {
         "dunder": 1019,
         "private": 1098,
@@ -23414,8 +23414,8 @@
           "file": "server/app.py",
           "functions_and_methods": 64,
           "language": "python",
-          "logical_lines": 1207,
-          "physical_lines": 1349
+          "logical_lines": 1208,
+          "physical_lines": 1350
         },
         {
           "file": "quorune/codex_cli.py",
@@ -23428,8 +23428,8 @@
           "file": "quorune/session.py",
           "functions_and_methods": 22,
           "language": "python",
-          "logical_lines": 1149,
-          "physical_lines": 1197
+          "logical_lines": 1152,
+          "physical_lines": 1200
         },
         {
           "file": "quorune/compiler/unlock_frontier.py",
@@ -23491,8 +23491,8 @@
           "file": "quorune/preflight.py",
           "functions_and_methods": 21,
           "language": "python",
-          "logical_lines": 982,
-          "physical_lines": 1064
+          "logical_lines": 984,
+          "physical_lines": 1066
         },
         {
           "file": "quorune/card_programs/runtime.py",
@@ -23684,6 +23684,13 @@
           "physical_lines": 850
         },
         {
+          "file": "quorune/work_selection_bundles.py",
+          "functions_and_methods": 26,
+          "language": "python",
+          "logical_lines": 825,
+          "physical_lines": 889
+        },
+        {
           "file": "quorune/continuous_effect_model.py",
           "functions_and_methods": 20,
           "language": "python",
@@ -23787,13 +23794,6 @@
           "language": "python",
           "logical_lines": 763,
           "physical_lines": 827
-        },
-        {
-          "file": "quorune/work_selection_bundles.py",
-          "functions_and_methods": 22,
-          "language": "python",
-          "logical_lines": 762,
-          "physical_lines": 814
         },
         {
           "file": "quorune/drawing/model.py",
@@ -24510,6 +24510,13 @@
           "physical_lines": 458
         },
         {
+          "file": "quorune/record_trust.py",
+          "functions_and_methods": 19,
+          "language": "python",
+          "logical_lines": 427,
+          "physical_lines": 476
+        },
+        {
           "file": "quorune/bulk.py",
           "functions_and_methods": 9,
           "language": "python",
@@ -24522,13 +24529,6 @@
           "language": "python",
           "logical_lines": 422,
           "physical_lines": 461
-        },
-        {
-          "file": "quorune/record_trust.py",
-          "functions_and_methods": 18,
-          "language": "python",
-          "logical_lines": 421,
-          "physical_lines": 468
         },
         {
           "file": "quorune/effect_runtime/life_effects.py",
@@ -37135,10 +37135,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 1349,
+          "end_line": 1350,
           "file": "server/app.py",
           "kind": "function",
-          "line": 586,
+          "line": 587,
           "logical_lines": 718,
           "name": "create_app",
           "physical_lines": 764,
@@ -37157,13 +37157,13 @@
           "visibility": "public"
         },
         {
-          "end_line": 923,
+          "end_line": 926,
           "file": "quorune/session.py",
           "kind": "method",
-          "line": 572,
-          "logical_lines": 348,
+          "line": 577,
+          "logical_lines": 346,
           "name": "act",
-          "physical_lines": 352,
+          "physical_lines": 350,
           "symbol": "CommanderSession.act",
           "visibility": "public"
         },
@@ -37179,10 +37179,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 830,
+          "end_line": 831,
           "file": "quorune/preflight.py",
           "kind": "function",
-          "line": 568,
+          "line": 569,
           "logical_lines": 262,
           "name": "card_semantic_status",
           "physical_lines": 263,
@@ -37366,10 +37366,10 @@
           "visibility": "public"
         },
         {
-          "end_line": 1064,
+          "end_line": 1066,
           "file": "quorune/preflight.py",
           "kind": "function",
-          "line": 904,
+          "line": 906,
           "logical_lines": 161,
           "name": "semantic_preflight",
           "physical_lines": 161,
@@ -37426,7 +37426,7 @@
           "physical_lines": 1678
         }
       ],
-      "physical_lines": 382339,
+      "physical_lines": 382428,
       "python_file_count": 1985,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -37444,7 +37444,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 7793,
+      "top_level_functions": 7798,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -38822,7 +38822,7 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            354
+            355
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -38836,7 +38836,7 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            328
+            329
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -38850,7 +38850,7 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            286
+            287
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -38864,7 +38864,7 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            162
+            163
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -38878,8 +38878,8 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            157,
-            160
+            158,
+            161
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -38893,9 +38893,9 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            481,
-            493,
-            503
+            482,
+            494,
+            504
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -38909,7 +38909,7 @@
           ],
           "file": "quorune/preflight.py",
           "lines": [
-            725
+            726
           ],
           "member": "oracle_text",
           "rationale": "Bounded compilation, validation, or corpus input.",
@@ -62921,13 +62921,13 @@
         "oversized_symbol_count": 2,
         "oversized_symbols": [
           {
-            "end_line": 923,
+            "end_line": 926,
             "file": "quorune/session.py",
             "kind": "method",
-            "line": 572,
-            "logical_lines": 348,
+            "line": 577,
+            "logical_lines": 346,
             "name": "act",
-            "physical_lines": 352,
+            "physical_lines": 350,
             "symbol": "CommanderSession.act",
             "visibility": "public"
           },
@@ -69970,7 +69970,7 @@
           "_without_parenthetical_reminder": [
             "quorune/compiler/target_effect_corpus_assurance.py:584",
             "quorune/oracle_ir.py:154",
-            "quorune/preflight.py:108"
+            "quorune/preflight.py:109"
           ]
         },
         "evidence_symbols": [
@@ -70381,7 +70381,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "b01f83b50abef760bf49687912079a26650bc2531b7a5c9e3c2d69184ef7f4a4",
+      "fingerprint": "149a51c519a5812b9df4baa712d2614a47959a79118d36f3239c1e9f5f95945c",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -71242,8 +71242,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 13362,
-      "discovered_total": 16671,
+      "conventional_ast_cases": 13376,
+      "discovered_total": 16685,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 370,
