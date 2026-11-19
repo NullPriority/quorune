@@ -1118,7 +1118,10 @@ class CiPipelineTests(unittest.TestCase):
         self.assertIn("validate-ci-dependencies --verify-artifact local/pr-compact-dependencies", reuse)
         full = step("Compare the independently computed Windows dependency report")
         self.assertIn("if: matrix.shard == 'generated-validation'", full)
-        self.assertIn("scripts/update_compact_ci_dependencies.py --check", full)
+        self.assertIn(
+            "scripts/build_test_database.py validate-ci-dependencies "
+            "--emit-artifact local/windows-compact-dependencies", full,
+        )
         build = "Validate manifest, runtime, and build isolated card database"
         self.assertIn("scripts/build_test_database.py build-ci", step(build))
         self.assertLess(windows.index(reuse), windows.index(f"name: {build}"))

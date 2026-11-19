@@ -320,7 +320,7 @@ jobs:
         run: python scripts/build_test_database.py validate-ci-dependencies --verify-artifact local/pr-compact-dependencies
       - name: Compare the independently computed Windows dependency report
         if: matrix.shard == 'generated-validation'
-        run: python scripts/update_compact_ci_dependencies.py --check
+        run: python scripts/build_test_database.py validate-ci-dependencies --emit-artifact local/windows-compact-dependencies
       - name: Validate manifest, runtime, and build isolated card database
         shell: pwsh
         run: |
