@@ -173,6 +173,36 @@ class CurrentLifeAmountNativeTests(InheritedNativeFixture,unittest.TestCase):
                 ir=compile_oracle_card(card,capability_registry=self.registry,capability_profile='commander_review')
                 self.assertEqual('exact',ir.status,ir.material_residuals)
 
+    def test_corpus_assurance_rebuilds_current_life_amount_and_requires_its_authority(self):
+        from dataclasses import replace
+
+        from quorune.compiler.target_effect_corpus_assurance import (
+            TargetEffectAssuranceError,
+            TargetEffectCorpusCollector,
+        )
+
+        record = self.db.lookup(ORIGINALS[-1], fuzzy=False)
+        ir = compile_oracle_card(
+            record, capability_registry=self.registry, capability_profile='commander_review',
+        )
+        TargetEffectCorpusCollector().observe(record, ir)
+        face, = ir.faces
+        node, = [candidate for candidate in face.nodes
+                 if 'quantity_expression.current_controller_life' in candidate.capability_dependencies]
+        effects = list(node.effects)
+        effects[0] = {**effects[0], 'amount': {**effects[0]['amount'], 'coefficient': 2}}
+        mismatches = (
+            (replace(node, effects=tuple(effects)), 'differs from source lowering'),
+            (replace(node, capability_dependencies=tuple(
+                capability for capability in node.capability_dependencies
+                if capability != 'quantity_expression.current_player_value'
+            )), 'lost required capabilities'),
+        )
+        for changed, reason in mismatches:
+            with self.subTest(reason=reason), self.assertRaisesRegex(TargetEffectAssuranceError, reason):
+                rebuilt = replace(face, nodes=tuple(changed if item is node else item for item in face.nodes))
+                TargetEffectCorpusCollector().observe(record, replace(ir, faces=(rebuilt,)))
+
     def test_actual_storm_herd_printed_cast_uses_life_after_response_and_keeps_flying_definition(self):
         s,private=self.start(721001);spell=self.add(s.engine,'Storm Herd',zone='hand')
         shock=self.add(s.engine,'Shock',zone='hand');nectar=self.add(s.engine,'Sacred Nectar',zone='hand')
