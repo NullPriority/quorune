@@ -18,7 +18,10 @@ from .damage_modifier_state import (
     SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
     read_shield_counter_damage_version,
 )
-from .stack_resolution_authority_model import stack_resolution_authority_version
+from .stack_resolution_authority_model import (
+    COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
+    stack_resolution_authority_version,
+)
 from .mana_source_counter_payment_model import (
     mana_source_counter_payment_fields,read_mana_source_counter_payment_version,
     mana_cost_order_fields,read_mana_cost_order_version,mana_cost_order_version,
@@ -136,7 +139,7 @@ def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> No
         raise ValueError("Fetch entry placement provenance does not match the initial checkpoint")
     stack_authority = format_value.get("stack_resolution_authority_version", 0)
     if (
-        type(stack_authority) is not int or stack_authority not in {0, 1}
+        type(stack_authority) is not int or stack_authority not in {0, 1, COPIED_SPELL_ENTRY_AUTHORITY_VERSION}
         or stack_authority != (stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None)) or 0)
     ):
         raise ValueError("Stack resolution authority provenance does not match the initial checkpoint")

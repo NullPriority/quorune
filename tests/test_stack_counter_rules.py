@@ -903,7 +903,7 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
                           deck_names={}, commander_oracle_ids={}, turn_order=[], current_turn=None,
                           last_normal_turn_player=None)
         wire = state.to_dict()
-        self.assertEqual(1, wire[key])
+        self.assertEqual(2, wire[key])
         self.assertEqual(wire, GameState.from_dict(wire).to_dict())
         manifest = {"format": format_state_versions(state)}
         validate_state_versions(manifest, state)
@@ -915,10 +915,16 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
         historical_manifest = {"format": format_state_versions(historical)}
         self.assertNotIn(key, historical_manifest["format"])
         validate_state_versions(historical_manifest, historical)
-        for versioned, checkpoint in ((manifest, historical), (historical_manifest, state)):
+        prior_wire = {**wire, key: 1}
+        prior = GameState.from_dict(prior_wire)
+        prior_manifest = {"format": format_state_versions(prior)}
+        self.assertEqual(prior_wire, prior.to_dict())
+        validate_state_versions(prior_manifest, prior)
+        for versioned, checkpoint in ((manifest, historical), (historical_manifest, state),
+                                      (manifest, prior), (prior_manifest, state)):
             with self.assertRaisesRegex(ValueError, "Stack resolution authority provenance"):
                 validate_state_versions(versioned, checkpoint)
-        for bad in (True, False, 0, 2, "1"):
+        for bad in (True, False, 0, 3, "1"):
             with self.subTest(value=bad):
                 with self.assertRaisesRegex(ValueError, "Unsupported stack resolution authority version"):
                     GameState.from_dict({**wire, key: bad})

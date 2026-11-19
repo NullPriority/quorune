@@ -3687,7 +3687,7 @@ class CommanderEngine(
         target_snapshots: Mapping[str, Any] | None = None,
         copiable_characteristics: Mapping[str, Any] | None = None,
     ) -> StackItem:
-        """Create an independent stack copy without copying paid costs."""
+        """Create a stack copy with inherited choices and no new payment."""
 
         ref = self._next_ref("S")
         original_card = self.state.cards.get(target.card_object_id or "")
@@ -3752,6 +3752,10 @@ class CommanderEngine(
                 permanent_spell=permanent_spell, characteristics=original_data,
             ),
         )
+        if permanent_spell:
+            from .zone_object_state import inherit_copied_entry_kicker
+
+            inherit_copied_entry_kicker(copy_object, copied.context, self.state.stack_resolution_authority_version)
         control_effects.pin_pending_control_duration(self, copied, reset=True)
         self.state.stack.append(copied)
         copy_events.dispatch_normalized_spell_copy_event(self, copied, target.ref)

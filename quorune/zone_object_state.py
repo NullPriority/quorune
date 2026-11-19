@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Object-local state reset for CR 400.7 zone transitions."""
 
+from collections.abc import Mapping
 import copy
 from typing import Sequence
 from .paid_entry_copy_model import PAID_ENTRY_COPY_FIELD, validate_paid_entry_copy_fact
@@ -9,6 +10,7 @@ from .declared_cast_cost_model import DECLARED_CAST_COSTS_FIELD, DeclaredCastCos
 
 from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
+from .stack_resolution_authority_model import COPIED_SPELL_ENTRY_AUTHORITY_VERSION
 from .multikicker_model import MULTIKICKER_FIELD, validate_multikicker_fact
 from .flashback import FLASHBACK_CAST_ANNOTATION
 from .cast_lifecycles import (
@@ -99,10 +101,28 @@ def mark_declared_cast_costs(card: CardInstance, context) -> None:
 def mark_card_kicked(card: CardInstance) -> None:
     """Record one paid Kicker cost on the current spell object."""
 
+    _mark_stack_kicked(card, object_kind="card")
+
+
+def inherit_copied_entry_kicker(
+    card: CardInstance, context: Mapping[str, object], authority_version: int | None,
+) -> None:
+    """Carry a copied choice into entry without committing another payment."""
+
+    if (
+        authority_version != COPIED_SPELL_ENTRY_AUTHORITY_VERSION
+        or context.get("kicked") is not True
+        or MULTIKICKER_FIELD in context
+    ):
+        return
+    _mark_stack_kicked(card, object_kind="spell_copy")
+
+
+def _mark_stack_kicked(card: CardInstance, *, object_kind: str) -> None:
     if (
         not isinstance(card, CardInstance)
         or card.zone != "stack"
-        or card.object_kind != "card"
+        or card.object_kind != object_kind
         or card.annotations.get(KICKER_ANNOTATION) is not None
     ):
         raise ZoneObjectStateError("Paid Kicker spell state is malformed")
@@ -366,6 +386,7 @@ __all__ = [
     "mark_card_flashed_back",
     "mark_card_fixed_cast_lifecycle",
     "mark_fixed_zone_cast_designation",
+    "inherit_copied_entry_kicker",
     "mark_card_kicked",
     "mark_card_unearthed",
     "ZoneObjectStateError",
