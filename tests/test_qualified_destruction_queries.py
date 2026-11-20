@@ -59,10 +59,18 @@ class QualifiedDestructionCompilerTests(unittest.TestCase):
             {(part.types_all,part.subtypes_all) for part in union.spec.query.any_of})
 
     def test_unrepresented_siblings_and_open_queries_remain_residual(self):
+        from quorune.attachment_destruction_model import AttachedDestructionScope
+
+        for text, scope in (
+            ('Destroy all creatures and all permanents attached to creatures.', AttachedDestructionScope.CREATURES_AND_ATTACHED),
+            ('Destroy all Auras and Equipment attached to target creature.', AttachedDestructionScope.AURAS_EQUIPMENT_ON_CREATURE),
+        ):
+            with self.subTest(text=text):
+                attached = mass_destruction_effect_template(text)
+                self.assertIsNotNone(attached)
+                self.assertIs(scope, attached.spec.scope)
         for text in ('Destroy all creatures with power X or greater.',
                 'Destroy all creatures of the creature type of your choice.',
-                'Destroy all creatures and all permanents attached to creatures.',
-                'Destroy all Auras and Equipment attached to target creature.',
                 "Destroy all creatures that aren't enchanted.",
                 'Destroy all creatures with the remembered quality.'):
             with self.subTest(text=text):self.assertIsNone(mass_destruction_effect_template(text))

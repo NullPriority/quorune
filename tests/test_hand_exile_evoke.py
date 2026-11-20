@@ -70,6 +70,34 @@ class HandExileEvokeModelTests(unittest.TestCase):
             with self.subTest(change=change),self.assertRaises((ValueError,TypeError)):
                 HandExileEvokeSpec.from_dict({**self.spec().to_dict(),**change})
 
+    def test_equivalent_reviewed_evoke_stays_usable_and_conflicting_prices_fail_closed(self):
+        from types import SimpleNamespace
+
+        from quorune.evoke import evoke_payment_marker
+        from quorune.rules.casting.costs import _with_evoke_cost
+
+        spec = self.spec("green")
+        card = SimpleNamespace(keywords=("Evoke",), oracle_id="fixture")
+        reviewed = {
+            "id": "evoke",
+            "kind": "alternate",
+            "requirements": {},
+            "evoke_payment": evoke_payment_marker(schema_version=1),
+            "exile_from_hand": {"colors_any": ["G"], "exclude_source": True},
+        }
+        with patch("quorune.rules.casting.costs.compiled_evoke_specs", return_value=(spec,)):
+            schema = {"alternate_costs": [reviewed]}
+            self.assertEqual(schema, _with_evoke_cost(None, card, None, schema, suppress_source_costs=False))
+            for changed in (
+                {**reviewed, "exile_from_hand": {"colors_any": ["R"], "exclude_source": True}},
+                {**reviewed, "exile_from_hand": {"colors_any": ["G"], "exclude_source": 1}},
+                {**reviewed, "requirements": {"G": 1}},
+                {**reviewed, "evoke_payment": evoke_payment_marker(schema_version=2)},
+            ):
+                with self.subTest(changed=changed):
+                    self.assertIsNone(_with_evoke_cost(None, card, None, {"alternate_costs": [changed]},
+                        suppress_source_costs=False))
+
     def test_component_requires_complete_parent_and_does_not_compile_at_runtime(self):
         spec=self.spec();descriptor=hand_exile_evoke_handler_descriptor(spec)
         with patch('quorune.hand_exile_evoke_model.compile_hand_exile_evoke',side_effect=AssertionError('runtime compilation')):

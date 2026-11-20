@@ -100,9 +100,16 @@ class CardTypeReceiverUnionNativeTests(InheritedNativeFixture, unittest.TestCase
                                  capability_profile='commander_review')
         child, = (n for n in ir.faces[0].nodes if n.active_zone == 'command')
         self.assertIn(RECEIVER_UNION_CAPABILITY, child.capability_dependencies)
-        for name in ('Spiritual Asylum', 'Sorin, Vengeful Bloodlord'):
-            self.assertNotEqual('exact', compile_oracle_card(self.db.lookup(name),
-                capability_registry=self.registry, capability_profile='commander_review').status)
+        asylum = compile_oracle_card(self.db.lookup('Spiritual Asylum'),
+            capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual('exact', asylum.status, asylum.material_residuals)
+        grant, attack = asylum.faces[0].nodes
+        self.assertEqual(('characteristics.evaluate', 'creature.attacks'), (grant.event, attack.event))
+        self.assertEqual('self_zone_move', attack.effects[0]['op'])
+        sorin = compile_oracle_card(self.db.lookup('Sorin, Vengeful Bloodlord'),
+            capability_registry=self.registry, capability_profile='commander_review')
+        self.assertNotEqual('exact', sorin.status)
+        self.assertTrue(sorin.material_residuals)
 
     def test_original_emblem_survives_creator_and_tracks_controller_new_entries_and_destruction(self):
         s = self.session(114613)

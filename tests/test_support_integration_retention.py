@@ -52,12 +52,12 @@ class SupportIntegrationRetentionModelTests(unittest.TestCase):
         text='Target player discards two cards. Ninjas and Rogues you control gain menace until end of turn.'
         ir=compile_oracle_card(record(text,suffix=597020),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
         node=ir.faces[0].nodes[0]
-        program=SimpleNamespace(effects=node.effects,target_schema=node.target_schema,coverage=node.mechanics)
+        program=SimpleNamespace(effects=node.effects,handlers=(),target_schema=node.target_schema,coverage=node.mechanics)
         required=fixed_resolution_characteristics_runtime_dependencies(program)
         self.assertIn('state_query.permanent.receiver_union',required)
         effect=dict(next(e for e in node.effects if e.get('op')=='modify_all_matching_permanents_until_end_of_turn'))
         effect['predicate']={**effect['predicate'],'controller':'$target.0'}
-        invalid=SimpleNamespace(effects=(effect,),target_schema={'zones':['battlefield'],'categories':['permanent'],'count':1},coverage=node.mechanics)
+        invalid=SimpleNamespace(effects=(effect,),handlers=(),target_schema={'zones':['battlefield'],'categories':['permanent'],'count':1},coverage=node.mechanics)
         with self.assertRaises(ValueError):fixed_resolution_characteristics_runtime_dependencies(invalid)
 
     def test_label_fallback_preserves_unowned_condition_boundaries_and_detects_early_stripping(self):

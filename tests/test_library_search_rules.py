@@ -325,10 +325,9 @@ class LibrarySearchRuleTests(unittest.TestCase):
             self.assertFalse(any('evidence_index:unverified' in b for b in blockers))
 
     def test_fresh_source_permission_window_and_optional_omissions_are_killed(self):
-        from quorune.rules.library_search_rules import LibrarySearchConstraint
-        import quorune.rules.library_search_rules as owner
-        original=owner.library_search_object_ids
-        def unbounded(host,player,zone):return tuple(host.state.players[player].zones[zone])
+        def unbounded(host, player, zone, *, searching_player=None):
+            return tuple(host.state.players[player].zones[zone])
+
         for path,value,method in (
             ('quorune.compiler.runtime_templates.fixed_library_search_rule_handler',lambda text:None,
              'test_complete_library_search_rule_originals_have_normal_admission'),

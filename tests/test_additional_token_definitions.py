@@ -131,7 +131,10 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
         for definition in ('Treasure token', 'Food token', 'Map token'):
             text='If one or more artifact tokens would be created under your control, those tokens plus an additional '+definition+' are created instead.'
             result=lower(text);self.assertIsNotNone(result)
-            original = _TOKEN_DEFINITIONS[definition.casefold()]
+            original = dict(_TOKEN_DEFINITIONS[definition.casefold()])
+            if definition == 'Food token':
+                self.assertEqual("two_tap_sac_gain_three_life_v1", original.pop("activated_ability_profile"))
+                original["ability_profile"] = "two_tap_sac_gain_three_life_v1"
             self.assertEqual({**original, "name": definition.title(), "literal_token_name_version": 1}, result[1]["token"])
             legacy = GenericAdditionalTokenReplacementHandler().validate({**result[1], "token": original})
             self.assertEqual(original["name"], legacy.token.name)

@@ -564,6 +564,16 @@ class FixedPlayerCounterPlacementRuntimeTests(unittest.TestCase):
             },
         )
         engine.semantics.put(program)
+        spell = next(
+            card for card in engine.state.cards.values()
+            if card.owner == "A" and card.printed_name == "Abrade"
+        )
+        engine._remove_from_zone(spell)
+        engine._reset_zone_change(spell, "stack")
+        spell.zone = "stack"
+        spell.controller = "A"
+        spell.known_to = list(engine.seats)
+        spell.revealed_to = list(engine.seats)
         engine.state.stack.append(
             StackItem(
                 stack_id="poison-each-opponent",
@@ -572,6 +582,7 @@ class FixedPlayerCounterPlacementRuntimeTests(unittest.TestCase):
                 controller="A",
                 label=program.label,
                 semantic_key=program.key,
+                card_object_id=spell.object_id,
                 visibility=list(engine.seats),
             )
         )

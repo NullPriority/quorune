@@ -325,8 +325,17 @@ class SourceSelfOptionalCompilerTests(unittest.TestCase):
 
     def test_unestablished_or_new_object_pronouns_are_not_rebound_to_source(self):
         registry=load_default_capability_registry()
-        for text in ('Whenever another creature enters, you may have it deal 2 damage to any target.',
-                     'When this creature enters, create a 1/1 green Elf creature token. You may have it deal 2 damage to any target.',
+        from quorune.event_damage_source_model import EventDamageSourceReference
+
+        bound = 'Whenever another creature enters, you may have it deal 2 damage to any target.'
+        ir = compile_oracle_card(record(bound, 'Creature — Human'),
+            capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual({"field": "card", "op": "ne", "value": "$source.ref"}, node.event_condition)
+        self.assertEqual(EventDamageSourceReference("creature.enter").to_dict(),
+            node.effects[0]["effects"][0]["source"])
+        for text in ('When this creature enters, create a 1/1 green Elf creature token. You may have it deal 2 damage to any target.',
                      'You may have it deal 2 damage to any target.'):
             with self.subTest(text=text):
                 ir=compile_oracle_card(record(text,'Creature — Human'),capability_registry=registry,capability_profile='commander_review')

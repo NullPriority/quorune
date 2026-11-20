@@ -137,7 +137,7 @@ class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
         effects = handler.lower(descriptor, SimpleNamespace(
             source_object_id="cross-zone-source", component_id="static", source_timestamp=1, source_controller="A",
         ))
-        host = SimpleNamespace(_type_parts=type_parts)
+        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace())
         physical = CardInstance(object_id="creature", ref="creature", oracle_id="test:creature",
             printed_name="Test Creature", owner="A", controller="B", zone="stack")
         copied = replace(physical, object_kind="spell_copy")

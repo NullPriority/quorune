@@ -69,9 +69,12 @@ class FixedPublicSacrificePredicateModelTests(unittest.TestCase):
                 self.assertIsNone(template.target_schema)
 
     def test_unowned_predicate_tails_and_source_relative_exclusions_stay_outside_this_family(self):
+        other = self.template('Sacrifice another Powerstone.')
+        self.assertTrue(other.exclude_source)
+        self.assertEqual(('powerstone',), other.predicate.subtypes_all)
         for text in ('Sacrifice a Mountain you owned last turn.',
                 'Sacrifice a Powerstone in your hand.', 'Sacrifice a colored card.',
-                "Sacrifice a permanent that's exactly two colors.", 'Sacrifice another Powerstone.',
+                "Sacrifice a permanent that's exactly two colors.",
                 'Sacrifice a permanent that used to be green.'):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_affected_player_sacrifice_effect_template(text))

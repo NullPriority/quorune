@@ -144,7 +144,7 @@ class ChosenCounterRemovalCompilerTests(unittest.TestCase):
                         program = compile_best_available_card_program(db, card, semantic_registry=semantics,
                             capability_registry=self.registry, capability_profile='commander_review')
                         binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                        self.assertEqual(name in (*ORIGINALS, 'Vampire Hexmage'),
+                        self.assertEqual(name in (*ORIGINALS, 'Vampire Hexmage', 'Purging Stormbrood // Absorb Essence'),
                             bool(binding['strict_capability_ready'] and binding['trust_basis'] == 'capability_closed'), binding['blockers'])
                         if name in ORIGINALS:
                             ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')

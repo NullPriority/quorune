@@ -344,6 +344,14 @@ class AnyNumberTargetTests(unittest.TestCase):
 
 
 class SelectedPlayerResultCompilerTests(unittest.TestCase):
+    def test_legacy_graveyard_shuffle_keeps_its_closed_payload(self):
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+
+        legacy = {"op": "shuffle_graveyard_bottom_random", "players": "$targets"}
+        self.assertEqual((), typed_result_amount_runtime_dependencies(legacy))
+        with self.assertRaisesRegex(ValueError, "Selected player result has an unowned payload"):
+            typed_result_amount_runtime_dependencies({**legacy, "count": 2})
+
     def test_selected_player_shapes_infer_cardinality_and_leaf_authority(self):
         from quorune.compiler.any_number_target_sets import any_number_player_result_template
         from quorune.oracle_ir import _reviewed_atomic_effect_template

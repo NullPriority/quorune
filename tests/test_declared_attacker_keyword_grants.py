@@ -59,8 +59,8 @@ class DeclaredAttackerKeywordGrantTests(unittest.TestCase):
                                 for field in ('enchanted', 'equipped')]}
                             self.assertIn(either, attack.event_condition['all'])
 
-                pending, _ = register_card(db, reg, 'Master Symmetrist')
-                self.assertFalse(pending['strict_capability_ready'])
+                symmetrist, _ = register_card(db, reg, 'Master Symmetrist')
+                self.assertTrue(symmetrist['strict_capability_ready'], symmetrist['blockers'])
                 card = db.lookup(DREADHORDE, fuzzy=False)
                 for old, unsupported in (('6 or greater', 'X or greater'), ('6 or greater', '6 or less'),
                         ('Zombie token', 'Zombie or Goblin token'), ('until end of turn', 'until your next turn')):

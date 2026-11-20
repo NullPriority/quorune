@@ -1005,8 +1005,15 @@ class HighRiskPromotionSentinelTests(unittest.TestCase):
         from scripts.build_test_database import build_fixture_database
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / 'interaction-promotions.sqlite3'
-        fixture = Path(__file__).resolve().parents[1] / 'tests/fixtures/interaction-promotion-sentinel-cards.json'
-        build_fixture_database(fixture, path)
+        fixtures = Path(__file__).resolve().parents[1] / 'tests/fixtures'
+        build_fixture_database(
+            [
+                fixtures / 'interaction-promotion-sentinel-cards.json',
+                fixtures / 'combat-prevention-source-scopes-cards.json',
+                fixtures / 'graveyard-salvage-cards.json',
+            ],
+            path,
+        )
         cls.db = CardDatabase(path)
 
     @classmethod

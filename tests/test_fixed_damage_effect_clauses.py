@@ -356,8 +356,14 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
             node=ir.faces[0].nodes[0]
             self.assertEqual({'op':'damage','source':'$source','target':'$target.0','amount':1},node.effects[0])
             self.assertIsNotNone(node.target_schema)
+        from quorune.event_damage_source_model import EventDamageSourceReference
+
+        event = self.compile('Whenever a creature attacks, it deals 1 damage to any target.',
+            type_line='Creature — Dinosaur')
+        self.assertEqual('exact', event.status, event.material_residuals)
+        self.assertEqual(EventDamageSourceReference('creature.attacks').to_dict(),
+            event.faces[0].nodes[0].effects[0]['source'])
         for text in (
-            'Whenever a creature attacks, it deals 1 damage to any target.',
             'Whenever this creature attacks, create a token. It deals 1 damage to any target.',
             'Whenever this creature attacks, it deals X damage to any target.',
         ):
@@ -614,13 +620,24 @@ class FixedDamageEffectCompilerTests(unittest.TestCase):
         promoted = self.compile('When this creature leaves the battlefield, it deals 1 damage to any target.',
                                 type_line='Creature — Goblin')
         self.assertEqual('exact', promoted.status, promoted.material_residuals)
+        from quorune.event_damage_source_model import EventDamageSourceReference
+
+        entry = self.compile("When another creature enters, it deals 1 damage to any target.",
+            type_line="Creature — Goblin")
+        self.assertEqual("exact", entry.status, entry.material_residuals)
+        node, = entry.faces[0].nodes
+        self.assertEqual({"all": [
+            {"field": "types", "op": "contains_any", "value": ["creature"]},
+            {"field": "card", "op": "ne", "value": "$source.ref"},
+        ]}, node.event_condition)
+        self.assertEqual("permanent.enter", node.event)
+        self.assertEqual(EventDamageSourceReference("permanent.enter").to_dict(), node.effects[0]["source"])
         variants = (
             "When this creature enters, it deals X damage to any target.",
             "When this creature dies, it deals 2 damage divided as you choose "
             "among two targets.",
             "When this creature enters, it deals 2 damage to any target and "
             "you gain X life.",
-            "When another creature enters, it deals 1 damage to any target.",
         )
         for text in variants:
             with self.subTest(text=text):

@@ -220,6 +220,9 @@ def _affected_quantity_payload_dependencies(
     if value.get("op") == ENDURE_OPERATION:
         fixed_endure_amount(value)
         return (ENDURE_CAPABILITY,)
+    if value == {"op": "shuffle_graveyard_bottom_random", "players": "$targets"}:
+        # The reviewed legacy graveyard shuffle already owns its optional target group.
+        return ()
     if value.get("players") == "$targets":
         from ..rules.any_number_target_shapes import selected_player_payload_dependencies
         return selected_player_payload_dependencies(value)

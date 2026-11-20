@@ -9,6 +9,7 @@ from quorune.carddb import CardDatabase
 from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
 from quorune.compiler.trigger_result_templates import binding_effect_template
 from quorune.deck import DeckDefinition, DeckEntry
+from quorune.event_damage_source_model import EventDamageSourceReference
 from quorune.oracle_ir import _effect_template
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
@@ -17,10 +18,11 @@ import test_compiled_reviewed_trigger_consumers as native
 
 class BoundSourceFixedDamageCompilerTests(unittest.TestCase):
     def test_only_explicit_source_heads_bind_the_fixed_damage_pronoun(self):
-        for subject, state, accepted in (
-            ("this creature", "tapped", True), ("this creature", "untapped", True),
-            ("enchanted creature", "tapped", False), ("enchanted creature", "untapped", False),
-            ("a creature you control", "tapped", False), ("a creature you control", "untapped", False),
+        tapped = EventDamageSourceReference("permanent.tap").to_dict()
+        for subject, state, dealer in (
+            ("this creature", "tapped", "$source"), ("this creature", "untapped", "$source"),
+            ("enchanted creature", "tapped", tapped), ("enchanted creature", "untapped", None),
+            ("a creature you control", "tapped", tapped), ("a creature you control", "untapped", None),
         ):
             with self.subTest(subject=subject, state=state):
                 binding = fixed_counter_trigger_binding(
@@ -30,9 +32,9 @@ class BoundSourceFixedDamageCompilerTests(unittest.TestCase):
                 result, _current = binding_effect_template(
                     binding, binding.body, card_name="Fixture", effect_template=_effect_template,
                 )
-                self.assertEqual(accepted, result[0] is not None)
-                if accepted:
-                    self.assertEqual(({"op": "damage", "source": "$source", "target": "$target.0", "amount": 1},), result[1])
+                self.assertEqual(dealer is not None, result[0] is not None)
+                if dealer is not None:
+                    self.assertEqual(({"op": "damage", "source": dealer, "target": "$target.0", "amount": 1},), result[1])
 
 
 class BoundSourceFixedDamageRuntimeTests(unittest.TestCase):

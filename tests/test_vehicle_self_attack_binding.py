@@ -7,6 +7,7 @@ from common import ROOT
 from quorune.carddb import CardDatabase
 from quorune.compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
 from quorune.deck import DeckDefinition, DeckEntry
+from quorune.event_damage_source_model import EventDamageSourceReference
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
@@ -32,13 +33,21 @@ class VehicleSelfAttackCompilerTests(unittest.TestCase):
                 capability_registry=self.registry, capability_profile="commander_review")
             self.assertEqual("exact", ir.status, ir.material_residuals)
             node, = ir.faces[0].nodes
-            self.assertEqual(({"op": "damage", "source": "$source", "target": "$target.0", "amount": 1},), tuple(node.effects))
+            self.assertEqual(binding.event_condition, node.event_condition)
+            dealer = EventDamageSourceReference("creature.attacks").to_dict()
+            self.assertEqual(({"op": "damage", "source": dealer, "target": "$target.0", "amount": 1},), tuple(node.effects))
             self.assertEqual(1, node.target_schema["count"])
             self.assertEqual(node.text, text[node.span.start:node.span.end])
 
     def test_other_creature_and_unrepresented_riders_do_not_borrow_the_source(self):
+        bound = "Whenever a creature attacks, it deals 1 damage to any target."
+        ir = compile_oracle_card(replace(query_record(bound), type_line="Artifact — Vehicle"),
+            capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIsNone(node.event_condition)
+        self.assertEqual(EventDamageSourceReference("creature.attacks").to_dict(), node.effects[0]["source"])
         for text in (
-            "Whenever a creature attacks, it deals 1 damage to any target.",
             "Whenever this Vehicle attacks, it deals 1 damage to any target chosen at random.",
             "Whenever this Vehicle attacks and becomes blocked, it deals 1 damage to any target.",
         ):

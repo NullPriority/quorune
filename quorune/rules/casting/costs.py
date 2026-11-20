@@ -46,7 +46,9 @@ from ...convoke import (
     find_convoke_plan,
     select_convoke_plan,
 )
-from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
+from ...evoke import EVOKE_PAYMENT_FIELD, evoke_payment_marker, validate_evoke_payment_marker
+from ...hand_exile_evoke_model import HandExileEvokeSpec
+from ...util import stable_json
 from ...object_query import object_matches_query, object_query_result
 from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from ..action_proposals import CastCostOption
@@ -249,6 +251,19 @@ def _with_bestow_cost(
     return result
 
 
+def _same_reviewed_hand_exile_evoke_price(spec: Any, reviewed: Mapping[str, Any]) -> bool:
+    if not isinstance(spec, HandExileEvokeSpec):
+        return False
+    legacy = {
+        "id": "evoke",
+        "kind": "alternate",
+        "requirements": {},
+        EVOKE_PAYMENT_FIELD: evoke_payment_marker(schema_version=1),
+        "exile_from_hand": {"colors_any": [spec.color], "exclude_source": True},
+    }
+    return stable_json(reviewed) == stable_json(legacy)
+
+
 def _with_evoke_cost(
     host: CastCostHost,
     record: Any,
@@ -280,10 +295,13 @@ def _with_evoke_cost(
         if not suppress_source_costs
         else ()
     )
-    if len(compiled) > 1 or (compiled and reviewed):
+    if len(compiled) > 1:
         return None
     if compiled:
-        alternate_costs.extend(compiled[0].cast_cost_options())
+        if not reviewed:
+            alternate_costs.extend(compiled[0].cast_cost_options())
+        elif len(reviewed) != 1 or not _same_reviewed_hand_exile_evoke_price(compiled[0], reviewed[0]):
+            return None
     elif (
         not suppress_source_costs
         and "evoke" in {str(value).casefold() for value in record.keywords}

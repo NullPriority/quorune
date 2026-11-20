@@ -209,12 +209,14 @@ class PermanentDeathAmountNativeTests(InheritedNativeFixture, unittest.TestCase)
         body = self.add(engine, "Generic Bound Body")
         altar = self.add(engine, "Ashnod's Altar")
         session.state.turn_history.permanent_death_history_version = None
+        session.state.turn_history.death_name_history_version = None
         self.prepare(session)
         self.checkpoint(session)
         self.sacrifice(session, "A", altar, body)
         session = self.replay(session, load=True)
         history = session.state.turn_history.to_dict()
         self.assertNotIn("permanent_death_history_version", history)
+        self.assertNotIn("death_name_history_version", history)
         events = [event for event in history["events"] if event["kind"] in {"creature_died", "permanent_died"}]
         death, = events
         self.assertEqual("creature_died", death["kind"])

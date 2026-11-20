@@ -10320,8 +10320,8 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v1223-batched-commander-source-composition",
-      "compiler_version": "oracle-ir-v1223",
+      "transition_id": "oracle-ir-v1224-batched-commander-source-composition",
+      "compiler_version": "oracle-ir-v1224",
       "bundle_id": "bundle:batched-commander-exact-support-v1223",
       "candidate_ids": [
         "bundle:batched-commander-exact-support-v1223"

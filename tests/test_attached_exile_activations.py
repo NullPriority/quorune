@@ -38,7 +38,7 @@ class AttachedExileActivationCompilerTests(unittest.TestCase):
         self.assertTrue({'object.reference.source_attachment_information', 'combat.damage.assignment.trample',
                          'permanent.indestructible.ordinary'} <= set(dependencies))
         self.assertEqual(dependencies, fixed_resolution_characteristics_runtime_dependencies(
-            SimpleNamespace(effects=effects, target_schema=None, coverage=()),
+            SimpleNamespace(handlers=(), effects=effects, target_schema=None, coverage=()),
         ))
         for forged in ({**effect, 'card': {**effect['card'], 'schema_version': 1}},
                        {**effect, 'keywords': ['Trample', 'Trample']}, {**effect, 'power': False}):
@@ -66,7 +66,7 @@ class AttachedExileActivationCompilerTests(unittest.TestCase):
         self.assertEqual(required, set(fixed_source_characteristics_node_capabilities(
             effects=effects, target_schema=None, mechanic_ids=mechanics)))
         self.assertEqual(required, set(fixed_resolution_characteristics_runtime_dependencies(
-            SimpleNamespace(effects=effects, target_schema=None, coverage=()))))
+            SimpleNamespace(handlers=(), effects=effects, target_schema=None, coverage=()))))
         for bad in (
             {**effect, 'card': {**reference, 'schema_version': 1}},
             {**effect, 'card': {**reference, 'required_card_type': 'creature'}},
@@ -79,10 +79,10 @@ class AttachedExileActivationCompilerTests(unittest.TestCase):
                     effects=(bad,), target_schema=None, mechanic_ids=mechanics))
                 with self.assertRaises(ValueError):
                     fixed_resolution_characteristics_runtime_dependencies(
-                        SimpleNamespace(effects=(bad,), target_schema=None, coverage=()))
+                        SimpleNamespace(handlers=(), effects=(bad,), target_schema=None, coverage=()))
         with self.assertRaises(ValueError):
             fixed_resolution_characteristics_runtime_dependencies(
-                SimpleNamespace(effects=effects, target_schema={'count': 1}, coverage=()))
+                SimpleNamespace(handlers=(), effects=effects, target_schema={'count': 1}, coverage=()))
         for relation in (None, K.EQUIPPED):
             self.assertIsNone(fixed_attached_stat_effect_template(text, source_attachment_relation=relation))
         for unsupported in (
