@@ -22217,7 +22217,7 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
       "piece_ids": [
         "capability.damage.amount.positive",
         "residual.replacement.damage-prevention"
@@ -22226,12 +22226,12 @@
         "damage.amount.positive"
       ],
       "interaction_order": 2,
-      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+      "assertion": "A constructed source preserves the represented capability alongside a material unsupported sibling. The program reaches runtime admission, where strict and compatible admission reject it without a construction failure. The formerly rejected pinned originals have separate complete-admission evidence."
     },
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
       "piece_ids": [
         "capability.damage.result.multitype_permanent",
         "residual.replacement.damage-prevention"
@@ -22240,12 +22240,12 @@
         "damage.result.multitype_permanent"
       ],
       "interaction_order": 2,
-      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+      "assertion": "A constructed source preserves the represented capability alongside a material unsupported sibling. The program reaches runtime admission, where strict and compatible admission reject it without a construction failure. The formerly rejected pinned originals have separate complete-admission evidence."
     },
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
         "residual.replacement.damage-prevention"
@@ -22254,7 +22254,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+      "assertion": "A constructed source preserves the represented capability alongside a material unsupported sibling. The program reaches runtime admission, where strict and compatible admission reject it without a construction failure. The formerly rejected pinned originals have separate complete-admission evidence."
     },
     {
       "evidence_class": "interaction",
@@ -22441,7 +22441,7 @@
     {
       "evidence_class": "interaction",
       "assurance_kind": "fail_closed_runtime_admission",
-      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_all_declared_residual_pairs_fail_closed_at_runtime_boundary",
       "piece_ids": [
         "capability.zone.return.own_graveyard_choice",
         "residual.card_form.ordinary-saga-chapter-event-binding"
@@ -22450,7 +22450,7 @@
         "zone.return.own_graveyard_choice"
       ],
       "interaction_order": 2,
-      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+      "assertion": "A constructed source preserves the represented capability alongside a material unsupported sibling. The program reaches runtime admission, where strict and compatible admission reject it without a construction failure. The formerly rejected pinned originals have separate complete-admission evidence."
     },
     {
       "evidence_class": "interaction",

@@ -166,7 +166,10 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.semantics import SemanticRegistry
 
         registry = load_default_capability_registry()
-        for name in ('Cunning Strike', 'Shadow Guildmage', 'The Shattered States Era // Nameless Conqueror'):
+        for name in (
+            'Cunning Strike', 'Shadow Guildmage', 'The Shattered States Era // Nameless Conqueror',
+            'Goblin Snowman', 'The Mending of Dominaria',
+        ):
             with self.subTest(name=name):
                 card = self.db.lookup(name)
                 ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
