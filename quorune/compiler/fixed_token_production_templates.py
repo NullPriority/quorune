@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed extensions for fixed token production across effect contexts."""
 
-import re
+from . import regex_working_set as re
 from typing import Callable
 
 from ..ability_fragments import ability_fragment_to_dict
@@ -396,6 +396,10 @@ def extended_fixed_token_creation_effect_template(
     compile_inner: Callable[[str], FixedTokenCreationTemplate | None],
 ) -> FixedTokenCreationTemplate | None:
     """Lower one extended form or return ``None`` to the base grammar."""
+    from .named_equipment_token_templates import fixed_named_equipment_token_template
+    equipment = fixed_named_equipment_token_template(normalized)
+    if equipment is not None:
+        return equipment
 
     for compiler in (
         _fixed_investigate_template,

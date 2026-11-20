@@ -1,6 +1,6 @@
 """Consume conditional bonuses separately from their unconditional fight or bite."""
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..conditional_target_preparation import PreparationCondition, CONDITIONAL_PREPARATION_MECHANIC
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind

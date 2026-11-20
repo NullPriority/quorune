@@ -69,7 +69,8 @@ class GrantedStaticCharacteristicModelTests(unittest.TestCase):
             printed_name='Generic Equipment Source', owner='A', controller='A', zone='battlefield')
         instances = _continuous_program_instances(semantics, source, (child,), lambda source:(('child',3),('child',5)))
         self.assertEqual(((child,3,0),(child,5,1)), instances)
-        legacy=replace_namespace(child,ability_id='static:front:n4:role:1',coverage=())
+        legacy=replace_namespace(child, ability_id='static:front:n4:role:1', coverage=(),
+            cost_schema=None, target_schema=None)
         self.assertEqual(((legacy,None,None),),_continuous_program_instances(semantics,source,(legacy,),lambda source:()))
         from quorune.rules.keyword_runtime_requirements import keyword_runtime_dependencies
         self.assertNotIn(CAPABILITY,keyword_runtime_dependencies(legacy))
@@ -136,7 +137,7 @@ class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
         effects = handler.lower(descriptor, SimpleNamespace(
             source_object_id="cross-zone-source", component_id="static", source_timestamp=1, source_controller="A",
         ))
-        host = SimpleNamespace(_type_parts=type_parts)
+        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace())
         physical = CardInstance(object_id="creature", ref="creature", oracle_id="test:creature",
             printed_name="Test Creature", owner="A", controller="B", zone="stack")
         copied = replace(physical, object_kind="spell_copy")

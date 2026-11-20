@@ -1,0 +1,125 @@
+{
+  "fixture_kind": "public_exact-list_card_data",
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Graveyard Shovel",
+      "oracle_id": "868b5315-da38-4918-b8e4-70762811605b",
+      "oracle_text": "{2}, {T}: Target player exiles a card from their graveyard. If it's a creature card, you gain 2 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Rhox Faithmender",
+      "oracle_id": "2abe9303-d498-4aad-b6b2-8b5064bd2ffd",
+      "oracle_text": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)\nIf you would gain life, you gain twice that much life instead.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "5",
+      "type_line": "Creature — Rhino Monk"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "The targeted player chooses which card to exile when the ability resolves.",
+      "oracle_id": "868b5315-da38-4918-b8e4-70762811605b",
+      "published_at": "2011-09-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect sets your life total to a specific number, and that number is higher than your current life total, the effect will cause you to gain life equal to the difference. Rhox Faithmender will then double that number. For example, if you have 3 life and an effect says that your life total \"becomes 10,\" your life total will actually become 17.",
+      "oracle_id": "2abe9303-d498-4aad-b6b2-8b5064bd2ffd",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control two Rhox Faithmenders, life you gain will be multiplied by four. Three Rhox Faithmenders will multiply any life gain by eight, and so on.",
+      "oracle_id": "2abe9303-d498-4aad-b6b2-8b5064bd2ffd",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, only Rhox Faithmender's controller is affected by it. If that player's teammate gains life, Rhox Faithmender will have no effect, even when that life gain is applied to the shared team life total.",
+      "oracle_id": "2abe9303-d498-4aad-b6b2-8b5064bd2ffd",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    }
+  ]
+}

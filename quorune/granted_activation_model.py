@@ -16,6 +16,8 @@ _MANA_KEYS = frozenset({"W", "U", "B", "R", "G", "C", "GENERIC"})
 RESTRICTED_MANA_GRANT_CAPABILITY = 'continuous.ability.restricted_mana_grant'
 GRANTING_ATTACHMENT_PAYMENT_CAPABILITY = 'activation.granting_attachment.fixed_payment'
 GRANTING_ATTACHMENT_PAYMENT_FIELD = 'granting_attachment_payment'
+GRANTED_SOURCE_COUNTER_CAPABILITY = 'activation.source_counter_removal.fixed'
+GRANTED_SPORE_COUNTER_COST = FrozenMap({'schema_version': 1, 'counter_name': 'spore', 'amount': 2})
 
 
 class GrantingAttachmentPaymentKind(StrEnum):
@@ -137,9 +139,10 @@ class GrantedActivatedAbilitySpec:
     schema_version: int = 1
     crew_threshold: int | None = None
     granting_attachment_payment: GrantingAttachmentPayment | None = None
+    source_counter_removal_cost: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6}:
             raise AbilityFragmentError(
                 "Unsupported granted activated-ability schema version"
             )
@@ -218,9 +221,22 @@ class GrantedActivatedAbilitySpec:
                 "Granted-ability mana restrictions require fixed mana output"
             )
         object.__setattr__(self, "fixed_mana_outputs", normalized_outputs)
+        price = self.source_counter_removal_cost
+        if self.schema_version == 6:
+            if (not isinstance(price, Mapping) or price != GRANTED_SPORE_COUNTER_COST
+                    or type(price["schema_version"]) is not int or type(price["amount"]) is not int
+                    or any((self.mana, self.tap_source, self.untap_source, self.sacrifice_source,
+                            self.life_payment, self.choices, self.mana_ability, self.sorcery_speed,
+                            self.mana_spend_restriction, self.fixed_mana_outputs))):
+                raise AbilityFragmentError("Granted source-counter cost requires exactly two spore counters from its source")
+            object.__setattr__(self, "source_counter_removal_cost", GRANTED_SPORE_COUNTER_COST)
+        elif price is not None:
+            raise AbilityFragmentError("Granted source-counter costs require schema version 6")
 
     @property
     def capability_id(self) -> str | None:
+        if self.schema_version == 6:
+            return GRANTED_SOURCE_COUNTER_CAPABILITY
         if self.schema_version == 5:
             return GRANTING_ATTACHMENT_PAYMENT_CAPABILITY
         return RESTRICTED_MANA_GRANT_CAPABILITY if self.schema_version == 4 else None
@@ -257,6 +273,8 @@ class GrantedActivatedAbilitySpec:
         if self.schema_version==3:result["crew_threshold"]=self.crew_threshold
         if self.granting_attachment_payment is not None:
             result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
+        if self.source_counter_removal_cost is not None:
+            result["source_counter_removal_cost"] = thaw_value(self.source_counter_removal_cost)
         return result
 
     @classmethod
@@ -285,14 +303,17 @@ class GrantedActivatedAbilitySpec:
         }
         crew_extended={*extended,'crew_threshold'}
         attachment_extended = {*extended, GRANTING_ATTACHMENT_PAYMENT_FIELD}
+        source_counter_fields = {*expected, "source_counter_removal_cost"}
         if (
             not isinstance(value, Mapping)
-            or set(value) not in {frozenset(expected), frozenset(extended), frozenset(crew_extended), frozenset(attachment_extended)}
+            or set(value) not in {frozenset(expected), frozenset(extended), frozenset(crew_extended),
+                                  frozenset(attachment_extended), frozenset(source_counter_fields)}
             or (value.get("schema_version") == 1 and set(value) != expected)
             or (value.get("schema_version") == 2 and set(value) != extended)
             or (value.get("schema_version") == 3 and set(value) != crew_extended)
             or (value.get("schema_version") == 4 and set(value) != extended)
             or (value.get("schema_version") == 5 and set(value) != attachment_extended)
+            or (value.get("schema_version") == 6 and set(value) != source_counter_fields)
         ):
             raise AbilityFragmentError(
                 "Granted activated-ability fragments have a closed schema"
@@ -333,4 +354,5 @@ class GrantedActivatedAbilitySpec:
             crew_threshold=value.get("crew_threshold"),
             granting_attachment_payment=(GrantingAttachmentPayment.from_dict(value[GRANTING_ATTACHMENT_PAYMENT_FIELD])
                                          if GRANTING_ATTACHMENT_PAYMENT_FIELD in value else None),
+            source_counter_removal_cost=value.get("source_counter_removal_cost"),
         )

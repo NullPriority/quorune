@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle-IR lowering for fixed-output activated mana abilities."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
@@ -11,6 +11,7 @@ from ..activation_condition_model import (
     PUBLIC_ACTIVATION_CAPABILITY, PublicActivationTiming, activation_restriction_spec,
 )
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
+from ..graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_OPERATION
 from ..abilities import (
     ActivatedAbility,
 )
@@ -331,8 +332,14 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "choose_target_player_graveyard_exile",
+    "exile_public_graveyard_card_result",
+    GRAVEYARD_EXILE_TOKEN_OPERATION,
+    "remove_chosen_counter",
+    "choose_target_basic_land_type",
     "choose_creature_type",
     COMBAT_REMOVAL_OPERATION,
+    "phase_out_permanent",
     "life_loss_then_gain_actual",
     'discover',
     FIXED_TOP_EXILE_OPERATION,
@@ -340,14 +347,16 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     'exile_until_instant_or_sorcery',
     'reveal_until_library_selection',
     'choose_untap_lands',
-    'order_library_top','shuffle_controller_library',
+    'order_library_top','shuffle_controller_library','inspect_target_library',
     'create_token_then_counters',
     'discard_hands_then_draw',
+    'hand_library_redraw',
     'discard_draw_up_to',
     'set_day_night',
     'grant_next_spell_cost_reduction',
     'prohibit_casting_until_end_of_turn',
     'return_random_graveyard_cards',
+    'recycle_graveyards_into_libraries',
     "copy_stack_item",
     'create_role_token',
     "gain_control",
@@ -441,6 +450,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "tap_targets",
     "untap",
     "untap_targets",
+    "prohibit_next_untap",
 })
 
 
@@ -490,7 +500,9 @@ def _activated_effect_dependency_gate(
                 "temporary-source-keyword-choice",
                 "temporary-source-protection-choice",
                 "fixed-target-color-scope",
+                "fixed-target-library-inspection",
                 "opposing-graveyard-return-then-targeted-result",
+                "self-graveyard-entry-followup",
             }.intersection(mechanics)
         )
         or (
@@ -574,14 +586,25 @@ def _dependency_metadata(
     return gate.closure.reachable, gate.closure.profile, gate.closure.fingerprint
 
 
+_SOURCE_SACRIFICE_DAMAGE_AND_REMOVAL = re.compile(
+    r"it (?P<effect>deals [1-9][0-9]* damage to target creature with flying"
+    r"(?:\. | and )that creature loses flying until end of turn\.?)",
+    re.IGNORECASE,
+)
+
+
 _ACTIVATION_RESTRICTION_PREFIX = re.compile(
     r"^(?P<effect>.+?)\s+activate only ",
     re.IGNORECASE,
 )
 def _activated_effect_material(ability: ActivatedAbility, *, source_name=None) -> str:
-    """Remove only a complete restriction already present in typed metadata."""
+    """Normalize a bound source pronoun or an already represented restriction."""
 
     material = ability.effect_text.strip()
+    if ability.sacrifice_source and ability.zones == ("battlefield",):
+        damage_and_removal = _SOURCE_SACRIFICE_DAMAGE_AND_REMOVAL.fullmatch(material)
+        if damage_and_removal is not None:
+            return "This permanent " + damage_and_removal["effect"]
     prefix = _ACTIVATION_RESTRICTION_PREFIX.match(material)
     if prefix is None:
         return material
@@ -806,10 +829,9 @@ def activated_oracle_node(
     handlers: tuple[Mapping[str, Any], ...] = ()
     if self_zone_move is not None:
         ability = self_zone_move.ability
-        template = "activated-self-zone-move-v1"
-        effects = (self_zone_move.effect(),)
+        from ..self_zone_move_followups import compiled_self_entry
+        template, effects, mechanics = compiled_self_entry(self_zone_move)
         target_schema = None
-        mechanics = ("self-zone-move",)
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
     else:
         from .activation_paid_sacrifice_results import compile_activation_result

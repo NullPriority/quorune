@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """One source-spanned intrinsic graveyard method with fixed discard payment."""
 
-import re
+from . import regex_working_set as re
 
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..rules.self_graveyard_discard import CAPABILITIES, EVENT, HANDLER_ID, SelfGraveyardDiscardSpec

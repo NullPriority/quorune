@@ -2,7 +2,7 @@
 from copy import deepcopy
 from dataclasses import replace
 import hashlib
-import re
+from . import regex_working_set as re
 
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND,ScalarEffectAmountSpec
 

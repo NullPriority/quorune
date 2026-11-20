@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compose a printed trigger-use limit with an independently closed trigger."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,

@@ -9,6 +9,8 @@ from ..attachment_references import (
     resolve_source_attachment,
 )
 from ..station import StationAbilityError, station_resolution_power
+from ..graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_OPERATION
+from ..rules.graveyard_exile_type_outcomes import GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION
 from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VALUE
 from ..query_effect_amount_model import (
     PUBLIC_QUERY_AMOUNT_KIND,
@@ -139,6 +141,30 @@ def _resolve_attachment_reference(
 
 def _resolve_typed_semantic_value(host, value, item):
     """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind']=='current_controller_life_effect_amount':
+        from ..rules.current_life_effect_amounts import resolve_current_life_effect_amount
+        try:return resolve_current_life_effect_amount(host,value,item)
+        except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind']=='all_player_turn_life_loss_amount':
+        from ..rules.turn_life_loss_recovery import resolve_all_player_turn_life_loss
+        try:return resolve_all_player_turn_life_loss(host,value,item)
+        except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind'] in {'per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount'}:
+        from .per_player_query_life import resolve_per_player_query_life
+        try:return resolve_per_player_query_life(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind'] in {'per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount'}:
+        from .per_player_query_damage import resolve_per_player_query_damage
+        try:return resolve_per_player_query_damage(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind'] in {'per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount'}:
+        from .per_player_life_damage import resolve_per_player_life_damage
+        try:return resolve_per_player_life_damage(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind']=='target_player_public_query_amount':
+        from .target_player_query_amounts import resolve_target_player_query_amount
+        try:return resolve_target_player_query_amount(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value['kind']=='unique_player_maximum':
         from ..player_maximum import resolve_player_maximum
         try:return resolve_player_maximum(host,value,item)
@@ -168,10 +194,51 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get("op") == "look_top_shared_type_reveal":
+        from ..rules.shared_type_library_model import SharedTypeLibraryResult
+        try:
+            SharedTypeLibraryResult.from_dict(value["result"])
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return {**value, "player": resolve_semantic_value(host, value["player"], item)}
+    if (value.get("op") == "create_token" and isinstance(value.get("copy_spec"), Mapping)
+            and value["copy_spec"].get("schema_version") in {3, 4}):
+        from ..token_copy_recipes import TokenCopyRecipeSpec
+        try:
+            recipe = TokenCopyRecipeSpec.from_dict(value["copy_spec"])
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        # The nested reference declares capture; the copy owner resolves it later.
+        return {key: recipe.to_dict() if key == "copy_spec"
+                else resolve_semantic_value(host, child, item)
+                for key, child in value.items()}
+    from ..colored_hand_reveal_model import REVEAL_RESULT_KIND, ColoredRevealResult
+    if value.get('kind')==REVEAL_RESULT_KIND:
+        try:ColoredRevealResult.from_dict(value)
+        except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+        return dict(value)
+    if value.get('op') == 'search' and value.get('schema_version') == 8:
+        from ..library_search_model import QueryBoundLibrarySearchSpec
+        try:
+            retained = {key: child for key, child in value.items()
+                        if key not in {"_search_completion", "_replacement_selections"}}
+            QueryBoundLibrarySearchSpec.from_effect(retained, allow_resolved=True)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return dict(value)
     if value.get("op") == "resolve_stack_counter_followup":
         from ..rules.stack_counter_followup import materialize_stack_counter_followup
         try:
             return materialize_stack_counter_followup(value, resolve=lambda operand: resolve_semantic_value(host, operand, item))
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 6:
+        from ..rules.stack_controller_payment_cost import bind_target_announcement_payment
+
+        try:
+            return bind_target_announcement_payment(
+                host, value, resolve=lambda operand: resolve_semantic_value(host, operand, item),
+            )
         except (TypeError, ValueError, KeyError) as exc:
             raise SemanticNodeError(str(exc)) from exc
     if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 3:
@@ -194,13 +261,21 @@ def _resolve_effect_mapping(host, value, item):
         except (ValueError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
         return {**value, 'object': None} if current_linked_subject(host, subject, zone='battlefield') is None else dict(value)
+    if value.get('op') == 'reanimate' and ('attachment_return' in value or value.get('schema_version') == 7):
+        from ..attachment_source_return import bind_attachment_source_return
+        try:return bind_attachment_source_return(value, item)
+        except (TypeError, ValueError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value.get('op')=='schedule_fixed_object_action':
         from ..delayed_object_actions import bind_delayed_object_instruction
         try:return bind_delayed_object_instruction(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if "followup" in value and value.get("op") in ("destroy_all", "move_public_zone_set", REVEAL_TOP_OPERATION):
-        preceding_action = {key: child for key, child in value.items() if key != "followup"}
-        return {**_resolve_effect_mapping(host, preceding_action, item), "followup": value["followup"]}
+    result_operations = (GRAVEYARD_EXILE_TOKEN_OPERATION, GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION)
+    deferred_field = 'result' if value.get('op') in result_operations else 'followup'
+    if deferred_field in value and value.get('op') in (
+        'destroy_all', 'move_public_zone_set', REVEAL_TOP_OPERATION, *result_operations,
+    ):
+        preceding_action = {key: child for key, child in value.items() if key != deferred_field}
+        return {**_resolve_effect_mapping(host, preceding_action, item), deferred_field: value[deferred_field]}
     if value.get('op')=='create_token_then_counters':
         from ..created_token_counter_model import validate_created_token_counter
         try:validate_created_token_counter(value)
@@ -237,7 +312,7 @@ def _resolve_effect_mapping(host, value, item):
         raise SemanticNodeError(str(exc)) from exc
     source_exclusion = (
         value.get("op") == "choose_cards_apnap"
-        and value.get("then") == "return_owner_hand"
+        and value.get("then") in {"return_owner_hand", "sacrifice"}
         and value.get("exclude_ref") == "$source.zone_object"
     )
     if source_exclusion:
@@ -249,10 +324,24 @@ def _resolve_effect_mapping(host, value, item):
             or type(source_incarnation) is not str
             or not source_incarnation
         ):
-            raise SemanticNodeError("Entry return exclusion requires the triggering source incarnation")
+            raise SemanticNodeError("Source exclusion requires the triggering source incarnation")
     resolved = {key: resolve_semantic_value(host, child, item) for key, child in value.items()}
     if source_exclusion and resolved["exclude_ref"] is None:
         del resolved["exclude_ref"]
+    if value.get('op')=='damage':
+        from ..rules.referenced_damage_shapes import referenced_damage_kind
+        try:
+            kind=referenced_damage_kind(value.get('target'))
+            if kind is not None:
+                target=resolved.get('target')
+                if target is None:resolved['amount']=0
+                elif kind!='controller':
+                    card=next((c for c in host.state.cards.values() if c.ref==target),None)
+                    if card is None:resolved['amount']=0
+                    else:
+                        types=host._type_parts(str(host._effective_card_data(card).get('type_line') or ''))[0]
+                        if not types.intersection({'creature','planeswalker','battle'}):resolved['amount']=0
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     return resolved
 
 
@@ -285,7 +374,11 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','unique_player_maximum'):
+    if isinstance(value, Mapping) and value.get('kind')=='source_attachment_controller_information':
+        from ..rules.attachment_controller_information import resolve_attachment_controller
+        try:return resolve_attachment_controller(host,value,item)
+        except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','unique_player_maximum','target_player_public_query_amount','per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount','per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount','per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount','all_player_turn_life_loss_amount','current_controller_life_effect_amount'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)

@@ -70,7 +70,9 @@ def layer_two_controller_map(
     while remaining:
         has_static=any(effect.origin is ContinuousEffectOrigin.STATIC_ABILITY for effect in remaining)
         projected=control_source_dependencies(remaining,controllers=current,cards=cards) if has_static else remaining
-        ordered,_cycles=order_continuous_effects(projected)
+        ordered, _cycles = order_continuous_effects(
+            projected, dependency_order_version=getattr(host.state, "continuous_dependency_order_version", None),
+        )
         first=ordered[0]
         # One resolution can contain disjoint recipient groups at one timestamp.
         batch=(tuple(ordered) if not has_static else (first,) if first.origin is ContinuousEffectOrigin.STATIC_ABILITY

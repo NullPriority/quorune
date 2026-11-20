@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned compiler declarations for printed deck copy limits."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import ability_fragment_to_dict
 from ..carddb import CardRecord

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for fixed public Ward payments."""
 
-import re
+from . import regex_working_set as re
 
 from ..trigger_participation import WardSpec
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number

@@ -14,6 +14,11 @@ def semantic_choice_token_creation_preview(
     if operation == 'create_role_token':
         common = {'name': str(effect.get('name') or ''), 'quantity': 1, 'attacking_groups': (),
             'characteristics': dict(effect.get('characteristics') or {})}
+    elif operation == 'choose_fixed_attacking_token_destinations' and effect.get('token_entry_version') == 3:
+        from ..rules.per_opponent_attacking_tokens import per_opponent_token_inputs
+        _opponents, _groups, common = per_opponent_token_inputs(actor, effect,
+            seats=self.seats, active_seats=self.active_seats,
+            attacking=self.state.phase == 'combat' and self.state.active_player == actor)
     elif operation in {"choose_attacking_token_destinations", 'choose_fixed_attacking_token_destinations'}:
         quantity = effect.get("quantity")
         if type(quantity) is not int or quantity < 0:

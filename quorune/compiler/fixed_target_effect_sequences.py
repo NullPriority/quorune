@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed target-threaded sequences of fixed resolution effects."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..keyword_counters import keyword_counter_mechanic

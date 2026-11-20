@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragment_primitives import (
     CREW_POWER_BONUS_HANDLER_ID, CREW_SADDLE_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec,

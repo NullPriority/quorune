@@ -23,7 +23,28 @@ def validate_spell_query(value):
     return query
 
 
+def recurring_spell_cost_query(face_down_only: bool) -> ObjectQuerySpec:
+    return ObjectQuerySpec(types_any=() if face_down_only else ("instant", "sorcery"))
+
+
+def _validate_recurring_spell_cost_instruction(value):
+    if (
+        set(value) != {"op", "schema_version", "spell_query", "amount", "face_down_only"}
+        or value["op"] != OPERATION or type(value["schema_version"]) is not int
+        or value["schema_version"] != 2 or type(value["amount"]) is not int or value["amount"] != 1
+        or type(value["face_down_only"]) is not bool
+    ):
+        raise ValueError("Recurring spell costs require one fixed generic reduction and its announced scope")
+    expected = recurring_spell_cost_query(value["face_down_only"])
+    query = validate_spell_query(value["spell_query"])
+    if query != expected or value["spell_query"] != expected.to_dict():
+        raise ValueError("Recurring spell cost predicates must be canonical")
+    return query, (CAPABILITY,)
+
+
 def validate_next_spell_cost_instruction(value,*,resolved=False):
+    if isinstance(value, Mapping) and value.get("schema_version") == 2:
+        return _validate_recurring_spell_cost_instruction(value)
     if (not isinstance(value,Mapping) or set(value)!={'op','schema_version','spell_query','amount'}
             or value['op']!=OPERATION or type(value['schema_version']) is not int or value['schema_version']!=1):
         raise ValueError('Next-spell cost instructions have one closed schema')
@@ -57,29 +78,46 @@ class ResolvedNextSpellCostReduction:
     amount: int
     duration: ContinuousEffectDuration=ContinuousEffectDuration.UNTIL_END_OF_TURN
     schema_version: int=1
+    face_down_only: bool=False
 
     def __post_init__(self):
         if (any(type(v) is not str or not v for v in (self.effect_id,self.source_id,self.controller))
                 or type(self.timestamp) is not int or self.timestamp<0
                 or type(self.amount) is not int or self.amount<0
-                or type(self.schema_version) is not int or self.schema_version!=1
+                or type(self.schema_version) is not int or self.schema_version not in {1, 2}
+                or type(self.face_down_only) is not bool
+                or self.schema_version == 1 and self.face_down_only
                 or self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN
                 or not isinstance(self.spell_query,ObjectQuerySpec)):
             raise ContinuousEffectError('Pending next-spell reduction has invalid identity, amount or duration')
         validate_spell_query(self.spell_query.to_dict())
+        if self.schema_version == 2 and (
+            self.amount != 1 or self.spell_query != recurring_spell_cost_query(self.face_down_only)
+        ):
+            raise ContinuousEffectError("Recurring cost rule requires its exact spell scope")
 
     def to_dict(self):
-        return {'effect_kind':EFFECT_KIND,'schema_version':self.schema_version,'effect_id':self.effect_id,
+        value = {'effect_kind':EFFECT_KIND,'schema_version':self.schema_version,'effect_id':self.effect_id,
             'source_id':self.source_id,'timestamp':self.timestamp,'controller':self.controller,
             'spell_query':self.spell_query.to_dict(),'amount':self.amount,'duration':self.duration.value}
+        if self.schema_version == 2:
+            value['face_down_only'] = self.face_down_only
+        return value
 
     @classmethod
     def from_dict(cls,value):
-        if (not isinstance(value,Mapping) or set(value)!={'effect_kind','schema_version','effect_id',
-                'source_id','timestamp','controller','spell_query','amount','duration'} or value['effect_kind']!=EFFECT_KIND):
-            raise ContinuousEffectError('Pending next-spell reduction fields are incomplete or unknown')
-        return cls(value['effect_id'],value['source_id'],value['timestamp'],value['controller'],
-            validate_spell_query(value['spell_query']),value['amount'],ContinuousEffectDuration(value['duration']),value['schema_version'])
+        fields = {'effect_kind','schema_version','effect_id','source_id','timestamp','controller',
+                  'spell_query','amount','duration'}
+        if isinstance(value, Mapping) and value.get('schema_version') == 2:
+            fields.add('face_down_only')
+        if not isinstance(value, Mapping) or set(value) != fields or value['effect_kind'] != EFFECT_KIND:
+            raise ContinuousEffectError('Pending spell reduction fields are incomplete or unknown')
+        pending = cls(value['effect_id'],value['source_id'],value['timestamp'],value['controller'],
+            validate_spell_query(value['spell_query']),value['amount'],ContinuousEffectDuration(value['duration']),
+            value['schema_version'],value.get('face_down_only',False))
+        if pending.schema_version == 2 and pending.to_dict() != value:
+            raise ContinuousEffectError("Recurring spell cost journal must use its exact canonical fields")
+        return pending
 
     @property
     def fingerprint(self):return immutable_fingerprint(self.to_dict())

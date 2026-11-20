@@ -1,5 +1,5 @@
 """Closed chosen-creature-type casts and public creature occurrences."""
-import re
+from . import regex_working_set as re
 from ..rules.chosen_type_events import CHOSEN_TYPE_EVENT_CAPABILITY,CHOSEN_TYPE_FIELD
 from ..rules.event_subscriptions import FixedEventSubscription,fixed_event_subscription_condition
 from ..qualified_attack_model import ATTACK_FACT_PREFIX,QUALIFIED_ATTACK_CAPABILITY

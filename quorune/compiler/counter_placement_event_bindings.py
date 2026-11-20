@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Bounded subscriptions to committed battlefield counter placements."""
 
-import re
+from . import regex_working_set as re
 from ..counter_names import normalized_counter_name
 from ..counter_placement_event_model import COUNTER_EVENT_CAPABILITY,COUNTER_EVENT_MECHANIC
 from ..rules.source_references import SourceReferenceSpec

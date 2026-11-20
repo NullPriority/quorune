@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import hashlib
 import json
 import re
-from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
+from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING, cast
 
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from ..replacement.immutable import thaw_value
@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 
 CARD_PROGRAM_SCHEMA_VERSION = 2
+_DERIVE_TRUST_CLOSURE = cast(dict[str, Any], object())
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _PROGRAM_FIELDS = {
     "schema_version",
@@ -565,7 +566,9 @@ class CardProgram:
             oracle_source_hash=self.oracle_source_hash,
             rulings_source_hash=self.rulings_source_hash,
         )
-        if _clone(self.trust_closure) != expected_trust:
+        if self.trust_closure is _DERIVE_TRUST_CLOSURE:
+            object.__setattr__(self, "trust_closure", expected_trust)
+        elif _clone(self.trust_closure) != expected_trust:
             raise CardProgramError("CardProgram trust_closure does not match")
 
     @classmethod
@@ -608,12 +611,7 @@ class CardProgram:
             semantic_hash=_hash(
                 _semantic_payload(face_values, ability_values, residual_values)
             ),
-            trust_closure=build_program_trust_closure(
-                ability_values,
-                residual_values,
-                oracle_source_hash=oracle_source_hash,
-                rulings_source_hash=rulings_source_hash,
-            ),
+            trust_closure=_DERIVE_TRUST_CLOSURE,
         )
 
     @property
@@ -645,7 +643,7 @@ class CardProgram:
 
     def to_dict(self) -> dict[str, Any]:
         value = self._payload()
-        value["fingerprint"] = self.fingerprint
+        value["fingerprint"] = _hash(value)
         return value
 
     @classmethod

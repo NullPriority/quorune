@@ -81,8 +81,8 @@ def checkpoint_state(state: GameState) -> dict[str, Any]:
     return copy.deepcopy(state.to_dict(include_ephemeral=False))
 
 
-def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:
-    payload = checkpoint_state(state) if isinstance(state, GameState) else copy.deepcopy(dict(state))
+def _hash_checkpoint_payload(payload: dict[str, Any]) -> str:
+    """Normalize a caller-owned top level for replay hashing."""
     payload["events"] = []
     payload["capabilities"] = {}
     # Preserve command-hash compatibility with pre-monarch additive v3
@@ -91,6 +91,11 @@ def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:
     if payload.get("monarch") is None:
         payload.pop("monarch", None)
     return _canonical_hash(payload)
+
+
+def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:
+    payload = checkpoint_state(state) if isinstance(state, GameState) else copy.deepcopy(dict(state))
+    return _hash_checkpoint_payload(payload)
 
 
 def checkpoint_envelope(state: GameState) -> dict[str, Any]:
@@ -107,12 +112,13 @@ def checkpoint_envelope(state: GameState) -> dict[str, Any]:
                         "actor": cap.actor,
                     }
                 )
+    payload = checkpoint_state(state)
     return {
         "schema_version": RECORD_SCHEMA_VERSION,
         "kind": "authoritative-checkpoint",
-        "state_hash": authoritative_state_hash(state),
+        "state_hash": _hash_checkpoint_payload(dict(payload)),
         "active_capabilities": sorted(active_caps, key=lambda item: (item["principal"], item["id"])),
-        "state": checkpoint_state(state),
+        "state": payload,
     }
 
 
@@ -986,7 +992,7 @@ def replay_record(
     record_state_provenance.validate_state_versions(manifest, state)
     engine = CommanderEngine(card_db, state, semantics)
     engine.permissions.reissue_pending()
-    applied = _apply_replay_commands(
+    applied, actual = _apply_replay_commands(
         engine,
         _read_jsonl(directory / "commands.jsonl"),
         semantics,
@@ -997,7 +1003,6 @@ def replay_record(
         ),
         require_runtime_provenance=manifest.get("runtime_trust") is not None,
     )
-    actual = authoritative_state_hash(engine.state)
     expected = str(manifest["final_state_hash"])
     ok = actual == expected
     if verify and not ok:
@@ -1015,14 +1020,15 @@ def replay_record(
 
 def _apply_replay_commands(
     engine: CommanderEngine,
-    commands: Iterable[Mapping[str, Any]],
+    commands: Sequence[Mapping[str, Any]],
     semantics: SemanticRegistry,
     *,
     verify: bool,
     capability_profile: str,
     require_runtime_provenance: bool,
-) -> int:
+) -> tuple[int, str]:
     applied = 0
+    state_hash = None
     current_registry = semantics_fingerprint(semantics)
     for command in commands:
         command_semantics = command.get("semantics", {})
@@ -1047,12 +1053,16 @@ def _apply_replay_commands(
                     implicit_semantic_execution_provenance(engine, key, include_spell_copies=require_runtime_provenance)
                 ),
             )
-        before = authoritative_state_hash(engine.state)
-        if verify and before != command.get("before_state_hash"):
-            raise ValueError(
-                f"Replay diverged before command {command.get('sequence')}: "
-                f"expected {command.get('before_state_hash')}, got {before}"
-            )
+        if verify:
+            # The replay engine is private to this sequence. Provenance checks
+            # between submissions only read authoritative state.
+            if state_hash is None:
+                state_hash = authoritative_state_hash(engine.state)
+            if state_hash != command.get("before_state_hash"):
+                raise ValueError(
+                    f"Replay diverged before command {command.get('sequence')}: "
+                    f"expected {command.get('before_state_hash')}, got {state_hash}"
+                )
         principal = str(command["principal"])
         capability = engine.permissions.capability_for(principal)
         if capability is None:
@@ -1071,14 +1081,17 @@ def _apply_replay_commands(
                 engine=engine, events=engine.state.events, before_event_sequence=before_events,
                 captured=resolution_inputs, profile=capability_profile,
                 sequence=command.get('sequence'))
-        after = authoritative_state_hash(engine.state)
-        if verify and after != command.get("after_state_hash"):
-            raise ValueError(
-                f"Replay diverged after command {command.get('sequence')}: "
-                f"expected {command.get('after_state_hash')}, got {after}"
-            )
+        if verify:
+            state_hash = authoritative_state_hash(engine.state)
+            if state_hash != command.get("after_state_hash"):
+                raise ValueError(
+                    f"Replay diverged after command {command.get('sequence')}: "
+                    f"expected {command.get('after_state_hash')}, got {state_hash}"
+                )
         applied += 1
-    return applied
+    if state_hash is None:
+        state_hash = authoritative_state_hash(engine.state)
+    return applied, state_hash
 
 
 def verify_record_suffix(
@@ -1141,7 +1154,7 @@ def verify_record_suffix(
     engine = CommanderEngine(card_db, state, semantics)
     engine.permissions.reissue_pending()
     suffix_commands = commands[baseline_commands:]
-    applied = _apply_replay_commands(
+    applied, actual = _apply_replay_commands(
         engine,
         suffix_commands,
         semantics,
@@ -1152,7 +1165,6 @@ def verify_record_suffix(
         ),
         require_runtime_provenance=manifest.get("runtime_trust") is not None,
     )
-    actual = authoritative_state_hash(engine.state)
     expected = str(manifest["final_state_hash"])
     if actual != expected:
         raise ValueError(

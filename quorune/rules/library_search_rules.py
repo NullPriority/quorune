@@ -28,15 +28,22 @@ def library_search_constraint(host,player):
     return LibrarySearchConstraint(prohibited,min(limits) if limits else None)
 
 
-def library_search_object_ids(host,player,zone):
+def library_search_object_ids(host,player,zone,*,searching_player=None):
     ids=tuple(host.state.players[player].zones[zone])
     if zone!='library':return ids
-    constraint=library_search_constraint(host,player)
+    searcher=player if searching_player is None else searching_player
+    if type(searcher) is not str or not searcher or searcher not in host.state.players:
+        raise ValueError('Library search requires a known searching player')
+    constraint=library_search_constraint(host,searcher)
     if constraint.prohibited:return ()
     return ids[-constraint.top_count:] if constraint.top_count is not None else ids
 
 
 def optional_search_permissions(host,actor,effect):
+    if effect.get('op') == 'search_named_library_or_graveyard':
+        from ..named_search_model import decode_named_zone_search
+        decode_named_zone_search({key:effect[key] for key in ('op','player','search')}, actor=actor)
+        return {actor:not library_search_constraint(host,actor).prohibited}
     if effect.get('op')!='offer_optional_effect':return {}
     effects=effect.get('effects',())
     if len(effects)!=1 or effects[0].get('op')!='search':return {}

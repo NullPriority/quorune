@@ -39,15 +39,14 @@ tests used as behavioral evidence fail CI.
 
 Both evidence files use the versioned storage envelope owned by
 `quorune/rules/evidence_storage.py`. It groups only identical rule, profile,
-capability, and applicability metadata; each reference keeps an explicit ordinal,
-evidence class, and fully qualified test identity. Decoding restores every
-declaration in its original order before the existing schema, fingerprint, and
-trust checks. Flat historical documents remain readable. Malformed envelopes,
-duplicate or missing ordinals, and ambiguous groups fail closed.
-The deterministic writer keeps each group's shared metadata compact and each
-reference on one line. This preserves reviewable reference changes while
-keeping both files within the repository's source-blob limit. JSON values,
-ordinals, and the storage schema are unchanged by this layout.
+capability, and applicability metadata. Each reference keeps an explicit
+ordinal, evidence class, and index into a shared table of fully qualified test
+identities. Decoding restores every declaration in its original order before the
+existing schema, fingerprint, and trust checks. Readers also support earlier
+grouped files with inline test identities and flat historical documents.
+Malformed envelopes, invalid test references, and duplicate or missing ordinals
+fail closed. The writer keeps each group's metadata compact and each reference
+on one line so both files fit the repository's source-blob limit.
 
 Use `read_evidence_document(path)` when reading either file. For declaration
 edits, update its expanded `declarations` list and serialize it with

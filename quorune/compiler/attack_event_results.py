@@ -1,16 +1,21 @@
 """Bind a complete attacker-pronoun characteristic instruction to its occurrence."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..qualified_attack_model import QUALIFIED_ATTACK_VARIANT
 from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND, PublicQueryAmountSpec
+from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
 
 _OTHER_CONTROLLED_CREATURES = re.compile(
     r"(?P<result>gets [+-]\d+/[+-]\d+ until end of turn) for each other creature you control\.?", re.I,
 )
+
+
+_FIXED_KEYWORD_GRANT = re.compile(r"gains (?P<keyword>[a-z ]+) until end of turn\.", re.I)
 
 
 def _seal_attack_relative_amounts(effect):
@@ -43,7 +48,14 @@ def qualified_attack_characteristic_result(binding,body,*,effect_template,card_n
     if match is None:return None
     other = _OTHER_CONTROLLED_CREATURES.fullmatch(match['body'])
     material = f"{other['result']} for each creature you control." if other is not None else match['body']
-    compiled=effect_template('This permanent '+material,card_name=card_name)
+    compiled = effect_template('This permanent '+material, card_name=card_name)
+    if not (len(compiled[1]) == 1 and compiled[1][0].get('op') == 'apply_source_characteristics_until_end_of_turn'):
+        grant = _FIXED_KEYWORD_GRANT.fullmatch(material)
+        keyword = grant['keyword'].title() if grant is not None else None
+        if keyword in FIXED_CHARACTERISTIC_KEYWORDS:
+            compiled = FixedSourceCharacteristicsTemplate(
+                source_kind='attack-occurrence', keywords=(keyword,),
+            ).compiled()
     if (compiled[0] is not None and compiled[2] is None and len(compiled[1])==1
             and compiled[1][0].get('card') in {'$source','$source.zone_object'}):
         effect = {**compiled[1][0], 'card': '$event.permanent_object'}

@@ -91,6 +91,10 @@ def fixed_resolution_characteristic_set_node_capabilities(
 ) -> tuple[str, ...]:
     """Own one fixed or chosen resolution-locked public characteristic result."""
 
+    if len(effects)==1 and isinstance(effects[0],Mapping) and 'event_player_set_version' in effects[0]:
+        from .event_player_modifiers import event_player_modifier_node_capabilities
+        return event_player_modifier_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+
     if len(effects) == 1 and isinstance(effects[0], Mapping) and effects[0].get("op") == "choose_creature_type":
         from .resolution_characteristic_shapes import temporary_creature_type_node_capabilities
 
@@ -205,6 +209,31 @@ def _runtime_stat_amount(value):
 
 def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
+    from .event_player_modifiers import event_player_modifier_program_dependencies
+    event_player=event_player_modifier_program_dependencies(program)
+    if event_player:return event_player
+    from ..event_card_return import death_land_exile_runtime_dependencies
+    if required := death_land_exile_runtime_dependencies(program):
+        return required
+    from .effect_shape_walkers import nested_effects
+    from ..target_land_type_model import (
+        FIXED_TARGET_LAND_TYPE_VERSION, FIXED_TARGET_LAND_TYPE_MECHANIC, SOURCE_PRESENT_LAND_TYPE_CAPABILITY,
+    )
+
+    if any(effect.get("op") == CHARACTERISTIC_OPERATION
+           and effect.get("schema_version") == FIXED_TARGET_LAND_TYPE_VERSION
+           for effect in nested_effects((program.effects, program.handlers))):
+        from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+
+        required = fixed_resolution_characteristic_capabilities(
+            effects=program.effects, target_schema=program.target_schema,
+            mechanic_ids=(FIXED_TARGET_LAND_TYPE_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"),
+        )
+        if not required:
+            raise ValueError("Basic land type setting requires a closed single target and duration")
+        if SOURCE_PRESENT_LAND_TYPE_CAPABILITY in required and program.active_zone != "battlefield":
+            raise ValueError("Source-presence land setting requires a battlefield source")
+        return required
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
     families=[]
     if any(is_attached_characteristic_effect(effect)

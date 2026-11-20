@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Reuse the closed public query grammar only at an applied instruction."""
 
-import re
+from . import regex_working_set as re
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
-from ..object_predicate import ObjectQuerySpec
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 
 
@@ -47,6 +47,10 @@ def resolution_quantity(value: str, *, source_name: str, complete_value: bool = 
         if match is None:
             return None
         text = match['objects']
+    if re.fullmatch(r'creatures? attacking you',text,re.I):
+        return LiveBattlefieldQuantitySpec('any',ObjectQuerySpec(zones=('battlefield',),
+            types_all=('creature',),state_predicate=PermanentStatePredicateSpec(attacking=True)),
+            schema_version=3)
     if text.casefold() == 'modified creatures you control other than this creature':
         text = 'other modified creatures you control'
     from .public_state_queries import fixed_battlefield_query_subject

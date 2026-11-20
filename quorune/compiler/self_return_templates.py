@@ -3,11 +3,11 @@ from __future__ import annotations
 """Closed source-permanent return-to-owner-hand grammar."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 
-FIXED_SELF_RETURN_MECHANIC = "fixed-self-return-to-owner-hand"
+from ..self_zone_move_followups import FIXED_SELF_RETURN_MECHANIC
 
 _SELF_RETURN = re.compile(
     r"return this (?P<kind>artifact|creature|enchantment|permanent) "

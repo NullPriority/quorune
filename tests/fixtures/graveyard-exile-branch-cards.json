@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Escape"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Cling to Dust",
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "oracle_text": "Exile target card from a graveyard. If it was a creature card, you gain 3 life. Otherwise, you draw a card.\nEscape—{3}{B}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "17da3654-7517-473b-89e7-0303f6f030cb",
+      "name": "Deathgorge Scavenger",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Whenever this creature enters or attacks, you may exile target card from a graveyard. If a creature card is exiled this way, you gain 2 life. If a noncreature card is exiled this way, this creature gets +1/+1 until end of turn.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "adf731a1-fc4d-4260-bb85-535edb1d82e9",
+      "name": "Feral Appetite",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Attacking Pests you control get +1/+0 and have deathtouch.\n{1}{G}: Exile target card from a graveyard. If a creature card is exiled this way, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "17da3654-7517-473b-89e7-0303f6f030cb",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "There's no way to get both bonuses at once while Deathgorge Scavenger's ability is resolving. If an artifact creature card is exiled this way, it's a creature card and not a noncreature card."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "After an escaped spell resolves, it returns to its owner’s graveyard if it’s not a permanent spell. If it is a permanent spell, it enters the battlefield and will return to its owner’s graveyard if it dies later. Perhaps it will escape again—good underworld security is so hard to come by these days."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Cling to Dust can target one of the five cards you’ll exile to pay its escape cost. In this case, the spell won’t resolve."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Escape’s permission doesn’t change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a card with escape is put into your graveyard during your turn, you’ll be able to cast it right away if it’s legal to do so, before an opponent can take any actions."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If the exiled card is a creature card that’s also another card type (such as an enchantment creature), you gain 3 life. You don’t also draw a card."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If the target card is an illegal target by the time Cling to Dust tries to resolve, the spell won’t resolve. You won’t gain 3 life or draw a card."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can’t choose to apply any other alternative costs or to cast it without paying its mana cost. If it has any additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can’t take any other actions until you’re done casting the spell."
+    },
+    {
+      "oracle_id": "9c44e556-4c7a-48bf-a108-c584f69c2cfa",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you’re paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    }
+  ]
+}

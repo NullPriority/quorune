@@ -30,6 +30,69 @@ per-recipient damage intent. Equal recipients combine before replacement.
 The descriptor has independent capability closure and cannot mix with group or
 announced-allocation encodings. Existing damage encodings retain their forms.
 
+A modifier of creatures the source controller does not own binds the live
+controller and the authoritative public owner. Its type addition starts
+in layer four. The same recipients get the fixed keyword and stat changes
+in layers six and seven. The query excludes phased-out and hidden objects,
+and checks current control again on each characteristic evaluation.
+
+A controller energy result can read the committed amount from its source's
+combat damage to a player. The binding checks the original source incarnation
+and reads damage after prevention and replacement. Counter placement uses
+the existing controller replacement owner and stays independent of later
+changes to the source.
+
+A direct token result from a permanent's own cast trigger reads the exact
+spell occurrence and its current or recorded departure copiable values.
+It creates a token during trigger resolution, with the printed copy
+exception, and uses ordinary token creation replacements.
+
+Token-copy results may use `it` for the captured object of an owned public
+entry, death or departure event. This is the same typed `event_object` recipe
+as an explicit event-object reference. Resolution uses that incarnation's
+current copiable values or immediate departure information. Spell-cast
+references and unbound pronouns remain outside this production.
+
+Enchanted-creature token copies use recipe version three with an explicit
+version-two source attachment reference. The resolving ability controller
+creates and owns the copies independently of the Aura or creature owner.
+Current reciprocal attachment applies while the original Aura remains; its
+actual departure pins the last relation. Simultaneous Aura and creature
+departure retains that creature's copiable values. A creature leaving first
+can leave the Aura unattached, so its later departure creates no copy.
+Reentered incarnations never substitute for either original binding.
+Current entry-copy results preserve a real card's physical face. Copied
+program provenance stays in the copied values; it does not turn that physical
+face into the copied program's face identifier. Historical entry contexts and
+created-token face transport retain their recorded behavior.
+Historical recipes keep their existing encoding and meaning; equipped
+origins and separate cleanup or keyword grants remain outside this recipe.
+
+Private top-card creature-type conditions use the resolving controller's own
+library and two distinct optional choices. Looking grants information only
+to that player. A matching card may then be revealed, including a card
+already public; a real chosen reveal enables the complete closed child
+instruction list. The card stays in its library unless a child instruction
+moves it. Current source types or the canonical immediate last known source
+binding determine the comparison, independently of the source's owner.
+
+Non-targeted fixed changes to all other creatures exclude the original source
+incarnation through the existing battlefield reference. A departing source
+does not stop its independent ability; a source that reenters is a new object
+and can be affected. The continuous-effect owner locks recipients when the
+instruction resolves, applies state-based actions, and expires the modifier
+at cleanup. Later entrants and new recipient incarnations are outside that
+locked set.
+
+Fixed authored token definitions retain explicit names separately from ordinary
+subtype-derived token names. The predefined Walker is named Walker and is a
+2/2 black Zombie creature; ordinary unnamed predefined artifacts keep their
+existing name encoding. Targeted creators retain the selected player's token
+ownership and control through the existing creation owner. Quoted intrinsic
+abilities compile independently under the token's source, including mandatory
+attack requirements. Their combat component dependencies remain declared on the
+parent production before whole-card admission.
+
 Fixed predefined-token alternatives use `choose_option` with one canonical
 `create_token` instruction per branch. `fixed-token-definition-choice` requires
 its own capability together with every child definition dependency. Choice
@@ -99,6 +162,17 @@ node shapes; generated [compiler status](../COMPILER_COVERAGE_STATUS.md) owns
 current counts and residual inventories.
 
 ## Compiler result
+
+Scalar version fifteen distinguishes one graveyard-target mana value from a
+battlefield-target characteristic. It permits one intrinsic, unscaled mana
+value and requires its own quantity capability. Historical scalar versions
+cannot carry this origin, and the new version cannot relabel an older origin.
+Its source production preserves the original graveyard target query and ordered
+return/life instructions. The canonical departure owner seals only the requested
+mana value before movement to a hidden hand; a later incarnation never replaces
+that public snapshot. This quantity does not query power or toughness. The
+separate terminal spell-move and intrinsic copy owners retain their boundaries.
+Admission requires the quantity capability and every composed instruction owner.
 
 Source-self counter result quantities use the existing scalar amount owner.
 The closed version-two descriptor names one canonical counter kind. Current

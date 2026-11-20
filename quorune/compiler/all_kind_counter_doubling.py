@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete all-kind doubling over one existing direct permanent target set."""
 
-import re
+from . import regex_working_set as re
 from .direct_target import direct_permanent_target_spec
 from .fixed_homogeneous_target_sets import _singularize_subject,_target_bounds
 from ..target_cardinality import AnnouncedTargetCardinality,selected_target_count_descriptor

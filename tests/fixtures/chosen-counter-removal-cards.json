@@ -1,0 +1,787 @@
+{
+  "cards": [
+    {
+      "oracle_id": "650bf82e-7f83-470c-bf4a-34281bfe9341",
+      "name": "Battlegrowth",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Ferropede",
+      "oracle_id": "9ade7c7b-7d28-4d79-94b8-20c9c5b8369a",
+      "oracle_text": "This creature can't be blocked.\nWhenever this creature deals combat damage to a player, you may remove a counter from target permanent.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2004-06-04",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Insect"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G/W}",
+      "name": "Medicine Runner",
+      "oracle_id": "9c0a8412-af9f-4a22-b462-e9b2d9bd04c6",
+      "oracle_text": "When this creature enters, you may remove a counter from target permanent.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2008-05-02",
+      "toughness": "1",
+      "type_line": "Creature — Elf Cleric"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Thopter"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Price of Betrayal",
+      "oracle_id": "43a2bfe4-9705-4d0f-901a-21f9803b50f1",
+      "oracle_text": "Remove up to five counters from target artifact, creature, planeswalker, or opponent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{B}",
+          "name": "Purging Stormbrood",
+          "oracle_text": "Flying\nWard—Pay 2 life.\nWhen this creature enters, remove all counters from up to one target creature.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Creature — Dragon"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Absorb Essence",
+          "oracle_text": "Target creature gets +2/+2 and gains lifelink and hexproof until end of turn. (Then shuffle this card into its owner's library.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant — Omen"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Ward"
+      ],
+      "layout": "adventure",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B} // {1}{W}",
+      "name": "Purging Stormbrood // Absorb Essence",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "oracle_text": "Purging Stormbrood: Flying\nWard—Pay 2 life.\nWhen this creature enters, remove all counters from up to one target creature.\n//\nAbsorb Essence: Target creature gets +2/+2 and gains lifelink and hexproof until end of turn. (Then shuffle this card into its owner's library.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature — Dragon // Instant — Omen"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Sunburst"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}",
+      "name": "Spinal Parasite",
+      "oracle_id": "159427f7-27fe-490d-ac78-fed092952f51",
+      "oracle_text": "Sunburst (This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.)\nRemove two +1/+1 counters from this creature: Remove a counter from target permanent.",
+      "power": "-1",
+      "produced_mana": [],
+      "released_at": "2004-06-04",
+      "toughness": "-1",
+      "type_line": "Artifact Creature — Insect"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Extort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Thrull Parasite",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "oracle_text": "Extort (Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain that much life.)\n{T}, Pay 2 life: Remove a counter from target nonland permanent.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2013-02-01",
+      "toughness": "1",
+      "type_line": "Creature — Thrull"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Vampire Hexmage",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "oracle_text": "First strike\nSacrifice this creature: Remove all counters from target permanent.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": "1",
+      "type_line": "Creature — Vampire Shaman"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist.",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any permanent is a legal target for Spinal Parasite’s ability, not just one with a counter on it. The player who controls Spinal Parasite chooses which counter to remove from the targeted permanent.",
+      "oracle_id": "159427f7-27fe-490d-ac78-fed092952f51",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Spinal Parasite is a 1/1 because it has two +1/+1 counters on it, you can remove both counters to pay for its activated ability.",
+      "oracle_id": "159427f7-27fe-490d-ac78-fed092952f51",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Yes, this card’s base power/toughness is -1/-1. If it has five +1/+1 counters on it, it’s a 4/4 creature.",
+      "oracle_id": "159427f7-27fe-490d-ac78-fed092952f51",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players don’t normally have counters, but some cards in other sets say that a player “gets” a counter of a certain kind. Notably, emblems aren’t counters.",
+      "oracle_id": "43a2bfe4-9705-4d0f-901a-21f9803b50f1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Price of Betrayal has only one target. You may remove different kinds of counters from that one target, and you may also remove multiples of the same kind of counter from that one target.",
+      "oracle_id": "43a2bfe4-9705-4d0f-901a-21f9803b50f1",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "The nonland permanent you choose as the target doesn't have to have any counters on it. If it has more than one kind of counter, you'll choose one of those counters when the ability resolves.",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "published_at": "2013-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't activate Thrull Parasite's last ability to stop a player from paying the cost of a spell or an ability that requires removing a counter from a permanent (such as a planeswalker's loyalty ability).",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "published_at": "2013-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you gain from extort is based on the total amount of life lost, not necessarily the number of opponents you have. For example, if your opponent's life total can't change (perhaps because that player controls Platinum Emperion), you won't gain any life.",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability doesn't target any player.",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The extort ability resolves before the spell that caused it to trigger. The ability resolves even if that spell is countered.",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may pay {W/B} a maximum of one time for each extort triggered ability. You decide whether to pay when the ability resolves.",
+      "oracle_id": "577eb51d-7979-4f97-a8b1-e31242720611",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "An omen card is a creature card in every zone except the stack, as well as while on the stack if not cast as an Omen. Ignore its alternative characteristics in those cases. For example, while it’s in your graveyard, Twinmaw Stormbrood is a white creature card whose mana value is 6. It can’t be the target of the reflexive ability created by Kishla Trawlers’s triggered ability (“…When you do, return target instant or sorcery card from your graveyard to your hand.”).",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "As a player casts an omen card, the player chooses whether they cast the card normally or as an Omen.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting a card as an Omen isn’t casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Omen.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell is cast as an Omen, its controller shuffles it into its owner’s library instead of putting it into its owner’s graveyard as it resolves.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an Omen spell has one or more targets and all of those targets are illegal when the spell tries to resolve, it won’t resolve. None of its effects will happen, and it will be put into its owner’s graveyard. It won’t be shuffled into its owner’s library.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an Omen spell is copied, that copy is also an Omen and is shuffled into its owner’s library as it resolves. Its owner still shuffles their library, but the copy ceases to exist as a state-based action.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an Omen spell is countered or an effect causes it to otherwise leave the stack, it won’t be shuffled into its owner’s library.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Omen name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast an omen card as an Omen, use only its alternative characteristics to determine whether it’s legal to cast that spell. For example, if you control Thundermane Dragon (“You may cast creature spells with power 4 or greater from the top of your library.”) and Twinmaw Stormbrood is on top of your library, you can cast Twinmaw Stormbrood, but not Charring Bite.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "When casting a spell as an Omen, use the alternative characteristics and ignore all of the card’s normal characteristics. The spell’s color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics.",
+      "oracle_id": "5e8086d5-ea48-4555-b65a-a33d08ba4afd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any permanent is a legal target for Ferropede’s last ability, not just one with a counter on it.",
+      "oracle_id": "9ade7c7b-7d28-4d79-94b8-20c9c5b8369a",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there’s more than one type of counter on the targeted permanent, Ferropede’s controller chooses which counter to remove from it.",
+      "oracle_id": "9ade7c7b-7d28-4d79-94b8-20c9c5b8369a",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This can remove any kind of counter, not just a -1/-1 counter.",
+      "oracle_id": "9c0a8412-af9f-4a22-b462-e9b2d9bd04c6",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may target a permanent that doesn’t have a counter on it.",
+      "oracle_id": "9c0a8412-af9f-4a22-b462-e9b2d9bd04c6",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any permanent can be targeted by the second ability, not just one with counters on it.",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vampire Hexmage's ability can't target a permanent card in a zone other than the battlefield, such as a suspended card.",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete printed Kicker costs lowered through the shared casting algebra."""
 
-import re
+from . import regex_working_set as re
 from ..nonmana_kicker import FixedNonmanaKickerSpec,NONMANA_KICKER_HANDLER,nonmana_kicker_dependencies
 from ..util import mana_cost_to_vector
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD

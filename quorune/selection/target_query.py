@@ -2,9 +2,11 @@ from __future__ import annotations
 
 """Read-only target identity snapshots shared by proposal and revalidation."""
 
-from typing import Any, Iterable, Mapping, Protocol
+from typing import Any, Iterable, Iterator, Mapping, Protocol, TYPE_CHECKING
 
 from ..errors import GameRuleError
+if TYPE_CHECKING:
+    from ..model import CardInstance, StackItem
 
 
 class TargetIdentityQuery(Protocol):
@@ -145,4 +147,41 @@ def target_identity_matches_snapshot(
     )
 
 
-__all__ = ["resolve_object", "target_identity_matches_snapshot", "target_snapshot"]
+
+def current_spell_target_subjects(
+    host: TargetIdentityQuery, item: StackItem,
+) -> Iterator[str | CardInstance]:
+    """Read current selected subjects for CR 115.9b without rechecking inner legality."""
+
+    snapshots = item.context.get("target_snapshots")
+    if not isinstance(snapshots, Mapping):
+        return
+    announced_groups = item.context.get("target_groups")
+    refs = item.targets
+    if (item.context.get("targets_revalidated") is True
+            and isinstance(announced_groups, Mapping) and announced_groups):
+        refs = [
+            ref for group in announced_groups.values()
+            if isinstance(group, (list, tuple)) for ref in group
+        ]
+    for ref in refs:
+        if type(ref) is not str:
+            continue
+        snapshot = snapshots.get(ref)
+        if not isinstance(snapshot, Mapping) or snapshot.get("ref") != ref:
+            continue
+        if snapshot.get("category") == "player":
+            if ref in host.state.active_seats():
+                yield ref
+            continue
+        if (snapshot.get("zone") != "battlefield" or snapshot.get("category") != "permanent"
+                or type(snapshot.get("object_id")) is not str
+                or type(snapshot.get("zone_change_counter")) is not int):
+            continue
+        card = host.state.cards.get(snapshot["object_id"])
+        if (card is not None and card.zone == "battlefield" and not card.phased_out
+                and target_identity_matches_snapshot(host, ref, snapshot)):
+            yield card
+
+
+__all__ = ["current_spell_target_subjects", "resolve_object", "target_identity_matches_snapshot", "target_snapshot"]

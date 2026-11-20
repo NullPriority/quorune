@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Unrestricted cardinality over complete existing homogeneous result owners."""
 
-import re
+from . import regex_working_set as re
 from copy import deepcopy
 
 from ..query_effect_amount_model import CONTROLLER_MAXIMUM_PERMANENT_MANA_AMOUNT

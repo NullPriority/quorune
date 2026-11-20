@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Lower a complete fixed graveyard exile, copy and resolving-cast result."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.graveyard_card_targets import graveyard_copy_scope_schema
 from ..rules.graveyard_copy_cast_model import GRAVEYARD_COPY_MECHANIC, GRAVEYARD_COPY_OPERATION

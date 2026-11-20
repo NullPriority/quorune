@@ -1,0 +1,1418 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned-qualified-death-cast-permission",
+  "source": "Pinned full originals and canonical shared fixtures",
+  "cards": [
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "name": "Counterspell",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aadd10d0-6dd0-4bdc-8d93-ff08e29a5863",
+      "name": "Drannith Magistrate",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Your opponents can't cast spells from anywhere other than their hands.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1a6fce11-e77c-41f1-9ff7-9a93b18071db",
+      "name": "Ebondeath, Dracolich",
+      "mana_cost": "{2}{B}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Zombie Dragon",
+      "oracle_text": "Flash\nFlying\nEbondeath enters tapped.\nYou may cast this card from your graveyard if a creature not named Ebondeath, Dracolich died this turn.",
+      "power": "5",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "name": "Fist of Suns",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "You may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "name": "Gisa and Geralf",
+      "mana_cost": "{2}{U}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "When Gisa and Geralf enters, mill four cards.\nOnce during each of your turns, you may cast a Zombie creature spell from your graveyard.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "385c1208-bfea-44e2-b236-4f38bc90db9f",
+      "name": "Gladecover Scout",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Scout",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Hexproof"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "name": "Island",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Basic Land — Island",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Lithoform Engine",
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "oracle_text": "{2}, {T}: Copy target activated or triggered ability you control. You may choose new targets for the copy.\n{3}, {T}: Copy target instant or sorcery spell you control. You may choose new targets for the copy.\n{4}, {T}: Copy target permanent spell you control. (The copy becomes a token.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Legendary Artifact"
+    },
+    {
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "name": "Mountain",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Basic Land — Mountain",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Raise the Alarm",
+      "oracle_id": "5b2364d7-a811-4595-a1b4-224c70555ffa",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "name": "Sliver Hivelord",
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Sliver",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Solemnity",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-07-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "name": "Swamp",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Basic Land — Swamp",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3416ac84-c5ef-44be-894f-ab3b89e592ce",
+      "name": "Undead Sprinter",
+      "mana_cost": "{B}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Zombie",
+      "oracle_text": "Trample, haste\nYou may cast this card from your graveyard if a non-Zombie creature died this turn. If you do, this creature enters with a +1/+1 counter on it.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "Haste",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "name": "Universal Automaton",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact Creature — Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "name": "Village Rites",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "name": "Wastes",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Basic Land",
+      "oracle_text": "{T}: Add {C}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1a6fce11-e77c-41f1-9ff7-9a93b18071db",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "Ebondeath, Dracolich's last ability cares only whether a creature not named Ebondeath, Dracolich died during the turn, even if Ebondeath, Dracolich wasn't in your graveyard when that happened. It doesn't matter if a creature named Ebondeath, Dracolich also died, and it doesn't matter what happens to the creature after it dies. For example, if the creature that died is a token or the creature card leaves the graveyard later in the turn, you can still cast Ebondeath, Dracolich."
+    },
+    {
+      "oracle_id": "1a6fce11-e77c-41f1-9ff7-9a93b18071db",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "Casting Ebondeath, Dracolich from your graveyard follows the normal rules for casting that card. You must pay its costs, and you must follow all applicable timing rules."
+    },
+    {
+      "oracle_id": "1a6fce11-e77c-41f1-9ff7-9a93b18071db",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "Ebondeath Dracolich cares what the creature's name was while it was last on the battlefield, not what it is in the graveyard. For example, if a creature with a different name becomes a copy of Ebondeath, Dracolich and then dies, you won't be able to cast Ebondeath, Dracolich from your graveyard."
+    },
+    {
+      "oracle_id": "3416ac84-c5ef-44be-894f-ab3b89e592ce",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "You still pay all costs and obey timing restrictions when casting Undead Sprinter from your graveyard with the permission from its last ability."
+    },
+    {
+      "oracle_id": "3416ac84-c5ef-44be-894f-ab3b89e592ce",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If Undead Sprinter is countered or dies after being cast from your graveyard, it will return to your graveyard. It may be cast this way again."
+    },
+    {
+      "oracle_id": "3416ac84-c5ef-44be-894f-ab3b89e592ce",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell from your graveyard, it immediately moves to the stack. Players can't take any actions until you've finished casting the spell."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers."
+    },
+    {
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clone's ability doesn't target the chosen creature."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately."
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Wastes is not a land type. If something asks you to name a land type, you can't choose Wastes."
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "In Limited events (including Sealed Deck and Booster Draft), Wastes must be in your card pool to be included in your deck. You can't add Wastes to your card pool in the same way that you can add other basic lands."
+    },
+    {
+      "oracle_id": "05d24b0c-904a-46b6-b42a-96a4d91a0dd4",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Because Wastes is a basic land, you can include as many of them as you like in your Constructed decks."
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead."
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects."
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc",
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one."
+    },
+    {
+      "comment": "Counters can be put on cards that aren't on the battlefield. Notably, suspended cards will still get time counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with infect has no effect on creatures or players. No -1/-1 counters are put on creatures, and no damage is marked on them. Players don’t get poison counters and they don’t lose life. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage from a source with wither has no effect on creatures. No -1/-1 counters are put on them, and no damage is marked on them. The damage is still dealt for purposes of effects that care about damage, such as lifelink.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature with tribute is entering the battlefield, the chosen opponent can’t pay tribute even if they want to.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a replacement effect allows a player to modify or replace an event by putting counters on an artifact, creature, enchantment, or land, that player may apply that replacement effect. Counters won’t be put on the object, but if the original event is entirely replaced (such as by applying Soul-Scar Mage’s replacement effect), the original event won’t happen.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact, creature, enchantment, or land would enter the battlefield with counters on it at the same time that Solemnity enters the battlefield, Solemnity doesn’t stop it from getting those counters.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the cost of an ability or an additional cost of a spell requires putting counters on an artifact, creature, enchantment, or land, that cost can’t be paid. If a resolving spell or ability says that a player may put counters on one of those objects, that player can’t choose to do so.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity doesn’t remove any counters players or permanents already have.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Solemnity stops counters from being put on an artifact, creature, enchantment, or land as it enters the battlefield, as well as stopping counters from being put on them later.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While resolving a cumulative upkeep trigger of a permanent, you’ll fail to put a counter on that permanent, then you may pay for the age counters already on it. If it has no age counters on it, you may pay {0}.",
+      "oracle_id": "f0b4331b-ddd3-4f11-ba16-67c651c8954c",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you apply Fist of Suns's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Fist of Suns's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana of any color can be spent to cast it, you may cast it for Fist of Suns's alternative cost and still spend any color of mana to cover that cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you pay {W}{U}{B}{R}{G} rather than pay the mana cost of a spell with {X} in its mana cost, the only legal choice for X is 0."
+    },
+    {
+      "oracle_id": "aadd10d0-6dd0-4bdc-8d93-ff08e29a5863",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Effects may put cards from other zones onto the battlefield under an opponent's control."
+    },
+    {
+      "oracle_id": "aadd10d0-6dd0-4bdc-8d93-ff08e29a5863",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If an effect says that an opponent may cast a spell from anywhere other than their hand, Drannith Magistrate's restriction overrules that permission."
+    },
+    {
+      "oracle_id": "aadd10d0-6dd0-4bdc-8d93-ff08e29a5863",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If a rule or effect allows them to do so, your opponents may play lands from zones other than their hand and activate abilities of cards in zones other than their hand."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Once you begin to cast the Zombie spell, losing control of Gisa and Geralf won’t affect the spell."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If you cast one Zombie creature spell from your graveyard and then have a new Gisa and Geralf come under your control in the same turn, you may cast another Zombie creature spell from your graveyard that turn."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the Zombie spell you cast from your graveyard."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If a Zombie card is put into your graveyard during your main phase and the stack is empty, you have a chance to cast it before any player may attempt to remove that card from your graveyard."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If multiple effects allow you to cast a Zombie creature spell from your graveyard, such as those of Gisa and Geralf and Karador, Ghost Chieftain, you must announce which permission you’re using as you begin to cast the spell."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You must pay the costs to cast that Zombie spell. If it has an alternative cost, you may cast it for that cost instead."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If a permanent spell is copied, it's put onto the battlefield as a token as the spell resolves rather than putting the copy of the spell onto the battlefield. The rules that apply to a permanent spell becoming a permanent apply to a copy of a spell becoming a token."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Any choices made when the spell or ability resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves. Most notably, if a triggered ability asks you to pay a cost (such as that of Leyline Tyrant), you pay that cost for the copy if you wish to have it paid."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If an ability is linked to a second ability, copies of that first ability are also linked to that second ability. If the second ability refers to “the exiled card,” it refers to all cards exiled by the first ability and the copy. For example, if Fiend Hunter's enters-the-battlefield ability is copied and two creatures are exiled, they both return when Fiend Hunter leaves the battlefield."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy. Most notably, if the original spell was kicked, the copy is kicked."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The source of the copy from Lithoform Engine's first ability is the same as the source of the original ability."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Lithoform Engine can copy any spell or ability on the stack, not just one with targets. If a permanent spell is copied, new targets can't be chosen for it, if it has any (perhaps because it's an Aura or a mutating creature spell)."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The token that a resolving copy of a spell becomes isn't said to have been “created.”"
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written “[Cost]: [Effect].” Some keyword abilities (such as equip) are activated abilities and will have a colon in their reminder text."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not “cast” or “activated.” Creating the copy won't cause abilities that trigger when a player casts a spell or activates an ability to trigger. Abilities that say that a triggered ability triggers additional times won't apply to copying a triggered ability."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The copy will resolve before the original spell or ability does."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell or ability it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Triggered abilities use the word “when,” “whenever,” or “at.” They're often written as “[Trigger condition], [effect].” Some keywords (such as prowess) are triggered abilities and will use “when,” “whenever,” or “at” in their reminder text."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the spell or ability has damage divided as it was put onto the stack, the division can't be changed, although the targets receiving that damage still can. The same is true of spells and abilities that distribute counters."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Lithoform Engine's first ability targets an activated or triggered ability that is on the stack and creates another instance of that ability on the stack. It doesn't cause any object to gain an ability."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the spell or ability that's copied has an X whose value was determined as it was cast or activated, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "0bf299da-1854-4153-baea-3cee2eb01ee8",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If the spell or ability that's copied is modal (that is, it says “Choose one —” or the like), the copy will have the same mode. A different mode can't be chosen. This doesn't apply to copying a permanent spell with a modal enters-the-battlefield triggered ability, but it does apply to copying that ability."
+    }
+  ]
+}

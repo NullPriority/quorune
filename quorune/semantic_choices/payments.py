@@ -151,6 +151,7 @@ def _controller_payment_requirements(
 
 def _declined_counter_payment(
     effect: Mapping[str, Any], actor: str, label: str, query: SemanticChoiceQuery,
+    *, source_controller: str,
 ) -> SemanticChoiceCompletion:
     target = str(effect.get("stack") or "")
     if query.stack_object(target) is None:
@@ -173,6 +174,7 @@ def _declined_counter_payment(
         stack_ref=target,
         reason=label,
         countered_by=effect["_countering_controller"] if version == 2 else actor,
+        source_controller=source_controller,
     ),))
 
 
@@ -798,7 +800,9 @@ class OptionalPaymentHandler:
         if self.mode == "effect":
             return SemanticChoiceCompletion()
         if self.mode == "counter":
-            return _declined_counter_payment(effect, actor, label, query)
+            return _declined_counter_payment(
+                effect, actor, label, query, source_controller=continuation.semantic_frame.controller,
+            )
         if self.mode in {*_CUMULATIVE_MODES, "echo"}:
             return _declined_pay_or_sacrifice(
                 self.mode,
@@ -1030,6 +1034,7 @@ class WardPaymentChoiceHandler:
         effect: Mapping[str, Any],
         *,
         actor: str,
+        source_controller: str,
         query: SemanticChoiceQuery,
         label: str,
     ) -> SemanticChoiceCompletion:
@@ -1043,6 +1048,7 @@ class WardPaymentChoiceHandler:
                     stack_ref=target,
                     reason=label,
                     countered_by=actor,
+                    source_controller=source_controller,
                 ),
             )
         )
@@ -1088,7 +1094,8 @@ class WardPaymentChoiceHandler:
                     )
                 )
             return self._counter_completion(
-                effect, actor=actor, query=query, label=label
+                effect, actor=actor, source_controller=continuation.semantic_frame.controller,
+                query=query, label=label,
             )
         if spec.life_payment is not None:
             amount = effect.get("_life_payment")
@@ -1109,7 +1116,8 @@ class WardPaymentChoiceHandler:
                     )
                 )
             return self._counter_completion(
-                effect, actor=actor, query=query, label=label
+                effect, actor=actor, source_controller=continuation.semantic_frame.controller,
+                query=query, label=label,
             )
         selected = tuple(str(value) for value in response.get("cards", ()))
         if len(selected) > 1 or len(selected) != len(set(selected)):
@@ -1124,7 +1132,8 @@ class WardPaymentChoiceHandler:
             if "pay" in response and _payment_choice(response):
                 raise SemanticChoiceError("Ward discard payment requires one card")
             return self._counter_completion(
-                effect, actor=actor, query=query, label=label
+                effect, actor=actor, source_controller=continuation.semantic_frame.controller,
+                query=query, label=label,
             )
         card = query.object(selected[0], zones=("hand",))
         if (
@@ -1152,6 +1161,40 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
     """One registered owner preserves historical v1 and versioned fixed costs."""
 
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
+        from ..stack_target_change_model import STACK_TARGET_CHANGE_PAYMENT_VERSION
+        if effect.get("schema_version") == STACK_TARGET_CHANGE_PAYMENT_VERSION:
+            from .fixed_effect_payment import prepare_stack_target_change_payment
+            return prepare_stack_target_change_payment(effect, context)
+        from ..spell_caster_sacrifice_payment import SPELL_CASTER_SACRIFICE_PAYMENT_VERSION
+        if effect.get('schema_version') == SPELL_CASTER_SACRIFICE_PAYMENT_VERSION:
+            from .spell_caster_sacrifice_payment import prepare_spell_caster_sacrifice_payment
+            return prepare_spell_caster_sacrifice_payment(effect, context)
+        if effect.get('schema_version')==13:
+            from .optional_sacrifice_stats import prepare_optional_sacrifice_stat_result
+            return prepare_optional_sacrifice_stat_result(effect,context)
+        if 'life_gain_counter_result_version' in effect:
+            from .life_gain_counted_results import prepare_life_gain_counter_payment
+            return prepare_life_gain_counter_payment(effect, context)
+        if effect.get('schema_version')==12:
+            from .recover import prepare_recover
+            return prepare_recover(effect,context)
+        if 'recover' in effect or '_recover_identity' in effect:
+            raise SemanticChoiceError('Recover fields require their explicit version-twelve wrapper')
+        if effect.get('schema_version')==11:
+            from .cumulative_graveyard_upkeep import prepare_cumulative_graveyard_upkeep
+            return prepare_cumulative_graveyard_upkeep(effect,context)
+        if effect.get('schema_version')==10:
+            from .cumulative_effect_cost_upkeep import prepare_cumulative_effect_cost_upkeep
+            return prepare_cumulative_effect_cost_upkeep(effect,context)
+        if effect.get('schema_version')==9:
+            from .cumulative_alternative_mana_upkeep import prepare_cumulative_alternative_mana_upkeep
+            return prepare_cumulative_alternative_mana_upkeep(effect,context)
+        if effect.get('schema_version')==8:
+            from .cumulative_counter_upkeep import prepare_cumulative_counter_upkeep
+            return prepare_cumulative_counter_upkeep(effect,context)
+        if effect.get('schema_version')==7:
+            from .cumulative_object_upkeep import prepare_cumulative_object_upkeep
+            return prepare_cumulative_object_upkeep(effect,context)
         if effect.get('schema_version')==5:
             from .commander_learn import prepare_commander_learn
             return prepare_commander_learn(effect,context)
@@ -1161,12 +1204,43 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if effect.get('schema_version')==3:
             from .source_maintenance import prepare_source_maintenance
             return prepare_source_maintenance(effect,context)
-        if effect.get('schema_version')==2:
+        if effect.get('schema_version') in (2,6):
             from .fixed_effect_payment import prepare_fixed_effect_payment
             return prepare_fixed_effect_payment(effect,context)
         return super().prepare(effect,context)
 
     def complete(self,continuation:SemanticChoiceContinuation,response:Mapping[str,Any],query:SemanticChoiceQuery)->SemanticChoiceCompletion:
+        from ..stack_target_change_model import STACK_TARGET_CHANGE_PAYMENT_VERSION
+        if continuation.effect.get("schema_version") == STACK_TARGET_CHANGE_PAYMENT_VERSION:
+            from .fixed_effect_payment import complete_stack_target_change_payment
+            return complete_stack_target_change_payment(continuation, response, query)
+        from ..spell_caster_sacrifice_payment import SPELL_CASTER_SACRIFICE_PAYMENT_VERSION
+        if continuation.effect.get('schema_version') == SPELL_CASTER_SACRIFICE_PAYMENT_VERSION:
+            from .spell_caster_sacrifice_payment import complete_spell_caster_sacrifice_payment
+            return complete_spell_caster_sacrifice_payment(continuation, response, query)
+        if continuation.effect.get('schema_version')==13:
+            from .optional_sacrifice_stats import complete_optional_sacrifice_stat_result
+            return complete_optional_sacrifice_stat_result(continuation,response,query)
+        if continuation.effect.get('schema_version')==12:
+            from .recover import complete_recover
+            return complete_recover(continuation,response,query)
+        if 'recover' in continuation.effect or '_recover_identity' in continuation.effect:
+            raise SemanticChoiceError('Recover fields require their explicit version-twelve wrapper')
+        if continuation.effect.get('schema_version')==11:
+            from .cumulative_graveyard_upkeep import complete_cumulative_graveyard_upkeep
+            return complete_cumulative_graveyard_upkeep(continuation,response,query)
+        if continuation.effect.get('schema_version')==10:
+            from .cumulative_effect_cost_upkeep import complete_cumulative_effect_cost_upkeep
+            return complete_cumulative_effect_cost_upkeep(continuation,response,query)
+        if continuation.effect.get('schema_version')==9:
+            from .cumulative_alternative_mana_upkeep import complete_cumulative_alternative_mana_upkeep
+            return complete_cumulative_alternative_mana_upkeep(continuation,response,query)
+        if continuation.effect.get('schema_version')==8:
+            from .cumulative_counter_upkeep import complete_cumulative_counter_upkeep
+            return complete_cumulative_counter_upkeep(continuation,response,query)
+        if continuation.effect.get('schema_version')==7:
+            from .cumulative_object_upkeep import complete_zero_age_upkeep
+            return complete_zero_age_upkeep(continuation,response,query)
         if continuation.effect.get('schema_version')==5:
             from .commander_learn import complete_commander_learn
             return complete_commander_learn(continuation,response,query)
@@ -1176,7 +1250,7 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         if continuation.effect.get('schema_version')==3:
             from .source_maintenance import complete_source_maintenance
             return complete_source_maintenance(continuation,response,query)
-        if continuation.effect.get('schema_version')==2:
+        if continuation.effect.get('schema_version') in (2,6):
             from .fixed_effect_payment import complete_fixed_effect_payment
             return complete_fixed_effect_payment(continuation,response,query)
         return super().complete(continuation,response,query)
@@ -1190,18 +1264,29 @@ PAYMENT_CHOICE_HANDLERS = (
         mode="effect",
         prompt="Pay the stated cost to apply the triggered effect?",
         default_cost=FrozenMap(),
+        private_data=('actor payable mana', 'owner library unit orders'),
         capability_dependencies=(
             "effect.choice.optional_fixed_mana_payment",
         ),
         continuation_fields=(
             "player",
             "source",
+            "stack",
             "cost",
             "effects",
             "declined_effects",
             "schema_version",
+            "recover", "_recover_identity",
+            "_fractional_life_quote",
+            "stat", "result",
             "action", "rules_scope",
             "payment",
+            "source_stack",
+            "cumulative_payment", "stage", "_zero_age_payment",
+            "counter_payment", "counter_required", "counter_chosen",
+            "alternative_mana_price", "upkeep_age", "color_counts",
+            "upkeep_effect_cost", "effect_cost_age", "effect_cost_recipients",
+            "upkeep_graveyard_library_cost", "graveyard_cost_state",
             "reflexive_program",
             "_parent_stack_ref",
             "_legal_objects",

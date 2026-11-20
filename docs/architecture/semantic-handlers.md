@@ -9,6 +9,37 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Half-life Recover prices use a separate version-two Recover descriptor inside
+the existing version-twelve lifecycle instruction. The price quotes the locked
+payer's current signed life and rounds its nonnegative half upward through the
+shared quantity owner. Acceptance rejects a changed quote and emits the ordinary
+life-payment intent. A zero payment remains a paid cost, so the original
+graveyard incarnation follows the return branch. Decline follows the existing
+exile branch. Resolved prices use an explicit version-thirteen cost kind;
+positive fixed-life and fixed-mana Recover encodings keep their meanings.
+Unscoped resolved prices, other rounding and unrepresented riders fail closed.
+
+Death-controller optional draws use version two of the event optional-draw
+instruction. The complete all-creature death occurrence retains the creature's
+last battlefield controller as both chooser and drawer, independently from the
+source controller who owns the triggered ability. Tokens qualify. The existing
+draw-permission and private choice owners preserve that recipient through saved
+continuations and canonical drawing. The version-one defending-player attack
+instruction retains its original scope. Damage-source controller references and
+unrepresented result riders remain outside the death-controller form.
+
+Resolution-selected creature-stat results use an explicit version-thirteen
+optional-payment wrapper and a separate versioned stat descriptor. The closed
+controller end-step instruction offers one controlled nontoken creature through
+the existing fixed-cost owner. Acceptance seals that incarnation's current
+public power and toughness before its canonical sacrifice movement, then binds
+the selected nonnegative stat into one independently validated fixed token
+definition. A zero result still pays the sacrifice. Replacement redirection
+preserves the paid cost; death triggers wait until the resolving instruction
+finishes. Cast-price and activation-price stat descriptors retain their existing
+meanings. Mandatory prices, reflexive results and unrepresented riders remain
+outside this family.
+
 Next-spell cost reductions use the existing duration journal and public total-
 cost provider. A pending rule retains its resolving controller, spell predicate
 and resolved generic amount independently from its source's later state. Cost
@@ -25,6 +56,15 @@ references, intrinsic search/shuffle and ambiguous optional scope remain with
 their dedicated owners. An omitted third-person player subject keeps its
 explicit first-clause player relation. Resolution order, later choices and
 target legality use the existing sequence and instruction owners.
+
+A targeted-player graveyard-exile instruction gives that player a required
+choice of one current card from their own graveyard. The card is not a target;
+the public-zone query filters physical cards and seals their incarnations.
+An empty graveyard continues without a choice. Acceptance checks the same
+candidate set and sends the card through the canonical replacement-aware zone
+transaction. The source controller and graveyard owner keep separate roles.
+Other counts, predicates and result-dependent riders require represented
+instructions of their own.
 
 Optional graveyard returns use an actor-scoped non-target choice. Candidates
 come from the current owned graveyard through the shared public-zone query,
@@ -172,6 +212,14 @@ layer-5 quantities. Mana production calls the same read-only count owner.
 Pending replacement choices resume at the same cursor without repeating prior
 mutations. Linked-result, conditional, ambiguous shared subjects, and multiple
 independent target groups retain their unsupported boundaries.
+
+A distinct versioned scalar reads the sealed opponent-upkeep participant
+current hand count at damage resolution. Its two fixed differences become zero
+when negative, and zero produces no damage event. The instruction has no player
+target and never inspects private card identities. Source control changes and
+departure preserve the original upkeep subject and canonical damage source;
+departed participants use the existing scheduled-result skip. Old targeted-hand
+quantities retain their own target and wire contracts.
 
 Typed semantic handlers execute one immediate CardProgram instruction. They
 translate a validated typed node and bounded immutable rules query into typed
@@ -491,6 +539,31 @@ requested tapped state as commit, so the prepared identity remains valid when
 entry counters and tapped entry occur together. The existing Persist/Undying
 owner follows the same entering-controller counter attribution.
 
+Reanimation instruction version seven represents an Aura returning after its
+enchanted creature dies. The occurrence captures the Aura's battlefield
+zone-change counter; CR 400.7f permits following exactly the next graveyard
+incarnation, including an Aura moved there by a state-based action. An explicit
+controller-graveyard restriction remains distinct from an unqualified return.
+The existing zone owner performs entry under the resolving controller, and the
+Aura owner supplies a legal non-target attachment choice. Delayed returns use
+the existing next-end-step scheduler with the same retained incarnation.
+Transformed entry consults the physical card's faces; an ineligible single-face
+copy stays in its graveyard. Token Auras retain their triggered occurrence but
+cannot return after leaving the battlefield. Earlier reanimation versions keep
+their existing schemas and meanings.
+
+Optional payment wrapper eleven represents grouped graveyard-to-library upkeep
+costs. The payer proposes a complete fixed-size group from one public graveyard
+for each age counter, and each library owner privately orders that owner's
+individual groups. Proposals retain the selected incarnations and perform no
+movement. One typed cost batch delegates each group to the existing zone owner
+inside the existing transaction boundary. Later replacement preparation sees
+earlier group results; a replacement pause or fault restores every group before
+returning control. Saved replacement choices carry their exact event identities
+so replay can repeat earlier groups without applying a later group's choice to
+them. Older payment wrappers and simultaneous-movement payloads retain their
+existing meanings.
+
 The existing counter-unless-payment choice additionally accepts a closed v2
 controller-payment descriptor. It locks the current target's controller for
 the private choice, validates the complete mana vector and current target at
@@ -671,8 +744,10 @@ the resulting abilities. Untap-step triggers remain held until upkeep priority.
 The next-controller-untap instruction emits a typed prohibition intent through
 the canonical tap-state owner. It pins the resolved incarnation and stores one
 object-local marker consumed at its current controller's next represented
-physical untap step. Repeated markers expire together; the skipped untap does
-not remove a stun counter. Fixed-player timing, Exert, multiple future steps,
+physical untap step. Its fine-grained capability closes the represented
+instruction's tap-state coverage independently. Repeated markers expire
+together; the skipped untap does not remove a stun counter. Fixed-player timing,
+Exert, multiple future steps,
 and unsupported phasing or skipped-step compositions remain residual.
 
 No-op changes, entering in a tap state, stun-replaced untaps, and rollback do not
@@ -814,3 +889,55 @@ commit their ordinary token-creation preparation intent before automatic
 continuation. The tokens retain their printed tapped state and receive no
 combat assignments. The legacy manual-completion shape remains available;
 existing effect versions and cleanup ownership retain their contracts.
+
+Affected-player graveyard exile keeps its version-one choice encoding. Version
+two adds a closed selected-card type and fixed life-gain result. Its intent
+pins the chosen incarnation and delegates movement to the existing zone owner.
+After movement commits, the result reads current public characteristics, using
+the saved public facts for a hidden destination. It then emits an ordinary life
+instruction through the committed-followup owner and the original semantic
+frame. The graveyard owner remains the chooser; the resolving ability's
+controller remains the life recipient. Only an exact final typed result parent
+may append this follow-up. Replacement and remaining-choice encodings retain
+the nested result without changing historical version-one records.
+
+The direct-card counterpart uses the ordinary public-graveyard exile owner and
+a closed creature-card result. It emits a committed receipt only after exile
+finishes. The existing receipt consumer inserts the ordinary source counter
+and controller life instructions before later instructions. A vanished, phased,
+or new source incarnation receives no counter; the independent life instruction
+still resolves. The original one-card graveyard target schema remains
+unrestricted by type, and target revalidation rejects the whole ability when
+that target becomes illegal. Plain exile descriptors and handlers retain their
+existing encodings.
+
+Targeted graveyard exile can also carry a typed outcome for fixed life drain,
+counted life gain, or one predefined Clue or Food. The existing target-set
+authority owns required and optional counts, same-graveyard selection, and
+resolution revalidation. The zone transaction moves surviving targets
+simultaneously. The outcome counts their new face-up creature-card incarnations
+in exile and sends the ordinary life or token instruction to the committed
+follow-up consumer. An announced empty set and a move redirected away from
+exile supply no qualifying card. The recipe preserves the canonical Food and
+Clue definitions and the original public exile descriptor.
+
+An exclusive graveyard exile recipe has one announced card target. Its
+optional form uses the existing resolution choice after target revalidation
+and produces an outcome only after the exile commits. Its mandatory form
+selects one branch using current public type or the saved last-known type.
+The ordinary movement receipt preserves the exile journal. The existing
+follow-up consumer applies life, private draw, or a temporary stat change
+to the original source incarnation.
+
+A fixed creature token result carries one announced graveyard card target and
+an ordinary compiler-pinned token definition. Its predicate distinguishes a
+creature card identified by public or last-known facts from a creature card
+that actually reached exile. The committed follow-up owner executes token
+creation after the movement and retains any compiler-verified intrinsic token
+ability.
+
+A creature-and-land exile outcome keeps one announced card target and the
+ordinary movement receipt. The current or last-known public types govern
+the two independent token clauses. A land creature supplies both tokens in
+printed order. The remaining type combination supplies the ordinary life
+effect.

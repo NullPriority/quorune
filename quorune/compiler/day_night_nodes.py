@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed paired-face lowering for Daybound and Nightbound."""
 
 from typing import Any
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..day_night_model import (

@@ -24,6 +24,7 @@ from quorune.model import GameState, CardInstance
 from quorune.oracle_ir import _reviewed_effect_template, register_generated_programs
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.rules.capabilities import load_default_capability_registry, CapabilityRegistry, DEFAULT_CAPABILITY_REGISTRY
+from quorune.rules.evidence import _capability_validation_snapshot
 from quorune.rules.control_capability_shapes import fixed_control_node_capabilities
 from quorune.semantic_runtime.control_handlers import FixedControlHandler, FixedControlSetHandler
 from quorune.semantic_runtime.context import ReadOnlyHandlerContext, ReadOnlyRulesQuery, SemanticSourceContext, SemanticNodeError
@@ -355,6 +356,7 @@ class FixedControlGameplayTests(unittest.TestCase):
         session.commands.clear()
         session.decisions.clear()
 
+    @_capability_validation_snapshot()
     def replay(self, session):
         expected = authoritative_state_hash(session.engine.state)
         with tempfile.TemporaryDirectory() as directory:

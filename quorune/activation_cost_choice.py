@@ -17,6 +17,9 @@ class CostChoice:
     another: bool = False
     predicate: FrozenMap | None = None
     counter_amount: int | None = None
+    tap_schema_version: int | None = None
+    return_schema_version: int | None = None
+    sacrifice_schema_version: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.kind, str) or not self.kind.strip():
@@ -31,6 +34,23 @@ class CostChoice:
             raise ValueError("cost choice card_type must be null or nonempty")
         if type(self.another) is not bool:
             raise ValueError("cost choice another flag must be boolean")
+        if self.tap_schema_version is not None and (
+            type(self.tap_schema_version) is not int or self.tap_schema_version != 3
+            or self.kind != "tap" or self.predicate is None or self.card_type is not None
+        ):
+            raise ValueError("New tap-cost versions require an explicit typed tap choice")
+        if self.return_schema_version is not None:
+            from .qualified_return_cost_model import QUALIFIED_RETURN_COST_VERSION
+            if (type(self.return_schema_version) is not int or self.return_schema_version != QUALIFIED_RETURN_COST_VERSION
+                    or self.kind != 'return_one_to_owner_hand' or self.predicate is None
+                    or self.card_type is not None or self.another):
+                raise ValueError('New return-cost versions require an explicit subtype return choice')
+        if self.sacrifice_schema_version is not None:
+            from .keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_COST_VERSION
+            if (type(self.sacrifice_schema_version) is not int or self.sacrifice_schema_version!=KEYWORD_SACRIFICE_COST_VERSION
+                    or self.kind!='sacrifice_one' or self.predicate is None or self.card_type is not None
+                    or self.return_schema_version is not None or self.tap_schema_version is not None):
+                raise ValueError('Keyword sacrifice choices require their explicit version and typed predicate')
         from .rules.selected_counter_costs import SELECTED_COUNTER_COST_CAPABILITIES, validate_selected_counter_choice
         if self.kind in SELECTED_COUNTER_COST_CAPABILITIES:
             validate_selected_counter_choice(self)
@@ -87,7 +107,7 @@ class CostChoice:
                     2
                     if self.kind
                     == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
-                    else 1
+                    else self.sacrifice_schema_version or self.return_schema_version or 1
                 ),
                 "kind": ZONE_CHANGE_COST_KIND,
                 "operation": operation,
@@ -113,7 +133,7 @@ class CostChoice:
             return None
         return FixedTapActivationCost.from_descriptor(
             {
-                "schema_version": 2 if self.predicate.get('colors_any') else 1,
+                "schema_version": self.tap_schema_version or (2 if self.predicate.get('colors_any') else 1),
                 "kind": self.kind,
                 "count": self.count,
                 "zone": self.zone,
@@ -132,6 +152,12 @@ class CostChoice:
             result["q"] = thaw_value(self.predicate)
         if self.counter_amount is not None:
             result["amount"] = self.counter_amount
+        if self.tap_schema_version is not None:
+            result["tap_schema_version"] = self.tap_schema_version
+        if self.return_schema_version is not None:
+            result['return_schema_version'] = self.return_schema_version
+        if self.sacrifice_schema_version is not None:
+            result['sacrifice_schema_version'] = self.sacrifice_schema_version
         return result
 
     def to_dict(self) -> dict[str, Any]:
@@ -146,6 +172,12 @@ class CostChoice:
             result["predicate"] = thaw_value(self.predicate)
         if self.counter_amount is not None:
             result["counter_amount"] = self.counter_amount
+        if self.tap_schema_version is not None:
+            result["tap_schema_version"] = self.tap_schema_version
+        if self.return_schema_version is not None:
+            result['return_schema_version'] = self.return_schema_version
+        if self.sacrifice_schema_version is not None:
+            result['sacrifice_schema_version'] = self.sacrifice_schema_version
         return result
 
     @classmethod
@@ -155,10 +187,19 @@ class CostChoice:
             frozenset(expected),
             frozenset((*expected, "predicate")),
             frozenset((*expected, "counter_amount")),
+            frozenset((*expected, "predicate", "tap_schema_version")),
+            frozenset((*expected, 'predicate', 'return_schema_version')),
+            frozenset((*expected, 'predicate', 'sacrifice_schema_version')),
         }:
             raise ValueError("cost choices use a closed schema")
         if "counter_amount" in value and value["counter_amount"] is None:
             raise ValueError("Typed counter cost amounts must be nonnull")
+        if "tap_schema_version" in value and value["tap_schema_version"] is None:
+            raise ValueError("Explicit tap-cost versions must be nonnull")
+        if 'return_schema_version' in value and value['return_schema_version'] is None:
+            raise ValueError('Explicit return-cost versions must be nonnull')
+        if 'sacrifice_schema_version' in value and value['sacrifice_schema_version'] is None:
+            raise ValueError('Explicit sacrifice-cost versions must be nonnull')
         if "predicate" in value and value["predicate"] is None:
             raise ValueError(
                 "typed cost choice predicates must be nonnull objects"
@@ -170,6 +211,9 @@ class CostChoice:
             card_type=value["card_type"],
             another=value["another"],
             counter_amount=value.get("counter_amount"),
+            tap_schema_version=value.get("tap_schema_version"),
+            return_schema_version=value.get('return_schema_version'),
+            sacrifice_schema_version=value.get('sacrifice_schema_version'),
             predicate=(
                 FrozenMap(value["predicate"])
                 if "predicate" in value

@@ -3,7 +3,7 @@ from __future__ import annotations
 """Full-consumption fixed creature Goad over existing target and set queries."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from .direct_target import direct_permanent_target_spec
 from .public_state_queries import fixed_characteristic_battlefield_query_subject

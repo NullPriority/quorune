@@ -1,0 +1,890 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Academy Loremaster",
+      "oracle_id": "7d540860-ae94-4773-a526-aaffca3eb057",
+      "oracle_text": "At the beginning of each player's draw step, that player may draw an additional card. If they do, spells they cast this turn cost {2} more to cast.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": "3",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Blind with Anger",
+      "oracle_id": "97913c3c-eec0-4510-921a-d70c022f7961",
+      "oracle_text": "Untap target nonlegendary creature and gain control of it until end of turn. That creature gains haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2004-10-01",
+      "toughness": null,
+      "type_line": "Instant — Arcane"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "4",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Elspeth, Knight-Errant",
+      "oracle_id": "eab0d8b9-c66f-402f-b259-f46f15cefd78",
+      "oracle_text": "+1: Create a 1/1 white Soldier creature token.\n+1: Target creature gets +3/+3 and gains flying until end of turn.\n−8: You get an emblem with \"Artifacts, creatures, enchantments, and lands you control have indestructible.\"",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2013-06-07",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Elspeth"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Fervor",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "oracle_text": "Creatures you control have haste. (They can attack and {T} as soon as they come under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}{G}{U}",
+      "name": "Fungal Shambler",
+      "oracle_id": "9991941e-436f-42d4-8b0c-1ee84234774b",
+      "oracle_text": "Trample\nWhenever this creature deals damage to an opponent, you draw a card and that opponent discards a card.",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2001-06-04",
+      "toughness": "4",
+      "type_line": "Creature — Fungus Beast"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Reach"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Harbor Guardian",
+      "oracle_id": "d72b69aa-fb61-441e-9b62-4534d7a32a69",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nWhenever this creature attacks, defending player may draw a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": "4",
+      "type_line": "Creature — Gargoyle"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{R}",
+      "name": "Ludevic, Necro-Alchemist",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "oracle_text": "At the beginning of each player's end step, that player may draw a card if a player other than you lost life this turn.\nPartner (You can have two commanders if both have partner.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2016-11-11",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Human Wizard"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{B}",
+      "name": "Notion Thief",
+      "oracle_id": "f8dab16e-1d50-443e-9431-8b6f1cf61c9c",
+      "oracle_text": "Flash\nIf an opponent would draw a card except the first one they draw in each of their draw steps, instead that player skips that draw and you draw a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2020-09-25",
+      "toughness": "1",
+      "type_line": "Creature — Human Rogue"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Reach Through Mists",
+      "oracle_id": "c81ca8ff-92f3-481e-82f7-0673b6c74ea0",
+      "oracle_text": "Draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-03-31",
+      "toughness": null,
+      "type_line": "Instant — Arcane"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{U}",
+      "name": "Sibilant Spirit",
+      "oracle_id": "9798d307-a44a-4f44-94c7-03e499b94962",
+      "oracle_text": "Flying\nWhenever this creature attacks, defending player may draw a card.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2008-09-22",
+      "toughness": "6",
+      "type_line": "Creature — Spirit"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Spirit of the Labyrinth",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "oracle_text": "Each player can't draw more than one card each turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2014-02-07",
+      "toughness": "1",
+      "type_line": "Enchantment Creature — Spirit"
+    },
+    {
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "name": "Thought Reflection",
+      "mana_cost": "{4}{U}{U}{U}",
+      "cmc": 7.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would draw a card, draw two cards instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture:event-draw-defender-battle",
+      "name": "Generic Defender Battle",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "type_line": "Battle — Siege",
+      "oracle_text": "",
+      "defense": "20",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a replacement effect would try to replace a card that you can't draw, that effect can't apply.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you draw a card, and then Spirit of the Labyrinth enters the battlefield, you won't be able to draw more cards that turn.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you haven't drawn any cards in a turn, and a spell or ability would cause you to draw multiple cards, you'll just draw one card.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can draw a maximum of one card on each player's turn. Subsequent card draws are ignored.",
+      "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
+      "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a player causes that player to lose that much life.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player lost life and subsequently lost the game, the player whose turn it is may draw a card.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ludevic's ability checks only if another player lost life during the turn, not whether that player's life total decreased over the course of the turn. For example, if a player other than Ludevic's controller lost 2 life and then gained 8 life this turn, the player whose turn it is may draw a card.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ludevic's ability looks at the entire turn to determine whether the player may draw a card or not. It doesn't matter whether Ludevic was on the battlefield when the opponent lost life.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ludevic's triggered ability triggers at the beginning of each player's end step, including yours, even if no player has lost life that turn. Whether or not a player has lost life is checked only as the triggered ability resolves.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Ludevic's triggered ability will allow the player to draw a card if any player other than Ludevic's controller, including the player whose turn it is, lost life this turn.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Only one card may be drawn no matter how much life was lost or how many players lost life.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes.",
+      "oracle_id": "3b9d587c-39d2-44a2-9802-e4217ed389c0",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability causes you to draw multiple cards, Thought Reflection's effect doubles each card draw. For example, if you cast Harmonize (“Draw three cards”), you'll draw six cards.",
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more replacement effects would apply to a card-drawing event, the player who's drawing the card chooses what order to apply them.",
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Thought Reflections are cumulative. For example, if you have two Thought Reflections on the battlefield, you'll draw four times the original number of cards. If you have three, you'll draw eight times the number of cards, and so on.",
+      "oracle_id": "692a6833-3014-42f6-b1ad-333bb3292c65",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that reduce the cost to cast a spell apply after abilities that raise them. For example, if an opponent chose to draw an additional card as Academy Loremaster's triggered ability resolved, Argivian Phalanx (a card with mana cost {5}{W} and the ability \"This spell costs {1} less to cast for each creature you control.\") will cost them {W} to cast that turn if they have seven or more creatures.",
+      "oracle_id": "7d540860-ae94-4773-a526-aaffca3eb057",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost increase applies to spells that player casts even if they're casting them for an alternative cost. If they cast a spell without paying its mana cost, they'll still have to pay {2}.",
+      "oracle_id": "7d540860-ae94-4773-a526-aaffca3eb057",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an attacking creature loses haste, perhaps because Fervor leaves the battlefield after attackers have been declared, it won't be removed from combat.",
+      "oracle_id": "8e0cea9c-3110-4728-9378-76849e33bb90",
+      "published_at": "2012-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Your opponent does not have to draw a card if they don’t want to.",
+      "oracle_id": "9798d307-a44a-4f44-94c7-03e499b94962",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Emblems behave similarly to enchantments: They have an ability that, in a general sense, continually affects the game. The primary difference between them is that emblems aren’t permanents and don’t exist on the battlefield. Nothing in the game can remove an emblem, simply because no other spell or ability references them. Once you get an emblem, you keep it for the rest of the game. Emblems have no color, name, card type, or other characteristics beyond the listed ability.",
+      "oracle_id": "eab0d8b9-c66f-402f-b259-f46f15cefd78",
+      "published_at": "2011-01-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Lethal damage and effects that say “destroy” won’t cause a permanent with indestructible to be put into the graveyard. However, a permanent with indestructible can be put into the graveyard for a number of reasons. The most likely reasons are if it’s sacrificed, if it’s a creature whose toughness is 0 or less, or if it’s an Aura that’s either unattached or attached to something illegal.",
+      "oracle_id": "eab0d8b9-c66f-402f-b259-f46f15cefd78",
+      "published_at": "2013-07-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an opponent is instructed to draw a card then discard a card, and Notion Thief causes you to draw a card instead, that opponent still discards a card. The same is true of any other actions that opponent is instructed to do.",
+      "oracle_id": "f8dab16e-1d50-443e-9431-8b6f1cf61c9c",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more players each control a Notion Thief and a player would draw a card other than the first one in their draw step, that player chooses one of the applicable Notion Thief effects to apply. Then the player whose Notion Thief's effect was chosen repeats this process among the remaining Notion Thief effects, and so on, until there are no more possible such effects to apply. Each effect can be applied to the card draw only once this way.",
+      "oracle_id": "f8dab16e-1d50-443e-9431-8b6f1cf61c9c",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The above procedure means that if each player in a two-player game controls a Notion Thief and one would draw a card, it really will be that player who draws a card.",
+      "oracle_id": "f8dab16e-1d50-443e-9431-8b6f1cf61c9c",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

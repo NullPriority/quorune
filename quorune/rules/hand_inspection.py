@@ -36,6 +36,7 @@ class InspectHandIntent:
     refs: tuple[str, ...]
     reason: str
     public: bool
+    keep_revealed: bool = True
 
     def __post_init__(self) -> None:
         if any(
@@ -50,6 +51,7 @@ class InspectHandIntent:
             any(type(value) is not str or not value for value in refs)
             or len(refs) != len(set(refs))
             or type(self.public) is not bool
+            or type(self.keep_revealed) is not bool
         ):
             raise ValueError("Hand-inspection intent is malformed")
         object.__setattr__(self, "refs", refs)

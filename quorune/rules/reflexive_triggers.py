@@ -50,14 +50,40 @@ def enqueue_reflexive_trigger(host, intent):
     consequence = ReflexiveTriggerProgram.from_dict(intent.program)
     if not reflexive_program_capabilities(consequence):
         raise GameRuleError('Reflexive consequence ownership is incomplete')
+    return _place_reflexive_trigger(host, parent, consequence, paid_creature=intent.paid_creature)
+
+
+def token_creation_reflexive_source(host, parent, consequence):
+    """Use the resolving spell entity or the original battlefield source's locked facts."""
+    from ..target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, capture_targeting_source
+
+    if parent.kind == 'triggered_ability':
+        source_id = parent.source_object_id
+        return source_id, _bound_reflexive_context(parent, consequence, source_id)
+    source = host.state.cards.get(parent.card_object_id)
+    if source is None or source.zone != 'stack' or source.controller != parent.controller:
+        raise GameRuleError('Reflexive creation requires the resolving spell incarnation')
+    binding = capture_targeting_source(host, source, schema_version=BOUND_TARGETING_SOURCE_VERSION)
+    return source.object_id, {TARGETING_SOURCE_CONTEXT: binding.to_dict(), 'source_logical_object_id': binding.logical_object_id}
+
+
+def enqueue_token_creation_reflexive(host, parent, consequence):
+    source_id, source_context = token_creation_reflexive_source(host, parent, consequence)
+    return _place_reflexive_trigger(host, parent, consequence, source_id=source_id, source_context=source_context)
+
+
+def _place_reflexive_trigger(host, parent, consequence, *, paid_creature=None, source_id=None, source_context=None):
     retained = {'creature_power_damage_source_lki', 'scalar_reference_snapshots'}
     context = {key: deepcopy(value) for key, value in parent.context.items()
                if key.startswith('source_') or key in retained}
-    source_id = parent.source_object_id or parent.card_object_id
-    if consequence.schema_version in BOUND_REFLEXIVE_PROGRAM_VERSIONS:
-        context.update(_bound_reflexive_context(parent, consequence, source_id))
-    if intent.paid_creature is not None:
-        context[REFLEXIVE_PAID_CREATURE_CONTEXT] = intent.paid_creature.to_dict()
+    if source_context is not None:
+        context.update(source_context)
+    else:
+        source_id = parent.source_object_id or parent.card_object_id
+        if consequence.schema_version in BOUND_REFLEXIVE_PROGRAM_VERSIONS:
+            context.update(_bound_reflexive_context(parent, consequence, source_id))
+    if paid_creature is not None:
+        context[REFLEXIVE_PAID_CREATURE_CONTEXT] = paid_creature.to_dict()
     source = host.state.cards.get(source_id)
     if source is not None:
         if not context.get('source_logical_object_id'):
@@ -71,7 +97,7 @@ def enqueue_reflexive_trigger(host, intent):
         context.update(target_schema_override=consequence.to_dict()['target_schema'], trigger_target_selection_pending=True)
     ref = host._next_ref('S')
     item = StackItem(stack_id=host._stable_runtime_id('stack', ref), ref=ref, kind='triggered_ability',
-        controller=intent.controller, label=parent.label + ' — reflexive', source_object_id=source_id,
+        controller=parent.controller, label=parent.label + ' — reflexive', source_object_id=source_id,
         visibility=list(host.seats), context=context)
     enqueue_trigger_batch(host, (item,))
     return ref

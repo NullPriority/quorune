@@ -1,7 +1,7 @@
 """Bind one existing direct-permanent target to a proved occurrence player."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from .direct_target import DirectPermanentTargetSpec
 from .event_player_results import _event_player

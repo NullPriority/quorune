@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed reductions for spells matching the source's chosen creature type."""
 
-import re
+from . import regex_working_set as re
 
 from ..cast_cost_modifiers import (
     CHOSEN_TYPE_CAST_COST_CAPABILITY, CHOSEN_TYPE_CAST_COST_HANDLER_ID,

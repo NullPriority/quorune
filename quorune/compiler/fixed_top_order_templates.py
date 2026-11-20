@@ -1,5 +1,5 @@
 """Whole fixed-count controller ordering and explicit controller shuffle."""
-import re
+from . import regex_working_set as re
 
 from .affected_player_discard_templates import fixed_affected_player_hand_top_effect_template
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -58,6 +58,9 @@ def _graveyard_library_order_template(text: str):
 
 
 def fixed_top_order_template(text: str):
+    from .target_library_shuffle import fixed_target_library_shuffle_template
+    targeted=fixed_target_library_shuffle_template(text)
+    if targeted is not None:return targeted
     match = re.fullmatch(
         rf'Look at the top (?P<count>{FIXED_COUNT_PATTERN}) cards? of your '
         r'library,? then put them back in any order\.',

@@ -1,5 +1,5 @@
 """Optional untargeted returns; mill sequencing remains in the clause owner."""
-import re
+from . import regex_working_set as re
 
 from ..rules.graveyard_card_targets import GraveyardCardTargetKind
 from ..rules.graveyard_return_choices import GraveyardReturnSelection, OPERATION, MECHANIC

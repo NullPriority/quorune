@@ -7,6 +7,8 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, ImmutableValueError, freeze_value
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
+from ..graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_OPERATION
+from ..rules.graveyard_exile_type_outcomes import GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION
 from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_VERSIONS
@@ -22,6 +24,8 @@ _MUTATING_TARGET_FIELDS = {
         'destroy', 'bounce', 'exile_permanent', 'tap', 'untap', 'place_counters',
         'remove_counters', 'remove_all_counters', 'gain_control', 'give_control', 'regenerate',
         'sacrifice', 'apply_source_characteristics_until_end_of_turn',
+        'exile_public_graveyard_card_result',
+        'exile_public_graveyard_card_branch', GRAVEYARD_EXILE_TOKEN_OPERATION, GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION,
         COMBAT_REMOVAL_OPERATION,
     )},
     'damage': 'target',

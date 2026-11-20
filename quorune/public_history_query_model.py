@@ -5,6 +5,7 @@ from collections.abc import Mapping
 
 from .creature_subtypes import canonical_creature_subtype
 from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS, PUBLIC_MOVEMENT_HISTORY_KINDS
+from .turn_history_model import CAST_CREATURE_COUNTERED_EVENT
 
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
 COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
@@ -15,7 +16,7 @@ PERMANENT_DEATH_HISTORY_CAPABILITY = "zone.turn_history.permanent_death"
 PUBLIC_MOVEMENT_HISTORY_CAPABILITY = "condition.history.public_movement"
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
     'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard',
-    'permanent_died'}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
+    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
 
@@ -33,9 +34,11 @@ class PublicHistoryQuerySpec:
     token: bool | None = None
     artifact_subtype: str | None = None
     exclude_source: bool = False
+    excluded_name: str | None = None
+    excluded_subtype: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
             raise ValueError("Unsupported public history query version")
         if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
         if self.reduction not in {'count','sum_amount','max_player_amount'}:raise ValueError('Unknown history reduction')
@@ -47,9 +50,14 @@ class PublicHistoryQuerySpec:
             if not isinstance(values,(tuple,list)) or any(type(v) is not str or v not in _TYPES for v in values) or len(values)!=len(set(values)):
                 raise ValueError('History type predicates require distinct canonical card types')
             object.__setattr__(self,field,tuple(sorted(values)))
+        if self.event == "player_damaged" and (
+            self.schema_version != 1 or self.relation != "controller"
+            or self.types_all != ("creature",) or self.types_any or self.excluded_types
+        ):
+            raise ValueError("Creature damage history requires the exact player recipient and source type")
         typed_arrival=self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types))
         if (life or self.event in (COMMITTED_OCCURRENCE_HISTORY_KINDS | {
-                "card_discarded", "card_arrived_exile", "artifact_subtype_sacrificed"})) and any(
+                "card_discarded", "card_arrived_exile", "artifact_subtype_sacrificed", CAST_CREATURE_COUNTERED_EVENT})) and any(
             (self.types_all, self.types_any, self.excluded_types)
         ):
             raise ValueError('This history event does not seal type predicates')
@@ -63,11 +71,11 @@ class PublicHistoryQuerySpec:
         if (self.schema_version==2)!=(typed_arrival or self.origin is not None):
             raise ValueError('Qualified history queries require version2; version1 keeps its original fields')
         death_query = self.event == "permanent_died"
-        if ((death_query and self.schema_version not in (3, 4))
+        if ((death_query and self.schema_version not in (3, 4, 5))
                 or (not death_query and self.schema_version == 3)):
             raise ValueError("Permanent death queries require their explicit version")
         if death_query:
-            if self.creature_subtype is None and self.token is None:
+            if self.schema_version != 5 and self.creature_subtype is None and self.token is None:
                 raise ValueError("Permanent death queries require a subtype or token predicate")
             if self.creature_subtype is not None and canonical_creature_subtype(self.creature_subtype) != self.creature_subtype:
                 raise ValueError("Death queries require a canonical creature subtype")
@@ -87,6 +95,16 @@ class PublicHistoryQuerySpec:
             raise ValueError("Only artifact subtype sacrifice queries carry that subtype")
         elif self.schema_version == 4 and not (death_query and self.exclude_source and self.relation == "controller"):
             raise ValueError("Qualified death history requires explicit source exclusion")
+        if self.schema_version == 5:
+            from .death_cast_permission_model import DeathCastPermissionSpec
+            DeathCastPermissionSpec(excluded_name=self.excluded_name, excluded_subtype=self.excluded_subtype)
+            if (not death_query or self.creature_subtype is not None or self.token is not None
+                    or self.exclude_source or self.origin is not None or self.artifact_subtype is not None
+                    or self.reduction != 'count' or self.types_all != ('creature',)
+                    or self.types_any or self.excluded_types):
+                raise ValueError('Version-five exclusions require an explicit creature death count')
+        elif self.excluded_name is not None or self.excluded_subtype is not None:
+            raise ValueError('Death name/subtype exclusions require query version five')
         if self.exclude_source and self.schema_version != 4:
             raise ValueError("Source exclusion requires version-four history")
 
@@ -96,7 +114,8 @@ class PublicHistoryQuerySpec:
             **({'origin':self.origin} if self.schema_version==2 else {}),
             **({"creature_subtype": self.creature_subtype, "token": self.token} if self.event == "permanent_died" else {}),
             **({"exclude_source": True} if self.exclude_source else {}),
-            **({"artifact_subtype": self.artifact_subtype} if self.artifact_subtype is not None else {})}
+            **({"artifact_subtype": self.artifact_subtype} if self.artifact_subtype is not None else {}),
+            **({'excluded_name':self.excluded_name,'excluded_subtype':self.excluded_subtype} if self.schema_version==5 else {})}
 
     @classmethod
     def from_dict(cls,value):
@@ -111,6 +130,8 @@ class PublicHistoryQuerySpec:
                 fields.add("artifact_subtype")
             else:
                 fields.update(("creature_subtype", "token", "exclude_source"))
+        elif version == 5:
+            fields.update(('creature_subtype','token','excluded_name','excluded_subtype'))
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError('Public history queries have a closed field set')
         return cls(**dict(value))
@@ -120,6 +141,7 @@ class PublicHistoryQuerySpec:
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
             *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
             *((PERMANENT_DEATH_HISTORY_CAPABILITY,) if self.event == "permanent_died" else ()),
+            *(('condition.history.qualified_death_exclusion',) if self.schema_version==5 else ()),
             *((PUBLIC_MOVEMENT_HISTORY_CAPABILITY,) if self.event in PUBLIC_MOVEMENT_HISTORY_KINDS or self.exclude_source else ()),
             *((SPELL_ORIGIN_HISTORY_CAPABILITY,) if self.event=='spell_cast' and self.origin is not None else ()),
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
@@ -130,6 +152,8 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
     if spec.event in COMMITTED_OCCURRENCE_HISTORY_KINDS and history.committed_occurrence_history_version != 1:
+        return None
+    if spec.event == CAST_CREATURE_COUNTERED_EVENT and history.creature_spell_counter_history_version != 1:
         return None
     if spec.event == "permanent_died" and history.permanent_death_history_version != 1:
         return None
@@ -147,7 +171,7 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     matched=[]
     for event in history.events:
         if event.kind!=spec.event:continue
-        seat=event.target if spec.event in {'player_gained_life','player_lost_life'} else event.actor
+        seat=event.target if spec.event in {'player_gained_life','player_lost_life','player_damaged'} else event.actor
         if seat not in allowed:continue
         if spec.exclude_source and event.object_incarnation == source_incarnation:
             continue
@@ -162,6 +186,13 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
             continue
         if spec.creature_subtype is not None and spec.creature_subtype not in event.creature_subtypes:
             continue
+        if spec.schema_version == 5:
+            from .death_cast_permission_model import DeathCastPermissionSpec
+            predicate = DeathCastPermissionSpec(excluded_name=spec.excluded_name,excluded_subtype=spec.excluded_subtype)
+            qualifies = predicate.matches_departure(was_creature='creature' in types,
+                rules_names=event.rules_names,creature_subtypes=event.creature_subtypes)
+            if qualifies is None:return None
+            if not qualifies:continue
         matched.append(event)
     return tuple(matched)
 
@@ -173,7 +204,7 @@ def public_history_query_value(state,controller,spec,*,source_incarnation=None):
     if spec.reduction=='sum_amount':return sum(event.amount for event in events)
     totals={}
     for event in events:
-        seat=event.target if spec.event in {'player_gained_life','player_lost_life'} else event.actor
+        seat=event.target if spec.event in {'player_gained_life','player_lost_life','player_damaged'} else event.actor
         totals[seat]=totals.get(seat,0)+event.amount
     return max(totals.values(),default=0)
 

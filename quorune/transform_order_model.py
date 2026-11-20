@@ -89,11 +89,12 @@ class TransformTimestampContinuation:
     priority_player: str | None
     held_triggers: tuple[FrozenMap,...]
     orders: tuple[tuple[str,...],...]=()
+    resolution: FrozenMap | None = None
 
     def __post_init__(self):
         from .model import StackItem
         if (not isinstance(self.request,TransformTimestampRequest) or not isinstance(self.context,Mapping)
-                or self.resume_kind not in {'untap','stabilize'}
+                or self.resume_kind not in {'untap','stabilize','resolution'}
                 or self.priority_player is not None and type(self.priority_player) is not str):
             raise TransformTimestampModelError('Transform timestamp continuation is malformed')
         context=FrozenMap(self.context)
@@ -103,6 +104,25 @@ class TransformTimestampContinuation:
                 or context['active_player'] is not None and type(context['active_player']) is not str
                 or self.resume_kind=='untap' and (context['phase']!='beginning' or context['step']!='untap' or context['phase_index']!=0)):
             raise TransformTimestampModelError('Transform timestamp turn context is malformed')
+        if self.resume_kind == 'resolution':
+            value = self.resolution
+            if (not isinstance(value, Mapping)
+                    or set(value) != {'stack_ref','effect','remaining','destination','note','semantic_frame'}
+                    or type(value['stack_ref']) is not str or not value['stack_ref']
+                    or not isinstance(value['effect'], Mapping)
+                    or not isinstance(value['remaining'], (list,tuple))
+                    or any(not isinstance(item,Mapping) for item in value['remaining'])
+                    or type(value['note']) is not str
+                    or value['destination'] is not None and type(value['destination']) is not str
+                    or not isinstance(value['semantic_frame'],Mapping)
+                    or value['semantic_frame'].get('stack_object') != value['stack_ref']
+                    or type(value['semantic_frame'].get('instruction_pointer')) is not int
+                    or value['semantic_frame']['instruction_pointer'] < 0
+                    or self.held_triggers or self.request.day_night_instruction):
+                raise TransformTimestampModelError('Transform resolution continuation is malformed')
+            object.__setattr__(self,'resolution',FrozenMap(value))
+        elif self.resolution is not None:
+            raise TransformTimestampModelError('Historical transform continuations cannot carry resolution data')
         triggers=tuple(FrozenMap(value) for value in self.held_triggers)
         trigger_ids=[];trigger_refs=[]
         for value in triggers:
@@ -145,18 +165,26 @@ class TransformTimestampContinuation:
         return tuple(by_ref[ref] for actor,refs in self.request.groups for ref in selected.get(actor,refs))
 
     def to_dict(self):
-        return {'schema_version':1,'request':self.request.to_dict(),'context':thaw_value(self.context),
+        result = {'schema_version':2 if self.resolution is not None else 1,
+            'request':self.request.to_dict(),'context':thaw_value(self.context),
             'resume_kind':self.resume_kind,'priority_player':self.priority_player,
             'held_triggers':[thaw_value(value) for value in self.held_triggers],
             'orders':[list(value) for value in self.orders]}
+        if self.resolution is not None:result['resolution']=thaw_value(self.resolution)
+        return result
 
     @classmethod
     def from_dict(cls,value):
-        if (not isinstance(value,Mapping) or set(value)!={'schema_version','request','context','resume_kind',
-                'priority_player','held_triggers','orders'} or type(value['schema_version']) is not int
-                or value['schema_version']!=1 or any(not isinstance(value[key],list) for key in ('held_triggers','orders'))
+        fields={'schema_version','request','context','resume_kind','priority_player','held_triggers','orders'}
+        if (not isinstance(value,Mapping) or type(value.get('schema_version')) is not int
+                or value['schema_version'] not in {1,2}
+                or set(value) != (fields if value['schema_version']==1 else fields|{'resolution'})
+                or any(not isinstance(value[key],list) for key in ('held_triggers','orders'))
                 or any(not isinstance(order,list) for order in value['orders'])
-                or any(not isinstance(item,Mapping) for item in value['held_triggers'])):
+                or any(not isinstance(item,Mapping) for item in value['held_triggers'])
+                or value['schema_version']==1 and value['resume_kind']=='resolution'
+                or value['schema_version']==2 and (value['resume_kind']!='resolution' or value['resolution'] is None)):
             raise TransformTimestampModelError('Transform timestamp continuation has a closed schema')
         return cls(TransformTimestampRequest.from_dict(value['request']),value['context'],value['resume_kind'],
-            value['priority_player'],tuple(value['held_triggers']),tuple(tuple(order) for order in value['orders']))
+            value['priority_player'],tuple(value['held_triggers']),tuple(tuple(order) for order in value['orders']),
+            value.get('resolution'))

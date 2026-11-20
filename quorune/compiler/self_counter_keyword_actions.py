@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number

@@ -584,7 +584,14 @@
         "platform-source",
         "rules-source"
       ],
-      "input_paths": [],
+      "input_paths": [
+        "migrations/**",
+        "pyproject.toml",
+        "quorune/schemas/**",
+        "schemas/**",
+        "server/**",
+        "web/**"
+      ],
       "implementation_inputs": [
         "scripts/update_platform_status.py"
       ],

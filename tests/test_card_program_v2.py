@@ -124,7 +124,7 @@ def _multi_event_artifact() -> CardRecord:
 class CardProgramIRReuseTests(unittest.TestCase):
     def test_one_parse_per_compilation_preserves_exact_and_residual_programs(self):
         from quorune import oracle_ir
-        from quorune.card_programs import adapters
+        from quorune.card_programs import adapters, model
 
         capabilities = load_default_capability_registry()
         database = SimpleNamespace(rulings=lambda _record: ())
@@ -137,10 +137,13 @@ class CardProgramIRReuseTests(unittest.TestCase):
                 adapters, "compile_oracle_card", wraps=adapters.compile_oracle_card
             ) as compiler, patch.object(
                 oracle_ir, "compile_oracle_card", side_effect=AssertionError("duplicate IR parse")
-            ):
+            ), patch.object(
+                model, "build_program_trust_closure", wraps=model.build_program_trust_closure
+            ) as build_trust:
                 program = adapters.compile_best_available_card_program(database, record,
                     semantic_registry=semantics, capability_registry=capabilities, capability_profile="commander_review")
                 compiler.assert_called_once()
+                build_trust.assert_called_once()
                 self.assertEqual(basis, program.trust_closure["trust_basis"])
                 self.assertEqual(basis == "unresolved", bool(program.residuals))
                 self.assertEqual(record.oracle_id, program.oracle_id)
@@ -871,6 +874,44 @@ class CardProgramV2Tests(unittest.TestCase):
             path.write_text(json.dumps(raw), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "views disagree"):
                 SemanticRegistry(path)
+
+    def test_current_static_fragment_reads_skip_historical_lookup_and_keep_shadowing(self):
+        from types import SimpleNamespace
+        from quorune.ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+        from quorune.compiled_ability_fragments import compiled_static_ability_fragments
+
+        def program(key, **provenance):
+            return SimpleNamespace(key=key, active_zone="battlefield", event="continuous",
+                ability_id="ability:fixture", handlers=(), coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+                provenance=provenance)
+
+        current = program("fixture:current")
+        shadowing = program("fixture:shadowed", granted_only=True)
+        historical = program("fixture:historical")
+        shadowed = program("fixture:shadowed")
+
+        def current_programs(oracle_id, *, active_zone):
+            self.assertEqual("fixture-oracle", oracle_id)
+            return (current, shadowing) if active_zone == "battlefield" else ()
+
+        calls = []
+        def fallback(oracle_id, *, active_zone, event):
+            self.assertEqual(("fixture-oracle", "battlefield"), (oracle_id, active_zone))
+            calls.append(event)
+            return (historical, shadowed) if event == "continuous" else ()
+
+        registry = SimpleNamespace(programs_for_oracle=current_programs,
+            runtime_handler_programs_for_oracle=fallback, runtime_handler_compatibility_enabled=False)
+        host = SimpleNamespace(semantics=registry, semantic_program_is_current_trusted=lambda program: True)
+        card = SimpleNamespace(zone="battlefield", active_face=None)
+        record = SimpleNamespace(oracle_id="fixture-oracle", faces=())
+        current_values = compiled_static_ability_fragments(host, card, record=record)
+        self.assertEqual(["fixture:current"], [fragment.semantic_key for fragment in current_values])
+        self.assertEqual([], calls)
+        registry.runtime_handler_compatibility_enabled = True
+        older_values = compiled_static_ability_fragments(host, card, record=record)
+        self.assertEqual({"fixture:current", "fixture:historical"}, {fragment.semantic_key for fragment in older_values})
+        self.assertEqual(["continuous", "characteristics.evaluate"], calls)
 
     def test_legacy_registry_without_compatibility_flag_retains_v3_adapter(self):
         with tempfile.TemporaryDirectory() as temporary:

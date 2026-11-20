@@ -340,7 +340,7 @@ class FixedActivatedZoneChangeCostCompilerTests(unittest.TestCase):
             "Sacrifice an artifact or another creature",
             "Sacrifice another creature or token",
             "Sacrifice another creature or Vehicle",
-            "Sacrifice a creature with defender",
+            "Sacrifice a creature with defender or flying",
             "Sacrifice a modified creature",
         )
         for index, cost in enumerate(unsupported):

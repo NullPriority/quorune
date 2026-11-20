@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Intrinsic Tribute and its source-bound unpaid-entry production."""
 
-import re
+from . import regex_working_set as re
 from ..tribute_model import TributeSpec,TRIBUTE_CAPABILITY,TRIBUTE_UNPAID_FIELD
 from ..rules.source_references import SourceReferenceSpec,source_self_permanent_type
 from .dependency_gate import explicit_capability_gate,dependency_gate

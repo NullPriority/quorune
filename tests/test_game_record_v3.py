@@ -77,6 +77,21 @@ class AuthoritativeCheckpointSerializationTests(unittest.TestCase):
         self.assertEqual(1, len(state.events))
         self.assertIn('raw-credential', state.capabilities)
 
+    def test_checkpoint_envelope_hashes_the_single_isolated_export(self):
+        from unittest.mock import patch
+        from quorune.record import authoritative_state_hash, checkpoint_envelope
+
+        state = self.state()
+        state.monarch = "A"
+        expected = authoritative_state_hash(state)
+        with patch.object(type(state), "to_dict", autospec=True, side_effect=type(state).to_dict) as serialize:
+            envelope = checkpoint_envelope(state)
+        serialize.assert_called_once_with(state, include_ephemeral=False)
+        self.assertEqual(expected, envelope["state_hash"])
+        self.assertEqual(expected, authoritative_state_hash(envelope["state"]))
+        envelope["state"]["annotations"]["nested"]["values"].append(9)
+        self.assertEqual([3], state.annotations["nested"]["values"])
+
     def test_checkpoint_preserves_legacy_omissions_and_current_designation_hashes(self):
         from quorune.record import authoritative_state_hash, checkpoint_state
 
@@ -89,6 +104,83 @@ class AuthoritativeCheckpointSerializationTests(unittest.TestCase):
                 expected.update(events=[], capabilities={})
                 self.assertEqual(expected, checkpoint_state(state))
                 self.assertEqual(authoritative_state_hash(expected), authoritative_state_hash(state))
+
+
+    def test_replay_hashes_adjacent_boundaries_once_and_checks_each_recorded_value(self):
+        from quorune import record
+        from quorune.semantics import SemanticRegistry
+
+        states = [self.state() for _ in range(3)]
+        for step, state in enumerate(states):
+            state.annotations["replay_step"] = step
+        hashes = [record.authoritative_state_hash(state) for state in states]
+        commands = [
+            {"sequence": step + 1, "principal": "A", "action": "advance",
+             "before_state_hash": hashes[step], "after_state_hash": hashes[step + 1]}
+            for step in range(2)
+        ]
+        engine = SimpleNamespace(
+            state=states[0],
+            permissions=SimpleNamespace(capability_for=lambda principal: SimpleNamespace(token="test")),
+        )
+
+        def replay(rows, *, verify=True):
+            engine.state = states[0]
+            following = iter(states[1:])
+
+            def apply(host, initial, **envelope):
+                host.state = next(following)
+                return SimpleNamespace(ok=True), None
+
+            with (
+                patch.object(record, "submit_with_resolution_capture", side_effect=apply),
+                patch.object(record, "validate_resolution_provenance"),
+                patch.object(record, "authoritative_state_hash", wraps=record.authoritative_state_hash) as digest,
+            ):
+                result = record._apply_replay_commands(
+                    engine, rows, SemanticRegistry(), verify=verify,
+                    capability_profile="commander_review", require_runtime_provenance=True,
+                )
+            return result, digest.call_count
+
+        self.assertEqual(((2, hashes[-1]), 3), replay(commands))
+        self.assertEqual(((2, hashes[-1]), 1), replay(commands, verify=False))
+        self.assertEqual(((0, hashes[0]), 1), replay([]))
+        for index, field, error in (
+            (0, "before_state_hash", "before command 1"),
+            (0, "after_state_hash", "after command 1"),
+            (1, "before_state_hash", "before command 2"),
+            (1, "after_state_hash", "after command 2"),
+        ):
+            with self.subTest(field=field, index=index):
+                tampered = copy.deepcopy(commands)
+                tampered[index][field] = "0" * 64
+                with self.assertRaisesRegex(ValueError, error):
+                    replay(tampered)
+
+
+    def test_continuous_dependency_order_marker_survives_record_round_trip(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        marker = "continuous_dependency_order_version"
+        state = self.state()
+        payload = state.to_dict()
+        manifest = {"format": format_state_versions(state)}
+        self.assertEqual(1, payload[marker])
+        self.assertEqual(1, manifest["format"][marker])
+        validate_state_versions(manifest, GameState.from_dict(payload))
+
+        legacy_payload = {key: value for key, value in payload.items() if key != marker}
+        legacy_format = {key: value for key, value in manifest["format"].items() if key != marker}
+        legacy_state = GameState.from_dict(legacy_payload)
+        self.assertNotIn(marker, legacy_state.to_dict())
+        validate_state_versions({"format": legacy_format}, legacy_state)
+        with self.assertRaisesRegex(ValueError, "Continuous dependency order provenance"):
+            validate_state_versions(manifest, legacy_state)
+        for invalid in (None, True, 0, 2):
+            with self.subTest(version=invalid), self.assertRaises(ValueError):
+                GameState.from_dict({**payload, marker: invalid})
 
 
 class RuntimeTrustManifestSchemaTests(unittest.TestCase):
@@ -148,7 +240,7 @@ class GameRecordV3Tests(unittest.TestCase):
             self.assertIsNone(_VALIDATION_REGISTRY.get())
             second = replay_record(path, self.db, verify=True)
             self.assertEqual(first['final_state_hash'], second['final_state_hash'])
-            with patch('quorune.rules.evidence.load_capability_evidence_index',
+            with patch('quorune.rules.evidence.validate_capability_evidence_index',
                        side_effect=CapabilityEvidenceError('changed evidence between replays')):
                 with self.assertRaisesRegex(CapabilityEvidenceError, 'changed evidence between replays'):
                     replay_record(path, self.db, verify=True)
@@ -172,7 +264,7 @@ class GameRecordV3Tests(unittest.TestCase):
                 from quorune.record import authoritative_state_hash
                 self.assertEqual(authoritative_state_hash(session.state), authoritative_state_hash(loaded.state))
             self.assertIsNone(_VALIDATION_REGISTRY.get())
-            with patch('quorune.rules.evidence.load_capability_evidence_index',
+            with patch('quorune.rules.evidence.validate_capability_evidence_index',
                        side_effect=CapabilityEvidenceError('changed invocation inputs')):
                 with self.assertRaisesRegex(CapabilityEvidenceError, 'changed invocation inputs'):
                     make_session(self.db, self.mishra, self.zimone, players=2,
@@ -225,7 +317,7 @@ class GameRecordV3Tests(unittest.TestCase):
                 with self.assertRaisesRegex(CapabilityRegistryError, 'resolvable implementation'):
                     session.save(path)
             self.assertIsNone(_VALIDATION_REGISTRY.get())
-            with patch('quorune.rules.evidence.load_capability_evidence_index',
+            with patch('quorune.rules.evidence.validate_capability_evidence_index',
                        side_effect=CapabilityEvidenceError('changed inputs between saves')):
                 with self.assertRaisesRegex(CapabilityEvidenceError, 'changed inputs between saves'):
                     session.save(path)

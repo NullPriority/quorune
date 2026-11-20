@@ -47,12 +47,19 @@ def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],targe
 
 def fixed_payment_event_player_runtime_dependencies(program):
     """Keep occurrence-player proof when a closed result sits behind a cost."""
+    from .life_gain_counted_results import life_gain_counter_payment_program_dependencies
     players={'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
     def references(value):
         if isinstance(value,Mapping):return set().union(*(references(child) for child in value.values()))
         if isinstance(value,(tuple,list)):return set().union(*(references(child) for child in value))
         return {value} if isinstance(value,str) and value in players else set()
-    required=set()
+    from ..spell_caster_sacrifice_payment import spell_caster_sacrifice_payment_program_dependencies
+    required=set(life_gain_counter_payment_program_dependencies(program))
+    required.update(spell_caster_sacrifice_payment_program_dependencies(program))
+    from .optional_sacrifice_stats import optional_sacrifice_stat_program_dependencies
+    required.update(optional_sacrifice_stat_program_dependencies(program))
+    from .fractional_life_payment import fractional_life_payment_program_dependencies
+    required.update(fractional_life_payment_program_dependencies(program))
     from .event_player_result_shapes import _event_player_reference_is_closed
     def visit(value):
         if isinstance(value,Mapping):
@@ -77,6 +84,46 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     mechanics=set(mechanic_ids)
     if FIXED_EFFECT_PAYMENT_MECHANIC not in mechanics or len(effects)!=1:return ()
     wrapper=effects[0]
+    from ..spell_caster_sacrifice_payment import (
+        spell_caster_sacrifice_payment_capabilities, uses_spell_caster_sacrifice_payment,
+    )
+    if uses_spell_caster_sacrifice_payment(wrapper):
+        if target_schema is not None:
+            return ()
+        try:
+            return spell_caster_sacrifice_payment_capabilities(wrapper)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if isinstance(wrapper,Mapping) and wrapper.get('schema_version') == 11:
+        if target_schema is not None:return ()
+        from ..cumulative_graveyard_upkeep import GraveyardLibraryCostSpec
+        try:return GraveyardLibraryCostSpec.from_effect(wrapper).capabilities
+        except (KeyError,TypeError,ValueError):return ()
+    if isinstance(wrapper,Mapping) and wrapper.get('schema_version') == 10:
+        if target_schema is not None:return ()
+        from ..cumulative_effect_cost_upkeep import UpkeepEffectCostSpec
+        try:return UpkeepEffectCostSpec.from_effect(wrapper).capabilities
+        except (KeyError,TypeError,ValueError):return ()
+    if isinstance(wrapper,Mapping) and wrapper.get('schema_version') == 9:
+        if target_schema is not None:return ()
+        from ..cumulative_alternative_mana_upkeep import CumulativeAlternativeManaSpec
+        try:return CumulativeAlternativeManaSpec.from_effect(wrapper).capabilities
+        except (KeyError,TypeError,ValueError):return ()
+    if isinstance(wrapper,Mapping) and wrapper.get('schema_version') == 8:
+        if target_schema is not None:return ()
+        from ..cumulative_counter_upkeep import CumulativeCounterUpkeepSpec
+        try:return CumulativeCounterUpkeepSpec.from_effect(wrapper).capabilities
+        except (KeyError,TypeError,ValueError):return ()
+    if isinstance(wrapper,Mapping) and wrapper.get('schema_version') == 7:
+        if target_schema is not None:return ()
+        from ..cumulative_object_upkeep import CumulativeObjectUpkeepSpec
+        try:return CumulativeObjectUpkeepSpec.from_effect(wrapper).capabilities
+        except (KeyError,TypeError,ValueError):return ()
+    if isinstance(wrapper,Mapping) and wrapper.get('schema_version') == 6:
+        if target_schema is not None:return ()
+        from ..cast_source_sacrifice_payment import cast_source_sacrifice_spec
+        try:return cast_source_sacrifice_spec(wrapper).capabilities
+        except (KeyError,TypeError,ValueError):return ()
     if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 4:
         from .reflexive_payment_shapes import reflexive_payment_node_capabilities
         return reflexive_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)

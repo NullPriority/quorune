@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -71,7 +72,17 @@ class KickedEntryActionTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / 'kicked-entry.sqlite3'
+        copy_fixture = json.loads(
+            (ROOT / 'tests/fixtures/fixed-qualified-stack-copy-cards.json').read_text(encoding='utf-8')
+        )
+        copy_card, = [row for row in copy_fixture['cards'] if row['name'] == 'Lithoform Engine']
+        copy_fixture['cards'] = [copy_card]
+        copy_fixture['rulings'] = [row for row in copy_fixture.get('rulings', ())
+                                    if row['oracle_id'] == copy_card['oracle_id']]
+        copy_path = path.with_name('copy-authority-fixture.json')
+        copy_path.write_text(json.dumps(copy_fixture), encoding='utf-8')
         build_fixture_database([
+            copy_path,
             ROOT / 'tests/fixtures/fixed-resolution-payment-cards.json',
             ROOT / 'tests/fixtures/kicked-entry-triggers.json',
         ], path)
@@ -144,6 +155,39 @@ class KickedEntryActionTests(unittest.TestCase):
                     self.assertEqual('kicked', session.state.stack[-1].context['cast_option'])
                     self.advance_to(session, lambda s: not s.state.stack)
                 self.assertEqual(50 if kicked else 40, session.state.players['A'].life)
+                self.replay(session)
+
+    def test_paid_permanent_spell_copy_entry_preserves_the_recorded_version(self):
+        for version, end_life in ((1, 50), (2, 60)):
+            with self.subTest(version=version):
+                session = self.session(7023320 + version)
+                session.state.stack_resolution_authority_version = version
+                source = self.add(session.engine, 'Krosan Druid', ref='PAID-SOURCE')
+                copier = self.add(session.engine, 'Lithoform Engine', ref='SPELL-COPIER', zone='battlefield')
+                action = self.ready(session, source, {'G': 2, 'C': 12})
+                self.checkpoint(session)
+                cast = session.act('pilot:A', {
+                    'action_id': action['id'], 'cost_option': 'kicked', 'pay': 'auto',
+                })
+                self.assertTrue(cast.ok, cast.summary)
+                original, = [item for item in session.state.stack if item.card_object_id == source.object_id]
+                self.advance_to(session, lambda game: 'pilot:A' in game.pending_principals())
+                actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                copy_action, = [
+                    row for row in actions
+                    if row['id'].startswith(f'activate:{copier.ref}:')
+                    and original.ref in row.get('target_schema', {}).get('legal_refs', ())
+                ]
+                accepted = session.act('pilot:A', {
+                    'action_id': copy_action['id'], 'targets': [original.ref], 'pay': 'auto',
+                })
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.advance_to(session, lambda game: not game.state.stack)
+                self.assertEqual(end_life, session.state.players['A'].life)
+                self.assertEqual(1, len(session.engine._current_turn_history('spell_cast')))
+                copy_token, = [card for card in session.state.cards.values()
+                               if card.zone == 'battlefield' and card.is_token]
+                self.assertEqual(source.printed_name, copy_token.printed_name)
                 self.replay(session)
 
     def test_actual_kicked_verix_creates_karox_with_its_printed_characteristics(self):

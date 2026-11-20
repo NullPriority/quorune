@@ -13,6 +13,58 @@ from quorune.object_query import (
 
 
 class ObjectQueryTests(unittest.TestCase):
+
+    def test_nonowner_control_matches_public_live_controller_without_changing_owner(self):
+        from dataclasses import replace
+
+        query = ObjectQuerySpec(zones=("battlefield",), controller="A", types_all=("creature",),
+                                controlled_by_nonowner=True)
+        creature = ObjectQueryResult(object_id="body", ref="BODY", printed_name="Fixture",
+                                     owner="B", controller="A", zone="battlefield", types=("creature",))
+        self.assertEqual((creature,), query_objects((creature,), query))
+        for change in ({"controller": "B"}, {"owner": "A"}, {"controller": "C"},
+                       {"zone": "hand"}, {"phased_out": True}, {"types": ("artifact",)}, {"owner": ""}):
+            with self.subTest(change=change):
+                self.assertFalse(query_objects((replace(creature, **change),), query))
+        shifted = replace(creature, controller="C")
+        self.assertEqual((shifted,), query_objects((shifted,), replace(query, controller="C")))
+        self.assertEqual("B", shifted.owner)
+
+    def test_omitting_the_nonowner_qualification_is_detected(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.object_query import object_matches_query
+
+        def omit_owner(row, compiled):
+            altered = replace(compiled,controlled_by_nonowner=False,_serialization_version=2)
+            return object_matches_query(row,altered)
+
+        with patch("quorune.object_query.object_matches_query",side_effect=omit_owner):
+            result = unittest.TestResult()
+            type(self)("test_nonowner_control_matches_public_live_controller_without_changing_owner").run(result)
+        self.assertEqual([],result.errors)
+        self.assertTrue(any("'owner': 'A'" in str(case) for case, _detail in result.failures))
+
+    def test_nonowner_control_preserves_old_bytes_and_requires_exact_raw_scope(self):
+        from dataclasses import replace
+
+        from quorune.object_predicate import NONOWNER_CONTROL_QUERY_CAPABILITY, object_query_capabilities
+
+        legacy = ObjectQuerySpec(zones=("battlefield",), controller="A", types_all=("creature",))
+        historical = legacy.to_dict()
+        query = replace(legacy, controlled_by_nonowner=True)
+        wire = query.to_dict()
+        self.assertEqual({**historical,"controlled_by_nonowner":True}, wire)
+        self.assertEqual(historical, ObjectQuerySpec.from_dict(historical).to_dict())
+        self.assertEqual(wire, ObjectQuerySpec.from_dict(wire).to_dict())
+        self.assertEqual((NONOWNER_CONTROL_QUERY_CAPABILITY,), object_query_capabilities(wire))
+        self.assertEqual((NONOWNER_CONTROL_QUERY_CAPABILITY,), object_query_capabilities(query))
+        for change in ({"controlled_by_nonowner": False}, {"controlled_by_nonowner": 1},
+                       {"zones": ["graveyard"]}, {"owner": "B"}, {"include_phased_out": True},
+                       {"types_all": ["artifact"]}, {"colors_all": ["G"]}, {"token": True}, {"unknown": True}):
+            with self.subTest(change=change), self.assertRaises(ObjectQueryError):
+                ObjectQuerySpec.from_dict({**wire,**change})
+
     def test_fixed_public_graveyard_mana_bound_omission_is_killed(self):
         from dataclasses import replace
         from unittest.mock import patch

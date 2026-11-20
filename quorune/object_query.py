@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from .battlefield_mana_value_query import permanent_mana_value_matches
 from .qualified_hexproof import keyword_type_terms
 
 from dataclasses import dataclass, field
@@ -198,6 +200,7 @@ def object_matches_query(
         (not spec.zones or row.zone in spec.zones)
         and (spec.owner is None or row.owner == spec.owner)
         and (spec.controller is None or row.controller == spec.controller)
+        and (not spec.controlled_by_nonowner or bool(row.owner and row.controller and row.owner != row.controller))
         and (spec.commander is None or row.commander is spec.commander)
         and row.controller not in spec.excluded_controllers
         and set(spec.types_all).issubset(types)
@@ -227,6 +230,7 @@ def object_matches_query(
         )
         and (spec.exclude_ref is None or row.ref != spec.exclude_ref)
         and (spec.mana_value_max is None or row.mana_value <= spec.mana_value_max)
+        and permanent_mana_value_matches(row, spec)
         and (not spec.any_of or any(object_matches_query(row, part) for part in spec.any_of))
         and (spec.numeric_characteristic is None or spec.numeric_characteristic.permits(
             power=row.effective_power, toughness=row.effective_toughness))

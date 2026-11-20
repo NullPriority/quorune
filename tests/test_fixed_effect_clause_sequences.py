@@ -842,5 +842,212 @@ class OrderedTokenAbilityNativeTests(InheritedNativeFixture, unittest.TestCase):
         ))
 
 
+class PublicCountPreventionCompositionTests(InheritedNativeFixture, unittest.TestCase):
+    originals = ('Respite', 'Riot Control', 'Blunt the Assault')
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'public-count-prevention.sqlite3'
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/prevention-composition-cards.json',
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Public-count prevention', [
+            DeckEntry('Generic Bound Commander', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30),
+        ], ['Generic Bound Commander'])
+
+    def bound_original(self, name):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.oracle_ir import register_generated_programs
+        from quorune.semantics import SemanticRegistry
+        card = self.db.lookup(name, fuzzy=False)
+        semantics = SemanticRegistry()
+        register_generated_programs(self.db, semantics, (card,), trust_level='provisional',
+            capability_registry=self.registry, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        program = compile_best_available_card_program(self.db, card, semantic_registry=semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        bound = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(bound['strict_capability_ready'], bound['blockers'])
+        self.assertEqual('capability_closed', bound['trust_basis'])
+        return card, program
+
+    def test_originals_keep_their_typed_life_query_and_independent_parent(self):
+        for name in self.originals:
+            with self.subTest(name=name):
+                card, program = self.bound_original(name)
+                ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual(card.oracle_text[node.span.start:node.span.end], node.text)
+                self.assertIn('resolution.effect_program.closed_components', node.capability_dependencies)
+                self.assertIn('damage.prevention.persistent_amount', node.capability_dependencies)
+                self.assertIn('quantity_expression.public_query_effect_amount', node.capability_dependencies)
+                life, = [effect for effect in node.effects if effect['op'] == 'life']
+                self.assertEqual('public_query_effect_amount', life['delta']['kind'])
+                self.assertEqual(1, len(program.abilities))
+
+    def test_unscoped_shields_reject_unowned_fields_and_target_bindings(self):
+        from quorune.rules.prevention_component_shapes import fixed_prevention_component_capabilities
+        base = {'op': 'create_damage_prevention_shield', 'source': '$source',
+            'subject': '*', 'mode': 'all', 'duration': 'until_end_of_turn', 'damage_kind': 'combat'}
+        def owned(effect, schema=None):
+            return fixed_prevention_component_capabilities(effects=(effect,), target_schema=schema,
+                mechanic_ids=('cr-615-prevention-effects',))
+        self.assertEqual(('damage.prevention.persistent_amount',), owned(base))
+        self.assertEqual(('damage.prevention.persistent_amount',), owned({
+            key: value for key, value in {**base, 'subject': '$controller'}.items() if key != 'damage_kind'}))
+        for key, value in (('source', '$controller'), ('subject', '$target.0'), ('mode', 'next_instance'),
+                ('duration', 'forever'), ('damage_kind', True), ('amount', 1), ('future', True),
+                ('scope', {'unknown': True})):
+            with self.subTest(key=key):
+                self.assertEqual((), owned({**base, key: value}))
+        self.assertEqual((), owned(base, {'zones': ['battlefield'], 'categories': ['creature'], 'count': 1}))
+
+    def test_removed_parent_prevention_or_quantity_authority_blocks_original(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        _, program = self.bound_original('Respite')
+        ability, = program.abilities
+        for missing in ('resolution.effect_program.closed_components', 'damage.prevention.persistent_amount', 'life.change.effect',
+                        'quantity_expression.public_query_effect_amount'):
+            with self.subTest(missing=missing):
+                dependencies = tuple(value for value in ability.capability_dependencies if value != missing)
+                changed = replace(ability, capability_dependencies=dependencies,
+                    capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+                bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile='commander_review')
+                self.assertFalse(bound['strict'], bound)
+                self.assertIn('capability:undeclared_runtime_dependency:' + missing, bound['blockers'])
+        dependencies = tuple(value for value in ability.capability_dependencies
+            if value != 'damage.prevention.persistent_amount')
+        changed = replace(ability, coverage=(), capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+        self.assertFalse(bind_semantic_program_runtime(changed, capability_registry=self.registry,
+            profile='commander_review')['strict'])
+
+    def reject_command(self, session, seat, command):
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:' + seat, command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def check_private_and_replay(self, session, private):
+        for seat in 'ABC':
+            self.assertNotIn(private.ref, str(session.packet('pilot:' + seat, full=True)))
+        self.replay(session, load=True)
+
+    def global_combat_scene(self, name):
+        from quorune.effect_runtime import damage_modifiers
+        session = self.session(615810 if name == 'Respite' else 615811)
+        spell = self.add(session.engine, name, zone='hand')
+        attackers = [self.add(session.engine, 'Grizzly Bears', ref='combat-a-' + str(i)) for i in range(3)]
+        blocker = self.add(session.engine, 'Grizzly Bears', seat='B', ref='combat-blocker')
+        self.add(session.engine, 'Grizzly Bears', seat='C', ref='combat-other')
+        phased = self.add(session.engine, 'Grizzly Bears', seat='D', ref='combat-phased')
+        phased.phased_out = True
+        for card in attackers:
+            card.acquired_control_turn_count = -1
+        for i in range(4):
+            self.add(session.engine, 'Forest', ref='combat-forest-' + str(i))
+        self.add(session.engine, 'Mountain', seat='B', ref='combat-mountain')
+        shock = self.add(session.engine, 'Shock', seat='B', zone='hand', ref='combat-shock')
+        expiry = self.add(session.engine, 'Shock', seat='B', zone='hand', ref='combat-expiry')
+        private = self.add(session.engine, 'Shock', seat='D', zone='hand', ref='combat-private')
+        self.assert_closed(session, spell)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(attackers[0], 'B'), (attackers[1], 'C')])
+        initial_life = session.state.players['A'].life
+        expected_gain = 2 if name == 'Respite' else 5
+        seen_life = []
+        commit = damage_modifiers.commit_prevention_shield_creation
+        def observe(host, plan):
+            seen_life.append(host.state.players['A'].life)
+            return commit(host, plan)
+        self.reject_command(session, 'C', {'action_id': 'cast:' + spell.ref, 'pay': 'auto'})
+        with patch.object(damage_modifiers, 'commit_prevention_shield_creation', side_effect=observe):
+            self.cast_for(session, 'A', spell)
+            self.assertIsNone(self.resolve(session))
+        self.assertEqual([initial_life if name == 'Respite' else initial_life + expected_gain], seen_life)
+        self.assertEqual(initial_life + expected_gain, session.state.players['A'].life)
+        self.assertEqual(1, len(session.state.damage_prevention_shields))
+        self.cast_for(session, 'B', shock, ['A'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial_life + expected_gain - 2, session.state.players['A'].life)
+        session = self.replay(session, load=True)
+        self.until(session, lambda current: current.state.pending_decision is not None
+            and current.state.pending_decision.kind == 'combat.blockers'
+            and current.state.pending_decision.actors == ['B'])
+        command = {'action_id': 'block', 'blocks': {blocker.ref: attackers[0].ref}}
+        self.reject_command(session, 'C', command)
+        self.assertTrue(session.act('pilot:B', command).ok)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        self.until(session, lambda current: current.state.phase == 'postcombat_main')
+        self.assertEqual(life, {seat: player.life for seat, player in session.state.players.items()})
+        for card in (attackers[0], attackers[1], blocker):
+            current = session.state.cards[card.object_id]
+            self.assertEqual('battlefield', current.zone)
+            self.assertEqual(0, current.marked_damage)
+        self.until(session, lambda current: current.state.active_player == 'B')
+        self.assertEqual([], session.state.damage_prevention_shields)
+        self.cast_for(session, 'B', expiry, ['A'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial_life + expected_gain - 4, session.state.players['A'].life)
+        self.check_private_and_replay(session, private)
+
+    def test_global_combat_shields_keep_printed_order_counts_and_cleanup(self):
+        for name in ('Respite', 'Blunt the Assault'):
+            with self.subTest(name=name):
+                self.global_combat_scene(name)
+
+    def test_controller_shield_counts_current_opponents_and_leaves_other_recipients_unprotected(self):
+        session = self.session(615812)
+        spell = self.add(session.engine, 'Riot Control', zone='hand')
+        own = self.add(session.engine, 'Grizzly Bears', ref='riot-own')
+        borrowed = self.add(session.engine, 'Grizzly Bears', ref='riot-borrowed'); borrowed.owner = 'B'
+        foreign = self.add(session.engine, 'Grizzly Bears', seat='B', ref='riot-foreign'); foreign.owner = 'A'
+        removed = self.add(session.engine, 'Grizzly Bears', seat='C', ref='riot-removed')
+        phased = self.add(session.engine, 'Grizzly Bears', seat='D', ref='riot-phased'); phased.phased_out = True
+        for i in range(3):
+            self.add(session.engine, 'Generic Bound Plains', ref='riot-plains-' + str(i))
+        for i in range(4):
+            self.add(session.engine, 'Mountain', seat='B', ref='riot-mountain-' + str(i))
+        shocks = [self.add(session.engine, 'Shock', seat='B', zone='hand', ref='riot-shock-' + str(i)) for i in range(5)]
+        private = self.add(session.engine, 'Shock', seat='D', zone='hand', ref='riot-private')
+        self.assert_closed(session, spell)
+        self.prepare(session)
+        self.checkpoint(session)
+        initial_life = {seat: player.life for seat, player in session.state.players.items()}
+        self.cast_for(session, 'A', spell)
+        self.cast_for(session, 'B', shocks[0], [removed.ref])
+        self.resolve_top(session)
+        self.assertEqual('graveyard', session.state.cards[removed.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial_life['A'] + 1, session.state.players['A'].life)
+        self.assertEqual(1, len(session.state.damage_prevention_shields))
+        for shock, target in zip(shocks[1:4], ('A', own.ref, 'C')):
+            self.cast_for(session, 'B', shock, [target])
+            self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial_life['A'] + 1, session.state.players['A'].life)
+        self.assertEqual('graveyard', session.state.cards[own.object_id].zone)
+        self.assertEqual(initial_life['C'] - 2, session.state.players['C'].life)
+        self.assertEqual('battlefield', session.state.cards[borrowed.object_id].zone)
+        self.until(session, lambda current: current.state.active_player == 'B')
+        self.assertEqual([], session.state.damage_prevention_shields)
+        self.cast_for(session, 'B', shocks[4], ['A'])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial_life['A'] - 1, session.state.players['A'].life)
+        self.check_private_and_replay(session, private)
+
+    def test_missing_shield_commit_is_killed_by_actual_original_spell(self):
+        with patch('quorune.effect_runtime.damage_modifiers.commit_prevention_shield_creation', return_value=()):
+            with self.assertRaises(AssertionError):
+                self.global_combat_scene('Respite')
+
+
 if __name__ == "__main__":
     unittest.main()

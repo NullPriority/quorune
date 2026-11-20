@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Existing typed result leaves bound to one normalized trigger occurrence."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from .target_announcement_bindings import target_announcement_result, target_announcement_bound_result
@@ -17,7 +17,58 @@ from .fixed_entry_return_requirements import (
 from .endure_templates import binding_endure_trigger_result
 
 
+def _bound_source_combat_result(binding, body):
+    """Lower fixed results from the original source attack or blocked occurrence."""
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        == ("creature.becomes_blocked", "this_creature_becomes_blocked", "battlefield")
+        and body == binding.body
+    ):
+        if re.fullmatch(r"Regenerate it[.]?", body, re.I):
+            from .regeneration_templates import self_regeneration_effect_template
+
+            return self_regeneration_effect_template("Regenerate this creature.").compiled()
+        if re.fullmatch(r"Defending player discards a card at random[.]?", body, re.I):
+            from ..random_discard import random_discard_effect_template
+
+            result = random_discard_effect_template("Discard a card at random.")
+            effect = {**result[1][0], "players": ["$context.defending_player"]}
+            return "fixed-blocked-defender-random-discard-v1", (effect,), None, result[3]
+    from .affected_player_sacrifice_templates import most_lands_attack_sacrifice_result
+    from .event_player_choice_templates import attacked_defender_exile_result
+    from .next_spell_cost_templates import recurring_attack_spell_cost_template
+    from .temporary_cast_restrictions import attacked_defender_cast_restriction
+
+    return (attacked_defender_cast_restriction(binding, body)
+            or attacked_defender_exile_result(binding, body)
+            or recurring_attack_spell_cost_template(binding, body)
+            or most_lands_attack_sacrifice_result(binding, body))
+
+
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .shared_type_library_templates import shared_type_library_result_template
+    shared = shared_type_library_result_template(binding, body,
+        compile_result=lambda clause: effect_template(clause, card_name=card_name))
+    if shared is not None:
+        return shared, False
+    if _allow_payment:
+        from .optional_sacrifice_stat_results import optional_sacrifice_stat_binding_result
+        paid_stat = optional_sacrifice_stat_binding_result(binding, body, compile_fixed=lambda text: effect_template(text, card_name=card_name)) if _allow_optional else None
+        if paid_stat is not None:return paid_stat
+        from .life_gain_counted_results import life_gain_counted_counter_payment
+        counted_payment = life_gain_counted_counter_payment(body, binding=binding, compile_result=lambda child: binding_effect_template(
+            binding, child, card_name=card_name, effect_template=effect_template, _allow_payment=False,
+            source_counter_variants=source_counter_variants, _allow_optional=_allow_optional))
+        if counted_payment is not None:return counted_payment
+    from .event_outcome_templates import fixed_event_outcome_template
+    outcome = fixed_event_outcome_template(binding, body, card_name=card_name, effect_template=effect_template)
+    if outcome is not None: return outcome
+    from .event_damage_source_templates import event_damage_source_template
+    dealer = event_damage_source_template(binding, body, card_name=card_name, effect_template=effect_template, allow_optional=_allow_optional)
+    if dealer is not None:return dealer,False
+    from .referenced_damage_templates import event_fixed_damage_template
+    referenced=event_fixed_damage_template(binding,body,card_name=card_name)
+    if referenced is not None:return referenced,False
     from .player_maximum_templates import player_maximum_control_result
     maximum=player_maximum_control_result(binding,body,card_name=card_name)
     if maximum is not None:return maximum,False
@@ -29,6 +80,12 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     threshold = event_counter_threshold_result(binding, body, effect_template=effect_template, card_name=card_name)
     if threshold is not None:
         return threshold
+    from .combat_prevention_source_results import bound_source_combat_prevention
+    source_prevention=bound_source_combat_prevention(binding,body)
+    if source_prevention is not None:return source_prevention,False
+    source_combat = _bound_source_combat_result(binding, body)
+    if source_combat is not None:
+        return source_combat, False
     from .source_self_effect_templates import bound_source_fixed_damage
     source_damage = bound_source_fixed_damage(binding, body)
     if source_damage is not None:
@@ -91,6 +148,19 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     endure = binding_endure_trigger_result(binding, body, source_name=card_name, effect_template=effect_template)
     if endure is not None:
         return endure, False
+    from ..source_sacrifice_model import (
+        SOURCE_SACRIFICE_MECHANIC, SOURCE_UNATTACHMENT_VARIANT, former_attachment_sacrifice_effect,
+    )
+    if binding.variant == SOURCE_UNATTACHMENT_VARIANT and body.strip().casefold() == "sacrifice that permanent.":
+        return ("fixed-former-attachment-sacrifice-v1", (former_attachment_sacrifice_effect(),),
+            None, (SOURCE_SACRIFICE_MECHANIC,)), False
+    from .event_player_modifiers import event_player_modifier_result
+    modifier=event_player_modifier_result(binding,body)
+    if modifier is not None:return modifier
+    from .per_player_query_life import source_attack_opponent_subtype_absence_life_result
+    absence = source_attack_opponent_subtype_absence_life_result(binding, body)
+    if absence is not None:
+        return absence, False
     from .event_player_target_results import event_player_target_result
     defending_target=event_player_target_result(binding,body,compile_result=lambda text: binding_effect_template(
         binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,
@@ -191,9 +261,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     skip = damage_player_turn_skip_result(binding, body)
     if skip is not None:
         return skip
-    from .event_player_choice_templates import fixed_event_player_sacrifice_result
-    player_choice = fixed_event_player_sacrifice_result(binding, body,
-        effect_template=effect_template, card_name=card_name)
+    from .event_player_choice_templates import fixed_event_player_choice_result
+    player_choice = fixed_event_player_choice_result(binding, body)
     if player_choice is not None:return player_choice
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)

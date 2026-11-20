@@ -3,7 +3,7 @@ from __future__ import annotations
 """Fixed scheduled-player predicates and nontargeted result binding."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_MECHANIC
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
@@ -39,6 +39,28 @@ def scheduled_player_binding_spec(text, *, card_name=None):
 
 def scheduled_player_result(binding, body, *, effect_template, card_name):
     if binding.variant not in SCHEDULED_PLAYER_VARIANTS:return None
+    if binding.variant in {'each_player_upkeep', 'each_opponent_upkeep'}:
+        from .event_player_choice_templates import _sacrifice_clause
+        from .affected_player_sacrifice_templates import fixed_affected_player_sacrifice_effect_template
+        match = _sacrifice_clause(body)
+        if match is not None and match['subject'].casefold() in {'that player', 'they'}:
+            choice = fixed_affected_player_sacrifice_effect_template('Target player sacrifices ' + match['body'])
+            if choice is not None:
+                effect = deepcopy(dict(choice.effects[0]))
+                if effect.pop('target', None) != '$target.0' or effect.get('players') != ['$target.0']:
+                    return None
+                effect['players'] = ['$context.player']
+                return ('scheduled-player-fixed-sacrifice-v1', (effect,), None,
+                    tuple(m for m in (*choice.mechanics, SCHEDULED_PLAYER_MECHANIC) if m != 'cr-115-targets')), True
+    from .upkeep_hand_difference_templates import upkeep_hand_difference_result
+    difference=upkeep_hand_difference_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if difference is not None:return difference
+    from .hand_library_redraw_templates import hand_library_redraw_template
+    if binding.variant == 'each_player_draw' and (redraw := hand_library_redraw_template(body)) is not None:
+        from ..hand_library_redraw_model import HandLibraryScope
+        if redraw.redraw.scope is HandLibraryScope.EVENT_PLAYER:
+            template,effects,schema,mechanics = redraw.compiled()
+            return (template,effects,schema,(*mechanics,SCHEDULED_PLAYER_MECHANIC)),True
     if re.search(r'\b(?:that player|them)\b',body,re.I) and re.search(r'\bdeals? [1-9]\d* damage to (?:that player|them)\.',body,re.I):
         fixed=re.sub(r'\b(?:that player|them)\b','target player',body,flags=re.I)
         template,effects,schema,mechanics=effect_template(fixed,card_name=card_name)

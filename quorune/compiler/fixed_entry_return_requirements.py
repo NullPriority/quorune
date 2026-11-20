@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..creature_subtypes import canonical_creature_subtype

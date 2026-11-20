@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-threaded fixed animation and independent recipient prevention."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template, _two_sentence_clauses

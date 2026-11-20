@@ -66,11 +66,13 @@ def resolve_public_query_amount(
     host: PublicQueryAmountHost,
     value: Mapping[str, Any],
     item: Any,
+    *,
+    query_player: str | None = None,
 ) -> int:
-    """Resolve a typed amount for the stack object's locked controller."""
+    """Resolve for an explicit query player or the stack's locked controller."""
 
     spec = PublicQueryAmountSpec.from_dict(value)
-    controller = getattr(item, "controller", None)
+    controller = getattr(item, "controller", None) if query_player is None else query_player
     stack_ref = getattr(item, "ref", None)
     if type(controller) is not str or not controller:
         raise PublicQueryAmountError(

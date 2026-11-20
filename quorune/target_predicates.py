@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Protocol, Set
 
+from .attachments import attached_object_identity
+from .continuous_effect_model import Layer
+from .enchant_public_state_model import OTHER_AURA_ATTACHED_PREDICATE
 from .model import CardInstance, StackItem
 from .relative_power_target import (
     CREATURE_POWER_PREDICATE,
@@ -13,6 +16,7 @@ from .relative_power_target import (
     current_effective_creature_power,
 )
 from .targets import TargetGroup
+from .stack_spell_targeting import STACK_SPELL_TARGET_PREDICATES, StackSpellTargetPredicate
 
 
 class TargetPredicateError(ValueError):
@@ -28,7 +32,7 @@ class TargetPredicateHost(Protocol):
 
     def _numeric_stat(self, object_id: str, stat: str) -> int: ...
 
-    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+    def _effective_card_data(self, card: Any, *, maximum_layer: Layer | None = None) -> Mapping[str, Any]: ...
 
     def _type_parts(
         self, type_line: str
@@ -81,6 +85,91 @@ def _relative_power_matches(
         raise TargetPredicateError(str(exc)) from exc
 
 
+def _other_aura_attached(
+    host: TargetPredicateHost,
+    target: CardInstance,
+    source_ref: str,
+) -> bool:
+    for object_id in target.attachments:
+        attachment = host.state.cards.get(object_id)
+        if attachment is None or attachment.ref == source_ref:
+            continue
+        identity = attached_object_identity(host.state.cards, attachment)
+        if identity is None or identity.object_id != target.object_id:
+            continue
+        data = host._effective_card_data(attachment, maximum_layer=Layer.COLOR)
+        types, subtypes, _ = host._type_parts(str(data.get("type_line") or ""))
+        if "enchantment" in types and "aura" in subtypes:
+            return True
+    return False
+
+
+def _spell_target_subject_matches(
+    host: TargetPredicateHost,
+    predicate: StackSpellTargetPredicate,
+    subject: str | CardInstance,
+    *,
+    controller: str | None,
+    source_incarnation: str | None,
+) -> bool:
+    if isinstance(subject, str):
+        return predicate is StackSpellTargetPredicate.PLAYER or (
+            predicate in {StackSpellTargetPredicate.CONTROLLER,
+                          StackSpellTargetPredicate.CONTROLLER_OR_CONTROLLED_PERMANENT}
+            and subject == controller
+        )
+    if predicate is StackSpellTargetPredicate.SOURCE:
+        return subject.logical_object_id == source_incarnation
+    if predicate in {StackSpellTargetPredicate.CONTROLLED_PERMANENT,
+                     StackSpellTargetPredicate.CONTROLLER_OR_CONTROLLED_PERMANENT,
+                     StackSpellTargetPredicate.INSTANT_OR_AURA_CONTROLLED_PERMANENT}:
+        return subject.controller == controller
+    if predicate in {StackSpellTargetPredicate.CONTROLLED_CREATURE,
+                     StackSpellTargetPredicate.CONTROLLED_ARTIFACT_OR_CREATURE} and subject.controller != controller:
+        return False
+    required = _SPELL_SUBJECT_TYPES.get(predicate)
+    if required is None:
+        return False
+    effective = host._effective_card_data(subject)
+    subject_types, _, _ = host._type_parts(str(effective.get("type_line") or ""))
+    return bool(required.intersection(subject_types))
+
+
+_SPELL_SUBJECT_TYPES = {
+    StackSpellTargetPredicate.CREATURE: frozenset({"creature"}),
+    StackSpellTargetPredicate.ENCHANTMENT: frozenset({"enchantment"}),
+    StackSpellTargetPredicate.CONTROLLED_CREATURE: frozenset({"creature"}),
+    StackSpellTargetPredicate.CONTROLLED_ARTIFACT_OR_CREATURE: frozenset({"artifact", "creature"}),
+}
+
+
+def _spell_targets_matching_subject(
+    host: TargetPredicateHost,
+    predicate: StackSpellTargetPredicate,
+    row: Mapping[str, Any],
+    *,
+    types: Set[str],
+    controller: str | None,
+    source_incarnation: str | None,
+) -> bool:
+    from .selection.target_query import current_spell_target_subjects
+
+    item = row.get("stack_item")
+    if (row.get("category") != "spell" or not isinstance(item, StackItem)
+            or item.kind not in {"spell", "spell_copy"}):
+        return False
+    if predicate is StackSpellTargetPredicate.INSTANT_OR_AURA_CONTROLLED_PERMANENT and (
+        "instant" not in types and not ("enchantment" in types and "aura" in row.get("subtypes", ()))
+    ):
+        return False
+    return any(
+        _spell_target_subject_matches(
+            host, predicate, subject, controller=controller, source_incarnation=source_incarnation,
+        )
+        for subject in current_spell_target_subjects(host, item)
+    )
+
+
 def target_predicate_matches(
     host: TargetPredicateHost,
     group: TargetGroup,
@@ -91,21 +180,48 @@ def target_predicate_matches(
     colors: Set[str],
     derived: Mapping[str, bool],
     source_ref: str | None = None,
+    controller: str | None = None,
+    source_incarnation: str | None = None,
 ) -> bool:
     """Evaluate the closed predicate vocabulary for one normalized target row."""
 
     predicate = group.predicate
     if not predicate:
         return True
+    if predicate in STACK_SPELL_TARGET_PREDICATES:
+        return _spell_targets_matching_subject(
+            host, StackSpellTargetPredicate(predicate), row, types=types,
+            controller=controller, source_incarnation=source_incarnation,
+        )
+    from .stack_target_change_model import SINGLE_ANNOUNCED_STACK_TARGET, matches_single_announced_stack_target
+
+    if predicate == SINGLE_ANNOUNCED_STACK_TARGET:
+        item = row.get("stack_item")
+        return row.get("zone") == "stack" and isinstance(item, StackItem) and matches_single_announced_stack_target(item)
     card = row.get("card")
-    if predicate in {'activated_artifact_source','noncreature_ability_source'}:
+    if predicate == OTHER_AURA_ATTACHED_PREDICATE:
+        return bool(
+            source_ref and isinstance(card, CardInstance)
+            and row.get("category") == "permanent" and "creature" in types
+            and _other_aura_attached(host, card, source_ref)
+        )
+    from .ability_source_information import ABILITY_SOURCE_FILTERS
+    if predicate in ABILITY_SOURCE_FILTERS:
         item=row.get('stack_item');source_types=row.get('ability_source_types')
         if (row.get('zone')!='stack' or row.get('category')!='ability'
                 or not isinstance(item,StackItem) or source_types is None):
             return False
         if predicate=='activated_artifact_source':
             return item.kind=='activated_ability' and 'artifact' in source_types
+        if predicate == 'artifact_ability_source':
+            return item.kind in {'activated_ability','triggered_ability'} and 'artifact' in source_types
+        if predicate == 'colorless_ability_source':
+            source_colors = row.get('ability_source_colors')
+            return item.kind in {'activated_ability','triggered_ability'} and source_colors is not None and not source_colors
         return item.kind in {'activated_ability','triggered_ability'} and 'creature' not in source_types
+    if predicate == 'activated_or_triggered_ability':
+        item = row.get('stack_item')
+        return row.get('zone') == 'stack' and isinstance(item, StackItem) and item.kind in {'activated_ability','triggered_ability'}
     if predicate in {'triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
             'ability_or_legendary_spell','blue_instant_spell'}:
         item = row.get('stack_item')

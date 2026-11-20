@@ -6,5 +6,7 @@ from ..rules.transform_capability_shapes import source_transform_node_capabiliti
 
 
 def is_closed_source_transform_program(program):
-    required=source_transform_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
+    from ..rules.subtype_transform import subtype_transform_node_capabilities
+    context=dict(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
+    required=source_transform_node_capabilities(**context) or subtype_transform_node_capabilities(**context)
     return bool(required) and set(required)<=set(program.capability_dependencies)

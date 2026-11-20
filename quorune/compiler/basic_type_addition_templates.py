@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..basic_land_types import BASIC_LAND_MANA
 from ..basic_type_addition_model import BASIC_TYPE_ADDITION_CAPABILITY,BASIC_TYPE_ADDITION_HANDLER,BasicTypeAdditionSpec
 

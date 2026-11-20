@@ -5,12 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec, object_query_capabilities
 
 
 LIVE_BATTLEFIELD_QUANTITY_KIND = 'live_battlefield_quantity'
 LIVE_BATTLEFIELD_QUANTITY_CAPABILITY = 'quantity_expression.live_battlefield_count'
 LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY = 'quantity_expression.live_qualified_creature_count'
+LIVE_ATTACKING_PLAYER_COUNT_CAPABILITY = 'quantity_expression.live_attacking_player_count'
 
 
 def _closed_qualified_creature_query(query: ObjectQuerySpec) -> bool:
@@ -33,12 +34,18 @@ class LiveBattlefieldQuantitySpec:
     schema_version: int = 1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version not in (1, 2)
+        if (type(self.schema_version) is not int or self.schema_version not in (1, 2, 3)
                 or type(self.controller_relation) is not str
                 or self.controller_relation not in {'any', 'source_controller', 'source_opponents'}
                 or type(self.exclude_source) is not bool):
             raise ValueError('Live battlefield quantity identity is unsupported')
         q = self.query
+        if self.schema_version == 3:
+            if (self.controller_relation != 'any' or self.exclude_source
+                    or not isinstance(q,ObjectQuerySpec) or q != ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),
+                        state_predicate=PermanentStatePredicateSpec(attacking=True))):
+                raise ValueError('Direct-player attack counts require the exact current attacking creature query')
+            return
         if self.schema_version == 2:
             if (self.controller_relation != 'source_controller' or not isinstance(q, ObjectQuerySpec)
                     or not _closed_qualified_creature_query(q)):
@@ -54,16 +61,27 @@ class LiveBattlefieldQuantitySpec:
                 or q.state_predicate not in states):
             raise ValueError('Live counts require one closed current public battlefield query')
 
+    @property
+    def capability_dependencies(self):
+        return (LIVE_BATTLEFIELD_QUANTITY_CAPABILITY,
+            *((LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY,*object_query_capabilities(self.query))
+                if self.schema_version == 2 else ()),
+            *((LIVE_ATTACKING_PLAYER_COUNT_CAPABILITY,) if self.schema_version == 3 else ()))
+
     def to_dict(self):
-        return {'kind': LIVE_BATTLEFIELD_QUANTITY_KIND, 'schema_version': self.schema_version,
+        value = {'kind': LIVE_BATTLEFIELD_QUANTITY_KIND, 'schema_version': self.schema_version,
             'controller_relation': self.controller_relation, 'query': self.query.to_dict(),
             'exclude_source': self.exclude_source}
+        if self.schema_version == 3:value['attack_destination']='controller_player'
+        return value
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]):
-        if (not isinstance(value, Mapping) or set(value) != {
-                'kind', 'schema_version', 'controller_relation', 'query', 'exclude_source'}
-                or value['kind'] != LIVE_BATTLEFIELD_QUANTITY_KIND):
+        fields={'kind','schema_version','controller_relation','query','exclude_source'}
+        if (not isinstance(value,Mapping)
+                or set(value) != (fields|{'attack_destination'} if value.get('schema_version') == 3 else fields)
+                or value['kind'] != LIVE_BATTLEFIELD_QUANTITY_KIND
+                or value.get('schema_version') == 3 and value.get('attack_destination') != 'controller_player'):
             raise ValueError('Live battlefield quantity fields are incomplete or unknown')
         return cls(value['controller_relation'], ObjectQuerySpec.from_dict(value['query']),
             value['exclude_source'], value['schema_version'])

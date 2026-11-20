@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle surfaces for existing immutable public condition values."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Collection, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype, canonical_creature_subtype_surface

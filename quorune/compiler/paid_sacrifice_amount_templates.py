@@ -3,7 +3,7 @@ from __future__ import annotations
 """Facts about a single paid sacrifice in closed spell result slots."""
 
 from collections.abc import Mapping
-import re
+from . import regex_working_set as re
 
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec
 from ..rules.casting_additional_costs import fixed_single_sacrifice_price

@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed controller-designation grammar for the monarch variant."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 

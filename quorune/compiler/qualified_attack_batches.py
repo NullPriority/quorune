@@ -1,6 +1,6 @@
 """Fixed matching-attack counts with explicit declaration or recipient grouping."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 
 from ..attack_batch_model import (QualifiedAttackBatchSpec,QUALIFIED_ATTACK_BATCH_CAPABILITY,

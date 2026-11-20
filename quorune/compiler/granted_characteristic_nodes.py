@@ -8,9 +8,16 @@ from ..static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY
 
 
 def _compiled_characteristic(text, *, source_name):
-    from .continuous_templates import attached_fixed_characteristics_handler, fixed_power_toughness_anthem_handler
-    compiled = (attached_fixed_characteristics_handler(text, source_name=source_name)
-        or fixed_power_toughness_anthem_handler(text, source_name=source_name))
+    from .continuous_templates import (
+        attached_fixed_characteristics_handler,
+        fixed_power_toughness_anthem_handler,
+        fixed_public_state_characteristics_handler,
+    )
+    compiled = (
+        attached_fixed_characteristics_handler(text, source_name=source_name)
+        or fixed_power_toughness_anthem_handler(text, source_name=source_name)
+        or fixed_public_state_characteristics_handler(text, source_name=source_name)
+    )
     if compiled is None or not granted_characteristic_handlers_are_closed((compiled[1],)):
         return None
     return compiled

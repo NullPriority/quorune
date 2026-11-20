@@ -11,6 +11,7 @@ from .counter_removal import (
 from .control_effects import record_source_transition, synchronize_control_effects
 from .continuous_effect_model import ContinuousObjectIdentity
 from .source_untap_rule_model import PendingSourceUntapRestraint
+from .next_player_untap_model import NextPlayerUntapScope, ProhibitNextPlayerUntapIntent
 
 VIGILANCE_KEYWORD = "vigilance"
 STUN_COUNTER_NAME = "stun"
@@ -82,6 +83,26 @@ def prohibit_next_untap(host: Any, object_ref: str, *, actor: str, reason: str,
     host._log(actor, 'permanent.next_untap.prohibited', 'Permanent will skip its next controller untap step.',
               {'object': card.ref, REASON_FIELD: reason}, changed_objects=[card.object_id])
     return card.ref
+
+
+def schedule_next_player_untap(host: Any, intent: ProhibitNextPlayerUntapIntent) -> None:
+    restriction = intent.restriction
+    if intent.actor not in host.active_seats or restriction.player not in host.active_seats:
+        raise TapStateError("Next-player untap requires active source and recipient seats")
+    current = {row.player: row for row in host.state.next_player_untap_restrictions}
+    existing = current.get(restriction.player)
+    if existing is None or restriction.scope is NextPlayerUntapScope.CREATURES_AND_LANDS:
+        current[restriction.player] = restriction
+    host.state.next_player_untap_restrictions = tuple(current[seat] for seat in sorted(current))
+    host._log(intent.actor, "player.next_untap.prohibited", "Restricted the player's next untap step.",
+        {"player": restriction.player, "scope": restriction.scope.value, REASON_FIELD: intent.reason},
+        changed_players=[restriction.player])
+
+
+def expire_next_player_untap(host: Any, player: str) -> None:
+    pending = host.state.next_player_untap_restrictions
+    if pending:
+        host.state.next_player_untap_restrictions = tuple(row for row in pending if row.player != player)
 
 
 def consume_next_untap_prohibition(card: Any) -> bool:

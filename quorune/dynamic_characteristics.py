@@ -48,6 +48,9 @@ def query_characteristic_count(
     _maximum_layer: Layer | None = Layer.COLOR,
 ) -> int:
     """Resolve a public quantity, using layer 5 unless a full view is requested."""
+    if quantity.schema_version == 8:
+        from .commander_cast_counts import controller_commander_cast_count
+        return controller_commander_cast_count(host.state, source.controller)
     if quantity.schema_version==5:
         from .public_zone_quantities import current_public_zone_quantity
         return current_public_zone_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)

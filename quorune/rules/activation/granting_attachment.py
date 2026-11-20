@@ -83,8 +83,11 @@ def pay_granting_attachment(host, *, actor, source, payment, response):
             transition_kinds={equipment.object_id: ZoneTransitionKind.SACRIFICE},
         )
     else:
+        from ...unattachment_triggers import dispatch_unattachment, prepare_equipment_unattachment
+        former = prepare_equipment_unattachment(host, equipment)
         detach_object(host.state.cards, equipment, players=host.state.players)
         host._log(actor, 'attachment.unattach', f'{equipment.ref} became unattached.',
                   {'attachment': equipment.ref, 'reason': 'activated ability cost'},
                   importance=2, changed_objects=[equipment.object_id, source.object_id])
+        dispatch_unattachment(host, former)
     return equipment.object_id

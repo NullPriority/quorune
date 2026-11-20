@@ -20,6 +20,18 @@ class DamageModifierError(ValueError):
     """A durable prevention or redirection value is malformed or stale."""
 
 
+SHIELD_COUNTER_DAMAGE_VERSION_FIELD = "shield_counter_damage_version"
+
+
+def read_shield_counter_damage_version(data: Mapping[str, Any]) -> int | None:
+    if SHIELD_COUNTER_DAMAGE_VERSION_FIELD not in data:
+        return None
+    version = data[SHIELD_COUNTER_DAMAGE_VERSION_FIELD]
+    if type(version) is not int or version != 1:
+        raise DamageModifierError("Unsupported shield counter damage version")
+    return version
+
+
 class PreventionMode(str, Enum):
     AMOUNT = "amount"
     NEXT_INSTANCE = "next_instance"

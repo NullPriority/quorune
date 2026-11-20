@@ -35,6 +35,9 @@ def bind_semantic_program_runtime(
     semantic_identities: list[dict[str, Any]] = []
     component_identities: list[dict[str, Any]] = []
     required,blockers=program_dynamic_runtime_requirements(program)
+    from ..activation_x import source_discard_activation_x_program_dependencies
+    try:required.update(source_discard_activation_x_program_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_hand_activation_x:invalid:{exc}')
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
         from ..rules.trigger_limits import validate_program_trigger_limit,trigger_limit_capabilities
@@ -45,6 +48,16 @@ def bind_semantic_program_runtime(
             blockers.add(f"runtime_trigger_limit:invalid:{exc}")
     for effect in program.effects:
         operation = str(effect.get("op") or "")
+        if operation == 'inspect_target_library':
+            from ..rules.target_library_inspection import target_library_inspection_instruction_capabilities
+            try:required.update(target_library_inspection_instruction_capabilities(effect))
+            except (ValueError, TypeError, KeyError) as exc:blockers.add(f'runtime_target_library_inspection:invalid:{exc}')
+        if operation == 'search_named_library_or_graveyard' or operation == 'search' and effect.get('schema_version') == 6:
+            from ..rules.named_searches import named_zone_search_instruction_capabilities
+            try:
+                required.update(named_zone_search_instruction_capabilities(effect))
+            except (ValueError, TypeError, KeyError) as exc:
+                blockers.add(f'runtime_named_zone_search:invalid:{exc}')
         if operation == 'linked_exile_return' and effect.get('spec',{}).get('timing') == 'source_departure':
             from ..linked_exile_return_model import CONDITIONAL_EXILE_CAPABILITY
             required.add(CONDITIONAL_EXILE_CAPABILITY)
@@ -82,7 +95,8 @@ def bind_semantic_program_runtime(
             from ..activation_x import activation_x_capabilities
             ability = descriptor['ability']
             required.update(activation_x_capabilities(symbols=ability['announced_x_symbols'],
-                sacrifice_source=ability.get('sacrifice_source', False), discard_cards=bool(ability.get('choices'))))
+                sacrifice_source=ability.get('sacrifice_source', False), discard_cards=bool(ability.get('choices')),
+                discard_source=ability.get('discard_source', False)))
         if descriptor.get("schema_version") != registered["schema_version"]:
             blockers.add(f"runtime_handler:schema_mismatch:{handler_id}")
         if descriptor.get("event") != registered["event"]:

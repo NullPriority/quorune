@@ -1,6 +1,6 @@
 """Source-specific mutation occurrences over the existing public event binder."""
 
-import re
+from . import regex_working_set as re
 from ..mutate_model import MUTATE_CAPABILITY,MUTATE_EVENT
 from .fixed_public_event_trigger_bindings import _spec,_source_subject
 

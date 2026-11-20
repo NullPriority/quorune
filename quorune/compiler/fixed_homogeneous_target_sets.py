@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle grammar for bounded homogeneous target sets."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from .destruction_templates import targeted_destruction_effect_template

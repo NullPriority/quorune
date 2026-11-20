@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Shared fixed public target subjects for spell and activation cost clauses."""
 
-import re
+from . import regex_working_set as re
 
 from ..target_cost_subject import TargetCostSubjectSpec
 from ..rules.source_references import SourceReferenceSpec

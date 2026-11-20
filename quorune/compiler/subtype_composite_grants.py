@@ -1,6 +1,6 @@
 """Closed additive subtype and quoted-ability composition."""
 
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..object_predicate import ObjectQuerySpec

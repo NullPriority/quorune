@@ -1,7 +1,7 @@
 """Read one current-target self-replacement before ordinary result composition."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec

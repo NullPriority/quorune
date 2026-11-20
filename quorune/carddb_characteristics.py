@@ -157,6 +157,31 @@ def public_object_rules_names(
     return (name,)
 
 
+def public_stack_rules_names(card: CardInstance, effective: Mapping[str, Any],
+        record: CardRecord | None = None) -> tuple[str, ...]:
+    """Read current public spell names, retaining typed fused split names."""
+    if card.zone != 'stack' or card.face_down or card.phased_out:
+        return ()
+    name = effective.get('name')
+    if type(name) is not str or not name or name != name.strip():
+        raise ValueError('A visible spell requires explicit current public rules names')
+    if record is not None and record.faces and record.layout == 'split' and name == record.name:
+        return tuple(face['name'] for face in record.faces)
+    return (name,)
+
+
+def public_revealed_library_rules_names(card: CardInstance, record: CardRecord | None) -> tuple[str, ...]:
+    """Read typed outside-stack names only for an already authorized library reveal."""
+    if card.zone != 'library' or record is None:
+        raise ValueError('Revealed library names require the original library card and record')
+    if record.faces:
+        if record.layout == 'split':return tuple(face['name'] for face in record.faces)
+        return (record.faces[0]['name'],)
+    if type(record.name) is not str or not record.name:
+        raise ValueError('A revealed library card lost its rules name')
+    return (record.name,)
+
+
 def base_card_characteristics(
     card: CardInstance,
     record: CardRecord | None,

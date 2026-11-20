@@ -1,6 +1,6 @@
 """Fixed-color scopes and exact same-target companion instructions."""
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION
 from ..resolution_color_model import SCOPED_TARGET_COLOR_VERSION,TARGET_COLOR_SET_VERSION,TARGET_COLOR_SCOPE_MECHANIC

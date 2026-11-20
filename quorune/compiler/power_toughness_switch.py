@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-pinned recipient grammar for temporary power and toughness switches."""
 
-import re
+from . import regex_working_set as re
 
 from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION
 from ..rules.power_toughness_switch import (

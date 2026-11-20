@@ -70,7 +70,7 @@ class StormTargetChoiceOwnerMixin:
         )
 
     def _prepare_storm_resolution(self, item: StackItem) -> None:
-        count, template = validated_spell_copy_trigger(item)
+        count, template = validated_spell_copy_trigger(item, self)
         if count == 0:
             self.state.stack.remove(item)
             self._log(
@@ -83,10 +83,10 @@ class StormTargetChoiceOwnerMixin:
             self._grant_priority(self.state.active_player)
             return
         target_schema = template.get("target_schema")
-        if not isinstance(target_schema, Mapping):
+        if not isinstance(target_schema, Mapping) or template.get('commander_copy_new_targets') is False:
             context = StormCompletionContext(
                 seat=item.controller,
-                response={"copy_targets": [[] for _ in range(count)]},
+                response={"copy_targets": [copy.deepcopy(template.get('targets') or []) for _ in range(count)]},
                 trigger=item,
                 count=count,
                 template=template,
@@ -151,6 +151,8 @@ class StormTargetChoiceOwnerMixin:
         self,
         decision: Any,
     ) -> StormCompletionContext:
+        from ..semantic_runtime.commander_cast_copies import COMMANDER_CAST_COPY_KEY
+
         seat = decision.actors[0]
         response = decision.responses[seat]
         raw_continuation = decision.continuation
@@ -167,6 +169,8 @@ class StormTargetChoiceOwnerMixin:
                 None,
             )
             if legacy_trigger is not None:
+                if legacy_trigger.semantic_key == COMMANDER_CAST_COPY_KEY:
+                    raise GameRuleError('Commander-cast copy choices require their versioned selection')
                 legacy_count, legacy_template = validated_spell_copy_trigger(
                     legacy_trigger
                 )
@@ -213,7 +217,11 @@ class StormTargetChoiceOwnerMixin:
             raise GameRuleError("The storm trigger is no longer on the stack")
         if trigger.controller != seat:
             raise GameRuleError("Storm choice controller changed")
-        count, template = validated_spell_copy_trigger(trigger)
+        if trigger.semantic_key == COMMANDER_CAST_COPY_KEY:
+            from ..commander_cast_copies import completed_commander_cast_copy_spec
+            count, template = completed_commander_cast_copy_spec(trigger, thaw_value(selection.payload))
+        else:
+            count, template = validated_spell_copy_trigger(trigger)
         if "selection" in raw_continuation:
             payload = thaw_value(selection.payload)
             if selection.source_ref != self._stack_source_ref(trigger):
@@ -284,6 +292,7 @@ class StormTargetChoiceOwnerMixin:
                     context={
                         **declared_cost_copy_fields(template),
                         **cast_text_copy_fields(template),
+                        **({"copy_permanent_spell": True} if template.get("copy_permanent_spell") is True else {}),
                         "target_groups": grouped,
                         "target_snapshots": thaw_value(assignment.snapshots),
                         "targets_revalidated": False,

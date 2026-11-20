@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned fixed-mana Miracle declarations and linked triggers."""
 
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE

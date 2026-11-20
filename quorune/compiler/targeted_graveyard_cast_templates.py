@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Lower one complete optional resolving cast and its destination rider."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.graveyard_card_targets import targeted_graveyard_cast_instruction_schema
 from ..rules.source_references import matches_source_power_reference

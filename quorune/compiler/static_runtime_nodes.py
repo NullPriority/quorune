@@ -180,6 +180,15 @@ def static_runtime_node(
             kind='replacement_effect',event='token.create',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
             dependency_reason='Token quantity replacement requires its canonical replacement owner',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    from .static_recipient_qualifiers import recipient_qualified_static_handler
+    qualified = (recipient_qualified_static_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if qualified is not None:
+        return runtime_handler_node(node_id=node_id, line=line, span=span, compiled=qualified,
+            kind='static_ability', event='characteristics.evaluate',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Recipient qualifications require the live public query and characteristic owners',
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     template = static_runtime_template(
         material_line,
         source_name=source_name,

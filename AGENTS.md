@@ -185,8 +185,22 @@ paths and staged-diff inspection. Unexpected staged content must be reconciled.
 
 Shared checkout-wide mutations and global writers require a freeze request and
 explicit idle acknowledgments from affected developers, including confirmation
-that no mutating subprocess remains. Use isolated logs, temporary databases and
-ports; the pinned corpus stays read-only. Live-tree results are development
+that no mutating subprocess remains. Either developer holding the output and
+integration claims may run a narrow development refresh through its existing
+writer with relevant inputs protected for the whole operation. Public candidate
+ownership does not reserve development registries, declarations, fixture
+manifests or evidence indexes during certification. Commit and release central
+integration claims at bounded handoffs. Keep registry, declaration and generated
+evidence changes in one write transaction through the paired refresh, preventing
+readers from observing an intermediate state. Refresh related declarations and
+evidence together, complete cheap structural and whole-card admission checks, then commit
+a coherent private checkpoint and release the central claims. Record remaining
+native, interaction, replay, rollback and mutation checks as pending and finish
+them after that handoff. A private checkpoint does not make a family ready.
+Protect all discovered tests only for checks that inspect them; ordinary native
+read windows leave the other developer's tests and fixtures writable.
+Use isolated logs, temporary databases
+and ports; the pinned corpus stays read-only. Live-tree results are development
 feedback unless their relevant inputs remained protected for the whole run.
 The publisher remains a card developer and alone controls public refs, full
 generation, certification and protected merges. Use the other existing checkout
@@ -200,8 +214,8 @@ hour. Aim for approximately 80% of active effort on reusable card/effect
 implementation and focused behavioral evidence, and 20% on independent defects,
 publication, coordination and measured delivery improvements. Use available
 defect capacity for cards when no ready defect work exists. Verified correctness,
-privacy, security and replay failures take priority over this allocation. Use
-actual session data when reporting effort percentages or active hours.
+privacy, security and replay failures take priority over this allocation; do not
+infer effort percentages or active hours without supporting session data.
 
 Publish according to readiness and risk. Correct defects introduced or exposed
 by a family before publishing it. Consolidate independent defects when warranted
@@ -215,8 +229,8 @@ claims and begin the next family without waiting for reassignment. A family
 awaiting shared integration, evidence-index refresh, generation, certification or
 merge is pending integration: preserve its checkpoint, record the precise
 remaining obligation, release claims no longer needed and immediately select
-independent work. Behavioral evidence remains pending until the required native
-tests pass.
+independent work. Behavioral evidence remains pending until it actually passes;
+declaration validation does not replace native tests.
 
 The publisher checks asynchronous candidate results briefly at useful work
 boundaries and repairs actionable failures with scoped changes. Never hold the
@@ -226,7 +240,7 @@ independently switches, resets or rebases the shared checkout; the publisher
 coordinates history changes through an acknowledged freeze. Use the existing
 durable handoff record for current family, latest private commit, completed
 families, pending evidence, measured gains, exact blocker and next action. Label
-unmeasured gains and unknown effort. Use existing measurements for status updates.
+unmeasured gains and unknown effort; do not run a census for a status update.
 
 Keep the filesystem equally bounded. The normal layout is the canonical
 `C:\Code Projects\Quorune` checkout plus, only while Slot B is active, one
@@ -576,7 +590,9 @@ Use temporary directories and sanitized recipes for regression records.
 ## CI failure triage and recurrence prevention
 
 When public pull-request CI fails, inspect every failed job for the same exact
-head before changing the branch. For each failed job, identify:
+head and available output from started canceled jobs before changing the branch.
+Distinguish jobs that never ran from interrupted execution. For each actionable
+failure, identify:
 
 - the failed step;
 - the exact command;

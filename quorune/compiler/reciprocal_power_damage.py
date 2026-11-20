@@ -1,5 +1,5 @@
 """Recognize two complete power-damage instructions without converting to Fight."""
-import re
+from . import regex_working_set as re
 
 from ..reciprocal_power_damage import RECIPROCAL_POWER_MECHANIC, reciprocal_power_damage_capabilities
 from ..rules.source_references import SourceReferenceSpec

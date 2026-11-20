@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compose a targeted return with one complete linked end-step instruction."""
 
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 
 from ..rules.reanimation_followup import (
     BattlefieldEntryFollowup, REANIMATION_EXILE_REPLACEMENT_VERSION, REANIMATION_FOLLOWUP_MECHANIC,

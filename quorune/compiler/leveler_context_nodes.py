@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compile CR 711 Leveler striations around already-typed child abilities."""
 
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..ability_fragments import (

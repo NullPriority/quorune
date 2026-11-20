@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Retain raw spans while joining proved public-condition spell clauses."""
 
-import re
+from . import regex_working_set as re
 from .ir_model import SourceSpan
 from .oracle_source_text import without_ability_word_label
 from .public_self_replacement_templates import normalize_public_replacement_text

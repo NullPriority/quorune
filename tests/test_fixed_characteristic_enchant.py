@@ -53,8 +53,8 @@ class FixedCharacteristicEnchantCompilerTests(unittest.TestCase):
                         TypedEnchantSpec.from_dict(changed)
 
     def test_nearby_unsupported_and_ambiguous_restrictions_stay_residual(self):
-        for text in ('Enchant creature with another Aura attached to it',
-                'Enchant modified creature', 'Enchant nonbasic land',
+        for text in ('Enchant creature with two other Auras attached to it',
+                'Enchant modified permanent', 'Enchant nonbasic land you control',
                 'Enchant creature with power X or less',
                 'Enchant creature with power less than this creature',
                 'Enchant creature without flying or vigilance',

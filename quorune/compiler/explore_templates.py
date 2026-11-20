@@ -8,7 +8,7 @@ the compiler only proves the small Oracle sentence shapes represented here.
 """
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 

@@ -9,6 +9,7 @@ from .replacement.immutable import FrozenMap,thaw_value
 EVENT_SPELL_COPY_CAPABILITY='stack.copy.cast_event_spell'
 EVENT_SPELL_COPY_MECHANIC='cast-event-spell-copy'
 EVENT_SPELL_COPY_CONTEXT='event_spell_copy_source'
+CAST_SPELL_TOKEN_ORACLE_CONTEXT = 'cast_spell_token_oracle_id'
 
 
 @dataclass(frozen=True,slots=True)
@@ -46,6 +47,14 @@ class EventSpellCopySource:
         if not isinstance(value,Mapping) or set(value)!={'schema_version','stack_item','characteristics','target_schema','logical_object_id','departed'}:
             raise ValueError('Event spell-copy source fields are closed')
         return cls(**dict(value))
+
+
+def cast_spell_token_condition():
+    """The actual original spell cast by its own controller."""
+    return {"all": [
+        {"field":"controller","op":"eq","value":"$source.controller"},
+        {"field":"card","op":"eq","value":"$source.ref"},
+    ]}
 
 
 def event_spell_copy_effect(*,retain_targets_only=False):

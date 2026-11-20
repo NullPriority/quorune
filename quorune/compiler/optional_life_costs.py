@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile the complete colored-only optional life-cost declaration."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.optional_life_cost_model import (
     OPTIONAL_LIFE_COST_CAPABILITY, OPTIONAL_LIFE_COST_EVENT, OPTIONAL_LIFE_COST_HANDLER,

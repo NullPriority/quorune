@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
+from ..conditional_recipient_model import (
+    ATTACHED_CREATURE_CONDITION_SUBJECT, attached_creature_no_other_creatures_condition,
+)
 from ..object_predicate import ObjectQuerySpec
 from ..ability_fragments import (
     ConditionalKeywordSpec,
@@ -1335,9 +1338,16 @@ def fixed_public_state_characteristics_handler(
     layers use one target and source condition.
     """
 
-    parsed = fixed_public_state_parts(
-        oracle_line,
-        source_name=source_name,
+    material = " ".join(oracle_line.casefold().replace("\u2019", "'").split())
+    attached_creature = re.fullmatch(
+        r"enchanted creature has intimidate as long as its controller controls no other creatures\.?"
+        r"(?: \(it can't be blocked except by artifact creatures and/or creatures that share a color with it\.\))?",
+        material,
+    )
+    parsed = (
+        (attached_creature_no_other_creatures_condition(), "Enchanted creature has intimidate.")
+        if attached_creature
+        else fixed_public_state_parts(oracle_line, source_name=source_name)
     )
     if parsed is None:
         return None
@@ -1365,6 +1375,7 @@ def fixed_public_state_characteristics_handler(
             "source_condition": source_condition.to_dict(),
             "target": dict(target),
             "modifier": dict(modifier),
+            **({"condition_subject": ATTACHED_CREATURE_CONDITION_SUBJECT} if attached_creature else {}),
         },
         tuple(
             sorted(

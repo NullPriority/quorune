@@ -1,5 +1,5 @@
 """Compile one printed Mutate cost without promoting incomplete gameplay."""
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict,CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..mutate_model import MutateSpec,MUTATE_CAPABILITY,MUTATE_HANDLER

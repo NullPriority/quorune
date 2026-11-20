@@ -1,6 +1,6 @@
 """Closed printed current-turn history thresholds over existing typed facts."""
 
-import re
+from . import regex_working_set as re
 
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..creature_subtypes import canonical_creature_subtype
@@ -27,6 +27,8 @@ def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),
 
 
 def fixed_public_history_condition(text):
+    qualified = qualified_creature_death_exclusion(text)
+    if qualified is not None:return qualified
     text=' '.join(text.strip().rstrip('.').casefold().replace('’',"'").split())
     if text == "an artifact or creature was put into a graveyard from the battlefield this turn":
         return _condition("permanent_arrived_graveyard", "any_player", types_any=("artifact", "creature"))
@@ -118,3 +120,17 @@ def fixed_public_history_condition(text):
             return _condition('card_arrived_graveyard', types_any=tuple(sorted(PERMANENT_CARD_TYPES)))
         return _condition('card_arrived_graveyard', types_all=(arrival[1],))
     return None
+
+
+def qualified_creature_death_exclusion(text):
+    material=' '.join(text.strip().rstrip('.').split())
+    named=re.fullmatch(r'a creature not named (?P<name>.+?) died this turn',material,re.I)
+    typed=re.fullmatch(r'a non-(?P<subtype>[A-Za-z][A-Za-z -]*) creature died this turn',material,re.I)
+    if named is None and typed is None:return None
+    if named is not None and re.search(r'\bdied\b|\bthis turn\b',named['name'],re.I):return None
+    subtype=canonical_creature_subtype(typed['subtype']) if typed is not None else None
+    if typed is not None and subtype is None:return None
+    query=PublicHistoryQuerySpec('permanent_died','any_player',types_all=('creature',),schema_version=5,
+        excluded_name=named['name'] if named is not None else None,excluded_subtype=subtype)
+    return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+        amount=1,schema_version=8,history_query=query)

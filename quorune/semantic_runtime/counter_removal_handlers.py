@@ -114,7 +114,7 @@ class AllCounterRemovalHandler:
         if named:
             from ..counter_names import normalized_counter_name
             counter_name = effect.get('counter')
-            if (type(effect.get('schema_version')) is not int or effect['schema_version'] != 2
+            if (type(effect.get('schema_version')) is not int or effect['schema_version'] not in (2, 3)
                     or type(counter_name) is not str or not counter_name.strip()
                     or normalized_counter_name(counter_name) != counter_name):
                 raise SemanticNodeError('Named-kind counter removal requires its version and canonical name')

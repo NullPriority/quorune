@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..rules.turn_cast_grant_model import (

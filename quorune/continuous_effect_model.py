@@ -20,6 +20,27 @@ class ContinuousEffectError(ValueError):
     pass
 
 
+CONTINUOUS_DEPENDENCY_ORDER_VERSION = 1
+CONTINUOUS_DEPENDENCY_ORDER_FIELD = "continuous_dependency_order_version"
+
+
+def read_continuous_dependency_order_version(data: Mapping[str, Any]) -> int | None:
+    if CONTINUOUS_DEPENDENCY_ORDER_FIELD not in data:
+        return None
+    value = data[CONTINUOUS_DEPENDENCY_ORDER_FIELD]
+    if type(value) is not int or value != CONTINUOUS_DEPENDENCY_ORDER_VERSION:
+        raise ContinuousEffectError("Invalid continuous dependency order version")
+    return value
+
+
+def continuous_dependency_order_fields(version: int | None) -> dict[str, int]:
+    if version is None:
+        return {}
+    fields = {CONTINUOUS_DEPENDENCY_ORDER_FIELD: version}
+    read_continuous_dependency_order_version(fields)
+    return fields
+
+
 class Layer(IntEnum):
     COPY = 1
     CONTROL = 2
@@ -105,6 +126,8 @@ _OPERATION_LAYERS = {
     "remove_all_colors": Layer.COLOR,
     "add_ability": Layer.ABILITY,
     "remove_ability": Layer.ABILITY,
+    "remove_color_protection": Layer.ABILITY,
+    "remove_landwalk_abilities": Layer.ABILITY,
     "prohibit_ability": Layer.ABILITY,
     "remove_all_abilities": Layer.ABILITY,
     "add_rules_text": Layer.ABILITY,
@@ -335,6 +358,9 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op in {"add_ability", "remove_ability", "prohibit_ability", "add_rules_text"}:
         if field is not None or type(value) is not str or not value:
             raise ContinuousEffectError(f"{op} requires one nonempty ability string")
+    elif op == "remove_color_protection":
+        if field is not None or type(value) is not str or value not in {"W", "U", "B", "R", "G"}:
+            raise ContinuousEffectError("remove_color_protection requires one canonical color symbol")
     elif op in {"add_ability_fragment", "remove_ability_fragment"}:
         if field is not None or not isinstance(value, Mapping):
             raise ContinuousEffectError(
@@ -346,6 +372,7 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
             raise ContinuousEffectError(str(exc)) from exc
     elif op in {
         "remove_all_abilities",
+        "remove_landwalk_abilities",
         "remove_all_colors",
         "remove_creature_card_type",
         "switch_power_toughness",
@@ -488,9 +515,13 @@ def _validate_continuous_effect_identity_scope(
         raise ContinuousEffectError("Next-turn duration requires a resolution-created effect")
     if effect.duration.source_bound:
         if (effect.origin is not ContinuousEffectOrigin.RESOLUTION
-                or (effect.layer is not Layer.CONTROL
-                    and (effect.duration is not ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS
-                         or effect.layer not in {Layer.TYPE, Layer.COLOR, Layer.ABILITY, Layer.POWER_TOUGHNESS}))
+                or (effect.layer is not Layer.CONTROL and not (
+                    effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS
+                    and effect.layer in {Layer.TYPE, Layer.COLOR, Layer.ABILITY, Layer.POWER_TOUGHNESS}
+                    or effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES
+                    and effect.layer is Layer.TYPE and len(locked) == len(effect.operations) == 1
+                    and effect.operations[0].op == "set_basic_land_types"
+                ))
                 or not isinstance(effect.duration_source, ContinuousObjectIdentity)
                 or not isinstance(effect.duration_history, SourceContinuitySnapshot)
                 or effect.source_id != effect.duration_source.object_id):
@@ -549,6 +580,23 @@ def _validate_continuous_effect_identity_scope(
         )
 
 
+def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
+    anchor = effect.recipient_scope_anchor
+    if anchor is None:
+        return
+    if type(anchor) is not str or not anchor:
+        raise ContinuousEffectError("A retained recipient scope requires an effect identity")
+    if (effect.origin is not ContinuousEffectOrigin.STATIC_ABILITY
+            or effect.duration is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT
+            or effect.relation is not ContinuousEffectRelation.NONE
+            or effect.locked_objects or effect.characteristic_defining
+            or not effect.applies.controlled_by_nonowner or not effect.applies.controller
+            or effect.applies.types_all != ("creature",)):
+        raise ContinuousEffectError("Retained recipients require a live nonowner creature query")
+    if (anchor == effect.effect_id) != (effect.layer is Layer.TYPE) or effect.sublayer not in {"4","6","7c"}:
+        raise ContinuousEffectError("Retained recipients start in layer four and continue in six or seven c")
+
+
 @dataclass(frozen=True, slots=True)
 class ContinuousEffect:
     effect_id: str
@@ -574,6 +622,7 @@ class ContinuousEffect:
     denied_keyword_grants: tuple[tuple[str, str, str], ...] = ()
     attachment_duration: AttachmentDuration | None = None
     expires_on_next_turn_of: str | None = None
+    recipient_scope_anchor: str | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -679,6 +728,7 @@ class ContinuousEffect:
             )
         object.__setattr__(self, "locked_objects", locked)
         _validate_continuous_effect_identity_scope(self, locked)
+        _validate_recipient_scope_anchor(self)
         denied = self.denied_keyword_grants
         if not isinstance(denied, (tuple, list)) or any(
             not isinstance(row, (tuple, list)) or len(row) != 3
@@ -728,6 +778,8 @@ class ContinuousEffect:
             payload['attachment_duration'] = self.attachment_duration.to_dict()
         if self.expires_on_next_turn_of is not None:
             payload["expires_on_next_turn_of"] = self.expires_on_next_turn_of
+        if self.recipient_scope_anchor is not None:
+            payload["recipient_scope_anchor"] = self.recipient_scope_anchor
         return payload
 
     @classmethod
@@ -754,7 +806,9 @@ class ContinuousEffect:
                 "Continuous effect fields are missing or unknown"
             )
         turn_expiry = decode_turn_expiry(value)
-        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of'})
+        if "recipient_scope_anchor" in value and value["recipient_scope_anchor"] is None:
+            raise ContinuousEffectError("An explicit recipient scope anchor cannot be null")
+        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of', 'recipient_scope_anchor'})
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
@@ -838,6 +892,7 @@ class ContinuousEffect:
                 attachment_duration=(AttachmentDuration.from_dict(value['attachment_duration'])
                     if 'attachment_duration' in value else None),
                 expires_on_next_turn_of=turn_expiry,
+                recipient_scope_anchor=value.get("recipient_scope_anchor"),
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):

@@ -63,7 +63,14 @@ def collect_counter_permissions(host, *, sources=None, source_zones=None,
                 spec = handler.validate(descriptor)
                 if self_only and spec.relation != 'self':
                     continue
-                rules.append(CounterProhibitionRule(spec, source.object_id, controller))
+                if spec.relation == 'attached':
+                    target = host.state.cards.get(source.attached_to)
+                    if target is None or target.zone != 'battlefield' or target.phased_out:
+                        continue
+                    rules.append(CounterProhibitionRule(spec, source.object_id, controller,
+                        target.object_id, target.logical_object_id))
+                else:
+                    rules.append(CounterProhibitionRule(spec, source.object_id, controller))
     return CounterPermissionSnapshot(tuple(rules))
 
 
@@ -75,7 +82,8 @@ def allows_counter_placement_on_card(host, card, counter_name, amount, *, permis
     data = host._effective_card_data(card) if effective is None else effective
     types = tuple(sorted(host._type_parts(str(data.get('type_line') or ''))[0]))
     return permissions.allows(CounterPlacementFact('permanent', card.object_id, counter_name, amount,
-        controller=card.controller if card.zone == 'battlefield' else None, zone=card.zone, types=types))
+        controller=card.controller if card.zone == 'battlefield' else None, zone=card.zone, types=types,
+        logical_object_id=getattr(card, 'logical_object_id', None)))
 
 
 def entry_counter_permissions(host, subject, card, global_permissions):

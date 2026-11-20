@@ -288,3 +288,124 @@ def event_card_return_intent(effect: Mapping[str, Any], *, actor: str, reason: s
         optional_if_missing=True, expected_zone_change_counter=counter,
         replacement_selections=tuple(selections),
     )
+
+
+
+DEATH_LAND_EXILE_CAPABILITY = "zone.move.fixed_death_source_exile_after_land_type"
+DEATH_LAND_EXILE_MECHANIC = "fixed-death-land-type-and-exile"
+DEATH_EXILE_ARRIVALS = "death_exile_arrivals"
+DEATH_EXILE_VERSION = "death_exile_version"
+_DEATH_EXILE_PUBLIC_ZONES = ("graveyard", "exile", "command")
+
+
+def death_land_exile_condition():
+    return {"all": [
+        {"field": "card", "op": "eq", "value": "$source.ref"},
+        {"field": "card_object_identity", "op": "eq", "value": "$source.logical_object_id"},
+    ]}
+
+
+def death_source_exile_effect():
+    return {"op": "move_if_in_zone", DEATH_EXILE_VERSION: 1,
+            DEATH_EXILE_ARRIVALS: "$context." + DEATH_EXILE_ARRIVALS}
+
+
+def has_death_source_exile(effect):
+    return DEATH_EXILE_VERSION in effect or DEATH_EXILE_ARRIVALS in effect
+
+
+def death_source_exile_context(host, context, occurrence, parts):
+    from .rules.event_subscriptions import event_has_capability_subscriber
+
+    if not event_has_capability_subscriber(host, "creature.dies", DEATH_LAND_EXILE_CAPABILITY):
+        return context
+    if occurrence.composition is None:
+        arrivals = (occurrence,)
+    else:
+        group = occurrence.composition
+        if not group.permanent_departure or len(parts) != group.member_count or any(
+            part.composition is None or not part.composition.physical_arrival
+            or part.composition.parent != group.parent for part in parts
+        ):
+            raise ValueError("Death-source exile requires its complete committed departures")
+        arrivals = parts
+    rows = [
+        {"object_id": part.object_id, "reference": part.card_ref,
+         "logical_object_id": part.current_logical_object_id, "zone": part.destination}
+        for part in arrivals if part.card_object and not part.token
+        and part.destination in _DEATH_EXILE_PUBLIC_ZONES
+    ]
+    return {**dict(context), DEATH_EXILE_ARRIVALS: rows}
+
+
+def death_land_exile_node_capabilities(effects, target_schema):
+    from .resolution_characteristic_model import fixed_resolution_characteristic_instruction
+    from .rules.resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+    from .target_land_type_model import FIXED_TARGET_LAND_TYPE_MECHANIC, FixedTargetLandTypeSpec
+
+    if (len(effects) != 2 or type(effects[1].get(DEATH_EXILE_VERSION)) is not int
+            or effects[1] != death_source_exile_effect()):
+        return ()
+    try:
+        spec, selection = fixed_resolution_characteristic_instruction(effects[0])
+    except (KeyError, TypeError, ValueError):
+        return ()
+    if (not isinstance(spec, FixedTargetLandTypeSpec) or spec.duration != "zone_object"
+            or spec.retain_other_land_types or spec.controller_relation != "any"
+            or selection != "$target.0"):
+        return ()
+    required = fixed_resolution_characteristic_capabilities(
+        effects=effects[:1], target_schema=target_schema,
+        mechanic_ids=(FIXED_TARGET_LAND_TYPE_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"),
+    )
+    return (*required, DEATH_LAND_EXILE_CAPABILITY) if required else ()
+
+
+def death_land_exile_runtime_dependencies(program):
+    from .replacement.immutable import FrozenMap
+    from .rules.effect_shape_walkers import nested_effects
+
+    if not any(has_death_source_exile(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if (program.event != "creature.dies" or program.active_zone != "battlefield"
+            or FrozenMap(program.event_condition or {}) != FrozenMap(death_land_exile_condition())):
+        raise ValueError("Death-source exile needs its exact intrinsic dies occurrence")
+    required = death_land_exile_node_capabilities(program.effects, program.target_schema)
+    if not required:
+        raise ValueError("Death-source exile must follow one complete target land setting")
+    return required
+
+
+def apply_death_source_exile(host, effect, *, actor, reason):
+    from .errors import GameRuleError
+    from .semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+
+    required = {"op", DEATH_EXILE_VERSION, DEATH_EXILE_ARRIVALS}
+    if (not required <= set(effect) <= required | {"_runtime_source", "_replacement_selections"}
+            or effect["op"] != "move_if_in_zone"
+            or type(effect[DEATH_EXILE_VERSION]) is not int or effect[DEATH_EXILE_VERSION] != 1):
+        raise GameRuleError("Death-source exile has a closed resolved instruction")
+    arrivals = effect[DEATH_EXILE_ARRIVALS]
+    if not isinstance(arrivals, (list, tuple)):
+        raise GameRuleError("Death-source exile requires the committed public arrivals")
+    objects = set()
+    refs = []
+    for row in arrivals:
+        fields = {"object_id", "reference", "logical_object_id", "zone"}
+        if (not isinstance(row, Mapping) or set(row) != fields
+                or any(type(row[field]) is not str or not row[field] for field in fields)
+                or row["zone"] not in _DEATH_EXILE_PUBLIC_ZONES or row["object_id"] in objects):
+            raise GameRuleError("Death-source exile has a malformed committed arrival")
+        objects.add(row["object_id"])
+        card = host.state.cards.get(row["object_id"])
+        if (card is not None and card.ref == row["reference"]
+                and card.logical_object_id == row["logical_object_id"] and card.zone == row["zone"]
+                and card.is_card_object and not card.is_token):
+            refs.append(card.ref)
+    if not refs:
+        return ()
+    return host.move_objects_simultaneously_intent(MoveObjectsSimultaneouslyIntent(
+        actor=actor, object_refs=tuple(refs), expected_zones=_DEATH_EXILE_PUBLIC_ZONES,
+        destination="exile", reason=reason,
+        replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+    ))

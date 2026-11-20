@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed current-provider power grammar shared by cast and activation costs."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from ..self_cast_reductions import CastReductionMetric, CastReductionMetricKind

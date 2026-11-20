@@ -5,6 +5,25 @@ from typing import Mapping
 
 
 CONDITIONAL_RECIPIENT_CAPABILITY = 'continuous.characteristics.conditional_recipients'
+ATTACHED_CREATURE_CONDITION_SUBJECT = 'attached_creature'
+
+
+def attached_creature_no_other_creatures_condition():
+    """Use the current condition subject to exclude the attached creature itself."""
+    from .characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from .continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+    from .object_predicate import ObjectQuerySpec
+
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
+        amount=0,
+        quantity=CharacteristicQuantitySpec(
+            CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)),
+            exclude_source=True,
+        ),
+        schema_version=2,
+    )
 
 
 @dataclass(frozen=True, slots=True)

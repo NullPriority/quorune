@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
@@ -43,6 +43,11 @@ from ..morph import (
     FACE_DOWN_METHOD_RUNTIME_EVENTS,
     face_down_method_handler_descriptor,
 )
+from .cumulative_effect_cost_upkeep import cumulative_effect_cost_upkeep_node
+from .cumulative_graveyard_upkeep import cumulative_graveyard_upkeep_node
+from .cumulative_alternative_mana_upkeep import cumulative_alternative_mana_upkeep_node
+from .cumulative_counter_upkeep import cumulative_counter_upkeep_node
+from .cumulative_object_upkeep import cumulative_object_upkeep_node
 from .cumulative_upkeep_nodes import (
     fixed_life_cumulative_upkeep_node,
     fixed_mana_cumulative_upkeep_node,
@@ -399,7 +404,11 @@ def closed_special_keyword_node(
     morph = fixed_mana_morph_keyword_node(**values)
     if morph is not None:
         return morph
-    for lower in (graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node,increment_keyword_node):
+    from .recover_nodes import recover_keyword_node
+    from .ripple_nodes import ripple_keyword_node
+    from .demonstrate_nodes import demonstrate_keyword_node
+    from .gravestorm_nodes import gravestorm_keyword_node
+    for lower in (gravestorm_keyword_node,demonstrate_keyword_node,ripple_keyword_node,recover_keyword_node,graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node,increment_keyword_node):
         node=lower(**values)
         if node is not None:return node
     renown = renown_keyword_node(
@@ -426,6 +435,11 @@ def closed_special_keyword_node(
         fixed_transmute_keyword_node,
         typecycling_keyword_node,
         ordinary_cycling_keyword_node,
+        cumulative_object_upkeep_node,
+        cumulative_counter_upkeep_node,
+        cumulative_alternative_mana_upkeep_node,
+        cumulative_effect_cost_upkeep_node,
+        cumulative_graveyard_upkeep_node,
         fixed_mana_cumulative_upkeep_node,
         fixed_life_cumulative_upkeep_node,
         fixed_mana_echo_node,

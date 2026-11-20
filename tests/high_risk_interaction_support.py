@@ -1491,6 +1491,19 @@ DECLARATION_AND_REPLACEMENT_PAIRS = tuple(
     )
 )
 
+PROMOTED_DAMAGE_PREVENTION_SIBLING_PAIRS = tuple(
+    _pair(capability, "residual.replacement.damage-prevention")
+    for capability in (
+        "capability.damage.amount.positive",
+        "capability.damage.result.multitype_permanent",
+        "capability.damage.source.stack_current_or_lki",
+    )
+)
+PROMOTED_GRAVEYARD_SAGA_SIBLING_PAIR = _pair(
+    "capability.zone.return.own_graveyard_choice",
+    "residual.card_form.ordinary-saga-chapter-event-binding",
+)
+
 ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
     sorted(
         {
@@ -1526,6 +1539,8 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
             *REANIMATION_RESIDUAL_BOUNDARY_PAIRS,
             *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
             *SAGA_CHAPTER_HIGH_RISK_BOUNDARY_PAIRS,
+            *PROMOTED_DAMAGE_PREVENTION_SIBLING_PAIRS,
+            PROMOTED_GRAVEYARD_SAGA_SIBLING_PAIR,
         }
     )
 )
@@ -1538,6 +1553,25 @@ _WITNESSES['zz-conditional-damage-recipient-redirection'] = _Witness(
     'If this spell would deal damage to a creature, it deals that much damage '
     "to that creature's controller instead.",
     '{R}',
+)
+
+# These keys follow the existing witnesses so their generated fixture IDs stay stable.
+_WITNESSES["zz-variable-damage-prevention-sibling"] = _Witness(
+    "Generic Damage and Prevention Sibling Fixture",
+    "Creature — Human",
+    "{T}: This creature deals 2 damage to target creature or planeswalker.\n"
+    "{1}: Prevent the next X damage that would be dealt to this creature this turn, "
+    "where X is the number of creatures you control.",
+    "{2}{R}",
+    power="2",
+    toughness="2",
+)
+_WITNESSES["zz-unresolved-graveyard-saga-sibling"] = _Witness(
+    "Generic Graveyard and Saga Sibling Fixture",
+    "Enchantment — Saga",
+    "I, II — Mill three cards. Then you may return a creature card from your graveyard to your hand.\n"
+    "III — Choose a card name.",
+    "{3}{G}",
 )
 
 _PAIR_WITNESS: dict[Pair, str] = {}
@@ -1742,6 +1776,9 @@ _bind(
     "kirtars-wrath",
     *REGENERATION_PROHIBITION_AND_REPLACEMENT_PAIRS,
 )
+
+_bind("zz-variable-damage-prevention-sibling", *PROMOTED_DAMAGE_PREVENTION_SIBLING_PAIRS)
+_bind("zz-unresolved-graveyard-saga-sibling", PROMOTED_GRAVEYARD_SAGA_SIBLING_PAIR)
 
 if set(_PAIR_WITNESS) != {
     *ALL_HIGH_RISK_BOUNDARY_PAIRS,

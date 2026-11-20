@@ -1,7 +1,10 @@
 """Unblocked syntax binds to the post-blocker-declaration occurrence."""
-import re
+from . import regex_working_set as re
 from ..rules.source_references import SourceReferenceSpec
-from ..unblocked_attacker_model import UNBLOCKED_ATTACKER_EVENT,UNBLOCKED_ATTACKER_CAPABILITY,UNBLOCKED_ATTACKER_VARIANT
+from ..unblocked_attacker_model import (
+    UNBLOCKED_ATTACKER_EVENT, UNBLOCKED_ATTACKER_CAPABILITY, UNBLOCKED_ATTACKER_VARIANT,
+    intrinsic_unblocked_condition,
+)
 
 
 def unblocked_attacker_binding_spec(text,*,card_name):
@@ -11,5 +14,4 @@ def unblocked_attacker_binding_spec(text,*,card_name):
     from .fixed_public_event_trigger_bindings import _spec
     return _spec(UNBLOCKED_ATTACKER_EVENT,UNBLOCKED_ATTACKER_VARIANT,match['body'],
         'fixed-counter-public-attack-trigger-v1','trigger-event-normalized-public-action',
-        condition={'all':[{'field':'card','op':'eq','value':'$source.ref'},
-            {'field':'card_object_identity','op':'eq','value':'$source.logical_object_id'}]},capabilities=(UNBLOCKED_ATTACKER_CAPABILITY,))
+        condition=intrinsic_unblocked_condition(), capabilities=(UNBLOCKED_ATTACKER_CAPABILITY,))

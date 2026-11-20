@@ -80,7 +80,7 @@ def fixed_resolution_characteristic_query_is_closed(
         or query.include_phased_out
         or query.known_to_actor is not None
         or not _public_state_is_closed(query.state_predicate)
-        or query.exclude_ref not in {None, "$source"}
+        or query.exclude_ref not in {None, "$source", "$source.zone_object"}
     ):
         return False
     if query.controller == "$controller":
@@ -144,6 +144,10 @@ def fixed_resolution_characteristic_query_is_closed(
     if query.exclude_ref is not None and not (
         query.controller == "$controller"
         or query.state_predicate is not None
+        or query == ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",),
+            exclude_ref="$source.zone_object",
+        )
     ):
         return False
     return bool(

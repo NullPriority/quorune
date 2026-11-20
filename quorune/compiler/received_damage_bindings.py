@@ -1,5 +1,5 @@
 """Exact permanent receiving heads and one attached tap/receiving pair."""
-import re
+from . import regex_working_set as re
 
 from ..received_damage_model import (
     RECEIVED_DAMAGE_EVENT, RECEIVED_COMBAT_DAMAGE_EVENT, RECEIVED_DAMAGE_MECHANIC,

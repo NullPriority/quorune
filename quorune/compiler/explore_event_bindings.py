@@ -1,5 +1,5 @@
 """Completed creature exploration over the existing typed action owner."""
-import re
+from . import regex_working_set as re
 from ..explore_action_model import CREATURE_EXPLORE_EVENT, CREATURE_EXPLORE_CAPABILITY
 from .fixed_public_event_trigger_bindings import _spec
 

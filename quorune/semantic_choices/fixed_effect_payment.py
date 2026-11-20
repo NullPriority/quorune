@@ -7,7 +7,7 @@ from dataclasses import replace
 
 from ..fixed_effect_payment import RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
 from ..object_query import object_matches_query
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.blight_model import blight_decline_branch_is_closed
 from ..rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent, SetPermanentsTappedIntent, RemoveCountersIntent
@@ -50,6 +50,8 @@ def _validated(
     *, continuation: bool = False,
 ) -> tuple[FixedEffectPaymentSpec, tuple[FrozenMap, ...]]:
     fields = {'op', 'schema_version', 'player', 'payment', 'effects'}
+    cast_payment = effect.get('schema_version') == 6
+    if cast_payment:fields.add('source_stack')
     if "declined_effects" in effect:
         fields.add("declined_effects")
     local = {'_choice_actor', '_legal_objects', '_stack_label'} if continuation else set()
@@ -59,9 +61,13 @@ def _validated(
         set(effect) not in (fields | local, fields | local | {'cost'})
         or effect.get('op') != 'offer_optional_mana_payment'
         or type(effect.get('schema_version')) is not int
-        or effect['schema_version'] != 2
+        or effect['schema_version'] not in (2,6)
     ):
         raise SemanticChoiceError('Fixed effect payment fields are malformed')
+    if cast_payment:
+        from ..cast_source_sacrifice_payment import cast_source_sacrifice_spec
+        try:cast_source_sacrifice_spec({key:effect[key] for key in fields},actor=actor)
+        except (KeyError,TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if effect['player'] != actor or actor not in query.active_seats:
         raise SemanticChoiceError('Fixed payment controller changed')
     try:
@@ -75,7 +81,7 @@ def _validated(
         raise SemanticChoiceError('Fixed payment object relation changed')
     effects = effect['effects']
     if "declined_effects" in effect:
-        if not blight_decline_branch_is_closed(spec.kind, effects, effect["declined_effects"]):
+        if not cast_payment and not blight_decline_branch_is_closed(spec.kind, effects, effect["declined_effects"]):
             raise SemanticChoiceError("The declined Blight or mana result is malformed")
         effects = effect["declined_effects"]
     if not isinstance(effects, (tuple, list)) or not 1 <= len(effects) <= 4:
@@ -173,6 +179,10 @@ def prepare_fixed_payment_cost(
         legal=(source,) if source is not None else ()
         payable=bool(legal)
         choice=ScalarChoice(field_name='pay',legal_values=(True,False) if payable else (False,))
+    elif spec.kind == 'resolved_fractional_life':
+        from ..rules.fractional_life_payment import resolved_fractional_payment_is_payable
+        payable = resolved_fractional_payment_is_payable(spec, context.query.player_life(actor))
+        choice = ScalarChoice(field_name='pay', legal_values=(True, False) if payable else (False,))
     else:
         payable = (
             context.query.player_life(actor) >= spec.amount if spec.kind == 'life'
@@ -210,6 +220,46 @@ def complete_fixed_effect_payment(
         intents=completion.intents,
         prepend_effects=consequences if run_consequences else (),
     )
+
+
+def _stack_target_change_payment_spec(effect, actor, source_ref, query):
+    from ..stack_target_change_model import validate_stack_target_change_payment_effect
+
+    try:
+        validate_stack_target_change_payment_effect(effect, resolved=True)
+        target = query.stack_object(effect["stack"], exclude_ref=source_ref)
+        if (
+            target is None or len(target.targets) != 1
+            or target.controller != actor or effect["player"] != actor or actor not in query.active_seats
+        ):
+            raise ValueError("The targeted spell and its current paying controller are unavailable")
+        return FixedEffectPaymentSpec("mana", requirements=effect["cost"])
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+
+
+def prepare_stack_target_change_payment(effect, context):
+    spec = _stack_target_change_payment_spec(effect, context.actor, context.stack_ref, context.query)
+    prepared = prepare_fixed_payment_cost(spec, effect, context)
+    request = replace(
+        prepared.request, prompt="Pay {2} to keep the spell's target.",
+        public_context=FrozenMap({**dict(prepared.request.public_context),
+                                  "cost": dict(spec.requirements), "target_stack": effect["stack"]}),
+    )
+    return replace(prepared, request=request)
+
+
+def complete_stack_target_change_payment(continuation, response, query):
+    effect = continuation.effect
+    local_fields = {"_choice_actor", "_stack_label", "_legal_objects"}
+    if not local_fields.issubset(effect) or effect["_legal_objects"]:
+        raise SemanticChoiceError("Spell target change requires its fixed mana continuation")
+    source = {key: value for key, value in thaw_value(effect).items() if key not in local_fields}
+    spec = _stack_target_change_payment_spec(source, effect["_choice_actor"], continuation.stack_ref, query)
+    completion = complete_fixed_payment_cost(spec, effect, response, query)
+    if completion.intents:
+        return completion
+    return SemanticChoiceCompletion(prepend_effects=tuple(FrozenMap(child) for child in source["declined_effects"]))
 
 
 def _object_payment_intent(spec, actor, selected, label):
@@ -278,6 +328,11 @@ def complete_fixed_payment_cost(
             return SemanticChoiceCompletion()
         if spec.kind=='remove_source_counter':
             intent=_source_counter_payment_intent(spec,effect,query)
+        elif spec.kind == 'resolved_fractional_life':
+            from ..rules.fractional_life_payment import resolved_fractional_payment_is_payable
+            if not resolved_fractional_payment_is_payable(spec, query.player_life(actor)):
+                raise SemanticChoiceError('Resolved fractional life payment is no longer payable')
+            intent = PayLifeIntent(actor=actor, player=actor, amount=spec.amount, reason=label)
         elif spec.kind == 'life':
             if query.player_life(actor) < spec.amount:
                 raise SemanticChoiceError('Fixed life payment is no longer payable')

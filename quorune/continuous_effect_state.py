@@ -1,6 +1,8 @@
 from __future__ import annotations
 from .damage_death_exile_model import ResolvedDamageDeathExile
 from .linked_departure_exile_model import ResolvedLinkedDepartureExile
+from .life_gain_permission import ResolvedLifeGainProhibition
+from .damage_prevention_permission import ResolvedDamagePreventionProhibition
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -184,7 +186,8 @@ def commit_continuous_effect(
     if not isinstance(
         effect,
         (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint,
-         ResolvedLinkedDepartureExile, ResolvedNextSpellCostReduction),
+         ResolvedLinkedDepartureExile, ResolvedNextSpellCostReduction,
+         ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -302,6 +305,7 @@ def apply_fixed_resolution_characteristics(
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
         FixedResolutionCardTypeAdditionSpec, IndefiniteTargetLandAnimationSpec,
     )
+    from .target_land_type_model import FixedTargetLandTypeSpec
     from .errors import GameRuleError
 
     instruction = {key: value for key, value in effect.items()
@@ -335,6 +339,26 @@ def apply_fixed_resolution_characteristics(
         source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
         timing = ((spec.duration, None, None) if isinstance(spec, (FixedResolutionCardTypeAdditionSpec,IndefiniteTargetLandAnimationSpec))
                   else _characteristic_effect_timing(host, effect, actor=actor, source=source))
+        if isinstance(spec, FixedTargetLandTypeSpec):
+            land, = affected
+            if land.phased_out or "land" not in host._effective_type_parts(land)[0]:
+                return []
+            if spec.controller_relation == "you" and land.controller != actor:
+                return []
+            if spec.controller_relation == "opponent" and (
+                land.controller == actor or land.controller not in host.active_seats
+            ):
+                return []
+            duration = ContinuousEffectDuration(spec.duration)
+            history = None
+            if duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES:
+                from .control_effects import prepare_source_presence_duration
+
+                source = ResolutionEffectSource.from_effect(effect)
+                history = prepare_source_presence_duration(host.state, source)
+                if history is None:
+                    return []
+            timing = duration, None, history
         if timing is None:
             return []
         duration, expiry_player, history = timing
@@ -354,6 +378,8 @@ def apply_fixed_resolution_characteristics(
     refs = [card.ref for card in affected]
     if duration is ContinuousEffectDuration.ZONE_OBJECT:
         duration_label = "for this battlefield incarnation"
+    elif duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES:
+        duration_label = "while the source remains on the battlefield"
     elif history is not None:
         duration_label = "until the source untaps or leaves the battlefield"
     else:
@@ -638,7 +664,7 @@ def create_resolution_declaration_rule_effect(
 def active_resolution_effects(
     state: Any, card: Any
 ) -> tuple[ContinuousEffect, ...]:
-    from .control_effects import tapped_source_duration_is_current
+    from .control_effects import characteristic_source_duration_is_current
 
     journal = state.continuous_effects
     if not journal:
@@ -653,7 +679,9 @@ def active_resolution_effects(
         if isinstance(effect, ContinuousEffect)
         and identity in effect.locked_objects
         and (effect.duration_source is None or effect.layer is Layer.CONTROL
-             or tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history))
+             or characteristic_source_duration_is_current(
+                 state, effect.duration_source, effect.duration_history, effect.duration,
+             ))
         and (effect.attachment_duration is None
             or effect.attachment_duration.is_current(state.cards))
     )

@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compile-time binding to one independently declared public target role."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .kicked_same_target_replacements import same_target_kicked_replacement

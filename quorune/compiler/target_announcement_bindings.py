@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed source and controlled-creature target occurrence subscriptions."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from ..rules.target_announcements import TARGET_ANNOUNCEMENT_CAPABILITY, TARGET_ANNOUNCEMENT_EVENT
@@ -35,6 +35,21 @@ def target_announcement_source_sacrifice(binding, body: str, *, card_name: str):
 
 
 def target_announcement_bound_result(binding, body: str, *, card_name: str):
+    if binding.variant == 'source_target_announcement' and re.fullmatch(
+        r'counter that spell or ability unless its controller pays \{2\}\.?', body, re.I,
+    ):
+        from ..rules.stack_controller_payment_cost import (
+            STACK_CONTROLLER_PAYMENT_MECHANIC, target_announcement_counter_payment_effect,
+        )
+        from ..rules.stack_controller_payment_shapes import source_opponent_target_announcement_condition_is_closed
+
+        if source_opponent_target_announcement_condition_is_closed(binding.public_condition):
+            return (
+                'target-announcement-counter-unless-pay-v1',
+                (target_announcement_counter_payment_effect(),),
+                None,
+                ('counter', STACK_CONTROLLER_PAYMENT_MECHANIC),
+            )
     return target_announcement_source_sacrifice(binding, body, card_name=card_name)
 
 

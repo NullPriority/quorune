@@ -62,6 +62,9 @@ def fixed_library_order_capabilities(*, effects, target_schema, mechanic_ids):
     if not isinstance(effect, Mapping):
         return ()
     try:
+        if 'target_library_shuffle_version' in effect:
+            from .target_library_shuffle import target_shuffle_node_capabilities
+            return target_shuffle_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
         if effect.get("op") == GRAVEYARD_LIBRARY_ORDER_OPERATION and GRAVEYARD_LIBRARY_ORDER_MECHANIC in mechanic_ids:
             return _graveyard_library_order_capabilities(effect, target_schema)
         if is_affected_hand_top_choice(effect):
@@ -103,6 +106,10 @@ def library_order_payload_dependencies(value):
             raise ValueError("Hand-to-top order program requires reserved controller")
         return (HAND_TOP_ORDER_CAPABILITY,)
     if value.get('op') == SHUFFLE_OPERATION:
+        if 'target_library_shuffle_version' in value:
+            from .target_library_shuffle import validate_target_shuffle_effect, TARGET_SHUFFLE_CAPABILITY
+            validate_target_shuffle_effect(value)
+            return (TARGET_SHUFFLE_CAPABILITY,SHUFFLE_CAPABILITY,'target.revalidate_resolution')
         validate_fixed_shuffle_effect(value)
         if value['player'] != '$controller':
             raise ValueError('Shuffle program requires reserved controller')

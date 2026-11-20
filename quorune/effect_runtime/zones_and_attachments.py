@@ -4,6 +4,7 @@ import random
 from typing import Any, Mapping, Sequence
 
 from ..attachments import attach_objects, detach_object
+from ..attachment_source_return import apply_attachment_source_return
 from ..rules.reconfigure import source_has_reconfigure, commit_reconfigure_attachment_effect
 from ..rules.attachment_actions import (
     ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION, equipment_attachment_is_legal,
@@ -13,6 +14,7 @@ from ..aura import legal_aura_target_refs
 from ..continuous_effects import ContinuousOperation, Layer
 from ..continuous_effect_state import (
     ContinuousEffectStateError,
+    ResolutionEffectSource,
     create_resolution_continuous_effect,
     matching_battlefield_objects,
     resolution_effect_source,
@@ -29,16 +31,66 @@ from ..milling import mill_cards, MillRequest
 from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
-from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
+from ..public_zone_moves import (
+    GRAVEYARD_LIBRARY_TARGET_FIELD, STACK_SPELL_EXILE_FIELD, StackSpellExileScope, StackSpellExileSpec,
+)
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
 from .linked_zone_movement import apply_move_if_in_zone
+from .recover import apply_recover_source_result
 
 _EXILE_ZONE = "exile"
 
 
 OPERATIONS = effect_family_contract("zones-and-attachments.v1").operations
+
+
+def _apply_stack_spell_exile(host, effect, *, actor, reason):
+    from ..zone_transitions import ZoneTransitionOwner
+
+    try:
+        spec = StackSpellExileSpec.from_dict(effect[STACK_SPELL_EXILE_FIELD])
+        source_ref = ResolutionEffectSource.from_effect(effect).stack_ref
+    except (ValueError, TypeError, ContinuousEffectStateError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    selected = spec.scope is StackSpellExileScope.SELECTED
+    allowed = {"op", STACK_SPELL_EXILE_FIELD, "_runtime_source", "reason", "_replacement_selections"}
+    if selected:
+        allowed.add("stacks")
+    if set(effect) - allowed or effect.get("op") != "exile":
+        raise GameRuleError("Stack exile effect fields are closed")
+    stack = {item.ref: item for item in host.state.stack}
+    source = stack.get(source_ref)
+    if (source is None or source.kind not in {"spell", "spell_copy"} or source.controller != actor
+            or source.context.get("currently_resolving") is not True):
+        raise GameRuleError("Stack exile requires its current resolving source")
+    spell_kinds = {"spell", "spell_copy"}
+    if selected:
+        refs = effect.get("stacks")
+        if (not isinstance(refs, (list, tuple)) or any(type(ref) is not str for ref in refs)
+                or len(set(refs)) != len(refs) or source_ref in refs):
+            raise GameRuleError("Stack exile requires distinct other spell targets")
+        spells = [stack[ref] for ref in refs if ref in stack]
+        if any(item.kind not in spell_kinds for item in spells):
+            raise GameRuleError("Stack exile targets must be spells")
+        abilities = ()
+    else:
+        spells = [item for item in stack.values() if item.ref != source_ref and item.kind in spell_kinds]
+        abilities = tuple(item.ref for item in stack.values() if item.kind in {"activated_ability", "triggered_ability"})
+    moves = []
+    for item in spells:
+        card = host.state.cards.get(item.card_object_id)
+        if card is None or card.zone != "stack":
+            raise GameRuleError("An exiled spell is missing its current stack object")
+        moves.append((card.object_id, "exile"))
+    with host.transaction():
+        moved = ZoneTransitionOwner(host).move_cards_simultaneously(
+            moves, reason=reason, log=False, replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        )
+        for ref in abilities:
+            host._counter_stack_item(ref, reason=reason, countered_by=actor)
+    return moved
 
 
 def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
@@ -54,6 +106,8 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         from ..rules.attacking_card_entry import apply_attacking_entry_move
 
         return apply_attacking_entry_move(host, effect, actor=actor, reason=reason)
+    if op == "exile" and STACK_SPELL_EXILE_FIELD in effect:
+        return _apply_stack_spell_exile(host, effect, actor=actor, reason=reason)
     graveyard_library_target = GRAVEYARD_LIBRARY_TARGET_FIELD in effect
     if graveyard_library_target:
         version = effect[GRAVEYARD_LIBRARY_TARGET_FIELD]
@@ -479,7 +533,11 @@ def _apply_attach(
             importance=2,
         )
         return None
+    from ..unattachment_triggers import dispatch_unattachment, prepare_equipment_unattachment
+
     has_reconfigure = attachment_kind == 'equipment' and source_has_reconfigure(host, attachment)
+    former = (prepare_equipment_unattachment(host, attachment)
+              if attachment.attached_to != creature.object_id else None)
     transition = attach_objects(
         host.state.cards,
         attachment,
@@ -519,6 +577,7 @@ def _apply_attach(
             creature.object_id,
         ],
     )
+    dispatch_unattachment(host, former)
     return creature.ref
 
 
@@ -532,10 +591,13 @@ def _apply_unattach(host: Any, effect: Mapping[str, Any], *, actor: str,
     source = _attachment_object(host, actor, str(value))
     if source.zone != 'battlefield':
         return None
+    from ..unattachment_triggers import dispatch_unattachment, prepare_equipment_unattachment
+    former = prepare_equipment_unattachment(host, source)
     transition = detach_object(host.state.cards, source, players=host.state.players)
     if transition.changed:
         host._log(actor, 'attachment.unattach', f'{source.ref} became unattached.',
             {'attachment':source.ref, 'reason':reason}, importance=2)
+        dispatch_unattachment(host, former)
     return source
 
 
@@ -713,6 +775,8 @@ def _apply_reanimate(
     operation: str,
     reason: str,
 ) -> Any:
+    if 'attachment_return' in effect or effect.get('schema_version') == 7:
+        return apply_attachment_source_return(host, effect, actor=actor, operation=operation, reason=reason)
     followup = None
     if effect.get("schema_version") in REANIMATION_FOLLOWUP_VERSIONS:
         from ..continuous_effect_state import ResolutionEffectSource
@@ -975,6 +1039,11 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     operation: str,
     reason: str,
 ) -> Any:
+    if 'event_player_set_version' in effect:
+        from ..rules.event_player_modifiers import prepare_event_player_modifier_runtime
+        try:effect=prepare_event_player_modifier_runtime(host,effect)
+        except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+        if effect is None:return []
     from ..next_turn_effect import split_next_turn_effect
 
     try:
@@ -1382,6 +1451,7 @@ def _apply_exile_top_library_card(
 
 
 HANDLERS = {
+    'recover_source_result': apply_recover_source_result,
     'linked_exile_return': resolve_linked_exile_return,
     'return_linked_exiled_objects': return_linked_exiled_objects,
     'prepare_graveyard_creature_aura': _apply_prepare_graveyard_creature_aura,

@@ -8,6 +8,11 @@ from ..attachment_references import ATTACHMENT_INFORMATION_CAPABILITY, Attachmen
 from ..object_predicate import ObjectQuerySpec, object_query_capabilities
 from ..next_turn_effect import next_turn_effect_dependencies
 from ..source_tap_effect import source_tap_effect_dependencies
+from ..basic_type_setting_model import BASIC_TYPE_SETTING_CAPABILITY
+from ..target_land_type_model import (
+    FIXED_TARGET_LAND_TYPE_CAPABILITY, FIXED_TARGET_LAND_TYPE_MECHANIC, FixedTargetLandTypeSpec,
+    SOURCE_PRESENT_LAND_TYPE_CAPABILITY,
+)
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
     FIXED_TARGET_COLOR_VERSION, decode_fixed_target_color, fixed_target_color_schema,
@@ -47,6 +52,8 @@ def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add(TARGET_CARD_TYPE_ADDITION_MECHANIC)
     if INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY in supplied:
         covered.add(INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC)
+    if FIXED_TARGET_LAND_TYPE_CAPABILITY in supplied:
+        covered.update((FIXED_TARGET_LAND_TYPE_MECHANIC, "cr-611-continuous-effects"))
     return covered
 
 
@@ -135,6 +142,24 @@ def temporary_creature_type_runtime_dependencies(program):
 
 def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema: Any, mechanic_ids: Any) -> tuple[str, ...]:
     mechanics=set(mechanic_ids)
+    if FIXED_TARGET_LAND_TYPE_MECHANIC in mechanics:
+        from ..replacement.immutable import FrozenMap
+
+        if (len(effects) != 1 or not {"cr-611-continuous-effects", "cr-115-targets"} <= mechanics
+                or not isinstance(target_schema, Mapping) or type(target_schema.get("count")) is not int):
+            return ()
+        try:
+            spec, selection = fixed_resolution_characteristic_instruction(effects[0])
+        except (TypeError, ValueError, KeyError):
+            return ()
+        if (not isinstance(spec, FixedTargetLandTypeSpec) or selection != "$target.0"
+                or FrozenMap(spec.target_schema()) != FrozenMap(target_schema)):
+            return ()
+        required = (FIXED_TARGET_LAND_TYPE_CAPABILITY, BASIC_TYPE_SETTING_CAPABILITY,
+                    "continuous.resolution.fixed_characteristics_until_end_of_turn", "target.revalidate_resolution")
+        if spec.duration == "until_source_leaves":
+            return (*required, SOURCE_PRESENT_LAND_TYPE_CAPABILITY)
+        return required
     if ('cr-611-continuous-effects' not in mechanics or len(effects) != 1
             or not mechanics.intersection({PERMANENT_CHARACTERISTIC_MECHANIC,
                 INDEFINITE_SOURCE_ANIMATION_MECHANIC, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,

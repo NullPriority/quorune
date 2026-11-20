@@ -1,6 +1,6 @@
 """One simultaneous instruction with independently constrained target roles."""
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from .fixed_homogeneous_target_sets import _compiled_singular, _OPERATION_LIFT
 

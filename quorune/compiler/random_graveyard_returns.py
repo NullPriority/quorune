@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed fixed-count random graveyard leaves; declared X reuses fixed probes."""
 
-import re
+from . import regex_working_set as re
 from ..creature_subtypes import canonical_creature_subtype
 from ..rules.random_graveyard_returns import OPERATION,MECHANIC,RandomGraveyardReturnSpec
 

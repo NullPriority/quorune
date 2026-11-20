@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle lowering for one fixed positive Amass instruction."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..amass import FixedAmassSpec, canonical_amass_subtype

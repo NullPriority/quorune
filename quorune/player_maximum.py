@@ -34,10 +34,15 @@ def current_player_metric_values(state,spec,*,public_object_resolver=None):
     return tuple(values.items())
 
 
-def current_player_maximum(state,spec,*,public_object_resolver=None):
-    values=dict(current_player_metric_values(state,spec,public_object_resolver=public_object_resolver))
-    greatest=max(values.values());winners=[seat for seat,value in values.items() if value==greatest]
-    return winners[0] if len(winners)==1 else None
+def current_players_at_maximum(state, spec, *, public_object_resolver=None):
+    values = current_player_metric_values(state, spec, public_object_resolver=public_object_resolver)
+    maximum = max(value for _, value in values)
+    return tuple(seat for seat, value in values if value == maximum)
+
+
+def current_player_maximum(state, spec, *, public_object_resolver=None):
+    winners = current_players_at_maximum(state, spec, public_object_resolver=public_object_resolver)
+    return winners[0] if len(winners) == 1 else None
 
 
 def opponent_has_greater_metric(state,controller,spec,*,public_object_resolver=None):

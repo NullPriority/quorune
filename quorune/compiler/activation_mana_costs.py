@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compile closed fixed complex mana symbols on activated abilities."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..abilities import ActivatedAbility
 from ..activation_mana_cost import ActivationManaCostOption, fixed_complex_activation_mana_options

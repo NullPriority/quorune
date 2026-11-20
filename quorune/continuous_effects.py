@@ -1,10 +1,13 @@
 from __future__ import annotations
 from .qualified_hexproof import keyword_is_removed,keyword_type_terms
+from .landwalk_vocabulary import LANDWALK_KEYWORDS
 
 from dataclasses import dataclass, field, replace
 from typing import Any, Iterable, Mapping, Sequence
 
 from .continuous_effect_model import (
+    CONTINUOUS_DEPENDENCY_ORDER_FIELD,
+    CONTINUOUS_DEPENDENCY_ORDER_VERSION,
     ContinuousEffect,
     ContinuousEffectDuration,
     ContinuousEffectError,
@@ -17,6 +20,8 @@ from .continuous_effect_model import (
 from .object_predicate import ObjectQuerySpec
 from .object_query import ObjectQueryResult, object_matches_query
 from .ability_fragments import (
+    ProtectionQualityKind,
+    ProtectionSpec,
     StaticComponentSpec,
     StaticAbilityFragment,
     ability_fragment_from_dict,
@@ -165,6 +170,8 @@ def _ability_presence_dependency_ids(
     def changes_required_ability(candidate: ContinuousEffect) -> bool:
         return any(
             operation.op == "remove_all_abilities"
+            or (operation.op == "remove_landwalk_abilities"
+                and (required.intersection(LANDWALK_KEYWORDS) or "landwalk" in required))
             or (
                 operation.op in {"add_ability", "remove_ability", "prohibit_ability"}
                 and bool(keyword_type_terms((operation.value,))&required
@@ -182,64 +189,53 @@ def _ability_presence_dependency_ids(
 
 
 def _dependency_order(
-    effects: Sequence[ContinuousEffect],
+    effects: Sequence[ContinuousEffect], *, dependency_order_version: int | None,
 ) -> tuple[list[ContinuousEffect], list[tuple[str, ...]]]:
-    """Order one layer/sublayer by CDA, dependency, then timestamp.
-
-    Cyclic dependency components fall back to timestamp order, matching the
-    CR rule that dependencies inside the loop do not determine their order.
-    """
+    """Order by characteristic definition, dependency, then timestamp."""
 
     by_id = {effect.effect_id: effect for effect in effects}
+    candidates = tuple(by_id.values())
+    dependencies = {
+        effect.effect_id: set(effect.depends_on) | _ability_presence_dependency_ids(effect, candidates)
+        for effect in candidates
+    }
     remaining = set(by_id)
     ordered: list[ContinuousEffect] = []
     cycles: list[tuple[str, ...]] = []
+
+    def order_key(effect_id: str) -> tuple[bool, int, str]:
+        effect = by_id[effect_id]
+        return not effect.characteristic_defining, effect.timestamp, effect_id
+
     while remaining:
-        ready = [
-            by_id[effect_id]
-            for effect_id in remaining
-            if not (
-                (
-                    set(by_id[effect_id].depends_on)
-                    | set(
-                        _ability_presence_dependency_ids(
-                            by_id[effect_id],
-                            tuple(by_id.values()),
-                        )
-                    )
-                ).intersection(remaining)
-            )
-        ]
+        active = {effect_id: dependencies[effect_id] & remaining for effect_id in remaining}
+        ready = sorted((effect_id for effect_id, required in active.items() if not required), key=order_key)
         if ready:
-            ready.sort(
-                key=lambda effect: (
-                    not effect.characteristic_defining,
-                    effect.timestamp,
-                    effect.effect_id,
-                )
-            )
-            for effect in ready:
-                ordered.append(effect)
-                remaining.remove(effect.effect_id)
+            ordered.extend(by_id[effect_id] for effect_id in ready)
+            remaining.difference_update(ready)
             continue
-        cycle = tuple(
-            sorted(
-                remaining,
-                key=lambda effect_id: (
-                    not by_id[effect_id].characteristic_defining,
-                    by_id[effect_id].timestamp,
-                    effect_id,
-                ),
-            )
-        )
+
+        if dependency_order_version is None:
+            # Stored games with no version keep the historical fallback.
+            cycle = tuple(sorted(remaining, key=order_key))
+            cycles.append(cycle)
+            ordered.extend(by_id[effect_id] for effect_id in cycle)
+            break
+
+        from .continuous_type_dependencies import _dependency_cycle_ready
+
+        cycle = _dependency_cycle_ready(active, order_key)
         cycles.append(cycle)
-        ordered.extend(by_id[effect_id] for effect_id in cycle)
-        remaining.clear()
+        members = set(cycle)
+        for effect_id in members:
+            dependencies[effect_id].difference_update(members)
     return ordered, cycles
 
 
 def order_continuous_effects(
     effects: Iterable[ContinuousEffect],
+    *,
+    dependency_order_version: int | None = CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ) -> tuple[list[ContinuousEffect], list[tuple[str, ...]]]:
     values = tuple(effects)
     effect_ids = [effect.effect_id for effect in values]
@@ -259,7 +255,7 @@ def order_continuous_effects(
     ordered: list[ContinuousEffect] = []
     cycles: list[tuple[str, ...]] = []
     for key in sorted(groups):
-        group, group_cycles = _dependency_order(groups[key])
+        group, group_cycles = _dependency_order(groups[key], dependency_order_version=dependency_order_version)
         ordered.extend(group)
         cycles.extend(group_cycles)
     return ordered, cycles
@@ -363,12 +359,29 @@ def _apply_ability_operation(
     elif op == 'prohibit_ability':
         state.prohibited_keywords.add(str(value).casefold())
         state.abilities = [ability for ability in state.abilities if not keyword_is_removed(ability,value)]
-    elif op == "remove_ability":
-        state.abilities = [
-            ability
-            for ability in state.abilities
-            if not keyword_is_removed(ability,value)
-        ]
+    elif op in {"remove_ability", "remove_landwalk_abilities"}:
+        prior = state.abilities
+        if op == "remove_landwalk_abilities":
+            state.abilities = [ability for ability in prior if ability.casefold() not in LANDWALK_KEYWORDS]
+            removes_landwalk = True
+        else:
+            state.abilities = [ability for ability in prior if not keyword_is_removed(ability, value)]
+            removes_landwalk = str(value).casefold() in LANDWALK_KEYWORDS
+        # A printed Landwalk category label describes the named variants. It
+        # cannot remain as an unsupported standalone ability after the last one leaves.
+        if (removes_landwalk and len(state.abilities) < len(prior)
+                and not any(ability.casefold().endswith("walk") and ability.casefold() != "landwalk"
+                            for ability in state.abilities)):
+            state.abilities = [ability for ability in state.abilities if ability.casefold() != "landwalk"]
+    elif op == "remove_color_protection":
+        prior_fragments = state.ability_fragments
+        state.ability_fragments = [fragment for fragment in prior_fragments if not (
+            isinstance(fragment, ProtectionSpec) and fragment.quality_kind is ProtectionQualityKind.COLOR
+            and fragment.quality == value
+        )]
+        if (len(state.ability_fragments) < len(prior_fragments)
+                and not any(isinstance(fragment, ProtectionSpec) for fragment in state.ability_fragments)):
+            state.abilities = [ability for ability in state.abilities if ability.casefold() != "protection"]
     elif op == "add_rules_text":
         line = str(value).strip()
         existing = [item.strip() for item in state.text.splitlines()]
@@ -532,11 +545,35 @@ def _materialize_intrinsic_mana(state: CharacteristicState) -> None:
     state.activated_abilities.extend(state._intrinsic_mana_abilities)
 
 
+def _validate_recipient_scope_plan(effects: Sequence[ContinuousEffect]) -> None:
+    members = [effect for effect in effects if effect.recipient_scope_anchor is not None]
+    if not members:
+        return
+    anchors = {effect.effect_id: effect for effect in members
+               if effect.effect_id == effect.recipient_scope_anchor}
+    for effect in members:
+        anchor = anchors.get(effect.recipient_scope_anchor)
+        if (anchor is None or effect.source_id != anchor.source_id or effect.timestamp != anchor.timestamp
+                or effect.applies != anchor.applies):
+            raise ContinuousEffectError("A later effect must share its earlier recipient scope")
+
+
+def _matches_effect_recipient(effect, state, context, memberships):
+    anchor = effect.recipient_scope_anchor
+    if anchor is not None and anchor != effect.effect_id:
+        return memberships[anchor]
+    matched = _matches(effect.applies, state, context)
+    if anchor is not None:
+        memberships[anchor] = matched
+    return matched
+
+
 def evaluate_continuous_effects(
     base: CharacteristicState,
     effects: Iterable[ContinuousEffect],
     *,
     context: Mapping[str, Any] | None = None,
+    type_order=None,
 ) -> ContinuousEvaluation:
     # Reusing a state must rebuild derived abilities at the layer boundary.
     # Remove only descriptors this evaluator actually created, preserving the
@@ -560,11 +597,17 @@ def evaluate_continuous_effects(
             inapplicable.append(effect.effect_id)
             continue
         present.append(effect)
-    from .continuous_type_dependencies import bind_type_applicability_dependencies
-    ordered, cycles = order_continuous_effects(bind_type_applicability_dependencies(present,base,context))
+    from .continuous_type_dependencies import bind_type_applicability_dependencies, effects_with_live_type_recipient_scopes
+    ordered, cycles = order_continuous_effects(
+        bind_type_applicability_dependencies(present, base, context),
+        dependency_order_version=context.get(CONTINUOUS_DEPENDENCY_ORDER_FIELD, CONTINUOUS_DEPENDENCY_ORDER_VERSION),
+    )
+    _validate_recipient_scope_plan(present)
+    memberships: dict[str, bool] = {}
     applied: list[str] = []
     intrinsic_ready=False
-    for effect in ordered:
+    order = type_order if type_order is not None else context.get("type_order")
+    for effect in effects_with_live_type_recipient_scopes(ordered, present, base, context, cycles, order):
         if not intrinsic_ready and effect.layer>Layer.TYPE:
             _materialize_intrinsic_mana(base)
             intrinsic_ready=True
@@ -603,7 +646,7 @@ def evaluate_continuous_effects(
                 continue
         # Applicability is evaluated against the characteristics produced by
         # earlier layers, not the object's unmodified starting values.
-        if not _matches(effect.applies, base, context):
+        if not _matches_effect_recipient(effect, base, context, memberships):
             inapplicable.append(effect.effect_id)
             continue
         for operation in effect.operations:

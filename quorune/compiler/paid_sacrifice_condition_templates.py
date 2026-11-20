@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compose a fixed result with a characteristic of the printed sacrifice price."""
 
-import re
+from . import regex_working_set as re
 
 from ..paid_sacrifice_conditions import (
     PAID_SACRIFICE_CONDITION_MECHANIC, PAID_SACRIFICE_CONDITION_VERSION,

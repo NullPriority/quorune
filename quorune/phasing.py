@@ -76,13 +76,32 @@ def _expand_groups(roots, children):
     return included
 
 
-def plan_untap_phasing(host, active: str) -> PhasingPlan:
-    state = host.state
-    battlefield = {
+def _battlefield(state):
+    return {
         oid: state.cards[oid]
         for seat in state.turn_order
         for oid in state.players[seat].zones["battlefield"]
     }
+
+
+def _outgoing_phasing(host, battlefield, direct):
+    if not direct:
+        return {}
+    children = _attachment_children(host, battlefield)
+    outgoing = _expand_groups(direct, children)
+    return {
+        oid: PhaseTransition(
+            _identity(battlefield[oid]),
+            _record_outgoing(battlefield[oid], battlefield, host.state.players, outgoing, children),
+            True,
+        )
+        for oid in outgoing
+    }
+
+
+def plan_untap_phasing(host, active: str) -> PhasingPlan:
+    state = host.state
+    battlefield = _battlefield(state)
     incoming, incoming_children, direct_out = set(), {}, set()
     for card in battlefield.values():
         record = card.phasing_record
@@ -110,18 +129,15 @@ def plan_untap_phasing(host, active: str) -> PhasingPlan:
         if unsupported:
             source = min(unsupported, key=lambda oid: battlefield[oid].ref)
             return PhasingPlan(active, unsupported=source)
-    children = _attachment_children(host, battlefield) if direct_out else {}
-    outgoing = _expand_groups(direct_out, children)
+    outgoing = _outgoing_phasing(host, battlefield, direct_out)
     incoming = _expand_groups(incoming, incoming_children)
-    transitions = []
-    for oid in sorted(incoming | outgoing, key=lambda oid: (battlefield[oid].ref, oid)):
-        card = battlefield[oid]
-        if oid in outgoing:
-            record = _record_outgoing(card, battlefield, state.players, outgoing, children)
-        else:
-            record = card.phasing_record
-        transitions.append(PhaseTransition(_identity(card), record, oid in outgoing))
-    return PhasingPlan(active, tuple(transitions))
+    ordered = sorted(incoming | outgoing.keys(), key=lambda oid: (battlefield[oid].ref, oid))
+    transitions = tuple(
+        outgoing[oid] if oid in outgoing else
+        PhaseTransition(_identity(battlefield[oid]), battlefield[oid].phasing_record, False)
+        for oid in ordered
+    )
+    return PhasingPlan(active, transitions)
 
 
 def _restore_phase_attachment(host, card, record):
@@ -135,11 +151,9 @@ def _restore_phase_attachment(host, card, record):
         detach_object(cards, card, players=players)
 
 
-def commit_untap_phasing(host, plan: PhasingPlan) -> None:
-    if plan.unsupported is not None or plan.active != host.state.active_player:
-        raise ValueError("Phasing requires one represented current untap plan")
+def _commit_phasing(host, transitions):
     affected = []
-    for transition in plan.transitions:
+    for transition in transitions:
         card = _host_incarnation(host.state.cards, transition.object)
         if (
             card is None or card.zone != "battlefield" or card.phased_out == transition.out
@@ -148,7 +162,7 @@ def commit_untap_phasing(host, plan: PhasingPlan) -> None:
             raise ValueError("A phasing plan no longer matches its permanent")
         affected.append((card, transition))
     if not affected:
-        return
+        return ()
     from .relative_power_target import pin_host_relative_power_source_departures
 
     pin_host_relative_power_source_departures(
@@ -167,10 +181,61 @@ def commit_untap_phasing(host, plan: PhasingPlan) -> None:
     end_pairs_containing(host, tuple(card.object_id for card, transition in affected if transition.out),
                          reason="paired object phased out")
     synchronize_control_effects(host, reason="phasing status changed")
+    return tuple(affected)
+
+
+def commit_untap_phasing(host, plan: PhasingPlan) -> None:
+    if plan.unsupported is not None or plan.active != host.state.active_player:
+        raise ValueError("Phasing requires one represented current untap plan")
+    affected = _commit_phasing(host, plan.transitions)
+    if not affected:
+        return
     host._log(plan.active, "untap.phasing", "Permanents phased in and out.",
         {"in": [card.ref for card, transition in affected if not transition.out],
          "out": [card.ref for card, transition in affected if transition.out]},
         importance=1, changed_objects=[card.object_id for card, _ in affected])
+
+
+def phase_out_permanent(host, identity: ContinuousObjectIdentity, *, actor: str, reason: str):
+    from .phasing_model import phasing_lifecycle_version
+
+    if phasing_lifecycle_version(host.state.phasing_lifecycle_version) != 1:
+        raise ValueError("A phase-out effect requires the current phasing lifecycle")
+    host._require_seat(actor, in_game=True)
+    battlefield = _battlefield(host.state)
+    card = _host_incarnation(battlefield, identity)
+    if card is None or card.phased_out:
+        return None
+    outgoing = _outgoing_phasing(host, battlefield, {card.object_id})
+    ordered = sorted(outgoing, key=lambda oid: (battlefield[oid].ref, oid))
+    affected = _commit_phasing(host, tuple(outgoing[oid] for oid in ordered))
+    for permanent, _transition in affected:
+        host._remove_object_from_combat(permanent, reason="phased out")
+    host._log(
+        actor, "permanent.phase_out", "Permanents phased out.",
+        {"out": [permanent.ref for permanent, _transition in affected], "reason": reason},
+        importance=1, changed_objects=[permanent.object_id for permanent, _transition in affected],
+    )
+    return card.ref
+
+
+def apply_phase_out_effect(host, effect, *, actor, operation, reason):
+    from .continuous_effect_state import ResolutionEffectSource
+    from .errors import GameRuleError
+    from .phasing_model import validate_phase_out_effect
+
+    subject = validate_phase_out_effect(effect, runtime=True)
+    if subject == "source":
+        source = ResolutionEffectSource.from_effect(effect)
+        card = host.state.cards.get(source.object_id)
+        if card is None or card.ref != source.card_ref or card.logical_object_id != source.logical_object_id:
+            return None
+    else:
+        try:
+            card = host._resolve_object(actor, effect["card"], zones={"battlefield"})
+        except GameRuleError:
+            return None
+    return phase_out_permanent(host, _identity(card), actor=actor, reason=reason)
 
 
 def mark_departed_phasing_returns(state: GameState, previous_normal: str | None, next_normal: str) -> None:

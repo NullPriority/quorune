@@ -1,12 +1,13 @@
 """Bind a following instruction to a committed public graveyard exile."""
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..public_zone_moves import PublicZoneMoveSetSpec
 from ..rules.public_exile_result_model import PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
 from .closed_effect_programs import CLOSED_EFFECT_PROGRAM_MECHANIC
+from .targeted_graveyard_outcome_templates import targeted_graveyard_exile_outcome_template
 
 _TERMINAL_COUNT = re.compile(
     r"(?P<effect>(?:Then )?(?:You gain 1 life|Put a \+1/\+1 counter on this creature|create a [^.]+? token)) "
@@ -37,6 +38,9 @@ def public_exile_followup_template(text: str, *, compile_literal):
     normalized = text.strip()
     if not normalized.casefold().startswith("exile "):
         return None
+    targeted = targeted_graveyard_exile_outcome_template(normalized)
+    if targeted is not None:
+        return targeted
     literal = _literal_followup(normalized)
     if literal is None:
         return None

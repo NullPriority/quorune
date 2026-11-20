@@ -20,7 +20,8 @@ from .replicate_model import REPLICATE_SEMANTIC_KEY
 from .conspire_model import CONSPIRE_SEMANTIC_KEY
 from .declared_cast_cost_model import declared_cost_copy_fields
 from .casualty_model import CASUALTY_SEMANTIC_KEY
-SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY, CASUALTY_SEMANTIC_KEY})
+from .semantic_runtime.commander_cast_copies import COMMANDER_CAST_COPY_KEY
+SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY, CASUALTY_SEMANTIC_KEY, COMMANDER_CAST_COPY_KEY})
 
 
 class StormHost(Protocol):
@@ -201,7 +202,12 @@ def validated_storm_trigger(
     return count, copy.deepcopy(dict(template))
 
 
-def validated_spell_copy_trigger(item):
+def validated_spell_copy_trigger(item, host=None):
+    if item.semantic_key == COMMANDER_CAST_COPY_KEY:
+        from .commander_cast_copies import validated_commander_cast_copy_trigger
+        if host is None:
+            raise StateInvariantError('Commander-cast copy resolution requires authoritative state')
+        return validated_commander_cast_copy_trigger(host, item)
     if item.semantic_key == CASUALTY_SEMANTIC_KEY:
         from .casualty import validated_casualty_trigger
         return validated_casualty_trigger(item)

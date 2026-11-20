@@ -3,7 +3,7 @@ from __future__ import annotations
 """Consume a terminal spell move without changing body ownership."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from ..rules.spell_self_exile import SELF_BOTTOM, SELF_EXILE, SELF_SHUFFLE, terminal_spell_move

@@ -13,6 +13,7 @@ from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import thaw_value
 from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
 from .type_subtype_vocabulary import CARD_TYPE_SUBTYPES
+from .target_land_type_model import FIXED_TARGET_LAND_TYPE_VERSION, FixedTargetLandTypeSpec
 
 
 PERMANENT_CHARACTERISTIC_MECHANIC = "fixed-source-characteristics-until-end-of-turn"
@@ -48,7 +49,7 @@ RECIPIENT_MANA_VALUE = "recipient_mana_value"
 FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION, CHOSEN_SUBTYPE_SETTING_VERSION,
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, TARGET_CARD_TYPE_ADDITION_VERSION,
-    INDEFINITE_TARGET_LAND_ANIMATION_VERSION,
+    INDEFINITE_TARGET_LAND_ANIMATION_VERSION, FIXED_TARGET_LAND_TYPE_VERSION,
     *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
@@ -482,11 +483,18 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value.get("schema_version")
+    if type(version) is int and version == FIXED_TARGET_LAND_TYPE_VERSION:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
+            raise ValueError("Fixed basic land type needs one closed result")
+        card = value["card"]
+        if type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0"):
+            raise ValueError("Fixed basic land type needs its one announced land")
+        return FixedTargetLandTypeSpec.from_dict(value["characteristics"]), card
     if type(version) is int and version == INDEFINITE_TARGET_LAND_ANIMATION_VERSION:
         if value.get('op')!=CHARACTERISTIC_OPERATION or set(value)!=expected|{'card'}:
             raise ValueError('Indefinite target land animation requires one closed instruction')

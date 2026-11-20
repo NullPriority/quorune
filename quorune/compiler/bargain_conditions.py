@@ -1,6 +1,6 @@
 """Complete same-target Bargain result replacement or appended keyword clauses."""
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from ..bargain_model import BARGAIN_INSTANCE
 from ..declared_cast_cost_model import DECLARED_CAST_COST_MECHANIC, DeclaredCastCostKind
 from ..declared_cost_conditions import DeclaredCastCostCondition, validate_declared_cost_instruction

@@ -3,7 +3,7 @@ from __future__ import annotations
 """A target blocker and the represented permanent source, with distinct roles."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..source_block_pair_model import SourceBlockPairSpec
 from .direct_target import direct_permanent_target_spec

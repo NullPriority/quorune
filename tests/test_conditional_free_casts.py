@@ -375,9 +375,19 @@ class ConditionalFreeCastRuntimeTests(unittest.TestCase):
 
     def test_unowned_new_target_companion_stays_residual(self):
         from quorune.oracle_ir import compile_oracle_card
-        ir=compile_oracle_card(self.db.lookup('Deflecting Swat'),capability_registry=self.registry,capability_profile='commander_review')
-        self.assertNotEqual('exact',ir.status)
-        self.assertTrue(any('choose new targets' in r.text for r in ir.material_residuals))
+        source = self.db.lookup('Deflecting Swat')
+        settings = dict(capability_registry=self.registry, capability_profile='commander_review')
+        original = compile_oracle_card(source, **settings)
+        self.assertEqual('exact', original.status, original.material_residuals)
+        cost, spell = original.faces[0].nodes
+        self.assertEqual(('cast.cost', 'resolve'), (cost.event, spell.event))
+        self.assertEqual({'op': 'retarget_stack_item', 'stack': '$target.0', 'optional_stack_target_change': 1},
+            spell.effects[0])
+        altered = replace(source, oracle_text=source.oracle_text.replace("new targets for", "new targets at random for", 1))
+        self.assertNotEqual(source.oracle_text, altered.oracle_text)
+        ir = compile_oracle_card(altered, **settings)
+        self.assertNotEqual('exact', ir.status)
+        self.assertTrue(any('at random' in r.text for r in ir.material_residuals))
 
     def test_actual_basic_type_change_updates_zero_price_and_commander_copies_do_not_qualify(self):
         s=self.session(755240);source=self.add(s.engine,'Rushwood Legate',zone='hand')

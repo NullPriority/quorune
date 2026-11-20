@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed flat generic activation-cost modifiers over existing public queries."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 
 from ..activation_cost_modifiers import (

@@ -1,5 +1,5 @@
 """Optional wrappers retain the bound event/source context of their child."""
-import re
+from . import regex_working_set as re
 
 from .optional_effect_templates import fixed_optional_effect_template
 

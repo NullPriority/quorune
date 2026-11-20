@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed hand, graveyard target, and graveyard source entry with a fresh defender choice."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 
 from ..attack_batch_model import QUALIFIED_ATTACK_BATCH_VARIANT

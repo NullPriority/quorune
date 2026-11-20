@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete intrinsic graveyard clauses with fixed canonical payment data."""
 
-import re
+from . import regex_working_set as re
 
 from ..additional_cost_vocabulary import DISCARD_ONE_COST, SACRIFICE_ONE_COST, EXILE_ONE_FROM_GRAVEYARD_COST
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD

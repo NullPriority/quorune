@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source-spanned independent scalar clauses for the existing spell composer."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from .closed_effect_programs import _top_level_positions
 from .ir_model import SourceSpan

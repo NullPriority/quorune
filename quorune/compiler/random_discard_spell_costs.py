@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed producer for one mandatory unrestricted random hand payment."""
 
 from dataclasses import dataclass,replace
-import re
+from . import regex_working_set as re
 from ..rules.random_discard_additional_cost import FixedRandomDiscardAdditionalCost,random_spell_cost_dependencies
 
 

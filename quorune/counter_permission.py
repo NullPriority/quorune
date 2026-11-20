@@ -9,6 +9,9 @@ from .counter_names import normalized_counter_name
 
 
 COUNTER_PROHIBITION_CAPABILITY = 'counter.placement.prohibition.static'
+ATTACHED_COUNTER_PROHIBITION_DEPENDENCIES = (
+    COUNTER_PROHIBITION_CAPABILITY, 'object.reference.source_attachment_information',
+)
 COUNTER_PROHIBITION_HANDLER = 'ability.static.counter-prohibition.v1'
 COUNTER_PROHIBITION_EVENT = 'continuous'
 _PERMANENT_TYPES = frozenset({'artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker'})
@@ -27,6 +30,7 @@ class CounterPlacementFact:
     controller: str | None = None
     zone: str | None = None
     types: tuple[str, ...] = ()
+    logical_object_id: str | None = None
 
     def __post_init__(self):
         if (type(self.subject_kind) is not str or self.subject_kind not in {'player', 'permanent'}
@@ -39,8 +43,10 @@ class CounterPlacementFact:
         object.__setattr__(self, 'counter_name', normalized_counter_name(self.counter_name))
         if not isinstance(self.types, tuple) or any(type(x) is not str or not x for x in self.types):
             raise CounterPermissionError('Counter placement needs typed current characteristics')
+        if self.logical_object_id is not None and (type(self.logical_object_id) is not str or not self.logical_object_id):
+            raise CounterPermissionError('Counter placement needs a stable object incarnation')
         if self.subject_kind == 'player':
-            if self.controller is not None or self.zone is not None or self.types:
+            if self.controller is not None or self.zone is not None or self.types or self.logical_object_id is not None:
                 raise CounterPermissionError('Player counter facts cannot name a permanent zone or types')
         elif type(self.zone) is not str or not self.zone:
             raise CounterPermissionError('Permanent counter facts require the represented zone')
@@ -57,7 +63,7 @@ class FixedCounterProhibitionSpec:
 
     def __post_init__(self):
         if (type(self.target_kind) is not str or self.target_kind not in {'player', 'permanent'}
-                or type(self.relation) is not str or self.relation not in {'any', 'you', 'opponent', 'self'}):
+                or type(self.relation) is not str or self.relation not in {'any', 'you', 'opponent', 'self', 'attached'}):
             raise CounterPermissionError('Unsupported counter prohibition domain')
         if (not isinstance(self.types_any, tuple)
                 or any(type(x) is not str or x not in _PERMANENT_TYPES for x in self.types_any)
@@ -65,6 +71,8 @@ class FixedCounterProhibitionSpec:
             raise CounterPermissionError('Counter prohibitions require a fixed public type disjunction')
         if self.target_kind == 'player' and (self.types_any or self.relation == 'self'):
             raise CounterPermissionError('Player prohibitions cannot use permanent identity or types')
+        if self.relation == 'attached' and (self.target_kind != 'permanent' or self.types_any != ('creature',) or self.counter_name is not None):
+            raise CounterPermissionError('The attached counter prohibition requires exactly a creature and all counters')
         if self.relation == 'self' and self.types_any:
             raise CounterPermissionError('A self-reference does not depend on retaining its printed type')
         if self.counter_name is not None:
@@ -85,7 +93,7 @@ class FixedCounterProhibitionSpec:
             raise CounterPermissionError('Malformed counter prohibition')
         return cls(value['target_kind'], value['relation'], value['counter_name'], tuple(value['types_any']))
 
-    def blocks(self, fact, *, source_object_id, source_controller):
+    def blocks(self, fact, *, source_object_id, source_controller, attached_object_id=None, attached_logical_object_id=None):
         if not isinstance(fact, CounterPlacementFact):
             raise CounterPermissionError('Counter permissions require typed placement facts')
         if any(type(x) is not str or not x for x in (source_object_id, source_controller)):
@@ -101,6 +109,14 @@ class FixedCounterProhibitionSpec:
                 return False
             if self.relation == 'self':
                 return fact.subject_id == source_object_id
+            if self.relation == 'attached':
+                if not attached_object_id or not attached_logical_object_id:
+                    raise CounterPermissionError('Attached counter permission needs a bound creature')
+                if fact.subject_id != attached_object_id:
+                    return False
+                if fact.logical_object_id is None:
+                    raise CounterPermissionError('Attached counter permission requires the affected incarnation')
+                return fact.logical_object_id == attached_logical_object_id
             controller = fact.controller
         else:
             controller = fact.subject_id
@@ -113,23 +129,39 @@ class CounterProhibitionRule:
     spec: FixedCounterProhibitionSpec
     source_object_id: str
     source_controller: str
+    attached_object_id: str | None = None
+    attached_logical_object_id: str | None = None
 
     def __post_init__(self):
         if not isinstance(self.spec, FixedCounterProhibitionSpec):
             raise CounterPermissionError('Counter prohibition rules require a typed predicate')
         if any(type(x) is not str or not x for x in (self.source_object_id, self.source_controller)):
             raise CounterPermissionError('Counter prohibition rules require a current source')
+        attached = (self.attached_object_id, self.attached_logical_object_id)
+        if self.spec.relation == 'attached':
+            if any(type(value) is not str or not value for value in attached):
+                raise CounterPermissionError('Attached counter prohibition needs the attached object and incarnation')
+        elif any(value is not None for value in attached):
+            raise CounterPermissionError('Only attached counter prohibition binds an attachment')
 
     def to_dict(self):
-        return dict(spec=self.spec.to_dict(), source_object_id=self.source_object_id,
+        value = dict(spec=self.spec.to_dict(), source_object_id=self.source_object_id,
             source_controller=self.source_controller)
+        if self.attached_object_id is not None:
+            value.update(attached_object_id=self.attached_object_id,
+                attached_logical_object_id=self.attached_logical_object_id)
+        return value
 
     @classmethod
     def from_dict(cls, value):
-        if not isinstance(value, Mapping) or set(value) != {'spec', 'source_object_id', 'source_controller'}:
+        base = {'spec', 'source_object_id', 'source_controller'}
+        if not isinstance(value, Mapping) or set(value) not in (base, base | {'attached_object_id', 'attached_logical_object_id'}):
             raise CounterPermissionError('Malformed counter prohibition source')
-        return cls(FixedCounterProhibitionSpec.from_dict(value['spec']),
-            value['source_object_id'], value['source_controller'])
+        spec = FixedCounterProhibitionSpec.from_dict(value['spec'])
+        if (set(value) != base) != (spec.relation == 'attached'):
+            raise CounterPermissionError('Counter prohibition fields do not match its attachment scope')
+        return cls(spec, value['source_object_id'], value['source_controller'],
+            value.get('attached_object_id'), value.get('attached_logical_object_id'))
 
 
 @dataclass(frozen=True, slots=True)
@@ -144,18 +176,26 @@ class CounterPermissionSnapshot:
         if not isinstance(fact, CounterPlacementFact):
             raise CounterPermissionError('Counter permissions require typed placement facts')
         return not any(rule.spec.blocks(fact, source_object_id=rule.source_object_id,
-            source_controller=rule.source_controller) for rule in self.rules)
+            source_controller=rule.source_controller, attached_object_id=rule.attached_object_id,
+            attached_logical_object_id=rule.attached_logical_object_id) for rule in self.rules)
+
+    @property
+    def schema_version(self):
+        return 2 if any(rule.spec.relation == 'attached' for rule in self.rules) else 1
 
     def to_dict(self):
-        return dict(schema_version=1, rules=[rule.to_dict() for rule in self.rules])
+        return dict(schema_version=self.schema_version, rules=[rule.to_dict() for rule in self.rules])
 
     @classmethod
     def from_dict(cls, value):
         if (not isinstance(value, Mapping) or set(value) != {'schema_version', 'rules'}
-                or type(value['schema_version']) is not int or value['schema_version'] != 1
+                or type(value['schema_version']) is not int or value['schema_version'] not in (1, 2)
                 or not isinstance(value['rules'], (list, tuple))):
             raise CounterPermissionError('Malformed counter permission snapshot')
-        return cls(tuple(CounterProhibitionRule.from_dict(rule) for rule in value['rules']))
+        snapshot = cls(tuple(CounterProhibitionRule.from_dict(rule) for rule in value['rules']))
+        if snapshot.schema_version != value['schema_version']:
+            raise CounterPermissionError('Counter permission snapshot version does not match its attachment rules')
+        return snapshot
 
 
 ALLOW_ALL_COUNTERS = CounterPermissionSnapshot()
@@ -169,13 +209,17 @@ def counter_prohibition_payload_dependencies(value, *, coverage=()):
         from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE, ability_fragment_from_dict
         if (set(value) != {'handler_id', 'schema_version', 'event', 'fragment'}
                 or type(value['schema_version']) is not int or value['schema_version'] != 1
-                or value['event'] != COUNTER_PROHIBITION_EVENT
-                or not isinstance(ability_fragment_from_dict(value['fragment']), FixedCounterProhibitionSpec)):
+                or value['event'] != COUNTER_PROHIBITION_EVENT):
+            raise CounterPermissionError('Malformed counter prohibition descriptor')
+        spec = ability_fragment_from_dict(value['fragment'])
+        if not isinstance(spec, FixedCounterProhibitionSpec):
             raise CounterPermissionError('Malformed counter prohibition descriptor')
         if CURRENT_ABILITY_FRAGMENT_COVERAGE not in coverage:
             raise CounterPermissionError('Counter prohibition requires current source-ability scope')
-        dependencies = (COUNTER_PROHIBITION_CAPABILITY,)
+        dependencies = (ATTACHED_COUNTER_PROHIBITION_DEPENDENCIES if spec.relation == 'attached'
+            else (COUNTER_PROHIBITION_CAPABILITY,))
     if value.get('op') == 'set' and value.get('field') == '_counter_permissions':
-        CounterPermissionSnapshot.from_dict(value.get('value'))
-        dependencies = (COUNTER_PROHIBITION_CAPABILITY,)
+        snapshot = CounterPermissionSnapshot.from_dict(value.get('value'))
+        dependencies = (ATTACHED_COUNTER_PROHIBITION_DEPENDENCIES if snapshot.schema_version == 2
+            else (COUNTER_PROHIBITION_CAPABILITY,))
     return dependencies

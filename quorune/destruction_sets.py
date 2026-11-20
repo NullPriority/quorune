@@ -135,6 +135,10 @@ def snapshot_destruction_set(
     """Freeze the complete affected set before destruction preflight."""
 
     try:
+        from .attachment_destruction_model import AttachmentDestructionSetSpec, current_attachment_destruction_rows
+        if isinstance(spec, AttachmentDestructionSetSpec):
+            object_rows = current_attachment_destruction_rows(query,
+                query.affected_permanent_object_rows(actor) if object_rows is None else object_rows)
         selected = select_affected_permanents(
             query.affected_permanent_object_rows(actor) if object_rows is None else object_rows,
             spec,

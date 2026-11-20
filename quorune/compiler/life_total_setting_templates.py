@@ -1,5 +1,5 @@
 """Complete source clauses for fixed and resolution-count life totals."""
-import re
+from . import regex_working_set as re
 from ..life_total_setting_model import LifeTotalValueSpec
 from .fixed_numbers import FIXED_COUNT_PATTERN,fixed_number
 

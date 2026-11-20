@@ -10,6 +10,11 @@ concern: "game-record"
 
 # Game Record v3
 
+The checkpoint state and its hash come from one captured state payload.
+The hash normalizes top-level log and capability fields and preserves
+historical omissions. The stored checkpoint owns an independent copy
+of its mutable values.
+
 Fixed-mana Evoke descriptor version two emits payment-marker version two and
 records `evoke_source_identity_version: 2` with the source battlefield incarnation.
 Resolution requires that same incarnation under the trigger controller; blink,
@@ -17,6 +22,18 @@ control changes, phasing and departure leave the source untouched. Historical
 descriptor-one/payment-one records keep their stored source behavior and exact
 replay. An absent identity version preserves other builtin source sacrifices;
 declared boolean, missing-source or unknown-version identity contexts reject.
+
+The `shield_counter_damage_version` marker has value `1` in current checkpoints
+and the manifest. It binds damage-side shield counter consumption to the
+record. Historical records omit the marker and retain their original damage
+execution. Declared null, boolean or unknown versions and disagreements
+between the manifest and checkpoint are rejected.
+
+The continuous dependency order marker has value `1` in new checkpoints and
+record manifests. It confines timestamp fallback to the unresolved cycle and
+preserves dependencies from effects outside the cycle. Older records omit the
+marker and replay using the historical ordering. A declared invalid version or
+a mismatch with the initial checkpoint rejects the record.
 
 Current checkpoints and record formats carry
 `mana_source_counter_payment_version: 1`. Automatic mana source discovery and
@@ -948,6 +965,27 @@ New games enable them; rollover and reset preserve them. The record manifest
 binds their versions to the initial checkpoint. Historical absence omits cast
 origins and retains empty arrival types, so replay adds no previously absent
 facts. Missing modes cannot establish a qualified zero-history condition.
+
+New games pin `turn_history.spell_color_history_version: 1` in the
+checkpoint and format provenance. Each committed spell cast stores its
+effective colors in WUBRG order alongside the caster and spell
+incarnation. An empty array records a colorless cast. Turn rollover
+clears the facts and retains the mode. A historical checkpoint with the
+mode absent keeps the earlier event fields and hashes when replayed.
+A missing as-cast fact leaves the blue-spell price unavailable.
+
+The optional `turn_history.creature_spell_counter_history_version` is
+`1` in new games and is mirrored in format provenance. An actual
+creature spell counter records the caster, cast incarnation and source
+controller before the existing zone-change processing. The counter
+source controller survives a payment choice by a different player.
+Turn rollover clears the facts and retains this mode. Earlier records
+omit it and continue to reproduce their original hashes.
+
+For fixed opponent-history prices, the serialized condition schema pins
+the opponent relation. Version four reads qualifying actions from before
+an opponent left the game under CR 800.4i. Version three retains its
+live-opponent evaluation in saved records.
 
 `turn_history.spell_mana_history_version` enables complete current-turn spell
 payment facts when set to one. Each `spell_mana_spent` fact stores its player

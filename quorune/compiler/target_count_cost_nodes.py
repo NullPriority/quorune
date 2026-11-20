@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete source sentences define mandatory per-extra-target mana prices."""
 
-import re
+from . import regex_working_set as re
 
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..repeated_mana_costs import FixedRepeatedManaCostSpec

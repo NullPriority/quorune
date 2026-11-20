@@ -19,7 +19,7 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.modal_selection import canonical_modes
 from ..semantics import SemanticProgram
 from ..target_characteristics import TargetCharacteristicSnapshot
-from ..target_history import target_damage_history_matches
+from ..target_history import target_damage_history_matches, target_player_history_matches
 from ..target_predicates import TargetPredicateError, target_predicate_matches
 from ..target_protection import TargetProtectionVerdict
 from ..target_protection_engine_adapter import target_protection_verdict_for_row
@@ -75,12 +75,16 @@ class TargetSelectionHost(Protocol):
     def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
     def _increment_optimization(self, seat: str, key: str, amount: int = 1) -> None: ...
 
+    def _attachment_public_state(self, card: CardInstance, *,
+        _enforce_static_component_applicability: bool = True) -> tuple[bool, bool, bool]: ...
+
 
 def _target_group_public_state_matches(
     group: TargetGroup,
     *,
     card: CardInstance | None,
     turn_sequence: int,
+    attachment_state: Mapping[str, bool] | None = None,
 ) -> bool:
     """Evaluate one target group's typed current public-state predicate."""
 
@@ -98,9 +102,19 @@ def _target_group_public_state_matches(
                 and card.entered_battlefield_turn_sequence == turn_sequence
             ),
             tapped=card.tapped,
+            **dict(attachment_state or {}),
         )
     except ObjectQueryError as exc:
         raise GameRuleError(str(exc)) from exc
+
+
+def _target_group_attachment_state(host, group, card):
+    predicate = group.state_predicate
+    if (predicate is None or not isinstance(card, CardInstance)
+            or all(getattr(predicate, key) is None for key in ('enchanted', 'equipped', 'modified'))):
+        return {}
+    enchanted, equipped, modified = host._attachment_public_state(card)
+    return {'enchanted': enchanted, 'equipped': equipped, 'modified': modified}
 
 
 def _current_combat_target_matches(host, group, card, controller, source_ref):
@@ -159,8 +173,10 @@ def _target_group_object_facts_match(
     history: Any,
     turn_sequence: int,
     actor: str,
+    player: str | None,
+    source_incarnation: str | None,
 ) -> bool:
-    """Evaluate typed object facts outside the main target matcher."""
+    """Evaluate typed history and object facts outside the main target matcher."""
 
     history_matches = group.damage_history is None or bool(
         card is not None
@@ -172,6 +188,11 @@ def _target_group_object_facts_match(
             object_incarnation=card.logical_object_id,
         )
     )
+    if group.player_history is not None:
+        history_matches = player is not None and target_player_history_matches(
+            group.player_history, history=history, turn_sequence=turn_sequence,
+            player=player, source_incarnation=source_incarnation,
+        )
     return bool(
         history_matches
         and (
@@ -305,10 +326,13 @@ class TargetSelectionOwnerMixin:
                     str(source_data.get("type_line") or "")
                 )
                 ability_source_types = None
-                if group.predicate in {'activated_artifact_source','noncreature_ability_source'} and item.kind in {'activated_ability','triggered_ability'}:
-                    from ..ability_source_information import complete_ability_source_information
+                ability_source_colors = None
+                from ..ability_source_information import ABILITY_SOURCE_FILTERS, complete_ability_source_information
+                if group.predicate in ABILITY_SOURCE_FILTERS and item.kind in {'activated_ability','triggered_ability'}:
                     if complete_ability_source_information(self.state):
-                        ability_source_types = stack_targeting_source(self,item).card_types
+                        source_facts = stack_targeting_source(self,item)
+                        ability_source_types = source_facts.card_types
+                        ability_source_colors = source_facts.colors
                 characteristics = _target_characteristic_row_values(data, card=card)
                 if item.kind in {"spell", "spell_copy"}:
                     from .exile_cast import mana_value_of_cost
@@ -329,8 +353,8 @@ class TargetSelectionOwnerMixin:
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,
-                        **({'ability_source_types':ability_source_types} if group.predicate in {
-                            'activated_artifact_source','noncreature_ability_source'} else {}),
+                        **({'ability_source_types':ability_source_types} if group.predicate in ABILITY_SOURCE_FILTERS else {}),
+                        **({'ability_source_colors':ability_source_colors} if group.predicate == 'colorless_ability_source' else {}),
                     }
                 )
         for zone in (
@@ -483,6 +507,7 @@ class TargetSelectionOwnerMixin:
             group,
             card=card if isinstance(card, CardInstance) else None,
             turn_sequence=self.state.turn_sequence,
+            attachment_state=_target_group_attachment_state(self, group, card),
         ):
             return False
         if not _target_group_object_facts_match(
@@ -491,6 +516,8 @@ class TargetSelectionOwnerMixin:
             history=self.state.turn_history,
             turn_sequence=self.state.turn_sequence,
             actor=controller,
+            player=str(row["ref"]) if row["category"] == "player" else None,
+            source_incarnation=getattr(acting_source, "logical_object_id", None),
         ):
             return False
         derived = {
@@ -500,14 +527,13 @@ class TargetSelectionOwnerMixin:
         derived["permanent"] = row["category"] == "permanent"
         try:
             if not target_predicate_matches(
-                self,
-                group,
-                row,
+                self, group, row,
                 types=types,
                 supertypes=supertypes,
                 colors=colors,
                 derived=derived,
-                source_ref=source_ref,
+                source_ref=source_ref, controller=controller,
+                source_incarnation=getattr(acting_source, "logical_object_id", None),
             ):
                 return False
         except TargetPredicateError as exc:

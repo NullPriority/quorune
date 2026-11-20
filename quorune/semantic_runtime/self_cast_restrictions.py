@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact
 from ..object_predicate import ObjectQuerySpec
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -13,6 +13,29 @@ from .context import SemanticNodeError
 SELF_CAST_RESTRICTION_CAPABILITY = 'casting.restriction.self_fixed_public_condition'
 SELF_CAST_RESTRICTION_HANDLER = 'ability.static.self-cast-restriction.v1'
 SELF_CAST_RESTRICTION_EVENT = 'cast.restriction'
+
+
+def _current_public_cast_condition(condition):
+    if (condition.terms or condition.counter_name is not None or condition.predicate is not None
+            or condition.history_query is not None or condition.aggregate is not None):
+        raise SemanticNodeError('Intrinsic public cast conditions require one independent leaf')
+    if condition.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST:
+        if (condition.schema_version == 4 and condition.amount == 1
+                and condition.fact is FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN
+                and condition.fact_parameter is None and condition.quantity is None):
+            return condition
+    elif condition.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST:
+        from ..creature_subtypes import canonical_creature_subtype
+        quantity = condition.quantity
+        if (condition.schema_version == 2 and type(condition.amount) is int and condition.amount > 0
+                and quantity is not None and quantity.schema_version == 1
+                and quantity.scope.value == 'controller_zone' and quantity.counter_name is None
+                and not quantity.exclude_source and not quantity.exclude_attached_object):
+            subtypes = quantity.query.subtypes_all
+            if (len(subtypes) == 1 and canonical_creature_subtype(subtypes[0]) == subtypes[0]
+                    and quantity.query == ObjectQuerySpec(zones=('battlefield',), subtypes_all=subtypes)):
+                return condition
+    raise SemanticNodeError('Unrepresented intrinsic public cast condition')
 
 
 @dataclass(frozen=True, slots=True)
@@ -27,13 +50,21 @@ class SelfCastRestrictionHandler:
     )
 
     def validate(self, descriptor):
-        exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'source_condition'},
-            field='Intrinsic cast restriction')
+        marked = 'intrinsic_condition_version' in descriptor
+        exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'source_condition',
+            *({'intrinsic_condition_version'} if marked else ())}, field='Intrinsic cast restriction')
         if (descriptor['handler_id'] != self.handler_id
                 or type(descriptor['schema_version']) is not int
                 or descriptor['schema_version'] != self.schema_version
                 or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic cast-restriction identity changed')
+        if marked:
+            if (type(descriptor['intrinsic_condition_version']) is not int
+                    or descriptor['intrinsic_condition_version'] != 2):
+                raise SemanticNodeError('Unsupported intrinsic public cast condition version')
+            try:condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
+            except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+            return _current_public_cast_condition(condition)
         condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
         if condition.terms or condition.amount != 1 or condition.counter_name is not None or condition.predicate is not None:
             raise SemanticNodeError('Intrinsic cast restrictions require one complete public condition')

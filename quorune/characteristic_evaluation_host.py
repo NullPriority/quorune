@@ -134,6 +134,35 @@ class CharacteristicEvaluationHostMixin:
             require_available=require_available,
         )
 
+    def _type_effect_order_for_recipients(self, card, base, runtime_effects, *, ignore_face_down):
+        """Read one battlefield order for a modifier that retains its first-layer recipients."""
+        from .characteristic_evaluation import battlefield_type_dependency_view
+        from .continuous_type_dependencies import battlefield_type_effect_order
+
+        local_ids = {effect.effect_id for effect in active_resolution_effects(self.state, card)}
+        shared = tuple(effect for effect in runtime_effects if effect.layer <= Layer.TYPE
+                       and effect.effect_id not in local_ids)
+        prospective = self.state.cards.get(card.object_id) is not card
+        key = ("type-recipient-board-order", tuple(effect.effect_id for effect in shared),
+               id(card) if prospective or ignore_face_down else None, ignore_face_down)
+
+        def prepare():
+            members = tuple(value for value in self.state.cards.values()
+                            if value.object_id != card.object_id and value.zone == "battlefield")
+            views = []
+            for member in (card, *members):
+                data = base if member is card else self._compiled_base_characteristics(
+                    member, self.card_record(member), error_type=GameRuleError)
+                local = active_resolution_effects(self.state, member)
+                views.append(battlefield_type_dependency_view(
+                    member, data, runtime_effects=(*local, *shared),
+                    ignore_face_down=(member is card and ignore_face_down),
+                    dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
+                ))
+            return battlefield_type_effect_order(views)
+
+        return memoized_characteristic_read(self, key, prepare, identity=card if prospective else None)
+
     def _apply_layered_characteristic_annotations(
         self,
         card: CardInstance,
@@ -168,6 +197,12 @@ class CharacteristicEvaluationHostMixin:
             )
             else None
         )
+        type_order = (
+            self._type_effect_order_for_recipients(card,base,runtime_effects,ignore_face_down=ignore_face_down)
+            if card.zone == "battlefield" and (maximum_layer is None or maximum_layer >= Layer.TYPE)
+            and any(effect.recipient_scope_anchor is not None for effect in runtime_effects)
+            else None
+        )
         return separate_custom_display_text(
             card,
             evaluate_card_characteristics(
@@ -180,6 +215,8 @@ class CharacteristicEvaluationHostMixin:
                 enchanted=enchanted,
                 equipped=equipped,
                 modified=modified,
+                type_order=type_order,
+                dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
             ),
         )
 

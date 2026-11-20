@@ -9,8 +9,65 @@ from ..resolution_characteristic_model import (
     INDEFINITE_TARGET_LAND_ANIMATION_VERSION,
 )
 
+def _graveyard_result_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    from ..rules.graveyard_exile_branches import graveyard_exile_branch_payload_dependencies
+    from ..rules.graveyard_exile_tokens import graveyard_exile_token_payload_dependencies
+    from ..rules.graveyard_exile_type_outcomes import graveyard_exile_type_outcome_payload_dependencies
+    from ..rules.targeted_graveyard_outcomes import targeted_graveyard_outcome_payload_dependencies
+    from ..rules.graveyard_card_results import graveyard_card_counter_life_payload_dependencies
+
+    return (graveyard_exile_branch_payload_dependencies(value)
+        or graveyard_exile_token_payload_dependencies(value)
+        or graveyard_exile_type_outcome_payload_dependencies(value)
+        or targeted_graveyard_outcome_payload_dependencies(value)
+        or graveyard_card_counter_life_payload_dependencies(value))
+
+
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    if graveyard_result := _graveyard_result_payload_dependencies(value):return graveyard_result
+    from ..rules.shared_type_library import shared_type_library_payload_dependencies
+    if shared_type := shared_type_library_payload_dependencies(value):
+        return shared_type
+    from ..rules.targeted_graveyard_exile import targeted_graveyard_exile_payload_dependencies
+    if graveyard_choice := targeted_graveyard_exile_payload_dependencies(value):return graveyard_choice
+    from ..rules.targeted_library_exile import targeted_library_exile_payload_dependencies
+    if targeted_search := targeted_library_exile_payload_dependencies(value):return targeted_search
+    from ..rules.gravestorm import gravestorm_payload_dependencies
+    if gravestorm := gravestorm_payload_dependencies(value):return gravestorm
+    from ..rules.demonstrate import demonstrate_payload_dependencies
+    if demonstrate := demonstrate_payload_dependencies(value):return demonstrate
+    from ..rules.ripple import ripple_payload_dependencies
+    if ripple := ripple_payload_dependencies(value):return ripple
+    from ..rules.paid_alternative_cast_facts import paid_alternative_payload_dependencies
+    if paid_alternative := paid_alternative_payload_dependencies(value):return paid_alternative
+    from ..rules.colored_hand_reveals import colored_hand_reveal_payload_dependencies
+    if reveal := colored_hand_reveal_payload_dependencies(value):return reveal
+    from ..rules.keyword_sacrifice_costs import keyword_sacrifice_payload_dependencies
+    if keyword_price := keyword_sacrifice_payload_dependencies(value):return keyword_price
+    from ..qualified_return_cost_model import qualified_return_cost_payload_dependencies
+    if price := qualified_return_cost_payload_dependencies(value):return price
+    from ..rules.announced_x_damage_sets import announced_x_damage_set_dependencies
+    if damage_set := announced_x_damage_set_dependencies(value):return damage_set
+    from ..rules.library_result_capability_shapes import library_result_payload_dependencies
+    if library_required := library_result_payload_dependencies(value):
+        return library_required
+    if value.get('selection_kind') == 'attached_permanent_destruction':
+        from ..attachment_destruction_model import AttachmentDestructionSetSpec, ATTACHED_DESTRUCTION_CAPABILITY
+        AttachmentDestructionSetSpec.from_dict(value)
+        return (ATTACHED_DESTRUCTION_CAPABILITY,)
+    if 'event_optional_draw_version' in value:
+        from ..rules.event_optional_draw_shapes import validate_event_optional_draw_payload
+        return validate_event_optional_draw_payload(value)
+    if value.get('op') == 'remove_all_counters' and value.get('schema_version') == 3:
+        from ..rules.target_all_counter_removal import named_target_all_counter_payload_dependencies
+        return named_target_all_counter_payload_dependencies(value)
+    if value.get('op') == 'remove_chosen_counter':
+        from ..rules.chosen_counter_removal import chosen_counter_removal_payload_dependencies
+        return chosen_counter_removal_payload_dependencies(value)
+    if 'optional_target_result' in value:
+        from ..rules.optional_target_results import optional_target_result_payload_dependencies
+        return optional_target_result_payload_dependencies(value)
     from ..rules.compound_target_sets import compound_target_payload_dependencies
     if compound := compound_target_payload_dependencies(value):return compound
     if value.get('op') == 'fixed_library_selection':
@@ -33,11 +90,13 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         return impulse
     from ..rules.distinct_sacrifices import distinct_sacrifice_payload_dependencies
     from ..drawing.captured_hand import captured_draw_cast_payload_dependencies
+    from ..bounded_hand_cast_model import bounded_hand_cast_payload_dependencies
     from ..dungeon_progress import venture_payload_dependencies
     from ..initiative_model import initiative_payload_dependencies
     from ..rules.manifest_shapes import manifest_result_payload_dependencies
     from ..rules.event_counter_threshold import event_counter_threshold_payload_dependencies
-    if owned_choice := (distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value)
+    if owned_choice := (bounded_hand_cast_payload_dependencies(value)
+                        or distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value)
                         or venture_payload_dependencies(value) or initiative_payload_dependencies(value)
                         or manifest_result_payload_dependencies(value) or event_counter_threshold_payload_dependencies(value)):
         return owned_choice
@@ -74,6 +133,10 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         from ..rules.detain import DIRECT_PROHIBITION_CAPABILITY, validate_direct_action_prohibition
         validate_direct_action_prohibition(value)
         return (DIRECT_PROHIBITION_CAPABILITY,)
+    from ..self_zone_move_followups import self_entry_followup_payload_dependencies
+    from ..source_self_entry_counter_model import source_self_entry_counter_payload_dependencies
+    if owned := source_self_entry_counter_payload_dependencies(value):return owned
+    if owned := self_entry_followup_payload_dependencies(value):return owned
     if value.get("op") == "schedule_turn_skip":
         from ..turn_skip_model import TURN_SKIP_CAPABILITY, decode_turn_skip_instruction
         decode_turn_skip_instruction(value)
@@ -157,6 +220,9 @@ def _affected_quantity_payload_dependencies(
     if value.get("op") == ENDURE_OPERATION:
         fixed_endure_amount(value)
         return (ENDURE_CAPABILITY,)
+    if value == {"op": "shuffle_graveyard_bottom_random", "players": "$targets"}:
+        # The reviewed legacy graveyard shuffle already owns its optional target group.
+        return ()
     if value.get("players") == "$targets":
         from ..rules.any_number_target_shapes import selected_player_payload_dependencies
         return selected_player_payload_dependencies(value)
@@ -192,7 +258,7 @@ def _scalar_amount_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, 
         ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE: PAID_SACRIFICE_MANA_VALUE_CAPABILITY,
         ScalarAmountOrigin.CAST_SPELL_MANA_VALUE: CAST_MANA_VALUE_CAPABILITY,
     }
-    required = {SCALAR_AMOUNT_CAPABILITY, *spec.history_count_capabilities}
+    required = {SCALAR_AMOUNT_CAPABILITY, *spec.referenced_quantity_capabilities}
     if capability := origin_capabilities.get(spec.origin):
         required.add(capability)
     if spec.binding_id is not None:
@@ -214,12 +280,40 @@ def _token_creation_payload_dependencies(value, mechanics):
     ) for cap in owners}))
 
 
+def _player_query_amount_runtime_dependencies(value):
+    """Delegate closed player-bound values before walking their inner amounts."""
+    from ..rules.current_life_effect_amounts import current_life_value_dependencies
+    from ..rules.turn_life_loss_recovery import turn_life_loss_value_dependencies
+    from ..rules.per_player_query_life import per_player_query_life_value_dependencies
+    from ..rules.per_player_query_damage import per_player_query_damage_value_dependencies
+    from ..rules.per_player_life_damage import per_player_life_damage_value_dependencies
+    from ..rules.target_player_query_amounts import target_player_query_value_dependencies
+    for resolver in (current_life_value_dependencies,turn_life_loss_value_dependencies,per_player_query_life_value_dependencies,per_player_query_damage_value_dependencies,per_player_life_damage_value_dependencies,target_player_query_value_dependencies):
+        required=resolver(value)
+        if required:return required
+    return ()
+
+
+def _fixed_alternative_price_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    from ..public_alternative_costs import (
+        creature_damage_price_payload_dependencies,
+        live_attacking_price_payload_dependencies, opponent_history_price_payload_dependencies,
+    )
+    from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
+
+    return (
+        *conditional_free_cast_capabilities(value),
+        *opponent_history_price_payload_dependencies(value),
+        *live_attacking_price_payload_dependencies(value),
+        *creature_damage_price_payload_dependencies(value),
+    )
+
+
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
-    from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
-        DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
         affected_quantity = _affected_quantity_payload_dependencies(value, mechanics=mechanics)
+        if player_query := _player_query_amount_runtime_dependencies(value):return player_query
         if affected_quantity is not None:
             return affected_quantity
         from ..entry_x_amount_model import entry_x_amount_dependencies
@@ -339,8 +433,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             condition = value.get("public_condition")
             if isinstance(condition, Mapping) and condition.get("scope") == "subject_controller_not_monarch":
                 own = (*own, "variant.monarch.designate")
-        from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
-        own = (*own, *conditional_free_cast_capabilities(value))
+        own = (*own, *_fixed_alternative_price_dependencies(value))
         from ..land_entry_condition_model import land_entry_condition_capabilities
         own = (*own, *land_entry_condition_capabilities(value))
         from ..nonmana_kicker import NONMANA_KICKER_HANDLER,FixedNonmanaKickerSpec,nonmana_kicker_dependencies
@@ -350,6 +443,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             from ..public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_CAPABILITY
             PublicQuantityManaOutput.from_dict(value)
             return (PUBLIC_QUANTITY_MANA_CAPABILITY,)
+        from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
+            DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
         if value.get('kind') == PUBLIC_QUERY_AMOUNT_KIND:
             spec = PublicQueryAmountSpec.from_dict(value)
             return tuple(sorted({*own,PUBLIC_QUERY_AMOUNT_CAPABILITY,

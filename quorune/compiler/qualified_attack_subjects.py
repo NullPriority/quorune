@@ -1,20 +1,60 @@
 """Singular declared-attack subjects over a fixed public characteristic query."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
-from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT, ATTACK_FACT_PREFIX
+from ..qualified_attack_model import (
+    ATTACK_FACT_EQUAL_POWER_TOUGHNESS, ATTACK_FACT_PREFIX, QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT,
+    qualified_player_defense_condition,
+)
 from .public_event_query_conditions import public_event_query_conditions
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 from ..attack_batch_model import validate_attack_characteristic_query
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
+
+
+_CONTROLLED_TOKEN_MIN_POWER = re.compile(
+    r"(?P<subtype>[A-Z][A-Za-z'-]*) token you control with power (?P<minimum>[1-9][0-9]{0,2}) or greater", re.I,
+)
+_CONTROLLED_CREATURE_POWER = re.compile(
+    r"creature you control with power (?P<power>0|[1-9][0-9]{0,2}) or (?P<comparison>less|greater)", re.I,
+)
+_DEFENDING_CREATURE_POWER = re.compile(
+    r"(?:When|Whenever) a creature with power (?P<power>0|[1-9][0-9]{0,2}) or greater attacks you, (?P<body>.+)", re.I,
+)
+_ENCHANTED_OR_EQUIPPED = re.compile(
+    r"(?P<article>a|another) creature you control that(?: is|['’]s) enchanted or equipped", re.I,
+)
+
+
+_EQUAL_POWER_AND_TOUGHNESS = re.compile(
+    r"(?P<article>a|another) creature you control with power equal to its toughness", re.I,
+)
 
 
 def _attack_subject_query(text):
     match = re.fullmatch(r'(?P<article>an?|another) (?P<subject>.+)', text, re.I)
     if match is None: return None
     subject = match['subject']; other = match['article'].casefold() == 'another'
+    token_power = _CONTROLLED_TOKEN_MIN_POWER.fullmatch(subject)
+    if token_power is not None:
+        subtype = canonical_creature_subtype(token_power['subtype'])
+        if subtype is None:
+            return None
+        query = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), subtypes_all=(subtype,), token=True,
+            numeric_characteristic=TargetNumericCharacteristicSpec(
+                TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_LEAST, int(token_power['minimum'])))
+        return query, other
+    creature_power = _CONTROLLED_CREATURE_POWER.fullmatch(subject)
+    if creature_power is not None:
+        comparison = (TargetNumericComparison.AT_MOST if creature_power['comparison'].casefold() == 'less'
+            else TargetNumericComparison.AT_LEAST)
+        query = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',),
+            numeric_characteristic=TargetNumericCharacteristicSpec(
+                TargetNumericCharacteristic.POWER, comparison, int(creature_power['power'])))
+        return query, other
     # The public static query grammar uses plural nouns; attack events supply the creature gate.
     bare = re.fullmatch(r'(?P<types>.+?) you control', subject, re.I)
     if bare:
@@ -39,9 +79,19 @@ def _attack_subject_query(text):
 
 def qualified_attack_binding_spec(text):
     from .fixed_public_event_trigger_bindings import _spec, _all_conditions
+
+    defense = _DEFENDING_CREATURE_POWER.fullmatch(text)
+    if defense is not None:
+        return _spec('creature.attacks', QUALIFIED_ATTACK_VARIANT, defense['body'],
+            'fixed-counter-public-attack-trigger-v1', 'trigger-event-normalized-public-action',
+            condition=qualified_player_defense_condition(int(defense['power'])), capabilities=(QUALIFIED_ATTACK_CAPABILITY,))
     match = re.fullmatch(r'(?:When|Whenever) (?P<subject>.+?) attacks(?P<alone> alone)?, (?P<body>.+)', text, re.I)
     if match is None: return None
-    parsed = _attack_subject_query(match['subject'])
+    subject = match['subject']
+    attachment = _ENCHANTED_OR_EQUIPPED.fullmatch(subject)
+    equal_stats = _EQUAL_POWER_AND_TOUGHNESS.fullmatch(subject)
+    closed_subject = attachment or equal_stats
+    parsed = _attack_subject_query(f"{closed_subject['article']} creature you control" if closed_subject else subject)
     if parsed is None: return None
     query, excluded = parsed
     conditions = [{'field': ATTACK_FACT_PREFIX + 'version', 'op': 'eq', 'value': 1},
@@ -49,6 +99,13 @@ def qualified_attack_binding_spec(text):
         *public_event_query_conditions(query, prefix=ATTACK_FACT_PREFIX)]
     if excluded: conditions.append({'field': 'card', 'op': 'ne', 'value': '$source.ref'})
     if match['alone']: conditions.append({'field': 'attacking_alone', 'op': 'truthy', 'value': True})
+    if attachment is not None:
+        conditions.append({'any': [
+            {'field': ATTACK_FACT_PREFIX + name, 'op': 'eq', 'value': True}
+            for name in ('enchanted', 'equipped')
+        ]})
+    if equal_stats is not None:
+        conditions.append({'field': ATTACK_FACT_EQUAL_POWER_TOUGHNESS, 'op': 'eq', 'value': True})
     for name in ('token', 'commander'):
         if getattr(query, name) is not None:
             conditions.append({'field': ATTACK_FACT_PREFIX + name, 'op': 'eq', 'value': getattr(query, name)})

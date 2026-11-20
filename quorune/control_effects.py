@@ -17,6 +17,7 @@ from .object_predicate import ObjectQuerySpec
 from .source_continuity import SourceContinuityHistory, SourceContinuitySnapshot
 from .source_tap_effect import SOURCE_TAP_EFFECT_FIELD
 from .source_untap_rule_model import ResolvedSourceUntapRestraint
+from .stack_target_change_model import STACK_SPELL_CONTROL_CONTEXT, StackSpellControlHistory
 from .model import CONTROL_HISTORY_VERSION
 from . import control_history
 from .errors import GameRuleError
@@ -86,6 +87,80 @@ def _commit_control_change(host: ControlEffectHost, object_id: str, controller: 
         {"object": card.ref, "from": previous, "to": controller, "reason": reason},
         importance=2, changed_objects=[object_id], changed_players=[previous, controller],
     )
+
+
+def _stack_control_history(item) -> StackSpellControlHistory:
+    raw = item.context.get(STACK_SPELL_CONTROL_CONTEXT)
+    history = StackSpellControlHistory(item.controller) if raw is None else StackSpellControlHistory.from_dict(raw)
+    if history.controller != item.controller:
+        raise ControlEffectError("Current controller and spell control history disagree")
+    return history
+
+
+def _apply_stack_control_history(host, spell, history):
+    card = host.state.cards.get(spell.card_object_id) if spell.card_object_id is not None else None
+    if spell.card_object_id is not None and (card is None or card.zone != "stack"):
+        raise ControlEffectError("The selected spell's physical card is unavailable")
+    spell.context[STACK_SPELL_CONTROL_CONTEXT] = history.to_dict()
+    if spell.controller != history.controller:
+        spell.controller = history.controller
+        spell.context["targets_revalidated"] = False
+        if card is not None:
+            card.controller = history.controller
+    return card
+
+
+def gain_control_of_stack_spell(host: ControlEffectHost, *, stack_ref: str, actor: str,
+                                source: ResolutionEffectSource, reason: str) -> str:
+    """Transfer current spell control without reopening its cast receipt."""
+    host._require_seat(actor, in_game=True)
+    spell = next((item for item in host.state.stack if item.ref == stack_ref), None)
+    if spell is None or spell.kind not in {"spell", "spell_copy"} or spell.ref == source.stack_ref:
+        raise ControlEffectError("Spell control requires a different current stack spell")
+    previous = spell.controller
+    if previous == actor:
+        return spell.ref
+    history = _stack_control_history(spell)
+    card = _apply_stack_control_history(host, spell, history.acquire(actor))
+    host._log(
+        actor, "stack.control.change", "Control of a spell changed.",
+        {"stack": spell.ref, "from": previous, "to": actor, "source": source.stack_ref, "reason": reason},
+        importance=2, changed_objects=[card.object_id] if card is not None else [],
+        changed_players=[previous, actor],
+    )
+    return spell.ref
+
+
+def end_player_stack_control_effects(host: ControlEffectHost, departing_seats: Sequence[str]) -> frozenset[str]:
+    """End the departing group of stack grants while owned cards leave normally."""
+    departing = frozenset(departing_seats)
+    removed = set()
+    for spell in tuple(host.state.stack):
+        if STACK_SPELL_CONTROL_CONTEXT not in spell.context:
+            continue
+        history = _stack_control_history(spell)
+        if spell.card_object_id is not None:
+            if host.state.cards[spell.card_object_id].owner in departing:
+                continue
+        elif spell.kind == "spell_copy" and history.default_controller in departing:
+            removed.add(spell.ref)
+            continue
+        if history.controller not in departing and departing.isdisjoint(history.acquired_controllers):
+            continue
+        after = history.without(departing)
+        if after.controller in host.active_seats and after.controller not in departing:
+            _apply_stack_control_history(host, spell, after)
+        elif spell.card_object_id is None:
+            removed.add(spell.ref)
+        else:
+            host.move_card(spell.card_object_id, "exile", reason="spell control returned to a departed player", log=False)
+    if removed:
+        from .rules.event_spell_copy import pin_event_spell_copy_departure
+
+        for spell in host.state.stack:
+            if spell.ref in removed:
+                pin_event_spell_copy_departure(host, spell)
+    return frozenset(removed)
 
 
 def source_continuity_snapshot(card: Any) -> SourceContinuitySnapshot:
@@ -223,12 +298,21 @@ def prepare_tapped_source_duration(
     return card.source_continuity.snapshot()
 
 
+def prepare_source_presence_duration(state, source):
+    card = _current_duration_source(state, source)
+    return source_continuity_snapshot(card) if card is not None else None
+
+
+def characteristic_source_duration_is_current(state, source, snapshot, duration):
+    card = _current_duration_source(state, source)
+    return card is not None and _duration_condition(card, duration, card.controller, snapshot)
+
+
 def tapped_source_duration_is_current(
     state: Any, source: ContinuousObjectIdentity, snapshot: SourceContinuitySnapshot,
 ) -> bool:
-    card = _current_duration_source(state, source)
-    return card is not None and _duration_condition(
-        card, ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS, card.controller, snapshot,
+    return characteristic_source_duration_is_current(
+        state, source, snapshot, ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS,
     )
 
 
@@ -431,16 +515,20 @@ def _next_source_expiration(host: ControlEffectHost, ending: Sequence[Continuous
             and effect.duration_source in other.locked_objects
         )
         candidates.append(replace(effect, depends_on=prerequisites))
-    ordered, _cycles = order_continuous_effects(candidates)
+    ordered, _cycles = order_continuous_effects(
+        candidates, dependency_order_version=getattr(host.state, "continuous_dependency_order_version", None),
+    )
     return next(effect for effect in ending if effect.effect_id == ordered[0].effect_id)
 
 
-def _expired_tapped_duration(state, effect) -> bool:
-    return (
-        isinstance(effect, ResolvedSourceUntapRestraint)
-        or isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
-        and effect.duration_source is not None
-    ) and not tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
+def _expired_characteristic_source_duration(state, effect) -> bool:
+    if isinstance(effect, ResolvedSourceUntapRestraint):
+        return not tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
+    return (isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
+            and effect.duration_source is not None
+            and not characteristic_source_duration_is_current(
+                state, effect.duration_source, effect.duration_history, effect.duration,
+            ))
 
 
 def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool:
@@ -452,8 +540,8 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     journal = host.state.continuous_effects
     if not journal:
         return _exile_phased_permanents_without_live_custody(host, (), static)
-    retained = [effect for effect in journal if not _expired_tapped_duration(host.state, effect)]
-    expired_tapped_durations = len(retained) != len(journal)
+    retained = [effect for effect in journal if not _expired_characteristic_source_duration(host.state, effect)]
+    expired_characteristic_durations = len(retained) != len(journal)
     expired = []
     # Each changing pass removes at least one source-bound effect. Expired
     # durations never reappear, so source cycles terminate without guessing.
@@ -504,7 +592,7 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     phased_exiled = _exile_phased_permanents_without_live_custody(host, journal, static)
     from .rules.city_blessing import synchronize_citys_blessing
     city_changed=synchronize_citys_blessing(host,reason='control changes committed')
-    return bool(changes or expired or expired_tapped_durations or phased_exiled or city_changed)
+    return bool(changes or expired or expired_characteristic_durations or phased_exiled or city_changed)
 
 
 def _exile_phased_permanents_without_live_custody(host, journal, static):

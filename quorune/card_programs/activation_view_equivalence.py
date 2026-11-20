@@ -41,6 +41,9 @@ def shadowed_reviewed_activation_view_keys(record,generated_programs,reviewed_pr
         matches=[]
         for current in generated:
             comparison=reviewed_activation_with_equivalent_target(current,old)
+            if comparison is None:
+                from ..rules.stack_spell_copy_shapes import reviewed_stack_copy_with_current_policy
+                comparison=reviewed_stack_copy_with_current_policy(current,old)
             if comparison is None:continue
             if (current.key!=old.key or current.ability_id!=old.ability_id
                     or not _same_current_source(record,current,comparison)
@@ -50,7 +53,7 @@ def shadowed_reviewed_activation_view_keys(record,generated_programs,reviewed_pr
                     or current.event_condition!=old.event_condition or current.trigger_limit!=old.trigger_limit
                     or current.requires_arbiter or current.capability_closure.get('blockers')!=[]
                     or not _catalog_preserves_cost(current,comparison)
-                    or not _results_equal(current,old)):continue
+                    or not _results_equal(current,comparison)):continue
             if bind_semantic_program_runtime(current,capability_registry=capability_registry,profile=capability_profile)['strict']:
                 matches.append(current)
         if len(matches)==1:shadowed.add(old.key)

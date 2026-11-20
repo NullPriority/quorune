@@ -234,12 +234,14 @@ class TriggerProcessingOwner:
             continuation=decision.continuation,
         )
 
-    def collect_ward_occurrences(self, targeted_item: StackItem) -> list[str]:
+    def collect_ward_occurrences(
+        self, targeted_item: StackItem, *, target_refs: tuple[str, ...] | None = None,
+    ) -> list[str]:
         """Collect current typed Ward abilities into the ordinary batch."""
 
         occurrences: list[StackItem] = []
         seen: set[str] = set()
-        for target_ref in targeted_item.targets:
+        for target_ref in targeted_item.targets if target_refs is None else target_refs:
             normalized_target_ref = str(target_ref)
             if normalized_target_ref in seen:
                 continue
@@ -864,8 +866,10 @@ def expire_next_cast_copy_triggers(host: TriggerProcessingHost) -> None:
 def collect_ward_occurrences(
     host: TriggerProcessingHost,
     targeted_item: StackItem,
+    *,
+    target_refs: tuple[str, ...] | None = None,
 ) -> list[str]:
-    return TriggerProcessingOwner(host).collect_ward_occurrences(targeted_item)
+    return TriggerProcessingOwner(host).collect_ward_occurrences(targeted_item, target_refs=target_refs)
 
 
 def complete_trigger_order_decision(

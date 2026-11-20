@@ -9,10 +9,24 @@ from .composition_storage import PermanentCompositionStorage
 from .dungeon_progress import DungeonJourney
 from .creature_subtypes import canonical_creature_subtype
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
+from .spell_resolution_name_model import SpellResolutionNameLedger
+from .spell_resolution_name_codec import read_resolution_name_ledger, resolution_name_state_fields
 
+from .library_search_model import (
+    FETCH_ENTRY_PLACEMENT_VERSION,
+    fetch_entry_placement_fields,
+    read_fetch_entry_placement_version,
+)
+from .continuous_effect_model import (
+    CONTINUOUS_DEPENDENCY_ORDER_VERSION,
+    continuous_dependency_order_fields,
+    read_continuous_dependency_order_version,
+)
 from .damage_modifier_state import (
     DamagePreventionShield,
     DamageRedirectionEffect,
+    SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
+    read_shield_counter_damage_version,
 )
 from .declaration_rule_effects import (
     ContinuousJournalEffect,
@@ -20,6 +34,7 @@ from .declaration_rule_effects import (
 )
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
 from .turn_skip_model import ScheduledTurnSkip, decode_scheduled_turn_skips
+from .next_player_untap_model import NextPlayerUntapRestriction, decode_next_player_untap_restrictions
 from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
@@ -66,7 +81,10 @@ from .shared_type_doors import SHARED_TYPE_DOORS_VERSION, SharedTypeDoors
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION, characteristic_query_boundary_version
-from .stack_resolution_authority_model import stack_resolution_authority_version
+from .stack_resolution_authority_model import (
+    COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
+    stack_resolution_authority_version,
+)
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
@@ -103,379 +121,10 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 # structural constant as schema vocabulary rather than card dispatch.
 PLAYER_COUNTERS_FIELD = "counters"
 
-TurnHistoryEventKind = Literal[
-    "first_venture",
-    "trigger_optional_result_used",
-    "crime_committed",
-    "spell_mana_spent",
-    "spell_cast",
-    "spell_warped",
-    "card_left_graveyard",
-    "card_discarded",
-    "creature_attacked",
-    "creature_died",
-    "permanent_died",
-    "permanent_sacrificed",
-    "player_damaged",
-    "player_gained_life",
-    "player_lost_life",
-    "first_life_gain",
-    "permanent_damaged",
-    "permanent_entered",
-    "permanent_left",
-    "permanent_arrived_hand",
-    "permanent_arrived_graveyard",
-    "card_arrived_exile",
-    "artifact_subtype_sacrificed",
-    "card_arrived_graveyard",
-    "card_milled_graveyard",
-]
-
-
-COMMITTED_OCCURRENCE_HISTORY_KINDS = frozenset({"spell_warped", "card_left_graveyard"})
-PUBLIC_MOVEMENT_HISTORY_KINDS = frozenset({
-    "permanent_arrived_hand", "permanent_arrived_graveyard", "card_arrived_exile", "artifact_subtype_sacrificed",
-})
-
-
-@dataclass(frozen=True, slots=True)
-class TurnHistoryEvent:
-    """One rules-relevant fact recorded during the current turn.
-
-    This compact journal is authoritative game state, unlike the presentation
-    event log.  It intentionally stores the characteristics and logical-object
-    identity that existed when the event happened so CR 608.2i look-back
-    queries never substitute the object's current characteristics or zone.
-    """
-
-    kind: TurnHistoryEventKind
-    actor: str | None = None
-    object_incarnation: str | None = None
-    target: str | None = None
-    target_kind: str | None = None
-    target_object_incarnation: str | None = None
-    types: tuple[str, ...] = ()
-    amount: int = 0
-    origin: str | None = None
-    creature_subtypes: tuple[str, ...] | None = None
-    token: bool | None = None
-
-    def __post_init__(self):
-        if self.kind == "permanent_died":
-            if (type(self.actor) is not str or not self.actor
-                or type(self.object_incarnation) is not str or not self.object_incarnation
-                or type(self.token) is not bool
-                or not isinstance(self.types, tuple)
-                or any(type(value) is not str or not value or value != value.casefold() for value in self.types)
-                or self.types != tuple(sorted(set(self.types)))
-                or not isinstance(self.creature_subtypes, tuple)
-                or any(type(value) is not str or canonical_creature_subtype(value) != value
-                       for value in self.creature_subtypes)
-                or self.creature_subtypes != tuple(sorted(set(self.creature_subtypes)))
-                or any(value is not None for value in (
-                    self.target, self.target_kind, self.target_object_incarnation, self.origin,
-                ))
-                or type(self.amount) is not int or self.amount != 0):
-                raise ValueError("Permanent death history requires its sealed departure facts")
-        elif self.creature_subtypes is not None or self.token is not None:
-            raise ValueError("Only permanent deaths carry subtype and token history")
-        if self.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS and (
-            type(self.actor) is not str or not self.actor
-            or type(self.object_incarnation) is not str or not self.object_incarnation
-            or any(value is not None for value in (
-                self.target, self.target_kind, self.target_object_incarnation, self.origin,
-            ))
-            or self.types or type(self.amount) is not int or self.amount != 0
-        ):
-            raise ValueError("Committed occurrence history requires an actor and its exact object incarnation")
-        if self.kind in PUBLIC_MOVEMENT_HISTORY_KINDS:
-            self._validate_public_movement()
-        if self.kind == 'first_life_gain' and (
-            type(self.target) is not str or not self.target or self.target_kind != 'player'
-            or any(value is not None for value in (self.actor, self.object_incarnation, self.target_object_incarnation, self.origin))
-            or self.types or type(self.amount) is not int or self.amount != 0
-        ):
-            raise ValueError('First life gain history requires only its gaining seat')
-        if self.kind == "first_venture" and (
-            type(self.actor) is not str or not self.actor
-            or any(value is not None for value in (self.object_incarnation, self.target, self.target_kind,
-                                                  self.target_object_incarnation, self.origin))
-            or self.types or type(self.amount) is not int or self.amount != 0
-        ):
-            raise ValueError("First Venture history requires only the venturing seat")
-        if self.kind=='crime_committed' and (type(self.actor) is not str or not self.actor
-                or type(self.target) is not str or not self.target or self.target_kind!='stack_object'
-                or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
-                or self.target_object_incarnation is not None or self.types or self.origin is not None):
-            raise ValueError('Crime history requires one completed player action and its exact stack identity')
-        if self.kind == 'trigger_optional_result_used' and (
-            any(type(value) is not str or not value for value in (self.actor, self.object_incarnation, self.target))
-            or self.target_kind != 'ability_program' or self.target_object_incarnation is not None
-            or self.types or self.origin is not None or type(self.amount) is not int or self.amount != 0
-        ):
-            raise ValueError('Optional result usage requires its controller, source incarnation and ability program')
-        if self.kind=='spell_mana_spent' and (
-                type(self.actor) is not str or not self.actor or type(self.amount) is not int or self.amount<=0
-                or any(value is not None for value in (self.object_incarnation,self.target,self.target_kind,
-                    self.target_object_incarnation,self.origin)) or self.types):
-            raise ValueError('Spell-mana history requires one positive player payment')
-        if self.origin is not None and (type(self.origin) is not str or self.origin not in {'battlefield','hand','library','graveyard','stack','exile','command','outside'}):
-            raise ValueError('Turn-history arrival origin is closed')
-        if self.kind=='card_arrived_graveyard' and (self.origin is None or self.origin=='graveyard' or type(self.object_incarnation) is not str or not self.object_incarnation):
-            raise ValueError('Graveyard arrival needs its exact arrived incarnation and origin')
-        if self.kind not in {'card_arrived_graveyard','spell_cast'} and self.origin is not None:raise ValueError('Only cast and graveyard arrival history has an origin')
-        if self.kind=='spell_cast' and self.origin in {'battlefield','stack'}:raise ValueError('A cast needs a supported pre-stack origin')
-        if self.kind=='card_milled_graveyard' and (type(self.object_incarnation) is not str or not self.object_incarnation):
-            raise ValueError('Mill arrival history needs its exact graveyard incarnation')
-
-    def _validate_public_movement(self) -> None:
-        if (type(self.actor) is not str or not self.actor
-                or type(self.object_incarnation) is not str or not self.object_incarnation
-                or self.target_object_incarnation is not None or self.origin is not None
-                or type(self.amount) is not int or self.amount != 0):
-            raise ValueError("Public movement history requires a seat and a committed incarnation")
-        if self.kind == "artifact_subtype_sacrificed":
-            from .type_subtype_vocabulary import ARTIFACT_SUBTYPES
-
-            if (self.target_kind != "artifact_subtype" or type(self.target) is not str
-                    or self.target not in ARTIFACT_SUBTYPES or self.types):
-                raise ValueError("Sacrifice history requires one canonical artifact subtype")
-        elif self.target is not None or self.target_kind is not None:
-            raise ValueError("Movement history cannot carry a target")
-        elif self.kind == "card_arrived_exile":
-            if self.types:
-                raise ValueError("Card exile history carries no characteristics")
-        elif (not self.types or not isinstance(self.types, tuple)
-                or any(type(value) is not str or not value or value != value.casefold() for value in self.types)
-                or self.types != tuple(sorted(set(self.types)))):
-            raise ValueError("Permanent arrival history requires its prior types")
-
-    def to_dict(self) -> dict[str, Any]:
-        payload = asdict(self)
-        payload["types"] = list(self.types)
-        if self.kind == "permanent_died":
-            payload["creature_subtypes"] = list(self.creature_subtypes)
-        else:
-            payload.pop("creature_subtypes")
-            payload.pop("token")
-        if self.origin is None:payload.pop("origin")
-        return payload
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "TurnHistoryEvent":
-        payload = dict(data)
-        if payload.get("kind") in {"permanent_died", *PUBLIC_MOVEMENT_HISTORY_KINDS}:
-            if not isinstance(payload.get("types"), (list, tuple)):
-                family = "Permanent death" if payload.get("kind") == "permanent_died" else "Public movement"
-                raise ValueError(f"{family} history requires explicit card types")
-            payload["types"] = tuple(payload["types"])
-        else:
-            payload["types"] = tuple(str(value) for value in payload.get("types", ()))
-        if isinstance(payload.get("creature_subtypes"), list):
-            payload["creature_subtypes"] = tuple(payload["creature_subtypes"])
-        return cls(**payload)
-
-
-@dataclass(slots=True)
-class TurnHistory:
-    """Versioned current-turn facts used by deterministic rules queries."""
-
-    schema_version: int = 1
-    turn_sequence: int = 0
-    events: list[TurnHistoryEvent] = field(default_factory=list)
-    # Additive summary retained across exactly one turn boundary. The live
-    # event list continues to describe only ``turn_sequence``; these fields
-    # preserve previous-turn spell counts for CR 502.2/731 and printed
-    # intervening-if triggers without retaining an unbounded event journal.
-    previous_turn_sequence: int | None = None
-    previous_active_player: str | None = None
-    previous_spell_cast_counts: dict[str, int] = field(default_factory=dict)
-    # Absent preserves pre-extension event hashes; new games enable complete
-    # committed battlefield-departure recording explicitly.
-    departure_history_version: int | None = None
-    arrival_history_version: int | None = None
-    mill_history_version: int | None = None
-    spell_origin_history_version: int | None = None
-    graveyard_type_history_version: int | None = None
-    spell_mana_history_version: int | None = None
-    crime_history_version: int | None = None
-    committed_occurrence_history_version: int | None = None
-    damage_life_history_version: int | None = None
-    permanent_death_history_version: int | None = None
-    public_movement_history_version: int | None = None
-    first_life_gain_history_version: int | None = None
-    venture_history_version: int | None = None
-
-    def __post_init__(self) -> None:
-        if self.schema_version != 1 or type(self.schema_version) is not int:
-            raise ValueError("Unsupported turn-history schema version")
-        if type(self.turn_sequence) is not int or self.turn_sequence < 0:
-            raise ValueError("Turn-history sequence must be nonnegative")
-        if self.departure_history_version is not None and (
-            type(self.departure_history_version) is not int
-            or self.departure_history_version != 1
-        ):
-            raise ValueError("Unsupported departure-history version")
-        if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
-        if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
-        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version,self.crime_history_version):
-            if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
-        occurrence_version = self.committed_occurrence_history_version
-        if occurrence_version is not None and (type(occurrence_version) is not int or occurrence_version != 1):
-            raise ValueError("Unsupported committed occurrence history version")
-        damage_life_version = self.damage_life_history_version
-        if damage_life_version is not None and (type(damage_life_version) is not int or damage_life_version != 1):
-            raise ValueError("Unsupported damage life history version")
-        death_version = self.permanent_death_history_version
-        if death_version is not None and (type(death_version) is not int or death_version != 1):
-            raise ValueError("Unsupported permanent death history version")
-        movement_version = self.public_movement_history_version
-        if movement_version is not None and (type(movement_version) is not int or movement_version != 1):
-            raise ValueError("Unsupported public movement history version")
-        life_gain_version = self.first_life_gain_history_version
-        if life_gain_version is not None and (type(life_gain_version) is not int or life_gain_version != 1):
-            raise ValueError('Unsupported first life gain history version')
-        venture_version = self.venture_history_version
-        if venture_version is not None and (type(venture_version) is not int or venture_version != 1):
-            raise ValueError("Unsupported Venture history version")
-        if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
-        if not isinstance(self.events, list) or any(
-            not isinstance(event, TurnHistoryEvent) for event in self.events
-        ):
-            raise ValueError("Turn-history events must be typed")
-        if self.spell_mana_history_version is None and any(event.kind=='spell_mana_spent' for event in self.events):
-            raise ValueError('Spell-mana facts require complete payment history')
-        if self.crime_history_version is None and any(event.kind=='crime_committed' for event in self.events):
-            raise ValueError('Crime facts require complete initial-action history')
-        if occurrence_version is None and any(event.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS for event in self.events):
-            raise ValueError("Committed occurrence facts require complete history")
-        if death_version is None and any(event.kind == "permanent_died" for event in self.events):
-            raise ValueError("Permanent death facts require complete history")
-        if movement_version is None and any(event.kind in PUBLIC_MOVEMENT_HISTORY_KINDS for event in self.events):
-            raise ValueError("Public movement facts require complete history")
-        first_gainers = [event.target for event in self.events if event.kind == 'first_life_gain']
-        if first_gainers and (life_gain_version is None or len(first_gainers) != len(set(first_gainers))):
-            raise ValueError('First life gain facts require versioned history and unique gaining seats')
-        first_ventures = [event.actor for event in self.events if event.kind == "first_venture"]
-        if first_ventures and (venture_version is None or len(first_ventures) != len(set(first_ventures))):
-            raise ValueError("First Venture facts require versioned history and unique venturing seats")
-        previous_absent = self.previous_turn_sequence is None
-        if previous_absent != (self.previous_active_player is None):
-            raise ValueError(
-                "Previous-turn sequence and active player must be paired"
-            )
-        if previous_absent:
-            if self.previous_spell_cast_counts:
-                raise ValueError(
-                    "Previous spell counts require a previous turn"
-                )
-            return
-        if (
-            type(self.previous_turn_sequence) is not int
-            or self.previous_turn_sequence < 0
-            or self.previous_turn_sequence != self.turn_sequence - 1
-            or type(self.previous_active_player) is not str
-            or not self.previous_active_player
-            or not isinstance(self.previous_spell_cast_counts, dict)
-            or any(
-                type(player) is not str
-                or not player
-                or type(count) is not int
-                or count < 0
-                for player, count in self.previous_spell_cast_counts.items()
-            )
-        ):
-            raise ValueError("Previous-turn spell history is malformed")
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "schema_version": self.schema_version,
-            "turn_sequence": self.turn_sequence,
-            "events": [event.to_dict() for event in self.events],
-            **({"arrival_history_version":1} if self.arrival_history_version is not None else {}),
-            **({"mill_history_version":1} if self.mill_history_version is not None else {}),
-            **({"spell_origin_history_version":1} if self.spell_origin_history_version is not None else {}),
-            **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
-            **({"spell_mana_history_version":1} if self.spell_mana_history_version is not None else {}),
-            **({"crime_history_version":1} if self.crime_history_version is not None else {}),
-            **({"committed_occurrence_history_version": 1}
-               if self.committed_occurrence_history_version is not None else {}),
-            **({"damage_life_history_version": 1}
-               if self.damage_life_history_version is not None else {}),
-            **({"permanent_death_history_version": 1}
-               if self.permanent_death_history_version is not None else {}),
-            **({"public_movement_history_version": 1}
-               if self.public_movement_history_version is not None else {}),
-            **({'first_life_gain_history_version': 1} if self.first_life_gain_history_version is not None else {}),
-            **({"venture_history_version": 1} if self.venture_history_version is not None else {}),
-            **({"departure_history_version": self.departure_history_version}
-               if self.departure_history_version is not None else {}),
-            **(
-                {
-                    "previous_turn": {
-                        "turn_sequence": self.previous_turn_sequence,
-                        "active_player": self.previous_active_player,
-                        "spell_cast_counts": dict(
-                            sorted(self.previous_spell_cast_counts.items())
-                        ),
-                    }
-                }
-                if self.previous_turn_sequence is not None
-                else {}
-            ),
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "TurnHistory":
-        previous = data.get("previous_turn")
-        if "public_movement_history_version" in data and data["public_movement_history_version"] is None:
-            raise ValueError("Unsupported public movement history version")
-        if previous is not None and not isinstance(previous, dict):
-            raise ValueError("Previous-turn spell history must be an object")
-        if isinstance(previous, dict) and set(previous) != {
-            "turn_sequence",
-            "active_player",
-            "spell_cast_counts",
-        }:
-            raise ValueError("Previous-turn spell history has unknown fields")
-        return cls(
-            schema_version=int(data.get("schema_version", 1)),
-            departure_history_version=data.get("departure_history_version"),
-            arrival_history_version=data.get("arrival_history_version"),
-            mill_history_version=data.get("mill_history_version"),
-            spell_origin_history_version=data.get("spell_origin_history_version"),
-            graveyard_type_history_version=data.get("graveyard_type_history_version"),
-            spell_mana_history_version=data.get("spell_mana_history_version"),
-            crime_history_version=data.get("crime_history_version"),
-            committed_occurrence_history_version=data.get("committed_occurrence_history_version"),
-            damage_life_history_version=data.get("damage_life_history_version"),
-            permanent_death_history_version=data.get("permanent_death_history_version"),
-            public_movement_history_version=data.get("public_movement_history_version"),
-            first_life_gain_history_version=data.get('first_life_gain_history_version'),
-            venture_history_version=data.get("venture_history_version"),
-            turn_sequence=int(data.get("turn_sequence", 0)),
-            events=[
-                TurnHistoryEvent.from_dict(event)
-                for event in data.get("events", [])
-            ],
-            previous_turn_sequence=(
-                previous["turn_sequence"]
-                if isinstance(previous, dict)
-                and previous.get("turn_sequence") is not None
-                else None
-            ),
-            previous_active_player=(
-                previous["active_player"]
-                if isinstance(previous, dict)
-                and previous.get("active_player") is not None
-                else None
-            ),
-            previous_spell_cast_counts=(
-                previous.get("spell_cast_counts", {})
-                if isinstance(previous, dict)
-                else {}
-            ),
-        )
+from .turn_history_model import (
+    COMMITTED_OCCURRENCE_HISTORY_KINDS, PUBLIC_MOVEMENT_HISTORY_KINDS,
+    TurnHistoryEventKind, TurnHistoryEvent, TurnHistory,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1238,6 +887,7 @@ class GameState:
     soulbond_pairs: tuple[SoulbondPair, ...] | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
     scheduled_turn_skips: list[ScheduledTurnSkip] = field(default_factory=list)
+    next_player_untap_restrictions: tuple[NextPlayerUntapRestriction, ...] = field(default=(), kw_only=True)
     active_player: str | None = None
     priority_player: str | None = None
     priority_passes: list[str] = field(default_factory=list)
@@ -1249,6 +899,7 @@ class GameState:
     stack: list[StackItem] = field(default_factory=list)
     delayed_triggers: list[DelayedTrigger] = field(default_factory=list)
     # Additive Game Record v3 state for durable CR 609.7/614.9/615 effects.
+    shield_counter_damage_version: int | None = 1
     # Historical checkpoints omit both arrays and deserialize as empty.
     damage_prevention_shields: list[DamagePreventionShield] = field(
         default_factory=list
@@ -1258,12 +909,16 @@ class GameState:
     )
     # Additive Game Record v3 duration journal. ``None`` preserves historical
     # checkpoints whose temporary continuous effects used annotations.
+    continuous_dependency_order_version: int | None = CONTINUOUS_DEPENDENCY_ORDER_VERSION
+    fetch_entry_placement_version: int | None = FETCH_ENTRY_PLACEMENT_VERSION
     continuous_effects: list[ContinuousJournalEffect] | None = field(
         default_factory=list
     )
     # Authoritative CR 608.2i look-back facts. ``None`` is reserved for legacy
     # Game Record v3 checkpoints created before this additive feature existed.
     turn_history: TurnHistory | None = field(default_factory=TurnHistory)
+    # Missing lifetime history is unavailable, never implicitly known-empty.
+    spell_resolution_name_ledger: SpellResolutionNameLedger | None = None
     # CR 725 designation. ``None`` means no player has become the monarch.
     monarch: str | None = None
     initiative: str | None = None
@@ -1311,7 +966,7 @@ class GameState:
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
-    stack_resolution_authority_version: int | None = 1
+    stack_resolution_authority_version: int | None = COPIED_SPELL_ENTRY_AUTHORITY_VERSION
     token_copy_value_version: int | None = 1
     predefined_token_name_version: int | None = 1
     qualified_attack_facts_version: int | None = QUALIFIED_ATTACK_FULL_STATS_VERSION
@@ -1355,10 +1010,15 @@ class GameState:
                 {"scheduled_turn_skips": [grant.to_dict() for grant in self.scheduled_turn_skips]}
                 if self.scheduled_turn_skips else {}
             ),
+            **(
+                {"next_player_untap_restrictions": [row.to_dict() for row in self.next_player_untap_restrictions]}
+                if self.next_player_untap_restrictions else {}
+            ),
         }
 
-    def _event_version_fields(self) -> dict[str, int]:
+    def _record_version_fields(self) -> dict[str, int]:
         versions = {
+            SHIELD_COUNTER_DAMAGE_VERSION_FIELD: self.shield_counter_damage_version,
             "qualified_attack_facts_version": qualified_attack_facts_version(self.qualified_attack_facts_version),
             "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
             "battle_cry_resolution_version": battle_cry_resolution_version(self.battle_cry_resolution_version),
@@ -1367,10 +1027,14 @@ class GameState:
             "block_characteristics_version": block_characteristics_version(self.block_characteristics_version),
             "unblocked_attacker_event_version": unblocked_attacker_event_version(self.unblocked_attacker_event_version),
         }
-        return {name: version for name, version in versions.items() if version is not None}
+        present = {name: version for name, version in versions.items() if version is not None}
+        read_shield_counter_damage_version(present)
+        present.update(continuous_dependency_order_fields(self.continuous_dependency_order_version))
+        present.update(fetch_entry_placement_fields(self.fetch_entry_placement_version))
+        return present
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
-        event_versions = self._event_version_fields()
+        record_versions = self._record_version_fields()
         legend_rule_choice_version(self.legend_rule_choice_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
             self.effect_destruction_replacement_version
@@ -1428,7 +1092,7 @@ class GameState:
             **mana_cost_order_fields(self.mana_cost_order_version),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
             **({'declare_attack_cast_version':self.declare_attack_cast_version} if self.declare_attack_cast_version is not None else {}),
-            **event_versions,
+            **record_versions,
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
             **(
                 {"effect_destruction_replacement_version": effect_destruction_version}
@@ -1489,6 +1153,7 @@ class GameState:
                 if self.turn_history is not None
                 else {}
             ),
+            **resolution_name_state_fields(self.spell_resolution_name_ledger),
             "monarch": self.monarch,
             **({"initiative": self.initiative} if self.initiative is not None else {}),
             **(
@@ -1593,6 +1258,9 @@ class GameState:
                 data.get("scheduled_turn_skips", ()), data["players"],
                 active_player=data.get("active_player"), turn_sequence=int(data.get("turn_sequence", 0)),
             ),
+            next_player_untap_restrictions=decode_next_player_untap_restrictions(
+                data.get("next_player_untap_restrictions", ()), data["players"],
+            ),
             active_player=data.get("active_player"),
             priority_player=data.get("priority_player"),
             priority_passes=list(data.get("priority_passes", [])),
@@ -1603,6 +1271,7 @@ class GameState:
             step=str(data.get("step", "mulligan")),
             stack=[StackItem.from_dict(item) for item in data.get("stack", [])],
             delayed_triggers=[DelayedTrigger.from_dict(item) for item in data.get("delayed_triggers", [])],
+            shield_counter_damage_version=read_shield_counter_damage_version(data),
             damage_prevention_shields=[
                 DamagePreventionShield.from_dict(item)
                 for item in data.get("damage_prevention_shields", [])
@@ -1611,6 +1280,8 @@ class GameState:
                 DamageRedirectionEffect.from_dict(item)
                 for item in data.get("damage_redirections", [])
             ],
+            continuous_dependency_order_version=read_continuous_dependency_order_version(data),
+            fetch_entry_placement_version=read_fetch_entry_placement_version(data),
             continuous_effects=(
                 cls._continuous_effects_from_dict(data["continuous_effects"], data["players"])
                 if "continuous_effects" in data
@@ -1621,6 +1292,7 @@ class GameState:
                 if isinstance(data.get("turn_history"), dict)
                 else None
             ),
+            spell_resolution_name_ledger=read_resolution_name_ledger(data),
             monarch=data.get("monarch"),
             initiative=data.get("initiative"),
             day_night=data.get("day_night"),

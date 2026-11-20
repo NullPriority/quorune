@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Lower one source-spanned optional attack Exert and exact linked body."""
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict, CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..exert_model import ExertAttackSpec, EXERT_ATTACK_CAPABILITY, EXERT_UNTAP_CAPABILITY, EXERT_ATTACK_HANDLER
 from ..rules.capabilities import capability_dependencies_for_node

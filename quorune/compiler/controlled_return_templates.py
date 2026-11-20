@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed printed bounds for a controller's permanent return."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..rules.controlled_return import CONTROLLED_RETURN_MECHANIC, ControlledReturn
 from .fixed_entry_return_requirements import _controlled_quality_query

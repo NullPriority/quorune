@@ -3,7 +3,7 @@ from __future__ import annotations
 """Compile Backup from complete, source-ordered downstream printed abilities."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE,ability_fragment_to_dict
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..rules.temporary_ability_grant import BACKUP_CAPABILITY,BACKUP_COVERAGE

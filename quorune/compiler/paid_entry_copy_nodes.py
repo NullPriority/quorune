@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """A printed Offspring instance owns separate cost and entry-trigger nodes."""
 
-import re
+from . import regex_working_set as re
 
 from ..paid_entry_copy_model import (
     PaidEntryCopySpec, PAID_ENTRY_COPY_CAPABILITY, PAID_ENTRY_COPY_HANDLER,

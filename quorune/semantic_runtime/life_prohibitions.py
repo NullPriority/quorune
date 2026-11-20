@@ -8,7 +8,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..entry_copy import copiable_oracle_id
 from ..life_gain_permission import (FixedLifeGainProhibitionSpec,LifeGainPermissionSnapshot,
     LIFE_GAIN_PROHIBITION_CAPABILITY,LIFE_GAIN_PROHIBITION_HANDLER,LIFE_GAIN_PROHIBITION_EVENT,
-    decode_life_gain_prohibition)
+    decode_life_gain_prohibition, ResolvedLifeGainProhibition, validate_temporary_life_gain_effect)
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
 
@@ -16,6 +16,7 @@ from .current_ability_components import program_has_current_ability_fragments
 class LifeGainPermissionHost(Protocol):
     semantics: Any
     active_seats: list[str]
+    state: Any
     def _semantic_event_sources(self, *, zones: set[str] | None = None) -> list[Any]: ...
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
     def _effective_card_data(self, card: Any): ...
@@ -41,10 +42,36 @@ class LifeGainProhibitionHandler:
         return (self.validate(descriptor),)
 
 
+def apply_temporary_life_gain_prohibition(host, actor, effect):
+    from ..continuous_effect_state import commit_continuous_effect
+    from ..errors import GameRuleError
+
+    try:
+        spec = validate_temporary_life_gain_effect(effect, resolved=True)
+        denied = spec.permissions(actor, host.active_seats).denied_players
+    except (ValueError, TypeError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    if not denied:
+        return 0
+    rule = ResolvedLifeGainProhibition(
+        host._next_ref("LG"), effect["source"], host._next_zone_timestamp(), actor, denied,
+        affected_player_relation=spec.affected_player_relation,
+    )
+    commit_continuous_effect(host.state, rule)
+    host._log(actor, "life.gain.prohibition.created", "A temporary life-gain prohibition applies.",
+              {"effect": rule.effect_id, "players": list(denied)}, importance=1)
+    return rule.effect_id
+
+
 def collect_life_gain_permissions(host: LifeGainPermissionHost, *, sources=None, source_zones=None):
     from .life_replacements import default_life_replacement_registry,LifeReplacementSourceContext
     registry = default_life_replacement_registry()
-    denied = set()
+    journal = getattr(getattr(host, "state", None), "continuous_effects", None)
+    denied = {
+        player for rule in journal or ()
+        if isinstance(rule, ResolvedLifeGainProhibition)
+        for player in rule.denied_players if player in host.active_seats
+    }
     candidates = list(sources) if sources is not None else host._semantic_event_sources(zones={'battlefield'})
     for source in candidates:
         zone = source_zones.get(source.object_id,source.zone) if source_zones is not None else source.zone

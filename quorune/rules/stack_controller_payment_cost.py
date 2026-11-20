@@ -28,6 +28,7 @@ STACK_CONTROLLER_QUANTITY_PAYMENT_CAPABILITY = "stack.counter.controller_quantit
 STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION = 3
 STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION = 4
 STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION = 5
+TARGET_ANNOUNCEMENT_PAYMENT_VERSION = 6
 STACK_CONTROLLER_FOLLOWUP_PAYMENT_CAPABILITY = "stack.counter.payment_followup"
 COUNTER_PAYMENT_FOLLOWUP_FIELD = "counter_payment_followup"
 TARGET_SPELL_TAX_MANA_VALUE = FrozenMap({"kind": "counter_payment_target_mana_value", "schema_version": 1})
@@ -177,6 +178,40 @@ def bound_counter_payment_followup_effects(effect, *, paid: bool):
     if payload["when"] == "paid" and not paid:
         return ()
     return (FrozenMap(payload["effect"]),)
+
+
+def target_announcement_counter_payment_effect() -> dict[str, Any]:
+    price = dict.fromkeys(sorted(MANA_PAYMENT_KEYS), 0)
+    price["GENERIC"] = 2
+    return {
+        "op": "counter_unless_pay",
+        "schema_version": TARGET_ANNOUNCEMENT_PAYMENT_VERSION,
+        "stack": "$context.stack",
+        "cost": price,
+    }
+
+
+def target_announcement_payment_cost(effect: Mapping[str, Any]) -> StackControllerPaymentCost:
+    if (not isinstance(effect, Mapping) or type(effect.get("schema_version")) is not int
+            or thaw_value(effect) != target_announcement_counter_payment_effect()):
+        raise ValueError("Target announcement payment requires the exact announced stack object and fixed price")
+    return StackControllerPaymentCost(effect["cost"])
+
+
+def bind_target_announcement_payment(host, effect, *, resolve):
+    """Use the live controller of the sealed stack object when the trigger resolves."""
+    cost = target_announcement_payment_cost(effect)
+    ref = resolve(effect["stack"])
+    if type(ref) is not str or not ref:
+        raise ValueError("Target announcement payment has no sealed stack reference")
+    target = next((entry for entry in host.state.stack if entry.ref == ref), None)
+    return {
+        "op": "counter_unless_pay",
+        "schema_version": 2,
+        "stack": target.ref if target is not None else None,
+        "player": target.controller if target is not None else None,
+        "cost": cost.to_dict(),
+    }
 
 
 def compiled_stack_controller_payment_cost(effect: Mapping[str, Any]) -> StackControllerPaymentCost:

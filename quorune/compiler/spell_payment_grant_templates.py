@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed printed battlefield spell-payment grants."""
 
-import re
+from . import regex_working_set as re
 
 from ..semantic_runtime.spell_payment_grants import SpellPaymentGrantHandler, SpellPaymentGrantSpec
 from .cast_cost_modifier_templates import fixed_spell_predicate

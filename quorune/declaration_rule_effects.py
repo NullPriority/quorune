@@ -27,6 +27,8 @@ from .library_search_model import LIBRARY_SEARCH_TEMP_KIND,ResolvedLibrarySearch
 from .damage_death_exile_model import DAMAGE_DEATH_EXILE_KIND, ResolvedDamageDeathExile
 from .linked_departure_exile_model import LINKED_DEPARTURE_EXILE_KIND, ResolvedLinkedDepartureExile
 from .source_untap_rule_model import SOURCE_UNTAP_RESTRAINT_KIND, ResolvedSourceUntapRestraint
+from .life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_KIND, ResolvedLifeGainProhibition
+from .damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_KIND, ResolvedDamagePreventionProhibition
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
@@ -265,7 +267,7 @@ class ResolutionDeclarationRuleEffect:
 
 ContinuousJournalEffect: TypeAlias = (
     ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule | ResolvedCastRestriction | ResolvedSourceBlockPair | ResolvedLibrarySearchProhibition | ResolvedDamageDeathExile | ResolvedSourceUntapRestraint
-    | ResolvedLinkedDepartureExile | ResolvedNextSpellCostReduction
+    | ResolvedLinkedDepartureExile | ResolvedNextSpellCostReduction | ResolvedLifeGainProhibition | ResolvedDamagePreventionProhibition
 )
 
 
@@ -275,6 +277,10 @@ def continuous_journal_effect_from_dict(
     """Deserialize additive journal records while preserving legacy effects."""
 
     if isinstance(value, Mapping) and "effect_kind" in value:
+        if value["effect_kind"] == TEMPORARY_DAMAGE_PROHIBITION_KIND:
+            return ResolvedDamagePreventionProhibition.from_dict(value)
+        if value["effect_kind"] == TEMPORARY_LIFE_GAIN_PROHIBITION_KIND:
+            return ResolvedLifeGainProhibition.from_dict(value)
         if value['effect_kind']==NEXT_SPELL_COST_KIND:return ResolvedNextSpellCostReduction.from_dict(value)
         if value["effect_kind"] == SOURCE_UNTAP_RESTRAINT_KIND:
             return ResolvedSourceUntapRestraint.from_dict(value)

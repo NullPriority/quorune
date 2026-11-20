@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed public-action and result predicates for typed event triggers."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_CAPABILITY, DIRECT_PLAYER_ATTACK_EVENT, direct_player_attack_condition
@@ -12,6 +12,7 @@ from ..rules.event_subscriptions import (
     FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
 )
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
+from ..source_sacrifice_model import SOURCE_UNATTACHMENT_VARIANT, UNATTACHMENT_EVENT, UNATTACHMENT_TRIGGER_CAPABILITY
 from .fixed_public_event_trigger_bindings import (
     FixedPublicEventBindingSpec,
     _all_conditions,
@@ -218,6 +219,9 @@ def _sacrifice_subject(subject: str) -> tuple[str, tuple[Mapping[str, Any], ...]
         return subject, (_sacrifice_types("types", subject),)
     if subject == "permanent":
         return subject, ()
+    if subject == "nontoken creature":
+        return "qualified_permanent", (_sacrifice_types("types", "creature"),
+            {"field": "token", "op": "eq", "value": False})
     if subject == "nontoken permanent":
         return "qualified_permanent", ({"field": "token", "op": "eq", "value": False},)
     if subject == "noncreature token":
@@ -851,6 +855,19 @@ def _public_cycle_spec(
     )
 
 
+def _equipment_unattachment_spec(material_line):
+    match = re.fullmatch(
+        r"Whenever this Equipment becomes unattached from a permanent, (?P<body>sacrifice that permanent\.)",
+        material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _spec(UNATTACHMENT_EVENT, SOURCE_UNATTACHMENT_VARIANT, match["body"],
+        "fixed-source-equipment-unattached-v1", "trigger-event-normalized-public-action",
+        condition={"field": "card", "op": "eq", "value": "$source.ref"},
+        capabilities=(UNATTACHMENT_TRIGGER_CAPABILITY,))
+
+
 def fixed_public_action_event_binding_spec(
     material_line: str,
     *,
@@ -860,6 +877,7 @@ def fixed_public_action_event_binding_spec(
 
     return (
         direct_player_attack_binding_spec(material_line)
+        or _equipment_unattachment_spec(material_line)
         or _public_attack_spec(material_line)
         or _public_land_play_spec(material_line)
         or _public_expend_spec(material_line)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..mana_spent_amounts import MANA_COLOR_AMOUNT_CAPABILITY, MANA_COLOR_AMOUNT_MECHANIC
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec

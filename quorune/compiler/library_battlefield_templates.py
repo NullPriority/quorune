@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed self-library inspection whose selected permanents use owned entry."""
 
-import re
+from . import regex_working_set as re
 
 from ..mana_value_limit import ManaValueLimitSpec
 from ..library_battlefield_model import (

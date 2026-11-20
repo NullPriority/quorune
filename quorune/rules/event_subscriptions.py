@@ -11,6 +11,13 @@ from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
     FixedPublicStateConditionSpec,
 )
+from ..controller_creature_keyword_absence import (
+    CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE, ControllerCreatureKeywordAbsence,
+    is_controller_creature_keyword_absence, is_controller_end_step_schedule,
+)
+from ..death_keyword_absence import (
+    DEATH_KEYWORD_ABSENCE_COVERAGE, DeathKeywordAbsence, is_death_keyword_absence,
+)
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT, DUNGEON_VENTURE_CAPABILITY
 from ..errors import GameRuleError
 from ..face_up_effect_model import (
@@ -277,6 +284,84 @@ def upkeep_hand_runtime_dependencies(program) -> tuple[str, ...]:
     return ('trigger.condition.fixed_public_state', SCHEDULED_PLAYER_CAPABILITY, UPKEEP_HAND_COUNT_CAPABILITY)
 
 
+def _controller_keyword_absence_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:
+    leaves = tuple(_public_state_leaves(condition))
+    if not any(is_controller_creature_keyword_absence(leaf.get("condition")) for leaf in leaves):
+        return None
+    clauses = condition["all"] if isinstance(condition, Mapping) and set(condition) == {"all"} else ()
+    if (len(leaves) != 1 or not isinstance(clauses, (list, tuple)) or len(clauses) != 2
+            or clauses[1] != leaves[0] or not is_controller_end_step_schedule(clauses[0])):
+        raise EventSubscriptionError("Controller creature keyword absence requires its controller end-step schedule")
+    leaf = leaves[0]
+    if set(leaf) != {"field", "op", "value", "condition"} or leaf["op"] != "truthy" or leaf["value"] is not True:
+        raise EventSubscriptionError("Controller creature keyword absence requires its closed intervening predicate")
+    ControllerCreatureKeywordAbsence.from_dict(leaf["condition"])
+    return leaf
+
+
+def controller_keyword_absence_runtime_dependencies(program) -> tuple[str, ...]:
+    leaf = _controller_keyword_absence_leaf(program.event_condition)
+    coverage = set(program.coverage)
+    if leaf is None:
+        if CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE in coverage:
+            raise EventSubscriptionError("Controller creature keyword absence coverage requires its typed predicate")
+        return ()
+    if (program.event != "step.begin" or program.active_zone != "battlefield"
+            or not {CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE, FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+                    "intervening_condition"} <= coverage):
+        raise EventSubscriptionError("Controller creature keyword absence requires a battlefield intervening end-step trigger")
+    return ("trigger.condition.fixed_public_state",)
+
+
+def _controller_keyword_absence_holds(host, source, context, condition: ControllerCreatureKeywordAbsence) -> bool:
+    from ..continuous_effect_model import Layer
+    from ..object_predicate import ObjectQuerySpec
+    from ..object_query import object_matches_query
+
+    controller = context.get("intervening_condition_controller", source.controller)
+    if (type(controller) is not str or controller not in host.state.players
+            or context.get("event") not in (None, "step.begin") or context.get("step") != "end_step"
+            or context.get("player") != controller):
+        raise GameRuleError("Controller creature keyword absence lost its original end-step controller")
+    query = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), keywords_all=(condition.keyword,))
+    battlefield = host.state.players[controller].zones["battlefield"]
+    return not any(
+        object_matches_query(host._public_object_query_result(card, _maximum_layer=Layer.ABILITY), query)
+        for object_id in battlefield
+        if (card := host.state.cards[object_id]).controller == controller and not card.phased_out
+    )
+
+
+def _death_keyword_absence_leaf(condition: Mapping[str, Any] | None) -> Mapping[str, Any] | None:
+    leaves = tuple(_public_state_leaves(condition))
+    if not any(is_death_keyword_absence(leaf.get("condition")) for leaf in leaves):
+        return None
+    clauses = condition["all"] if isinstance(condition, Mapping) and set(condition) == {"all"} else ()
+    if len(leaves) != 1 or not isinstance(clauses, (list, tuple)) or len(clauses) != 2 or clauses[1] != leaves[0]:
+        raise EventSubscriptionError("Death keyword absence requires one closed occurrence and intervening predicate")
+    leaf = leaves[0]
+    if set(leaf) != {"field", "op", "value", "condition"} or leaf["op"] != "truthy" or leaf["value"] is not True:
+        raise EventSubscriptionError("Death keyword absence requires its explicit intervening predicate")
+    spec = DeathKeywordAbsence.from_dict(leaf["condition"])
+    if not isinstance(clauses[0], Mapping) or FrozenMap(clauses[0]) != FrozenMap(spec.occurrence_condition()):
+        raise EventSubscriptionError("Death keyword absence requires another controlled creature of its subtype")
+    return leaf
+
+
+def death_keyword_absence_runtime_dependencies(program) -> tuple[str, ...]:
+    leaf = _death_keyword_absence_leaf(program.event_condition)
+    coverage = set(program.coverage)
+    if leaf is None:
+        if DEATH_KEYWORD_ABSENCE_COVERAGE in coverage:
+            raise EventSubscriptionError("Death keyword absence coverage requires its typed predicate")
+        return ()
+    if (program.event != "creature.dies" or program.active_zone != "battlefield"
+            or not {DEATH_KEYWORD_ABSENCE_COVERAGE, FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+                    "intervening_condition"} <= coverage):
+        raise EventSubscriptionError("Death keyword absence requires a battlefield intervening creature-death trigger")
+    return ("trigger.condition.fixed_public_state", "trigger.event.normalized_zone_change")
+
+
 def public_state_intervening_actual(
     host,
     condition: Mapping[str, Any],
@@ -293,6 +378,12 @@ def public_state_intervening_actual(
         if is_upkeep_hand_condition(raw_condition):
             hand_condition = UpkeepParticipantHandCondition.from_dict(raw_condition)
             return upkeep_hand_condition_holds(host.state, context, hand_condition)
+        if is_controller_creature_keyword_absence(raw_condition):
+            keyword_condition = ControllerCreatureKeywordAbsence.from_dict(raw_condition)
+            return _controller_keyword_absence_holds(host, source, context, keyword_condition)
+        if is_death_keyword_absence(raw_condition):
+            death_condition = DeathKeywordAbsence.from_dict(raw_condition)
+            return death_condition.holds(context, controller=context.get("intervening_condition_controller", source.controller))
         public_condition = FixedPublicStateConditionSpec.from_dict(raw_condition)
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
@@ -336,12 +427,21 @@ def intervening_recheck_condition(program, *, context, controller):
     """Select the intervening predicate without reapplying its occurrence filter."""
     condition = program.event_condition
     upkeep = UPKEEP_HAND_COUNT_CAPABILITY in program.capability_dependencies
-    if not upkeep and (FIXED_PUBLIC_STATE_INTERVENING_COVERAGE not in program.coverage
-                       or EVENT_SUBSCRIPTIONS_FIELD not in condition):
+    keyword_absence = CONTROLLER_CREATURE_KEYWORD_ABSENCE_COVERAGE in program.coverage
+    death_absence = DEATH_KEYWORD_ABSENCE_COVERAGE in program.coverage
+    if not (upkeep or keyword_absence or death_absence) and (
+        FIXED_PUBLIC_STATE_INTERVENING_COVERAGE not in program.coverage or EVENT_SUBSCRIPTIONS_FIELD not in condition
+    ):
         return condition
     try:
         if upkeep:
             shared = _upkeep_hand_condition_leaf(condition)
+            events = (program.event,)
+        elif keyword_absence:
+            shared = _controller_keyword_absence_leaf(condition)
+            events = (program.event,)
+        elif death_absence:
+            shared = _death_keyword_absence_leaf(condition)
             events = (program.event,)
         else:
             subscriptions = FixedEventSubscriptionSet.from_condition(condition)
@@ -359,6 +459,14 @@ def intervening_recheck_condition(program, *, context, controller):
 
 def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
     """Recheck a condition whose source occurrence carries the relevant facts."""
+    from .event_outcome_shapes import uses_zero_mana_cast_condition, zero_mana_cast_result_recheck
+
+    if uses_zero_mana_cast_condition(program.event_condition):
+        try:
+            return zero_mana_cast_result_recheck(program, context)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+
     from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
     from .attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE, attacked_player_life_holds
 
@@ -406,5 +514,7 @@ __all__ = [
     "intervening_recheck_condition",
     "public_state_intervening_actual",
     "upkeep_hand_runtime_dependencies",
+    "controller_keyword_absence_runtime_dependencies",
+    "death_keyword_absence_runtime_dependencies",
     "source_event_intervening_recheck",
 ]

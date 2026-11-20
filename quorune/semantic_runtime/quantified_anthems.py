@@ -56,6 +56,10 @@ class QuantifiedAnthemHandler:
         try:quantity=CharacteristicQuantitySpec.from_dict(modifier['quantity'])
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
         query=quantity.query
+        if quantity.schema_version == 8:
+            if modifier['exclude_recipient'] or base.target_controller == 'source_owner':
+                raise SemanticNodeError('Commander cast anthems require an ordinary current subject')
+            return base, quantity, False
         source_attachments = (quantity.scope is Scope.ATTACHED_TO_SOURCE and quantity.schema_version == 2
             and quantity.reduction is CharacteristicQuantityReduction.OBJECT_COUNT)
         if ((quantity.scope not in {Scope.CONTROLLER_ZONE,Scope.OPPONENT_ZONES,Scope.ALL_ZONES}

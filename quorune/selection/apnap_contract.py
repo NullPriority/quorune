@@ -6,7 +6,31 @@ from ..errors import GameRuleError
 from ..library_order_model import HAND_TOP_APNAP_RESULT, is_affected_hand_top_choice
 from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_dependencies
 from ..object_predicate import ObjectQuerySpec
+from ..player_maximum import current_players_at_maximum
+from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
 from .fractional_counts import validate_apnap_count
+
+
+def bind_most_lands_sacrifice_players(host, effect, continuation):
+    if not uses_land_count_maximizers(effect.get("players")):
+        return effect
+
+    from ..rules.affected_player_sacrifice_capability_shapes import most_lands_attack_sacrifice_effect_is_closed
+
+    stack_ref = continuation.get("stack_ref")
+    item = next((candidate for candidate in host.state.stack if candidate.ref == stack_ref), None)
+    if (
+        item is None or item.context.get("event") != "creature.attacks" or item.targets
+        or not most_lands_attack_sacrifice_effect_is_closed(effect, actor=item.controller)
+    ):
+        raise GameRuleError("Most-lands sacrifice requires its exact sealed combat choice")
+    try:
+        players = current_players_at_maximum(
+            host.state, LAND_COUNT_METRIC, public_object_resolver=host._public_object_query_result,
+        )
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    return {**effect, "players": list(players)}
 
 
 def is_typed_hand_exile(effect):
@@ -54,6 +78,17 @@ def validate_apnap_choice_effect(host, effect, continuation):
             ),
             None,
         )
+        from ..rules.event_player_choice_shapes import attacked_defender_exile_effect_is_closed, is_typed_defender_exile
+
+        if is_typed_defender_exile(effect):
+            defender = item.context.get("defending_player") if item is not None else None
+            if (
+                item is None or item.context.get("event") != "creature.attacks"
+                or type(defender) is not str or defender not in host.active_seats
+                or not attacked_defender_exile_effect_is_closed(effect, actor=item.controller, player=defender)
+            ):
+                raise GameRuleError("Defender exile requires its exact sealed combat choice")
+            return
         if (
             set(effect) != allowed_fields
             or effect.get("op") != "choose_cards_apnap"

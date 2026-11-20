@@ -12,6 +12,17 @@ from .additional_tap_costs import validate_fixed_tap_payment
 
 def select_fixed_nonmoving_cost(host,seat,source,option,mandatory,response,*,hint,choice_schema,position):
     """None delegates other kinds; a result carries legality and an optional selection."""
+    from ..behold_additional_cost import fixed_behold_additional_cost
+    from .behold_costs import behold_cost_selection
+    try:
+        behold = fixed_behold_additional_cost(mandatory[position])
+    except AdditionalCostError:
+        return False, None
+    if behold is not None:
+        if len(mandatory) != 1:
+            return False, None
+        return behold_cost_selection(host, seat=seat, source=source, cost=behold, response=response,
+            hint=hint, choice_schema=choice_schema, cost_position=position)
     try:
         declared_life = announced_x_life_additional_cost(mandatory[position])
     except AdditionalCostError:

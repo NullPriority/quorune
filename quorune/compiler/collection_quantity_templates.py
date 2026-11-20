@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed layer-safe collection values over the existing object-query parser."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..characteristic_fragments import CharacteristicQuantityReduction, CharacteristicQuantityScope, CharacteristicQuantitySpec
 from .fixed_numbers import fixed_number

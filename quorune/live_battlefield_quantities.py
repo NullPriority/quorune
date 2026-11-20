@@ -23,6 +23,8 @@ def current_live_battlefield_count(host, controller: str, spec: LiveBattlefieldQ
     for card in host.state.cards.values():
         if card.zone != 'battlefield' or card.phased_out:
             continue
+        if spec.schema_version == 3 and card.attacking != controller:
+            continue
         if spec.schema_version == 2:
             if card.controller != controller:
                 continue

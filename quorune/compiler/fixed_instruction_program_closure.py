@@ -13,6 +13,7 @@ from ..rules.blight_shapes import is_closed_fixed_blight_program
 from ..rules.goad_capability_shapes import is_closed_fixed_goad_program
 from ..rules.exploit_capability_shapes import is_closed_exploit_instruction_program
 from ..rules.created_token_counter_shapes import is_closed_created_token_counter_program
+from ..rules.token_creation_reflexive import is_closed_token_creation_reflexive_program
 from ..rules.incubate_capability_shapes import is_closed_incubate_program
 from ..rules.discover_capability_shapes import is_closed_discover_program
 from ..rules.variable_library_selection_shapes import is_closed_variable_library_selection_program
@@ -20,17 +21,52 @@ from ..rules.reveal_until_library_selection_shapes import is_closed_reveal_until
 from ..rules.detain import is_closed_permanent_action_prohibition_program
 from ..rules.distinct_sacrifices import is_closed_distinct_sacrifice_program
 from ..drawing.captured_hand import is_closed_captured_draw_cast_program
+from ..bounded_hand_cast_model import is_closed_bounded_hand_cast_program
 from ..dungeon_progress import is_closed_venture_program
 from ..initiative_model import is_closed_initiative_program
 
 
 def is_closed_fixed_instruction_program(program):
+    from ..rules.occurrence_object_results import is_closed_phase_out_program
+    if is_closed_phase_out_program(program):
+        return True
+    from ..rules.shared_type_library import is_closed_shared_type_library_program
+    if is_closed_shared_type_library_program(program):
+        return True
+    from ..rules.fixed_hand_putback import is_closed_fixed_putback_program
+    if is_closed_fixed_putback_program(program):return True
+    from ..rules.hand_library_redraw import is_closed_hand_library_redraw_program
+    if is_closed_hand_library_redraw_program(program):return True
+    from ..rules.referenced_damage_shapes import is_closed_referenced_damage_program
+    if is_closed_referenced_damage_program(program):return True
+    from ..rules.source_self_entry_counters import is_closed_source_self_entry_counter_program
+    if is_closed_source_self_entry_counter_program(program):return True
+    from ..rules.self_zone_move_followups import is_closed_self_entry_followup_program
+    if is_closed_self_entry_followup_program(program):return True
+    from ..rules.event_optional_draw_shapes import is_closed_event_optional_draw_program
+    from ..rules.source_sacrifice_shapes import is_closed_fixed_source_sacrifice_program
+    from ..rules.target_all_counter_removal import is_closed_target_all_counter_variant_program
+    from ..rules.chosen_counter_removal import is_closed_chosen_counter_removal_program
+    from ..rules.optional_target_results import is_closed_optional_target_result_program
+    from ..rules.target_land_type import is_closed_target_land_type_program
+    from ..rules.graveyard_recycling import is_closed_graveyard_recycling_program
+    from ..rules.target_library_inspection import is_closed_target_library_inspection_program
     from ..rules.fixed_damage_roles import is_closed_fixed_damage_role_program
     return any(recognizer(program) for recognizer in (
+        is_closed_event_optional_draw_program,
+        is_closed_fixed_source_sacrifice_program,
+        is_closed_target_all_counter_variant_program,
+        is_closed_chosen_counter_removal_program,
+        is_closed_optional_target_result_program,
+        is_closed_target_land_type_program,
+        is_closed_graveyard_recycling_program,
+        is_closed_target_library_inspection_program,
         is_closed_fixed_damage_role_program,
         is_closed_created_token_counter_program,
+        is_closed_token_creation_reflexive_program,
         is_closed_distinct_sacrifice_program,
         is_closed_captured_draw_cast_program,
+        is_closed_bounded_hand_cast_program,
         is_closed_venture_program,
         is_closed_initiative_program,
         is_closed_incubate_program,

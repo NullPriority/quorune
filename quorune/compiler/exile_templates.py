@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass
 from typing import Any, Mapping
 
@@ -16,6 +16,22 @@ from ..rules.public_zone_move_capability_shapes import (
 )
 
 _EXILE_MECHANIC = "exile"
+
+
+def stack_spell_exile_template(text, *, source_is_permanent):
+    if source_is_permanent is not False:
+        return None
+    from ..public_zone_moves import StackSpellExileScope, StackSpellExileSpec
+
+    scope = {
+        "exile any number of target spells": StackSpellExileScope.SELECTED,
+        "exile all other spells and counter all abilities": StackSpellExileScope.OTHER_SPELLS_AND_ABILITIES,
+    }.get(text.strip().casefold().removesuffix("."))
+    if scope is None:
+        return None
+    spec = StackSpellExileSpec(scope)
+    mechanics = ("cr-115-targets",) if spec.target_schema is not None else ("counter",)
+    return f"stack-spell-exile-{scope.value}-v1", (spec.effect(),), spec.target_schema, mechanics
 
 
 def triggered_source_exile_template(binding, body):

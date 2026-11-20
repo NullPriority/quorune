@@ -160,6 +160,40 @@ def stabilization_ids(
     return frozenset(selected)
 
 
+def _require_current_cohort_probe_ids(
+    specs: Sequence[GeneratorSpec], *, root: Path,
+) -> None:
+    owner = next(
+        (spec for spec in specs if spec.id == "work-selection-cohort-measurements"),
+        None,
+    )
+    if owner is None or owner.write_policy != "database" or owner.write is not None:
+        return
+    try:
+        catalog = json.loads((root / "platform/rules-subsystems.json").read_bytes())
+        coverage = catalog["work_selection"]["coverage_family"]
+        report = json.loads((root / owner.outputs[0]).read_bytes())
+        probe_ids = {
+            bundle["bundle_id"]: bundle.get("measurement_probe_id")
+            for bundle in coverage["candidate_bundles"]
+        }
+        stale = sorted({
+            row["bundle_id"]
+            for row in report["measurements"]
+            if isinstance(probe_ids.get(row["bundle_id"]), str)
+            and isinstance(row["probe_id"], str)
+            and row["probe_id"] != probe_ids[row["bundle_id"]]
+        })
+    except (IndexError, KeyError, OSError, TypeError, ValueError):
+        # Leave other file and schema failures to the canonical owner checks.
+        return
+    if stale:
+        raise GeneratedFinalizationError(
+            f"Refresh cohort measurements for changed probe IDs in {', '.join(stale)}. "
+            "Supply the pinned database with --db."
+        )
+
+
 def write_until_stable(
     specs: Sequence[GeneratorSpec],
     *,
@@ -172,6 +206,8 @@ def write_until_stable(
 ) -> dict[str, object]:
     if max_passes < 1:
         raise ValueError("max_passes must be positive")
+    if database is None:
+        _require_current_cohort_probe_ids(specs, root=root)
     before = output_snapshot(specs, root=root)
     changed_by_pass: list[tuple[str, ...]] = []
     executed_by_pass: list[tuple[str, ...]] = []
@@ -375,9 +411,11 @@ def main() -> int:
     parser.add_argument(
         "--resume-from",
         metavar="GENERATOR_ID",
+        action="append",
         help=(
-            "After a failed write, rerun one registered generator and its "
-            "descendants; every freshness and policy check still runs"
+            "After a failed write, rerun the named generator and its "
+            "descendants. Repeat to include independent owners. Every freshness "
+            "and policy check still runs."
         ),
     )
     parser.add_argument(
@@ -434,16 +472,14 @@ def main() -> int:
         )
         selected_ids: frozenset[str] | None = None
         if args.resume_from:
-            resumed = next(
-                (spec for spec in specs if spec.id == args.resume_from),
-                None,
-            )
-            if resumed is None:
-                raise ValueError(
-                    f"Unknown generated-artifact owner: {args.resume_from}"
-                )
-            selected_ids = stabilization_ids(specs, resumed.outputs)
-            result["resume_from"] = args.resume_from
+            owners = list(dict.fromkeys(args.resume_from))
+            by_id = {spec.id: spec for spec in specs}
+            unknown = [name for name in owners if name not in by_id]
+            if unknown:
+                raise ValueError(f"Unknown generated-artifact owner: {', '.join(unknown)}")
+            outputs = tuple(output for name in owners for output in by_id[name].outputs)
+            selected_ids = stabilization_ids(specs, outputs)
+            result["resume_from"] = owners[0] if len(owners) == 1 else owners
         if args.write:
             result["write"] = write_until_stable(
                 specs,

@@ -8,7 +8,8 @@ from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .face_queries import build_cast_cost_options
 from .option_expansion import bind_granted_payment_mechanics
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
-from .additional_zone_costs import select_zone_change_additional_cost
+from .additional_zone_costs import expand_announced_x_pitch_options, select_zone_change_additional_cost
+from ...public_alternative_costs import ANNOUNCED_X_PITCH_POLICY
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -45,7 +46,9 @@ from ...convoke import (
     find_convoke_plan,
     select_convoke_plan,
 )
-from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
+from ...evoke import EVOKE_PAYMENT_FIELD, evoke_payment_marker, validate_evoke_payment_marker
+from ...hand_exile_evoke_model import HandExileEvokeSpec
+from ...util import stable_json
 from ...object_query import object_matches_query, object_query_result
 from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from ..action_proposals import CastCostOption
@@ -248,6 +251,19 @@ def _with_bestow_cost(
     return result
 
 
+def _same_reviewed_hand_exile_evoke_price(spec: Any, reviewed: Mapping[str, Any]) -> bool:
+    if not isinstance(spec, HandExileEvokeSpec):
+        return False
+    legacy = {
+        "id": "evoke",
+        "kind": "alternate",
+        "requirements": {},
+        EVOKE_PAYMENT_FIELD: evoke_payment_marker(schema_version=1),
+        "exile_from_hand": {"colors_any": [spec.color], "exclude_source": True},
+    }
+    return stable_json(reviewed) == stable_json(legacy)
+
+
 def _with_evoke_cost(
     host: CastCostHost,
     record: Any,
@@ -256,7 +272,7 @@ def _with_evoke_cost(
     *,
     suppress_source_costs: bool,
 ) -> dict[str, Any] | None:
-    """Add one trusted fixed-mana Evoke branch or reviewed override."""
+    """Add one trusted typed Evoke branch or reviewed override."""
 
     result = copy.deepcopy(dict(schema))
     alternate_costs = [dict(value) for value in result.get("alternate_costs", ())]
@@ -279,10 +295,13 @@ def _with_evoke_cost(
         if not suppress_source_costs
         else ()
     )
-    if len(compiled) > 1 or (compiled and reviewed):
+    if len(compiled) > 1:
         return None
     if compiled:
-        alternate_costs.extend(compiled[0].cast_cost_options())
+        if not reviewed:
+            alternate_costs.extend(compiled[0].cast_cost_options())
+        elif len(reviewed) != 1 or not _same_reviewed_hand_exile_evoke_price(compiled[0], reviewed[0]):
+            return None
     elif (
         not suppress_source_costs
         and "evoke" in {str(value).casefold() for value in record.keywords}
@@ -1374,9 +1393,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     if x_value_policy == "zero":
         if response.get("x") is not None and int(response["x"]) != 0:
             return None
-    elif x_value_policy is not None:
+    elif x_value_policy not in (None, ANNOUNCED_X_PITCH_POLICY):
         return None
-    elif has_x:
+    elif has_x and x_value_policy is None:
         minimum_x = option.get('library_top_minimum_x', 0)
         maximum = _maximum_affordable_x_with_mechanics(
             host,
@@ -1462,9 +1481,13 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
     if initial is None:
         return ()
     expanded, mandatory, mechanics, has_x = initial
+    expanded = expand_announced_x_pitch_options(host, seat, card, expanded, submission,
+                                                hint=hint, has_x=has_x)
     from .surcharge_flash_costs import mana_surcharge_flash_variants
     expanded=mana_surcharge_flash_variants(host,seat,card,expanded,
         suppress_source_costs=suppress_source_costs,ignore_timing=ignore_timing)
+    from ..death_cast_permissions import with_qualified_death_choices
+    expanded=with_qualified_death_choices(host,seat,card,expanded,force_without_mana_cost=force_without_mana_cost)
     from .turn_cast_grants import with_turn_cast_grant_choices
     expanded=with_turn_cast_grant_choices(host,seat,card,expanded,cast_type_line=cast_type_line,force_without_mana_cost=force_without_mana_cost)
     from .optional_life_costs import optional_life_cost_variants

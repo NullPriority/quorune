@@ -16,6 +16,10 @@ SCHEDULED_PLAYER_DEPARTURE_COVERAGE = 'scheduled_player_departure_v1'
 
 def scheduled_player_subject_instruction(effect: Mapping[str, Any]) -> bool:
     operation = effect.get('op')
+    if operation == 'hand_library_redraw':
+        from ..hand_library_redraw_model import decode_hand_library_redraw, HandLibraryScope
+        try:return decode_hand_library_redraw(effect).scope is HandLibraryScope.EVENT_PLAYER
+        except (TypeError,ValueError):return False
     if operation == 'damage':
         return effect.get('target') == '$context.player'
     if operation == 'choose_cards_apnap':
@@ -30,11 +34,22 @@ def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],targ
     capabilities={SCHEDULED_PLAYER_CAPABILITY}
     for effect in effects:
         op=effect.get('op')
+        if op == 'hand_library_redraw':
+            from .hand_library_redraw import hand_library_redraw_node_capabilities
+            required = hand_library_redraw_node_capabilities(effects=(effect,),target_schema=None,mechanic_ids=mechanic_ids)
+            if not required or not scheduled_player_subject_instruction(effect):return ()
+            capabilities.update(required)
+            continue
         if op == 'choose_cards_apnap':
             if effect.get('players') not in (['$context.player'], ['$controller']):
                 return ()
-            checker = fixed_context_player_discard_node_capabilities if effect.get('players') == ['$context.player'] else fixed_controller_discard_node_capabilities
-            required = checker(effects=(effect,), target_schema=None, mechanic_ids=mechanic_ids)
+            if effect.get('then') == 'sacrifice' and effect.get('players') == ['$context.player']:
+                from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
+                required = fixed_affected_player_sacrifice_node_capabilities(
+                    effects=({**effect, 'players': ['$controller']},), target_schema=None, mechanic_ids=mechanic_ids)
+            else:
+                checker = fixed_context_player_discard_node_capabilities if effect.get('players') == ['$context.player'] else fixed_controller_discard_node_capabilities
+                required = checker(effects=(effect,), target_schema=None, mechanic_ids=mechanic_ids)
             if not required:
                 return ()
             capabilities.update(required)
@@ -65,6 +80,8 @@ def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],targ
 
 
 def is_closed_scheduled_player_program(program):
+    from .upkeep_hand_differences import _difference_specs,is_closed_upkeep_hand_difference_program
+    if _difference_specs(program):return is_closed_upkeep_hand_difference_program(program)
     required=scheduled_player_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     return bool(required) and set(required).issubset(program.capability_dependencies)
 
@@ -99,6 +116,18 @@ def is_upkeep_participant_schedule(condition: Any) -> bool:
 
 
 def scheduled_player_departure_runtime_dependencies(program) -> tuple[str, ...]:
+    if program.event == 'step.begin' and any(effect.get('op') == 'choose_cards_apnap' and effect.get('then') == 'sacrifice'
+           and effect.get('players') == ['$context.player'] for effect in program.effects):
+        from ..compiler.affected_player_sacrifice_templates import FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC
+        required = scheduled_player_node_capabilities(effects=program.effects,
+            target_schema=program.target_schema,
+            mechanic_ids=(SCHEDULED_PLAYER_MECHANIC, FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, 'sacrifice'))
+        if (not required or program.event != 'step.begin' or program.active_zone not in {'battlefield', 'command'}
+                or not is_upkeep_participant_schedule(program.event_condition)):
+            raise ValueError('Scheduled sacrifice requires a closed sealed upkeep-player choice')
+        return required
+    from .upkeep_hand_differences import upkeep_hand_difference_program_dependencies
+    if required:=upkeep_hand_difference_program_dependencies(program):return required
     if SCHEDULED_PLAYER_DEPARTURE_COVERAGE not in program.coverage:
         return ()
     if scheduled_player_result_step(program) is None or not is_closed_scheduled_player_program(program):

@@ -42,6 +42,9 @@ def generated_ability_id(
         slot = str(node_id or '').rsplit(':role-static:', 1)
         if len(slot) == 2 and slot[1].isdigit():
             return f'static:{face_id}:n{line}:role:{slot[1]}'
+        slot = str(node_id or '').rsplit(':token-static:', 1)
+        if len(slot) == 2 and slot[1].isdigit():
+            return f'static:{face_id}:n{line}:token:{slot[1]}'
         return attached_granted_program_ability_id(kind=kind, face_id=face_id, line=line, node_id=node_id)
     granted = attached_granted_program_ability_id(
         kind=kind,
@@ -85,7 +88,7 @@ def generated_ability_id(
                 _EVOLVE_MECHANIC,
                 _CASCADE_MECHANIC,
                 _PROWESS_MECHANIC,
-                'increment', 'myriad',
+                'increment', 'myriad', 'numeric-instance',
                 AFTERLIFE_MECHANIC_ID,
                 "chapter",
                 "backup",
@@ -109,7 +112,7 @@ def generated_ability_id(
         if str(node_id or '').endswith(':max-speed-scope'):return f'static:{face_id}:n{line}:max-speed-scope'
         parts = str(node_id or "").split(":")
         suffix = parts[-1]
-        if suffix in {'flash-keyword','flash-stack'}:
+        if suffix in {'flash-keyword', 'flash-stack', 'attached-counter-prohibition'}:
             return f'static:{face_id}:n{line}:{suffix}'
         if suffix in {"unleash-entry", "unleash-block"}:
             if (

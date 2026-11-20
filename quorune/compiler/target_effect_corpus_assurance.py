@@ -6,7 +6,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass
 import hashlib
 import inspect
-import re
+from . import regex_working_set as re
 from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
 
 from ..abilities import parse_activated_abilities
@@ -490,6 +490,12 @@ def synthetic_target_effect_contract(
 def grammar_source_fingerprint() -> str:
     """Fingerprint the exact parser and capability-shape implementation."""
 
+    from .current_life_effect_amounts import current_life_effect_amount_template
+    from ..current_life_effect_amount_model import CurrentLifeEffectAmountSpec
+    from ..rules.current_life_effect_amounts import (
+        _fixed_life_results, _fixed_result_ownership, current_life_node_capabilities,
+        current_life_value_dependencies,
+    )
     from .declared_effect_amounts import declared_effect_amount_template
     from .scalar_effect_amounts import scalar_effect_amount_template
     from .public_query_effect_amounts import AMOUNT_MECHANIC_CAPABILITIES
@@ -545,6 +551,13 @@ def grammar_source_fingerprint() -> str:
         _independent_target_resolution_body,
         _compiled_template,
         _compiled_source_template,
+        current_life_effect_amount_template,
+        current_life_node_capabilities,
+        current_life_value_dependencies,
+        CurrentLifeEffectAmountSpec.__post_init__,
+        CurrentLifeEffectAmountSpec.from_dict,
+        _fixed_life_results,
+        _fixed_result_ownership,
         declared_effect_amount_template,
         scalar_effect_amount_template,
         public_query_effect_amount_template,
@@ -737,6 +750,13 @@ def _compiled_template(
         compiled=_compiled_template(text,card_name=card_name)
         if compiled is not None and compiled[0] in TARGET_TEMPLATE_IDS:base_template.append(compiled[0])
         return compiled or (None,(),None,())
+    from .current_life_effect_amounts import current_life_effect_amount_template
+
+    current_life = current_life_effect_amount_template(
+        body, source_name=card_name, compile_fixed=compile_fixed,
+    )
+    if current_life is not None:
+        return current_life
     public=public_query_effect_amount_template(body,source_name=card_name,compile_fixed=compile_fixed)
     if public is not None and base_template:
         return base_template[-1],public[1],public[2],public[3]
@@ -764,7 +784,8 @@ def _compiled_source_template(body, *, record, node, face_index, face_name):
         text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
         or (None, (), None, ()))
     return declared or compiled, activation_x_capabilities(symbols=ability.announced_x_symbols,
-        sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices))
+        sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices),
+            discard_source=ability.discard_source)
 
 
 def _clause_count(body: str, template_id: str) -> int:
@@ -819,6 +840,17 @@ def _required_capabilities(
     )
     from .public_query_effect_amounts import public_query_amount_shape_context, declared_amount_dependencies, AMOUNT_MECHANIC_CAPABILITIES
     variants = tuple(kind for kind in SpellTextVariantKind if kind.boundary in node.runtime_coverage)
+    from ..current_life_effect_amount_model import CURRENT_LIFE_AMOUNT_MECHANIC
+    from ..rules.current_life_effect_amounts import current_life_node_capabilities
+
+    if CURRENT_LIFE_AMOUNT_MECHANIC in node.mechanics:
+        required = current_life_node_capabilities(
+            effects=node.effects, target_schema=node.target_schema,
+            mechanic_ids=node.mechanics, cost_schema=node.cost,
+        )
+        if not required:
+            return ()
+        return tuple(sorted(set(required) | {kind.capability for kind in variants}))
     context = public_query_amount_shape_context(node.effects, set(node.mechanics) - {kind.value for kind in variants})
     if context is None:
         return ()

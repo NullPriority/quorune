@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed grammar for public static spell-cost increases and reductions."""
 
-import re
+from . import regex_working_set as re
 
 from ..cast_cost_modifiers import (
     CastCostAffectedController,

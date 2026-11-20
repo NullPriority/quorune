@@ -171,8 +171,8 @@
       "quorune/emblems.py": "typed immutable emblem-creation preparation and authoritative public noncard command-object construction owner (ADR0142)",
       "quorune/engine.py": "legacy authoritative transaction and mutation boundary",
       "quorune/game_object_store.py": "canonical in-place current-object registration/detachment owner shared by copies, tokens, emblems and physical composition; preserves map aliases and validates edits before mutation",
-      "quorune/initiative_runtime.py": "typed initiative designation and source-less trigger materialization owner",
       "quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner",
+      "quorune/initiative_runtime.py": "typed initiative designation and source-less trigger materialization owner",
       "quorune/life_change.py": "replacement-capable typed life-event transaction owner behind represented rules transactions",
       "quorune/life_state.py": "canonical typed life-total mutation owner behind represented rules transactions",
       "quorune/linked_ability_exile_state.py": "typed CR607 ability-pair records on actual exile incarnations and explicit linked returns through the existing zone-return owner",
@@ -205,6 +205,7 @@
       "quorune/selection/targeting.py": "typed target proposal, projection, completion, and resolution revalidation owner",
       "quorune/semantic_choices/intent_host.py": "typed semantic-choice intent application behind the immutable choice registry",
       "quorune/soulbond_state.py": "typed symmetric Soulbond pair proposal, continuity validation, and relationship commit/expiry owner",
+      "quorune/spell_resolution_names.py": "typed immutable lifetime spell-resolution name ledger assignment behind canonical command transactions",
       "quorune/stack_counter.py": "typed stack-counter legality, removal, ordinary spell destination, telemetry, and public journal owner",
       "quorune/tap_state.py": "typed tap-state effect mutation owner behind the semantic intent executor",
       "quorune/target_source.py": "typed announced targeting-source and retained pre-cost/LKI stack provenance owner",
@@ -391,6 +392,8 @@
       "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/zone_transition_model.py": "typed read-only zone-transition host protocol, plan, and departure snapshot definitions",
       "quorune/zone_trigger_events.py": "immutable normalized CR 603.6 zone-change occurrence and event derivation",
+      "quorune/rules/token_creation_reflexive.py": "Reads the resolving source and verifies its bound instructions before the token owner handles mutation",
+      "quorune/unattachment_triggers.py": "Reads attachment and departing object state and delegates event placement to the trigger owner",
       "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners"
     }
   },

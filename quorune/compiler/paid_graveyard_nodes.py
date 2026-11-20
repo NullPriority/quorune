@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Bind complete ordinary source cards to typed intrinsic graveyard prices."""
 
-import re
+from . import regex_working_set as re
 
 from ..additional_cost_vocabulary import DISCARD_ONE_COST
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE

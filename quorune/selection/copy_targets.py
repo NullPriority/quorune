@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Copied target decisions over the canonical current target validator."""
+"""Fixed stack target choices over the canonical current target validator."""
 
 import copy
 from dataclasses import dataclass
@@ -136,6 +136,101 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
     for ref in changed_refs:
         snapshots[ref] = dict(host._target_snapshot(ref))
     return PreparedCopyTargets(tuple(targets), FrozenMap(groups), FrozenMap(snapshots))
+
+
+def _stack_target_change_subject(host, effect):
+    target_ref = effect.get("_target_stack_ref") or effect.get("stack")
+    item = next((current for current in host.state.stack if current.ref == target_ref), None)
+    if item is None:
+        return None, None, None
+    program = host.semantics.get(item.semantic_key)
+    return item, program, host._stack_target_schema(item, program)
+
+
+def materialize_single_stack_target_change(host, effect, response):
+    from ..stack_target_change_model import matches_single_announced_stack_target
+    from ..target_source import stack_targeting_source
+    from .target_query import target_identity_matches_snapshot
+
+    item, program, schema = _stack_target_change_subject(host, effect)
+    if item is None or schema is None or not matches_single_announced_stack_target(item):
+        return {}, {}
+    plan = target_plan(schema, item.modes, require_modes=bool(schema.get("modes")))
+    prior_groups = item.context.get("target_groups") or {}
+    prior_target, = item.targets
+    if prior_target is None:
+        prior_target, = (ref for refs in prior_groups.values() for ref in refs)
+    original = original_copy_groups(host, schema, item.modes, (prior_target,), prior_groups)
+    group, = (group for group in plan.groups if original[group.group_id])
+    source_ref = host._stack_source_ref(item)
+    acting_source = stack_targeting_source(host, item)
+    candidates = host._target_candidate_map(
+        item.controller, plan, source_ref=source_ref, acting_source=acting_source,
+    )
+    prior_snapshot = item.context.get("target_snapshots", {}).get(prior_target, {})
+    prior_current = target_identity_matches_snapshot(host, prior_target, prior_snapshot)
+    alternatives = tuple(ref for ref in candidates[group.group_id]
+                         if ref != item.ref and (ref != prior_target or not prior_current))
+    if not alternatives:
+        return {}, {}
+    key = f"{item.controller}:{item.ref}"
+    public = {"groups": [{**group.public_dict(alternatives), "min": 1, "max": 1}],
+              "legal_refs": list(alternatives)}
+    bundle = {key: {"authoritative": dict(schema), "public": public}}
+    if response is None:
+        return bundle, {}
+
+    selected = host._normalize_target_submission(response.get("targets"))
+    if len(selected) != 1:
+        raise GameRuleError("Choose one different legal target")
+    value, = selected
+    if isinstance(value, Mapping):
+        if (value.get("group") or value.get("group_id")) != group.group_id:
+            raise GameRuleError("The chosen target must retain its original slot")
+        value = value.get("ref", value.get("target"))
+    if type(value) is not str or value not in alternatives:
+        raise GameRuleError("Choose one different legal target")
+    targets, groups = host._validate_semantic_targets(
+        item.controller, program, [{"group": group.group_id, "ref": value}],
+        modes=item.modes, source_ref=source_ref, acting_source=acting_source, target_schema=schema,
+    )
+    return bundle, {key: {"targets": targets, "groups": groups}}
+
+
+def materialize_optional_stack_target_change(host, effect, response):
+    from ..target_source import stack_targeting_source
+
+    item, _, schema = _stack_target_change_subject(host, effect)
+    if item is None or schema is None or not item.targets:
+        return {}, {}
+    actor = item.controller
+    source_ref = host._stack_source_ref(item)
+    acting_source = stack_targeting_source(host, item)
+    original_groups = dict(item.context.get("target_groups") or {})
+    public = copy_target_public_schema(
+        host, actor, schema, item.modes, item.targets, original_groups, source_ref,
+        acting_source=acting_source,
+    )
+    for group in public["groups"]:
+        group["legal_refs"] = [ref for ref in group["legal_refs"] if group["max"] and ref != item.ref]
+    public["legal_refs"] = list(dict.fromkeys(ref for group in public["groups"] for ref in group["legal_refs"]))
+    key = f"{actor}:{item.ref}"
+    bundle = {key: {"authoritative": dict(schema), "public": public}}
+    submitted = (response or {}).get("targets")
+    if submitted is None:
+        return bundle, {}
+    assignment = prepare_copy_targets(
+        host, actor=actor, schema=schema, modes=item.modes, source_ref=source_ref,
+        original_targets=item.targets, original_groups=original_groups,
+        original_snapshots=dict(item.context.get("target_snapshots") or {}),
+        submitted=submitted, acting_source=acting_source,
+    )
+    if item.ref in assignment.targets:
+        raise GameRuleError("A stack item cannot target itself")
+    return bundle, {key: {
+        "targets": list(assignment.targets), "groups": dict(assignment.groups),
+        "snapshots": dict(assignment.snapshots),
+    }}
 
 
 def stack_copy_context(target: Any, groups: Mapping[str, Sequence[str]], snapshots: Mapping[str, Any],

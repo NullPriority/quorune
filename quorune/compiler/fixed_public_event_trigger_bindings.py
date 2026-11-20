@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed public occurrence grammar for fixed typed event-effect triggers."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
@@ -1327,6 +1327,9 @@ def fixed_public_event_binding_spec(
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .source_counter_cast_binding import source_counter_cast_binding_spec
+    source_counter=source_counter_cast_binding_spec(material_line,card_name=card_name)
+    if source_counter is not None:return source_counter
     from .designation_event_bindings import designation_event_binding_spec
     designation = designation_event_binding_spec(material_line, card_name=card_name)
     if designation is not None:return designation

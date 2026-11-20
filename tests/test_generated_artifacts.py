@@ -524,6 +524,35 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             report.discovered,
         )
 
+    def test_marker_discovery_reads_only_the_existing_prefix(self):
+        marker = b"automatically generated"
+        status = b"status: generated\n"
+        files = {
+            "early.txt": b"x" * (4096 - len(marker)) + marker + b"trailer",
+            "late.txt": b"x" * 4096 + marker,
+            "status.md": status + b"x" * 8192,
+            "cut-utf8.md": status + b"x" * (4095 - len(status)) + bytes((0xC3, 0xA9)),
+        }
+        discovery = GeneratedArtifactDiscoverySpec(
+            path_prefixes=(),
+            path_globs=(),
+            explicit_paths=(),
+            markdown_statuses=("generated",),
+            content_markers=("automatically generated",),
+        )
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            for name, data in files.items():
+                (root / name).write_bytes(data)
+            with mock.patch(
+                "scripts.generated_artifacts._tracked_paths",
+                return_value=tuple(sorted(files)),
+            ), mock.patch.object(Path, "read_bytes", side_effect=AssertionError("whole-file read")):
+                self.assertEqual(
+                    ("early.txt", "status.md"),
+                    discover_tracked_generated_artifacts(root, discovery),
+                )
+
     def test_generated_completeness_rejects_unowned_tracked_artifact(self):
         with TemporaryDirectory() as raw:
             root = Path(raw)
@@ -842,6 +871,64 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         )
         self.assertEqual((), result["changed_by_pass"][1])
 
+    def test_finalizer_detects_probe_drift_before_writing_without_database(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+            platform = root / "platform"
+            platform.mkdir()
+            (platform / "rules-subsystems.json").write_text(
+                json.dumps({"work_selection": {"coverage_family": {"candidate_bundles": [
+                    {"bundle_id": "bundle:fixture", "measurement_probe_id": "probe-v2"},
+                ]}}}),
+                encoding="utf-8",
+            )
+            specs = (
+                GeneratorSpec(
+                    id="upstream",
+                    depends_on=(),
+                    outputs=("upstream.txt",),
+                    check=("unused.py", "--check"),
+                    write=("unused.py", "--write"),
+                    write_with_database=None,
+                    write_policy="automatic",
+                ),
+                GeneratorSpec(
+                    id="work-selection-cohort-measurements",
+                    depends_on=("upstream",),
+                    outputs=("cohorts.json",),
+                    check=("measure.py", "--check"),
+                    write=None,
+                    write_with_database=("measure.py", "--write", "--db", "{db}"),
+                    write_policy="database",
+                ),
+            )
+            report = root / "cohorts.json"
+
+            def write_probe(probe_id: str) -> None:
+                report.write_text(
+                    json.dumps({"measurements": [{"bundle_id": "bundle:fixture", "probe_id": probe_id}]}),
+                    encoding="utf-8",
+                )
+
+            runner = mock.Mock(return_value=0)
+            options = dict(include_manual=False, max_passes=2, root=root, runner=runner)
+            write_probe("probe-v1")
+            with self.assertRaisesRegex(GeneratedFinalizationError, "changed probe IDs in bundle:fixture"):
+                write_until_stable(specs, database=None, **options)
+            runner.assert_not_called()
+
+            write_probe("probe-v2")
+            write_until_stable(specs, database=None, **options)
+            self.assertEqual(["upstream"], [call.args[0] for call in runner.call_args_list])
+
+            write_probe("probe-v1")
+            runner.reset_mock()
+            write_until_stable(specs, database=root / "pinned.sqlite3", **options)
+            self.assertEqual(
+                ["upstream", "pre-corpus-semantic-transition", "work-selection-cohort-measurements"],
+                [call.args[0] for call in runner.call_args_list],
+            )
+
     def test_generated_finalizer_rebuilds_database_corpus_only_once(self):
         with TemporaryDirectory() as raw:
             root = Path(raw)
@@ -978,6 +1065,42 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
 
         self.assertEqual(2, result["passes"])
         self.assertEqual(['pre-corpus-semantic-transition', "failed-owner", "failed-owner"], calls)
+
+    def test_finalizer_resumes_disjoint_owners_and_checks_the_entire_manifest(self):
+        from scripts import finalize_generated as finalizer
+
+        first = GeneratorSpec(
+            id="first", depends_on=(), outputs=("first.txt",),
+            check=("unused.py", "--check"), write=("unused.py", "--write"),
+            write_with_database=None, write_policy="automatic",
+        )
+        specs = (
+            first,
+            replace(first, id="second", outputs=("second.txt",)),
+            replace(first, id="consumer", depends_on=("second",), outputs=("consumer.txt",)),
+            replace(first, id="unrelated", outputs=("unrelated.txt",)),
+        )
+        cases = (
+            (["--resume-from", "first"], {"first"}, "first"),
+            (["--resume-from", "first", "--resume-from", "second", "--resume-from", "first"],
+             {"first", "second", "consumer"}, ["first", "second"]),
+        )
+        for flags, selected, expected in cases:
+            with (
+                self.subTest(flags=flags),
+                mock.patch.object(finalizer, "load_manifest", return_value=specs),
+                mock.patch.object(finalizer, "_database", return_value=None),
+                mock.patch.object(finalizer, "write_until_stable", return_value={"passes": 1}) as write,
+                mock.patch.object(finalizer, "check_all", return_value=["unrelated"]) as check,
+                mock.patch.object(finalizer.sys, "argv", ["finalize_generated.py", "--write", *flags]),
+                mock.patch("builtins.print") as printed,
+            ):
+                self.assertEqual(1, finalizer.main())
+                self.assertEqual(frozenset(selected), write.call_args.kwargs["initial_selected_ids"])
+                check.assert_called_once_with(specs)
+                receipt = json.loads(printed.call_args.args[0])
+                self.assertEqual(expected, receipt["resume_from"])
+                self.assertEqual(["unrelated"], receipt["failures"])
 
     def test_broad_generated_ci_uses_the_canonical_finalizer_only(self):
         workflow_dir = ROOT / ".github" / "workflows"

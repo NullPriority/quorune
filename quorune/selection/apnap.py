@@ -12,7 +12,8 @@ from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
 from .apnap_contract import (
-    is_typed_hand_exile, revalidate_ordered_hand_choices, validate_apnap_choice_effect,
+    bind_most_lands_sacrifice_players, is_typed_hand_exile, revalidate_ordered_hand_choices,
+    validate_apnap_choice_effect,
 )
 from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
@@ -146,6 +147,7 @@ class ApnapChoiceOwnerMixin:
         return candidates
 
     def _issue_apnap_choice(self, *, effect: Mapping[str, Any], continuation: Mapping[str, Any]) -> None:
+        effect = bind_most_lands_sacrifice_players(self, effect, continuation)
         players_spec = effect.get("players", "all")
         if players_spec == "all":
             queue = self.apnap_order()

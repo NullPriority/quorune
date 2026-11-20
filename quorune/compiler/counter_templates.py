@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Any, Mapping
 
 from ..query_effect_amount_model import CastXAmountSpec
+from ..stack_spell_targeting import CURRENT_TARGET_COUNTER, StackSpellTargetPredicate
 from ..replacement.immutable import FrozenMap
 from ..rules.stack_controller_payment_cost import (
     COUNTER_PAYMENT_FOLLOWUP_FIELD, MANA_PAYMENT_KEYS, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
@@ -101,10 +102,22 @@ class TargetedCounterEffectTemplate:
     target: CounterTarget
     mana_value_predicate: tuple[str, int] | None = None
     counter_destination: str | None = None
+    only_if_no_mana_spent: bool = False
+    only_if_mana_value_equals_x: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, CounterTarget):
             raise ValueError("Counter target domain is unsupported")
+        if type(self.only_if_no_mana_spent) is not bool or self.only_if_no_mana_spent and (
+            self.target is not CounterTarget.SPELL or self.mana_value_predicate is not None
+            or self.counter_destination is not None
+        ):
+            raise ValueError("Zero mana spent is a resolution condition on the ordinary spell counter")
+        if type(self.only_if_mana_value_equals_x) is not bool or self.only_if_mana_value_equals_x and (
+            self.only_if_no_mana_spent or self.target is not CounterTarget.SPELL
+            or self.mana_value_predicate is not None or self.counter_destination is not None
+        ):
+            raise ValueError("Announced X equality is a resolution condition on an ordinary spell counter")
         if self.counter_destination is not None:
             counter_destination_fields(self.counter_destination)
             if self.target_schema.get("categories") != ["spell"]:
@@ -120,6 +133,10 @@ class TargetedCounterEffectTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.only_if_no_mana_spent:
+            return "counter-target-spell-if-no-mana-spent-v1"
+        if self.only_if_mana_value_equals_x:
+            return "counter-target-spell-if-mana-value-equals-x-v1"
         slug = direct_target_slug(self.target.value)
         if self.mana_value_predicate is not None:
             field, value = self.mana_value_predicate
@@ -130,6 +147,14 @@ class TargetedCounterEffectTemplate:
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
         effect, = direct_target_effect("counter_stack_target", reference_field="stack")
+        if self.only_if_no_mana_spent:
+            from ..stack_counter import NO_MANA_SPENT_COUNTER_FIELD
+
+            effect = {**effect, NO_MANA_SPENT_COUNTER_FIELD: 1}
+        if self.only_if_mana_value_equals_x:
+            from ..stack_counter import ANNOUNCED_X_COUNTER_FIELD
+
+            effect = {**effect, ANNOUNCED_X_COUNTER_FIELD: CastXAmountSpec().to_dict()}
         if self.counter_destination is not None:
             effect = {**effect, COUNTER_DESTINATION_FIELD: self.counter_destination}
         return (effect,)
@@ -221,6 +246,10 @@ def _counter_destination_clause(text: str) -> tuple[str, str | None]:
 def targeted_counter_effect_template(
     text: str,
 ) -> TargetedCounterEffectTemplate | None:
+    if re.fullmatch(r"Counter target spell if no mana was spent to cast it[.]?", text.strip(), re.I):
+        return TargetedCounterEffectTemplate(CounterTarget.SPELL, only_if_no_mana_spent=True)
+    if re.fullmatch(r"Counter target spell if its mana value is X[.]?", text.strip(), re.I):
+        return TargetedCounterEffectTemplate(CounterTarget.SPELL, only_if_mana_value_equals_x=True)
     normalized, destination = _counter_destination_clause(text)
     quantity = re.search(r" with mana value (?P<value>[0-9]+)(?P<comparison> or less| or greater)?\.?$", normalized, re.I)
     numeric = None
@@ -256,6 +285,47 @@ def targeted_counter_effect_template(
         CounterTarget(match.group("target").casefold()), mana_value_predicate=numeric,
         counter_destination=destination,
     )
+
+
+_SPELL_TARGET_SUBJECTS = {
+    "a player": StackSpellTargetPredicate.PLAYER,
+    "you": StackSpellTargetPredicate.CONTROLLER,
+    "a creature": StackSpellTargetPredicate.CREATURE,
+    "an enchantment": StackSpellTargetPredicate.ENCHANTMENT,
+    "a permanent you control": StackSpellTargetPredicate.CONTROLLED_PERMANENT,
+    "you or a permanent you control": StackSpellTargetPredicate.CONTROLLER_OR_CONTROLLED_PERMANENT,
+    "a creature you control": StackSpellTargetPredicate.CONTROLLED_CREATURE,
+    "an artifact or creature you control": StackSpellTargetPredicate.CONTROLLED_ARTIFACT_OR_CREATURE,
+    "this creature": StackSpellTargetPredicate.SOURCE,
+}
+
+
+@dataclass(frozen=True, slots=True)
+class SpellTargetingCounterTemplate:
+    predicate: StackSpellTargetPredicate
+
+    def compiled(self):
+        return compiled_direct_target(
+            template_id=f"counter-{direct_target_slug(self.predicate.value)}",
+            effects=(dict(CURRENT_TARGET_COUNTER),),
+            target_schema=self.predicate.target_schema(),
+            mechanics=("counter", "cr-115-targets"),
+        )
+
+
+def spell_targeting_counter_effect_template(text: str) -> SpellTargetingCounterTemplate | None:
+    match = re.fullmatch(
+        r"Counter target (?P<kind>spell|instant or Aura spell) that targets (?P<subject>[^.\n]+)\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    subject = _SPELL_TARGET_SUBJECTS.get(match["subject"].casefold())
+    if match["kind"].casefold() == "instant or aura spell":
+        if subject is not StackSpellTargetPredicate.CONTROLLED_PERMANENT:
+            return None
+        subject = StackSpellTargetPredicate.INSTANT_OR_AURA_CONTROLLED_PERMANENT
+    return SpellTargetingCounterTemplate(subject) if subject is not None else None
 
 
 def is_intrinsically_uncounterable_spell(text: str) -> bool:
@@ -447,5 +517,6 @@ __all__ = [
     "TargetedControllerPaymentTemplate",
     "is_intrinsically_uncounterable_spell",
     "targeted_counter_effect_template",
+    "spell_targeting_counter_effect_template",
     "targeted_controller_payment_template",
 ]

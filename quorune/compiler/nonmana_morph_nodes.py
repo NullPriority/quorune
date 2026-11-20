@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-spanned fixed nonmana Morph declarations on otherwise complete cards."""
 
-import re
+from . import regex_working_set as re
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..creature_subtypes import canonical_creature_subtype
 from ..nonmana_morph_model import (

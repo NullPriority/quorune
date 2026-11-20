@@ -3257,3 +3257,1025 @@ class DistributedTokenCreationRuntimeTests(unittest.TestCase):
         self.assertTrue(all(card.controller == card.owner for card in tokens))
         self.assertEqual(1, len({card.zone_timestamp for card in tokens}))
         self.replay(session, load=True)
+
+
+class AuthoredTargetedTokenCompilerTests(unittest.TestCase):
+    def test_walker_keeps_explicit_rule_name_and_exact_vanilla_characteristics(self):
+        from quorune.compiler.token_templates import fixed_token_creation_effect_template
+        token=fixed_token_creation_effect_template('Create three Walker tokens.')
+        self.assertIsNotNone(token);effect=token.compiled()[1][0]
+        self.assertEqual(('Walker',3),(effect['name'],effect['quantity']))
+        definition=effect['characteristics']
+        self.assertEqual(('2','2',['B']),(definition['power'],definition['toughness'],definition['colors']))
+        self.assertEqual('Token Creature — Zombie',definition['type_line'])
+        self.assertEqual(1,definition['literal_token_name_version'])
+
+    def test_targeted_creator_shell_consumes_comma_and_quoted_intrinsic_ability_without_losing_keyword(self):
+        from quorune.compiler.typed_token_ability_nodes import _token_ability_shell
+        text='When this creature enters, target opponent creates The Void, a legendary 5/5 black Horror Villain creature token with flying, indestructible, and "The Void attacks each combat if able."'
+        shell,abilities=_token_ability_shell(text)
+        self.assertIn('target opponent creates',shell)
+        self.assertTrue(shell.rstrip('.').endswith('with flying, indestructible'))
+        self.assertEqual(('The Void attacks each combat if able.',),abilities)
+
+    def test_new_token_shell_still_rejects_unconsumed_quotes_and_unrelated_material(self):
+        from quorune.compiler.typed_token_ability_nodes import _token_ability_shell
+        self.assertIsNone(_token_ability_shell('Create a token with "unknown one" "unknown two" "unknown three".'))
+        self.assertIsNone(_token_ability_shell('A player reads "The Void attacks each combat if able."'))
+
+
+    def test_authored_token_attack_requirement_keeps_raw_combat_owner_in_parent_node(self):
+        from quorune.carddb import CardRecord
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from dataclasses import replace
+        from test_qualified_zone_event_queries import query_record
+        text='When this creature enters, target opponent creates The Void, a legendary 5/5 black Horror Villain creature token with flying, indestructible, and "The Void attacks each combat if able."'
+        record=replace(query_record(text),type_line='Creature — Human',power='4',toughness='4')
+        ir=compile_oracle_card(record,capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        parent=ir.faces[0].nodes[0]
+        self.assertIn('combat.declaration.typed_components',parent.capability_dependencies)
+
+
+class AuthoredTargetedTokenNativeFixture(InheritedNativeFixture):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary=tempfile.TemporaryDirectory();root=Path(cls.temporary.name)
+        base=json.loads((ROOT/'tests/fixtures/bound-effect-program-cards.json').read_text(encoding='utf-8'))
+        base['cards']=[row for row in base['cards'] if row['name']=='Generic Bound Plains'];base['rulings']=[]
+        path=root/'base.json';path.write_text(json.dumps(base),encoding='utf-8')
+        build_fixture_database([path,ROOT/'tests/fixtures/authored-targeted-token-cards.json'],root/'authored.sqlite3')
+        cls.db=CardDatabase(root/'authored.sqlite3');cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Authored tokens',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
+
+
+class AuthoredTargetedTokenNativeTests(AuthoredTargetedTokenNativeFixture,unittest.TestCase):
+    def trim_prepared_hands(self,s):
+        for seat in 'ABCD':
+            for object_id in tuple(s.state.players[seat].zones['hand'])[:2]:
+                s.engine.move_card(object_id,'library',reason='Bound full-turn native fixture hands',log=False)
+
+    def advance_to_upkeep_target(self,s):
+        for _ in range(400):
+            s.engine.pump();decision=s.state.pending_decision
+            if decision is not None and decision.kind=='semantic.target':return
+            self.assertIsNotNone(decision)
+            if decision.kind=='priority':command={'action_id':'pass'}
+            elif decision.kind=='combat.attackers':command={'action_id':'attack','attackers':{}}
+            elif decision.kind=='combat.blockers':command={'action_id':'block','blocks':{}}
+            elif decision.kind=='trigger.order':
+                group=next(g for g in s.state.pending_trigger_batches[0].groups if g.controller==decision.actors[0])
+                command={'action_id':'order','triggers':[item.ref for item in group.items]}
+            else:self.fail('Unexpected fullturn fixture decision: '+decision.kind)
+            result=s.act(s.pending_principals()[0],command);self.assertTrue(result.ok,result.summary)
+        self.fail('Fullfour-player rotation didnot reach upkeep target: '+str((s.state.active_player,s.state.phase,s.state.step)))
+
+    def tokens(self,s,name):
+        return [card for card in s.state.cards.values() if card.is_token and card.zone=='battlefield' and card.printed_name==name]
+
+    def test_two_full_originals_bind_normally_and_void_parent_requires_combat_component_without_coverage(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        for i,name in enumerate(('The Sentry, Golden Guardian','Hansk, Slayer Zealot')):
+            s=self.session(111100200+i);card=self.add(s.engine,name,zone='hand');self.assert_closed(s,card)
+            ir=compile_oracle_card(self.db.lookup(name),capability_registry=self.registry,capability_profile='commander_review')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            if i:continue
+            programs=[p for p in s.engine.semantics.programs_for_oracle(card.oracle_id) if 'combat.declaration.typed_components' in p.capability_dependencies]
+            self.assertTrue(programs)
+            for program in programs:
+                deps=tuple(c for c in program.capability_dependencies if c!='combat.declaration.typed_components')
+                changed=replace(program,capability_dependencies=deps,coverage=(),capability_closure=self.registry.closure(deps,profile='commander_review').to_dict())
+                bound=bind_semantic_program_runtime(changed,capability_registry=self.registry,profile='commander_review')
+                self.assertFalse(bound['strict'])
+                self.assertIn('capability:undeclared_runtime_dependency:combat.declaration.typed_components',bound['blockers'])
+
+    def test_actual_paid_sentry_opponent_creates_named_void_with_intrinsic_rules_private_pending_load_and_replay(self):
+        s=self.session(111100210);source=self.add(s.engine,'The Sentry, Golden Guardian',zone='hand')
+        secret=self.add(s.engine,'Counterspell',seat='D',zone='hand',ref='authored-unrelated-private')
+        self.assert_closed(s,source);self.prepare(s,mana={'C':3,'W':1});self.checkpoint(s)
+        self.cast_for(s,'A',source);self.assertEqual('semantic.target',self.resolve(s).kind)
+        self.target(s,'A',['B']);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        token,=self.tokens(s,'The Void');self.assertEqual(('B','B'),(token.owner,token.controller))
+        data=s.engine._effective_card_data(token)
+        self.assertEqual((5,5),(s.engine._numeric_stat(token.object_id,'power'),s.engine._numeric_stat(token.object_id,'toughness')))
+        self.assertTrue({'horror','villain'}<=set(s.engine._type_parts(data['type_line'])[1]))
+        self.assertIn('Legendary',data['type_line']);self.assertEqual(['B'],data['colors'])
+        self.assertTrue({'flying','indestructible'}<=set(s.engine._combat_keywords(token)))
+        self.assertFalse(any(s.state.players['A'].mana_pool.values()))
+        self.assertTrue(all(token.object_id not in s.state.players[seat].zones['battlefield'] for seat in 'ACD'))
+        for viewer in 'ABC':self.assertNotIn(secret.ref,json.dumps(s.packet('pilot:'+viewer,full=True)))
+        self.replay(s,load=True)
+
+    def test_actual_paid_hansk_next_upkeep_target_creates_three_walkers_then_printed_damage_and_zombie_death_draw_replay(self):
+        s=self.session(111100220);self.trim_prepared_hands(s);source=self.add(s.engine,'Hansk, Slayer Zealot',zone='hand')
+        secret=self.add(s.engine,'Counterspell',seat='D',zone='hand',ref='hansk-unrelated-private')
+        self.assert_closed(s,source);self.prepare(s,mana={'C':2,'R':1,'G':1});self.checkpoint(s)
+        self.cast_for(s,'A',source);self.assertIsNone(self.resolve(s))
+        self.advance_to_upkeep_target(s)
+        self.target(s,'A',['B']);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        walkers=self.tokens(s,'Walker');self.assertEqual(3,len(walkers))
+        for token in walkers:
+            self.assertEqual(('B','B'),(token.owner,token.controller))
+            data=s.engine._effective_card_data(token)
+            self.assertEqual(['B'],data['colors']);self.assertEqual({'zombie'},set(s.engine._type_parts(data['type_line'])[1]))
+            self.assertEqual((2,2),(s.engine._numeric_stat(token.object_id,'power'),s.engine._numeric_stat(token.object_id,'toughness')))
+        self.priority(s,'A')
+        rows=s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+        action,=[row for row in rows if row['id'].startswith('activate:'+source.ref+':')]
+        hand=len(s.state.players['A'].zones['hand']);before_hand=set(s.state.players['A'].zones['hand'])
+        result=s.act('pilot:A',{'action_id':action['id'],'targets':[walkers[0].ref],'pay':'auto'});self.assertTrue(result.ok,result.summary)
+        self.assertTrue(s.state.cards[source.object_id].tapped);self.assertIsNone(self.resolve(s))
+        self.assertNotEqual('battlefield',s.state.cards[walkers[0].object_id].zone)
+        self.assertEqual(hand+1,len(s.state.players['A'].zones['hand']))
+        drawn=set(s.state.players['A'].zones['hand'])-before_hand
+        for viewer in 'BCD':
+            packet=json.dumps(s.packet('pilot:'+viewer,full=True))
+            for object_id in drawn:self.assertNotIn(s.state.cards[object_id].ref,packet)
+        for viewer in 'ABC':self.assertNotIn(secret.ref,json.dumps(s.packet('pilot:'+viewer,full=True)))
+        self.replay(s,load=True)
+
+
+    def test_actual_hansk_token_doubling_belongs_to_target_creator_not_trigger_controller(self):
+        for provider,expected in (('A',3),('B',6)):
+            with self.subTest(provider=provider):
+                s=self.session(111100230+ord(provider));self.trim_prepared_hands(s);source=self.add(s.engine,'Hansk, Slayer Zealot',zone='hand')
+                multiplier=self.add(s.engine,'Parallel Lives',seat=provider)
+                for card in (source,multiplier):self.assert_closed(s,card)
+                self.prepare(s,mana={'C':2,'R':1,'G':1});self.checkpoint(s);self.cast_for(s,'A',source)
+                self.assertIsNone(self.resolve(s));self.advance_to_upkeep_target(s)
+                self.target(s,'A',['B']);self.assertIsNone(self.resolve(s));tokens=self.tokens(s,'Walker')
+                self.assertEqual(expected,len(tokens));self.assertTrue(all(c.owner==c.controller=='B' for c in tokens))
+                self.replay(s,load=True)
+
+    def test_void_intrinsic_requirement_follows_token_controller_after_parent_departure_and_rejects_empty_attack(self):
+        s=self.session(111100240);self.trim_prepared_hands(s);source=self.add(s.engine,'The Sentry, Golden Guardian',zone='hand')
+        fervor=self.add(s.engine,'Fervor',seat='B');self.assert_closed(s,fervor)
+        self.prepare(s,mana={'C':3,'W':1});self.checkpoint(s);self.cast_for(s,'A',source)
+        self.assertEqual('semantic.target',self.resolve(s).kind);self.target(s,'A',['B']);self.assertIsNone(self.resolve(s))
+        token,=self.tokens(s,'The Void')
+        # Canonical owner interaction preparation: parent leaves, token's
+        # intrinsic rule survives. Gameplay/replay starts from this checkpoint.
+        s.engine.move_card(source.object_id,'exile',reason='Prepared departed token-definition parent',log=False)
+        self.checkpoint(s)
+        self.until(s,lambda x:x.state.active_player=='B' and x.state.pending_decision is not None and x.state.pending_decision.kind=='combat.attackers')
+        before=authoritative_state_hash(s.state)
+        rejected=s.act('pilot:B',{'action_id':'attack','attackers':{}});self.assertFalse(rejected.ok)
+        self.assertEqual(before,authoritative_state_hash(s.state))
+        accepted=s.act('pilot:B',{'action_id':'attack','attackers':{token.ref:'C'}});self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual('exile',s.state.cards[source.object_id].zone)
+        self.replay(s,load=True)
+
+
+    def sentry_pending(self,seed):
+        s=self.session(seed);self.trim_prepared_hands(s);source=self.add(s.engine,'The Sentry, Golden Guardian',zone='hand')
+        self.prepare(s,mana={'C':3,'W':1});self.checkpoint(s);self.cast_for(s,'A',source)
+        self.assertEqual('semantic.target',self.resolve(s).kind);self.target(s,'A',['B'])
+        return s,source
+
+    def test_actual_countered_or_departed_target_trigger_creates_no_token_and_keeps_paid_source(self):
+        for mode in ('counter','depart'):
+            with self.subTest(mode=mode):
+                s=self.session(111100250+len(mode));self.trim_prepared_hands(s)
+                source=self.add(s.engine,'The Sentry, Golden Guardian',zone='hand')
+                counter=self.add(s.engine,'Stifle',seat='B',zone='hand');s.state.players['B'].mana_pool.update({'U':1})
+                self.prepare(s,mana={'C':3,'W':1});self.checkpoint(s);self.cast_for(s,'A',source)
+                self.assertEqual('semantic.target',self.resolve(s).kind)
+                before=authoritative_state_hash(s.state)
+                self.assertFalse(s.act('pilot:A',{'action_id':'choose','targets':['A']}).ok)
+                self.assertEqual(before,authoritative_state_hash(s.state))
+                self.target(s,'A',['B'])
+                if mode=='counter':
+                    trigger=next(item for item in s.state.stack if item.kind=='triggered_ability' and item.source_object_id==source.object_id)
+                    self.assert_closed(s,counter);self.cast_for(s,'B',counter,[trigger.ref])
+                else:
+                    self.priority(s,'B');result=s.act('pilot:B',{'action_id':'concede','choices':{'confirm_concede':True}});self.assertTrue(result.ok,result.summary)
+                s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+                self.assertEqual([],self.tokens(s,'The Void'));self.assertEqual('battlefield',s.state.cards[source.object_id].zone)
+                self.assertFalse(any(s.state.players['A'].mana_pool.values()));self.replay(s,load=True)
+
+    def test_actual_post_creation_fault_rolls_back_entire_token_blueprint_and_event_state_then_loads_and_retries(self):
+        s,source=self.sentry_pending(111100270);original=s.engine.create_token;seen=[];failed=None;before=None
+        def fault(*args,**kwargs):
+            created=original(*args,**kwargs);seen.extend(card.object_id for card in self.tokens(s,'The Void'))
+            raise GameRuleError('Injected authored token post-creation fault')
+        with patch.object(s.engine,'create_token',side_effect=fault):
+            for _ in range(16):
+                actor=s.pending_principals()[0];before=authoritative_state_hash(s.state);result=s.act(actor,{'action_id':'pass'})
+                if not result.ok:
+                    self.assertIn('Injected authored token',result.summary);failed=actor;break
+            else:self.fail('Actual creation owner was not reached')
+        self.assertEqual(1,len(seen));self.assertEqual(before,authoritative_state_hash(s.state));self.assertEqual([],self.tokens(s,'The Void'))
+        s=self.replay(s,load=True);result=s.act(failed,{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(s));token,=self.tokens(s,'The Void');self.assertEqual(('B','B'),(token.owner,token.controller))
+        self.replay(s,load=True)
+
+    def test_fresh_native_wrong_creator_mutant_is_killed_after_positive_paid_original(self):
+        method='test_actual_paid_sentry_opponent_creates_named_void_with_intrinsic_rules_private_pending_load_and_replay'
+        baseline=unittest.TestResult();type(self)(method).run(baseline);self.assertEqual((0,0),(len(baseline.failures),len(baseline.errors)))
+        from quorune.engine import CommanderEngine
+        original=CommanderEngine.create_token
+        def wrong(host,seat,*args,**kwargs):return original(host,'A',*args,**kwargs)
+        mutated=unittest.TestResult()
+        with patch.object(CommanderEngine,'create_token',wrong):type(self)(method).run(mutated)
+        self.assertEqual([],mutated.errors);self.assertEqual(1,len(mutated.failures))
+
+
+class AuthoredTargetedTokenWithdrawalTests(AuthoredTargetedTokenNativeFixture,unittest.TestCase):
+    def test_genuine_verified_definition_target_and_intrinsic_owner_withdrawals_keep_unrelated_controls(self):
+        from copy import deepcopy
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        doc=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
+        baseline=CapabilityRegistry(raw)
+        baseline_index=build_index(registry_value=raw,declaration_source=doc,discovered_test_ids=known)
+        baseline.mark_evidence_verified(validate_capability_evidence_index(baseline_index,registry=baseline))
+        baseline_dependencies={}
+        for name in ('The Sentry, Golden Guardian','Hansk, Slayer Zealot'):
+            original=compile_oracle_card(self.db.lookup(name),capability_registry=baseline,capability_profile='commander_review')
+            self.assertEqual('exact',original.status,name)
+            baseline_dependencies[name]=tuple(sorted({capability for face in original.faces for node in face.nodes for capability in node.capability_dependencies}))
+        for cap in ('token.creation.fixed_definition','target.revalidate_resolution','token.creation.typed_ability_definition','combat.declaration.typed_components'):
+            value=deepcopy(raw);next(row for row in value['capabilities'] if row['id']==cap).update(status='blocked',blockers=['Authored token or necessary intrinsic owner withdrawn'])
+            registry=CapabilityRegistry(value);index=build_index(registry_value=value,declaration_source=doc,discovered_test_ids=known)
+            registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry));self.assertTrue(registry.evidence_fingerprint)
+            for name in ('The Sentry, Golden Guardian','Hansk, Slayer Zealot'):
+                ir=compile_oracle_card(self.db.lookup(name),capability_registry=registry,capability_profile='commander_review')
+                required=name=='The Sentry, Golden Guardian' or cap in ('token.creation.fixed_definition','target.revalidate_resolution')
+                if required:
+                    self.assertNotEqual('exact',ir.status,(cap,name))
+                    closure=registry.closure(baseline_dependencies[name],profile='commander_review')
+                    self.assertFalse(closure.trusted)
+                    self.assertIn('status:'+cap+':blocked',set(closure.blockers))
+                    blockers={b for r in ir.material_residuals for b in r.blockers}
+                    self.assertFalse(any('unverified' in b for b in blockers))
+                else:self.assertEqual('exact',ir.status,(cap,name))
+            for name in ('Grizzly Bears','Island'):
+                self.assertEqual('exact',compile_oracle_card(self.db.lookup(name),capability_registry=registry,capability_profile='commander_review').status,(cap,name))
+
+
+class EnchantedCopyRecipeContractTests(unittest.TestCase):
+    def spec(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        return TokenCopyRecipeSpec(origin='source_attachment',schema_version=3,attachment_kind='enchanted')
+
+    def test_recipe_three_is_immutable_and_explicitly_binds_the_enchanted_source(self):
+        from dataclasses import FrozenInstanceError
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        spec=self.spec();self.assertEqual(spec,TokenCopyRecipeSpec.from_dict(spec.to_dict()))
+        self.assertEqual(('source_attachment','enchanted',3),(spec.origin,spec.attachment_kind,spec.schema_version))
+        with self.assertRaises(FrozenInstanceError):spec.attachment_kind='equipped'
+
+    def test_old_versions_cannot_carry_new_relation_and_existing_source_and_embalm_encodings_keep_meaning(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        wire=self.spec().to_dict()
+        for version in (1,2):
+            with self.subTest(version=version),self.assertRaises(ValueError):
+                TokenCopyRecipeSpec.from_dict({**wire,'schema_version':version})
+        for old in (TokenCopyRecipeSpec(origin='source'),TokenCopyRecipeSpec(origin='source',schema_version=2,creation_origin='embalm')):
+            self.assertEqual(old,TokenCopyRecipeSpec.from_dict(old.to_dict()))
+            self.assertNotIn('attachment_kind',old.to_dict())
+        with self.assertRaises(ValueError):TokenCopyRecipeSpec(origin='source',schema_version=3,attachment_kind='enchanted')
+
+    def test_unknown_relation_cleanup_grants_and_wire_fields_fail_closed(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        wire=self.spec().to_dict()
+        for change in ({'attachment_kind':'equipped'},{'attachment_kind':True},{'cleanup':'exile_next_end_step'},
+                {'temporary_keywords':['Haste']},{'creation_origin':'embalm'},{'extra':None},{'schema_version':True}):
+            with self.subTest(change=change),self.assertRaises(ValueError):TokenCopyRecipeSpec.from_dict({**wire,**change})
+
+    def test_new_relation_requires_fine_and_both_parent_owners_independently_of_coverage(self):
+        from quorune.rules.token_creation_capability_shapes import token_definition_payload_dependencies
+        effect={'op':'create_token','controller':'$controller','quantity':1,'copy_spec':self.spec().to_dict()}
+        deps=token_definition_payload_dependencies(effect)
+        self.assertIn('token.creation.enchanted_source_copy',deps)
+        self.assertEqual({'token.creation.enchanted_source_copy','token.creation.fixed_copy','object.reference.source_attachment_information'},set(deps))
+
+
+class EnchantedCopyReferenceTests(unittest.TestCase):
+    @staticmethod
+    def fixture():
+        from types import SimpleNamespace
+        from quorune.model import CardInstance
+        from quorune.attachment_references import (
+            AttachmentReferenceKind, capture_source_attachment_snapshot,
+        )
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        def card(oid, name):
+            return CardInstance(object_id=oid, ref=oid.upper(), oracle_id=oid,
+                printed_name=name, owner="A", controller="B", zone="battlefield")
+        source, first, second = card("aura", "Aura"), card("first", "First"), card("second", "Second")
+        source.attached_to=first.object_id; first.attachments.append(source.object_id)
+        cards={v.object_id:v for v in (source,first,second)}
+        snapshot=capture_source_attachment_snapshot(cards,source,AttachmentReferenceKind.ENCHANTED)
+        recipe=TokenCopyRecipeSpec(origin="source_attachment",schema_version=3,attachment_kind="enchanted")
+        item=SimpleNamespace(source_object_id=source.object_id,card_object_id=None,semantic_key="recipe",
+            context={"source_logical_object_id":source.logical_object_id,
+                "source_attachment_snapshot":snapshot.to_dict(),"source_attachment_information_version":1})
+        effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
+        host=SimpleNamespace(state=SimpleNamespace(cards=cards,stack=[item],pending_trigger_batches=[]),
+            semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=(effect,),target_schema=None)))
+        return host,item,recipe,source,first,second
+
+    @staticmethod
+    def snapshot(host,card):
+        return {"object_id":card.object_id,"logical_object_id":card.logical_object_id,
+                "ref":card.ref,"zone":card.zone,"snapshot":{"name":card.printed_name}}
+
+    def test_full_consumption_requires_source_relation_and_captures_versioned_information(self):
+        from quorune.compiler.token_copy_templates import token_copy_recipe_template
+        from quorune.attachment_references import (
+            AttachmentReferenceKind, required_attachment_relation, attachment_information_capabilities,
+        )
+        text="Create a token that's a copy of enchanted creature, except it's a Spirit in addition to its other types."
+        compiled=token_copy_recipe_template(text,source_name="Generic Aura",source_is_permanent=True,
+            source_attachment_relation=AttachmentReferenceKind.ENCHANTED)
+        self.assertIsNotNone(compiled)
+        self.assertIsNone(compiled.target_schema)
+        effect=compiled.effect
+        self.assertEqual(3,effect["copy_spec"]["schema_version"])
+        self.assertEqual(["spirit"],effect["copy_spec"]["exception"]["add_subtypes"])
+        self.assertIs(AttachmentReferenceKind.ENCHANTED,required_attachment_relation((effect,)))
+        self.assertIn("object.reference.source_attachment_information",attachment_information_capabilities((effect,)))
+        for relation in (None,AttachmentReferenceKind.EQUIPPED):
+            self.assertIsNone(token_copy_recipe_template(text,source_name="Generic Aura",source_is_permanent=True,
+                source_attachment_relation=relation))
+        for bad in (text+" Draw a card.",text.replace("enchanted","equipped"),
+                "Create a token that's a copy of enchanted creature. It gains haste.",
+                "Create a token that's a copy of enchanted creature. Exile it at the beginning of the next end step."):
+            self.assertIsNone(token_copy_recipe_template(bad,source_name="Generic Aura",source_is_permanent=True,
+                source_attachment_relation=AttachmentReferenceKind.ENCHANTED))
+
+    def test_current_relation_overrides_old_snapshot_and_cached_creature(self):
+        from quorune.token_copy_references import copy_reference_snapshot, pin_copy_characteristic_departures
+        host,item,recipe,source,first,second=self.fixture()
+        with patch("quorune.token_copy_references._snapshot",side_effect=self.snapshot):
+            pin_copy_characteristic_departures(host,[first])
+            source.attached_to=second.object_id;first.attachments.clear();second.attachments.append(source.object_id)
+            value=copy_reference_snapshot(host,item,recipe)
+        self.assertEqual(second.logical_object_id,value["logical_object_id"])
+        self.assertEqual("Second",value["snapshot"]["name"])
+
+    def test_departures_pin_immediate_creature_values_and_neither_reentry_substitutes(self):
+        from quorune.attachment_information import pin_attachment_information_departures
+        from quorune.token_copy_references import copy_reference_snapshot, pin_copy_characteristic_departures
+        host,item,recipe,source,first,second=self.fixture()
+        # Aura moved to another creature after the trigger, then both depart.
+        source.attached_to=second.object_id;first.attachments.clear();second.attachments.append(source.object_id)
+        old_id=second.logical_object_id
+        with patch("quorune.token_copy_references._snapshot",side_effect=self.snapshot):
+            pin_attachment_information_departures(host,[source,second])
+            pin_copy_characteristic_departures(host,[source,second])
+            source.zone="graveyard";source.zone_change_counter+=1;source.attached_to=None
+            second.zone="graveyard";second.zone_change_counter+=1;second.attachments.clear()
+            second.printed_name="Reentered Different Values";second.zone="battlefield"
+            source.zone="battlefield";source.attached_to=first.object_id;first.attachments.append(source.object_id)
+            value=copy_reference_snapshot(host,item,recipe)
+        self.assertEqual(old_id,value["logical_object_id"])
+        self.assertEqual("Second",value["snapshot"]["name"])
+
+    def test_source_departure_keeps_last_relation_and_reads_living_creature_now(self):
+        from quorune.attachment_information import pin_attachment_information_departures
+        from quorune.token_copy_references import copy_reference_snapshot
+        host,item,recipe,source,first,second=self.fixture()
+        source.attached_to=second.object_id;first.attachments.clear();second.attachments.append(source.object_id)
+        pin_attachment_information_departures(host,[source])
+        source.zone="graveyard";source.zone_change_counter+=1;source.attached_to=None
+        second.printed_name="Current Copiable Values"
+        with patch("quorune.token_copy_references._snapshot",side_effect=self.snapshot):
+            value=copy_reference_snapshot(host,item,recipe)
+        self.assertEqual("Current Copiable Values",value["snapshot"]["name"])
+        self.assertEqual(second.logical_object_id,value["logical_object_id"])
+
+    def test_detachment_and_phasing_create_no_reference_and_tampered_context_fails_closed(self):
+        from quorune.token_copy_references import copy_reference_snapshot
+        host,item,recipe,source,first,second=self.fixture()
+        source.attached_to=None;first.attachments.clear()
+        self.assertIsNone(copy_reference_snapshot(host,item,recipe))
+        source.attached_to=first.object_id;first.attachments.append(source.object_id);source.phased_out=True
+        self.assertIsNone(copy_reference_snapshot(host,item,recipe))
+        source.phased_out=False
+        for key,bad in (("source_logical_object_id","wrong-incarnation"),
+                ("source_attachment_information_version",True),("source_attachment_snapshot",{})):
+            before=item.context[key];item.context[key]=bad
+            with self.subTest(key=key),self.assertRaises(ValueError):
+                copy_reference_snapshot(host,item,recipe)
+            item.context[key]=before
+
+    def test_wire_cannot_change_canonical_reference_type_relation_or_version(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        _,_,recipe,_,_,_=self.fixture();wire=recipe.to_dict()
+        for field,bad in (("relation","equipped_object"),("required_card_type","permanent"),("schema_version",1)):
+            altered={**wire,"attachment_reference":{**wire["attachment_reference"],field:bad}}
+            with self.subTest(field=field),self.assertRaises(ValueError):TokenCopyRecipeSpec.from_dict(altered)
+
+
+    def test_captured_context_json_reload_retains_original_incarnations_and_old_versions_stay_closed(self):
+        from quorune.token_copy_references import copy_reference_snapshot
+        host,item,recipe,source,first,second=self.fixture()
+        with patch("quorune.token_copy_references._snapshot",side_effect=self.snapshot):
+            before=copy.deepcopy(item.context)
+            expected=copy_reference_snapshot(host,item,recipe)
+            item.context=json.loads(json.dumps(item.context))
+            self.assertEqual(expected,copy_reference_snapshot(host,item,recipe))
+            self.assertEqual(before,item.context)
+            item.context.pop("source_attachment_information_version")
+            with self.assertRaises(ValueError):copy_reference_snapshot(host,item,recipe)
+
+    def test_fresh_reference_mutant_ignoring_current_attachment_is_killed(self):
+        from quorune.token_copy_references import copy_reference_snapshot
+        host,item,recipe,source,first,second=self.fixture()
+        source.attached_to=second.object_id;first.attachments.clear();second.attachments.append(source.object_id)
+        def witness():
+            with patch("quorune.token_copy_references._snapshot",side_effect=self.snapshot):
+                self.assertEqual(second.logical_object_id,copy_reference_snapshot(host,item,recipe)["logical_object_id"])
+        witness()
+        with patch("quorune.token_copy_references._attachment_identity",
+                return_value=(first.object_id,first.logical_object_id,"battlefield")):
+            with self.assertRaises(AssertionError):witness()
+
+
+    def test_semantic_resolution_preserves_typed_copy_reference_for_canonical_copy_owner(self):
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        host,item,recipe,source,first,second=self.fixture()
+        item.controller="C"
+        effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
+        resolved=resolve_semantic_value(host,effect,item)
+        self.assertEqual("C",resolved["controller"])
+        self.assertEqual(recipe.to_dict(),resolved["copy_spec"])
+        self.assertIsInstance(resolved["copy_spec"]["attachment_reference"],dict)
+        self.assertEqual(source.logical_object_id,item.context["source_logical_object_id"])
+
+
+    def test_current_entry_copy_retains_physical_face_and_historical_or_token_results_keep_recorded_form(self):
+        from types import SimpleNamespace
+        from quorune.model import CardInstance
+        from quorune.entry_results import commit_prepared_copy_values
+        from quorune.entry_copy import COPIABLE_ORACLE_FIELD,COPIABLE_FACE_FIELD
+        values={COPIABLE_ORACLE_FIELD:"copied-source",COPIABLE_FACE_FIELD:"front","type_line":"Creature — Bear"}
+        prepared=SimpleNamespace(event=SimpleNamespace(payload={"entry_copy":values}))
+        def card():
+            return CardInstance("physical","PHYSICAL","physical-oracle","Physical double face","A","A","battlefield",active_face="Physical front")
+        current=card();commit_prepared_copy_values(prepared,current,error_type=ValueError,preserve_physical_face=True)
+        self.assertEqual("Physical front",current.active_face)
+        self.assertEqual(values,current.annotations["copy_overrides"])
+        old=card();commit_prepared_copy_values(prepared,old,error_type=ValueError)
+        self.assertEqual("front",old.active_face)
+        token=card();token.is_token=True;token.object_kind="token"
+        commit_prepared_copy_values(prepared,token,error_type=ValueError,preserve_physical_face=True)
+        self.assertEqual("front",token.active_face)
+
+
+class EnchantedCopyNativeFixture(InheritedNativeFixture):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary=tempfile.TemporaryDirectory();root=Path(cls.temporary.name)
+        base=json.loads((ROOT/"tests/fixtures/bound-effect-program-cards.json").read_text(encoding="utf-8"))
+        base["cards"]=[row for row in base["cards"] if row["name"]=="Generic Bound Plains"];base["rulings"]=[]
+        path=root/"base.json";path.write_text(json.dumps(base),encoding="utf-8")
+        build_fixture_database([path,ROOT/"tests/fixtures/enchanted-source-token-copy-cards.json"],root/"enchanted-copy.sqlite3")
+        cls.db=CardDatabase(root/"enchanted-copy.sqlite3");cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition("Enchanted copies",[DeckEntry("Isamaru, Hound of Konda",1,"commander"),
+            DeckEntry("Generic Bound Plains",30)],["Isamaru, Hound of Konda"])
+
+    def tokens(self,s):
+        return [c for c in s.state.cards.values() if c.is_token and c.zone=="battlefield"]
+
+    def advance_to_upkeep_trigger(self,s,source):
+        for _ in range(400):
+            s.engine.pump()
+            if any(i.kind=="triggered_ability" and i.source_object_id==source.object_id for i in s.state.stack):
+                return
+            decision=s.state.pending_decision;self.assertIsNotNone(decision)
+            if decision.kind=="priority":command={"action_id":"pass"}
+            elif decision.kind=="combat.attackers":command={"action_id":"attack","attackers":{}}
+            elif decision.kind=="combat.blockers":command={"action_id":"block","blocks":{}}
+            elif decision.kind=="trigger.order":
+                group=next(g for g in s.state.pending_trigger_batches[0].groups if g.controller==decision.actors[0])
+                command={"action_id":"order","triggers":[i.ref for i in group.items]}
+            else:self.fail("Unexpected enchanted-copy turn decision: "+decision.kind)
+            result=s.act(s.pending_principals()[0],command);self.assertTrue(result.ok,result.summary)
+        self.fail("No printed upkeep trigger in full four-player rotation")
+
+    def trim_prepared_hands(self,s):
+        for seat in "ABCD":
+            for oid in tuple(s.state.players[seat].zones["hand"])[:2]:
+                s.engine.move_card(oid,"library",reason="Bound full-turn enchanted-copy fixture hands",log=False)
+
+    def paid_followed(self,seed,*,target_seat="B"):
+        s=self.session(seed);self.trim_prepared_hands(s)
+        body=self.add(s.engine,"Grizzly Bears",seat=target_seat)
+        source=self.add(s.engine,"Followed Footsteps",zone="hand")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":3,"U":2})
+        self.checkpoint(s);self.cast_for(s,"A",source,[body.ref]);self.assertIsNone(self.resolve(s))
+        self.assertEqual(("battlefield",body.object_id),(source.zone,source.attached_to))
+        self.assertFalse(any(s.state.players["A"].mana_pool.values()))
+        return s,source,body
+
+
+class EnchantedCopyNativeTests(EnchantedCopyNativeFixture,unittest.TestCase):
+    def test_two_full_originals_bind_normally_and_raw_fine_owner_cannot_be_stripped_without_coverage(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        fine="token.creation.enchanted_source_copy"
+        for j,name in enumerate(("Followed Footsteps","Mirrorhall Mimic // Ghastly Mimicry")):
+            s=self.session(707303400+j);source=self.add(s.engine,name,zone="hand");self.assert_closed(s,source)
+            ir=compile_oracle_card(self.db.lookup(name),capability_registry=self.registry,capability_profile="commander_review")
+            self.assertEqual("exact",ir.status,ir.material_residuals)
+            programs=[p for p in s.engine.semantics.programs_for_oracle(source.oracle_id) if fine in p.capability_dependencies]
+            self.assertTrue(programs)
+            for p in programs:
+                deps=tuple(d for d in p.capability_dependencies if d!=fine)
+                changed=replace(p,coverage=(),capability_dependencies=deps,
+                    capability_closure=self.registry.closure(deps,profile="commander_review").to_dict())
+                bound=bind_semantic_program_runtime(changed,capability_registry=self.registry,profile="commander_review")
+                self.assertFalse(bound["strict"])
+                self.assertIn("capability:undeclared_runtime_dependency:"+fine,bound["blockers"])
+
+    def test_actual_paid_aura_copies_opponents_creature_for_ability_controller_with_private_load_and_replay(self):
+        s=self.session(707303410);self.trim_prepared_hands(s)
+        body=self.add(s.engine,"Grizzly Bears",seat="B")
+        source=self.add(s.engine,"Followed Footsteps",zone="hand")
+        secret=self.add(s.engine,"Counterspell",seat="D",zone="hand",ref="enchanted-copy-private")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":3,"U":2});self.checkpoint(s)
+        self.cast_for(s,"A",source,[body.ref]);self.assertIsNone(self.resolve(s))
+        self.assertEqual(body.object_id,source.attached_to);self.assertFalse(any(s.state.players["A"].mana_pool.values()))
+        self.advance_to_upkeep_trigger(s,source)
+        trigger,=[i for i in s.state.stack if i.source_object_id==source.object_id]
+        self.assertFalse(trigger.targets)
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        token,=self.tokens(s);self.assertEqual(("A","A"),(token.owner,token.controller))
+        self.assertEqual("Grizzly Bears",token.printed_name)
+        self.assertEqual((2,2),tuple(s.engine._numeric_stat(token.object_id,k) for k in ("power","toughness")))
+        self.assertEqual("B",s.state.cards[body.object_id].controller)
+        for viewer in "ABC":self.assertNotIn(secret.ref,json.dumps(s.packet("pilot:"+viewer,full=True)))
+        self.replay(s,load=True)
+
+    def test_actual_source_removal_keeps_last_enchanted_creature_and_independent_trigger_replays(self):
+        s,source,body=self.paid_followed(707303420)
+        # Response mana is present before the record boundary and paid normally.
+        removal=self.add(s.engine,"Disenchant",seat="B",zone="hand")
+        for j in range(2):self.add(s.engine,"Generic Bound Plains",seat="B",ref="removal-plains-"+str(j))
+        self.checkpoint(s);self.advance_to_upkeep_trigger(s,source)
+        self.cast_for(s,"B",removal,[source.ref]);self.resolve_top(s)
+        self.assertEqual("graveyard",s.state.cards[source.object_id].zone)
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        token,=self.tokens(s);self.assertEqual(("A","A","Grizzly Bears"),(token.owner,token.controller,token.printed_name))
+        self.replay(s,load=True)
+
+    def test_actual_creature_blink_leaves_aura_unattached_and_creates_no_token_from_reentered_object(self):
+        s,source,body=self.paid_followed(707303430)
+        blink=self.add(s.engine,"Cloudshift",seat="B",zone="hand")
+        self.add(s.engine,"Generic Bound Plains",seat="B")
+        before_identity=body.logical_object_id
+        self.checkpoint(s);self.advance_to_upkeep_trigger(s,source)
+        self.cast_for(s,"B",blink,[body.ref]);self.resolve_top(s)
+        self.assertNotEqual(before_identity,s.state.cards[body.object_id].logical_object_id)
+        self.assertEqual("graveyard",s.state.cards[source.object_id].zone)
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        self.assertFalse(self.tokens(s))
+        self.replay(s,load=True)
+
+
+    def test_actual_paid_mimic_front_copies_creature_and_copiable_spirit_values_with_pending_load(self):
+        s=self.session(707303450)
+        body=self.add(s.engine,"Colossal Dreadmaw",seat="B")
+        source=self.add(s.engine,"Mirrorhall Mimic // Ghastly Mimicry",zone="hand")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":3,"U":1});self.checkpoint(s)
+        self.cast_for(s,"A",source)
+        self.assertEqual("replacement.order",self.resolve(s).kind)
+        s=self.replay(s,load=True)
+        option=next(r for r in s.packet("pilot:A",full=True)["decision"]["ctx"]["options"]
+                    if body.ref in r["id"] and not r["id"].startswith("decline:"))
+        command={"action_id":"choose","replacement":option["id"]}
+        before=authoritative_state_hash(s.state)
+        self.assertFalse(s.act("pilot:C",command).ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        result=s.act("pilot:A",command);self.assertTrue(result.ok,result.summary);self.assertIsNone(self.resolve(s))
+        current=s.state.cards[source.object_id];data=s.engine._effective_card_data(current)
+        self.assertEqual("Colossal Dreadmaw",data["name"])
+        self.assertEqual({"dinosaur","spirit"},set(s.engine._type_parts(data["type_line"])[1]))
+        self.assertEqual((6,6),tuple(s.engine._numeric_stat(current.object_id,k) for k in ("power","toughness")))
+        self.assertIn("trample",s.engine._combat_keywords(current))
+        self.assertFalse(any(s.state.players["A"].mana_pool.values()))
+        self.replay(s,load=True)
+
+    def test_actual_paid_disturb_aura_upkeep_copies_spirit_addition_and_printed_graveyard_destination_exiles(self):
+        s=self.session(707303440);self.trim_prepared_hands(s)
+        body=self.add(s.engine,"Grizzly Bears",seat="B")
+        source=self.add(s.engine,"Mirrorhall Mimic // Ghastly Mimicry",zone="graveyard")
+        removal=self.add(s.engine,"Disenchant",seat="B",zone="hand")
+        for j in range(2):self.add(s.engine,"Generic Bound Plains",seat="B",ref="mimic-removal-plains-"+str(j))
+        secret=self.add(s.engine,"Counterspell",seat="D",zone="hand",ref="mimic-private")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":3,"U":2});self.checkpoint(s)
+        action_id="cast:"+source.ref+":face:Ghastly Mimicry"
+        self.assertIn(action_id,[r["id"] for r in s.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]])
+        command={"action_id":action_id,"face":"Ghastly Mimicry","cost_option":"disturb","targets":[body.ref],"pay":"auto"}
+        before=authoritative_state_hash(s.state)
+        self.assertFalse(s.act("pilot:C",command).ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        result=s.act("pilot:A",command);self.assertTrue(result.ok,result.summary);self.assertIsNone(self.resolve(s))
+        self.assertEqual(("battlefield",body.object_id),(source.zone,source.attached_to))
+        self.assertFalse(any(s.state.players["A"].mana_pool.values()))
+        self.advance_to_upkeep_trigger(s,source);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        token,=self.tokens(s);self.assertEqual(("A","A"),(token.owner,token.controller))
+        self.assertEqual({"bear","spirit"},set(s.engine._type_parts(s.engine._effective_card_data(token)["type_line"])[1]))
+        self.assertEqual((2,2),tuple(s.engine._numeric_stat(token.object_id,k) for k in ("power","toughness")))
+        self.cast_for(s,"B",removal,[s.state.cards[source.object_id].ref]);self.assertIsNone(self.resolve(s))
+        self.assertEqual("exile",s.state.cards[source.object_id].zone)
+        for viewer in "ABC":self.assertNotIn(secret.ref,json.dumps(s.packet("pilot:"+viewer,full=True)))
+        self.replay(s,load=True)
+
+
+    def controlled_upkeep(self,seed):
+        from quorune.attachments import attach_objects
+        from quorune.control_effects import synchronize_control_effects
+        s=self.session(seed)
+        body=self.add(s.engine,"Grizzly Bears",seat="C")
+        source=self.add(s.engine,"Followed Footsteps",seat="A")
+        theft=self.add(s.engine,"Confiscate",seat="B")
+        self.add(s.engine,"Parallel Lives",seat="B")
+        self.assert_closed(s,source);self.assert_closed(s,theft)
+        attach_objects(s.state.cards,source,body,source_timestamp=source.zone_timestamp,players=s.state.players)
+        attach_objects(s.state.cards,theft,source,source_timestamp=theft.zone_timestamp,players=s.state.players)
+        synchronize_control_effects(s.engine,reason="Canonical initial Aura-control fixture")
+        self.assertEqual(("A","B","C"),(source.owner,source.controller,body.controller))
+        self.prepare(s);self.checkpoint(s);self.advance_to_upkeep_trigger(s,source)
+        trigger,=[i for i in s.state.stack if i.source_object_id==source.object_id]
+        self.assertEqual("B",trigger.controller)
+        return s,source,body
+
+    def test_actual_aura_owner_controller_and_creature_controller_are_distinct_and_creator_replacement_applies(self):
+        s,source,body=self.controlled_upkeep(707303460)
+        hidden=s.state.cards[s.state.players["D"].zones["hand"][0]].ref
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        tokens=self.tokens(s);self.assertEqual(2,len(tokens))
+        self.assertTrue(all((c.owner,c.controller)==("B","B") for c in tokens))
+        self.assertTrue(all(c.printed_name=="Grizzly Bears" for c in tokens))
+        self.assertEqual(("A","B","C"),(s.state.cards[source.object_id].owner,
+            s.state.cards[source.object_id].controller,s.state.cards[body.object_id].controller))
+        for viewer in "ABC":self.assertNotIn(hidden,json.dumps(s.packet("pilot:"+viewer,full=True)))
+        self.replay(s,load=True)
+
+    def test_actual_disk_simultaneous_departure_copies_last_enchanted_creature_and_replays(self):
+        s=self.session(707303470);self.trim_prepared_hands(s)
+        body=self.add(s.engine,"Grizzly Bears",seat="B")
+        source=self.add(s.engine,"Followed Footsteps",zone="hand")
+        disk=self.add(s.engine,"Nevinyrral's Disk",seat="B")
+        self.add(s.engine,"Generic Bound Plains",seat="B")
+        self.assert_closed(s,source);self.assert_closed(s,disk)
+        self.prepare(s,mana={"C":3,"U":2});self.checkpoint(s)
+        self.cast_for(s,"A",source,[body.ref]);self.assertIsNone(self.resolve(s))
+        self.advance_to_upkeep_trigger(s,source);self.priority(s,"B")
+        action,=[r for r in s.packet("pilot:B",full=True)["decision"]["ctx"]["legal"]["actions"]
+                 if r["id"].startswith("activate:"+disk.ref+":")]
+        result=s.act("pilot:B",{"action_id":action["id"],"pay":"auto"});self.assertTrue(result.ok,result.summary)
+        self.resolve_top(s)
+        self.assertTrue(all(s.state.cards[c.object_id].zone=="graveyard" for c in (source,body,disk)))
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        token,=self.tokens(s);self.assertEqual(("A","A","Grizzly Bears"),(token.owner,token.controller,token.printed_name))
+        self.assertEqual((2,2),tuple(s.engine._numeric_stat(token.object_id,k) for k in ("power","toughness")))
+        self.replay(s,load=True)
+
+    def test_actual_post_copy_group_fault_rolls_back_full_state_and_loads_retries(self):
+        from quorune import token_creation as owner
+        s,source,body=self.controlled_upkeep(707303480)
+        original=owner.create_tokens;seen=[];failed=None;before=None
+        def fault(*args,**kwargs):
+            created=original(*args,**kwargs);seen.extend(created)
+            raise GameRuleError("Injected enchanted-copy post-group fault")
+        with patch.object(owner,"create_tokens",side_effect=fault):
+            for _ in range(16):
+                actor=s.pending_principals()[0];before=authoritative_state_hash(s.state)
+                result=s.act(actor,{"action_id":"pass"})
+                if not result.ok:
+                    self.assertIn("Injected enchanted-copy",result.summary);failed=actor;break
+            else:self.fail("Canonical copy group was not reached")
+        self.assertEqual(2,len(seen));self.assertEqual(before,authoritative_state_hash(s.state))
+        self.assertFalse(self.tokens(s))
+        s=self.replay(s,load=True);result=s.act(failed,{"action_id":"pass"});self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(s));self.assertEqual(2,len(self.tokens(s)))
+        self.assertTrue(all((c.owner,c.controller)==("B","B") for c in self.tokens(s)))
+        self.replay(s,load=True)
+
+    def test_fresh_native_wrong_creator_mutant_is_killed_with_original_aura_owner_held_constant(self):
+        from quorune import token_creation as owner
+        method="test_actual_aura_owner_controller_and_creature_controller_are_distinct_and_creator_replacement_applies"
+        baseline=unittest.TestResult();type(self)(method).run(baseline)
+        self.assertEqual((0,0),(len(baseline.failures),len(baseline.errors)))
+        original=owner.create_tokens;seen=[]
+        def wrong(host,creator,*args,**kwargs):
+            seen.append(creator);return original(host,"A",*args,**kwargs)
+        changed=unittest.TestResult()
+        with patch.object(owner,"create_tokens",wrong):type(self)(method).run(changed)
+        self.assertEqual(["B"],seen);self.assertEqual([],changed.errors);self.assertEqual(1,len(changed.failures))
+
+
+class EnchantedCopyWithdrawalTests(EnchantedCopyNativeFixture,unittest.TestCase):
+    def test_genuine_verified_fine_and_reference_parent_withdrawals_block_both_full_originals(self):
+        from copy import deepcopy
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        raw=json.loads((ROOT/"quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        doc=read_evidence_document(ROOT/"platform/capability-evidence-declarations.json")
+        known=set(discover_tests(ROOT).values())
+        def verified(value):
+            r=CapabilityRegistry(value)
+            index=build_index(registry_value=value,declaration_source=doc,discovered_test_ids=known)
+            r.mark_evidence_verified(validate_capability_evidence_index(index,registry=r));return r
+        baseline=verified(raw);cards=[self.db.lookup(name) for name in
+            ("Followed Footsteps","Mirrorhall Mimic // Ghastly Mimicry")]
+        dependencies={}
+        for card in cards:
+            ir=compile_oracle_card(card,capability_registry=baseline,capability_profile="commander_review")
+            self.assertEqual("exact",ir.status,ir.material_residuals)
+            dependencies[card.oracle_id]=tuple(d for f in ir.faces for n in f.nodes for d in n.capability_dependencies)
+        for cap in ("token.creation.enchanted_source_copy","token.creation.fixed_copy","object.reference.source_attachment_information"):
+            changed=deepcopy(raw);next(r for r in changed["capabilities"] if r["id"]==cap).update(
+                status="blocked",blockers=["focused enchanted-copy owner withdrawal"])
+            withdrawn=verified(changed)
+            for card in cards:
+                self.assertIn(cap,dependencies[card.oracle_id])
+                self.assertNotEqual("exact",compile_oracle_card(card,capability_registry=withdrawn,capability_profile="commander_review").status)
+                self.assertIn("status:"+cap+":blocked",withdrawn.closure(dependencies[card.oracle_id],profile="commander_review").blockers)
+            self.assertEqual("exact",compile_oracle_card(self.db.lookup("Grizzly Bears"),capability_registry=withdrawn).status)
+            if cap!="token.creation.fixed_copy":
+                self.assertEqual("exact",compile_oracle_card(token_record("Ordinary targeted copy",
+                    "Create a token that's a copy of target creature you control.",707303499),
+                    capability_registry=withdrawn).status)
+
+class EventReferentCopyCompilerTests(unittest.TestCase):
+    def test_event_it_is_the_same_closed_recipe_as_explicit_event_creature(self):
+        from quorune.compiler.token_copy_templates import token_copy_recipe_template
+        for event in ("permanent.enter","artifact.enter","creature.enter","creature.dies","permanent.graveyard","permanent.leave"):
+            with self.subTest(event=event):
+                kw=dict(source_name="Generic Observer",source_is_permanent=True,event=event)
+                old=token_copy_recipe_template("Create a token that's a copy of that creature, except the token isn't legendary.",**kw)
+                new=token_copy_recipe_template("Create a token that's a copy of it, except the token isn't legendary.",**kw)
+                self.assertIsNotNone(new)
+                self.assertEqual(old,new)
+                self.assertEqual("event_object",new.effect["copy_spec"]["origin"])
+
+    def test_it_without_an_owned_public_event_never_becomes_a_self_or_target_copy(self):
+        from quorune.compiler.token_copy_templates import token_copy_recipe_template
+        for event in (None,"resolve","activate","spell.cast","spell.cast.self","creature.attacks","player.draw_card"):
+            with self.subTest(event=event):
+                self.assertIsNone(token_copy_recipe_template("Create a token that's a copy of it, except it isn't legendary.",
+                    source_name="Generic Observer",source_is_permanent=True,event=event))
+        for body in ("Create a token that's a copy of it and draw a card.",
+                     "Create a token that's a copy of it, except its power is equal to your life total."):
+            self.assertIsNone(token_copy_recipe_template(body,source_name="Generic Observer",
+                source_is_permanent=True,event="creature.enter"))
+
+    def test_full_normalized_entry_pronoun_requires_event_and_copy_owners(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        from quorune.rules.capabilities import load_default_capability_registry
+        ir=compile_oracle_card(token_record("Generic Entry Copy",
+            "Whenever another nontoken Dragon you control enters, create a token that's a copy of it, except the token isn't legendary.",27071801,type_line="Enchantment"),
+            capability_registry=load_default_capability_registry(),capability_profile="commander_review")
+        self.assertEqual("exact",ir.status,ir.material_residuals)
+        node=next(n for n in ir.faces[0].nodes if n.kind=="triggered_ability")
+        self.assertEqual("event_object",TokenCopyRecipeSpec.from_dict(node.effects[0]["copy_spec"]).origin)
+        self.assertIn("token.creation.fixed_copy",node.capability_dependencies)
+        self.assertIn("trigger.event.normalized_zone_change",node.capability_dependencies)
+        self.assertEqual(1,node.span.line)
+
+class EventReferentCopyNativeFixture(InheritedNativeFixture):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary=tempfile.TemporaryDirectory();folder=Path(cls.temporary.name)
+        base=json.loads((ROOT/"tests/fixtures/bound-effect-program-cards.json").read_text(encoding="utf-8"))
+        base["cards"]=[r for r in base["cards"] if r["name"]=="Generic Bound Plains"];base["rulings"]=[]
+        path=folder/"base.json";path.write_text(json.dumps(base),encoding="utf-8")
+        build_fixture_database([path,ROOT/"tests/fixtures/event-referent-copy-cards.json"],folder/"event-copy.sqlite3")
+        cls.db=CardDatabase(folder/"event-copy.sqlite3");cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition("Event copy",[DeckEntry("Isamaru, Hound of Konda",1,"commander"),
+            DeckEntry("Generic Bound Plains",30)],["Isamaru, Hound of Konda"])
+
+    def event_tokens(self,s):
+        return [c for c in s.state.cards.values() if c.is_token and c.zone=="battlefield"]
+
+
+class EventReferentCopyNativeTests(EventReferentCopyNativeFixture,unittest.TestCase):
+    def test_actual_paid_original_qualifies_only_other_controlled_nontoken_dragons_and_copies_nonlegendary(self):
+        s=self.session(70720701)
+        source=self.add(s.engine,"Miirym, Sentinel Wyrm",zone="hand")
+        own=self.add(s.engine,"Rorix Bladewing",zone="hand",ref="event-copy-own-dragon")
+        foreign=self.add(s.engine,"Rorix Bladewing",seat="B",ref="event-copy-foreign-dragon")
+        blink=self.add(s.engine,"Cloudshift",seat="B",zone="hand")
+        bear=self.add(s.engine,"Grizzly Bears",zone="hand")
+        secret=self.add(s.engine,"Unsummon",seat="D",zone="hand",ref="event-copy-private")
+        for card in (source,own,foreign,bear,blink):self.assert_closed(s,card)
+        self.prepare(s,mana={"C":7,"G":2,"U":1,"R":4})
+        s.state.players["B"].mana_pool.update({"W":1})
+        self.checkpoint(s)
+        self.cast_for(s,"A",source);self.assertIsNone(self.resolve(s))
+        self.assertFalse(self.event_tokens(s))
+        self.cast_for(s,"A",bear);self.assertIsNone(self.resolve(s))
+        self.assertFalse(self.event_tokens(s))
+        old_incarnation=foreign.logical_object_id
+        self.cast_for(s,"B",blink,[foreign.ref]);self.assertIsNone(self.resolve(s))
+        self.assertNotEqual(old_incarnation,s.state.cards[foreign.object_id].logical_object_id)
+        self.assertFalse(self.event_tokens(s))
+        for seat in "ABC":self.assertNotIn(secret.ref,json.dumps(s.packet("pilot:"+seat,full=True)))
+        self.cast_for(s,"A",own);self.resolve_top(s)
+        self.assertEqual(1,sum(i.kind=="triggered_ability" and i.source_object_id==source.object_id for i in s.state.stack))
+        s=self.replay(s,load=True)
+        self.assertIsNone(self.resolve(s))
+        token,=self.event_tokens(s)
+        self.assertEqual(("A","A"),(token.owner,token.controller))
+        self.assertEqual(own.object_id,token.annotations["copied_from"])
+        data=s.engine._copyable_characteristics(token)
+        self.assertEqual("Rorix Bladewing",data["name"])
+        self.assertNotIn("Legendary",data["type_line"])
+        self.assertEqual((6,5),tuple(s.engine._numeric_stat(token.object_id,k) for k in ("power","toughness")))
+        self.assertEqual(1,len(self.event_tokens(s)))
+        self.replay(s,load=True)
+
+    def test_full_original_binds_normally_through_the_canonical_adapter(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        card=self.db.lookup("Miirym, Sentinel Wyrm")
+        program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile="commander_review")
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.registry,
+            profile="commander_review")["strict_capability_ready"])
+
+
+    def choose_entry_copy(self, session, referent):
+        decision = self.resolve(session)
+        self.assertEqual("replacement.order", decision.kind)
+        option, = (
+            row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            if referent.ref in row["id"] and not row["id"].startswith("decline:")
+        )
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": option["id"]})
+        self.assertTrue(result.ok, result.summary)
+
+    def pending_copied_entrant(self, seed, *, double=False):
+        session = self.session(seed)
+        engine = session.engine
+        source = self.add(engine, "Miirym, Sentinel Wyrm", zone="hand")
+        dragon = self.add(engine, "Rorix Bladewing", seat="B", ref="event-copy-basis")
+        bear = self.add(engine, "Grizzly Bears", seat="C")
+        entrant = self.add(engine, "Clone", zone="hand")
+        blink = self.add(engine, "Cloudshift", zone="hand")
+        self.add(engine, "Parallel Lives", seat="B", ref="event-copy-foreign-doubler")
+        if double:
+            self.add(engine, "Parallel Lives", ref="event-copy-own-doubler")
+        for card in (source, dragon, bear, entrant, blink):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 6, "G": 1, "U": 2, "R": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", source, reserve={"W": 1, "U": 1})
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "A", entrant, reserve={"W": 1})
+        self.assertEqual(1, session.state.players["A"].mana_pool.get("W", 0))
+        self.choose_entry_copy(session, dragon)
+        self.assertEqual(1, len(session.state.stack))
+        trigger = session.state.stack[-1]
+        self.assertEqual(("triggered_ability", source.object_id, "A"),
+                         (trigger.kind, trigger.source_object_id, trigger.controller))
+        current = session.state.cards[entrant.object_id]
+        self.assertEqual("Rorix Bladewing", engine._copyable_characteristics(current)["name"])
+        self.assertEqual((current.ref, current.logical_object_id),
+                         (trigger.context["card"], trigger.context["card_object_identity"]))
+        self.assertFalse(self.event_tokens(session))
+        return session, entrant, blink, bear
+
+    def return_as_bear(self, session, entrant, blink, bear):
+        old = session.state.cards[entrant.object_id].logical_object_id
+        self.cast_for(session, "A", blink, [entrant.ref])
+        self.choose_entry_copy(session, bear)
+        current = session.state.cards[entrant.object_id]
+        self.assertNotEqual(old, current.logical_object_id)
+        self.assertEqual("Grizzly Bears", session.engine._copyable_characteristics(current)["name"])
+        self.assertEqual(1, len(session.state.stack))
+        from quorune.token_copy_references import COPY_REFERENCE_CONTEXT
+        captured = session.state.stack[-1].context[COPY_REFERENCE_CONTEXT]["event_object"]
+        self.assertEqual(old, captured["logical_object_id"])
+        self.assertEqual("Rorix Bladewing", captured["snapshot"]["characteristics"]["name"])
+
+    def assert_entrant_copies(self, session, entrant, count):
+        tokens = self.event_tokens(session)
+        self.assertEqual(count, len(tokens))
+        for card in tokens:
+            self.assertEqual(("A", "A"), (card.owner, card.controller))
+            self.assertEqual(entrant.object_id, card.annotations["copied_from"])
+            characteristics = session.engine._copyable_characteristics(card)
+            self.assertEqual("Rorix Bladewing", characteristics["name"])
+            self.assertNotIn("Legendary", characteristics["type_line"])
+
+    def test_paid_copy_entrant_uses_live_copiable_values_and_creators_replacement(self):
+        session, entrant, _blink, _bear = self.pending_copied_entrant(70720702, double=True)
+        self.assertIsNone(self.resolve(session))
+        self.assert_entrant_copies(session, entrant, 2)
+        self.replay(session, load=True)
+
+    def test_paid_blinked_entrant_keeps_departure_copy_values_across_load_and_replay(self):
+        session, entrant, blink, bear = self.pending_copied_entrant(70720703)
+        self.return_as_bear(session, entrant, blink, bear)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assert_entrant_copies(session, entrant, 1)
+        self.replay(session, load=True)
+
+    def test_actual_post_copy_fault_restores_full_state_and_loads_before_retry(self):
+        from quorune import token_creation as owner
+        session, entrant, _blink, _bear = self.pending_copied_entrant(70720704, double=True)
+        original = owner.create_tokens
+        seen = []
+
+        def fail_after_group(*args, **kwargs):
+            seen.extend(original(*args, **kwargs))
+            raise GameRuleError("Injected event-copy fault after token group")
+
+        with patch.object(owner, "create_tokens", side_effect=fail_after_group):
+            for _ in range(12):
+                principal = session.pending_principals()[0]
+                before = authoritative_state_hash(session.state)
+                result = session.act(principal, {"action_id": "pass"})
+                if not result.ok:
+                    self.assertIn("Injected event-copy fault", result.summary)
+                    break
+            else:
+                self.fail("The canonical token creation group was not reached")
+        self.assertEqual(2, len(seen))
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertFalse(self.event_tokens(session))
+        session = self.replay(session, load=True)
+        self.assertTrue(session.act(principal, {"action_id": "pass"}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assert_entrant_copies(session, entrant, 2)
+        self.replay(session, load=True)
+
+    def test_native_reentry_substitution_mutant_changes_the_copied_values(self):
+        from quorune import token_copy_runtime as runtime
+        from quorune.token_copy_references import _snapshot
+        original = runtime.copy_reference_snapshot
+        seen = []
+
+        def substitute(host, item, recipe, *, target_index=None):
+            bound = original(host, item, recipe, target_index=target_index)
+            if recipe.origin != "event_object":
+                return bound
+            current = host.state.cards[bound["object_id"]]
+            seen.append((bound["logical_object_id"], current.logical_object_id))
+            return _snapshot(host, current)
+
+        outcome = unittest.TestResult()
+        with patch.object(runtime, "copy_reference_snapshot", substitute):
+            type(self)("test_paid_blinked_entrant_keeps_departure_copy_values_across_load_and_replay").run(outcome)
+        self.assertEqual([], outcome.errors)
+        self.assertEqual(1, len(seen))
+        self.assertNotEqual(*seen[0])
+        self.assertEqual(1, len(outcome.failures))
+        self.assertIn("Grizzly Bears", outcome.failures[0][1])
+
+
+class EventReferentCopyWithdrawalTests(EventReferentCopyNativeFixture, unittest.TestCase):
+    def test_genuinely_verified_copy_and_event_withdrawals_block_complete_original(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw = json.loads(CAPABILITY_REGISTRY_PATH.read_text(encoding="utf-8"))
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        tests = set(discover_tests(ROOT).values())
+        card = self.db.lookup("Miirym, Sentinel Wyrm")
+
+        def registry_with_verified_index(value):
+            registry = CapabilityRegistry(value)
+            index = build_index(registry_value=value, declaration_source=declarations, discovered_test_ids=tests)
+            registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+            return registry
+
+        def binding(record, registry):
+            program = compile_best_available_card_program(
+                self.db, record, semantic_registry=SemanticRegistry(), capability_registry=registry,
+                capability_profile="commander_review",
+            )
+            return bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+
+        baseline = registry_with_verified_index(raw)
+        self.assertTrue(binding(card, baseline)["strict_capability_ready"])
+        for capability in ("token.creation.fixed_copy", "trigger.event.normalized_zone_change"):
+            with self.subTest(capability=capability):
+                updated = copy.deepcopy(raw)
+                owner = next(row for row in updated["capabilities"] if row["id"] == capability)
+                owner.update(status="blocked", blockers=["Focused event-copy owner withdrawal"])
+                registry = registry_with_verified_index(updated)
+                self.assertFalse(binding(card, registry)["strict_capability_ready"])
+                self.assertTrue(binding(self.db.lookup("Grizzly Bears"), registry)["strict_capability_ready"])

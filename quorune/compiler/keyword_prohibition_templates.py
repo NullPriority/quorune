@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 

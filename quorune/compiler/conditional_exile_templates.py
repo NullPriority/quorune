@@ -7,7 +7,7 @@ with an explicit conditional source-departure lifecycle.
 """
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..replacement.immutable import FrozenMap
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type

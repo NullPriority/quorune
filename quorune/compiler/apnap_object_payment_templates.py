@@ -1,6 +1,6 @@
 """One fixed optional discard or sacrifice per affected player."""
 
-import re
+from . import regex_working_set as re
 
 from ..apnap_object_payment import DECLINED_LIFE_LOSS
 from .affected_player_discard_templates import fixed_affected_player_discard_effect_template

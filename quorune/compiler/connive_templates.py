@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Full-consumption fixed Connive grammar with exact recipient bindings."""
 
-import re
+from . import regex_working_set as re
 from ..connive import FixedConniveSpec, connive_effect, CONNIVE_MECHANIC
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_numbers import fixed_number

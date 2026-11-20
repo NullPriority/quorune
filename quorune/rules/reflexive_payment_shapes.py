@@ -105,11 +105,17 @@ def _live_count_result_capabilities(effects, schema, mechanics):
 
     if len(effects) != 1 or PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
         return ()
-    field = {'damage': 'amount', 'mill': 'count', 'place_counters': 'amount'}.get(effects[0].get('op'))
+    effect, = effects
+    operation = effect.get('op')
+    if (operation == 'modify_stats_until_end_of_turn' and schema is not None
+            and effect.get('power') == effect.get('toughness')):
+        field = 'power'
+    else:
+        field = {'damage': 'amount', 'mill': 'count', 'place_counters': 'amount'}.get(operation)
     if field is None:
         return ()
     try:
-        amount = PublicQueryAmountSpec.from_dict(effects[0][field])
+        amount = PublicQueryAmountSpec.from_dict(effect[field])
     except (KeyError, TypeError, ValueError):
         return ()
     quantity = amount.quantity

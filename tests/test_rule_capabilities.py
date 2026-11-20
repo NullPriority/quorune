@@ -73,17 +73,14 @@ class CapabilityValidationSnapshotTests(unittest.TestCase):
 
         registry_text = REGISTRY_PATH.read_text(encoding="utf-8")
         evidence_text = evidence.DEFAULT_CAPABILITY_EVIDENCE.read_text(encoding="utf-8")
-        original_loader = evidence.load_capability_evidence_index
         with TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "registry.json"
             index = root / "evidence.json"
             source.write_text(registry_text, encoding="utf-8")
             index.write_text(evidence_text, encoding="utf-8")
-            def load_index(*, registry):
-                return original_loader(index, registry=registry)
             with patch.object(capabilities, "DEFAULT_CAPABILITY_REGISTRY", source), patch.object(
-                evidence, "load_capability_evidence_index", side_effect=load_index
+                evidence, "DEFAULT_CAPABILITY_EVIDENCE", index
             ):
                 with _capability_validation_snapshot():
                     load_default_capability_registry()
@@ -147,7 +144,7 @@ class CapabilityValidationSnapshotTests(unittest.TestCase):
             with self.assertRaisesRegex(CapabilityRegistryError, "resolvable implementation"):
                 with _capability_validation_snapshot():
                     load_default_capability_registry()
-        with patch("quorune.rules.evidence.load_capability_evidence_index",
+        with patch("quorune.rules.evidence.validate_capability_evidence_index",
                    side_effect=CapabilityEvidenceError("changed evidence")):
             with self.assertRaisesRegex(CapabilityEvidenceError, "changed evidence"):
                 with _capability_validation_snapshot():

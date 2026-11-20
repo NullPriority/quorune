@@ -1,5 +1,5 @@
 """Lower a complete attacking rider over an existing fixed creature producer."""
-import re
+from . import regex_working_set as re
 
 from ..rules.attacking_token_results import ATTACKING_TOKEN_MECHANIC, ATTACKING_TOKEN_OPERATION
 

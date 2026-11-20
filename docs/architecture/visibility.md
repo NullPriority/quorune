@@ -33,6 +33,12 @@ promote a spectator, select another seat, or request an analyst view.
 
 ## Projection invariants
 
+Action explanations obey the same hidden-library boundary as card views. A top
+library land receives an explanation only when that seat already knows the
+card or a current library-top visibility grant applies. A land face, library
+ownership or unavailable play permission alone does not reveal its reference.
+Explanations remain descriptive and never grant a playable action.
+
 Persistent hand visibility uses the existing trusted action-permission collector.
 Its typed all-player or source-opponent scope is evaluated from current phased-in
 battlefield sources, controllers, faces and abilities. Projected known hands,

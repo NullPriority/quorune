@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete public-player hand-count grammar, retaining its direct target."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from ..scalar_effect_amount_model import ScalarAmountOrigin,ScalarEffectAmountSpec,direct_player_amount_target_is_closed

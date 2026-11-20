@@ -375,6 +375,10 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
         s=self.choose_merge(s,'bottom',load=True);self.assertIsNone(self.resolve(s))
         retained=s.state.cards[root.object_id]
         self.assertEqual((original,'C',3),(retained.logical_object_id,retained.controller,retained.counters['+1/+1']))
+        ledger=s.state.spell_resolution_name_ledger
+        self.assertFalse(ledger.pending)
+        self.assertTrue(ledger.history.has_same_name_resolution('A',('Glowstone Recluse',)))
+        self.assertFalse(ledger.history.has_same_name_resolution('C',('Glowstone Recluse',)))
         self.assertEqual((5,5),(s.engine._numeric_stat(retained.object_id,'power'),s.engine._numeric_stat(retained.object_id,'toughness')))
         self.mutate(s,second,retained);s=self.choose_merge(s,'bottom')
         self.assertEqual('trigger.order',s.state.pending_decision.kind)

@@ -1,0 +1,414 @@
+"""CR707.10: copied stack objects retain their source and paid choices."""
+from dataclasses import replace
+from copy import deepcopy
+from types import SimpleNamespace
+import json
+from pathlib import Path
+import tempfile
+import unittest
+from unittest.mock import patch
+
+from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
+from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+from quorune.rules.capabilities import load_default_capability_registry
+from quorune.record import authoritative_state_hash
+from scripts.build_test_database import build_fixture_database
+import test_target_recipient_results as recipients
+
+from quorune.stack_spell_copy_model import FixedStackSpellCopySpec, FixedQualifiedStackCopySpec, qualified_stack_copy_specs
+from quorune.compiler.fixed_stack_spell_copy import fixed_stack_spell_copy_template
+from quorune.rules.stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
+from quorune.ability_source_information import ability_source_filter_dependencies, ABILITY_SOURCE_INFORMATION_CAPABILITY
+from quorune.model import StackItem
+from quorune.target_predicates import target_predicate_matches
+from quorune.targets import target_plan
+
+NAMES = ['Lithoform Engine', 'Strionic Resonator', "Tawnos, Urza's Apprentice", 'Abstruse Archaic']
+FIXTURE = ROOT/'tests/fixtures/fixed-qualified-stack-copy-cards.json'
+
+
+class QualifiedStackCopyModelTests(unittest.TestCase):
+    def test_closed_copy_kinds_preserve_old_spell_wire_and_every_target_policy(self):
+        old = FixedStackSpellCopySpec(True)
+        self.assertEqual({'schema_version': 1, 'controlled_only': True}, old.to_dict())
+        self.assertEqual(old, FixedStackSpellCopySpec.from_dict(old.to_dict()))
+        for spec in qualified_stack_copy_specs():
+            self.assertEqual(spec, FixedQualifiedStackCopySpec.from_dict(spec.to_dict()))
+            self.assertEqual('you', spec.target_schema['controller_relation'])
+            self.assertTrue(spec.target_schema['source_exclusion'])
+            self.assertEqual(spec.target_kind == 'permanent_spell', bool(spec.effects[0].get('retain_targets_only')))
+            for changes in ({'schema_version': True}, {'schema_version': 2}, {'target_kind': 'spell'},
+                    {'source_filter': 'creature'}, {'kind': 'fixed_instant_sorcery_copy'}, {'extra': True}):
+                with self.subTest(spec=spec, changes=changes), self.assertRaises(ValueError):
+                    FixedQualifiedStackCopySpec.from_dict({**spec.to_dict(), **changes})
+
+    def test_complete_copy_clauses_lower_and_open_or_incompatible_policies_stay_closed(self):
+        lines = [
+            'Copy target permanent spell you control.',
+            'Copy target triggered ability you control. You may choose new targets for the copy.',
+            'Copy target activated or triggered ability you control. You may choose new targets for the copy.',
+            'Copy target activated or triggered ability you control from an artifact source. You may choose new targets for the copy.',
+            'Copy target activated or triggered ability you control from a colorless source. You may choose new targets for the copy.',
+        ]
+        for line in lines:
+            self.assertIsNotNone(fixed_stack_spell_copy_template(line))
+            self.assertIsNone(fixed_stack_spell_copy_template(line+' Draw a card.'))
+        for line in ('Copy target activated or triggered ability.', 'Copy target triggered ability you control from an artifact source. You may choose new targets for the copy.',
+                'Copy target permanent spell you control. You may choose new targets for the copy.'):
+            self.assertIsNone(fixed_stack_spell_copy_template(line))
+
+    def test_source_filters_have_closed_controlled_schema_and_fine_information_dependency(self):
+        for source in ('artifact', 'colorless'):
+            spec = FixedQualifiedStackCopySpec('activated_or_triggered_ability', source)
+            self.assertEqual((ABILITY_SOURCE_INFORMATION_CAPABILITY,), ability_source_filter_dependencies(spec.target_schema))
+            for changes in ({'controller_relation': 'opponent'}, {'count': 2}, {'categories': ['spell']}, {'extra': True}):
+                with self.assertRaises(ValueError): ability_source_filter_dependencies({**spec.target_schema, **changes})
+
+    def test_source_qualification_distinguishes_unavailable_from_colorless_and_exact_kind(self):
+        def matches(spec, *, kind='activated_ability', source_types=('artifact',), colors=()):
+            item = StackItem(stack_id='ability', ref='S1', kind=kind, controller='A', label='Ability')
+            group = target_plan(spec.target_schema).groups[0]
+            row = {'ref': 'S1', 'zone': 'stack', 'category': 'ability', 'stack_item': item,
+                'ability_source_types': None if source_types is None else frozenset(source_types),
+                'ability_source_colors': None if colors is None else frozenset(colors)}
+            return target_predicate_matches(SimpleNamespace(), group, row, types=set(), supertypes=set(), colors=set(), derived={})
+        artifact = FixedQualifiedStackCopySpec('activated_or_triggered_ability', 'artifact')
+        colorless = FixedQualifiedStackCopySpec('activated_or_triggered_ability', 'colorless')
+        self.assertTrue(matches(artifact)); self.assertTrue(matches(artifact, kind='triggered_ability'))
+        self.assertFalse(matches(artifact, source_types=('creature',))); self.assertFalse(matches(artifact, source_types=None))
+        self.assertTrue(matches(colorless)); self.assertFalse(matches(colorless, colors=('G',)))
+        self.assertFalse(matches(colorless, colors=None)); self.assertFalse(matches(colorless, source_types=None))
+        self.assertFalse(matches(artifact, kind='spell'))
+
+    def test_declaration_gate_keeps_effect_target_policy_and_concrete_source_dependency(self):
+        for spec in qualified_stack_copy_specs():
+            deps = fixed_stack_spell_copy_node_capabilities(effects=spec.effects,
+                target_schema=spec.target_schema, mechanic_ids=spec.mechanics)
+            self.assertIn('stack.copy.fixed_qualified_target', deps)
+            self.assertEqual(spec.source_filter is not None, ABILITY_SOURCE_INFORMATION_CAPABILITY in deps)
+            bad = {**spec.effects[0], 'retain_targets_only': spec.target_kind != 'permanent_spell'}
+            self.assertFalse(fixed_stack_spell_copy_node_capabilities(effects=(bad,), target_schema=spec.target_schema, mechanic_ids=spec.mechanics))
+
+    def test_runtime_minimum_is_derived_from_data_without_coverage_or_handlers(self):
+        from quorune.rules.stack_spell_copy_shapes import qualified_stack_copy_runtime_dependencies
+        for spec in qualified_stack_copy_specs():
+            p = SimpleNamespace(effects=spec.effects, target_schema=spec.target_schema, coverage=(), handlers=())
+            self.assertIn('stack.copy.fixed_qualified_target', qualified_stack_copy_runtime_dependencies(p))
+            for target in ({**spec.target_schema, 'controller_relation': 'opponent'},
+                    {**spec.target_schema, 'count': 2}):
+                with self.assertRaises(ValueError):
+                    qualified_stack_copy_runtime_dependencies(SimpleNamespace(effects=spec.effects, target_schema=target))
+        old = FixedStackSpellCopySpec(True)
+        self.assertFalse(qualified_stack_copy_runtime_dependencies(SimpleNamespace(effects=old.effects, target_schema=old.target_schema)))
+
+
+class QualifiedStackCopyCompilerTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory(); path = Path(cls.temporary.name)/'qualified-copy.sqlite3'
+        build_fixture_database([FIXTURE], path); cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
+
+    @classmethod
+    def tearDownClass(cls): cls.db.close(); cls.temporary.cleanup()
+
+    def test_all_four_originals_have_normal_complete_admission_and_source_spans(self):
+        from quorune.semantics import SemanticRegistry
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime, bind_semantic_program_runtime
+        semantics = SemanticRegistry(); cards = [self.db.lookup(n, fuzzy=False) for n in NAMES]
+        register_generated_programs(self.db, semantics, cards, trust_level='provisional', capability_registry=self.registry,
+            capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        for card in cards:
+            with self.subTest(card=card.name):
+                ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                for face in ir.faces:
+                    for node in face.nodes: self.assertEqual(node.text, card.oracle_text[node.span.start:node.span.end])
+                program = compile_best_available_card_program(self.db, card, semantic_registry=semantics,
+                    capability_registry=self.registry, capability_profile='commander_review')
+                bound = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+                self.assertTrue(bound['strict_capability_ready'], (card.name, bound['blockers']))
+                for ability in semantics.programs_for_oracle(card.oracle_id, event='activate'):
+                    if not any(effect.get('op') == 'copy_stack_item' for effect in ability.effects): continue
+                    if 'stack.copy.fixed_qualified_target' not in ability.capability_dependencies: continue
+                    deps = tuple(x for x in ability.capability_dependencies if x != 'stack.copy.fixed_qualified_target')
+                    altered = replace(ability, handlers=(), coverage=(), capability_dependencies=deps,
+                        capability_closure=self.registry.closure(deps, profile='commander_review').to_dict())
+                    checked = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile='commander_review')
+                    self.assertFalse(checked['strict'])
+                    self.assertIn('capability:undeclared_runtime_dependency:stack.copy.fixed_qualified_target', checked['blockers'])
+
+    def test_genuine_copy_owner_withdrawal_keeps_the_old_spell_copy_owner(self):
+        from copy import deepcopy
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8')); raw = deepcopy(raw)
+        next(r for r in raw['capabilities'] if r['id'] == 'stack.copy.fixed_qualified_target').update(status='blocked', blockers=['owner withdrawn'])
+        registry = CapabilityRegistry(raw); index = build_index(registry_value=raw,
+            declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        for name in NAMES: self.assertNotEqual('exact', compile_oracle_card(self.db.lookup(name), capability_registry=registry, capability_profile='commander_review').status)
+        self.assertEqual('exact', compile_oracle_card(self.db.lookup('Reverberate'), capability_registry=registry, capability_profile='commander_review').status)
+
+    def test_reviewed_copy_replacement_requires_complete_current_source_and_unchanged_cost(self):
+        from quorune.semantics import SemanticRegistry
+        from quorune.compiler.activated_ability_catalog import with_activated_ability_catalog
+        from quorune.card_programs.activation_view_equivalence import shadowed_reviewed_activation_view_keys
+        semantics = SemanticRegistry(); card = self.db.lookup('Lithoform Engine')
+        legacy = semantics.programs_for_oracle(card.oracle_id)
+        register_generated_programs(self.db, semantics, [card], trust_level='provisional', capability_registry=self.registry,
+            capability_profile='commander_review', promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        current = semantics.programs_for_oracle(card.oracle_id)
+        augmented = with_activated_ability_catalog(card, legacy, reference_programs=current)
+        def keys(new=current, old=augmented):
+            return shadowed_reviewed_activation_view_keys(card, new, old,
+                capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual({p.key for p in augmented if p.event == 'activate'}, keys())
+        for old in augmented:
+            if old.event != 'activate': continue
+            for changed in (replace(old, provenance={**old.provenance, 'source_oracle_hash': 'stale'}),
+                    replace(old, provenance={**old.provenance, 'source_rulings_hash': 'stale'}),
+                    replace(old, effects=({'op': 'draw', 'player': '$controller', 'count': 1},)),
+                    replace(old, cost_schema={'mana': {'C': 99}})):
+                self.assertFalse(keys(old=(changed,)))
+        incomplete = tuple(replace(p, provenance={**p.provenance, 'requires_complete_card_program': False}) for p in current)
+        self.assertFalse(keys(new=incomplete))
+
+
+class QualifiedStackCopyNativeTests(InheritedNativeFixture, unittest.TestCase):
+    reject = recipients.TargetRecipientNativeTests.reject
+    finish = recipients.TargetRecipientNativeTests.finish
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory(); path = Path(cls.temporary.name)/'qualified-copy-native.sqlite3'
+        build_fixture_database([FIXTURE], path); cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Qualified stack copies', [DeckEntry('Sliver Hivelord', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Sliver Hivelord'])
+
+    def activate_target(self, s, source, target_ref, *, reserve=None, x=None):
+        self.priority(s, 'A')
+        actions = s.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        candidates = [a for a in actions if a['id'].startswith('activate:'+source.ref+':')
+            and target_ref in json.dumps(a.get('target_schema') or {})]
+        self.assertTrue(candidates, (source.ref, target_ref, actions))
+        command = {'action_id': candidates[0]['id'], 'targets': [target_ref], 'pay': 'auto', 'reserve': reserve or {}}
+        if x is not None: command['x'] = x
+        self.reject(s, 'C', command); result = s.act('pilot:A', command); self.assertTrue(result.ok, result.summary)
+        return candidates[0]
+
+    def choose_targets(self, s, refs):
+        decision = self.resolve(s); self.assertEqual('semantic.choice', decision.kind)
+        command = {'action_id': 'choose', 'targets': list(refs)}; self.reject(s, 'B', command)
+        result = s.act('pilot:A', command); self.assertTrue(result.ok, result.summary)
+
+    def test_actual_lithoform_copies_activated_damage_without_repaying_or_activating_again(self):
+        s = self.session(871001); copier = self.add(s.engine, 'Lithoform Engine'); dealer = self.add(s.engine, 'Prodigal Sorcerer')
+        self.add(s.engine, 'Fervor'); private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-litho-private')
+        self.assert_closed(s, copier); self.assert_closed(s, dealer); self.prepare(s, mana={'C': 2}); self.checkpoint(s)
+        self.activate_target(s, dealer, 'B'); original = s.state.stack[-1]
+        self.activate_target(s, copier, original.ref); self.assertTrue(s.state.cards[copier.object_id].tapped)
+        self.choose_targets(s, ['D']); self.assertIsNone(self.resolve(s))
+        self.assertEqual([40, 39, 40, 39], [s.state.players[x].life for x in 'ABCD'])
+        self.assertTrue(s.state.cards[dealer.object_id].tapped); self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+        self.finish(s, private)
+
+    def test_actual_strionic_copies_trigger_only_after_source_departure(self):
+        s = self.session(871010); copier = self.add(s.engine, 'Strionic Resonator')
+        visionary = self.add(s.engine, 'Elvish Visionary', zone='hand'); bounce = self.add(s.engine, 'Unsummon', seat='B', zone='hand')
+        self.add(s.engine, 'Island', seat='B'); private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-trigger-private')
+        self.assert_closed(s, copier); self.prepare(s, mana={'C': 3, 'G': 1}); self.checkpoint(s)
+        self.cast_for(s, 'A', visionary, reserve={'C': 2}); self.resolve_top(s)
+        original = next(i for i in s.state.stack if i.kind == 'triggered_ability' and i.source_object_id == visionary.object_id)
+        self.cast(s, 'B', bounce, [visionary.ref]); self.resolve_top(s); count = len(s.state.players['A'].zones['hand'])
+        self.activate_target(s, copier, original.ref); self.assertIsNone(self.resolve(s))
+        self.assertEqual(count+2, len(s.state.players['A'].zones['hand'])); self.finish(s, private)
+
+    def test_actual_tawnos_requires_artifact_source_and_preserves_source_lki(self):
+        s = self.session(871020); copier = self.add(s.engine, "Tawnos, Urza's Apprentice")
+        rod = self.add(s.engine, 'Rod of Ruin'); invalid = self.add(s.engine, 'Prodigal Sorcerer'); self.add(s.engine, 'Fervor')
+        remove = self.add(s.engine, 'Disenchant', seat='B', zone='hand'); self.add(s.engine, 'Plains', seat='B'); self.add(s.engine, 'Wastes', seat='B')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-artifact-private')
+        self.assert_closed(s, copier); self.prepare(s, mana={'C': 3, 'U': 1, 'R': 1}); self.checkpoint(s)
+        self.activate_target(s, invalid, 'D'); bad = s.state.stack[-1]
+        self.activate_target(s, rod, 'B', reserve={'U': 1, 'R': 1}); original = s.state.stack[-1]; self.priority(s, 'A')
+        actions = s.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(a for a in actions if a['id'].startswith('activate:'+copier.ref+':'))
+        self.reject(s, 'A', {'action_id': action['id'], 'targets': [bad.ref], 'pay': 'auto'})
+        self.cast(s, 'B', remove, [rod.ref]); self.resolve_top(s)
+        self.activate_target(s, copier, original.ref); self.choose_targets(s, ['D']); self.assertIsNone(self.resolve(s))
+        self.assertEqual([40, 39, 40, 38], [s.state.players[x].life for x in 'ABCD']); self.finish(s, private)
+
+    def test_actual_archaic_excludes_colored_source_and_copies_colorless_damage(self):
+        s = self.session(871030); copier = self.add(s.engine, 'Abstruse Archaic'); rod = self.add(s.engine, 'Rod of Ruin')
+        colored = self.add(s.engine, 'Prodigal Sorcerer'); self.add(s.engine, 'Fervor')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-colorless-private')
+        self.assert_closed(s, copier); self.prepare(s, mana={'C': 4}); self.checkpoint(s)
+        self.activate_target(s, colored, 'B'); invalid = s.state.stack[-1]
+        self.activate_target(s, rod, 'B'); original = s.state.stack[-1]; self.priority(s, 'A')
+        actions = s.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(a for a in actions if a['id'].startswith('activate:'+copier.ref+':'))
+        self.reject(s, 'A', {'action_id': action['id'], 'targets': [invalid.ref], 'pay': 'auto'})
+        self.activate_target(s, copier, original.ref)
+        self.choose_targets(s, ['D']); self.assertIsNone(self.resolve(s))
+        self.assertEqual([40, 38, 40, 39], [s.state.players[x].life for x in 'ABCD']); self.finish(s, private)
+
+    def test_actual_permanent_spell_copy_becomes_token_and_instant_copy_sibling_retains_targets(self):
+        s = self.session(871040); copier = self.add(s.engine, 'Lithoform Engine'); creature = self.add(s.engine, 'Krakilin', zone='hand')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-permanent-private')
+        self.prepare(s, mana={'C': 6, 'G': 2}); self.checkpoint(s); self.priority(s, 'A')
+        offered = self.action(s, 'A', creature)
+        result = s.act('pilot:A', {'action_id': offered['id'], 'x': 2, 'pay': 'auto', 'reserve': {'C': 4}})
+        self.assertTrue(result.ok, result.summary)
+        original = s.state.stack[-1]; self.activate_target(s, copier, original.ref); self.assertIsNone(self.resolve(s))
+        bears = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.controller == 'A'
+            and c.printed_name == 'Krakilin']
+        self.assertEqual(2, len(bears)); self.assertEqual(1, sum(not c.is_card_object for c in bears))
+        self.assertEqual([2, 2], [c.counters.get('+1/+1', 0) for c in bears]); self.finish(s, private)
+        s = self.session(871041); copier = self.add(s.engine, 'Lithoform Engine')
+        spell = self.add(s.engine, 'Shock', zone='hand')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-instant-private')
+        self.prepare(s, mana={'C': 3, 'R': 1}); self.checkpoint(s); self.cast_for(s, 'A', spell, ['B'], reserve={'C': 3})
+        original = s.state.stack[-1]; self.activate_target(s, copier, original.ref)
+        self.assertEqual('semantic.choice', self.resolve(s).kind)
+        s = self.replay(s, load=True); self.assertTrue(s.act('pilot:A', {'action_id': 'choose'}).ok)
+        self.assertIsNone(self.resolve(s)); self.assertEqual(36, s.state.players['B'].life)
+        self.assertEqual(1, len(s.engine._current_turn_history('spell_cast'))); self.finish(s, private)
+
+    def test_actual_ability_copy_preserves_announced_x_and_original_source_without_extra_cost(self):
+        s = self.session(871050); copier = self.add(s.engine, 'Lithoform Engine')
+        source = self.add(s.engine, 'Arashi, the Sky Asunder'); target = self.add(s.engine, 'Vampire Nighthawk', seat='B')
+        self.add(s.engine, 'Fervor'); private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-x-private')
+        self.assert_closed(s, source); self.prepare(s, mana={'C': 3, 'G': 1}); self.checkpoint(s)
+        self.activate_target(s, source, target.ref, x=1, reserve={'C': 2}); original = s.state.stack[-1]
+        self.activate_target(s, copier, original.ref); self.choose_targets(s, [target.ref])
+        copied = s.state.stack[-1]
+        self.assertEqual((1, source.object_id, original.semantic_key), (copied.x_value, copied.source_object_id, copied.semantic_key))
+        self.assertTrue(s.state.cards[source.object_id].tapped); self.assertEqual(0, sum(s.state.players['A'].mana_pool.values()))
+        self.assertIsNone(self.resolve(s)); self.assertEqual(2, s.state.cards[target.object_id].marked_damage)
+        self.finish(s, private)
+
+    def test_actual_default_targets_keep_departed_incarnation_and_explicit_targets_rebind(self):
+        for change in (False, True):
+            with self.subTest(change=change):
+                s = self.session(871060+change); copier = self.add(s.engine, 'Abstruse Archaic')
+                source = self.add(s.engine, 'Rod of Ruin'); target = self.add(s.engine, 'Ashcoat Bear')
+                bounce = self.add(s.engine, 'Unsummon', zone='hand')
+                private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-incarnation-private')
+                self.prepare(s, mana={'C': 5, 'U': 1, 'G': 1}); self.checkpoint(s)
+                self.activate_target(s, source, target.ref, reserve={'U': 1, 'G': 1, 'C': 2}); original = s.state.stack[-1]
+                snapshot = deepcopy(original.context['target_snapshots'][target.ref])
+                self.activate_target(s, copier, original.ref, reserve={'U': 1, 'G': 1, 'C': 1})
+                self.cast_for(s, 'A', bounce, [target.ref], reserve={'G': 1, 'C': 1}); self.resolve_top(s)
+                self.cast_for(s, 'A', target); self.resolve_top(s)
+                self.assertEqual('semantic.choice', self.resolve(s).kind); s = self.replay(s, load=True)
+                result = s.act('pilot:A', {'action_id': 'choose', **({'targets': [{'ref': target.ref}]} if change else {})})
+                self.assertTrue(result.ok, result.summary); copied = s.state.stack[-1]
+                self.assertEqual(not change, snapshot == copied.context['target_snapshots'][target.ref])
+                self.assertIsNone(self.resolve(s)); self.assertEqual(int(change), s.state.cards[target.object_id].marked_damage)
+                self.finish(s, private)
+
+    def test_actual_permanent_aura_copy_has_no_new_target_permission(self):
+        s = self.session(871070); copier = self.add(s.engine, 'Lithoform Engine')
+        aura = self.add(s.engine, 'Holy Strength', zone='hand'); target = self.add(s.engine, 'Grizzly Bears')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-aura-private')
+        self.prepare(s, mana={'C': 4, 'W': 1}); self.checkpoint(s); self.cast_for(s, 'A', aura, [target.ref], reserve={'C': 4})
+        original = s.state.stack[-1]; self.activate_target(s, copier, original.ref)
+        self.assertIsNone(self.resolve(s))
+        auras = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Holy Strength']
+        self.assertEqual(2, len(auras)); self.assertEqual(1, sum(not c.is_card_object for c in auras))
+        self.assertEqual((4, 6), tuple(s.engine._numeric_stat(target.object_id, field) for field in ('power', 'toughness')))
+        self.finish(s, private)
+
+    def test_actual_aura_copy_retains_departed_target_identity_and_both_spells_fail(self):
+        s = self.session(871071); copier = self.add(s.engine, 'Lithoform Engine')
+        aura = self.add(s.engine, 'Holy Strength', zone='hand'); target = self.add(s.engine, 'Ashcoat Bear')
+        bounce = self.add(s.engine, 'Unsummon', zone='hand')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-aura-incarnation-private')
+        self.prepare(s, mana={'C': 5, 'W': 1, 'U': 1, 'G': 1}); self.checkpoint(s)
+        self.cast_for(s, 'A', aura, [target.ref], reserve={'C': 5, 'U': 1, 'G': 1})
+        original = s.state.stack[-1]; old = target.logical_object_id
+        self.activate_target(s, copier, original.ref, reserve={'C': 1, 'U': 1, 'G': 1})
+        self.cast_for(s, 'A', bounce, [target.ref], reserve={'C': 1, 'G': 1}); self.resolve_top(s)
+        self.cast_for(s, 'A', target); self.resolve_top(s)
+        self.assertNotEqual(old, s.state.cards[target.object_id].logical_object_id)
+        self.assertIsNone(self.resolve(s))
+        self.assertFalse([c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Holy Strength'])
+        self.assertEqual(2, s.engine._numeric_stat(target.object_id, 'power')); self.finish(s, private)
+
+    def test_opponent_stack_target_rejects_before_cost_and_countered_original_produces_no_copy(self):
+        s = self.session(871075); copier = self.add(s.engine, 'Lithoform Engine')
+        own = self.add(s.engine, 'Shock', zone='hand'); enemy = self.add(s.engine, 'Shock', seat='B', zone='hand', ref='qualified-enemy-shock')
+        counter = self.add(s.engine, 'Counterspell', seat='B', zone='hand', ref='qualified-enemy-counter')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-countered-private')
+        s.state.players['B'].mana_pool.update({'R': 1, 'U': 2})
+        self.prepare(s, mana={'C': 3, 'R': 1}); self.checkpoint(s)
+        self.cast_for(s, 'B', enemy, ['D'], reserve={'U': 2}); foreign = s.state.stack[-1]
+        self.cast_for(s, 'A', own, ['C'], reserve={'C': 3}); original = s.state.stack[-1]; self.priority(s, 'A')
+        action = next(a for a in s.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+            if a['id'].startswith('activate:'+copier.ref+':') and original.ref in json.dumps(a.get('target_schema') or {}))
+        self.reject(s, 'A', {'action_id': action['id'], 'targets': [foreign.ref], 'pay': 'auto'})
+        self.assertFalse(s.state.cards[copier.object_id].tapped); self.assertEqual(3, sum(s.state.players['A'].mana_pool.values()))
+        self.activate_target(s, copier, original.ref); self.cast_for(s, 'B', counter, [original.ref]); self.resolve_top(s)
+        self.assertFalse(any(i.ref == original.ref for i in s.state.stack)); self.assertIsNone(self.resolve(s))
+        self.assertEqual([40, 40, 40, 38], [s.state.players[x].life for x in 'ABCD'])
+        self.assertFalse([i for i in s.state.stack if i.kind == 'spell_copy']); self.finish(s, private)
+
+    def test_actual_source_type_revalidation_uses_departure_lki_after_source_returns(self):
+        s = self.session(871080); copier = self.add(s.engine, "Tawnos, Urza's Apprentice")
+        rod = self.add(s.engine, 'Rod of Ruin'); self.add(s.engine, 'Vedalken Orrery')
+        change = self.add(s.engine, 'Song of the Dryads', zone='hand'); bounce = self.add(s.engine, 'Boomerang', zone='hand')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-lki-private')
+        self.prepare(s, mana={'C': 9, 'G': 1, 'U': 3, 'R': 1}); self.checkpoint(s)
+        self.activate_target(s, rod, 'B', reserve={'C': 6, 'G': 1, 'U': 3, 'R': 1}); original = s.state.stack[-1]
+        self.activate_target(s, copier, original.ref, reserve={'C': 6, 'G': 1, 'U': 2})
+        self.cast_for(s, 'A', change, [rod.ref], reserve={'C': 4, 'U': 2}); self.resolve_top(s)
+        from quorune.target_source import stack_targeting_source
+        self.assertEqual(frozenset({'land'}), stack_targeting_source(s.engine, original).card_types)
+        self.cast_for(s, 'A', bounce, [rod.ref], reserve={'C': 4}); self.resolve_top(s)
+        self.cast_for(s, 'A', rod); self.resolve_top(s)
+        self.assertIn('artifact', s.engine._type_parts(s.engine._effective_card_data(s.state.cards[rod.object_id])['type_line'])[0])
+        self.assertEqual(frozenset({'land'}), stack_targeting_source(s.engine, original).card_types)
+        self.assertIsNone(self.resolve(s)); self.assertEqual(39, s.state.players['B'].life)
+        self.finish(s, private)
+
+    def test_copy_creation_fault_rolls_back_and_same_command_retries(self):
+        from quorune.engine import CommanderEngine
+        from quorune.errors import GameRuleError
+        s = self.session(871090); copier = self.add(s.engine, 'Strionic Resonator')
+        source = self.add(s.engine, 'Elvish Visionary', zone='hand')
+        private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-rollback-private')
+        self.prepare(s, mana={'C': 3, 'G': 1}); self.checkpoint(s); self.cast_for(s, 'A', source, reserve={'C': 2}); self.resolve_top(s)
+        original = s.state.stack[-1]; self.activate_target(s, copier, original.ref)
+        original_copy = CommanderEngine._copy_stack_item; calls = []
+        def fault(host, **kwargs):
+            result = original_copy(host, **kwargs); calls.append(result.ref)
+            raise GameRuleError('qualified copy rollback witness')
+        with patch.object(CommanderEngine, '_copy_stack_item', fault):
+            for _ in range(12):
+                before = authoritative_state_hash(s.state); actor = s.pending_principals()[0]
+                result = s.act(actor, {'action_id': 'pass'})
+                if not result.ok:
+                    self.assertEqual(before, authoritative_state_hash(s.state)); break
+            else: self.fail('The copy mutation fault did not reach the command boundary')
+        self.assertTrue(calls); self.assertTrue(s.state.cards[copier.object_id].tapped)
+        self.assertTrue(s.act(actor, {'action_id': 'pass'}).ok); self.assertIsNone(self.resolve(s))
+        self.assertEqual(0, sum(s.state.players['A'].mana_pool.values())); self.finish(s, private)
+
+    def test_fresh_source_qualification_omission_mutant_is_killed(self):
+        import quorune.target_predicates as predicates
+        original = predicates.target_predicate_matches
+        def omitted(host, group, row, **kwargs):
+            if group.predicate == 'colorless_ability_source': return True
+            return original(host, group, row, **kwargs)
+        with patch('quorune.selection.targeting.target_predicate_matches', omitted):
+            with self.assertRaises(AssertionError):
+                self.test_actual_archaic_excludes_colored_source_and_copies_colorless_damage()

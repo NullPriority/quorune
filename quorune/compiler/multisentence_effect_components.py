@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compose independently exact leaves whose own grammar spans sentences."""
 
-import re
+from . import regex_working_set as re
 from .closed_effect_programs import ClosedEffectProgramTemplate, _NESTED_SEQUENCE_MECHANICS, _top_level_positions
 
 

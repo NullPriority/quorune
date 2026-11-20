@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile closed fixed and unbounded static maximum-hand-size rules."""
 
-import re
+from . import regex_working_set as re
 
 from ..maximum_hand_size import (
     NO_MAXIMUM_HAND_SIZE_CAPABILITY_ID,

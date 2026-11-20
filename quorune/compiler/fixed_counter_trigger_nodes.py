@@ -6,7 +6,7 @@ from ..crime_model import crime_fact_dependencies
 from dataclasses import dataclass, replace
 from enum import Enum
 from .trigger_event_vocabulary import FixedCounterTriggerEvent
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
@@ -1262,6 +1262,8 @@ def fixed_counter_event_trigger_node(
     else:
         compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
     template, effects, target_schema, body_mechanics = compiled
+    if any(e.get("op") == "look_top_shared_type_reveal" for e in effects):
+        return None
     if optional_match is not None and {'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics) and binding.event not in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}:
         return None
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
@@ -1417,15 +1419,20 @@ def fixed_typed_event_effect_trigger_node(
             effect_template=effect_template,
         )
     template, effects, target_schema, body_mechanics = compiled
+    from ..unblocked_attacker_model import UNBLOCKED_ATTACKER_EVENT, unblocked_defender_poison_effect
+    closed_unblocked_poison = (
+        binding.event.value == UNBLOCKED_ATTACKER_EVENT
+        and tuple(effects) == (unblocked_defender_poison_effect(),)
+    )
     if (
         template is None
         or (
             not effects
             and FIXED_NONREPEATING_MODAL_MECHANIC not in body_mechanics
         )
-        or _COUNTER_PLACEMENT_OPERATIONS.intersection(
-            _nested_operations(effects)
-        )
+        or (_COUNTER_PLACEMENT_OPERATIONS.intersection(_nested_operations(effects))
+            and not (closed_unblocked_poison
+                     or len(effects) == 1 and effects[0].get("op") == "look_top_shared_type_reveal"))
     ):
         return None
     mechanics = (
@@ -1486,6 +1493,7 @@ def fixed_typed_event_effect_trigger_node(
                     and (
                         template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
                         or binding.variant == "fixed_entry_return_requirement"
+                        or template == "scheduled-player-hand-difference-v1"
                     )
                 ),
             ),

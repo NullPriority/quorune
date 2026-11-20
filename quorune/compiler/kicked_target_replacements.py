@@ -3,7 +3,7 @@ from __future__ import annotations
 """Complete instead clauses that replace a fixed target predicate or count."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from ..kicked_target_replacement_model import validate_kicked_target_replacement_instruction
 from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC,CAST_FACT_CONDITION_MECHANIC
 from .closed_effect_programs import _top_level_positions

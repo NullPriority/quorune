@@ -5,9 +5,24 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+from ..rules.committed_quantity_followups import CommittedQuantityFollowup
 
 
-def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent)->tuple[str,...]:
+def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent)->tuple[str,...] | CommittedQuantityFollowup:
+    from ..semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
+
+    if isinstance(intent, TargetedGraveyardExileOutcomeIntent):
+        from ..rules.targeted_graveyard_outcomes import commit_targeted_graveyard_exiles, creature_exile_followup
+
+        return creature_exile_followup(intent.result, commit_targeted_graveyard_exiles(host, intent))
+    from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
+    if isinstance(intent, GraveyardExileLifeResultIntent):
+        from ..rules.graveyard_exile_results import commit_graveyard_exile_life_result
+        return commit_graveyard_exile_life_result(host, intent)
+    from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
+    if isinstance(intent, GraveyardLibraryCostBatchIntent):
+        from .graveyard_library_cost import commit_graveyard_library_cost
+        return commit_graveyard_library_cost(host, intent)
     cards = tuple(
         host._resolve_object(
             intent.actor,

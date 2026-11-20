@@ -1,6 +1,7 @@
 """Resolve an authorized Mutate alternative through the physical merge owner."""
 
 from ..errors import GameRuleError
+from ..spell_resolution_names import finish_spell_resolution_names
 from ..mutate_model import MutateSpec,MUTATE_PAYMENT_FIELD,MUTATE_EVENT
 from ..semantic_runtime.mutate_intent import SelectMutateMergeIntent
 from ..replacement.immutable import FrozenMap
@@ -53,5 +54,6 @@ def commit_mutate_merge(host,intent):
             'mutation_count':storage.topology.mutation_count})
         host._log(item.controller,'stack.resolve',f'Resolved {item.ref} {item.label}.',
             {'stack':item.ref,'merged_permanent':root.ref},importance=2)
+        finish_spell_resolution_names(host, item)
         if not host._stabilize():host._grant_priority(host.state.active_player)
         return storage

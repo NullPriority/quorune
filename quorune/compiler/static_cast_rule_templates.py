@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for battlefield-static casting rules."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
@@ -43,6 +43,9 @@ _PERIOD_PROHIBITION = re.compile(
     r"^(?P<actor>Your opponents|Players) can't cast spells during "
     r"(?P<period>combat|your turn)\.?$",
     re.IGNORECASE,
+)
+_AFTER_ATTACK_PROHIBITION = re.compile(
+    r"^Each opponent who attacked with a creature this turn can't cast spells\.?$", re.IGNORECASE,
 )
 _KIND_PROHIBITION = re.compile(
     r"^(?P<actor>You|Your opponents|Players) can't cast "
@@ -296,10 +299,60 @@ def _timing_rule(
     return None
 
 
+def _noncreature_mana_prohibition(normalized: str) -> StaticCastRuleTemplate | None:
+    cases = (
+        (
+            r"Each opponent can['’]t cast noncreature spells with mana value greater than "
+            r"the number of lands that player controls[.]?",
+            "static-cast-prohibition-caster-land-mana-value-v1",
+            StaticCastPlayerScope.SOURCE_OPPONENTS, StaticCastCondition.CASTER_LAND_MANA_VALUE_LIMIT,
+        ),
+        (
+            r"Noncreature spells with mana value 4 or greater can['’]t be cast[.]?",
+            "static-cast-prohibition-noncreature-mana-value-four-v1",
+            StaticCastPlayerScope.ALL_PLAYERS, StaticCastCondition.NONCREATURE_MANA_VALUE_AT_LEAST_FOUR,
+        ),
+        (
+            r"Noncreature spells with \{X\} in their mana costs can['’]t be cast[.]?",
+            "static-cast-prohibition-noncreature-mana-cost-x-v1",
+            StaticCastPlayerScope.ALL_PLAYERS, StaticCastCondition.NONCREATURE_MANA_COST_HAS_X,
+        ),
+    )
+    for pattern, template, scope, condition in cases:
+        if re.fullmatch(pattern, normalized, re.I):
+            return (
+                template,
+                _descriptor(
+                    handler_id=STATIC_CAST_PROHIBITION_HANDLER_ID,
+                    kind=StaticCastRuleKind.CAST_PROHIBITION,
+                    scope=scope,
+                    queries=(_query(excluded_types=("creature",)),),
+                    condition=condition,
+                ),
+                "casting.prohibition.fixed_public",
+            )
+    return None
+
+
 def _cast_prohibition_or_limit_rule(
     normalized: str,
 ) -> StaticCastRuleTemplate | None:
 
+    mana_prohibition = _noncreature_mana_prohibition(normalized)
+    if mana_prohibition is not None:
+        return mana_prohibition
+    if _AFTER_ATTACK_PROHIBITION.fullmatch(normalized) is not None:
+        return (
+            "static-cast-prohibition-after-attacking-v1",
+            _descriptor(
+                handler_id=STATIC_CAST_PROHIBITION_HANDLER_ID,
+                kind=StaticCastRuleKind.CAST_PROHIBITION,
+                scope=StaticCastPlayerScope.SOURCE_OPPONENTS,
+                queries=(_query(),),
+                condition=StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN,
+            ),
+            "casting.prohibition.fixed_public",
+        )
     period = _PERIOD_PROHIBITION.fullmatch(normalized)
     if period is not None:
         return (

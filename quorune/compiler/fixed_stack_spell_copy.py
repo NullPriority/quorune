@@ -2,11 +2,14 @@ from __future__ import annotations
 
 """A closed leaf for one explicitly retargetable instant/sorcery spell copy."""
 
-import re
+from . import regex_working_set as re
 from ..stack_spell_copy_model import FixedStackSpellCopySpec
 
 
 def fixed_stack_spell_copy_template(text):
+    qualified = fixed_qualified_stack_copy_template(text)
+    if qualified is not None:
+        return qualified
     match = re.fullmatch(r'Copy target instant or sorcery spell(?P<controlled> you control)?\. '
         r'You may choose new targets for the copy\.', text.strip(), re.I)
     if match is None:
@@ -14,6 +17,24 @@ def fixed_stack_spell_copy_template(text):
     spec = FixedStackSpellCopySpec(bool(match['controlled']))
     return ('fixed-instant-sorcery-copy-controlled-v1' if spec.controlled_only else 'fixed-instant-sorcery-copy-v1',
         spec.effects, spec.target_schema, spec.mechanics)
+
+
+def fixed_qualified_stack_copy_template(text):
+    from ..stack_spell_copy_model import FixedQualifiedStackCopySpec
+
+    if re.fullmatch(r'Copy target permanent spell you control\.', text.strip(), re.I):
+        spec = FixedQualifiedStackCopySpec('permanent_spell')
+    else:
+        match = re.fullmatch(r'Copy target (?P<kind>activated or triggered ability|triggered ability) you control'
+            r'(?: from (?P<source>an artifact|a colorless) source)?\. '
+            r'You may choose new targets for the copy\.', text.strip(), re.I)
+        if match is None:
+            return None
+        kind = 'triggered_ability' if match['kind'].casefold() == 'triggered ability' else 'activated_or_triggered_ability'
+        source = {'an artifact': 'artifact', 'a colorless': 'colorless'}.get((match['source'] or '').casefold())
+        try:spec = FixedQualifiedStackCopySpec(kind, source)
+        except ValueError:return None
+    return ('fixed-qualified-stack-copy-v1', spec.effects, spec.target_schema, spec.mechanics)
 
 
 def cast_event_spell_copy_template(binding,text):

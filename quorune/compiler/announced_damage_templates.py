@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..announced_damage import (
     ANNOUNCED_DAMAGE_EFFECT_FIELD,
@@ -34,11 +34,11 @@ _DIRECT_RECIPIENTS = {
     "target creatures and/or planeswalkers": "target creature or planeswalker",
     "target creatures and/or planeswalkers your opponents control": "target creature or planeswalker an opponent controls",
     "target white and/or blue creatures": "target white or blue creature",
+    "target attacking creatures": "target attacking creature",
     "target attacking or blocking creatures": "target attacking or blocking creature",
 }
 _VARIABLE_RECIPIENTS = {
     **_DIRECT_RECIPIENTS,
-    "target attacking creatures": "target attacking creature",
     "target attacking or blocking creatures without flying": "target attacking or blocking creature without flying",
 }
 VARIABLE_DAMAGE_TEMPLATE_ID = "damage-announced-allocation-v2"

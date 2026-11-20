@@ -48,7 +48,9 @@ def fixed_library_search_covered_mechanics(
     """Return search mechanics covered by their exact capability shapes."""
 
     capabilities = set(supplied)
+    from .targeted_library_exile import TARGET_LIBRARY_EXILE_CAPABILITY,TARGET_LIBRARY_EXILE_MECHANIC
     covered: set[str] = set()
+    if TARGET_LIBRARY_EXILE_CAPABILITY in capabilities:covered.add(TARGET_LIBRARY_EXILE_MECHANIC)
     if 'activation.transmute.hand' in capabilities:
         covered.add('transmute')
     if FIXED_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
@@ -59,6 +61,8 @@ def fixed_library_search_covered_mechanics(
         covered.add(FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID)
     if DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
         covered.add(DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID)
+    from ..library_search_model import QUERY_BOUND_SEARCH_CAPABILITY,QUERY_BOUND_SEARCH_MECHANIC
+    if QUERY_BOUND_SEARCH_CAPABILITY in capabilities:covered.add(QUERY_BOUND_SEARCH_MECHANIC)
     return covered
 
 
@@ -72,6 +76,16 @@ def fixed_counted_library_search_node_capabilities(
         or target_schema is not None or len(effects) != 1
     ):
         return ()
+    if effects[0].get('schema_version') == 8:
+        from ..library_search_model import QueryBoundLibrarySearchSpec,QUERY_BOUND_SEARCH_MECHANIC
+        if QUERY_BOUND_SEARCH_MECHANIC not in mechanic_ids:return ()
+        try:return QueryBoundLibrarySearchSpec.from_effect(effects[0]).capabilities()
+        except (ValueError,TypeError,KeyError):return ()
+    if effects[0].get('schema_version') == 7:
+        from ..qualified_library_search_model import QualifiedLibrarySearchSpec, QUALIFIED_LIBRARY_SEARCH_MECHANIC
+        if QUALIFIED_LIBRARY_SEARCH_MECHANIC not in mechanic_ids:return ()
+        try:return QualifiedLibrarySearchSpec.from_effect(effects[0]).capabilities()
+        except (ValueError, TypeError, KeyError):return ()
     if effects[0].get('schema_version') == 5:
         from ..search_allocation_model import SearchAllocationSpec, SEARCH_ALLOCATION_MECHANIC
         if SEARCH_ALLOCATION_MECHANIC not in mechanic_ids:return ()
@@ -142,6 +156,9 @@ def fixed_library_search_node_capabilities(
 ) -> tuple[str, ...]:
     """Recognize one compiler-owned fixed search-to-battlefield instruction."""
 
+    from .targeted_library_exile import targeted_library_exile_node_capabilities
+    targeted = targeted_library_exile_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+    if targeted:return targeted
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID in mechanics:
         return fixed_counted_library_search_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)

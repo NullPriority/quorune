@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed fixed-count library selection and remainder partitions."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
@@ -399,6 +399,12 @@ def fixed_library_selection_effect_template(
     """Lower one complete fixed self-library hand/remainder instruction."""
 
     normalized = " ".join(text.strip().split())
+    from .targeted_library_exile_templates import targeted_library_exile_template
+    exile_search = targeted_library_exile_template(normalized)
+    if exile_search is not None:return exile_search
+    from .target_library_inspection_templates import target_library_inspection_template
+    targeted = target_library_inspection_template(normalized)
+    if targeted is not None:return targeted
     top_exile=re.fullmatch(rf'Look at the top (?P<count>{FIXED_COUNT_PATTERN}) cards of your library\. '
         r'You may put one of those cards back on top of your library\. Exile the rest\.?',normalized,re.I)
     if top_exile is not None:

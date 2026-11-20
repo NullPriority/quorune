@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from hashlib import sha256
-import re
+from . import regex_working_set as re
 from typing import Any, Iterable, Mapping
 
 from ..abilities import ActivatedAbility, parse_activated_abilities

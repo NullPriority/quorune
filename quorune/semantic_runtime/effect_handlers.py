@@ -19,6 +19,9 @@ from ..rules.detain import (
 from ..saddle import SADDLE_CAPABILITY, SADDLE_OPERATION
 from ..rules.cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_OPERATION, CAST_CASCADE_RULES
 from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_OPERATION
+from ..phasing_model import (
+    PHASE_OUT_CAPABILITY, PHASE_OUT_OPERATION, PHASE_OUT_RULES, PHASING_CAPABILITY, validate_phase_out_effect,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +49,8 @@ class DomainEffectHandler:
             return DETAIN_RULES
         if self.operation == DIRECT_PROHIBITION_OPERATION:
             return DIRECT_PROHIBITION_RULES
+        if self.operation == PHASE_OUT_OPERATION:
+            return PHASE_OUT_RULES
         if self.operation=='turn_face_up':
             from ..face_up_effect_model import FACE_UP_EFFECT_RULES
             return FACE_UP_EFFECT_RULES
@@ -67,6 +72,17 @@ class DomainEffectHandler:
             raise SemanticNodeError(
                 f"Handler {self.handler_id} cannot lower {operation!r}"
             )
+        if operation == 'recover_source_result':
+            from ..rules.recover import validate_recover_result
+            try:validate_recover_result(effect,resolved=True)
+            except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+            if (effect['player'] != context.actor or context.source is None
+                    or context.source.logical_object_id != effect['identity']):
+                raise SemanticNodeError('Recover result changed its original source or controller')
+        if operation == 'reanimate' and ('attachment_return' in effect or effect.get('schema_version') == 7):
+            from ..attachment_source_return_model import validate_attachment_source_return
+            try:validate_attachment_source_return(effect)
+            except (TypeError, ValueError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
         if operation == 'reanimate' and effect.get('schema_version') == 2:
             from ..event_card_return import event_battlefield_return_intent
             try:
@@ -104,11 +120,22 @@ class DomainEffectHandler:
             ref = effect.get("card")
             if set(effect) - {"op", "card", "reason"} or type(ref) is not str or not ref:
                 raise SemanticNodeError("Saddle requires a closed bound source")
+        if 'event_player_set_version' in effect:
+            from ..rules.event_player_modifiers import validate_bound_event_player_modifier
+            try:validate_bound_event_player_modifier(effect)
+            except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
         runtime_effect = dict(effect)
         if operation in {'schedule_fixed_object_action','resolve_fixed_object_action'}:
             from ..delayed_object_model import validate_delayed_object_instruction
             try:validate_delayed_object_instruction({k:v for k,v in effect.items() if k!='reason'})
             except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+        if operation == PHASE_OUT_OPERATION:
+            try:
+                subject = validate_phase_out_effect(effect)
+                if subject == "source" and context.source is None:
+                    raise ValueError("Source phase out requires its typed source frame")
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
         if operation=='turn_face_up':
             from ..face_up_effect_model import validate_face_up_instruction
             try:validate_face_up_instruction(effect)
@@ -159,6 +186,9 @@ class DomainEffectHandler:
 
 
 def _domain_capabilities(operation):
+    if operation=='recover_source_result':
+        from ..recover_model import RECOVER_RESULT_CAPABILITY
+        return (RECOVER_RESULT_CAPABILITY,)
     if operation=='grant_next_spell_cost_reduction':
         from ..next_spell_cost_model import CAPABILITY
         return (CAPABILITY,)
@@ -173,6 +203,8 @@ def _domain_capabilities(operation):
         from ..delayed_object_model import DELAYED_OBJECT_CAPABILITY
         return (DELAYED_OBJECT_CAPABILITY,)
     if operation=='set_life_total':return ('life.change.set_total',)
+    if operation == PHASE_OUT_OPERATION:
+        return PHASE_OUT_CAPABILITY, PHASING_CAPABILITY
     if operation=='turn_face_up':
         from ..face_up_effect_model import FACE_UP_EFFECT_CAPABILITY
         return (FACE_UP_EFFECT_CAPABILITY,)

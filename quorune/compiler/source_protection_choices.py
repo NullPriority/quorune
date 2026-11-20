@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """One resolution-time color choice for the source creature incarnation."""
 
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import ability_fragment_to_dict, parse_protection_line
 from ..rules.source_references import SourceReferenceSpec

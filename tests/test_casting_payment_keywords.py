@@ -270,8 +270,11 @@ class CastingPaymentKeywordCompilerTests(unittest.TestCase):
                 self.assertEqual(expected_variants, len(lowered.cast_cost_options()))
 
     def test_evoke_nonmana_descriptor_and_raw_cost_fail_closed(self):
+        admitted = self.compile("Evoke—Exile a green card from your hand.", keywords=("Evoke",))
+        self.assertEqual("exact", admitted.status)
+        self.assertEqual("fixed-hand-exile-evoke-v1", admitted.faces[0].nodes[0].template_id)
         ir = self.compile(
-            "Evoke—Exile a green card from your hand.", keywords=("Evoke",)
+            "Evoke—Exile two green cards from your hand.", keywords=("Evoke",)
         )
         self.assertTrue(ir.material_residuals)
         self.assertFalse(any(node.exact for node in ir.faces[0].nodes))

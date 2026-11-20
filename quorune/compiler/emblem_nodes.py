@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source-spanned creation of independently closed command-zone abilities."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..emblem_program_model import CompiledEmblemSpec, EmblemAbilityProgram, EMBLEM_CHILD_COVERAGE, EMBLEM_PROGRAM_CAPABILITY
 from .dependency_gate import explicit_capabilities_gate, dependency_gate
@@ -58,7 +58,7 @@ def compiled_emblem_nodes(*, record, face_id, node_id, line, material_line, span
     instruction = match.group(0)
     bodies = re.findall(r'"([^\"]+)"', match['quote'])
     source_effects, _ = grant_effect_templates(False, (), None)
-    def emblem_effect(text, **kwargs):
+    def emblem_atomic_effect(text, **kwargs):
         from .damage_templates import source_pronoun_damage_effect_template
         damage = re.fullmatch(r'This emblem deals (?P<body>.+)', text, re.I)
         if damage is not None:
@@ -66,6 +66,16 @@ def compiled_emblem_nodes(*, record, face_id, node_id, line, material_line, span
             if leaf is not None:
                 return leaf.compiled()
         return source_effects(text, **kwargs)
+    def emblem_effect(text, **kwargs):
+        from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
+        joined = re.fullmatch(r'(?P<damage>This emblem deals [^.]+?) and you (?P<draw>draw [^.]+)\.', text.strip(), re.I)
+        if joined is not None:
+            sequence = fixed_effect_clause_sequence_template(
+                joined['damage'] + '. ' + joined['draw'].capitalize() + '.',
+                compile_clause=lambda clause: emblem_atomic_effect(clause, **kwargs))
+            if sequence is not None:
+                return sequence.compiled()
+        return emblem_atomic_effect(text, **kwargs)
     children = tuple(_emblem_child(body, node_id=f'{node_id}:emblem-ability:{slot}', span=span,
         registry=capability_registry, profile=capability_profile, effects=emblem_effect,
         trusted_mechanics=trusted_mechanics) for slot, body in enumerate(bodies, 1))

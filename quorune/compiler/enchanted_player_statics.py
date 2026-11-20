@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole source-pinned static clauses over the enchanted player's creatures."""
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE,ability_fragment_to_dict
 from ..enchanted_player_model import (EnchantedPlayerAttackRequirementSpec,ENCHANTED_PLAYER_ATTACK_CAPABILITY,
     ENCHANTED_PLAYER_ATTACK_HANDLER,ENCHANTED_PLAYER_CHARACTERISTICS_CAPABILITY,ENCHANTED_PLAYER_CHARACTERISTICS_HANDLER)

@@ -10,6 +10,7 @@ from ..compiler.bound_effect_programs import (
     target_controller_zone_result_prefix_matches,
 )
 from ..compiler.optional_effect_templates import OPTIONAL_EFFECT_OPERATION
+from ..replacement.immutable import thaw_value
 from ..target_controller_information import (
     TARGET_CONTROLLER_INFORMATION_CAPABILITY, TARGET_CONTROLLER_INFORMATION_KIND,
     TARGET_CONTROLLER_INFORMATION_MECHANIC, controller_reference_index,
@@ -136,6 +137,28 @@ def _target_controller_search_dependencies(effects, schema, mechanics) -> tuple[
     return (TARGET_CONTROLLER_INFORMATION_CAPABILITY, *(dependency for part in parts for dependency in part))
 
 
+def _untap_and_combat_prevention_dependencies(effects, schema, mechanics):
+    if (len(effects) != 3 or CLOSED_EFFECT_PROGRAM_MECHANIC not in mechanics
+            or effects[0] != {"op": "untap", "card": "$target.0"}):
+        return ()
+
+    from ..compiler.direct_target import DirectPermanentTargetSpec
+    from .prevention_component_shapes import paired_target_combat_prevention_capabilities
+
+    targets = (
+        DirectPermanentTargetSpec(types_any=("creature",), combat_state="attacking"),
+        DirectPermanentTargetSpec(types_any=("creature",), controller_relation="you", combat_state="attacking"),
+        DirectPermanentTargetSpec(types_all=("creature",), keywords_all=("shadow",), combat_state="attacking"),
+    )
+    if thaw_value(schema) not in tuple(target.to_target_schema() for target in targets):
+        return ()
+    untap = closed_effect_component_capabilities(effects[:1], target_schema=schema, mechanics=mechanics)
+    prevention = paired_target_combat_prevention_capabilities(
+        effects=effects[1:], target_schema=schema, mechanic_ids=mechanics,
+    )
+    return (*untap, *prevention) if untap and prevention else ()
+
+
 def bound_effect_program_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
@@ -173,6 +196,16 @@ def bound_effect_program_node_capabilities(
                 legacy_attachment = True
     target_seen = False
     dependencies = {BOUND_EFFECT_PROGRAM_CAPABILITY, "resolution.effect_program.closed_components"}
+    untap_prevention = _untap_and_combat_prevention_dependencies(effects, target_schema, mechanics)
+    if untap_prevention:
+        return tuple(sorted(dependencies.union(untap_prevention)))
+    if len(effects) == 2 and effects[0].get("op") == "damage":
+        from .temporary_keyword_removal import damage_then_fixed_keyword_removal_capabilities
+        damage_removal = damage_then_fixed_keyword_removal_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+        if damage_removal:
+            return tuple(sorted(dependencies.union(damage_removal)))
     if has_target_controller_search_role(effects[1]):
         search = _target_controller_search_dependencies(effects, target_schema, mechanics)
         return tuple(sorted(dependencies.union(search))) if search else ()

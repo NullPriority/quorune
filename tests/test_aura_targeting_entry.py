@@ -271,9 +271,9 @@ class SimpleEnchantModelTests(unittest.TestCase):
     def test_dynamic_and_malformed_typed_enchant_forms_fail_closed(self):
         for line in (
             "Enchant creature without flying or vigilance",
-            "Enchant creature with another Aura attached to it",
-            "Enchant nonbasic land",
-            "Enchant modified creature",
+            "Enchant creature with two other Auras attached to it",
+            "Enchant nonbasic land you control",
+            "Enchant modified permanent",
             "Enchant creature with power X or less",
             "Enchant creature with mana value less than this creature's power",
         ):
@@ -445,7 +445,7 @@ class SimpleEnchantModelTests(unittest.TestCase):
         for restriction in (
             "creature without flying or vigilance",
             "creature with power X or less",
-            "creature with another Aura attached to it",
+            "creature with two other Auras attached to it",
         ):
             with self.subTest(unsupported=restriction):
                 unsupported = compile_oracle_card(

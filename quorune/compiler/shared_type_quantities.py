@@ -1,7 +1,7 @@
 """Whole-sentence shared-creature-type counts over current recipients."""
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..recipient_modifier_model import RecipientQuantityKind, RecipientQuantitySpec, RECIPIENT_SHARED_TYPE_CAPABILITY

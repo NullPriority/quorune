@@ -2,7 +2,13 @@ from __future__ import annotations
 
 """Closed static characteristic children that cannot grant further components."""
 
-from ..object_predicate import ObjectQuerySpec
+from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+    FixedPublicStateConditionKind,
+    FixedPublicStateConditionSpec,
+)
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 
 
 def granted_characteristic_handlers_are_closed(handlers):
@@ -28,7 +34,43 @@ def granted_characteristic_handlers_are_closed(handlers):
             keywords_all=query.keywords_all, keywords_none=query.keywords_none, token=query.token,
             commander=query.commander)
         return query == public
+    if descriptor.get('handler_id') == FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID:
+        return _fixed_public_state_child_is_closed(descriptor)
     return False
+
+
+def _fixed_public_state_child_is_closed(descriptor):
+    from ..semantic_runtime.conditional_continuous import FixedPublicStateCharacteristicsHandler
+
+    if 'recipient' in descriptor:
+        return False
+    node = FixedPublicStateCharacteristicsHandler().validate(descriptor)
+    if node.target_kind != 'source' or node.fragments:
+        return False
+    if node.source_condition.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY:
+        return _untapped_source_hexproof_is_closed(node)
+
+    controlled_swamp = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        amount=1,
+        quantity=CharacteristicQuantitySpec(
+            CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=('battlefield',), types_all=('land',), subtypes_all=('swamp',)),
+        ),
+        schema_version=2,
+    )
+    return (node.source_condition == controlled_swamp and not node.abilities
+        and node.power == node.toughness == 1)
+
+
+def _untapped_source_hexproof_is_closed(node):
+    untapped_source = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY,
+        predicate=ObjectQuerySpec(zones=('battlefield',), state_predicate=PermanentStatePredicateSpec(tapped=False)),
+        schema_version=2,
+    )
+    return (node.source_condition == untapped_source and node.abilities == ('Hexproof',)
+        and node.power == node.toughness == 0)
 
 
 def granted_characteristic_occurrences(fragments, eligible_keys):

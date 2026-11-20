@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """A fixed source-local graveyard redirection, without paid-cost inference."""
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.source_references import SourceReferenceSpec
 from ..self_graveyard_exile_model import SELF_GRAVEYARD_EXILE_CAPABILITY, self_graveyard_exile_descriptor

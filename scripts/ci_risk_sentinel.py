@@ -29,6 +29,7 @@ SELECTION_AUTHORITY_PATTERNS = (
     "scripts/compact_ci_dependencies.py",
     "scripts/finalize_generated.py",
     "scripts/generated_artifacts.py",
+    "scripts/generated_cache_identity.py",
     "scripts/generated_owner_cache.py",
     "scripts/main_broad_ci.py",
     "scripts/main_health.py",

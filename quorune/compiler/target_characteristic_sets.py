@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..rules.target_characteristic_sets import OPERATION
 from .fixed_target_effect_sequences import fixed_target_characteristics_effect_template
 

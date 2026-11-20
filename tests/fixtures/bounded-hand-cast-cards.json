@@ -1,0 +1,2721 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Rishkar's Expertise",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "oracle_text": "Draw cards equal to the greatest power among creatures you control.\nYou may cast a spell with mana value 5 or less from your hand without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Sram's Expertise",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "oracle_text": "Create three 1/1 colorless Servo artifact creature tokens.\nYou may cast a spell with mana value 3 or less from your hand without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Yahenni's Expertise",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "oracle_text": "All creatures get -3/-3 until end of turn.\nYou may cast a spell with mana value 3 or less from your hand without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{R}",
+      "name": "Kari Zev's Expertise",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "oracle_text": "Gain control of target creature or Vehicle until end of turn. Untap it. It gains haste until end of turn.\nYou may cast a spell with mana value 2 or less from your hand without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-01-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}{U}",
+      "name": "Baral's Expertise",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "oracle_text": "Return up to three target artifacts and/or creatures to their owners' hands.\nYou may cast a spell with mana value 4 or less from your hand without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{R}{R}",
+      "name": "Electrodominance",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "oracle_text": "Electrodominance deals X damage to any target. You may cast a spell with mana value X or less from your hand without paying its mana cost.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Llanowar Elves",
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "1",
+      "type_line": "Creature — Elf Druid"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Wind Drake",
+      "oracle_id": "d6ffdaf0-ac08-4de9-bbce-2eab2f86bcca",
+      "oracle_text": "Flying",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "2",
+      "type_line": "Creature — Drake"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Lightning Bolt",
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Cathartic Reunion",
+      "oracle_id": "0f3c3e5f-6af3-4af2-8703-4ccc8ed8f675",
+      "oracle_text": "As an additional cost to cast this spell, discard two cards.\nDraw three cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Village Rites",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Reach",
+        "Protection",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}",
+      "name": "Stonecoil Serpent",
+      "oracle_id": "78124cd1-2658-43f3-a339-0755d84154d2",
+      "oracle_text": "Reach, trample, protection from multicolored\nThis creature enters with X +1/+1 counters on it.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "0",
+      "type_line": "Artifact Creature — Snake"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Wear",
+          "oracle_text": "Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}",
+          "name": "Tear",
+          "oracle_text": "Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fuse"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R} // {W}",
+      "name": "Wear // Tear",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "oracle_text": "Wear: Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nTear: Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Instant // Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Far",
+          "oracle_text": "Return target creature to its owner's hand.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Away",
+          "oracle_text": "Target player sacrifices a creature of their choice.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Fuse"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U} // {2}{B}",
+      "name": "Far // Away",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "oracle_text": "Far: Return target creature to its owner's hand.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nAway: Target player sacrifices a creature of their choice.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2013-05-03",
+      "toughness": null,
+      "type_line": "Instant // Instant"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}{U}",
+          "name": "Brazen Borrower",
+          "oracle_text": "Flash\nFlying\nThis creature can block only creatures with flying.",
+          "power": "3",
+          "toughness": "1",
+          "type_line": "Creature — Faerie Rogue"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Petty Theft",
+          "oracle_text": "Return target nonland permanent an opponent controls to its owner's hand.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant — Adventure"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "layout": "adventure",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{U} // {1}{U}",
+      "name": "Brazen Borrower // Petty Theft",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "oracle_text": "Brazen Borrower: Flash\nFlying\nThis creature can block only creatures with flying.\n//\nPetty Theft: Return target nonland permanent an opponent controls to its owner's hand.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "1",
+      "type_line": "Creature — Faerie Rogue // Instant — Adventure"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Jwari Disruption",
+          "oracle_text": "Counter target spell unless its controller pays {1}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Jwari Ruins",
+          "oracle_text": "This land enters tapped.\n{T}: Add {U}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ],
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U} // ",
+      "name": "Jwari Disruption // Jwari Ruins",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "oracle_text": "Jwari Disruption: Counter target spell unless its controller pays {1}.\n//\nJwari Ruins: This land enters tapped.\n{T}: Add {U}.",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Instant // Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Suspend"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Ancestral Vision",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "oracle_text": "Suspend 4—{U} (Rather than cast this card from your hand, pay {U} and exile it with four time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)\nTarget player draws three cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Kicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Into the Roil",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "oracle_text": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nReturn target nonland permanent to its owner's hand. If this spell was kicked, draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Thalia, Guardian of Thraben",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "oracle_text": "First strike\nNoncreature spells cost {1} more to cast.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": "1",
+      "type_line": "Legendary Creature — Human Soldier"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Rule of Law",
+      "oracle_id": "53e88e64-6f82-4154-a66e-6aeb0154b368",
+      "oracle_text": "Each player can't cast more than one spell each turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Young Pyromancer",
+      "oracle_id": "5fac139a-07d3-4e6c-98e3-d98b199f7a6f",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "1",
+      "type_line": "Creature — Human Shaman"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Impact Tremors",
+      "oracle_id": "9242cd3e-1a71-4700-8182-9c1005616033",
+      "oracle_text": "Whenever a creature you control enters, this enchantment deals 1 damage to each opponent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Smuggler's Copter",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "3",
+      "type_line": "Artifact — Vehicle"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Ashaya, Soul of the Wild",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "oracle_text": "Ashaya's power and toughness are each equal to the number of lands you control.\nNontoken creatures you control are Forest lands in addition to their other types. (They're still affected by summoning sickness.)",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "*",
+      "type_line": "Legendary Creature — Elemental"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Deprive",
+      "oracle_id": "1065eceb-9150-4ea4-bd6d-acaabda14e00",
+      "oracle_text": "As an additional cost to cast this spell, return a land you control to its owner's hand.\nCounter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-04-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Overload"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Cyclonic Rift",
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "oracle_text": "Return target nonland permanent you don't control to its owner's hand.\nOverload {6}{U} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Cathartic Reunion, you must pay those to cast the card.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that allow you to \"cast\" a card don't allow you to play a land card.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may cast one of the cards drawn by Rishkar's Expertise's first effect while performing its second effect.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card's mana value is determined solely by the mana symbols printed in its upper right corner. The mana value is the total amount of mana in that cost, regardless of color. For example, a card with mana cost {1}{U}{U} has mana value 3. Ignore any alternative costs, additional costs, cost increases, or cost reductions that could apply to it. A card with no mana cost has a mana value of 0.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control no creatures with power greater than 0 as Rishkar's Expertise resolves, you draw no cards, but you may cast a card with mana value 5 or less from your hand without paying its mana cost.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any triggered abilities that trigger while performing the Expertise spell's first effect won't be put onto the stack until after you're done casting your free spell. They're put onto the stack at the same time as any abilities that triggered while casting that spell regardless of the order in which those abilities triggered.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "While you're casting your free spell, the Expertise spell is still on the stack. It will be put into its owner's graveyard after the free spell is cast. The free spell can't target the Expertise card in your graveyard. It can target the Expertise spell on the stack, but the Expertise spell will become an illegal target before the free spell resolves.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The greatest power among creatures you control is determined as Rishkar's Expertise resolves.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If an expertise spell allows you to cast a split card, you may cast either half or, if that split card has fuse, both halves.",
+      "oracle_id": "97407cd0-2bd2-4074-94d3-4ec3d243fa78",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "While you're casting your free spell, the Expertise spell is still on the stack. It will be put into its owner's graveyard after the free spell is cast. The free spell can't target the Expertise card in your graveyard. It can target the Expertise spell on the stack, but the Expertise spell will become an illegal target before the free spell resolves.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any triggered abilities that trigger while performing the Expertise spell's first effect won't be put onto the stack until after you're done casting your free spell. They're put onto the stack at the same time as any abilities that triggered while casting that spell regardless of the order in which those abilities triggered.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Cathartic Reunion, you must pay those to cast the card.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card's mana value is determined solely by the mana symbols printed in its upper right corner. The mana value is the total amount of mana in that cost, regardless of color. For example, a card with mana cost {1}{U}{U} has mana value 3. Ignore any alternative costs, additional costs, cost increases, or cost reductions that could apply to it. A card with no mana cost has a mana value of 0.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that allow you to \"cast\" a card don't allow you to play a land card.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If an expertise spell allows you to cast a split card, you may cast either half or, if that split card has fuse, both halves.",
+      "oracle_id": "5cd17347-5558-46f9-b8bb-ae5deeb1f229",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that allow you to \"cast\" a card don't allow you to play a land card.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card's mana value is determined solely by the mana symbols printed in its upper right corner. The mana value is the total amount of mana in that cost, regardless of color. For example, a card with mana cost {1}{U}{U} has mana value 3. Ignore any alternative costs, additional costs, cost increases, or cost reductions that could apply to it. A card with no mana cost has a mana value of 0.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "While you're casting your free spell, the Expertise spell is still on the stack. It will be put into its owner's graveyard after the free spell is cast. The free spell can't target the Expertise card in your graveyard. It can target the Expertise spell on the stack, but the Expertise spell will become an illegal target before the free spell resolves.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Cathartic Reunion, you must pay those to cast the card.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature's toughness is reduced to 0 or less by Yahenni's Expertise, that creature is still on the battlefield as you cast your free spell. It can be the target of that spell, although it will become an illegal target before that spell resolves. If it has any abilities that trigger on the spell being cast, those abilities will trigger.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any triggered abilities that trigger while performing the Expertise spell's first effect won't be put onto the stack until after you're done casting your free spell. They're put onto the stack at the same time as any abilities that triggered while casting that spell regardless of the order in which those abilities triggered.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If an expertise spell allows you to cast a split card, you may cast either half or, if that split card has fuse, both halves.",
+      "oracle_id": "692babfa-9b74-415e-a560-abae4ccb006b",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Kari Zev's Expertise can target any creature or Vehicle, even one that you already control or that is already untapped.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Expertise spell you cast has any targets, and those targets become illegal before the spell resolves, the spell doesn't resolve and none of its effects happen. You won't get to cast a free spell.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that allow you to \"cast\" a card don't allow you to play a land card.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "While you're casting your free spell, the Expertise spell is still on the stack. It will be put into its owner's graveyard after the free spell is cast. The free spell can't target the Expertise card in your graveyard. It can target the Expertise spell on the stack, but the Expertise spell will become an illegal target before the free spell resolves.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Cathartic Reunion, you must pay those to cast the card.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any triggered abilities that trigger while performing the Expertise spell's first effect won't be put onto the stack until after you're done casting your free spell. They're put onto the stack at the same time as any abilities that triggered while casting that spell regardless of the order in which those abilities triggered.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card's mana value is determined solely by the mana symbols printed in its upper right corner. The mana value is the total amount of mana in that cost, regardless of color. For example, a card with mana cost {1}{U}{U} has mana value 3. Ignore any alternative costs, additional costs, cost increases, or cost reductions that could apply to it. A card with no mana cost has a mana value of 0.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If an expertise spell allows you to cast a split card, you may cast either half or, if that split card has fuse, both halves.",
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Cathartic Reunion, you must pay those to cast the card.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Expertise spell you cast has any targets, and those targets become illegal before the spell resolves, the spell doesn't resolve and none of its effects happen. You won't get to cast a free spell.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card's mana value is determined solely by the mana symbols printed in its upper right corner. The mana value is the total amount of mana in that cost, regardless of color. For example, a card with mana cost {1}{U}{U} has mana value 3. Ignore any alternative costs, additional costs, cost increases, or cost reductions that could apply to it. A card with no mana cost has a mana value of 0.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any triggered abilities that trigger while performing the Expertise spell's first effect won't be put onto the stack until after you're done casting your free spell. They're put onto the stack at the same time as any abilities that triggered while casting that spell regardless of the order in which those abilities triggered.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The card that you cast may be an artifact or creature that was returned to your hand by this spell.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "While you're casting your free spell, the Expertise spell is still on the stack. It will be put into its owner's graveyard after the free spell is cast. The free spell can't target the Expertise card in your graveyard. It can target the Expertise spell on the stack, but the Expertise spell will become an illegal target before the free spell resolves.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that allow you to \"cast\" a card don't allow you to play a land card.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-02-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If an expertise spell allows you to cast a split card, you may cast either half or, if that split card has fuse, both halves.",
+      "oracle_id": "a1cdcb8c-1e12-4d39-aa4a-db678a80df9c",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target is dealt lethal damage this way, it will still be on the battlefield while you cast a spell from your hand. It won't die until after Electrodominance is finished resolving. If any of its abilities trigger while you cast that spell, those abilities will trigger but won't resolve until after the target has died.",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that allow you to cast a spell don't allow you to play a land.",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target is illegal as Electrodominance tries to resolve, it won't resolve and none of its effects will happen. You won't get to cast a spell from your hand.",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs, such as that of Bankrupt in Blood, those must be paid to cast the card.",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You cast the spell during the resolution of Electrodominance. Ignore timing restrictions based on the spell's type.",
+      "oracle_id": "4a59d86e-405d-4c70-b2a5-c64f5cecfd9e",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because discarding two cards is an additional cost, you can't cast Cathartic Reunion if you don't have at least two other cards in hand.",
+      "oracle_id": "0f3c3e5f-6af3-4af2-8703-4ccc8ed8f675",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you can't cast it without sacrificing a creature, and you can't sacrifice additional creatures.",
+      "oracle_id": "365548fb-5acc-4a8a-b20b-26d28b7d029f",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack.",
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Away targets only a player. It doesn't target any creatures. The target player chooses which creature to sacrifice as the spell resolves.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it.",
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it's not possible to play the copy as a permanent.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "An adventurer card uses only its non-Adventure characteristics in every zone except the stack, as well as while on the stack if not cast as an Adventure. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Jidoor, Aristocratic Capital is a colorless Town land card whose mana value is 0. It can't be the target of Sorceress's Schemes, which reads in part \"Return target instant or sorcery card from your graveyard or exiled card with flashback you own to your hand.\"",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an object becomes a copy of an object that has an Adventure, the copy also has an Adventure. If it changes zones, it will either cease to exist (if it's a token) or cease to be a copy (if it's a nontoken permanent), and so you won't be able to cast it as an Adventure.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "An effect may refer to a card, spell, or permanent that \"has an Adventure.\" This refers to a card, spell, or permanent that has an adventurer card's set of alternative characteristics, even if they're not being used and even if that card was never cast as an Adventure.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting a card as an Adventure isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it's legal to cast that spell. For example, if you control Traveling Chocobo (\"You may play lands and cast Bird spells from the top of your library.\") and Jidoor, Aristocratic Capital is on top of your library, you can play Jidoor, Aristocratic Capital, but you can't cast Overture.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any timing restrictions and permissions for the card you play from exile. In the case of any of the five lands in this release, you'll be able to play it only during your main phase while the stack is empty and only if you have an available land play remaining.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner's graveyard as it resolves. For as long as it remains exiled, that player may play it using its primary characteristics. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won't be exiled and the spell's controller won't be able to play that card from exile later.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a card, spell, or permanent that has an Adventure, it won't find an instant or sorcery spell on the stack that's been cast as an Adventure.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "When playing a card as an Adventure, use the alternative characteristics and ignore all of the card's normal characteristics. The resulting spell's color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won't give you permission to play it with its primary characteristics.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose.",
+      "oracle_id": "c7b044c3-3cfa-407e-bf20-2875e8e04b7b",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "A modal double-faced card can't be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \"play\") a specific modal double-faced card, you can't play it as a land.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you're playing and ignore the other face's characteristics.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face's name.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can't be put onto the battlefield, it doesn't enter the battlefield.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that's being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined.",
+      "oracle_id": "941a4b14-ea2a-4bd0-8cc2-d609f80df32c",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although originally printed with a characteristic-defining ability that defined its color, this card now has a color indicator. This color indicator can't be affected by text-changing effects (such as the one created by Crystal Spray), although color-changing effects can still overwrite it.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Due to a recent rules change to suspend, you are no longer required to cast the suspended card as the second triggered ability of suspend resolves. Instead, as the second triggered ability resolves, you may cast the card. Timing permissions based on the card's type are ignored. If you don't cast the card, it remains exiled with no time counters on it, and it's no longer suspended.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Suspend is a keyword that represents three abilities. The first is a static ability that allows you to exile the card from your hand with the specified number of time counters (the number before the dash) on it by paying its suspend cost (listed after the dash). The second is a triggered ability that removes a time counter from the suspended card at the beginning of each of your upkeeps. The third is a triggered ability that gives you the option to cast the card when the last time counter is removed.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a spell cast without paying its mana cost is determined by its mana cost, even though that cost wasn't paid.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Exiling a card with suspend isn't casting that card. This action doesn't use the stack and can't be responded to.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a \"suspended card,\" that means a card that (1) has suspend, (2) is in exile, and (3) has one or more time counters on it.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can exile a card in your hand using suspend any time you could cast that card. Consider its card type, any effects that modify when you could cast it (such as flash) and any other effects that stop you from casting it (such as from Meddling Mage's ability) to determine if and when you can do this. Whether you could actually complete all steps in casting the card is irrelevant. For example, you can exile a card with suspend that has no mana cost or that requires a target even if no legal targets are available at that time.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell requires any targets, those targets are chosen when the spell is finally cast, not when it's exiled.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the second triggered ability is countered, the card can't be cast. It remains exiled with no time counters on it, and it's no longer suspended.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the first triggered ability of suspend (the one that removes time counters) is countered, no time counter is removed. The ability will trigger again at the beginning of the card's owner's next upkeep.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Cards exiled with suspend are exiled face up.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a card \"without paying its mana cost,\" such as with suspend, you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those if you want to cast the card.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the last time counter is removed, the second triggered ability of suspend (the one that lets you cast the card) triggers. It doesn't matter why the last time counter was removed or what effect removed it.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card with no mana cost is given an alternative cost equal to its mana cost (by Snapcaster Mage, for example), that cost cannot be paid and the card cannot be cast this way.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card with no mana cost can't be cast normally; you'll need a way to cast it for an alternative cost or without paying its mana cost, such as by suspending it.",
+      "oracle_id": "9728dec9-d482-4c7a-8cdc-44d010dc878d",
+      "published_at": "2024-02-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted permanent is an illegal target by the time Into the Roil resolves, the entire spell doesn't resolve. You don't draw a card.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target nonland permanent is an illegal target by the time Into the Roil tries to resolve, the spell doesn't resolve. You don't draw a card if it was kicked.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "c2898bbd-82a4-4d26-b6ee-169b0ebe71b4",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Thalia's ability affects each spell that's not a creature spell, including your own.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Thalia's ability affects each spell that's not a creature spell, including your own.",
+      "oracle_id": "9b7f1d05-707c-4ed3-9f0e-8ced1232c2ee",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Rule of Law looks at the entire turn to see if a player has cast a spell, even if Rule of Law wasn’t on the battlefield when that spell was cast. Notably, you can’t cast Rule of Law and then cast another spell during the same turn.",
+      "oracle_id": "53e88e64-6f82-4154-a66e-6aeb0154b368",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a spell that was countered, you can’t cast another spell during the same turn.",
+      "oracle_id": "53e88e64-6f82-4154-a66e-6aeb0154b368",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers when a player casts a spell resolves before the spell that caused it to trigger, but after targets have been chosen for that spell. It resolves even if that spell is countered.",
+      "oracle_id": "5fac139a-07d3-4e6c-98e3-d98b199f7a6f",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures you control enter at the same time, Impact Tremors will trigger once for each of those creatures. This is true even if Impact Tremors enters at the same time as those creatures.",
+      "oracle_id": "9242cd3e-1a71-4700-8182-9c1005616033",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap more creatures than necessary to activate a crew ability.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature.",
+      "oracle_id": "49136bdc-bc50-49a2-999a-1ef9c16ea130",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "As long as Ashaya is on the battlefield, it's affected by its second ability and thus its first ability counts itself.",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on a creature until the damage is removed as the turn ends, nonlethal damage dealt to Ashaya may become lethal if lands you control leave the battlefield during that turn.",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "A land that's a Forest has the intrinsic mana ability \"{T}: Add {G}.\"",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that defines Ashaya's power and toughness applies in all zones, not just the battlefield.",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't play creature cards as lands; you'll still have to cast them as spells, and they'll enter the battlefield as lands (in addition to their other types).",
+      "oracle_id": "162572f2-1757-42e9-bd97-e6bd9a762c0e",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an overload cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because a spell with overload doesn't target when its overload cost is paid, it may affect permanents with hexproof or with protection from the appropriate color.",
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to cast a spell with overload \"without paying its mana cost,\" you can't choose to pay its overload cost instead.",
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't pay the overload cost of a spell with overload, that spell will have a single target. If you pay the overload cost, the spell won't have any targets.",
+      "oracle_id": "d75b9c82-1b49-4c3e-a1b5-aeef57d6644b",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

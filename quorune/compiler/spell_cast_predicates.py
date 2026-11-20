@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..mana_value_limit import ManaValueLimitSpec
 from ..rules.spell_cast_events import CAST_SPELL_KEYWORDS
 
 
@@ -215,6 +216,8 @@ class FixedSpellCastSubject:
     targets_creature: bool = False
     targets_controlled_creature: bool = False
     qualified_spell_number: int | None = None
+    mana_value_limit: ManaValueLimitSpec | None = None
+    requires_no_mana_spent: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.controller, FixedSpellCastController):
@@ -239,6 +242,7 @@ class FixedSpellCastSubject:
             "requires_x_cost",
             "requires_adventure",
             "requires_main_phase",
+            "requires_no_mana_spent",
             "not_owned_by_controller",
             "targets_creature",
             "targets_controlled_creature",
@@ -287,10 +291,22 @@ class FixedSpellCastSubject:
             self.turn_relation, FixedSpellCastTurnRelation
         ):
             raise ValueError("Spell-cast turns require a closed relation")
+        if self.mana_value_limit is not None and (
+            not isinstance(self.mana_value_limit, ManaValueLimitSpec)
+            or self.controller not in {FixedSpellCastController.ANY, FixedSpellCastController.OPPONENT}
+            or self.quality is not FixedSpellCastQuality.ANY or self.mana_value_minimum is not None
+        ):
+            raise ValueError("Spell-cast mana-value limits require their closed caster and spell scope")
+        if self.requires_no_mana_spent and (
+            self.controller not in {FixedSpellCastController.ANY, FixedSpellCastController.OPPONENT}
+            or self.quality is not FixedSpellCastQuality.ANY
+        ):
+            raise ValueError("Zero mana spent requires the exact any-player or opponent cast")
         if self.qualified_spell_number is not None:
             self.qualified_ordinal_spec
             if (self.caster_spell_number is not None or self.caster_spell_number_minimum is not None or self.source_spell
-                    or self.characteristic_query is not None or self.mana_value_minimum is not None or self.requires_kicked
+                    or self.characteristic_query is not None or self.mana_value_minimum is not None
+                    or self.mana_value_limit is not None or self.requires_no_mana_spent or self.requires_kicked
                     or self.requires_x_cost or self.requires_adventure or self.requires_main_phase or self.not_owned_by_controller or self.targets_creature):
                 raise ValueError('Qualified spell ordinals cannot count unrecorded historical predicates')
 
@@ -321,6 +337,8 @@ class FixedSpellCastSubject:
             predicates.append("source_spell")
         if self.mana_value_minimum is not None:
             predicates.append(f"mana_value_gte_{self.mana_value_minimum}")
+        if self.mana_value_limit is not None:
+            predicates.append(f"mana_value_lte_{self.mana_value_limit.maximum}")
         if self.caster_spell_number is not None:
             predicates.append(f"spell_number_{self.caster_spell_number}")
         if self.qualified_spell_number is not None:
@@ -341,6 +359,8 @@ class FixedSpellCastSubject:
             predicates.append("adventure")
         if self.requires_main_phase:
             predicates.append("main_phase")
+        if self.requires_no_mana_spent:
+            predicates.append("no_mana_spent")
         if self.not_owned_by_controller:
             predicates.append("not_owned")
         return f"{self.controller.value}:" + ":and:".join(predicates)
@@ -352,6 +372,7 @@ class FixedSpellCastSubject:
                 self.source_spell,
                 self.targets_creature,
                 self.mana_value_minimum is not None,
+                self.mana_value_limit is not None,
                 self.caster_spell_number is not None,
                 self.qualified_spell_number is not None,
                 self.caster_spell_number_minimum is not None,
@@ -361,6 +382,7 @@ class FixedSpellCastSubject:
                 self.requires_x_cost,
                 self.requires_adventure,
                 self.requires_main_phase,
+                self.requires_no_mana_spent,
                 self.not_owned_by_controller,
                 self.quality is FixedSpellCastQuality.PERMANENT,
                 self.quality is not None
@@ -453,6 +475,12 @@ class FixedSpellCastSubject:
         ):
             if value is not None:
                 conditions.append({"field": field, "op": op, "value": value})
+        if self.mana_value_limit is not None:
+            conditions.append({"field": "mana_value", "op": "lte", "value": self.mana_value_limit.maximum})
+        if self.requires_no_mana_spent:
+            from ..rules.event_outcome_shapes import zero_mana_spent_cast_condition
+
+            conditions.append(zero_mana_spent_cast_condition())
         if self.origin is FixedSpellCastOrigin.NOT_HAND:
             conditions.append({"field": "from", "op": "ne", "value": "hand"})
         elif self.origin is not None:
@@ -736,6 +764,20 @@ def _subtyped_creature_spell_cast_binding(material_line: str) -> FixedSpellCastB
             )),
         ),
         body=match['body'],
+    )
+
+
+def _mana_value_limit_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
+    match = re.fullmatch(
+        r"Whenever (?P<caster>a player casts|an opponent casts) a spell with mana value "
+        r"(?P<maximum>0|[1-9][0-9]*) or less, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _binding(
+        body=match["body"], controller=_spell_cast_controller(match["caster"]),
+        mana_value_limit=ManaValueLimitSpec(int(match["maximum"])),
     )
 
 
@@ -1065,6 +1107,7 @@ def fixed_spell_cast_binding_spec(
     for parser in (
         _targeted_creature_spell_cast_binding,
         _basic_spell_cast_binding,
+        _mana_value_limit_spell_cast_binding,
         _history_spell_cast_binding,
         _origin_spell_cast_binding,
     ):

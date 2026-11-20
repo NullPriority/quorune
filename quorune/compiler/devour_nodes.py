@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed source-spanned Devour keyword productions."""
 
-import re
+from . import regex_working_set as re
 from ..devour import DevourSpec,DevourQuality,DEVOUR_HANDLER,DEVOUR_CAPABILITY
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .dependency_gate import explicit_capabilities_gate

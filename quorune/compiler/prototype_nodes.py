@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compile printed fixed Prototype characteristics before keyword fallback."""
 
-import re
+from . import regex_working_set as re
 from ..prototype_model import PrototypeSpec,PROTOTYPE_HANDLER,PROTOTYPE_CAPABILITY
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .static_runtime_nodes import runtime_handler_node

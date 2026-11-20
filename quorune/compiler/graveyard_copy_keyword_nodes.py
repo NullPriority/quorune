@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed Embalm/Eternalize activation composed from existing cost and copy owners."""
 
-import re
+from . import regex_working_set as re
 from ..abilities import ActivatedAbility
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..token_copy_recipes import TokenCopyExceptionSpec,TokenCopyRecipeSpec

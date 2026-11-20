@@ -1,6 +1,6 @@
 """One simultaneous instruction with independently constrained damage roles."""
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..fixed_damage_role_model import FixedDamageRoleSpec,FIXED_DAMAGE_ROLE_FIELD,FIXED_DAMAGE_ROLE_MECHANIC
 from .damage_templates import FixedDamageEffectTemplate,fixed_damage_effect_template,source_pronoun_damage_effect_template

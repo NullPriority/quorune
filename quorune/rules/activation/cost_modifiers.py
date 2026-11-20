@@ -7,7 +7,8 @@ from dataclasses import replace
 from ...ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ...activation_cost_modifiers import (ACTIVATION_GENERIC_COST_EVENT, ACTIVATION_GENERIC_COST_HANDLER,
     TARGETED_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, ActivationCostModifierSource,
-    ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, ActivationManaReduction, FixedActivationCostModifierSpec)
+    ConditionalActivationReduction, OpponentControlledActivationReduction,
+    AbilityLocalPublicManaAdjustment, ActivationManaReduction, FixedActivationCostModifierSpec)
 from ...card_program_faces import program_matches_face
 from ...object_query import object_matches_query
 from ...public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
@@ -24,6 +25,9 @@ def _ability_local_mana_modifiers(host, seat, source, ability):
     if isinstance(reduction, TargetActivationReduction):
         from .targeted_costs import ability_local_target_cost_modifiers
         return list(ability_local_target_cost_modifiers(host, seat, source, ability))
+    if isinstance(reduction, OpponentControlledActivationReduction):
+        count = reduction.generic if opponent_controlled_activation_threshold(host, seat, reduction) else 0
+        return [FixedActivationCostModifierSpec(-count, subject_relation='any')] if count else []
     provider = source if source.controller == seat else replace(source, controller=seat)
     if isinstance(reduction, AbilityLocalPublicManaAdjustment):
         if reduction.direction == 'reduce':return []
@@ -43,6 +47,20 @@ def _ability_local_mana_modifiers(host, seat, source, ability):
 
         count = query_characteristic_count(host, provider, reduction)
     return [FixedActivationCostModifierSpec(-count, subject_relation='any')] if count else []
+
+
+def opponent_controlled_activation_threshold(host, seat, reduction):
+    """Count current typed public rows separately for each active opponent."""
+    if seat not in host.active_seats:
+        raise ValueError('Opponent activation price requires an active actor')
+    counts = {opponent: 0 for opponent in host.active_seats if opponent != seat}
+    for card in host.state.cards.values():
+        if card.zone != 'battlefield' or card.phased_out or card.controller not in counts:
+            continue
+        row = host._public_object_query_result(card, _maximum_layer=None)
+        if object_matches_query(row, reduction.opponent_controlled_query):
+            counts[card.controller] += 1
+    return any(count >= reduction.minimum for count in counts.values())
 
 
 def ability_local_mana_reductions(host, seat, source, ability):

@@ -6,10 +6,12 @@ from types import SimpleNamespace
 from ..object_query import exact_numeric_characteristic
 from ..qualified_attack_model import (
     ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS, ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS,
+    ATTACK_FACT_EQUAL_POWER_TOUGHNESS,
     ATTACK_RECIPIENT_KIND_FIELD, QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_FULL_STATS_VERSION,
-    defended_player_or_planeswalker_condition, qualified_attack_facts_version, source_attacks_battle_condition,
+    defended_player_or_planeswalker_condition, qualified_attack_facts_version, qualified_player_defense_condition,
+    source_attacks_battle_condition,
 )
-from ..replacement.immutable import thaw_value
+from ..replacement.immutable import FrozenMap, thaw_value
 
 
 def attack_characteristic_context(host, card):
@@ -40,6 +42,16 @@ def _has_defended_recipient_scope(condition, expected):
             and any(_has_defended_recipient_scope(child, expected) for child in condition['all']))
 
 
+def qualified_player_defense_is_closed(condition) -> bool:
+    if not isinstance(condition, Mapping) or set(condition) != {'all'}:
+        return False
+    clauses = condition['all']
+    if not isinstance(clauses, (list, tuple)) or len(clauses) != 5 or not isinstance(clauses[-1], Mapping):
+        return False
+    minimum = clauses[-1].get('value')
+    return type(minimum) is int and minimum >= 0 and FrozenMap(condition) == FrozenMap(qualified_player_defense_condition(minimum))
+
+
 def qualified_attack_runtime_dependencies(program):
     from .event_subscriptions import FixedEventSubscriptionSet
     subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
@@ -61,6 +73,9 @@ def qualified_attack_runtime_dependencies(program):
                 if thaw_value(value) == battle_scope["all"][-1]:
                     if program.event != "creature.attacks" or thaw_value(program.event_condition) != battle_scope:
                         raise ValueError("A battle-attack condition requires the source's own declared attack")
+                elif thaw_value(value) == {'field': ATTACK_RECIPIENT_KIND_FIELD, 'op': 'eq', 'value': 'player'}:
+                    if program.event != 'creature.attacks' or not qualified_player_defense_is_closed(program.event_condition):
+                        raise ValueError('Fixed-power attacks on the source controller require the exact player recipient')
                 else:
                     recipient_scope = defended_player_or_planeswalker_condition()
                     if thaw_value(value) != recipient_scope['all'][1]:
@@ -80,6 +95,9 @@ def qualified_attack_runtime_dependencies(program):
                 elif name in ATTACK_FACT_BOOLEANS:
                     if op != 'eq' or type(expected) is not bool:
                         raise ValueError('Attacker state conditions require exact booleans')
+                elif field == ATTACK_FACT_EQUAL_POWER_TOUGHNESS:
+                    if op != 'eq' or expected is not True:
+                        raise ValueError('Equal attacker power and toughness requires the closed comparison')
                 elif name in ATTACK_FACT_NUMBERS:
                     if op not in {'gte', 'lte', 'eq'} or type(expected) is not int:
                         raise ValueError('Attacker numeric conditions require fixed integer comparisons')
@@ -95,3 +113,15 @@ def qualified_attack_runtime_dependencies(program):
             or not _has_defended_recipient_scope(thaw_value(program.event_condition), recipient_scope)):
         raise ValueError('Declared defender kind requires the source controller as the defending player')
     return (QUALIFIED_ATTACK_CAPABILITY,) if found or recipient_scope is not None else ()
+
+
+def qualified_attack_defender_condition_is_closed(event,condition):
+    """One controlled, versioned attack occurrence supplies one defending player."""
+    from .event_subscriptions import FixedEventSubscriptionSet
+    if event!='creature.attacks':return False
+    try:
+        if FixedEventSubscriptionSet.from_condition(condition) is not None:return False
+        required=qualified_attack_runtime_dependencies(SimpleNamespace(event=event,event_condition=condition))
+        return QUALIFIED_ATTACK_CAPABILITY in required and _has_defended_recipient_scope(thaw_value(condition),
+            {'field':'controller','op':'eq','value':'$source.controller'})
+    except (TypeError,ValueError,KeyError):return False

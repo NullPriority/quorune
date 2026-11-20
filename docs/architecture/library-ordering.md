@@ -11,10 +11,53 @@ maintenance: "hand-maintained"
 
 Quorune represents private library inspection as a typed choice followed by a
 separate authoritative mutation. A choice handler may read only the projected
-top of the instructed player's library, reveal those identities only to that
-player and the analyst record, and issue a strict schema. The response is
+top of the instructed player's library, reveal those identities only to the
+instructed viewer and the analyst record, and issue a strict schema. The response is
 revalidated against the exact looked-at identities before any library order is
 changed.
+
+## Fixed targeted inspection
+
+`library.inspect.fixed_target_player` represents the resolving controller
+privately looking at a fixed one, two or three cards of one targeted player's
+library. The targeted owner and inspecting actor are separate typed roles.
+The ordinary target owner enforces any opponent restriction and revalidates
+the announced target before inspection. Only the actor receives the looked-at
+identities and private decision; a short library supplies its available cards.
+
+The new `inspect_target_library` operation pins the current top order and each
+logical incarnation. Its closed version-one descriptor supports an unchanged
+look, optionally moving the single top card to its owner's graveyard, or
+choosing exactly one inspected card for its owner's graveyard or exile.
+Completion rejects changed order, foreign references and changed incarnations
+before mutation. Revealing knowledge and moving the chosen card delegate to
+`RevealLibraryCardsIntent` and the canonical destination-replacement zone owner.
+These actions do not search, mill, shuffle or reorder the remaining library.
+An independently represented next-turn draw retains its original controller
+and delayed-trigger owner.
+
+Saved continuations retain the explicit operation, descriptor version, viewer,
+target and inspected identities. Historical library operations keep their
+existing codecs and replay meaning. Multiple-card ordering or destination
+partitions, conditional payments, optional initial inspection and face-down
+play permissions remain outside this grammar.
+
+## Search queries and player roles
+
+The canonical library-search query accepts a library owner and a separate
+searching player. Restrictions and bounded top windows belong to the searching
+player; the returned card identities belong to the instructed library. Existing
+self-search callers keep their original default. The query is read-only and
+does not itself issue a choice, grant visibility, move a card or shuffle.
+
+A version-nine target-library exile search keeps both roles explicit through
+choice, validation and movement. Its mandatory unqualified count requires the
+full available quantity. The searching actor receives the private choice; the
+target library owner shuffles after canonical simultaneous exile and any
+destination replacements. Search prohibition still preserves the printed shuffle.
+Saved identities reject changed incarnations, and older search versions cannot
+carry this foreign-library authority. Contextual event-player clauses, qualified
+and optional counts, and unrepresented destinations remain separate boundaries.
 
 ## Shared ordered partition
 
@@ -73,8 +116,18 @@ shuffle through the canonical `ShuffleLibraryIntent`. Ordinary optional-effect
 and ordered-result composition express ordering, optional shuffle and a later
 draw. A declined shuffle keeps the chosen order; applying it shuffles the whole
 library before continuation. Source departure, paid activations and target-loss
-handling retain their existing stack and effect owners. Variable counts,
-another player's library and unrepresented sibling results remain residuals.
+handling retain their existing stack and effect owners. Variable counts and
+unrepresented sibling results remain residuals.
+
+`library.shuffle.fixed_target_player` adds one public player target through an
+explicit `target_library_shuffle_version: 1` marker. The target can be the
+controller or another active player; empty and singleton libraries are legal.
+The existing canonical shuffle intent resets reordered-card knowledge and
+records the instructed player's shuffle. Source costs, target protection and
+resolution revalidation remain with their shared owners. The unmarked
+controller-only payload and existing handler identity retain their replay
+meaning. The executable marker independently requires the target capability
+and exact single-player schema even after coverage metadata is removed.
 See [ADR 0131](../adr/0131-typed-private-library-ordering.md).
 
 ## Fixed hand to library top
@@ -296,6 +349,24 @@ seals the limit before it offers private choices, and resumption validates the
 selection against the same limit. A stated quality still permits the player to
 search and find nothing.
 
+## Searches with a public query maximum
+
+Version-eight basic-land searches evaluate an existing closed public quantity
+once when their instruction starts. The original resolving controller and exact
+instruction pointer bind the value in the stack's declared-public-amount cache.
+The private offer and command validation use the same frozen nonnegative
+maximum, including zero and values above the fixed-search grammar's limit.
+
+`QueryBoundLibrarySearchSpec` keeps an unresolved compiler descriptor separate
+from saved resolved continuation data. Only controlled lands, tapped creatures,
+Shrines, distinct permanent colors and creatures directly attacking the
+controller are accepted. Counted lands enter the battlefield tapped together,
+or are explicitly revealed into hand, before one whole-library shuffle.
+Searching for zero still searches and shuffles. Existing search windows,
+prohibitions, chooser privacy, entry replacements and rollback remain canonical.
+Historical search versions retain their codecs and meanings. See
+[ADR 0171](../adr/0171-query-bounded-library-search.md).
+
 ## Counted searches with alternative qualities
 
 Different qualifications can share one counted search. Each alternative
@@ -356,6 +427,12 @@ chosen when prohibited, so its contingent shuffle does not occur. Cast and
 activation costs remain paid. Semantic searches and historical fetch searches
 use the same constraint query and retain their existing movement owners.
 
+New Game Record checkpoints carry fetch entry placement version 1. The built-in
+search commits the entry setting from its trusted one-card placement instruction
+and binds it to the saved search decision. The zone transition evaluates entry
+effects using that setting. Historical records without the marker replay with
+their recorded placement behavior.
+
 Resolved turn prohibitions use a typed entry in the existing continuous-effect
 journal. Its decoder, ordinary cleanup and pre-action replay preserve the
 duration after the resolving spell leaves the stack. Static participation
@@ -399,3 +476,35 @@ grammar outside the normalized fixed-body observer. In particular, CR 701.22c
 requires a future APNAP decision coordinator
 and simultaneous commit; a normal four-player game in which one player Scrying
 has opponents is not that case.
+
+## Whole hand and graveyard recycling
+
+The existing recycling instruction has an explicit inner version two for a
+complete hand plus graveyard collection of the resolving controller or all
+active players. The selector validates every owner and zone before committing
+one canonical simultaneous movement batch. Commander destination choices suspend
+that entire batch; no library shuffles until all replacements finish. Hidden
+hand identities and private library order remain server state. Every designated
+library shuffles once, including empty collections.
+
+The complete reset composes with independently closed drawing in printed order:
+every library shuffles before the active player draws, followed by other players
+in turn order. Draw amounts, replacements and restrictions retain the canonical
+draw owner. The resolving spell stays on the stack during its own reset and
+finishes at its represented destination. Assist, Flashback, modal and Entwine
+prices retain their existing owners. See
+[ADR 0169](../adr/0169-hand-graveyard-library-reset.md).
+
+## Whole-graveyard recycling
+
+A closed recycling instruction binds the resolving controller, one declared
+player target, or all current players. It snapshots public graveyards and
+delegates the complete batch to the canonical simultaneous zone owner. All
+destination replacement choices complete before each designated library is
+shuffled once, including empty graveyards and empty or one-card libraries.
+
+The resolving spell enters its graveyard after the instruction completes.
+Printed activation prices remain paid when a player target becomes illegal;
+revalidation also prevents any following draw from resolving alone. The
+shuffle owner clears order knowledge and preserves seeded replay. Selective
+card sets, hidden-zone wheels and unrepresented siblings remain unsupported.

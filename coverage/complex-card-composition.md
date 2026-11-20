@@ -2,7 +2,7 @@
 title: "Complex card composition benchmark"
 status: "generated"
 authoritative_source: "coverage/complex-card-composition.json"
-verified: "2b7f3fc39efac3d7b95e72e061dc88b3d86891afda27ab693b22069f0e6cbff9"
+verified: "0b2ec88b74bd6e78e948d05b025d77d41209774a87c4c300b136ce7eae907892"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -24,6 +24,8 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Urabrask // The Great Work | 213 | 37 | 6 | 6 | 8 | 4 | `blocked` |
 | Rowan Kenrith | 212 | 29 | 5 | 6 | 5 | 21 | `blocked` |
 | Jugan Defends the Temple // Remnant of the Rising Star | 211 | 29 | 7 | 6 | 7 | 9 | `blocked` |
+| Blacksmith's Talent | 206 | 35 | 5 | 10 | 1 | 8 | `blocked` |
+| Toggo, Goblin Weaponsmith | 205 | 36 | 6 | 5 | 0 | 11 | `exact` |
 | Gossip's Talent | 203 | 33 | 5 | 8 | 4 | 11 | `blocked` |
 | Gwen Stacy // Ghost-Spider | 203 | 38 | 5 | 5 | 5 | 13 | `blocked` |
 | Kytheon, Hero of Akros // Gideon, Battle-Forged | 203 | 30 | 4 | 5 | 10 | 18 | `blocked` |
@@ -41,11 +43,13 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Conceited Witch // Price of Beauty | 191 | 29 | 6 | 4 | 0 | 20 | `exact` |
 | Crystal Fragments // Summon: Alexander | 189 | 27 | 6 | 7 | 4 | 8 | `blocked` |
 | Elesh Norn // The Argent Etchings | 189 | 25 | 7 | 6 | 9 | 2 | `blocked` |
+| Invasion of Fiora // Marchesa, Resolute Monarch | 189 | 25 | 6 | 7 | 3 | 17 | `blocked` |
 | Kaito, Dancing Shadow | 187 | 36 | 6 | 5 | 4 | 2 | `blocked` |
 | Mila, Crafty Companion // Lukka, Wayward Bonder | 187 | 34 | 4 | 6 | 10 | 3 | `blocked` |
 | Rowan, Scholar of Sparks // Will, Scholar of Frost | 187 | 33 | 4 | 8 | 10 | 4 | `blocked` |
 | Dorothea, Vengeful Victim // Dorothea's Retribution | 186 | 37 | 5 | 7 | 0 | 2 | `exact` |
 | Kaito, Cunning Infiltrator | 186 | 41 | 6 | 5 | 0 | 2 | `exact` |
+| Invasion of Tarkir // Defiant Thundermaw | 185 | 27 | 6 | 4 | 3 | 18 | `blocked` |
 | Jace, Vryn's Prodigy // Jace, Telepath Unbound | 185 | 29 | 5 | 5 | 7 | 15 | `blocked` |
 | Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel | 185 | 30 | 6 | 5 | 8 | 10 | `blocked` |
 | Invasion of Kaldheim // Pyre of the World Tree | 184 | 24 | 6 | 4 | 3 | 22 | `blocked` |
@@ -59,8 +63,4 @@ Contains public card names, Oracle IDs, generated piece IDs, and aggregate count
 | Ral, Monsoon Mage // Ral, Leyline Prodigy | 180 | 19 | 5 | 6 | 12 | 17 | `blocked` |
 | The Rise of Sozin // Fire Lord Sozin | 180 | 23 | 6 | 5 | 9 | 5 | `blocked` |
 | Hidetsugu Consumes All // Vessel of the All-Consuming | 179 | 33 | 5 | 6 | 2 | 10 | `blocked` |
-| Ob Nixilis, the Adversary | 179 | 38 | 4 | 5 | 1 | 7 | `blocked` |
-| Urza, Planeswalker | 179 | 29 | 5 | 6 | 6 | 11 | `blocked` |
-| Cleric Class | 178 | 29 | 3 | 8 | 6 | 12 | `blocked` |
-| Faithbound Judge // Sinner's Judgment | 178 | 26 | 7 | 7 | 5 | 1 | `blocked` |
 | Animate Dead | 131 | 16 | 5 | 3 | 5 | 5 | `blocked` |

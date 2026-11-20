@@ -80,7 +80,7 @@ class ActivationProposalHost(Protocol):
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
 
     def _fetch_context(
-        self, seat: str, ability: ActivatedAbility, response: Mapping[str, Any]
+        self, seat: str, ability: ActivatedAbility, response: Mapping[str, Any], *, program: Any = None,
     ) -> dict[str, Any]: ...
 
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
@@ -186,6 +186,12 @@ def _validate_activation_cost_contract(
     from ...granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
     payment = ability.granting_attachment_payment
     program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    from .paid_characteristic_results import granted_paid_activation_price_matches
+    if not granted_paid_activation_price_matches(program, ability):
+        raise ActivationProposalError(
+            'Granted paid creature result has a different effective activation price',
+            status='unresolved', reason='unresolved_granted_paid_stat_price',
+        )
     cost = program.cost_schema if program is not None else None
     declared = cost.get(GRANTING_ATTACHMENT_PAYMENT_FIELD) if isinstance(cost, Mapping) else None
     if payment is not None or declared is not None:
@@ -382,7 +388,7 @@ def build_activation_proposal(
         else []
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
-    context = host._fetch_context(request.actor, ability, response)
+    context = host._fetch_context(request.actor, ability, response, program=program)
     context.update(_activation_effect_context(host, source, program, effective_target_schema, targets, response))
     mana_option = None
     if ability.mana_cost_options:

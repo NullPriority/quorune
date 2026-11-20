@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping
@@ -171,6 +171,21 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
 
 
 @dataclass(frozen=True, slots=True)
+class TargetedGraveyardReturnManaValueLifeTemplate:
+    returned: TargetedOwnGraveyardReturnToHandEffectTemplate
+
+    def compiled(self):
+        from ..scalar_effect_amount_model import ScalarEffectAmountSpec, ScalarAmountOrigin, SCALAR_AMOUNT_MECHANIC
+        from .fixed_effect_clause_sequences import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+        from .life_templates import LIFE_MECHANIC
+        template, effects, schema, mechanics = self.returned.compiled()
+        amount = ScalarEffectAmountSpec(ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE,
+            characteristic='mana_value', schema_version=15)
+        life = {'op': 'life', 'player': '$controller', 'delta': amount.to_dict()}
+        return template + '-mana-value-life-v1', (*effects, life), schema, (*mechanics, LIFE_MECHANIC, SCALAR_AMOUNT_MECHANIC, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC)
+
+
+@dataclass(frozen=True, slots=True)
 class TargetedPublicGraveyardReturnToHandEffectTemplate:
     target: PublicGraveyardCardTargetSpec
 
@@ -261,7 +276,13 @@ def targeted_return_to_hand_effect_template(
 
 def targeted_own_graveyard_return_to_hand_effect_template(
     text: str,
-) -> TargetedOwnGraveyardReturnToHandEffectTemplate | None:
+) -> TargetedOwnGraveyardReturnToHandEffectTemplate | TargetedGraveyardReturnManaValueLifeTemplate | None:
+    normalized = ' '.join(text.strip().split())
+    linked = re.fullmatch(r"(?P<returned>Return target .+? from your graveyard to your hand)\. "
+        r"You gain life equal to that card['’]s mana value\.", normalized, re.I)
+    if linked is not None:
+        returned = targeted_own_graveyard_return_to_hand_effect_template(linked['returned'])
+        return TargetedGraveyardReturnManaValueLifeTemplate(returned) if isinstance(returned, TargetedOwnGraveyardReturnToHandEffectTemplate) else None
     targets = "|".join(
         re.escape(kind.value) for kind in GraveyardCardTargetKind
     )

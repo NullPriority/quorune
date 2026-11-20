@@ -4,11 +4,24 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 from .declare_attack_cast_model import declare_attack_cast_version
+from .spell_resolution_name_codec import validate_resolution_name_provenance
 
 from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_event_type_snapshot_version
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
 from .model import unearth_leave_replacement_version
-from .stack_resolution_authority_model import stack_resolution_authority_version
+from .library_search_model import fetch_entry_placement_fields, read_fetch_entry_placement_version
+from .continuous_effect_model import (
+    continuous_dependency_order_fields,
+    read_continuous_dependency_order_version,
+)
+from .damage_modifier_state import (
+    SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
+    read_shield_counter_damage_version,
+)
+from .stack_resolution_authority_model import (
+    COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
+    stack_resolution_authority_version,
+)
 from .mana_source_counter_payment_model import (
     mana_source_counter_payment_fields,read_mana_source_counter_payment_version,
     mana_cost_order_fields,read_mana_cost_order_version,mana_cost_order_version,
@@ -32,11 +45,14 @@ def format_state_versions(state: Any) -> dict[str, int]:
     """Return canonical manifest markers for additive state semantics."""
 
     from .state_based_legend_model import legend_rule_choice_version
+    shield_damage = getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None)
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
     unearth = unearth_leave_replacement_version(getattr(state, "unearth_leave_replacement_version", None))
     return {
+        **({"spell_resolution_name_history_version": 1}
+           if getattr(state, "spell_resolution_name_ledger", None) is not None else {}),
         **({'declare_attack_cast_version': 1}
            if declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None)) == 1 else {}),
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
@@ -53,9 +69,9 @@ def format_state_versions(state: Any) -> dict[str, int]:
             getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
         ),
         **({"arrival_history_version":1} if getattr(getattr(state,"turn_history",None),"arrival_history_version",None)==1 else {}),
-        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
+        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','spell_color_history_version','creature_spell_counter_history_version',
             'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
-            'permanent_death_history_version','first_life_gain_history_version','public_movement_history_version',
+            'permanent_death_history_version','death_name_history_version','first_life_gain_history_version','public_movement_history_version',
             'venture_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
@@ -68,6 +84,9 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
         **mana_source_counter_payment_fields(getattr(state,'mana_source_counter_payment_version',None)),
         **mana_cost_order_fields(getattr(state,'mana_cost_order_version',None)),
+        **({SHIELD_COUNTER_DAMAGE_VERSION_FIELD: shield_damage} if shield_damage is not None else {}),
+        **continuous_dependency_order_fields(getattr(state, "continuous_dependency_order_version", None)),
+        **fetch_entry_placement_fields(getattr(state, "fetch_entry_placement_version", None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
@@ -104,6 +123,28 @@ def _validate_token_state_versions(format_value: Mapping[str, Any], state: Any) 
             raise ValueError(f"{label} provenance does not match the initial checkpoint")
 
 
+def _validate_mana_payment_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    if read_mana_source_counter_payment_version(format_value)!=getattr(state,'mana_source_counter_payment_version',None):
+        raise ValueError('Mana source-counter payment provenance does not match the initial checkpoint')
+    if read_mana_cost_order_version(format_value)!=mana_cost_order_version(getattr(state,'mana_cost_order_version',None)):
+        raise ValueError('Mana cost-order provenance does not match the initial checkpoint')
+
+
+def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    if read_shield_counter_damage_version(format_value) != getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None):
+        raise ValueError("Shield counter damage provenance does not match the initial checkpoint")
+    if read_continuous_dependency_order_version(format_value) != getattr(state, "continuous_dependency_order_version", None):
+        raise ValueError("Continuous dependency order provenance does not match the initial checkpoint")
+    if read_fetch_entry_placement_version(format_value) != getattr(state, "fetch_entry_placement_version", None):
+        raise ValueError("Fetch entry placement provenance does not match the initial checkpoint")
+    stack_authority = format_value.get("stack_resolution_authority_version", 0)
+    if (
+        type(stack_authority) is not int or stack_authority not in {0, 1, COPIED_SPELL_ENTRY_AUTHORITY_VERSION}
+        or stack_authority != (stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None)) or 0)
+    ):
+        raise ValueError("Stack resolution authority provenance does not match the initial checkpoint")
+
+
 def validate_state_versions(
     manifest: Mapping[str, Any],
     state: Any,
@@ -119,21 +160,14 @@ def validate_state_versions(
     format_value = manifest.get("format")
     if not isinstance(format_value, Mapping):
         raise ValueError("Record format provenance is malformed")
+    validate_resolution_name_provenance(format_value, getattr(state, 'spell_resolution_name_ledger', None))
     declared_attack = format_value.get('declare_attack_cast_version')
     if (('declare_attack_cast_version' in format_value
             and (type(declared_attack) is not int or declared_attack != 1))
             or declared_attack != declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None))):
         raise ValueError('Declared attack cast-window provenance does not match the checkpoint')
-    if read_mana_source_counter_payment_version(format_value)!=getattr(state,'mana_source_counter_payment_version',None):
-        raise ValueError('Mana source-counter payment provenance does not match the initial checkpoint')
-    if read_mana_cost_order_version(format_value)!=mana_cost_order_version(getattr(state,'mana_cost_order_version',None)):
-        raise ValueError('Mana cost-order provenance does not match the initial checkpoint')
-    stack_authority = format_value.get("stack_resolution_authority_version", 0)
-    if (
-        type(stack_authority) is not int or stack_authority not in {0, 1}
-        or stack_authority != (stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None)) or 0)
-    ):
-        raise ValueError("Stack resolution authority provenance does not match the initial checkpoint")
+    _validate_mana_payment_versions(format_value, state)
+    _validate_effect_versions(format_value, state)
     departed_turns = format_value.get("departed_turn_boundary_version")
     if (departed_turns != getattr(state, "departed_turn_boundary_version", None)
             or "departed_turn_boundary_version" in format_value
@@ -146,9 +180,9 @@ def validate_state_versions(
     arrival=format_value.get('arrival_history_version',0)
     actual_arrival=getattr(getattr(state,'turn_history',None),'arrival_history_version',None) or 0
     if type(arrival) is not int or arrival not in {0,1} or arrival!=actual_arrival:raise ValueError('Arrival-history provenance does not match the initial checkpoint')
-    for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
+    for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','spell_color_history_version','creature_spell_counter_history_version',
                 'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
-                'permanent_death_history_version','first_life_gain_history_version','public_movement_history_version',
+                'permanent_death_history_version','death_name_history_version','first_life_gain_history_version','public_movement_history_version',
                 'venture_history_version'):
         declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
         if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')

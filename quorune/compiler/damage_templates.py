@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping

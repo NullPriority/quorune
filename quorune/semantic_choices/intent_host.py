@@ -1,9 +1,14 @@
 from __future__ import annotations
 from .token_creation_intents import execute_token_creation_intent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
-from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent,GiveControlIntent,GiveControlSetIntent,RestoreOwnerControlIntent
+from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
+from ..semantic_runtime.control_intents import (
+    GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
+    GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+)
 from ..semantic_runtime.connive_intent import ConniveCompletedIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
+from ..rules.committed_quantity_followups import CommittedQuantityFollowup
 
 import copy
 import random
@@ -145,9 +150,13 @@ from ..util import unique_preserving_order
 
 
 class SemanticChoiceIntentHostMixin:
-    def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent):
-        from ..control_effects import gain_control_of_refs, ControlEffectError
+    def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent | GainSpellControlIntent):
+        from ..control_effects import ControlEffectError, gain_control_of_refs, gain_control_of_stack_spell
         try:
+            if isinstance(intent, GainSpellControlIntent):
+                return gain_control_of_stack_spell(
+                    self, stack_ref=intent.object_ref, actor=intent.actor, source=intent.source, reason=intent.reason,
+                )
             return gain_control_of_refs(
                 self, actor=intent.actor, object_refs=(intent.object_ref,),
                 controller=intent.controller, duration=intent.duration,
@@ -537,7 +546,7 @@ class SemanticChoiceIntentHostMixin:
     def move_objects_simultaneously_intent(
         self,
         intent: MoveObjectsSimultaneouslyIntent,
-    ) -> tuple[str, ...]:
+    ) -> tuple[str, ...] | CommittedQuantityFollowup:
         from .simultaneous_movement import commit_simultaneous_movement
         return commit_simultaneous_movement(self,intent)
 
@@ -646,6 +655,10 @@ class SemanticChoiceIntentHostMixin:
                 else []
             ),
         )
+
+    def apply_life_gain_cost_batch_intent(self, intent: LifeGainCostBatchIntent) -> int:
+        from .life_intent_commit import apply_life_gain_cost_batch_intent
+        return apply_life_gain_cost_batch_intent(self,intent)
 
     def apply_life_loss_batch_intent(self, intent: LifeLossBatchIntent) -> int:
         from .life_intent_commit import apply_life_loss_batch_intent
@@ -763,6 +776,10 @@ class SemanticChoiceIntentHostMixin:
         intent: InspectHandIntent,
     ) -> tuple[str, ...]:
         return commit_hand_inspection(self, intent)
+
+    def reveal_colored_hand_cards_intent(self, intent):
+        from ..effect_runtime.hand_inspection import commit_colored_hand_reveal
+        return commit_colored_hand_reveal(self,intent)
 
     def move_library_cards_to_bottom_intent(
         self,
@@ -1170,11 +1187,13 @@ class SemanticChoiceIntentHostMixin:
 
             counter_stack_item(
                 self, intent.stack_ref, reason=intent.reason, countered_by=intent.countered_by,
+                source_controller=intent.source_controller,
                 counter_destination=intent.counter_destination, replacement_selections=intent.replacement_selections,
             )
             return
         self._counter_stack_item(
             intent.stack_ref, reason=intent.reason, countered_by=intent.countered_by,
+            source_controller=intent.source_controller,
         )
 
     def eliminate_players_intent(self, intent: EliminatePlayersIntent) -> None:
@@ -1223,13 +1242,16 @@ class SemanticChoiceIntentHostMixin:
         previous_target_snapshots = target.context.get("target_snapshots", {})
         target.targets = list(intent.targets)
         target.context["target_groups"] = thaw_value(intent.target_groups)
-        target.context["target_snapshots"] = {
-            ref: self._target_snapshot(ref) for ref in intent.targets
-        }
+        target.context["target_snapshots"] = (
+            thaw_value(intent.target_snapshots) if intent.target_snapshots is not None
+            else {ref: self._target_snapshot(ref) for ref in intent.targets}
+        )
         target.context["targets_revalidated"] = False
         from ..rules.target_announcements import dispatch_target_announcements
-        dispatch_target_announcements(self, target, previous_targets=previous_targets,
-            previous_target_snapshots=previous_target_snapshots)
+        dispatch_target_announcements(
+            self, target, previous_targets=previous_targets, previous_target_snapshots=previous_target_snapshots,
+            collect_ward=intent.collect_single_target_ward or intent.target_snapshots is not None,
+        )
         self._log(
             intent.actor,
             "stack.retarget",

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """CR 702.29d binds the combined wording to the single discard occurrence."""
 
-import re
+from . import regex_working_set as re
 from .fixed_public_event_trigger_bindings import _all_conditions, _spec
 
 

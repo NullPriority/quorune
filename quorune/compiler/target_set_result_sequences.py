@@ -1,5 +1,5 @@
 """Ordered existing results over one announced bounded target set."""
-import re
+from . import regex_working_set as re
 from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
 from .closed_effect_programs import _candidate_partitions
 from .fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template

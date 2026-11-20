@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Retain the exact death-replacement recipient named by a damage instruction."""
 
-import re
+from . import regex_working_set as re
 
 from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_FIELD, DAMAGE_DEATH_EXILE_MECHANIC, DamageDeathExileScope
 from ..rules.damage_capability_shapes import damage_death_exile_scope_is_closed

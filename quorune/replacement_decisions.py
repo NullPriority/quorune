@@ -248,10 +248,16 @@ def _validate_mana_payment_frame(
 
 def _quantity_followup_plan(plan: IntentPlan) -> bool:
     from .semantic_runtime.earthbend_intents import EarthbendIntent
+    from .semantic_runtime.graveyard_card_result_intent import GraveyardCardCounterLifeIntent
+    from .semantic_runtime.graveyard_exile_branch_intent import GraveyardExileBranchIntent
+    from .semantic_runtime.graveyard_exile_token_intent import GraveyardExileTokenIntent
+    from .semantic_runtime.graveyard_exile_type_outcome_intent import GraveyardExileTypeOutcomeIntent
+    from .semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
     from .semantic_runtime.intents import DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent
 
     return any(
-        isinstance(intent, EarthbendIntent)
+        isinstance(intent, (EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
+            GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent))
         or (
             isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
             and intent.followup is not None
@@ -290,6 +296,8 @@ def apply_effect_with_replacement_choice(
             raise GameRuleError("Copied Aura token selections require their resolving copy recipe")
         copied_aura_token_selections(item, instruction_pointer=instruction_pointer)
     from .composition_order_model import CompositionOrderChoiceRequired
+    from .transform_order_model import TransformTimestampOrderRequired
+    from .transform_timestamp_order import issue_transform_resolution_order
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
     committed_followup = False
     try:
@@ -304,6 +312,9 @@ def apply_effect_with_replacement_choice(
                 return_deferred_source_departures(host, waiting)
             else:
                 execute_intent_plan(host, plan)
+    except TransformTimestampOrderRequired as required:
+        issue_transform_resolution_order(host,item,required,effect,remaining,destination,note,instruction_pointer)
+        return False
     except CompositionOrderChoiceRequired as required:
         issue_composition_order_choice(host,item,required,effect,remaining,destination,note,instruction_pointer)
         return False
@@ -596,7 +607,11 @@ def _resume_semantic_replacement(
     )
 
 
-def _scope_effect_destruction_choice(host, restored, pending, selection):
+def _scope_replayed_event_choice(host, restored, pending, selection):
+    if (restored.resume_kind == 'semantic_intent_completion'
+            and restored.semantic_intent_kind == 'graveyard_library_cost_batch'):
+        fields = {'effect_id': selection} if isinstance(selection, str) else dict(selection)
+        return {**fields, 'event_id': fields.get('event_id', pending.event_id)}
     if (
         getattr(host.state, "effect_destruction_replacement_version", None) != 1
         or restored.resume_kind not in {"semantic", "semantic_preparation", "semantic_intent_completion"}
@@ -637,7 +652,7 @@ def complete_replacement_order_choice(
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
-    selection = _scope_effect_destruction_choice(host, restored, pending, selection)
+    selection = _scope_replayed_event_choice(host, restored, pending, selection)
     from .zone_devour import validate_devour_resume
     from .entry_results import validate_pending_amplify_reveals
     validate_devour_resume(host,batch,effects,selection,error_type=error_type)

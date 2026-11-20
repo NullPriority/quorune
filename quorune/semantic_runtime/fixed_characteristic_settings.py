@@ -2,13 +2,13 @@ from __future__ import annotations
 
 """Fixed public characteristic settings through existing query and layer owners."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping
 
 from ..continuous_effect_model import ContinuousEffect, ContinuousEffectOrigin, ContinuousEffectRelation, ContinuousObjectIdentity, ContinuousOperation, Layer
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
 from ..characteristic_fragments import CharacteristicQuantityReduction
-from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..object_predicate import NONOWNER_CONTROL_QUERY_CAPABILITY, ObjectQuerySpec, PermanentStatePredicateSpec
 from .attached_continuous import _attached_characteristics_node, _has_characteristic_modifier
 from .fixed_characteristic_effects import fixed_characteristic_effects
 from .component_registry import exact_fields
@@ -19,6 +19,8 @@ from .continuous_components import ContinuousEffectSourceContext, _fixed_query_e
 FIXED_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v1"
 CONDITIONAL_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v2"
 FIXED_SETTING_CAPABILITY = "continuous.characteristics.fixed_public_setting"
+NONOWNER_CREATURE_MODIFIER_HANDLER = "continuous.characteristics.nonowner-creature-modifier.v1"
+NONOWNER_CREATURE_MODIFIER_CAPABILITY = "continuous.characteristics.fixed_nonowner_creature_modifier"
 CREATURE_TYPE_REMOVAL_HANDLER = 'continuous.characteristics.conditional-creature-type-removal.v1'
 CREATURE_TYPE_REMOVAL_CAPABILITY = 'continuous.characteristics.conditional_creature_type_removal'
 
@@ -164,6 +166,64 @@ class FixedCharacteristicSettingsHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class NonownerCreatureModifierHandler:
+    """Apply one live creature modifier through its first layer's recipient selection."""
+
+    handler_id: str = NONOWNER_CREATURE_MODIFIER_HANDLER
+    schema_version: int = 1
+    family: str = NONOWNER_CREATURE_MODIFIER_CAPABILITY
+    event: str = "characteristics.evaluate"
+    source_component_layer: Layer = Layer.TYPE
+    rule_references: tuple[str, ...] = (
+        "108.3", "110.2", "205.3d", "611.3a", "611.3b", "613.1b", "613.1d",
+        "613.1f", "613.4c", "613.6", "613.7a", "613.8",
+    )
+    capability_dependencies: tuple[str, ...] = (
+        NONOWNER_CREATURE_MODIFIER_CAPABILITY, NONOWNER_CONTROL_QUERY_CAPABILITY, FIXED_SETTING_CAPABILITY,
+    )
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id","schema_version","event","predicate","modifier"},
+                     field="nonowner creature modifier")
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version):
+            raise SemanticNodeError("Nonowner creature modifier identity changed")
+        predicate = ObjectQuerySpec.from_dict(descriptor["predicate"])
+        if predicate != ObjectQuerySpec(zones=("battlefield",),types_all=("creature",),controlled_by_nonowner=True):
+            raise SemanticNodeError("Nonowner creature modifiers must bind the source controller at evaluation")
+        node = fixed_setting_modifier_node(descriptor["modifier"])
+        if (node.color_operations or node.remove_abilities or node.remove_all_abilities
+                or node.base_power is not None or not node.add_abilities
+                or not (node.power or node.toughness) or len(node.type_operations) != 1):
+            raise SemanticNodeError("Nonowner creature modifiers require subtype, keyword and stat additions")
+        operation, = node.type_operations
+        if operation.op != "add_types" or operation.field != "subtypes" or len(operation.value) != 1:
+            raise SemanticNodeError("Nonowner creature modifiers add one represented creature subtype")
+        return predicate, node
+
+    def required_capabilities(self, descriptor):
+        from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+
+        _predicate, node = self.validate(descriptor)
+        return tuple(sorted({
+            *self.capability_dependencies,
+            *(capability for keyword in node.add_abilities
+              for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
+        }))
+
+    def lower(self, descriptor, context: ContinuousEffectSourceContext):
+        predicate, node = self.validate(descriptor)
+        if not context.source_logical_object_id:
+            raise SemanticNodeError("Nonowner creature modifiers require the original source incarnation")
+        common = dict(source_id=context.source_object_id,timestamp=context.source_timestamp,
+                      origin=ContinuousEffectOrigin.STATIC_ABILITY,
+                      applies=replace(predicate,controller=context.source_controller))
+        effects = fixed_characteristic_effects(node, context, common=common)
+        anchor = effects[0].effect_id
+        return tuple(replace(effect,recipient_scope_anchor=anchor) for effect in effects)
+
+
+@dataclass(frozen=True, slots=True)
 class ConditionalCharacteristicSettingsHandler(FixedCharacteristicSettingsHandler):
     handler_id: str = CONDITIONAL_SETTING_HANDLER_ID
     schema_version: int = 2
@@ -248,4 +308,6 @@ def prospective_creature_type_characteristics(host, card, characteristics, *, de
                 public_state=resolver.snapshot(prospective, condition))
             effects.extend(handler.lower(descriptor, context))
     return (evaluate_card_characteristics(prospective, characteristics, runtime_effects=effects,
-        maximum_layer=Layer.TYPE) if effects else characteristics)
+        maximum_layer=Layer.TYPE,
+        dependency_order_version=getattr(host.state, 'continuous_dependency_order_version', None),
+    ) if effects else characteristics)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed Endure for an explicitly bound ability source."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.endure_model import ENDURE_MECHANIC, ENDURE_OPERATION
 from ..rules.source_references import SourceReferenceSpec

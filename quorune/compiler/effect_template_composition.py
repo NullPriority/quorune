@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Mapping
 from functools import partial
-import re
+from . import regex_working_set as re
 
 from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, supports_next_turn_effect
 from .closed_effect_programs import closed_effect_program_template
@@ -153,7 +153,8 @@ def reviewed_contextual_effect_template(
         if current[0] is not None:
             return current
         copy_recipe = token_copy_recipe_template(body, source_name=card_name,
-            source_is_permanent=source_context.get("source_is_permanent"))
+            source_is_permanent=source_context.get("source_is_permanent"),
+            source_attachment_relation=source_context.get("source_attachment_relation"))
         if copy_recipe is not None:
             return copy_recipe.compiled()
         return fixed_resolution_characteristics_effect_template(
@@ -206,6 +207,11 @@ def reviewed_contextual_effect_template(
             compile_fixed=partial(compile_fixed, card_name=card_name, **source_context),
         )
 
+    if source_context.get("source_is_permanent") is False:
+        from .token_creation_reflexive_templates import token_creation_reflexive_template
+        reflexive_creation = token_creation_reflexive_template(text, compile_effect=payment_body)
+        if reflexive_creation is not None:
+            return reflexive_creation
     compiled = compose(text, card_name=card_name)
     if compiled[0] is None and source_context.get("source_is_permanent") is True:
         from .source_self_effect_templates import source_declaration_sequence
@@ -214,6 +220,64 @@ def reviewed_contextual_effect_template(
 
 
 def reviewed_effect_template_composition(
+    text: str,
+    *,
+    source_name: str,
+    compile_atomic: EffectCompiler,
+    compile_fixed: EffectCompiler,
+    cast_x_available: bool = False,
+    forbid_public_x: bool = False,
+    allow_declarations: bool = True,
+    allow_conditions: bool = True,
+) -> CompiledEffectTemplate:
+    """Preserve owned linked instructions before generic clause composition."""
+    from .graveyard_exile_branch_templates import graveyard_exile_branch_template
+
+    from .graveyard_exile_token_templates import graveyard_exile_token_template
+    from .graveyard_exile_type_outcome_templates import graveyard_exile_type_outcome_template
+
+    owned_exile = (graveyard_exile_branch_template(text) or graveyard_exile_token_template(text)
+        or graveyard_exile_type_outcome_template(text))
+    if owned_exile is not None:
+        return owned_exile
+    from .current_life_effect_amounts import current_life_effect_amount_template
+    current_life=current_life_effect_amount_template(text,source_name=source_name,compile_fixed=compile_atomic)
+    if current_life is not None:return current_life
+    from .turn_life_loss_recovery import turn_life_loss_recovery_template
+    recovery=turn_life_loss_recovery_template(text,compile_fixed=compile_atomic)
+    if recovery is not None:return recovery
+    from .per_player_query_life import per_player_query_life_template
+    per_player_loss=per_player_query_life_template(text,compile_fixed=compile_atomic,source_name=source_name)
+    if per_player_loss is not None:return per_player_loss
+    from .per_player_query_damage import per_player_query_damage_template
+    per_player_damage=per_player_query_damage_template(text,compile_fixed=compile_atomic,source_name=source_name)
+    if per_player_damage is not None:return per_player_damage
+    from .per_player_life_damage import per_player_life_damage_template
+    life_damage=per_player_life_damage_template(text,compile_fixed=compile_atomic,source_name=source_name)
+    if life_damage is not None:return life_damage
+    from .target_player_query_amounts import target_player_query_amount_template
+    target_query=target_player_query_amount_template(text,compile_fixed=compile_atomic,source_name=source_name)
+    if target_query is not None:return target_query
+    from .paid_alternative_cast_results import paid_alternative_spell_result_template
+    paid_alternative=paid_alternative_spell_result_template(text,compile_component=compile_fixed)
+    if paid_alternative is not None:return paid_alternative
+    from .colored_hand_reveal_templates import colored_hand_reveal_template
+    colored_reveal=colored_hand_reveal_template(text,compile_fixed=compile_atomic)
+    if colored_reveal is not None:return colored_reveal
+    from .named_search_templates import named_zone_search_sequence_template
+    context = dict(source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed,
+        cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
+        allow_declarations=allow_declarations, allow_conditions=allow_conditions)
+    from .optional_target_result_templates import optional_target_result_template
+    optional_target = optional_target_result_template(text,
+        compile_mandatory=partial(reviewed_effect_template_composition, **context))
+    if optional_target is not None:return optional_target.compiled()
+    named = named_zone_search_sequence_template(text,
+        compile_prefix=partial(reviewed_effect_template_composition, **context))
+    return named if named is not None else _reviewed_effect_template_composition(text, **context)
+
+
+def _reviewed_effect_template_composition(
     text: str,
     *,
     source_name: str,

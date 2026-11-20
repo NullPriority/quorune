@@ -198,6 +198,16 @@ or prevention choice, damage result, or damage-trigger history. Literal compiler
 grammar remains independently bounded; declared amounts require their own
 capability rather than broadening that grammar.
 
+Announced-X simultaneous sets use the existing cast-X amount and fixed-set
+payloads. Damage shape dispatch materializes mechanic iterables before its
+delegating recognizers inspect them, so a declined reference shape cannot
+consume the fixed-set owner's authority. Runtime binding independently decodes
+the announced amount and public recipient groups and requires their quantity,
+source, result, query, and batch capabilities. Neither printed names nor trust
+annotations select the damage behavior. Existing fixed and declared-X wire
+fields and the canonical stack-X, recipient snapshot, and batch executor retain
+their interpretation.
+
 Preparation discovers applicable runtime components against the current
 event, validates the affected player or permanent controller, records any
 replacement choices, and rediscoveries after each transformation. Redirection

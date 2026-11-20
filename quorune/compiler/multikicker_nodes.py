@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Link a printed fixed Multikicker instance to its named entry counters."""
 
-import re
+from . import regex_working_set as re
 
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..multikicker_model import (

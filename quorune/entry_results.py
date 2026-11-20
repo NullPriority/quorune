@@ -45,7 +45,7 @@ def commit_entry_designations(
             )
 
 
-def commit_prepared_copy_values(prepared,card,*,error_type):
+def commit_prepared_copy_values(prepared,card,*,error_type,preserve_physical_face=False):
     """Commit one validated copied-value result before entry observers."""
     copy_values = prepared.event.payload.get('entry_copy')
     if copy_values is not None:
@@ -62,13 +62,14 @@ def commit_prepared_copy_values(prepared,card,*,error_type):
 
         from .entry_copy import COPIABLE_FACE_FIELD
         from .defined_token_faces import defined_token_definition
-        if defined_token_definition(card) is None:
+        if (defined_token_definition(card) is None
+                and not (preserve_physical_face and card.object_kind == "card" and not card.is_token)):
             card.active_face=card.annotations['copy_overrides'].get(COPIABLE_FACE_FIELD)
 
 
-def commit_prepared_entry_identity_results(prepared,card,*,error_type):
+def commit_prepared_entry_identity_results(prepared,card,*,error_type,preserve_physical_face=False):
     """Commit copied values and incarnation-bound choices before entry observers."""
-    commit_prepared_copy_values(prepared,card,error_type=error_type)
+    commit_prepared_copy_values(prepared,card,error_type=error_type,preserve_physical_face=preserve_physical_face)
     from .tribute_entry_results import commit_tribute_entry_outcomes
     try:commit_tribute_entry_outcomes(prepared,card)
     except (ValueError,TypeError) as exc:raise error_type(str(exc)) from exc
@@ -94,7 +95,9 @@ def commit_prepared_entry_results(
     for selection in (payload.get(ENTRY_REVEAL_FIELD), *amplify_selections):
         commit_entry_hand_reveal(host, selection, source_ref=card.ref)
 
-    commit_prepared_entry_identity_results(prepared,card,error_type=error_type)
+    from .token_copy_value_model import token_copy_value_mode
+    commit_prepared_entry_identity_results(prepared,card,error_type=error_type,
+        preserve_physical_face=token_copy_value_mode(host)==1)
     from .rules.entry_subtype_grants import entry_subtype_grants,commit_entry_subtype_grants
     try:commit_entry_subtype_grants(host,card,entry_subtype_grants(prepared.event))
     except (ValueError,TypeError) as exc:raise error_type(str(exc)) from exc

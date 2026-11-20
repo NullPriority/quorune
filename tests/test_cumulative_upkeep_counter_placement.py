@@ -207,9 +207,16 @@ class CumulativeUpkeepCompilerTests(unittest.TestCase):
         )
 
     def test_unsupported_cumulative_upkeep_costs_remain_material_residuals(self):
+        promoted = "Cumulative upkeep {W} or {U}"
+        self.assertIsNone(compile_fixed_mana_cumulative_upkeep(promoted))
+        admitted = compile_oracle_card(
+            cumulative_record(promoted, 9), capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", admitted.status, admitted.material_residuals)
         for suffix, text in enumerate(
             (
-                "Cumulative upkeep {W} or {U}",
+                "Cumulative upkeep {W} or {U} or {B}",
                 "Cumulative upkeep {S}",
                 "Cumulative upkeep {W/U}",
                 "Cumulative upkeep {X}",
@@ -250,11 +257,18 @@ class CumulativeUpkeepCompilerTests(unittest.TestCase):
             with self.subTest(value=value):
                 with self.assertRaises(CumulativeUpkeepError):
                     FixedLifeCumulativeUpkeepSpec.from_dict(value)
+        promoted = "Cumulative upkeep—An opponent gains 1 life."
+        self.assertIsNone(compile_fixed_life_cumulative_upkeep(promoted))
+        admitted = compile_oracle_card(
+            cumulative_record(promoted, 39), capability_registry=self.capabilities,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", admitted.status, admitted.material_residuals)
         for suffix, text in enumerate(
             (
                 "Cumulative upkeep—Pay 0 life.",
                 "Cumulative upkeep—Pay 1 life and {B}.",
-                "Cumulative upkeep—An opponent gains 1 life.",
+                "Cumulative upkeep—An opponent gains 1 life and you gain 1 life.",
                 "Cumulative upkeep—Pay X life.",
             ),
             start=40,

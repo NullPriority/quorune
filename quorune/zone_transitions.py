@@ -384,7 +384,7 @@ class ZoneTransitionOwner:
         if plan.prepared_replacement.devour_sacrifices and not _devour_batch:
             from .zone_devour import commit_single_devour_entry
             return commit_single_devour_entry(self,plan,reason=reason,log=log,aura_target_ref=aura_target_ref,semantic_events=semantic_events)
-        if plan.origin == "battlefield" and not characteristic_lki_prepared:
+        if plan.origin in {"battlefield", "graveyard"} and not characteristic_lki_prepared:
             self.pin_characteristic_departures((card,))
         departure = self._capture_departure(
             card,
@@ -620,6 +620,8 @@ class ZoneTransitionOwner:
             if semantic_events
             else {}
         )
+        from .death_history_names import capture_departure_rules_names
+        characteristics = capture_departure_rules_names(self.host, card, characteristics) if semantic_events else characteristics
         if card.zone == "battlefield":
             capture_explore_source_departure(self.host, card)
             from .connive import capture_connive_source_departure
@@ -1079,11 +1081,16 @@ class ZoneTransitionOwner:
             declared_cast_costs=departure.declared_cast_costs if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             source_entry_cast_information=self._source_entry_cast_information(card,departure),
             source_entry_x_information=self._source_entry_x_information(card,departure),
+            paid_alternative_entry_information=self._paid_alternative_entry_information(card,departure),
         )
 
     def _source_entry_cast_information(self,card,departure):
         from .rules.entry_cast_information import information_for_committed_entry
         return information_for_committed_entry(self.host,card,departure)
+
+    def _paid_alternative_entry_information(self,card,departure):
+        from .rules.paid_alternative_cast_facts import information_for_paid_entry
+        return information_for_paid_entry(self.host,card,departure)
 
     def _source_entry_x_information(self,card,departure):
         from .rules.ravenous import ravenous_entry_information
@@ -1372,6 +1379,7 @@ class ZoneTransitionOwner:
         source_snapshot: DepartureTriggerSnapshot,
     ) -> tuple[CardInstance, ZoneDepartureSnapshot]:
         from .conditional_exile_model import source_conditional_bindings
+        from .death_history_names import capture_departure_rules_names
         from .creature_power_damage import with_occurrence_power_departure
         return (
             card,
@@ -1380,9 +1388,9 @@ class ZoneTransitionOwner:
                 controller=card.controller,
                 logical_object_id=card.logical_object_id,
                 conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
-                characteristics=with_occurrence_power_departure(
+                characteristics=capture_departure_rules_names(self.host, card, with_occurrence_power_departure(
                     self.host, card, copy.deepcopy(current_zone_event_characteristics(self.host, card)),
-                ),
+                )),
                 counters=dict(card.counters),
                 attachments=tuple(
                     self.state.cards[attachment_id].ref

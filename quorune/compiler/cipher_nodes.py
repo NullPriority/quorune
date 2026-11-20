@@ -19,13 +19,6 @@ def cipher_source_rows(record, rows):
     return tuple(row for i, row in enumerate(rows) if i != index), CipherCompilationContext(rows[index], index)
 
 
-def contextual_source_rows(record, rows):
-    from .station_context_nodes import station_source_context
-    rows, station = station_source_context(record, rows)
-    rows, cipher = cipher_source_rows(record, rows)
-    return rows, station, cipher
-
-
 def apply_cipher_context(face, context, *, capability_registry, capability_profile):
     if context is None:
         return face
@@ -58,9 +51,3 @@ def apply_cipher_context(face, context, *, capability_registry, capability_profi
         capability_profile=gate.closure.profile if gate.closure else None,
         capability_fingerprint=gate.closure.fingerprint if gate.closure else None))
     return replace(face, nodes=tuple(nodes), residuals=tuple(residuals))
-
-
-def finish_contextual_face(context, *args):
-    from .leveler_context_nodes import leveler_face_ir
-    return apply_cipher_context(leveler_face_ir(*args), context,
-        capability_registry=args[-2], capability_profile=args[-1])

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from itertools import combinations
 import json
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..ability_fragments import (
@@ -14,6 +14,7 @@ from ..ability_fragments import (
     decayed_ability_fragments,
 )
 from ..fixed_token_production import (
+    FOOD_TOKEN_CHARACTERISTICS,
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenCreationTemplate,
     fixed_ordinary_token_name,
@@ -21,6 +22,7 @@ from ..fixed_token_production import (
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from ..keyword_abilities import triggered_keyword_grant
+from ..standard_token_abilities import TOKEN_ABILITY_PROFILE_FIELD
 from .fixed_token_production_templates import (
     extended_fixed_token_creation_effect_template,
 )
@@ -88,17 +90,21 @@ _FIXED_CREATURE_TOKEN = re.compile(
     r"(?P<colors>white|blue|black|red|green|colorless)"
     r"(?: and (?P<second_color>white|blue|black|red|green))? "
     r"(?P<subtypes>[A-Za-z][A-Za-z' -]*?) "
-    r"(?P<card_types>(?:(?:artifact|enchantment) )*)creature tokens?"
+    r"(?P<card_types>(?:(?:artifact|enchantment|land) )*)creature tokens?"
     r"(?: with (?P<keywords>[A-Za-z0-9 ,'-]+))?\.?$",
     re.IGNORECASE,
 )
 _FIXED_PREDEFINED_TOKEN = re.compile(
     rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
-    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood|Lander|Mutagen) tokens?\.?$",
+    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood|Lander|Mutagen|Walker) tokens?\.?$",
     re.IGNORECASE,
 )
 _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
+    "walker token": {
+        "name": "Walker", "type_line": "Token Creature — Zombie",
+        "colors": ["B"], "power": "2", "toughness": "2", "literal_token_name_version": 1,
+    },
     "lander token": {
         "name": "Lander", "type_line": "Token Artifact — Lander",
         "display_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
@@ -125,11 +131,7 @@ _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
     },
     "food token": {
         "name": _TOKEN_FOOD,
-        "type_line": "Token Artifact — Food",
-        "display_text": (
-            "{2}, {T}, Sacrifice this token: You gain 3 life."
-        ),
-        "ability_profile": "two_tap_sac_gain_three_life_v1",
+        **FOOD_TOKEN_CHARACTERISTICS,
     },
     "map token": {
         "name": _TOKEN_MAP,
@@ -196,7 +198,7 @@ _PREDEFINED_CREATION_DEFINITIONS: dict[str, Mapping[str, Any]] = {
     for key, definition in _TOKEN_DEFINITIONS.items()
     if key
     in {
-        "lander token", "mutagen token",
+        "lander token", "mutagen token", "walker token",
         "blood token",
         "treasure token",
         "food token",
@@ -255,12 +257,12 @@ def _positive_fixed_number(value: str) -> int | None:
 def _fixed_creature_token_types(value: str) -> tuple[str, ...] | None:
     types = tuple(part.casefold() for part in value.split())
     if len(types) != len(set(types)) or not set(types).issubset(
-        {"artifact", "enchantment"}
+        {"artifact", "enchantment", "land"}
     ):
         return None
     return tuple(
         card_type
-        for card_type in ("artifact", "enchantment")
+        for card_type in ("artifact", "enchantment", "land")
         if card_type in types
     )
 
@@ -290,9 +292,11 @@ def _single_fixed_token_creation_effect_template(
         definition = _PREDEFINED_CREATION_DEFINITIONS.get(f"{name} token")
         if definition is None:
             return None
-        token_name, characteristics = predefined_token_identity(
-            str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
-        )
+        values = {field: value for field, value in definition.items() if field != "name"}
+        if values.get("literal_token_name_version") == 1:
+            token_name, characteristics = str(definition["name"]), values
+        else:
+            token_name, characteristics = predefined_token_identity(str(definition["name"]), values)
         return FixedTokenCreationTemplate(
             template_id=f"create-fixed-{name}-token-v1",
             effect={
@@ -309,6 +313,7 @@ def _single_fixed_token_creation_effect_template(
             },
             mechanics=(
                 "cr-111-tokens",
+                *(("fixed-named-token",) if definition.get("literal_token_name_version") == 1 else ()),
                 *(
                     str(keyword).casefold()
                     for keyword in definition.get("keywords", [])
@@ -332,6 +337,7 @@ def _single_fixed_token_creation_effect_template(
     subtypes = " ".join(creature.group("subtypes").split())
     ordered_types = (
         *(("Artifact",) if "artifact" in card_types else ()),
+        *(("Land",) if "land" in card_types else ()),
         "Creature",
         *(("Enchantment",) if "enchantment" in card_types else ()),
     )
@@ -502,9 +508,12 @@ def fixed_token_creation_effect_template(
     if explicit_creator is not None:
         text = "Create " + text.lstrip()[explicit_creator.end():]
     cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
+    from .per_opponent_attacking_tokens import per_opponent_attacking_token_template
+    scoped = per_opponent_attacking_token_template(text, compile_attacking=lambda line:
+        fixed_attacking_token_template(line, compile_fixed=_single_fixed_token_creation_effect_template))
     attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
     choice = fixed_token_choice_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
-    return cleanup or attacking or choice or _single_fixed_token_creation_effect_template(
+    return cleanup or scoped or attacking or choice or _single_fixed_token_creation_effect_template(
         text
     ) or _fixed_token_batch_creation_effect_template(text)
 
@@ -527,6 +536,8 @@ def _fixed_additional_token_definition(text: str) -> Mapping[str, Any] | None:
         name, characteristics = predefined_token_identity(
             str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
         )
+        if TOKEN_ABILITY_PROFILE_FIELD in characteristics:
+            characteristics["ability_profile"] = characteristics.pop(TOKEN_ABILITY_PROFILE_FIELD)
         return {"name": name, **characteristics}
     template=_single_fixed_token_creation_effect_template('Create a '+text+'.')
     if template is None:return None

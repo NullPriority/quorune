@@ -1,5 +1,9 @@
 from __future__ import annotations
+from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent, validate_bounded_hand_cast_identity
+from ..rules.ripple_resolution_model import (ResolveRippleCastIntent,RippleBottomIntent,
+    validate_ripple_cast_identity,validate_ripple_bottom_identity)
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
+from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
 from ..fixed_top_exile import ResolvingExileLandPlayIntent, validate_resolving_land_play_identity
@@ -8,8 +12,12 @@ from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyar
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..discard_result_model import DiscardWholeHandsResultIntent, decode_discard_result_identity
+from ..hand_library_redraw_model import HandLibraryRedrawIntent
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
+from ..semantic_runtime.graveyard_exile_result_intent import (
+    GraveyardExileLifeResultIntent, validate_graveyard_exile_life_result_identity,
+)
 from ..semantic_runtime.champion_intent import (
     CHAMPION_INTENT_TYPES, ChampionExileIntent, ReturnLinkedAbilityExileIntent,
     champion_intent_identity, decode_champion_intent_identity,
@@ -215,6 +223,7 @@ def counter_intent_identity(intent: PlaceCountersIntent) -> dict[str, Any]:
         _REASON_FIELD: intent.reason,
         "source_ref": intent.source_ref,
         **({"effect_generated": False} if not intent.effect_generated else {}),
+        **({"ordered_cost_version": 2} if intent.ordered_cost_version == 2 else {}),
     }
 
 
@@ -222,7 +231,10 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
     if not isinstance(value, Mapping):
         raise SemanticChoiceError("Counter intent identity must be an object")
     actual = set(value)
-    cost = actual == _COUNTER_INTENT_FIELDS | {"effect_generated"} and value["effect_generated"] is False
+    ordered = (actual == _COUNTER_INTENT_FIELDS | {"effect_generated", "ordered_cost_version"}
+        and value["effect_generated"] is False and type(value["ordered_cost_version"]) is int
+        and value["ordered_cost_version"] == 2 and type(value["amount"]) is int and value["amount"] == 1)
+    cost = ordered or actual == _COUNTER_INTENT_FIELDS | {"effect_generated"} and value["effect_generated"] is False
     if actual != _COUNTER_INTENT_FIELDS and not cost:
         missing = sorted(_COUNTER_INTENT_FIELDS - actual)
         unknown = sorted(actual - _COUNTER_INTENT_FIELDS)
@@ -247,7 +259,7 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
         or not isinstance(refs, (list, tuple))
         or not refs
         or any(not isinstance(ref, str) or not ref for ref in refs)
-        or len(refs) != len(set(refs))
+        or not ordered and len(refs) != len(set(refs))
         or (not all_kinds and (not isinstance(name,str) or not name or type(amount) is not int or amount<0))
         or not isinstance(reason, str)
         or (source is not None and (not isinstance(source, str) or not source))
@@ -261,6 +273,7 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
         _REASON_FIELD: reason,
         "source_ref": source,
         **({"effect_generated": False} if cost else {}),
+        **({"ordered_cost_version": 2} if ordered else {}),
     }
 
 
@@ -320,6 +333,8 @@ def _library_selection_intent_identity(
 def _simultaneous_move_intent_identity(
     intent: MoveObjectsSimultaneouslyIntent,
 ) -> tuple[str, dict[str, Any]]:
+    from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
+    if isinstance(intent, GraveyardLibraryCostBatchIntent):return 'graveyard_library_cost_batch', intent.identity()
     identity = {
         "actor": intent.actor,
         "object_refs": list(intent.object_refs),
@@ -367,6 +382,9 @@ def _create_token_intent_identity(
 
 
 def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] | None:
+    if isinstance(intent,ResolveRippleCastIntent):return 'ripple_cast',intent.identity()
+    if isinstance(intent,RippleBottomIntent):return 'ripple_bottom',intent.identity()
+    if isinstance(intent, ResolveBoundedHandCastIntent):return "resolving_bounded_hand_cast", intent.identity()
     if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
     if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
     if isinstance(intent, ResolveCapturedDrawCastIntent):return 'resolving_captured_draw_cast', intent.identity()
@@ -374,22 +392,10 @@ def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] |
     return None
 
 
-def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
-    """Return the closed identity of a replacement-capable typed intent."""
-
-    if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
-    if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
-    if cast_identity := _resolving_cast_intent_identity(intent):
-        return cast_identity
-    if isinstance(intent,ExileGraveyardCopiesIntent):return 'exile_graveyard_copies',intent.identity()
-    if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
-    if isinstance(intent, DiscardWholeHandsResultIntent):return 'discard_hand_result', intent.identity()
+def _life_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] | None:
+    """Keep fixed-life and repeated-cost identities in one closed codec family."""
+    if isinstance(intent,LifeGainCostBatchIntent):return 'life_gain_cost_batch',intent.identity()
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
-    if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
-    if isinstance(intent, CHAMPION_INTENT_TYPES):return champion_intent_identity(intent)
-    if isinstance(intent, DESTRUCTION_INTENT_TYPES):
-        return destruction_intent_identity(intent)
-
     if isinstance(intent, LifeChangeIntent):
         return (
             "life_change",
@@ -401,6 +407,28 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
                 "source_ref": intent.source_ref,
             },
         )
+    return None
+
+
+def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
+    """Return the closed identity of a replacement-capable typed intent."""
+    if life_identity := _life_intent_identity(intent):
+        return life_identity
+
+    if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
+    if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
+    if cast_identity := _resolving_cast_intent_identity(intent):
+        return cast_identity
+    if isinstance(intent,ExileGraveyardCopiesIntent):return 'exile_graveyard_copies',intent.identity()
+    if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
+    if isinstance(intent, DiscardWholeHandsResultIntent):return 'discard_hand_result', intent.identity()
+    if isinstance(intent, HandLibraryRedrawIntent):return 'hand_library_redraw', intent.identity()
+    if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
+    if isinstance(intent,GraveyardExileLifeResultIntent):return 'graveyard_exile_life_result',intent.identity()
+    if isinstance(intent, CHAMPION_INTENT_TYPES):return champion_intent_identity(intent)
+    if isinstance(intent, DESTRUCTION_INTENT_TYPES):
+        return destruction_intent_identity(intent)
+
     if isinstance(intent, PlaceCountersIntent):
         return "place_counters", counter_intent_identity(intent)
     if isinstance(intent, MoveCountersIntent):
@@ -794,6 +822,9 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind == 'graveyard_exile_life_result':
+        try:return validate_graveyard_exile_life_result_identity(value)
+        except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == 'targeted_graveyard_cast':
         try:return decode_graveyard_cast_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -802,6 +833,15 @@ def validate_semantic_intent_identity(
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == 'resolving_exile_land_play':
         try:return validate_resolving_land_play_identity(value)
+        except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind=='ripple_cast':
+        try:return validate_ripple_cast_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind=='ripple_bottom':
+        try:return validate_ripple_bottom_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'resolving_bounded_hand_cast':
+        try:return validate_bounded_hand_cast_identity(value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == 'resolving_captured_draw_cast':
         try:
@@ -820,6 +860,9 @@ def validate_semantic_intent_identity(
     if kind == 'discard_hand_result':
         try:return decode_discard_result_identity(value)
         except (ValueError, TypeError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'hand_library_redraw':
+        try:return HandLibraryRedrawIntent.from_identity(value).identity()
+        except (ValueError, TypeError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == 'cipher_encode':
         try:return validate_cipher_intent_identity(value)
         except (ValueError, TypeError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -831,6 +874,11 @@ def validate_semantic_intent_identity(
         except ValueError as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind in {"destroy_permanent", "destroy_permanent_set", "destroy_permanent_targets"}:
         return validate_destruction_intent_identity(kind, value)
+    if kind=='life_gain_cost_batch':
+        if not isinstance(value,Mapping) or set(value)!={'actor','players','amount','reason','source_ref'} or not isinstance(value['players'],(list,tuple)):
+            raise SemanticChoiceError('Life-gain cost batch continuation identity is malformed')
+        try:return LifeGainCostBatchIntent(value['actor'],tuple(value['players']),value['amount'],value['reason'],value['source_ref']).identity()
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind=='life_loss_batch':
         if not isinstance(value,Mapping) or set(value)!={'actor','players','amount','reason','source_ref'} or not isinstance(value['players'],(list,tuple)):
             raise SemanticChoiceError('Life loss batch continuation identity is malformed')
@@ -861,8 +909,8 @@ def validate_semantic_intent_identity(
         return _validate_surveil_intent_identity(value)
     if kind == "library_selection":
         return _validate_library_selection_intent_identity(value)
-    if kind == "move_objects_simultaneously":
-        return _validate_simultaneous_move_intent_identity(value)
+    if kind in {"move_objects_simultaneously", "graveyard_library_cost_batch"}:
+        return _validate_simultaneous_move_intent_identity(value, kind=kind)
     if kind != "zone_move":
         raise SemanticChoiceError("Unknown semantic intent continuation kind")
     return _validate_zone_move_intent_identity(value)
@@ -988,7 +1036,12 @@ def _validate_zone_move_intent_identity(value):
 
 def _validate_simultaneous_move_intent_identity(
     value: Mapping[str, Any],
+    *, kind: str = "move_objects_simultaneously",
 ) -> dict[str, Any]:
+    if kind == 'graveyard_library_cost_batch':
+        from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
+        try:return GraveyardLibraryCostBatchIntent.from_identity(value).identity()
+        except (TypeError, ValueError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if not isinstance(value, Mapping) or set(value) - {"library_order"} not in {
         frozenset(_SIMULTANEOUS_MOVE_FIELDS),
         frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
@@ -1272,6 +1325,8 @@ def with_replacement_selections(
     DiscoverCastIntent
     | ResolvingExileLandPlayIntent
     | ResolveCapturedDrawCastIntent
+    | ResolveBoundedHandCastIntent
+    | ResolveRippleCastIntent
     | GraveyardCastIntent
     | ExileGraveyardCopiesIntent
     | DiscoverCleanupIntent
@@ -1300,15 +1355,19 @@ def with_replacement_selections(
             DiscoverCastIntent,
             ResolvingExileLandPlayIntent,
             ResolveCapturedDrawCastIntent,
+            ResolveBoundedHandCastIntent,
+            ResolveRippleCastIntent,
             GraveyardCastIntent,
             ExileGraveyardCopiesIntent,
             DiscoverCleanupIntent,
             IncubateIntent,
             EncodeCipherIntent,
             DiscardWholeHandsResultIntent,
+            HandLibraryRedrawIntent,
             PlaceCountersIntent,
             LifeChangeIntent,
             LifeLossBatchIntent,
+            LifeGainCostBatchIntent,
             MoveCountersIntent,
             PlaceCounterBatchIntent,
             PlaceCountersOnSetIntent,

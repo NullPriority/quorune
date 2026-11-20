@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from dataclasses import replace
 
 from .characteristic_evaluation import type_parts
 from .combat_evasion import (
@@ -13,6 +14,7 @@ from .keyword_abilities import normalized_characteristic_keywords
 from .landwalk import BASIC_LAND_TYPES, LandwalkLandCharacteristics, LandwalkRuleError
 from .semantic_runtime.block_restrictions import current_self_block_prohibitions
 from .rules.landwalk_permissions import current_landwalk_block_exceptions
+from .rules.block_as_though import current_block_as_though_assumptions
 from .ring_effects import ring_power_block_allowed
 from .ring_state import current_ring_rule_views
 from .ring_model import RingObjectIdentity
@@ -76,9 +78,11 @@ def engine_combat_evasion_verdict(
         )
     attacker_facts = combatant_evasion_characteristics(engine, attacker)
     blocker_facts = combatant_evasion_characteristics(engine, blocker)
+    assumptions=current_block_as_though_assumptions(engine,blocker,attacker)
+    attacking,blocking=assumptions.keywords(attacker_facts.keywords,blocker_facts.keywords)
     ordinary = combat_evasion_verdict(
-        attacker_facts,
-        blocker_facts,
+        replace(attacker_facts,keywords=attacking),
+        replace(blocker_facts,keywords=blocking),
         defending_land_characteristics(engine, defending_player),
         ignored_landwalk_keywords=current_landwalk_block_exceptions(engine, blocker),
     )

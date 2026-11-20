@@ -108,6 +108,10 @@ def fixed_homogeneous_target_set_node_capabilities(
     effect = effects[0]
     operation = effect.get("op")
     maximum = effect.get("maximum_targets")
+    if operation == 'exile_public_graveyard_targets' and 'followup' in effect:
+        from .targeted_graveyard_outcomes import targeted_graveyard_outcome_node_capabilities
+
+        return targeted_graveyard_outcome_node_capabilities(effects=effects, target_schema=target_schema)
     if operation=='reanimate_targets':
         from ..compiler.reanimation_templates import (FIXED_TARGET_REANIMATION_SET_CAPABILITY,
             FIXED_TARGET_REANIMATION_SET_MECHANIC)
@@ -215,7 +219,12 @@ def announced_target_set_node_capabilities(
     if ANNOUNCED_TARGET_SET_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
-    if (set(effect) != {"op", "cards", "maximum_targets", "announced_target_count"}
+    from .target_characteristic_sets import OPERATION, target_characteristic_set_capabilities
+    characteristic = effect.get('op') == OPERATION
+    fields = {"op", "cards", "maximum_targets", "announced_target_count"}
+    if characteristic:
+        fields.update(('schema_version', 'power', 'toughness', 'keywords'))
+    if (set(effect) != fields
             or effect.get("announced_target_count") is not True):
         return ()
     try:
@@ -227,7 +236,8 @@ def announced_target_set_node_capabilities(
         return ()
     fixed = {key: value for key, value in effect.items() if key != "announced_target_count"}
     fixed["maximum_targets"] = 2
-    owned = fixed_homogeneous_target_set_node_capabilities(effects=(fixed,), target_schema=schema,
+    owner = target_characteristic_set_capabilities if characteristic else fixed_homogeneous_target_set_node_capabilities
+    owned = owner(effects=(fixed,), target_schema=schema,
         mechanic_ids=mechanics | {FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC})
     return (*owned, ANNOUNCED_TARGET_SET_CAPABILITY, DECLARED_AMOUNT_CAPABILITY) if owned else ()
 
@@ -242,7 +252,8 @@ def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
         if not owned:raise ValueError('Any-number target result or schema is malformed')
         return owned
     parameterized = isinstance(schema, Mapping) and "count_parameter" in schema
-    effects = tuple(effect for effect in program.effects if effect.get("op") in _OPERATION_CAPABILITIES
+    from .target_characteristic_sets import OPERATION
+    effects = tuple(effect for effect in program.effects if effect.get("op") in {*_OPERATION_CAPABILITIES, OPERATION}
         and ("announced_target_count" in effect or isinstance(effect.get("maximum_targets"), Mapping)))
     if not parameterized and not effects:
         return ()
@@ -268,10 +279,12 @@ def is_closed_announced_target_set_program(program: Any) -> bool:
         if (type(cost.get("announced_x_symbols")) is not int
                 or not set(activation_x_capabilities(symbols=cost.get('announced_x_symbols'),
                     sacrifice_source=cost.get('sacrifice_source',False),
-                    discard_cards=bool(cost.get('choices')))).issubset(program.capability_dependencies)
+                    discard_cards=bool(cost.get('choices')),
+                    discard_source=cost.get('discard_source', False))).issubset(program.capability_dependencies)
                 or activation_x_symbols(str(cost.get("text") or ""),
                     allow_source_sacrifice=cost.get('sacrifice_source') is True,
-                    allow_fixed_discard=bool(cost.get('choices'))) != cost["announced_x_symbols"]):
+                    allow_fixed_discard=bool(cost.get('choices')),
+                    allow_source_discard=cost.get('discard_source') is True) != cost["announced_x_symbols"]):
             return False
     required = announced_target_set_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)

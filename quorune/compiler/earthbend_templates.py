@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Earthbend instructions over the shared land-target and quantity grammar."""
 
-import re
+from . import regex_working_set as re
 
 from ..earthbend_model import EARTHBEND_MECHANIC, EARTHBEND_OPERATION
 from ..query_effect_amount_model import PublicQueryAmountSpec

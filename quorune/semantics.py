@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable, Mapping
 
+from .characteristic_read_frames import characteristic_oracle_program_cache
 from .creature_power_damage_model import CREATURE_POWER_DAMAGE_OPERATION
 from .rules.event_subscriptions import FixedEventSubscriptionSet
 from .semantic_runtime import (
@@ -34,6 +35,7 @@ VALID_EFFECT_OPERATIONS = {
     "place_counters_on_targets",
     "place_player_counters",
     "remove_counters",
+    "remove_chosen_counter",
     "remove_all_counters",
     "add_type",
     "add_subtype",
@@ -516,6 +518,7 @@ class SemanticRegistry:
         self.path = Path(path) if path else None
         self._programs: dict[str, SemanticProgram] = {}
         self._event_program_cache: dict[str, tuple[SemanticProgram, ...]] | None = None
+        self._oracle_lookup_identity = object()
         self._card_program_cache: dict[str, Any] | None = None
         self._runtime_handler_compatibility: dict[
             tuple[str, str, str], tuple[SemanticProgram, ...]
@@ -544,10 +547,14 @@ class SemanticRegistry:
         if self.path and self.path.exists():
             self.load()
 
+    def _invalidate_program_read_indexes(self) -> None:
+        self._event_program_cache = None
+        self._oracle_lookup_identity = object()
+
     def load(self) -> None:
         if not self.path:
             return
-        self._event_program_cache = None
+        self._invalidate_program_read_indexes()
         raw = json.loads(self.path.read_text(encoding="utf-8"))
         if raw.get("include_builtin_packs") is False:
             # A saved game carries a complete registry snapshot. Clearing the
@@ -606,7 +613,7 @@ class SemanticRegistry:
     def load_packs(self, paths: Iterable[str | Path]) -> None:
         """Load declarative semantic packs without coupling them to the kernel."""
 
-        self._event_program_cache = None
+        self._invalidate_program_read_indexes()
         candidates: list[Path] = []
         for raw in paths:
             path = Path(raw)
@@ -677,14 +684,14 @@ class SemanticRegistry:
             program = SemanticProgram.from_dict(program)
         self._programs[program.key] = program
         self._card_program_cache = None
-        self._event_program_cache = None
+        self._invalidate_program_read_indexes()
         self.save()
         return program
 
     def remove(self, key: str) -> None:
         self._programs.pop(key, None)
         self._card_program_cache = None
-        self._event_program_cache = None
+        self._invalidate_program_read_indexes()
         self.save()
 
     def keys(self) -> list[str]:
@@ -706,9 +713,23 @@ class SemanticRegistry:
         active_zone: str | None = None,
         event: str | None = None,
     ) -> list[SemanticProgram]:
+        candidates = None
+        if type(oracle_id) is str:
+            cache = characteristic_oracle_program_cache(self)
+            if cache is not None:
+                key = (self._oracle_lookup_identity, oracle_id)
+                candidates = cache.get(key)
+                if candidates is None:
+                    candidates = tuple(
+                        program for program in self._programs.values()
+                        if program.oracle_id == oracle_id
+                    )
+                    cache[key] = candidates
+        if candidates is None:
+            candidates = self._programs.values()
         return [
             program
-            for program in self._programs.values()
+            for program in candidates
             if program.oracle_id == oracle_id
             and (active_zone is None or program.active_zone == active_zone)
             and (event is None or program.event == event)

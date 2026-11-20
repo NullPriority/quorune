@@ -72,6 +72,14 @@ class FixedEffectPaymentSpec:
         return type(self.schema_version) is int and self.schema_version == MANDATORY_DISCARD_PAYMENT_VERSION
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version == 13:
+            from .rules.fractional_life_payment import validate_resolved_fractional_payment_spec
+            validate_resolved_fractional_payment_spec(self)
+            return
+        if type(self.schema_version) is int and self.schema_version == 12:
+            from .rules.repeated_object_payment import validate_repeated_object_payment
+            validate_repeated_object_payment(self)
+            return
         hybrid = self.kind == HYBRID_RESOLUTION_PAYMENT_KIND
         if not hybrid and self.hybrid_symbols != ():
             raise ValueError("Only hybrid payments carry hybrid symbols")
@@ -224,6 +232,9 @@ class FixedEffectPaymentSpec:
 
     @property
     def capabilities(self) -> tuple[str, ...]:
+        if self.kind == 'resolved_fractional_life':
+            from .fractional_life_payment_model import FRACTIONAL_LIFE_PAYMENT_CAPABILITY
+            return (FIXED_EFFECT_PAYMENT_CAPABILITY, FRACTIONAL_LIFE_PAYMENT_CAPABILITY)
         costs = {"mana":(), "life":("casting.additional_cost.fixed_life_payment",),
                  'energy':('cost.energy.fixed_resolution_payment',),
                  "discard":("choice.affected_player.fixed_discard", "zone.change.destination_replacement"),
@@ -238,12 +249,21 @@ class FixedEffectPaymentSpec:
         costs[RETURN_PAYMENT_KIND] = (CONTROLLED_RETURN_CAPABILITY, "zone.change.destination_replacement")
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind], *object_query_capabilities(self.predicate),
             *((MANDATORY_DISCARD_PAYMENT_CAPABILITY,) if self.mandatory else ()),
-            *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()))
+            *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()),
+            *(('cost.object.repeated_resolution',) if self.schema_version==12 else ()))
 
 
 def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     if not isinstance(value, Mapping) or value.get("op") != "offer_optional_mana_payment":
         return ()
+    if value.get('schema_version') == 13:
+        from .rules.optional_sacrifice_stats import optional_sacrifice_stat_node_capabilities
+        required = optional_sacrifice_stat_node_capabilities(effects=(value,), target_schema=None)
+        if not required:raise ValueError('Resolution sacrifice stats require their complete price and result')
+        return required
+    if value.get('schema_version') == 12:
+        from .rules.recover import recover_node_dependencies
+        return recover_node_dependencies(value)
     descriptor = value.get("payment")
     if not isinstance(descriptor, Mapping):
         return ()

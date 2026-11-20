@@ -1,0 +1,806 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Menace",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Dire Fleet Ravager",
+      "oracle_id": "b83080af-9616-4dc3-bc47-6ef84b9ccc1b",
+      "oracle_text": "Menace, deathtouch\nWhen this creature enters, each player loses a third of their life, rounded up.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "4",
+      "type_line": "Creature — Orc Pirate Wizard"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Fraying Omnipotence",
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "oracle_text": "Each player loses half their life, then discards half the cards in their hand, then sacrifices half the creatures they control of their choice. Round up each time.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{8}",
+      "name": "Platinum Emperion",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "oracle_text": "Your life total can't change. (You can't gain or lose life. You can't pay any amount of life except 0.)",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2018-12-07",
+      "toughness": "8",
+      "type_line": "Artifact Creature — Golem"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Revitalize",
+      "oracle_id": "b1385b03-cb4b-4812-857f-7421f1df39af",
+      "oracle_text": "You gain 3 life.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-02-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Sliver Hivelord",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "oracle_text": "Sliver creatures you control have indestructible. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Sliver"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Stifle",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "oracle_text": "Counter target activated or triggered ability. (Mana abilities can't be targeted.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Strionic Resonator",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "oracle_text": "{2}, {T}: Copy target triggered ability you control. You may choose new targets for the copy. (A triggered ability uses the words \"when,\" \"whenever,\" or \"at.\")",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Worship",
+      "oracle_id": "99f9a4c8-b59f-4a41-8577-6c1e4684b240",
+      "oracle_text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-07-29",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Because the instructions are followed in order, abilities of the creatures a player will sacrifice may modify or trigger on losing life, discarding cards, and/or sacrificing creatures. Abilities that trigger this way will resolve after Fraying Omnipotence is done resolving.",
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, Fraying Omnipotence causes each player to lose half of their team’s life, rounded up. This means that teams at an even life total will have 0 life, and teams at an odd life total will have -1 life. The game then ends in a draw.",
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amounts that are lost are rounded up, not the amounts kept. For example, a player with 5 life, five cards in hand, and five creatures would lose 3 life, discard three cards, and sacrifice three creatures.",
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "When Fraying Omnipotence resolves, first each player loses the appropriate amount of life at once. Next, the player whose turn it is chooses an appropriate number of cards in hand without revealing them, then each other player in turn order does the same, and then those cards are all discarded simultaneously. Then, the player whose turn it is chooses an appropriate number of creatures they control. Each other player in turn order does the same, knowing choices made by previous players. Finally, all of the chosen creatures are sacrificed simultaneously.",
+      "oracle_id": "3b00068d-ad07-417c-bbb3-5f980615fb06",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "It reduces your life total to 1, not the damage to 1.",
+      "oracle_id": "99f9a4c8-b59f-4a41-8577-6c1e4684b240",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Worship does not prevent damage. It causes some damage to be unable to lower your life total. So any damage rendered useless by Worship was still dealt and is counted by effects that track the amount of damage done to a player. In addition, Worship does not prevent loss of life, so loss of life bypasses Worship.",
+      "oracle_id": "99f9a4c8-b59f-4a41-8577-6c1e4684b240",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "An activated ability has a \"Cost: Effect\" format. Look for the colon. A triggered ability starts with \"when\", \"whenever\", or \"at\".",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "It can target delayed triggered abilities. For example, a card that says \"Whenever a player cycles a card, you may exile target creature. If you do, return that creature to the battlefield at the beginning of the end step.\" triggers when a player cycles a card and creates a delayed trigger that happens at the beginning of the end step. You can choose to target the \"at the beginning of the end step\" trigger when it is placed on the stack at end of turn.",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Turn-based actions and special actions like the normal card draw, combat damage, or turning a face-down creature face up can't be targeted.",
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "For example, if you have 13 life, you'll lose 5 life.",
+      "oracle_id": "b83080af-9616-4dc3-bc47-6ef84b9ccc1b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player has 1 life, that player loses 1 life. If each player has 0 life after that, the game's a draw.",
+      "oracle_id": "b83080af-9616-4dc3-bc47-6ef84b9ccc1b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, each player loses a third of the team's life total rounded up. For example, if a team has 13 life, each player on that team loses 5 life and the team loses 10 life total.",
+      "oracle_id": "b83080af-9616-4dc3-bc47-6ef84b9ccc1b",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that trigger whenever damage is dealt to you will still trigger because that damage is still dealt, even though your life total doesn’t change as a result.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that replace an event with having you gain life (like Words of Worship’s effect does) or having you lose life will end up replacing the event with nothing.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that would replace having you gain life with some other event won’t be able to be applied because it’s impossible for you to gain life.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a cost would include causing you to gain life (like the alternative cost of an opponent’s Invigorate does), that cost can’t be paid.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says to set your life total to a certain number, that part of the effect won’t do anything.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect would cause you to exchange life totals with another player, the exchange won’t happen. Neither player’s life total changes.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Commander game, the damage dealt to you by commanders will still be counted, even if that damage doesn’t cause you to lose life.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Platinum Emperion’s ability doesn’t prevent damage. Rather, it changes the results of that damage. For example, if a creature with lifelink deals damage to you, you won’t lose any life, but its controller will still gain that much life. Similarly, if a creature you control with lifelink deals damage to another player, that player will lose life but you won’t gain any life.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Spells and abilities that would normally cause you to gain or lose life still resolve, but the life-gain or life-loss part simply has no effect.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can’t pay a cost that includes the payment of any amount of life other than 0 life. However, you can choose to be dealt damage, even though that damage won’t result in your life total changing.",
+      "oracle_id": "bcd2f70c-36c2-44b2-9d4b-1000e9bb62b6",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any choices made when the triggered ability resolves won't have been made yet when it's copied. Any such choices will be made separately when the copy resolves. If the triggered ability asks you to pay a cost (such as that of Frenzied Goblin), you pay that cost for the copy.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a triggered ability is linked to a second ability, copies of that triggered ability are also linked to that second ability. If the second ability refers to \"the exiled card,\" it refers to all cards exiled by the triggered ability and the copy. For example, if Fiend Hunter's enters-the-battlefield ability is copied and two creatures are exiled, they both return when Fiend Hunter leaves the battlefield.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability divides damage or distributes counters among a number of targets (for example, the ability of Bogardan Hellkite), the division and number of targets can't be changed. If you choose new targets, you must choose the same number of targets.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the triggered ability is modal (that is, if it says, \"Choose one —\" or similar), the mode is copied and can't be changed.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "In some cases involving linked abilities, an ability requires information about \"the exiled card.\" When this happens, the ability gets multiple answers. If these answers are being used to determine the value of a variable, the sum is used. For example, if Elite Arcanist's enters-the-battlefield ability is copied, two cards are exiled. The value of X in the activation cost of Elite Arcanist's other ability is the sum of the two cards' mana values. As the ability resolves, you create copies of both cards and can cast none, one, or both of the copies in any order.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Strionic Resonator targets a triggered ability that has triggered and is on the stack and creates another instance of that ability on the stack. It doesn't cause any object to gain an ability.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The source of the copy is the same as the source of the original ability.",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Triggered abilities use the word \"when,\" \"whenever,\" or \"at.\" They're often written as \"[Trigger condition], [effect].\"",
+      "oracle_id": "cf751552-156f-4f81-ac94-9814dce099f9",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Abilities that Slivers grant, as well as power/toughness boosts, are cumulative. However, for some abilities, like indestructible and the ability granted by Belligerent Sliver, having more than one instance of the ability doesn’t provide any additional benefit.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Damage dealt to a Sliver with indestructible is still marked on that creature. If it has lethal damage marked on it and it loses indestructible (perhaps because Sliver Hivelord leaves the battlefield), it will be destroyed.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you change the creature type of a Sliver you control so it’s no longer a Sliver, it will no longer be affected by its own ability. Its ability will continue to affect other Sliver creatures you control.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Slivers in this set affect only Sliver creatures you control. They don’t grant bonuses to your opponents’ Slivers. This is the same way Slivers from the Magic 2014 core set worked, while Slivers in earlier sets granted bonuses to all Slivers.",
+      "oracle_id": "e4fe33e7-b952-4152-8c83-81d948756d2f",
+      "published_at": "2014-07-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

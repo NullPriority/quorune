@@ -181,11 +181,15 @@ class FixedActivationTapCostCompilerTests(unittest.TestCase):
         self.assertTrue(node.exact)
         self.assertFalse(node.cost.get("uncompiled_costs"))
         self.assertEqual(["W"], node.cost["choices"][0]["q"]["colors_any"])
+        legendary = self.compile(fixture_card("Legendary Tap Cost", "Tap an untapped legendary permanent you control: Draw a card.")).faces[0].nodes[0]
+        self.assertTrue(legendary.exact)
+        self.assertEqual(3, legendary.cost["choices"][0]["tap_schema_version"])
+        self.assertIn("activation.selected_tap.fixed_legendary", legendary.capability_dependencies)
         unsupported = (
             "Tap any number of untapped creatures you control",
             "Tap two untapped artifacts and/or creatures you control",
             "Tap an untapped creature you control with the chosen color",
-            "Tap an untapped legendary permanent you control",
+            "Tap an untapped legendary artifact you control",
             "Tap an untapped snow land you control",
             "Tap an untapped nontoken artifact you control",
             "Tap an untapped creature you control with flying",

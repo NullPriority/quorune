@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed public characteristic predicates over normalized zone occurrences."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass
 from typing import Any, Mapping
 

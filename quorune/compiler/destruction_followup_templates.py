@@ -1,7 +1,7 @@
 """Bind a closed literal continuation to actual destruction results."""
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
 from ..rules.destruction_result_model import DESTRUCTION_RESULT_MECHANIC, DestructionFollowup

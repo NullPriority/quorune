@@ -20,6 +20,7 @@ from .rules.single_object_zone_transition import (
     SingleObjectDestination,
     SingleObjectOrigin,
     SingleObjectZoneTransitionError,
+    SingleObjectZoneTransitionResult,
     commit_prevalidated_single_object_zone_transition,
     prepare_single_object_zone_transition,
     request_for_card,
@@ -31,6 +32,100 @@ FIXED_OWNER_ZONE_MOVE_CAPABILITY = "zone.single_owner_move.fixed_destination"
 FIXED_OWNER_ZONE_MOVE_MECHANIC = "fixed-owner-zone-move"
 GRAVEYARD_LIBRARY_TARGET_CAPABILITY = "zone.single_owner_move.graveyard_library_target"
 GRAVEYARD_LIBRARY_TARGET_FIELD = "graveyard_library_target_version"
+
+
+STACK_SPELL_EXILE_FIELD = "stack_spell_exile"
+
+
+class StackSpellExileScope(str, Enum):
+    SELECTED = "selected_spells"
+    OTHER_SPELLS_AND_ABILITIES = "other_spells_then_all_abilities"
+
+
+@dataclass(frozen=True, slots=True)
+class StackSpellExileSpec:
+    scope: StackSpellExileScope
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if type(self.schema_version) is not int or self.schema_version != 1 or not isinstance(self.scope, StackSpellExileScope):
+            raise ValueError("Stack exile requires the exact spell scope")
+
+    def to_dict(self):
+        return {"schema_version": self.schema_version, "scope": self.scope.value}
+
+    @classmethod
+    def from_dict(cls, data):
+        if not isinstance(data, Mapping) or set(data) != {"schema_version", "scope"}:
+            raise ValueError("Stack exile descriptor fields are closed")
+        return cls(StackSpellExileScope(data["scope"]), data["schema_version"])
+
+    @property
+    def target_schema(self):
+        if self.scope is not StackSpellExileScope.SELECTED:
+            return None
+        from .target_cardinality import AnnouncedTargetCardinality
+
+        return {
+            "zones": ["stack"], "categories": ["spell"], "source_exclusion": True,
+            "count_parameter": AnnouncedTargetCardinality("up_to", "any_number", schema_version=2).to_dict(),
+        }
+
+    def effect(self):
+        fields = {"op": "exile", STACK_SPELL_EXILE_FIELD: self.to_dict()}
+        if self.scope is StackSpellExileScope.SELECTED:
+            fields["stacks"] = "$targets"
+        return fields
+
+    @property
+    def capability_dependencies(self):
+        if self.scope is StackSpellExileScope.SELECTED:
+            from .target_cardinality import ANY_NUMBER_TARGET_CAPABILITY
+
+            return ("zone.change.destination_replacement", "target.revalidate_resolution",
+                    "resolution.effect.fixed_homogeneous_target_set", ANY_NUMBER_TARGET_CAPABILITY)
+        return ("zone.change.destination_replacement", "stack.counter.effect")
+
+
+def _checked_stack_spell_exile(effects, target_schema):
+    from .replacement.immutable import thaw_value
+
+    if len(effects) != 1 or not isinstance(effects[0], Mapping):
+        raise ValueError("Stack exile requires one complete effect")
+    effect = thaw_value(effects[0])
+    spec = StackSpellExileSpec.from_dict(effect.get(STACK_SPELL_EXILE_FIELD))
+    if effect != spec.effect() or thaw_value(target_schema) != spec.target_schema:
+        raise ValueError("Stack exile requires its exact source and target scope")
+    return spec
+
+
+def stack_spell_exile_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if not any(STACK_SPELL_EXILE_FIELD in effect for effect in effects):
+        return ()
+    try:
+        return _checked_stack_spell_exile(effects, target_schema).capability_dependencies
+    except (ValueError, TypeError):
+        return ()
+
+
+def stack_spell_exile_runtime_dependencies(program):
+    from .rules.effect_shape_walkers import nested_effects
+
+    effects = (*program.effects, *getattr(program, "handlers", ()))
+    if not any(STACK_SPELL_EXILE_FIELD in effect for effect in nested_effects(effects)):
+        return ()
+    if ((program.event, program.active_zone) != ("resolve", "stack")
+            or not program.ability_id.startswith("spell:") or getattr(program, "handlers", ())):
+        raise ValueError("Stack exile requires its complete spell resolution")
+    return _checked_stack_spell_exile(program.effects, program.target_schema).capability_dependencies
+
+
+def is_closed_stack_spell_exile_program(program):
+    try:
+        required = stack_spell_exile_runtime_dependencies(program)
+    except (ValueError, TypeError):
+        return False
+    return bool(required) and set(required).issubset(program.capability_dependencies)
 
 
 class PublicZoneMoveError(ValueError):
@@ -627,6 +722,21 @@ def exile_public_graveyard_card(
 ) -> str:
     """Move one revalidated physical card from a public graveyard to exile."""
 
+    return exile_public_graveyard_card_transition(
+        host, object_ref, actor=actor, reason=reason, replacement_selections=replacement_selections,
+    ).object_ref
+
+
+def exile_public_graveyard_card_transition(
+    host: PublicZoneMoveHost,
+    object_ref: str,
+    *,
+    actor: str,
+    reason: str,
+    replacement_selections: Sequence[str | Mapping[str, Any]] = (),
+) -> SingleObjectZoneTransitionResult:
+    """Commit the existing public graveyard exile and return its actual movement receipt."""
+
     card = host._resolve_object(actor, object_ref, zones={"graveyard"})
     if not bool(getattr(card, "is_card_object", True)):
         raise PublicZoneMoveError(
@@ -661,12 +771,13 @@ def exile_public_graveyard_card(
         changed_objects=(result.object_id,),
         changed_players=(result.owner,),
     )
-    return result.object_ref
+    return result
 
 
 __all__ = [
     "PUBLIC_AURA_ENTRY_VERSION",
     "exile_public_graveyard_card",
+    "exile_public_graveyard_card_transition",
     "FIXED_OWNER_ZONE_MOVE_CAPABILITY",
     "FIXED_OWNER_ZONE_MOVE_MECHANIC",
     "PublicZoneDestination",

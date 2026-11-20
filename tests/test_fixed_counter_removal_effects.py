@@ -332,7 +332,6 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
         texts = (
             "Remove a counter from target creature.",
             "Remove up to one +1/+1 counter from target creature.",
-            "Remove all charge counters from target artifact.",
             "Remove X charge counters from target artifact.",
             "Remove a poison counter from target player.",
             "Remove a +1/+1 counter from this creature.",
@@ -487,11 +486,10 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
         )
         self.assertIsNone(all_counter_removal_effect_template(composed))
         texts = (
-            "Remove all charge counters from target artifact.",
             "Remove all counters from target player.",
             "Remove all counters from this creature.",
             "Remove all counters from each creature.",
-            "Remove all counters from up to one target permanent.",
+            "Remove all counters from up to two target permanents.",
         )
         for text in texts:
             with self.subTest(text=text):
@@ -499,6 +497,14 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
                 ir = self.compile(text)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_named_and_optional_all_target_variants_promote_through_their_own_leaf(self):
+        for text in ('Remove all charge counters from target artifact.',
+                     'Remove all counters from up to one target permanent.'):
+            self.assertIsNone(fixed_counter_removal_effect_template(text))
+            self.assertIsNotNone(all_counter_removal_effect_template(text))
+            ir = self.compile(text)
+            self.assertEqual('exact', ir.status, ir.material_residuals)
 
     def test_unlock_frontier_groups_counter_removal_by_reusable_family(self):
         counter = _clause_families(

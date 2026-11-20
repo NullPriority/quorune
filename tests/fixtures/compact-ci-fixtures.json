@@ -26,12 +26,34 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/chosen-counter-removal-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The bounded admitted and excluded tables register complete pinned original records from this fixture, preserving every material sibling.",
+      "source": "tests/test_chosen_counter_removal.py",
+      "symbol": "ChosenCounterRemovalCompilerTests.test_full_originals_close_and_unsupported_counts_or_siblings_remain_material"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/closed-effect-program-cards.json"
       ],
       "oracle_ids": [],
       "rationale": "The exact 53-card measured cohort is iterated by name from the dedicated pinned fixture.",
       "source": "tests/test_closed_effect_programs.py",
       "symbol": "ClosedEffectProgramCompilerTests.test_measured_corpus_lower_bound_is_capability_closed"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/combat-prevention-source-scopes-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The expanded admitted original table iterates complete sources from the dedicated fixture, preserving all excluded siblings.",
+      "source": "tests/test_combat_prevention_source_scopes.py",
+      "symbol": "CombatPreventionSourceCompilerTests.test_all_originals_bind_normally_and_material_neighbors_keep_complete_siblings"
     },
     {
       "card_names": [],
@@ -89,6 +111,17 @@
       "rationale": "The compiler witness binds the pinned printed copy-limit cohort by name.",
       "source": "tests/test_deck_loader.py",
       "symbol": "DeckLoaderTests.test_printed_copy_limit_originals_have_trusted_pregame_bindings"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/event-player-optional-draw-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The bounded admitted and excluded tables register complete pinned original records from this fixture, preserving every material sibling.",
+      "source": "tests/test_event_player_optional_draw.py",
+      "symbol": "EventOptionalDrawCompilerTests.test_complete_originals_admit_without_conditional_or_compound_sibling_loss"
     },
     {
       "card_names": [],
@@ -208,6 +241,17 @@
       "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands.",
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/graveyard-recycling-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The bounded pinned fixture supplies the whole original recycling table and actual named activation sources/controls with all original siblings.",
+      "source": "tests/test_graveyard_recycling.py",
+      "symbol": "GraveyardRecyclingCompilerTests.test_all_eight_original_cards_use_normal_complete_stored_and_runtime_admission"
     },
     {
       "card_names": [],
@@ -353,12 +397,45 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/legendary-tap-activation-costs.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Both complete original candidate cards are iterated to verify ordinary and fixed-mana compiler authority withdrawal and exact source spans.",
+      "source": "tests/test_legendary_tap_activation_costs.py",
+      "symbol": "LegendaryTapCompilerTests.test_both_ordinary_and_mana_activations_require_the_new_authority"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/legendary-tap-activation-costs.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Both complete candidate originals and the full excluded Moonsnare Prototype are iterated without dropping unowned siblings.",
+      "source": "tests/test_legendary_tap_activation_costs.py",
+      "symbol": "LegendaryTapCompilerTests.test_complete_originals_close_without_discarding_the_channel_sibling"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/mutate-casting-cards.json"
       ],
       "oracle_ids": [],
       "rationale": "The exact34pinnedMutate originals are filtered and iterated by OracleID from this dedicated canonical fixture;the10control records are kept in the same fixture for later native casting witnesses.",
       "source": "tests/test_mutate_cast_metadata.py",
       "symbol": "MutateCastMetadataTests.test_every_pinned_mutate_cost_lowers_but_blocked_integration_never_admits_it"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/named-zone-search-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The exact38 complete originals are iterated from pinned fixture Oracle clauses; the31 candidates and7 unsupported whole-source boundaries retain every sibling.",
+      "source": "tests/test_named_zone_searches.py",
+      "symbol": "NamedZoneSearchRegistrationTests.test_complete_original_sources_preserve_all_unsupported_siblings"
     },
     {
       "card_names": [],
@@ -387,6 +464,17 @@
       "symbol": "ProliferateEngineTests.test_generated_proliferate_trigger_runs_without_name_dispatch"
     },
     {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/public-life-gain-scopes-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Complete admitted and excluded original tables iterate names from the dedicated full-source fixture.",
+      "source": "tests/test_public_life_gain_scopes.py",
+      "symbol": "PublicLifeGainCompilerTests.test_complete_originals_bind_normally_and_unknown_siblings_remain"
+    },
+    {
       "card_names": [
         "Boon Reflection"
       ],
@@ -399,6 +487,17 @@
       "rationale": "The test reader returns its directly constructed synthetic end-step record and delegates remaining IDs to the canonical deck/counter fixture database; the synthetic identity is not a compact-database card.",
       "source": "tests/test_public_query_effect_amounts.py",
       "symbol": "PublicQueryEffectAmountRuntimeTests.test_query_amounts_trigger_uses_normalized_event_and_apnap_owner"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/qualified-library-search-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The five new originals, three already-supported controls and complete excluded Vision Quest are iterated from explicit candidate/control constants.",
+      "source": "tests/test_qualified_library_searches.py",
+      "symbol": "QualifiedLibrarySearchRegistrationTests.test_original_five_close_without_counting_existing_controls_or_unknown_neighbor"
     },
     {
       "card_names": [
@@ -415,12 +514,2026 @@
       "card_names": [],
       "deck_files": [],
       "fixture_files": [
+        "tests/fixtures/target-all-counter-variants-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The bounded admitted and excluded tables register complete pinned original records from this fixture, preserving every material sibling.",
+      "source": "tests/test_target_all_counter_variants.py",
+      "symbol": "TargetAllCounterCompilerTests.test_complete_originals_admit_both_faces_and_keep_material_exclusions"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/target-library-inspection-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Twelve candidate and eleven excluded full original sources are iterated from explicit constants; every original sibling is retained.",
+      "source": "tests/test_target_library_inspection.py",
+      "symbol": "TargetLibraryInspectionRegistrationTests.test_complete_original_cards_keep_all_unowned_siblings"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/target-library-shuffle-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The explicit admitted and existing-control tables register complete original records from the dedicated fixture; source-plus-graveyard exclusion remains present.",
+      "source": "tests/test_target_library_shuffle.py",
+      "symbol": "TargetShuffleCompilerTests.test_full_originals_bind_and_existing_recycling_controls_are_not_new_candidates"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
         "tests/fixtures/undaunted-cards.json"
       ],
       "oracle_ids": [],
       "rationale": "The exact five pinned originals and two explicitly constructed cost controls are iterated by fixture Oracle identity; both unsupported original result bodies remain residual.",
       "source": "tests/test_undaunted.py",
       "symbol": "UndauntedCompilerTests.test_original_keyword_preserves_complete_and_unrepresented_result_bodies"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/query-bounded-library-search-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Complete bounded-search originals, retained fixed controls and unsupported quantity neighbors are iterated by explicit names.",
+      "source": "tests/test_query_bounded_library_search.py",
+      "symbol": "QueryBoundSearchRegistrationTests.test_five_complete_originals_retain_every_sibling_and_unknown_quantity_neighbors"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/bounded-hand-cast-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Complete Expertise originals and complete excluded variable-bound neighbor are iterated from the dedicated original-card fixture.",
+      "source": "tests/test_bounded_hand_casts.py",
+      "symbol": "BoundedHandCastRegistrationTests.test_all_five_originals_close_normally_and_variable_neighbor_keeps_its_complete_source"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/graveyard-exile-replacement-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The six exact original sources and preserved unsupported followup/sibling neighbors are registered by explicit fixture candidate names.",
+      "source": "tests/test_graveyard_exile_replacements.py",
+      "symbol": "GraveyardExileRegistrationTests.test_six_complete_originals_close_normally_while_result_and_sibling_neighbors_remain_unready"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/attached-destruction-set-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Full pinned originals and preserved unsupported chosen/source-exclusion neighbors use explicit fixture candidates.",
+      "source": "tests/test_attached_destruction_sets.py",
+      "symbol": "AttachmentDestructionRegistrationTests.test_four_complete_originals_close_normally_and_unrepresented_choice_neighbors_do_not"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/hand-library-redraw-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Complete original and full unsupported neighbor/old-retention names are iterated from the dedicated pinned fixture.",
+      "source": "tests/test_hand_library_redraw.py",
+      "symbol": "HandLibraryRedrawRegistrationTests.test_eight_complete_originals_close_normally_old_library_cards_retain_and_full_rider_neighbors_do_not"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/fixed-draw-hand-putback-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Complete original, old-retention and genuine excluded linked-rider sources are iterated from the explicit pinned fixture.",
+      "source": "tests/test_fixed_draw_hand_putback.py",
+      "symbol": "FixedPutbackRegistrationTests.test_four_complete_originals_close_normally_and_old_hand_library_controls_retain"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/bounded-block-as-though-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Full pinned originals and existing Landwalk retention are iterated from this explicit fixture; gameplay adds also use that same declared subset.",
+      "source": "tests/test_bounded_block_as_though.py",
+      "symbol": "BlockAsThoughRegistrationTests.test_six_complete_originals_and_existing_landwalk_control_bind_normally"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/upkeep-hand-difference-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Pinned four complete originals, chosen-opponent exclusions and targeted/conditional controls are iterated from the explicit family fixture; all native additions use this same subset.",
+      "source": "tests/test_upkeep_hand_differences.py",
+      "symbol": "UpkeepHandDifferenceRegistrationTests.test_four_complete_originals_close_normally_targeted_and_conditional_controls_retain_and_chosen_opponent_stays_unready"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/paid-alternative-cast-result-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Genuine verified capability withdrawal iterates the three complete original paid-Surge sources from the explicit pinned fixture.",
+      "source": "tests/test_paid_alternative_cast_results.py",
+      "symbol": "PaidAlternativeCompilerChoiceTests.test_verified_paid_fact_and_cost_authority_withdrawal_keeps_unrelated_draw"
+    },
+    {
+      "card_names": [
+        "Jadar, Ghoulcaller of Nephalia"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The named test constant selects the one existing fixture record for compile and registration.",
+      "source": "tests/test_controller_creature_keyword_absence.py",
+      "symbol": "ControllerCreatureKeywordAbsenceTests.test_complete_pinned_jadar_preserves_schedule_live_condition_and_decayed_result"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "Jadar, Ghoulcaller of Nephalia",
+        "Rotten Reunion"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The withdrawal check passes its three fixed fixture names to the shared registration helper.",
+      "source": "tests/test_controller_creature_keyword_absence.py",
+      "symbol": "ControllerCreatureKeywordAbsenceNativeTests.test_verified_condition_and_decayed_withdrawals_require_complete_jadar"
+    },
+    {
+      "card_names": [
+        "Urborg",
+        "Walking Sponge"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_chosen_temporary_keyword_removal.py",
+      "symbol": "ChosenTemporaryKeywordRemovalTests.test_full_originals_keep_one_target_complete_branches_and_printed_mana"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "Unsummon",
+        "Urborg",
+        "Walking Sponge"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_chosen_temporary_keyword_removal.py",
+      "symbol": "ChosenTemporaryKeywordRemovalTests.test_verified_withdrawals_separate_keyword_removal_from_target_authority"
+    },
+    {
+      "card_names": [
+        "Ebony Horse",
+        "Elvish Scout",
+        "Ith, High Arcanist",
+        "Maze of Ith",
+        "Maze of Shadows"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_combat_untap_prevention.py",
+      "symbol": "CombatUntapPreventionTests.test_five_complete_originals_retain_exact_target_cost_order_and_siblings"
+    },
+    {
+      "card_names": [
+        "Maze of Ith"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_combat_untap_prevention.py",
+      "symbol": "CombatUntapPreventionTests.test_raw_group_requires_both_ordered_combat_directions_and_the_same_target"
+    },
+    {
+      "card_names": [
+        "Ebony Horse",
+        "Elvish Scout",
+        "Ith, High Arcanist",
+        "Maze of Ith",
+        "Maze of Shadows"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_combat_untap_prevention.py",
+      "symbol": "CombatUntapPreventionTests.test_verified_capability_withdrawals_require_both_actual_components"
+    },
+    {
+      "card_names": [
+        "Rotten Reunion",
+        "Walking Corpse",
+        "Wilhelt, the Rotcleaver"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_death_keyword_absence.py",
+      "symbol": "DeathKeywordAbsenceNativeTests.test_verified_death_condition_and_sacrifice_withdrawals_block_complete_wilhelt"
+    },
+    {
+      "card_names": [
+        "Wilhelt, the Rotcleaver"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_death_keyword_absence.py",
+      "symbol": "DeathKeywordAbsenceTests.test_original_wilhelt_keeps_both_abilities_and_the_normalized_death_owner"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "Master Symmetrist"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_declared_attacker_equal_stats.py",
+      "symbol": "DeclaredAttackerEqualStatsNativeTests.test_verified_attack_condition_recipient_and_reach_withdrawals_block_complete_symmetrist"
+    },
+    {
+      "card_names": [
+        "Master Symmetrist"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_declared_attacker_equal_stats.py",
+      "symbol": "DeclaredAttackerEqualStatsTests.test_pinned_reach_and_whole_attack_grant_admit_only_the_closed_comparison"
+    },
+    {
+      "card_names": [
+        "Dreadhorde Invasion",
+        "Grizzly Bears",
+        "Reyav, Master Smith"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_declared_attacker_keyword_grants.py",
+      "symbol": "DeclaredAttackerKeywordGrantNativeTests.test_verified_attacker_grant_and_amass_withdrawals_block_the_affected_originals"
+    },
+    {
+      "card_names": [
+        "Dreadhorde Invasion",
+        "Reyav, Master Smith"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_declared_attacker_keyword_grants.py",
+      "symbol": "DeclaredAttackerKeywordGrantTests.test_originals_use_declared_recipients_and_retain_every_ability"
+    },
+    {
+      "card_names": [
+        "Jangling Automaton"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_defending_player_creature_untap.py",
+      "symbol": "DefendingPlayerCreatureUntapTests.test_complete_original_owns_one_untargeted_source_attack_set"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "Jangling Automaton",
+        "Village Bell-Ringer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_defending_player_creature_untap.py",
+      "symbol": "DefendingPlayerCreatureUntapTests.test_verified_withdrawals_distinguish_the_attack_and_public_tap_set"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "MacCready, Lamplight Mayor"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_fixed_power_qualified_attacks.py",
+      "symbol": "FixedPowerQualifiedAttackNativeTests.test_verified_attack_skulk_and_controller_withdrawals_block_complete_maccready"
+    },
+    {
+      "card_names": [
+        "MacCready, Lamplight Mayor"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_fixed_power_qualified_attacks.py",
+      "symbol": "FixedPowerQualifiedAttackTests.test_whole_original_binds_both_attacks_and_rejects_forged_defenders"
+    },
+    {
+      "card_names": [
+        "Animal Boneyard",
+        "Miren, the Moaning Well"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_granted_paid_creature_toughness.py",
+      "symbol": "GrantedPaidCreatureToughnessTests.test_complete_original_retains_enchant_land_and_closed_granted_price"
+    },
+    {
+      "card_names": [
+        "Animal Boneyard",
+        "Grizzly Bears",
+        "Miren, the Moaning Well"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_granted_paid_creature_toughness.py",
+      "symbol": "GrantedPaidCreatureToughnessTests.test_verified_withdrawals_distinguish_the_grant_from_paid_toughness"
+    },
+    {
+      "card_names": [
+        "Sporoloth Ancient"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_granted_source_counter_cost.py",
+      "symbol": "GrantedSourceCounterCostTests.test_complete_original_keeps_the_upkeep_and_independent_granted_child"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "Sporoloth Ancient",
+        "Thallid"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_granted_source_counter_cost.py",
+      "symbol": "GrantedSourceCounterCostTests.test_verified_withdrawal_separates_grant_and_independent_printed_counter_price"
+    },
+    {
+      "card_names": [
+        "Sedge Sliver"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_granted_swamp_characteristic.py",
+      "symbol": "GrantedSwampCharacteristicTests.test_complete_original_keeps_separate_swamp_child_and_regeneration"
+    },
+    {
+      "card_names": [
+        "Metallic Sliver",
+        "Sedge Sliver"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_granted_swamp_characteristic.py",
+      "symbol": "GrantedSwampCharacteristicTests.test_verified_withdrawal_keeps_the_independent_regeneration_child"
+    },
+    {
+      "card_names": [
+        "Giant's Amulet"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_granted_untapped_hexproof.py",
+      "symbol": "GrantedUntappedHexproofTests.test_original_complete_graph_retains_paid_entry_equip_and_conditional_child"
+    },
+    {
+      "card_names": [
+        "Giant's Amulet",
+        "Grizzly Bears",
+        "Inspiring Leader"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_granted_untapped_hexproof.py",
+      "symbol": "GrantedUntappedHexproofTests.test_verified_withdrawals_separate_regular_static_grants_and_the_untapped_condition"
+    },
+    {
+      "card_names": [
+        "Exhaustion",
+        "Mana Vapors"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_next_player_untap_restrictions.py",
+      "symbol": "NextPlayerUntapRestrictionTests.test_exact_direct_player_schemas_and_narrow_grammar"
+    },
+    {
+      "card_names": [
+        "Back to Basics",
+        "Exhaustion",
+        "Grizzly Bears",
+        "Mana Vapors"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_next_player_untap_restrictions.py",
+      "symbol": "NextPlayerUntapRestrictionTests.test_verified_withdrawals_distinguish_pending_and_static_untap_owners"
+    },
+    {
+      "card_names": [
+        "Daybreak Coronet"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_other_aura_enchant.py",
+      "symbol": "OtherAuraEnchantTests.test_complete_original_keeps_the_exact_other_aura_domain_and_characteristic_grant"
+    },
+    {
+      "card_names": [
+        "Daybreak Coronet"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_other_aura_enchant.py",
+      "symbol": "OtherAuraEnchantTests.test_verified_capability_withdrawal_blocks_the_complete_original"
+    },
+    {
+      "card_names": [
+        "Eastfarthing Farmer",
+        "Faebloom Trick",
+        "Grizzly Bears"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_reflexive_live_count_stat_results.py",
+      "symbol": "ReflexiveLiveCountStatNativeTests.test_verified_live_quantity_and_reflexive_withdrawals_block_the_right_originals"
+    },
+    {
+      "card_names": [
+        "Eastfarthing Farmer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_reflexive_live_count_stat_results.py",
+      "symbol": "ReflexiveLiveCountStatTests.test_complete_farmer_preserves_the_food_and_one_paired_live_count"
+    },
+    {
+      "card_names": [
+        "Thornbow Archer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_source_attack_opponent_subtype_absence.py",
+      "symbol": "SourceAttackOpponentSubtypeAbsenceTests.test_complete_archer_has_one_exact_attack_and_public_subtype_without_a_target"
+    },
+    {
+      "card_names": [
+        "Grizzly Bears",
+        "Stronghold Discipline",
+        "Thornbow Archer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_source_attack_opponent_subtype_absence.py",
+      "symbol": "SourceAttackOpponentSubtypeAbsenceTests.test_verified_withdrawals_preserve_v1_when_only_source_attacks_are_removed"
+    },
+    {
+      "card_names": [
+        "Grafted Exoskeleton",
+        "Grafted Wargear"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_source_unattachment_sacrifice.py",
+      "symbol": "SourceUnattachmentSacrificeTests.test_originals_keep_equip_characteristics_and_the_untargeted_trigger"
+    },
+    {
+      "card_names": [
+        "Grafted Exoskeleton",
+        "Grafted Wargear",
+        "Grizzly Bears",
+        "Straw Golem"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_source_unattachment_sacrifice.py",
+      "symbol": "SourceUnattachmentSacrificeTests.test_verified_withdrawals_distinguish_unattachment_from_ordinary_source_sacrifice"
+    },
+    {
+      "card_names": [
+        "Cephalid Snitch"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_temporary_black_protection_removal.py",
+      "symbol": "TemporaryBlackProtectionRemovalTests.test_compiler_and_runtime_exclude_unrepresented_qualities_subjects_and_durations"
+    },
+    {
+      "card_names": [
+        "Cephalid Snitch"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_temporary_black_protection_removal.py",
+      "symbol": "TemporaryBlackProtectionRemovalTests.test_complete_original_uses_source_sacrifice_and_one_typed_color_removal"
+    },
+    {
+      "card_names": [
+        "Cephalid Snitch",
+        "Grizzly Bears",
+        "Paladin en-Vec"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_temporary_black_protection_removal.py",
+      "symbol": "TemporaryBlackProtectionRemovalTests.test_verified_withdrawals_preserve_unrelated_complete_creature"
+    },
+    {
+      "card_names": [
+        "Hammerheim"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_temporary_landwalk_removal.py",
+      "symbol": "TemporaryLandwalkRemovalTests.test_complete_original_keeps_independent_red_mana_and_closed_target_removal"
+    },
+    {
+      "card_names": [
+        "Hammerheim"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_temporary_landwalk_removal.py",
+      "symbol": "TemporaryLandwalkRemovalTests.test_removed_family_excludes_other_targets_durations_subsets_and_companion_changes"
+    },
+    {
+      "card_names": [
+        "Hammerheim"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_temporary_landwalk_removal.py",
+      "symbol": "TemporaryLandwalkRemovalTests.test_verified_withdrawals_require_both_landwalk_owners_and_keep_mana_mode_compilable"
+    },
+    {
+      "card_names": [
+        "Diregraf Horde",
+        "Eastfarthing Farmer",
+        "Faebloom Trick"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_token_creation_reflexive_results.py",
+      "symbol": "TokenCreationReflexiveCompilerTests.test_originals_close_both_phases_and_raw_parents_fail_closed"
+    },
+    {
+      "card_names": [
+        "Diregraf Horde",
+        "Faebloom Trick",
+        "Grizzly Bears"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_token_creation_reflexive_results.py",
+      "symbol": "TokenCreationReflexiveNativeTests.test_verified_producer_reflexive_and_result_withdrawals_block_the_right_originals"
+    },
+    {
+      "card_names": [
+        "Predator's Gambit"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_attached_controller_intimidate.py",
+      "symbol": "AttachedControllerIntimidateTests.test_complete_original_binds_one_exact_attached_condition_and_keeps_fixed_stats"
+    },
+    {
+      "card_names": [
+        "Predator's Gambit"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_attached_controller_intimidate.py",
+      "symbol": "AttachedControllerIntimidateTests.test_verified_withdrawal_preserves_independent_aura_and_stats"
+    },
+    {
+      "card_names": [
+        "Ajani Vengeant",
+        "Barl's Cage",
+        "Elvish Hunter",
+        "Fifty Feet of Rope",
+        "House Guildmage",
+        "Sleeper Dart"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test's fixed case inputs supply the names used for lookup and registration.",
+      "source": "tests/test_targeted_controller_untap.py",
+      "symbol": "TargetedControllerUntapTests.test_six_complete_originals_use_the_typed_target_result_and_keep_printed_costs"
+    },
+    {
+      "card_names": [
+        "Ajani Vengeant",
+        "Barl's Cage",
+        "Elvish Hunter",
+        "Fifty Feet of Rope",
+        "House Guildmage",
+        "Sleeper Dart"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The capability withdrawal test registers its bounded candidate and control names.",
+      "source": "tests/test_targeted_controller_untap.py",
+      "symbol": "TargetedControllerUntapTests.test_verified_withdrawal_blocks_each_whole_original"
+    },
+    {
+      "card_names": [
+        "Frost Titan"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The fixed source constant is a registered compact fixture used by this native registration check.",
+      "source": "tests/test_target_announcement_counter_payment.py",
+      "symbol": "TargetAnnouncementCounterPaymentTests.test_complete_original_keeps_both_abilities_and_seals_the_exact_event_operand"
+    },
+    {
+      "card_names": [
+        "Frost Titan"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The fixed source constant is a registered compact fixture used by this native registration check.",
+      "source": "tests/test_target_announcement_counter_payment.py",
+      "symbol": "TargetAnnouncementCounterPaymentTests.test_omitting_the_exact_event_scope_blocks_ordinary_complete_registration"
+    },
+    {
+      "card_names": [
+        "Frost Titan"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The fixed source constant is a registered compact fixture used by this native registration check.",
+      "source": "tests/test_target_announcement_counter_payment.py",
+      "symbol": "TargetAnnouncementCounterPaymentTests.test_verified_owner_withdrawal_preserves_independent_tap_trigger"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/linked-exile-and-life-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The exact three enchantment records come from the pinned compound exile and life fixture.",
+      "source": "tests/test_linked_exile_and_life.py",
+      "symbol": "LinkedExileAndLifeTests.test_complete_originals_keep_the_exact_pair_and_independent_final_gain"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/linked-exile-and-life-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Each dependency withdrawal registers all three complete original enchantments from the pinned fixture.",
+      "source": "tests/test_linked_exile_and_life.py",
+      "symbol": "LinkedExileAndLifeTests.test_verified_withdrawals_require_both_link_and_life_for_each_original"
+    },
+    {
+      "card_names": [
+        "Liminal Hold"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Native registration uses the name returned by one fixed lookup in the registered compact fixture.",
+      "source": "tests/test_linked_exile_and_life.py",
+      "symbol": "LinkedExileAndLifeTests.test_raw_ordered_shape_keeps_the_pair_roles_and_life_amount"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/damage-then-keyword-removal-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "This check registers every complete original from the pinned ordered damage and removal fixture.",
+      "source": "tests/test_damage_then_keyword_removal.py",
+      "symbol": "DamageThenKeywordRemovalTests.test_each_complete_original_keeps_exact_damage_then_removal"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/damage-then-keyword-removal-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Each verified withdrawal registers the exact four original sources in the pinned fixture.",
+      "source": "tests/test_damage_then_keyword_removal.py",
+      "symbol": "DamageThenKeywordRemovalTests.test_verified_withdrawals_require_damage_and_temporary_removal_for_every_original"
+    },
+    {
+      "card_names": [
+        "Vertigo"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The pinned original supplies the unmodified ordered invocation before raw target and payload changes.",
+      "source": "tests/test_damage_then_keyword_removal.py",
+      "symbol": "DamageThenKeywordRemovalTests.test_wrong_order_slot_amount_domain_or_rider_cannot_bind_the_pair"
+    },
+    {
+      "card_names": [
+        "Goblin Skycutter"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The mutation recompiles one fixed original from the pinned fixture.",
+      "source": "tests/test_source_sacrifice_bound_damage.py",
+      "symbol": "SourceSacrificeBoundDamageTests.test_leaving_the_source_pronoun_unbound_blocks_original_registration"
+    },
+    {
+      "card_names": [
+        "Goblin Skycutter"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test checks normal complete registration of the fixed pinned original.",
+      "source": "tests/test_source_sacrifice_bound_damage.py",
+      "symbol": "SourceSacrificeBoundDamageTests.test_original_binds_paid_source_and_the_same_announced_damage_and_removal_target"
+    },
+    {
+      "card_names": [
+        "Goblin Skycutter"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The withdrawal test registers the fixed pinned original against each capability change.",
+      "source": "tests/test_source_sacrifice_bound_damage.py",
+      "symbol": "SourceSacrificeBoundDamageTests.test_verified_withdrawals_require_the_price_and_last_known_source"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/source-becomes-blocked-result-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The two complete printed source occurrences and independent siblings come from the pinned fixture.",
+      "source": "tests/test_source_becomes_blocked_results.py",
+      "symbol": "SourceBecomesBlockedResultTests.test_complete_originals_bind_the_sealed_occurrence_and_keep_the_activated_siblings"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/source-becomes-blocked-result-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Each capability withdrawal registers the complete pinned source creature records.",
+      "source": "tests/test_source_becomes_blocked_results.py",
+      "symbol": "SourceBecomesBlockedResultTests.test_verified_result_owner_withdrawals_block_only_dependent_complete_originals"
+    },
+    {
+      "card_names": [
+        "Xantid Swarm"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The ordinary complete source fixture supplies the fixed compiled trigger for two checks.",
+      "source": "tests/test_attack_defender_cast_prohibition.py",
+      "symbol": "AttackDefenderCastProhibitionTests.original_trigger"
+    },
+    {
+      "card_names": [
+        "Xantid Swarm"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The fixed pinned original is registered after omitting its exact producer.",
+      "source": "tests/test_attack_defender_cast_prohibition.py",
+      "symbol": "AttackDefenderCastProhibitionTests.test_omitting_the_sealed_defender_producer_blocks_the_original"
+    },
+    {
+      "card_names": [
+        "Xantid Swarm"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Each owner withdrawal registers the same pinned original with no sibling changes.",
+      "source": "tests/test_attack_defender_cast_prohibition.py",
+      "symbol": "AttackDefenderCastProhibitionTests.test_verified_owner_withdrawals_block_the_original"
+    },
+    {
+      "card_names": [
+        "Bane of Bala Ged"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "This helper registers the complete pinned defender exile original for the typed and mutated shape checks.",
+      "source": "tests/test_attack_defender_public_exile.py",
+      "symbol": "AttackDefenderPublicExileTests.registered"
+    },
+    {
+      "card_names": [
+        "Bane of Bala Ged"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "This mutation registers the fixed pinned original without its exact result route.",
+      "source": "tests/test_attack_defender_public_exile.py",
+      "symbol": "AttackDefenderPublicExileTests.test_excluding_the_public_exile_producer_blocks_ordinary_original_registration"
+    },
+    {
+      "card_names": [
+        "Bane of Bala Ged"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test rebinds the same complete pinned original for each verified dependency withdrawal.",
+      "source": "tests/test_attack_defender_public_exile.py",
+      "symbol": "AttackDefenderPublicExileTests.test_verified_attack_and_replacement_withdrawals_block_complete_original"
+    },
+    {
+      "card_names": [
+        "Thoughtcutter Agent"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The fixed pinned original supplies its ordinary complete program and exact raw validation surface.",
+      "source": "tests/test_targeted_life_loss_public_hand_observation.py",
+      "symbol": "TargetedLifeLossPublicHandObservationTests.original_program"
+    },
+    {
+      "card_names": [
+        "Thoughtcutter Agent"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The mutation registers the same original while its exact public observation leaf is unavailable.",
+      "source": "tests/test_targeted_life_loss_public_hand_observation.py",
+      "symbol": "TargetedLifeLossPublicHandObservationTests.test_leaving_the_exact_public_observation_uncompiled_blocks_the_original"
+    },
+    {
+      "card_names": [
+        "Thoughtcutter Agent"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The test rebinds the exact pinned original under each verified owner withdrawal.",
+      "source": "tests/test_targeted_life_loss_public_hand_observation.py",
+      "symbol": "TargetedLifeLossPublicHandObservationTests.test_verified_withdrawal_requires_hand_observation_and_shared_player_target"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/current-turn-player-history-target-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "The complete original programs are loaded from the pinned player history fixture.",
+      "source": "tests/test_current_turn_player_history_targets.py",
+      "symbol": "CurrentTurnPlayerHistoryTargetTests.ordinary_loss_program"
+    },
+    {
+      "card_names": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/current-turn-player-history-target-cards.json"
+      ],
+      "oracle_ids": [],
+      "rationale": "Each verified dependency withdrawal binds both exact original card records.",
+      "source": "tests/test_current_turn_player_history_targets.py",
+      "symbol": "CurrentTurnPlayerHistoryTargetTests.test_verified_history_withdrawals_block_only_the_dependent_complete_original"
+    },
+    {
+      "card_names": [
+        "Vampire's Bite"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The pinned original supplies ordinary complete registration and its two fixed branch operands.",
+      "source": "tests/test_kicked_additive_target_lifelink.py",
+      "symbol": "KickedAdditiveTargetLifelinkTests.original_program"
+    },
+    {
+      "card_names": [
+        "Vampire's Bite"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The same complete original is read while its exact additive lowering is unavailable.",
+      "source": "tests/test_kicked_additive_target_lifelink.py",
+      "symbol": "KickedAdditiveTargetLifelinkTests.test_omitting_the_additive_producer_restores_only_the_original_residual"
+    },
+    {
+      "card_names": [
+        "Vampire's Bite"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Each verified capability withdrawal rebinds the same pinned spell.",
+      "source": "tests/test_kicked_additive_target_lifelink.py",
+      "symbol": "KickedAdditiveTargetLifelinkTests.test_verified_withdrawals_require_shared_target_branch_and_lifelink_owners"
+    },
+    {
+      "card_names": [
+        "Gift of Growth"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The exact pinned original supplies ordinary complete registration and both scoped ordered branches.",
+      "source": "tests/test_kicked_shared_untap_and_modifier.py",
+      "symbol": "KickedSharedUntapAndModifierTests.original_program"
+    },
+    {
+      "card_names": [
+        "Gift of Growth"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The fixed pinned original is registered when its exact untap-plus-stat producer is unavailable.",
+      "source": "tests/test_kicked_shared_untap_and_modifier.py",
+      "symbol": "KickedSharedUntapAndModifierTests.test_omitting_the_exact_untap_producer_keeps_only_the_original_residual"
+    },
+    {
+      "card_names": [
+        "Gift of Growth"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Each verified capability withdrawal rebinds the same complete pinned spell.",
+      "source": "tests/test_kicked_shared_untap_and_modifier.py",
+      "symbol": "KickedSharedUntapAndModifierTests.test_verified_withdrawal_requires_the_untap_and_shared_kicker_owners"
+    },
+    {
+      "card_names": [
+        "Goblin Maskmaker",
+        "Spellbinding Soprano"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The two complete printed originals supply the exact version-two cost scopes and independent sibling.",
+      "source": "tests/test_repeated_source_attack_cast_cost_reduction.py",
+      "symbol": "RepeatedSourceAttackCastCostReductionTests.original_program"
+    },
+    {
+      "card_names": [
+        "Goblin Maskmaker",
+        "Spellbinding Soprano"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "The mutation registers both fixed pinned originals with the scoped recurring result unavailable.",
+      "source": "tests/test_repeated_source_attack_cast_cost_reduction.py",
+      "symbol": "RepeatedSourceAttackCastCostReductionTests.test_omitting_exact_recurring_producer_restores_both_complete_original_residuals"
+    },
+    {
+      "card_names": [
+        "Goblin Maskmaker",
+        "Spellbinding Soprano"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Each verified dependency withdrawal registers the same two original cards.",
+      "source": "tests/test_repeated_source_attack_cast_cost_reduction.py",
+      "symbol": "RepeatedSourceAttackCastCostReductionTests.test_verified_withdrawals_require_source_attack_and_cast_cost_authority"
+    },
+    {
+      "card_names": [
+        "Tectonic Hellion"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile the same original with both its attack and Haste.",
+      "source": "tests/test_most_lands_attack_sacrifice.py",
+      "symbol": "MostLandsAttackSacrificeTests.original_program"
+    },
+    {
+      "card_names": [
+        "Tectonic Hellion"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same original with the exact most-lands lowering removed.",
+      "source": "tests/test_most_lands_attack_sacrifice.py",
+      "symbol": "MostLandsAttackSacrificeTests.test_removing_exact_most_lands_lowering_restores_the_original_residual"
+    },
+    {
+      "card_names": [
+        "Tectonic Hellion"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same original for each verified capability withdrawal.",
+      "source": "tests/test_most_lands_attack_sacrifice.py",
+      "symbol": "MostLandsAttackSacrificeTests.test_verified_withdrawals_require_attack_and_public_sacrifice_authority"
+    },
+    {
+      "card_names": [
+        "Mana Breach"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile the full pinned original with its mandatory caster choice.",
+      "source": "tests/test_spell_caster_land_return.py",
+      "symbol": "SpellCasterLandReturnTests.original_program"
+    },
+    {
+      "card_names": [
+        "Mana Breach"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same original with the exact caster-return producer removed.",
+      "source": "tests/test_spell_caster_land_return.py",
+      "symbol": "SpellCasterLandReturnTests.test_omitting_the_caster_land_lowering_restores_the_original_residual"
+    },
+    {
+      "card_names": [
+        "Mana Breach"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same original for each verified capability withdrawal.",
+      "source": "tests/test_spell_caster_land_return.py",
+      "symbol": "SpellCasterLandReturnTests.test_verified_withdrawals_require_the_cast_event_and_land_return_owners"
+    },
+    {
+      "card_names": [
+        "Eidolon of the Great Revel",
+        "Pyrostatic Pillar",
+        "Scalding Viper // Steam Clean"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile all three pinned originals and retain the existing Adventure.",
+      "source": "tests/test_spell_cast_mana_value_limits.py",
+      "symbol": "SpellCastManaValueLimitTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Eidolon of the Great Revel",
+        "Pyrostatic Pillar",
+        "Scalding Viper // Steam Clean"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the three originals after disabling the specific upper-bound syntax.",
+      "source": "tests/test_spell_cast_mana_value_limits.py",
+      "symbol": "SpellCastManaValueLimitTests.test_omitting_the_exact_upper_limit_restores_the_three_cast_residuals"
+    },
+    {
+      "card_names": [
+        "Eidolon of the Great Revel",
+        "Pyrostatic Pillar",
+        "Scalding Viper // Steam Clean"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the three originals for each genuine verified capability withdrawal.",
+      "source": "tests/test_spell_cast_mana_value_limits.py",
+      "symbol": "SpellCastManaValueLimitTests.test_verified_withdrawals_require_actual_cast_and_fixed_caster_damage"
+    },
+    {
+      "card_names": [
+        "Aether Barrier",
+        "Spelltithe Enforcer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile both full pinned originals and their distinct caster scopes.",
+      "source": "tests/test_spell_caster_sacrifice_payment.py",
+      "symbol": "SpellCasterSacrificePaymentTests.original_program"
+    },
+    {
+      "card_names": [
+        "Aether Barrier",
+        "Spelltithe Enforcer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both pinned originals after disabling their exact shared payment producer.",
+      "source": "tests/test_spell_caster_sacrifice_payment.py",
+      "symbol": "SpellCasterSacrificePaymentTests.test_omitting_the_exact_caster_sacrifice_payment_restores_both_residuals"
+    },
+    {
+      "card_names": [
+        "Aether Barrier",
+        "Spelltithe Enforcer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both complete originals for verified withdrawal of each payment and sacrifice dependency.",
+      "source": "tests/test_spell_caster_sacrifice_payment.py",
+      "symbol": "SpellCasterSacrificePaymentTests.test_verified_withdrawals_require_payment_and_sacrifice_authority"
+    },
+    {
+      "card_names": [
+        "Aetherflux Reservoir",
+        "Rug of Smothering"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile both pinned originals and preserve their independent ability handlers.",
+      "source": "tests/test_current_turn_spell_count_life.py",
+      "symbol": "CurrentTurnSpellCountLifeTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Aetherflux Reservoir",
+        "Rug of Smothering"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same two originals with exact cast-count life lowering disabled.",
+      "source": "tests/test_current_turn_spell_count_life.py",
+      "symbol": "CurrentTurnSpellCountLifeTests.test_omitting_the_exact_spell_count_lowering_restores_both_original_residuals"
+    },
+    {
+      "card_names": [
+        "Aetherflux Reservoir",
+        "Rug of Smothering"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same two originals after each genuine capability withdrawal.",
+      "source": "tests/test_current_turn_spell_count_life.py",
+      "symbol": "CurrentTurnSpellCountLifeTests.test_verified_withdrawals_require_current_history_and_life_authority"
+    },
+    {
+      "card_names": [
+        "Boromir, Warden of the Tower",
+        "Vexing Bauble"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile both pinned originals and keep their independent actual siblings.",
+      "source": "tests/test_zero_mana_cast_counters.py",
+      "symbol": "ZeroManaCastCounterTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Boromir, Warden of the Tower",
+        "Vexing Bauble"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both pinned originals with the exact zero-paid intervening binding omitted.",
+      "source": "tests/test_zero_mana_cast_counters.py",
+      "symbol": "ZeroManaCastCounterTests.test_omitting_the_exact_zero_mana_binding_restores_only_the_two_original_residuals"
+    },
+    {
+      "card_names": [
+        "Boromir, Warden of the Tower",
+        "Vexing Bauble"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same two originals after each genuine capability withdrawal.",
+      "source": "tests/test_zero_mana_cast_counters.py",
+      "symbol": "ZeroManaCastCounterTests.test_verified_withdrawals_require_normalized_cast_and_original_spell_counter"
+    },
+    {
+      "card_names": [
+        "Nix"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile the full pinned original and its ordinary any-spell target schema.",
+      "source": "tests/test_targeted_zero_mana_counter.py",
+      "symbol": "TargetedZeroManaCounterTests.original_program"
+    },
+    {
+      "card_names": [
+        "Nix"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with its exact mana-payment resolution condition omitted.",
+      "source": "tests/test_targeted_zero_mana_counter.py",
+      "symbol": "TargetedZeroManaCounterTests.test_omitting_payment_condition_lowering_leaves_only_the_original_residual"
+    },
+    {
+      "card_names": [
+        "Nix"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the complete pinned original after genuine payment-receipt capability withdrawal.",
+      "source": "tests/test_targeted_zero_mana_counter.py",
+      "symbol": "TargetedZeroManaCounterTests.test_verified_withdrawal_requires_actual_mana_receipt_authority"
+    },
+    {
+      "card_names": [
+        "Lavinia, Azorius Renegade"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile both complete pinned Lavinia abilities.",
+      "source": "tests/test_lands_cast_mana_value_limit.py",
+      "symbol": "LandsCastManaValueLimitTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Lavinia, Azorius Renegade"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with its exact land-based cast prohibition omitted.",
+      "source": "tests/test_lands_cast_mana_value_limit.py",
+      "symbol": "LandsCastManaValueLimitTests.test_omitting_exact_caster_land_prohibition_keeps_only_its_original_residual"
+    },
+    {
+      "card_names": [
+        "Lavinia, Azorius Renegade"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the complete pinned original after genuine cast-prohibition capability withdrawal.",
+      "source": "tests/test_lands_cast_mana_value_limit.py",
+      "symbol": "LandsCastManaValueLimitTests.test_verified_withdrawal_requires_the_static_cast_prohibition_authority"
+    },
+    {
+      "card_names": [
+        "Gaddock Teeg"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Compile both pinned Gaddock static prohibitions.",
+      "source": "tests/test_fixed_noncreature_mana_cast_restrictions.py",
+      "symbol": "FixedNoncreatureManaCastRestrictionTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Gaddock Teeg"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with either fixed prohibition omitted and preserve Lavinia.",
+      "source": "tests/test_fixed_noncreature_mana_cast_restrictions.py",
+      "symbol": "FixedNoncreatureManaCastRestrictionTests.test_omitting_either_exact_rule_restores_the_original_residual"
+    },
+    {
+      "card_names": [
+        "Gaddock Teeg"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the complete pinned original after genuine cast-prohibition capability withdrawal.",
+      "source": "tests/test_fixed_noncreature_mana_cast_restrictions.py",
+      "symbol": "FixedNoncreatureManaCastRestrictionTests.test_verified_withdrawal_requires_static_prohibition_authority"
+    },
+    {
+      "card_names": [
+        "Roiling Vortex"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the pinned original with all three independent abilities.",
+      "source": "tests/test_zero_mana_damage_and_life_gain_permission.py",
+      "symbol": "ZeroManaDamageAndLifeGainPermissionTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Roiling Vortex"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original with either cast damage or life prohibition lowering disabled.",
+      "source": "tests/test_zero_mana_damage_and_life_gain_permission.py",
+      "symbol": "ZeroManaDamageAndLifeGainPermissionTests.test_omitting_either_exact_result_restores_its_independent_original_residual"
+    },
+    {
+      "card_names": [
+        "Roiling Vortex"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original after each genuine capability withdrawal.",
+      "source": "tests/test_zero_mana_damage_and_life_gain_permission.py",
+      "symbol": "ZeroManaDamageAndLifeGainPermissionTests.test_verified_withdrawals_require_cast_receipt_and_life_permission_authority"
+    },
+    {
+      "card_names": [
+        "Bolt Bend",
+        "Deflection",
+        "Misdirection",
+        "Redirect Lightning",
+        "Shunt",
+        "Swerve"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register all six pinned originals and their complete printed spell prices.",
+      "source": "tests/test_mandatory_single_stack_target_changes.py",
+      "symbol": "MandatorySingleStackTargetChangeTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Bolt Bend",
+        "Deflection",
+        "Misdirection",
+        "Redirect Lightning",
+        "Shunt",
+        "Swerve"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind each pinned original with the exact mandatory change lowering disabled.",
+      "source": "tests/test_mandatory_single_stack_target_changes.py",
+      "symbol": "MandatorySingleStackTargetChangeTests.test_disabling_the_exact_lowerer_restores_the_material_residuals"
+    },
+    {
+      "card_names": [
+        "Bolt Bend",
+        "Deflection",
+        "Misdirection",
+        "Redirect Lightning",
+        "Shunt",
+        "Swerve"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind each pinned original after independently withdrawing each verified target owner.",
+      "source": "tests/test_mandatory_single_stack_target_changes.py",
+      "symbol": "MandatorySingleStackTargetChangeTests.test_verified_withdrawals_require_original_target_and_new_announcement_owners"
+    },
+    {
+      "card_names": [
+        "Call In a Professional",
+        "Flaring Pain",
+        "Skullcrack"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the three pinned originals with their full spell and Flashback rules.",
+      "source": "tests/test_turn_damage_prevention_prohibition.py",
+      "symbol": "TurnDamagePreventionProhibitionTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Call In a Professional",
+        "Flaring Pain",
+        "Skullcrack"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same three originals with turn damage-prevention lowering disabled.",
+      "source": "tests/test_turn_damage_prevention_prohibition.py",
+      "symbol": "TurnDamagePreventionProhibitionTests.test_disabling_exact_lowerer_restores_the_three_original_residuals"
+    },
+    {
+      "card_names": [
+        "Call In a Professional",
+        "Flaring Pain",
+        "Skullcrack"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the same three originals after each genuine permission withdrawal.",
+      "source": "tests/test_turn_damage_prevention_prohibition.py",
+      "symbol": "TurnDamagePreventionProhibitionTests.test_verified_withdrawals_require_damage_and_life_permission_authority"
+    },
+    {
+      "card_names": [
+        "Deflecting Swat",
+        "Insidious Will",
+        "Redirect"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register each pinned original with its retained prices or mode siblings.",
+      "source": "tests/test_optional_stack_target_changes.py",
+      "symbol": "OptionalStackTargetChangeTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Deflecting Swat",
+        "Insidious Will",
+        "Redirect"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the three originals with the exact optional change lowering disabled.",
+      "source": "tests/test_optional_stack_target_changes.py",
+      "symbol": "OptionalStackTargetChangeTests.test_missing_optional_lowering_keeps_every_original_unready"
+    },
+    {
+      "card_names": [
+        "Deflecting Swat",
+        "Insidious Will",
+        "Redirect"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind each original after independently withdrawing its verified target authority.",
+      "source": "tests/test_optional_stack_target_changes.py",
+      "symbol": "OptionalStackTargetChangeTests.test_verified_withdrawals_require_optional_target_and_announcement_owners"
+    },
+    {
+      "card_names": [
+        "Aethersnatch",
+        "Commandeer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register both pinned originals with full control, target selection and the independent pitch price.",
+      "source": "tests/test_targeted_spell_control.py",
+      "symbol": "TargetedSpellControlTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Aethersnatch",
+        "Commandeer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both originals when the exact current spell-control lowering is disabled.",
+      "source": "tests/test_targeted_spell_control.py",
+      "symbol": "TargetedSpellControlTests.test_disabling_exact_control_lowering_restores_both_original_residuals"
+    },
+    {
+      "card_names": [
+        "Aethersnatch",
+        "Commandeer"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both originals after independent verified rule-owner withdrawals.",
+      "source": "tests/test_targeted_spell_control.py",
+      "symbol": "TargetedSpellControlTests.test_verified_withdrawals_require_control_and_target_announcement_owners"
+    },
+    {
+      "card_names": [
+        "Divert"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register Divert with its independent payer and mandatory outcome.",
+      "source": "tests/test_stack_target_change_payment.py",
+      "symbol": "StackTargetChangePaymentTests.original_program"
+    },
+    {
+      "card_names": [
+        "Divert"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind Divert with the exact target-change payment lowering disabled.",
+      "source": "tests/test_stack_target_change_payment.py",
+      "symbol": "StackTargetChangePaymentTests.test_disabling_exact_payment_lowering_restores_only_divert_residual"
+    },
+    {
+      "card_names": [
+        "Divert"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind Divert after the exact payment or target rule owner is withdrawn.",
+      "source": "tests/test_stack_target_change_payment.py",
+      "symbol": "StackTargetChangePaymentTests.test_verified_withdrawals_require_payment_and_mandatory_target_owners"
+    },
+    {
+      "card_names": [
+        "Ravenous Trap",
+        "Runeflare Trap",
+        "Whiplash Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register each pinned original and its independent alternative condition.",
+      "source": "tests/test_opponent_history_alternative_prices.py",
+      "symbol": "OpponentHistoryAlternativePriceTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Ravenous Trap",
+        "Runeflare Trap",
+        "Whiplash Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind all three pinned originals with the exact history alternative disabled.",
+      "source": "tests/test_opponent_history_alternative_prices.py",
+      "symbol": "OpponentHistoryAlternativePriceTests.test_omission_restores_each_independent_price_residual"
+    },
+    {
+      "card_names": [
+        "Ravenous Trap",
+        "Runeflare Trap",
+        "Whiplash Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the originals after real fixed-price and event-history authority withdrawals.",
+      "source": "tests/test_opponent_history_alternative_prices.py",
+      "symbol": "OpponentHistoryAlternativePriceTests.test_verified_withdrawals_require_fixed_price_and_only_relevant_history_owner"
+    },
+    {
+      "card_names": [
+        "Ricochet Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the pinned original and its independently bound cast price and target change.",
+      "source": "tests/test_cast_color_alternative_price.py",
+      "symbol": "CastColorAlternativePriceTests.original_program"
+    },
+    {
+      "card_names": [
+        "Ricochet Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with the exact history price disabled.",
+      "source": "tests/test_cast_color_alternative_price.py",
+      "symbol": "CastColorAlternativePriceTests.test_omission_restores_the_price_residual"
+    },
+    {
+      "card_names": [
+        "Ricochet Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original after genuine fixed-price and public history authority withdrawals.",
+      "source": "tests/test_cast_color_alternative_price.py",
+      "symbol": "CastColorAlternativePriceTests.test_genuine_withdrawals_require_both_price_and_history_owners"
+    },
+    {
+      "card_names": [
+        "Summoning Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the pinned original with its counter-conditioned price and independent top-seven selection.",
+      "source": "tests/test_creature_counter_alternative_price.py",
+      "symbol": "CreatureCounterAlternativePriceTests.original_program"
+    },
+    {
+      "card_names": [
+        "Summoning Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with the creature-counter price lowering disabled.",
+      "source": "tests/test_creature_counter_alternative_price.py",
+      "symbol": "CreatureCounterAlternativePriceTests.test_omission_restores_the_counter_price_residual"
+    },
+    {
+      "card_names": [
+        "Summoning Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original after genuine fixed-price and public history authority withdrawals.",
+      "source": "tests/test_creature_counter_alternative_price.py",
+      "symbol": "CreatureCounterAlternativePriceTests.test_genuine_withdrawals_require_both_creature_counter_price_owners"
+    },
+    {
+      "card_names": [
+        "Lavaball Trap",
+        "Needlebite Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register each pinned original and its independent alternative condition.",
+      "source": "tests/test_life_and_land_alternative_prices.py",
+      "symbol": "LifeAndLandAlternativePriceTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Lavaball Trap",
+        "Needlebite Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both pinned originals with the exact history alternative disabled.",
+      "source": "tests/test_life_and_land_alternative_prices.py",
+      "symbol": "LifeAndLandAlternativePriceTests.test_omission_restores_both_life_and_land_price_residuals"
+    },
+    {
+      "card_names": [
+        "Lavaball Trap",
+        "Needlebite Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the originals after real fixed-price and event-history authority withdrawals.",
+      "source": "tests/test_life_and_land_alternative_prices.py",
+      "symbol": "LifeAndLandAlternativePriceTests.test_genuine_withdrawals_block_both_life_and_land_price_originals"
+    },
+    {
+      "card_names": [
+        "Lethargy Trap",
+        "Pitfall Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register each pinned original and its independent alternative condition.",
+      "source": "tests/test_live_attacking_alternative_prices.py",
+      "symbol": "LiveAttackingAlternativePriceTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Lethargy Trap",
+        "Pitfall Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both pinned originals with the exact live alternative disabled.",
+      "source": "tests/test_live_attacking_alternative_prices.py",
+      "symbol": "LiveAttackingAlternativePriceTests.test_omission_restores_both_live_attacking_price_residuals"
+    },
+    {
+      "card_names": [
+        "Lethargy Trap",
+        "Pitfall Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the originals after genuine fixed-price and battlefield quantity authority withdrawals.",
+      "source": "tests/test_live_attacking_alternative_prices.py",
+      "symbol": "LiveAttackingAlternativePriceTests.test_genuine_withdrawals_block_both_live_attacking_price_originals"
+    },
+    {
+      "card_names": [
+        "Inferno Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the pinned original, exact damage-receipt price and independent damage target.",
+      "source": "tests/test_distinct_creature_damage_alternative_price.py",
+      "symbol": "DistinctCreatureDamageAlternativePriceTests.original_program"
+    },
+    {
+      "card_names": [
+        "Inferno Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with the exact damage price disabled.",
+      "source": "tests/test_distinct_creature_damage_alternative_price.py",
+      "symbol": "DistinctCreatureDamageAlternativePriceTests.test_omission_restores_infernos_distinct_creature_damage_price_residual"
+    },
+    {
+      "card_names": [
+        "Inferno Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original after genuine price and committed damage history authority withdrawals.",
+      "source": "tests/test_distinct_creature_damage_alternative_price.py",
+      "symbol": "DistinctCreatureDamageAlternativePriceTests.test_genuine_withdrawals_require_price_and_distinct_damage_history_owners"
+    },
+    {
+      "card_names": [
+        "Arrow Volley Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the pinned original, exact attacking quote and independent fixed allocation.",
+      "source": "tests/test_attacking_divided_damage_alternative_price.py",
+      "symbol": "AttackingDividedDamageAlternativePriceTests.original_program"
+    },
+    {
+      "card_names": [
+        "Arrow Volley Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with either component disabled and retain Hail of Arrows.",
+      "source": "tests/test_attacking_divided_damage_alternative_price.py",
+      "symbol": "AttackingDividedDamageAlternativePriceTests.test_omission_of_either_arrow_component_restores_whole_card_residual"
+    },
+    {
+      "card_names": [
+        "Arrow Volley Trap"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original after genuine price, live quantity and announced division withdrawals.",
+      "source": "tests/test_attacking_divided_damage_alternative_price.py",
+      "symbol": "AttackingDividedDamageAlternativePriceTests.test_genuine_withdrawals_require_live_price_and_announced_arrow_damage_owners"
+    },
+    {
+      "card_names": [
+        "Blazing Shoal",
+        "Nourishing Shoal",
+        "Sickening Shoal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the three complete pinned originals and independently bound pitch price.",
+      "source": "tests/test_announced_x_pitch_alternatives.py",
+      "symbol": "AnnouncedXPitchAlternativeTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Blazing Shoal",
+        "Nourishing Shoal",
+        "Sickening Shoal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the three original programs with the exact pitch price disabled.",
+      "source": "tests/test_announced_x_pitch_alternatives.py",
+      "symbol": "AnnouncedXPitchAlternativeTests.test_omission_restores_the_three_independent_shoal_price_residuals"
+    },
+    {
+      "card_names": [
+        "Blazing Shoal",
+        "Nourishing Shoal",
+        "Sickening Shoal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the three originals after genuine fixed-price and hand-exile authority withdrawals.",
+      "source": "tests/test_announced_x_pitch_alternatives.py",
+      "symbol": "AnnouncedXPitchAlternativeTests.test_genuine_withdrawals_require_shoal_price_and_fixed_hand_exile_owners"
+    },
+    {
+      "card_names": [
+        "Disrupting Shoal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register the pinned original and independent announced-X resolution predicate.",
+      "source": "tests/test_announced_x_conditional_counter.py",
+      "symbol": "AnnouncedXConditionalCounterTests.original_program"
+    },
+    {
+      "card_names": [
+        "Disrupting Shoal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned original with the exact resolution predicate disabled.",
+      "source": "tests/test_announced_x_conditional_counter.py",
+      "symbol": "AnnouncedXConditionalCounterTests.test_omission_of_the_exact_x_counter_leaves_disrupting_partial"
+    },
+    {
+      "card_names": [
+        "Disrupting Shoal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the original after genuine announced amount and ordinary counter withdrawals.",
+      "source": "tests/test_announced_x_conditional_counter.py",
+      "symbol": "AnnouncedXConditionalCounterTests.test_genuine_withdrawals_require_declared_x_and_counter_owners_for_disrupting"
+    },
+    {
+      "card_names": [
+        "Mindbreak Trap",
+        "Summary Dismissal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register both whole stack-exile sources and the independent Mindbreak price.",
+      "source": "tests/test_stack_spell_exile.py",
+      "symbol": "StackSpellExileTests.original_programs"
+    },
+    {
+      "card_names": [
+        "Mindbreak Trap",
+        "Summary Dismissal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind both originals with the exact result owner unavailable.",
+      "source": "tests/test_stack_spell_exile.py",
+      "symbol": "StackSpellExileTests.test_omission_of_stack_exile_owner_leaves_both_results_partial"
+    },
+    {
+      "card_names": [
+        "Mindbreak Trap",
+        "Summary Dismissal"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the originals after genuine zone, cardinality and counter authority withdrawals.",
+      "source": "tests/test_stack_spell_exile.py",
+      "symbol": "StackSpellExileTests.test_genuine_withdrawals_distinguish_stack_exile_target_count_and_ability_counter_authority"
+    },
+    {
+      "card_names": [
+        "Avoid Fate",
+        "Cerulean Drake",
+        "Confound",
+        "Fugitive Droid",
+        "Hindering Light",
+        "Hydromorph Guardian",
+        "Hydromorph Gull",
+        "Intervene",
+        "Keep Safe",
+        "Mistfolk",
+        "Outwit",
+        "Rebuff the Wicked",
+        "Ring of Immortals",
+        "Vigilant Martyr"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Register every whole current-spell-target counter original including activated costs and independent printed draws.",
+      "source": "tests/test_spell_targeting_counters.py",
+      "symbol": "SpellTargetingCounterTests.original_counter"
+    },
+    {
+      "card_names": [
+        "Avoid Fate",
+        "Cerulean Drake",
+        "Keep Safe",
+        "Sol Ring"
+      ],
+      "deck_files": [],
+      "fixture_files": [],
+      "oracle_ids": [],
+      "rationale": "Rebind the pinned spell and activation, the independent draw, and an unrelated control after genuine authority withdrawals.",
+      "source": "tests/test_spell_targeting_counters.py",
+      "symbol": "SpellTargetingCounterTests.test_genuine_withdrawal_distinguishes_spell_target_revalidation_counter_and_private_draw"
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
@@ -455,11 +2568,15 @@
     "tests/fixtures/amass-rules-cards.json",
     "tests/fixtures/amplify-cards.json",
     "tests/fixtures/announced-hand-discard-cards.json",
+    "tests/fixtures/announced-reinforce-cards.json",
     "tests/fixtures/announced-target-cardinality-cards.json",
     "tests/fixtures/announced-x-activation-cards.json",
     "tests/fixtures/announced-x-additional-cost-cards.json",
     "tests/fixtures/announced-x-fixed-discard-cards.json",
     "tests/fixtures/announced-x-library-search-cards.json",
+    "tests/fixtures/announced-x-pitch-alternative-cards.json",
+    "tests/fixtures/announced-x-public-damage-set-cards.json",
+    "tests/fixtures/announced-x-source-discard-cards.json",
     "tests/fixtures/announced-x-source-sacrifice-cards.json",
     "tests/fixtures/another-sacrifice-payment-cards.json",
     "tests/fixtures/any-number-target-cards.json",
@@ -469,6 +2586,9 @@
     "tests/fixtures/assist-payment-cards.json",
     "tests/fixtures/attached-cast-restriction-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",
+    "tests/fixtures/attached-controller-intimidate-cards.json",
+    "tests/fixtures/attached-counter-prohibition-cards.json",
+    "tests/fixtures/attached-destruction-set-cards.json",
     "tests/fixtures/attached-exile-activation-cards.json",
     "tests/fixtures/attached-goad-cards.json",
     "tests/fixtures/attached-object-keyword-cards.json",
@@ -481,9 +2601,15 @@
     "tests/fixtures/attached-untap-restraint-cards.json",
     "tests/fixtures/attachment-damage-cards.json",
     "tests/fixtures/attachment-followup-cards.json",
+    "tests/fixtures/attachment-source-return-cards.json",
     "tests/fixtures/attack-declaration-power-cards.json",
+    "tests/fixtures/attack-defender-cast-prohibition-cards.json",
+    "tests/fixtures/attack-defender-public-exile-cards.json",
     "tests/fixtures/attacking-card-entry-cards.json",
+    "tests/fixtures/attacking-divided-damage-price-cards.json",
+    "tests/fixtures/attacking-player-quantity-cards.json",
     "tests/fixtures/attacking-token-result-cards.json",
+    "tests/fixtures/authored-targeted-token-cards.json",
     "tests/fixtures/awaken-cards.json",
     "tests/fixtures/backup-cards.json",
     "tests/fixtures/banding-cards.json",
@@ -506,11 +2632,16 @@
     "tests/fixtures/boast-restriction-cards.json",
     "tests/fixtures/bound-source-fixed-damage-cards.json",
     "tests/fixtures/bound-static-declaration-cards.json",
+    "tests/fixtures/bounded-block-as-though-cards.json",
+    "tests/fixtures/bounded-hand-cast-cards.json",
     "tests/fixtures/bounded-return-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
     "tests/fixtures/captured-draw-cast-cards.json",
+    "tests/fixtures/card-type-receiver-union-cards.json",
+    "tests/fixtures/cast-after-attacking-cards.json",
+    "tests/fixtures/cast-color-alternative-price-cards.json",
     "tests/fixtures/cast-creature-targets.json",
     "tests/fixtures/cast-spell-mana-value-cards.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
@@ -523,20 +2654,27 @@
     "tests/fixtures/chosen-aura-protection-cards.json",
     "tests/fixtures/chosen-color-event-cards.json",
     "tests/fixtures/chosen-color-mana-cards.json",
+    "tests/fixtures/chosen-counter-removal-cards.json",
     "tests/fixtures/chosen-impulse-access-cards.json",
+    "tests/fixtures/chosen-temporary-keyword-removal-cards.json",
     "tests/fixtures/chosen-type-event-cards.json",
     "tests/fixtures/cipher-cards.json",
     "tests/fixtures/classic-flash-cards.json",
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/closed-effect-program-cards.json",
     "tests/fixtures/color-cast-land-entry-cards.json",
+    "tests/fixtures/colored-hand-reveal-cards.json",
     "tests/fixtures/colored-spell-graveyard-return-cards.json",
     "tests/fixtures/colorless-nonland-target-cards.json",
+    "tests/fixtures/combat-damage-energy-cards.json",
     "tests/fixtures/combat-defending-player-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",
+    "tests/fixtures/combat-prevention-source-scopes-cards.json",
     "tests/fixtures/combat-removal-cards.json",
+    "tests/fixtures/combat-untap-prevention-cards.json",
     "tests/fixtures/combined-tap-activation-costs.json",
     "tests/fixtures/command-resolution-provenance-cards.json",
+    "tests/fixtures/commander-cast-quantity-cards.json",
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-learn-cards.json",
     "tests/fixtures/commander-permanent-keyword-cards.json",
@@ -573,6 +2711,7 @@
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controlled-keyword-target-cards.json",
     "tests/fixtures/controlled-return-choice-cards.json",
+    "tests/fixtures/controller-creature-keyword-absence-cards.json",
     "tests/fixtures/controller-damage-cards.json",
     "tests/fixtures/controller-sacrifice-cards.json",
     "tests/fixtures/copiable-entry-ability-grant-cards.json",
@@ -596,21 +2735,36 @@
     "tests/fixtures/creature-subtype-addition-cards.json",
     "tests/fixtures/crew-power-bonus-cards.json",
     "tests/fixtures/crime-cards.json",
+    "tests/fixtures/cumulative-alternative-mana-upkeep-cards.json",
+    "tests/fixtures/cumulative-counter-upkeep-cards.json",
+    "tests/fixtures/cumulative-effect-cost-upkeep-cards.json",
+    "tests/fixtures/cumulative-graveyard-upkeep-cards.json",
+    "tests/fixtures/cumulative-object-upkeep-cards.json",
+    "tests/fixtures/current-life-effect-amount-cards.json",
     "tests/fixtures/current-target-replacement-cards.json",
+    "tests/fixtures/current-turn-player-history-target-cards.json",
+    "tests/fixtures/current-turn-spell-count-life-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-death-exile-cards.json",
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/damage-source-identity-cards.json",
+    "tests/fixtures/damage-then-keyword-removal-cards.json",
     "tests/fixtures/dealt-damage-recipient-cards.json",
+    "tests/fixtures/death-cast-permission-cards.json",
+    "tests/fixtures/death-keyword-absence-cards.json",
     "tests/fixtures/decayed-cards.json",
     "tests/fixtures/declare-attack-cast-window-cards.json",
+    "tests/fixtures/declared-attacker-equal-stats-cards.json",
+    "tests/fixtures/declared-attacker-keyword-grants-cards.json",
     "tests/fixtures/declared-impulse-access-cards.json",
     "tests/fixtures/defender-declaration-numeric-cards.json",
     "tests/fixtures/defender-permission-cards.json",
+    "tests/fixtures/defending-player-creature-untap-cards.json",
     "tests/fixtures/defending-player-target-cards.json",
     "tests/fixtures/delayed-counter-action-cards.json",
     "tests/fixtures/delayed-object-action-cards.json",
     "tests/fixtures/delivery-interaction-boundary-cards.json",
+    "tests/fixtures/demonstrate-cards.json",
     "tests/fixtures/departure-trigger-limit-cards.json",
     "tests/fixtures/depleting-mana-source-cards.json",
     "tests/fixtures/designation-event-cards.json",
@@ -619,9 +2773,11 @@
     "tests/fixtures/devour-cards.json",
     "tests/fixtures/direct-token-target-cards.json",
     "tests/fixtures/discard-result-cards.json",
+    "tests/fixtures/discard-result-negative-offset-cards.json",
     "tests/fixtures/discover-cards.json",
     "tests/fixtures/disjoint-negative-keyword-cards.json",
     "tests/fixtures/disjunctive-library-search-cards.json",
+    "tests/fixtures/distinct-creature-damage-alternative-price-cards.json",
     "tests/fixtures/distinct-public-value-cards.json",
     "tests/fixtures/distinct-sacrifice-cards.json",
     "tests/fixtures/distinct-target-cost-cards.json",
@@ -634,9 +2790,12 @@
     "tests/fixtures/each-player-mill-cards.json",
     "tests/fixtures/earthbend-cards.json",
     "tests/fixtures/echo-rules-cards.json",
+    "tests/fixtures/empty-battlefield-condition-cards.json",
     "tests/fixtures/empty-fixed-target-batch-cards.json",
     "tests/fixtures/empty-permanent-cards.json",
+    "tests/fixtures/enchant-public-state-cards.json",
     "tests/fixtures/enchanted-player-static-cards.json",
+    "tests/fixtures/enchanted-source-token-copy-cards.json",
     "tests/fixtures/end-step-impulse-access-cards.json",
     "tests/fixtures/endure-cards.json",
     "tests/fixtures/energy-activation-cards.json",
@@ -652,15 +2811,21 @@
     "tests/fixtures/entry-x-result-cards.json",
     "tests/fixtures/escaped-entry-counter-cards.json",
     "tests/fixtures/event-card-return.json",
+    "tests/fixtures/event-creature-controller-result-cards.json",
+    "tests/fixtures/event-damage-source-cards.json",
     "tests/fixtures/event-player-fixed-damage-cards.json",
+    "tests/fixtures/event-player-modifier-cards.json",
+    "tests/fixtures/event-player-optional-draw-cards.json",
     "tests/fixtures/event-player-public-count-cards.json",
     "tests/fixtures/event-player-sacrifice-cards.json",
     "tests/fixtures/event-player-subject-cards.json",
+    "tests/fixtures/event-referent-copy-cards.json",
     "tests/fixtures/event-spell-copy-cards.json",
     "tests/fixtures/evolve-cards.json",
     "tests/fixtures/exert-cards.json",
     "tests/fixtures/expanded-basic-type-setting-cards.json",
     "tests/fixtures/expend-cards.json",
+    "tests/fixtures/explicit-controller-extra-turn-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/explore-event-cards.json",
     "tests/fixtures/external-entry-counter-cards.json",
@@ -675,6 +2840,7 @@
     "tests/fixtures/firebending-token-cards.json",
     "tests/fixtures/fixed-basic-type-setting-cards.json",
     "tests/fixtures/fixed-battlefield-query-characteristics-cards.json",
+    "tests/fixtures/fixed-behold-additional-cost-cards.json",
     "tests/fixtures/fixed-characteristic-enchant-cards.json",
     "tests/fixtures/fixed-cleave-cards.json",
     "tests/fixtures/fixed-conspire-cards.json",
@@ -684,9 +2850,12 @@
     "tests/fixtures/fixed-counter-keyword-activations.json",
     "tests/fixtures/fixed-counter-prevention-cards.json",
     "tests/fixtures/fixed-damage-source-lki-cards.json",
+    "tests/fixtures/fixed-direct-phasing-cards.json",
     "tests/fixtures/fixed-distributed-token-cards.json",
     "tests/fixtures/fixed-disturb-cards.json",
+    "tests/fixtures/fixed-draw-hand-putback-cards.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
+    "tests/fixtures/fixed-emblem-event-cards.json",
     "tests/fixtures/fixed-emerge-cards.json",
     "tests/fixtures/fixed-energy-payment-cards.json",
     "tests/fixtures/fixed-entwine-cards.json",
@@ -697,9 +2866,12 @@
     "tests/fixtures/fixed-mana-evoke-identity-cards.json",
     "tests/fixtures/fixed-mana-result-cards.json",
     "tests/fixtures/fixed-next-turn-draw-cards.json",
+    "tests/fixtures/fixed-noncreature-mana-cast-restriction-cards.json",
     "tests/fixtures/fixed-nonmana-equip-cards.json",
     "tests/fixtures/fixed-overload-cards.json",
     "tests/fixtures/fixed-prowess-token-cards.json",
+    "tests/fixtures/fixed-public-sacrifice-predicates-cards.json",
+    "tests/fixtures/fixed-qualified-stack-copy-cards.json",
     "tests/fixtures/fixed-query-keyword-grant-cards.json",
     "tests/fixtures/fixed-replicate-cards.json",
     "tests/fixtures/fixed-resolution-mana-cards.json",
@@ -708,6 +2880,7 @@
     "tests/fixtures/fixed-scry-controller-cards.json",
     "tests/fixtures/fixed-self-cost-surface-cards.json",
     "tests/fixtures/fixed-source-counter-payment-cards.json",
+    "tests/fixtures/fixed-source-sacrifice-cards.json",
     "tests/fixtures/fixed-spell-cost-reduction-cards.json",
     "tests/fixtures/fixed-stack-mana-value-cards.json",
     "tests/fixtures/fixed-stack-spell-copy-cards.json",
@@ -728,22 +2901,38 @@
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/flavor-named-trigger-cards.json",
     "tests/fixtures/forecast-cards.json",
+    "tests/fixtures/forest-dryad-x-token-cards.json",
+    "tests/fixtures/fractional-life-payment-cards.json",
     "tests/fixtures/fractional-player-result-cards.json",
     "tests/fixtures/fuse-cards.json",
     "tests/fixtures/gain-and-get-cards.json",
     "tests/fixtures/global-alternative-cost-cards.json",
+    "tests/fixtures/global-empty-state-trigger-cards.json",
     "tests/fixtures/global-plural-characteristic-sets.json",
     "tests/fixtures/graft-cards.json",
     "tests/fixtures/granted-death-return-cards.json",
+    "tests/fixtures/granted-keyword-activation-cards.json",
     "tests/fixtures/granted-keyword-event-cards.json",
+    "tests/fixtures/granted-paid-creature-toughness-cards.json",
     "tests/fixtures/granted-skulk-cards.json",
+    "tests/fixtures/granted-source-counter-cost-cards.json",
     "tests/fixtures/granted-static-characteristic-cards.json",
     "tests/fixtures/granted-static-cost-cards.json",
+    "tests/fixtures/granted-swamp-characteristic-cards.json",
+    "tests/fixtures/granted-untapped-hexproof-cards.json",
     "tests/fixtures/granting-equipment-payment-cards.json",
+    "tests/fixtures/gravestorm-cards.json",
+    "tests/fixtures/graveyard-card-result-cards.json",
     "tests/fixtures/graveyard-copy-cast-cards.json",
     "tests/fixtures/graveyard-copy-keyword-cards.json",
+    "tests/fixtures/graveyard-exile-branch-cards.json",
     "tests/fixtures/graveyard-exile-payment-cards.json",
+    "tests/fixtures/graveyard-exile-replacement-cards.json",
+    "tests/fixtures/graveyard-exile-result-cards.json",
+    "tests/fixtures/graveyard-exile-token-cards.json",
+    "tests/fixtures/graveyard-exile-type-outcome-cards.json",
     "tests/fixtures/graveyard-mixed-target-cards.json",
+    "tests/fixtures/graveyard-recycling-cards.json",
     "tests/fixtures/graveyard-resolution-condition-cards.json",
     "tests/fixtures/graveyard-salvage-cards.json",
     "tests/fixtures/graveyard-self-return-cards.json",
@@ -755,6 +2944,9 @@
     "tests/fixtures/half-sacrifice-sequence-cards.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
     "tests/fixtures/hand-entry-followup-cards.json",
+    "tests/fixtures/hand-exile-evoke-cards.json",
+    "tests/fixtures/hand-graveyard-library-reset-cards.json",
+    "tests/fixtures/hand-library-redraw-cards.json",
     "tests/fixtures/hand-result-counter-payment-cards.json",
     "tests/fixtures/hand-size-adjustment-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",
@@ -771,22 +2963,28 @@
     "tests/fixtures/intrinsic-empty-spell-resolution-cards.json",
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",
     "tests/fixtures/intrinsic-permanent-death-return-cards.json",
+    "tests/fixtures/intrinsic-public-cast-condition-cards.json",
     "tests/fixtures/intrinsic-token-composition-cards.json",
     "tests/fixtures/investigate-twice-cards.json",
     "tests/fixtures/job-select-cards.json",
+    "tests/fixtures/keyword-sacrifice-cards.json",
+    "tests/fixtures/kicked-additive-target-lifelink-cards.json",
     "tests/fixtures/kicked-damage-replacement-cards.json",
     "tests/fixtures/kicked-entry-triggers.json",
     "tests/fixtures/kicked-same-target-replacement-cards.json",
     "tests/fixtures/kicked-self-replacement-cards.json",
+    "tests/fixtures/kicked-shared-untap-and-modifier-cards.json",
     "tests/fixtures/kicked-spell-conditions.json",
     "tests/fixtures/kicked-target-group-cards.json",
     "tests/fixtures/kicked-target-replacement-cards.json",
     "tests/fixtures/kindred-subtype-quantities.json",
     "tests/fixtures/land-condition-quantity-cards.json",
     "tests/fixtures/land-search-view-cards.json",
+    "tests/fixtures/lands-cast-mana-value-limit-cards.json",
     "tests/fixtures/landwalk-as-though-cards.json",
     "tests/fixtures/leading-duration-quantity-cards.json",
     "tests/fixtures/legend-rule-exemption-cards.json",
+    "tests/fixtures/legendary-tap-activation-costs.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-other-remainder-cards.json",
     "tests/fixtures/library-search-dispatch-cards.json",
@@ -794,11 +2992,15 @@
     "tests/fixtures/library-search-rules-cards.json",
     "tests/fixtures/library-selection-knowledge-cards.json",
     "tests/fixtures/library-selection-predicate-cards.json",
+    "tests/fixtures/life-and-land-alternative-price-cards.json",
+    "tests/fixtures/life-gain-counted-result-cards.json",
     "tests/fixtures/life-gain-prohibition-cards.json",
     "tests/fixtures/life-total-setting-cards.json",
     "tests/fixtures/limited-event-triggers.json",
+    "tests/fixtures/linked-exile-and-life-cards.json",
     "tests/fixtures/linked-temporary-control-cards.json",
     "tests/fixtures/literal-token-source-cards.json",
+    "tests/fixtures/live-attacking-alternative-price-cards.json",
     "tests/fixtures/live-battlefield-quantity-cards.json",
     "tests/fixtures/live-defined-token-cards.json",
     "tests/fixtures/live-modifier-quantity-cards.json",
@@ -808,6 +3010,7 @@
     "tests/fixtures/mana-discard-payment-cards.json",
     "tests/fixtures/mana-source-counter-payment-cards.json",
     "tests/fixtures/mana-value-destruction-cards.json",
+    "tests/fixtures/mandatory-single-stack-target-change-cards.json",
     "tests/fixtures/manifest-cards.json",
     "tests/fixtures/material-sibling-admission-cards.json",
     "tests/fixtures/mayhem-cards.json",
@@ -818,6 +3021,7 @@
     "tests/fixtures/modal-event-composition-cards.json",
     "tests/fixtures/modal-keyword-composition-cards.json",
     "tests/fixtures/modal-token-program-cards.json",
+    "tests/fixtures/most-lands-attack-sacrifice-cards.json",
     "tests/fixtures/multikicker-entry-counter-cards.json",
     "tests/fixtures/multikicker-result-cards.json",
     "tests/fixtures/multisentence-effect-cards.json",
@@ -825,9 +3029,12 @@
     "tests/fixtures/myrel-composition-cards.json",
     "tests/fixtures/myriad-composition-cards.json",
     "tests/fixtures/named-attacking-token-cards.json",
+    "tests/fixtures/named-equipment-token-cards.json",
     "tests/fixtures/named-source-result-cards.json",
+    "tests/fixtures/named-zone-search-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
     "tests/fixtures/next-cast-counter-protection-cards.json",
+    "tests/fixtures/next-player-untap-restrictions-cards.json",
     "tests/fixtures/next-spell-cost-reduction-cards.json",
     "tests/fixtures/next-turn-duration-cards.json",
     "tests/fixtures/noncreature-subtype-quantity-cards.json",
@@ -836,6 +3043,7 @@
     "tests/fixtures/nonmana-kicker-cards.json",
     "tests/fixtures/nonmana-morph-cards.json",
     "tests/fixtures/nonmodal-face-mana-value-cards.json",
+    "tests/fixtures/nonowner-creature-modifier-cards.json",
     "tests/fixtures/nontoken-target-cards.json",
     "tests/fixtures/number-of-token-cards.json",
     "tests/fixtures/numeric-count-self-cost-cards.json",
@@ -844,6 +3052,7 @@
     "tests/fixtures/opening-hand-battlefield-cards.json",
     "tests/fixtures/opening-hand-reveal-cards.json",
     "tests/fixtures/opponent-draw-cards.json",
+    "tests/fixtures/opponent-history-alternative-price-cards.json",
     "tests/fixtures/opponent-keyword-prohibition-cards.json",
     "tests/fixtures/optional-counter-payment-cards.json",
     "tests/fixtures/optional-draw-discard-sequences.json",
@@ -851,13 +3060,17 @@
     "tests/fixtures/optional-object-action-counters.json",
     "tests/fixtures/optional-player-result-cards.json",
     "tests/fixtures/optional-result-followup-cards.json",
+    "tests/fixtures/optional-sacrifice-stat-cards.json",
+    "tests/fixtures/optional-target-results-cards.json",
     "tests/fixtures/ordered-amount-clause-cards.json",
     "tests/fixtures/ordered-clause-cards.json",
     "tests/fixtures/ordered-composition-followup-cards.json",
     "tests/fixtures/ordered-quantity-results.json",
     "tests/fixtures/ordinary-saddle-cards.json",
+    "tests/fixtures/ordinary-scheduled-sacrifice-cards.json",
     "tests/fixtures/ordinary-token-cleanup-cards.json",
     "tests/fixtures/owned-commander-setting-cards.json",
+    "tests/fixtures/paid-alternative-cast-result-cards.json",
     "tests/fixtures/paid-color-entry-cards.json",
     "tests/fixtures/paid-entry-copy-cards.json",
     "tests/fixtures/paid-event-copy-cards.json",
@@ -867,10 +3080,16 @@
     "tests/fixtures/paid-sacrifice-creature-stat-cards.json",
     "tests/fixtures/paired-opponent-draw-cards.json",
     "tests/fixtures/paired-typecycling-cards.json",
+    "tests/fixtures/paradigm-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
+    "tests/fixtures/per-opponent-attacking-token-cards.json",
+    "tests/fixtures/per-player-life-damage-cards.json",
+    "tests/fixtures/per-player-query-damage-cards.json",
+    "tests/fixtures/per-player-query-life-cards.json",
     "tests/fixtures/per-player-target-cards.json",
     "tests/fixtures/per-player-trigger-composition-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
+    "tests/fixtures/permanent-subtype-hand-entry-cards.json",
     "tests/fixtures/persist-undying-cards.json",
     "tests/fixtures/persistent-hand-visibility-cards.json",
     "tests/fixtures/phasing-cards.json",
@@ -905,6 +3124,7 @@
     "tests/fixtures/public-graveyard-entry-cards.json",
     "tests/fixtures/public-history-query-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
+    "tests/fixtures/public-life-gain-scopes-cards.json",
     "tests/fixtures/public-named-quantity-cards.json",
     "tests/fixtures/public-negative-color-cards.json",
     "tests/fixtures/public-negative-keyword-cards.json",
@@ -920,8 +3140,10 @@
     "tests/fixtures/public-value-cost-cards.json",
     "tests/fixtures/public-zone-condition-cards.json",
     "tests/fixtures/public-zone-quantity-cards.json",
+    "tests/fixtures/qualified-attached-setting-cards.json",
     "tests/fixtures/qualified-attack-batch-cards.json",
     "tests/fixtures/qualified-attack-cards.json",
+    "tests/fixtures/qualified-attack-defender-cards.json",
     "tests/fixtures/qualified-block-pair-cards.json",
     "tests/fixtures/qualified-declaration-cards.json",
     "tests/fixtures/qualified-destruction-cards.json",
@@ -930,16 +3152,19 @@
     "tests/fixtures/qualified-graveyard-grant-cards.json",
     "tests/fixtures/qualified-hexproof-cards.json",
     "tests/fixtures/qualified-landwalk-cards.json",
+    "tests/fixtures/qualified-library-search-cards.json",
     "tests/fixtures/qualified-live-creature-count-cards.json",
     "tests/fixtures/qualified-public-history-cards.json",
     "tests/fixtures/qualified-quantity-cards.json",
     "tests/fixtures/qualified-quantity-retention-cards.json",
     "tests/fixtures/qualified-regeneration-cards.json",
+    "tests/fixtures/qualified-return-cost-cards.json",
     "tests/fixtures/qualified-sacrifice-cards.json",
     "tests/fixtures/qualified-spell-ordinal-cards.json",
     "tests/fixtures/quantified-counter-target-cards.json",
     "tests/fixtures/quantified-target-keyword-cards.json",
     "tests/fixtures/quantity-token-cleanup-cards.json",
+    "tests/fixtures/query-bounded-library-search-cards.json",
     "tests/fixtures/query-gated-self-characteristics-cards.json",
     "tests/fixtures/query-power-toughness-definition-cards.json",
     "tests/fixtures/query-scaled-counter-cards.json",
@@ -958,8 +3183,12 @@
     "tests/fixtures/recipient-result-cards.json",
     "tests/fixtures/reconfigure-cards.json",
     "tests/fixtures/recorded-history-condition-cards.json",
+    "tests/fixtures/recover-cards.json",
+    "tests/fixtures/referenced-fixed-damage-cards.json",
     "tests/fixtures/reflexive-payment-cards.json",
     "tests/fixtures/repeatable-object-action-triggers.json",
+    "tests/fixtures/repeated-keyword-event-cards.json",
+    "tests/fixtures/repeated-source-attack-cast-cost-reduction-cards.json",
     "tests/fixtures/resolution-mana-choice-cards.json",
     "tests/fixtures/resolution-public-condition-cards.json",
     "tests/fixtures/resolved-attack-requirement-cards.json",
@@ -972,6 +3201,7 @@
     "tests/fixtures/revealed-entry-followup-cards.json",
     "tests/fixtures/revealed-library-top-cards.json",
     "tests/fixtures/ring-original-cards.json",
+    "tests/fixtures/ripple-cards.json",
     "tests/fixtures/runtime-owner-alignment-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scalar-history-quantity-cards.json",
@@ -986,24 +3216,30 @@
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/selected-player-result-cards.json",
+    "tests/fixtures/self-cast-permanent-token-copy-cards.json",
     "tests/fixtures/self-cast-restriction-cards.json",
     "tests/fixtures/self-exile-return-cards.json",
+    "tests/fixtures/self-graveyard-return-followups-cards.json",
     "tests/fixtures/self-public-cost-cards.json",
     "tests/fixtures/self-public-zone-cards.json",
     "tests/fixtures/self-target-reduction-cards.json",
     "tests/fixtures/self-zone-discard-cast-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
     "tests/fixtures/shared-creature-type-cards.json",
+    "tests/fixtures/shared-type-library-cards.json",
     "tests/fixtures/singular-characteristic-set-cards.json",
     "tests/fixtures/singular-public-permanent-set-cards.json",
     "tests/fixtures/singular-token-entry-cards.json",
     "tests/fixtures/soulbond-cards.json",
     "tests/fixtures/source-attack-alone-cards.json",
+    "tests/fixtures/source-attack-opponent-subtype-absence-cards.json",
+    "tests/fixtures/source-becomes-blocked-result-cards.json",
     "tests/fixtures/source-block-pair-cards.json",
     "tests/fixtures/source-characteristic-tap-cards.json",
     "tests/fixtures/source-composition-closure-cards.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
+    "tests/fixtures/source-counter-cast-value-cards.json",
     "tests/fixtures/source-counter-pronoun-cards.json",
     "tests/fixtures/source-counter-quantity-cards.json",
     "tests/fixtures/source-counter-removal-cards.json",
@@ -1011,6 +3247,8 @@
     "tests/fixtures/source-damage-scalar-cards.json",
     "tests/fixtures/source-entry-cast-cards.json",
     "tests/fixtures/source-event-player-damage-cards.json",
+    "tests/fixtures/source-excluded-sacrifice-cards.json",
+    "tests/fixtures/source-excluded-stat-group-cards.json",
     "tests/fixtures/source-explore-cards.json",
     "tests/fixtures/source-fixed-protection-cards.json",
     "tests/fixtures/source-keyword-choice-cards.json",
@@ -1020,18 +3258,26 @@
     "tests/fixtures/source-protection-choice-cards.json",
     "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/source-relative-effect-count-cards.json",
+    "tests/fixtures/source-sacrifice-bound-damage-cards.json",
     "tests/fixtures/source-sacrifice-payment-cards.json",
+    "tests/fixtures/source-self-entry-fixed-counter-cards.json",
     "tests/fixtures/source-self-optional-cards.json",
     "tests/fixtures/source-specific-blocking-cards.json",
     "tests/fixtures/source-tap-duration-cards.json",
+    "tests/fixtures/source-unattachment-sacrifice-cards.json",
     "tests/fixtures/source-zone-ability-grant-cards.json",
     "tests/fixtures/special-trigger-envelope-cards.json",
+    "tests/fixtures/spell-caster-land-return-cards.json",
+    "tests/fixtures/spell-caster-sacrifice-payment-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
     "tests/fixtures/spell-random-discard-cost-cards.json",
+    "tests/fixtures/spell-targeting-counter-cards.json",
     "tests/fixtures/splice-cards.json",
     "tests/fixtures/split-second-cards.json",
     "tests/fixtures/spree-mode-cost-cards.json",
     "tests/fixtures/squad-paid-entry-copy-cards.json",
+    "tests/fixtures/stack-spell-exile-cards.json",
+    "tests/fixtures/stack-target-change-payment-cards.json",
     "tests/fixtures/state-based-destination-cards.json",
     "tests/fixtures/state-qualified-zone-cards.json",
     "tests/fixtures/static-action-permission-cards.json",
@@ -1044,41 +3290,60 @@
     "tests/fixtures/static-land-animation-cards.json",
     "tests/fixtures/static-mana-spending-cards.json",
     "tests/fixtures/static-player-restriction-cards.json",
+    "tests/fixtures/static-recipient-qualifier-cards.json",
     "tests/fixtures/station-activation-cards.json",
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/station-symbol-cards.json",
     "tests/fixtures/storm-cards.json",
+    "tests/fixtures/subtype-combat-fog-cards.json",
     "tests/fixtures/subtype-composite-grant-cards.json",
     "tests/fixtures/subtype-union-condition-cards.json",
     "tests/fixtures/support-integration-retention-cards.json",
     "tests/fixtures/suspect-cards.json",
     "tests/fixtures/tagged-partner-cards.json",
     "tests/fixtures/tap-controller-information-cards.json",
+    "tests/fixtures/target-all-counter-variants-cards.json",
+    "tests/fixtures/target-announcement-counter-payment-cards.json",
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-characteristic-sets.json",
     "tests/fixtures/target-controller-damage-cards.json",
     "tests/fixtures/target-controller-prevention-cards.json",
     "tests/fixtures/target-dependent-activation-cards.json",
+    "tests/fixtures/target-land-type-choice-cards.json",
+    "tests/fixtures/target-library-inspection-cards.json",
+    "tests/fixtures/target-library-shuffle-cards.json",
     "tests/fixtures/target-player-hand-count-cards.json",
+    "tests/fixtures/target-player-query-amount-cards.json",
     "tests/fixtures/target-player-sequence-cards.json",
     "tests/fixtures/target-recipient-additional-composition-cards.json",
     "tests/fixtures/target-recipient-result-cards.json",
     "tests/fixtures/target-restriction-cards.json",
     "tests/fixtures/target-set-result-sequence-cards.json",
+    "tests/fixtures/targeted-controller-untap-cards.json",
     "tests/fixtures/targeted-graveyard-cast-cards.json",
+    "tests/fixtures/targeted-graveyard-exile-cards.json",
+    "tests/fixtures/targeted-graveyard-outcome-cards.json",
+    "tests/fixtures/targeted-library-exile-cards.json",
+    "tests/fixtures/targeted-life-loss-public-hand-observation-cards.json",
     "tests/fixtures/targeted-owner-library-cards.json",
+    "tests/fixtures/targeted-spell-control-cards.json",
     "tests/fixtures/targeted-spell-cost-cards.json",
+    "tests/fixtures/targeted-zero-mana-counter-cards.json",
+    "tests/fixtures/temporary-black-protection-removal-cards.json",
     "tests/fixtures/temporary-blocker-restriction-cards.json",
     "tests/fixtures/temporary-cast-cascade-grant-cards.json",
     "tests/fixtures/temporary-cast-restriction-cards.json",
     "tests/fixtures/temporary-cast-timing-cards.json",
     "tests/fixtures/temporary-declaration-restriction-cards.json",
     "tests/fixtures/temporary-keyword-removal-cards.json",
+    "tests/fixtures/temporary-landwalk-removal-cards.json",
     "tests/fixtures/temporary-source-keyword-cards.json",
     "tests/fixtures/terminal-spell-shuffle-cards.json",
+    "tests/fixtures/third-current-life-cards.json",
     "tests/fixtures/token-article-cards.json",
     "tests/fixtures/token-copy-boundary-cards.json",
     "tests/fixtures/token-copy-recipe-cards.json",
+    "tests/fixtures/token-creation-reflexive-results-cards.json",
     "tests/fixtures/token-creation-trigger-cards.json",
     "tests/fixtures/token-entry-boundary-cards.json",
     "tests/fixtures/toughness-assignment-cards.json",
@@ -1090,6 +3355,8 @@
     "tests/fixtures/turn-cast-grant-cards.json",
     "tests/fixtures/turn-cast-rider-cards.json",
     "tests/fixtures/turn-count-self-cost-cards.json",
+    "tests/fixtures/turn-damage-prevention-prohibition-cards.json",
+    "tests/fixtures/turn-life-loss-recovery-cards.json",
     "tests/fixtures/type-replacement-grant-cards.json",
     "tests/fixtures/typecycling-cards.json",
     "tests/fixtures/typed-grant-carrier-cards.json",
@@ -1106,6 +3373,8 @@
     "tests/fixtures/unpreventable-damage-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
     "tests/fixtures/untargeted-untap-cards.json",
+    "tests/fixtures/upkeep-creature-token-absence-cards.json",
+    "tests/fixtures/upkeep-hand-difference-cards.json",
     "tests/fixtures/upkeep-participant-hand-cards.json",
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-actual-life-cards.json",
@@ -1119,7 +3388,8 @@
     "tests/fixtures/venture-followup-cards.json",
     "tests/fixtures/waterbend-cards.json",
     "tests/fixtures/whole-hand-discard-cards.json",
-    "tests/fixtures/worldwagon-cards.json"
+    "tests/fixtures/worldwagon-cards.json",
+    "tests/fixtures/zero-mana-cast-counter-cards.json"
   ],
   "full_database_only": [],
   "schema_version": 2

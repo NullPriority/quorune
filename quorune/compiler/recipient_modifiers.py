@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole-sentence grammar for one public recipient-local static scalar."""
 
-import re
+from . import regex_working_set as re
 from ..counter_names import normalized_counter_name
 from ..recipient_modifier_model import RecipientQuantitySpec,RecipientQuantityKind,RECIPIENT_MODIFIER_CAPABILITY
 from ..semantic_runtime.recipient_anthems import RecipientAnthemHandler,RECIPIENT_ANTHEM_HANDLER

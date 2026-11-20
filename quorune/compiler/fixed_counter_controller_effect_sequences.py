@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed ordered sequences containing one counter and one controller effect."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from .counter_placement_templates import (

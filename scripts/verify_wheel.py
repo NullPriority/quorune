@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -68,7 +69,12 @@ def main() -> int:
             f"found {observed_requirement!r}"
         )
     with tempfile.TemporaryDirectory() as temporary:
-        environment = Path(temporary) / "wheel-venv"
+        workdir = Path(temporary)
+        environment = workdir / "wheel-venv"
+        smoke_environment = os.environ.copy()
+        smoke_environment.pop("PYTHONPATH", None)
+        smoke_environment.pop("PYTHONHOME", None)
+        run_options = {"cwd": workdir, "env": smoke_environment}
         venv.EnvBuilder(with_pip=True, clear=True).create(environment)
         python = (
             environment / "Scripts" / "python.exe"
@@ -86,21 +92,30 @@ def main() -> int:
                 str(wheel),
             ],
             check=True,
+            **run_options,
         )
         subprocess.run(
             [
                 str(python),
                 "-c",
                 (
+                    "from importlib.metadata import distribution; "
+                    "from pathlib import Path; "
                     "import quorune as package; "
+                    "module = Path(package.__file__).resolve(); "
+                    "installed = Path(distribution('quorune').locate_file("
+                    "'quorune/__init__.py')).resolve(); "
+                    "assert module == installed, (module, installed); "
                     "print(package.__version__)"
                 ),
             ],
             check=True,
+            **run_options,
         )
         subprocess.run(
             [str(python), "-m", "quorune", "--help"],
             check=True,
+            **run_options,
             stdout=subprocess.DEVNULL,
         )
         scripts = environment / ("Scripts" if sys.platform == "win32" else "bin")
@@ -109,6 +124,7 @@ def main() -> int:
             subprocess.run(
                 [str(scripts / f"{command}{executable_suffix}"), "--help"],
                 check=True,
+                **run_options,
                 stdout=subprocess.DEVNULL,
             )
         subprocess.run(
@@ -121,10 +137,12 @@ def main() -> int:
                 str(wheel),
             ],
             check=True,
+            **run_options,
         )
         subprocess.run(
             [str(scripts / f"quorune-server{executable_suffix}"), "--help"],
             check=True,
+            **run_options,
             stdout=subprocess.DEVNULL,
         )
         subprocess.run(
@@ -145,6 +163,7 @@ def main() -> int:
                 ),
             ],
             check=True,
+            **run_options,
         )
     print(
         "Verified clean installation, simulation CLI, and server entry point "

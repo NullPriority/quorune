@@ -117,14 +117,30 @@ class TokenCopyRecipeSpec:
     keyword_duration: str = "zone_object"
     schema_version: int = 1
     creation_origin: str | None = None
+    attachment_kind: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4}:
             raise TokenCopyRecipeError("Copy recipe version is unsupported")
         if (self.creation_origin is not None and (self.schema_version!=2 or self.creation_origin!='embalm')
                 or self.schema_version==2 and self.creation_origin is None):raise TokenCopyRecipeError('Versioned copy creation origin is closed')
-        if self.origin not in {"source", "target", "event_object"} or not isinstance(self.exception, TokenCopyExceptionSpec):
+        attached = self.origin == "source_attachment"
+        if (self.schema_version == 3) != attached:
+            raise TokenCopyRecipeError("Source attachment requires explicit recipe version three")
+        if attached:
+            if (self.attachment_kind != "enchanted" or self.cleanup != "none"
+                    or self.temporary_keywords or self.keyword_duration != "zone_object"):
+                raise TokenCopyRecipeError("Enchanted copy recipe has one closed intrinsic lifecycle")
+        elif self.attachment_kind is not None:
+            raise TokenCopyRecipeError("Historical copy recipes cannot carry an attachment relation")
+        if self.origin not in {"source", "target", "event_object", "source_attachment", "event_spell"} or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise TokenCopyRecipeError("Copy reference origin or exception is unsupported")
+        cast_spell = self.origin == "event_spell"
+        if (self.schema_version == 4) != cast_spell:
+            raise TokenCopyRecipeError("Cast spell references require copy recipe version four")
+        if cast_spell and (self.exception != TokenCopyExceptionSpec(remove_legendary=True)
+                or self.cleanup != "none" or self.temporary_keywords or self.keyword_duration != "zone_object"):
+            raise TokenCopyRecipeError("Cast spell copy represents direct nonlegendary token creation")
         if self.cleanup not in {"none", "sacrifice_next_end_step", "exile_next_end_step"}:
             raise TokenCopyRecipeError("Copy cleanup is outside the represented lifecycle")
         if self.keyword_duration not in {"zone_object", "until_end_of_turn"}:
@@ -135,15 +151,31 @@ class TokenCopyRecipeSpec:
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version": self.schema_version, "origin": self.origin,
                 "exception": self.exception.to_dict(), "cleanup": self.cleanup,
-                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration,**({"creation_origin":self.creation_origin} if self.schema_version==2 else {})}
+                "temporary_keywords": list(self.temporary_keywords), "keyword_duration": self.keyword_duration,**({"creation_origin":self.creation_origin} if self.schema_version==2 else {}), **({"attachment_kind":self.attachment_kind, "attachment_reference":self.attachment_reference()} if self.schema_version==3 else {})}
+
+    def attachment_reference(self) -> dict[str, Any]:
+        if self.schema_version != 3:
+            raise TokenCopyRecipeError("Only recipe three carries an attachment reference")
+        from .attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+        return AttachmentReferenceSpec(
+            AttachmentReferenceKind.ENCHANTED, "creature", schema_version=2
+        ).to_dict()
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "TokenCopyRecipeSpec":
-        if not isinstance(value, Mapping) or set(value) != ({"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration","creation_origin"} if value.get("schema_version")==2 else {"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}):
+        fields={"schema_version", "origin", "exception", "cleanup", "temporary_keywords", "keyword_duration"}
+        if isinstance(value,Mapping) and value.get("schema_version")==2:fields.add("creation_origin")
+        if isinstance(value,Mapping) and value.get("schema_version")==3:fields.update({"attachment_kind", "attachment_reference"})
+        if not isinstance(value, Mapping) or set(value) != fields:
             raise TokenCopyRecipeError("Copy recipes have a closed complete schema")
+        if value["schema_version"] == 3:
+            from .attachment_references import AttachmentReferenceSpec
+            reference = AttachmentReferenceSpec.from_dict(value["attachment_reference"])
+            if reference.to_dict() != cls(origin="source_attachment", schema_version=3, attachment_kind="enchanted").attachment_reference():
+                raise TokenCopyRecipeError("Enchanted recipe requires its exact version-two creature reference")
         return cls(schema_version=value["schema_version"], origin=value["origin"],
                    exception=TokenCopyExceptionSpec.from_dict(value["exception"]), cleanup=value["cleanup"],
-                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"],creation_origin=value.get("creation_origin"))
+                   temporary_keywords=value["temporary_keywords"], keyword_duration=value["keyword_duration"],creation_origin=value.get("creation_origin"), attachment_kind=value.get("attachment_kind"))
 
 
 def apply_copy_exception(characteristics: Mapping[str, Any], exception: TokenCopyExceptionSpec) -> dict[str, Any]:

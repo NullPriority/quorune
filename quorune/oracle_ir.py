@@ -90,7 +90,7 @@ from .compiler.fractional_player_templates import fixed_player_result_template
 from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
-from .compiler import cipher_nodes as cipher_context_owner
+from .compiler import spell_lifecycle_contexts as spell_lifecycle_context_owner
 from .compiler import station_context_nodes as station_context_owner
 from .compiler.bargain_nodes import printed_bargain_spec
 from .compiler.leveler_context_nodes import (
@@ -180,7 +180,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1072"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1224"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1190,7 +1190,7 @@ def _prepare_face_source(record, face_id, type_line, oracle_text):
         rows = tuple((line, room_source_material(material), span)
                      for line, material, span in rows if line != ROOM_REMINDER)
         compile_inner = partial(compile_inner, room_door_face=face_id)
-    rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, rows)
+    rows, station_context, cipher_context = spell_lifecycle_context_owner.contextual_source_rows(record, rows)
     return rows, leveler_context, station_context, cipher_context, compile_inner
 
 
@@ -1223,15 +1223,15 @@ def _compile_face(
     if spell:
         from .compiler.public_replacement_rows import public_replacement_material_rows
         material_rows=public_replacement_material_rows(material_rows,oracle_text=oracle_text,source_name=face_name or record.name,
-            compile_effect=declared_spell_effect_compiler(record,is_spell=spell,oracle_text=oracle_text,compile_effect=contextual_effect_template))
+            compile_effect=declared_spell_effect_compiler(record,is_spell=spell,oracle_text=oracle_text,compile_effect=contextual_effect_template,face_name=face_name))
         typed_face = _typed_whole_spell_face(
             record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
-            material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template),
+            material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template, face_name=face_name),
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
         )
         if typed_face is not None:
-            return cipher_context_owner.apply_cipher_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
+            return spell_lifecycle_context_owner.apply_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
     from .compiler.independent_target_rows import prepare_target_clause_context,mark_independent_target_nodes
     material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,face_id=face_id,oracle_text=oracle_text,
         card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
@@ -1321,7 +1321,7 @@ def _compile_face(
 
         ability_word = _ABILITY_WORD.match(material_line)
         body = ability_word.group("body") if ability_word else material_line
-        template, effects, target_schema, mechanics = (declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template) if spell else contextual_effect_template)(
+        template, effects, target_schema, mechanics = (declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template, face_name=face_name) if spell else contextual_effect_template)(
             body,
             card_name=face_name or record.name,
         )
@@ -1423,7 +1423,7 @@ def _compile_face(
     resolved_nodes = station_context_owner.apply_station_context(context=station_context, oracle_id=record.oracle_id,
         face_id=face_id, oracle_text=oracle_text, material_rows=material_rows, nodes=resolved_nodes,
         residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
-    return cipher_context_owner.finish_contextual_face(cipher_context,
+    return spell_lifecycle_context_owner.finish_contextual_face(cipher_context,
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, resolved_nodes, residuals, capability_registry, capability_profile,
     )

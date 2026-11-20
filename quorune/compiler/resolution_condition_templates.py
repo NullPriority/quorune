@@ -3,7 +3,7 @@ from __future__ import annotations
 """One public-state conditional result, optionally after a mandatory prefix."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from typing import Callable
 
 from ..resolution_conditions import (

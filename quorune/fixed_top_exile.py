@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from .impulse_access_model import ImpulseAccessDuration
+from .mana_value_exile_model import TOTAL_MANA_EXILE_SCOPE, TOTAL_MANA_EXILE_CAPABILITY, TOTAL_MANA_EXILE_MECHANIC
 from .rules.library_selection import LibrarySelectionObjectIdentity
 
 
@@ -24,6 +25,7 @@ FIXED_TOP_EXILE_MECHANIC_CAPABILITIES = {
     FIXED_TOP_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY,),
     CHOSEN_IMPULSE_MECHANIC: (CHOSEN_IMPULSE_CAPABILITY,),
     RESOLVING_TOP_PLAY_MECHANIC: (RESOLVING_TOP_PLAY_CAPABILITY,),
+    TOTAL_MANA_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, TOTAL_MANA_EXILE_CAPABILITY),
 }
 FIXED_TOP_EXILE_RULES = ("400.7j", "601.2", "608.2c", "608.2d", "608.2g", "712.8a", "712.11")
 FIXED_TOP_EXILE_DAMAGE_CAPABILITIES = (
@@ -63,6 +65,12 @@ def validate_resolving_land_play_identity(value):
 
 
 def validate_fixed_top_exile(effect, *, resolved=False):
+    if isinstance(effect, Mapping) and effect.get('scope') == TOTAL_MANA_EXILE_SCOPE:
+        from .rules.mana_value_exile import validate_total_mana_instruction, validate_total_mana_step
+        if type(effect.get('schema_version')) is int and effect['schema_version'] == 5 and resolved:
+            validate_total_mana_step(effect)
+            return TOTAL_MANA_EXILE_SCOPE
+        return validate_total_mana_instruction(effect, resolved=resolved)
     if isinstance(effect, Mapping) and effect.get("scope") == CHOSEN_IMPULSE_SCOPE:
         return _validate_chosen_impulse(effect, resolved=resolved)
     if isinstance(effect, Mapping) and effect.get("scope") == RESOLVING_TOP_PLAY_SCOPE:
@@ -134,6 +142,8 @@ def fixed_top_exile_dependencies(effect):
     if effect.get("op") != FIXED_TOP_EXILE_OPERATION:
         return ()
     scope = validate_fixed_top_exile(effect)
+    if scope == TOTAL_MANA_EXILE_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, TOTAL_MANA_EXILE_CAPABILITY)
     if scope == CHOSEN_IMPULSE_SCOPE:
         return (FIXED_TOP_EXILE_CAPABILITY, CHOSEN_IMPULSE_CAPABILITY, "zone.impulse_access.fixed")
     if scope == RESOLVING_TOP_PLAY_SCOPE:
@@ -159,7 +169,7 @@ def fixed_top_exile_result_rows(effect):
     if scope in OWN_LIBRARY_EXILE_SCOPES:
         if len(results) > instruction["count"]:
             raise ValueError("Fixed top exile captured too many cards")
-    elif len({owner for owner, _ in results}) != len(results):
+    elif scope != TOTAL_MANA_EXILE_SCOPE and len({owner for owner, _ in results}) != len(results):
         raise ValueError("Fixed top exile results require one distinct card per library")
     owner = instruction["supplier"] if scope == "cast_event_library" else instruction["player"]
     if scope != "each_library" and any(supplier != owner for supplier, _ in results):

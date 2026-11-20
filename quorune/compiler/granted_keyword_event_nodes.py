@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..death_return import DeathReturnSpec

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..activation_counter_cost import SourceCounterRemovalCost
+
 from hashlib import sha256
 from typing import Any, Protocol
 
@@ -161,6 +163,8 @@ def _typed_granted_abilities(
                 builtin_semantic_key=spec.semantic_key,
                 mana_spend_restriction=spec.mana_spend_restriction,
                 granting_attachment_payment=payment,
+                source_counter_removal_cost=(SourceCounterRemovalCost.from_dict(spec.source_counter_removal_cost)
+                    if spec.source_counter_removal_cost is not None else None),
             )
         )
     return tuple(result)

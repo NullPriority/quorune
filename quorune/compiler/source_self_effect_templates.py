@@ -4,7 +4,7 @@ from __future__ import annotations
 """Composition boundary for source-self trigger effect bodies."""
 
 from typing import Any
-import re
+from . import regex_working_set as re
 from ..rules.source_references import CYCLED_SOURCE_DAMAGE_COVERAGE, SourceReferenceSpec, source_self_permanent_type
 
 from .announced_damage_templates import fixed_announced_damage_template
@@ -48,6 +48,13 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
             return (*attachment, None)
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
+        if condition is None:
+            from .token_creation_reflexive_templates import token_creation_reflexive_template
+            reflexive_creation = token_creation_reflexive_template(
+                body, compile_effect=lambda clause: effect_template(clause, card_name=card_name),
+            )
+            if reflexive_creation is not None:
+                return (*reflexive_creation, None)
     from .recipient_control_templates import normalized_source_recipient_control_body
     body=normalized_source_recipient_control_body(body) or body
     compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)

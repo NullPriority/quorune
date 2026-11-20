@@ -140,7 +140,7 @@ def _loss_summary(result: LifeBatchResult, players: Sequence[str]) -> str:
     )
 
 
-def _apply_selected_life(host, effect, *, actor, reason, field):
+def _apply_selected_life(host, effect, *, actor, reason, field, source_ref=None):
     if set(effect) - {"op", "players", field, "reason", "_runtime_source", "_replacement_selections"}:
         raise GameRuleError("Selected life result has conflicting or unknown fields")
     amount = effect.get(field)
@@ -154,7 +154,8 @@ def _apply_selected_life(host, effect, *, actor, reason, field):
         return {}
     delta = amount if field == "delta" else -amount
     prepared = _commit(host, tuple(LifeChange(player, delta) for player in players),
-                       effect=effect, actor=actor, reason=reason)
+                       effect={**effect, 'source':source_ref} if source_ref is not None else effect,
+                       actor=actor, reason=reason)
     result = _result(prepared)
     host._log(
         actor, "effect.life", "Life changed for the selected players.",
@@ -171,7 +172,26 @@ def _apply_life(
     actor: str,
     operation: str,
     reason: str,
-) -> int | dict[str, int]:
+) -> int | dict[str, int] | str:
+    from ..life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD
+    from ..rules.public_life_gain_scopes import PUBLIC_LIFE_GAIN_FIELD, validate_public_life_gain
+
+    if TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in effect:
+        from ..semantic_runtime.life_prohibitions import apply_temporary_life_gain_prohibition
+
+        return apply_temporary_life_gain_prohibition(host, actor, effect)
+    if PUBLIC_LIFE_GAIN_FIELD in effect or "scope" in effect:
+        try:validate_public_life_gain(effect,runtime=True)
+        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
+        players=[seat for seat in host.apnap_order() if effect['scope']=='all_active_players' or seat!=actor]
+        selected={key:value for key,value in effect.items() if key not in {PUBLIC_LIFE_GAIN_FIELD,'scope'}}
+        selected['players']=players
+        # One public instruction enters the existing simultaneous batch. No
+        # player changes life while affected-player replacements remain pending.
+        from ..semantic_runtime.context import SemanticSourceContext
+        raw_source=effect.get('_runtime_source')
+        source_ref=SemanticSourceContext(**raw_source).card_ref if raw_source is not None else None
+        return _apply_selected_life(host,selected,actor=actor,reason=reason,field="delta",source_ref=source_ref)
     if "players" in effect:
         return _apply_selected_life(host, effect, actor=actor, reason=reason, field="delta")
     seat = str(effect.get("player") or actor)
@@ -203,6 +223,25 @@ def _apply_life(
     return host.state.players[seat].life
 
 
+def _apply_per_player_query_loss(host,effect,*,actor,reason):
+    from ..rules.per_player_query_life import per_player_query_life_spec
+    from ..semantic_runtime.context import SemanticSourceContext
+    try:bound=per_player_query_life_spec(effect,runtime=True)
+    except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
+    if (bound.controller!=actor or actor not in host.active_seats
+            or any(change.player not in host.active_seats for change in bound.changes)):
+        raise GameRuleError('Per-player loss requires its locked controller and active recipients')
+    if not bound.changes:return 0
+    raw_source=effect.get('_runtime_source')
+    source_ref=SemanticSourceContext(**raw_source).card_ref if raw_source is not None else effect.get('source')
+    prepared=_commit(host,bound.changes,effect={**effect,'source':source_ref},actor=actor,reason=reason)
+    result=_result(prepared)
+    host._log(actor,'effect.life','Per-player simultaneous life loss resolved.',
+        {'players':[c.player for c in bound.changes],'requested_deltas':{c.player:c.amount for c in bound.changes},
+         **result.to_dict()},importance=2,changed_players=list(result.changed_players))
+    return sum(record.amount for record in prepared.records if record.direction=='loss')
+
+
 def _apply_lose_life(
     host: LifeEffectHost,
     effect: Mapping[str, Any],
@@ -211,6 +250,8 @@ def _apply_lose_life(
     operation: str,
     reason: str,
 ) -> int | dict[str, int]:
+    if isinstance(effect.get('amount'),Mapping) and effect['amount'].get('kind')=='bound_per_player_public_query_life_loss_amount':
+        return _apply_per_player_query_loss(host,effect,actor=actor,reason=reason)
     if "players" in effect:
         return _apply_selected_life(host, effect, actor=actor, reason=reason, field="amount")
     seat = str(effect.get("player") or actor)
@@ -273,6 +314,8 @@ def _apply_lose_life_each_opponent(
     operation: str,
     reason: str,
 ) -> int:
+    if isinstance(effect.get('amount'),Mapping) and effect['amount'].get('kind')=='bound_per_player_public_query_life_loss_amount':
+        return _apply_per_player_query_loss(host,effect,actor=actor,reason=reason)
     amount = max(0, int(effect.get("amount", 0)))
     opponents = tuple(seat for seat in host.active_seats if seat != actor)
     prepared = _commit(

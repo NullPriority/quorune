@@ -27,6 +27,7 @@ import test_self_public_zone_casting as zone_actions
 
 
 FIXTURE = ROOT / 'tests/fixtures/fixed-stack-spell-copy-cards.json'
+UNSUPPORTED_COPY_CONTROL = 'Fixed Stack Copy Boundary Witness'
 
 
 class FixedStackSpellCopyModelCompilerTests(unittest.TestCase):
@@ -301,7 +302,17 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
     def test_unsupported_source_siblings_have_no_independent_executable_copy_fallback(self):
         session = self.session(70710007)
         engine = session.engine
-        source = self.add(engine, 'Fury Storm', zone='hand', ref='stack-copy-incomplete-source')
+        record = self.db.lookup(UNSUPPORTED_COPY_CONTROL)
+        isolated = replace(record, oracle_text=record.oracle_text.splitlines()[0])
+        standalone = compile_oracle_card(isolated, capability_registry=self.registry,
+                                        capability_profile='commander_review')
+        complete = compile_oracle_card(record, capability_registry=self.registry,
+                                      capability_profile='commander_review')
+        self.assertEqual('exact', standalone.status)
+        self.assertIn(STACK_SPELL_COPY_CAPABILITY, standalone.faces[0].nodes[0].capability_dependencies)
+        self.assertNotEqual('exact', complete.status)
+        self.assertTrue(complete.material_residuals)
+        source = self.add(engine, UNSUPPORTED_COPY_CONTROL, zone='hand', ref='stack-copy-incomplete-source')
         growth = self.add(engine, 'Giant Growth', zone='hand', ref='stack-copy-incomplete-target')
         body = self.add(engine, 'Llanowar Elves', ref='stack-copy-incomplete-body')
         self.prepare(session, mana={'C': 2, 'R': 2, 'G': 1})
@@ -426,9 +437,11 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
     def test_original_copy_candidates_need_complete_siblings_and_current_generated_registration(self):
         expected = {'Geistblast', 'Reiterate', 'Dual Casting', 'Sigil Tracer', 'Naru Meha, Master Wizard',
             'Mirrorpool', 'Dualcaster Mage', 'Twincast', 'Uyo, Silent Prophet', 'Reverberate',
-            'Nivix Guildmage', 'Flare of Duplication', 'Kitsa, Otterball Elite', 'Stella Lee, Wild Card'}
+            'Nivix Guildmage', 'Flare of Duplication', 'Kitsa, Otterball Elite', 'Stella Lee, Wild Card',
+            'Fury Storm', 'Insidious Will', 'Lithoform Engine'}
         pattern = re.compile(r'Copy target instant or sorcery spell(?: you control)?\. You may choose new targets for the copy\.', re.I)
-        rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if pattern.search(r.get('oracle_text') or '')]
+        rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']
+                if r['name'] != UNSUPPORTED_COPY_CONTROL and pattern.search(r.get('oracle_text') or '')]
         self.assertEqual(24, len(rows))
         for row in rows:
             with self.subTest(name=row['name']):

@@ -1,5 +1,5 @@
 """Whole fixed searches whose ordered found cards have distinct destinations."""
-import re
+from . import regex_working_set as re
 
 from ..library_search_model import FixedCountedLibrarySearchTemplate, search_selector
 from ..search_allocation_model import SearchAllocationSpec

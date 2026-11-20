@@ -92,6 +92,12 @@ _NEGATIVE_GENERATED_VALUE = re.compile(
 _FINALIZER_WRITE = re.compile(
     r"scripts[\\/]finalize_generated\.py\s+--write\b", re.IGNORECASE
 )
+_FINALIZER_ASSEMBLE = re.compile(
+    r"scripts[\\/]finalize_generated\.py\s+--assemble\b", re.IGNORECASE
+)
+_CLOUD_BUNDLE_INSTALL = re.compile(
+    r"scripts[\\/]cloud_generated_artifacts\.py\s+install-bundle\b", re.IGNORECASE
+)
 _ACTIONS_RUN_URL = re.compile(
     r"https://github\.com/[^\s)]+/actions/runs/\d+", re.IGNORECASE
 )
@@ -356,14 +362,19 @@ def validate_body(body: str, template: str) -> tuple[PolicyFailure, ...]:
             value and not _NEGATIVE_GENERATED_VALUE.fullmatch(value)
             for value in claimed_values
         )
-        if generated_claimed and not _FINALIZER_WRITE.search(
-            fields.get("Generators run", "")
-        ):
+        generators = fields.get("Generators run", "")
+        cloud_finalized = (
+            _FINALIZER_ASSEMBLE.search(generators)
+            and _CLOUD_BUNDLE_INSTALL.search(generators)
+        )
+        if generated_claimed and not (_FINALIZER_WRITE.search(generators) or cloud_finalized):
             failures.append(
                 PolicyFailure(
                     "missing-finalizer",
                     "generated work is claimed but Generators run does not name "
-                    "scripts/finalize_generated.py --write",
+                    "scripts/finalize_generated.py --write or both "
+                    "scripts/finalize_generated.py --assemble and "
+                    "scripts/cloud_generated_artifacts.py install-bundle",
                 )
             )
 

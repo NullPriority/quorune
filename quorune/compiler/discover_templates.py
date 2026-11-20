@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed controller exile scans with their printed cast choices."""
 
-import re
+from . import regex_working_set as re
 
 from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
     QUALIFIED_SCAN_MECHANIC, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_TARGET)
@@ -123,6 +123,8 @@ def cast_event_fixed_top_exile(binding, body):
 
 
 def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid_public_x=False,**context):
+    total_mana = _total_mana_exile_template(text)
+    if total_mana is not None:return total_mana
     fixed_top = _fixed_top_exile_template(text, source_name=source_name, event=context.get("event"))
     if fixed_top is not None:
         return fixed_top
@@ -143,3 +145,14 @@ def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid
     return declared_effect_amount_template(text,source_name=source_name,compile_fixed=fixed,
         cast_x_available=cast_x_available,forbid_public_x=forbid_public_x) or scalar_effect_amount_template(
             text,source_name=source_name,compile_fixed=fixed,event=context.get('event'),source_event=context.get('source_event',False))
+
+
+def _total_mana_exile_template(text):
+    match=re.fullmatch(r"Exile cards from the top of your library until you exile cards with total mana value "
+        r"(?P<amount>[1-9][0-9]*) or greater\. You may cast any number of spells from among them without paying their mana costs\.?",
+        " ".join(text.strip().split()),re.I)
+    if match is None:return None
+    from ..mana_value_exile_model import TOTAL_MANA_EXILE_SCOPE,TOTAL_MANA_EXILE_MECHANIC
+    return ('total-mana-value-exile-cast-subset-v1',({'op':FIXED_TOP_EXILE_OPERATION,'schema_version':4,
+        'scope':TOTAL_MANA_EXILE_SCOPE,'player':'$controller','minimum_total':int(match['amount'])},),None,
+        (FIXED_TOP_EXILE_MECHANIC,TOTAL_MANA_EXILE_MECHANIC))

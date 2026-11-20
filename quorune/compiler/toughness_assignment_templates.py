@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed source-local assignment rules with existing characteristic prefixes."""
 
-import re
+from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict
 from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER,TEMPORARY_TOUGHNESS_MECHANIC
 from ..object_predicate import ObjectQuerySpec

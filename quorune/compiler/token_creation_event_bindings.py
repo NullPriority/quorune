@@ -1,5 +1,5 @@
 """Closed token-creation and creation/sacrifice occurrence subscriptions."""
-import re
+from . import regex_working_set as re
 from ..token_creation_batch_model import (TOKEN_CREATED_EVENT,TOKEN_CREATION_BATCH_EVENT,
     TOKEN_CREATION_TRIGGER_CAPABILITY)
 from ..rules.event_subscriptions import FixedEventSubscription,fixed_event_subscription_condition

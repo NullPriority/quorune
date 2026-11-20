@@ -40,6 +40,10 @@ def fixed_dual_damage_payload_dependencies(effect,*,mechanics):
 def fixed_dual_damage_runtime_dependencies(program):
     from .fixed_damage_roles import fixed_damage_role_runtime_dependencies
     required=set(fixed_damage_role_runtime_dependencies(program))
+    from .per_player_query_damage import per_player_query_damage_program_dependencies
+    required.update(per_player_query_damage_program_dependencies(program))
+    from .per_player_life_damage import per_player_life_damage_program_dependencies
+    required.update(per_player_life_damage_program_dependencies(program))
     effects = tuple(effect for effect in program.effects if FIXED_DUAL_DAMAGE_FIELD in effect)
     if not effects and FIXED_DUAL_DAMAGE_MECHANIC not in program.coverage:return tuple(sorted(required))
     if not effects:raise ValueError('Fixed target/controller damage lost its represented instruction')

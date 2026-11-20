@@ -301,6 +301,16 @@ class EachPlayerLifeCompilerTests(unittest.TestCase):
         self.assertEqual("all_zones", effect["amount"]["quantity"]["scope"])
         self.assertEqual(["zombie"], effect["amount"]["quantity"]["query"]["subtypes_all"])
 
+    def test_closed_per_player_quantity_composition_keeps_fixed_leaf_boundary(self):
+        text='Each player loses 1 life for each creature they control.'
+        self.assertIsNone(fixed_life_effect_template(text))
+        registry=load_default_capability_registry()
+        for body,type_line in ((text,'Sorcery'),('When this creature enters, '+text[0].lower()+text[1:],'Creature — Human')):
+            ir=compile_oracle_card(fixture_card(body,type_line=type_line),capability_registry=registry)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=next(n for face in ir.faces for n in face.nodes if n.effects)
+            self.assertEqual('per_player_public_query_life_loss_amount',node.effects[0]['amount']['kind'])
+
     def test_each_player_shapes_and_separate_player_quantities_fail_closed(self):
         registry = load_default_capability_registry()
         for text in (

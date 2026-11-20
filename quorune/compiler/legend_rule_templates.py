@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed unconditional legend-rule exemption text; no runtime text reads."""
 
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..legend_rule_model import LegendRuleExemptionSpec

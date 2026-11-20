@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed generic ambient costs per distinct chosen target or creature."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec,object_query_capabilities
 from ..targeted_spell_costs import (DISTINCT_TARGET_COST_CAPABILITY,TARGETED_SPELL_COST_CAPABILITY,

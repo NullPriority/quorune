@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed resolution-created control over one existing permanent target."""
 
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..continuous_effect_model import ContinuousEffectDuration

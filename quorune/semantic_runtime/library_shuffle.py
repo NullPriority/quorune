@@ -18,11 +18,13 @@ class FixedLibraryShuffleHandler:
     capability_dependencies: tuple[str, ...] = (SHUFFLE_CAPABILITY,)
 
     def lower(self, effect, context):
+        from ..rules.target_library_shuffle import TARGET_SHUFFLE_FIELD, validate_target_shuffle_effect
+        targeted=TARGET_SHUFFLE_FIELD in effect
         try:
-            player = validate_fixed_shuffle_effect(effect)
+            player = validate_target_shuffle_effect(effect,resolved=True) if targeted else validate_fixed_shuffle_effect(effect)
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
-        if player != context.actor:
+        if not targeted and player != context.actor:
             raise SemanticNodeError('Fixed shuffle requires its resolving controller')
         context.query.require_active_seat(player)
         return IntentPlan(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Fixed homogeneous selected-object costs normalized to existing predicates."""
 
-import re
+from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import fixed_number

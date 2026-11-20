@@ -3,7 +3,7 @@ from __future__ import annotations
 """Fixed named-counter payment from one controlled creature, compiled once."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 
 from ..abilities import CostChoice
 from ..rules.selected_counter_costs import (

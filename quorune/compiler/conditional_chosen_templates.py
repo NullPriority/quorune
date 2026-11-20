@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Compose independently closed chosen queries and public conditions."""
 
-import re
+from . import regex_working_set as re
 
 from ..entry_designations import (
     CONDITIONAL_CHOSEN_CHARACTERISTICS_CAPABILITY,

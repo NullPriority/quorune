@@ -3,7 +3,7 @@ from __future__ import annotations
 """Resolution-time ordinary keyword choices for one permanent incarnation."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..keyword_counters import keyword_counter_mechanic

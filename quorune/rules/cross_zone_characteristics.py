@@ -51,6 +51,7 @@ def prospective_cross_zone_spell_type_line(host, card, seat, selected_type_line=
         card_types={word.title() for word in types}, subtypes={word.title() for word in subtypes},
         supertypes={word.title() for word in supertypes})
     values = evaluate_continuous_effects(base, effects, context={
+        "continuous_dependency_order_version": getattr(host.state, "continuous_dependency_order_version", None),
         "zone": "stack", "owner": card.owner, "object_id": card.object_id,
         "logical_object_id": card.logical_object_id, "ref": card.ref, "token": card.is_token,
     }).characteristics

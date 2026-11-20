@@ -3,7 +3,7 @@ from __future__ import annotations
 """One represented fixed action followed by its separate reflexive body."""
 
 import hashlib
-import re
+from . import regex_working_set as re
 
 from ..creature_power_damage_model import CREATURE_POWER_DAMAGE_OPERATION, occurrence_power_damage_in
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC

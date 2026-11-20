@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 
 from ..replacement.immutable import FrozenMap
 from ..rules.revealed_library_top import REVEAL_TOP_MECHANIC, RevealedLibraryTopSpec

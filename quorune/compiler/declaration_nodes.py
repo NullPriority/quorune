@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Typed Oracle-IR lowering for combat declaration static abilities."""
 
-import re
+from . import regex_working_set as re
 from dataclasses import replace
 from typing import Any, Mapping
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Kicked self-entry triggers over sealed zone-occurrence cast facts."""
 
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..rules.capabilities import CapabilityRegistry
@@ -22,7 +22,10 @@ def fixed_source_entry_or_step_trigger_node(**kwargs: Any) -> OracleNode | None:
     maintenance = source_maintenance_node(**{
         key: value for key, value in kwargs.items() if key not in {'effect_template', 'trusted_mechanics'}
     })
-    return maintenance if maintenance is not None else fixed_kicked_entry_trigger_node(**kwargs)
+    if maintenance is not None:return maintenance
+    from .paid_alternative_cast_results import paid_alternative_entry_trigger_node
+    paid_alternative=paid_alternative_entry_trigger_node(**kwargs)
+    return paid_alternative if paid_alternative is not None else fixed_kicked_entry_trigger_node(**kwargs)
 
 
 def fixed_kicked_entry_trigger_node(

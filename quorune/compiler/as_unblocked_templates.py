@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed static combat-assignment grants through existing applicability."""
 
-import re
+from . import regex_working_set as re
 from ..as_unblocked import AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER, TEMPORARY_AS_UNBLOCKED_MECHANIC, AsUnblockedAssignmentPermission
 from ..ability_fragments import ability_fragment_to_dict
 from ..rules.source_references import SourceReferenceSpec

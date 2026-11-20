@@ -70,5 +70,7 @@ def ordered_static_source_candidates(host,present,participants):
                     dependencies.setdefault(effect.effect_id,[]).append(removal.effect_id)
     bound=tuple(replace(effect,depends_on=tuple(dict.fromkeys((*effect.depends_on,*dependencies[effect.effect_id]))))
         if effect.effect_id in dependencies else effect for effect in present)
-    ordered,_cycles=order_continuous_effects(bound)
+    ordered, _cycles = order_continuous_effects(
+        bound, dependency_order_version=getattr(host.state, "continuous_dependency_order_version", None),
+    )
     return ordered

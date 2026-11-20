@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping, Sequence
 
+from ..token_copy_recipes import TokenCopyRecipeSpec
+
 from ..ability_fragment_primitives import CrewPowerBonusSpec
 from ..ability_fragments import (
     AbilityFragmentError,
@@ -99,6 +101,24 @@ def query_defined_token_stat_dependencies(
     )
 
 
+CAST_PERMANENT_TOKEN_COPY_CAPABILITY = "token.creation.cast_source_permanent_copy"
+
+
+def cast_spell_token_copy_payload_dependencies(value: Any) -> tuple[str, ...]:
+    """A cast-source token has a separate raw minimum from battlefield copy recipes."""
+    if not isinstance(value, Mapping) or value.get("op") != "create_token":
+        return ()
+    spec = value.get("copy_spec")
+    if not isinstance(spec, Mapping) or spec.get("schema_version") != 4:
+        return ()
+    if (set(value) != {"op","controller","quantity","copy_spec"} or value["controller"] != "$controller"
+            or type(value["quantity"]) is not int or value["quantity"] != 1):
+        raise ValueError("Direct cast spell copy creates one token for its resolving controller")
+    TokenCopyRecipeSpec.from_dict(spec)
+    from ..event_spell_copy_model import EVENT_SPELL_COPY_CAPABILITY
+    return (CAST_PERMANENT_TOKEN_COPY_CAPABILITY, FIXED_TOKEN_COPY_CAPABILITY_ID, EVENT_SPELL_COPY_CAPABILITY)
+
+
 def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
     """Infer fixed token and selected creator dependencies from the payload.
 
@@ -110,20 +130,43 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
         return fixed_token_choice_payload_dependencies(value,mechanics)
     if isinstance(value, Mapping) and value.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
         return distributed_token_creation_payload_dependencies(value)
+    cast_copy = cast_spell_token_copy_payload_dependencies(value)
+    if cast_copy:
+        return cast_copy
+    if (isinstance(value,Mapping) and value.get('op')=='create_token'
+            and isinstance(value.get('copy_spec'),Mapping) and value['copy_spec'].get('schema_version')==3):
+        recipe=TokenCopyRecipeSpec.from_dict(value['copy_spec'])
+        if recipe.origin != 'source_attachment':raise ValueError('Recipe three requires its source attachment')
+        return ('token.creation.enchanted_source_copy', FIXED_TOKEN_COPY_CAPABILITY_ID, 'object.reference.source_attachment_information')
     targeted = (
         isinstance(value, Mapping)
         and value.get("op") == "create_token"
         and "target" in value
     )
     target_dependencies = ("target.revalidate_resolution",) if targeted else ()
+    if (isinstance(value, Mapping) and value.get('op') == 'create_token'
+            and isinstance(value.get('characteristics'), Mapping)
+            and re.fullmatch(r'Token (?:Legendary )?Artifact — (?:Book )?Equipment',
+                str(value['characteristics'].get('type_line'))) is not None):
+        from .equipment_token_shapes import fixed_equipment_token_closure
+        closure = fixed_equipment_token_closure(value)
+        if closure is None:
+            raise ValueError('Fixed Equipment token definition has an unrepresented payload')
+        return (*closure[0], *target_dependencies)
     if (isinstance(value,Mapping) and value.get('op')=='create_token'
             and isinstance(value.get('characteristics'),Mapping)
             and {'power','toughness'}<=set(value['characteristics'])
             and not value.get('copy_of') and not value.get('copy_spec')):
         if AFTERLIFE_MECHANIC_ID in mechanics and _is_fixed_token_action_effect(value, afterlife_token_effect):
             return (AFTERLIFE_CAPABILITY_ID,)
+        land_dependencies = ()
+        if 'Land' in str(value['characteristics'].get('type_line', '')).split(' — ', 1)[0].split():
+            if _fixed_creature_effect_closure(value) is None:
+                raise ValueError('Land creature token definition has an unrepresented payload')
+            land_dependencies = ('mana.intrinsic.basic_land_type',)
         return (
             'token.creation.fixed_definition',
+            *land_dependencies,
             *token_toxic_definition_dependencies(value['characteristics']),
             *token_decayed_definition_dependencies(value['characteristics']),
             *query_defined_token_stat_dependencies(value['characteristics']),
@@ -343,7 +386,7 @@ def _fixed_creature_effect_closure(
         return None
     type_line = str(characteristics.get("type_line") or "")
     if re.fullmatch(
-        r"Token (?:Legendary )?(?:Artifact )?Creature(?: Enchantment)? — "
+        r"Token (?:Legendary )?(?:Artifact )?(?:Land )?Creature(?: Enchantment)? — "
         r"[A-Z][A-Za-z']*(?:[ -][A-Z][A-Za-z']*)*",
         type_line,
     ) is None:
@@ -360,6 +403,8 @@ def _fixed_creature_effect_closure(
     ):
         return None
     capabilities = {"token.creation.fixed_definition"}
+    if "Land" in type_line.split(" — ", 1)[0]:
+        capabilities.add("mana.intrinsic.basic_land_type")
     mechanics = {
         _TOKEN_MECHANIC,
         *(keyword.split()[0].casefold() if keyword.startswith(("Toxic ","Bushido ")) else keyword.casefold() for keyword in keywords),
@@ -421,6 +466,7 @@ def _fixed_creature_effect_closure(
         elif isinstance(fragment, DeclarationRequirementTemplate):
             typed_ability_definition = True
             capabilities.add("combat.declaration.typed_components")
+            mechanics.add("fixed-token-declaration-fragment")
             mechanics.update(fragment.mechanics)
             typed_ability_fragment = True
         elif isinstance(fragment, QueryCharacteristicModifierSpec):
@@ -472,6 +518,10 @@ def _fixed_token_effect_closure(
     predefined = _fixed_predefined_effect_is_closed(effect)
     if predefined is not None:
         return predefined
+    from .equipment_token_shapes import fixed_equipment_token_closure
+    equipment = fixed_equipment_token_closure(effect)
+    if equipment is not None:
+        return equipment
     return _fixed_creature_effect_closure(effect)
 
 
@@ -515,6 +565,9 @@ def _fixed_copy_token_capabilities(
 
 
 def _copy_recipe_capabilities(effect, target_schema, mechanics):
+    if 'copy_recipient_binding' in effect:
+        from .token_copy_recipients import target_copy_recipient_node_dependencies
+        return target_copy_recipient_node_dependencies(effect, target_schema, mechanics)
     from ..token_copy_recipes import TokenCopyRecipeSpec
     from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
     from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
@@ -538,6 +591,13 @@ def _copy_recipe_capabilities(effect, target_schema, mechanics):
     if set(recipe.temporary_keywords) - {"Haste"}:
         return ()
     dependencies = {FIXED_TOKEN_COPY_CAPABILITY_ID}
+    if recipe.origin == "event_spell":
+        try:
+            dependencies.update(cast_spell_token_copy_payload_dependencies(effect))
+        except (TypeError, ValueError):
+            return ()
+    if recipe.origin == "source_attachment":
+        dependencies.update({"token.creation.enchanted_source_copy", "object.reference.source_attachment_information"})
     if recipe.creation_origin=='embalm':dependencies.add('activation.graveyard_copy_keyword.fixed_mana')
     if recipe.origin == "target":
         dependencies.add("target.revalidate_resolution")
@@ -671,6 +731,11 @@ def _fixed_token_definition_node_capabilities(
     mechanics: set[str],
 ) -> tuple[str, ...]:
     """Validate one ordinary token definition and any selected creator."""
+    from ..reflexive_trigger_model import TOKEN_CREATION_REFLEXIVE_FIELD
+    if TOKEN_CREATION_REFLEXIVE_FIELD in effect:
+        from .token_creation_reflexive import token_creation_reflexive_node_capabilities
+        return token_creation_reflexive_node_capabilities(effects=(effect,), target_schema=target_schema,
+            mechanic_ids=mechanics)
     fixed_effect = effect
     if target_schema is not None:
         if not isinstance(target_schema, Mapping):
@@ -892,6 +957,8 @@ def fixed_token_creation_covered_mechanics(
                 "fixed-token-production",
             }
         )
+    if 'token.creation.target_player_copy' in capability_ids:
+        covered.add('target-player-copy-creation')
     return tuple(sorted(covered))
 
 

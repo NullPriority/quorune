@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source-pinned predefined Aura Role definitions and closed attached entry."""
 
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..ability_fragments import StaticComponentSpec, ability_fragment_to_dict

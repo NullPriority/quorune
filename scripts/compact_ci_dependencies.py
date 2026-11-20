@@ -469,6 +469,10 @@ def _call_name(node: ast.AST) -> str:
     return ""
 
 
+def _class_for_symbol(symbol: str) -> str:
+    return symbol.split(".", 1)[0] if "." in symbol else ""
+
+
 def _source_symbol(
     node: ast.AST,
     functions: tuple[tuple[int, int, str], ...],
@@ -518,6 +522,8 @@ class DependencySourceScope:
         self._classes: dict[ast.AST, tuple[ast.ClassDef, ...]] = {}
         self._database_modes: dict[ast.AST, tuple[Mapping, Mapping]] = {}
         self._environments: dict[tuple[ast.AST, Path], Mapping] = {}
+        self._wrapper_classes: dict[ast.AST, tuple[str, ...]] = {}
+        self._wrappers: dict[tuple[ast.AST, tuple[str | None, ...]], tuple[WrapperSpec, ...]] = {}
 
     def functions(self, tree: ast.AST) -> tuple[tuple[int, int, str], ...]:
         if tree not in self._functions:
@@ -564,6 +570,22 @@ class DependencySourceScope:
             modes = _database_modes(tree, syntax=parsed.syntax, functions=self.functions(tree))
             self._database_modes[tree] = tuple(MappingProxyType(dict(part)) for part in modes)
         return self._database_modes[tree]
+
+    def wrappers(self, parsed, *, class_modes: Mapping[str, str]) -> tuple[WrapperSpec, ...]:
+        tree = parsed.tree
+        functions = self.functions(tree)
+        if tree not in self._wrapper_classes:
+            self._wrapper_classes[tree] = tuple(sorted({
+                _class_for_symbol(symbol) for _, _, symbol in functions
+            }))
+        # Only receiver modes for this file's symbols affect its wrapper inventory.
+        key = (tree, tuple(class_modes.get(name) for name in self._wrapper_classes[tree]))
+        if key not in self._wrappers:
+            self._wrappers[key] = _wrapper_inventory(
+                tree, class_modes=class_modes, name_modes=self.database_modes(parsed)[1],
+                syntax=parsed.syntax, functions=functions,
+            )
+        return self._wrappers[key]
 
     def environments(self, parsed, *, root: Path) -> Mapping:
         key = (parsed.tree, root)
@@ -686,7 +708,7 @@ def _database_modes(
         value = node.value
         targets = node.targets if isinstance(node, ast.Assign) else [node.target]
         symbol = _source_symbol(node, functions)
-        class_name = symbol.split(".", 1)[0] if "." in symbol else ""
+        class_name = _class_for_symbol(symbol)
         if isinstance(value, ast.Call) and _call_name(value.func) == "load_assets":
             for target in targets:
                 if isinstance(target, (ast.Tuple, ast.List)) and target.elts:
@@ -721,7 +743,7 @@ def _receiver_mode(
     if isinstance(receiver, ast.Name):
         return name_modes.get((symbol, receiver.id))
     if isinstance(receiver, ast.Attribute) and receiver.attr in {"db", "database"}:
-        class_name = symbol.split(".", 1)[0] if "." in symbol else ""
+        class_name = _class_for_symbol(symbol)
         return class_modes.get(class_name)
     return None
 
@@ -890,12 +912,8 @@ def discover_module_requirements(
     wrappers = tuple(
         wrapper
         for path, value in parsed.items()
-        for wrapper in _wrapper_inventory(
-            value.tree,
-            class_modes={**combined_class_modes, **modes_by_path[path][0]},
-            name_modes=modes_by_path[path][1],
-            syntax=value.syntax,
-            functions=sources.functions(value.tree),
+        for wrapper in sources.wrappers(
+            value, class_modes={**combined_class_modes, **modes_by_path[path][0]},
         )
     )
     wrappers_by_name: dict[str, list[WrapperSpec]] = {}
@@ -974,7 +992,7 @@ def discover_module_requirements(
                 and _receiver_is_deck_loader(call.func.value)
                 and call.args
             ):
-                class_name = symbol.split(".", 1)[0] if "." in symbol else ""
+                class_name = _class_for_symbol(symbol)
                 if class_modes.get(class_name) == "local":
                     continue
                 values = _expression_values(call.args[0], environment)

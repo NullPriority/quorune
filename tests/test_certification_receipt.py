@@ -187,6 +187,42 @@ class CertificationReceiptTests(unittest.TestCase):
             tracked_worktree_source_fingerprint(ROOT),
         )
 
+    def test_committed_fingerprint_preserves_markdown_prefix_boundaries(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw)
+
+            def git(*args):
+                return subprocess.check_output(["git", *args], cwd=root).decode().strip()
+
+            def fingerprint():
+                git("add", "--", ".")
+                git("commit", "-qm", "fixture")
+                return tracked_ref_source_fingerprint(root, "HEAD")
+
+            git("init", "-q")
+            git("config", "user.email", "test@example.invalid")
+            git("config", "user.name", "Certification Test")
+            git("config", "core.autocrlf", "false")
+            generated = root / "generated.md"
+            ordinary = root / "ordinary.md"
+            boundary = root / "boundary.md"
+            alias = root / "alias.md"
+            marker = b"status: generated\n"
+            prefix = marker + b"x" * (511 - len(marker))
+            generated.write_bytes(marker + b"old output\n")
+            ordinary.write_bytes(b"x" * 512 + b"\n" + marker)
+            alias.write_bytes(ordinary.read_bytes())
+            boundary.write_bytes(prefix + bytes((0xC3, 0xA9)))
+            before = fingerprint()
+
+            generated.write_bytes(marker + b"new output\n")
+            self.assertEqual(before, fingerprint())
+            ordinary.write_bytes(ordinary.read_bytes() + b"past the prefix")
+            edited = fingerprint()
+            self.assertNotEqual(before, edited)
+            boundary.write_bytes(prefix + bytes((0xC3, 0xAA)))
+            self.assertNotEqual(edited, fingerprint())
+
     def test_github_merge_run_and_artifact_selection_is_strict(self):
         pull = select_merged_pull_request(
             [

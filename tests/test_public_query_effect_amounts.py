@@ -54,7 +54,7 @@ from quorune.semantic_runtime.context import SemanticNodeError
 from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
 from quorune.semantic_runtime.values import resolve_semantic_value
 from quorune.trigger_processing import collect_trigger_items, enqueue_trigger_batch
-from scripts.build_test_database import build_fixture_database
+from scripts.build_test_database import _card_payload, build_fixture_database
 
 
 class _NoRulingsDatabase:
@@ -743,11 +743,12 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
-    def session(self, seed: int, *, players: int = 4):
+    def session(self, seed: int, *, players: int = 4, assets=None):
+        database, mishra, zimone = (self.db, self.mishra, self.zimone) if assets is None else assets
         session = make_session(
-            self.db,
-            self.mishra,
-            self.zimone,
+            database,
+            mishra,
+            zimone,
             players=players,
             seed=seed,
             auto_pass_empty=False,
@@ -787,6 +788,23 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         self.assertEqual("trusted", candidates[0].trust_level)
         return candidates[0]
 
+    def spell_session(self, seed, text, *, suffix, players=4):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        directory = Path(temporary.name)
+        fixture = directory / "query-spell.json"
+        record = query_amount_record(text, suffix=suffix)
+        fixture.write_text(json.dumps({"schema_version": 1, "cards": [_card_payload(record)], "rulings": []}),
+                           encoding="utf-8")
+        path = directory / "query-spell.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/scryfall-exact-lists.json", fixture], path)
+        database = CardDatabase(path)
+        self.addCleanup(database.close)
+        loader = DeckLoader(database)
+        assets = (database, loader.load(ROOT / "examples/mishra-eminent-one.txt", commander="Mishra, Eminent One"),
+                  loader.load(ROOT / "examples/zimone-and-dina.txt", commander="Zimone and Dina"))
+        return self.session(seed, players=players, assets=assets), self.program(text, suffix=suffix)
+
     @staticmethod
     def token(engine, seat: str, *, name: str, type_line: str):
         ref = engine.create_token(
@@ -820,6 +838,7 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
             controller=controller,
             label=program.label,
             source_object_id=(source.object_id if source is not None else None),
+            card_object_id=(source.object_id if kind == "spell" and source is not None else None),
             semantic_key=program.key,
             targets=list(targets),
             visibility=list(engine.active_seats),
@@ -834,6 +853,19 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         )
         engine.state.stack.append(item)
         return item
+
+    def stack_printed_spell(self, engine, program, *, suffix, controller, targets=()):
+        record = engine.card_db.by_oracle_id(program.oracle_id)
+        card = CardInstance(
+            object_id=f"query-spell-{suffix}", ref=engine._next_ref("P"),
+            oracle_id=record.oracle_id, printed_name=record.name,
+            owner=controller, controller=controller, zone="stack",
+            zone_timestamp=engine._next_zone_timestamp(),
+            known_to=list(engine.active_seats), revealed_to=list(engine.active_seats),
+        )
+        engine.state.cards[card.object_id] = card
+        return self.stack_program(engine, program, suffix=suffix, controller=controller,
+                                  source=card, targets=targets, kind="spell")
 
     @staticmethod
     def resolve(engine, item, program):
@@ -1100,7 +1132,13 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         self.assertEqual(1, event.details["replacement_count"])
 
     def test_query_scaled_characteristics_use_resolution_state_and_cleanup(self):
-        session = self.session(172_003_150, players=2)
+        session, program = self.spell_session(
+            172_003_150,
+            "Target creature gains vigilance and gets +2/+1 until end of "
+            "turn for each creature you control.",
+            suffix=172_003_151,
+            players=2,
+        )
         engine = session.engine
         target = self.token(
             engine,
@@ -1125,18 +1163,12 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
             {"op": "add_type", "card": changed.ref, "type": "Creature"},
             actor="A",
         )
-        program = self.program(
-            "Target creature gains vigilance and gets +2/+1 until end of "
-            "turn for each creature you control.",
-            suffix=172_003_151,
-        )
-        item = self.stack_program(
+        item = self.stack_printed_spell(
             engine,
             program,
             suffix=172_003_151,
             controller="A",
             targets=(target.ref,),
-            kind="spell",
         )
         self.token(
             engine,
@@ -1160,13 +1192,12 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         self.assertEqual(1, engine._numeric_stat(target.object_id, "toughness"))
         self.assertNotIn("vigilance", engine._combat_keywords(target))
 
-        stale = self.stack_program(
+        stale = self.stack_printed_spell(
             engine,
             program,
             suffix=172_003_152,
             controller="A",
             targets=(target.ref,),
-            kind="spell",
         )
         engine.move_card(target.object_id, "graveyard", log=False)
         engine.move_card(
@@ -1317,25 +1348,25 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         )
 
     def test_query_amount_four_player_projection_save_load_and_replay(self):
-        session = self.session(172_004_000)
-        engine = session.engine
-        program = self.program(
+        session, program = self.spell_session(
+            172_004_000,
             "You gain 2 life for each card in your hand.",
             suffix=172_004_001,
         )
-        item = self.stack_program(
+        engine = session.engine
+        database = engine.card_db
+        item = self.stack_printed_spell(
             engine,
             program,
             suffix=172_004_001,
             controller="A",
-            kind="spell",
         )
         hand_refs = {
             engine.state.cards[object_id].ref
             for object_id in engine.state.players["A"].zones["hand"]
         }
         projected = json.dumps(
-            StateProjector(self.db, engine.state)._snapshot("pilot:B")
+            StateProjector(database, engine.state)._snapshot("pilot:B")
         )
         self.assertTrue(all(ref not in projected for ref in hand_refs))
         expected_gain = 2 * len(hand_refs)
@@ -1363,7 +1394,7 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
             engine.state.players["A"].life,
         )
         projected = json.dumps(
-            StateProjector(self.db, engine.state)._snapshot("pilot:B")
+            StateProjector(database, engine.state)._snapshot("pilot:B")
         )
         self.assertTrue(all(ref not in projected for ref in hand_refs))
 
@@ -1372,7 +1403,7 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
             record_dir = Path(temporary) / "public-query-amount-record"
             session.save(record_dir)
             loaded = load_record_state(record_dir)
-            replay = replay_record(record_dir, self.db, verify=True)
+            replay = replay_record(record_dir, database, verify=True)
         self.assertEqual(expected_hash, authoritative_state_hash(loaded))
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])

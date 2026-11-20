@@ -92,3 +92,103 @@ class UnblockedAttackerOwnerTests(unittest.TestCase):
         host=SimpleNamespace(state=SimpleNamespace(unblocked_attacker_event_version=1,combat=combat,cards={'source':source}),active_seats=('A','B'),
             _effective_card_data=lambda card:{'type_line':'Creature'},_type_parts=lambda line:({'creature'},set(),set()),_defending_player_for_attacker=lambda oid,target:target)
         self.assertEqual((),unblocked_attacker_occurrences(host))
+
+
+class UnblockedDefenderPoisonCompilerTests(unittest.TestCase):
+    def test_poison_result_is_an_untargeted_intrinsic_post_declaration_trigger(self):
+        from quorune.unblocked_attacker_model import (
+            UNBLOCKED_ATTACKER_CAPABILITY, UNBLOCKED_DEFENDER_POISON_CAPABILITY,
+            intrinsic_unblocked_condition, unblocked_defender_poison_effect,
+        )
+
+        registry = load_default_capability_registry()
+        text = "Whenever this creature attacks and isn't blocked, defending player gets a poison counter."
+        ir = compile_oracle_card(record(text, "Creature — Human"), capability_registry=registry,
+                                 capability_profile="commander_review")
+        effect = unblocked_defender_poison_effect()
+        node, = [node for face in ir.faces for node in face.nodes if effect in node.effects]
+        self.assertEqual("creature.unblocked", node.event)
+        self.assertEqual(intrinsic_unblocked_condition(), node.event_condition)
+        self.assertIsNone(node.target_schema)
+        self.assertIn(UNBLOCKED_ATTACKER_CAPABILITY, node.capability_dependencies)
+        self.assertIn(UNBLOCKED_DEFENDER_POISON_CAPABILITY, node.capability_dependencies)
+        self.assertIn("counter.producer.fixed_player_effect", node.capability_dependencies)
+        self.assertEqual(registry.closure(node.capability_dependencies, profile="commander_review").trusted,
+                         node.exact)
+
+    def test_raw_poison_cannot_rebind_the_trigger_or_add_a_target(self):
+        from quorune.rules.combat_defending_players import combat_defending_player_runtime_dependencies
+        from quorune.unblocked_attacker_model import (
+            UNBLOCKED_ATTACKER_CAPABILITY, UNBLOCKED_DEFENDER_POISON_CAPABILITY,
+            intrinsic_unblocked_condition, unblocked_defender_poison_effect,
+        )
+
+        effect = unblocked_defender_poison_effect()
+        packet = {
+            "effects": (effect,), "target_schema": None, "active_zone": "battlefield",
+            "event": "creature.unblocked", "event_condition": intrinsic_unblocked_condition(),
+            "coverage": (),
+        }
+        self.assertEqual({
+            UNBLOCKED_ATTACKER_CAPABILITY, UNBLOCKED_DEFENDER_POISON_CAPABILITY,
+            "counter.producer.fixed_player_effect",
+        }, set(combat_defending_player_runtime_dependencies(SimpleNamespace(**packet))))
+        for invalid in (
+            {"event": "creature.attacks"},
+            {"event_condition": {"field": "card", "op": "eq", "value": "$source.ref"}},
+            {"active_zone": "stack"},
+            {"target_schema": {"count": 1}},
+            {"effects": ({**effect, "amount": True},)},
+            {"effects": ({**effect, "amount": 2},)},
+            {"effects": ({"op": "offer_optional_effect", "effects": [effect]},)},
+        ):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "exact intrinsic"):
+                combat_defending_player_runtime_dependencies(SimpleNamespace(**{**packet, **invalid}))
+
+    def test_omitting_the_compiler_result_loses_the_complete_poison_instruction(self):
+        from quorune.unblocked_attacker_model import unblocked_defender_poison_effect
+
+        text = "Whenever this creature attacks and isn't blocked, defending player gets a poison counter."
+        card = record(text, "Creature — Human")
+        registry = load_default_capability_registry()
+        effect = unblocked_defender_poison_effect()
+        baseline = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertTrue(any(effect in node.effects for face in baseline.faces for node in face.nodes))
+        with patch("quorune.compiler.event_player_results.fixed_event_player_result", return_value=None):
+            changed = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertFalse(any(effect in node.effects for face in changed.faces for node in face.nodes))
+        self.assertTrue(any(
+            residual.reason == "trigger effect has no exact generic template"
+            for face in changed.faces for residual in face.residuals
+        ))
+
+    def test_genuinely_withdrawn_poison_or_counter_owner_preserves_unblocked_draw(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.unblocked_attacker_model import UNBLOCKED_DEFENDER_POISON_CAPABILITY
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw=json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        declarations=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered=set(discover_tests(ROOT).values())
+        profile="commander_review"
+        prefix="Whenever this creature attacks and isn't blocked, "
+        poison=record(prefix+"defending player gets a poison counter.","Creature — Human")
+        draw=record(prefix+"draw a card.","Creature — Human")
+        self.assertEqual("exact",compile_oracle_card(poison,capability_registry=load_default_capability_registry(),
+                             capability_profile=profile).status)
+        for capability in (UNBLOCKED_DEFENDER_POISON_CAPABILITY,"counter.producer.fixed_player_effect"):
+            with self.subTest(withdrawn=capability):
+                blocked=deepcopy(raw)
+                next(row for row in blocked["capabilities"] if row["id"]==capability).update(
+                    status="blocked",blockers=["Test removal of the actual operation owner"],
+                )
+                registry=CapabilityRegistry(blocked)
+                index=build_index(registry_value=blocked,declaration_source=declarations,
+                                  discovered_test_ids=discovered)
+                registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+                self.assertNotEqual("exact",compile_oracle_card(poison,capability_registry=registry,
+                                      capability_profile=profile).status)
+                self.assertEqual("exact",compile_oracle_card(draw,capability_registry=registry,
+                                  capability_profile=profile).status)

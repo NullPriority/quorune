@@ -6,7 +6,7 @@ from typing import Any, Mapping
 from ..replacement.immutable import FrozenMap
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, query_objects
-from ..hand_entry_queries import decode_hand_entry_queries, hand_entry_matches
+from ..hand_entry_queries import decode_hand_entry_queries, hand_entry_matches, hand_entry_query_capabilities
 from ..semantic_runtime.intents import (
     LifeChangeIntent,
     RecordZoneMoveIntent,
@@ -355,7 +355,7 @@ class PutTypedCardFromHandHandler:
                 "Private hand-entry continuation query is malformed"
             ) from exc
         identities = continuation.effect.get('_legal_logical_ids')
-        if (followup is not None or attacking) and identities is None:
+        if (followup is not None or attacking or hand_entry_query_capabilities(continuation.effect["_choice_query"])) and identities is None:
             raise SemanticChoiceError('Versioned private hand entry requires the sealed hand incarnation')
         if identities is not None and (
             not isinstance(identities, Mapping)

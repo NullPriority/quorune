@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """One source-spanned ordinary mana Emerge declaration on a creature card."""
 
-import re
+from . import regex_working_set as re
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from ..emerge_model import EMERGE_CAPABILITY, EMERGE_HANDLER, FixedManaEmergeSpec
 from ..util import mana_cost_to_vector

@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed grammar for fixed public permanent-set tap-state effects."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..affected_permanents import (

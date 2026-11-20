@@ -1552,6 +1552,51 @@
         "tests.test_cascade_rules.TemporaryCastCascadeGrantTests.test_temporary_cascade_capability_and_scope_omission_fail_closed",
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0066",
+      "adr": "docs/adr/0167-chosen-counter-removal.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "db9c82183bf88d53a2bbbc3b671c7a332aa104c098fafe1f26826f0d1c0d2765",
+      "exact_allowance": "One additional registered operation remove_chosen_counter; all other baseline fields and structural ceilings remain unchanged.",
+      "rationale": "A public resolution-time kind choice delegates exactly one removal to the existing RemoveCountersIntent and canonical counter transition owner.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "One explicit version-one counter-kind choice for one original permanent target; no new mutation, engine method, identity dispatch or runtime text authority.",
+      "removal_condition": "Replace the operation only when a successor preserves resolution-time kinds, legal counterless targets, original identity and historical named-removal replay.",
+      "target_milestone": "Complete original counter-removal sources with printed costs and optional wrappers.",
+      "replay_implications": "The new version-one instruction and existing immutable choice continuation are serialized; old named/all-removal instructions are unchanged.",
+      "privacy_implications": "Only public permanent counters are projected; the resolving controller owns the capability.",
+      "security_implications": "Closed instruction, complete target declaration, current kind, authenticated controller and target incarnation are validated before returning one canonical intent.",
+      "tests": [
+        "tests.test_chosen_counter_removal.ChosenCounterRemovalPureTests.test_choices_use_resolution_time_kinds_and_reject_stale_or_forged_responses",
+        "tests.test_chosen_counter_removal.ChosenCounterRemovalPureTests.test_counter_kind_filter_mutation_is_detected_before_any_intent",
+        "tests.test_chosen_counter_removal.ChosenCounterRemovalRuntimeTests.test_original_medicine_runner_chooses_the_resolution_kind_and_replays",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0067",
+      "adr": "docs/adr/0177-spell-resolution-name-history.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "c9ab8baac970ca34fdc2d0f1095f64fccfaebaf0525e51d6fa99b0fe119602ba",
+      "exact_allowance": "One assignment identity: quorune/spell_resolution_names.py::_commit_ledger, spell_resolution_name_ledger; one canonical owner write. Every unrelated baseline value is preserved.",
+      "rationale": "A typed immutable lifetime ledger records actual controller-scoped spell resolutions and stable active first-resolution facts; cast or turn histories cannot supply this authority.",
+      "owner": "rules architecture maintainers",
+      "maximum_scope": "Exactly one nullable GameState ledger and its canonical assignment owner; no new engine write, engine method, operation, identity dispatch, Oracle parsing or widened size allowance.",
+      "removal_condition": "A successor retains lifetime resolution facts, paused claims, truthful historical absence, canonical rollback and exact replay through one typed owner.",
+      "target_milestone": "Controller-scoped first successful spell-name resolution for complete Paradigm sources.",
+      "replay_implications": "Missing legacy ledgers remain absent; new games explicitly initialize known-empty. Manifest version must exactly match the initial checkpoint. Paused facts serialize and transactions restore immutable history.",
+      "privacy_implications": "Only effective public spell names at resolution and public controllers enter the ledger; face-down spell names remain empty.",
+      "security_implications": "Begin runs after target legality for actual spells and copies only. Closed schemas reject malformed versions and claims. No player command can directly submit ledger mutations.",
+      "tests": [
+        "tests.test_spell_resolution_names.SpellResolutionNameStateCodecTests.test_manifest_and_initial_checkpoint_must_agree_exactly_including_legacy_absence",
+        "tests.test_spell_resolution_names.SpellResolutionNameNativeTests.test_native_paid_spells_and_permanent_resolution_record_names_by_current_controller",
+        "tests.test_spell_resolution_names.SpellResolutionNameNativeTests.test_native_all_targets_illegal_and_countered_spells_never_enter_resolution_history",
+        "tests.test_spell_resolution_names.SpellResolutionNameNativeTests.test_native_uncast_spell_copy_resolves_before_original_and_only_copy_is_first",
+        "tests.test_spell_resolution_names.SpellResolutionNameNativeTests.test_native_choice_pause_keeps_original_first_fact_across_save_load_and_exact_replay",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
     }
   ]
 }

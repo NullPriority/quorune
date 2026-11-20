@@ -67,10 +67,17 @@ class TriggeredGraveyardBattlefieldCompilerTests(unittest.TestCase):
 
     def test_unknown_heads_death_lookback_and_open_result_riders_stay_residual(self):
         registry = load_default_capability_registry()
+        enchanted = "When enchanted creature dies, return this card from your graveyard to the battlefield."
+        positive = compile_oracle_card(query_record(enchanted), capability_registry=registry,
+                                       capability_profile='commander_review')
+        self.assertEqual("exact", positive.status, positive.material_residuals)
+        node, = positive.faces[0].nodes
+        self.assertEqual(("battlefield", "creature.dies"), (node.active_zone, node.event))
+        self.assertEqual({"field": "attachments", "op": "contains_any", "value": ["$source.ref"]}, node.event_condition)
+        self.assertEqual("$attachment_departure.source", node.effects[0]["source"])
         texts = (
             'Whenever another creature is put into your graveyard from the battlefield, you may pay {B}. If you do, return this card from your graveyard to the battlefield.',
             'Whenever a Dragon you control dies while this card is in your graveyard, you may return this card from your graveyard to the battlefield.',
-            'When enchanted creature dies, return this card from your graveyard to the battlefield.',
             'Whenever you draw your third card in a turn, return this card from your graveyard to the battlefield tapped.',
             'Whenever a land you control enters, return this card from your graveyard to the battlefield with a +1/+1 counter on it.',
             'Whenever a land you control enters, return this card from your graveyard to the battlefield attached to target creature.',

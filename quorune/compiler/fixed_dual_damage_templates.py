@@ -1,6 +1,6 @@
 """Compose existing fixed targeted damage with its simultaneous controller share."""
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..fixed_dual_damage_model import FixedTargetControllerDamageSpec,FIXED_DUAL_DAMAGE_FIELD,FIXED_DUAL_DAMAGE_MECHANIC
 from .damage_templates import FixedDamageEffectTemplate,fixed_damage_effect_template,source_pronoun_damage_effect_template

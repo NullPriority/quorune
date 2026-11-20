@@ -80,6 +80,38 @@ def _selected_order(frame):
     finally:_SELECTED.reset(token)
 
 
+def _resolution_item(host, retained):
+    from .semantic_choices.model import SemanticChoiceFrame
+    from .card_overrides import normalize_game_record_v3_effect
+    from .rules.subtype_transform import SubtypeTransformSpec
+    SubtypeTransformSpec.from_effect(retained['effect'])
+    semantic = SemanticChoiceFrame.from_dict(retained['semantic_frame'])
+    item = next((item for item in host.state.stack if item.ref==retained['stack_ref']),None)
+    if item is None or item.controller!=semantic.controller:
+        raise GameRuleError('Transform ordering resolving stack object changed')
+    host._validate_semantic_frame(semantic.to_dict(),item)
+    program=host.semantics.get(item.semantic_key)
+    pointer=semantic.instruction_pointer
+    if (program is None or not host.semantic_program_is_current_trusted(program)
+            or not 0<=pointer<len(program.effects)):
+        raise GameRuleError('Transform ordering requires its current trusted parent instruction')
+    expected=normalize_game_record_v3_effect(host._semantic_value(program.effects[pointer],item))
+    if FrozenMap(expected)!=FrozenMap(retained['effect']):
+        raise GameRuleError('Transform ordering parent effect differs from its trusted instruction')
+    return item,semantic
+
+
+def issue_transform_resolution_order(host,item,required,effect,remaining,destination,note,instruction_pointer):
+    retained=FrozenMap({'stack_ref':item.ref,'effect':dict(effect),'remaining':list(remaining),
+        'destination':destination,'note':note,
+        'semantic_frame':host._semantic_frame(item,instruction_pointer=instruction_pointer)})
+    _resolution_item(host,retained)
+    frame=TransformTimestampContinuation(required.request,
+        FrozenMap({key:getattr(host.state,key) for key in _CONTEXT_FIELDS}),
+        'resolution',host.state.priority_player,(),resolution=retained)
+    _issue(host,frame)
+
+
 def _resume(host,frame,*,selected):
     from .model import StackItem
     from .replacement.immutable import thaw_value
@@ -91,6 +123,17 @@ def _resume(host,frame,*,selected):
             from .untap_step_coordination import coordinate_untap_step
             coordinate_untap_step(host,phase=frame.context['phase'],step=frame.context['step'],
                 active_player=frame.context['active_player'],held_triggers=triggers,phasing_complete=True)
+        elif frame.resume_kind=='resolution':
+            from .replacement.immutable import thaw_value
+            retained=frame.resolution
+            if not selected and not any(item.ref==retained['stack_ref'] for item in host.state.stack):
+                if not host._stabilize():host._grant_priority(host.state.active_player)
+                return
+            item,semantic=_resolution_item(host,retained)
+            host._continue_resolution(stack_ref=item.ref,
+                effects=[thaw_value(retained['effect']),*(thaw_value(e) for e in retained['remaining'])],
+                destination=retained['destination'],note=retained['note'],
+                instruction_pointer=semantic.instruction_pointer)
         elif not host._stabilize():
             host._grant_priority(frame.priority_player or host.state.active_player)
     if selected:

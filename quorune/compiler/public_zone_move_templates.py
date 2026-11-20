@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed Oracle grammar for fixed public-origin zone moves."""
 
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
@@ -23,6 +23,8 @@ from ..rules.graveyard_card_targets import (
 )
 from .destruction_templates import fixed_affected_permanent_query
 from .direct_target import compiled_direct_target, direct_target_effect
+from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec
+from .graveyard_card_result_templates import parse_graveyard_card_counter_life
 from .public_tap_state_set_templates import (
     FixedPublicTapStateSetTemplate,
     fixed_public_tap_state_set_effect_template,
@@ -45,14 +47,20 @@ class PublicGraveyardCardExileTemplate:
 
     target: PublicGraveyardCardTargetKind = PublicGraveyardCardTargetKind.CARD
     owner_relation: str = "any"
+    result: GraveyardCardCounterLifeSpec | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, PublicGraveyardCardTargetKind):
             raise ValueError("Public graveyard exile target is unsupported")
         PublicGraveyardCardTargetSpec(self.target, owner_relation=self.owner_relation)
+        if self.result is not None and (not isinstance(self.result, GraveyardCardCounterLifeSpec)
+                or self.target is not PublicGraveyardCardTargetKind.CARD or self.owner_relation != 'any'):
+            raise ValueError('Conditional creature-card result requires one unrestricted public graveyard card')
 
     @property
     def template_id(self) -> str:
+        if self.result is not None:
+            return 'exile-target-graveyard-card-counter-life-result-v1'
         if self.owner_relation != "any":
             return ("exile-target-" + PublicGraveyardCardTargetSpec(self.target).slug
                     + "-from-owner-" + self.owner_relation + "-graveyard-v1")
@@ -64,6 +72,8 @@ class PublicGraveyardCardExileTemplate:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
+        if self.result is not None:
+            return (self.result.effect(),)
         return direct_target_effect(
             "exile_public_graveyard_card",
             reference_field="card",
@@ -218,6 +228,9 @@ def _relation(
 def public_graveyard_card_exile_template(
     text: str,
 ) -> PublicGraveyardCardExileTemplate | None:
+    result = parse_graveyard_card_counter_life(text)
+    if result is not None:
+        return PublicGraveyardCardExileTemplate(result=result)
     targets = "|".join(
         re.escape(kind.value) for kind in PublicGraveyardCardTargetKind
     )

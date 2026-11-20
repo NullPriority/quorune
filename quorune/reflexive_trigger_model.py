@@ -22,6 +22,7 @@ SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION = 3
 BOUND_REFLEXIVE_PROGRAM_VERSIONS = frozenset({BOUND_REFLEXIVE_PROGRAM_VERSION, SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION})
 SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY = 'trigger.reflexive.selected_sacrifice'
 REFLEXIVE_PAID_CREATURE_CONTEXT = 'reflexive_paid_creature'
+TOKEN_CREATION_REFLEXIVE_FIELD = 'token_creation_reflexive'
 
 
 def _values(value):
@@ -34,9 +35,14 @@ def _values(value):
 
 def bound_reflexive_has_targets(effects):
     for effect in effects:
-        child = effect.get('reflexive_program')
-        if (effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 4
-                and isinstance(child, Mapping) and type(child.get('schema_version')) is int
+        operation = effect.get('op')
+        if operation == 'create_token':
+            child = effect.get(TOKEN_CREATION_REFLEXIVE_FIELD)
+        elif operation == 'offer_optional_mana_payment' and effect.get('schema_version') == 4:
+            child = effect.get('reflexive_program')
+        else:
+            continue
+        if (isinstance(child, Mapping) and type(child.get('schema_version')) is int
                 and child['schema_version'] in BOUND_REFLEXIVE_PROGRAM_VERSIONS
                 and child.get('target_schema') is not None):
             return True

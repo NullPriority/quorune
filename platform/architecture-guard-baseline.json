@@ -8,7 +8,7 @@
     }
   ],
   "direct_game_state_write_classification_counts": {
-    "canonical_mutation_owner_write": 20,
+    "canonical_mutation_owner_write": 21,
     "compatibility_adapter_write": 11,
     "grandfathered_engine_debt": 42,
     "orchestration_root_replacement": 1
@@ -399,6 +399,12 @@
       "symbol": "_prepare_storm_resolution"
     },
     {
+      "file": "quorune/spell_resolution_names.py",
+      "symbol": "_commit_ledger",
+      "kind": "assignment",
+      "state_path": "spell_resolution_name_ledger"
+    },
+    {
       "file": "quorune/trigger_processing.py",
       "kind": "mutating_call:clear",
       "state_path": "pending_trigger_batches",
@@ -436,6 +442,7 @@
     "quorune/permissions.py": 8,
     "quorune/record.py": 11,
     "quorune/selection/storm.py": 3,
+    "quorune/spell_resolution_names.py": 1,
     "quorune/trigger_processing.py": 2,
     "quorune/zone_transitions.py": 3
   },
@@ -1571,9 +1578,9 @@
     "physical_lines": 7062
   },
   "exception_binding": {
-    "adr": "docs/adr/0165-temporary-cast-cascade-grants.md",
-    "allowance_fingerprint": "d478d642b2277f53e8bd9e602db8dee6cbaace0b0514b8ff3a323dc94ed59780",
-    "exception_id": "ARCH-EXC-0065"
+    "exception_id": "ARCH-EXC-0067",
+    "adr": "docs/adr/0177-spell-resolution-name-history.md",
+    "allowance_fingerprint": "c9ab8baac970ca34fdc2d0f1095f64fccfaebaf0525e51d6fa99b0fe119602ba"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1931,6 +1938,7 @@
     "regenerate",
     "remora_tax",
     "remove_all_counters",
+    "remove_chosen_counter",
     "remove_counters",
     "reorder_top",
     "require_blocking_this_combat",

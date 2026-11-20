@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source-incarnation maintenance on entry or a fixed turn step."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE

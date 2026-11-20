@@ -3,7 +3,7 @@ from __future__ import annotations
 """One fixed default instruction replaced before its ordinary event owners."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 from .closed_effect_programs import _top_level_positions
 from .public_state_queries import fixed_public_state_condition
 from ..resolution_conditions import RESOLUTION_CONDITION_OPERATION,RESOLUTION_CONDITION_MECHANIC,cast_fact_result_is_fixed,resolution_condition_is_closed,public_replacement_result_is_fixed,public_source_replacement_result_is_fixed

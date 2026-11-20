@@ -8,6 +8,8 @@ def special_trigger_envelope_capabilities(dependencies, mechanics):
     from .capabilities import MECHANIC_CAPABILITY_DEPENDENCIES,_SHAPE_GATED_MECHANICS
     events={m for m in mechanics if m not in _SHAPE_GATED_MECHANICS
         and (m=='fixed-typed-event-effect-trigger' or m.startswith('trigger-event-'))}
+    if 'third-current-player-life-loss' in mechanics and 'cr-603-handling-triggered-abilities' in mechanics:
+        events.add('fixed-typed-event-effect-trigger')
     return tuple(sorted({*dependencies,
         *(cap for m in events for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(m,())),
         *(('trigger.placement.apnap',) if 'cr-603-handling-triggered-abilities' in mechanics else ())}))
@@ -19,7 +21,9 @@ def special_result_trigger_runtime_dependencies(program):
     from .manifest_shapes import manifest_node_capabilities, validate_manifest_result_envelope
     from ..fractional_quantity_model import HalfQuantitySpec,HALF_QUANTITY_KIND,HALF_LIFE_CAPABILITY
     validate_manifest_result_envelope(program)
-    required=set();manifest=False;half=False
+    from .third_life_shapes import third_life_program_dependencies
+    third=third_life_program_dependencies(program)
+    required=set(third);manifest=False;half=bool(third)
     for effect in program.effects:
         if effect.get('op')=='manifest_card':
             owned=manifest_node_capabilities(effects=(effect,),target_schema=None,mechanics={'manifest'})
@@ -61,8 +65,86 @@ def special_result_trigger_runtime_dependencies(program):
     return tuple(sorted(required))
 
 
+def _owned_special_result_capabilities(**context):
+    """Keep independently owned special results ahead of generic amount walking."""
+    from .optional_sacrifice_stats import optional_sacrifice_stat_node_capabilities
+    if owned := optional_sacrifice_stat_node_capabilities(**context):return owned
+    from .life_gain_counted_results import life_gain_counter_payment_node_capabilities
+    if owned := life_gain_counter_payment_node_capabilities(**context):return owned
+    from .recover import recover_node_capabilities
+    from .ripple import ripple_node_capabilities
+    from .demonstrate import demonstrate_node_capabilities
+    from .gravestorm import gravestorm_node_capabilities
+    from .current_life_effect_amounts import current_life_node_capabilities
+    from .turn_life_loss_recovery import turn_life_loss_node_capabilities
+    from .per_player_query_life import per_player_query_life_node_capabilities
+    from .per_player_query_damage import per_player_query_damage_node_capabilities
+    from .per_player_life_damage import per_player_life_damage_node_capabilities
+    from .target_player_query_amounts import target_player_query_node_capabilities
+    from .attachment_source_return import attachment_source_return_node_capabilities
+    from .graveyard_card_results import graveyard_card_counter_life_node_capabilities
+    from .graveyard_exile_branches import graveyard_exile_branch_node_capabilities
+    from .graveyard_exile_tokens import graveyard_exile_token_node_capabilities
+    from .graveyard_exile_type_outcomes import graveyard_exile_type_outcome_node_capabilities
+    for resolver in (gravestorm_node_capabilities,demonstrate_node_capabilities,recover_node_capabilities,ripple_node_capabilities,current_life_node_capabilities,turn_life_loss_node_capabilities,per_player_query_life_node_capabilities,per_player_query_damage_node_capabilities,per_player_life_damage_node_capabilities,target_player_query_node_capabilities,
+                     attachment_source_return_node_capabilities, graveyard_card_counter_life_node_capabilities,
+                     graveyard_exile_branch_node_capabilities, graveyard_exile_token_node_capabilities,
+                     graveyard_exile_type_outcome_node_capabilities):
+        required=resolver(**context)
+        if required:return required
+    return ()
+
+
+def _shared_and_source_entry_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
+    """Keep closed library and source-entry envelopes ahead of leaf composition."""
+    if any(e.get("op") == "look_top_shared_type_reveal" for e in effects):
+        from .shared_type_library import shared_type_library_node_capabilities
+        return shared_type_library_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    query_result=_owned_special_result_capabilities(
+        effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)
+    if query_result:return query_result
+    if any('self_entry_counter' in effect for effect in effects):
+        from .source_self_entry_counters import source_self_entry_counter_node_capabilities
+        return source_self_entry_counter_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if any('self_entry_followup' in effect for effect in effects):
+        from .self_zone_move_followups import self_entry_followup_node_capabilities
+        return self_entry_followup_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    return None
+
+
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    from ..event_card_return import DEATH_LAND_EXILE_MECHANIC, death_land_exile_node_capabilities
+    if DEATH_LAND_EXILE_MECHANIC in mechanics:
+        return death_land_exile_node_capabilities(effects, target_schema)
+    owned=_shared_and_source_entry_capabilities(
+        effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
+    if owned is not None:return owned
+    if any('event_optional_draw_version' in effect for effect in effects):
+        from .event_optional_draw_shapes import event_optional_draw_node_capabilities
+        return event_optional_draw_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if len(effects) == 1 and 'fixed_source_sacrifice_version' in effects[0]:
+        from .source_sacrifice_shapes import fixed_source_sacrifice_node_capabilities
+        return fixed_source_sacrifice_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if any(effect.get('op') == 'remove_chosen_counter' for effect in effects):
+        from .chosen_counter_removal import chosen_counter_removal_node_capabilities
+        return chosen_counter_removal_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if any('optional_target_result' in effect for effect in effects):
+        from .optional_target_results import optional_target_result_node_capabilities
+        return optional_target_result_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if len(effects) == 1 and effects[0].get('op') == 'choose_target_basic_land_type':
+        from .target_land_type import target_land_type_node_capabilities
+        return target_land_type_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if len(effects) == 1 and effects[0].get('op') == 'recycle_graveyards_into_libraries':
+        from .graveyard_recycling import graveyard_recycling_node_capabilities
+        return graveyard_recycling_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    if any(effect.get('op') == 'inspect_target_library' for effect in effects):
+        from .target_library_inspection import target_library_inspection_node_capabilities
+        return target_library_inspection_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    if any(effect.get('op') == 'search_named_library_or_graveyard' for effect in effects):
+        from .named_searches import named_zone_search_node_capabilities
+        return named_zone_search_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if 'conditional-target-power-preparation' in mechanics or any(e.get('op') == 'apply_if_public_condition' and e.get('schema_version') == 16 for e in effects):
         from .conditional_target_preparation import conditional_prepared_power_capabilities
         return conditional_prepared_power_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
@@ -76,6 +158,9 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     from .controlled_return import CONTROLLED_RETURN_FIELD, controlled_return_node_capabilities
     from .distinct_sacrifices import DISTINCT_SACRIFICE_FIELD, distinct_sacrifice_node_capabilities
     from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD, captured_draw_cast_node_capabilities
+    from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD, bounded_hand_cast_node_capabilities
+    if len(effects) == 1 and BOUNDED_HAND_CAST_FIELD in effects[0]:
+        return bounded_hand_cast_node_capabilities(effects=effects, target_schema=target_schema)
     if len(effects) == 1 and CAPTURED_DRAW_CAST_FIELD in effects[0]:
         return captured_draw_cast_node_capabilities(effects=effects, target_schema=target_schema)
     if len(effects) == 1 and DISTINCT_SACRIFICE_FIELD in effects[0]:
@@ -105,6 +190,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
             and {'distinct_controllers','retain_controller'}.intersection(target_schema)):
         from .per_player_target_sets import per_player_target_node_capabilities
         return per_player_target_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    from ..phasing_model import PHASE_OUT_OPERATION
+    from .occurrence_object_results import phase_out_node_capabilities
+    if any(effect.get("op") == PHASE_OUT_OPERATION for effect in effects):
+        return phase_out_node_capabilities(effects, target_schema)
     from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC,FACE_UP_EFFECT_OPERATION,face_up_node_capabilities
     if FACE_UP_EFFECT_MECHANIC in mechanics or any(effect.get('op')==FACE_UP_EFFECT_OPERATION for effect in effects):
         return face_up_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics)
@@ -165,8 +254,40 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
         'fixed-nonrepeating-modal', 'fixed-choose-one-modal-spell', CLOSED_EFFECT_PROGRAM_MECHANIC,
     }):
         from .fractional_player_result_shapes import half_life_node_capabilities, half_choice_node_capabilities
+        if 'third-current-player-life-loss' in mechanics:
+            from .third_life_shapes import third_life_node_capabilities
+            return third_life_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
         if 'half-current-player-life-loss' in mechanics:
             return half_life_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
         if 'half-affected-player-domain-choice' in mechanics:
             return half_choice_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     return None
+
+
+def special_node_covered_mechanics(supplied):
+    """Keep special capability coverage with its typed shape routing."""
+    from ..phasing_model import PHASE_OUT_CAPABILITY, PHASE_OUT_MECHANIC
+
+    mapping = {
+        PHASE_OUT_CAPABILITY: PHASE_OUT_MECHANIC,
+        "continuous.resolution.target_basic_land_type_choice": "target-basic-land-type-choice",
+        "resolution.effect_program.optional_target_result": "fixed-optional-target-characteristic-result",
+        "counter.removal.chosen_kind": "chosen-counter-removal",
+        "resolution.event_player.optional_draw": "fixed-event-player-optional-draw",
+        'library.top.shared_type_optional_reveal': 'private-top-shared-type-reveal',
+        'choice.affected_player.graveyard_exile': 'target-player-graveyard-exile-choice',
+        'quantity_expression.resolution_paid_creature_stat': 'optional-sacrifice-creature-stat-result',
+        'life.loss.third_current_player': 'third-current-player-life-loss',
+        'keyword.recover.fixed_mana': 'recover-fixed-mana',
+        'keyword.recover.half_current_life': 'recover-half-current-life',
+        'quantity_expression.current_controller_life': 'current-controller-life-effect-amount',
+        'quantity_expression.all_player_turn_life_loss': 'all-player-turn-life-loss-amount',
+        'life.loss.per_player_public_quantity': 'per-player-public-query-life-loss',
+        'damage.batch.per_player_public_quantity': 'per-player-public-query-damage',
+        'damage.batch.per_player_current_life_fraction': 'per-player-current-life-fraction-damage',
+        'quantity_expression.target_player_public_query': 'target-player-public-query-amount',
+        'casting.resolution.targeted_graveyard': 'targeted-resolving-graveyard-cast',
+        'casting.resolution.graveyard_copies': 'resolving-graveyard-copy-cast',
+        'casting.resolution.fixed_bounded_hand': 'fixed-bounded-hand-free-cast',
+    }
+    return {mechanic for capability, mechanic in mapping.items() if capability in supplied}

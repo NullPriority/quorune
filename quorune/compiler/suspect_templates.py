@@ -1,6 +1,6 @@
 """Closed Suspect actions over existing object references and targets."""
 
-import re
+from . import regex_working_set as re
 
 from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
 from ..suspect_model import SUSPECT_MECHANIC, SUSPECT_OPERATION

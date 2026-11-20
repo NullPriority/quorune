@@ -75,6 +75,11 @@ def random_discard_node_capabilities(*, effects, target_schema, mechanic_ids, **
             or type(effect["count"]) is not int or not 1 <= effect["count"] <= 4):
         return ()
     dependencies = {RANDOM_DISCARD_CAPABILITY}
+    if effect["players"] == ["$context.defending_player"]:
+        if (target_schema is not None or effect["count"] != 1
+                or "trigger-event-normalized-public-action" not in mechanic_ids):
+            return ()
+        return (RANDOM_DISCARD_CAPABILITY, "trigger.event.normalized_public_action", "trigger.placement.apnap")
     if effect["players"] == ["$context.target"]:
         if "trigger-event-normalized-damage" not in mechanic_ids:
             return ()
@@ -113,6 +118,17 @@ def damage_player_random_discard_result(binding, body: str):
         return None
     effect = {**compiled[1][0], "players": ["$context.target"]}
     return ("fixed-damage-player-random-discard-v1", (effect,), None, compiled[3]), False
+
+
+def blocked_defender_discard_recipient_has_left(host, raw_effect, effect):
+    """Stop an untargeted random discard when its original defender has left."""
+    players = effect.get("players")
+    if (raw_effect.get("players") != ["$context.defending_player"]
+            or not isinstance(players, (list, tuple)) or len(players) != 1):
+        return False
+    recipient = players[0]
+    return (isinstance(recipient, str) and recipient in host.state.players
+            and not host.state.players[recipient].in_game)
 
 
 def random_discard_input_snapshot(host, effect, *, actor):

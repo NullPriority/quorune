@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ..errors import GameRuleError
 from ..fractional_quantity_model import HalfQuantitySpec
+from ..third_quantity_model import ThirdQuantitySpec,THIRD_QUANTITY_KIND
 from ..life_state import LifeChange
 
 
@@ -11,7 +12,12 @@ def apply_fractional_life_loss(host, effect, *, actor, operation, reason):
     from .life_effects import _commit, _result
 
     try:
-        fraction = HalfQuantitySpec.from_dict(effect['amount'])
+        amount=effect['amount']
+        from collections.abc import Mapping
+        third=isinstance(amount,Mapping) and amount.get('kind')==THIRD_QUANTITY_KIND
+        fraction=ThirdQuantitySpec.from_dict(amount) if third else HalfQuantitySpec.from_dict(amount)
+        if third and (fraction.rounding!='up' or effect.get('scope')!='all_active_players' or 'player' in effect):
+            raise ValueError('Third-life loss requires the complete all-player rounded-up result')
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     if 'scope' in effect:
@@ -36,6 +42,8 @@ def apply_life_loss(host, effect, *, actor, operation, reason):
     from collections.abc import Mapping
     from .life_effects import _apply_lose_life
 
+    if isinstance(effect.get('amount'),Mapping) and effect['amount'].get('kind')=='bound_per_player_public_query_life_loss_amount':
+        return _apply_lose_life(host,effect,actor=actor,operation=operation,reason=reason)
     if isinstance(effect.get('amount'), Mapping):
         return apply_fractional_life_loss(host, effect, actor=actor, operation=operation, reason=reason)
     return _apply_lose_life(host, effect, actor=actor, operation=operation, reason=reason)

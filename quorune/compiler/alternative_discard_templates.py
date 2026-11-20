@@ -1,6 +1,6 @@
 """Complete alternative-quality discard instructions and preceding draw."""
 from dataclasses import replace
-import re
+from . import regex_working_set as re
 from ..alternative_discard_model import AlternativeDiscardCountSpec,ALTERNATIVE_DISCARD_MECHANIC
 from ..object_predicate import ObjectQuerySpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS

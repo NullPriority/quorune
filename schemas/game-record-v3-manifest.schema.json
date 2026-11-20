@@ -154,6 +154,18 @@
           ],
           "type": "integer"
         },
+        "fetch_entry_placement_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "continuous_dependency_order_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "shield_counter_damage_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "departed_turn_boundary_version": {
           "const": 1,
           "type": "integer"

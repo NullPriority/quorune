@@ -97,6 +97,26 @@ class CardProgramTrustTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_registration_parses_once_for_default_trust_promotion(self):
+        from unittest.mock import patch
+        from quorune import oracle_ir
+
+        record = _bolt()
+        registry = SemanticRegistry()
+        with patch.object(
+            oracle_ir, "compile_oracle_card", wraps=oracle_ir.compile_oracle_card,
+        ) as compiler:
+            report = oracle_ir.register_generated_programs(
+                self.db,
+                registry,
+                (record,),
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+                promote_exact_effect_programs=True,
+            )
+        self.assertEqual(1, report["exact_effect_programs_promoted"])
+        self.assertEqual(1, compiler.call_count)
+
     def test_generated_program_exposes_capability_closed_intrinsic_basis(self):
         trust = self.bolt.trust_closure
         self.assertEqual("capability_closed", trust["trust_basis"])
@@ -232,6 +252,25 @@ class CardProgramTrustTests(unittest.TestCase):
             )
         )
 
+    def test_runtime_component_description_keeps_defensive_lists(self):
+        from unittest.mock import patch
+        from quorune.semantic_runtime.components import runtime_component_registries
+
+        registry = runtime_component_registries()[0]
+        inventory = registry.inventory()
+        expected = inventory[0]
+        expected_fingerprint = registry.fingerprint
+        handler_id = expected["handler_id"]
+        with patch.object(registry, "inventory", side_effect=AssertionError("Full inventory was built")):
+            description = registry.describe(handler_id)
+            self.assertEqual(expected, description)
+            description["rule_references"].append("fixture")
+            description["capability_dependencies"].clear()
+            self.assertEqual(expected, registry.describe(handler_id))
+            self.assertIsNone(registry.describe("fixture.missing.handler"))
+        self.assertEqual(inventory, registry.inventory())
+        self.assertEqual(expected_fingerprint, registry.fingerprint)
+
     def test_global_handler_and_component_inventory_is_capability_bound(self):
         status = runtime_component_status("commander_review")
         self.assertEqual(
@@ -318,6 +357,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.declaration_restriction",
                 "ability.static.declaration_restriction_component",
                 "ability.static.landwalk_block_permission",
+                "ability.static.bounded_block_as_though",
                 "ability.static.counter_prohibition",
                 "ability.static.defender_permission",
                 "ability.static.block_capacity",
@@ -357,6 +397,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.trigger.prowess",
                 "ability.trigger.renown",
                 "ability.trigger.storm",
+                "ability.trigger.commander_cast_copy",
                 "ability.trigger.training",
                 "ability.trigger.decayed",
                 "ability.trigger.ward",
@@ -376,6 +417,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.cost.modifier.self_public",
                 "casting.disguise.fixed_mana",
                 "casting.evoke.fixed_mana",
+                "casting.evoke.fixed_hand_exile",
                 "casting.flashback.fixed_mana",
                 "casting.kicker.fixed_mana",
                 "casting.kicker.fixed_nonmana",
@@ -391,6 +433,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "zone.change.self_graveyard_exile",
                 "casting.lifecycle.fixed_public",
                 "casting.lifecycle.cipher",
+                "casting.lifecycle.paradigm",
                 "continuous.ability.cipher_encoding",
                 "casting.madness.trigger",
                 "casting.megamorph.fixed_mana",
@@ -411,6 +454,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.commander_permanent_keywords",
                 "continuous.opponent_keyword_prohibition",
                 "continuous.attached.fixed_characteristics",
+                "continuous.attached.qualified_characteristics",
                 "continuous.attached.source_chosen_color_protection",
                 "continuous.soulbond.paired_grant",
                 "continuous.characteristics.fixed_public_state",
@@ -423,6 +467,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.fixed_subtype_composite_grant",
                 "continuous.ability.graveyard_conditional_grant",
                 "continuous.characteristics.fixed_public_setting",
+                "continuous.characteristics.fixed_nonowner_creature_modifier",
                 "continuous.characteristics.enchanted_player_query",
                 "continuous.ability.disjoint_negative_keyword_grant",
                 "continuous.control.attached_source",

@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..conditional_recipient_model import (
+    ATTACHED_CREATURE_CONDITION_SUBJECT, attached_creature_no_other_creatures_condition,
+)
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
     FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
@@ -302,6 +305,7 @@ class FixedPublicStateCharacteristicsHandler:
                 "target",
                 "modifier",
                 *({'recipient'} if 'recipient' in descriptor else ()),
+                *({'condition_subject'} if 'condition_subject' in descriptor else ()),
             },
             field="runtime handler",
         )
@@ -336,6 +340,16 @@ class FixedPublicStateCharacteristicsHandler:
             exclude_source,
             subject_types_all,
         ) = _validate_target(descriptor["target"], allow_permanent=allow_permanent)
+        if "condition_subject" in descriptor and (
+            self.handler_id != FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID
+            or descriptor["condition_subject"] != ATTACHED_CREATURE_CONDITION_SUBJECT
+            or "recipient" in descriptor
+            or target_kind != "attached" or subject_types_all != ("creature",)
+            or target_controller is not None or predicate is not None or exclude_source
+            or source_condition != attached_creature_no_other_creatures_condition()
+            or abilities != ("Intimidate",) or power or toughness or fragments
+        ):
+            raise SemanticNodeError("An attached-creature condition requires its exact Intimidate result")
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
             target_kind=target_kind,

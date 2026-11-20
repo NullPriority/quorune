@@ -38,6 +38,7 @@ class CharacteristicQuantityScope(str, Enum):
     CONTROLLER_LIFE_TOTAL = "controller_life_total"
     OPPONENT_POISON_COUNTERS = "opponent_poison_counters"
     ATTACHED_OBJECT = "attached_object"
+    CONTROLLER_COMMANDER_CAST_COUNT = "controller_commander_cast_count"
 
 
 class CharacteristicQuantityReduction(str, Enum):
@@ -77,6 +78,15 @@ class CharacteristicQuantitySpec:
     def __post_init__(self) -> None:
         self._validate_reduction_version()
         self._validate_scope_and_exclusions()
+        if self.schema_version == 8:
+            from .commander_cast_count_model import validate_commander_cast_quantity
+            try:
+                validate_commander_cast_quantity(self)
+            except ValueError as exc:
+                raise CharacteristicFragmentError(str(exc)) from exc
+            return
+        if self.scope is CharacteristicQuantityScope.CONTROLLER_COMMANDER_CAST_COUNT:
+            raise CharacteristicFragmentError("Commander cast counts require their explicit quantity version")
         if self.schema_version == 7:
             self._validate_named_count()
         if self.schema_version==5:
@@ -107,7 +117,7 @@ class CharacteristicQuantitySpec:
         self._validate_object_query()
 
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
@@ -345,7 +355,7 @@ class CharacteristicQuantitySpec:
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
             **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
-                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6, 7} else {}),
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6, 7, 8} else {}),
             **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
             **({"literal_name": self.literal_name} if self.schema_version == 7 else {}),
         }
@@ -374,7 +384,7 @@ class CharacteristicQuantitySpec:
                 "Characteristic quantities have a closed schema"
             )
         version = value.get("schema_version")
-        if ((version in {2, 3, 4, 5, 6, 7}) != ("reduction" in value)
+        if ((version in {2, 3, 4, 5, 6, 7, 8}) != ("reduction" in value)
                 or (version == 3) != ("terms" in value) or (version == 7) != ("literal_name" in value)):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
@@ -813,6 +823,10 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         if value.get('schema_version')==7 and {'scope','query','counter_name','exclude_source'}<=set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own=(*own,PUBLIC_NAMED_COUNT_CAPABILITY)
+        if value.get('schema_version') == 8 and {'scope','query','counter_name','exclude_source'} <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            from .commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
+            own = (*own, COMMANDER_CAST_COUNT_CAPABILITY)
         if value.get("kind") == "public_query_effect_amount":
             from .query_effect_amount_model import source_relative_count_capabilities
 
@@ -827,16 +841,9 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
                 own=(*own,'quantity_expression.current_player_value')
             if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
         if value.get('kind') == 'live_battlefield_quantity':
-            from .live_battlefield_quantity_model import (
-                LIVE_BATTLEFIELD_QUANTITY_CAPABILITY, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY,
-                LiveBattlefieldQuantitySpec,
-            )
-            from .object_predicate import object_query_capabilities
-
+            from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
             live = LiveBattlefieldQuantitySpec.from_dict(value)
-            own = (*own, LIVE_BATTLEFIELD_QUANTITY_CAPABILITY)
-            if live.schema_version == 2:
-                own = (*own, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY, *object_query_capabilities(live.query))
+            own = (*own, *live.capability_dependencies)
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
         from .initiative_model import dungeon_status_dependencies
         own = (*own, *dungeon_status_dependencies(value))

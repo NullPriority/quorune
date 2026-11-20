@@ -3,7 +3,7 @@ from __future__ import annotations
 """Dispatch keyword grammars that intrinsically emit multiple IR nodes."""
 
 from typing import Any
-import re
+from . import regex_working_set as re
 
 from .commander_pairing_nodes import partner_with_keyword_nodes
 from .madness_nodes import madness_keyword_nodes
@@ -17,6 +17,10 @@ from .ir_model import SourceSpan
 
 def multi_keyword_nodes(**values: Any):
     compile_sibling = values.pop('compile_single_keyword', None)
+    from .repeated_keyword_event_nodes import repeated_numeric_keyword_nodes
+    repeated = repeated_numeric_keyword_nodes(**values)
+    if repeated is not None:
+        return repeated
     if 'champion' in values['mechanics']:
         from .champion_nodes import champion_keyword_nodes
         champion = champion_keyword_nodes(**{key: values[key] for key in (

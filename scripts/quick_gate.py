@@ -98,6 +98,15 @@ def build_plan(
         ),
     ]
     if phase in {"normal", "pre-corpus"}:
+        if any(path.startswith(".github/workflows/") for path in paths):
+            steps.append(QuickStep(
+                "generated-workflow-contract",
+                (
+                    python, "-m", "unittest",
+                    "tests.test_generated_artifacts.GeneratedArtifactFinalizationTests."
+                    "test_broad_generated_ci_uses_the_canonical_finalizer_only",
+                ),
+            ))
         steps.extend(
             (
                 QuickStep("explicit-text-encoding", (python, "scripts/quick_gate.py", "--validate-text-io", "--changed-files-stdin"),

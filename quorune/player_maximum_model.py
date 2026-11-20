@@ -10,6 +10,7 @@ PLAYER_MAXIMUM_FACT='unique_player_maximum'
 PLAYER_MAXIMUM_REFERENCE='unique_player_maximum'
 OPPONENT_MORE_METRIC_FACT='opponent_has_greater_metric'
 OPPONENT_MORE_METRIC_CAPABILITY='condition.player.opponent_greater_metric'
+LAND_COUNT_MAXIMIZERS_REFERENCE = 'land_count_maximizers'
 
 
 @dataclass(frozen=True,slots=True)
@@ -37,6 +38,17 @@ class PlayerMaximumSpec:
                 or value['kind']!=PLAYER_MAXIMUM_REFERENCE or type(value['schema_version']) is not int or value['schema_version']!=1):
             raise ValueError('Unique player reference requires its closed metric and version')
         return cls(value['metric'])
+
+
+LAND_COUNT_METRIC = PlayerMaximumSpec("land_count")
+
+
+def land_count_maximizers_reference():
+    return {"kind": LAND_COUNT_MAXIMIZERS_REFERENCE, "schema_version": 1}
+
+
+def uses_land_count_maximizers(value):
+    return isinstance(value, Mapping) and value.get("kind") == LAND_COUNT_MAXIMIZERS_REFERENCE
 
 
 def validate_player_maximum_fact(*,schema_version,amount,parameter):

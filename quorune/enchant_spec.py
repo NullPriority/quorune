@@ -6,6 +6,7 @@ import hashlib
 from typing import Any, Mapping, TypeAlias
 
 from .target_forms import TargetCharacteristicForm
+from .enchant_public_state_model import EnchantPublicStateSpec
 from .target_numeric import (
     TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison,
 )
@@ -206,9 +207,10 @@ class TypedEnchantSpec:
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     mana_value_max: int | None = None
     keywords_none: tuple[str, ...] = ()
+    public_state: EnchantPublicStateSpec | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {2, 3, 4}:
             raise AuraRuleError("Unsupported typed Enchant schema version")
         self._validate_fixed_characteristic()
         if not isinstance(self.subject, AuraEnchantSubject):
@@ -299,7 +301,24 @@ class TypedEnchantSpec:
                 "Graveyard-card Enchant restrictions do not use controller relation"
             )
 
+    def _validate_public_state(self) -> None:
+        if not isinstance(self.public_state, EnchantPublicStateSpec):
+            raise AuraRuleError('Public-state Enchant requires one typed qualification')
+        if (self.subject is not AuraEnchantSubject.PERMANENT
+                or self.controller_relation is not AuraControllerRelation.ANY
+                or self.player_relation is not AuraControllerRelation.ANY
+                or self.types_all != self.public_state.types_all or self.commander is not None
+                or any((self.types_any, self.types_none, self.subtypes_any, self.subtypes_none,
+                    self.supertypes_any, self.colors_any, self.colors_none, self.characteristic_forms_any, self.keywords_none))
+                or self.numeric_characteristic is not None or self.mana_value_max is not None):
+            raise AuraRuleError('Public-state Enchant has one closed unrestricted creature or land domain')
+
     def _validate_fixed_characteristic(self) -> None:
+        if self.schema_version == 4:
+            self._validate_public_state()
+            return
+        if self.public_state is not None:
+            raise AuraRuleError('Legacy Enchant versions cannot carry public-state qualification')
         fields = (self.numeric_characteristic is not None,
             self.mana_value_max is not None, bool(self.keywords_none))
         if self.schema_version == 2:
@@ -377,6 +396,8 @@ class TypedEnchantSpec:
                 schema['mana_value_max'] = self.mana_value_max
             if self.keywords_none:
                 schema['keywords_none'] = list(self.keywords_none)
+        if self.schema_version == 4:
+            schema.update(self.public_state.target_fields())
         return schema
 
     def to_dict(self) -> dict[str, Any]:
@@ -402,6 +423,8 @@ class TypedEnchantSpec:
             value.update(numeric_characteristic=(self.numeric_characteristic.to_dict()
                 if self.numeric_characteristic is not None else None),
                 mana_value_max=self.mana_value_max, keywords_none=list(self.keywords_none))
+        if self.schema_version == 4:
+            value['public_state'] = self.public_state.to_dict()
         return value
 
     @classmethod
@@ -424,6 +447,8 @@ class TypedEnchantSpec:
         }
         if isinstance(value, Mapping) and value.get('schema_version') == 3:
             expected |= {'numeric_characteristic', 'mana_value_max', 'keywords_none'}
+        if isinstance(value, Mapping) and value.get('schema_version') == 4:
+            expected |= {'public_state'}
         if not isinstance(value, Mapping) or set(value) != expected:
             raise AuraRuleError("Typed Enchant values have a closed schema")
         if value['schema_version'] == 3 and not isinstance(value['keywords_none'], (list, tuple)):
@@ -477,6 +502,7 @@ class TypedEnchantSpec:
                 if value.get('numeric_characteristic') is not None else None),
             mana_value_max=value.get('mana_value_max'),
             keywords_none=tuple(value.get('keywords_none', ())),
+            public_state=(EnchantPublicStateSpec.from_dict(value['public_state']) if value.get('schema_version') == 4 else None),
         )
 
     @property

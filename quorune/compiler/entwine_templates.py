@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-import re
+from . import regex_working_set as re
 
 from ..entwine_model import ENTWINE_FIXED_MECHANIC,EntwineModeCost
 from ..util import mana_cost_to_vector,stable_json

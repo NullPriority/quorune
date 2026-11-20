@@ -695,7 +695,7 @@ class CohortPrefilterTests(unittest.TestCase):
                 measurements.build_work_selection_cohort_measurements(**builder_arguments)
         self.assertIsNone(compilation._COMPILATIONS.get())
         self.assertIsNone(_VALIDATION_REGISTRY.get())
-        with mock.patch('quorune.rules.evidence.load_capability_evidence_index',
+        with mock.patch('quorune.rules.evidence.validate_capability_evidence_index',
                         side_effect=CapabilityEvidenceError("changed evidence")):
             with self.assertRaisesRegex(CapabilityEvidenceError, "changed evidence"):
                 with compilation.cohort_compilation_snapshot():
@@ -3767,6 +3767,8 @@ class RulesSchedulerTests(unittest.TestCase):
             "Sacrifice a Forest or Plains: Draw a card.",
             "Exile a card from your graveyard: Draw a card.",
             "Sacrifice another creature: Add {B}.",
+            "Sacrifice a creature with defender: Draw a card.",
+            "Sacrifice a creature with defender: Add {B}.",
         ):
             with self.subTest(source=source):
                 self.assertTrue(
@@ -3783,11 +3785,11 @@ class RulesSchedulerTests(unittest.TestCase):
             "Sacrifice an artifact or another creature: Draw a card.",
             "Sacrifice another creature or token: Draw a card.",
             "Sacrifice another creature or Vehicle: Draw a card.",
-            "Sacrifice a creature with defender: Draw a card.",
+            "Sacrifice a creature with defender or flying: Draw a card.",
             "Sacrifice a modified creature: Draw a card.",
             "Sacrifice this creature, Sacrifice another creature: Draw a card.",
             "{W/U}, Sacrifice another creature: Draw a card.",
-            "Sacrifice a creature with defender: Add {B}.",
+            "Sacrifice a creature with defender or flying: Add {B}.",
         ):
             with self.subTest(source=source):
                 self.assertFalse(

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Normalize a current-player quantity only after its subject was bound."""
 
-import re
+from . import regex_working_set as re
 
 
 def event_result_instruction(subject, verb, body):

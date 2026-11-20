@@ -188,6 +188,58 @@ class CompactDependencyArtifactTests(unittest.TestCase):
         self.assertEqual(1, summary["fixture_count"])
         self.assertEqual(converted, {path: path.read_bytes() for path in converted})
 
+    def test_pre_push_reuses_only_exact_compact_bundle_evidence(self):
+        from scripts.compact_ci_report import (
+            current_dependency_report_receipt,
+            remember_bundled_dependency_artifact,
+        )
+
+        complete = current_dependency_report_receipt(root=self.root)
+        remember_bundled_dependency_artifact(root=self.root, input_fingerprint="0" * 64)
+        cache = self.root / "local/generated-owner-cache/compact-ci-card-dependencies"
+        self.assertFalse(cache.exists())
+        with mock.patch.object(
+            database_builder, "build_dependency_report", wraps=build_dependency_report,
+        ) as audit:
+            self.assertTrue(self.cli("--reuse-local-artifact")["closed"])
+            audit.assert_called_once_with(root=self.root)
+
+        remember_bundled_dependency_artifact(root=self.root, input_fingerprint=complete.input_fingerprint)
+        with mock.patch.object(
+            database_builder, "build_dependency_report",
+            side_effect=AssertionError("Exact receipt should perform verification only"),
+        ):
+            self.assertTrue(self.cli("--reuse-local-artifact")["closed"])
+
+        artifact = cache / complete.input_fingerprint
+        stored = artifact / COMPACT_CI_REPORT_PATH
+        stored.write_bytes(stored.read_bytes() + b"\n")
+        with mock.patch.object(
+            database_builder, "build_dependency_report", wraps=build_dependency_report,
+        ) as audit:
+            self.assertTrue(self.cli("--reuse-local-artifact")["closed"])
+            audit.assert_called_once_with(root=self.root)
+
+    def test_stale_local_report_falls_back_before_cache_key_resolution(self):
+        from scripts import compact_ci_report
+
+        current = compact_ci_report.current_dependency_report_receipt(root=self.root)
+        compact_ci_report.remember_bundled_dependency_artifact(
+            root=self.root, input_fingerprint=current.input_fingerprint,
+        )
+        self.source.write_text("Changed tracked source\n", encoding="utf-8")
+        with (
+            mock.patch.object(
+                compact_ci_report, "_dependency_artifact_owner",
+                side_effect=AssertionError("Stale report reached owner-key resolution"),
+            ),
+            mock.patch.object(
+                database_builder, "build_dependency_report", wraps=build_dependency_report,
+            ) as audit,
+        ):
+            self.assertTrue(self.cli("--reuse-local-artifact")["closed"])
+            audit.assert_called_once_with(root=self.root)
+
     def test_compact_artifact_rejects_changed_declared_inputs_and_upstream_outputs(self):
         self.cli("--emit-artifact", str(self.artifact))
         for path in (self.root / "tests/test_fixture.py", self.upstream):
@@ -331,11 +383,16 @@ class DependencySyntaxScopeTests(unittest.TestCase):
             scope = owner.DependencySourceScope()
             parse = ast.parse
             inventory = owner._function_inventory
-            with mock.patch('scripts.source_syntax.ast.parse', wraps=parse) as parser, mock.patch.object(owner, '_function_inventory', wraps=inventory) as functions:
+            with (
+                mock.patch('scripts.source_syntax.ast.parse', wraps=parse) as parser,
+                mock.patch.object(owner, '_function_inventory', wraps=inventory) as functions,
+                mock.patch.object(owner, '_wrapper_inventory', wraps=owner._wrapper_inventory) as wrappers,
+            ):
                 first, first_dynamic, first_errors = owner.discover_module_requirements('test_first', root=root, sources=scope)
                 second, second_dynamic, second_errors = owner.discover_module_requirements('test_second', root=root, sources=scope)
                 self.assertEqual(3, parser.call_count)
                 self.assertEqual(3, functions.call_count)
+                self.assertEqual(3, wrappers.call_count)
             self.assertEqual([], list(first_errors + second_errors))
             self.assertEqual([], list(first_dynamic + second_dynamic))
             self.assertEqual({'First Card'}, {row.value for row in first})

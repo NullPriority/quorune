@@ -250,6 +250,14 @@ operational state from the Git common directory; timestamps never authorize
 claim theft. Both developers continue card work, while only the publisher
 controls publication, full generation, protected merges and release blockers.
 
+Keep development integration available throughout certification. Either developer
+holding the relevant output and integration claims may use the existing writer
+for a narrow development refresh with its inputs protected for the entire run.
+Release central claims after committing a coherent integration. Candidate
+ownership does not reserve the development registry, evidence declarations,
+fixture manifests or evidence index. A narrow owned refresh does not require a
+checkout-wide pause; full generation and checkout-wide mutations still do.
+
 At a delivery boundary, freeze briefly, commit a coherent source checkpoint and
 record its cut point. Establish that checkpoint on a separate candidate ref in
 Slot A; Git must never check out the development branch twice. Generation and
@@ -261,15 +269,15 @@ once across the combined batch; there is no per-developer delivery quota.
 
 Publish according to readiness and risk. Card-support pull requests add at
 least 500 net distinct capability-closed cards and retain every certification
-requirement. Correct family defects before publishing that family. Consolidate
-independent defects when warranted and keep unrelated card production moving.
+requirement. Correct family defects before publishing that family; consolidate
+independent defects when warranted without holding unrelated card production.
 
 Aim for approximately 80% of active effort on reusable card/effect implementation
 and focused behavioral evidence, and 20% on independent defects, publication,
 coordination and measured delivery improvements. Use unused defect capacity for
 cards. Verified correctness, privacy, security and replay failures take priority.
-Measure retained whole-card gains per elapsed day and active development hour.
-Report active hours and effort allocation only when session evidence supports them.
+Measure retained whole-card gains per elapsed day and active development hour;
+report active hours and effort allocation only when session evidence supports them.
 
 Each developer keeps one active family and an independent next candidate. After
 focused work and owned changes are committed, release completed claims and select
@@ -521,10 +529,12 @@ the right owners, downstream-only changes leave unrelated upstream work valid,
 failed or incomplete computation is never reused, and bounded cold and cached
 outputs agree. Cold validation is periodic or policy-change-triggered rather
 than duplicated on every expensive pull-request run.
-The pinned database is also cached from its snapshot and builder inputs, then
-validated by SQLite integrity, schema, and row cardinalities before use. The
-workflow has read-only repository permissions and never commits or opens a pull
-request. On `main`, assembled output bytes must match the merge.
+The pinned database cache key binds its rules snapshot, database builder, and
+validation code. Owner planning has a separate input identity. Before reuse,
+the database must pass SQLite integrity checks and match the manifest's
+schema version, source archive digests, and actual card and ruling counts.
+The workflow has read-only repository permissions. On `main`, assembled
+output bytes must match the merge.
 
 Each owner checks only its own completed output. Workflow `needs` edges and
 downloaded owner artifacts supply upstream state; the final bundle check is the
@@ -638,8 +648,11 @@ not its observed counts or frontier fingerprint.
 An unmerged feature retains its transition ID across compiler revisions so its
 original base-frontier identity remains available. A changed measurement
 contract uses a new registered probe version while retaining the previous
-version for historical receipts. The cohort owner then measures the corrected
-programs against that original frontier instead of reusing the older bound.
+version for historical receipts. A local write without a pinned database reports
+a changed cohort probe ID before running any owner writers. Supply the pinned
+database with `--db` so the finalizer can refresh the cohort measurement.
+The cohort owner then measures the corrected programs against that original
+frontier instead of reusing the older bound.
 The current attached-quote probe uses the compiler's material line and requires
 one exact activation, mana ability, or trigger inside the attachment shell.
 Upgrading an unpublished legacy prediction to generated measurement preserves
@@ -737,12 +750,13 @@ Use `--check` for read-only diagnosis and in CI; a successful `--write` already
 performs that verification, so do not run both commands consecutively.
 
 If a full database-backed write fails at a later registered owner, correct the
-source problem and use `--resume-from <generator-id>` only when the correction
-cannot affect earlier owners. The canonical coordinator reruns that owner and
-all descendants, then performs every normal freshness and policy check. This
+source problem and use `--resume-from <generator-id>` when earlier unselected
+owners remain current. Repeat the flag for affected owners with independent
+dependency roots. The canonical coordinator reruns the named owners and their
+descendants, then performs every normal freshness and policy check. This
 avoids repeating the expensive corpus while preserving dependency and final
-verification guarantees; do not invoke individual writers by hand. The normal
-first run and pre-push hook never use resume mode.
+verification guarantees. Use the canonical coordinator for these recoveries.
+The normal first run and pre-push hook use complete writes.
 
 The final verification phase includes the architecture policy validator, not
 only generated-file freshness. This closes the failure mode where every report
@@ -805,8 +819,9 @@ the change-impact policy makes PR planning fail before any matrix job can run.
 These references are checked before test collection and dependency inspection.
 Partition validation also checks explicit ability identities in semantic-program
 fixtures and imported helper `TestCase` aliases. These checks share immutable
-per-module syntax facts. Every request reads the current UTF-8 source and checks
-directory membership, the supplied partition, and cross-module imports. Equal source content and analysis policy may reuse one of at
+per-module syntax facts. Every request still reads the current UTF-8 source;
+directory membership, the supplied partition, and cross-module imports are
+checked each time. Equal source content and analysis policy may reuse one of at
 most 2,048 retained summaries within the process. The summaries contain no
 mutable AST nodes or cached partition verdicts. Source changes, including changes
 that preserve file size and timestamp, and changed parser or analysis policy
@@ -881,11 +896,13 @@ database builder. The generated
 current identities, owners, source provenance, and per-shard closure; they do
 not duplicate card payloads.
 
-One dependency report reuses each source file's immutable local import edges,
-syntax, function inventories, database assignments, and constant environments. Inherited database modes, wrapper resolution, requirements and
+One dependency report reuses immutable facts for each source file: local import
+edges, syntax, function inventories, database assignments and constant
+environments. Inherited database modes, wrapper resolution, requirements and
 provenance remain specific to each consuming module. A new report creates a
-fresh scope and observes changed, added, removed or malformed helpers. The cache lasts for one build. Every report checks fixture, declaration, alias,
-and shard closure.
+fresh scope and observes changed, added, removed or malformed helpers. These
+caches last for one build and do not replace the fixture, declaration, alias or
+shard closure checks.
 
 Pull-request planning runs this validation before functional matrices are
 released, and Windows, main-smoke, nightly, quick-gate, local-gate, and
@@ -901,7 +918,9 @@ the exact committed report content, and the transferred file hashes before
 building its isolated compact database. The Windows generated-validation shard
 independently rebuilds and compares the full report. The Windows compatibility,
 main-smoke, nightly, and local validation paths continue to run their existing
-closure checks.
+closure checks. After installing a verified cloud bundle, pre-push can reuse its
+compact dependency artifact when the source, owner inputs, and installed report
+bytes match. A missing or invalid proof triggers the full closure check.
 
 During local generated finalization, a later stabilization pass can reuse
 its compact dependency write after checking the source tree, upstream owner

@@ -25,6 +25,7 @@ ACTIVATION_GENERIC_COST_HANDLER = 'modification.activation-cost.fixed-generic.v1
 ACTIVATION_GENERIC_COST_EVENT = 'activation.mana_cost.modify'
 ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY = 'activation.mana_cost.ability_local_public_count'
 ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY = 'activation.mana_cost.ability_local_public_value'
+OPPONENT_CONTROLLED_ACTIVATION_CAPABILITY = 'activation.mana_cost.opponent_controlled_count'
 MANA_KEYS = ('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C')
 
 
@@ -68,6 +69,34 @@ class ConditionalActivationReduction:
                 or type(value['schema_version']) is not int or value['schema_version'] != 1):
             raise ValueError('Conditional activation reduction fields are incomplete or unknown')
         return cls(value['generic'], FixedPublicStateConditionSpec.from_dict(value['condition']))
+
+
+@dataclass(frozen=True, slots=True)
+class OpponentControlledActivationReduction:
+    """One opponent individually controls enough current nonbasic lands."""
+    generic: int
+    minimum: int
+    opponent_controlled_query: ObjectQuerySpec = ObjectQuerySpec(
+        zones=('battlefield',), types_all=('land',), excluded_supertypes=('basic',))
+
+    def __post_init__(self):
+        if (type(self.generic) is not int or self.generic < 1
+                or type(self.minimum) is not int or not 1 <= self.minimum <= 10
+                or self.opponent_controlled_query != ObjectQuerySpec(
+                    zones=('battlefield',), types_all=('land',), excluded_supertypes=('basic',))):
+            raise ValueError('Opponent activation reduction requires its closed nonbasic-land threshold')
+
+    def to_dict(self):
+        return {'schema_version': 4, 'generic': self.generic, 'minimum': self.minimum,
+                'opponent_controlled_query': self.opponent_controlled_query.to_dict()}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (not isinstance(value, Mapping)
+                or set(value) != {'schema_version', 'generic', 'minimum', 'opponent_controlled_query'}
+                or type(value['schema_version']) is not int or value['schema_version'] != 4):
+            raise ValueError('Opponent activation reduction requires its complete version-four fields')
+        return cls(value['generic'], value['minimum'], ObjectQuerySpec.from_dict(value['opponent_controlled_query']))
 
 
 @dataclass(frozen=True, slots=True)
@@ -115,11 +144,13 @@ class AbilityLocalPublicManaAdjustment:
 
 
 AbilityLocalManaReduction = (CharacteristicQuantitySpec | ConditionalActivationReduction
-    | PublicCharacteristicAggregateSpec | AbilityLocalPublicManaAdjustment | TargetActivationReduction)
+    | PublicCharacteristicAggregateSpec | AbilityLocalPublicManaAdjustment | TargetActivationReduction
+    | OpponentControlledActivationReduction)
 
 
 def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -> None:
-    if isinstance(quantity, (ConditionalActivationReduction, AbilityLocalPublicManaAdjustment, TargetActivationReduction)):
+    if isinstance(quantity, (ConditionalActivationReduction, AbilityLocalPublicManaAdjustment,
+                             TargetActivationReduction, OpponentControlledActivationReduction)):
         return
     if isinstance(quantity, PublicCharacteristicAggregateSpec):
         if quantity.schema_version != 1 or quantity.controller_relation != 'source_controller':
@@ -141,7 +172,9 @@ def validate_ability_local_mana_reduction(quantity: AbilityLocalManaReduction) -
 def ability_local_mana_reduction_from_dict(value: Mapping[str, Any]) -> AbilityLocalManaReduction:
     if not isinstance(value, Mapping):
         raise ValueError('Ability-local mana reduction must be a descriptor')
-    if 'target_metric' in value:
+    if 'opponent_controlled_query' in value:
+        reduction = OpponentControlledActivationReduction.from_dict(value)
+    elif 'target_metric' in value:
         reduction = TargetActivationReduction.from_dict(value)
     elif 'direction' in value or 'mana' in value:
         reduction = AbilityLocalPublicManaAdjustment.from_dict(value)
@@ -156,11 +189,16 @@ def ability_local_mana_reduction_from_dict(value: Mapping[str, Any]) -> AbilityL
 
 
 def ability_local_reduction_origin_is_supported(zones, discard_source, reduction) -> bool:
+    if isinstance(reduction, OpponentControlledActivationReduction):
+        return zones == ('graveyard',) and discard_source is False
     return (zones == ('battlefield',) or zones == ('hand',) and discard_source is True
             and _controlled_battlefield_count(reduction) and not reduction.exclude_source)
 
 
 def ability_local_mana_reduction_capabilities(reduction: AbilityLocalManaReduction, zone: str) -> tuple[str, ...]:
+    if isinstance(reduction, OpponentControlledActivationReduction):
+        return tuple(sorted({OPPONENT_CONTROLLED_ACTIVATION_CAPABILITY, ABILITY_LOCAL_PUBLIC_VALUE_CAPABILITY,
+                             *object_query_capabilities(reduction.to_dict())}))
     if isinstance(reduction, TargetActivationReduction):return (TARGET_ACTIVATION_VALUE_CAPABILITY,)
     if isinstance(reduction, CharacteristicQuantitySpec) and zone == 'battlefield':
         return (ABILITY_LOCAL_MANA_REDUCTION_CAPABILITY,)

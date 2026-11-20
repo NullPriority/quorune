@@ -7,6 +7,8 @@ from ..replacement.immutable import FrozenMap
 from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
 from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
+from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD
+from ..rules.ripple import RIPPLE_FIELD
 from ..semantic_runtime.intents import (
     CreateTokenIntent,
     LifeChangeIntent,
@@ -51,13 +53,28 @@ class PublicObjectChoiceHandler:
         "_maximum",
         "_stack_label",
         CONTROLLED_RETURN_FIELD,
+        BOUNDED_HAND_CAST_FIELD,
+        RIPPLE_FIELD,
+        "cast_snapshot",
+        "ripple_state",
+        "demonstrate",
+        "demonstrate_state",
+        "gravestorm",
+        "_gravestorm_copies",
+        "copy_source",
+        "player",
+        "_options_fingerprint",
         "_return_candidates",
     )
-    private_data: tuple[str, ...] = ()
+    private_data: tuple[str, ...] = ("actor hand casting options",)
     projected_fields: tuple[str, ...] = (
         "prompt",
         "objects",
         "legal_actions.choice_schema.legal_refs",
+        "cast_options",
+        "legal_actions.choice_schema.legal_values",
+        "legal_actions.choice_schema.cast_options",
+        "legal_actions.choice_schema.cast_options_when",
     )
     mutation_path: tuple[str, ...] = (
         "MoveObjectsSimultaneouslyIntent",
@@ -72,6 +89,18 @@ class PublicObjectChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if 'gravestorm' in effect:
+            from .gravestorm import prepare_gravestorm
+            return prepare_gravestorm(effect,context)
+        if 'demonstrate' in effect:
+            from .demonstrate import prepare_demonstrate
+            return prepare_demonstrate(effect,context)
+        if RIPPLE_FIELD in effect:
+            from .ripple import prepare_ripple
+            return prepare_ripple(effect,context)
+        if BOUNDED_HAND_CAST_FIELD in effect:
+            from .bounded_hand_cast import prepare_bounded_hand_cast
+            return prepare_bounded_hand_cast(effect, context)
         if CAPTURED_DRAW_CAST_FIELD in effect:
             from .captured_draw_cast import prepare_captured_draw_cast
             return prepare_captured_draw_cast(effect, context)
@@ -154,6 +183,17 @@ class PublicObjectChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if 'gravestorm' in effect:
+            raise SemanticChoiceError('Gravestorm delegates choices to its canonical copy instructions')
+        if 'demonstrate' in effect:
+            from .demonstrate import complete_demonstrate
+            return complete_demonstrate(continuation,response,query)
+        if RIPPLE_FIELD in effect:
+            from .ripple import complete_ripple
+            return complete_ripple(continuation,response,query)
+        if BOUNDED_HAND_CAST_FIELD in effect:
+            from .bounded_hand_cast import complete_bounded_hand_cast
+            return complete_bounded_hand_cast(continuation, response, query)
         if CAPTURED_DRAW_CAST_FIELD in effect:
             from .captured_draw_cast import complete_captured_draw_cast
             return complete_captured_draw_cast(continuation, response, query)
@@ -292,7 +332,7 @@ class SpringheartLandfallChoiceHandler:
             quantity=1,
             characteristics=FrozenMap(
                 {
-                    "type_line": "Token Creature — Insect",
+                    "type_line": "Token Creature â€” Insect",
                     "colors": ["G"],
                     "power": "1",
                     "toughness": "1",

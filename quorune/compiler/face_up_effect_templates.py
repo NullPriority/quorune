@@ -1,5 +1,5 @@
 """One targeted face-down creature receives an ordinary face-up instruction."""
-import re
+from . import regex_working_set as re
 from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC,face_up_instruction,face_up_target_schema
 
 

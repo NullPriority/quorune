@@ -109,6 +109,11 @@ def _fixed_characteristic_enchant(restriction: str) -> TypedEnchantSpec | None:
 def parse_typed_enchant_line(line: str) -> TypedEnchantSpec | None:
     """Parse closed player, public-card, and characteristic restrictions."""
 
+    from ..compiler.enchant_public_state_templates import parse_enchant_public_state_requirement
+    public_state = parse_enchant_public_state_requirement(line)
+    if public_state is not None:
+        return TypedEnchantSpec(subject=AuraEnchantSubject.PERMANENT, types_all=public_state.types_all,
+            schema_version=4, public_state=public_state)
     restriction = enchant_restriction_text(line)
     if restriction is None:
         return None

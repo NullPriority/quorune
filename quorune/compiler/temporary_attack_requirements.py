@@ -1,6 +1,6 @@
 """Compile complete single-creature attack-if-able instructions for this turn."""
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from ..temporary_attack_requirement_model import TemporaryAttackRequirementSpec
 
 

@@ -23,7 +23,7 @@ from ..semantic_runtime.cast_costs import (
     evoke_handler_descriptor,
     improvise_handler_descriptor,
 )
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capability_gate, explicit_capabilities_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 
 
@@ -206,6 +206,23 @@ def fixed_mana_evoke_keyword_node(
 ) -> OracleNode | None:
     if mechanics != (EVOKE_MECHANIC_ID,):
         return None
+    from ..hand_exile_evoke_model import compile_hand_exile_evoke, HAND_EXILE_EVOKE_DEPENDENCIES
+    from ..semantic_runtime.cast_costs import hand_exile_evoke_handler_descriptor
+    hand_spec = compile_hand_exile_evoke(material_line=material_line, oracle_line=line, line_index=span.line - 1)
+    if hand_spec is not None:
+        gate = explicit_capabilities_gate(HAND_EXILE_EVOKE_DEPENDENCIES,
+            capability_registry=capability_registry, capability_profile=capability_profile)
+        residual_ids = (append_residual(residuals, kind="dependency_contract", text=line, span=span,
+            reason="Hand-exile Evoke requires its typed casting authority", blockers=gate.blockers),) if gate.blockers else ()
+        closure = gate.closure
+        return OracleNode(node_id=node_id, kind="keyword_ability", text=line, span=span,
+            active_zone="stack", event="cast.cost", lowerable=True, exact=not residual_ids,
+            template_id="fixed-hand-exile-evoke-v1", handlers=(hand_exile_evoke_handler_descriptor(hand_spec),),
+            runtime_coverage=("fixed_hand_exile_evoke_alternate_cost","shared_evoke_sacrifice_trigger"),
+            mechanics=(EVOKE_MECHANIC_ID,), residual_ids=residual_ids, capability_dependencies=gate.capabilities,
+            capability_closure=closure.reachable if closure is not None else (),
+            capability_profile=closure.profile if closure is not None else None,
+            capability_fingerprint=closure.fingerprint if closure is not None else None)
     spec = compile_fixed_mana_evoke(
         material_line=material_line,
         oracle_line=line,

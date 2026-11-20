@@ -27,6 +27,109 @@ class CharacteristicReadFrameTests(unittest.TestCase):
             calls.clear();self.assertEqual(expected,catalog.build_priority_action_catalog(host,'A'));self.assertEqual([1],calls)
             value['power']=4;catalog.build_priority_action_catalog(host,'A');self.assertEqual([1,4],calls)
 
+    def test_oracle_program_reads_keep_order_and_observe_registry_changes(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        from quorune.semantics import SemanticProgram, SemanticRegistry
+
+        registry = SemanticRegistry(include_builtin_packs=False)
+        host = SimpleNamespace(semantics=registry)
+        oracle = "fixture-oracle"
+        first = registry.put(SemanticProgram(key="z", label="First", oracle_id=oracle, ability_id="fixture:oracle-read-first"))
+        second = registry.put(SemanticProgram(key="a", label="Second", oracle_id=oracle, ability_id="fixture:oracle-read-second"))
+
+        class CountedPrograms(dict):
+            scans = 0
+
+            def values(self):
+                self.scans += 1
+                return super().values()
+
+        programs = CountedPrograms(registry._programs)
+        registry._programs = programs
+        with characteristic_read_frame(host):
+            result = registry.programs_for_oracle(oracle)
+            self.assertEqual([first, second], result)
+            result.clear()
+            self.assertEqual([first, second], registry.programs_for_oracle(oracle, active_zone="stack"))
+            self.assertEqual(1, programs.scans)
+            first.event = "fixture_event"
+            self.assertEqual([first], registry.programs_for_oracle(oracle, event="fixture_event"))
+            self.assertEqual([], registry.programs_for_oracle([]))
+            with characteristic_read_frame(object()):
+                registry.remove(first.key)
+            self.assertEqual([second], registry.programs_for_oracle(oracle))
+            replacement = registry.put(SemanticProgram(key="a", label="Replacement", oracle_id=oracle, ability_id="fixture:oracle-read-second"))
+            self.assertIs(replacement, registry.programs_for_oracle(oracle)[0])
+            with tempfile.TemporaryDirectory() as folder:
+                path = Path(folder) / "programs.json"
+                path.write_text(json.dumps({"schema_version": 3, "programs": [first.to_dict()]}), encoding="utf-8")
+                registry.load_packs([path])
+                self.assertEqual([replacement, first], registry.programs_for_oracle(oracle))
+                registry.path = path
+                path.write_text(json.dumps({"include_builtin_packs": False, "programs": {"z": first.to_dict()}}), encoding="utf-8")
+                registry.load()
+                self.assertEqual([first], registry.programs_for_oracle(oracle))
+        loaded = registry.get("z")
+        self.assertIsNotNone(loaded)
+        loaded.oracle_id = "other-oracle"
+        self.assertEqual([], registry.programs_for_oracle(oracle))
+        self.assertEqual([loaded], registry.programs_for_oracle("other-oracle"))
+
+    def test_card_rows_do_not_share_metadata_or_survive_connection_changes(self):
+        import tempfile
+        from pathlib import Path
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from scripts.build_test_database import build_fixture_database
+
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "cards.sqlite3"
+            build_fixture_database([ROOT / "tests/fixtures/per-player-trigger-composition-cards.json"], path)
+            with CardDatabase(path) as database:
+                def read():
+                    return database.by_oracle_id("00000000-0000-4000-8000-000000005414")
+
+                queries = []
+                def trace(sql):
+                    if sql.startswith("SELECT * FROM cards WHERE oracle_id"):
+                        queries.append(sql)
+
+                database.connection.set_trace_callback(trace)
+                host = SimpleNamespace(card_db=database)
+                with characteristic_read_frame(host):
+                    first = read()
+                    first.raw["fixture_field"] = ["edited"]
+                    first.legalities["fixture_format"] = "edited"
+                    second = read()
+                    self.assertEqual(1, len(queries))
+                    self.assertIsNot(first, second)
+                    self.assertNotIn("fixture_field", second.raw)
+                    self.assertNotIn("fixture_format", second.legalities)
+                    database.connection.execute(
+                        "UPDATE cards SET name = ? WHERE oracle_id = ?",
+                        ("Temporary name", second.oracle_id),
+                    )
+                    self.assertEqual("Temporary name", read().name)
+                    database.connection.rollback()
+                    self.assertEqual(second.name, read().name)
+                    database.connection.execute(
+                        "UPDATE cards SET name = ? WHERE oracle_id = ?",
+                        ("Current name", second.oracle_id),
+                    )
+                    database.connection.commit()
+                    self.assertEqual("Current name", read().name)
+                    database.close()
+                    database.connection.set_trace_callback(trace)
+                    reads_before = len(queries)
+                    self.assertEqual("Current name", read().name)
+                    self.assertEqual(reads_before + 1, len(queries))
+                reads_before = len(queries)
+                read()
+                read()
+                self.assertEqual(reads_before + 2, len(queries))
+
     def test_prospective_identity_cannot_be_reused_inside_a_frame_and_is_released_afterward(self):
         class Prospective:
             pass

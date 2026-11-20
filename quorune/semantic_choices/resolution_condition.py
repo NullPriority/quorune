@@ -36,6 +36,9 @@ class PublicResolutionConditionHandler:
     test_modules: tuple[str, ...] = ("tests.test_resolution_public_conditions",)
 
     def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        if effect.get('schema_version') == 18:
+            from .paid_alternative_cast import prepare_paid_alternative_result
+            return prepare_paid_alternative_result(effect,context)
         if effect.get('schema_version') == 17:
             from .target_replacements import prepare_current_target_replacement
             return prepare_current_target_replacement(effect, context)

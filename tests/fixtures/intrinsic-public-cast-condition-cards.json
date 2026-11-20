@@ -1,0 +1,702 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Feast of Blood",
+      "oracle_id": "fed05740-01b2-4c7a-8b97-55e64837c07f",
+      "oracle_text": "Cast this spell only if you control two or more Vampires.\nDestroy target creature. You gain 4 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-10-02",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Grim Wanderer",
+      "oracle_id": "614feadd-b74f-4d9c-a0a3-3a63724956af",
+      "oracle_text": "Flash\nTragic Backstory \u2014 Cast this spell only if a creature died this turn.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Goblin Warlock"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Bear"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Murder",
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Swamp"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{U}{U}",
+          "name": "Twice Upon a Time",
+          "oracle_text": "Cast this spell only if you control two or more Doctors.\nTake an extra turn after this one. Exile Twice Upon a Time.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{U}",
+          "name": "Unlikely Meeting",
+          "oracle_text": "Search your library for a Doctor card, reveal it, put it into your hand, then shuffle.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery \u2014 Adventure"
+        }
+      ],
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "adventure",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}{U} // {2}{U}",
+      "name": "Twice Upon a Time // Unlikely Meeting",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "oracle_text": "Twice Upon a Time: Cast this spell only if you control two or more Doctors.\nTake an extra turn after this one. Exile Twice Upon a Time.\n//\nUnlikely Meeting: Search your library for a Doctor card, reveal it, put it into your hand, then shuffle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-10-13",
+      "toughness": null,
+      "type_line": "Sorcery // Sorcery \u2014 Adventure"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Vampire Neonate",
+      "oracle_id": "c0045925-25bf-403c-b721-5f05ba30985b",
+      "oracle_text": "{2}, {T}: Each opponent loses 1 life and you gain 1 life.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "3",
+      "type_line": "Creature \u2014 Vampire"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Changeling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Universal Automaton",
+      "oracle_id": "d50b1d2e-1825-432a-ab73-068fdc356f50",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": "1",
+      "type_line": "Artifact Creature \u2014 Shapeshifter"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Song of the Dryads",
+      "oracle_id": "7c3944fa-7c86-4979-85a9-86196aa94594",
+      "oracle_text": "Enchant permanent\nEnchanted permanent is a colorless Forest land.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Enchantment \u2014 Aura"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Swords to Plowshares",
+      "oracle_id": "b1544f21-7e98-461b-aed5-e748b0168c52",
+      "oracle_text": "Exile target creature. Its controller gains life equal to its power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "An effect may refer to a card, spell, or permanent that \"has an Adventure.\" This refers to a card, spell, or permanent that has an adventurer card's set of alternative characteristics, even if they're not being used and even if that card was never cast as an Adventure.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting a card as an Adventure isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to the Adventure.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell is cast as an Adventure, its controller exiles it instead of putting it into its owner's graveyard as it resolves. For as long as it remains exiled, that player may cast it as a non-Adventure spell. If an Adventure spell leaves the stack in any way other than resolving (most likely by being countered or by failing to resolve because its targets have all become illegal), that card won't be exiled and the spell's controller won't be able to cast it as a permanent later.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an adventurer card ends up in exile for any other reason than by exiling itself while resolving, it won't give you permission to cast it as a non-Adventure spell.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect copies an Adventure spell, that copy is exiled as it resolves. It ceases to exist as a state-based action; it's not possible to cast the copy from exile.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative Adventure name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast an adventurer card as an Adventure, use only its alternative characteristics to determine whether it's legal to cast that spell.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "In every zone other than the stack, Twice Upon a Time uses only its non-Adventure characteristics, and you ignore its alternative characteristics in those cases. For example, while it's in your graveyard, its mana value is 6.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "When casting a spell as an Adventure, use the alternative characteristics and ignore all of the card's normal characteristics. The spell's color, mana cost, mana value, and so on are determined by only those alternative characteristics. If the spell leaves the stack, it immediately resumes using its normal characteristics.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must still follow any relevant timing rules for the non-Adventure spell you cast from exile. Normally, you'll be able to cast it only during your main phase while the stack is empty.",
+      "oracle_id": "04dc2e9c-312c-4af8-950c-6a7ed859c9be",
+      "published_at": "2023-10-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Grim Wanderer's ability doesn't care who controlled the creature that died.",
+      "oracle_id": "614feadd-b74f-4d9c-a0a3-3a63724956af",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, Vampire Neonate's ability causes the opposing team to lose 2 life and you to gain 1 life.",
+      "oracle_id": "c0045925-25bf-403c-b721-5f05ba30985b",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted creature is an illegal target by the time Feast of Blood resolves, the entire spell doesn\u2019t resolve. You don\u2019t gain life.",
+      "oracle_id": "fed05740-01b2-4c7a-8b97-55e64837c07f",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whether you control two or more Vampires is checked only as you try to move Feast of Blood to the stack as the first step of casting it. It doesn\u2019t matter whether you still control two or more Vampires as you finish casting Feast of Blood (in case you somehow sacrifice one to produce mana) or as Feast of Blood resolves.",
+      "oracle_id": "fed05740-01b2-4c7a-8b97-55e64837c07f",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the permanent was an Aura or an Equipment, it becomes unattached from whatever it was attached to.",
+      "oracle_id": "7c3944fa-7c86-4979-85a9-86196aa94594",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The enchanted permanent loses any card types, subtypes, and colors it previously had. It keeps any supertypes it had and its name remains unchanged. It gains \u201c{T}: Add {G}\u201d and loses all other abilities from its rules text. It will still have any abilities it gained from other effects.",
+      "oracle_id": "7c3944fa-7c86-4979-85a9-86196aa94594",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Use the power of the creature from when it was last on the battlefield to determine how much life is gained.",
+      "oracle_id": "b1544f21-7e98-461b-aed5-e748b0168c52",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

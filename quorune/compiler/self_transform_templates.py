@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Source-pinned Transform instructions through the existing owner."""
 
-import re
+from . import regex_working_set as re
 from ..rules.source_references import SourceReferenceSpec
 from ..rules.transform_capability_shapes import TRIGGERED_SOURCE_TRANSFORM_MECHANIC
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Lower closed battlefield Cascade grants without parsing spells at runtime."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..semantic_runtime.battlefield_cascade_grants import (

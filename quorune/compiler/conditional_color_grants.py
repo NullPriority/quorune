@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed self-color shell around an independently compiled quoted ability."""
 
-import re
+from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.conditional_color_grants import (

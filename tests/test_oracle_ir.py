@@ -2006,7 +2006,15 @@ class OracleIRTests(unittest.TestCase):
         rest = compile_oracle_card(self.db.lookup("Rest in Peace"))
         self.assertEqual("partial", rest.status)
         kinds = {residual.kind for residual in rest.material_residuals}
-        self.assertIn("replacement_effect", kinds)
+        self.assertEqual({"dependency_contract"}, kinds)
+        self.assertTrue(any(
+            "capability:zone.change.destination_replacement" in residual.blockers
+            for residual in rest.material_residuals
+        ))
+        self.assertTrue(any(
+            "capability:zone.change.qualified_graveyard_exile" in residual.blockers
+            for residual in rest.material_residuals
+        ))
         self.assertNotIn("trigger", kinds)
         self.assertTrue(
             all(residual.reason for residual in rest.material_residuals)

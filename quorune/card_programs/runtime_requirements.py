@@ -42,6 +42,8 @@ from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_char
 from ..rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
 from ..rules.resolution_characteristic_shapes import fixed_target_color_runtime_dependencies, temporary_creature_type_runtime_dependencies
 from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+from ..rules.paradigm import paradigm_runtime_dependencies
+from ..rules.token_copy_recipients import target_copy_recipient_runtime_dependencies
 from ..rules.spell_self_exile import (
     spell_self_bottom_runtime_dependencies, spell_self_exile_runtime_dependencies, spell_self_shuffle_runtime_dependencies,
 )
@@ -49,7 +51,8 @@ from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dep
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
 from ..rules.event_subscriptions import (
-    FixedEventSubscriptionSet, LAND_PLAY_EVENT, dungeon_completion_dependencies,
+    FixedEventSubscriptionSet, LAND_PLAY_EVENT, controller_keyword_absence_runtime_dependencies,
+    death_keyword_absence_runtime_dependencies, dungeon_completion_dependencies,
     face_transition_event_dependencies, upkeep_hand_runtime_dependencies,
 )
 from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
@@ -149,10 +152,32 @@ def _event_subscription_runtime_requirements(program):
             if any(child.event.removesuffix('.self')==MUTATE_EVENT for child in subscriptions.subscriptions):
                 required.add(MUTATE_CAPABILITY)
         required.update(upkeep_hand_runtime_dependencies(program), dungeon_completion_dependencies(program, subscriptions))
+        required.update(controller_keyword_absence_runtime_dependencies(program))
+        required.update(death_keyword_absence_runtime_dependencies(program))
         required.update(face_transition_event_dependencies(program, subscriptions))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_event_subscriptions:invalid:{exc}')
     return required,blockers
+
+
+def _affected_player_choice_runtime_requirements(program):
+    from ..rules.affected_player_sacrifice_capability_shapes import (
+        most_lands_attack_sacrifice_runtime_dependencies,
+        source_excluded_sacrifice_runtime_dependencies,
+    )
+    from ..rules.event_player_choice_shapes import spell_caster_land_return_runtime_dependencies
+
+    required, blockers = set(), set()
+    for resolver, label in (
+        (source_excluded_sacrifice_runtime_dependencies, "source_exclusion"),
+        (most_lands_attack_sacrifice_runtime_dependencies, "most_lands_attack_sacrifice"),
+        (spell_caster_land_return_runtime_dependencies, "spell_caster_land_return"),
+    ):
+        try:
+            required.update(resolver(program))
+        except (ValueError, TypeError, KeyError) as exc:
+            blockers.add(f"runtime_{label}:invalid:{exc}")
+    return required, blockers
 
 
 def _event_query_runtime_requirements(program):
@@ -163,12 +188,15 @@ def _event_query_runtime_requirements(program):
     from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
     from ..rules.entry_permanent_results import entry_animation_runtime_dependencies
     from ..rules.transform_capability_shapes import triggered_source_transform_runtime_dependencies
+    from ..rules.subtype_transform import subtype_transform_runtime_dependencies
     from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
     from ..rules.block_characteristics import qualified_block_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
     from ..rules.attacked_player_life import attacked_player_life_runtime_dependencies
-    from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
+    from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies, spell_cast_count_life_runtime_dependencies
     from ..rules.scheduled_turn_skip_shapes import scheduled_turn_skip_event_dependencies
+    from ..rules.self_zone_move_followups import self_entry_followup_runtime_dependencies
+    from ..rules.source_self_entry_counters import source_self_entry_counter_runtime_dependencies
     from ..rules.combat_defending_players import combat_defending_player_runtime_dependencies
     from ..rules.event_player_targets import event_player_target_runtime_dependencies
     from ..rules.per_player_target_sets import per_player_target_runtime_dependencies
@@ -176,12 +204,20 @@ def _event_query_runtime_requirements(program):
     from ..rules.hand_entry_followup import hand_entry_followup_runtime_dependencies
     from ..rules.finality_counters import finality_counter_runtime_dependencies
     from ..rules.target_set_result_sequences import target_set_result_sequence_runtime_dependencies
+    from ..rules.targeted_graveyard_outcomes import targeted_graveyard_outcome_runtime_dependencies
+    from ..rules.graveyard_exile_branches import graveyard_exile_branch_runtime_dependencies
+    from ..rules.graveyard_exile_tokens import graveyard_exile_token_runtime_dependencies
+    from ..rules.graveyard_exile_type_outcomes import graveyard_exile_type_outcome_runtime_dependencies
     from ..rules.target_player_sequences import target_player_sequence_runtime_dependencies
     from ..rules.stack_controller_payment_shapes import stack_controller_payment_scope_dependencies
     from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
     from ..rules.reflexive_payment_shapes import reflexive_payment_runtime_dependencies
+    from ..rules.token_creation_reflexive import token_creation_reflexive_runtime_dependencies
     from ..cast_event_amounts import cast_mana_value_runtime_dependencies
     from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
+    from ..rules.gravestorm import gravestorm_program_dependencies
+    from ..rules.demonstrate import demonstrate_program_dependencies
+    from ..rules.ripple import ripple_program_dependencies
     from ..rules.casting.spell_mana_payments import expend_runtime_dependencies
     from ..rules.modal_node_capabilities import modal_event_runtime_dependencies
     from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_runtime_dependencies
@@ -193,15 +229,22 @@ def _event_query_runtime_requirements(program):
     from ..source_entry_cast_information import source_entry_cast_program_dependencies
     from ..rules.tribute import tribute_condition_dependencies
     from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
+    from ..rules.targeted_graveyard_exile import targeted_graveyard_exile_runtime_dependencies
     from ..rules.scheduled_player_shapes import scheduled_player_departure_runtime_dependencies
     from ..triggered_mana_model import fixed_triggered_mana_runtime_dependencies
-    required,blockers=set(),set()
+    required, blockers = _affected_player_choice_runtime_requirements(program)
     from ..entry_x_amount_model import entry_x_amount_runtime_dependencies
     try:required.update(entry_x_amount_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_entry_x_amount:invalid:{exc}')
     from ..ravenous_model import ravenous_runtime_dependencies
     try:required.update(ravenous_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_ravenous:invalid:{exc}')
+    from ..rules.source_sacrifice_shapes import fixed_source_sacrifice_runtime_dependencies
+    try:required.update(fixed_source_sacrifice_runtime_dependencies(program))
+    except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_source_sacrifice:invalid:{exc}')
+    from ..rules.referenced_damage_shapes import referenced_damage_runtime_dependencies
+    try:required.update(referenced_damage_runtime_dependencies(program))
+    except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_referenced_damage:invalid:{exc}')
     from ..rules.graveyard_self_return import graveyard_self_return_runtime_dependencies
     try:required.update(graveyard_self_return_runtime_dependencies(program))
     except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_graveyard_source_return:invalid:{exc}')
@@ -233,13 +276,17 @@ def _event_query_runtime_requirements(program):
         (saddle_activation_runtime_dependencies,program,'saddle_activation'),
         (entry_animation_runtime_dependencies,program,'entry_animation'),
         (triggered_source_transform_runtime_dependencies,program,'triggered_source_transform'),
+        (subtype_transform_runtime_dependencies,program,'fixed_subtype_transform'),
         (saddled_attack_runtime_dependencies,program,'saddled_attack'),
         (unblocked_attacker_runtime_dependencies,program,'unblocked_attacker'),
         (qualified_block_runtime_dependencies,program,'qualified_block'),
         (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),
         (attacked_player_life_runtime_dependencies,program,'attacked_player_life'),
         (event_player_damage_runtime_dependencies,program,'event_player_damage'),
+        (spell_cast_count_life_runtime_dependencies,program,'spell_cast_count_life'),
         (scheduled_turn_skip_event_dependencies,program,'scheduled_turn_skip_player'),
+        (self_entry_followup_runtime_dependencies,program,'self_entry_followup'),
+        (source_self_entry_counter_runtime_dependencies,program,'source_self_entry_counter'),
         (combat_defending_player_runtime_dependencies,program,'combat_defending_player'),
         (event_player_target_runtime_dependencies,program,'event_player_target'),
         (per_player_target_runtime_dependencies,program,'per_player_targets'),
@@ -247,12 +294,20 @@ def _event_query_runtime_requirements(program):
         (hand_entry_followup_runtime_dependencies,program,'hand_entry_followup'),
         (finality_counter_runtime_dependencies,program,'finality_counter'),
         (target_set_result_sequence_runtime_dependencies,program,'target_set_result_sequence'),
+        (targeted_graveyard_outcome_runtime_dependencies,program,'targeted_graveyard_outcome'),
+        (graveyard_exile_branch_runtime_dependencies,program,'graveyard_exile_branch'),
+        (graveyard_exile_token_runtime_dependencies,program,'graveyard_exile_token'),
+        (graveyard_exile_type_outcome_runtime_dependencies,program,'graveyard_exile_type_outcomes'),
         (target_player_sequence_runtime_dependencies,program,'target_player_sequence'),
         (stack_controller_payment_scope_dependencies,program,'stack_controller_payment_scope'),
         (fixed_payment_event_player_runtime_dependencies,program,'payment_event_player'),
         (reflexive_payment_runtime_dependencies,program,'reflexive_payment'),
+        (token_creation_reflexive_runtime_dependencies,program,'token_creation_reflexive'),
         (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
         (event_spell_copy_runtime_dependencies,program,'event_spell_copy'),
+        (gravestorm_program_dependencies,program,'gravestorm'),
+        (demonstrate_program_dependencies,program,'demonstrate'),
+        (ripple_program_dependencies,program,'ripple'),
         (expend_runtime_dependencies,program,'expend'),
         (modal_event_runtime_dependencies,program,'modal_event'),
         (fixed_resolution_mana_runtime_dependencies,program,'fixed_resolution_mana'),
@@ -264,6 +319,7 @@ def _event_query_runtime_requirements(program):
         (source_entry_cast_program_dependencies,program,'source_entry_cast'),
         (tribute_condition_dependencies,program,'tribute_entry'),
         (graveyard_return_choice_runtime_dependencies,program,'graveyard_return_choice'),
+        (targeted_graveyard_exile_runtime_dependencies,program,'targeted_graveyard_exile'),
         (scheduled_player_departure_runtime_dependencies,program,'scheduled_player_departure'),
         (fixed_triggered_mana_runtime_dependencies,program,'fixed_triggered_mana'),
     ):
@@ -312,6 +368,36 @@ def _value_runtime_requirements(program):
     values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
     required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
     blockers = set()
+    from ..rules.event_optional_draw_shapes import event_optional_draw_runtime_dependencies
+    try:required.update(event_optional_draw_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:blockers.add(f'runtime_event_optional_draw:invalid:{exc}')
+    from ..rules.damage_capability_shapes import turn_damage_prevention_runtime_dependencies
+    from ..rules.fixed_controller_effect_shapes import temporary_life_gain_runtime_dependencies
+    from ..rules.public_life_gain_scopes import public_life_gain_runtime_dependencies
+    try:
+        required.update(public_life_gain_runtime_dependencies(program))
+        required.update(temporary_life_gain_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_public_life_gain:invalid:{exc}')
+    try:
+        required.update(turn_damage_prevention_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_turn_damage_prevention:invalid:{exc}')
+    from ..rules.target_library_shuffle import target_shuffle_runtime_dependencies
+    try:required.update(target_shuffle_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:blockers.add(f'runtime_target_library_shuffle:invalid:{exc}')
+    from ..rules.permanent_subtype_hand_queries import permanent_subtype_hand_runtime_dependencies
+    try:required.update(permanent_subtype_hand_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:blockers.add(f'runtime_permanent_subtype_hand:invalid:{exc}')
+    from ..source_prevention import source_block_combat_runtime_dependencies
+    try:required.update(source_block_combat_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:blockers.add(f'runtime_source_block_combat:invalid:{exc}')
+    from ..rules.target_all_counter_removal import target_all_counter_variant_runtime_dependencies
+    try:required.update(target_all_counter_variant_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:blockers.add(f'runtime_target_all_counter_variant:invalid:{exc}')
+    from ..rules.chosen_counter_removal import chosen_counter_removal_runtime_dependencies
+    try:required.update(chosen_counter_removal_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:blockers.add(f'runtime_chosen_counter_removal:invalid:{exc}')
     from ..rules.conditional_target_preparation import conditional_preparation_runtime_dependencies
     try:
         required.update(conditional_preparation_runtime_dependencies(program))
@@ -337,10 +423,10 @@ def _value_runtime_requirements(program):
     except ValueError as exc:
         blockers.add(f"runtime_next_turn_duration:invalid:{exc}")
     from ..source_tap_effect import source_tap_effect_dependencies
-    from ..rules.tap_state_capability_shapes import target_set_next_untap_dependencies
+    from ..rules.tap_state_capability_shapes import untap_runtime_dependencies
     try:
         required.update(source_tap_effect_dependencies(program.effects))
-        required.update(target_set_next_untap_dependencies(program.effects))
+        required.update(untap_runtime_dependencies(program))
     except ValueError as exc:
         blockers.add(f"runtime_source_tap_duration:invalid:{exc}")
     try:
@@ -421,7 +507,44 @@ def _value_runtime_requirements(program):
     return required, blockers
 
 
+def stack_spell_target_counter_runtime_dependencies(program) -> tuple[str, ...]:
+    from ..replacement.immutable import thaw_value
+    from ..stack_spell_targeting import (
+        CURRENT_TARGET_COUNTER, CURRENT_TARGET_COUNTER_CAPABILITIES, StackSpellTargetPredicate,
+        contains_stack_spell_target_predicate, stack_spell_target_predicate,
+    )
+
+    schema = program.target_schema
+    if not contains_stack_spell_target_predicate(schema):
+        return ()
+    predicate = stack_spell_target_predicate(schema)
+    event_zone = (program.event, program.active_zone)
+    if predicate is None or event_zone not in {("resolve", "stack"), ("activate", "battlefield")}:
+        raise ValueError("A spell-target subject requires a closed counter resolution or activation")
+    if predicate is StackSpellTargetPredicate.SOURCE and program.event != "activate":
+        raise ValueError("A current-source subject requires a battlefield activation")
+    effects = tuple(thaw_value(effect) for effect in program.effects)
+    if not effects or effects[0] != CURRENT_TARGET_COUNTER:
+        raise ValueError("A spell-target subject requires the ordinary counter as its first result")
+    if len(effects) == 1:
+        return CURRENT_TARGET_COUNTER_CAPABILITIES
+    if (program.event != "resolve" or len(effects) != 2
+            or effects[1] != {"op": "draw", "player": "$controller", "count": 1, "private": True}
+            or type(effects[1].get("count")) is not int or effects[1].get("private") is not True):
+        raise ValueError("A counter with a spell-target subject permits only one private draw afterward")
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+
+    draw = composed_spell_family_runtime_dependencies(
+        program, capability="zone.draw.library_to_hand", mechanic="cr-121-drawing-a-card",
+    )
+    if not draw:
+        raise ValueError("The counter and private draw require exact printed composition")
+    return (*CURRENT_TARGET_COUNTER_CAPABILITIES, *draw)
+
+
 def _zone_move_runtime_requirements(program, required, blockers):
+    from ..stack_counter import announced_x_counter_runtime_dependencies, no_mana_spent_counter_runtime_dependencies
+    from ..public_zone_moves import stack_spell_exile_runtime_dependencies
     from ..rules.recipient_control_shapes import recipient_control_runtime_dependencies
     from ..rules.owner_control_shapes import owner_control_runtime_dependencies
     from ..rules.event_counter_threshold import event_counter_threshold_program_dependencies
@@ -440,6 +563,11 @@ def _zone_move_runtime_requirements(program, required, blockers):
 
     for resolver, label in (
         (event_counter_threshold_program_dependencies, 'event_counter_threshold'),
+        (no_mana_spent_counter_runtime_dependencies, 'no_mana_spent_counter'),
+        (announced_x_counter_runtime_dependencies, 'announced_x_counter'),
+        (stack_spell_target_counter_runtime_dependencies, 'stack_spell_target_counter'),
+        (paradigm_runtime_dependencies, 'paradigm'),
+        (target_copy_recipient_runtime_dependencies, 'target_copy_recipient'),
         (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
         (spell_self_shuffle_runtime_dependencies, 'spell_self_shuffle'),
         (spell_self_bottom_runtime_dependencies, 'spell_self_bottom'),
@@ -451,6 +579,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (source_power_reanimation_runtime_dependencies, 'source_power_reanimation'),
         (checked_entry_return_runtime_dependencies, 'checked_entry_return'),
         (controlled_return_runtime_dependencies, 'controlled_return'),
+        (stack_spell_exile_runtime_dependencies, 'stack_spell_exile'),
         (recipient_control_runtime_dependencies,'recipient_control'),
         (owner_control_runtime_dependencies,'owner_control'),
         (attached_event_battlefield_return_runtime_dependencies, 'attached_event_battlefield_return'),
@@ -478,7 +607,81 @@ def _declaration_rule_runtime_requirements(program, required, blockers):
             blockers.add(f'runtime_{label}:invalid:{exc}')
 
 
+def _dynamic_reference_runtime_requirements(program):
+    """Gather announced targets, live dealer references and public query minima."""
+    required = set()
+    blockers = set()
+    from ..rules.cumulative_graveyard_upkeep import cumulative_graveyard_upkeep_runtime_dependencies
+    try:required.update(cumulative_graveyard_upkeep_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_graveyard_upkeep:invalid:{exc}')
+    from ..rules.attachment_source_return import attachment_source_return_runtime_dependencies
+    try:required.update(attachment_source_return_runtime_dependencies(program))
+    except (ValueError, TypeError) as exc:blockers.add(f'runtime_attachment_source_return:invalid:{exc}')
+    from ..rules.cumulative_effect_cost_upkeep import cumulative_effect_cost_upkeep_runtime_dependencies
+    try:required.update(cumulative_effect_cost_upkeep_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_upkeep_effect_cost:invalid:{exc}')
+    from ..rules.cumulative_alternative_mana_upkeep import cumulative_alternative_mana_upkeep_runtime_dependencies
+    try:required.update(cumulative_alternative_mana_upkeep_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_alternative_mana_upkeep:invalid:{exc}')
+    from ..rules.cumulative_counter_upkeep import cumulative_counter_upkeep_runtime_dependencies
+    try:required.update(cumulative_counter_upkeep_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_cumulative_counter_upkeep:invalid:{exc}')
+    from ..rules.cumulative_object_upkeep import cumulative_object_upkeep_runtime_dependencies
+    try:required.update(cumulative_object_upkeep_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_cumulative_object_upkeep:invalid:{exc}')
+    from ..rules.source_counter_cast_value import source_counter_cast_runtime_dependencies
+    try:required.update(source_counter_cast_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_source_counter_cast:invalid:{exc}')
+    from ..rules.event_outcome_shapes import event_outcome_runtime_dependencies
+    try: required.update(event_outcome_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc: blockers.add(f'runtime_event_outcome:invalid:{exc}')
+    from ..rules.stack_target_change_shapes import single_stack_target_change_runtime_dependencies
+    try:
+        required.update(single_stack_target_change_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_stack_target_change:invalid:{exc}')
+    from ..rules.stack_spell_copy_shapes import qualified_stack_copy_runtime_dependencies
+    try:required.update(qualified_stack_copy_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:blockers.add(f'runtime_qualified_stack_copy:invalid:{exc}')
+    try:
+        required.update(announced_target_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_target_count:invalid:{exc}')
+    from ..rules.fixed_controller_effect_shapes import player_history_life_loss_runtime_dependencies
+    try:
+        required.update(player_history_life_loss_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_player_history:invalid:{exc}')
+    try:
+        from ..rules.event_damage_sources import event_damage_source_runtime_dependencies
+        required.update(event_damage_source_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_event_damage_source:invalid:{exc}')
+    try:
+        required.update(object_query_capabilities((program.effects,program.handlers,program.target_schema)))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_query:invalid:{exc}')
+    return required, blockers
+
+
+def _player_quantity_runtime_requirements(program,required,blockers):
+    """Validate independently bound public player quantities and their frames."""
+    from ..rules.current_life_effect_amounts import current_life_program_dependencies
+    from ..rules.turn_life_loss_recovery import turn_life_loss_program_dependencies
+    from ..rules.target_player_query_amounts import target_player_query_program_dependencies
+    from ..rules.per_player_query_life import per_player_query_life_program_dependencies
+    for resolver,label in ((current_life_program_dependencies,'current_life'),
+            (turn_life_loss_program_dependencies,'turn_life_loss'),
+            (target_player_query_program_dependencies,'target_player_query'),
+            (per_player_query_life_program_dependencies,'per_player_query_life'),
+            (target_hand_count_runtime_dependencies,'target_hand_count')):
+        try:required.update(resolver(program))
+        except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')
+
+
 def program_dynamic_runtime_requirements(program):
+    from ..rules.target_land_type import target_land_type_runtime_dependencies
+    from ..rules.graveyard_recycling import graveyard_recycling_runtime_dependencies
     from ..preparation import preparation_runtime_dependencies
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
@@ -486,6 +689,14 @@ def program_dynamic_runtime_requirements(program):
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required,blockers=_event_query_runtime_requirements(program)
+    from ..rules.colored_hand_reveals import colored_hand_reveal_program_dependencies
+    try:required.update(colored_hand_reveal_program_dependencies(program))
+    except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_colored_hand_reveal:invalid:{exc}')
+    _player_quantity_runtime_requirements(program,required,blockers)
+    try:required.update(target_land_type_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_target_land_type:invalid:{exc}')
+    try:required.update(graveyard_recycling_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_graveyard_recycling:invalid:{exc}')
     try:
         required.update(preparation_runtime_dependencies(program))
     except (TypeError, ValueError) as exc:
@@ -590,14 +801,9 @@ def program_dynamic_runtime_requirements(program):
         required.update(self_target_reduction_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_self_target_reduction:invalid:{exc}')
-    try:
-        required.update(announced_target_runtime_dependencies(program))
-    except (TypeError,ValueError) as exc:
-        blockers.add(f'runtime_target_count:invalid:{exc}')
-    try:
-        required.update(object_query_capabilities((program.effects,program.handlers,program.target_schema)))
-    except (TypeError,ValueError) as exc:
-        blockers.add(f'runtime_query:invalid:{exc}')
+    reference_required, reference_blockers = _dynamic_reference_runtime_requirements(program)
+    required.update(reference_required)
+    blockers.update(reference_blockers)
     try:
         required.update(announced_additional_cost_dependencies(program.cost_schema))
         from ..rules.random_discard_additional_cost import random_spell_cost_dependencies
@@ -608,10 +814,6 @@ def program_dynamic_runtime_requirements(program):
         required.update(bound_resolution_condition_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_same_target_replacement:invalid:{exc}')
-    try:
-        required.update(target_hand_count_runtime_dependencies(program))
-    except (TypeError,ValueError) as exc:
-        blockers.add(f'runtime_target_hand_count:invalid:{exc}')
     try:
         required.update(temporary_keyword_removal_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:

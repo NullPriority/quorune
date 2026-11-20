@@ -29,7 +29,7 @@ def compiled_ordinary_zone_cast_permission(
     host: CompiledFlashbackHost,
     seat: str,
     card: Any,
-    *, include_source_grants: bool = True,
+    *, include_source_grants: bool = True, include_qualified_death: bool = True,
 ) -> bool:
     """Return whether current typed authority permits the printed cost."""
 
@@ -42,6 +42,8 @@ def compiled_ordinary_zone_cast_permission(
         return True
     if compiled_self_zone_cast_permission(host, seat, card):
         return True
+    from .rules.death_cast_permissions import qualified_death_zone_permission
+    if include_qualified_death and qualified_death_zone_permission(host,seat,card):return True
     from .rules.casting.turn_cast_grants import normal_turn_grant_permission
     return include_source_grants and normal_turn_grant_permission(host, seat, card)
 

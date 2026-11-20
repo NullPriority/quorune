@@ -3,7 +3,7 @@ from __future__ import annotations
 """One fixed destruction instruction through the current attachment owner."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from ..attachment_references import AttachmentReferenceKind,AttachmentReferenceSpec
 
 

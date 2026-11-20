@@ -90,6 +90,21 @@ class EntryValueConsumerTests(unittest.TestCase):
         with self.assertRaises(ValueError):replace(spec,quantity=old_hidden)
         with self.assertRaises(ValueError):replace(quantity,query=ObjectQuerySpec(zones=('hand',),types_all=('creature',)))
 
+        unsupported = CharacteristicQuantitySpec(S.CONTROLLER_COMMANDER_CAST_COUNT, schema_version=8)
+        with patch(
+            "quorune.compiler.fixed_self_entry_counter_templates.query_characteristic_quantity",
+            return_value=unsupported,
+        ):
+            for amount in (
+                "a +1/+1 counter on it for each creature you control",
+                "a number of +1/+1 counters on it equal to the number of creatures you control",
+                "a +1/+1 counter on it plus an additional +1/+1 counter on it for each creature you control",
+            ):
+                with self.subTest(amount=amount):
+                    self.assertIsNone(dynamic_self_entry_counter_handler(
+                        f"Generic Source enters with {amount}.", source_name="Generic Source",
+                    ))
+
     def test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter(self):
         s=self.session(810010);self.clear_hands(s);spell=self.add(s.engine,'Realm Seekers',zone='hand')
         self.hand(s,'A',2);response=self.hand(s,'B',3)[0];private=self.hand(s,'C',1)[0]

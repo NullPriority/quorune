@@ -6,11 +6,16 @@ from typing import Any, Mapping
 from ..affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
+    DEFENDING_PLAYER_UNTAP_SET_FIELD,
     PermanentControllerRelation,
+    decode_defending_player_creature_untap,
 )
 from ..public_tap_state_sets import SetPublicPermanentsTappedIntent
 from ..continuous_effect_model import ContinuousObjectIdentity
 from ..source_tap_effect import split_source_tap_untap_restraint
+from ..next_player_untap_model import (
+    ProhibitNextPlayerUntapIntent, decode_next_player_untap_instruction, is_next_player_untap_instruction,
+)
 from ..source_untap_rule_model import PendingSourceUntapRestraint
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
@@ -227,23 +232,29 @@ class SetPublicTapStateSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        effect, restraint = _source_untap_restraint(effect, context)
-        if (
-            set(effect) != {"op", "source", "set", "tapped"}
-            or effect.get("op") != self.operation
-            or type(effect.get("tapped")) is not bool
-        ):
-            raise SemanticNodeError(
-                "Public-set tap-state effect has an invalid shape"
-            )
-        try:
-            spec = AffectedPermanentSetSpec.from_dict(effect["set"])
-        except (KeyError, TypeError, AffectedPermanentSetError) as exc:
-            raise SemanticNodeError(str(exc)) from exc
-        if spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
-            context.query.require_active_seat(
-                str(spec.target_controller or "")
-            )
+        if DEFENDING_PLAYER_UNTAP_SET_FIELD in effect:
+            try:
+                spec = decode_defending_player_creature_untap(effect, resolved=True)
+            except AffectedPermanentSetError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            player = context.query.require_known_seat(spec.target_controller)
+            if player not in context.query.active_seats:
+                return IntentPlan(self.operation, self.handler_id, (), result_shape="by_player")
+            restraint = None
+        else:
+            effect, restraint = _source_untap_restraint(effect, context)
+            if (
+                set(effect) != {"op", "source", "set", "tapped"}
+                or effect.get("op") != self.operation
+                or type(effect.get("tapped")) is not bool
+            ):
+                raise SemanticNodeError("Public-set tap-state effect has an invalid shape")
+            try:
+                spec = AffectedPermanentSetSpec.from_dict(effect["set"])
+            except (KeyError, TypeError, AffectedPermanentSetError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            if spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
+                context.query.require_active_seat(str(spec.target_controller or ""))
         source_ref = effect.get("source")
         if source_ref is not None and (
             type(source_ref) is not str or not source_ref
@@ -277,6 +288,16 @@ class ProhibitNextUntapHandler:
     capability_dependencies: tuple[str, ...] = ('untap.step.prohibit_next_controller',)
 
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
+        if is_next_player_untap_instruction(effect):
+            if context.source is None:
+                raise SemanticNodeError('Next-player untap requires a resolving stack source')
+            try:
+                restriction = decode_next_player_untap_instruction(effect)
+                context.query.require_active_seat(restriction.player)
+                intent = ProhibitNextPlayerUntapIntent(context.actor, restriction, context.default_reason)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(intent,))
         fields = validate_direct_target_effect(effect, context, operation=self.operation,
             reference_field='card', family_label='Next-untap', allow_replacement_selections=False)
         return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(

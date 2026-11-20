@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..stack_target_change_model import is_mandatory_single_stack_target_change, is_optional_stack_target_change
 from ..semantic_runtime.intents import (
     CopyStackItemIntent,
     RetargetStackItemIntent,
@@ -133,27 +134,31 @@ class StackTargetChoiceHandler:
                 "_stack_label": context.stack_label,
             }
         )
-        prompt = (
-            "Choose targets for the copy, or keep the original targets."
-            if self.mode == "copy"
-            else "Choose new targets, or keep the current targets."
-        )
+        mandatory = is_mandatory_single_stack_target_change(effect)
+        if mandatory:
+            prompt = "Choose a different legal target."
+            offered_defaults = ()
+        else:
+            prompt = ("Choose targets for the copy, or keep the original targets."
+                      if self.mode == "copy" else "Choose new targets, or keep the current targets.")
+            offered_defaults = defaults
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
                 prompt=prompt,
                 choice=TargetAssignmentChoice(
                     target_schema=FrozenMap(public),
-                    default_targets=defaults,
-                    may_retain_each_default=self.mode == "copy",
+                    default_targets=offered_defaults,
+                    optional=not mandatory,
+                    may_retain_each_default=self.mode == "copy" or is_optional_stack_target_change(effect),
                 ),
                 public_context=FrozenMap(
                     {
                         "stack": context.stack_ref,
                         "operation": self.operation,
                         "target_stack": target.ref,
-                        "default_targets": defaults,
+                        "default_targets": offered_defaults,
                         "target_schema": dict(public),
-                        "default_target_groups": target.target_groups,
+                        "default_target_groups": {} if mandatory else target.target_groups,
                     }
                 ),
             ),
@@ -174,6 +179,12 @@ class StackTargetChoiceHandler:
                 "The stack object selected for the choice no longer exists"
             )
         submitted = response.get("targets")
+        mandatory = is_mandatory_single_stack_target_change(effect)
+        optional_reselection = is_optional_stack_target_change(effect)
+        if submitted is None and optional_reselection:
+            return SemanticChoiceCompletion()
+        if submitted is None and mandatory:
+            raise SemanticChoiceError("Choose one different legal target")
         if submitted is None and self.mode != "copy":
             targets = tuple(
                 str(value)
@@ -206,12 +217,19 @@ class StackTargetChoiceHandler:
                 copy_source=target.copy_source,
             )
         else:
+            snapshots = None
+            if optional_reselection:
+                snapshots = FrozenMap(query.copied_target_snapshots(target_ref, actor=str(effect["_validation_actor"])))
+                if targets == target.targets and groups == target.target_groups and snapshots == target.target_snapshots:
+                    return SemanticChoiceCompletion()
             intent = RetargetStackItemIntent(
                 actor=actor,
                 target_stack_ref=target_ref,
                 targets=targets,
                 target_groups=groups,
                 source_stack_ref=continuation.stack_ref,
+                collect_single_target_ward=mandatory,
+                target_snapshots=snapshots,
             )
         return SemanticChoiceCompletion(intents=(intent,))
 

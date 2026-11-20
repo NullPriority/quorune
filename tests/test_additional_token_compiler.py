@@ -18,6 +18,7 @@ from quorune.semantic_runtime import (
     TokenCreationReplacementContext,
 )
 from quorune.semantics import SemanticRegistry
+from quorune.standard_token_abilities import TOKEN_ABILITY_PROFILE_FIELD
 
 
 def additional_token_record(
@@ -112,6 +113,11 @@ class AdditionalTokenCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual(token_name, descriptor["token"]["name"])
                 self.assertNotIn("oracle_text", descriptor["token"])
+                token = GenericAdditionalTokenReplacementHandler().validate(descriptor).token
+                if token_name == "Food Token":
+                    self.assertEqual("two_tap_sac_gain_three_life_v1", token.ability_profile)
+                    self.assertEqual(1, len(token.characteristics()["activated_abilities"]))
+                    self.assertNotIn(TOKEN_ABILITY_PROFILE_FIELD, descriptor["token"])
                 if token_name in {"Treasure Token", "Food Token", "Map Token"}:
                     self.assertIn("display_text", descriptor["token"])
 

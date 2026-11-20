@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from types import MappingProxyType
 from typing import Any, Mapping
 
 
@@ -21,6 +22,11 @@ FIXED_DELAYED_TOKEN_CAPABILITY_ID = "trigger.delayed.fixed_token_creation"
 TYPED_TOKEN_ABILITY_CAPABILITY_ID = "token.creation.typed_ability_definition"
 TYPED_TOKEN_ABILITY_MECHANIC_ID = "fixed-token-typed-ability-definition"
 TOKEN_LITERAL_NAME_VERSION_FIELD = "literal_token_name_version"
+FOOD_TOKEN_CHARACTERISTICS = MappingProxyType({
+    "type_line": "Token Artifact — Food",
+    "display_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+    "activated_ability_profile": "two_tap_sac_gain_three_life_v1",
+})
 
 
 class FixedTokenProductionError(ValueError):
@@ -179,6 +185,18 @@ def clue_token_effect(quantity: int, *, legacy_name: bool = False) -> dict[str, 
     }
 
 
+def food_token_effect(quantity: int) -> dict[str, Any]:
+    """Use the same predefined Food definition as the ordinary token compiler."""
+    name, characteristics = predefined_token_identity("Food", FOOD_TOKEN_CHARACTERISTICS)
+    return {
+        "op": "create_token",
+        "controller": "$controller",
+        "name": name,
+        "quantity": _fixed_count(quantity, label="Food"),
+        "characteristics": characteristics,
+    }
+
+
 def afterlife_token_effect(quantity: int, *, legacy_name: bool = False) -> dict[str, Any]:
     """Return the canonical Spirit definition for one Afterlife instance."""
 
@@ -301,4 +319,6 @@ __all__ = [
     "TYPED_TOKEN_ABILITY_MECHANIC_ID",
     "afterlife_token_effect",
     "clue_token_effect",
+    "FOOD_TOKEN_CHARACTERISTICS",
+    "food_token_effect",
 ]

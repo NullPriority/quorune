@@ -217,13 +217,16 @@ class ScopedColorNativeTests(InheritedNativeFixture,unittest.TestCase):
             return {'targets':[self.add(s.engine,'Ornithopter',seat='B',ref='color-target-'+str(i)) for i in range(7)],
                 'bounce':self.add(s.engine,'Unsummon',seat='B',zone='hand')}
         s,spell,body,private,extra=self.scene('Dwarven Song',before)
+        bounced_target = extra['targets'][0]
+        original_colors = self.colors(s, bounced_target)
         row=self.action(s,'A',spell)
         self.reject(s,'A',{'action_id':row['id'],'targets':[],'pay':'auto'})
         self.reject(s,'A',{'action_id':row['id'],'targets':[extra['targets'][0].ref]*2,'pay':'auto'})
         self.cast(s,'A',spell,[c.ref for c in extra['targets']])
         self.cast(s,'B',extra['bounce'],[extra['targets'][0].ref]);self.resolve_top(s)
         s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-        self.assertEqual('hand',s.state.cards[extra['targets'][0].object_id].zone)
+        self.assertEqual('hand',s.state.cards[bounced_target.object_id].zone)
+        self.assertEqual(original_colors, self.colors(s, bounced_target))
         self.assertTrue(all(self.colors(s,c)=={'R'} for c in extra['targets'][1:]));self.assertEqual({'G'},self.colors(s,body))
         self.finish(s,private)
 

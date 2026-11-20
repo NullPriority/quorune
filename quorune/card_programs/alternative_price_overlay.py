@@ -11,8 +11,35 @@ from ..rules.casting_additional_costs import fixed_zone_change_additional_cost
 from .current_view_equivalence import _same_current_source
 
 
+def _reviewed_zero_price_resolution_view(current):
+    """Match the closed resolving result on either side of the old price view."""
+    if current.target_schema == {'zones': ['battlefield'], 'categories': ['permanent'], 'count': 1, 'types_any': ['creature']}:
+        return (
+            targeted_exile_node_capabilities(effects=current.effects,
+                target_schema=current.target_schema, mechanic_ids=current.coverage),
+            {'zones': ['battlefield'], 'categories': ['permanent'], 'creature': True, 'count': 1},
+            [{'op': 'exile', 'card': '$target.0'}],
+            'commander_presence', 'Cast without paying mana while controlling a commander',
+        )
+    from ..stack_target_change_model import OptionalStackTargetChangeSpec
+    from ..rules.stack_target_change_shapes import single_stack_target_change_capabilities
+    from .admission import program_has_declared_complete_source_admission
+
+    spec = OptionalStackTargetChangeSpec(spell_or_ability=True)
+    if (tuple(current.effects) == spec.effects and current.target_schema == spec.target_schema
+            and program_has_declared_complete_source_admission(current)):
+        return (
+            single_stack_target_change_capabilities(effects=current.effects,
+                target_schema=current.target_schema, mechanic_ids=current.coverage),
+            spec.target_schema,
+            [{'op': 'retarget_stack_item', 'stack': '$target.0'}],
+            'alternate', 'Cast without paying its mana cost while you control a commander',
+        )
+    return None
+
+
 def shadowed_reviewed_zero_price_keys(record, generated_programs, reviewed_programs):
-    """Replace only source-equivalent reviewed price/exile compound views."""
+    """Replace source-equivalent reviewed zero-price compound views."""
     generated = tuple(generated_programs)
     shadowed = set()
     for current in generated:
@@ -20,15 +47,16 @@ def shadowed_reviewed_zero_price_keys(record, generated_programs, reviewed_progr
                 or current.capability_closure.get('trusted') is not True or current.event != 'resolve'
                 or current.active_zone != 'stack' or current.cost_schema is not None or current.handlers):
             continue
-        if current.target_schema != {'zones': ['battlefield'], 'categories': ['permanent'], 'count': 1, 'types_any': ['creature']}:
+        view = _reviewed_zero_price_resolution_view(current)
+        if view is None:
             continue
-        dependencies = targeted_exile_node_capabilities(effects=current.effects,
-            target_schema=current.target_schema, mechanic_ids=current.coverage)
+        dependencies, old_schema, old_effects, kind, label = view
         if not dependencies or not set(dependencies).issubset(current.capability_dependencies):
             continue
         prices = [p for p in generated if p.oracle_id == record.oracle_id and p.trust_level == 'trusted' and p.event == 'cast.cost'
             and p.active_zone == 'all' and p.capability_closure and p.capability_closure.get('trusted') is True
-            and len(p.handlers) == 1 and p.handlers[0].get('handler_id') == FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID]
+            and program_has_complete_card_program_admission(p) and len(p.handlers) == 1
+            and p.handlers[0].get('handler_id') == FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID]
         if len(prices) != 1:
             continue
         spec = FixedPublicAlternativeCostSpec.from_dict(prices[0].handlers[0]['alternative_cost'])
@@ -45,13 +73,10 @@ def shadowed_reviewed_zero_price_keys(record, generated_programs, reviewed_progr
                     or prices[0].provenance.get(field) != current.provenance[field]
                     for field in ('source_oracle_hash', 'source_rulings_hash')):
                 continue
-            if old.target_schema != {'zones': ['battlefield'], 'categories': ['permanent'], 'creature': True, 'count': 1}:
+            if old.target_schema != old_schema or list(old.effects) != old_effects:
                 continue
-            if list(old.effects) != [{'op': 'exile', 'card': '$target.0'}]:
-                continue
-            if old.cost_schema != {'alternate_costs': [{'id': 'commander_free', 'kind': 'commander_presence',
-                    'label': 'Cast without paying mana while controlling a commander', 'requirements': {},
-                    'condition': {'control_commander': True}}]}:
+            if old.cost_schema != {'alternate_costs': [{'id': 'commander_free', 'kind': kind,
+                    'label': label, 'requirements': {}, 'condition': {'control_commander': True}}]}:
                 continue
             shadowed.add(old.key)
     return shadowed

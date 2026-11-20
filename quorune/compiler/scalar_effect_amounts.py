@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import replace
 from copy import deepcopy
 import hashlib
-import re
+from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..scalar_effect_amount_model import (
@@ -17,6 +17,7 @@ from ..counter_names import normalized_counter_name
 from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT, counter_placement_condition_names_kind
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..public_history_query_model import PublicHistoryQuerySpec
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .declared_effect_amounts import declared_effect_amount_template, _result_slot
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
@@ -155,6 +156,10 @@ def _counted_death_result(text: str, *, source_event: bool) -> tuple[str, Scalar
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
+    from .commander_cast_quantity_templates import commander_cast_scalar_template
+    commander_result = commander_cast_scalar_template(text, source_name=source_name, compile_fixed=compile_fixed)
+    if commander_result is not None:
+        return commander_result
     from .source_counter_modifiers import source_counter_modifier_template
     counter=source_counter_modifier_template(text,source_name=source_name,compile_fixed=compile_fixed,
         compile_scalar=scalar_effect_amount_template,event=event,source_event=source_event)
@@ -195,6 +200,11 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     elif (death_result := _counted_death_result(normalized, source_event=source_event)) is not None:
         body, producer, multiplier = death_result
         quantity = ""
+    elif (counter_life:=re.fullmatch(rf'(?:You )?(?P<verb>gain|lose) (?P<count>{FIXED_COUNT_PATTERN}) life for each (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+?)\.',normalized,re.I)) is not None:
+        multiplier=fixed_number(counter_life['count'])
+        if multiplier<=0:return None
+        body=f"You {counter_life['verb'].casefold()} X life."
+        quantity=f"the number of {counter_life['counter']} counters on {counter_life['reference']}"
     elif (each:=re.fullmatch(r'(?P<head>Draw a card|(?:You |Target player |Target opponent )?gain 1 life|Create (?:a|one) .+? token) for each (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+?)\.',normalized,re.I)) is not None:
         body=re.sub(r'^Draw a card$','Draw X cards',each['head'],flags=re.I)
         body=re.sub(r'\bgain 1 life\b','gain X life',body,flags=re.I)
@@ -274,7 +284,17 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
 
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
+    from .life_gain_counted_results import life_gain_counted_counter_result
+    counted = life_gain_counted_counter_result(text, binding=binding)
+    if counted is not None:
+        text = counted
     event = binding.event.value
+    if (event == "damage.dealt.self" and binding.variant == "source_combat_damage_player"
+            and text == binding.body and re.fullmatch(r"You get that many \{E\}\s*\.?", text.strip(), re.I)):
+        from ..rules.event_player_result_shapes import combat_damage_energy_effect
+
+        return ("combat-damage-controller-energy-v1", (combat_damage_energy_effect(),), None,
+                ("cr-122-counters", SCALAR_AMOUNT_MECHANIC))
     if event == "spell.cast" and re.fullmatch(r"You (?:gain|lose) life equal to its mana value\.?", text.strip(), re.I):
         text = re.sub(r"\bits mana value\b", "that spell's mana value", text, flags=re.I)
     if event == COUNTER_PLACEMENT_EVENT and not counter_placement_condition_names_kind(binding.event_condition):
@@ -302,6 +322,16 @@ def scalar_amount_shape_context(effects, mechanics):
     """Project only validated result slots, retaining the original fixed owner."""
     from ..scalar_effect_amount_model import PAID_SACRIFICE_MANA_VALUE_MECHANIC
 
+    if len(effects) == 1 and effects[0].get("op") == "place_player_counters":
+        from ..rules.event_player_result_shapes import combat_damage_energy_fixed_projection
+
+        try:
+            fixed_energy = combat_damage_energy_fixed_projection(effects[0])
+        except ValueError:
+            return None
+        if fixed_energy is not None:
+            return (fixed_energy,), set(mechanics) - {SCALAR_AMOUNT_MECHANIC}
+
     count = 0
     def project(value, operation, path):
         nonlocal count
@@ -315,7 +345,14 @@ def scalar_amount_shape_context(effects, mechanics):
             return {**value,'effects':type(children)(project(child,str(child.get('op') or ''),()) for child in children)}
         if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
             spec = ScalarEffectAmountSpec.from_dict(value)
-            if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
+            if spec.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE:
+                from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_MECHANIC
+                if SCHEDULED_PLAYER_MECHANIC not in mechanics or (operation,path)!=("damage",("amount",)):
+                    raise PublicQueryAmountError("Upkeep hand difference requires its scheduled player damage slot")
+            elif spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE:
+                if (operation, path) != ('life', ('delta',)):
+                    raise PublicQueryAmountError('Graveyard-target mana value requires its controller life-result slot')
+            elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
                 if PAID_SACRIFICE_MANA_VALUE_MECHANIC not in mechanics or (operation, path) not in {
                     ('draw', ('count',)), ('life', ('delta',)),
                     ('place_counters', ('amount',)), ('mana', ('amount',)),

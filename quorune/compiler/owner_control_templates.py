@@ -1,5 +1,5 @@
 """One simultaneous resolution instruction restoring all objects to owners."""
-import re
+from . import regex_working_set as re
 from ..owner_control_model import OWNER_CONTROL_MECHANIC,OWNER_CONTROL_OPERATION
 
 

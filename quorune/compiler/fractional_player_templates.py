@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed half-life and affected-domain instructions over existing owners."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..fractional_quantity_model import HalfQuantitySpec, HALF_LIFE_OPERATION, HALF_LIFE_MECHANIC, HALF_CHOICE_MECHANIC
 from .closed_effect_programs import closed_effect_program_template
@@ -92,6 +92,9 @@ def fractional_player_sequence_template(text):
 
 
 def fixed_player_result_template(text,*,source_name=None):
+    from .third_life_templates import third_life_effect_template
+    third=third_life_effect_template(text)
+    if third is not None:return third
     if 'half' in text.casefold():
         fractional = fractional_player_result_template(text) or fractional_player_sequence_template(text)
         if fractional is not None:

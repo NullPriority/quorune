@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for fixed public alternative casting costs."""
 
-import re
+from . import regex_working_set as re
 from typing import Any
 
 from ..additional_cost_vocabulary import (
@@ -14,7 +14,13 @@ from ..additional_cost_vocabulary import (
 )
 from ..object_predicate import ObjectQuerySpec
 from ..public_alternative_costs import (
+    ANNOUNCED_X_PITCH_PRICE_VERSION,
     FIXED_PUBLIC_ALTERNATIVE_COST_MECHANIC,
+    OPPONENT_HISTORY_COSTS,
+    CREATURE_DAMAGE_PRICE_VERSION,
+    LIVE_ATTACKING_COSTS,
+    LIVE_ATTACKING_PRICE_VERSION,
+    OPPONENT_HISTORY_PRICE_VERSION,
     FixedPublicAlternativeCondition,
     FixedPublicAlternativeConditionKind,
     FixedPublicAlternativeCostKind,
@@ -60,6 +66,12 @@ _HAND_MOVE = re.compile(
     r"cards?(?P<from_hand> from your hand)?",
     re.IGNORECASE,
 )
+_ANNOUNCED_X_PITCH = re.compile(
+    r"You may exile a (?P<color>white|blue|black|red|green) card with mana value X "
+    r"from your hand rather than pay this spell['’]s mana cost\.?",
+    re.IGNORECASE,
+)
+
 _RETURN = re.compile(
     r"return (?P<count>a|an|one|two|three|four|five|[1-9][0-9]*) "
     r"(?P<quality>basic land|Forests?|Islands?|Mountains?|Plains|Swamps?) "
@@ -295,6 +307,87 @@ def _payment(
     return None
 
 
+_OPPONENT_HISTORY_LINES = {
+    "if an opponent drew three or more cards this turn": FixedPublicAlternativeConditionKind.OPPONENT_DREW_THREE,
+    "if an opponent gained life this turn": FixedPublicAlternativeConditionKind.OPPONENT_GAINED_LIFE,
+    "if an opponent had two or more lands enter the battlefield under their control this turn":
+        FixedPublicAlternativeConditionKind.OPPONENT_LAND_ARRIVALS,
+    "if an opponent cast a blue spell this turn": FixedPublicAlternativeConditionKind.OPPONENT_BLUE_CAST,
+    "if an opponent cast three or more spells this turn":
+        FixedPublicAlternativeConditionKind.OPPONENT_CAST_THREE_SPELLS,
+    "if a creature spell you cast this turn was countered by a spell or ability an opponent controlled":
+        FixedPublicAlternativeConditionKind.OPPONENT_COUNTERED_CREATURE_CAST,
+    "if an opponent had three or more cards put into their graveyard from anywhere this turn":
+        FixedPublicAlternativeConditionKind.OPPONENT_GRAVEYARD_ARRIVALS,
+    "if an opponent had two or more creatures enter the battlefield under their control this turn":
+        FixedPublicAlternativeConditionKind.OPPONENT_CREATURE_ARRIVALS,
+}
+
+
+_FIXED_ALTERNATIVE_PRICE_LINE = re.compile(
+    r"(?P<condition>If [^,]+), you may pay (?P<cost>(?:\{[0-9WUBRGC]+\})+) "
+    r"rather than pay this spell['’]s mana cost\.?",
+    re.I,
+)
+
+
+def _opponent_history_price(material_line, oracle_line, line_index):
+    match = _FIXED_ALTERNATIVE_PRICE_LINE.fullmatch(material_line.strip())
+    if match is None:
+        return None
+    kind = _OPPONENT_HISTORY_LINES.get(match["condition"].casefold())
+    if kind is None or match["cost"].upper() != OPPONENT_HISTORY_COSTS[kind]:
+        return None
+    cost_text, mana = _mana(OPPONENT_HISTORY_COSTS[kind])
+    return FixedPublicAlternativeCostSpec(
+        ability_id=f"ab{line_index + 1}", line_index=line_index, oracle_line=oracle_line,
+        kind=FixedPublicAlternativeCostKind.PLAIN,
+        condition=FixedPublicAlternativeCondition(kind, schema_version=OPPONENT_HISTORY_PRICE_VERSION),
+        cost_text=cost_text, mana_requirements=mana,
+    )
+
+
+_LIVE_ATTACKING_LINES = {
+    "if exactly one creature is attacking": FixedPublicAlternativeConditionKind.EXACTLY_ONE_ATTACKING_CREATURE,
+    "if three or more creatures are attacking": FixedPublicAlternativeConditionKind.AT_LEAST_THREE_ATTACKING_CREATURES,
+    "if four or more creatures are attacking": FixedPublicAlternativeConditionKind.AT_LEAST_FOUR_ATTACKING_CREATURES,
+}
+
+
+def _live_attacking_price(material_line, oracle_line, line_index):
+    match = _FIXED_ALTERNATIVE_PRICE_LINE.fullmatch(material_line.strip())
+    if match is None:
+        return None
+    kind = _LIVE_ATTACKING_LINES.get(match["condition"].casefold())
+    if kind is None or match["cost"].upper() != LIVE_ATTACKING_COSTS[kind]:
+        return None
+    cost_text, mana = _mana(LIVE_ATTACKING_COSTS[kind])
+    return FixedPublicAlternativeCostSpec(
+        ability_id=f"ab{line_index + 1}", line_index=line_index, oracle_line=oracle_line,
+        kind=FixedPublicAlternativeCostKind.PLAIN,
+        condition=FixedPublicAlternativeCondition(kind, schema_version=LIVE_ATTACKING_PRICE_VERSION),
+        cost_text=cost_text, mana_requirements=mana,
+    )
+
+
+def _creature_damage_price(material_line, oracle_line, line_index):
+    match = _FIXED_ALTERNATIVE_PRICE_LINE.fullmatch(material_line.strip())
+    if (match is None or match["condition"].casefold().replace("’", "'")
+            != "if you've been dealt damage by two or more creatures this turn"
+            or match["cost"].upper() != "{R}"):
+        return None
+    cost_text, mana = _mana("{R}")
+    return FixedPublicAlternativeCostSpec(
+        ability_id=f"ab{line_index + 1}", line_index=line_index, oracle_line=oracle_line,
+        kind=FixedPublicAlternativeCostKind.PLAIN,
+        condition=FixedPublicAlternativeCondition(
+            FixedPublicAlternativeConditionKind.DAMAGED_BY_TWO_CREATURES,
+            schema_version=CREATURE_DAMAGE_PRICE_VERSION,
+        ),
+        cost_text=cost_text, mana_requirements=mana,
+    )
+
+
 def compile_fixed_public_alternative_cost(
     *,
     material_line: str,
@@ -303,6 +396,28 @@ def compile_fixed_public_alternative_cost(
 ) -> FixedPublicAlternativeCostSpec | None:
     """Parse one closed fixed alternative-cost declaration."""
     from .conditional_free_casts import conditional_zero_mana_condition
+    if match := _ANNOUNCED_X_PITCH.fullmatch(material_line.strip()):
+        cost = FixedZoneChangeAdditionalCost(
+            operation=EXILE_ONE_FROM_HAND_COST, count=1, choice_field="exile_cards",
+            predicate=_hand_query(match["color"]),
+        )
+        return FixedPublicAlternativeCostSpec(
+            ability_id=f"ab{line_index + 1}", line_index=line_index, oracle_line=oracle_line,
+            kind=FixedPublicAlternativeCostKind.PLAIN,
+            condition=FixedPublicAlternativeCondition(FixedPublicAlternativeConditionKind.ALWAYS),
+            cost_text=None, mana_requirements=_zero_mana(),
+            additional_costs=(FrozenMap(cost.to_descriptor()),),
+            schema_version=ANNOUNCED_X_PITCH_PRICE_VERSION,
+        )
+    history_price = _opponent_history_price(material_line, oracle_line, line_index)
+    if history_price is not None:
+        return history_price
+    attacking_price = _live_attacking_price(material_line, oracle_line, line_index)
+    if attacking_price is not None:
+        return attacking_price
+    damage_price = _creature_damage_price(material_line, oracle_line, line_index)
+    if damage_price is not None:
+        return damage_price
     zero_condition = conditional_zero_mana_condition(material_line)
     if zero_condition is not None:
         return FixedPublicAlternativeCostSpec(ability_id=f'ab{line_index+1}', line_index=line_index,

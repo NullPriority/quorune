@@ -3,7 +3,7 @@ from __future__ import annotations
 """Lower the two fixed-controller Venture entry modes."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 
 from ..dungeon_catalog import VentureMode
 from ..dungeon_progress import DUNGEON_VENTURE_FIELD, DUNGEON_VENTURE_MECHANIC

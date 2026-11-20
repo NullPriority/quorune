@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "a79d5770a384dc2d50f7a06c8b69039cde5ec3c9ce8084ee04c6d945d5b3a3b1"
+verified: "436df075fbc985fbe370c2cabb3f896b9d84829588023fe78b4f73e216a561a0"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,12 +17,12 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 695 |
-| Cards | 7185 |
-| Rulings | 22515 |
-| Modules inspected | 1028 |
-| Static requirements | 3210 |
-| Declared dynamic requirements | 187 |
+| Fixture files | 852 |
+| Cards | 7884 |
+| Rulings | 26746 |
+| Modules inspected | 1187 |
+| Static requirements | 3963 |
+| Declared dynamic requirements | 1080 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
 | Missing deck dependencies | 0 |
@@ -39,18 +39,18 @@ Overall closure: **closed**.
 | counter-continuous-effects | 64 | closed |
 | deterministic-game-regressions | 6 | closed |
 | events-replacement-zone | 60 | closed |
-| functional-01 | 77 | closed |
-| functional-02 | 72 | closed |
-| functional-03 | 88 | closed |
-| functional-04 | 84 | closed |
-| functional-05 | 66 | closed |
-| functional-06 | 75 | closed |
-| functional-07 | 76 | closed |
-| functional-08 | 130 | closed |
-| functional-09 | 102 | closed |
-| functional-10 | 68 | closed |
+| functional-01 | 80 | closed |
+| functional-02 | 91 | closed |
+| functional-03 | 122 | closed |
+| functional-04 | 97 | closed |
+| functional-05 | 72 | closed |
+| functional-06 | 112 | closed |
+| functional-07 | 90 | closed |
+| functional-08 | 138 | closed |
+| functional-09 | 105 | closed |
+| functional-10 | 89 | closed |
 | functional-11 | 87 | closed |
-| functional-12 | 69 | closed |
+| functional-12 | 70 | closed |
 | generated-validation | 34 | closed |
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
@@ -58,7 +58,7 @@ Overall closure: **closed**.
 | multiplayer-commander | 17 | closed |
 | nightly-property | 3 | closed |
 | server-replay-privacy | 37 | closed |
-| state-actions-damage | 22 | closed |
+| state-actions-damage | 23 | closed |
 | targets-choices-continuations | 39 | closed |
 | triggers-turns-exact-decks | 20 | closed |
 | windows-compat | 18 | closed |

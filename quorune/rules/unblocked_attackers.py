@@ -1,6 +1,6 @@
 """Read current declaration membership; delegate occurrences to APNAP trigger owners."""
 from ..unblocked_attacker_model import (UNBLOCKED_ATTACKER_EVENT,UNBLOCKED_ATTACKER_CAPABILITY,
-    UnblockedAttackerOccurrence,unblocked_attacker_event_version)
+    UnblockedAttackerOccurrence,unblocked_attacker_event_version,unblocked_defender_poison_effect)
 
 
 def unblocked_attacker_occurrences(host):
@@ -32,3 +32,17 @@ def unblocked_attacker_runtime_dependencies(program):
     subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
     events={s.event.removesuffix('.self') for s in subscriptions.subscriptions} if subscriptions else {program.event.removesuffix('.self')}
     return (UNBLOCKED_ATTACKER_CAPABILITY,) if UNBLOCKED_ATTACKER_EVENT in events else ()
+
+
+
+def unblocked_poison_recipient_has_left(host, item, raw_effect, effect):
+    # Check the exact intrinsic result against its sealed defending player.
+    if (item.kind != "triggered_ability" or item.context.get("event") != UNBLOCKED_ATTACKER_EVENT
+            or type(raw_effect.get("amount")) is not int
+            or raw_effect != unblocked_defender_poison_effect()):
+        return False
+    defender = item.context.get("defending_player")
+    if not isinstance(defender, str) or effect.get("target") != defender:
+        return False
+    player = host.state.players.get(defender)
+    return player is not None and not player.in_game

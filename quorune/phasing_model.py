@@ -62,3 +62,33 @@ class PhasingRecord:
             attached_object=ContinuousObjectIdentity.from_dict(attached) if attached is not None else None,
             attached_player=value["attached_player"], indirect=value["indirect"], departed_ready=value["departed_ready"],
         )
+
+
+PHASE_OUT_OPERATION = "phase_out_permanent"
+PHASE_OUT_CAPABILITY = "permanent.phasing.fixed_phase_out"
+PHASE_OUT_MECHANIC = "fixed-phase-out"
+PHASE_OUT_RULES = ("502.1", "506.4", "608.2b", "702.26b", "702.26d", "702.26g",
+                   "702.26h", "702.26i", "702.26m", "702.26n")
+
+def phase_out_effect(*, targeted=False):
+    return {"op": PHASE_OUT_OPERATION, "schema_version": 1,
+            "subject": "target" if targeted else "source",
+            **({"card": "$target.0"} if targeted else {})}
+
+
+def validate_phase_out_effect(effect, *, runtime=False):
+    if not isinstance(effect, Mapping) or effect.get("op") != PHASE_OUT_OPERATION:
+        raise ValueError("Phase out requires its typed operation")
+    subject = effect.get("subject")
+    required = {"op", "schema_version", "subject"}
+    if subject == "target":
+        required.add("card")
+        ref = effect.get("card")
+        if type(ref) is not str or not ref or ref != ref.strip():
+            raise ValueError("Phase out requires a single target reference")
+    allowed = required | ({"_runtime_source"} if runtime else set())
+    if (subject not in ("source", "target") or not required.issubset(effect)
+            or set(effect) - allowed or type(effect["schema_version"]) is not int
+            or effect["schema_version"] != 1):
+        raise ValueError("Phase out requires a closed versioned source or target instruction")
+    return subject

@@ -41,10 +41,12 @@ def dispatch_target_announcements(
     host: Any, item: Any, *, previous_targets: tuple[str, ...] = (),
     previous_target_snapshots: Mapping[str, Any] | None = None,
     trigger_batch: list[Any] | None = None,
+    collect_ward: bool = False,
 ) -> None:
     """A stack object targets each new current permanent once per occurrence."""
     previous = set(previous_targets)
     snapshots = item.context.get('target_snapshots', {})
+    announced = []
     for ref in dict.fromkeys(item.targets):
         snapshot = snapshots.get(ref) if isinstance(snapshots, Mapping) else None
         if not isinstance(snapshot, Mapping) or not target_identity_matches_snapshot(host, ref, snapshot):
@@ -65,6 +67,12 @@ def dispatch_target_announcements(
             card.logical_object_id, tuple(sorted(types)),
         )
         host._dispatch_semantic_event(TARGET_ANNOUNCEMENT_EVENT, occurrence.to_context(), trigger_batch=trigger_batch)
+        if collect_ward:
+            announced.append(ref)
+    if announced:
+        from ..trigger_processing import collect_ward_occurrences
+
+        collect_ward_occurrences(host, item, target_refs=tuple(announced))
 
 
 def _detects_targets_before_payment(host: Any) -> bool:

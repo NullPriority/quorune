@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Complete homogeneous counter results reuse the scalar counter grammar."""
 
-import re
+from . import regex_working_set as re
 
 from ..counter_names import existing_counter_amount_descriptor
 from ..target_cardinality import AnnouncedTargetCardinality, selected_target_count_descriptor

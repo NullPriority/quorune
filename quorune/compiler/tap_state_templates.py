@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping, Sequence
@@ -10,6 +10,10 @@ from ..attachment_references import (
     AttachmentReferenceSpec,
 )
 from ..rules.source_references import source_self_permanent_type
+from ..next_player_untap_model import (
+    NEXT_PLAYER_UNTAP_INSTRUCTION_VERSION, NEXT_PLAYER_UNTAP_OPERATION,
+    NextPlayerUntapScope, next_player_untap_target_schema,
+)
 from .direct_target import (
     DirectPermanentTargetSpec,
     compiled_direct_target,
@@ -30,6 +34,23 @@ _TAP_STATE_SOURCE_TYPES = frozenset(
         "planeswalker",
     }
 )
+
+
+_NEXT_PLAYER_UNTAP = re.compile(
+    r"(?P<subject>lands target player|creatures and lands target opponent)"
+    r" controls don['’]t untap during their next untap step\.?", re.I,
+)
+
+
+def next_player_untap_effect_template(text: str):
+    match = _NEXT_PLAYER_UNTAP.fullmatch(" ".join(text.strip().split()))
+    if match is None:
+        return None
+    scope = (NextPlayerUntapScope.LANDS if match["subject"].casefold() == "lands target player"
+        else NextPlayerUntapScope.CREATURES_AND_LANDS)
+    effect = {"op": NEXT_PLAYER_UNTAP_OPERATION, "schema_version": NEXT_PLAYER_UNTAP_INSTRUCTION_VERSION,
+        "player": "$target.0", "scope": scope.value}
+    return "fixed-next-player-untap-v1", (effect,), next_player_untap_target_schema(scope), ("tap-and-untap", "cr-115-targets")
 
 
 class TapStateAction(str, Enum):

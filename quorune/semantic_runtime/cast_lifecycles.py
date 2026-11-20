@@ -117,7 +117,8 @@ class FixedCastLifecycleRegistry(
 @lru_cache(maxsize=1)
 def default_fixed_cast_lifecycle_registry() -> FixedCastLifecycleRegistry:
     from .cipher import CipherSpellDeclarationHandler
-    registry = FixedCastLifecycleRegistry((FixedCastLifecycleHandler(), CipherSpellDeclarationHandler()))
+    from .paradigm import ParadigmSpellDeclarationHandler
+    registry = FixedCastLifecycleRegistry((FixedCastLifecycleHandler(), CipherSpellDeclarationHandler(), ParadigmSpellDeclarationHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

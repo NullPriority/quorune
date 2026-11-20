@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed single-target graveyard-to-battlefield lowering."""
 
 from dataclasses import dataclass
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype

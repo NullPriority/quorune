@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Closed Oracle grammar for controller-wide static action permissions."""
 
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype

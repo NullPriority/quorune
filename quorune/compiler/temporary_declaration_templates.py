@@ -3,7 +3,7 @@ from __future__ import annotations
 """Closed creature declaration rules lasting through the current turn."""
 
 from dataclasses import dataclass, replace
-import re
+from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..rules.temporary_declaration_restrictions import (

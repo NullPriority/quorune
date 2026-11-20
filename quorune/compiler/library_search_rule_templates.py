@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..library_search_model import (LIBRARY_SEARCH_RULE_CAPABILITY,LIBRARY_SEARCH_RULE_HANDLER,LIBRARY_SEARCH_TEMP_CAPABILITY,
     LIBRARY_SEARCH_TEMP_OPERATION,LibrarySearchRuleSpec)
 from .fixed_numbers import fixed_number

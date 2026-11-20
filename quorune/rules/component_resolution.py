@@ -43,8 +43,8 @@ def implementation_component_resolves(component: str) -> bool:
         module_path = package_root / relative.with_suffix(".py")
         if not module_path.is_file():
             module_path = package_root / relative / "__init__.py"
-        if not module_path.is_file():
-            continue
+            if not module_path.is_file():
+                continue
         remaining = parts[length:]
         if not remaining:
             return True

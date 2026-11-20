@@ -1,7 +1,7 @@
 """Compile complete paired characteristic shells and independent quotes."""
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..rules.source_references import SourceReferenceSpec
 from ..soulbond_model import SOULBOND_GRANT_HANDLER, SOULBOND_GRANT_CAPABILITY, SOULBOND_CAPABILITY
 from .continuous_templates import (

@@ -1187,3 +1187,267 @@ class MostCommonColorContractTests(unittest.TestCase):
         self.assertEqual(0,count([five,blue],'R'))
         resolver=_FixedPublicStateSnapshotResolver(SimpleNamespace(cards={}),None,None)
         self.assertIsNone(resolver._public_fact_quantity(None,fact('R')))
+
+
+class SourceExcludedPublicStatGroupCompilerTests(unittest.TestCase):
+    @staticmethod
+    def compile(text, *, permanent=True):
+        from quorune.compiler.fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
+        from quorune.attachment_references import AttachmentReferenceKind
+        return fixed_resolution_characteristics_effect_template(
+            text,source_name="Generic source",source_is_permanent=permanent,
+            source_card_types=("creature",) if permanent else ("sorcery",),
+            source_attachment_relation=None)
+
+    def test_complete_signed_global_other_instruction_keeps_original_source_incarnation(self):
+        from quorune.object_predicate import ObjectQuerySpec
+        for power,toughness in ((-1,-1),(-2,-2),(2,-1)):
+            text=f"All other creatures get {power:+}/{toughness:+} until end of turn."
+            result=self.compile(text);self.assertIsNotNone(result)
+            template,effects,targets,mechanics=result
+            self.assertIsNone(targets);self.assertEqual("source-excluded-public-fixed-stats-eot-v1",template)
+            effect,=effects;self.assertEqual((power,toughness),(effect["power"],effect["toughness"]))
+            query=ObjectQuerySpec.from_dict(effect["predicate"])
+            self.assertEqual((None,("creature",),"$source.zone_object"),(query.controller,query.types_all,query.exclude_ref))
+            self.assertIn("cr-611-continuous-effects",mechanics)
+
+    def test_unknown_source_and_unconsumed_lifecycle_or_filter_remain_closed(self):
+        text="All other creatures get -1/-1 until end of turn."
+        for permanent in (False,None):
+            self.assertIsNone(self.compile(text,permanent=permanent))
+        for bad in (text+" Draw a card.",text.replace("-1/-1","-X/-X"),
+                text.replace("creatures","creatures of your choice"),text.replace("end of turn","your next turn"),
+                text.replace("All other","All"),text.replace("-1/-1","+0/+0")):
+            self.assertIsNone(self.compile(bad))
+
+    def test_raw_query_contract_extends_only_plain_global_incarnation_exclusion(self):
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
+        q=ObjectQuerySpec(zones=("battlefield",),types_all=("creature",),exclude_ref="$source.zone_object")
+        self.assertTrue(fixed_resolution_characteristic_query_is_closed(q,target_schema=None))
+        self.assertTrue(fixed_resolution_characteristic_query_is_closed(replace(q,controller="$controller",exclude_ref="$source"),target_schema=None))
+        for bad in (replace(q,exclude_ref="$source"),replace(q,types_all=("artifact",)),
+                replace(q,subtypes_all=("elf",)),replace(q,excluded_controllers=("$controller",))):
+            self.assertFalse(fixed_resolution_characteristic_query_is_closed(bad,target_schema=None))
+
+    def test_generic_trigger_and_activation_keep_source_spans_and_existing_owner(self):
+        from test_qualified_zone_event_queries import query_record
+        r=load_default_capability_registry()
+        for text in ("When this creature enters, all other creatures get -2/-2 until end of turn.",
+                "{1}{B}, Remove a +1/+1 counter from this creature: All other creatures get -1/-1 until end of turn."):
+            c=replace(query_record(text),type_line="Creature — Horror",power="3",toughness="3")
+            ir=compile_oracle_card(c,capability_registry=r,capability_profile="commander_review")
+            self.assertEqual("exact",ir.status,ir.material_residuals)
+            node,=ir.faces[0].nodes
+            self.assertEqual(text,node.text)
+            self.assertEqual(text,c.oracle_text[node.span.start:node.span.end])
+            self.assertIn("continuous.resolution.fixed_characteristics_until_end_of_turn",node.capability_dependencies)
+            self.assertEqual("$source.zone_object",node.effects[0]["predicate"]["exclude_ref"])
+
+    def test_source_zone_reference_becomes_none_after_departure_or_reentry(self):
+        from types import SimpleNamespace
+        from quorune.model import CardInstance
+        from quorune.semantic_runtime.values import resolve_semantic_value
+        card=CardInstance("source","source-ref","fixture:source","Generic source","A","B","battlefield")
+        host=SimpleNamespace(state=SimpleNamespace(cards={card.object_id:card}))
+        item=SimpleNamespace(source_object_id=card.object_id,context={"source_logical_object_id":card.logical_object_id})
+        self.assertEqual(card.ref,resolve_semantic_value(host,"$source.zone_object",item))
+        card.zone="graveyard";card.zone_change_counter+=1
+        self.assertIsNone(resolve_semantic_value(host,"$source.zone_object",item))
+        card.zone="battlefield"
+        self.assertIsNone(resolve_semantic_value(host,"$source.zone_object",item))
+
+
+class SourceExcludedPublicStatNativeFixture(InheritedNativeFixture):
+    @classmethod
+    def setUpClass(cls):
+        import tempfile
+        from pathlib import Path
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition,DeckEntry
+        from scripts.build_test_database import build_fixture_database
+        cls.temporary=tempfile.TemporaryDirectory();root=Path(cls.temporary.name)
+        base=json.loads((ROOT/"tests/fixtures/bound-effect-program-cards.json").read_text(encoding="utf-8"))
+        base["cards"]=[r for r in base["cards"] if r["name"]=="Generic Bound Plains"];base["rulings"]=[]
+        p=root/"base.json";p.write_text(json.dumps(base),encoding="utf-8")
+        build_fixture_database([p,ROOT/"tests/fixtures/source-excluded-stat-group-cards.json"],root/"other-groups.sqlite3")
+        cls.db=CardDatabase(root/"other-groups.sqlite3");cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition("Other creatures",[DeckEntry("Isamaru, Hound of Konda",1,"commander"),
+            DeckEntry("Generic Bound Plains",30)],["Isamaru, Hound of Konda"])
+
+    def stats(self,s,card):
+        return tuple(s.engine._numeric_stat(card.object_id,k) for k in ("power","toughness"))
+
+    def group(self,s,name="Colossal Dreadmaw"):
+        return [self.add(s.engine,name,seat=seat,ref="other-group-"+seat) for seat in "ABCD"]
+
+
+class SourceExcludedPublicStatNativeTests(SourceExcludedPublicStatNativeFixture,unittest.TestCase):
+    def test_two_originals_admit_whole_and_demon_keeps_unrelated_return_residual(self):
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        for j,name in enumerate(("Shefet Archfiend","Festercreep")):
+            s=self.session(6112400+j);source=self.add(s.engine,name,zone="hand");self.assert_closed(s,source)
+            ir=compile_oracle_card(self.db.lookup(name),capability_registry=self.registry,capability_profile="commander_review")
+            self.assertEqual("exact",ir.status,ir.material_residuals)
+        c=self.db.lookup("Demon of Dark Schemes")
+        p=compile_card_program(self.db,c,capability_registry=self.registry,capability_profile="commander_review")
+        self.assertFalse(bind_card_program_runtime(p,capability_registry=self.registry,profile="commander_review")["strict_capability_ready"])
+
+    def test_actual_paid_shefet_modifies_all_controllers_except_source_with_sba_privacy_load_and_replay(self):
+        from quorune.record import authoritative_state_hash
+        s=self.session(6112410);bodies=self.group(s)
+        source=self.add(s.engine,"Shefet Archfiend",zone="hand")
+        small=self.add(s.engine,"Memnite",seat="C")
+        land=self.add(s.engine,"Swamp",seat="B")
+        secret=self.add(s.engine,"Counterspell",seat="D",zone="hand",ref="other-group-private")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":5,"B":2});self.checkpoint(s)
+        self.cast_for(s,"A",source);self.resolve_top(s)
+        trigger,=[i for i in s.state.stack if i.source_object_id==source.object_id]
+        self.assertFalse(trigger.targets)
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        self.assertFalse(any(s.state.players["A"].mana_pool.values()))
+        self.assertEqual((5,5),self.stats(s,source))
+        self.assertTrue(all(self.stats(s,c)==(4,4) for c in bodies))
+        self.assertEqual("graveyard",s.state.cards[small.object_id].zone)
+        self.assertEqual("battlefield",s.state.cards[land.object_id].zone)
+        for viewer in "ABC":self.assertNotIn(secret.ref,json.dumps(s.packet("pilot:"+viewer,full=True)))
+        self.replay(s,load=True)
+
+    def test_actual_festercreep_pays_counter_and_mana_dies_before_independent_group_effect(self):
+        from quorune.record import authoritative_state_hash
+        s=self.session(6112420);bodies=self.group(s,"Grizzly Bears")
+        source=self.add(s.engine,"Festercreep",zone="hand")
+        self.add(s.engine,"Swamp");self.add(s.engine,"Wastes")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":1,"B":1});self.checkpoint(s)
+        self.cast_for(s,"A",source);self.assertIsNone(self.resolve(s))
+        self.assertEqual({"+1/+1":1},source.counters)
+        self.priority(s,"A")
+        action,=[r for r in s.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+                 if r["id"].startswith("activate:"+source.ref+":")]
+        command={"action_id":action["id"],"pay":"auto"}
+        before=authoritative_state_hash(s.state)
+        self.assertFalse(s.act("pilot:D",command).ok);self.assertEqual(before,authoritative_state_hash(s.state))
+        result=s.act("pilot:A",command);self.assertTrue(result.ok,result.summary)
+        self.assertEqual("graveyard",s.state.cards[source.object_id].zone)
+        self.assertTrue(all(self.stats(s,c)==(2,2) for c in bodies))
+        self.assertTrue(s.state.stack)
+        self.assertTrue(all(s.state.cards[oid].tapped for oid in s.state.players["A"].zones["battlefield"]
+            if s.state.cards[oid].printed_name in ("Swamp","Wastes")))
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        self.assertTrue(all(self.stats(s,c)==(1,1) for c in bodies))
+        self.replay(s,load=True)
+
+    def test_actual_source_blink_excludes_only_original_incarnation_and_recipients_lock_at_resolution(self):
+        s=self.session(6112430);bodies=self.group(s)
+        source=self.add(s.engine,"Shefet Archfiend",zone="hand")
+        blink=self.add(s.engine,"Cloudshift",zone="hand",ref="other-source-blink")
+        late=self.add(s.engine,"Cloudshift",seat="C",zone="hand",ref="other-recipient-blink")
+        self.add(s.engine,"Plains");self.add(s.engine,"Plains",seat="C",ref="other-C-plains")
+        self.assert_closed(s,source);self.prepare(s,mana={"C":5,"B":2});self.checkpoint(s)
+        self.cast_for(s,"A",source);self.resolve_top(s);original=source.logical_object_id
+        self.cast_for(s,"A",blink,[source.ref]);self.resolve_top(s)
+        self.assertNotEqual(original,s.state.cards[source.object_id].logical_object_id)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual((3,3),self.stats(s,source))
+        self.assertTrue(all(self.stats(s,c)==(2,2) for c in bodies))
+        self.cast_for(s,"C",late,[bodies[2].ref]);self.assertIsNone(self.resolve(s))
+        self.assertEqual((6,6),self.stats(s,bodies[2]))
+        self.assertEqual((3,3),self.stats(s,source))
+        s=self.replay(s,load=True)
+        self.assertEqual((6,6),self.stats(s,bodies[2]))
+        self.replay(s,load=True)
+
+
+    def test_actual_post_modifier_fault_rolls_back_full_journal_event_and_priority_then_loads_and_retries(self):
+        from quorune.errors import GameRuleError
+        from quorune.record import authoritative_state_hash
+        s=self.session(6112440);bodies=self.group(s)
+        source=self.add(s.engine,"Shefet Archfiend",zone="hand")
+        self.prepare(s,mana={"C":5,"B":2});self.checkpoint(s)
+        self.cast_for(s,"A",source);self.resolve_top(s)
+        from quorune.effect_runtime import zones_and_attachments as owner
+        original=owner.create_resolution_continuous_effect;seen=[];failed=None;before=None
+        def fault(*args,**kwargs):
+            result=original(*args,**kwargs)
+            seen.append(tuple(self.stats(s,c) for c in bodies))
+            raise GameRuleError("Injected other-group post-modifier fault")
+        with mock.patch.object(owner,"create_resolution_continuous_effect",side_effect=fault):
+            for _ in range(16):
+                actor=s.pending_principals()[0];before=authoritative_state_hash(s.state)
+                result=s.act(actor,{"action_id":"pass"})
+                if not result.ok:
+                    self.assertIn("Injected other-group",result.summary);failed=actor;break
+            else:self.fail("Native continuous owner was not reached")
+        self.assertEqual([((4,4),)*4],seen)
+        self.assertEqual(before,authoritative_state_hash(s.state))
+        self.assertTrue(all(self.stats(s,c)==(6,6) for c in bodies))
+        s=self.replay(s,load=True);result=s.act(failed,{"action_id":"pass"});self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(s));self.assertEqual((5,5),self.stats(s,source))
+        self.assertTrue(all(self.stats(s,c)==(4,4) for c in bodies));self.replay(s,load=True)
+
+    def test_fresh_native_omitted_source_exclusion_mutant_is_killed_after_positive_paid_original(self):
+        from quorune.effect_runtime import zones_and_attachments as owner
+        method="test_actual_paid_shefet_modifies_all_controllers_except_source_with_sba_privacy_load_and_replay"
+        baseline=unittest.TestResult();type(self)(method).run(baseline)
+        self.assertEqual((0,0),(len(baseline.failures),len(baseline.errors)))
+        original=owner.matching_battlefield_objects;seen=[]
+        def mutant(host,predicate):
+            if predicate.exclude_ref is not None and predicate.types_all==("creature",):
+                seen.append(predicate.exclude_ref)
+                predicate=replace(predicate,exclude_ref=None)
+            return original(host,predicate)
+        result=unittest.TestResult()
+        with mock.patch.object(owner,"matching_battlefield_objects",mutant):type(self)(method).run(result)
+        self.assertTrue(seen);self.assertEqual([],result.errors);self.assertEqual(1,len(result.failures))
+
+    def test_actual_printed_shefet_cycling_pays_two_discards_and_draws_privately_without_entry_modifier(self):
+        from quorune.record import authoritative_state_hash
+        s=self.session(6112450);bodies=self.group(s)
+        source=self.add(s.engine,"Shefet Archfiend",zone="hand")
+        self.prepare(s,mana={"C":2});self.checkpoint(s)
+        actions=s.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+        action,=[r for r in actions if r["id"].startswith("activate:"+source.ref+":")]
+        before=set(s.state.players["A"].zones["hand"])
+        result=s.act("pilot:A",{"action_id":action["id"],"pay":"auto"});self.assertTrue(result.ok,result.summary)
+        self.assertEqual("graveyard",s.state.cards[source.object_id].zone)
+        self.assertFalse(any(s.state.players["A"].mana_pool.values()))
+        s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
+        after=set(s.state.players["A"].zones["hand"])
+        self.assertEqual(1,len(after-before))
+        self.assertEqual(len(before),len(after))
+        self.assertTrue(all(self.stats(s,c)==(6,6) for c in bodies))
+        for oid in after-before:
+            for viewer in "BCD":self.assertNotIn(s.state.cards[oid].ref,json.dumps(s.packet("pilot:"+viewer,full=True)))
+        self.replay(s,load=True)
+
+
+class SourceExcludedPublicStatWithdrawalTests(SourceExcludedPublicStatNativeFixture,unittest.TestCase):
+    def test_genuine_verified_continuous_owner_withdrawal_blocks_both_originals_and_keeps_vanilla(self):
+        from copy import deepcopy
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        raw=json.loads((ROOT/"quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        doc=read_evidence_document(ROOT/"platform/capability-evidence-declarations.json")
+        known=set(discover_tests(ROOT).values())
+        def verified(value):
+            registry=CapabilityRegistry(value)
+            index=build_index(registry_value=value,declaration_source=doc,discovered_test_ids=known)
+            registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+            return registry
+        baseline=verified(raw)
+        originals=[self.db.lookup(name) for name in ("Shefet Archfiend","Festercreep")]
+        deps={}
+        for card in originals:
+            ir=compile_oracle_card(card,capability_registry=baseline,capability_profile="commander_review")
+            self.assertEqual("exact",ir.status,ir.material_residuals)
+            deps[card.oracle_id]=tuple(d for face in ir.faces for node in face.nodes for d in node.capability_dependencies)
+        cap="continuous.resolution.fixed_characteristics_until_end_of_turn"
+        changed=deepcopy(raw);next(r for r in changed["capabilities"] if r["id"]==cap).update(status="blocked",blockers=["focused source-excluded owner withdrawal"])
+        withdrawn=verified(changed)
+        for card in originals:
+            self.assertIn(cap,deps[card.oracle_id])
+            self.assertNotEqual("exact",compile_oracle_card(card,capability_registry=withdrawn,capability_profile="commander_review").status)
+            self.assertIn("status:"+cap+":blocked",withdrawn.closure(deps[card.oracle_id],profile="commander_review").blockers)
+        self.assertEqual("exact",compile_oracle_card(self.db.lookup("Isamaru, Hound of Konda"),
+            capability_registry=withdrawn,capability_profile="commander_review").status)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Incubate counts remain one instruction, including two ordered incubations."""
 
-import re
+from . import regex_working_set as re
 
 from ..incubate_model import INCUBATE_OPERATION,INCUBATE_MECHANIC
 from .declared_effect_amounts import declared_effect_amount_template

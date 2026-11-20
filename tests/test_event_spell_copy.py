@@ -502,3 +502,368 @@ class EventSpellCopyNativeTests(unittest.TestCase):
         copied=next(i for i in session.state.stack if i.kind=='spell_copy');self.assertEqual([original.ref],copied.targets);self.assertNotIn(copied.ref,copied.targets)
         hand=len(session.state.players['B'].zones['hand']);session=self.replay(session,load=True);self.finish(session)
         self.assertEqual('graveyard',session.state.cards[counter.object_id].zone);self.assertEqual(hand+2,len(session.state.players['B'].zones['hand']));self.replay(session,load=True)
+
+class DirectCastSpellTokenReferenceTests(unittest.TestCase):
+    def test_new_recipe_and_old_spelled_origins_have_distinct_closed_codecs(self):
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
+        effect=TokenCopyRecipeSpec("event_spell",TokenCopyExceptionSpec(remove_legendary=True),schema_version=4)
+        self.assertEqual(effect,TokenCopyRecipeSpec.from_dict(effect.to_dict()))
+        for change in ({"schema_version":3},{"origin":"event_object"},{"cleanup":"sacrifice_next_end_step"},
+                       {"temporary_keywords":["Haste"]},{"exception":TokenCopyExceptionSpec().to_dict()}):
+            with self.subTest(change=change),self.assertRaises(ValueError):
+                TokenCopyRecipeSpec.from_dict({**effect.to_dict(),**change})
+        older=TokenCopyRecipeSpec("event_object").to_dict()
+        self.assertEqual(older,TokenCopyRecipeSpec.from_dict(older).to_dict())
+
+    def test_exact_spell_adapts_current_then_departure_values_without_cast_choices(self):
+        from quorune.entry_copy import COPIABLE_ORACLE_FIELD
+        from quorune.event_spell_copy_model import CAST_SPELL_TOKEN_ORACLE_CONTEXT, cast_spell_token_condition
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
+        from quorune.token_copy_references import copy_reference_snapshot
+
+        host,card,spell=copy_host()
+        host.characteristics={
+            "name":"Fixture","type_line":"Legendary Creature — Human","power":"1","toughness":"3",
+        }
+        recipe=TokenCopyRecipeSpec("event_spell",TokenCopyExceptionSpec(remove_legendary=True),schema_version=4)
+        effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
+        program=SimpleNamespace(effects=(effect,),coverage=(),event="spell.cast",active_zone="stack",
+                                target_schema=None,event_condition=cast_spell_token_condition())
+        occurrence={"stack":spell.ref,"logical_object_id":card.logical_object_id}
+        captured=event_spell_copy_trigger_context(host,program,"spell.cast",occurrence)
+        self.assertEqual(card.oracle_id,captured[CAST_SPELL_TOKEN_ORACLE_CONTEXT])
+        self.assertNotIn(COPIABLE_ORACLE_FIELD,EventSpellCopySource.from_dict(captured[KEY]).characteristics)
+        legacy=SimpleNamespace(effects=(event_spell_copy_effect(),),coverage=(),event="spell.cast")
+        self.assertEqual({KEY},set(event_spell_copy_trigger_context(host,legacy,"spell.cast",occurrence)))
+        trigger=StackItem("id:trigger","TRIGGER","triggered_ability","A","Create a copy token",
+                          source_object_id=card.object_id,context={**captured,**occurrence})
+        host.state.stack.append(trigger)
+        host.characteristics["power"]="4"
+        live=copy_reference_snapshot(host,trigger,recipe)
+        self.assertEqual(("stack",spell.ref,card.logical_object_id),
+                         (live["zone"],live["ref"],live["logical_object_id"]))
+        self.assertEqual({"characteristics","oracle_id","printed_name","annotations"},set(live["snapshot"]))
+        self.assertEqual("4",live["snapshot"]["characteristics"]["power"])
+        self.assertEqual(card.oracle_id,live["snapshot"]["oracle_id"])
+        pin_event_spell_copy_departure(host,spell)
+        host.state.stack.remove(spell)
+        card.zone="graveyard"
+        card.zone_change_counter+=1
+        card.oracle_id="unrelated-later-identity"
+        host.characteristics.update(power="7",type_line="Creature — Goblin")
+        self.assertEqual(live,copy_reference_snapshot(host,trigger,recipe))
+        self.assertNotIn("targets",live["snapshot"]["characteristics"])
+        self.assertNotIn("x_value",live["snapshot"]["characteristics"])
+        wrong=replace(trigger,context={**trigger.context,"stack":"different-spell"})
+        with self.assertRaises(ValueError):
+            copy_reference_snapshot(host,wrong,recipe)
+
+    def test_raw_direct_copy_requires_the_new_owner_without_coverage_labels(self):
+        from quorune.rules.token_creation_capability_shapes import (
+            CAST_PERMANENT_TOKEN_COPY_CAPABILITY, token_definition_payload_dependencies,
+        )
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
+
+        recipe=TokenCopyRecipeSpec("event_spell",TokenCopyExceptionSpec(remove_legendary=True),schema_version=4)
+        effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
+        required=token_definition_payload_dependencies(effect)
+        self.assertEqual({CAST_PERMANENT_TOKEN_COPY_CAPABILITY,"token.creation.fixed_copy",CAPABILITY},set(required))
+        for changed in ({"quantity":True},{"quantity":2},{"tapped":True},{"controller":"$context.player"},
+                        {"copy_spec":{**effect["copy_spec"],"origin":"event_object"}}):
+            with self.subTest(changed=changed),self.assertRaises(ValueError):
+                token_definition_payload_dependencies({**effect,**changed})
+
+    def test_direct_token_capture_requires_the_exact_self_cast_subscription(self):
+        from quorune.event_spell_copy_model import cast_spell_token_condition
+        from quorune.rules.event_spell_copy import event_spell_copy_runtime_dependencies
+        from quorune.rules.token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY
+        from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
+
+        recipe=TokenCopyRecipeSpec("event_spell",TokenCopyExceptionSpec(remove_legendary=True),schema_version=4)
+        effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
+        host,card,spell=copy_host()
+        host.characteristics.update(type_line="Creature")
+        values=dict(effects=(effect,),coverage=(),event="spell.cast",active_zone="stack",target_schema=None,
+                    event_condition=cast_spell_token_condition())
+        program=SimpleNamespace(**values)
+        self.assertIn(CAST_PERMANENT_TOKEN_COPY_CAPABILITY,event_spell_copy_runtime_dependencies(program))
+        actual=event_spell_copy_trigger_context(host,program,"spell.cast",
+            {"stack":spell.ref,"logical_object_id":card.logical_object_id})
+        self.assertEqual(spell.ref,EventSpellCopySource.from_dict(actual[KEY]).item().ref)
+        for earlier in ({"event":"resolve"},{"active_zone":"battlefield"},{"event_condition":None},
+                        {"target_schema":{}},{"effects":(event_spell_copy_effect(),effect)},
+                        {"effects":({"op":"offer_optional_effect","effects":[effect]},)}):
+            with self.subTest(earlier=earlier),self.assertRaises(ValueError):
+                event_spell_copy_runtime_dependencies(SimpleNamespace(**{**values,**earlier}))
+
+    def test_compiler_lowers_one_complete_self_cast_declaration_with_explicit_authority(self):
+        from quorune.rules.token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY
+
+        printed = "When you cast this spell, create a token that's a copy of it, except the token isn't legendary."
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(query_record(printed),capability_registry=registry,capability_profile="commander_review")
+        node, = (node for face in ir.faces for node in face.nodes
+                 if node.template_id == "self-cast-permanent-token-copy-v1")
+        self.assertEqual(("stack","spell.cast",None),(node.active_zone,node.event,node.target_schema))
+        self.assertEqual(printed,printed[node.span.start:node.span.end])
+        self.assertEqual(4,node.effects[0]["copy_spec"]["schema_version"])
+        self.assertIn(CAST_PERMANENT_TOKEN_COPY_CAPABILITY,node.capability_dependencies)
+        self.assertEqual(registry.closure(node.capability_dependencies,profile="commander_review").trusted,node.exact)
+        for record in (replace(query_record(printed),type_line="Instant"),
+                       query_record(printed.replace("When you cast this spell","Whenever you cast a creature spell")),
+                       query_record(printed+" Draw a card.")):
+            with self.subTest(text=record.oracle_text,kind=record.type_line):
+                boundary=compile_oracle_card(record,capability_registry=registry,capability_profile="commander_review")
+                self.assertFalse(any(n.template_id=="self-cast-permanent-token-copy-v1"
+                                     for face in boundary.faces for n in face.nodes))
+
+    def test_stack_token_source_requires_a_pinned_snapshot(self):
+        from quorune.token_creation import TokenCreationError, create_tokens
+
+        host = SimpleNamespace(_require_seat=lambda *_args, **_kwargs: None)
+        with self.assertRaisesRegex(TokenCreationError, "Stack token-copy source requires a pinned snapshot"):
+            create_tokens(host, "A", name="", quantity=1, copy_of="S1", copy_source_zone="stack")
+
+    def test_direct_token_detects_omission_of_its_departure_receipt(self):
+        self.test_exact_spell_adapts_current_then_departure_values_without_cast_choices()
+        with patch(f"{__name__}.pin_event_spell_copy_departure",return_value=None):
+            with self.assertRaisesRegex(ValueError,"departure information is unavailable"):
+                self.test_exact_spell_adapts_current_then_departure_values_without_cast_choices()
+
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+class DirectCastSpellTokenNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        data = json.loads((ROOT / "tests/fixtures/bound-effect-program-cards.json").read_text(encoding="utf-8"))
+        data["cards"] = [card for card in data["cards"] if card["name"] == "Generic Bound Plains"]
+        data["rulings"] = []
+        basic = folder / "base.json"
+        basic.write_text(json.dumps(data), encoding="utf-8")
+        db = folder / "direct-cast-token.sqlite3"
+        build_fixture_database([basic, ROOT / "tests/fixtures/self-cast-permanent-token-copy-cards.json"], db)
+        cls.db = CardDatabase(db)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Direct cast token", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def finish(self, session):
+        EventSpellCopyNativeTests.finish(self, session)
+
+    def cast_source(self, session, source, *, reserve=None):
+        self.cast_for(session, "A", source, reserve=reserve)
+        spell, trigger = session.state.stack
+        self.assertEqual((source.object_id,"spell"), (spell.card_object_id, spell.kind))
+        self.assertEqual((source.object_id,"triggered_ability"), (trigger.source_object_id, trigger.kind))
+        context = EventSpellCopySource.from_dict(trigger.context[KEY])
+        self.assertEqual(spell.ref,context.item().ref)
+        self.assertEqual(session.state.cards[source.object_id].logical_object_id,context.logical_object_id)
+        return spell, trigger
+
+    def copy_tokens(self, session, source):
+        return [card for card in session.state.cards.values() if card.zone=="battlefield" and card.is_token
+                and card.annotations.get("copied_from")==source.object_id]
+
+    def assert_copy(self, session, source, token):
+        self.assertEqual(("A","A","token"),(token.owner,token.controller,token.object_kind))
+        expected = self.db.lookup(source.printed_name)
+        self.assertEqual((expected.oracle_id,expected.name),(token.oracle_id,token.printed_name))
+        effective = session.engine._effective_card_data(token)
+        self.assertNotIn("Legendary",effective["type_line"])
+        self.assertTrue({"human","alien","shapeshifter"}.issubset(session.engine._type_parts(effective["type_line"])[1]))
+        self.assertEqual((2,2),tuple(session.engine._numeric_stat(token.object_id,key) for key in ("power","toughness")))
+
+    def test_paid_original_creates_direct_token_and_retains_restricted_mana_and_paradox(self):
+        from quorune.mana_restrictions import (
+            ability_mana_spend_context, mana_restriction_allows, spell_mana_spend_context,
+        )
+
+        session = self.session(707100401)
+        engine = session.engine
+        source = self.add(engine,"Osgood, Operation Double",zone="hand")
+        self.add(engine,"Fervor")
+        plunder = self.add(engine,"Memory Plunder",zone="hand")
+        borrowed = self.add(engine,"Shock",seat="B",zone="graveyard",ref="direct-copy-borrowed-spell")
+        artifact = self.add(engine,"Sol Ring",zone="hand")
+        creature = self.add(engine,"Grizzly Bears",zone="hand")
+        private = self.add(engine,"Counterspell",seat="D",zone="hand",ref="direct-copy-private")
+        for card in (source, plunder, borrowed, artifact, creature):
+            self.assert_closed(session,card)
+        self.prepare(session,mana={"C":2,"U":6,"G":1})
+        self.checkpoint(session)
+
+        spell, _trigger = self.cast_source(session,source,reserve={"U":4,"G":1})
+        self.resolve_top(session)
+        only_original, = session.state.stack
+        self.assertEqual((spell.ref,"spell"),(only_original.ref,only_original.kind))
+        self.assertEqual("stack",session.state.cards[source.object_id].zone)
+        token, = self.copy_tokens(session,source)
+        self.assert_copy(session,source,token)
+        self.assertIsNone(self.resolve(session))
+        self.assertIn("Legendary",session.engine._effective_card_data(session.state.cards[source.object_id])["type_line"])
+        self.assertEqual(1,sum(card.is_token for card in session.state.cards.values() if card.zone=="battlefield"))
+
+        self.priority(session,"A")
+        offer = self.action(session,"A",plunder)
+        command={"action_id":offer["id"],"targets":[borrowed.ref],"pay":"auto","reserve":{"G":1}}
+        if offer.get("cost_options"):
+            command["cost_option"]=offer["cost_options"][0]["id"]
+        cast=session.act("pilot:A",command)
+        self.assertTrue(cast.ok,cast.summary)
+        self.assertEqual("semantic.choice",self.resolve(session).kind)
+        choices=session.packet("pilot:A",full=True)["decision"]["ctx"]["cast_options"]
+        command={"action_id":"choose","choice":"cast","cast":{"cost_option":choices[0]["id"],"targets":["C"]}}
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D",command).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        session=self.replay(session,load=True)
+        accepted=session.act("pilot:A",command)
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.finish(session)
+        self.assertEqual(38,session.state.players["C"].life)
+        clues=[card for card in session.state.cards.values() if card.zone=="battlefield" and card.is_token
+               and card.printed_name=="Clue Token"]
+        self.assertEqual([("A","A"),("A","A")],[(card.owner,card.controller) for card in clues])
+
+        token=session.state.cards[token.object_id]
+        self.priority(session,"A")
+        actions=lambda: session.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered, = (row for row in actions() if row["id"].startswith("activate:"+token.ref+":"))
+        accepted=session.act("pilot:A",{"action_id":offered["id"],"pay":"auto"})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertTrue(session.state.cards[token.object_id].tapped)
+        (restriction, lot), = session.state.players["A"].stats["restricted_mana"].items()
+        self.assertEqual({"C":1},lot)
+        self.assertTrue(mana_restriction_allows(restriction,spell_mana_spend_context("Artifact")))
+        self.assertTrue(mana_restriction_allows(restriction,ability_mana_spend_context("Artifact")))
+        self.assertFalse(mana_restriction_allows(restriction,spell_mana_spend_context("Creature")))
+        self.assertFalse(mana_restriction_allows(restriction,ability_mana_spend_context("Creature")))
+        self.assertFalse(any(row.get("card")==creature.ref for row in actions()))
+        self.cast_for(session,"A",artifact,reserve={"G":1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(0,session.state.players["A"].mana_pool.get("C",0))
+        self.assertEqual(1,session.state.players["A"].mana_pool["G"])
+        for seat in "ABC":
+            self.assertNotIn(private.ref,json.dumps(session.packet("pilot:"+seat,full=True)))
+        self.replay(session,load=True)
+
+    def test_countered_source_uses_departure_values_and_creators_token_replacement(self):
+        session = self.session(707100402)
+        engine = session.engine
+        source = self.add(engine,"Osgood, Operation Double",zone="hand")
+        counter = self.add(engine,"Counterspell",seat="B",zone="hand")
+        self.add(engine,"Parallel Lives",ref="direct-copy-own-replacement")
+        self.add(engine,"Parallel Lives",seat="C",ref="direct-copy-foreign-replacement")
+        self.assert_closed(session,source)
+        self.assert_closed(session,counter)
+        self.prepare(session,mana={"C":2,"U":2})
+        session.state.players["B"].mana_pool["U"]=2
+        self.checkpoint(session)
+        spell, trigger = self.cast_source(session,source)
+        self.cast_for(session,"B",counter,[spell.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard",session.state.cards[source.object_id].zone)
+        pending, = session.state.stack
+        self.assertEqual(trigger.ref,pending.ref)
+        receipt=EventSpellCopySource.from_dict(pending.context[KEY])
+        self.assertTrue(receipt.departed)
+        self.assertEqual(spell.ref,receipt.item().ref)
+        self.assertFalse(self.copy_tokens(session,source))
+        session=self.replay(session,load=True)
+        self.assertIsNone(self.resolve(session))
+        tokens=self.copy_tokens(session,source)
+        self.assertEqual(2,len(tokens))
+        for token in tokens:
+            self.assert_copy(session,source,token)
+        self.assertEqual("graveyard",session.state.cards[source.object_id].zone)
+        self.replay(session,load=True)
+
+    def test_genuine_cast_token_owner_and_shared_dependency_withdrawal(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.oracle_ir import register_generated_programs
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.rules.token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY
+        from quorune.semantics import SemanticRegistry
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        profile = "commander_review"
+        card = self.db.lookup("Osgood, Operation Double", fuzzy=False)
+        targeted_control = replace(
+            query_record("Copy target instant or sorcery spell. You may choose new targets for the copy."),
+            type_line="Instant",
+        )
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered = set(discover_tests(ROOT).values())
+
+        def binding(registry):
+            semantics = SemanticRegistry()
+            register_generated_programs(
+                self.db, semantics, [card], trust_level="provisional", capability_registry=registry,
+                capability_profile=profile, promote_exact_runtime_handlers=True,
+                promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+                promote_exact_capability_declarations=True,
+            )
+            program = compile_best_available_card_program(
+                self.db, card, semantic_registry=semantics, capability_registry=registry, capability_profile=profile,
+            )
+            return bind_card_program_runtime(program, capability_registry=registry, profile=profile)
+
+        self.assertTrue(binding(load_default_capability_registry())["strict_capability_ready"])
+        for capability in (CAST_PERMANENT_TOKEN_COPY_CAPABILITY, CAPABILITY):
+            with self.subTest(capability=capability):
+                blocked = deepcopy(raw)
+                next(row for row in blocked["capabilities"] if row["id"] == capability).update(
+                    status="blocked", blockers=["Test withdrawal of the actual owner"],
+                )
+                registry = CapabilityRegistry(blocked)
+                index = build_index(registry_value=blocked, declaration_source=declarations, discovered_test_ids=discovered)
+                registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+                self.assertFalse(binding(registry)["strict_capability_ready"])
+                self.assertEqual("exact", compile_oracle_card(
+                    targeted_control, capability_registry=registry, capability_profile=profile,
+                ).status)
+
+    def test_actual_token_creation_fault_rolls_back_exactly_and_replays_on_retry(self):
+        from quorune import token_creation
+        from quorune.errors import GameRuleError
+
+        session=self.session(707100403)
+        source=self.add(session.engine,"Osgood, Operation Double",zone="hand")
+        self.prepare(session,mana={"C":2,"U":2})
+        self.checkpoint(session)
+        self.cast_source(session,source)
+        original=token_creation.create_tokens
+        committed=[]
+        def fail_after_creation(*args,**kwargs):
+            created=original(*args,**kwargs)
+            committed.extend(created)
+            raise GameRuleError("Injected direct cast token creation fault")
+        with patch.object(token_creation,"create_tokens",side_effect=fail_after_creation):
+            for _ in range(12):
+                actor=session.pending_principals()[0]
+                before=authoritative_state_hash(session.state)
+                result=session.act(actor,{"action_id":"pass"})
+                if not result.ok:
+                    self.assertIn("Injected direct cast token creation fault",result.summary)
+                    break
+            else:
+                self.fail("The actual token creation transaction did not reach the fault")
+        self.assertEqual(1,len(committed))
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self.assertFalse(self.copy_tokens(session,source))
+        session=self.replay(session,load=True)
+        self.assertTrue(session.act(actor,{"action_id":"pass"}).ok)
+        self.assertIsNone(self.resolve(session))
+        token, = self.copy_tokens(session,source)
+        self.assert_copy(session,source,token)
+        self.replay(session,load=True)

@@ -1,5 +1,5 @@
 """Explicit recipient roles over the existing permanent-control journal."""
-import re
+from . import regex_working_set as re
 from ..recipient_control_model import (RECIPIENT_CONTROL_MECHANIC,recipient_control_effect,
     CHOOSE_CONTROL_RECIPIENT_OPERATION,GIVE_CONTROL_SET_OPERATION)
 from ..rules.source_references import SourceReferenceSpec,source_self_permanent_type

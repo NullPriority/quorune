@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Whole-value aggregate grammar over the shared public battlefield query."""
 
-import re
+from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..public_characteristic_aggregate_model import (

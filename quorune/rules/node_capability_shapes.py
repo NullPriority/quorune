@@ -656,15 +656,36 @@ def targeted_counter_node_capabilities(
         return stack_controller_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
-    if (
-        not {"counter", "cr-115-targets"}.issubset(mechanics)
-        or len(effects) != 1
-        or not fixed_stack_counter_target_schema_is_closed(target_schema)
-    ):
+    if not {"counter", "cr-115-targets"}.issubset(mechanics) or len(effects) != 1:
+        return ()
+    from ..stack_spell_targeting import (
+        CURRENT_TARGET_COUNTER, CURRENT_TARGET_COUNTER_CAPABILITIES, stack_spell_target_predicate,
+    )
+    try:
+        if stack_spell_target_predicate(target_schema) is not None:
+            return CURRENT_TARGET_COUNTER_CAPABILITIES if effects[0] == CURRENT_TARGET_COUNTER else ()
+    except (TypeError, ValueError):
+        return ()
+    if not fixed_stack_counter_target_schema_is_closed(target_schema):
         return ()
     from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, counter_destination_payload_dependencies
 
     effect = effects[0]
+    from ..stack_counter import (
+        ANNOUNCED_X_COUNTER_FIELD, NO_MANA_SPENT_COUNTER_FIELD,
+        announced_x_counter_capabilities, no_mana_spent_counter_capabilities,
+    )
+
+    if ANNOUNCED_X_COUNTER_FIELD in effect:
+        try:
+            return announced_x_counter_capabilities(effect, target_schema)
+        except (ValueError, TypeError):
+            return ()
+    if NO_MANA_SPENT_COUNTER_FIELD in effect:
+        try:
+            return no_mana_spent_counter_capabilities(effect, target_schema)
+        except (ValueError, TypeError):
+            return ()
     destination_present = COUNTER_DESTINATION_FIELD in effect
     fields = {"op", "stack"} | ({COUNTER_DESTINATION_FIELD} if destination_present else set())
     if (
@@ -978,6 +999,9 @@ def fixed_target_characteristics_node_capabilities(
     if any(effect.get("schema_version") == 12 and effect.get("op") == "apply_source_characteristics_until_end_of_turn" for effect in effects):
         from .power_toughness_switch import power_toughness_switch_node_capabilities
         return power_toughness_switch_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if len(effects) == 1 and effects[0].get('op') == 'choose_option':
+        from .temporary_keyword_removal import chosen_keyword_removal_capabilities
+        return chosen_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if any(effect.get('schema_version')==11 and effect.get('op')=='apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .temporary_keyword_removal import temporary_keyword_removal_capabilities
         return temporary_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)

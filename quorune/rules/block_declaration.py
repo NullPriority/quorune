@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from .block_capacity import current_block_capacity
+from .block_as_though import blocker_tap_allows_block
 from ..errors import GameRuleError
 
 
@@ -28,7 +29,7 @@ def validate_block_assignments(host, defender, raw):
         values=tuple(attacker_values) if isinstance(attacker_values,(list,tuple)) else (attacker_values,)
         if not values or any(type(v) is not str or not v for v in values):raise GameRuleError('Block assignments require nonempty attacker references')
         types,_,_=host._type_parts(str(host._effective_card_data(blocker).get('type_line') or ''))
-        if blocker.tapped or blocker.phased_out or 'creature' not in types or 'battle' in types:
+        if not blocker_tap_allows_block(host,blocker) or blocker.phased_out or 'creature' not in types or 'battle' in types:
             raise GameRuleError(f'{blocker.ref} cannot block')
         capacity=current_block_capacity(host,blocker,eligible_attackers=len(host._current_attacker_cards()))
         if len(values)>capacity:raise GameRuleError(f'{blocker.ref} can block at most {capacity} attackers')

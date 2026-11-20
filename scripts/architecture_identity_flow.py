@@ -281,6 +281,12 @@ class _ScopeAnalyzer:
         self.tree = tree
         self.scope = scope
         self.policy = policy
+        self.identity_source_fields = frozenset(map(str, policy["identity_source_fields"]))
+        self.mapping_source_fields = frozenset(map(str, policy["mapping_source_fields"]))
+        self.normalization_calls = frozenset(map(str, policy["normalization_calls"]))
+        self.implementation_map_markers = tuple(
+            str(value).casefold() for value in policy["implementation_map_markers"]
+        )
         self.module_classification = module_classification
         self.parents = parents
         self.syntax = SyntaxSnapshot(tree) if syntax is None else syntax
@@ -298,8 +304,8 @@ class _ScopeAnalyzer:
         existing = self.direct_origins.get(id(node))
         if existing is not None:
             return existing
-        source_fields = set(map(str, self.policy["identity_source_fields"]))
-        mapping_fields = set(map(str, self.policy["mapping_source_fields"]))
+        source_fields = self.identity_source_fields
+        mapping_fields = self.mapping_source_fields
         field: str | None = None
         kind: str | None = None
         if isinstance(node, ast.Attribute) and node.attr in source_fields:
@@ -346,7 +352,7 @@ class _ScopeAnalyzer:
             return self.taints.get(node.id, ())
         if isinstance(node, ast.Call):
             name = _call_name(node.func)
-            normalizers = set(map(str, self.policy["normalization_calls"]))
+            normalizers = self.normalization_calls
             if isinstance(node.func, ast.Name) and name in normalizers:
                 return self._merge_taints(
                     *(self._expr_taints(arg) for arg in node.args)
@@ -426,10 +432,7 @@ class _ScopeAnalyzer:
                 break
 
     def _implementation_map_name(self, node: ast.AST) -> str | None:
-        markers = tuple(
-            str(value).casefold()
-            for value in self.policy["implementation_map_markers"]
-        )
+        markers = self.implementation_map_markers
         if isinstance(node, ast.Name):
             if node.id in self.map_aliases:
                 return self.map_aliases[node.id]

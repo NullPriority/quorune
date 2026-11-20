@@ -3,7 +3,7 @@ from __future__ import annotations
 """One fixed conditional result after an independently owned mandatory prefix."""
 
 from copy import deepcopy
-import re
+from . import regex_working_set as re
 
 from ..resolution_conditions import (
     RESOLUTION_CONDITION_OPERATION, RESOLUTION_CONDITION_MECHANIC,
@@ -12,6 +12,10 @@ from ..resolution_conditions import (
 
 
 def kicked_spell_condition_template(text: str, *, compile_component,source_name='source'):
+    from .kicked_self_replacement_templates import kicked_additive_target_lifelink_template
+    additive = kicked_additive_target_lifelink_template(text, compile_component=compile_component)
+    if additive is not None:
+        return additive
     from .kicked_target_replacements import kicked_target_replacement_template
     replacing=kicked_target_replacement_template(text,compile_component=compile_component)
     if replacing is not None:return replacing

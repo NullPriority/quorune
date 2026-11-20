@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from typing import Any, Sequence
 
 from ..abilities import ActivatedAbility, ActivationLimit, parse_activated_abilities
@@ -62,7 +62,8 @@ def parse_compiled_activation_line(
 def _parse_compiled_activation_material(material, *, card_name, keywords):
     from .public_quantity_activation_costs import compile_ability_local_mana_reduction
 
-    abilities = parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords)
+    from .announced_reinforce_nodes import parse_reinforce_activation_material
+    abilities = parse_reinforce_activation_material(material, card_name=card_name, keywords=keywords)
     return tuple(compile_ability_local_mana_reduction(ability, source_name=card_name) for ability in abilities)
 
 
@@ -95,7 +96,8 @@ def activated_ability_cost_capabilities(
     if ability.announced_x_symbols is not None:
         from ..activation_x import activation_x_capabilities
         additional.extend(activation_x_capabilities(symbols=ability.announced_x_symbols,
-            sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices)))
+            sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices),
+            discard_source=ability.discard_source))
     if ability.waterbend is not None:
         from ..waterbend import WATERBEND_CAPABILITY
         additional.append(WATERBEND_CAPABILITY)
@@ -154,6 +156,12 @@ def activated_ability_cost_capabilities(
     if any(choice.fixed_tap_cost() is not None and choice.fixed_tap_cost().schema_version == 2 for choice in ability.choices):
         from ..rules.activation_costs import COLORED_TAP_ACTIVATION_CAPABILITY
         additional.append(COLORED_TAP_ACTIVATION_CAPABILITY)
+    if any(choice.tap_schema_version == 3 for choice in ability.choices):
+        from ..rules.activation_costs import LEGENDARY_TAP_ACTIVATION_CAPABILITY
+        additional.append(LEGENDARY_TAP_ACTIVATION_CAPABILITY)
+    if any(choice.sacrifice_schema_version is not None for choice in ability.choices):
+        from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
+        additional.append(KEYWORD_SACRIFICE_CAPABILITY)
     return tuple(dict.fromkeys(additional))
 
 

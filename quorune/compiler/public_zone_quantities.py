@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import re
+from . import regex_working_set as re
 from ..characteristic_fragments import CharacteristicQuantitySpec,CharacteristicQuantityScope as S,CharacteristicQuantityReduction as R
 from ..object_predicate import ObjectQuerySpec
 

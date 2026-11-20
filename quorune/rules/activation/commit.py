@@ -850,6 +850,9 @@ def _commit_activation_costs_and_stack(
     from ...transmute import capture_transmute_discard
     transmute_context = capture_transmute_discard(host, program, source)
     attachment_snapshot = _source_attachment_snapshot(host, source, program)
+    from ..attachment_controller_information import capture_attachment_controller_context
+    attachment_controller_context=(capture_attachment_controller_context(host.state.cards,program,attachment_snapshot)
+        if attachment_snapshot is not None and program is not None else {})
     from ...designation_prevention import capture_designation_information, DESIGNATION_INFORMATION_FIELD
     designation_information=capture_designation_information(source,program.effects) if program is not None else None
     if not ability.mana_ability:
@@ -889,6 +892,8 @@ def _commit_activation_costs_and_stack(
     from ...attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
     if attachment_snapshot is not None and program is not None and attachment_information_capabilities(program.effects):
         source_activation_context={**(source_activation_context or {}),ATTACHMENT_INFORMATION_VERSION:1}
+    if attachment_controller_context:
+        source_activation_context={**(source_activation_context or {}),**attachment_controller_context}
     if designation_information is not None:
         source_activation_context={**(source_activation_context or {}),DESIGNATION_INFORMATION_FIELD:designation_information}
     if ability.mana_ability:

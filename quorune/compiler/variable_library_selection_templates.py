@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Resolve only the inspection count; selection semantics keep their owner."""
 
-import re
+from . import regex_working_set as re
 
 from ..variable_library_selection_model import (ALL_LOOKED,VARIABLE_LIBRARY_SELECTION_OPERATION,
     VARIABLE_LIBRARY_SELECTION_MECHANIC,validate_variable_library_selection)

@@ -7,6 +7,8 @@ from ..discover_model import (NONLAND_SCAN_CAPABILITY, NONLAND_SCAN_OPERATION,
 from .registry import SemanticChoiceRegistry
 from .composition_order import CompositionOrderHandler
 from .control_recipient import ControlRecipientChoiceHandler
+from .target_land_type import TargetLandTypeChoiceHandler
+from .chosen_counter_removal import ChosenCounterRemovalHandler
 from .mutate import MutateMergeChoiceHandler
 from .created_token_counters import CREATED_TOKEN_ATTACHMENT_HANDLERS, CREATED_TOKEN_COUNTER_HANDLERS
 from .incubate import INCUBATE_HANDLERS
@@ -23,6 +25,9 @@ from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
 from .object_selection import OBJECT_SELECTION_HANDLERS
 from .hand_entry_collections import PrivateHandCollectionHandler
+from .named_zone_search import NamedZoneSearchChoiceHandler
+from .target_library_inspection import TargetLibraryInspectionHandler
+from .shared_type_library import SharedTypeLibraryHandler
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
 from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
@@ -72,7 +77,11 @@ from .ring import RingTemptationChoiceHandler
 from .champion import ChampionExileChoiceHandler, ChampionReturnChoiceHandler
 from .cipher import CipherEncodingChoiceHandler
 from .discard_results import DiscardResultDrawHandler
+from .hand_library_redraw import HandLibraryRedrawHandler
+from .fixed_hand_putback import FixedHandPutbackHandler
+from .colored_hand_reveals import ColoredHandRevealChoiceHandler
 from .graveyard_return import GraveyardReturnChoiceHandler
+from .targeted_graveyard_exile import TargetedGraveyardExileChoiceHandler
 
 
 @lru_cache(maxsize=1)
@@ -85,7 +94,11 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             MutateMergeChoiceHandler(),
             ActualLifeTransferHandler(),
             DiscardResultDrawHandler(),
+            HandLibraryRedrawHandler(),
+            FixedHandPutbackHandler(),
+            ColoredHandRevealChoiceHandler(),
             GraveyardReturnChoiceHandler(),
+            TargetedGraveyardExileChoiceHandler(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
             *CREATED_TOKEN_ATTACHMENT_HANDLERS,
             *INCUBATE_HANDLERS,
@@ -123,6 +136,9 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,
             PrivateHandCollectionHandler(),
+            NamedZoneSearchChoiceHandler(),
+            TargetLibraryInspectionHandler(),
+            SharedTypeLibraryHandler(),
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
             *FIXED_TOP_ORDER_HANDLERS,
@@ -130,6 +146,8 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *GRAVEYARD_COPY_HANDLERS,
             FixedLandUntapChoiceHandler(),
             ControlRecipientChoiceHandler(),
+            TargetLandTypeChoiceHandler(),
+            ChosenCounterRemovalHandler(),
             *SCRY_CHOICE_HANDLERS,
             *SURVEIL_CHOICE_HANDLERS,
             *FIXED_LIBRARY_SELECTION_CHOICE_HANDLERS,

@@ -1,5 +1,5 @@
 """Closed actor-relative crime trigger subscriptions."""
-import re
+from . import regex_working_set as re
 from ..crime_model import CRIME_EVENT,CRIME_CAPABILITY
 from .fixed_public_event_trigger_bindings import _spec
 

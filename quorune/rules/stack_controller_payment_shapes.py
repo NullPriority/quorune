@@ -8,6 +8,7 @@ from .stack_controller_payment_cost import (
     STACK_CONTROLLER_PAYMENT_CAPABILITY, STACK_CONTROLLER_PAYMENT_MECHANIC,
     STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION, STACK_CONTROLLER_FOLLOWUP_PAYMENT_CAPABILITY,
     STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION, STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION,
+    TARGET_ANNOUNCEMENT_PAYMENT_VERSION, target_announcement_payment_cost,
     compiled_stack_controller_payment_cost, counter_payment_followup,
 )
 from ..zone_trigger_events import COUNTER_DESTINATION_FIELD
@@ -52,6 +53,13 @@ def _followup_capabilities(effect, payment):
             *((DECLARED_AMOUNT_CAPABILITY,) if amount_field is not None else ()))
 
 
+def source_opponent_target_announcement_condition_is_closed(condition: Any) -> bool:
+    return thaw_value(condition) == {"all": [
+        {"field": "card", "op": "eq", "value": "$source.ref"},
+        {"field": "stack_controller", "op": "ne", "value": "$source.controller"},
+    ]}
+
+
 def stack_controller_payment_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
@@ -59,8 +67,19 @@ def stack_controller_payment_node_capabilities(
     mechanics = set(mechanic_ids)
     if STACK_CONTROLLER_PAYMENT_MECHANIC not in mechanics or len(effects) != 1:
         return ()
+    effect = effects[0]
+    if isinstance(effect, Mapping) and effect.get("schema_version") == TARGET_ANNOUNCEMENT_PAYMENT_VERSION:
+        if target_schema is not None or "trigger-event-normalized-target-announcement" not in mechanics:
+            return ()
+        try:
+            target_announcement_payment_cost(effect)
+        except (TypeError, ValueError, KeyError):
+            return ()
+        from .target_announcements import TARGET_ANNOUNCEMENT_CAPABILITY
+
+        return (STACK_CONTROLLER_PAYMENT_CAPABILITY, "stack.counter.effect", TARGET_ANNOUNCEMENT_CAPABILITY)
     try:
-        payment = compiled_stack_controller_payment_cost(effects[0])
+        payment = compiled_stack_controller_payment_cost(effect)
     except (TypeError, ValueError, KeyError):
         return ()
     if (payment.schema_version == STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION
@@ -100,6 +119,22 @@ def is_closed_stack_controller_payment_program(program: Any) -> bool:
 
 def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]:
     """Revalidate the independent target roles of a composed payment clause."""
+    from .effect_shape_walkers import nested_effects
+
+    if any(effect.get("op") == "counter_unless_pay"
+            and effect.get("schema_version") == TARGET_ANNOUNCEMENT_PAYMENT_VERSION
+            for effect in nested_effects(program.effects)):
+        from .target_announcements import TARGET_ANNOUNCEMENT_EVENT
+
+        if ((program.event, program.active_zone) != (TARGET_ANNOUNCEMENT_EVENT, "battlefield")
+                or not source_opponent_target_announcement_condition_is_closed(program.event_condition)):
+            raise ValueError("Target announcement payment requires its exact source and opponent occurrence")
+        owned = stack_controller_payment_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if not owned:
+            raise ValueError("Target announcement payment requires its complete sealed stack result")
+        return owned
     versioned = any(effect.get("op") == "counter_unless_pay"
                     and effect.get("schema_version") in {
                         STACK_CONTROLLER_QUANTITY_PAYMENT_VERSION, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,

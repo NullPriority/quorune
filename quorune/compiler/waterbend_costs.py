@@ -3,7 +3,7 @@ from __future__ import annotations
 """Source compiler for one mandatory fixed Waterbend casting cost."""
 
 from dataclasses import dataclass,replace
-import re
+from . import regex_working_set as re
 from ..waterbend import FixedWaterbendCost,WATERBEND_CAPABILITY,WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
 
 
