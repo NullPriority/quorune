@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 import unittest
 from unittest import mock
 
@@ -10,6 +12,7 @@ from scripts.certification_receipt import RECEIPT_SCHEMA_VERSION
 from scripts.update_platform_status import (
     PLATFORM_INPUT_FINGERPRINT_ALGORITHM,
     ROOT,
+    _file_count,
     _serialize_json,
     _validate_provenance,
     build_report,
@@ -77,6 +80,24 @@ class PlatformStatusTests(unittest.TestCase):
         ):
             report = build_report()
         self.assertGreater(report["tests"]["primary_test_modules"], 0)
+
+    def test_file_inventory_only_counts_tracked_sources(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+            (root / ".gitignore").write_text("local/\n", encoding="utf-8")
+            web = root / "web"
+            (web / "local").mkdir(parents=True)
+            (web / "index.html").touch()
+            (web / "local" / "work-in-progress.html").touch()
+            (web / "untracked.html").touch()
+            subprocess.run(
+                ["git", "add", "--", "web/index.html"], cwd=root, check=True,
+            )
+
+            with mock.patch("scripts.update_platform_status.ROOT", root):
+                self.assertEqual(_file_count("web"), 1)
+                self.assertEqual(_file_count("server"), 0)
 
     def test_durable_provenance_has_no_execution_coordinates(self):
         source = self.source()

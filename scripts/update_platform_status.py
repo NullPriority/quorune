@@ -6,6 +6,7 @@ import difflib
 import hashlib
 import json
 from pathlib import Path
+import subprocess
 import sys
 import tomllib
 
@@ -133,23 +134,12 @@ def _input_fingerprint(value: dict) -> str:
 
 
 def _file_count(relative: str) -> int:
-    directory = ROOT / relative
-    if not directory.is_dir():
-        return 0
-    ignored_parts = {
-        "__pycache__",
-        "node_modules",
-        "dist",
-        "playwright-report",
-        "test-results",
-    }
-    return sum(
-        1
-        for path in directory.rglob("*")
-        if path.is_file()
-        and not ignored_parts.intersection(path.relative_to(directory).parts)
-        and path.suffix not in {".pyc", ".tsbuildinfo"}
+    """Count the paths included in the Git source checkpoint."""
+    tracked = subprocess.check_output(
+        ["git", "ls-files", "--cached", "--deduplicate", "-z", "--", f"{relative}/"],
+        cwd=ROOT,
     )
+    return tracked.count(b"\0")
 
 
 def _optional_json(relative: str) -> dict | None:
