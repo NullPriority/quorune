@@ -1560,6 +1560,29 @@
       "produced_mana": [],
       "faces": [],
       "cmc": 1.0
+    },
+    {
+      "oracle_id": "00000000-0000-4a07-8707-000000000570",
+      "name": "Fixed Stack Copy Boundary Witness",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.\nInvent an unrepresented sibling.",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "rulings": [
