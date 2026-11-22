@@ -18728,6 +18728,17 @@
         "test_cumulative_counter_upkeep",
         "test_attached_untap_restraints"
       ]
+    },
+    {
+      "id": "fetch-entry-replacement-continuation",
+      "patterns": [
+        "quorune/selection/fetch_search_entry.py"
+      ],
+      "test_modules": [
+        "test_semantic_searches",
+        "test_typed_land_entry_participation",
+        "test_fixed_library_searches"
+      ]
     }
   ],
   "risk_rules": [

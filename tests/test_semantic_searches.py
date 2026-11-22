@@ -952,6 +952,131 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         self.assertEqual("battlefield", target.zone)
         self.assertTrue(engineer.tapped)
 
+    def _activate_fetch_with_spelunking(self, starting_life=40):
+        session = self._session()
+        engine = session.engine
+        fetch = self._card(engine, "B", "Wooded Foothills")
+        pool = self._card(engine, "B", "Breeding Pool")
+        spelunking = self._card(engine, "B", "Spelunking")
+        for card, destination in ((fetch, "battlefield"), (pool, "library"), (spelunking, "battlefield")):
+            if card.zone != destination:
+                controller = {"controller": "B"} if destination == "battlefield" else {}
+                engine.move_card(card.object_id, destination, log=False, **controller)
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.active_player = "B"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_passes = []
+        engine.state.players["B"].life = starting_life
+        engine._grant_priority("B")
+        engine._issue_priority("B")
+        ability = next(ability for ability in engine._activated_abilities(fetch) if ability.library_search_types)
+        command = f"activate:{fetch.ref}:{ability.ability_id}"
+        self.assertIn(command, [action["id"] for action in session.packet(
+            "pilot:B", full=True,
+        )["decision"]["ctx"]["legal"]["actions"]])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        activated = session.act("pilot:B", {"action_id": command})
+        self.assertTrue(activated.ok, activated.summary)
+        for _ in range(4):
+            if session.state.pending_decision.kind == "search.fetch":
+                break
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            principal, = session.pending_principals()
+            passed = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual("search.fetch", session.state.pending_decision.kind)
+        self.assertEqual(starting_life - 1, session.state.players["B"].life)
+        self.assertEqual("graveyard", session.state.cards[fetch.object_id].zone)
+        return session, fetch, pool, spelunking
+
+    def test_fetch_entry_choice_preserves_paid_activation_and_exact_replay(self):
+        for pay_life in (False, True):
+            for spelunking_first in (False, True):
+                with self.subTest(pay_life=pay_life, spelunking_first=spelunking_first):
+                    session, fetch, pool, spelunking = self._activate_fetch_with_spelunking()
+                    player = session.state.players["B"]
+                    shuffled = player.stats.get("shuffle_count", 0)
+                    order = list(player.zones["library"])
+                    event_id = session.state.event_sequence
+                    old = session.engine.permissions.capability_for("pilot:B")
+                    stack_context = copy.deepcopy(session.state.stack[-1].context)
+                    chosen = session.act("pilot:B", {
+                        "action_id": "choose", "search_card": pool.ref, "entry_pay_life": pay_life,
+                    })
+                    self.assertTrue(chosen.ok, chosen.summary)
+                    self.assertEqual("replacement.order", session.state.pending_decision.kind)
+                    self.assertEqual(["pilot:B"], list(session.pending_principals()))
+                    self.assertEqual(39, player.life)
+                    self.assertEqual("graveyard", session.state.cards[fetch.object_id].zone)
+                    self.assertEqual("library", session.state.cards[pool.object_id].zone)
+                    self.assertEqual(order, player.zones["library"])
+                    self.assertEqual(shuffled, player.stats.get("shuffle_count", 0))
+                    self.assertEqual(stack_context, session.state.stack[-1].context)
+                    for principal in ("pilot:A", "arbiter", "spectator"):
+                        view = session.packet(principal, full=True)
+                        self.assertIsNone(view.get("decision"))
+                        text = json.dumps(view)
+                        self.assertNotIn(pool.printed_name, text)
+                        self.assertNotIn(json.dumps(pool.ref), text)
+                    options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                    self.assertEqual({pool.ref, spelunking.ref}, {option["source"] for option in options})
+                    first = spelunking.ref if spelunking_first else pool.ref
+                    choice, = (option["id"] for option in options if option["source"] == first)
+                    command = {"action_id": "choose", "replacement": choice}
+                    suspended = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act("pilot:A", command).ok)
+                    self.assertFalse(session.act("pilot:B", {**command, "replacement": "invalid"}).ok)
+                    self.assertFalse(session.engine.try_submit(
+                        token=old.token, principal="pilot:B", action="choose",
+                        payload={"search_card": pool.ref, "entry_pay_life": not pay_life},
+                    ).ok)
+                    self.assertEqual(suspended, authoritative_state_hash(session.state))
+                    with tempfile.TemporaryDirectory() as temp:
+                        pending = Path(temp) / "pending-fetch"
+                        session.save(pending)
+                        session = CommanderSession.load(self.db, pending)
+                        self.assertEqual(suspended, authoritative_state_hash(session.state))
+                        resumed = session.act("pilot:B", command)
+                        self.assertTrue(resumed.ok, resumed.summary)
+                        landed = session.state.cards[pool.object_id]
+                        self.assertEqual("battlefield", landed.zone)
+                        self.assertEqual(spelunking_first and not pay_life, landed.tapped)
+                        self.assertEqual("graveyard", session.state.cards[fetch.object_id].zone)
+                        player = session.state.players["B"]
+                        self.assertEqual(37 if pay_life else 39, player.life)
+                        self.assertEqual(shuffled + 1, player.stats["shuffle_count"])
+                        codes = [event.code for event in session.state.events
+                                 if event.event_id > event_id
+                                 and event.code in {"library.search", "library.shuffle", "stack.resolve"}]
+                        self.assertEqual(["library.search", "library.shuffle", "stack.resolve"], codes)
+                        finished = Path(temp) / "resolved-fetch"
+                        session.save(finished)
+                        replay = replay_record(finished, self.db, verify=True)
+                        self.assertTrue(replay["ok"], replay)
+                        self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
+
+    def test_fetch_entry_payment_failure_keeps_the_original_search(self):
+        session, fetch, pool, _ = self._activate_fetch_with_spelunking(starting_life=2)
+        before = authoritative_state_hash(session.state)
+        chosen = session.act("pilot:B", {
+            "action_id": "choose", "search_card": pool.ref, "entry_pay_life": True,
+        })
+        self.assertFalse(chosen.ok)
+        self.assertIn("Cannot pay more life", chosen.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertEqual("search.fetch", session.state.pending_decision.kind)
+        self.assertEqual(1, session.state.players["B"].life)
+        self.assertEqual("graveyard", session.state.cards[fetch.object_id].zone)
+        skipped = session.act("pilot:B", {
+            "action_id": "choose", "search_card": pool.ref, "entry_pay_life": False,
+        })
+        self.assertTrue(skipped.ok, skipped.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+
     def test_ordered_plan_spans_fetch_entomb_and_private_search(self):
         session = CommanderSession.create(
             self.db,

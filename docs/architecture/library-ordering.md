@@ -66,8 +66,10 @@ the affected player's entry replacement choice. The private continuation
 retains the chosen land and its entry life payment response. Entry and any
 payment complete through the existing zone and life owners. Once the land
 enters, the search records its result, shuffles, and resumes the resolving
-spell or ability. Invalid responses preserve the pending choice and its
-transaction state.
+spell or ability. A fetch activation keeps its paid activation cost when
+the entry choice suspends the search. The continuation rechecks the selected
+library object's incarnation before placement. Invalid responses preserve the
+pending choice and its transaction state.
 
 ## Shared ordered partition
 

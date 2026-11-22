@@ -18,6 +18,10 @@ from ..library_search_model import (
     FixedCountedLibrarySearchTemplate, SEARCH_ALTERNATIVES, SEARCH_SUBTYPES, is_counted_library_search,
 )
 from ..rules.library_search_rules import library_search_constraint,library_search_object_ids
+from .fetch_search_entry import (
+    FETCH_OPERATION_ID, finish_fetch_selection, is_fetch_search_entry_resume,
+    requires_private_land_entry_choice, resume_fetch_search_entry,
+)
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -27,7 +31,6 @@ from .model import (
 
 
 SEARCH_OPERATION_ID = "selection.search.semantic.v1"
-FETCH_OPERATION_ID = "selection.search.fetch.v1"
 _FETCH_ENTRY_TAPPED = "fetch_entry_tapped"
 _SEARCH_COMPLETION_FIELD = "_search_completion"
 _SEARCH_COMPLETION_FIELDS = {"actor", "choice_id", "selected_refs"}
@@ -364,19 +367,12 @@ class HiddenSearchOwnerMixin:
             raise GameRuleError(
                 "Selected fetchland result is no longer a legal library card"
             )
-        item.context["search_card"] = (
-            str(selected) if selected is not None else None
+        finish_fetch_selection(
+            self, item, selected=str(selected) if selected is not None else None,
+            pay_life=_search_entry_life_choice(response),
         )
-        item.context["choice_made"] = True
-        item.context["pay_life"] = bool(
-            response.get(
-                "entry_pay_life",
-                response.get("pay_life", False),
-            )
-        )
-        self._resolve_fetch_land(item)
 
-    def _resolve_fetch_land(self, item: StackItem) -> None:
+    def _resolve_fetch_land(self, item: StackItem, *, replacement_selections=()) -> None:
         seat = item.controller
         selected = item.context.get("search_card")
         legal_refs = {
@@ -417,6 +413,7 @@ class HiddenSearchOwnerMixin:
                 reason=f"{item.label} search",
                 log=False,
                 semantic_events=True,
+                replacement_selections=replacement_selections,
             )
             tapped = found.tapped
             life_paid = life_before - self.state.players[seat].life
@@ -661,6 +658,12 @@ class HiddenSearchOwnerMixin:
         note: str,
         instruction_pointer: int,
     ) -> None:
+        if is_fetch_search_entry_resume(effect):
+            resume_fetch_search_entry(
+                self, item, effect, remaining=remaining, destination=destination,
+                instruction_pointer=instruction_pointer,
+            )
+            return
         if _SEARCH_COMPLETION_FIELD in effect:
             self._resume_semantic_search(
                 item=item,
@@ -1433,13 +1436,7 @@ class HiddenSearchOwnerMixin:
                 context.effect, values, destination
             )
             if library_entry:
-                events = required.batch.events
-                if (
-                    required.pending.choice.chooser != context.seat
-                    or len(events) != 1
-                    or events[0].kind != "zone.change"
-                    or "land" not in events[0].payload.get("object_types", ())
-                ):
+                if not requires_private_land_entry_choice(required, context.seat):
                     raise
             elif not (
                 (context.effect.get("schema_version") == 9 and destination == "exile")
