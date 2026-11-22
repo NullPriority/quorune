@@ -315,6 +315,145 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         self.assertFalse(untapped_pool.tapped)
         self.assertEqual(38, paid.state.players["B"].life)
 
+    def _cast_three_visits_with_spelunking(self, *, starting_life=40):
+        session = self._session()
+        engine = session.engine
+        spell = self._card(engine, "B", "Three Visits")
+        spelunking = self._card(engine, "B", "Spelunking")
+        pool = self._card(engine, "B", "Breeding Pool")
+        bayou = self._card(engine, "B", "Bayou")
+        for card, destination in ((spell, "hand"), (pool, "library"), (bayou, "library")):
+            if card.zone != destination:
+                engine.move_card(card.object_id, destination, log=False)
+        engine.move_card(spelunking.object_id, "battlefield", controller="B", log=False)
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.active_player = "B"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine.state.priority_passes = []
+        engine.state.players["B"].mana_pool["G"] = 2
+        engine.state.players["B"].life = starting_life
+        engine._grant_priority("B")
+        engine._issue_priority("B")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        command = f"cast:{spell.ref}"
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(command, [action["id"] for action in actions])
+        result = session.act("pilot:B", {"action_id": command, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        for _ in range(2):
+            if session.state.pending_decision.kind != "priority":
+                break
+            principal, = session.pending_principals()
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.search", session.state.pending_decision.kind)
+        program = engine.semantics.get(session.state.stack[-1].semantic_key)
+        self.assertTrue(engine.semantic_program_is_current_trusted(program))
+        return session, spell, pool, bayou, spelunking
+
+    def test_three_visits_land_entry_order_preserves_payment_privacy_and_replay(self):
+        for pay_life, spelunking_first in ((False, False), (False, True), (True, False), (True, True)):
+            with self.subTest(pay_life=pay_life, spelunking_first=spelunking_first):
+                session, spell, pool, bayou, spelunking = self._cast_three_visits_with_spelunking()
+                player = session.state.players["B"]
+                shuffle_count = player.stats.get("shuffle_count", 0)
+                library_before = list(player.zones["library"])
+                events_before = session.state.event_sequence
+                search_capability = session.engine.permissions.capability_for("pilot:B")
+                decision = session.packet("pilot:B", full=True)["decision"]
+                schema = decision["legal_actions"][0]["choice_schema"]
+                self.assertIn(pool.ref, schema["legal_refs"])
+                self.assertIn(bayou.ref, schema["legal_refs"])
+                self.assertEqual("boolean", schema["entry_pay_life"])
+
+                result = session.act("pilot:B", {
+                    "action_id": "choose", "search_card": pool.ref, "entry_pay_life": pay_life,
+                })
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("replacement.order", session.state.pending_decision.kind)
+                self.assertEqual(["pilot:B"], list(session.pending_principals()))
+                self.assertEqual("stack", session.state.cards[spell.object_id].zone)
+                self.assertEqual("library", session.state.cards[pool.object_id].zone)
+                self.assertEqual(40, player.life)
+                self.assertEqual(library_before, player.zones["library"])
+                self.assertEqual(shuffle_count, player.stats.get("shuffle_count", 0))
+                self.assertFalse(any(
+                    event.event_id > events_before and event.code.startswith("library.")
+                    for event in session.state.events
+                ))
+                for viewer in ("pilot:A", "arbiter", "spectator"):
+                    packet = session.packet(viewer, full=True)
+                    self.assertIsNone(packet.get("decision"))
+                    serialized = json.dumps(packet)
+                    self.assertNotIn(pool.printed_name, serialized)
+                    for ref in (pool.ref, bayou.ref):
+                        self.assertNotIn(json.dumps(ref), serialized)
+
+                options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+                self.assertEqual({pool.ref, spelunking.ref}, {option["source"] for option in options})
+                first = spelunking if spelunking_first else pool
+                replacement, = [option["id"] for option in options if option["source"] == first.ref]
+                command = {"action_id": "choose", "replacement": replacement}
+                pending_hash = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", command).ok)
+                self.assertFalse(session.act("pilot:B", {**command, "replacement": "invalid"}).ok)
+                self.assertFalse(session.engine.try_submit(
+                    token=search_capability.token, principal="pilot:B", action="choose",
+                    payload={"search_cards": [bayou.ref], "entry_pay_life": not pay_life},
+                ).ok)
+                self.assertEqual(pending_hash, authoritative_state_hash(session.state))
+
+                with tempfile.TemporaryDirectory() as temporary:
+                    pending = Path(temporary) / "pending"
+                    session.save(pending)
+                    session = CommanderSession.load(self.db, pending)
+                    self.assertEqual(pending_hash, authoritative_state_hash(session.state))
+                    result = session.act("pilot:B", command)
+                    self.assertTrue(result.ok, result.summary)
+                    landed = session.state.cards[pool.object_id]
+                    self.assertEqual("battlefield", landed.zone)
+                    self.assertEqual(spelunking_first and not pay_life, landed.tapped)
+                    self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+                    self.assertEqual("library", session.state.cards[bayou.object_id].zone)
+                    player = session.state.players["B"]
+                    self.assertEqual(38 if pay_life else 40, player.life)
+                    self.assertEqual(shuffle_count + 1, player.stats["shuffle_count"])
+                    codes = [
+                        event.code for event in session.state.events
+                        if event.event_id > events_before
+                        and event.code in {"library.search", "library.shuffle", "stack.resolve"}
+                    ]
+                    self.assertEqual(["library.search", "library.shuffle", "stack.resolve"], codes)
+                    finished = Path(temporary) / "finished"
+                    session.save(finished)
+                    replay = replay_record(finished, self.db, verify=True)
+                    self.assertTrue(replay["ok"], replay)
+                    self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
+
+    def test_three_visits_unaffordable_entry_payment_keeps_the_search_open(self):
+        session, _, pool, _, spelunking = self._cast_three_visits_with_spelunking(starting_life=1)
+        before = authoritative_state_hash(session.state)
+        choose = {"action_id": "choose", "search_card": pool.ref}
+        result = session.act("pilot:B", {**choose, "entry_pay_life": True})
+        self.assertFalse(result.ok)
+        self.assertIn("Cannot pay more life", result.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertEqual("semantic.search", session.state.pending_decision.kind)
+
+        result = session.act("pilot:B", {**choose, "entry_pay_life": False})
+        self.assertTrue(result.ok, result.summary)
+        options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        replacement, = [option["id"] for option in options if option["source"] == spelunking.ref]
+        result = session.act("pilot:B", {"action_id": "choose", "replacement": replacement})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, session.state.players["B"].life)
+        self.assertTrue(session.state.cards[pool.object_id].tapped)
+
     def test_restrictive_hidden_search_may_fail_to_find(self):
         session = self._session()
         spell, _ = self._begin_spell(
