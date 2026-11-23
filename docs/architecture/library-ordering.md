@@ -59,6 +59,18 @@ Saved identities reject changed incarnations, and older search versions cannot
 carry this foreign-library authority. Contextual event-player clauses, qualified
 and optional counts, and unrepresented destinations remain separate boundaries.
 
+## Single land entry during search
+
+A direct library search that puts one land onto the battlefield can pause for
+the affected player's entry replacement choice. The private continuation
+retains the chosen land and its entry life payment response. Entry and any
+payment complete through the existing zone and life owners. Once the land
+enters, the search records its result, shuffles, and resumes the resolving
+spell or ability. A fetch activation keeps its paid activation cost when
+the entry choice suspends the search. The continuation rechecks the selected
+library object's incarnation before placement. Invalid responses preserve the
+pending choice and its transaction state.
+
 ## Shared ordered partition
 
 `LibraryPartitionChoice` is the one private complete-partition schema for

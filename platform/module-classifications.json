@@ -24562,6 +24562,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/selection/fetch_search_entry.py",
+      "layer": "rules",
+      "owning_subsystem": "search_target_and_choice",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/selection/fixed_resolving_cast.py",
       "layer": "rules",
       "owning_subsystem": "search_target_and_choice",
@@ -32286,5 +32300,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "292911ef8ca60040c3f55367c66f413f073aa46fdac0cfb4684a07a71b37029c"
+  "fingerprint": "c001bf78f5294dd30ace92c7349b83d9d917d75adb483df4521ae02c86a3069a"
 }

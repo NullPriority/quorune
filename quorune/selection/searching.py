@@ -5,6 +5,7 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
+from ..life_state import LifeStateError, prepare_life_payment
 from ..model import CardInstance, StackItem
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
@@ -17,6 +18,10 @@ from ..library_search_model import (
     FixedCountedLibrarySearchTemplate, SEARCH_ALTERNATIVES, SEARCH_SUBTYPES, is_counted_library_search,
 )
 from ..rules.library_search_rules import library_search_constraint,library_search_object_ids
+from .fetch_search_entry import (
+    FETCH_OPERATION_ID, finish_fetch_selection, is_fetch_search_entry_resume,
+    requires_private_land_entry_choice, resume_fetch_search_entry,
+)
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -26,11 +31,30 @@ from .model import (
 
 
 SEARCH_OPERATION_ID = "selection.search.semantic.v1"
-FETCH_OPERATION_ID = "selection.search.fetch.v1"
 _FETCH_ENTRY_TAPPED = "fetch_entry_tapped"
 _SEARCH_COMPLETION_FIELD = "_search_completion"
 _SEARCH_COMPLETION_FIELDS = {"actor", "choice_id", "selected_refs"}
+_ENTRY_LIFE_CHOICE = "entry_pay_life"
 _REPLACEMENT_SELECTIONS_FIELD = "_replacement_selections"
+
+
+def _search_entry_life_choice(response: Mapping[str, Any]) -> bool:
+    return bool(response.get(_ENTRY_LIFE_CHOICE, response.get("pay_life", False)))
+
+
+def _single_library_battlefield_entry(
+    effect: Mapping[str, Any],
+    values: Sequence[str],
+    destination: str,
+) -> bool:
+    return (
+        destination == "battlefield"
+        and len(values) == 1
+        and effect.get("zone", "library") == "library"
+        and effect.get("schema_version") is None
+        and (effect.get("count") or {}).get("maximum", 1) == 1
+        and effect.get("enters_tapped_override") is None
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -343,19 +367,12 @@ class HiddenSearchOwnerMixin:
             raise GameRuleError(
                 "Selected fetchland result is no longer a legal library card"
             )
-        item.context["search_card"] = (
-            str(selected) if selected is not None else None
+        finish_fetch_selection(
+            self, item, selected=str(selected) if selected is not None else None,
+            pay_life=_search_entry_life_choice(response),
         )
-        item.context["choice_made"] = True
-        item.context["pay_life"] = bool(
-            response.get(
-                "entry_pay_life",
-                response.get("pay_life", False),
-            )
-        )
-        self._resolve_fetch_land(item)
 
-    def _resolve_fetch_land(self, item: StackItem) -> None:
+    def _resolve_fetch_land(self, item: StackItem, *, replacement_selections=()) -> None:
         seat = item.controller
         selected = item.context.get("search_card")
         legal_refs = {
@@ -396,6 +413,7 @@ class HiddenSearchOwnerMixin:
                 reason=f"{item.label} search",
                 log=False,
                 semantic_events=True,
+                replacement_selections=replacement_selections,
             )
             tapped = found.tapped
             life_paid = life_before - self.state.players[seat].life
@@ -640,6 +658,12 @@ class HiddenSearchOwnerMixin:
         note: str,
         instruction_pointer: int,
     ) -> None:
+        if is_fetch_search_entry_resume(effect):
+            resume_fetch_search_entry(
+                self, item, effect, remaining=remaining, destination=destination,
+                instruction_pointer=instruction_pointer,
+            )
+            return
         if _SEARCH_COMPLETION_FIELD in effect:
             self._resume_semantic_search(
                 item=item,
@@ -1073,12 +1097,7 @@ class HiddenSearchOwnerMixin:
                 and effect.get("enters_tapped_override") is None
             ):
                 record = self.card_record(card)
-                pay_entry_life = bool(
-                    response.get(
-                        "entry_pay_life",
-                        response.get("pay_life", False),
-                    )
-                )
+                pay_entry_life = _search_entry_life_choice(response)
                 entry_life = (
                     self._land_entry_life_amount(record)
                     if record is not None
@@ -1209,7 +1228,10 @@ class HiddenSearchOwnerMixin:
         raw_completion = effect.get(_SEARCH_COMPLETION_FIELD)
         if (
             not isinstance(raw_completion, Mapping)
-            or set(raw_completion) != _SEARCH_COMPLETION_FIELDS
+            or set(raw_completion) not in (
+                _SEARCH_COMPLETION_FIELDS,
+                _SEARCH_COMPLETION_FIELDS | {_ENTRY_LIFE_CHOICE},
+            )
         ):
             raise GameRuleError("Malformed semantic search completion")
         actor = raw_completion.get("actor")
@@ -1262,7 +1284,15 @@ class HiddenSearchOwnerMixin:
         destination_spec, resolved_destination, position = (
             self._semantic_search_destination(base_effect)
         )
-        if (resolved_destination != "hand"
+        response: dict[str, Any] = {"search_cards": selected}
+        if _ENTRY_LIFE_CHOICE in raw_completion:
+            pay_entry_life = raw_completion[_ENTRY_LIFE_CHOICE]
+            if type(pay_entry_life) is not bool or not _single_library_battlefield_entry(
+                base_effect, selected, resolved_destination
+            ):
+                raise GameRuleError("Malformed semantic search entry life choice")
+            response[_ENTRY_LIFE_CHOICE] = pay_entry_life
+        elif (resolved_destination != "hand"
                 and not (base_effect.get("schema_version") == 8 and resolved_destination == "battlefield")
                 and not (base_effect.get("schema_version") == 9 and resolved_destination == "exile")):
             raise GameRuleError(
@@ -1287,7 +1317,7 @@ class HiddenSearchOwnerMixin:
         return (
             SemanticSearchCompletionContext(
                 seat=seat,
-                response={"search_cards": selected},
+                response=response,
                 continuation={
                     "remaining": [dict(value) for value in remaining],
                     "destination": destination,
@@ -1354,6 +1384,11 @@ class HiddenSearchOwnerMixin:
                 replacement_selections=raw_selections,
             )
         except ReplacementChoiceRequired as required:
+            if (
+                _ENTRY_LIFE_CHOICE in context.response
+                and required.pending.choice.chooser != context.seat
+            ):
+                raise
             from ..replacement_decisions import issue_replacement_order_choice
 
             issue_replacement_order_choice(
@@ -1397,18 +1432,44 @@ class HiddenSearchOwnerMixin:
                 position=position,
             )
         except ReplacementChoiceRequired as required:
-            targeted = context.effect.get('schema_version') == 9 and destination == 'exile'
-            if not targeted and ((destination != "hand" and not (destination=="battlefield" and context.effect.get("schema_version")==8))
-                    or len(values) > 1 and not is_counted_library_search(context.effect)):
+            library_entry = _single_library_battlefield_entry(
+                context.effect, values, destination
+            )
+            if library_entry:
+                if not requires_private_land_entry_choice(required, context.seat):
+                    raise
+            elif not (
+                (context.effect.get("schema_version") == 9 and destination == "exile")
+                or (
+                    (destination == "hand" or (
+                        destination == "battlefield" and context.effect.get("schema_version") == 8
+                    ))
+                    and (len(values) <= 1 or is_counted_library_search(context.effect))
+                )
+            ):
                 raise
             from ..replacement_decisions import issue_replacement_order_choice
 
             resume_effect = copy.deepcopy(context.effect)
-            resume_effect[_SEARCH_COMPLETION_FIELD] = {
+            completion: dict[str, Any] = {
                 "actor": context.seat,
                 "choice_id": decision.decision_id,
                 "selected_refs": values,
             }
+            if library_entry:
+                pay_life = _search_entry_life_choice(context.response)
+                if pay_life:
+                    # An unaffordable choice must return to the original search decision.
+                    card = self._resolve_object(
+                        context.seat, values[0], zones={"library"}, owned_only=True,
+                    )
+                    amount = self._land_entry_life_amount(self.card_record(card))
+                    try:
+                        prepare_life_payment(self, context.seat, amount)
+                    except LifeStateError as exc:
+                        raise GameRuleError(str(exc)) from exc
+                completion[_ENTRY_LIFE_CHOICE] = pay_life
+            resume_effect[_SEARCH_COMPLETION_FIELD] = completion
             issue_replacement_order_choice(
                 self,
                 item=context.item,

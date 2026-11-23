@@ -8732,48 +8732,48 @@
           "classification": "rules_value",
           "file": "quorune/selection/searching.py",
           "flow_id": "card-identity-flow:6ab8320a49b9b349bc0c",
-          "line": 165,
+          "line": 189,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 165,
+          "source_line": 189,
           "symbol": "HiddenSearchOwnerMixin._fetch_land_options"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/searching.py",
           "flow_id": "card-identity-flow:59a339b2e7c707259b6f",
-          "line": 405,
+          "line": 423,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 405,
+          "source_line": 423,
           "symbol": "HiddenSearchOwnerMixin._resolve_fetch_land"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/searching.py",
           "flow_id": "card-identity-flow:00978681db00e868c0e8",
-          "line": 559,
+          "line": 577,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 559,
+          "source_line": 577,
           "symbol": "HiddenSearchOwnerMixin._semantic_search_options"
         },
         {
           "classification": "rules_value",
           "file": "quorune/selection/searching.py",
           "flow_id": "card-identity-flow:f387ea51045eac78ef9f",
-          "line": 773,
+          "line": 797,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 773,
+          "source_line": 797,
           "symbol": "HiddenSearchOwnerMixin._bounded_library_search_view"
         },
         {
@@ -13131,7 +13131,7 @@
           "module": "quorune.util"
         },
         {
-          "fan_in": 184,
+          "fan_in": 185,
           "fan_out": 0,
           "module": "quorune.errors"
         },
@@ -13253,7 +13253,7 @@
           "module": "quorune.compiler.effect_template_composition"
         }
       ],
-      "internal_edges": 14311,
+      "internal_edges": 14317,
       "modules": [
         {
           "fan_in": 2,
@@ -18081,7 +18081,7 @@
           "module": "quorune.entwine_model"
         },
         {
-          "fan_in": 184,
+          "fan_in": 185,
           "fan_out": 0,
           "module": "quorune.errors"
         },
@@ -18491,7 +18491,7 @@
           "module": "quorune.life_gain_permission"
         },
         {
-          "fan_in": 16,
+          "fan_in": 18,
           "fan_out": 2,
           "module": "quorune.life_state"
         },
@@ -19271,12 +19271,12 @@
           "module": "quorune.replacement.tribute"
         },
         {
-          "fan_in": 6,
+          "fan_in": 7,
           "fan_out": 36,
           "module": "quorune.replacement_decisions"
         },
         {
-          "fan_in": 42,
+          "fan_in": 43,
           "fan_out": 1,
           "module": "quorune.replacement_effects"
         },
@@ -21936,6 +21936,11 @@
           "module": "quorune.selection.exile_cast"
         },
         {
+          "fan_in": 1,
+          "fan_out": 4,
+          "module": "quorune.selection.fetch_search_entry"
+        },
+        {
           "fan_in": 2,
           "fan_out": 5,
           "module": "quorune.selection.fixed_resolving_cast"
@@ -21957,7 +21962,7 @@
         },
         {
           "fan_in": 1,
-          "fan_out": 21,
+          "fan_out": 23,
           "module": "quorune.selection.searching"
         },
         {
@@ -24675,7 +24680,7 @@
       ]
     },
     "production": {
-      "file_count": 2287,
+      "file_count": 2288,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -25008,7 +25013,7 @@
           "visibility": "dunder"
         }
       ],
-      "logical_lines": 366826,
+      "logical_lines": 366967,
       "methods": {
         "dunder": 1141,
         "private": 1109,
@@ -25164,6 +25169,13 @@
           "physical_lines": 1623
         },
         {
+          "file": "quorune/selection/searching.py",
+          "functions_and_methods": 33,
+          "language": "python",
+          "logical_lines": 1445,
+          "physical_lines": 1495
+        },
+        {
           "file": "quorune/rules/node_capability_shapes.py",
           "functions_and_methods": 26,
           "language": "python",
@@ -25218,13 +25230,6 @@
           "language": "python",
           "logical_lines": 1410,
           "physical_lines": 1531
-        },
-        {
-          "file": "quorune/selection/searching.py",
-          "functions_and_methods": 31,
-          "language": "python",
-          "logical_lines": 1389,
-          "physical_lines": 1434
         },
         {
           "file": "quorune/token_creation.py",
@@ -31469,6 +31474,13 @@
           "language": "python",
           "logical_lines": 85,
           "physical_lines": 100
+        },
+        {
+          "file": "quorune/selection/fetch_search_entry.py",
+          "functions_and_methods": 4,
+          "language": "python",
+          "logical_lines": 85,
+          "physical_lines": 98
         },
         {
           "file": "quorune/attack_batch_model.py",
@@ -41342,8 +41354,8 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 408946,
-      "python_file_count": 2271,
+      "physical_lines": 409105,
+      "python_file_count": 2272,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -41360,7 +41372,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 8814,
+      "top_level_functions": 8820,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -50740,7 +50752,7 @@
       "card_specific_operation_branch_occurrences": {
         "remora_tax": 1
       },
-      "count": 1706,
+      "count": 1707,
       "limitations": "AST heuristic covers if/match conditions whose source names op or operation.",
       "locations": [
         {
@@ -66477,6 +66489,23 @@
           "symbol": "validate_apnap_choice_effect"
         },
         {
+          "condition": "set(effect) != {\"op\", _SEARCH_COMPLETION, _REPLACEMENTS} or effect.get(\"op\") != \"search\" or set(completion) != _ENTRY_FIELDS or item.context.get(\"builtin\") != \"fetch_land\" or item.context.get(\"choice_made\") or completion[\"actor\"] != item.co",
+          "file": "quorune/selection/fetch_search_entry.py",
+          "line": 75,
+          "string_literals": [
+            "actor",
+            "builtin",
+            "choice_made",
+            "entry_pay_life",
+            "fetch_land",
+            "op",
+            "search",
+            "source_ref",
+            "stack_ref"
+          ],
+          "symbol": "resume_fetch_search_entry"
+        },
+        {
           "condition": "set(effect) - {'_replacement_selections', '_aura_target_ref'} != fields or effect['op'] != 'self_zone_move' or effect['origin'] != 'graveyard' or effect['destination'] != 'battlefield' or effect['source_form'] != 'card' or type(effect['tapp",
           "file": "quorune/self_zone_move_followups.py",
           "line": 56,
@@ -69729,7 +69758,7 @@
         "activate": 2,
         "activated_ability": 1,
         "active_zone": 1,
-        "actor": 21,
+        "actor": 22,
         "add": 4,
         "add_ability": 4,
         "add_ability_fragment": 2,
@@ -69780,6 +69809,7 @@
         "body": 1,
         "bottom": 4,
         "bounce": 5,
+        "builtin": 1,
         "candidates": 1,
         "cap_result_life_loss": 1,
         "card": 170,
@@ -69793,6 +69823,7 @@
         "characteristics": 9,
         "choice": 1,
         "choice_id": 1,
+        "choice_made": 1,
         "choice_schema": 1,
         "choose": 2,
         "choose_attacking_token_destinations": 1,
@@ -69929,6 +69960,7 @@
         "energy": 1,
         "enters_tapped_override": 2,
         "entry_counter": 1,
+        "entry_pay_life": 1,
         "entry_tapped": 1,
         "eq": 51,
         "equipment": 5,
@@ -69957,6 +69989,7 @@
         "fading": 1,
         "fallback_effects": 3,
         "falsy": 1,
+        "fetch_land": 1,
         "field": 77,
         "field_of_dead_token": 1,
         "finish_earthbend_land": 1,
@@ -70090,7 +70123,7 @@
         "offer_soulbond_pair": 1,
         "offset": 1,
         "once": 1,
-        "op": 1193,
+        "op": 1194,
         "open_tribute_entry_choice": 2,
         "operation": 7,
         "opponent": 4,
@@ -70231,7 +70264,7 @@
         "scopes": 1,
         "scry": 7,
         "scute_swarm_token": 1,
-        "search": 26,
+        "search": 27,
         "search_named_library_or_graveyard": 3,
         "searching_player": 4,
         "selected": 1,
@@ -70269,6 +70302,7 @@
         "source_identity": 1,
         "source_lki": 1,
         "source_predicate": 4,
+        "source_ref": 1,
         "source_subtypes": 1,
         "spec": 14,
         "spell": 2,
@@ -70277,7 +70311,7 @@
         "spell_query": 2,
         "spend_restriction": 2,
         "stack": 15,
-        "stack_ref": 1,
+        "stack_ref": 2,
         "stage": 6,
         "state_trigger": 1,
         "station": 1,
@@ -74470,6 +74504,7 @@
           "quorune/selection/apnap_contract.py",
           "quorune/selection/copy_targets.py",
           "quorune/selection/exile_cast.py",
+          "quorune/selection/fetch_search_entry.py",
           "quorune/selection/fixed_resolving_cast.py",
           "quorune/selection/fractional_counts.py",
           "quorune/selection/model.py",
@@ -74830,7 +74865,7 @@
         "state_authority": {
           "classified_module_access": {
             "mutable_owner": 7,
-            "none": 131,
+            "none": 132,
             "read_only": 18
           },
           "direct_write_count": 3,
@@ -78099,7 +78134,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "b31dbab782f5540eac0c5f516b5bb84e6e8cf91330bb3af27bc90c58ab0ebd53",
+      "fingerprint": "2d19ce995ca74657cde5d462f727695481360ab98e094bb1080343ff3db9d54b",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -78960,14 +78995,14 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 16022,
-      "discovered_total": 19331,
+      "conventional_ast_cases": 16026,
+      "discovered_total": 19335,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 401,
         "fuzz_named": 1,
-        "privacy_or_projection_named": 185,
-        "replay_named": 914,
+        "privacy_or_projection_named": 186,
+        "replay_named": 916,
         "server_named": 100
       },
       "reconciles": true,
