@@ -862,6 +862,107 @@ class TypedLandEntryRuntimeTests(unittest.TestCase):
         )
         self.assertTrue(historical.tapped)
 
+    def _low_life_competing_land_entry(self, *, legacy=False):
+        session = self.session(6140127)
+        engine = session.engine
+        ambient = next(
+            card for card in engine.state.cards.values()
+            if card.owner == "B" and card.printed_name == "Spelunking"
+        )
+        land = next(
+            card for card in engine.state.cards.values()
+            if card.owner == "A" and card.printed_name == "Steam Vents"
+        )
+        engine.move_card(ambient.object_id, "battlefield", controller="A", log=False)
+        if land.zone != "hand":
+            engine.move_card(land.object_id, "hand", log=False)
+        self.stage_main(engine)
+        engine.state.players["A"].life = 1
+        if legacy:
+            engine.state.land_entry_affordability_version = None
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        return session, land
+
+    def test_unaffordable_land_entry_rejects_before_opening_replacement_order(self):
+        from quorune.record import authoritative_state_hash
+
+        session, land = self._low_life_competing_land_entry()
+        self.assertEqual(1, session.state.land_entry_affordability_version)
+        priority = session.engine.permissions.capability_for("pilot:A")
+        before = authoritative_state_hash(session.state)
+        command = {"action_id": f"play-land:{land.ref}"}
+        refused = session.act("pilot:A", {**command, "pay_life": True})
+        self.assertFalse(refused.ok)
+        self.assertIn("Cannot pay more life", refused.summary)
+        self.assertEqual("priority", session.state.pending_decision.kind)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertEqual(priority.token, session.engine.permissions.capability_for("pilot:A").token)
+
+        accepted = session.act("pilot:A", {**command, "pay_life": False})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        option = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"][0]["id"]
+        entry = session.act("pilot:A", {"action_id": "choose", "replacement": option})
+        self.assertTrue(entry.ok, entry.summary)
+        self.assertEqual("battlefield", session.state.cards[land.object_id].zone)
+        self.assertEqual(1, session.state.players["A"].life)
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / "corrected-low-life-entry"
+            session.save(record)
+            result = replay_record(record, self.db, verify=True)
+            self.assertTrue(result["ok"], result)
+
+    def test_legacy_unaffordable_pending_land_entry_keeps_its_exact_record(self):
+        from quorune import CommanderSession
+        from quorune.record import authoritative_state_hash
+
+        session, land = self._low_life_competing_land_entry(legacy=True)
+        self.assertNotIn("land_entry_affordability_version", session.state.to_dict())
+        result = session.act("pilot:A", {"action_id": f"play-land:{land.ref}", "pay_life": True})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual("hand", session.state.cards[land.object_id].zone)
+        unchanged = authoritative_state_hash(session.state)
+        from quorune.land_entry_coordination import SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT
+
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(1, sum(x["id"] == SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT for x in options))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        for option in options:
+            if option["id"] == SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT:
+                continue
+            failed = session.act("pilot:A", {"action_id": "choose", "replacement": option["id"]})
+            self.assertFalse(failed.ok)
+            self.assertIn("Cannot pay more life", failed.summary)
+            self.assertEqual(unchanged, authoritative_state_hash(session.state))
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / "legacy-low-life-entry"
+            session.save(record)
+            result = replay_record(record, self.db, verify=True)
+            self.assertTrue(result["ok"], result)
+            self.assertEqual(unchanged, result["final_state_hash"])
+            recovered = CommanderSession.load(self.db, record)
+            choose = {"action_id": "choose", "replacement": SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT}
+            self.assertFalse(recovered.act("pilot:B", choose).ok)
+            accepted = recovered.act("pilot:A", choose)
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.assertEqual("replacement.order", recovered.state.pending_decision.kind)
+            choices = recovered.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            self.assertNotIn(SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT, [choice["id"] for choice in choices])
+            completed = recovered.act("pilot:A", {"action_id": "choose", "replacement": choices[0]["id"]})
+            self.assertTrue(completed.ok, completed.summary)
+            self.assertEqual("battlefield", recovered.state.cards[land.object_id].zone)
+            self.assertEqual(1, recovered.state.players["A"].life)
+            finished = Path(directory) / "recovered-entry"
+            recovered.save(finished)
+            proof = replay_record(finished, self.db, verify=True)
+            self.assertTrue(proof["ok"], proof)
+            self.assertEqual(authoritative_state_hash(recovered.state), proof["final_state_hash"])
+
     def test_competing_land_entry_choice_is_private_and_replayable(self):
         session = self.session(6140127)
         engine = session.engine

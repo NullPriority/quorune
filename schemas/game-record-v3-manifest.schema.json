@@ -95,7 +95,12 @@
     "format": {
       "additionalProperties": true,
       "properties": {
+        "land_entry_affordability_version": { "type": "integer", "const": 1 },
         "declare_attack_cast_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "ward_discard_order_version": {
           "const": 1,
           "type": "integer"
         },

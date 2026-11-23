@@ -605,6 +605,7 @@ class SemanticChoiceCoordinationMixin:
                 (self.state.cards[stack_item.card_object_id].object_kind == 'card')
                 if stack_item is not None and stack_item.card_object_id in self.state.cards else False),
             explore_action_version=getattr(self.state, 'explore_action_version', None),
+            ward_discard_order_version=self.state.ward_discard_order_version,
             explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
             shared_type_library_source=materialize_shared_type_library_source(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,

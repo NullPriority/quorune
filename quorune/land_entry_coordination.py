@@ -7,7 +7,10 @@ from contextlib import AbstractContextManager
 from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import GameRuleError
+from .model import LAND_ENTRY_PAYMENT_VALIDATION_FIELD, land_entry_affordability_version
+from .life_state import LifeStateError, prepare_life_payment
 from .mana_undo import clear_mana_undo_stack
+from .replacement.operations import AddAmount
 from .replacement.ordering import (
     ReplacementChoiceRequired,
     replacement_choice_payload,
@@ -16,6 +19,7 @@ from .replacement.model import ReplacementEffectError
 
 
 _PILOT_ROLE = "pilot"
+SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT = "skip-unavailable-land-entry-payment"
 _INTERNAL_FIELDS = {
     "_entry_action_id",
     "_entry_replacement_selections",
@@ -29,6 +33,59 @@ class LandEntryContinuationHost(Protocol):
     def transaction(self) -> AbstractContextManager[None]: ...
 
     def _play_land(self, seat: str, response: Mapping[str, Any]) -> None: ...
+
+
+class LandEntryLifeUnavailable(GameRuleError):
+    """The original priority action cannot pay the selected entry price."""
+
+
+def validate_explicit_land_entry_payment(host: LandEntryContinuationHost, seat: str, amount: int) -> None:
+    if amount <= 0:
+        raise GameRuleError("This land play does not authorize an entry life payment")
+    version = land_entry_affordability_version(
+        getattr(host.state, LAND_ENTRY_PAYMENT_VALIDATION_FIELD, None),
+    )
+    if version == 1:
+        try:
+            prepare_life_payment(host, seat, amount)
+        except LifeStateError as exc:
+            raise LandEntryLifeUnavailable(str(exc)) from exc
+
+
+def can_skip_unavailable_land_entry_payment(state, restored, seat):
+    if restored.resume_kind != "land_entry" or restored.priority_seat != seat or seat not in state.players:
+        return False
+    response = restored.thaw_priority_response()
+    card_ref = response.get("card") or response.get("id")
+    if not response.get("pay_life") or type(card_ref) is not str or len(restored.batch.events) != 1:
+        return False
+    event, = restored.batch.events
+    if (event.kind != "zone.change" or event.payload.get("object_ref") != card_ref
+            or event.payload.get("destination") != "battlefield"
+            or event.payload.get("destination_controller") != seat):
+        return False
+    price = sum(operation.amount for effect in restored.effects if effect.source_id == card_ref
+                for operation in effect.operations
+                if isinstance(operation, AddAmount) and operation.field == "entry_life_payment")
+    return price > 0 and state.players[seat].life < price
+
+
+def offer_land_entry_payment_recovery(state, decision, seat, context):
+    if (decision.kind != "replacement.order"
+            or decision.continuation.get("replacement_resume_kind") != "land_entry"):
+        return
+    from .replacement.replay import ReplacementContinuation
+
+    try:
+        restored = ReplacementContinuation.from_dict(decision.continuation)
+        available = can_skip_unavailable_land_entry_payment(state, restored, seat)
+    except ReplacementEffectError:
+        return
+    if available:
+        context["options"] = [
+            *context.get("options", ()),
+            {"id": SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT, "label": "Skip life payment", "source": ""},
+        ]
 
 
 def _priority_frame(host: LandEntryContinuationHost) -> dict[str, Any]:

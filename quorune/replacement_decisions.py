@@ -25,7 +25,10 @@ from .replacement.immutable import thaw_value
 from .mana_payment_continuations import (
     resume_mana_choice_capable_priority_action,
 )
-from .land_entry_coordination import resume_land_entry_priority_action
+from .land_entry_coordination import (
+    SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT, can_skip_unavailable_land_entry_payment,
+    resume_land_entry_priority_action,
+)
 from .semantic_choices.counter_coordination import (
     resume_semantic_counter_completion,
     resume_semantic_intent_completion,
@@ -536,6 +539,10 @@ def _resume_land_entry_replacement(
         response = restored.thaw_priority_response()
     except ReplacementEffectError as exc:
         raise error_type(str(exc)) from exc
+    if selection == SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT:
+        response["pay_life"] = False
+        resume_land_entry_priority_action(host, seat=restored.priority_seat, response=response, selections=())
+        return
     resume_land_entry_priority_action(
         host,
         seat=restored.priority_seat,
@@ -649,6 +656,11 @@ def complete_replacement_order_choice(
         raise error_type(
             "Replacement continuation no longer requires this chooser"
         )
+    if response.get("replacement") == SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT:
+        if not can_skip_unavailable_land_entry_payment(host.state, restored, seat):
+            raise error_type("The payment recovery choice is unavailable")
+        _resume_land_entry_replacement(host, restored, SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT, error_type=error_type)
+        return
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )

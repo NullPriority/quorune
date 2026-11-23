@@ -9,3 +9,9 @@ def stack_resolution_authority_version(value):
     if value is not None and (type(value) is not int or value not in {1, COPIED_SPELL_ENTRY_AUTHORITY_VERSION}):
         raise ValueError("Unsupported stack resolution authority version")
     return value
+
+
+def ward_discard_order_version(value):
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported Ward discard option order version")
+    return value

@@ -25,12 +25,14 @@
       "type": "object",
       "required": ["game_id", "config", "players", "cards", "events", "capabilities"],
       "properties": {
+        "land_entry_affordability_version": { "type": "integer", "const": 1 },
         "declare_attack_cast_version": {"type": "integer", "const": 1},
         "legend_rule_choice_version": {"type": "integer", "const": 1},
         "transform_timestamp_version": {"type": "integer", "const": 1},
         "face_status_timestamp_version": {"type": "integer", "const": 1},
         "cast_event_type_snapshot_version": {"type": "integer", "const": 1},
         "shield_counter_damage_version": {"type": "integer", "const": 1},
+        "ward_discard_order_version": {"type": "integer", "const": 1},
         "events": {"type": "array", "maxItems": 0},
         "capabilities": {"type": "object", "maxProperties": 0}
       },

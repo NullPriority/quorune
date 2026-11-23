@@ -2,7 +2,7 @@
 title: "Generated protocol inventory"
 status: "generated"
 authoritative_source: "server FastAPI OpenAPI output and versioned schemas/*.json"
-verified: "6ede8bcb6e560c8b5cd1c78422f9df1860695bdb56f82a76e488184fb4252fda"
+verified: "7fd6983703aacf1a17fc44ce5d9de75b723766e18573dd7d64e8e64466b8b368"
 audience: "client, server, and protocol contributors"
 maintenance: "generated"
 generated_source: "coverage/protocol-inventory.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_protocol_referenc
 
 # Generated protocol inventory
 
-Source fingerprint: `ca588e8bb14aef28aea9f56e043683324ac31dd75aae11a1630eb0a1a5bb31eb`
+Source fingerprint: `4f5057d77afa0651b3d2b36c7db0dd07b122c4c70987fdf143e991e0ea4cd3af`
 
 ## Current top-level state
 
