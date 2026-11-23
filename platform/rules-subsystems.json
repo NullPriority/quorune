@@ -10320,14 +10320,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v1226-land-entry-and-ward-payment-corrections",
-      "compiler_version": "oracle-ir-v1226",
+      "transition_id": "oracle-ir-v1227-concession-priority-stabilization",
+      "compiler_version": "oracle-ir-v1227",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Validate explicit land-entry life payments and canonically order discard Ward choices for stable replay."
+      "non_harvest_reason": "Apply state-based actions and pending trigger choices before passing priority after a confirmed concession, with exact Game Record replay."
     },
     "forecast_corrections": [
       {
