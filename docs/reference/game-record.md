@@ -770,7 +770,25 @@ seal the offered equivalent payment identifiers in the resolution choice.
 The accepted identifier still requires the complete price to be payable.
 Ordinary fixed costs keep their existing continuation shape.
 
+## Land-entry payment validation
+
+Current games record the version of the explicit land-entry payment check. An
+unaffordable response is rejected in the original priority window. The player
+can then submit a different land-play response while the land and the priority
+capability remain available. A saved record without this version retains the
+historical priority response and any replacement-order continuation for exact
+replay. During live recovery the affected player can decline an unavailable
+payment and order the remaining entry effects. The recovery choice leaves the
+recorded pending state intact until the player submits it.
+
 ## Replay contract
+
+Current records pin Ward discard option ordering with
+`ward_discard_order_version: 1`. The private choice and its saved identities
+share a stable order by current object reference. Earlier records preserve
+their recorded ordering behavior. An already-issued choice retains its
+sealed references when the game is loaded.
+
 
 New records pin `ninjutsu_band_retention_version: 1`. The Ninja joins combat
 as an individual attacker while the current unrelated attack bands retain

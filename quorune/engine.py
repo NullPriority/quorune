@@ -2485,10 +2485,9 @@ class CommanderEngine(
         pay_entry_life = bool(response.get("pay_life", False))
         entry_life_amount = self._land_entry_life_amount(record, face)
         if pay_entry_life:
-            if entry_life_amount <= 0:
-                raise GameRuleError(
-                    "This land play does not authorize an entry life payment"
-                )
+            from .land_entry_coordination import validate_explicit_land_entry_payment
+
+            validate_explicit_land_entry_payment(self, seat, entry_life_amount)
         life_before = player.life
         origin = card.zone
         card.annotations.pop("temporary_play_permission", None)

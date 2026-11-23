@@ -117,6 +117,9 @@ class SemanticChoiceQuery(
     def explore_action_version(self) -> int | None: ...
 
     @property
+    def ward_discard_order_version(self) -> int | None: ...
+
+    @property
     def explore_source_types(self) -> tuple[str, ...] | None: ...
 
     @property
@@ -222,6 +225,7 @@ class SnapshotSemanticChoiceQuery:
     venture_journey: DungeonJourney | None = None
     venture_allowed: bool = True
     life_gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN
+    ward_discard_order_version: int | None = None
 
     def __post_init__(self) -> None:
         if type(self.attacking_token_entry_allowed) is not bool:

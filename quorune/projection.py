@@ -490,6 +490,8 @@ class StateProjector:
         from .rules.mana_pool_payment import mana_pool_choice_context
 
         context = mana_pool_choice_context(self.state, capability.actor, decision.kind, context)
+        from .land_entry_coordination import offer_land_entry_payment_recovery
+        offer_land_entry_payment_recovery(self.state, decision, capability.actor, context)
         raw_actions = list(
             (context.get("legal") or {}).get("actions")
             or context.get("legal_actions")

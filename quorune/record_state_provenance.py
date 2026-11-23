@@ -10,6 +10,9 @@ from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_ev
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
 from .model import unearth_leave_replacement_version
 from .library_search_model import fetch_entry_placement_fields, read_fetch_entry_placement_version
+from .model import (
+    LAND_ENTRY_PAYMENT_VALIDATION_FIELD, land_entry_payment_validation_fields, land_entry_affordability_version,
+)
 from .continuous_effect_model import (
     continuous_dependency_order_fields,
     read_continuous_dependency_order_version,
@@ -21,6 +24,7 @@ from .damage_modifier_state import (
 from .stack_resolution_authority_model import (
     COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
     stack_resolution_authority_version,
+    ward_discard_order_version,
 )
 from .mana_source_counter_payment_model import (
     mana_source_counter_payment_fields,read_mana_source_counter_payment_version,
@@ -87,6 +91,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({SHIELD_COUNTER_DAMAGE_VERSION_FIELD: shield_damage} if shield_damage is not None else {}),
         **continuous_dependency_order_fields(getattr(state, "continuous_dependency_order_version", None)),
         **fetch_entry_placement_fields(getattr(state, "fetch_entry_placement_version", None)),
+        **land_entry_payment_validation_fields(getattr(state, LAND_ENTRY_PAYMENT_VALIDATION_FIELD, None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
@@ -107,6 +112,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'permanent_event_state_version':state.permanent_event_state_version} if getattr(state,'permanent_event_state_version',None) is not None else {}),
         **({'battle_cry_resolution_version':state.battle_cry_resolution_version} if getattr(state,'battle_cry_resolution_version',None) is not None else {}),
         **({'ninjutsu_band_retention_version':state.ninjutsu_band_retention_version} if getattr(state,'ninjutsu_band_retention_version',None) is not None else {}),
+        **({"ward_discard_order_version": ward_discard_order_version(state.ward_discard_order_version)}
+           if getattr(state, "ward_discard_order_version", None) is not None else {}),
     }
 
 
@@ -137,6 +144,10 @@ def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> No
         raise ValueError("Continuous dependency order provenance does not match the initial checkpoint")
     if read_fetch_entry_placement_version(format_value) != getattr(state, "fetch_entry_placement_version", None):
         raise ValueError("Fetch entry placement provenance does not match the initial checkpoint")
+    if land_entry_affordability_version(format_value.get(LAND_ENTRY_PAYMENT_VALIDATION_FIELD)) != getattr(
+        state, LAND_ENTRY_PAYMENT_VALIDATION_FIELD, None,
+    ):
+        raise ValueError("Land entry payment validation provenance does not match the initial checkpoint")
     stack_authority = format_value.get("stack_resolution_authority_version", 0)
     if (
         type(stack_authority) is not int or stack_authority not in {0, 1, COPIED_SPELL_ENTRY_AUTHORITY_VERSION}
@@ -168,6 +179,12 @@ def validate_state_versions(
         raise ValueError('Declared attack cast-window provenance does not match the checkpoint')
     _validate_mana_payment_versions(format_value, state)
     _validate_effect_versions(format_value, state)
+
+    ward_order = format_value.get("ward_discard_order_version")
+    checkpoint_ward_order = getattr(state, "ward_discard_order_version", None)
+    if (ward_discard_order_version(ward_order) != checkpoint_ward_order
+            or ward_order is None and "ward_discard_order_version" in format_value):
+        raise ValueError("Ward discard order provenance does not match the initial checkpoint")
     departed_turns = format_value.get("departed_turn_boundary_version")
     if (departed_turns != getattr(state, "departed_turn_boundary_version", None)
             or "departed_turn_boundary_version" in format_value

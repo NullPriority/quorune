@@ -373,6 +373,7 @@
       "test_temporary_cast_restrictions",
       "test_token_creation_replacements",
       "test_typed_land_entry_participation",
+      "test_ward_discard_replay",
       "test_zone_replacement_compiler"
     ],
     "main-integration-smoke": [
@@ -460,7 +461,8 @@
       "test_server_persistence",
       "test_spell_random_discard_costs",
       "test_state_based_destination_replacements",
-      "test_temporary_cast_restrictions"
+      "test_temporary_cast_restrictions",
+      "test_ward_discard_replay"
     ],
     "state-actions-damage": [
       "test_combat_damage_assignment",
@@ -526,7 +528,8 @@
       "test_surveil_rules",
       "test_targeting_v070",
       "test_trigger_targeting",
-      "test_typed_ability_fragments"
+      "test_typed_ability_fragments",
+      "test_ward_discard_replay"
     ],
     "triggers-turns-exact-decks": [
       "test_beginning_phase_rules",
@@ -745,7 +748,8 @@
       "test_turn_structure_rules",
       "test_typed_ability_fragments",
       "test_typed_trigger_participation",
-      "test_variable_library_counts"
+      "test_variable_library_counts",
+      "test_ward_discard_replay"
     ],
     "functional-03": [
       "test_ability_word_event_triggers",

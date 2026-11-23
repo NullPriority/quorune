@@ -84,6 +84,7 @@ from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION,
 from .stack_resolution_authority_model import (
     COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
     stack_resolution_authority_version,
+    ward_discard_order_version,
 )
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
@@ -864,6 +865,21 @@ def unearth_leave_replacement_version(value: Any) -> int | None:
     return value
 
 
+
+LAND_ENTRY_PAYMENT_VALIDATION_FIELD = "land_entry_affordability_version"
+
+
+def land_entry_affordability_version(value: Any) -> int | None:
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported land entry payment validation version")
+    return value
+
+
+def land_entry_payment_validation_fields(value: Any) -> dict[str, int]:
+    version = land_entry_affordability_version(value)
+    return {LAND_ENTRY_PAYMENT_VALIDATION_FIELD: version} if version is not None else {}
+
+
 @dataclass(slots=True)
 class GameState:
     game_id: str
@@ -973,10 +989,12 @@ class GameState:
     permanent_event_state_version: int | None = ZONE_EVENT_NUMERICS_VERSION
     battle_cry_resolution_version: int | None = 1
     ninjutsu_band_retention_version: int | None = 1
+    ward_discard_order_version: int | None = 1
     block_characteristics_version: int | None = 1
     unblocked_attacker_event_version: int | None = 1
     legend_rule_choice_version: int | None = 1
     effect_destruction_replacement_version: int | None = 1
+    land_entry_affordability_version: int | None = 1
     unearth_leave_replacement_version: int | None = 1
     counter_quantity_provenance_version: int | None = 1
     departed_turn_boundary_version: int | None = None
@@ -1023,6 +1041,7 @@ class GameState:
             "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
             "battle_cry_resolution_version": battle_cry_resolution_version(self.battle_cry_resolution_version),
             "ninjutsu_band_retention_version": ninjutsu_band_retention_version(self.ninjutsu_band_retention_version),
+            "ward_discard_order_version": ward_discard_order_version(self.ward_discard_order_version),
             "unearth_leave_replacement_version": unearth_leave_replacement_version(self.unearth_leave_replacement_version),
             "block_characteristics_version": block_characteristics_version(self.block_characteristics_version),
             "unblocked_attacker_event_version": unblocked_attacker_event_version(self.unblocked_attacker_event_version),
@@ -1031,6 +1050,7 @@ class GameState:
         read_shield_counter_damage_version(present)
         present.update(continuous_dependency_order_fields(self.continuous_dependency_order_version))
         present.update(fetch_entry_placement_fields(self.fetch_entry_placement_version))
+        present.update(land_entry_payment_validation_fields(self.land_entry_affordability_version))
         return present
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
@@ -1187,6 +1207,9 @@ class GameState:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
+            land_entry_affordability_version=land_entry_affordability_version(
+                data.get(LAND_ENTRY_PAYMENT_VALIDATION_FIELD)
+            ),
             departed_turn_boundary_version=cls._departed_turn_boundary_version(data.get("departed_turn_boundary_version")),
             mandatory_linked_loop=(MandatoryLinkedLoopWatch.from_dict(data["mandatory_linked_loop"])
                                    if "mandatory_linked_loop" in data else None),
@@ -1240,6 +1263,7 @@ class GameState:
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
             battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
             ninjutsu_band_retention_version=ninjutsu_band_retention_version(data.get('ninjutsu_band_retention_version')),
+            ward_discard_order_version=ward_discard_order_version(data.get("ward_discard_order_version")),
             block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
             unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
             counter_quantity_provenance_version=counter_quantity_provenance_version(

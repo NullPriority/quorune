@@ -980,6 +980,8 @@ class WardPaymentChoiceHandler:
             rows = context.query.objects(
                 zones=("hand",), owner=context.actor
             )
+            if context.query.ward_discard_order_version == 1:
+                rows = tuple(sorted(rows, key=lambda row: row.ref))
             legal_objects = tuple(
                 FrozenMap(
                     {

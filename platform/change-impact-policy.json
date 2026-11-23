@@ -18739,6 +18739,30 @@
         "test_typed_land_entry_participation",
         "test_fixed_library_searches"
       ]
+    },
+    {
+      "id": "land-entry-affordability-validation-mode",
+      "patterns": [
+        "quorune/land_entry_coordination.py"
+      ],
+      "test_modules": [
+        "test_typed_land_entry_participation"
+      ]
+    },
+    {
+      "id": "discard-ward-choice-order",
+      "patterns": [
+        "quorune/semantic_choices/context.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/payments.py",
+        "quorune/stack_resolution_authority_model.py",
+        "tests/fixtures/ward-discard-replay-cards.json",
+        "tests/test_ward_discard_replay.py"
+      ],
+      "test_modules": [
+        "test_ward_discard_replay",
+        "test_trigger_processing_owner"
+      ]
     }
   ],
   "risk_rules": [
