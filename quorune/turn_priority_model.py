@@ -3,9 +3,38 @@ from __future__ import annotations
 """Immutable transition values for the turn/priority decision state machine."""
 
 from dataclasses import asdict, dataclass
-from typing import Any, Literal, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Literal, Mapping, Protocol, Sequence
 
-from .model import GameState
+if TYPE_CHECKING:
+    from .model import GameState
+
+
+PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD = "priority_concession_stabilization_version"
+PRIORITY_CONCESSION_RESUME_FIELD = "priority_concession_resume_from"
+
+
+def read_priority_concession_stabilization_version(value: Mapping[str, Any]) -> int | None:
+    if PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD not in value:
+        return None
+    version = value[PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD]
+    if type(version) is not int or version != 1:
+        raise ValueError("Unsupported priority concession stabilization version")
+    return version
+
+
+def read_priority_concession_resume(value: Mapping[str, Any]) -> str | None:
+    if PRIORITY_CONCESSION_RESUME_FIELD not in value:
+        return None
+    anchor = value[PRIORITY_CONCESSION_RESUME_FIELD]
+    players = value.get("players")
+    if (
+        read_priority_concession_stabilization_version(value) != 1
+        or type(anchor) is not str or anchor not in value.get("turn_order", ())
+        or not isinstance(players, Mapping) or not isinstance(players.get(anchor), Mapping)
+        or players[anchor].get("in_game") is not False
+    ):
+        raise ValueError("Concession priority resumption requires the recorded departed seat")
+    return anchor
 
 
 def apnap_participants(

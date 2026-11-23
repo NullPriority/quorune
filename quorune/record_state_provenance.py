@@ -21,6 +21,10 @@ from .damage_modifier_state import (
     SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
     read_shield_counter_damage_version,
 )
+from .turn_priority_model import (
+    PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD,
+    read_priority_concession_stabilization_version,
+)
 from .stack_resolution_authority_model import (
     COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
     stack_resolution_authority_version,
@@ -50,6 +54,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
 
     from .state_based_legend_model import legend_rule_choice_version
     shield_damage = getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None)
+    concession = getattr(state, PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD, None)
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
@@ -89,6 +94,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **mana_source_counter_payment_fields(getattr(state,'mana_source_counter_payment_version',None)),
         **mana_cost_order_fields(getattr(state,'mana_cost_order_version',None)),
         **({SHIELD_COUNTER_DAMAGE_VERSION_FIELD: shield_damage} if shield_damage is not None else {}),
+        **({PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD: concession} if concession is not None else {}),
         **continuous_dependency_order_fields(getattr(state, "continuous_dependency_order_version", None)),
         **fetch_entry_placement_fields(getattr(state, "fetch_entry_placement_version", None)),
         **land_entry_payment_validation_fields(getattr(state, LAND_ENTRY_PAYMENT_VALIDATION_FIELD, None)),
@@ -138,6 +144,10 @@ def _validate_mana_payment_versions(format_value: Mapping[str, Any], state: Any)
 
 
 def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    if read_priority_concession_stabilization_version(format_value) != getattr(
+        state, PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD, None
+    ):
+        raise ValueError("Priority concession stabilization provenance does not match the initial checkpoint")
     if read_shield_counter_damage_version(format_value) != getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None):
         raise ValueError("Shield counter damage provenance does not match the initial checkpoint")
     if read_continuous_dependency_order_version(format_value) != getattr(state, "continuous_dependency_order_version", None):

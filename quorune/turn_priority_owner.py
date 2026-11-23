@@ -264,7 +264,12 @@ class TurnPriorityDecisionOwner:
                 )
             self.state.priority_passes = []
             self.host._eliminate_players([seat], reason="conceded")
-            if self.state.pending_trigger_batches and not self.state.game_over and (
+            if getattr(self.state, "priority_concession_stabilization_version", None) == 1:
+                if not self.state.game_over:
+                    self.state.priority_concession_resume_from = seat
+                    if self.state.pending_decision is None:
+                        self.host._stabilize()
+            elif self.state.pending_trigger_batches and not self.state.game_over and (
                 getattr(self.state, "initiative", None) is not None or pending_unattachment_snapshots(self.state)
             ):
                 self.complete_special_action(self.host._next_active_after(seat))
@@ -625,9 +630,13 @@ class TurnPriorityDecisionOwner:
 
     def pump(self, *, max_transitions: int = 1000) -> None:
         for _ in range(max_transitions):
+            resume_from = getattr(self.state, "priority_concession_resume_from", None)
+            if self.state.game_over:
+                if resume_from is not None:
+                    self.state.priority_concession_resume_from = None
+                return
             if (
-                self.state.game_over
-                or self.state.pending_decision is not None
+                self.state.pending_decision is not None
                 or self.host._semantic_pause_annotation() is not None
             ):
                 return
@@ -640,6 +649,9 @@ class TurnPriorityDecisionOwner:
                 self.grant_priority(self.state.active_player)
                 continue
             if self.state.priority_player is not None:
+                if resume_from is not None:
+                    self.state.priority_player = self.host._next_active_after(resume_from)
+                    self.state.priority_concession_resume_from = None
                 seat = self.state.priority_player
                 hints = self.host._priority_action_hints(seat)
                 action_signature = self.meaningful_action_signature(seat, hints)
