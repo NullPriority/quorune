@@ -25,6 +25,7 @@ from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed, granted_characteristic_occurrences
+from quorune.semantics import SemanticRegistry
 from quorune.semantic_runtime.continuous_components import FixedQueryAbilityGrantHandler
 from quorune.static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY as CAPABILITY
 from scripts.build_test_database import _card_payload, build_fixture_database
@@ -132,11 +133,11 @@ class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
             self.assertIsNone(cross_zone_type_addition_handler(unsupported))
 
         effects = handler.lower(descriptor, replace_namespace(context, source_designations={"chosen_creature_type": "time lord"}))
-        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace())
+        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace(), semantics=SemanticRegistry())
         physical = CardInstance(object_id="body", ref="body", oracle_id="fixture:body", printed_name="Test Body",
                                 owner="A", controller="B", zone="stack")
         copy = replace(physical, object_kind="spell_copy")
-        with patch("quorune.rules.cross_zone_characteristics._cross_zone_type_effects", return_value=effects):
+        with patch("quorune.rules.cross_zone_characteristics._scoped_type_addition_effects", return_value=effects):
             def chosen_subtypes(card, controller):
                 line = prospective_cross_zone_spell_type_line(host, card, controller, "Creature — Bear")
                 return type_parts(line)[1]
@@ -211,11 +212,11 @@ class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
         effects = handler.lower(descriptor, SimpleNamespace(
             source_object_id="cross-zone-source", component_id="static", source_timestamp=1, source_controller="A",
         ))
-        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace())
+        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace(), semantics=SemanticRegistry())
         physical = CardInstance(object_id="creature", ref="creature", oracle_id="test:creature",
             printed_name="Test Creature", owner="A", controller="B", zone="stack")
         copied = replace(physical, object_kind="spell_copy")
-        with patch("quorune.rules.cross_zone_characteristics._cross_zone_type_effects", return_value=effects):
+        with patch("quorune.rules.cross_zone_characteristics._scoped_type_addition_effects", return_value=effects):
             def spell_types(card, controller):
                 text = prospective_cross_zone_spell_type_line(host, card, controller, "Creature — Bear")
                 return type_parts(text)[0]

@@ -196,16 +196,17 @@ def _target_sacrifice_power_dependencies(program):
 
 
 def target_recipient_result_runtime_dependencies(program):
+    """A new producer keeps its recipient contract even if annotations are removed."""
     if sacrifice := _target_sacrifice_power_dependencies(program):
         return sacrifice
-    """A new producer keeps its recipient contract even if annotations are removed."""
     from ..compiler.target_recipient_results import TARGET_RECIPIENT_RESULT_TEMPLATE
     from .effect_shape_walkers import nested_effects
 
-    shuffle = any(uses_target_owner_shuffle(effect) for effect in nested_effects((program.effects, program.handlers)))
+    handlers = getattr(program, "handlers", ())
+    shuffle = any(uses_target_owner_shuffle(effect) for effect in nested_effects((program.effects, handlers)))
     if shuffle and (
         (program.event, program.active_zone) != ("resolve", "stack")
-        or program.cost_schema is not None or program.handlers or not program.ability_id.startswith("spell:")
+        or program.cost_schema is not None or handlers or not program.ability_id.startswith("spell:")
     ):
         raise ValueError("Target-owner shuffle and draw requires its complete spell resolution")
     if not shuffle and getattr(program,'provenance',{}).get('template_id')!=TARGET_RECIPIENT_RESULT_TEMPLATE:return ()

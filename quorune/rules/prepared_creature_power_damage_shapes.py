@@ -45,7 +45,7 @@ def _untapped_controller_damage_capabilities(effects, target_schema, mechanics):
 
 
 def untapped_controller_damage_runtime_dependencies(program):
-    if program.provenance.get("template_id") != UNTAPPED_CONTROLLER_DAMAGE_TEMPLATE:
+    if getattr(program, "provenance", {}).get("template_id") != UNTAPPED_CONTROLLER_DAMAGE_TEMPLATE:
         return ()
     required = _untapped_controller_damage_capabilities(program.effects, program.target_schema, program.coverage)
     if (not required or (program.event, program.active_zone) != ("resolve", "stack") or program.handlers

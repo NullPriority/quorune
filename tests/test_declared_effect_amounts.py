@@ -116,7 +116,8 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
         for record in (
             generic_spell("Draw X cards.", mana_cost="{2}{G}"),
             generic_spell("Destroy target creature with mana value X."),
-            generic_spell("Return target creature card with mana value X or less from your graveyard to the battlefield."),
+            generic_spell("Return target creature card with mana value X or less from your graveyard to the battlefield.",
+                          mana_cost="{2}{G}"),
             generic_spell("Draw X cards, where X is the number of creatures you control plus the chosen number.", mana_cost="{2}{G}"),
             generic_spell("Draw X cards, where X is the number of creatures with an unrepresented ability you control.", mana_cost="{2}{G}"),
             generic_spell("Draw X cards, where X is the number of cards in target player's hand.", mana_cost="{2}{G}"),

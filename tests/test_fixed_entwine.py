@@ -239,7 +239,7 @@ class FixedEntwineRuntimeTests(unittest.TestCase):
     def test_entwine_originals_require_complete_modes_and_normal_registration(self):
         expected={"Rain of Rust","Mirage Mockery","Abuna's Chant","Dream's Grip","Flourishing Strike",
             "Roar of the Kha","One Dozen Eyes","Unbounded Potential","Reap and Sow","Barbed Lightning","Goblin War Party",
-            "Gravedig","Twisted Reflection","Tooth and Nail","Temporal Cascade"}
+            "Gravedig","Twisted Reflection","Tooth and Nail","Temporal Cascade","Journey of Discovery"}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Entwine' not in raw.get('keywords',[]):continue
             with self.subTest(name=raw['name']):
@@ -250,6 +250,47 @@ class FixedEntwineRuntimeTests(unittest.TestCase):
                 program=compile_best_available_card_program(self.db,card,semantic_registry=registry,capability_registry=self.registry,capability_profile='commander_review')
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
                 self.assertEqual(raw['name'] in expected,binding['strict_capability_ready'],binding['blockers'])
+
+    def test_actual_entwined_journey_resumes_search_then_grants_two_additional_land_plays(self):
+        session = self.session(70204221)
+        engine = session.engine
+        source = self.add(engine, "Journey of Discovery", zone="hand")
+        found = [self.add(engine, "Generic Bound Plains", zone="library", ref=f"journey-found-{i}")
+                 for i in range(2)]
+        held = [self.add(engine, "Generic Bound Plains", zone="hand", ref=f"journey-held-{i}")
+                for i in range(2)]
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4, "G": 2})
+        self.checkpoint(session)
+
+        action = "cast:" + source.ref
+        modes = ["mode_1", "mode_2"]
+        self.reject(session, action, modes=modes, pay="manual", payment={"C": 2, "G": 1})
+        result = session.act("pilot:A", {"action_id": action, "modes": modes, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.assertEqual("semantic.search", self.resolve(session).kind)
+        query = {"action_id": "choose", "search_cards": [card.ref for card in found]}
+        self.reject(session, "choose", "B", search_cards=query["search_cards"])
+        session = self.replay(session, load=True)
+        shuffles = session.state.players["A"].stats.get("shuffle_count", 0)
+        result = session.act("pilot:A", query)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(shuffles + 1, session.state.players["A"].stats["shuffle_count"])
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "hand" for card in found))
+        for card in (*found, held[0]):
+            ref = session.state.cards[card.object_id].ref
+            offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            play, = (row for row in offered if row.get("card") == ref and row.get("kind") != "cast")
+            result = session.act("pilot:A", {"action_id": play["id"]})
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual("battlefield", session.state.cards[card.object_id].zone)
+        ref = session.state.cards[held[1].object_id].ref
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row.get("card") == ref and row.get("kind") != "cast" for row in offered))
+        self.reject(session, "play_land:" + session.state.cards[held[1].object_id].ref)
+        self.replay(session, load=True)
 
     def test_actual_tooth_and_nail_resumes_hand_collection_after_revealed_search(self):
         # CR 702.42b / 608.2c: search first, then choose the hand collection.
