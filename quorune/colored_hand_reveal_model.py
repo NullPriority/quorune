@@ -129,6 +129,18 @@ VARIABLE_COLORED_REVEAL_PRICE_FIELD = "variable_colored_reveal_price"
 VARIABLE_COLORED_REVEAL_CAPABILITY = "activation.cost.variable_colored_hand_reveal"
 
 
+def validate_variable_colored_reveal_cost(cost, *, event, active_zone):
+    price = VariableColoredRevealPrice.from_dict(cost.get(VARIABLE_COLORED_REVEAL_PRICE_FIELD))
+    if (event != "activate" or active_zone != "battlefield"
+            or cost.get("sacrifice_source") is not True or not price.matches_mana(cost.get("mana"))
+            or any(cost.get(k) for k in ("tap_source", "untap_source", "discard_source", "exile_source",
+                "life_payment", "energy_payment", "loyalty_delta", "choices", "uncompiled_costs",
+                "complex_symbols", "announced_x_symbols", "mana_cost_options", "waterbend",
+                "source_counter_removal_cost", "random_discard_payment"))):
+        raise ValueError("The colored reveal needs its closed battlefield mana and source-sacrifice price")
+    return price
+
+
 def variable_colored_reveal_program_dependencies(program):
     cost = getattr(program, "cost_schema", None) or {}
     descriptors = tuple(d["ability"] for d in getattr(program, "handlers", ())
@@ -138,14 +150,8 @@ def variable_colored_reveal_program_dependencies(program):
         if descriptors:
             raise ValueError("The colored reveal catalog price must match its compiled cost")
         return ()
-    price = VariableColoredRevealPrice.from_dict(cost[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
-    if (program.event != "activate" or program.active_zone != "battlefield"
-            or cost.get("sacrifice_source") is not True or not price.matches_mana(cost.get("mana"))
-            or any(cost.get(k) for k in ("tap_source", "untap_source", "discard_source", "exile_source",
-                "life_payment", "energy_payment", "loyalty_delta", "choices", "uncompiled_costs",
-                "complex_symbols", "announced_x_symbols", "mana_cost_options", "waterbend",
-                "source_counter_removal_cost", "random_discard_payment"))
-            or len(descriptors) != 1
+    price = validate_variable_colored_reveal_cost(cost, event=program.event, active_zone=program.active_zone)
+    if (len(descriptors) != 1
             or thaw_value(descriptors[0][VARIABLE_COLORED_REVEAL_PRICE_FIELD]) != price.to_dict()):
         raise ValueError("The colored reveal needs its closed battlefield mana and source-sacrifice price")
     return (VARIABLE_COLORED_REVEAL_CAPABILITY,)

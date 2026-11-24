@@ -1,5 +1,6 @@
 """Ordinary X announcement, private reveal payment, and all five paid results."""
 
+from dataclasses import replace
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -125,6 +126,31 @@ class VariableColoredRevealActivationTests(InheritedNativeFixture, unittest.Test
         self.assertIsNone(self.resolve(game))
         self.assertEqual(before, game.state.players["A"].life)
         self.replay(game, load=True)
+
+    def test_corpus_assurance_rebuilds_the_printed_colored_reveal_price(self):
+        from quorune.colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_PRICE_FIELD
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectAssuranceError, TargetEffectCorpusCollector
+
+        card = self.db.lookup(self.cards["green"], fuzzy=False)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        TargetEffectCorpusCollector().observe(card, ir)
+        node, = ir.faces[0].nodes
+        cost = dict(node.cost)
+        price = dict(cost[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
+        changed_price = replace(node, cost={**cost, VARIABLE_COLORED_REVEAL_PRICE_FIELD: {**price, "color": "U"}})
+        changed_sacrifice = replace(node, cost={**cost, "sacrifice_source": False})
+        missing_authority = replace(node, capability_dependencies=tuple(
+            cap for cap in node.capability_dependencies if cap != VARIABLE_COLORED_REVEAL_CAPABILITY
+        ))
+        for modified, error in (
+            (changed_price, "printed colored reveal price"),
+            (changed_sacrifice, "closed colored reveal cost"),
+            (missing_authority, "lost required capabilities"),
+        ):
+            with self.subTest(error=error), self.assertRaisesRegex(TargetEffectAssuranceError, error):
+                mutant = replace(ir, faces=(replace(ir.faces[0], nodes=(modified,)),))
+                TargetEffectCorpusCollector().observe(card, mutant)
 
     def test_green_live_result_applies_the_paid_count_to_one_creature(self):
         game = self.session(1073203)

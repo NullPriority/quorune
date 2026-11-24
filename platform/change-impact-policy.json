@@ -24587,6 +24587,7 @@
         "quorune/compiler/activated_ability_catalog.py",
         "quorune/compiler/activated_costs.py",
         "quorune/compiler/activation_x_costs.py",
+        "quorune/compiler/target_effect_corpus_assurance.py",
         "quorune/compiler/variable_colored_reveal_price.py",
         "quorune/effect_runtime/hand_inspection.py",
         "quorune/rules/activation/commit.py",

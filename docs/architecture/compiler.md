@@ -6958,7 +6958,8 @@ revalidates exactly X distinct hand incarnations, pays fixed generic mana, and
 sacrifices the source. Paid cards stay publicly revealed for that active stack
 object. A departed card stops being revealed and the ability keeps its locked X.
 The declared result uses the existing amount, target, damage, or counter
-payment owner.
+payment owner. Target-effect assurance reconstructs the printed reveal price
+and verifies its typed cost and capability before accepting the variable result.
 
 A normalized event can bind one affected player to a whole-hand discard and
 draw result. The zone owner computes actual destinations after replacements.
