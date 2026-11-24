@@ -74,11 +74,14 @@ def _attack_subject_query(text):
         parsed = ('source_controller', query, other)
     else:
         parsed = fixed_characteristic_battlefield_query_subject(('Other ' if other else '') + subject)
-    if parsed is None or parsed[0] != 'source_controller': return None
+    if parsed is None or parsed[0] != 'source_controller' or parsed[1].any_of:
+        return None
     query = parsed[1]
-    query = replace(query, types_all=tuple(sorted(set(query.types_all) | {'creature'})))
-    try:validate_attack_characteristic_query(query)
-    except ValueError:return None
+    try:
+        query = replace(query, types_all=tuple(sorted(set(query.types_all) | {'creature'})))
+        validate_attack_characteristic_query(query)
+    except ValueError:
+        return None
     return query, parsed[2]
 
 

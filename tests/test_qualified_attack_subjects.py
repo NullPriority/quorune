@@ -21,6 +21,19 @@ from scripts.build_test_database import build_fixture_database
 
 
 class QualifiedAttackCompilerTests(unittest.TestCase):
+    def test_receiver_union_in_attack_subject_keeps_the_trigger_residual(self):
+        from quorune.compiler.public_state_queries import fixed_characteristic_battlefield_query_subject
+        from quorune.compiler.qualified_attack_subjects import qualified_attack_binding_spec
+
+        receiver = fixed_characteristic_battlefield_query_subject("historic creatures you control")
+        self.assertIsNotNone(receiver)
+        self.assertTrue(receiver[1].any_of)
+        text = "Whenever a historic creature you control attacks, draw a card."
+        self.assertIsNone(qualified_attack_binding_spec(text))
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertNotEqual("exact", ir.status)
+        self.assertTrue(ir.material_residuals)
+
     def test_closed_subject_queries_share_exact_effects_and_keep_singular_scope(self):
         registry=load_default_capability_registry()
         for subject,alone in (('a Dragon you control',''),('a white creature you control',''),
