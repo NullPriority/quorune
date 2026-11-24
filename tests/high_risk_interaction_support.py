@@ -471,12 +471,14 @@ _WITNESSES = {
         power="2",
         toughness="2",
     ),
+    # Keep these keys stable when replacing a promoted original with a residual sibling.
     "alhammarrets-archive": _Witness(
-        "Alhammarret's Archive",
+        "Generic Draw Exemption Across Turns Boundary Fixture",
         "Legendary Artifact",
         "If you would gain life, you gain twice that much life instead.\n"
         "If you would draw a card except the first one you draw in each of "
-        "your draw steps, draw two cards instead.",
+        "your draw steps and the first one you draw during each opponent's turn, "
+        "draw two cards instead.",
         "{5}",
     ),
     "kor-haven": _Witness(
@@ -519,12 +521,13 @@ _WITNESSES = {
         ("Threshold",),
     ),
     "legacy-weapon": _Witness(
-        "Legacy Weapon",
+        "Generic Conditional Graveyard Replacement Boundary Fixture",
         "Legendary Artifact",
-        "{W}{U}{B}{R}{G}: Exile target permanent.\n"
-        "If Legacy Weapon would be put into a graveyard from anywhere, reveal "
-        "Legacy Weapon and shuffle it into its owner's library instead.",
-        "{7}",
+        "{4}: Exile target permanent.\n"
+        "If this artifact would be put into a graveyard from the battlefield "
+        "while it has a counter on it, reveal this artifact and shuffle it "
+        "into its owner's library instead.",
+        "{6}",
     ),
     "dauthi-voidwalker": _Witness(
         "Dauthi Voidwalker",
@@ -862,10 +865,10 @@ _WITNESSES = {
         toughness="3",
     ),
     "winds-of-qal-sisma": _Witness(
-        "Winds of Qal Sisma",
+        "Generic Chosen Name Combat Prevention Boundary Fixture",
         "Instant",
         "Prevent all combat damage that would be dealt this turn.\n"
-        "Ferocious — If you control a creature with power 4 or greater, "
+        "Ferocious — If you control a creature with the chosen name, "
         "instead prevent all combat damage that would be dealt this turn by "
         "creatures your opponents control.",
         "{1}{G}",
