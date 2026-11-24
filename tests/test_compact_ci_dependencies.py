@@ -17,6 +17,8 @@ from scripts import build_test_database as database_builder
 from scripts.compact_ci_report import (
     COMPACT_CI_REPORT_PATH,
     build_dependency_report,
+    dependency_report_json,
+    load_dependency_report,
     report_markdown,
     store_dependency_artifact,
 )
@@ -157,7 +159,9 @@ class CompactDependencyArtifactTests(unittest.TestCase):
 
         self.report = build_dependency_report(root=self.root)
         self.assertTrue(self.report["closed"])
-        self.json_output.write_text(stable_json(self.report) + "\n", encoding="utf-8", newline="\n")
+        self.json_output.write_text(
+            dependency_report_json(self.report), encoding="utf-8", newline="\n",
+        )
         self.markdown_output.write_text(report_markdown(self.report), encoding="utf-8", newline="\n")
 
     def cli(self, *arguments):
@@ -170,6 +174,38 @@ class CompactDependencyArtifactTests(unittest.TestCase):
         ):
             self.assertEqual(0, database_builder.main())
         return json.loads(output.getvalue())
+
+    def test_shared_resolutions_preserve_every_requirement_and_legacy_reports(self):
+        requirement = self.report["requirement_provenance"][0]
+        resolution = {
+            **requirement["resolution"],
+            "fixture_owners": [f"tests/fixtures/example-{index}.json" for index in range(25)],
+        }
+        requirements = [
+            {**requirement, "provenance": {**requirement["provenance"], "line": index + 1},
+             "resolution": resolution}
+            for index in range(100)
+        ]
+        requirements.append({**requirement, "resolution": None})
+        report = {**self.report, "requirement_provenance": requirements}
+        legacy = stable_json(report) + "\n"
+        self.json_output.write_text(legacy, encoding="utf-8", newline="\n")
+        self.assertEqual(report, load_dependency_report(self.json_output))
+
+        packed = dependency_report_json(report)
+        stored = json.loads(packed)
+        self.assertEqual([resolution], stored["requirement_resolutions"])
+        self.assertLess(len(packed), len(legacy) // 2)
+        self.json_output.write_text(packed, encoding="utf-8", newline="\n")
+        self.assertEqual(report, load_dependency_report(self.json_output))
+        self.assertEqual(packed, dependency_report_json(load_dependency_report(self.json_output)))
+
+        for bad_reference in (True, -1, 1):
+            with self.subTest(reference=bad_reference):
+                stored["requirement_provenance"][0]["resolution"] = bad_reference
+                self.json_output.write_text(stable_json(stored), encoding="utf-8", newline="\n")
+                with self.assertRaisesRegex(ValueError, "Invalid compact dependency resolution reference"):
+                    load_dependency_report(self.json_output)
 
     def test_compact_artifact_cli_checks_contents_and_preserves_consumer_line_endings(self):
         self.assertEqual(

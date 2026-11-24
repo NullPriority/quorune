@@ -184,6 +184,7 @@
       "input_paths": [],
       "implementation_inputs": [
         "scripts/update_compact_ci_dependencies.py",
+        "scripts/compact_ci_report.py",
         "scripts/source_syntax.py"
       ],
       "database_identity": "none",

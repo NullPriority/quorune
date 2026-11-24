@@ -38,6 +38,7 @@ from scripts.test_shards import load_manifest as load_test_shards
 
 
 REPORT_SCHEMA_VERSION = 1
+PACKED_REPORT_SCHEMA_VERSION = 2
 COMPACT_CI_REPORT_PATH = Path("coverage/compact-ci-card-dependencies.json")
 
 
@@ -313,6 +314,57 @@ def build_dependency_report(
     }
 
 
+def dependency_report_json(report: Mapping[str, object]) -> str:
+    """Store shared resolutions once while retaining every requirement row."""
+    resolutions: list[Mapping[str, object]] = []
+    resolution_indexes: dict[str, int] = {}
+    requirements = []
+    for row in report["requirement_provenance"]:
+        resolution = row["resolution"]
+        reference = None
+        if resolution is not None:
+            key = stable_json(resolution)
+            if key not in resolution_indexes:
+                resolution_indexes[key] = len(resolutions)
+                resolutions.append(resolution)
+            reference = resolution_indexes[key]
+        requirements.append({**row, "resolution": reference})
+
+    packed = {
+        **report,
+        "schema_version": PACKED_REPORT_SCHEMA_VERSION,
+        "requirement_provenance": requirements,
+        "requirement_resolutions": resolutions,
+    }
+    return stable_json(packed) + "\n"
+
+
+def load_dependency_report(path: Path) -> dict[str, object]:
+    """Read the earlier inline report or expand the canonical packed report."""
+    report = json.loads(path.read_bytes())
+    version = report.get("schema_version") if isinstance(report, dict) else None
+    if type(version) is not int or version not in {REPORT_SCHEMA_VERSION, PACKED_REPORT_SCHEMA_VERSION}:
+        raise ValueError("Unsupported compact dependency report schema")
+    if version == REPORT_SCHEMA_VERSION:
+        return report
+
+    resolutions = report.pop("requirement_resolutions", None)
+    requirements = report.get("requirement_provenance")
+    if (not isinstance(resolutions, list) or any(not isinstance(row, dict) for row in resolutions)
+            or not isinstance(requirements, list)):
+        raise ValueError("Malformed compact dependency report tables")
+
+    expanded = []
+    for row in requirements:
+        if not isinstance(row, dict) or "resolution" not in row:
+            raise ValueError("Malformed compact dependency requirement")
+        reference = row["resolution"]
+        if reference is not None and (type(reference) is not int or not 0 <= reference < len(resolutions)):
+            raise ValueError("Invalid compact dependency resolution reference")
+        expanded.append({**row, "resolution": None if reference is None else resolutions[reference]})
+    return {**report, "schema_version": REPORT_SCHEMA_VERSION, "requirement_provenance": expanded}
+
+
 def _dependency_artifact_owner(root: Path) -> tuple[GeneratorSpec, OwnerInputIdentity]:
     manifest = root / "platform/generated-artifacts.json"
     specs = load_manifest(manifest, root=root)
@@ -331,7 +383,7 @@ def _dependency_report_receipt(root: Path) -> OwnerArtifactReceipt:
 
 def current_dependency_report_receipt(*, root: Path) -> OwnerArtifactReceipt:
     """Bind the current closed report to its source, upstream owners and outputs."""
-    report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+    report = load_dependency_report(root / COMPACT_CI_REPORT_PATH)
     _require_current_dependency_report(report, root=root)
     return _dependency_report_receipt(root)
 
@@ -342,7 +394,7 @@ def _require_canonical_dependency_report(
     _require_current_dependency_report(report, root=root)
     json_output = root / COMPACT_CI_REPORT_PATH
     if (
-        json_output.read_text(encoding="utf-8") != stable_json(report) + "\n"
+        json_output.read_text(encoding="utf-8") != dependency_report_json(report)
         or json_output.with_suffix(".md").read_text(encoding="utf-8") != report_markdown(report)
     ):
         raise GeneratedOwnerCacheError("Compact dependency report is open or stale")
@@ -367,7 +419,7 @@ def remember_bundled_dependency_artifact(*, root: Path, input_fingerprint: str) 
         artifact_dir = owner_cache_directory(cache_root, identity)
         if not artifact_dir.resolve().is_relative_to(cache_root) or artifact_dir.exists():
             return
-        report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+        report = load_dependency_report(root / COMPACT_CI_REPORT_PATH)
         _require_canonical_dependency_report(report, root=root)
         artifact_dir.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=artifact_dir.parent) as directory:
@@ -384,7 +436,7 @@ def reuse_local_dependency_artifact(*, root: Path) -> dict[str, object] | None:
     if not (cache_root / "compact-ci-card-dependencies").is_dir():
         return None
     try:
-        report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+        report = load_dependency_report(root / COMPACT_CI_REPORT_PATH)
         _require_current_dependency_report(report, root=root)
         owner, identity = _dependency_artifact_owner(root)
         artifact_dir = owner_cache_directory(cache_root, identity)
@@ -424,7 +476,7 @@ def _verify_dependency_artifact(
         ):
             raise GeneratedOwnerCacheError(f"Compact dependency artifact output is corrupt: {relative}")
 
-    report = json.loads((root / COMPACT_CI_REPORT_PATH).read_bytes())
+    report = load_dependency_report(root / COMPACT_CI_REPORT_PATH)
     _require_current_dependency_report(report, root=root)
     return report
 

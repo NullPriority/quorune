@@ -892,8 +892,10 @@ requirements and a nonempty rationale. Undeclared dynamics and stale
 declarations both fail closed. Do not add another fixture list or compact
 database builder. The generated
 `coverage/compact-ci-card-dependencies.json` and `.md` companions record the
-current identities, owners, source provenance, and per-shard closure; they do
-not duplicate card payloads.
+current identities, owners, source provenance, and per-shard closure. The JSON
+report stores each distinct resolution once. The audit readers expand those
+references to recover all fixture owners and requirement records, and still
+accept earlier inline reports.
 
 One dependency report reuses immutable facts for each source file: local import
 edges, syntax, function inventories, database assignments and constant
