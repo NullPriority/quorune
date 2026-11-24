@@ -2480,6 +2480,38 @@
       "resolution": "Read the same required facts from the recorded cast version and retain rejection of unsupported versions. Keep exact supported cost and copy shapes in positive checks and use nearby open cost clauses for the negative checks. Exercise the original copy in the existing native recopy and replay witness. Supply the current contract fields to the two test doubles and use the actual linked-name replacement before checking undefined names.",
       "run_id": 45428512009,
       "summary": "Functional shard 10 rejected normalized cast-event version eight during a native Spirit and Arcane trigger. The same shard found stale cost and copy promotion expectations, missing fixture fields, and an entry setup that did not submit the now-supported linked name choice."
+    },
+    {
+      "category": "source_correctness",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Python / functional-08"
+      ],
+      "head_sha": "1bd3c1c1222bde2c00dde0d8b0666a0ecdab8576",
+      "id": "ci-20261124-pr575-functional-08-fixture-owners-and-promoted-carriers",
+      "impact_edge_status": "added",
+      "regressions": [
+        "test_damage_source_identity.DamageSourceIdentityOwnerTests.test_intervening_recheck_keeps_the_already_captured_event_source_identity",
+        "test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_unrepresented_counter_halving_source_stays_outside_complete_admission",
+        "test_fixed_counter_removal_effects.FixedSourceCounterRemovalActionTests.test_original_named_removal_carriers_preserve_unsupported_sibling_boundaries",
+        "test_fixed_library_searches.FixedLibrarySearchCompilerTests.test_named_linked_attachment_compound_and_open_searches_remain_residual",
+        "test_fixed_target_reanimation.FixedTargetReanimationSetCompilerTests.test_entry_policy_reaches_the_shared_zone_owner_without_inference",
+        "test_graveyard_self_return_triggers.GraveyardSelfReturnModelTests.test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust",
+        "test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_explicit_later_mana_grant_survives_without_recreating_intrinsic",
+        "test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_ability_removal_never_revives_intrinsic_mana",
+        "test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_type_changes_precede_intrinsic_mana_and_later_ability_loss",
+        "test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_parser_rejects_malformed_ranges_and_open_children",
+        "test_mutate_cast_metadata.MutateResolutionOwnerTests.test_cost_owner_target_owner_and_fallback_omission_mutants_are_killed",
+        "test_mutate_cast_metadata.MutateResolutionOwnerTests.test_shared_revalidation_keeps_mutate_creature_fallback_and_generic_fizzle_distinct",
+        "test_optional_spell_copy_followups.OptionalResultFollowupTests.test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
+        "test_permanent_composition.CompositionOrderChoiceTests.test_saved_parent_effect_cannot_substitute_another_trusted_instruction",
+        "test_state_trigger_predicates.StateTriggerPredicateTests.test_actual_endrek_counts_all_thrulls_and_triggers_above_seven",
+        "test_target_all_counter_variants.TargetAllCounterModelTests.test_payload_and_optional_target_drive_runtime_minima_without_coverage",
+        "test_target_controller_prevention.TargetControllerPreventionNativeTests.test_actual_other_controller_blocker_kills_the_attacker_when_source_predicate_is_omitted"
+      ],
+      "resolution": "Exercise the same current composition, targeting, counter, activation and prevention owners with complete fixtures. Preserve native supported cases and reject nearby open counter, Ward and search variants. Route Blood Hound, literal named search and sacrifice Ward owners to their older retention suites. The normalized cast-value repair also passes the two native failures in this shard.",
+      "run_id": 45428512009,
+      "summary": "Functional shard 08 exposed old fixture contracts and obsolete exclusions for supported card behavior. Two native cast-value failures matched the version-eight mismatch reported in functional shard 10."
     }
   ],
   "known_flaky_tests": [],
@@ -2540,7 +2572,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "45056236a3fc3dd5739809947e051958bbdea4b00e29311c96f9406807f03ad4",
+  "source_fingerprint": "3b0e2ba968debd8cd21122296bad4e57f92ea207d06c5017f590f3e47a6127fa",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -2551,12 +2583,12 @@
       "generated_artifact_drift": 11,
       "infrastructure": 1,
       "missing_affected_test": 57,
-      "source_correctness": 38,
+      "source_correctness": 39,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 117,
-    "escape_count": 127,
+    "deterministic_escape_count": 118,
+    "escape_count": 128,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

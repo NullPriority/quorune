@@ -256,8 +256,8 @@ class TargetControllerPreventionNativeTests(InheritedNativeFixture, unittest.Tes
 
     def test_actual_other_controller_blocker_kills_the_attacker_when_source_predicate_is_omitted(self):
         original = DamagePreventionScope.event_conditions
-        def omitted(scope, *, controller):
-            return {key: value for key, value in original(scope, controller=controller).items()
+        def omitted(scope, **kwargs):
+            return {key: value for key, value in original(scope, **kwargs).items()
                     if not (scope.source_controller is not None and key == 'source_controller')}
         with patch.object(DamagePreventionScope, 'event_conditions', omitted), self.assertRaisesRegex(AssertionError, "'graveyard' != 'battlefield'"):
             self.combat(paid=False, replay=False)

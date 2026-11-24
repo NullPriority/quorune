@@ -205,13 +205,28 @@ class EntryKeywordCounterChoiceRuntimeTests(unittest.TestCase):
         session = self.session(12261455)
         source = self.add(session.engine, 'Helica Glider', zone='hand', ref='choice-zero-source')
         self.assert_closed(session, source)
-        row = self.db.lookup('Vorinclex, Monstrous Raider')
-        program = compile_best_available_card_program(self.db, row, semantic_registry=session.engine.semantics,
-            capability_registry=self.registry, capability_profile='commander_review')
-        bound = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-        self.assertFalse(bound['strict_capability_ready'])
-        ir = compile_oracle_card(row, capability_registry=self.registry, capability_profile='commander_review')
-        self.assertTrue(any('half that many' in residual.text
+        original = self.db.lookup('Vorinclex, Monstrous Raider')
+        round_up = replace(
+            original,
+            oracle_id='fixture:opponent-counter-halving-round-up',
+            name='Constructed opponent counter halving',
+            oracle_text=original.oracle_text.replace('rounded down', 'rounded up'),
+            raw={},
+        )
+        self.assertNotEqual(original.oracle_text, round_up.oracle_text)
+        for card, supported in ((original, True), (round_up, False)):
+            with self.subTest(card=card.name):
+                program = compile_best_available_card_program(
+                    self.db, card, semantic_registry=session.engine.semantics,
+                    capability_registry=self.registry, capability_profile='commander_review',
+                )
+                bound = bind_card_program_runtime(
+                    program, capability_registry=self.registry, profile='commander_review',
+                )
+                self.assertEqual(supported, bound['strict_capability_ready'], bound['blockers'])
+                self.assertEqual(supported, bound['compatible_ready'], bound['blockers'])
+        ir = compile_oracle_card(round_up, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertTrue(any('half that many' in residual.text and 'rounded up' in residual.text
             for face in ir.faces for residual in face.residuals if residual.material))
 
     def test_manifested_original_has_no_entry_counter_or_new_entry_on_turn_up(self):

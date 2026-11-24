@@ -37,7 +37,7 @@ class IntrinsicManaLayerBoundaryTests(unittest.TestCase):
     def query(self,values):
         host=SimpleNamespace(_effective_card_data=lambda _card:{'type_line':'Land Creature — Forest Island',
             'activated_abilities':values['activated_abilities'],'ability_fragments':values['ability_fragments']})
-        return activated_abilities(host,SimpleNamespace())
+        return activated_abilities(host,SimpleNamespace(annotations={}))
 
     def test_type_changes_precede_intrinsic_mana_and_later_ability_loss(self):
         added=self.effect('type',Layer.TYPE,[ContinuousOperation('add_types',['island'],field='subtypes')])

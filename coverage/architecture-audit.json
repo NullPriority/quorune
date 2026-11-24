@@ -26448,9 +26448,9 @@
       "applicable_piece_pairs": 214091,
       "available": true,
       "covered_high_risk_pairs": 625,
-      "covered_piece_pairs": 1951,
+      "covered_piece_pairs": 1952,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "15a6684e025b766c8ab05bc4ec646b2c342f55388157a37adbf28a54420d5da8",
+      "source_fingerprint": "a4a93c61a10a58f9bafe47d4c49e913a27a8902782e0b3384699b619f565abbf",
       "uncovered_high_risk_pairs": 185
     },
     "migration_queue": [],
@@ -81575,7 +81575,7 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 257,
+        "primary_test_count": 258,
         "primary_tests": [
           "test_activated_self_transform",
           "test_activation_cost_modifiers",
@@ -84846,7 +84846,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1497,
     "compiler_module_physical_lines": 1563,
-    "compiler_version": "oracle-ir-v1229",
+    "compiler_version": "oracle-ir-v1230",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -85627,7 +85627,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 918,
         "exact_nodes": 1018,
-        "fingerprint": "cfcd39db2b89221afa3ee1b8438e47450940dd161349f23beaadd1285c155f55",
+        "fingerprint": "e19ed0a2b2507b090892e7508e8918c45ccd571c5f4e99f8ef772ce97c6c8e1b",
         "grammar_source_fingerprint": "4e6ade2e99d8265338e6963394d6437722421b7bf082dddcfea7a6d55cc9deee",
         "identity_fingerprint": "ffaf66d355a184c6eb2d41f288898832b8071df416e282fb080cd8bb4b968dfb",
         "present": true,
@@ -85639,7 +85639,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 943,
         "exact_nodes": 1056,
-        "fingerprint": "db4a79c8d3a29e689e79834f2efae4975fd0d86157787e43ee6e78ca6901b098",
+        "fingerprint": "d84728b7ea026a9cdaa50e6f5f131133468d8d2b5c01c125c97b497285113e68",
         "grammar_source_fingerprint": "4e6ade2e99d8265338e6963394d6437722421b7bf082dddcfea7a6d55cc9deee",
         "identity_fingerprint": "207c11e619941658b9968efa3f6150113a1de6d54b045914c028bc51fbed8b7b",
         "present": true,
@@ -85658,7 +85658,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "f9f9f44a3568ef8fe591c228b05ed34df9e74b92886fb79b43962dee3e1ad784",
+      "fingerprint": "1992788009143efe95249cfa097b2c89a34974f5a33ac9e2363ae58485d4c16c",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -86202,7 +86202,7 @@
       "generic-search-v1": 7,
       "generic-search-v2": 7,
       "interaction-kernel": 14,
-      "oracle-ir-v1229": 30,
+      "oracle-ir-v1230": 30,
       "replacement-choice-nested-events": 1,
       "reviewed-predefined-token-name-correction": 1,
       "v0.8-artifact-engine-family": 22,
@@ -86519,8 +86519,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 17809,
-      "discovered_total": 21118,
+      "conventional_ast_cases": 17810,
+      "discovered_total": 21119,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 414,

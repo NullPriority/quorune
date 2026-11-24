@@ -328,13 +328,14 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
             "Search your library for two creature cards, reveal them, put them into your hand, then shuffle.",
             "Search your library for a card named Lightning Bolt, reveal it, put it into your hand, then shuffle.",
             "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.",
+            "Search your library for a card named Nissa's Chosen, put it onto the battlefield, then shuffle.",
         ):
             with self.subTest(supported=supported):
                 self.assertIsNotNone(fixed_library_search_effect_template(supported))
                 ir = self.compile(supported)
                 self.assertEqual("exact", ir.status, ir.material_residuals)
         leaf_unsupported = (
-            "Search your library for a card named Nissa's Chosen, put it onto the battlefield, then shuffle.",
+            "Search your library for a card named Nissa's Chosen, put it onto the battlefield tapped and attacking, then shuffle.",
             "Search your library for up to three artifact cards with different names, put them onto the battlefield, then shuffle.",
             "Search your library for an Equipment card, put it onto the battlefield, attach it to a creature you control, then shuffle.",
             "Search your library for a Dinosaur creature card, put it onto the battlefield, then shuffle. It gains indestructible until your next turn.",

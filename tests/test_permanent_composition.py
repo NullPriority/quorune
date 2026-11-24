@@ -2669,17 +2669,18 @@ class CompositionOrderChoiceTests(unittest.TestCase):
         from types import SimpleNamespace
         from quorune.composition_ordering import validate_original_composition_effect
         from quorune.errors import GameRuleError
+        _, request = self.request()
         original={'op':'destroy','card':'ROOT'}
         host=SimpleNamespace(semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=(original,))),
             semantic_program_is_current_trusted=lambda program:True,_semantic_value=lambda effect,item:dict(effect))
         item=SimpleNamespace(semantic_key='parent')
-        validate_original_composition_effect(host,item,original,0)
-        validate_original_composition_effect(host,item,{**original,'_replacement_selections':[]},0)
+        validate_original_composition_effect(host,item,original,0,request)
+        validate_original_composition_effect(host,item,{**original,'_replacement_selections':[]},0,request)
         with self.assertRaises(GameRuleError):validate_original_composition_effect(host,item,
-            {'op':'gain_life','player':'C','amount':100},0)
-        with self.assertRaises(GameRuleError):validate_original_composition_effect(host,item,original,1)
+            {'op':'gain_life','player':'C','amount':100},0,request)
+        with self.assertRaises(GameRuleError):validate_original_composition_effect(host,item,original,1,request)
         host.semantic_program_is_current_trusted=lambda program:False
-        with self.assertRaises(GameRuleError):validate_original_composition_effect(host,item,original,0)
+        with self.assertRaises(GameRuleError):validate_original_composition_effect(host,item,original,0,request)
 
     def test_resolved_order_request_keeps_original_actor_and_exiler_distinct(self):
         from dataclasses import replace

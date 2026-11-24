@@ -430,7 +430,7 @@ class LevelerBandModelAndCompilerTests(unittest.TestCase):
 
         unsupported_keyword = leveler_record(
             BEASTBREAKER_TEXT.replace(
-                "6/6\nTrample", "6/6\nWard—Sacrifice a creature."
+                "6/6\nTrample", "6/6\nWard—Sacrifice a creature with mana value X."
             ),
             keywords=("Level Up", "Ward"),
         )

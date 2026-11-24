@@ -911,7 +911,7 @@ class FixedTargetReanimationSetCompilerTests(unittest.TestCase):
         from quorune.public_zone_moves import PublicBattlefieldController
         from quorune.semantic_choices.intent_host import SemanticChoiceIntentHostMixin
         from quorune.semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
-        cards={ref:SimpleNamespace(ref=ref,object_id='object:'+ref,owner=owner)
+        cards={ref:SimpleNamespace(ref=ref,object_id='object:'+ref,owner=owner,zone='graveyard')
             for ref,owner in (('ONE','B'),('TWO','C'))}
         calls=[]
         host=SimpleNamespace(_resolve_object=lambda actor,ref,**kwargs:cards[ref],
@@ -926,6 +926,7 @@ class FixedTargetReanimationSetCompilerTests(unittest.TestCase):
             self.assertEqual({'object:ONE':'B' if policy is PublicBattlefieldController.OWNER else 'A',
                 'object:TWO':'C' if policy is PublicBattlefieldController.OWNER else 'A'},arguments['destination_controllers'])
             self.assertTrue(arguments['tapped'])
+            self.assertEqual({'object:ONE':'A','object:TWO':'A'},arguments['putting_players'])
         ordinary=MoveObjectsSimultaneouslyIntent('A',('ONE',),('graveyard',),'hand','Ordinary return')
         SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent(host,ordinary)
         self.assertNotIn('destination_controllers',calls[-1][1]);self.assertNotIn('tapped',calls[-1][1])

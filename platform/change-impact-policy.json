@@ -22183,7 +22183,8 @@
         "test_trigger_processing_owner",
         "test_creature_counter_alternative_price",
         "test_card_program_trust",
-        "test_optional_sacrifice_stat_results"
+        "test_optional_sacrifice_stat_results",
+        "test_leveler_bands"
       ]
     },
     {
@@ -23461,7 +23462,8 @@
         "test_optional_literal_name_any_number_search",
         "test_target_creature_name_library_search",
         "test_fixed_optional_mana_payment_triggers",
-        "test_counted_library_searches"
+        "test_counted_library_searches",
+        "test_fixed_library_searches"
       ]
     },
     {
@@ -24015,7 +24017,8 @@
         "test_opponent_damage_optional_source_counters",
         "test_opponent_damage_untapped_source_draw",
         "test_controller_graveyard_arrival_optional_quest_counter",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_fixed_counter_removal_effects"
       ]
     },
     {

@@ -1457,7 +1457,7 @@ class FixedSourceCounterRemovalActionTests(unittest.TestCase):
                 program = compile_best_available_card_program(self.db, source, semantic_registry=semantics,
                     capability_registry=self.registry, capability_profile='commander_review')
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                ready=name in {'Ammit Eternal','Witherscale Wurm'}
+                ready = name in {'Ammit Eternal', 'Blood Hound', 'Witherscale Wurm'}
                 self.assertEqual(ready, binding['strict_capability_ready'], binding['blockers'])
                 self.assertEqual(ready, binding['compatible_ready'], binding['blockers'])
                 if not ready:
