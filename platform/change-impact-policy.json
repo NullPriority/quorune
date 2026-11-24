@@ -24964,6 +24964,19 @@
       ]
     },
     {
+      "id": "shared-source-maintenance-upkeep-retention",
+      "patterns": [
+        "quorune/semantic_choices/source_maintenance.py"
+      ],
+      "test_modules": [
+        "test_cumulative_alternative_mana_upkeep",
+        "test_cumulative_counter_upkeep",
+        "test_cumulative_effect_cost_upkeep",
+        "test_cumulative_graveyard_upkeep",
+        "test_cumulative_object_upkeep"
+      ]
+    },
+    {
       "id": "scheduled-upkeep-fixed-life-return",
       "patterns": [
         "quorune/compiler/scheduled_life_return.py",
