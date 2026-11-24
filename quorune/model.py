@@ -28,6 +28,12 @@ from .damage_modifier_state import (
     SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
     read_shield_counter_damage_version,
 )
+from .turn_priority_model import (
+    PRIORITY_CONCESSION_RESUME_FIELD,
+    PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD,
+    read_priority_concession_resume,
+    read_priority_concession_stabilization_version,
+)
 from .declaration_rule_effects import (
     ContinuousJournalEffect,
     continuous_journal_effect_from_dict,
@@ -906,6 +912,8 @@ class GameState:
     next_player_untap_restrictions: tuple[NextPlayerUntapRestriction, ...] = field(default=(), kw_only=True)
     active_player: str | None = None
     priority_player: str | None = None
+    priority_concession_stabilization_version: int | None = 1
+    priority_concession_resume_from: str | None = None
     priority_passes: list[str] = field(default_factory=list)
     priority_epoch: int = 0
     turn_sequence: int = 0
@@ -1023,6 +1031,8 @@ class GameState:
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
             **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
+            **({PRIORITY_CONCESSION_RESUME_FIELD: self.priority_concession_resume_from}
+               if self.priority_concession_resume_from is not None else {}),
             "extra_turns": [turn.to_dict() for turn in self.extra_turns],
             **(
                 {"scheduled_turn_skips": [grant.to_dict() for grant in self.scheduled_turn_skips]}
@@ -1037,6 +1047,7 @@ class GameState:
     def _record_version_fields(self) -> dict[str, int]:
         versions = {
             SHIELD_COUNTER_DAMAGE_VERSION_FIELD: self.shield_counter_damage_version,
+            PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD: self.priority_concession_stabilization_version,
             "qualified_attack_facts_version": qualified_attack_facts_version(self.qualified_attack_facts_version),
             "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
             "battle_cry_resolution_version": battle_cry_resolution_version(self.battle_cry_resolution_version),
@@ -1048,6 +1059,7 @@ class GameState:
         }
         present = {name: version for name, version in versions.items() if version is not None}
         read_shield_counter_damage_version(present)
+        read_priority_concession_stabilization_version(present)
         present.update(continuous_dependency_order_fields(self.continuous_dependency_order_version))
         present.update(fetch_entry_placement_fields(self.fetch_entry_placement_version))
         present.update(land_entry_payment_validation_fields(self.land_entry_affordability_version))
@@ -1287,6 +1299,8 @@ class GameState:
             ),
             active_player=data.get("active_player"),
             priority_player=data.get("priority_player"),
+            priority_concession_stabilization_version=read_priority_concession_stabilization_version(data),
+            priority_concession_resume_from=read_priority_concession_resume(data),
             priority_passes=list(data.get("priority_passes", [])),
             priority_epoch=int(data.get("priority_epoch", 0)),
             turn_sequence=int(data.get("turn_sequence", 0)),

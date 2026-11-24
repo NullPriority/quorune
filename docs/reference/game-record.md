@@ -29,6 +29,14 @@ record. Historical records omit the marker and retain their original damage
 execution. Declared null, boolean or unknown versions and disagreements
 between the manifest and checkpoint are rejected.
 
+The priority concession stabilization marker has value 1 in new checkpoints
+and manifests. When a player concedes while holding priority, the game
+finishes state-based actions and waiting triggers before issuing the next
+priority decision. A checkpoint saved during a resulting choice records the
+departed seat so the next active player receives priority when that choice
+finishes. Historical records with an absent marker keep their recorded
+priority behavior.
+
 The continuous dependency order marker has value `1` in new checkpoints and
 record manifests. It confines timestamp fallback to the unresolved cycle and
 preserves dependencies from effects outside the cycle. Older records omit the

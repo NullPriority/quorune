@@ -35,6 +35,24 @@
   ],
   "path_rules": [
     {
+      "id": "priority-concession-state-based-boundary",
+      "patterns": [
+        "quorune/model.py",
+        "quorune/record_state_provenance.py",
+        "quorune/turn_priority_model.py",
+        "quorune/turn_priority_owner.py",
+        "schemas/game-record-v3-checkpoint.schema.json",
+        "schemas/game-record-v3-manifest.schema.json",
+        "tests/fixtures/priority-concession-stabilization-cards.json",
+        "tests/test_priority_concession_stabilization.py"
+      ],
+      "test_modules": [
+        "test_concession_rules",
+        "test_priority_concession_stabilization",
+        "test_upkeep_step_rules"
+      ]
+    },
+    {
       "id": "activation-fetch-retention",
       "patterns": [
         "quorune/rules/activation/proposal.py"

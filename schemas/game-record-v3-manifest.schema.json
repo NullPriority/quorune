@@ -167,6 +167,7 @@
           "const": 1,
           "type": "integer"
         },
+        "priority_concession_stabilization_version": { "type": "integer", "const": 1 },
         "shield_counter_damage_version": {
           "const": 1,
           "type": "integer"

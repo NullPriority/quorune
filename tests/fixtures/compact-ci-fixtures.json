@@ -3107,6 +3107,7 @@
     "tests/fixtures/priced-mana-source-cards.json",
     "tests/fixtures/printed-deck-copy-limit-cards.json",
     "tests/fixtures/printed-source-attachment-cards.json",
+    "tests/fixtures/priority-concession-stabilization-cards.json",
     "tests/fixtures/private-hand-collection-cards.json",
     "tests/fixtures/protection-list-cards.json",
     "tests/fixtures/prototype-cards.json",

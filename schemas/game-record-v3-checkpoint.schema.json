@@ -31,6 +31,8 @@
         "transform_timestamp_version": {"type": "integer", "const": 1},
         "face_status_timestamp_version": {"type": "integer", "const": 1},
         "cast_event_type_snapshot_version": {"type": "integer", "const": 1},
+        "priority_concession_stabilization_version": { "type": "integer", "const": 1 },
+        "priority_concession_resume_from": { "type": "string", "minLength": 1 },
         "shield_counter_damage_version": {"type": "integer", "const": 1},
         "ward_discard_order_version": {"type": "integer", "const": 1},
         "events": {"type": "array", "maxItems": 0},
