@@ -10320,14 +10320,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v1227-concession-priority-stabilization",
-      "compiler_version": "oracle-ir-v1227",
+      "transition_id": "oracle-ir-v1228-canonical-proliferate-replay-order",
+      "compiler_version": "oracle-ir-v1228",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Apply state-based actions and pending trigger choices before passing priority after a confirmed concession, with exact Game Record replay."
+      "non_harvest_reason": "Preserve versioned Proliferate choice ordering across exact replay and retain modal admission for the existing supported corpus."
     },
     "forecast_corrections": [
       {

@@ -974,6 +974,11 @@ Two-Headed Giant shared poison totals, repeated or variable Proliferate,
 Proliferate replacement effects, and broader granted/copy propagation remain
 explicitly unsupported.
 
+New Proliferate instructions carry a choice-order version. The native offer
+lists eligible permanents by reference, followed by eligible players in seat
+order. Game Record v3 can also resume the sealed choice order from an
+unversioned instruction.
+
 The bounded Explore family compiles source/self and “target creature you
 control” instructions to CardProgram V2. It publicly reveals the current
 controller's top card, uses a replacement-aware zone move for a revealed land

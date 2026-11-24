@@ -35,6 +35,27 @@
   ],
   "path_rules": [
     {
+      "id": "canonical-proliferate-replay-order",
+      "patterns": [
+        "quorune/card_programs/modal_catalog_equivalence.py",
+        "quorune/compiler/proliferate_templates.py",
+        "quorune/counter_placement_event_model.py",
+        "quorune/rules/node_capability_shapes.py",
+        "quorune/semantic_choices/public_selection.py",
+        "tests/fixtures/proliferate-replay-order-cards.json",
+        "tests/test_proliferate_compiler.py",
+        "tests/test_proliferate_replay_order.py"
+      ],
+      "test_modules": [
+        "test_proliferate_compiler",
+        "test_proliferate_rules",
+        "test_proliferate_replay_order",
+        "test_card_program_trust",
+        "test_modal_activation_admission",
+        "test_interactions_v070"
+      ]
+    },
+    {
       "id": "priority-concession-state-based-boundary",
       "patterns": [
         "quorune/model.py",

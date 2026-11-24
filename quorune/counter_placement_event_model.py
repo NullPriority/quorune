@@ -12,6 +12,22 @@ COUNTER_EVENT_CAPABILITY='trigger.event.normalized_counter_placement'
 COUNTER_EVENT_MECHANIC='trigger-event-normalized-counter-placement'
 
 
+PROLIFERATE_ORDER_VERSION_FIELD = "proliferate_order_version"
+
+
+def has_canonical_proliferate_choice_order(effect):
+    if PROLIFERATE_ORDER_VERSION_FIELD not in effect:
+        return False
+    version = effect[PROLIFERATE_ORDER_VERSION_FIELD]
+    if (
+        type(version) is not int or version != 1
+        or set(effect) != {"op", PROLIFERATE_ORDER_VERSION_FIELD}
+        or effect["op"] != "proliferate"
+    ):
+        raise ValueError("Canonical proliferate requires its closed version-one ordering field")
+    return True
+
+
 def counter_placement_condition_names_kind(condition):
     if not isinstance(condition, Mapping):
         return False

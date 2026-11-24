@@ -430,8 +430,14 @@ def single_proliferate_node_capabilities(
         "proliferate" not in mechanics
         or target_schema is not None
         or len(effects) != 1
-        or dict(effects[0]) != {"op": "proliferate"}
     ):
+        return ()
+    from ..counter_placement_event_model import has_canonical_proliferate_choice_order
+
+    try:
+        if dict(effects[0]) != {"op": "proliferate"} and not has_canonical_proliferate_choice_order(effects[0]):
+            return ()
+    except (TypeError, ValueError):
         return ()
     return ("counter.producer.proliferate",)
 

@@ -6,6 +6,7 @@ import unittest
 from unittest.mock import patch
 
 from quorune.carddb import CardDatabase, CardRecord
+from quorune.counter_placement_event_model import PROLIFERATE_ORDER_VERSION_FIELD
 from quorune.compiler.proliferate_templates import (
     single_proliferate_effect_template,
 )
@@ -106,7 +107,10 @@ class ProliferateCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual("exact", ir.status)
                 self.assertEqual(expected_kind, node.kind)
-                self.assertEqual(({"op": "proliferate"},), node.effects)
+                self.assertEqual(
+                    ({"op": "proliferate", PROLIFERATE_ORDER_VERSION_FIELD: 1},),
+                    node.effects,
+                )
                 self.assertIn(
                     "counter.producer.proliferate",
                     node.capability_dependencies,
@@ -226,13 +230,15 @@ class ProliferateCompilerTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status)
                 self.assertEqual(kind, node.kind)
                 self.assertEqual(
-                    ({"op": "proliferate"},),
+                    ({"op": "proliferate", PROLIFERATE_ORDER_VERSION_FIELD: 1},),
                     node.effects,
                 )
 
     def test_proliferate_capability_shape_rejects_mutations(self):
         for effects, target_schema, mechanics in (
             (({"op": "proliferate", "times": 2},), None, ("proliferate",)),
+            (({"op": "proliferate", PROLIFERATE_ORDER_VERSION_FIELD: True},), None, ("proliferate",)),
+            (({"op": "proliferate", PROLIFERATE_ORDER_VERSION_FIELD: 2},), None, ("proliferate",)),
             (({"op": "proliferate"},), {"count": 1}, ("proliferate",)),
             (({"op": "proliferate"},), None, ()),
             (({"op": "proliferate"}, {"op": "draw", "count": 1}), None, ("proliferate",)),
