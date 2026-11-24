@@ -16,6 +16,7 @@ class RelativePowerTargetError(ValueError):
 
 
 CREATURE_POWER_PREDICATE = "power_less_than_source"
+GREATEST_CREATURE_POWER_PREDICATE = "greatest_creature_power"
 MANA_VALUE_LT_POWER = "mana_value_less_than_source_power"
 MANA_VALUE_LE_POWER = "mana_value_at_most_source_power"
 MANA_VALUE_POWER_PREDICATES = frozenset({MANA_VALUE_LT_POWER, MANA_VALUE_LE_POWER})

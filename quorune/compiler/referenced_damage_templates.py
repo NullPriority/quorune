@@ -5,6 +5,7 @@ from __future__ import annotations
 from . import regex_working_set as re
 from ..attachment_references import AttachmentReferenceKind,AttachmentReferenceSpec
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
+from ..rules.event_subscriptions import COMBAT_PARTICIPANT_DAMAGE_VARIANT
 from ..rules.source_references import SourceReferenceSpec,source_self_permanent_type
 
 REFERENCED_DAMAGE_CAPABILITY='damage.effect.fixed_referenced_recipient'
@@ -45,7 +46,9 @@ def event_fixed_damage_template(binding,text,*,card_name):
     if parsed is None or parsed[1]!='it':return None
     if binding.event.value=='creature.enter' and binding.variant=='creature:any:including_source:any_object':
         reference=EVENT_ENTRY_OBJECT
-    elif binding.event.value=='creature.attacks' and binding.variant=='public_attack_a_creature':
+    elif binding.event.value=='creature.attacks' and binding.variant in {
+        'public_attack_a_creature', COMBAT_PARTICIPANT_DAMAGE_VARIANT,
+    }:
         reference='$event.permanent_object'
     else:return None
     return _compiled(parsed[0],reference)

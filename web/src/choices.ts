@@ -157,8 +157,18 @@ function resolveDependentField(field: ChoiceField, values: ChoiceValues): Choice
     const schema = record(field.schema);
     const allocation = record(schema[DAMAGE_ALLOCATION_FIELD]);
     const damageMaximum = allocation.schema_version === 2 ? damageAllocationTotal(allocation, values) : undefined;
+    const bounds = record(schema.x_bounds_by_ref);
+    const announcedX = Number(values.x ?? 0);
     const groups = list(schema.groups).map((rawGroup) => {
-      const group = record(rawGroup);
+      let group = record(rawGroup);
+      if (schema.x_bounds_by_ref !== undefined && (schema.x_bound_group ?? "target") === group.id) {
+        const legalRefs = list(group.legal_refs).filter((ref) => {
+          const limit = record(bounds[String(ref)]);
+          return Number.isInteger(announcedX)
+            && announcedX >= Number(limit.minimum) && announcedX <= Number(limit.maximum);
+        });
+        group = { ...group, legal_refs: legalRefs };
+      }
       if (damageMaximum !== undefined) {
         return { ...group, max: Math.min(Number(group.max ?? 0), damageMaximum) };
       }
@@ -561,18 +571,50 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       errors.push(`Choose at most ${schema.max_modes} mode(s).`);
     }
     const targets = record(value);
+    const targetGroups = selectedTargetGroups(field, values);
     if (selectedTargetPrice(field, values) === null) {
       errors.push("These targets and modes do not have a currently payable casting cost.");
     }
-    for (const group of selectedTargetGroups(field, values)) {
+    for (const group of targetGroups) {
       const groupId = stringValue(group.id || "target");
-      const count = list(targets[groupId]).length;
+      const selected = list(targets[groupId]);
+      const count = selected.length;
       if (count < Number(group.min ?? 1) || count > Number(group.max ?? 1)) {
         errors.push(
           `${stringValue(group.label || groupId)} requires between ${group.min ?? 1} and ${group.max ?? 1} target(s).`,
         );
       }
+      if (schema.x_bounds_by_ref !== undefined && (schema.x_bound_group ?? "target") === groupId) {
+        const legal = new Set(list(group.legal_refs));
+        if (selected.some((ref) => !legal.has(ref))) {
+          errors.push("Choose an X within the offered range for each target.");
+        }
+      }
     }
+    const selectedRefs = targetGroups.flatMap((group) => list(targets[stringValue(group.id || "target")]));
+    const modeSchemas = record(schema.mode_schemas);
+    const requirements = [
+      record(schema.target_choice_requirement),
+      ...modes.map((mode) => record(record(modeSchemas[String(mode)]).target_choice_requirement)),
+      ...list(schema.combined_target_choice_requirements).map(record).filter((requirement) => {
+        const requiredModes = list(requirement.modes);
+        return requiredModes.length === modes.length && requiredModes.every((mode) => modes.includes(mode));
+      }),
+    ];
+    const missingFlagbearer = requirements.some((requirement) => {
+      if (requirement.kind !== "flagbearer" || list(requirement.legal_refs).some((ref) => selectedRefs.includes(ref))) {
+        return false;
+      }
+      if (requirement.when_target_counts === undefined) return true;
+      return list(requirement.when_target_counts).some((condition) =>
+        Object.entries(record(condition)).every(([group, rawRange]) => {
+          const range = list(rawRange);
+          const count = list(targets[group]).length;
+          return range.length === 2 && count >= Number(range[0]) && count <= Number(range[1]);
+        }),
+      );
+    });
+    if (missingFlagbearer) errors.push("Choose at least one Flagbearer as a target.");
     const allocation = selectedDamageAllocation(field, values);
     if (allocation) {
       const { refs, shares, total } = allocation;

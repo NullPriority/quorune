@@ -8,6 +8,7 @@ from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
 from ..owner_control_model import OwnerControlSpec
+from ..recipient_control_model import two_controller_creature_transfer_query
 from ..source_continuity import SourceContinuitySnapshot
 
 
@@ -69,6 +70,7 @@ class GainControlSetIntent:
     source: ResolutionEffectSource
     steps: tuple[str, ...]
     reason: str
+    opponent: str | None = None
 
     def __post_init__(self) -> None:
         _validate_control(self.actor, self.controller, self.duration, self.source, self.reason)
@@ -85,6 +87,12 @@ class GainControlSetIntent:
             raise ValueError("Control-set instruction order is unsupported")
         if "haste" in self.steps and self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN:
             raise ValueError("Control-set haste requires its printed end-of-turn duration")
+        if self.opponent is not None and (
+            type(self.opponent) is not str or not self.opponent or self.opponent == self.actor
+            or self.predicate != two_controller_creature_transfer_query()
+            or self.steps != ("untap", "gain_control", "haste")
+        ):
+            raise ValueError("Two-controller creature transfer requires the exact opposing groups and result order")
 
 
 @dataclass(frozen=True,slots=True)
@@ -132,4 +140,18 @@ class RestoreOwnerControlIntent:
         if not isinstance(self.spec,OwnerControlSpec):raise ValueError('Owner control requires its typed scope')
 
 
-ControlIntent = GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent
+@dataclass(frozen=True, slots=True)
+class ExchangePermanentControlIntent:
+    actor: str
+    references: tuple[str, str]
+    source: ResolutionEffectSource
+    reason: str
+
+    def __post_init__(self):
+        _validate_control(self.actor, self.actor, ContinuousEffectDuration.ZONE_OBJECT, self.source, self.reason)
+        if (type(self.references) is not tuple or len(self.references) != 2
+                or any(type(ref) is not str or not ref for ref in self.references)):
+            raise ValueError("Permanent control exchange requires two public references")
+
+
+ControlIntent = GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | ExchangePermanentControlIntent

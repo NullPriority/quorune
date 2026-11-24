@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Any, Mapping
 
 EVENT_PLAYER_TARGET_REFERENCES = frozenset({
@@ -104,3 +105,42 @@ class TargetCharacteristicForm:
 
 
 __all__ = ["TargetCharacteristicForm"]
+
+
+SHARED_PERMANENT_TYPE_PAIR_FIELD = "shared_permanent_type_pair"
+SHARED_PERMANENT_TYPE_PAIR_CAPABILITY = "target.relation.shared_permanent_card_type"
+
+
+class SharedPermanentTypeScope(StrEnum):
+    PERMANENT = "permanent"
+    ARTIFACT_OR_CREATURE = "artifact_or_creature"
+
+    @property
+    def types(self):
+        if self is self.ARTIFACT_OR_CREATURE:
+            return frozenset(("artifact", "creature"))
+        return frozenset(("artifact", "battle", "creature", "enchantment", "land", "planeswalker"))
+
+
+@dataclass(frozen=True, slots=True)
+class SharedPermanentTypePair:
+    left: str
+    right: str
+    scope: SharedPermanentTypeScope
+
+    def __post_init__(self):
+        if (type(self.left) is not str or not self.left or type(self.right) is not str
+                or not self.right or self.left == self.right):
+            raise ValueError("A shared permanent type pair requires two distinct target groups")
+        if not isinstance(self.scope, SharedPermanentTypeScope):
+            raise ValueError("A shared permanent type pair requires a represented card-type scope")
+
+    def to_dict(self):
+        return {"schema_version": 1, "left": self.left, "right": self.right, "scope": self.scope.value}
+
+    @classmethod
+    def from_mapping(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {"schema_version", "left", "right", "scope"}
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+            raise ValueError("Shared permanent type pairs require their exact versioned fields")
+        return cls(value["left"], value["right"], SharedPermanentTypeScope(value["scope"]))

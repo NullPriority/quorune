@@ -30,7 +30,7 @@ from .ability_fragments import (
 )
 from .abilities import ActivatedAbility
 from .replacement.immutable import thaw_value
-from .creature_subtypes import canonical_creature_subtype
+from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .intrinsic_land_abilities import intrinsic_land_mana_abilities
 from .basic_land_types import LAND_SUBTYPES
 
@@ -428,6 +428,18 @@ def _apply_ability_operation(
     return True
 
 
+def _apply_creature_subtype_change(state, operation, value):
+    if not any(kind.casefold() in {"creature", "kindred"} for kind in state.card_types):
+        return
+    state.subtypes = {word for word in state.subtypes if canonical_creature_subtype(word) is None}
+    if operation == "set_creature_subtype":
+        state.subtypes.add(value.title())
+    elif operation == "set_creature_subtypes":
+        state.subtypes.update(word.title() for word in value)
+    elif value == "all":
+        state.subtypes.update(word.title() for word in CREATURE_SUBTYPES)
+
+
 def _apply_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
@@ -482,10 +494,8 @@ def _apply_operation(
         state.ability_fragments=[]
         state.activated_abilities=[]
         return
-    if op == "set_creature_subtype":
-        if any(kind.casefold() in {"creature", "kindred"} for kind in state.card_types):
-            state.subtypes = {word for word in state.subtypes if canonical_creature_subtype(word) is None}
-            state.subtypes.add(value.title())
+    if op in {"set_creature_subtype", "set_creature_subtypes", "set_creature_subtype_set"}:
+        _apply_creature_subtype_change(state, op, value)
         return
     if op in {"set_types", "add_types", "remove_types"}:
         target = (
@@ -616,6 +626,9 @@ def evaluate_continuous_effects(
             ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,
             ContinuousEffectRelation.SOURCE_PAIRED_WITH_OBJECT,
             ContinuousEffectRelation.SOURCE_RING_BEARER_OBJECT,
+            ContinuousEffectRelation.SOURCE_CONTROLLED_AURA_RECIPIENT,
+            ContinuousEffectRelation.SOURCE_BLOCK_COUNTERPART_OBJECT,
+            ContinuousEffectRelation.SOURCE_COUNTER_PLACEMENT_RECIPIENT,
         }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(

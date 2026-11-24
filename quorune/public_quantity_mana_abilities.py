@@ -5,10 +5,17 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Mapping
 from .fixed_mana_abilities import FixedActivatedManaAbilitySpec, compile_fixed_activated_mana_ability, FixedManaMode
-from .public_quantity_mana_model import PublicQuantityManaOutput
+from .public_quantity_mana_model import CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION, PublicQuantityManaOutput
 from .replacement.immutable import FrozenMap
 
 PUBLIC_QUANTITY_MANA_HANDLER_ID='ability.activated.mana.public-quantity.v1'
+
+
+def _chosen_subtype_mana_price(costs: FixedActivatedManaAbilitySpec) -> bool:
+    return (costs.tap_source and {key: value for key, value in costs.mana_cost.items() if value} == {"GENERIC": 2}
+            and not (costs.sacrifice_source or costs.life_payment or costs.activation_limit is not None
+                     or costs.activation_conditions or costs.source_counter_removal_cost is not None
+                     or costs.result is not None or costs.choices or costs.mana_cost_options))
 
 
 @dataclass(frozen=True,slots=True)
@@ -21,6 +28,8 @@ class PublicQuantityActivatedManaAbilitySpec:
             raise ValueError('Public quantity mana requires closed costs and output')
         if self.costs.modes != (FixedManaMode(green=1),) or self.costs.spend_restriction is not None:
             raise ValueError('Public quantity cost descriptor cannot carry a competing mana output')
+        if self.output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION and not _chosen_subtype_mana_price(self.costs):
+            raise ValueError("Chosen subtype mana requires the exact generic-two tap activation")
 
     def to_dict(self) -> dict[str,Any]:
         return {'costs':self.costs.to_dict(),'output':self.output.to_dict()}
@@ -42,7 +51,10 @@ def public_quantity_mana_handler_descriptor(spec):
 
 def compile_public_quantity_activated_mana_ability(ability,output):
     costs = compile_mana_activation_costs(ability)
-    return None if costs is None else PublicQuantityActivatedManaAbilitySpec(costs,output)
+    if costs is None or (output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION
+                         and not _chosen_subtype_mana_price(costs)):
+        return None
+    return PublicQuantityActivatedManaAbilitySpec(costs, output)
 
 
 def compile_mana_activation_costs(ability):

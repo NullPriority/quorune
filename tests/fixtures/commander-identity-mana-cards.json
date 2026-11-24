@@ -1,0 +1,622 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "card_database_subset",
+  "source": "Pinned commander-identity mana originals and designated commander records",
+  "cards": [
+    {
+      "oracle_id": "0bc7f093-bef0-4f1a-852c-4b75ebf54838",
+      "name": "Arcane Signet",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "name": "Command Tower",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0b67c4e2-f88b-4e01-85a1-9d5f5b8db13b",
+      "name": "Commander's Sphere",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add one mana of any color in your commander's color identity.\nSacrifice this artifact: Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b639e1fe-d099-4cab-a0d0-a1b33c7f31dd",
+      "name": "Hidden Hideout",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land",
+      "oracle_text": "This land enters tapped.\n{T}: Add one mana of any color in your commander's color identity.\n{2}, {T}: Target creature you control with a counter on it gains lifelink until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "name": "Isamaru, Hound of Konda",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Legendary Creature — Dog",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "name": "Thrasios, Triton Hero",
+      "mana_cost": "{G}{U}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Merfolk Wizard",
+      "oracle_text": "{4}: Scry 1, then reveal the top card of your library. If it's a land card, put it onto the battlefield tapped. Otherwise, draw a card.\nPartner (You can have two commanders if both have partner.)",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Partner",
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0bfa4512-e35a-4c93-b324-80ec659f5a97",
+      "name": "Ulamog, the Ceaseless Hunger",
+      "mana_cost": "{10}",
+      "cmc": 10.0,
+      "type_line": "Legendary Creature — Eldrazi",
+      "oracle_text": "When you cast this spell, exile two target permanents.\nIndestructible\nWhenever Ulamog attacks, defending player exiles the top twenty cards of their library.",
+      "power": "10",
+      "toughness": "10",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Indestructible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "name": "Vial Smasher the Fierce",
+      "mana_cost": "{1}{B}{R}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Goblin Berserker",
+      "oracle_text": "Whenever you cast your first spell each turn, choose an opponent at random. Vial Smasher deals damage equal to that spell's mana value to that player or a planeswalker that player controls.\nPartner (You can have two commanders if both have partner.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "Partner"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "restricted",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0bc7f093-bef0-4f1a-852c-4b75ebf54838",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you have two commanders, the ability adds one mana of any color in their combined color identities."
+    },
+    {
+      "oracle_id": "0bc7f093-bef0-4f1a-852c-4b75ebf54838",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your commander is a card that has no colors in its color identity, Arcane Signet's ability produces no mana. It doesn't produce {C}."
+    },
+    {
+      "oracle_id": "0bc7f093-bef0-4f1a-852c-4b75ebf54838",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you don't have a commander, Arcane Signet's ability produces no mana."
+    },
+    {
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you don't have a commander, Command Tower's ability produces no mana."
+    },
+    {
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you have two commanders, the ability adds one mana of any color in their combined color identities."
+    },
+    {
+      "oracle_id": "0895c9b7-ae7d-4bb3-af17-3b75deb50a25",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your commander is a card that has no colors in its color identity, Command Tower's ability produces no mana. It doesn't produce {C}."
+    },
+    {
+      "oracle_id": "0b67c4e2-f88b-4e01-85a1-9d5f5b8db13b",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you don't have a commander, Commander's Sphere's first ability produces no mana."
+    },
+    {
+      "oracle_id": "0b67c4e2-f88b-4e01-85a1-9d5f5b8db13b",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you have two commanders, the ability adds one mana of any color in their combined color identities."
+    },
+    {
+      "oracle_id": "0b67c4e2-f88b-4e01-85a1-9d5f5b8db13b",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your commander is a card that has no colors in its color identity, Commander's Sphere's first ability produces no mana. It doesn't produce {C}."
+    },
+    {
+      "oracle_id": "b639e1fe-d099-4cab-a0d0-a1b33c7f31dd",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If you have two commanders, Hidden Hideout's first ability adds one mana of any color in their combined color identities."
+    },
+    {
+      "oracle_id": "b639e1fe-d099-4cab-a0d0-a1b33c7f31dd",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If your commander is a card that has no colors in its color identity, Hidden Hideout's first ability produces no mana. It doesn't produce {C}."
+    },
+    {
+      "oracle_id": "b639e1fe-d099-4cab-a0d0-a1b33c7f31dd",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If you don't have a commander, Hidden Hideout's first ability produces no mana."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2016-11-08",
+      "source": "wotc",
+      "comment": "No player may take another action while you're resolving the activated ability."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "The nonland card you reveal will be the card you draw."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "3d867016-2601-4a37-a73d-308898d3bd37",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "0bfa4512-e35a-4c93-b324-80ec659f5a97",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "If the player has less than twenty cards in their library, exile all of them. That player won't lose the game until they have to draw a card from an empty library."
+    },
+    {
+      "oracle_id": "0bfa4512-e35a-4c93-b324-80ec659f5a97",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Cards exiled by Ulamog's first and third abilities are exiled face up."
+    },
+    {
+      "oracle_id": "0bfa4512-e35a-4c93-b324-80ec659f5a97",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Ulamog's first ability resolves independently of Ulamog once they've both been put on the stack. If Ulamog is countered, that triggered ability will still resolve. That triggered ability will always resolve before Ulamog does."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2017-04-17",
+      "source": "scryfall",
+      "comment": "Vial Smasher the Fierce is banned as a commander in Duel Commander format, but it may be part of your deck."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once the game begins, your two commanders are tracked separately. If you cast one, you won't have to pay an additional {2} the first time you cast the other. A player loses the game after having been dealt 21 damage from any one of them, not from both of them combined."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your Commander deck has two commanders, you can only include cards whose own color identities are also found in your commanders' combined color identities. If Falthis and Kediss are your commanders, your deck may contain cards with black and/or red in their color identity, but not cards with green, white, or blue."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Vial Smasher's triggered ability triggers when you cast your first spell each turn, regardless of whose turn it is."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You can choose two commanders with partner that are the same color or colors. In Commander Draft, you can even choose two of the same commander with partner if you drafted them. If you do this, make sure you keep the number of times you've cast each from the command zone clear for \"commander tax\" purposes."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Vial Smasher has to be on the battlefield at the moment you cast your first spell. If that spell causes Vial Smasher to leave the battlefield as an additional cost to cast it, Vial Smasher's ability can't trigger. If that spell is Vial Smasher itself, Vial Smasher's ability can't trigger."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "An effect that checks whether you control your commander is satisfied if you control one or both of your two commanders."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To have two commanders, both must have the partner ability as the game begins. Losing the ability during the game doesn't cause either to cease to be your commander."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "The opponent to be dealt damage is chosen at random while the triggered ability is resolving. After that opponent is chosen, you choose whether damage will be dealt to that player or to a planeswalker they control, and if so, which planeswalker. No player may take any actions between the damage recipient being chosen and the damage being dealt."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "For spells with {X} in their mana costs, use the value chosen for X to determine the spell's mana value."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Vial Smasher's triggered ability resolves before the spell that caused it to trigger. If Vial Smasher's ability resolves and the spell that caused it to trigger has been countered, use that spell's mana value as it last existed on the stack to determine how much damage is dealt."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If something refers to your commander while you have two commanders, it refers to one of them of your choice. If you are instructed to perform an action on your commander (e.g. put it from the command zone into your hand due to Command Beacon), you choose one of your commanders at the time the effect happens."
+    },
+    {
+      "oracle_id": "1b355139-4891-436c-9079-0ce17ecc2d65",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Both commanders start in the command zone, and the remaining 98 cards (or 58 cards in a Commander Draft game) of your deck are shuffled to become your library."
+    }
+  ]
+}

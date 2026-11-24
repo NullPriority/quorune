@@ -1,0 +1,303 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Boneyard Wurm",
+      "oracle_id": "6e5f908a-f4f1-4718-ac39-34176e401756",
+      "oracle_text": "Boneyard Wurm's power and toughness are each equal to the number of creature cards in your graveyard.",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2018-12-07",
+      "toughness": "*",
+      "type_line": "Creature — Wurm"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}{W}",
+          "name": "Dusk",
+          "oracle_text": "Destroy all creatures with power 3 or greater.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{W}{W}",
+          "name": "Dawn",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nReturn all creature cards with power 2 or less from your graveyard to your hand.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 9.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aftermath"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W} // {3}{W}{W}",
+      "name": "Dusk // Dawn",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "oracle_text": "Dusk: Destroy all creatures with power 3 or greater.\n//\nDawn: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nReturn all creature cards with power 2 or less from your graveyard to your hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": null,
+      "type_line": "Sorcery // Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{G}",
+      "name": "Kalonian Tusker",
+      "oracle_id": "df7f697e-6886-4897-a024-61ae225c1b34",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2013-07-19",
+      "toughness": "3",
+      "type_line": "Creature — Beast"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{G}",
+      "name": "Lord of Extinction",
+      "oracle_id": "ea5e3401-bd6c-47bb-a52a-8eec5f09455d",
+      "oracle_text": "Lord of Extinction's power and toughness are each equal to the number of cards in all graveyards.",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "*",
+      "type_line": "Creature — Elemental"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "The ability that defines Boneyard Wurm’s power and toughness works in all zones, not just the battlefield. If Boneyard Wurm is in your graveyard, it will count itself.",
+      "oracle_id": "6e5f908a-f4f1-4718-ac39-34176e401756",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you're casting. The characteristics of the half of the card you didn't cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you'll exile the card if it would leave the stack.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can't cast the half with aftermath.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you'll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it's legal for you to do so.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card is a single card. For example, if you discard one, you've discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Split cards with aftermath have a new frame treatment—the half you can cast from your hand is oriented the same as other cards you'd cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can't cast Destined. This is a change from the previous rules for split cards.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "7bc3f92f-68a2-4934-afc4-89f6d0e8cf98",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that defines Lord of Extinction's power and toughness works in all zones, not just the battlefield. If Lord of Extinction is in your graveyard, it will count itself.",
+      "oracle_id": "ea5e3401-bd6c-47bb-a52a-8eec5f09455d",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an instant or sorcery spell deals damage to Lord of Extinction or lowers its toughness, that spell is put into its owner's graveyard before state-based actions are performed. That card will raise Lord of Extinction's toughness before the game checks to see if it dies.",
+      "oracle_id": "ea5e3401-bd6c-47bb-a52a-8eec5f09455d",
+      "published_at": "2018-12-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

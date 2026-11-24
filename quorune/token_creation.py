@@ -835,7 +835,7 @@ def _prepare_token_entry_counters(
         error_type=TokenCreationError,
     )
     prepared = prepare_zone_change_replacement_snapshot(
-        snapshot, selections=selections, error_type=TokenCreationError,
+        snapshot,selections=selections,error_type=TokenCreationError,host=host,prospective_objects=objects,
     )
     if any(
         entry.destination != "battlefield"
@@ -899,8 +899,9 @@ def _commit_token_specs(
             from .entry_results import commit_entry_designations
             entry = prepared_entries[object_id]
             from .entry_results import commit_prepared_entry_identity_results
-            commit_prepared_entry_identity_results(entry,host.state.cards[object_id],error_type=TokenCreationError)
-            commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color, creature_type=entry.entry_chosen_creature_type)
+            commit_prepared_entry_identity_results(entry,host.state.cards[object_id],error_type=TokenCreationError,host=host)
+            commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color,
+                                      creature_type=entry.entry_chosen_creature_type, card_name=entry.entry_chosen_card_name)
         if plan.aura_target_ref is not None:
             token = host.state.cards[object_id]
             data = host._effective_card_data(token)
@@ -970,6 +971,7 @@ def _create_token_specs(
     replacement_selections: Sequence[
         str | None | Mapping[str, Any]
     ],
+    copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
 ) -> list[str]:
     replacement_effects = _token_replacement_effects(
         host,
@@ -995,6 +997,7 @@ def _create_token_specs(
         base_name=base_name,
         base_quantity=base_quantity,
         reason=reason,
+        copied_aura_selections=copied_aura_selections,
     )
 
 
@@ -1014,7 +1017,10 @@ def _commit_prepared_token_entries(
         commit_token_devour_sacrifices, prepare_token_devour_sacrifices, publish_token_devour_sacrifices,
     )
 
+    from .counter_removal import commit_entry_counter_transfer
+
     devour = prepare_token_devour_sacrifices(host, prepared_entries, reason=reason)
+    commit_entry_counter_transfer(host, prepared_entries.values())
     sacrifices = commit_token_devour_sacrifices(devour, timestamp=creation_timestamp, reason=reason)
     result = _commit_token_specs(
         host, controller, plans,
@@ -1298,6 +1304,7 @@ def create_distributed_tokens(
     token: Mapping[str, Any],
     stack_ref: str,
     reason: str,
+    creator_quantities: Sequence[int] = (),
     replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
 ) -> list[str]:
     """Prepare all creators' replacements and commit one simultaneous entry."""
@@ -1310,13 +1317,15 @@ def create_distributed_tokens(
     apnap = tuple(host.apnap_order())
     if tuple(creators) != tuple(seat for seat in apnap if seat in creators):
         raise TokenCreationError("Token creators must be distinct and in current APNAP order")
-    name, quantity = token["name"], token["quantity"]
+    name = token["name"]
+    quantities = (dict(zip(creators, creator_quantities, strict=True)) if creator_quantities
+                  else dict.fromkeys(creators, token["quantity"]))
     events = []
     effects = {}
     for creator in creators:
         host._require_seat(creator, in_game=True)
         specs, types, subtypes, sources = _token_specification_inputs(
-            host, creator, name=name, quantity=quantity, tapped=token.get("tapped", False),
+            host, creator, name=name, quantity=quantities[creator], tapped=token.get("tapped", False),
             characteristics=token["characteristics"], attacking=None, attacking_groups=(),
             battle_protector=None, copy_of=None, copy_source_zone="battlefield",
             copy_snapshot=None, temporary_keywords=(), aura_target_ref=None,
@@ -1351,7 +1360,7 @@ def create_distributed_tokens(
         plans.extend(group)
         controllers.update({object_id: creator for object_id in objects})
         creations.append(CommittedTokenCreation(
-            creator, objects, name, quantity, tuple(_committed_replacement_components(group)),
+            creator, objects, name, quantities[creator], tuple(_committed_replacement_components(group)),
             tuple(selection for selection in progress.batch.journal if selection.event_id == event.event_id),
         ))
     remaining = replacement_selections[progress.consumed_selections:]

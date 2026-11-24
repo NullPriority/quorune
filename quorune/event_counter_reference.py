@@ -58,12 +58,15 @@ def event_object_identity(event,context):
         transition=AttackTransitionEvent.from_dict(context.get('attack_transition'))
         participant=next((p for p in transition.participants if p.reference==reference),None)
         identity=participant.logical_object_id if participant is not None else None
-    elif event == 'creature.becomes_blocked':
+    elif event in {'creature.blocks', 'creature.becomes_blocked'}:
         from .block_transitions import BlockTransitionEvent
         transition = BlockTransitionEvent.from_dict(context.get('block_transition'))
-        attacker_ids = {row.attacker_object_id for row in transition.assignments}
+        participant_ids = (
+            {assignment.blocker_object_id for assignment in transition.assignments}
+            if event == 'creature.blocks' else transition.blocked_attacker_ids
+        )
         participant = next((p for p in transition.participants if p.reference == reference
-                            and p.object_id in attacker_ids), None)
+                            and p.object_id in participant_ids), None)
         identity = participant.logical_object_id if participant is not None else None
     if type(reference) is not str or not reference or type(identity) is not str or not identity:
         raise ValueError('Counter event recipient has no sealed public incarnation')
@@ -87,10 +90,11 @@ def resolve_block_counterpart_recipient(host, item):
 
 
 def resolve_sealed_event_object_value(host, item, value):
-    if value == "$event.counter_threshold_count":
-        from .rules.event_counter_threshold import event_counter_threshold_count
+    if value in {"$event.counter_threshold_count", "$source.depletion_counter_count"}:
+        from .rules.event_counter_threshold import current_source_depletion_count, event_counter_threshold_count
 
-        return True, event_counter_threshold_count(host, item)
+        count = current_source_depletion_count if value == "$source.depletion_counter_count" else event_counter_threshold_count
+        return True, count(host, item)
     if value==DAMAGE_PERMANENT_OBJECT:
         return True,_resolve_public_incarnation(host,item.context.get(DAMAGE_PERMANENT_CONTEXT))
     if value == BLOCK_COUNTERPART_OBJECT:

@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for physical face-status copy and expiry.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956401",
+      "name": "Trial Refacing Echo",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5,
+      "oracle_text": "As this creature enters or is turned face up, you may choose another creature on the battlefield. If you do, until this creature is turned face down, it becomes a copy of that creature, except it has \"At the beginning of your upkeep, you may turn this creature face down.\"\nMorph {1}{U}",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "0",
+      "toughness": "0"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956402",
+      "name": "Trial Copy Rowan",
+      "type_line": "Creature — Elk",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "oracle_text": "",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "3"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956403",
+      "name": "Trial Copy Crest",
+      "type_line": "Creature — Bird",
+      "mana_cost": "{3}{W}{W}",
+      "cmc": 5,
+      "oracle_text": "Flying, vigilance",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "4",
+      "toughness": "4"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956404",
+      "name": "Trial Expose Reflection",
+      "type_line": "Instant",
+      "mana_cost": "{1}{R}",
+      "cmc": 2,
+      "oracle_text": "Turn target face-down creature an opponent controls face up.",
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

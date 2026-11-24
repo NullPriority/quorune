@@ -164,10 +164,15 @@ def _commit_phasing(host, transitions):
     if not affected:
         return ()
     from .relative_power_target import pin_host_relative_power_source_departures
+    from .target_source import pin_targeting_source_departures
+    from .scalar_effect_amounts import pin_scalar_characteristic_departures
+    from .token_copy_references import pin_copy_characteristic_departures
 
-    pin_host_relative_power_source_departures(
-        host, tuple(card for card, transition in affected if transition.out), phase_out=True,
-    )
+    outgoing = tuple(card for card, transition in affected if transition.out)
+    pin_host_relative_power_source_departures(host, outgoing, phase_out=True)
+    pin_targeting_source_departures(host, outgoing, error_type=ValueError, phase_out=True)
+    pin_scalar_characteristic_departures(host, outgoing, error_type=ValueError, phase_out=True)
+    pin_copy_characteristic_departures(host, outgoing, error_type=ValueError, phase_out=True)
     # Commit the entire status batch before recalculating any live observers.
     for card, transition in affected:
         card.phased_out = transition.out
@@ -196,17 +201,21 @@ def commit_untap_phasing(host, plan: PhasingPlan) -> None:
         importance=1, changed_objects=[card.object_id for card, _ in affected])
 
 
-def phase_out_permanent(host, identity: ContinuousObjectIdentity, *, actor: str, reason: str):
+def phase_out_permanents(host, identities: tuple[ContinuousObjectIdentity, ...], *, actor: str, reason: str):
     from .phasing_model import phasing_lifecycle_version
 
-    if phasing_lifecycle_version(host.state.phasing_lifecycle_version) != 1:
+    if phasing_lifecycle_version(host.state.phasing_lifecycle_version) is None:
         raise ValueError("A phase-out effect requires the current phasing lifecycle")
     host._require_seat(actor, in_game=True)
     battlefield = _battlefield(host.state)
-    card = _host_incarnation(battlefield, identity)
-    if card is None or card.phased_out:
-        return None
-    outgoing = _outgoing_phasing(host, battlefield, {card.object_id})
+    direct = set()
+    for identity in identities:
+        card = _host_incarnation(battlefield, identity)
+        if card is not None and not card.phased_out:
+            direct.add(card.object_id)
+    if not direct:
+        return ()
+    outgoing = _outgoing_phasing(host, battlefield, direct)
     ordered = sorted(outgoing, key=lambda oid: (battlefield[oid].ref, oid))
     affected = _commit_phasing(host, tuple(outgoing[oid] for oid in ordered))
     for permanent, _transition in affected:
@@ -216,15 +225,47 @@ def phase_out_permanent(host, identity: ContinuousObjectIdentity, *, actor: str,
         {"out": [permanent.ref for permanent, _transition in affected], "reason": reason},
         importance=1, changed_objects=[permanent.object_id for permanent, _transition in affected],
     )
-    return card.ref
+    return tuple(battlefield[oid].ref for oid in ordered if oid in direct)
+
+
+def phase_out_permanent(host, identity: ContinuousObjectIdentity, *, actor: str, reason: str):
+    phased = phase_out_permanents(host, (identity,), actor=actor, reason=reason)
+    return phased[0] if phased else None
 
 
 def apply_phase_out_effect(host, effect, *, actor, operation, reason):
     from .continuous_effect_state import ResolutionEffectSource
     from .errors import GameRuleError
-    from .phasing_model import validate_phase_out_effect
+    from .phasing_model import CONTROLLED_LAND_PHASE_OUT_SUBJECT, PHASE_OUT_TARGET_SET_SUBJECT, validate_phase_out_effect
 
     subject = validate_phase_out_effect(effect, runtime=True)
+    if subject == CONTROLLED_LAND_PHASE_OUT_SUBJECT:
+        from .affected_permanents import (
+            AffectedPermanentSetError, AffectedPermanentSetSpec, PermanentControllerRelation,
+            select_affected_permanents,
+        )
+        from .object_predicate import ObjectQuerySpec
+
+        spec = AffectedPermanentSetSpec(ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+                                        PermanentControllerRelation.ACTOR)
+        try:
+            lands = select_affected_permanents(
+                host.affected_permanent_object_rows(actor), spec, actor=actor,
+                active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
+            )
+        except AffectedPermanentSetError as exc:
+            raise GameRuleError(str(exc)) from exc
+        identities = tuple(ContinuousObjectIdentity(land.object_id, land.logical_object_id) for land in lands)
+        return phase_out_permanents(host, identities, actor=actor, reason=reason)
+    if subject == PHASE_OUT_TARGET_SET_SUBJECT:
+        targets = []
+        for reference in effect["cards"]:
+            try:
+                card = host._resolve_object(actor, reference, zones={"battlefield"})
+            except GameRuleError:
+                continue
+            targets.append(_identity(card))
+        return phase_out_permanents(host, tuple(targets), actor=actor, reason=reason)
     if subject == "source":
         source = ResolutionEffectSource.from_effect(effect)
         card = host.state.cards.get(source.object_id)

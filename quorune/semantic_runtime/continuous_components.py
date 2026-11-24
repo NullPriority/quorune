@@ -142,8 +142,16 @@ class ContinuousEffectSourceContext:
     public_type_objects: tuple[ObjectQueryResult, ...] | None = None
     enchanted_player: str | None = None
     cipher_encoded_object: ContinuousObjectIdentity | None = None
+    current_block_counterparts: tuple[ContinuousObjectIdentity, ...] = ()
+    counter_placement_recipients: tuple[ContinuousObjectIdentity, ...] = ()
+    linked_player: str | None = None
 
     def __post_init__(self) -> None:
+        counterparts = self.current_block_counterparts
+        if (type(counterparts) is not tuple
+                or any(not isinstance(identity, ContinuousObjectIdentity) for identity in counterparts)
+                or len(set(counterparts)) != len(counterparts)):
+            raise SemanticNodeError("Live block counterparts require distinct typed identities")
         if self.enchanted_player is not None and (type(self.enchanted_player) is not str
                 or not self.enchanted_player or self.enchanted_player.strip()!=self.enchanted_player):
             raise SemanticNodeError('Enchanted-player context requires a canonical player identity')

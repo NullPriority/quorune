@@ -2,12 +2,18 @@
 
 from dataclasses import dataclass
 from collections.abc import Mapping
+from typing import Any
 
 from .creature_subtypes import canonical_creature_subtype
 from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS, PUBLIC_MOVEMENT_HISTORY_KINDS
-from .turn_history_model import CAST_CREATURE_COUNTERED_EVENT
+from .turn_history_model import (
+    CAST_CREATURE_COUNTERED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
+)
 
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
+COUNTER_PLACEMENT_HISTORY_CAPABILITY = "condition.history.plus_one_counter_placement"
+COUNTER_PLACEMENT_HISTORY_QUERY_VERSION = 7
+OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY = "condition.history.opponent_life_loss_including_departed"
 COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
 TOKEN_CREATION_FACT = "controller_tokens_created_this_turn"
 SPELL_ORIGIN_HISTORY_CAPABILITY='condition.history.spell_origin'
@@ -16,7 +22,7 @@ PERMANENT_DEATH_HISTORY_CAPABILITY = "zone.turn_history.permanent_death"
 PUBLIC_MOVEMENT_HISTORY_CAPABILITY = "condition.history.public_movement"
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
     'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard',
-    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
+    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
 
@@ -36,9 +42,10 @@ class PublicHistoryQuerySpec:
     exclude_source: bool = False
     excluded_name: str | None = None
     excluded_subtype: str | None = None
+    source_only: bool = False
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, COUNTER_PLACEMENT_HISTORY_QUERY_VERSION}:
             raise ValueError("Unsupported public history query version")
         if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
         if self.reduction not in {'count','sum_amount','max_player_amount'}:raise ValueError('Unknown history reduction')
@@ -105,8 +112,21 @@ class PublicHistoryQuerySpec:
                 raise ValueError('Version-five exclusions require an explicit creature death count')
         elif self.excluded_name is not None or self.excluded_subtype is not None:
             raise ValueError('Death name/subtype exclusions require query version five')
+        if self.schema_version == 6 and (self.event, self.relation, self.reduction) != (
+                "player_lost_life", "opponents", "sum_amount"):
+            raise ValueError("Version six requires the original opponents’ committed life loss")
         if self.exclude_source and self.schema_version != 4:
             raise ValueError("Source exclusion requires version-four history")
+        placement_query = self.event == PLUS_ONE_COUNTERS_PLACED_EVENT
+        if (self.schema_version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION) != placement_query:
+            raise ValueError("Counter placement history requires its explicit query version")
+        if type(self.source_only) is not bool or (self.source_only and not placement_query):
+            raise ValueError("Only counter placement history supports source-incarnation matching")
+        if placement_query and (
+            self.relation != "controller" or self.types_all not in ((), ("creature",))
+            or self.types_any or self.excluded_types or (self.source_only and self.types_all)
+        ):
+            raise ValueError("Counter placement history requires the placing controller and a closed recipient scope")
 
     def to_dict(self):
         return {'schema_version':self.schema_version,'event':self.event,'relation':self.relation,'types_all':list(self.types_all),
@@ -115,7 +135,8 @@ class PublicHistoryQuerySpec:
             **({"creature_subtype": self.creature_subtype, "token": self.token} if self.event == "permanent_died" else {}),
             **({"exclude_source": True} if self.exclude_source else {}),
             **({"artifact_subtype": self.artifact_subtype} if self.artifact_subtype is not None else {}),
-            **({'excluded_name':self.excluded_name,'excluded_subtype':self.excluded_subtype} if self.schema_version==5 else {})}
+            **({'excluded_name':self.excluded_name,'excluded_subtype':self.excluded_subtype} if self.schema_version==5 else {}),
+            **({"source_only": self.source_only} if self.schema_version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION else {})}
 
     @classmethod
     def from_dict(cls,value):
@@ -132,6 +153,8 @@ class PublicHistoryQuerySpec:
                 fields.update(("creature_subtype", "token", "exclude_source"))
         elif version == 5:
             fields.update(('creature_subtype','token','excluded_name','excluded_subtype'))
+        elif version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION:
+            fields.add("source_only")
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError('Public history queries have a closed field set')
         return cls(**dict(value))
@@ -139,18 +162,39 @@ class PublicHistoryQuerySpec:
     @property
     def capability_dependencies(self):
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
+            *((COUNTER_PLACEMENT_HISTORY_CAPABILITY,) if self.event == PLUS_ONE_COUNTERS_PLACED_EVENT else ()),
             *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
             *((PERMANENT_DEATH_HISTORY_CAPABILITY,) if self.event == "permanent_died" else ()),
             *(('condition.history.qualified_death_exclusion',) if self.schema_version==5 else ()),
+            *((OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY,) if self.schema_version == 6 else ()),
             *((PUBLIC_MOVEMENT_HISTORY_CAPABILITY,) if self.event in PUBLIC_MOVEMENT_HISTORY_KINDS or self.exclude_source else ()),
             *((SPELL_ORIGIN_HISTORY_CAPABILITY,) if self.event=='spell_cast' and self.origin is not None else ()),
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
+
+
+def current_plus_one_counter_placement_query(
+    *, source_only: bool = False, was_creature: bool = False,
+) -> PublicHistoryQuerySpec:
+    return PublicHistoryQuerySpec(
+        PLUS_ONE_COUNTERS_PLACED_EVENT,
+        types_all=("creature",) if was_creature else (),
+        schema_version=COUNTER_PLACEMENT_HISTORY_QUERY_VERSION,
+        source_only=source_only,
+    )
+
+
+def opponent_life_loss_including_departed_query() -> PublicHistoryQuerySpec:
+    return PublicHistoryQuerySpec("player_lost_life", relation="opponents",
+                                  reduction="sum_amount", schema_version=6)
 
 
 def matching_public_history_events(state,controller,spec,*,source_incarnation=None):
     """Return sealed matching occurrences, or unavailable history."""
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
+    if (spec.event == PLUS_ONE_COUNTERS_PLACED_EVENT
+            and history.plus_one_counter_placement_history_version != 1):
+        return None
     if spec.event in COMMITTED_OCCURRENCE_HISTORY_KINDS and history.committed_occurrence_history_version != 1:
         return None
     if spec.event == CAST_CREATURE_COUNTERED_EVENT and history.creature_spell_counter_history_version != 1:
@@ -160,13 +204,14 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     if (PUBLIC_MOVEMENT_HISTORY_CAPABILITY in spec.capability_dependencies
             and getattr(history, "public_movement_history_version", None) != 1):
         return None
-    if spec.exclude_source and (type(source_incarnation) is not str or not source_incarnation):
+    if (spec.exclude_source or spec.source_only) and (type(source_incarnation) is not str or not source_incarnation):
         return None
     if spec.event=='permanent_left' and history.departure_history_version!=1:return None
     if spec.event=='card_arrived_graveyard' and history.arrival_history_version!=1:return None
     if spec.event=='spell_cast' and spec.origin is not None and history.spell_origin_history_version!=1:return None
     if GRAVEYARD_TYPE_HISTORY_CAPABILITY in spec.capability_dependencies and history.graveyard_type_history_version!=1:return None
-    seats={seat for seat,player in state.players.items() if player.in_game}
+    seats = {seat for seat, player in state.players.items()
+             if player.in_game or spec.schema_version == 6}
     allowed={controller} if spec.relation=='controller' else seats-{controller} if spec.relation=='opponents' else set(state.players)
     matched=[]
     for event in history.events:
@@ -174,6 +219,8 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
         seat=event.target if spec.event in {'player_gained_life','player_lost_life','player_damaged'} else event.actor
         if seat not in allowed:continue
         if spec.exclude_source and event.object_incarnation == source_incarnation:
+            continue
+        if spec.source_only and event.object_incarnation != source_incarnation:
             continue
         if spec.artifact_subtype is not None and event.target != spec.artifact_subtype:
             continue
@@ -195,6 +242,33 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
             if not qualifies:continue
         matched.append(event)
     return tuple(matched)
+
+
+OPPONENT_CAST_COLOR_DRAW = "draw_if_opponent_cast_colors_this_turn"
+SPELL_COLOR_HISTORY_FIELD = "spell_color_history_version"
+
+
+def uses_sealed_opponent_cast_colors(effect: Mapping[str, Any]) -> bool:
+    return effect.get("op") == OPPONENT_CAST_COLOR_DRAW and SPELL_COLOR_HISTORY_FIELD in effect
+
+
+def current_opponent_spell_colors(state, controller, *, include_departed: bool) -> frozenset[str] | None:
+    """Read the colors sealed on this turn's committed opposing spell casts."""
+    history = getattr(state, "turn_history", None)
+    if getattr(history, "spell_color_history_version", None) != 1:
+        return None
+    spec = PublicHistoryQuerySpec(event="spell_cast", relation="any_player")
+    occurrences = matching_public_history_events(state, controller, spec)
+    if occurrences is None:
+        return None
+    colors = set()
+    for event in occurrences:
+        if event.actor == controller or not (include_departed or state.players[event.actor].in_game):
+            continue
+        if event.spell_colors is None:
+            return None
+        colors.update(event.spell_colors)
+    return frozenset(colors)
 
 
 def public_history_query_value(state,controller,spec,*,source_incarnation=None):

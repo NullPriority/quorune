@@ -5,6 +5,11 @@ from ..affected_permanents import DEFENDING_PLAYER_UNTAP_SET_FIELD
 from ..event_player_modifier_model import DEFENDING_PLAYER_REFERENCE
 from .effect_shape_walkers import nested_effects
 from .event_player_result_shapes import _event_player_reference_is_closed
+from .hand_inspection import (
+    DEFENDING_HAND_OBSERVATION_CAPABILITY,
+    DEFENDING_HAND_OBSERVATION_VERSION_FIELD,
+    FIXED_HAND_INSPECTION_OPERATION,
+)
 
 
 def _qualified_defender_fixed_result_dependencies(program):
@@ -63,7 +68,36 @@ def _uses_defending_player(value):
     return value == "$context.defending_player"
 
 
+def _uses_defending_hand_observation(effect):
+    return (DEFENDING_HAND_OBSERVATION_VERSION_FIELD in effect
+            or (effect.get("op") == FIXED_HAND_INSPECTION_OPERATION
+                and effect.get("target") == DEFENDING_PLAYER_REFERENCE))
+
+
+def _defending_hand_observation_dependencies(program):
+    from .fixed_effect_clause_shapes import fixed_optional_effect_node_capabilities
+
+    if ((program.event, program.active_zone) != ("creature.becomes_blocked", "battlefield")
+            or program.event_condition != {"field": "card", "op": "eq", "value": "$source.ref"}
+            or program.target_schema is not None or getattr(program, "cost_schema", None) is not None
+            or getattr(program, "handlers", ())):
+        raise ValueError("Private defending hand observation requires one exact blocked source")
+    required = fixed_optional_effect_node_capabilities(
+        effects=program.effects, target_schema=None, mechanic_ids=program.coverage,
+    )
+    if DEFENDING_HAND_OBSERVATION_CAPABILITY not in required:
+        raise ValueError("Private defending hand observation requires one exact optional look")
+    return (*required, "trigger.event.normalized_public_action", "trigger.placement.apnap")
+
+
 def combat_defending_player_runtime_dependencies(program):
+    from .defending_creature_damage import defending_creature_damage_runtime_dependencies
+
+    if damage := defending_creature_damage_runtime_dependencies(program):
+        return damage
+    if any(_uses_defending_hand_observation(effect)
+           for effect in nested_effects((program.effects, getattr(program, "handlers", ())))):
+        return _defending_hand_observation_dependencies(program)
     from ..random_discard import RANDOM_DISCARD_OPERATION, random_discard_node_capabilities
     from .event_player_choice_shapes import attacked_defender_exile_program_dependencies, is_typed_defender_exile
 
@@ -124,6 +158,9 @@ def combat_defending_player_runtime_dependencies(program):
             if not owned:
                 from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
                 owned=event_player_sacrifice_node_capabilities(effects=(effect,),target_schema=program.target_schema,mechanic_ids=program.coverage)
+        elif op=='discard_hands_then_draw':
+            from .discard_result_shapes import event_player_discard_result_runtime_dependencies
+            owned=event_player_discard_result_runtime_dependencies(program)
         elif op=='offer_optional_mana_payment':
             from .fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
             owned=fixed_payment_event_player_runtime_dependencies(program)

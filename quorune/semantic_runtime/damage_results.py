@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..entry_copy import copiable_oracle_id
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -10,8 +10,12 @@ from ..replacement_effects import (
     ReplacementEffect,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..rules.damage_capability_shapes import (
+    CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER, controller_damage_result_life_floor_descriptor,
+)
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .current_ability_components import program_has_current_ability_fragments
 from .life_replacements import collect_life_change_replacement_effects
 
 
@@ -201,6 +205,22 @@ class DamageResultLifeFloorHandler:
         return (self.replacement_effect(descriptor, context),)
 
 
+@dataclass(frozen=True, slots=True)
+class ControllerDamageResultLifeFloorHandler(DamageResultLifeFloorHandler):
+    handler_id: str = CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER
+    schema_version: int = 2
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DamageResultLifeFloorNode:
+        if (type(descriptor.get("schema_version")) is not int
+                or dict(descriptor) != controller_damage_result_life_floor_descriptor()):
+            raise SemanticNodeError("Controller damage life floor requires its exact one-life result")
+        return DamageResultLifeFloorNode("source_controller", False, 1)
+
+    def replacement_effect(self, descriptor, context) -> ReplacementEffect:
+        effect = DamageResultLifeFloorHandler.replacement_effect(self, descriptor, context)
+        return replace(effect, conditions={**effect.conditions, "life_before": {"gte": 1}})
+
+
 class DamageResultReplacementRegistry(
     RuntimeComponentRegistry[
         DamageResultReplacementSourceContext,
@@ -226,7 +246,7 @@ class DamageResultReplacementRegistry(
 def default_damage_result_replacement_registry(
 ) -> DamageResultReplacementRegistry:
     registry = DamageResultReplacementRegistry(
-        (DamageResultLifeFloorHandler(),)
+        (DamageResultLifeFloorHandler(), ControllerDamageResultLifeFloorHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()
@@ -276,6 +296,10 @@ def collect_damage_result_replacement_effects(
             if not host.semantic_program_is_current_trusted(program):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                if descriptor.get("handler_id") == CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER and (
+                    source.face_down or not program_has_current_ability_fragments(program, host._effective_card_data(source))
+                ):
+                    continue
                 effects.append(
                     registry.replacement_effect(
                         descriptor,

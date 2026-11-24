@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for the source entry X and public target contracts.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842001",
+      "name": "Trial Formation Rover",
+      "mana_cost": "{X}{W}{B}",
+      "cmc": 2,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "When this Vehicle enters, return target artifact or creature card with mana value X or less from your graveyard to the battlefield.\nCrew 1",
+      "colors": [],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "3"
+    },
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842002",
+      "name": "Trial Charge Bauble",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842003",
+      "name": "Trial Engraved Plate",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842004",
+      "name": "Trial Field Beast",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Creature — Beast",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842005",
+      "name": "Trial Watcher",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Creature — Bird",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "1",
+      "toughness": "4"
+    },
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842006",
+      "name": "Trial Decommission",
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f20-8f50-000000842007",
+      "name": "Trial Restoration",
+      "mana_cost": "{3}{W}",
+      "cmc": 4,
+      "type_line": "Sorcery",
+      "oracle_text": "Return target artifact card from your graveyard to the battlefield tapped.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ]
+}

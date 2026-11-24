@@ -313,6 +313,26 @@ def _fixed_targeted_creator_template(
     )
 
 
+def _fixed_basic_land_token_template(normalized: str) -> FixedTokenCreationTemplate | None:
+    match = re.fullmatch(
+        r"Create a tapped colorless land token named (?P<name>[A-Za-z' -]+) that is every basic land type[.]?",
+        normalized, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from ..rules.fixed_basic_land_token import FIXED_BASIC_LAND_TOKEN_MECHANIC, fixed_basic_land_token_effect
+
+    try:
+        effect = fixed_basic_land_token_effect(match["name"])
+    except ValueError:
+        return None
+    return FixedTokenCreationTemplate(
+        template_id="create-fixed-named-all-basic-land-types-token-v1", effect=effect,
+        mechanics=(FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "cr-111-tokens", "fixed-named-token",
+                   FIXED_BASIC_LAND_TOKEN_MECHANIC),
+    )
+
+
 def _fixed_named_token_template(
     normalized: str,
     *,
@@ -405,6 +425,7 @@ def extended_fixed_token_creation_effect_template(
         _fixed_investigate_template,
         _fixed_copy_token_template,
         _fixed_postposed_color_token_template,
+        _fixed_basic_land_token_template,
     ):
         compiled = compiler(normalized)
         if compiled is not None:

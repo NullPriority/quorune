@@ -210,6 +210,7 @@ def apply_attacking_entry_move(host, effect, *, actor, reason):
     counters = attacking_entry_counters(effect, actor)
     ZoneTransitionOwner(host).move_cards_simultaneously(((card.object_id, "battlefield"),),
         reason=reason, log=True, tapped=True, destination_controllers={card.object_id: actor},
+        putting_players={card.object_id: actor},
         aura_target_refs={card.object_id: effect["_aura_target_ref"]} if effect.get("_aura_target_ref") is not None else None,
         replacement_selections=tuple(effect.get("_replacement_selections", ())), attacking_entries=attacking_entries,
         effect_entry_counters={card.object_id: counters} if counters else None)

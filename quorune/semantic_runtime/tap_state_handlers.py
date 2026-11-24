@@ -7,10 +7,16 @@ from ..affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
     DEFENDING_PLAYER_UNTAP_SET_FIELD,
+    TARGET_UNSPENT_MANA_FIELD,
     PermanentControllerRelation,
     decode_defending_player_creature_untap,
+    decode_target_unspent_mana_tap,
 )
 from ..public_tap_state_sets import SetPublicPermanentsTappedIntent
+from ..tap_state import (
+    ATTACKING_CREATURES_NEXT_UNTAP_FIELD, CONTROLLER_UNTAP_STEP_COUNT, ProhibitAttackingCreaturesNextUntapIntent,
+    validate_attacking_creatures_next_untap,
+)
 from ..continuous_effect_model import ContinuousObjectIdentity
 from ..source_tap_effect import split_source_tap_untap_restraint
 from ..next_player_untap_model import (
@@ -232,7 +238,15 @@ class SetPublicTapStateSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        if DEFENDING_PLAYER_UNTAP_SET_FIELD in effect:
+        lose_unspent_mana = TARGET_UNSPENT_MANA_FIELD in effect
+        if lose_unspent_mana:
+            try:
+                spec = decode_target_unspent_mana_tap(effect, resolved=True)
+            except AffectedPermanentSetError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            context.query.require_active_seat(spec.target_controller)
+            restraint = None
+        elif DEFENDING_PLAYER_UNTAP_SET_FIELD in effect:
             try:
                 spec = decode_defending_player_creature_untap(effect, resolved=True)
             except AffectedPermanentSetError as exc:
@@ -273,6 +287,7 @@ class SetPublicTapStateSetHandler:
                     reason=context.default_reason,
                     source_ref=source_ref,
                     untap_restraint=restraint,
+                    lose_unspent_mana=lose_unspent_mana,
                 ),
             ),
         )
@@ -288,6 +303,28 @@ class ProhibitNextUntapHandler:
     capability_dependencies: tuple[str, ...] = ('untap.step.prohibit_next_controller',)
 
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
+        if ATTACKING_CREATURES_NEXT_UNTAP_FIELD in effect:
+            try:
+                validate_attacking_creatures_next_untap(effect)
+                if context.source is None:
+                    raise SemanticNodeError("Attacking-creature untap requires a resolving stack source")
+                context.query.require_active_seat(context.actor)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            intent = ProhibitAttackingCreaturesNextUntapIntent(context.actor, context.default_reason)
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(intent,))
+        if CONTROLLER_UNTAP_STEP_COUNT in effect:
+            fields = validate_direct_target_effect(
+                effect, context, operation=self.operation, reference_field="card",
+                family_label="Two controller untaps", allow_replacement_selections=False,
+                additional_allowed_fields=("schema_version", CONTROLLER_UNTAP_STEP_COUNT),
+            )
+            version = effect.get("schema_version")
+            count = effect[CONTROLLER_UNTAP_STEP_COUNT]
+            if context.source is None or type(version) is not int or version != 2 or type(count) is not int or count != 2:
+                raise SemanticNodeError("Two controller untaps require the original versioned spell result")
+            intent = ProhibitNextUntapIntent(fields.object_ref, context.actor, fields.reason, step_count=count)
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(intent,))
         if is_next_player_untap_instruction(effect):
             if context.source is None:
                 raise SemanticNodeError('Next-player untap requires a resolving stack source')

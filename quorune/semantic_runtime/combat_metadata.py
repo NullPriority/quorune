@@ -16,6 +16,46 @@ from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
 
+LIVE_COMBAT_COUNTERPART_LIFELINK_HANDLER = "continuous.ability.combat-counterpart-lifelink.v1"
+LIVE_COMBAT_COUNTERPART_LIFELINK_CAPABILITY = "continuous.ability.combat_counterpart_lifelink"
+
+
+@dataclass(frozen=True, slots=True)
+class CombatCounterpartLifelinkHandler:
+    """Grant the existing lifelink keyword to currently linked combatants."""
+
+    handler_id: str = LIVE_COMBAT_COUNTERPART_LIFELINK_HANDLER
+    schema_version: int = 1
+    family: str = LIVE_COMBAT_COUNTERPART_LIFELINK_CAPABILITY
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("506.4", "509.1g", "509.1h", "613.1f", "702.15a", "702.15b", "702.15f")
+    capability_dependencies: tuple[str, ...] = (
+        LIVE_COMBAT_COUNTERPART_LIFELINK_CAPABILITY, "damage.result.lifelink",
+    )
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="combat counterpart lifelink")
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version):
+            raise SemanticNodeError("Combat counterpart lifelink descriptor identity changed")
+
+    def lower(self, descriptor, context):
+        from ..continuous_effect_model import (
+            ContinuousEffect, ContinuousEffectOrigin, ContinuousEffectRelation, ContinuousOperation, Layer,
+        )
+        from ..object_predicate import ObjectQuerySpec
+
+        self.validate(descriptor)
+        return tuple(ContinuousEffect(
+            effect_id=f"{context.source_object_id}:{context.component_id}:block:{identity.object_id}",
+            source_id=context.source_object_id, timestamp=context.source_timestamp,
+            layer=Layer.ABILITY, sublayer="6", origin=ContinuousEffectOrigin.STATIC_ABILITY,
+            applies=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+            relation=ContinuousEffectRelation.SOURCE_BLOCK_COUNTERPART_OBJECT, related_object=identity,
+            operations=(ContinuousOperation("add_ability", "Lifelink"),),
+        ) for identity in context.current_block_counterparts)
+
+
 GOAD_PROHIBITION_EVENT = "combat.goad.prohibition"
 GOAD_PROHIBITION_HANDLER_ID = (
     "prohibition.combat.goad.controller-creatures.v1"

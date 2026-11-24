@@ -45,6 +45,12 @@ QUERY_HANDLER = "ability.static.query-characteristic-modifier.v1"
 QUERY_CAPABILITY = "continuous.characteristics.query_count_modifier"
 
 
+DEFENDER_LAND_MODIFIER = (
+    "While this creature is attacking, it gets +X/+0, "
+    "where X is the number of lands the defending player controls."
+)
+
+
 class QueryCharacteristicPrefilterTests(unittest.TestCase):
     def test_markers_preserve_named_prefix_suffix_and_definition_grammar(self):
         from quorune.compiler.query_characteristic_templates import (
@@ -224,6 +230,46 @@ def query_fragment(
 
 
 class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
+    def test_attacking_defender_quantity_has_a_closed_power_layer(self):
+        from dataclasses import replace
+
+        from quorune.ability_fragments import ability_fragment_from_dict
+        from quorune.characteristic_fragments import (
+            ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY,
+            QueryPowerToughnessDefinitionSpec,
+            characteristic_quantity_capabilities,
+        )
+
+        compiled = query_self_characteristics_handler(DEFENDER_LAND_MODIFIER, source_name="Attacker fixture")
+        self.assertIsNotNone(compiled)
+        fragment = ability_fragment_from_dict(compiled[1]["fragment"])
+        self.assertEqual((1, 0), (fragment.power, fragment.toughness))
+        quantity = fragment.quantity
+        self.assertIs(CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE, quantity.scope)
+        self.assertEqual(quantity, CharacteristicQuantitySpec.from_dict(quantity.to_dict()))
+        self.assertIn(ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY, characteristic_quantity_capabilities(quantity))
+        for change in (
+            {"query": ObjectQuerySpec(zones=("graveyard",), types_all=("land",))},
+            {"query": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))},
+            {"multiplier": 2},
+            {"exclude_source": True},
+            {"terms": (quantity,)},
+        ):
+            with self.subTest(change=change), self.assertRaisesRegex(ValueError, "closed current land count"):
+                replace(quantity, **change)
+        with self.assertRaisesRegex(ValueError, "one additive power modifier"):
+            replace(fragment, toughness=1)
+        with self.assertRaisesRegex(ValueError, "layer 7a"):
+            QueryPowerToughnessDefinitionSpec(quantity, define_power=True, define_toughness=False)
+        for wrong in (
+            DEFENDER_LAND_MODIFIER.replace("attacking", "blocking"),
+            DEFENDER_LAND_MODIFIER.replace("lands", "creatures"),
+            DEFENDER_LAND_MODIFIER.replace("+X/+0", "+X/+X"),
+            DEFENDER_LAND_MODIFIER.replace("the defending player", "all defending players"),
+        ):
+            with self.subTest(wrong=wrong):
+                self.assertIsNone(query_self_characteristics_handler(wrong, source_name="Attacker fixture"))
+
     def test_self_modifiers_compose_existing_collection_values_without_repeating_dual_type_cards(self):
         cases=(
             ('This creature gets +1/+0 for each artifact and/or enchantment card in your graveyard.',1,0),
@@ -563,6 +609,177 @@ class SelfCollectionQuantityRuntimeTests(unittest.TestCase):
             promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
         return session
 
+
+    def test_combat_land_definition_uses_committed_player_walker_and_battle_roles(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from test_scalar_effect_amounts import EventPlayerSubjectActionTests
+
+        session = self.session(388108)
+        engine = session.engine
+        a = self.add(engine, "Harbor Grove Keeper", zone="hand", ref="grove-player")
+        b = self.add(engine, "Harbor Grove Keeper", ref="grove-walker")
+        c = self.add(engine, "Harbor Grove Keeper", ref="grove-battle")
+        for seat, count in (("A", 2), ("B", 1), ("C", 2), ("D", 3)):
+            for n in range(count):
+                card_name = "Harbor Junction" if n == 0 else "Harbor Forest"
+                self.add(engine, card_name, seat=seat, ref=f"grove-land-{seat}-{n}")
+            self.add(engine, "Generic Bound Plains", seat=seat, ref=f"grove-plain-{seat}")
+        walker = self.add(engine, "Harbor Beacon", seat="C", ref="grove-beacon")
+        walker.counters["loyalty"] = 5
+        battle = self.add(engine, "Harbor Siege", seat="C", ref="grove-siege")
+        battle.battle_protector = "D"
+        battle.counters["defense"] = 5
+
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(a.printed_name), semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+        def stats(live, card):
+            return tuple(live.engine._numeric_stat(card.object_id, key) for key in ("power", "toughness"))
+
+        self.assertEqual((2, 2), stats(session, a))
+        self.assertIn(a.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.assertNotIn(a.ref, json.dumps(session.packet("pilot:B", full=True)))
+
+        action = self.ready(session, a, {"C": 2})
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        self.checkpoint(session)
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(session))
+        until = EventPlayerSubjectActionTests.until
+        until(self, session, lambda live: live.state.pending_decision is not None
+              and live.state.pending_decision.kind == "combat.attackers")
+
+        self.assertEqual(((2, 2),) * 3, tuple(stats(session, card) for card in (a, b, c)))
+        attack = {"action_id": "attack", "attackers": {a.ref: "B", b.ref: walker.ref, c.ref: battle.ref}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", attack).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        life = session.state.players["B"].life
+        result = session.act("pilot:A", attack)
+        self.assertTrue(result.ok, result.summary)
+        expected = ((1, 1), (2, 2), (3, 3))
+        self.assertEqual(expected, tuple(stats(session, card) for card in (a, b, c)))
+        session = self.replay(session, load=True)
+        self.assertEqual(expected, tuple(stats(session, card) for card in (a, b, c)))
+
+        until(self, session, lambda live: live.state.phase == "postcombat_main")
+        self.assertEqual(life - 1, session.state.players["B"].life)
+        self.assertEqual(3, session.state.cards[walker.object_id].counters["loyalty"])
+        self.assertEqual(2, session.state.cards[battle.object_id].counters["defense"])
+        self.assertEqual(((2, 2),) * 3, tuple(stats(session, card) for card in (a, b, c)))
+        self.replay(session)
+
+    def test_combat_land_definition_withdrawal_leaves_the_legacy_additive_owner_available(self):
+        from quorune.characteristic_fragments import COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        root = Path(__file__).parents[1]
+        path = root / "quorune/rules/capability-registry.json"
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY).update(
+            status="blocked", blockers=["Withhold the paired source and defender count"],
+        )
+        source = self.db.lookup("Harbor Grove Keeper")
+        ordinary = self.db.lookup("Generic Border Surveyor")
+        profile = "commander_review"
+        self.assertEqual("exact", compile_oracle_card(
+            source, capability_registry=self.registry, capability_profile=profile,
+        ).status)
+        changed = CapabilityRegistry(raw)
+        index = build_index(
+            registry_value=raw,
+            declaration_source=read_evidence_document(root / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(root).values()),
+        )
+        changed.mark_evidence_verified(validate_capability_evidence_index(index, registry=changed))
+        blocked = compile_oracle_card(source, capability_registry=changed, capability_profile=profile)
+        self.assertNotEqual("exact", blocked.status)
+        self.assertTrue(any(COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY in value
+                            for residual in blocked.material_residuals for value in residual.blockers))
+        self.assertEqual("exact", compile_oracle_card(
+            ordinary, capability_registry=changed, capability_profile=profile,
+        ).status)
+        with mock.patch("quorune.compiler.query_characteristic_templates._combat_land_count_definition", return_value=None):
+            mutated = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertNotEqual("exact", mutated.status)
+
+    def test_registered_defender_count_casts_attacks_and_replays_through_combat_damage(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from test_scalar_effect_amounts import EventPlayerSubjectActionTests
+
+        session = self.session(388107)
+        engine = session.engine
+        source = self.add(engine, "Generic Border Surveyor", zone="hand")
+        self.add(engine, "Generic Bound Plains", seat="B", ref="defender-land-one")
+        self.add(engine, "Generic Bound Plains", seat="B", ref="defender-land-two")
+        self.add(engine, "Generic Bound Plains", seat="C", ref="unrelated-land")
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="defender-count-private")
+        program = compile_best_available_card_program(self.db, self.db.lookup(source.printed_name),
+            semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile="commander_review")["strict_capability_ready"])
+
+        action = self.ready(session, source, {"C": 2})
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        self.checkpoint(session)
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, engine._numeric_stat(source.object_id, "power"))
+        until = EventPlayerSubjectActionTests.until
+        until(self, session, lambda live: live.state.pending_decision is not None
+            and live.state.pending_decision.kind == "combat.attackers")
+
+        command = {"action_id": "attack", "attackers": {source.ref: "B"}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        life = session.state.players["B"].life
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(4, engine._numeric_stat(source.object_id, "power"))
+        session = self.replay(session, load=True)
+        self.assertEqual(4, session.engine._numeric_stat(source.object_id, "power"))
+        until(self, session, lambda live: live.state.phase == "postcombat_main")
+        self.assertEqual(life - 4, session.state.players["B"].life)
+        self.assertEqual(2, session.engine._numeric_stat(source.object_id, "power"))
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:B", full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet("pilot:C", full=True)))
+        self.replay(session)
+
+    def test_defender_count_registry_withdrawal_and_lowering_omission_block_admission(self):
+        from quorune.characteristic_fragments import ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        path = Path(__file__).parents[1] / "quorune/rules/capability-registry.json"
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        owner = next(row for row in raw["capabilities"] if row["id"] == ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY)
+        owner.update(status="blocked", blockers=["Test withdrawal of the current attacking defender quantity"])
+        source = self.db.lookup("Generic Border Surveyor")
+        profile = "commander_review"
+        normal = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", normal.status)
+        withdrawn = compile_oracle_card(source, capability_registry=CapabilityRegistry(raw), capability_profile=profile)
+        self.assertNotEqual("exact", withdrawn.status)
+        self.assertTrue(any(ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY in blocker
+            for residual in withdrawn.material_residuals for blocker in residual.blockers))
+        with mock.patch("quorune.compiler.runtime_templates.query_self_characteristics_handler", return_value=None):
+            omitted = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertNotEqual("exact", omitted.status)
+        self.assertTrue(omitted.material_residuals)
+
     def test_original_self_collection_stats_track_union_sum_and_maximum_with_real_casts(self):
         from quorune.card_programs.adapters import compile_best_available_card_program
         cases=(('Runaway Trash-Bot',{'C':3},388101),('Moon-Vigil Adherents',{'G':2,'C':2},388102),
@@ -704,6 +921,71 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
             reason="typed query-characteristic counted object",
         )[0]
         return engine._resolve_object(seat, ref, zones={"battlefield"})
+
+    def test_defender_land_modifier_uses_each_current_attacker_and_live_types(self):
+        from dataclasses import replace
+
+        from quorune.ability_fragments import ability_fragment_from_dict
+        from quorune.dynamic_characteristics import query_characteristic_count
+        from quorune.engine import TURN_STEPS
+
+        session = self.session(122_003_018)
+        engine = session.engine
+        compiled = query_self_characteristics_handler(DEFENDER_LAND_MODIFIER, source_name="Attacker fixture")
+        raw = compiled[1]["fragment"]
+        fragment = ability_fragment_from_dict(raw)
+        first = self.source(engine, seat="A", fragments=(raw,), power=2, toughness=5)
+        second = self.source(engine, seat="A", fragments=(raw,), power=2, toughness=5)
+        land = self.token(engine, "B", type_line="Token Land — Plains", name="Defender land")
+        animated = self.token(engine, "B", type_line="Token Creature — Citizen", name="Defender type change")
+        animated.annotations["continuous_add_types"] = ["Land"]
+        phased = self.token(engine, "B", type_line="Token Land — Forest", name="Phased defender land")
+        phased.phased_out = True
+        self.token(engine, "C", type_line="Token Land — Island", name="Other defender land")
+        self.token(engine, "D", type_line="Token Land — Mountain", name="Unrelated opponent land")
+        walker_ref = engine.create_token("B", name="Defended walker fixture", characteristics={
+            "type_line": "Token Planeswalker",
+            "loyalty": "5",
+        })[0]
+        walker = engine._resolve_object("B", walker_ref, zones={"battlefield"})
+
+        def powers():
+            return tuple(engine._effective_card_data(card)["power"] for card in (first, second))
+
+        self.assertEqual(("2", "2"), powers())
+        first.acquired_control_turn_count = -1
+        second.acquired_control_turn_count = -1
+        for step in ("beginning_combat", "declare_attackers"):
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            engine.state.phase_index = TURN_STEPS.index(("combat", step))
+            engine._enter_step()
+        self.assertEqual("combat.attackers", session.state.pending_decision.kind)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        attacked = session.act("pilot:A", {
+            "action_id": "attack", "attackers": {first.ref: walker.ref, second.ref: "C"},
+        })
+        self.assertTrue(attacked.ok, attacked.summary)
+        self.assertEqual(("4", "3"), powers())
+        self.assertEqual("2", engine._effective_card_data(first, maximum_layer=Layer.ABILITY)["power"])
+        stale = replace(first, zone_change_counter=first.zone_change_counter + 1)
+        self.assertEqual(0, query_characteristic_count(engine, stale, fragment.quantity))
+
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory) / "attacking-defender-land-count"
+            session.save(record_dir, include_review=False)
+            replay = replay_record(record_dir, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual(1, replay["commands"])
+
+        engine.move_card(walker.object_id, "graveyard", log=False)
+        self.assertEqual(("4", "3"), powers())
+        engine.change_control(land.object_id, "C", reason="Defender land control witness")
+        self.assertEqual(("3", "4"), powers())
+        engine.change_control(first.object_id, "C", reason="Attacker leaves combat")
+        self.assertEqual(("2", "4"), powers())
 
     def test_query_quantities_recompute_controller_correct_characteristics(self):
         session = self.session(122_003_000)

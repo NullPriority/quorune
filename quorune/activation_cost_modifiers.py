@@ -225,6 +225,10 @@ def base_activation_requirements(
     return result
 
 
+OTHER_EQUIPMENT_ACTIVATION_SUBJECT = 'other_equipment'
+OTHER_EQUIPMENT_ACTIVATION_PREDICATE = ObjectQuerySpec(zones=('battlefield',), subtypes_all=('equipment',))
+
+
 @dataclass(frozen=True, slots=True)
 class FixedActivationCostModifierSpec:
     generic_adjustment: int
@@ -262,7 +266,7 @@ class FixedActivationCostModifierSpec:
             raise ValueError('Activation-cost reductions support per-effect minima zero or one')
         if self.generic_adjustment > 0 and self.minimum_mana:
             raise ValueError('Cost increases do not impose a reduction minimum')
-        if self.subject_relation not in {'query', 'any', 'enchanted_object'}:
+        if self.subject_relation not in {'query', 'any', 'enchanted_object', OTHER_EQUIPMENT_ACTIVATION_SUBJECT}:
             raise ValueError('Unsupported activation-cost source relation')
         if self.controller_relation not in {'any', 'source_controller', 'source_opponents'}:
             raise ValueError('Unsupported activation-cost controller relation')
@@ -270,6 +274,12 @@ class FixedActivationCostModifierSpec:
             raise ValueError('Unsupported activation-cost ability scope')
         if not isinstance(self.predicate, ObjectQuerySpec):
             raise ValueError('Activation-cost source predicates must be typed')
+        if self.subject_relation == OTHER_EQUIPMENT_ACTIVATION_SUBJECT and (
+            self.schema_version != 1 or self.controller_relation != 'source_controller'
+            or self.ability_scope != 'equip' or self.generic_adjustment >= 0 or self.minimum_mana != 0
+            or self.predicate != OTHER_EQUIPMENT_ACTIVATION_PREDICATE
+        ):
+            raise ValueError('Other Equipment applies only to an exact generic equip reduction')
         if self.subject_relation == 'any':
             if self.predicate != ObjectQuerySpec():
                 raise ValueError('All-zone activation modifiers reserve their object predicate')

@@ -5,10 +5,12 @@ from ..continuous_effect_model import ContinuousObjectIdentity
 from ..replacement.immutable import FrozenMap
 from ..shared_creature_type_model import SharedCreatureTypeObject, canonical_creature_types
 from ..rules.shared_type_library_model import (
-    SHARED_TYPE_LIBRARY_OPERATION, SHARED_TYPE_LIBRARY_CAPABILITY,
+    SHARED_TYPE_LIBRARY_OPERATION, SHARED_TYPE_LIBRARY_CAPABILITY, SHARED_TYPE_PLAY_MECHANIC,
     SharedCreatureTypeComparison, SharedTypeLibraryResult,
 )
 from ..semantic_runtime.intents import RevealLibraryCardsIntent
+from ..rules.shared_type_library_play_model import PLAY_STAGE
+from .shared_type_library_play import complete_shared_type_play, prepare_shared_type_play
 from .model import (AutoContinue, ScalarChoice, SemanticChoiceCompletion,
     SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest)
 
@@ -73,14 +75,18 @@ class SharedTypeLibraryHandler:
     schema_version: int = 1
     rule_references: tuple = ("207.2c", "608.2h", "701.20a", "701.20b", "701.20c", "701.20e")
     capability_dependencies: tuple = (SHARED_TYPE_LIBRARY_CAPABILITY,)
-    continuation_fields: tuple = ("player", "result", "_shared_type_stage", "_top", "_comparison")
+    continuation_fields: tuple = ("player", "result", "_shared_type_stage", "_top", "_comparison",
+                                  "_stack_ref", "_options_fingerprint")
     private_data: tuple = ("looked card identity", "matching creature types")
-    projected_fields: tuple = ("prompt", "objects", "legal_actions.choice_schema")
-    mutation_path: tuple = ("RevealLibraryCardsIntent", "SemanticChoiceCompletion.prepend_effects")
+    projected_fields: tuple = ("prompt", "objects", "cast_options", "legal_actions.choice_schema")
+    mutation_path: tuple = ("RevealLibraryCardsIntent", "SemanticChoiceCompletion.prepend_effects",
+                            "ResolvingSharedTypeLibraryPlayIntent")
     replay_fixture: str = "private-top-shared-type-reveal"
-    test_modules: tuple = ("tests.test_shared_creature_type_quantities",)
+    test_modules: tuple = ("tests.test_shared_creature_type_quantities", "tests.test_kinship_revealed_play")
 
     def prepare(self, effect, context):
+        if effect.get("_shared_type_stage") == PLAY_STAGE:
+            return prepare_shared_type_play(effect, context)
         try:
             spec, stage = _decode(effect, context.actor)
             if context.actor != context.stack_controller:
@@ -113,6 +119,8 @@ class SharedTypeLibraryHandler:
             raise SemanticChoiceError(str(exc)) from exc
 
     def complete(self, continuation, response, query):
+        if continuation.effect.get("_shared_type_stage") == PLAY_STAGE:
+            return complete_shared_type_play(continuation, response, query)
         try:
             effect = continuation.effect
             actor = continuation.semantic_frame.controller
@@ -141,9 +149,12 @@ class SharedTypeLibraryHandler:
                     or comparison.source.identity != expected.identity
                     or comparison.candidate.identity != ContinuousObjectIdentity(top.object_id, top.logical_object_id)):
                 raise ValueError("Only the evaluated matching looked-at card can be revealed")
+            following = spec.effects
+            if spec.mechanics == (SHARED_TYPE_PLAY_MECHANIC,):
+                following = (FrozenMap({**effect, "_shared_type_stage": PLAY_STAGE}),)
             return SemanticChoiceCompletion(
                 intents=(RevealLibraryCardsIntent(actor, actor, actor, (top.ref,),
                     continuation.note, public=True),),
-                prepend_effects=spec.effects)
+                prepend_effects=following)
         except (ValueError, TypeError, KeyError) as exc:
             raise SemanticChoiceError(str(exc)) from exc

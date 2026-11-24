@@ -4,6 +4,8 @@ from typing import Any, Protocol
 
 from .casting_payment_keywords import AssistSpec, DelveSpec, ImproviseSpec
 from .convoke import ConvokeSpec
+from .card_programs.admission import program_has_complete_card_program_admission
+from .impending_model import FixedManaImpendingSpec
 from .evoke import FixedManaEvokeSpec
 from .hand_exile_evoke_model import HandExileEvokeSpec
 from .semantic_runtime.cast_costs import (
@@ -184,12 +186,22 @@ def compiled_self_spell_cost_reduction_specs(
     return tuple(result)
 
 
+def compiled_impending_specs(
+    host: CompiledCastCostHost, oracle_id: str, *, spell_program: Any,
+) -> tuple[FixedManaImpendingSpec, ...]:
+    return _compiled_specs(
+        host, oracle_id, spell_program=spell_program,
+        spec_type=FixedManaImpendingSpec, require_complete=True,
+    )
+
+
 def _compiled_specs(
     host: CompiledCastCostHost,
     oracle_id: str,
     *,
     spell_program: Any,
     spec_type: type[Any] | tuple[type[Any], ...],
+    require_complete: bool = False,
 ) -> tuple[Any, ...]:
     expected_face = _selected_face_id(spell_program)
     registry = default_cast_cost_component_registry()
@@ -202,6 +214,8 @@ def _compiled_specs(
         if not host.semantic_program_is_current_trusted(program):
             continue
         if str(program.provenance.get("face_id") or "") != expected_face:
+            continue
+        if require_complete and not program_has_complete_card_program_admission(program):
             continue
         for descriptor in program.handlers:
             if registry.describe(str(descriptor.get("handler_id") or "")) is None:
@@ -222,5 +236,6 @@ __all__ = [
     "compiled_delve_specs",
     "compiled_evoke_specs",
     "compiled_improvise_specs",
+    "compiled_impending_specs",
     "compiled_self_spell_cost_reduction_specs",
 ]

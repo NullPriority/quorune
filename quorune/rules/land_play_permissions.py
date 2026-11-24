@@ -22,6 +22,84 @@ from ..semantic_runtime.action_permissions import (
 )
 
 
+TURN_LAND_PLAY_ALLOWANCE_OPERATION = "grant_cast_permission"
+TURN_LAND_PLAY_ALLOWANCE_FIELD = "additional_land_plays"
+TURN_LAND_PLAY_ALLOWANCE_CAPABILITY = "land.play.additional.turn_duration"
+TURN_LAND_PLAY_ALLOWANCE_MECHANIC = "temporary-additional-land-plays"
+TURN_LAND_PLAY_ALLOWANCE_STAT = "turn_land_play_allowance"
+
+
+def turn_land_plays_effect_amount(effect, *, player="$controller") -> int:
+    if (
+        not isinstance(effect, Mapping)
+        or set(effect) != {"op", "schema_version", "player", TURN_LAND_PLAY_ALLOWANCE_FIELD}
+        or effect["op"] != TURN_LAND_PLAY_ALLOWANCE_OPERATION
+        or type(effect["schema_version"]) is not int
+        or effect["schema_version"] != 1
+        or effect["player"] != player
+        or type(effect[TURN_LAND_PLAY_ALLOWANCE_FIELD]) is not int
+        or effect[TURN_LAND_PLAY_ALLOWANCE_FIELD] not in {1, 2, 3}
+    ):
+        raise ValueError("Additional land plays require a fixed controller allowance")
+    return effect[TURN_LAND_PLAY_ALLOWANCE_FIELD]
+
+
+def turn_land_plays_node_capabilities(*, effects, target_schema, mechanic_ids, **_unused):
+    if target_schema is not None or len(effects) != 1 or TURN_LAND_PLAY_ALLOWANCE_MECHANIC not in mechanic_ids:
+        return ()
+    try:
+        turn_land_plays_effect_amount(effects[0])
+    except ValueError:
+        return ()
+    return (TURN_LAND_PLAY_ALLOWANCE_CAPABILITY,)
+
+
+def is_closed_turn_land_plays_program(program):
+    required = turn_land_plays_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
+def additional_land_plays_this_turn(stats, turn_sequence) -> int:
+    if TURN_LAND_PLAY_ALLOWANCE_STAT not in stats:
+        return 0
+    entry = stats[TURN_LAND_PLAY_ALLOWANCE_STAT]
+    if (
+        not isinstance(entry, Mapping)
+        or set(entry) != {"version", "turn", "amount"}
+        or type(entry["version"]) is not int
+        or entry["version"] != 1
+        or type(entry["turn"]) is not int
+        or not 0 <= entry["turn"] <= turn_sequence
+        or type(entry["amount"]) is not int
+        or entry["amount"] <= 0
+    ):
+        raise ValueError("Additional land-play allowance must be a versioned turn fact")
+    return entry["amount"] if entry["turn"] == turn_sequence else 0
+
+
+def grant_turn_land_plays(host, effect, *, actor, reason):
+    if actor not in host.active_seats:
+        raise GameRuleError("Additional land plays require the resolving controller")
+    stats = host.state.players[actor].stats
+    turn = host.state.turn_sequence
+    try:
+        amount = turn_land_plays_effect_amount(
+            {key: value for key, value in effect.items() if key not in {"reason", "_runtime_source"}},
+            player=actor,
+        )
+        total = additional_land_plays_this_turn(stats, turn) + amount
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    stats[TURN_LAND_PLAY_ALLOWANCE_STAT] = {"version": 1, "turn": turn, "amount": total}
+    host._log(
+        actor, "permission.additional_land_plays", f"{actor} gains {amount} additional land plays this turn.",
+        {"player": actor, "amount": amount, "reason": reason}, importance=1, changed_players=[actor],
+    )
+    return True
+
+
 def land_play_timing_window(state, player) -> Literal["ordinary", "next_creature_card"] | None:
     if player != state.active_player:
         return None
@@ -45,11 +123,16 @@ def land_play_timing_matches(window, card, record, face) -> bool:
 
 
 def resolving_exile_land_play_options(host, actor, card):
-    """Offer ordinary land faces and entry choices during an authorized resolution."""
+    return resolving_land_play_options(host, actor, card, origin="exile")
+
+
+def resolving_land_play_options(host, actor, card, *, origin):
+    """Offer land faces within the controller's existing play quota."""
     from ..discover_model import discover_options_fingerprint
 
-    if (actor not in host.active_seats or host.state.active_player != actor or not land_play_permission_options(host, actor)
-            or card.zone != "exile" or card.owner != actor or not card.is_card_object or card.face_down):
+    if (origin not in {"library", "exile"} or actor not in host.active_seats or host.state.active_player != actor
+            or not land_play_permission_options(host, actor) or card.zone != origin
+            or card.owner != actor or not card.is_card_object or card.face_down):
         return ()
     record = host.card_record(card)
     if record is None:
@@ -63,7 +146,15 @@ def resolving_exile_land_play_options(host, actor, card):
         result.append(option)
         if 0 < life <= host.state.players[actor].life:
             result.append({**option, "label": f"{option['label']} and pay {life} life", "pay_life": True})
-    return tuple({**option, "id": "fixed-top-land:" + discover_options_fingerprint((option,))} for option in result)
+    prefix = "fixed-top-land:" if origin == "exile" else "revealed-library-land:"
+    return tuple({**option, "id": prefix + discover_options_fingerprint((option,))} for option in result)
+
+
+def resolving_land_play_response(host, actor, intent):
+    if isinstance(intent, ResolvingExileLandPlayIntent):
+        return resolving_exile_land_play_response(host, actor, intent)
+    from .shared_type_library_play import resolving_shared_type_land_response
+    return resolving_shared_type_land_response(host, actor, intent)
 
 
 def resolving_exile_land_play_response(host, actor, intent):
@@ -148,10 +239,15 @@ def consume_land_play_permission(
                                       object_kind=played_card.object_kind)
 
 
+def expire_turn_land_play_allowance(stats):
+    stats.pop(TURN_LAND_PLAY_ALLOWANCE_STAT, None)
+
+
 def reset_additional_land_play_permissions(host: Any, player: str) -> None:
     stats = host.state.players[player].stats
     stats.pop(USED_ADDITIONAL_LAND_PLAY_SLOTS_STAT, None)
     stats.pop(LAND_PLAY_ACCOUNTING_STAT, None)
+    expire_turn_land_play_allowance(stats)
 
 
 __all__ = [

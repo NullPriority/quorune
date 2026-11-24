@@ -4,13 +4,39 @@ from __future__ import annotations
 
 from ..stack_spell_copy_model import (
     FixedStackSpellCopySpec, STACK_SPELL_COPY_CAPABILITY, STACK_SPELL_COPY_MECHANIC,
+    PERMANENT_SPELL_COPY_CAPABILITY, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec,
+    FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, FixedQualifiedStackCopySpec,
 )
+
+
+def permanent_spell_copy_node_dependencies(effect, target_schema):
+    from ..event_spell_copy_model import EVENT_SPELL_COPY_CAPABILITY
+    from ..replacement.immutable import FrozenMap
+    from ..stack_spell_copy_model import QUALIFIED_STACK_COPY_CAPABILITY
+
+    try:
+        spec = PermanentSpellCopySpec.from_dict(effect.get(PERMANENT_SPELL_COPY_FIELD))
+    except (TypeError, ValueError):
+        return ()
+    if effect != spec.effects[0] or FrozenMap(target_schema or {}) != FrozenMap(spec.target_schema or {}):
+        return ()
+    if spec.kind == "artifact":
+        return (PERMANENT_SPELL_COPY_CAPABILITY, EVENT_SPELL_COPY_CAPABILITY)
+    return (PERMANENT_SPELL_COPY_CAPABILITY, QUALIFIED_STACK_COPY_CAPABILITY, "target.revalidate_resolution")
 
 
 def fixed_stack_spell_copy_node_capabilities(*, effects, target_schema, mechanic_ids):
     from ..stack_spell_copy_model import (QUALIFIED_STACK_COPY_MECHANIC, QUALIFIED_STACK_COPY_CAPABILITY,
         qualified_stack_copy_specs)
+    if len(effects) == 1 and PERMANENT_SPELL_COPY_FIELD in effects[0]:
+        return permanent_spell_copy_node_dependencies(effects[0], target_schema)
     mechanics = set(mechanic_ids)
+    if any(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD in effect for effect in effects):
+        expected = FixedQualifiedStackCopySpec('permanent_spell', schema_version=2, copy_count=3)
+        if (len(effects) == 1 and type(effects[0].get(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD)) is int
+                and tuple(effects) == expected.effects and target_schema == expected.target_schema):
+            return (QUALIFIED_STACK_COPY_CAPABILITY, 'target.revalidate_resolution')
+        return ()
     for spec in qualified_stack_copy_specs():
         if tuple(effects) == spec.effects and target_schema == spec.target_schema:
             from ..ability_source_information import ability_source_filter_dependencies
@@ -46,6 +72,30 @@ def qualified_stack_copy_runtime_dependencies(program):
 
     effects = tuple(getattr(program, 'effects', ()))
     schema = getattr(program, 'target_schema', None)
+    from .effect_shape_walkers import nested_effects
+
+    handlers = getattr(program, 'handlers', ())
+    has_fixed_count = any(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD in effect
+                          for effect in nested_effects((effects, handlers)))
+    if has_fixed_count:
+        expected = FixedQualifiedStackCopySpec('permanent_spell', schema_version=2, copy_count=3)
+        if ((program.event, program.active_zone) != ('activate', 'battlefield')
+                or program.event_condition is not None or program.cost_schema is None
+                or any(handler.get('handler_id') != 'activation.catalog.pinned.v1' for handler in handlers)
+                or len(effects) != 1 or type(effects[0].get(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD)) is not int
+                or effects != expected.effects or schema != expected.target_schema):
+            raise ValueError('Three permanent spell copies require the complete controlled-target activation')
+        return fixed_stack_spell_copy_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=(QUALIFIED_STACK_COPY_MECHANIC,),
+        )
+    if any(PERMANENT_SPELL_COPY_FIELD in effect for effect in effects):
+        if len(effects) == 1:
+            spec = PermanentSpellCopySpec.from_dict(effects[0][PERMANENT_SPELL_COPY_FIELD])
+            if spec.kind == 'artifact':
+                return ()
+            if required := permanent_spell_copy_node_dependencies(effects[0], schema):
+                return required
+        raise ValueError('Permanent spell copy needs its exact single controlled creature target')
     if (not isinstance(schema, Mapping) or not any(effect.get('op') == 'copy_stack_item'
             and effect.get('stack') == '$target.0' for effect in effects)):
         return ()
@@ -100,3 +150,17 @@ def reviewed_stack_copy_with_current_policy(current, old):
         return replace(old, target_schema=deepcopy(current.target_schema),
             effects=deepcopy(current.effects), handlers=handlers)
     return None
+
+
+def apply_permanent_spell_copy_exception(spec, characteristics):
+    from ..characteristic_evaluation import type_parts
+    from ..token_copy_recipes import TokenCopyExceptionSpec, apply_copy_exception
+
+    types, _, _ = type_parts(str(characteristics.get("type_line") or ""))
+    if "creature" not in types:
+        raise ValueError("Permanent spell exception requires the represented copied creature spell")
+    exception = (
+        TokenCopyExceptionSpec(add_card_types=("artifact",))
+        if spec.kind == "artifact" else TokenCopyExceptionSpec(remove_legendary=True)
+    )
+    return apply_copy_exception(characteristics, exception)

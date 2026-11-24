@@ -26,3 +26,23 @@ class TokenCopyRecipientBinding:
         if not isinstance(value,Mapping) or set(value)!={'schema_version','recipient_index','copy_index'}:
             raise ValueError('Token copy recipient slots have a closed schema')
         return cls(**value)
+
+
+OTHER_NONTOKEN_CREATURE_ENTRY = "another_nontoken_creature_enters"
+OCCURRENCE_COPY_RECIPIENT_FIELD = "occurrence_copy_recipient_version"
+OCCURRENCE_COPY_RECIPIENT_CAPABILITY = "token.creation.occurrence_controller_copy"
+OCCURRENCE_COPY_RECIPIENT_MECHANIC = "occurrence-controller-token-copy"
+
+
+def other_nontoken_creature_entry_condition():
+    return {"all": [
+        {"field": "card", "op": "ne", "value": "$source.ref"},
+        {"field": "token", "op": "eq", "value": False},
+    ]}
+
+
+def has_occurrence_copy_recipient(effect):
+    return (
+        isinstance(effect, Mapping) and effect.get("op") == "create_token"
+        and OCCURRENCE_COPY_RECIPIENT_FIELD in effect
+    )

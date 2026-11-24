@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..rules.graveyard_card_targets import OPPOSING_GRAVEYARD_RETURN_CAPABILITY, OPPOSING_GRAVEYARD_RETURN_OPERATION
 from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
+from ..rules.compound_target_sets import OPTIONAL_DESTROY_ROLES_VERSION_FIELD, optional_destroy_roles_payload_is_closed
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import (
     DestroyPermanentTargetsIntent,
@@ -43,6 +44,10 @@ def _fixed_target_fields(
                 or operation not in {'destroy_targets','exile_permanent_targets','return_permanent_targets_to_owner_hand'}):
             raise SemanticNodeError('Target roles require an owned simultaneous operation')
         extra.add('target_roles')
+    if OPTIONAL_DESTROY_ROLES_VERSION_FIELD in effect:
+        if operation != 'destroy_targets' or not optional_destroy_roles_payload_is_closed(effect):
+            raise SemanticNodeError('Optional destruction lost its exact two-role payload')
+        extra.add(OPTIONAL_DESTROY_ROLES_VERSION_FIELD)
     if operation == 'destroy_targets' and 'regeneration_prohibited' in effect:
         if effect['regeneration_prohibited'] is not True:raise SemanticNodeError('Regeneration prohibition must be true')
         extra.add('regeneration_prohibited')
@@ -178,15 +183,38 @@ class MoveFixedTargetSetHandler:
             from .targeted_graveyard_outcome_handlers import lower_targeted_graveyard_outcome
 
             return lower_targeted_graveyard_outcome(effect, context, handler_id=self.handler_id)
+        from ..rules.opponent_exile_draw_results import OPPONENT_EXILE_DRAW_FIELD
+
+        exile_tokens = self.operation == "exile_permanent_targets" and "followup" in effect
+        exile_draw = self.operation == "exile_permanent_targets" and OPPONENT_EXILE_DRAW_FIELD in effect
         cards, _maximum, reason, selections = _fixed_target_fields(
             effect,
             context,
             operation=self.operation,
             replacements=True,
+            additional_fields=("followup",) if exile_tokens else (OPPONENT_EXILE_DRAW_FIELD,) if exile_draw else (),
         )
+        intent_type = MoveObjectsSimultaneouslyIntent
+        options = {}
+        if exile_tokens:
+            from ..rules.targeted_exile_token_results import TargetedExileTokenFollowup
+            from .targeted_exile_token_intent import TargetedExileTokensIntent
+
+            try:
+                options["followup"] = TargetedExileTokenFollowup.from_dict(effect["followup"], actor=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            intent_type = TargetedExileTokensIntent
+        elif exile_draw:
+            from .targeted_exile_token_intent import OpponentExileDrawIntent
+
+            version = effect[OPPONENT_EXILE_DRAW_FIELD]
+            if type(version) is not int or version != 1 or effect.get("announced_target_count") is not True:
+                raise SemanticNodeError("Opponent exile draws require the closed announced instruction")
+            intent_type = OpponentExileDrawIntent
         return _target_set_plan(
             self.operation, self.handler_id, cards,
-            MoveObjectsSimultaneouslyIntent(
+            intent_type(
                 actor=context.actor,
                 object_refs=cards,
                 expected_zones=(self.expected_zone,),
@@ -194,6 +222,7 @@ class MoveFixedTargetSetHandler:
                 reason=reason,
                 owned_only=self.owned_only,
                 replacement_selections=selections,
+                **options,
             ),
         )
 

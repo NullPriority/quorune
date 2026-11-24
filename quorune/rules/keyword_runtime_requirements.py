@@ -18,6 +18,11 @@ def registered_component_capabilities(descriptor,registered):
     )
     if descriptor.get("handler_id") == NONOWNER_CREATURE_MODIFIER_HANDLER:
         return NonownerCreatureModifierHandler().required_capabilities(descriptor)
+    from .live_modifier_quantities import is_controller_turn_life_loss_modifier
+    if is_controller_turn_life_loss_modifier(descriptor):
+        from ..characteristic_fragments import CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES
+
+        return (*dependencies, *CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES)
     if descriptor.get('handler_id')!=TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID:return dependencies
     fragment=TriggerMultiplierAbilityFragmentHandler().validate(descriptor)
     if fragment.capability_id not in dependencies:
@@ -60,6 +65,13 @@ def _fragment_descriptor_requirements(value):
             from ..continuous_conditions import FixedPublicStateConditionSpec
             FixedPublicStateConditionSpec.from_dict(value)
             own.add('permanent.designation.renowned')
+        from ..semantic_runtime.counter_placement_keyword_grants import (
+            COUNTER_PLACEMENT_KEYWORD_GRANT_HANDLER, CounterPlacementKeywordGrantHandler,
+        )
+        if value.get("handler_id") == COUNTER_PLACEMENT_KEYWORD_GRANT_HANDLER:
+            node = CounterPlacementKeywordGrantHandler().validate(value)
+            for keyword in node.abilities:
+                own.update(FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES.get(keyword, ()))
         if value.get('handler_id')=='continuous.ability.disjoint-negative-keyword-grant.v1':
             from ..semantic_runtime.negative_keyword_grants import DisjointNegativeKeywordGrantHandler,NEGATIVE_KEYWORD_GRANT_CAPABILITY
             DisjointNegativeKeywordGrantHandler().validate(value)
@@ -87,6 +99,13 @@ def _fragment_descriptor_requirements(value):
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
+        fragment_data = value.get("value")
+        if (value.get("kind") == "block_capacity" and isinstance(fragment_data, Mapping)
+                and fragment_data.get("schema_version") == 2):
+            from ..block_capacity_model import EQUIPMENT_BLOCK_CAPACITY_CAPABILITY
+
+            ability_fragment_from_dict(value)
+            own.add(EQUIPMENT_BLOCK_CAPACITY_CAPABILITY)
         if value.get('kind') == 'granted_triggered' and value.get('value', {}).get('schema_version') == 2:
             from ..cipher_model import CIPHER_CAPABILITY
             ability_fragment_from_dict(value)
@@ -97,9 +116,33 @@ def _fragment_descriptor_requirements(value):
     return set()
 
 
+def _granted_evolve_dependencies(program):
+    from collections.abc import Mapping
+    from ..evolve import EVOLVE_EVENT_CONDITION_FIELD
+
+    condition = program.event_condition
+    if not program.provenance.get("granted_only"):
+        return ()
+    evolves = (isinstance(condition, Mapping) and condition.get("field") == EVOLVE_EVENT_CONDITION_FIELD
+               or "evolve" in program.coverage)
+    if not evolves:
+        return ()
+    expected_effect = {
+        "op": "place_counters", "card": "$source", "counter": "+1/+1", "amount": 1, "source": "$source",
+    }
+    if ((program.event, program.active_zone) != ("creature.enter", "battlefield")
+            or condition != {"field": EVOLVE_EVENT_CONDITION_FIELD, "op": "truthy"}
+            or "intervening_condition" not in program.coverage
+            or program.cost_schema is not None or program.target_schema is not None or program.handlers
+            or tuple(program.effects) != (expected_effect,)):
+        raise ValueError("A granted Evolve program requires its exact entry comparison and source counter")
+    return ("counter.producer.evolve", "counter.producer.fixed_effect")
+
+
 def keyword_runtime_dependencies(program):
     from ..cipher_model import CIPHER_CAPABILITY
     required = set(attached_keyword_runtime_dependencies(program))
+    required.update(_granted_evolve_dependencies(program))
     from .recover import recover_program_dependencies
     required.update(recover_program_dependencies(program))
     from ..declared_cast_cost_model import declared_cost_event_dependencies

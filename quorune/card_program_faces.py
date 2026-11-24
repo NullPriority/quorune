@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 from dataclasses import replace
+from .rules.copied_flip_faces import current_flip_copy_values
 from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD,defined_token_current_characteristics
 
 
@@ -33,6 +34,7 @@ def selected_face_id(
     copied_values = (getattr(card, 'annotations', {}) or {}).get('copy_overrides', {})
     if DEFINED_TOKEN_FACES_FIELD in copied_values:
         copied_values=defined_token_current_characteristics(card,copied_values)
+    copied_values = current_flip_copy_values(card, copied_values)
     copied_face = copied_values.get('_copiable_face_id')
     if copied_face:
         active_face = copied_face

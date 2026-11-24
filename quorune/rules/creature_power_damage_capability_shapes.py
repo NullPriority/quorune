@@ -11,6 +11,9 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
     CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,
+    CREATURE_SELF_DAMAGE_SET_DEPENDENCIES,
+    is_creature_self_damage_set,
+    validate_creature_self_damage_set,
     OCCURRENCE_POWER_DAMAGE_LKI,
     OCCURRENCE_POWER_DAMAGE_SOURCE,
     OCCURRENCE_POWER_DAMAGE_VERSION,
@@ -226,15 +229,28 @@ def _targeted_self_bite_capabilities(effect, target_schema):
     return tuple(sorted(_FIXED_POWER_DAMAGE_DEPENDENCIES))
 
 
+def _creature_self_damage_set_capabilities(effects, target_schema, mechanics):
+    if (len(effects) != 1 or target_schema is not None or "cr-115-targets" in mechanics
+            or not {CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage"} <= mechanics):
+        return ()
+    try:
+        validate_creature_self_damage_set(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return CREATURE_SELF_DAMAGE_SET_DEPENDENCIES
+
+
 def fixed_creature_power_damage_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Recognize only the compiler-owned Fight and bite instruction shape."""
+    """Recognize the compiler-owned Fight, bite, and self-damage set shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if any(is_creature_self_damage_set(effect) for effect in effects):
+        return _creature_self_damage_set_capabilities(effects, target_schema, mechanics)
     from ..reciprocal_power_damage import RECIPROCAL_POWER_MECHANIC, reciprocal_power_damage_capabilities
     if RECIPROCAL_POWER_MECHANIC in mechanics:
         return reciprocal_power_damage_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)

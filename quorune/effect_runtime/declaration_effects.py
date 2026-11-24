@@ -53,6 +53,12 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     expiry_player = actor if next_turn else None
+    from ..rules.source_optional_unblockable import is_source_optional_unblockable, prepare_source_optional_unblockable
+    if is_source_optional_unblockable(effect):
+        try:
+            effect = prepare_source_optional_unblockable(host, effect)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
     allowed = {"op", "card", "cards", "set", "restriction", "reason", "_runtime_source"}
     unknown = set(effect) - allowed
     if unknown:
@@ -133,6 +139,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
             ),
             kind=effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
             expires_on_next_turn_of=expiry_player,
+            attack_defender=actor,
         )
     except TemporaryDeclarationRestrictionError as exc:
         raise GameRuleError(str(exc)) from exc

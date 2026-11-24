@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for the ordered graveyard copy replacement.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956501",
+      "name": "Trial Mire Echo",
+      "type_line": "Legendary Creature — Ooze",
+      "mana_cost": "{2}{B}{G}{U}",
+      "cmc": 5,
+      "oracle_text": "As this creature enters, you may exile two creature cards from graveyards. If you do, it enters as a copy of one of those cards with a number of additional +1/+1 counters on it equal to the power of the other card.",
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "power": "0",
+      "toughness": "0",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956502",
+      "name": "Trial Rising Husk",
+      "type_line": "Creature — Insect",
+      "mana_cost": "{2}{G}",
+      "cmc": 3,
+      "oracle_text": "This creature enters with two +1/+1 counters on it.",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "power": "0",
+      "toughness": "0",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956503",
+      "name": "Trial Grave Tally",
+      "type_line": "Creature — Horror",
+      "mana_cost": "{2}{B}",
+      "cmc": 3,
+      "oracle_text": "Trial Grave Tally's power and toughness are each equal to the number of creature cards in all graveyards.",
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "keywords": [],
+      "power": "*",
+      "toughness": "*",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956504",
+      "name": "Trial Tomb Echo",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{4}{U}",
+      "cmc": 5,
+      "oracle_text": "You may have this creature enter as a copy of any creature card in a graveyard.",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "keywords": [],
+      "power": "0",
+      "toughness": "0",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956505",
+      "name": "Trial Mire Bear",
+      "type_line": "Creature — Bear",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "oracle_text": "",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "power": "2",
+      "toughness": "3",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956506",
+      "name": "Trial Withered Sentinel",
+      "type_line": "Creature — Construct",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "oracle_text": "",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "keywords": [],
+      "power": "-1",
+      "toughness": "3",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original announced-X copy-entry fixtures.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000952001",
+      "name": "Trial Measured Mimic",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{X}{G}{U}",
+      "cmc": 2,
+      "oracle_text": "This spell can't be countered.\nYou may have this creature enter as a copy of any creature on the battlefield, except it enters with X additional +1/+1 counters on it.",
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "0",
+      "toughness": "0"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000952002",
+      "name": "Trial Twin Sign",
+      "type_line": "Instant",
+      "mana_cost": "{G}{U}",
+      "cmc": 2,
+      "oracle_text": "Copy target permanent spell you control.",
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000952003",
+      "name": "Trial Creature Return",
+      "type_line": "Instant",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000952004",
+      "name": "Trial Creature Unmaking",
+      "type_line": "Instant",
+      "mana_cost": "{1}{B}",
+      "cmc": 2,
+      "oracle_text": "Destroy target creature.",
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

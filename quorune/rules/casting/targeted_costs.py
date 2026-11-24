@@ -8,7 +8,8 @@ from itertools import combinations
 from ...announced_damage import variable_damage_allocation
 from ...targets import available_modes,target_plan
 from ...selection.target_validation import (validate_grouped_target_assignment,
-    target_assignment_witnesses, public_target_schema_for_witnesses)
+    target_assignment_meets_requirement, target_assignment_witnesses, public_target_schema_for_witnesses)
+from ...semantic_runtime.target_requirements import current_flagbearer_target_refs
 from ...semantic_runtime.targeted_spell_costs import targeted_spell_cost_sources
 from ...errors import GameRuleError
 
@@ -27,7 +28,8 @@ def _cost_signature(fact):
     return tuple((row['component_id'],row['generic']) for row in fact['sources'])
 
 
-def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_targets=0,sources=None):
+def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_targets=0,sources=None,
+                        required_refs=frozenset()):
     if schema is None:yield (),{};return
     plan=target_plan(schema,modes,require_modes=bool(available_modes(schema)))
     candidates=host._target_candidate_map(seat,plan,acting_source=spell_targeting_source(host,card), source_ref=card.ref)
@@ -36,8 +38,12 @@ def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_target
         extra_targets=max(extra_targets,sum(group.max_targets-group.min_targets for group in plan.groups))
         refs={ref for values in candidates.values() for ref in values}
         eligible_sets=tuple(frozenset(ref for ref in refs if source.matches_target(ref)) for source in sources)
-    yield from target_assignment_witnesses(host,plan,candidates,required=required,
-        extra_targets=extra_targets,eligible_sets=eligible_sets)
+        if required_refs:
+            eligible_sets=(*eligible_sets,required_refs)
+    for targets,grouped in target_assignment_witnesses(host,plan,candidates,required=required,
+            extra_targets=extra_targets,eligible_sets=eligible_sets):
+        if target_assignment_meets_requirement(host,plan,candidates,grouped,required_refs):
+            yield targets,grouped
 
 
 def _announced_tax_assignments(host,seat,card,schema,sources):
@@ -77,12 +83,14 @@ def _announced_tax_assignments(host,seat,card,schema,sources):
 def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
     """Price each signature once, retaining its separate target witnesses."""
     signatures={}
-    if 'target_count_price' in option:
+    required_refs=current_flagbearer_target_refs(host,seat)
+    if 'target_count_price' in option or required_refs:
         from .target_count_costs import counted_target_tax_assignments
-        assignments=counted_target_tax_assignments(host,seat,card,schema,sources,option['target_count_price'])
+        assignments=counted_target_tax_assignments(host,seat,card,schema,sources,option.get('target_count_price'),
+            required_refs=required_refs)
     else:
         from .distinct_target_costs import has_distinct_target_modifiers,distinct_target_tax_assignments
-        assignments=(distinct_target_tax_assignments(host,seat,card,schema,sources)
+        assignments=(distinct_target_tax_assignments(host,seat,card,schema,sources,required_refs=required_refs)
             if has_distinct_target_modifiers(sources) else _announced_tax_assignments(host,seat,card,schema,sources))
     for targets,grouped,limit in assignments:
         fact=target_cost_fact(sources,targets)
@@ -106,7 +114,8 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
     modes=tuple(response.get('modes') or ())
     if not hint or 'targets' in response:
         targets,_=host._validate_semantic_targets(seat,program,host._normalize_target_submission(response.get('targets')),
-            modes=modes,acting_source=spell_targeting_source(host,card), source_ref=card.ref,target_schema=schema)
+            modes=modes,acting_source=spell_targeting_source(host,card), source_ref=card.ref,target_schema=schema,
+            announcing_targets=True)
         yield {**option,'targeted_cost':target_cost_fact(sources,targets)};return
     if 'target_count_preview_limit' in option or 'target_count_price' in option:
         yield from _announced_tax_variants(host,seat,card,schema,sources,option,modes)
@@ -118,6 +127,7 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
     seen=set()
     from .distinct_target_costs import has_distinct_target_modifiers
     counted=has_distinct_target_modifiers(sources)
+    required_refs=current_flagbearer_target_refs(host,seat)
     for selected in mode_sets:
         required=(None,)
         if schema is not None:
@@ -126,7 +136,7 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
             required=(*required,*((group.group_id,ref) for group in plan.groups for ref in candidates[group.group_id] if group.max_targets))
         for needed in required:
             for targets,grouped in _target_assignments(host,seat,card,schema,selected,required=needed,
-                    extra_targets=len(sources),sources=sources if counted else None):
+                    extra_targets=len(sources),sources=sources if counted else None,required_refs=required_refs):
                 fact=target_cost_fact(sources,targets);key=(selected,needed,_cost_signature(fact))
                 if key in seen:continue
                 seen.add(key)
@@ -145,7 +155,8 @@ def target_cost_for_x_preview(option):
     fact = option.get('targeted_cost')
     if fact is None:
         return None
-    if ('target_count_parameter' in option or fact.get('schema_version') in {2, 3}
+    if ('target_count_parameter' in option or option.get("announced_mana_value_limit")
+            or fact.get('schema_version') in {2, 3}
             or variable_damage_allocation(option.get('target_schema')) is not None):
         return fact
     return None
@@ -154,6 +165,9 @@ def target_cost_for_x_preview(option):
 def _preview_option_rank(option):
     raw=option.to_dict()
     version=raw.get('targeted_cost',{}).get('schema_version')
+    if raw.get("announced_mana_value_limit"):
+        maximum = raw.get("choice_schema", {}).get("x", {}).get("maximum", 0)
+        return -maximum, sum(raw["requirements"].values())
     if variable_damage_allocation(raw.get('target_schema')) is not None:
         maximum = raw['choice_schema']['x']['maximum']
         return -maximum, sum(raw['requirements'].values())
@@ -173,15 +187,20 @@ def consolidate_target_cost_options(options,*,hint):
     if not hint:return tuple(options)
     from ..action_proposals import CastCostOption
     result={};witnesses={};prices={}
+    x_maxima = {}
     for option in options:
         raw=option.to_dict()
+        for ref, maximum in raw.get("target_x_maxima", {}).items():
+            maxima = x_maxima.setdefault(option.option_id, {})
+            maxima[ref] = max(maxima.get(ref, 0), maximum)
         allocation = variable_damage_allocation(raw.get('target_schema'))
         if 'target_cost_witness' in raw:
             maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum')
             limit = allocation.total_for_x(maximum) if allocation is not None else maximum
             candidates=raw.get('target_cost_witnesses',[raw['target_cost_witness']])
             payable = [w for w in candidates
-                       if limit is None or sum(len(refs) for refs in w['targets'].values()) <= limit]
+                       if raw.get("announced_mana_value_limit") or limit is None
+                       or sum(len(refs) for refs in w["targets"].values()) <= limit]
             if allocation is not None and not payable:
                 continue
             witnesses.setdefault(option.option_id,[]).extend(payable)
@@ -195,12 +214,13 @@ def consolidate_target_cost_options(options,*,hint):
                     for row in raw['targeted_cost']['sources']]} if raw['targeted_cost'].get('schema_version')==3 else {}),
                 **({'target_count':count} if count is not None else {}),
                 'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
-                if (allocation is not None or 'target_count_parameter' in raw
+                if (allocation is not None or 'target_count_parameter' in raw or raw.get("announced_mana_value_limit")
                     or raw['targeted_cost'].get('schema_version') in {2,3}) and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
         if prior is None or _preview_option_rank(option)<_preview_option_rank(prior):result[option.option_id]=option
     return tuple(CastCostOption.from_dict({**option.to_dict(),**({'payable_target_witnesses':witnesses[oid],
-        'target_cost_prices':list(prices.get(oid,{}).values())} if oid in witnesses else {})}) for oid,option in result.items())
+        'target_cost_prices':list(prices.get(oid,{}).values())} if oid in witnesses else {}),
+        **({"target_x_maxima": x_maxima[oid]} if oid in x_maxima else {})}) for oid,option in result.items())
 
 
 def public_target_costs(host,seat,option,*,card=None,spell_program=None):
@@ -214,6 +234,7 @@ def public_target_costs(host,seat,option,*,card=None,spell_program=None):
     kind=('generic_adjustment_per_distinct_target' if any('counted_targets' in row for row in clauses)
         else 'generic_adjustment_once_per_source' if any(row['generic']<0 for row in clauses) else 'generic_increase_once_per_source')
     shows_x = (option.get('targeted_cost', {}).get('schema_version') in {2, 3}
+               or option.get("announced_mana_value_limit")
                or variable_damage_allocation(option.get('target_schema')) is not None)
     return {'kind':kind,'clauses':clauses,
         'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if shows_x and 'maximum_x' in row

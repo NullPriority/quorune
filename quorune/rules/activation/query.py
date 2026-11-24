@@ -17,6 +17,8 @@ from ...card_overrides.game_record_v3 import (
     historical_game_record_v3_activated_abilities,
 )
 from ...fixed_mana_abilities import FixedManaMode
+from ...card_programs.admission import program_has_complete_card_program_admission
+from ...granted_activation_model import GRANTED_UNEARTH_VERSION
 from ...util import normalize_mana_bundle
 
 
@@ -55,8 +57,16 @@ def activated_abilities(
         abilities.extend(
             historical_game_record_v3_activated_abilities(card, data)
         )
+    from ...linked_ability_exile_model import LINKED_EXILE_COPY_TARGET_PREDICATE
+    from ..linked_graveyard_entry import has_linked_graveyard_entry_source
+
+    if not has_linked_graveyard_entry_source(card):
+        abilities = [
+            ability for ability in abilities
+            if (ability.target_schema or {}).get("predicate") != LINKED_EXILE_COPY_TARGET_PREDICATE
+        ]
     abilities.sort(key=lambda ability: ability.line_index)
-    abilities.extend(_typed_granted_abilities(data))
+    abilities.extend(_typed_granted_abilities(host, data))
     return tuple(abilities)
 
 
@@ -111,8 +121,33 @@ def activation_offer_candidates(host, seat: str):
                     yield source, ability
 
 
+def _is_current_granted_unearth_program(host, spec) -> bool:
+    from ...semantic_runtime.unearth import ordinary_unearth_specs_from_descriptors
+
+    program = host.semantics.get(spec.semantic_key)
+    if (
+        program is None or program.ability_id != spec.ability_id
+        or program.active_zone != "graveyard" or program.event != "activate"
+        or program.provenance.get("granted_only") is not True
+        or program.target_schema is not None or program.event_condition is not None
+        or tuple(program.effects) != ({"op": "unearth", "action": "return"},)
+        or not program_has_complete_card_program_admission(program)
+        or not host.semantic_program_is_current_trusted(program)
+    ):
+        return False
+    try:
+        abilities = ordinary_unearth_specs_from_descriptors(program.handlers)
+    except ValueError:
+        return False
+    if len(abilities) != 1:
+        return False
+    printed = abilities[0].to_activated_ability()
+    return (printed.cost_text == spec.cost_text
+            and {key: value for key, value in printed.mana.items() if value} == spec.mana_bundle)
+
+
 def _typed_granted_abilities(
-    data: dict[str, Any],
+    host: ActivatedAbilityQueryHost, data: dict[str, Any],
 ) -> tuple[ActivatedAbility, ...]:
     specs = granted_activated_specs(
         canonical_ability_fragments(data.get("ability_fragments", ()))
@@ -121,6 +156,11 @@ def _typed_granted_abilities(
     result: list[ActivatedAbility] = []
     for index, spec in enumerate(specs):
         ability_id = spec.ability_id
+        if spec.schema_version == GRANTED_UNEARTH_VERSION:
+            if spec.grant_incarnation is None or not _is_current_granted_unearth_program(host, spec):
+                continue
+            suffix = sha256(spec.grant_incarnation.encode("utf-8")).hexdigest()[:20]
+            ability_id = f"{ability_id}#unearth-{suffix}"
         payment = spec.granting_attachment_payment
         if payment is not None:
             identity = payment.granting_object
@@ -141,7 +181,7 @@ def _typed_granted_abilities(
                 oracle_line=f"{spec.cost_text}: {spec.effect_text}",
                 cost_text=spec.cost_text,
                 effect_text=spec.effect_text,
-                zones=("battlefield",),
+                zones=spec.activation_zones,
                 mana={
                     key: spec.mana_bundle.get(key, 0)
                     for key in ("GENERIC", "W", "U", "B", "R", "G", "C")
@@ -163,6 +203,7 @@ def _typed_granted_abilities(
                 builtin_semantic_key=spec.semantic_key,
                 mana_spend_restriction=spec.mana_spend_restriction,
                 granting_attachment_payment=payment,
+                announced_x_symbols=spec.announced_x_symbols,
                 source_counter_removal_cost=(SourceCounterRemovalCost.from_dict(spec.source_counter_removal_cost)
                     if spec.source_counter_removal_cost is not None else None),
             )

@@ -7,6 +7,9 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..rules.same_name_creature_modifiers import (
+    SAME_NAME_STAT_MECHANICS, SameNameCreatureStats, same_name_stat_target_schema,
+)
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .continuous_templates import controlled_characteristic_until_end_of_turn_effect
 from .fixed_resolution_characteristic_queries import (
@@ -24,6 +27,11 @@ _TRAILING_REMINDER = re.compile(r"\s*\([^()]*(?:\([^()]*\)[^()]*)*\)\s*$")
 _PUBLIC_CREATURE_SET = re.compile(
     r"^(?P<subject>.+?) "
     r"(?P<verb>get|gets|gain|gains) (?P<result>.+)$",
+    re.IGNORECASE,
+)
+_SAME_NAME_CREATURE_STATS = re.compile(
+    r"Target creature and all other creatures with the same name as that creature "
+    r"get (?P<power>[+-][0-9]+)/(?P<toughness>[+-][0-9]+) until end of turn\.",
     re.IGNORECASE,
 )
 _PLAYER_TARGET_SCHEMA = {
@@ -120,6 +128,18 @@ def _keyword_before_stat_grant(oracle_line: str) -> str:
             +parts['keywords']+' until end of turn.')
 
 
+def _same_name_creature_stat_template(oracle_line: str):
+    match = _SAME_NAME_CREATURE_STATS.fullmatch(oracle_line.strip())
+    if match is None:
+        return None
+    power, toughness = int(match["power"]), int(match["toughness"])
+    if not (power or toughness):
+        return None
+    spec = SameNameCreatureStats(power, toughness)
+    return ("modify-same-name-creature-stats-eot-v1", (spec.to_effect(),),
+            same_name_stat_target_schema(), SAME_NAME_STAT_MECHANICS)
+
+
 def fixed_public_characteristic_set_effect_template(
     oracle_line: str,
 ) -> tuple[
@@ -130,6 +150,8 @@ def fixed_public_characteristic_set_effect_template(
 ] | None:
     """Lower one closed creature/subtype set and lock it at resolution."""
 
+    if same_name := _same_name_creature_stat_template(oracle_line):
+        return same_name
     oracle_line = _keyword_before_stat_grant(oracle_line)
     controlled = controlled_characteristic_until_end_of_turn_effect(oracle_line)
     if controlled is not None:

@@ -29,6 +29,7 @@ from .counter_maximums import (
 )
 from .counter_permission import CounterPermissionError, FixedCounterProhibitionSpec
 from .legend_rule_model import LegendRuleExemptionSpec
+from .fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_FRAGMENT, FixedKeywordEntryCounterSpec
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     CharacteristicFragmentError,
@@ -66,6 +67,7 @@ from .static_component_scope import (
 )
 from .util import stable_json
 from .all_colors import AllColorsCharacteristicDefinitionSpec
+from .off_battlefield_creatures import OffBattlefieldSelfCreatureSpec
 from .copiable_program_source import CopiableProgramSourceSpec
 from .copiable_static_instance import CopiableStaticInstanceSpec
 
@@ -76,6 +78,7 @@ class ProtectionQualityKind(str, Enum):
     CARD_TYPE = "card_type"
     SUBTYPE = "subtype"
     PREDICATE = "predicate"
+    PLAYER = "player"
 
 
 class CombatKeywordTriggerKind(str, Enum):
@@ -83,6 +86,7 @@ class CombatKeywordTriggerKind(str, Enum):
 
     FLANKING = "flanking"
     BUSHIDO = "bushido"
+    BUSHIDO_ATTACKING_CREATURE_COUNT = "bushido_attacking_creature_count"
     RAMPAGE = 'rampage'
     EXALTED = "exalted"
     BATTLE_CRY = "battle_cry"
@@ -335,11 +339,7 @@ class ProtectionSpec:
     exempt_aura_incarnation: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {
-            1,
-            2,
-            3,
-        }:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
             raise AbilityFragmentError(
                 "Unsupported protection fragment schema version"
             )
@@ -347,6 +347,14 @@ class ProtectionSpec:
             raise AbilityFragmentError("Unsupported protection quality kind")
         from .protection_attachment_exceptions import validate_protection_attachment_exception
         validate_protection_attachment_exception(self)
+        if self.quality_kind is ProtectionQualityKind.PLAYER:
+            if (
+                self.schema_version != 4 or self.source_predicate is not None
+                or type(self.quality) is not str or not self.quality or self.quality.startswith("$")
+                or self.quality != self.quality.strip()
+            ):
+                raise AbilityFragmentError("Player protection requires its version and an exact bound seat")
+            return
         if self.quality_kind is ProtectionQualityKind.PREDICATE:
             if (
                 self.schema_version != 2
@@ -800,6 +808,7 @@ StaticAbilityFragment: TypeAlias = (
     | EnchantedPlayerAttackRequirementSpec
     | BoundStaticDeclarationRulesSpec
     | GrantedTriggeredAbilitySpec
+    | FixedKeywordEntryCounterSpec
     | CombatKeywordTriggerSpec
     | DamageKeywordTriggerSpec
     | SpellCastKeywordTriggerSpec
@@ -816,6 +825,7 @@ StaticAbilityFragment: TypeAlias = (
     | AllCreatureTypesCharacteristicDefinitionSpec
     | ColorlessCharacteristicDefinitionSpec
     | AllColorsCharacteristicDefinitionSpec
+    | OffBattlefieldSelfCreatureSpec
     | ConditionalKeywordSpec
     | DynamicPowerToughnessSpec
     | QueryCharacteristicModifierSpec
@@ -867,6 +877,8 @@ def ability_fragment_to_dict(
         kind = 'bound_static_declaration_rules'
     elif isinstance(fragment, GrantedTriggeredAbilitySpec):
         kind = "granted_triggered"
+    elif isinstance(fragment, FixedKeywordEntryCounterSpec):
+        kind = FIXED_KEYWORD_ENTRY_FRAGMENT
     elif isinstance(fragment, CombatKeywordTriggerSpec):
         kind = "combat_keyword_trigger"
     elif isinstance(fragment, DamageKeywordTriggerSpec):
@@ -899,6 +911,8 @@ def ability_fragment_to_dict(
         kind = "colorless_characteristic_definition"
     elif isinstance(fragment, AllColorsCharacteristicDefinitionSpec):
         kind = 'all_colors_characteristic_definition'
+    elif isinstance(fragment, OffBattlefieldSelfCreatureSpec):
+        kind = "off_battlefield_self_creature"
     elif isinstance(fragment, ConditionalKeywordSpec):
         kind = "conditional_keyword"
     elif isinstance(fragment, DynamicPowerToughnessSpec):
@@ -943,6 +957,21 @@ def ability_fragment_to_dict(
     return {"kind": kind, "value": fragment.to_dict()}
 
 
+_CHARACTERISTIC_FRAGMENT_READERS = {
+    "all_creature_types_characteristic_definition": AllCreatureTypesCharacteristicDefinitionSpec.from_dict,
+    "colorless_characteristic_definition": ColorlessCharacteristicDefinitionSpec.from_dict,
+    "all_colors_characteristic_definition": AllColorsCharacteristicDefinitionSpec.from_dict,
+    "off_battlefield_self_creature": OffBattlefieldSelfCreatureSpec.from_dict,
+}
+
+
+def _read_characteristic_fragment(reader, value):
+    try:
+        return reader(value)
+    except ValueError as exc:
+        raise AbilityFragmentError(str(exc)) from exc
+
+
 def ability_fragment_from_dict(
     value: Mapping[str, Any],
 ) -> StaticAbilityFragment:
@@ -981,6 +1010,8 @@ def ability_fragment_from_dict(
         return BoundStaticDeclarationRulesSpec.from_dict(value['value'])
     if value["kind"] == "granted_triggered":
         return GrantedTriggeredAbilitySpec.from_dict(value["value"])
+    if value["kind"] == FIXED_KEYWORD_ENTRY_FRAGMENT:
+        return FixedKeywordEntryCounterSpec.from_dict(value["value"])
     if value["kind"] == "combat_keyword_trigger":
         return CombatKeywordTriggerSpec.from_dict(value["value"])
     if value["kind"] == "damage_keyword_trigger":
@@ -1014,23 +1045,9 @@ def ability_fragment_from_dict(
         return TriggerMultiplierSpec.from_dict(value["value"])
     if value["kind"] == "ward":
         return WardSpec.from_dict(value["value"])
-    if value["kind"] == "all_creature_types_characteristic_definition":
-        try:
-            return AllCreatureTypesCharacteristicDefinitionSpec.from_dict(
-                value["value"]
-            )
-        except CharacteristicFragmentError as exc:
-            raise AbilityFragmentError(str(exc)) from exc
-    if value["kind"] == "colorless_characteristic_definition":
-        try:
-            return ColorlessCharacteristicDefinitionSpec.from_dict(
-                value["value"]
-            )
-        except CharacteristicFragmentError as exc:
-            raise AbilityFragmentError(str(exc)) from exc
-    if value['kind']=='all_colors_characteristic_definition':
-        try:return AllColorsCharacteristicDefinitionSpec.from_dict(value['value'])
-        except ValueError as exc:raise AbilityFragmentError(str(exc)) from exc
+    reader = _CHARACTERISTIC_FRAGMENT_READERS.get(value["kind"])
+    if reader is not None:
+        return _read_characteristic_fragment(reader, value["value"])
     if value["kind"] == "conditional_keyword":
         try:
             return ConditionalKeywordSpec.from_dict(value["value"])

@@ -85,8 +85,8 @@ def _anywhere_graveyard_spec(material_line):
 _PUBLIC_ATTACK_TRIGGER = re.compile(
     r"^Whenever (?P<subject>this creature|this Vehicle|a creature|"
     r"a creature you control|a creature with flying) "
-    r"attacks(?P<alone> alone)?(?: (?P<recipient>you or a planeswalker "
-    r"you control))?, (?P<body>.+)$",
+    r"attacks(?P<alone> alone)?(?: (?P<recipient>you(?: or a planeswalker "
+    r"you control)?))?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _PUBLIC_BLOCK_TRIGGER = re.compile(
@@ -323,11 +323,39 @@ def _source_subject(subject: str, *, card_name: str | None) -> bool:
     )
 
 
+_LINKED_PLAYER_CAST_MILL_VARIANT = "linked_player_cast_mill"
+_LINKED_PLAYER_CAST_MILL = re.compile(
+    r"Whenever the chosen player casts a spell, (?P<body>that player mills a card\.)",
+    re.I,
+)
+
+
+def linked_player_cast_mill_result(binding, body):
+    if binding.variant != _LINKED_PLAYER_CAST_MILL_VARIANT or body != binding.body:
+        return None
+    from ..entry_designations import LINKED_PLAYER_CAST_MILL_TEMPLATE, linked_player_cast_mill_effect
+    from .mill_templates import EVENT_MILL_RECIPIENT_MECHANIC, MILL_MECHANIC_ID
+
+    return (
+        (LINKED_PLAYER_CAST_MILL_TEMPLATE, (linked_player_cast_mill_effect(),), None,
+         (MILL_MECHANIC_ID, EVENT_MILL_RECIPIENT_MECHANIC)), True,
+    )
+
+
 def _public_spell_action_spec(
     material_line: str,
     *,
     card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
+    linked = _LINKED_PLAYER_CAST_MILL.fullmatch(material_line)
+    if linked is not None:
+        from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY, LINKED_PLAYER_CAST_MILL_TEMPLATE, linked_player_cast_condition
+
+        return _spec(
+            "spell.cast", _LINKED_PLAYER_CAST_MILL_VARIANT, linked["body"], LINKED_PLAYER_CAST_MILL_TEMPLATE,
+            "trigger-event-normalized-spell-cast", condition=linked_player_cast_condition(),
+            capabilities=(ENTRY_DESIGNATION_CAPABILITY, "trigger.event.normalized_spell_cast"),
+        )
     heroic = _HEROIC_TRIGGER.fullmatch(material_line)
     if heroic is not None and _source_subject(
         heroic.group("subject"),
@@ -515,6 +543,19 @@ def creature_graveyard_owner_spec(
 
 
 def _land_entry_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    putting = re.fullmatch(
+        r"Whenever a player puts a (?P<subtype>Forest|Swamp) onto the battlefield, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if putting is not None:
+        from ..rules.entry_player_counter_payment import entry_player_counter_payment_condition
+
+        subtype = putting["subtype"].casefold()
+        return _spec(
+            "land.enter", "putting_player_" + subtype, putting["body"],
+            "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+            condition=entry_player_counter_payment_condition(subtype),
+        )
     match = re.fullmatch(
         r"Whenever a land(?: (?P<relation>an opponent controls))? enters, "
         r"(?P<body>.+)",
@@ -869,12 +910,26 @@ def _attachment_event_spec(
     ) or _attachment_death_spec(material_line)
 
 
+def _other_nontoken_creature_entry_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    from ..token_copy_recipient_model import OTHER_NONTOKEN_CREATURE_ENTRY, other_nontoken_creature_entry_condition
+
+    match = re.fullmatch(r"Whenever another nontoken creature enters, (?P<body>.+)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        "creature.enter", OTHER_NONTOKEN_CREATURE_ENTRY, match["body"],
+        "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=other_nontoken_creature_entry_condition(),
+    )
+
+
 def _closed_public_zone_event_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
     return (
         _controlled_zone_departure_spec(material_line)
         or _controlled_entry_spec(material_line)
+        or _other_nontoken_creature_entry_spec(material_line)
         or _graveyard_departure_spec(material_line)
     )
 
@@ -957,6 +1012,18 @@ def _public_damage_spec(
     *,
     card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
+    dealer = re.fullmatch(
+        r"Whenever a creature deals combat damage to one of your opponents, (?P<body>.+)",
+        material_line, re.I,
+    )
+    if dealer is not None:
+        from ..rules.event_optional_draw_shapes import DAMAGE_DEALER_DRAW_VARIANT, damage_dealer_draw_condition
+
+        return _spec(
+            "damage.dealt", DAMAGE_DEALER_DRAW_VARIANT, dealer["body"],
+            "fixed-counter-public-damage-trigger-v1", "trigger-event-normalized-damage",
+            condition=damage_dealer_draw_condition(),
+        )
     match = _PUBLIC_DAMAGE_TRIGGER.fullmatch(material_line)
     if match is None:
         from .damage_permanent_event_bindings import damage_permanent_binding_spec
@@ -986,9 +1053,13 @@ def _public_damage_spec(
 
 
 def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> FixedPublicEventBindingSpec | None:
+    from .affected_player_sacrifice_templates import attack_sacrifice_stat_binding_spec
+
+    if sacrifice := attack_sacrifice_stat_binding_spec(material_line, card_name=card_name):
+        return sacrifice
     from ..qualified_attack_model import (
         QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT,
-        defended_player_or_planeswalker_condition, source_attacks_battle_condition,
+        defended_player_condition, defended_player_or_planeswalker_condition, source_attacks_battle_condition,
     )
 
     battle = re.fullmatch(r"(?:When|Whenever) this creature attacks a battle, (?P<body>.+)", material_line, re.I)
@@ -1008,8 +1079,15 @@ def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> 
         from .qualified_attack_subjects import qualified_attack_binding_spec
         return qualified_attack_binding_spec(material_line)
     subject = " ".join(match.group("subject").casefold().split())
-    if subject == "this creature" and (match.group("alone") is None or match.group("recipient") is not None):
+    recipient = match["recipient"]
+    if subject == "this creature" and (match["alone"] is None or recipient is not None):
         return None
+    if recipient and recipient.casefold() == "you":
+        if subject != "a creature" or match["alone"] is not None:
+            return None
+        scope = defended_player_condition()
+    else:
+        scope = defended_player_or_planeswalker_condition() if recipient else None
     return _spec(
         "creature.attacks",
         "source_attacks" if subject == "this creature" else "public_attack_" + subject.replace(" ", "_"),
@@ -1029,9 +1107,9 @@ def _public_attack_spec(material_line: str, *, card_name: str | None = None) -> 
             {"field": "attacking_alone", "op": "truthy", "value": True}
             if match.group("alone") is not None
             else None,
-            defended_player_or_planeswalker_condition() if match.group("recipient") is not None else None,
+            scope,
         ),
-        capabilities=(QUALIFIED_ATTACK_CAPABILITY,) if match.group("recipient") is not None else (),
+        capabilities=(QUALIFIED_ATTACK_CAPABILITY,) if scope is not None else (),
     )
 
 
@@ -1322,6 +1400,55 @@ def _first_life_gain_spec(material_line):
         condition=condition, capabilities=(FIRST_LIFE_GAIN_CAPABILITY,))
 
 
+def _opponent_life_gain_paid_graveyard_return_spec(material_line):
+    from ..rules.graveyard_self_return import (
+        GRAVEYARD_SELF_RETURN_CAPABILITY, graveyard_opponent_life_gain_condition,
+    )
+    match = re.fullmatch(
+        r"Whenever an opponent gains life, "
+        r"(?P<body>you may pay \{R\}\. If you do, return this card from your graveyard to your hand\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        "life.gained", "opponent_life_gain_paid_graveyard_return", match["body"],
+        "fixed-opponent-life-gain-paid-graveyard-return-v1", "trigger-event-normalized-life-gain",
+        condition=graveyard_opponent_life_gain_condition(),
+        capabilities=(GRAVEYARD_SELF_RETURN_CAPABILITY,), active_zone="graveyard",
+    )
+
+
+def _opponent_life_gain_self_counters_spec(material_line):
+    match = re.fullmatch(
+        r"Whenever an opponent gains life, "
+        r"(?P<body>put that many \+1/\+1 counters on this creature\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(
+        "life.gained", "opponent_life_gain_self_counters", match["body"],
+        "fixed-counter-opponent-life-gain-self-counters-v1", "trigger-event-normalized-life-gain",
+        condition={"field": "player", "op": "ne", "value": "$source.controller"},
+    )
+
+
+def _opponent_life_loss_spec(material_line):
+    from ..life_change import LIFE_LOSS_CAPABILITY, LIFE_LOSS_EVENT
+    from ..rules.event_outcome_shapes import opponent_life_loss_condition
+
+    match = re.fullmatch(
+        r"(?:When|Whenever) an opponent loses life, "
+        r"(?P<body>you gain that much life|that player mills that many cards)\.?", material_line, re.I,
+    )
+    if match is None:
+        return None
+    return _spec(LIFE_LOSS_EVENT, "opponent_life_loss", match["body"],
+        "fixed-counter-opponent-life-loss-result-v1", "trigger-event-normalized-life-loss",
+        condition=opponent_life_loss_condition(), capabilities=(LIFE_LOSS_CAPABILITY,))
+
+
 def fixed_public_event_binding_spec(
     material_line: str,
     *,
@@ -1345,6 +1472,9 @@ def fixed_public_event_binding_spec(
 
     return (
         _first_life_gain_spec(material_line)
+        or _opponent_life_gain_paid_graveyard_return_spec(material_line)
+        or _opponent_life_gain_self_counters_spec(material_line)
+        or _opponent_life_loss_spec(material_line)
         or _anywhere_graveyard_spec(material_line)
         or _source_any_damage_spec(material_line,card_name=card_name)
         or _transform_into_spec(material_line, card_name=card_name)

@@ -2,11 +2,14 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from .face_status_copy import ENTRY_COPY_HISTORY_FIELD, FACE_UP_COPY_EVENT, FACE_UP_COPY_RESULT
 from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT
+from ..self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_RESULT, RevealForOwnerLibraryShuffle
 
 from .applicability import canonical_effects, replacement_choice
 from .immutable import thaw_value
 from .model import (
+    COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD,
     COUNTER_REPLACEMENT_GENERATED_FIELD,
     AffectedObject,
     EntryReplacementScope,
@@ -17,25 +20,31 @@ from .model import (
     mapping_sequence,
     string_sequence,
 )
+from .counted_entry_counters import TransferEntryCounters, apply_counted_entry_counters, apply_transferred_entry_counters
 from .operations import (
     AmplifyEntryOperation,
     OpenTributeEntryChoice,
     CompleteTributeEntryChoice,
     DevourEntryOperation,
+    GraveyardCopyEntryOperation,
+    LinkedGraveyardEntryOperation,
     ENTRY_OBJECT_SELECTION_OPERATIONS,
     AddAmount,
     AppendValues,
     CapResultLifeLoss,
     CreateAffectedObjectCounter,
+    CreateCountedEntryCounters,
     AddAffectedObjectCounter,
     ApplyEntryCounterReplacement,
     GrantAffectedObjectSubtype,
     CreateAdditionalToken,
     CreateResultDraws,
     CreateNestedEvent,
+    DiscardInsteadOfDraw,
     DredgeDraw,
     GrantAffectedObjectKeyword,
     MultiplyAmount,
+    HalveCounterPlacementAmount,
     MultiplyTokenCreation,
     PreventAmount,
     PreventDraw,
@@ -52,16 +61,17 @@ _LIFE_LOSS_DIRECTION = "loss"
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_prepared','_counter_permissions'},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_card_name", "entry_chosen_color", "entry_chosen_creature_type", "entry_chosen_opponent", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_prepared','_counter_permissions',ENTRY_COPY_HISTORY_FIELD},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},
     "permanent.destroy": {"disposition", "clear_damage", "umbra_aura_object_id", "umbra_aura_logical_object_id"},
-    "life.change": {"amount"},
+    "life.change": {"amount", "direction"},
     "draw.instruction": {"count"},
     "damage.results": {"life_loss_amount", "life_after_without_replacement"},
     "effect": {"resolved"},
     TURN_BOUNDARY_SKIP_EVENT: {"skipped"},
+    FACE_UP_COPY_EVENT: {FACE_UP_COPY_RESULT},
 }
 _NUMERIC_FIELDS = {
     "damage": {"amount", "prevented"},
@@ -73,7 +83,7 @@ _NUMERIC_FIELDS = {
     "zone.change": {"entry_life_payment"},
 }
 _SEQUENCE_FIELDS = {
-    'zone.change':{'commander_component_returns'},
+    'zone.change':{'commander_component_returns', 'object_types'},
     "token.create": {"tokens", "created_types", "created_subtypes"},
 }
 
@@ -257,16 +267,9 @@ def _apply_result_life_floor(
     payload["life_after_without_replacement"] = life_before - resolved_loss + gain_total
 
 
-def _create_result_draw_instruction(
-    event: ReplaceableEvent,
-    payload: dict[str, Any],
-    children: list[ReplaceableEvent],
-    operation: CreateResultDraws,
-    *,
-    effect_id: str,
-) -> None:
-    """Replace one draw with a typed, independently replaceable result queue."""
-
+def _result_draw_exclusions(
+    event: ReplaceableEvent, payload: dict[str, Any], effect_id: str
+) -> tuple[str, ...]:
     if (
         event.kind != "draw"
         or event.affected_player is None
@@ -282,16 +285,30 @@ def _create_result_draw_instruction(
         raise ReplacementEffectError(
             "Result-draw exclusions must be stable effect IDs"
         )
-    exclusions = tuple(sorted({*inherited, effect_id}))
+    return tuple(sorted({*inherited, effect_id}))
+
+
+def _create_result_draw_instruction(
+    event: ReplaceableEvent,
+    payload: dict[str, Any],
+    children: list[ReplaceableEvent],
+    operation: CreateResultDraws,
+    *,
+    effect_id: str,
+) -> None:
+    """Replace one draw with a typed, independently replaceable result queue."""
+
+    exclusions = _result_draw_exclusions(event, payload, effect_id)
+    recipient = operation.recipient or event.affected_player
     payload["is_draw"] = False
     payload["result_kind"] = "result_draws"
     children.append(
         ReplaceableEvent(
             event_id=f"{event.event_id}/result-draw:{len(children)}",
             kind="draw.result_instruction",
-            affected_player=event.affected_player,
+            affected_player=recipient,
             payload={
-                "player": event.affected_player,
+                "player": recipient,
                 "count": operation.count,
                 "reason": payload.get("reason"),
                 "private": payload.get("private"),
@@ -571,6 +588,52 @@ def _apply_affected_object_keyword(
     ]
 
 
+def _apply_amount_operation(
+    event: ReplaceableEvent,
+    payload: dict[str, Any],
+    operation: AddAmount | MultiplyAmount | HalveCounterPlacementAmount,
+) -> None:
+    if isinstance(operation, AddAmount):
+        _require_field(event, operation.field, _NUMERIC_FIELDS, operation="add")
+        payload[operation.field] = int(payload.get(operation.field, 0)) + operation.amount
+        return
+    if isinstance(operation, MultiplyAmount):
+        _require_field(event, operation.field, _NUMERIC_FIELDS, operation="multiply")
+        payload[operation.field] = int(payload.get(operation.field, 0)) * operation.factor
+        return
+    amount = payload.get("amount")
+    if event.kind != "counter.place" or type(amount) is not int or amount < 1:
+        raise ReplacementEffectError("Counter placement halving requires a positive current placement")
+    payload["amount"] = amount // 2
+    if payload["amount"] == 0:
+        payload[COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD] = True
+
+
+def _apply_sequence_operation(event, payload, operation):
+    if operation.field=='commander_component_returns':
+        from ..composition_commander_replacement_model import validate_commander_component_returns
+        if not isinstance(operation,UnionValues) or payload.get('destination') not in {'hand','library'}:
+            raise ReplacementEffectError('Commander component return requires a hand/library union')
+        try:validate_commander_component_returns(payload,operation.values)
+        except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
+    _require_field(event, operation.field, _SEQUENCE_FIELDS, operation="sequence")
+    current = payload.get(operation.field, [])
+    if not isinstance(current, Sequence) or isinstance(current, (str, bytes)):
+        raise ReplacementEffectError("Replacement sequence destination must be an array")
+    if operation.field == "object_types":
+        from ..creature_subtypes import canonical_creature_subtype
+
+        chosen = payload.get("entry_chosen_creature_type")
+        if (not isinstance(operation, UnionValues) or payload.get("destination") != "battlefield"
+                or not isinstance(chosen, str) or canonical_creature_subtype(chosen) != chosen
+                or operation.values != (chosen,)):
+            raise ReplacementEffectError("Prospective subtype addition requires its exact chosen creature type")
+        if not {"creature", "kindred"}.intersection(current):
+            return
+    values = [*current, *(thaw_value(value) for value in operation.values)]
+    payload[operation.field] = values if isinstance(operation, AppendValues) else sorted(set(values), key=str)
+
+
 def _apply_operation(
     event: ReplaceableEvent,
     payload: dict[str, Any],
@@ -582,6 +645,11 @@ def _apply_operation(
 ) -> EntryReplacementScope | None:
     if isinstance(operation, SetField):
         _require_field(event, operation.field, _SET_FIELDS, operation="set")
+        if operation.field == "direction" and (
+            operation.value != _LIFE_LOSS_DIRECTION or payload.get("direction") != "gain"
+            or type(payload.get("amount")) is not int or payload["amount"] <= 0
+        ):
+            raise ReplacementEffectError("Life direction replacement can convert only positive gain to equal loss")
         if event.kind == TURN_BOUNDARY_SKIP_EVENT and operation.value is not True:
             raise ReplacementEffectError("A skipped boundary cannot be restored by a skip replacement")
         if operation.field=='destination' and 'commander_components' in payload and payload.get('destination')!=operation.value:
@@ -589,17 +657,24 @@ def _apply_operation(
             try:payload_commander_components(payload)
             except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
             payload[EPOCH_FIELD]=payload.get(EPOCH_FIELD,0)+1
+        if operation.field == "entry_chosen_opponent":
+            from ..entry_designations import ENTRY_OPPONENT_FIELD, EntryOpponentChoice, entry_opponent_effect_id
+            try:
+                choice = EntryOpponentChoice.from_dict(operation.value)
+                if (payload.get("destination") != "battlefield" or payload.get("origin") == "battlefield"
+                        or (not choice.any_player and choice.seat == payload.get("destination_controller"))
+                        or (choice.any_player and event.kind != "zone.change")
+                        or payload.get(ENTRY_OPPONENT_FIELD) is not None
+                        or effect_id != entry_opponent_effect_id(payload["object_ref"], choice)):
+                    raise ValueError("The selection requires its original entering subject and permitted player")
+            except (KeyError, ValueError) as exc:
+                raise ReplacementEffectError(str(exc)) from exc
         payload[operation.field] = thaw_value(operation.value)
         if operation.field == "destination":
             _retarget_zone_counter_children(event, payload, children)
         return entry_scope
-    if isinstance(operation, AddAmount):
-        _require_field(event, operation.field, _NUMERIC_FIELDS, operation="add")
-        payload[operation.field] = int(payload.get(operation.field, 0)) + operation.amount
-        return entry_scope
-    if isinstance(operation, MultiplyAmount):
-        _require_field(event, operation.field, _NUMERIC_FIELDS, operation="multiply")
-        payload[operation.field] = int(payload.get(operation.field, 0)) * operation.factor
+    if isinstance(operation, (AddAmount, MultiplyAmount, HalveCounterPlacementAmount)):
+        _apply_amount_operation(event, payload, operation)
         return entry_scope
     if isinstance(operation, PreventAmount):
         if event.kind != "damage":
@@ -607,9 +682,9 @@ def _apply_operation(
                 "Damage prevention can apply only to a damage event"
             )
         available = int(payload.get("amount", 0))
-        requested = available if operation.amount is None else operation.amount
         if available < 0:
             raise ReplacementEffectError("Damage amounts cannot be negative")
+        requested = operation.requested_prevention(available)
         prevented = 0 if bool(payload.get("unpreventable")) else min(available, requested)
         payload["amount"] = available - prevented
         payload["prevented"] = int(payload.get("prevented", 0)) + prevented
@@ -623,26 +698,7 @@ def _apply_operation(
             "Damage redirection requires subject-aware replacement application"
         )
     if isinstance(operation, (AppendValues, UnionValues)):
-        if operation.field=='commander_component_returns':
-            from ..composition_commander_replacement_model import validate_commander_component_returns
-            if not isinstance(operation,UnionValues) or payload.get('destination') not in {'hand','library'}:
-                raise ReplacementEffectError('Commander component return requires a hand/library union')
-            try:validate_commander_component_returns(payload,operation.values)
-            except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
-        _require_field(
-            event, operation.field, _SEQUENCE_FIELDS, operation="sequence"
-        )
-        current = payload.get(operation.field, [])
-        if not isinstance(current, Sequence) or isinstance(current, (str, bytes)):
-            raise ReplacementEffectError(
-                "Replacement sequence destination must be an array"
-            )
-        values = [*list(current), *[thaw_value(value) for value in operation.values]]
-        payload[operation.field] = (
-            values
-            if isinstance(operation, AppendValues)
-            else sorted(set(values), key=str)
-        )
+        _apply_sequence_operation(event, payload, operation)
         return entry_scope
     if isinstance(operation, CreateNestedEvent):
         children.append(
@@ -652,6 +708,9 @@ def _apply_operation(
                 suffix=str(len(children)),
             )
         )
+        return entry_scope
+    if isinstance(operation, CreateCountedEntryCounters):
+        apply_counted_entry_counters(event, payload, children, entry_scope, operation, effect_id=effect_id)
         return entry_scope
     if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword,
             OpenTributeEntryChoice,CompleteTributeEntryChoice)):
@@ -687,6 +746,10 @@ def _apply_operation(
             )
         payload["is_draw"] = False
         payload["result_kind"] = "prevented"
+        return entry_scope
+    if isinstance(operation, DiscardInsteadOfDraw):
+        exclusions = _result_draw_exclusions(event, payload, effect_id)
+        payload.update(is_draw=False, result_kind="discard_or_mill", excluded_effect_ids=list(exclusions))
         return entry_scope
     if isinstance(operation, CreateResultDraws):
         _create_result_draw_instruction(
@@ -739,6 +802,27 @@ def canonical_replacement_selection(
     return selected_effect_id
 
 
+def _apply_zone_outcome_operation(event, payload, children, operations, operation, *, effect_id):
+    if isinstance(operation, RevealForOwnerLibraryShuffle):
+        if (operations != (SetField("destination", "library"), operation)
+                or event.kind != "zone.change" or event.affected_object is None
+                or event.affected_object.object_id != operation.object_id
+                or event.affected_object.owner != operation.owner
+                or event.payload.get("destination") != "graveyard"
+                or event.payload.get("logical_object_id") != operation.logical_object_id
+                or event.payload.get("object_ref") != operation.object_ref
+                or SELF_GRAVEYARD_SHUFFLE_RESULT in payload):
+            raise ReplacementEffectError("Self-shuffle must replace the original object's graveyard arrival")
+        payload[SELF_GRAVEYARD_SHUFFLE_RESULT] = operation.to_dict()
+        return True
+    if isinstance(operation, TransferEntryCounters):
+        if len(operations) != 1:
+            raise ReplacementEffectError("Counter transfer requires one closed entry instruction")
+        apply_transferred_entry_counters(event, payload, children, operation, effect_id=effect_id)
+        return True
+    return False
+
+
 def _apply_effect_operations(
     event: ReplaceableEvent,
     effect: ReplacementEffect,
@@ -772,12 +856,32 @@ def _apply_effect_operations(
     affected_player = event.affected_player
     affected_object = event.affected_object
     for operation in operations:
+        if _apply_zone_outcome_operation(event, payload, children, operations, operation, effect_id=effect.effect_id):
+            if isinstance(operation, RevealForOwnerLibraryShuffle) and operation.is_commander:
+                affected_object = AffectedObject(operation.object_id, operation.owner, operation.owner)
+            continue
         if isinstance(operation, AmplifyEntryOperation):
             from .amplify import apply_amplify_entry_operation
             if len(operations) != 1:
                 raise ReplacementEffectError("Amplify requires one closed entry instruction")
             apply_amplify_entry_operation(event, payload, children, operation,
                 effect_id=effect.effect_id, objects=objects)
+            continue
+        if isinstance(operation,GraveyardCopyEntryOperation):
+            from ..rules.graveyard_entry_copy import apply_graveyard_copy_pair_selection
+
+            try:
+                entry_scope=apply_graveyard_copy_pair_selection(event,payload,entry_scope,operation,objects)
+            except ValueError as exc:
+                raise ReplacementEffectError(str(exc)) from exc
+            continue
+        if isinstance(operation, LinkedGraveyardEntryOperation):
+            from ..rules.linked_graveyard_entry import apply_linked_graveyard_entry_selection
+
+            try:
+                entry_scope = apply_linked_graveyard_entry_selection(event, payload, entry_scope, operation, objects)
+            except ValueError as exc:
+                raise ReplacementEffectError(str(exc)) from exc
             continue
         if isinstance(operation,DevourEntryOperation):
             from .devour import apply_devour_entry_operation
@@ -869,7 +973,8 @@ def _apply_effect_operations(
 def _record_replacement_generated_counters(payload: dict[str, Any], operations: Sequence[Any]) -> None:
     amount = payload.get("amount")
     if type(amount) is int and amount > 0 and any(
-        isinstance(operation, (AddAmount, MultiplyAmount, SetField)) and operation.field == "amount"
+        isinstance(operation, HalveCounterPlacementAmount)
+        or isinstance(operation, (AddAmount, MultiplyAmount, SetField)) and operation.field == "amount"
         for operation in operations
     ):
         payload[COUNTER_REPLACEMENT_GENERATED_FIELD] = True
@@ -879,13 +984,16 @@ def apply_replacement(
     choice: ReplacementChoice,
     effects: Iterable[ReplacementEffect],
     selected_effect_id: str | None,
-    *,objects: tuple[str,...] | None = None,
+    *, objects: tuple[str,...] | None = None, card_name: str | None = None,
 ) -> ReplaceableEvent:
+    from ..entry_designations import ENTRY_CARD_NAME_FIELD, entry_card_name_operation, validate_bound_entry_card_name
+
     all_effects = canonical_effects(effects)
     by_id = {effect.effect_id: effect for effect in all_effects}
     selection = canonical_replacement_selection(choice, selected_effect_id)
     if selection.startswith("decline:"):
-        if objects:raise ReplacementEffectError('Declining a replacement cannot select objects')
+        if objects or card_name is not None:
+            raise ReplacementEffectError("Declining a replacement cannot choose objects or a card name")
         declined = selection.removeprefix("decline:")
         if declined not in choice.options or declined not in choice.optional_options:
             raise ReplacementEffectError(
@@ -906,6 +1014,16 @@ def apply_replacement(
             "Selected replacement is not currently applicable"
         )
     effect = by_id[selection]
+    if entry_card_name_operation(effect) is not None:
+        if objects is not None or choice.event.payload.get("destination") != "battlefield":
+            raise ReplacementEffectError("A card-name choice requires the original battlefield entry")
+        try:
+            name = validate_bound_entry_card_name(card_name)
+        except ValueError as exc:
+            raise ReplacementEffectError(str(exc)) from exc
+        return _apply_effect_operations(choice.event, effect, (SetField(ENTRY_CARD_NAME_FIELD, name),))
+    if card_name is not None:
+        raise ReplacementEffectError("This replacement does not accept a card name")
     if objects is not None and not any(isinstance(op,ENTRY_OBJECT_SELECTION_OPERATIONS) for op in effect.operations):
         if objects:raise ReplacementEffectError('This replacement does not select objects')
         objects=None

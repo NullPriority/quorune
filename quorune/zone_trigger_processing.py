@@ -7,10 +7,14 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from .model import CardInstance, StackItem
+from .discard_effect_origin import OPPONENT_SOURCE_DISCARD_EVENT, opponent_discard_origin
 from .creature_power_damage_model import OCCURRENCE_POWER_DAMAGE_CONTEXT
 from .saga_progression import dispatch_saga_entry_chapters
 from .shared_creature_type_model import canonical_creature_types
 from .trigger_processing import enqueue_trigger_batch
+from .rules.event_subscriptions import (
+    GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY, GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, event_has_capability_subscriber,
+)
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
@@ -88,6 +92,20 @@ def semantic_event_sources(
     ]
 
 
+def order_observing_trigger_sources(host, sources, source_zones):
+    """Order the represented source snapshots that were present for this occurrence."""
+    from .phasing_model import PHASING_TRIGGER_SOURCE_VISIBILITY_VERSION
+
+    candidates = sources if sources is not None else host._semantic_event_sources()
+    zones = source_zones or {}
+    if getattr(host.state, "phasing_lifecycle_version", None) == PHASING_TRIGGER_SOURCE_VISIBILITY_VERSION:
+        candidates = [
+            source for source in candidates
+            if zones.get(source.object_id, source.zone) != "battlefield" or not source.phased_out
+        ]
+    return sorted(candidates, key=lambda source: (source.zone_timestamp, source.object_id, source.logical_object_id))
+
+
 def capture_departure_trigger_sources(
     host: ZoneTriggerProcessingHost,
     *,
@@ -96,7 +114,9 @@ def capture_departure_trigger_sources(
 ) -> DepartureTriggerSnapshot:
     """Snapshot battlefield trigger sources and LKI before zone mutation."""
 
-    if not semantic_events or origin not in {"battlefield", "stack"}:
+    if not semantic_events or (origin not in {"battlefield", "stack"} and not (
+        origin == "graveyard" and _has_graveyard_departure_lookback(host)
+    )):
         return DepartureTriggerSnapshot((), {}, {})
     source_zones = None
     if origin == "stack":
@@ -122,10 +142,82 @@ def capture_departure_trigger_sources(
     )
 
 
+def _has_graveyard_departure_lookback(host):
+    return event_has_capability_subscriber(
+        host, GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY,
+    )
+
+
+def _dispatch_graveyard_departure_lookback(host, occurrence, context, departure, pending):
+    if occurrence.card_object and not occurrence.token and _has_graveyard_departure_lookback(host):
+        host._dispatch_semantic_event(
+            GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, context,
+            sources=departure.sources, source_zones=departure.source_zones,
+            source_characteristics=departure.source_characteristics, trigger_batch=pending,
+        )
+
+
 def _damage_source_characteristics(host, source):
     from .rules.stack_damage_sources import capture_damage_source_characteristics
     from .rules.permanent_event_state import permanent_event_characteristics
     return permanent_event_characteristics(host,source,capture_damage_source_characteristics(host, source))
+
+
+
+
+def dispatch_committed_batch_zone_events(host, snapshots, occurrences, *, trigger_batch):
+    """Dispatch each committed batch member against its sealed departure inputs."""
+    for (card, departure), occurrence in zip(snapshots, occurrences, strict=True):
+        sources = departure.trigger_sources
+        host._dispatch_zone_change_events(
+            card,
+            origin=departure.origin,
+            destination=card.zone,
+            origin_controller=departure.controller,
+            origin_logical_object_id=departure.logical_object_id,
+            origin_data=departure.characteristics,
+            origin_counters=departure.counters,
+            origin_attachments=departure.attachments,
+            origin_attached_to=departure.attached_to,
+            cast_option=departure.cast_option,
+            paid_entry_copy=departure.paid_entry_copy,
+            multikicker_paid=departure.multikicker_paid,
+            declared_cast_costs=departure.declared_cast_costs if card.zone == "battlefield" else None,
+            departure_sources=sources.sources,
+            departure_source_zones=sources.source_zones,
+            departure_source_characteristics=sources.source_characteristics,
+            reason=occurrence.cause,
+            transition_kind=occurrence.transition_kind,
+            read_ahead_chapter=occurrence.read_ahead_chapter,
+            trigger_batch=trigger_batch,
+            history_pre_recorded=True,
+            **({"putting_player": occurrence.putting_player} if occurrence.putting_player is not None else {}),
+            **({"discard_effect_origin": occurrence.discard_effect_origin} if occurrence.discard_effect_origin is not None else {}),
+        )
+
+
+def _dispatch_opponent_source_discard(host, card, occurrence, context, trigger_batch):
+    """Observe the same face-up discarded object in the zone reached by the effect."""
+    if occurrence.discard_effect_origin is None:
+        return
+    from .zone_transition_model import PUBLIC_ZONES
+
+    if (card.zone not in PUBLIC_ZONES or card.face_down or card.zone != occurrence.destination
+            or card.logical_object_id != occurrence.current_logical_object_id
+            or occurrence.owner not in host.active_seats):
+        return
+    causer = opponent_discard_origin(
+        occurrence.discard_effect_origin.to_dict(), discarding_player=occurrence.owner,
+        opponents=host.state.players,
+    )
+    if causer is None:
+        return
+    host._dispatch_semantic_event(
+        OPPONENT_SOURCE_DISCARD_EVENT,
+        {**context, "previous_controller": occurrence.owner, "causing_player": causer.controller,
+         "discarded_logical_object_id": occurrence.current_logical_object_id},
+        sources=(card,), trigger_batch=trigger_batch,
+    )
 
 
 def dispatch_zone_change_occurrence(
@@ -150,14 +242,21 @@ def dispatch_zone_change_occurrence(
     if not history_pre_recorded:
         record_zone_change_history(host, occurrence, events=events)
     from .unattachment_triggers import dispatch_departure_unattachments
-    dispatch_departure_unattachments(host, occurrence, DepartureTriggerSnapshot(
+    departure = DepartureTriggerSnapshot(
         tuple(departure_sources), departure_source_zones, departure_source_characteristics,
-    ), trigger_batch=pending)
+    )
+    dispatch_departure_unattachments(host, occurrence, departure, trigger_batch=pending)
     for event in events:
         context = event.context
+        if event.kind == "card.leave_graveyard":
+            _dispatch_graveyard_departure_lookback(host, occurrence, context, departure, pending)
+        if event.kind == "card.discarded":
+            _dispatch_opponent_source_discard(host, card, occurrence, context, pending)
         if event.kind=='permanent.enter':
             from .tribute_entry_results import tribute_entry_context
-            context={**dict(context),**tribute_entry_context(card,occurrence)}
+            from .devour import devour_entry_context
+            context = {**dict(context), **tribute_entry_context(card, occurrence),
+                       **devour_entry_context(card, occurrence.current_logical_object_id)}
         if event.kind == "creature.dies":
             from .event_card_return import death_source_exile_context
 
@@ -198,6 +297,10 @@ def dispatch_zone_change_occurrence(
                 context,
                 trigger_batch=pending,
             )
+    if occurrence.destination == "graveyard":
+        from .event_card_return import dispatch_graveyard_source_arrival
+
+        dispatch_graveyard_source_arrival(host, occurrence, card, trigger_batch=pending)
     if occurrence.origin == "battlefield" and occurrence.destination in {"graveyard", "exile"}:
         from .earthbend import collect_earthbend_departure
 

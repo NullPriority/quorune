@@ -43,3 +43,29 @@ def activation_creature_sacrifice_choice(cost):
             or not ('creature' in price.predicate.types_all or price.predicate.types_any == ('creature',))):
         return None
     return choice
+
+def _ordinary_paid_creature_choice(cost_schema):
+    from ...object_predicate import ObjectQuerySpec
+
+    choice = activation_creature_sacrifice_choice(cost_schema)
+    if choice is None or choice.fixed_zone_change_cost().predicate != ObjectQuerySpec(
+        zones=("battlefield",), controller="$actor", types_any=("creature",), known_to_actor=True,
+    ):
+        return None
+    return choice
+
+
+def activation_paid_creature_choice(cost_schema, *, legendary=False):
+    choice = _ordinary_paid_creature_choice(cost_schema)
+    if (choice is None or choice.another is not legendary or cost_schema["tap_source"] is not legendary
+            or any(cost_schema["mana"].values())):
+        return None
+    return choice
+
+
+def activation_paid_suspected_choice(cost_schema):
+    choice = _ordinary_paid_creature_choice(cost_schema)
+    if (choice is None or not choice.another or cost_schema["tap_source"]
+            or {key: value for key, value in cost_schema["mana"].items() if value} != {"GENERIC": 2, "B": 1}):
+        return None
+    return choice

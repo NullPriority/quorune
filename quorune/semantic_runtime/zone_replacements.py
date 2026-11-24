@@ -8,7 +8,6 @@ from typing import Any, Mapping, Protocol, Sequence
 from ..card_program_faces import program_matches_face, selected_face_id, prospective_face_view
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..commander_zones import (
-    commander_hand_library_replacement_effects,
     capture_composed_commander_zone_components,
     CommanderZoneError,
 )
@@ -57,20 +56,24 @@ from .counter_replacements import (
     collect_counter_placement_replacement_effects,
 )
 from .self_entry_counters import (
-    DynamicSelfEntryCounterHandler,
+    intrinsic_entry_counter_handlers,
     program_static_component_is_applicable,
-    SelfEntryCounterHandler,
-    SelfTappedCounterEntryHandler,
     subject_dynamic_self_entry_amounts,
 )
 from .conditional_entry_counters import ConditionalSelfEntryCounterHandler
 from .sunburst import SunburstEntryCounterHandler
 from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler, KeywordCounterEntryChoiceHandler
 from .tribute import TributeEntryHandler
-from .entry_designations import EntryDesignationHandler, LimitedCreatureTypeEntryDesignationHandler
+from .entry_designations import (
+    CountedCreatureTypeEntryDesignationHandler, EntryCardNameHandler, EntryDesignationHandler,
+    LimitedCreatureTypeEntryDesignationHandler,
+    CountedEntryOpponentHandler, EntryOpponentDesignationHandler, EntryPlayerDesignationHandler,
+    SelfChosenSubtypeEntryHandler,
+)
 from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_handler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
+from .linked_graveyard_entry import LinkedGraveyardEntryHandler
 from ..rules.amplify import AMPLIFY_HANDLER, amplify_hand_reveals
 from .amplify import AmplifyEntryHandler, amplify_replacement_effects
 from .devour import DevourEntryHandler,devour_replacement_effects,capture_devour_candidates
@@ -78,8 +81,10 @@ from .preparation import PreparationEntryHandler
 from .kicker import FixedKickedEntryHandler
 from .multikicker import MultikickerEntryHandler, prospective_multikicker_fields
 from .madness import MadnessDiscardReplacementHandler
-from .self_graveyard_exile import SelfGraveyardExileHandler
-from ..self_graveyard_exile_model import SELF_GRAVEYARD_EXILE_HANDLER
+from .self_graveyard_exile import (
+    SELF_GRAVEYARD_REPLACEMENT_HANDLERS, SelfGraveyardExileHandler, SelfGraveyardShuffleHandler,
+    prepare_commander_zone_replacements,
+)
 from ..read_ahead import READ_AHEAD_ENTRY_HANDLER_ID
 from .entry_state import (
     ENTRY_STATE_HANDLER_ID,
@@ -87,8 +92,8 @@ from .entry_state import (
     FixedEntryConditionReplacementHandler,
 )
 from .external_entry_state import ExternalEntryStateHandler
-from .external_entry_counters import ExternalEntryCounterHandler
-from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER
+from .external_entry_counters import ExternalChosenSubtypeEntryCounterHandler, ExternalEntryCounterHandler
+from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER_IDS
 from ..qualified_entry_state_model import QUALIFIED_ENTRY_STATE_HANDLER, EntryStateSourceSnapshot
 from .qualified_entry_state import QualifiedEntryStateHandler
 from .zone_replacement_model import (
@@ -103,8 +108,9 @@ from .zone_replacement_model import (
     ZoneReplacementError,
 )
 from .zone_replacement_inputs import (
+    intrinsic_subject_replacement_effects,
     active_zone_replacement_sources,
-    conditional_counter_entry_types,
+    subject_entry_counter_fields,
     zone_change_subject_characteristics,
     validated_zone_change_snapshot_inputs,
     zone_change_snapshot_events,
@@ -441,31 +447,13 @@ class ZoneChangeReplacementRegistry(
         *,
         subject: ZoneChangeSubjectSnapshot,
         component_id: str,
+        host: ZoneReplacementHost | None = None,
+        simultaneous_departures: tuple[str, ...] = (),
     ) -> tuple[ReplacementEffect, ...]:
-        handler = self._handler(descriptor)
-        compiler = getattr(handler, "subject_replacement_effects", None)
-        if compiler is not None:
-            effects = tuple(
-                compiler(
-                    descriptor,
-                    subject=subject,
-                    component_id=component_id,
-                )
-            )
-            if any(
-                not isinstance(effect, ReplacementEffect)
-                for effect in effects
-            ):
-                raise SemanticNodeError(
-                    "Affected-object replacement compilation must be typed"
-                )
-            return effects
-        effect = self.subject_replacement_effect(
-            descriptor,
-            subject=subject,
-            component_id=component_id,
+        return intrinsic_subject_replacement_effects(
+            self._handler(descriptor), descriptor, subject=subject, component_id=component_id,
+            host=host, simultaneous_departures=simultaneous_departures, fallback=self.subject_replacement_effect,
         )
-        return () if effect is None else (effect,)
 
 
 @lru_cache(maxsize=1)
@@ -478,16 +466,32 @@ def default_zone_change_replacement_registry(
             ExternalEntryStateHandler(),
             QualifiedEntryStateHandler(),
             ExternalEntryCounterHandler(),
+            ExternalChosenSubtypeEntryCounterHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
+            EntryCardNameHandler(),
+            EntryOpponentDesignationHandler(),
+            EntryPlayerDesignationHandler(),
+            CountedEntryOpponentHandler(),
             ExcludedColorEntryDesignationHandler(),
             LimitedCreatureTypeEntryDesignationHandler(),
+            CountedCreatureTypeEntryDesignationHandler(),
+            SelfChosenSubtypeEntryHandler(),
             EntryCopyHandler(),
             entry_copy_handler(2),
             entry_copy_handler(3),
             entry_copy_handler(4),
             entry_copy_handler(5),
             entry_copy_handler(6),
+            entry_copy_handler(7),
+            entry_copy_handler(8),
+            entry_copy_handler(9),
+            entry_copy_handler(10),
+            entry_copy_handler(11),
+            entry_copy_handler(12),
+            entry_copy_handler(13),
+            entry_copy_handler(14),
+            LinkedGraveyardEntryHandler(),
             EntryRevealHandler(),
             AmplifyEntryHandler(),
             DevourEntryHandler(),
@@ -500,9 +504,8 @@ def default_zone_change_replacement_registry(
             MultikickerEntryHandler(),
             MadnessDiscardReplacementHandler(),
             SelfGraveyardExileHandler(),
-            DynamicSelfEntryCounterHandler(),
-            SelfEntryCounterHandler(),
-            SelfTappedCounterEntryHandler(),
+            SelfGraveyardShuffleHandler(),
+            *intrinsic_entry_counter_handlers(),
             SunburstEntryCounterHandler(),
             ZoneDestinationReplacementHandler(),
             GraveyardExileReplacementHandler(),
@@ -626,10 +629,10 @@ def collect_zone_change_replacement_effects(
                     or not program_static_component_is_applicable(host,program,source)):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
-                if descriptor.get('handler_id') == SELF_GRAVEYARD_EXILE_HANDLER:
+                if descriptor.get('handler_id') in SELF_GRAVEYARD_REPLACEMENT_HANDLERS:
                     continue
                 source_context=None
-                if descriptor.get('handler_id')==EXTERNAL_ENTRY_COUNTER_HANDLER:
+                if descriptor.get('handler_id') in EXTERNAL_ENTRY_COUNTER_HANDLER_IDS:
                     from ..rules.external_entry_counters import snapshot_external_entry_counter_source
                     source_context=snapshot_external_entry_counter_source(host,source,descriptor)
                 elif descriptor.get('handler_id') == QUALIFIED_ENTRY_STATE_HANDLER:
@@ -828,10 +831,6 @@ def _zone_change_snapshot_subjects(
             characteristics, destination_controller, card_types, subtypes, supertypes = zone_change_subject_characteristics(
                 host, card, destination, entry_characteristics, destination_controllers)
             counters = tuple(effect_entry_counters.get(card.object_id, ()))
-            if any(counter.required_entry_type is not None for counter in counters):
-                object_types = conditional_counter_entry_types(host, card, destination_controller)
-            else:
-                object_types = tuple(sorted(card_types | subtypes | supertypes))
             controlled_basic_types = controller_basic_land_types(
                 host,
                 destination_controller,
@@ -926,7 +925,8 @@ def _zone_change_snapshot_subjects(
                         prospective_name=prospective_name,
                         cache=entry_metrics_by_controller,
                     ),
-                    object_types=object_types,
+                    **subject_entry_counter_fields(host, card, destination, destination_controller,
+                        characteristics, (card_types, subtypes, supertypes), counters),
                     is_card_object=card.is_card_object,
                     transition_kind=transition_kinds.get(
                         card.object_id,
@@ -960,6 +960,7 @@ def _zone_change_snapshot_effects(
         sources=active_sources, source_zones={source.object_id: "battlefield" for source in active_sources},
     )
     subject_cards = {**host.state.cards, **prospective_objects}
+    simultaneous_departures = tuple(subject.object_id for subject in subjects if subject.destination != "battlefield")
     intrinsic_effects = tuple(
         effect
         for subject in subjects
@@ -1004,7 +1005,7 @@ def _zone_change_snapshot_effects(
             for descriptor_index, descriptor in enumerate(program.handlers):
                 if (
                     descriptor.get("handler_id")
-                    not in {MADNESS_REPLACEMENT_HANDLER_ID, SELF_GRAVEYARD_EXILE_HANDLER}
+                    not in {*SELF_GRAVEYARD_REPLACEMENT_HANDLERS, MADNESS_REPLACEMENT_HANDLER_ID}
                 ):
                     continue
                 subject_effects.extend(
@@ -1049,6 +1050,8 @@ def _zone_change_snapshot_effects(
                         descriptor,
                         subject=subject,
                         component_id=f"{program.key}:{descriptor_index}",
+                        host=host,
+                        simultaneous_departures=simultaneous_departures,
                     )
                 )
     effects=(
@@ -1062,17 +1065,14 @@ def _zone_change_snapshot_effects(
                 *intrinsic_effects,
                 *generated_effects,
                 *self_entry_effects,
-                *(effect for subject in subjects for effect in entry_copy_replacement_effects(host, subject,prospective_objects=prospective_objects)),
+                *(effect for subject in subjects for effect in entry_copy_replacement_effects(
+                    host, subject, prospective_objects=prospective_objects, simultaneous_departures=simultaneous_departures)),
                 *(effect for subject in subjects for effect in entry_reveal_replacement_effects(host, subject)),
                 *(effect for subject in subjects for effect in devour_replacement_effects(host, subject,prospective_objects=prospective_objects)),
                 *subject_effects,
     )
-    from ..replacement.operations import SetField
-    transitions=sum(isinstance(operation,SetField) and operation.field=="destination"
-        for effect in effects if effect.event_kind=="zone.change" for operation in effect.operations)
     try:
-        commanders=tuple(effect for subject in subjects
-            for effect in commander_hand_library_replacement_effects(subject,maximum_destination_changes=transitions))
+        commanders = prepare_commander_zone_replacements(subjects, effects)
     except CommanderZoneError as exc:raise ZoneReplacementError(str(exc)) from exc
     return tuple(sorted((*effects,*commanders),key=lambda effect:effect.effect_id))
 
@@ -1347,9 +1347,7 @@ def prepare_zone_change_replacement_batch(
         error_type=error_type,
     )
     prepared=prepare_zone_change_replacement_snapshot(
-        snapshot,
-        selections=selections,
-        error_type=error_type,
+        snapshot,selections=selections,error_type=error_type,host=host,
     )
     from ..entry_reveal import ENTRY_REVEAL_FIELD
     from ..effect_runtime.hand_inspection import validate_entry_hand_reveal
@@ -1366,13 +1364,21 @@ def prepare_zone_change_replacement_snapshot(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     error_type: type[Exception] = ZoneReplacementError,
     event_ids: Mapping[str, str] | None = None,
+    host=None,
+    prospective_objects=None,
 ) -> dict[str, PreparedZoneChange]:
-    """Resolve a captured batch without consulting mutable game state."""
+    """Resolve a captured batch and its prepared entry-cost reads."""
 
     if not isinstance(snapshot, ZoneChangeReplacementSnapshot):
         raise error_type(
             "Zone replacement preparation requires an immutable snapshot"
         )
+    from .graveyard_copy_preparation import has_graveyard_copy_operation, prepare_graveyard_copy_snapshot
+    if has_graveyard_copy_operation(snapshot):
+        if host is None or event_ids is not None:
+            raise error_type("Graveyard copy requires its captured entry host")
+        return prepare_graveyard_copy_snapshot(host,snapshot,selections=selections,error_type=error_type,
+                                              prospective_objects=prospective_objects)
     from ..replacement.operations import DevourEntryOperation
     if any(isinstance(op,DevourEntryOperation) for effect in snapshot.effects for op in effect.operations):
         if event_ids is not None:raise error_type('Explicit zone event identities do not represent Devour entry')

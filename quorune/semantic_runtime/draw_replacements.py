@@ -13,8 +13,18 @@ from ..replacement import (
     ReplacementEffect,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..drawing.step_exemption import (
+    DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+    DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY,
+    DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+    DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+    is_first_draw_in_own_draw_step,
+)
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .draw_step_discard import DrawStepExemptDiscardHandler
+from .draw_step_redirect import DrawStepExemptRedirectHandler
+from .temporary_draw_redirect import collect_temporary_draw_redirects
 
 
 DREDGE_HANDLER_ID = "replacement.draw.dredge.v1"
@@ -23,6 +33,11 @@ DRAW_INSTRUCTION_MULTIPLIER_HANDLER_ID = (
 )
 DRAW_RESULT_MULTIPLIER_HANDLER_ID = "replacement.draw.result.multiply.v1"
 _DREDGE_LABEL = "Dredge "
+_DRAW_STEP_EXEMPT_HANDLERS = {
+    DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+    DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+    DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+}
 
 
 class DrawReplacementSemantics(Protocol):
@@ -53,6 +68,7 @@ class DrawReplacementPlayer(Protocol):
 class DrawReplacementState(Protocol):
     players: Mapping[str, DrawReplacementPlayer]
     cards: Mapping[str, DrawReplacementCard]
+    continuous_effects: Sequence[Any] | None
 
 
 class DrawReplacementHost(Protocol):
@@ -61,6 +77,8 @@ class DrawReplacementHost(Protocol):
     active_seats: list[str]
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _effective_static_component_key_map(self) -> Mapping[str, Sequence[str]]: ...
 
     def _semantic_event_sources(
         self, *, zones: set[str] | None = None
@@ -498,6 +516,13 @@ def default_draw_replacement_registry() -> DrawReplacementRegistry:
             DredgeReplacementHandler(),
             DrawInstructionMultiplierHandler(),
             DrawResultMultiplierHandler(),
+            DrawStepExemptRedirectHandler(),
+            DrawStepExemptDiscardHandler(),
+            DrawResultMultiplierHandler(
+                handler_id=DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+                capability_dependencies=(DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY, "zone.draw.result_generated_ordering"),
+                rule_references=("121.6", "121.6b", "121.7", "504.1", "614.5"),
+            ),
         )
     )
     registry.require_registered_capabilities(
@@ -510,15 +535,16 @@ def collect_draw_replacement_effects(
     host: DrawReplacementHost,
     player: str,
 ) -> tuple[ReplacementEffect, ...]:
-    """Compile trusted graveyard draw replacements for one affected player."""
+    """Collect trusted draw replacements for the current affected player."""
 
-    if type(player) is not str or player not in host.active_seats:
+    active_seats = host.active_seats
+    if type(player) is not str or player not in active_seats:
         raise SemanticNodeError(
             "Draw replacements require one active affected player"
         )
     registry = default_draw_replacement_registry()
     graveyard = host.state.players[player].zones["graveyard"]
-    effects: list[ReplacementEffect] = []
+    effects = collect_temporary_draw_redirects(host, player, active_seats)
     for object_id in graveyard:
         source = host.state.cards[object_id]
         if source.owner != player or source.zone != "graveyard":
@@ -549,11 +575,12 @@ def collect_draw_replacement_effects(
                         ),
                     )
                 )
+    component_map = None
     for source in host._semantic_event_sources(zones={"battlefield"}):
         if (
             source.zone != "battlefield"
             or source.phased_out
-            or source.controller != player
+            or source.controller not in active_seats
         ):
             continue
         programs = host.semantics.runtime_handler_programs_for_oracle(
@@ -565,6 +592,20 @@ def collect_draw_replacement_effects(
             if not host.semantic_program_is_current_trusted(program):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                handler_id = descriptor.get("handler_id")
+                applies_to_opponent = handler_id == DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID
+                if (
+                    handler_id != DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID
+                    and (source.controller != player) != applies_to_opponent
+                ):
+                    continue
+                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS:
+                    if is_first_draw_in_own_draw_step(host.state, player):
+                        continue
+                    if component_map is None:
+                        component_map = host._effective_static_component_key_map()
+                    if program.key not in component_map.get(source.object_id, ()):
+                        continue
                 effects.append(
                     registry.replacement_effect(
                         descriptor,

@@ -9,6 +9,7 @@ from ..attachment_references import (
     resolve_source_attachment,
 )
 from ..station import StationAbilityError, station_resolution_power
+from ..affected_permanents import KICKED_ENTRY_DESTRUCTION_FIELD
 from ..graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_OPERATION
 from ..rules.graveyard_exile_type_outcomes import GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION
 from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VALUE
@@ -25,6 +26,7 @@ from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND
 from ..rules.revealed_library_top import REVEAL_TOP_OPERATION
 from ..scalar_effect_amounts import resolve_paid_sacrifice_condition, resolve_scalar_effect_amount
 from .direct_target_fields import bound_mutation_target_overrides
+from ..library_bottom_result_model import LIBRARY_BOTTOM_RESULT_OPERATION, LibraryBottomResultSpec
 
 
 _INDEX_GROUP = "index"
@@ -169,11 +171,18 @@ def _resolve_typed_semantic_value(host, value, item):
         from ..player_maximum import resolve_player_maximum
         try:return resolve_player_maximum(host,value,item)
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind'] == 'devoured_entry_creatures_amount':
+        from ..devour import resolve_devour_entry_amount
+        try:
+            return resolve_devour_entry_amount(value, item)
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if value['kind']=='source_entry_x_amount':
         from ..entry_x_amount_model import resolve_entry_x_amount
         try:return resolve_entry_x_amount(value,item)
         except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if value['kind'] in {'source_entry_designation_predicate','source_entry_designation_scope'}:
+    if value['kind'] in {'source_entry_designation_predicate','source_entry_designation_scope',
+                         'source_entry_designation_library_filter'}:
         from ..designation_prevention import resolve_designation_predicate
         try:return resolve_designation_predicate(value,item)
         except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
@@ -193,7 +202,79 @@ def _resolve_typed_semantic_value(host, value, item):
     raise SemanticNodeError('Typed semantic value kind is unsupported')
 
 
+def _resolve_kicked_entry_destruction(host, effect, item):
+    from ..affected_permanents import KickedEntryDestructionSpec
+
+    try:
+        spec = KickedEntryDestructionSpec.from_effect(effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    facts = item.context
+    cast_option = facts.get("cast_option")
+    counter = facts.get("card_zone_change_counter")
+    origin = facts.get("from")
+    source_id = item.source_object_id
+    first_token_entry = facts.get("token") is True and origin in ("stack", "outside")
+    if (item.kind != "triggered_ability" or facts.get("event") != "permanent.enter"
+            or facts.get("to") != "battlefield" or type(counter) is not int or counter < 0
+            or counter == 0 and not first_token_entry
+            or type(source_id) is not str or not source_id
+            or facts.get("source_logical_object_id") != f"{source_id}@{counter}"
+            or cast_option not in (None, "kicked")
+            or cast_option == "kicked" and origin != "stack"):
+        raise SemanticNodeError("Kicked entry destruction requires the committed self-entry occurrence")
+    source_ref = resolve_semantic_value(host, effect["source"], item)
+    affected = spec.affected_set(kicked=cast_option == "kicked", source_ref=source_ref)
+    return {"op": "destroy_all", "source": source_ref, "set": affected.to_dict()}
+
+
+def _resolve_fixed_object_action(host, value, item):
+    from ..delayed_object_model import is_forced_block_status_effect, validate_forced_block_status_effect
+
+    if is_forced_block_status_effect(value):
+        try:
+            validate_forced_block_status_effect(value, compiled=True)
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        ref = resolve_semantic_value(host, value["object"], item)
+        if ref is None:
+            return {**value, "object": None}
+        snapshot = item.context.get("target_snapshots", {}).get(ref)
+        if (not isinstance(snapshot, Mapping) or snapshot.get("zone") != "battlefield"
+                or type(snapshot.get("object_id")) is not str
+                or type(snapshot.get("zone_change_counter")) is not int):
+            raise SemanticNodeError("The blocked-status effect lost its announced attacking incarnation")
+        identity = f"{snapshot['object_id']}@{snapshot['zone_change_counter']}"
+        return {**value, "object": {"reference": ref, "logical_object_id": identity}}
+    from ..rules.reanimation_followup import current_linked_subject, validate_linked_departure
+
+    try:
+        subject = validate_linked_departure(value)
+    except (ValueError, TypeError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    return {**value, "object": None} if current_linked_subject(host, subject, zone="battlefield") is None else dict(value)
+
+
+def _resolve_library_bottom_result(host, value, item):
+    try:
+        if "_replacement_selections" in value:
+            retained = {key: child for key, child in value.items() if key != "_replacement_selections"}
+            spec = LibraryBottomResultSpec.from_effect(retained, actor=item.controller)
+            role = "$target.0" if spec.targets_player else "$controller"
+            if retained["player"] != resolve_semantic_value(host, role, item):
+                raise ValueError("Library-bottom replacement changed its printed library role")
+            return dict(value)
+        LibraryBottomResultSpec.from_effect(value)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    return {**value, "player": resolve_semantic_value(host, value["player"], item)}
+
+
 def _resolve_effect_mapping(host, value, item):
+    if KICKED_ENTRY_DESTRUCTION_FIELD in value:
+        return _resolve_kicked_entry_destruction(host, value, item)
+    if value.get("op") == LIBRARY_BOTTOM_RESULT_OPERATION:
+        return _resolve_library_bottom_result(host, value, item)
     if value.get("op") == "look_top_shared_type_reveal":
         from ..rules.shared_type_library_model import SharedTypeLibraryResult
         try:
@@ -202,7 +283,7 @@ def _resolve_effect_mapping(host, value, item):
             raise SemanticNodeError(str(exc)) from exc
         return {**value, "player": resolve_semantic_value(host, value["player"], item)}
     if (value.get("op") == "create_token" and isinstance(value.get("copy_spec"), Mapping)
-            and value["copy_spec"].get("schema_version") in {3, 4}):
+            and value["copy_spec"].get("schema_version") in {3, 4, 5}):
         from ..token_copy_recipes import TokenCopyRecipeSpec
         try:
             recipe = TokenCopyRecipeSpec.from_dict(value["copy_spec"])
@@ -253,14 +334,8 @@ def _resolve_effect_mapping(host, value, item):
     if value.get('op') == 'counter_unless_pay' and value.get('schema_version') == 5:
         if resolve_semantic_value(host, value['stack'], item) is None:
             return {**value, 'stack': None}
-    if value.get('op') == 'resolve_fixed_object_action' and value.get('schema_version') == 3:
-        from ..rules.reanimation_followup import current_linked_subject, validate_linked_departure
-
-        try:
-            subject = validate_linked_departure(value)
-        except (ValueError, TypeError) as exc:
-            raise SemanticNodeError(str(exc)) from exc
-        return {**value, 'object': None} if current_linked_subject(host, subject, zone='battlefield') is None else dict(value)
+    if value.get('op') == 'resolve_fixed_object_action' and value.get('schema_version') in {3, 4}:
+        return _resolve_fixed_object_action(host, value, item)
     if value.get('op') == 'reanimate' and ('attachment_return' in value or value.get('schema_version') == 7):
         from ..attachment_source_return import bind_attachment_source_return
         try:return bind_attachment_source_return(value, item)
@@ -288,10 +363,13 @@ def _resolve_effect_mapping(host, value, item):
         validate_resolution_condition_instruction(value)
         return {**value,'player':resolve_semantic_value(host,value['player'],item),
             'cast_fact':resolve_semantic_value(host,value['cast_fact'],item)}
-    from ..rules.stack_damage_sources import bound_stack_damage_source
+    from ..rules.stack_damage_sources import bind_source_relative_damage, bound_stack_damage_source
+    from ..rules.damage_capability_shapes import SOURCE_RELATIVE_DAMAGE_VERSION_FIELD
     from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        if SOURCE_RELATIVE_DAMAGE_VERSION_FIELD in value:
+            value = bind_source_relative_damage(host, value, item, resolve=lambda operand: resolve_semantic_value(host, operand, item))
         if 'fixed_target_role_damage' in value:
             from ..rules.fixed_damage_roles import bind_fixed_damage_roles
             value=bind_fixed_damage_roles(host,value,item)
@@ -364,8 +442,16 @@ def resolve_semantic_value(
         try:return resolve_cast_mana_units(host,value,item)
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind') in {
-            'target_controller_information','target_owner_information','occurrence_controller_information'}:
+            'target_controller_information','target_owner_information','occurrence_controller_information',
+            'damage_dealer_controller_information'}:
         return _resolve_target_information_value(host,value,item)
+    if isinstance(value, Mapping) and value.get("kind") == "source_charge_life_total":
+        from ..rules.source_charge_life_totals import resolve_source_charge_life_value
+
+        try:
+            return resolve_source_charge_life_value(host, value, item)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
         from ..reflexive_trigger_model import ReflexiveTriggerProgram
         try:
@@ -378,7 +464,7 @@ def resolve_semantic_value(
         from ..rules.attachment_controller_information import resolve_attachment_controller
         try:return resolve_attachment_controller(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','unique_player_maximum','target_player_public_query_amount','per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount','per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount','per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount','all_player_turn_life_loss_amount','current_controller_life_effect_amount'):
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','devoured_entry_creatures_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope','source_entry_designation_library_filter','unique_player_maximum','target_player_public_query_amount','per_player_public_query_damage_amount','bound_per_player_public_query_damage_amount','per_player_current_life_damage_amount','bound_per_player_current_life_damage_amount','per_player_public_query_life_loss_amount','bound_per_player_public_query_life_loss_amount','all_player_turn_life_loss_amount','current_controller_life_effect_amount'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)
@@ -498,6 +584,7 @@ def _resolve_target_information_value(host,value,item):
     )
     reader={'target_controller_information':resolve_target_controller_information,
         'target_owner_information':resolve_target_owner_information,
-        'occurrence_controller_information':resolve_occurrence_controller_information}[value['kind']]
+        'occurrence_controller_information':resolve_occurrence_controller_information,
+        'damage_dealer_controller_information':resolve_occurrence_controller_information}[value['kind']]
     try:return reader(host,value,item)
     except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc

@@ -13,6 +13,11 @@ All represented combat and noncombat damage uses one prepare-and-commit
 transaction. Producers submit immutable source, recipient, amount, and event
 identity values. `damage.py` coordinates preparation, delegating modifier and
 immediate prevention-result preparation to `damage_aftermath_preparation.py`.
+Fixed-remainder prevention reads the damaged player's or permanent's current
+scope and prevents the excess in each damage event. The existing replacement
+order determines the result when other effects modify the amount.
+A compiled emblem can supply the controller-and-planeswalker prevention
+component from the command zone after its creator leaves.
 `counter_prevention.py` aggregates fixed static counter-removal results across
 simultaneous sources, projects counter state for nested preparation, and
 delegates all live removal to the canonical counter owner. `damage_results.py` owns
@@ -53,6 +58,12 @@ keywords such as lifelink; the resolving ability keeps its own controller.
 Current facts are read at the individual damage instruction after any paid
 prefix. Once a damage proposal is sealed, replacement-choice resumption retains
 that proposal's source facts.
+
+Fixed damage to a creature that attacks or blocks uses the original
+incarnation sealed by the corresponding combat transition. The existing
+trigger owner produces one block occurrence for a creature that blocks
+multiple attackers. Each result uses the creating ability's current or
+last-known damage source and the original public recipient.
 
 Marked source-specific Cycling damage binds the card in its committed
 post-discard zone under CR 702.29c. The original hand snapshot still selects the
@@ -215,7 +226,28 @@ substitutes a complete recipient value before the loop continues. Prevention
 then consumes the resulting event through the separate
 [prevention transaction](prevention.md).
 
+A linked battlefield entry choice can bind any active player for the
+source's current damage quantity ability. The choice follows the original
+incarnation and effective copy form. The doubler rechecks the damage
+recipient's controller at application, including after redirection, and
+keeps the original dealer and its combat status.
+
+Another linked consumer can seal the chosen player when its source
+receives damage. The ordinary damage operation uses that received amount
+and the original source snapshot, even if the permanent has reentered
+with a different choice. One source-bound tap activation can also deal
+one damage to the original live incarnation. Missing recipients supply
+no damage result.
+
 ## Results and commit
+
+A current battlefield ability can cap its controller's damage-derived life
+loss at a final total of one. The version-two descriptor requires a starting
+life total of at least one and uses the same result batch as other life
+changes. Full damage still occurs, including unpreventable damage. The
+source must have its current printed ability when the damage batch begins,
+so a face-down source contributes no floor. A source that leaves during
+the same batch still contributes its effect to that batch.
 
 Only positive final damage produces result events. The result planner derives
 the typed consequences for life, marked damage, defense, loyalty, commander
@@ -327,3 +359,19 @@ See [ADR 0012](../adr/0012-damage-transaction-and-static-prevention.md),
 [ADR 0013](../adr/0013-damage-result-event-ownership.md),
 [ADR 0015](../adr/0015-durable-damage-modifier-ownership.md), and
 [ADR 0017](../adr/0017-prevention-continuations-and-aftermath.md).
+
+## Optional source damage
+
+A targeted player may choose to let the resolving source deal printed
+damage to them. The choice resolves the damage branch through the ordinary
+damage owner. A refusal resolves the printed alternate instruction.
+Prevention or replacement changes the damage without changing the choice
+that was recorded. The continuation checks the original spell and target
+again when the actor answers.
+
+Collective optional damage gives each eligible player a choice in active
+player, nonactive player order. A completed round deals one simultaneous
+damage batch to the players who accepted. All declines can trigger the
+printed draw or mill for the original target. For source-entry abilities,
+an acceptance can require sacrifice of the original creature even if
+replacement or prevention leaves the accepting player's life unchanged.

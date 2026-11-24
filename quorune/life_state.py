@@ -281,6 +281,14 @@ def validate_life_payment(
     validate_life_changes(host, prepared.plan)
 
 
+def dispatch_life_payment_loss(host: LifeStateHost, payment: LifeTransition) -> None:
+    from .player_result_events import LifeLossEvent, dispatch_life_loss_events
+
+    amount = payment.before - payment.after
+    if amount > 0:
+        dispatch_life_loss_events(host, (LifeLossEvent(payment.player, amount),))
+
+
 def commit_life_payment(
     host: LifeStateHost,
     prepared: PreparedLifePayment,
@@ -288,5 +296,6 @@ def commit_life_payment(
     """Commit a replay-validated nonreplaceable life payment."""
 
     validate_life_payment(host, prepared)
-    transitions = apply_life_changes(host, prepared.plan)
-    return transitions[0]
+    payment, = apply_life_changes(host, prepared.plan)
+    dispatch_life_payment_loss(host, payment)
+    return payment

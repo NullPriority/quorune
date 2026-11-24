@@ -16,6 +16,7 @@ from ..rules.graveyard_card_targets import (
     opposing_graveyard_return_sequence_capabilities,
     public_graveyard_return_effect,
 )
+from ..rules.source_excluding_graveyard_returns import source_excluding_graveyard_return_schema
 from .direct_target import (
     DirectPermanentTargetSpec,
     compiled_direct_target,
@@ -116,6 +117,7 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
     """Closed lowering for one mandatory own-graveyard card return."""
 
     target: GraveyardCardTargetKind | OwnGraveyardCardTargetSpec
+    exclude_source: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(
@@ -123,6 +125,10 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
             (GraveyardCardTargetKind, OwnGraveyardCardTargetSpec),
         ):
             raise ValueError("Graveyard return target domain is unsupported")
+        if type(self.exclude_source) is not bool:
+            raise ValueError("Graveyard return source exclusion must be boolean")
+        if self.exclude_source:
+            source_excluding_graveyard_return_schema(self.target_spec)
 
     @property
     def target_spec(self) -> OwnGraveyardCardTargetSpec:
@@ -134,6 +140,8 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.exclude_source:
+            return f"return-another-target-{self.target_spec.slug}-from-own-graveyard-v1"
         version = 1 if isinstance(self.target, GraveyardCardTargetKind) else 2
         return (
             f"return-target-{self.target_spec.slug}-from-own-graveyard-v{version}"
@@ -148,6 +156,8 @@ class TargetedOwnGraveyardReturnToHandEffectTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
+        if self.exclude_source:
+            return source_excluding_graveyard_return_schema(self.target_spec)
         return self.target_spec.to_target_schema()
 
     @property
@@ -278,6 +288,15 @@ def targeted_own_graveyard_return_to_hand_effect_template(
     text: str,
 ) -> TargetedOwnGraveyardReturnToHandEffectTemplate | TargetedGraveyardReturnManaValueLifeTemplate | None:
     normalized = ' '.join(text.strip().split())
+    prefix = "return another target "
+    if normalized.casefold().startswith(prefix):
+        ordinary = targeted_own_graveyard_return_to_hand_effect_template("return target " + normalized[len(prefix):])
+        if isinstance(ordinary, TargetedOwnGraveyardReturnToHandEffectTemplate):
+            try:
+                return TargetedOwnGraveyardReturnToHandEffectTemplate(ordinary.target, exclude_source=True)
+            except ValueError:
+                return None
+        return None
     linked = re.fullmatch(r"(?P<returned>Return target .+? from your graveyard to your hand)\. "
         r"You gain life equal to that card['’]s mana value\.", normalized, re.I)
     if linked is not None:

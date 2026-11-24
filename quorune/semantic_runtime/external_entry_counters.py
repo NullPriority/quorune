@@ -2,9 +2,13 @@ from __future__ import annotations
 
 """Pure replacement lowering from immutable external entry-counter source data."""
 
-from dataclasses import dataclass
-from ..external_entry_counter_model import (EXTERNAL_ENTRY_COUNTER_CAPABILITY,EXTERNAL_ENTRY_COUNTER_HANDLER,
-    ExternalEntryCounterSpec,ExternalEntryCounterSourceSnapshot)
+from dataclasses import dataclass, replace
+from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY
+from ..external_entry_counter_model import (
+    EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
+    EXTERNAL_ENTRY_COUNTER_CAPABILITY, EXTERNAL_ENTRY_COUNTER_HANDLER,
+    ExternalEntryCounterSpec, ExternalEntryCounterSourceSnapshot,
+)
 from ..replacement import ReplacementClass,ReplacementEffect
 from ..replacement.operations import AddAffectedObjectCounter,GrantAffectedObjectSubtype
 from .component_registry import exact_fields
@@ -28,6 +32,9 @@ class ExternalEntryCounterHandler:
         try:return ExternalEntryCounterSpec.from_dict(descriptor['entry_counter'])
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
 
+    def _spec_with_source(self, spec, source_context):
+        return spec
+
     def source_replacement_effect(self,descriptor,*,source_ref,source_controller,component_id,source_context):
         spec=self.validate(descriptor)
         if not isinstance(source_context,ExternalEntryCounterSourceSnapshot) or source_context.controller!=source_controller:
@@ -36,6 +43,9 @@ class ExternalEntryCounterHandler:
             raise SemanticNodeError('External entry counters require current source and component identities')
         if spec.amount_source=='fixed_one' and source_context.amount!=1:
             raise SemanticNodeError('Fixed-one entry counter source snapshot has an inconsistent amount')
+        spec = self._spec_with_source(spec, source_context)
+        if spec is None:
+            return None
         amount=source_context.nonnegative_amount
         if amount==0 and not spec.add_mutant:return None
         predicate={'contains_all':['creature',*([spec.required_subtype] if spec.required_subtype else [])]}
@@ -47,3 +57,25 @@ class ExternalEntryCounterHandler:
             operations=((*((GrantAffectedObjectSubtype('mutant'),) if spec.add_mutant else ()),
                 *((AddAffectedObjectCounter('+1/+1',amount,source_controller,source_ref),) if amount>0 else ()))),
             label=f'{source_ref}: enter with additional +1/+1 counters')
+
+
+
+@dataclass(frozen=True, slots=True)
+class ExternalChosenSubtypeEntryCounterHandler(ExternalEntryCounterHandler):
+    handler_id: str = EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER
+    schema_version: int = 2
+    rule_references: tuple[str, ...] = ("122.6", "122.6a", "607.2d", "614.1c", "614.5", "614.12", "616.1")
+    capability_dependencies: tuple[str, ...] = (
+        EXTERNAL_ENTRY_COUNTER_CAPABILITY, "counter.placement.quantity_replacement",
+        ENTRY_DESIGNATION_CAPABILITY, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY,
+    )
+
+    def validate(self, descriptor):
+        spec = ExternalEntryCounterHandler.validate(self, descriptor)
+        if spec != ExternalEntryCounterSpec():
+            raise SemanticNodeError("Chosen subtype entry counters require the exact fixed additional counter")
+        return spec
+
+    def _spec_with_source(self, spec, source_context):
+        subtype = source_context.chosen_creature_type
+        return replace(spec, required_subtype=subtype) if subtype is not None else None

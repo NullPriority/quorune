@@ -7,6 +7,7 @@ from ..whole_hand_discard_model import (
     WHOLE_HAND_DISCARD_OPERATION,WHOLE_HAND_DISCARD_CAPABILITY,DiscardWholeHandsIntent,
 )
 from ..target_cardinality import ordered_selected_players
+from ..discard_effect_origin import BOUND_DISCARD_EFFECT_ORIGIN, read_bound_discard_origin
 from .context import SemanticNodeError
 from .intents import IntentPlan,MoveObjectsSimultaneouslyIntent
 
@@ -21,7 +22,7 @@ class WholeHandDiscardHandler:
     capability_dependencies:tuple[str,...]=(WHOLE_HAND_DISCARD_CAPABILITY,)
 
     def lower(self,effect,context):
-        if set(effect)-{'op','actor','players','reason','_replacement_selections'} or not {'op','actor','players'}<=set(effect):
+        if set(effect)-{'op','actor','players','reason','_replacement_selections',BOUND_DISCARD_EFFECT_ORIGIN} or not {'op','actor','players'}<=set(effect):
             raise SemanticNodeError('Whole-hand discard fields are incomplete or unknown')
         if effect['op']!=self.operation or effect['actor']!=context.actor:
             raise SemanticNodeError('Whole-hand discard actor changed')
@@ -36,18 +37,28 @@ class WholeHandDiscardHandler:
             except (TypeError,ValueError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
         try:
+            origin = read_bound_discard_origin(
+                effect, stack_ref=context.source.stack_ref if context.source is not None else None,
+                controller=context.actor,
+            )
             intent=DiscardWholeHandsIntent(actor=context.actor,players=players,reason=str(effect.get('reason') or context.default_reason),
-                replacement_selections=effect.get('_replacement_selections',()))
+                replacement_selections=effect.get('_replacement_selections',()), effect_origin=origin)
         except (TypeError,ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
         return IntentPlan(operation=self.operation,handler_id=self.handler_id,intents=(intent,))
 
 
-def execute_whole_hand_discard(sink,intent):
+def execute_whole_hand_discard(sink, intent, *, graveyard_orders=None, require_graveyard_order=False):
     from ..whole_hand_discard import resolve_whole_hand_discard
     from ..zone_trigger_events import ZoneTransitionKind
     def commit(refs):
-        return sink.move_objects_simultaneously_intent(MoveObjectsSimultaneouslyIntent(
+        move = MoveObjectsSimultaneouslyIntent(
             actor=intent.actor,object_refs=refs,expected_zones=('hand',),destination='graveyard',reason=intent.reason,
-            transition_kind=ZoneTransitionKind.DISCARD,replacement_selections=intent.replacement_selections))
+            transition_kind=ZoneTransitionKind.DISCARD,replacement_selections=intent.replacement_selections,
+            discard_effect_origin=intent.effect_origin)
+        if graveyard_orders is not None or require_graveyard_order:
+            return sink.move_objects_simultaneously_intent(
+                move, graveyard_orders=graveyard_orders, require_graveyard_order=require_graveyard_order,
+            )
+        return sink.move_objects_simultaneously_intent(move)
     return resolve_whole_hand_discard(sink,intent,commit_batch=commit)

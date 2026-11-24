@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for announced mana-value graveyard copying.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f52-000000202301",
+      "name": "Trial Named Mimic",
+      "type_line": "Legendary Creature — Shapeshifter",
+      "mana_cost": "{U}{B}",
+      "cmc": 2,
+      "oracle_text": "{X}: This creature becomes a copy of target creature card in your graveyard with mana value X, except its name is Trial Named Mimic, it's legendary in addition to its other types, and it has this ability.",
+      "power": "1",
+      "toughness": "3",
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "layout": "normal",
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f52-000000202302",
+      "name": "Trial Other Form",
+      "type_line": "Artifact Creature — Construct",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f52-000000202303",
+      "name": "Trial Variable Walker",
+      "type_line": "Artifact Creature — Construct",
+      "mana_cost": "{X}{X}",
+      "cmc": 0,
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "0",
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f52-000000202304",
+      "name": "Trial Distant Sentinel",
+      "type_line": "Creature — Giant",
+      "mana_cost": "{5}",
+      "cmc": 5,
+      "oracle_text": "",
+      "power": "4",
+      "toughness": "4",
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

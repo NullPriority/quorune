@@ -67,7 +67,7 @@ def apply_attachment_source_return(host, effect, *, actor, operation, reason):
         face = transformed_return_face(host.card_record(card))
         if face is None:
             return None
-    moved = host.move_card(card.object_id, 'battlefield', controller=actor, enter_face=face,
+    moved = host.move_card(card.object_id, 'battlefield', controller=actor, putting_player=actor, enter_face=face,
         reason=reason, semantic_events=True,
         aura_target_ref=effect.get('_aura_target_ref'),
         replacement_selections=tuple(effect.get('_replacement_selections', ())))

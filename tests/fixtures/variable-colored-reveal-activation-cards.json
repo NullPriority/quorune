@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "name": "Trial Red Reveal",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120301",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "{2}, Reveal X red cards from your hand, Sacrifice this creature: This creature deals X damage to each creature without flying.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "name": "Trial Black Reveal",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120302",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "{1}, Reveal X black cards from your hand, Sacrifice this creature: Exile up to X target cards from a single graveyard.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "name": "Trial Blue Reveal",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120303",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "{2}, Reveal X blue cards from your hand, Sacrifice this creature: Counter target spell unless its controller pays {X}.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "name": "Trial White Reveal",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120304",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "{1}, Reveal X white cards from your hand, Sacrifice this creature: You gain three times X life.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "name": "Trial Green Reveal",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120305",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "{1}, Reveal X green cards from your hand, Sacrifice this creature: Target creature gets +X/+X until end of turn.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "1",
+      "toughness": "1"
+    },
+    {
+      "name": "Trial Ground Witness",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120306",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "name": "Trial Flying Witness",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120307",
+      "mana_cost": "{2}{U}",
+      "cmc": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "type_line": "Creature — Scout",
+      "oracle_text": "Flying",
+      "keywords": [
+        "Flying"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "name": "Trial Stack Growth",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120308",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal"
+    },
+    {
+      "name": "Trial White Balm",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120309",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "type_line": "Instant",
+      "oracle_text": "You gain 1 life.",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "layout": "normal"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for ordinary announced-X activation and hand reveal."
+}

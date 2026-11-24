@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.model import CardInstance,GameConfig,GameState
 from quorune.record_state_provenance import format_state_versions,validate_state_versions
 from quorune.token_copy_value_model import TOKEN_COPY_VALUE_VERSION_FIELD as FIELD,token_copy_value_version
@@ -229,3 +230,581 @@ class TokenCopyValueNativeTests(unittest.TestCase):
             self.assertEqual("A", session.state.cards[host.object_id].controller)
         self.assertEqual("A", session.state.priority_player)
         Helpers.replay(self, session, load=True)
+
+
+
+class TokenCopyBatchNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import json
+
+        from common import ROOT
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        folder = Path(cls.temporary.name)
+        fixtures = ROOT / "tests" / "fixtures"
+        path = folder / "copy-batch.sqlite3"
+        support = {
+            "creature-subtype-addition-cards.json": "Isamaru, Hound of Konda",
+            "permanent-control-exchange-cards.json": "Avarice Totem",
+            "activation-restriction-material-cards.json": "Memnite",
+            "kicked-same-target-replacement-cards.json": "Reverberate",
+        }
+        cards = []
+        for filename, name in support.items():
+            data = json.loads((fixtures / filename).read_bytes())
+            selected, = (row for row in data["cards"] if row["name"] == name)
+            cards.append(selected)
+        legend = folder / "copy-batch-models-and-controls.json"
+        legend.write_text(json.dumps({"schema_version": 1, "cards": cards}), encoding="utf-8")
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json", fixtures / "token-copy-recipe-cards.json",
+            fixtures / "copied-aura-token-entry-cards.json", legend,
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Current copy batches", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _tokens(self, game, *, controller="A"):
+        return [card for card in game.state.cards.values()
+                if card.is_token and card.zone == "battlefield" and card.controller == controller]
+
+    def _creations(self, game, cursor):
+        return [event for event in game.state.events[cursor:] if event.code == "token.create"]
+
+    def test_complete_originals_require_one_typed_model_scope_and_batch_dependency(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.capabilities import capability_dependencies_for_node
+        from quorune.token_copy_recipes import TOKEN_COPY_BATCH_CAPABILITY, TokenCopyBatchKind, TokenCopyBatchSpec
+        from test_controller_creature_keyword_absence import register_card
+
+        originals = (
+            ("Clone Legion", TokenCopyBatchKind.TARGET_PLAYER_CREATURES),
+            ("Second Harvest", TokenCopyBatchKind.CONTROLLER_TOKENS),
+            ("Multiversal Incursion", TokenCopyBatchKind.CONTROLLER_NONTOKEN_CREATURES),
+        )
+        for name, kind in originals:
+            with self.subTest(name=name):
+                spec = TokenCopyBatchSpec(kind)
+                report, semantics = register_card(self.db, self.registry, name)
+                self.assertTrue(report["strict_capability_ready"], report["blockers"])
+                self.assertEqual("capability_closed", report["trust_basis"])
+                program, = semantics.programs_for_oracle(self.db.lookup(name).oracle_id)
+                self.assertEqual((spec.to_effect(),), tuple(program.effects))
+                self.assertEqual(spec.target_schema, program.target_schema)
+                self.assertTrue(set(spec.capability_dependencies) <= set(program.capability_dependencies))
+                effect = spec.to_effect()
+                for invalid in (
+                    {**effect, "copy_batch": {**effect["copy_batch"], "schema_version": True}},
+                    {**effect, "copy_batch": {**effect["copy_batch"], "kind": "target_player_tokens"}},
+                    {**effect, "tokens": []},
+                    {**effect, "controller": "$target.0"},
+                ):
+                    bound = bind_semantic_program_runtime(
+                        replace(program, effects=(invalid,)), capability_registry=self.registry, profile="commander_review",
+                    )
+                    self.assertFalse(bound["strict"], bound)
+                wrong_schema = None if spec.targets_player else TokenCopyBatchSpec(
+                    TokenCopyBatchKind.TARGET_PLAYER_CREATURES,
+                ).target_schema
+                self.assertNotIn(TOKEN_COPY_BATCH_CAPABILITY, capability_dependencies_for_node(
+                    effects=program.effects, target_schema=wrong_schema, mechanic_ids=program.coverage,
+                ))
+        with patch("quorune.compiler.token_copy_templates._token_copy_batch_template", return_value=None):
+            for name, _ in originals:
+                report, _ = register_card(self.db, self.registry, name)
+                self.assertFalse(report["strict_capability_ready"], report)
+
+    def test_actual_clone_legion_copies_current_models_in_one_replacement_aware_batch(self):
+        from collections import Counter
+        import json
+
+        game = self.session(7072101)
+        spell = self.add(game.engine, "Clone Legion", zone="hand")
+        doubler = self.add(game.engine, "Parallel Lives")
+        bear = self.add(game.engine, "Grizzly Bears", seat="B", ref="legion-bear")
+        self.add(game.engine, "Young Wolf", seat="B", ref="legion-wolf")
+        departed = self.add(game.engine, "Grizzly Bears", seat="B", ref="legion-departing")
+        self.add(game.engine, "Generic Bound Body", seat="C", ref="legion-wrong-controller")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="legion-private")
+        bear.tapped = True
+        bear.counters["+1/+1"] = 2
+        game.state.config.semantic_policy = "trusted_only"
+        for card in (spell, doubler, bounce):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool.update({"U": 1})
+        self.prepare(game, mana={"U": 2, "C": 7})
+        self.checkpoint(game)
+        self.cast(game, "A", spell, ["B"])
+        self.cast(game, "B", bounce, [departed.ref])
+        game = self.replay(game, load=True)
+        cursor = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[departed.object_id].zone)
+        copies = self._tokens(game)
+        self.assertEqual(Counter({"Grizzly Bears": 2, "Young Wolf": 2}), Counter(
+            game.engine._effective_card_data(card)["name"] for card in copies
+        ))
+        self.assertTrue(all(card.owner == "A" and not card.tapped and not card.counters for card in copies))
+        created, = self._creations(game, cursor)
+        self.assertEqual((2, 2), (created.details["base_quantity"], created.details["replacement_count"]))
+        self.assertCountEqual([card.ref for card in copies], created.details["objects"])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.replay(game, load=True)
+
+    def test_clone_legion_can_target_a_player_with_an_empty_cohort(self):
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(7072102)
+        spell = self.add(game.engine, "Clone Legion", zone="hand")
+        self.add(game.engine, "Grizzly Bears", seat="C", ref="legion-untargeted-creature")
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"U": 2, "C": 7})
+        self.checkpoint(game)
+        rows = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = (row for row in rows if row["id"] == f"cast:{spell.ref}")
+        before = authoritative_state_hash(game.state)
+        for targets in ([], ["B", "C"], ["legion-untargeted-creature"]):
+            denied = game.act("pilot:A", {"action_id": action["id"], "targets": targets, "pay": "auto"})
+            self.assertFalse(denied.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast(game, "A", spell, ["B"])
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(self._tokens(game))
+        self.assertFalse(self._creations(game, 0))
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_harvest_copies_its_treasure_and_aura_in_one_resumable_batch(self):
+        import json
+
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(7072103)
+        spell = self.add(game.engine, "Second Harvest", zone="hand")
+        aura = self.add(game.engine, "Mind Control", zone="hand")
+        original_host = self.add(game.engine, "Grizzly Bears", seat="B", ref="harvest-original-host")
+        token_host = self.add(game.engine, "Grizzly Bears", seat="C", ref="harvest-token-host")
+        new_host = self.add(game.engine, "Young Wolf", seat="D", ref="harvest-new-host")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="harvest-private")
+        game.engine.move_card(aura.object_id, "battlefield", aura_target_ref=original_host.ref)
+        game.engine.create_token("A", name="", copy_of=aura.ref, aura_target_ref=token_host.ref)
+        game.engine.create_token("A", name="Treasure", characteristics={"type_line": "Token Artifact — Treasure"})
+        game.engine.create_token("B", name="Food", characteristics={"type_line": "Token Artifact — Food"})
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"G": 2, "C": 2})
+        self.checkpoint(game)
+        previous = {card.object_id for card in self._tokens(game)}
+        self.assertEqual(2, len(previous))
+        cursor = len(game.state.events)
+        self.cast(game, "A", spell)
+        pending = self.resolve(game)
+        self.assertEqual(("aura.entry", ["A"]), (pending.kind, pending.actors))
+        self.assertEqual(previous, {card.object_id for card in self._tokens(game)})
+        self.assertFalse(self._creations(game, cursor))
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        game = self.replay(game, load=True)
+        cursor = len(game.state.events)
+        before = authoritative_state_hash(game.state)
+        choose = {"action_id": "choose", "aura_target": new_host.ref}
+        self.assertFalse(game.act("pilot:B", choose).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", choose)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        copies = [card for card in self._tokens(game) if card.object_id not in previous]
+        self.assertCountEqual(["Mind Control", "Treasure"], [game.engine.display_name(c.object_id) for c in copies])
+        attached, = (card for card in copies if card.attached_to is not None)
+        self.assertEqual(new_host.object_id, attached.attached_to)
+        self.assertEqual("A", game.state.cards[new_host.object_id].controller)
+        created, = self._creations(game, cursor)
+        self.assertEqual(2, created.details["base_quantity"])
+        self.assertCountEqual([card.ref for card in copies], created.details["objects"])
+        self.assertEqual(1, len(self._tokens(game, controller="B")))
+        self.replay(game, load=True)
+
+    def test_actual_incursion_copies_nontoken_creatures_with_a_copiable_nonlegendary_exception(self):
+        game = self.session(7072104)
+        spell = self.add(game.engine, "Multiversal Incursion", zone="hand")
+        legend = self.add(game.engine, "Isamaru, Hound of Konda", ref="incursion-legend")
+        self.add(game.engine, "Grizzly Bears", ref="incursion-bear")
+        self.add(game.engine, "Young Wolf", seat="B", ref="incursion-foreign")
+        game.engine.create_token("A", name="Excluded Wolf",
+                                 characteristics={"type_line": "Token Creature — Wolf", "power": "2", "toughness": "2"})
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"U": 2, "C": 5})
+        self.checkpoint(game)
+        previous = {card.object_id for card in self._tokens(game)}
+        cursor = len(game.state.events)
+        self.cast(game, "A", spell)
+        self.assertIsNone(self.resolve(game))
+        copies = [card for card in self._tokens(game) if card.object_id not in previous]
+        self.assertCountEqual(["Isamaru, Hound of Konda", "Grizzly Bears"], [
+            game.engine._effective_card_data(card)["name"] for card in copies
+        ])
+        copied_legend, = (card for card in copies if game.engine.display_name(card.object_id) == legend.printed_name)
+        self.assertNotIn("Legendary", game.engine._copyable_characteristics(copied_legend)["type_line"])
+        self.assertIn("Legendary", game.engine._copyable_characteristics(game.state.cards[legend.object_id])["type_line"])
+        self.assertEqual("battlefield", game.state.cards[legend.object_id].zone)
+        created, = self._creations(game, cursor)
+        self.assertEqual(2, created.details["base_quantity"])
+        self.assertCountEqual([card.ref for card in copies], created.details["objects"])
+        self.replay(game, load=True)
+
+    def test_verified_batch_withdrawal_keeps_ordinary_single_model_copies(self):
+        import json
+
+        from common import ROOT
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.token_copy_recipes import TOKEN_COPY_BATCH_CAPABILITY
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        next(row for row in raw["capabilities"] if row["id"] == TOKEN_COPY_BATCH_CAPABILITY).update(
+            status="blocked", blockers=["Scoped current copy batch withdrawal"],
+        )
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        closure = registry.closure((TOKEN_COPY_BATCH_CAPABILITY,), profile="commander_review")
+        self.assertIn(f"status:{TOKEN_COPY_BATCH_CAPABILITY}:blocked", closure.blockers)
+        self.assertFalse(any("unverified" in blocker for blocker in closure.blockers))
+        for name in ("Clone Legion", "Second Harvest", "Multiversal Incursion"):
+            report, _ = register_card(self.db, registry, name)
+            self.assertFalse(report["strict_capability_ready"], report)
+        control, _ = register_card(self.db, registry, "Extravagant Replication")
+        self.assertTrue(control["strict_capability_ready"], control["blockers"])
+
+
+    def test_complete_elminster_preserves_announced_opponent_roles(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.token_copy_recipes import ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY, TokenCopyBatchKind, TokenCopyBatchSpec
+        from test_controller_creature_keyword_absence import register_card
+
+        name = "Elminster's Simulacrum"
+        original = self.db.lookup(name, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        self.assertEqual("capability_closed", report["trust_basis"])
+        program, = semantics.programs_for_oracle(original.oracle_id)
+        spec = TokenCopyBatchSpec(TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES, schema_version=2)
+        self.assertEqual(spec.target_schema, program.target_schema)
+        self.assertEqual((spec.to_effect(),), tuple(program.effects))
+        self.assertIn(ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY, program.capability_dependencies)
+        for schema in (None, {**program.target_schema, "controller_relation": "any"},
+                       {**program.target_schema, "retain_controller": False},
+                       {key: value for key, value in program.target_schema.items()
+                        if key not in {"distinct_controllers", "retain_controller"}}):
+            with self.subTest(schema=schema):
+                changed = replace(program, target_schema=schema)
+                bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+                self.assertFalse(bound["strict"], bound)
+        payload = spec.to_effect()
+        malformed = {**payload, "copy_batch": {**payload["copy_batch"], "schema_version": 1}}
+        wrong = replace(program, effects=[malformed])
+        self.assertFalse(bind_semantic_program_runtime(
+            wrong, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
+        with patch("quorune.compiler.token_copy_templates._token_copy_batch_template", return_value=None):
+            denied, _ = register_card(self.db, self.registry, name)
+            self.assertFalse(denied["strict_capability_ready"], denied)
+
+    def test_actual_elminster_creates_one_batch_from_one_creature_per_selected_opponent(self):
+        from collections import Counter
+        import json
+
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(60121101)
+        spell = self.add(game.engine, "Elminster's Simulacrum", zone="hand")
+        own = self.add(game.engine, "Grizzly Bears", ref="elminster-own")
+        bear = self.add(game.engine, "Grizzly Bears", seat="B", ref="elminster-bear")
+        other_b = self.add(game.engine, "Young Wolf", seat="B", ref="elminster-second-b")
+        wolf = self.add(game.engine, "Young Wolf", seat="C", ref="elminster-wolf")
+        self.add(game.engine, "Generic Bound Body", seat="D", ref="elminster-unselected")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="elminster-private")
+        doubler = self.add(game.engine, "Parallel Lives")
+        bear.tapped = True
+        bear.counters["+1/+1"] = 2
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.assert_closed(game, doubler)
+        self.prepare(game, mana={"C": 4, "U": 2})
+        self.checkpoint(game)
+        before = authoritative_state_hash(game.state)
+        for targets in ([bear.ref, other_b.ref], [own.ref], [private.ref]):
+            denied = game.act("pilot:A", {"action_id": f"cast:{spell.ref}", "targets": targets, "pay": "auto"})
+            self.assertFalse(denied.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast(game, "A", spell, [bear.ref, wolf.ref])
+        game = self.replay(game, load=True)
+        cursor = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        copies = self._tokens(game)
+        self.assertEqual(Counter({"Grizzly Bears": 2, "Young Wolf": 2}), Counter(
+            game.engine._effective_card_data(card)["name"] for card in copies
+        ))
+        self.assertTrue(all(card.owner == "A" and not card.tapped and not card.counters for card in copies))
+        self.assertEqual(1, len({card.zone_timestamp for card in copies}))
+        batch, = self._creations(game, cursor)
+        self.assertEqual((2, 2), (batch.details["base_quantity"], batch.details["replacement_count"]))
+        self.assertCountEqual([card.ref for card in copies], batch.details["objects"])
+        self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_elminster_omits_changed_controller_and_fizzles_after_total_loss(self):
+        for case in ("controller", "total"):
+            with self.subTest(case=case):
+                game = self.session(60121102 + len(case))
+                spell = self.add(game.engine, "Elminster's Simulacrum", zone="hand")
+                selected = self.add(game.engine, "Grizzly Bears", seat="B", ref="elminster-invalidated")
+                other = self.add(game.engine, "Young Wolf", seat="C", ref="elminster-surviving")
+                if case == "controller":
+                    response = self.add(game.engine, "Avarice Totem", seat="C")
+                    game.state.players["C"].mana_pool.update({"C": 5})
+                else:
+                    response = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+                    game.state.players["B"].mana_pool.update({"U": 1})
+                game.state.config.semantic_policy = "trusted_only"
+                for card in (spell, response):
+                    self.assert_closed(game, card)
+                self.prepare(game, mana={"C": 4, "U": 2})
+                self.checkpoint(game)
+                self.cast(game, "A", spell, [selected.ref, other.ref] if case == "controller" else [selected.ref])
+                if case == "controller":
+                    self.priority(game, "C")
+                    rows = game.packet("pilot:C", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    action, = (row for row in rows if row["id"].startswith(f"activate:{response.ref}:"))
+                    accepted = game.act("pilot:C", {"action_id": action["id"], "targets": [selected.ref], "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                else:
+                    self.cast(game, "B", response, [selected.ref])
+                self.resolve_top(game)
+                game = self.replay(game, load=True)
+                cursor = len(game.state.events)
+                self.assertIsNone(self.resolve(game))
+                copies = self._tokens(game)
+                if case == "controller":
+                    token, = copies
+                    self.assertEqual("Young Wolf", game.engine._effective_card_data(token)["name"])
+                    self.assertEqual("C", game.state.cards[selected.object_id].controller)
+                    batch, = self._creations(game, cursor)
+                    self.assertEqual([token.ref], batch.details["objects"])
+                else:
+                    self.assertFalse(copies)
+                    self.assertFalse(self._creations(game, cursor))
+                    self.assertEqual("hand", game.state.cards[selected.object_id].zone)
+                self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_actual_elminster_can_cast_with_zero_models(self):
+        game = self.session(60121103)
+        spell = self.add(game.engine, "Elminster's Simulacrum", zone="hand")
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 4, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", spell, [])
+        self.assertEqual([], game.state.stack[-1].targets)
+        cursor = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(self._tokens(game))
+        self.assertFalse(self._creations(game, cursor))
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_verified_announced_batch_withdrawal_preserves_current_player_creature_batches(self):
+        import json
+
+        from common import ROOT
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.token_copy_recipes import ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        capability = ANNOUNCED_OPPONENT_COPY_BATCH_CAPABILITY
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        next(row for row in raw["capabilities"] if row["id"] == capability).update(
+            status="blocked", blockers=["Scoped announced creature copy withdrawal"],
+        )
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        closure = registry.closure((capability,), profile="commander_review")
+        self.assertIn(f"status:{capability}:blocked", closure.blockers)
+        self.assertFalse(any("unverified" in blocker for blocker in closure.blockers))
+        rejected, _ = register_card(self.db, registry, "Elminster's Simulacrum")
+        self.assertFalse(rejected["strict_capability_ready"], rejected)
+        retained, _ = register_card(self.db, registry, "Clone Legion")
+        self.assertTrue(retained["strict_capability_ready"], retained["blockers"])
+
+
+    def test_complete_march_keeps_both_targeted_and_overloaded_copy_results(self):
+        from unittest.mock import patch
+
+        from quorune.overload_model import OVERLOAD_CAPABILITY
+        from quorune.token_copy_recipes import TokenCopyBatchKind, TokenCopyBatchSpec, TokenCopyRecipeSpec
+        from test_controller_creature_keyword_absence import register_card
+
+        name = "March of Progress"
+        record = self.db.lookup(name, fuzzy=False)
+        binding, semantics = register_card(self.db, self.registry, name)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        self.assertEqual("capability_closed", binding["trust_basis"])
+        programs = {program.effects[0]["op"]: program for program in semantics.programs_for_oracle(record.oracle_id)}
+        self.assertEqual({"create_token", "create_token_batch"}, set(programs))
+        normal = programs["create_token"]
+        overloaded = programs["create_token_batch"]
+        self.assertEqual(
+            {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+             "types_all": ["artifact", "creature"], "controller_relation": "you"},
+            normal.target_schema,
+        )
+        self.assertIsNone(overloaded.target_schema)
+        self.assertEqual(TokenCopyRecipeSpec("target").to_dict(), normal.effects[0]["copy_spec"])
+        self.assertEqual(TokenCopyBatchSpec(TokenCopyBatchKind.CONTROLLER_ARTIFACT_CREATURES).to_effect(),
+                         overloaded.effects[0])
+        for program in programs.values():
+            self.assertIn(OVERLOAD_CAPABILITY, program.capability_dependencies)
+        with patch("quorune.compiler.token_copy_templates._token_copy_batch_template", return_value=None):
+            withheld, _ = register_card(self.db, self.registry, name)
+            self.assertFalse(withheld["strict_capability_ready"], withheld)
+
+    def test_actual_march_normal_targets_one_and_overload_copies_current_controlled_artifact_creatures(self):
+        from quorune.record import authoritative_state_hash
+
+        for overloaded in (False, True):
+            with self.subTest(overloaded=overloaded):
+                game = self.session(70296101 + int(overloaded))
+                spell = self.add(game.engine, "March of Progress", zone="hand")
+                model = self.add(game.engine, "Memnite", ref="march-ordinary")
+                shrouded = self.add(game.engine, "Inkwell Leviathan", ref="march-shrouded")
+                noncreature = self.add(game.engine, "Avarice Totem", ref="march-artifact")
+                self.add(game.engine, "Grizzly Bears", ref="march-creature")
+                foreign = self.add(game.engine, "Memnite", seat="B", ref="march-opponent")
+                model.tapped = True
+                model.counters["+1/+1"] = 2
+                game.state.config.semantic_policy = "trusted_only"
+                self.assert_closed(game, spell)
+                self.assert_closed(game, shrouded)
+                self.assertIn("shroud", game.engine._combat_keywords(shrouded))
+                self.prepare(game, mana={"U": 1, "C": 6})
+                self.checkpoint(game)
+                actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action, = (row for row in actions if row["id"] == f"cast:{spell.ref}")
+                self.assertEqual({"normal", "overload"}, {row["id"] for row in action["cost_options"]})
+                command = {"action_id": action["id"], "cost_option": "overload" if overloaded else "normal",
+                           "pay": "auto"}
+                before = authoritative_state_hash(game.state)
+                bad = [model.ref] if overloaded else [shrouded.ref, foreign.ref, noncreature.ref]
+                for ref in bad:
+                    denied = game.act("pilot:A", {**command, "targets": [ref]})
+                    self.assertFalse(denied.ok)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                accepted = game.act("pilot:A", {**command, "targets": [] if overloaded else [model.ref]})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual([] if overloaded else [model.ref], game.state.stack[-1].targets)
+                self.assertEqual(overloaded, game.state.stack[-1].semantic_key.endswith(":overload"))
+                self.assertEqual("battlefield", game.state.cards[shrouded.object_id].zone)
+                self.assertEqual(0 if overloaded else 4, sum(game.state.players["A"].mana_pool.values()))
+                game = self.replay(game, load=True)
+                cursor = len(game.state.events)
+                self.assertIsNone(self.resolve(game))
+                copies = self._tokens(game)
+                self.assertCountEqual(["Memnite", "Inkwell Leviathan"] if overloaded else ["Memnite"], [
+                    game.engine._effective_card_data(card)["name"] for card in copies
+                ])
+                self.assertTrue(all(not card.tapped and not card.counters and card.owner == "A" for card in copies))
+                creation, = self._creations(game, cursor)
+                self.assertCountEqual([card.ref for card in copies], creation.details["objects"])
+                self.assertEqual(1, len({card.zone_timestamp for card in copies}))
+                self.replay(game, load=True)
+
+    def test_real_copy_of_overloaded_march_uses_its_own_controller_and_keeps_the_mode(self):
+        game = self.session(70296103)
+        spell = self.add(game.engine, "March of Progress", zone="hand")
+        copier = self.add(game.engine, "Reverberate", seat="B", zone="hand")
+        self.add(game.engine, "Inkwell Leviathan", ref="march-original-model")
+        self.add(game.engine, "Memnite", seat="B", ref="march-spell-copy-model")
+        game.state.config.semantic_policy = "trusted_only"
+        for card in (spell, copier):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool.update({"R": 2})
+        self.prepare(game, mana={"C": 6, "U": 1})
+        self.checkpoint(game)
+        accepted = game.act("pilot:A", {
+            "action_id": f"cast:{spell.ref}", "cost_option": "overload", "targets": [], "pay": "auto",
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        original = game.state.stack[-1]
+        self.cast(game, "B", copier, [original.ref])
+        self.resolve_top(game)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertEqual(("B", [], original.semantic_key), (copied.controller, copied.targets, copied.semantic_key))
+        self.assertTrue(copied.semantic_key.endswith(":overload"))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        for seat, name in (("A", "Inkwell Leviathan"), ("B", "Memnite")):
+            model, = self._tokens(game, controller=seat)
+            self.assertEqual(seat, model.owner)
+            self.assertEqual(name, game.engine._effective_card_data(model)["name"])
+            self.assertEqual(0, sum(game.state.players[seat].mana_pool.values()))
+        self.assertEqual(2, len(game.engine._current_turn_history("spell_cast")))
+        self.replay(game, load=True)
+
+    def test_verified_copy_batch_withdrawal_keeps_march_unresolved_as_a_whole(self):
+        import json
+
+        from common import ROOT
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.token_copy_recipes import TOKEN_COPY_BATCH_CAPABILITY
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        capability = TOKEN_COPY_BATCH_CAPABILITY
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        next(row for row in raw["capabilities"] if row["id"] == capability).update(
+            status="blocked", blockers=["Scoped overloaded copy batch withdrawal"],
+        )
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        closure = registry.closure((capability,), profile="commander_review")
+        self.assertIn(f"status:{capability}:blocked", closure.blockers)
+        self.assertFalse(any("unverified" in blocker for blocker in closure.blockers))
+        rejected, _ = register_card(self.db, registry, "March of Progress")
+        self.assertFalse(rejected["strict_capability_ready"], rejected)
+        retained, _ = register_card(self.db, registry, "Extravagant Replication")
+        self.assertTrue(retained["strict_capability_ready"], retained["blockers"])

@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import GameRuleError
 from .fractional_quantity_model import HalfQuantitySpec
+from .query_effect_amount_model import OpponentHandMillCount
 from .model import CardInstance
 from .zone_transition_model import PUBLIC_ZONES
 from .zone_transitions import ZoneTransitionOwner
@@ -131,11 +132,20 @@ def event_mill_recipient_has_left(
 
 
 def mill_request(
-    host: MillHost, *, actor: str, player: str, count: int | HalfQuantitySpec, reason: str,
+    host: MillHost, *, actor: str, player: str,
+    count: int | HalfQuantitySpec | OpponentHandMillCount, reason: str,
 ) -> MillRequest:
     if isinstance(count, HalfQuantitySpec):
         host._require_seat(player, in_game=True)
         count = count.amount(len(host.state.players[player].zones["library"]))
+    elif isinstance(count, OpponentHandMillCount):
+        host._require_seat(player, in_game=True)
+        if player == actor:
+            raise GameRuleError("Hand-count Mill cannot apply to its controller")
+        hand = host.state.players[player].zones["hand"]
+        if not isinstance(hand, list):
+            raise GameRuleError("Current opponent hand count is unavailable")
+        count = len(hand)
     return MillRequest(actor=actor, player=player, count=count, reason=reason)
 
 
@@ -179,7 +189,10 @@ def _validate_plan(host: MillHost, plan: MillPlan) -> tuple[str, ...]:
     return object_ids
 
 
-def commit_mill(host: MillHost, plan: MillPlan) -> MillResult:
+def commit_mill(
+    host: MillHost, plan: MillPlan, *,
+    replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
+) -> MillResult:
     """Commit one validated simultaneous library-to-graveyard instruction."""
 
     object_ids = _validate_plan(host, plan)
@@ -190,6 +203,7 @@ def commit_mill(host: MillHost, plan: MillPlan) -> MillResult:
             [(object_id, "graveyard") for object_id in object_ids],
             reason=plan.request.reason,
             log=False,
+            replacement_selections=replacement_selections,
         )
         if object_ids
         else ()
@@ -240,8 +254,11 @@ def _finish_mill(
     )
 
 
-def mill_cards(host: MillHost, request: MillRequest) -> MillResult:
-    return commit_mill(host, prepare_mill(host, request))
+def mill_cards(
+    host: MillHost, request: MillRequest, *,
+    replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
+) -> MillResult:
+    return commit_mill(host, prepare_mill(host, request), replacement_selections=replacement_selections)
 
 
 def mill_player_batch(host: MillHost, requests: Sequence[MillRequest]) -> tuple[MillResult, ...]:

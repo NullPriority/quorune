@@ -153,9 +153,28 @@ def _counted_death_result(text: str, *, source_event: bool) -> tuple[str, Scalar
     return None
 
 
+def _target_creature_power_template(text):
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.target_creature_power_results import target_creature_power_effect
+
+    draw = re.fullmatch(r"Draw cards equal to the power of target creature you control[.]?", text, re.I)
+    controller_life = re.fullmatch(r"(?:You )?gain life equal to the power of target creature you control[.]?", text, re.I)
+    any_life = re.fullmatch(r"(?:You )?gain life equal to target creature['’]s power[.]?", text, re.I)
+    if draw is None and controller_life is None and any_life is None:
+        return None
+    operation = "draw" if draw else "life"
+    schema = direct_permanent_target_spec("target creature" if any_life else "target creature you control").to_target_schema()
+    mechanic = "cr-121-drawing-a-card" if draw else "cr-119-life"
+    return "fixed-target-creature-power-v16", (target_creature_power_effect(operation),), schema, (
+        SCALAR_AMOUNT_MECHANIC, "cr-115-targets", mechanic,
+    )
+
+
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
+    if target_power := _target_creature_power_template(text.strip()):
+        return target_power
     from .commander_cast_quantity_templates import commander_cast_scalar_template
     commander_result = commander_cast_scalar_template(text, source_name=source_name, compile_fixed=compile_fixed)
     if commander_result is not None:
@@ -284,8 +303,8 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
 
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
-    from .life_gain_counted_results import life_gain_counted_counter_result
-    counted = life_gain_counted_counter_result(text, binding=binding)
+    from .life_gain_counted_results import life_gain_counted_counter_result, life_gain_counted_self_growth_result
+    counted = life_gain_counted_counter_result(text, binding=binding) or life_gain_counted_self_growth_result(text, binding=binding)
     if counted is not None:
         text = counted
     event = binding.event.value
@@ -316,6 +335,17 @@ def source_scalar_effect_amount_template(text,*,source_name,event,compile_fixed)
     optional=fixed_optional_effect_template(text,
         compile_effect=lambda body:scalar(body) or (None,(),None,()))
     return optional.compiled() if optional is not None else None
+
+
+def _graveyard_target_life_slot(operation, path, effects):
+    if (operation, path) == ("life", ("delta",)):
+        return True
+    return (
+        (operation, path) == ("lose_life", ("amount",)) and len(effects) == 2
+        and dict(effects[0]) == {"op": "reanimate", "card": "$target.0", "controller": "$controller", "tapped": False}
+        and set(effects[1]) == {"op", "player", "amount"} and effects[1]["op"] == "lose_life"
+        and effects[1]["player"] == "$controller"
+    )
 
 
 def scalar_amount_shape_context(effects, mechanics):
@@ -350,8 +380,8 @@ def scalar_amount_shape_context(effects, mechanics):
                 if SCHEDULED_PLAYER_MECHANIC not in mechanics or (operation,path)!=("damage",("amount",)):
                     raise PublicQueryAmountError("Upkeep hand difference requires its scheduled player damage slot")
             elif spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE:
-                if (operation, path) != ('life', ('delta',)):
-                    raise PublicQueryAmountError('Graveyard-target mana value requires its controller life-result slot')
+                if not _graveyard_target_life_slot(operation, path, effects):
+                    raise PublicQueryAmountError("Graveyard-target mana value requires its exact life-result slot")
             elif spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE:
                 if PAID_SACRIFICE_MANA_VALUE_MECHANIC not in mechanics or (operation, path) not in {
                     ('draw', ('count',)), ('life', ('delta',)),

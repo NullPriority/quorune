@@ -6,6 +6,8 @@ from enum import Enum
 from typing import Any, Mapping
 
 from ..fixed_damage_set_model import (
+    DEALT_LIFE_GAIN_FIELD,
+    TARGETED_DEALT_LIFE_GAIN_VERSION,
     FixedDamageSetSpec,
     PermanentControllerRelation,
     PermanentDamageGroup,
@@ -22,6 +24,62 @@ from .fixed_all_damage_prevention import (
     fixed_all_damage_prevention_scope_descriptor,
     fixed_all_damage_prevention_specs,
 )
+
+
+def fixed_damage_dealt_life_template(text, *, source_name, source_is_permanent):
+    match = re.fullmatch(
+        r"(?P<source>.+?) deals (?P<amount>[1-9][0-9]*) damage to each (?P<recipients>opponent|other player)"
+        r"\. You gain life equal to the damage dealt this way[.]?",
+        " ".join(text.strip().split()), re.I,
+    )
+    if match is None:
+        return None
+    recipients = match["recipients"].casefold()
+    if recipients == "opponent":
+        if not source_is_permanent or match["source"].casefold() != "this creature":
+            return None
+    elif source_is_permanent or not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    # The supported player profiles have no teammates, so both printed
+    # player groups use the same existing noncontroller recipient set.
+    group = FixedDamageSetSpec((PlayerDamageGroup(PlayerDamageRelation.OPPONENTS),))
+    effect = {"op": "damage_fixed_set", "source": "$source", "amount": int(match["amount"]),
+              **group.to_dict(), DEALT_LIFE_GAIN_FIELD: 1}
+    return "damage-fixed-set-dealt-life-v1", (effect,), None, ("cr-120-damage", "cr-119-life")
+
+
+def upkeep_other_controlled_creatures_damage_template(text):
+    match = re.fullmatch(
+        r"This creature deals (?P<amount>[1-9][0-9]*) damage to each other creature you control\.", text, re.I,
+    )
+    if match is None:
+        return None
+    group = _permanent_group(types_all=("creature",), controller_relation=PermanentControllerRelation.ACTOR,
+                             exclude_source=True)
+    compiled = FixedMassDamageEffectTemplate(int(match["amount"]), FixedDamageSetSpec((group,)),
+                                             source_kind="creature").compiled()
+    return ("upkeep-fixed-other-controlled-creature-damage-v1", *compiled[1:])
+
+
+def targeted_dealt_life_gain_template(text, *, compile_damage):
+    match = re.fullmatch(
+        r"(?P<damage>.+\.) You gain life equal to the damage dealt this way[.]?",
+        " ".join(text.strip().split()), re.I,
+    )
+    if match is None:
+        return None
+    compiled = compile_damage(match["damage"])
+    if compiled is None:
+        return None
+    template, effects, schema, mechanics = compiled
+    if template is None or len(effects) != 1:
+        return None
+    from ..rules.damage_capability_shapes import targeted_dealt_life_gain_amount
+
+    effect = {**effects[0], DEALT_LIFE_GAIN_FIELD: TARGETED_DEALT_LIFE_GAIN_VERSION}
+    if targeted_dealt_life_gain_amount(effect, schema) is None:
+        return None
+    return f"{template}-dealt-life-v2", (effect,), schema, (*mechanics, "cr-119-life")
 
 
 _ABILITY_WORD = re.compile(
@@ -50,6 +108,11 @@ _FIXED_DAMAGE_PREVENTION = re.compile(
     r"prevent (?P<amount>[1-9][0-9]*) of that damage\.?$",
     re.IGNORECASE,
 )
+_UNTAPPED_FIXED_COMBAT_PREVENTION = re.compile(
+    r"As long as this artifact is untapped, if a creature would deal combat damage to you, "
+    r"prevent (?P<amount>[1-9][0-9]*) of that damage\.?$",
+    re.IGNORECASE,
+)
 _REDIRECT_TO_SOURCE = re.compile(
     r"^All damage that would be dealt to you"
     r"(?P<permanents> and other permanents you control)? is dealt to "
@@ -70,6 +133,7 @@ class FixedDamageRecipient(str, Enum):
     OPPONENT_OR_PLANESWALKER = "opponent_or_planeswalker"
     EACH_OPPONENT = "each_opponent"
     CONTROLLER = 'controller'
+    SELF = "self"
 
 
 _FIXED_DAMAGE_RECIPIENTS: tuple[tuple[str, FixedDamageRecipient], ...] = (
@@ -129,6 +193,10 @@ class FixedDamageEffectTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.recipient is FixedDamageRecipient.SELF:
+            from ..rules.damage_capability_shapes import SOURCE_SELF_DAMAGE_TEMPLATE
+
+            return SOURCE_SELF_DAMAGE_TEMPLATE
         if self.target_spec is not None:
             return f"damage-{self.target_spec.slug}-v1"
         if self.recipient is FixedDamageRecipient.ANY_TARGET:
@@ -139,6 +207,10 @@ class FixedDamageEffectTemplate:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
+        if self.recipient is FixedDamageRecipient.SELF:
+            from ..rules.damage_capability_shapes import source_self_damage_effect
+
+            return (source_self_damage_effect(),)
         if self.recipient is FixedDamageRecipient.EACH_OPPONENT:
             return (
                 {
@@ -160,7 +232,7 @@ class FixedDamageEffectTemplate:
     def target_schema(self) -> Mapping[str, Any] | None:
         if self.target_spec is not None:
             return self.target_spec.to_target_schema()
-        if self.recipient in {FixedDamageRecipient.EACH_OPPONENT,FixedDamageRecipient.CONTROLLER}:
+        if self.recipient in {FixedDamageRecipient.EACH_OPPONENT, FixedDamageRecipient.CONTROLLER, FixedDamageRecipient.SELF}:
             return None
         if self.recipient is FixedDamageRecipient.ANY_TARGET:
             return {
@@ -207,7 +279,7 @@ class FixedDamageEffectTemplate:
 
     @property
     def mechanics(self) -> tuple[str, ...]:
-        if self.recipient in {FixedDamageRecipient.EACH_OPPONENT,FixedDamageRecipient.CONTROLLER}:
+        if self.recipient in {FixedDamageRecipient.EACH_OPPONENT, FixedDamageRecipient.CONTROLLER, FixedDamageRecipient.SELF}:
             return ("cr-120-damage",)
         return ("cr-120-damage", "cr-115-targets")
 
@@ -744,8 +816,10 @@ def source_pronoun_damage_effect_template(
 def activated_source_damage_effect_template(
     text: str,
 ) -> FixedDamageEffectTemplate | FixedMassDamageEffectTemplate | None:
-    """Compatibility entry point for source-bound activated abilities."""
+    """Compile source-bound activated damage through its ordinary result owner."""
 
+    if re.fullmatch(r"This creature deals 1 damage to itself\.", text.strip(), re.I):
+        return FixedDamageEffectTemplate(1, FixedDamageRecipient.SELF, source_kind="creature")
     return source_pronoun_damage_effect_template(text)
 
 
@@ -944,16 +1018,82 @@ def _colored_fixed_prevention_handler(text):
         'modification':{'amount':int(match['amount'])}},'damage.prevention.static_fixed')
 
 
+def _noncombat_prevention_life_gain_template(text: str):
+    if re.fullmatch(
+        r"If noncombat damage would be dealt to you, prevent that damage\. "
+        r"You gain life equal to the damage prevented this way\.",
+        text, re.I,
+    ):
+        from ..rules.damage_capability_shapes import (
+            NONCOMBAT_PREVENTION_LIFE_GAIN_CAPABILITY, NONCOMBAT_PREVENTION_LIFE_GAIN_TEMPLATE, noncombat_prevention_life_gain_descriptor,
+        )
+
+        return (NONCOMBAT_PREVENTION_LIFE_GAIN_TEMPLATE,
+                noncombat_prevention_life_gain_descriptor(), NONCOMBAT_PREVENTION_LIFE_GAIN_CAPABILITY)
+    return None
+
+
+def controller_damage_result_life_floor_template(text):
+    if re.fullmatch(r"Damage that would reduce your life total to less than 1 reduces it to 1 instead\.", text, re.I) is None:
+        return None
+    from ..rules.damage_capability_shapes import (
+        CONTROLLER_DAMAGE_LIFE_FLOOR_TEMPLATE, DAMAGE_RESULT_REPLACEMENT_CAPABILITY,
+        controller_damage_result_life_floor_descriptor,
+    )
+    return (CONTROLLER_DAMAGE_LIFE_FLOOR_TEMPLATE, controller_damage_result_life_floor_descriptor(),
+            DAMAGE_RESULT_REPLACEMENT_CAPABILITY)
+
+
+def linked_player_damage_quantity_template(text):
+    if re.fullmatch(
+        r"If a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead\.",
+        text, re.I,
+    ) is None:
+        return None
+    from ..entry_designations import LINKED_PLAYER_DAMAGE_CAPABILITIES, LINKED_PLAYER_DAMAGE_TEMPLATE, linked_player_damage_descriptor
+
+    return LINKED_PLAYER_DAMAGE_TEMPLATE, linked_player_damage_descriptor(), LINKED_PLAYER_DAMAGE_CAPABILITIES
+
+
 def static_damage_handler(
     text: str,
     *,
     card_name: str = "",
-) -> tuple[str, dict[str, Any], str] | None:
+) -> tuple[str, dict[str, Any], str | tuple[str, ...]] | None:
     """Lower a closed static damage/prevention wording family."""
 
     ability_word = _ABILITY_WORD.match(text)
     if text.casefold().startswith('max speed'):return None
     normalized = ability_word.group("body") if ability_word else text
+    from .fixed_remainder_prevention import fixed_remainder_prevention_template
+    special_prevention = (
+        _noncombat_prevention_life_gain_template(normalized)
+        or controller_damage_result_life_floor_template(normalized)
+        or linked_player_damage_quantity_template(normalized)
+        or fixed_remainder_prevention_template(normalized)
+    )
+    if special_prevention is not None:
+        return special_prevention
+    untapped = _UNTAPPED_FIXED_COMBAT_PREVENTION.fullmatch(normalized)
+    if untapped is not None:
+        return (
+            "damage-prevention-fixed-while-untapped-v3",
+            {
+                "handler_id": "prevention.damage.fixed.untapped.v3",
+                "schema_version": 3,
+                "event": "damage",
+                "condition": {
+                    "source_controller_relation": "any",
+                    "target_controller_relation": "source_controller",
+                    "target_kinds": ["player"],
+                    "source_types_all": ["creature"],
+                    "target_types_all": [],
+                    "combat": True,
+                },
+                "modification": {"amount": int(untapped["amount"])},
+            },
+            "damage.prevention.static_fixed",
+        )
     redirection = _REDIRECT_TO_SOURCE.fullmatch(normalized)
     if redirection is not None:
         target_kinds = ["player"]

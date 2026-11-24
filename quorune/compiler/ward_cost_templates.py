@@ -6,6 +6,7 @@ from . import regex_working_set as re
 
 from ..trigger_participation import WardSpec
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from .ward_sacrifice_templates import ward_sacrifice_scope
 
 
 _FIXED_GENERIC_WARD = re.compile(
@@ -23,7 +24,7 @@ _DISCARD_ONE_WARD = re.compile(
 
 
 def fixed_ward_spec(text: str) -> WardSpec | None:
-    """Parse one exact generic, fixed-life, or discard-one Ward cost."""
+    """Parse one represented fixed Ward cost."""
 
     material = text.strip()
     generic = _FIXED_GENERIC_WARD.fullmatch(material)
@@ -35,7 +36,8 @@ def fixed_ward_spec(text: str) -> WardSpec | None:
         return WardSpec(life_payment=amount) if amount > 0 else None
     if _DISCARD_ONE_WARD.fullmatch(material) is not None:
         return WardSpec(discard_cards=1)
-    return None
+    scope = ward_sacrifice_scope(material)
+    return WardSpec(sacrifice_scope=scope) if scope is not None else None
 
 
 __all__ = ["fixed_ward_spec"]

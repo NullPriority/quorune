@@ -14,6 +14,7 @@ from typing import Any, Iterable, Mapping, Protocol, Sequence
 
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import ObjectQueryResult, query_objects
+from .target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .rules.committed_quantity_followups import CommittedQuantityFollowup
 from .rules.public_exile_result_model import PublicExileFollowup
 from .rules.single_object_zone_transition import (
@@ -30,6 +31,9 @@ from .util import stable_json
 
 FIXED_OWNER_ZONE_MOVE_CAPABILITY = "zone.single_owner_move.fixed_destination"
 FIXED_OWNER_ZONE_MOVE_MECHANIC = "fixed-owner-zone-move"
+OWNER_LIBRARY_POSITION_OPERATION = "choose_owner_library_position"
+OWNER_LIBRARY_POSITION_MECHANIC = "owner-choice-of-library-position"
+OWNER_LIBRARY_POSITION_CAPABILITY = "choice.target_owner.library_position"
 GRAVEYARD_LIBRARY_TARGET_CAPABILITY = "zone.single_owner_move.graveyard_library_target"
 GRAVEYARD_LIBRARY_TARGET_FIELD = "graveyard_library_target_version"
 
@@ -132,6 +136,46 @@ class PublicZoneMoveError(ValueError):
     """A public zone-move descriptor, snapshot, or request is invalid."""
 
 
+OWN_GRAVEYARD_TYPE_CHOICE_FIELD = "own_graveyard_type_choice_version"
+OWN_GRAVEYARD_TYPE_RETURN_CAPABILITY = "zone.return.chosen_permanent_type_own_graveyard"
+
+
+def own_graveyard_type_return_choice_effect() -> dict[str, Any]:
+    from .external_entry_state_model import PERMANENT_CARD_TYPES
+
+    types = sorted(PERMANENT_CARD_TYPES)
+    branches = {}
+    for card_type in types:
+        spec = PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(zones=("graveyard",), types_all=(card_type,), token=False),
+            origin=PublicZoneOrigin.GRAVEYARD,
+            destination=PublicZoneDestination.OWNER_HAND,
+            relation_axis=PublicZoneRelationAxis.OWNER,
+            seat_relation=PublicZoneSeatRelation.ACTOR,
+            schema_version=2,
+        )
+        branches[card_type] = [{"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict()}]
+    return {
+        "op": "choose_option",
+        OWN_GRAVEYARD_TYPE_CHOICE_FIELD: 1,
+        "player": "$controller",
+        "prompt": "Choose a permanent type.",
+        "options": [{"id": card_type, "label": card_type.title()} for card_type in types],
+        "then_by_choice": branches,
+    }
+
+
+def own_graveyard_type_return_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if OWN_GRAVEYARD_TYPE_CHOICE_FIELD not in value:
+        return ()
+    from .replacement.immutable import thaw_value
+
+    if (type(value[OWN_GRAVEYARD_TYPE_CHOICE_FIELD]) is not int
+            or thaw_value(value) != own_graveyard_type_return_choice_effect()):
+        raise PublicZoneMoveError("Permanent-type graveyard return requires the six exact owner-hand branches")
+    return ("zone.move.fixed_public_set", OWN_GRAVEYARD_TYPE_RETURN_CAPABILITY)
+
+
 class PublicZoneOrigin(str, Enum):
     BATTLEFIELD = "battlefield"
     GRAVEYARD = "graveyard"
@@ -161,6 +205,31 @@ class PublicZoneSeatRelation(str, Enum):
 
 
 PUBLIC_AURA_ENTRY_VERSION = 3
+ANNOUNCED_GRAVEYARD_RETURN_VERSION = 5
+PUBLIC_AURA_ENTRY_VERSIONS = (PUBLIC_AURA_ENTRY_VERSION, ANNOUNCED_GRAVEYARD_RETURN_VERSION)
+ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY = "zone.move.announced_owned_graveyard_return"
+ANNOUNCED_MANA_VALUE_MAX_FIELD = "announced_mana_value_max"
+PUBLIC_GRAVEYARD_POWER_RETURN_VERSION = 4
+PUBLIC_SAME_NAME_MOVE_VERSION = 6
+PUBLIC_SAME_NAME_MOVE_TARGET_FIELD = "same_name_target"
+PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY = "zone.return.own_graveyard_creature_power_set"
+
+
+_GRAVEYARD_CREATURE_CARD_QUERY = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
+
+
+def public_graveyard_power_return_spec(maximum_power: int) -> PublicZoneMoveSetSpec:
+    return PublicZoneMoveSetSpec(
+        query=_GRAVEYARD_CREATURE_CARD_QUERY,
+        origin=PublicZoneOrigin.GRAVEYARD,
+        destination=PublicZoneDestination.OWNER_HAND,
+        relation_axis=PublicZoneRelationAxis.OWNER,
+        seat_relation=PublicZoneSeatRelation.ACTOR,
+        schema_version=PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
+        graveyard_power=TargetNumericCharacteristicSpec(
+            TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_MOST, maximum_power,
+        ),
+    )
 
 
 _SET_FIELDS_V1 = frozenset(
@@ -178,6 +247,9 @@ _SET_FIELDS_V1 = frozenset(
 _SET_FIELDS_V2 = _SET_FIELDS_V1 | frozenset(
     {"battlefield_controller", "battlefield_tapped"}
 )
+_SET_FIELDS_POWER_RETURN = _SET_FIELDS_V2 | {"graveyard_power"}
+_SET_FIELDS_ANNOUNCED_RETURN = _SET_FIELDS_V2 | {ANNOUNCED_MANA_VALUE_MAX_FIELD}
+_SET_FIELDS_SAME_NAME = _SET_FIELDS_V1 | {PUBLIC_SAME_NAME_MOVE_TARGET_FIELD}
 
 
 def _nonempty(value: Any, *, field: str) -> str:
@@ -200,9 +272,14 @@ class PublicZoneMoveSetSpec:
     battlefield_controller: PublicBattlefieldController | None = None
     battlefield_tapped: bool = False
     schema_version: int = 1
+    graveyard_power: TargetNumericCharacteristicSpec | None = None
+    announced_mana_value_max: int | None = None
+    same_name_target: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, PUBLIC_AURA_ENTRY_VERSION}:
+        if type(self.schema_version) is not int or self.schema_version not in {
+            1, 2, *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION, PUBLIC_SAME_NAME_MOVE_VERSION,
+        }:
             raise PublicZoneMoveError(
                 "Unsupported public zone-move set schema version"
             )
@@ -257,7 +334,7 @@ class PublicZoneMoveSetSpec:
             )
         if self.destination is PublicZoneDestination.BATTLEFIELD:
             if (
-                self.schema_version not in {2, PUBLIC_AURA_ENTRY_VERSION}
+                self.schema_version not in {2, *PUBLIC_AURA_ENTRY_VERSIONS}
                 or self.origin is not PublicZoneOrigin.GRAVEYARD
                 or not isinstance(
                     self.battlefield_controller,
@@ -271,6 +348,14 @@ class PublicZoneMoveSetSpec:
             raise PublicZoneMoveError(
                 "Only battlefield destinations accept entry policies"
             )
+        if self.schema_version == PUBLIC_GRAVEYARD_POWER_RETURN_VERSION:
+            self._validate_graveyard_power_return()
+        elif self.graveyard_power is not None:
+            raise PublicZoneMoveError("Graveyard power return requires its explicit set version")
+        if self.schema_version == ANNOUNCED_GRAVEYARD_RETURN_VERSION:
+            self._validate_announced_graveyard_return()
+        elif self.announced_mana_value_max is not None:
+            raise PublicZoneMoveError("An announced mana-value return requires its explicit set version")
         if self.schema_version == PUBLIC_AURA_ENTRY_VERSION and self.destination is not PublicZoneDestination.BATTLEFIELD:
             raise PublicZoneMoveError("Public zone-move version three is reserved for Aura-capable battlefield entry")
         if (
@@ -294,6 +379,46 @@ class PublicZoneMoveSetSpec:
                 "Only target-player sets accept a target seat"
             )
 
+        self._validate_same_name_target()
+
+    def _validate_same_name_target(self) -> None:
+        if self.schema_version == PUBLIC_SAME_NAME_MOVE_VERSION:
+            from .rules.same_name_zone_moves import same_name_zone_move_scope
+
+            same_name_zone_move_scope(self)
+        elif self.same_name_target is not None:
+            raise PublicZoneMoveError("Same-name targets require their explicit set version")
+
+    def _validate_graveyard_power_return(self) -> None:
+        maximum = self.graveyard_power
+        if (
+            self.origin is not PublicZoneOrigin.GRAVEYARD
+            or self.destination is not PublicZoneDestination.OWNER_HAND
+            or self.relation_axis is not PublicZoneRelationAxis.OWNER
+            or self.seat_relation is not PublicZoneSeatRelation.ACTOR
+            or self.query != _GRAVEYARD_CREATURE_CARD_QUERY
+            or not isinstance(maximum, TargetNumericCharacteristicSpec)
+            or maximum.characteristic is not TargetNumericCharacteristic.POWER
+            or maximum.comparison is not TargetNumericComparison.AT_MOST
+        ):
+            raise PublicZoneMoveError("Graveyard power return requires the exact own creature-card set")
+
+    def _validate_announced_graveyard_return(self) -> None:
+        expected = ObjectQuerySpec(zones=("graveyard",), types_any=("creature", "planeswalker"), token=False)
+        if (
+            self.origin is not PublicZoneOrigin.GRAVEYARD
+            or self.destination is not PublicZoneDestination.BATTLEFIELD
+            or self.relation_axis is not PublicZoneRelationAxis.OWNER
+            or self.seat_relation is not PublicZoneSeatRelation.ACTOR
+            or self.battlefield_controller is not PublicBattlefieldController.OWNER
+            or self.battlefield_tapped
+            or self.query != expected
+            or type(self.announced_mana_value_max) is not int
+            or self.announced_mana_value_max < 0
+        ):
+            raise PublicZoneMoveError("An announced return requires the exact owned creature and planeswalker set")
+
+
     def to_dict(self) -> dict[str, Any]:
         value = {
             "schema_version": self.schema_version,
@@ -305,7 +430,7 @@ class PublicZoneMoveSetSpec:
             "exclude_source": self.exclude_source,
             "query": self.query.canonical_dict(),
         }
-        if self.schema_version in {2, PUBLIC_AURA_ENTRY_VERSION}:
+        if self.schema_version in {2, *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION}:
             value.update(
                 {
                     "battlefield_controller": (
@@ -316,6 +441,12 @@ class PublicZoneMoveSetSpec:
                     "battlefield_tapped": self.battlefield_tapped,
                 }
             )
+        if self.graveyard_power is not None:
+            value["graveyard_power"] = self.graveyard_power.to_dict()
+        if self.announced_mana_value_max is not None:
+            value[ANNOUNCED_MANA_VALUE_MAX_FIELD] = self.announced_mana_value_max
+        if self.same_name_target is not None:
+            value[PUBLIC_SAME_NAME_MOVE_TARGET_FIELD] = self.same_name_target
         return value
 
     @classmethod
@@ -323,7 +454,14 @@ class PublicZoneMoveSetSpec:
         if not isinstance(value, Mapping) or frozenset(value) not in {
             _SET_FIELDS_V1,
             _SET_FIELDS_V2,
-        }:
+            _SET_FIELDS_POWER_RETURN,
+            _SET_FIELDS_ANNOUNCED_RETURN,
+            _SET_FIELDS_SAME_NAME,
+        } or ("graveyard_power" in value) != (value["schema_version"] == PUBLIC_GRAVEYARD_POWER_RETURN_VERSION) or (
+            ANNOUNCED_MANA_VALUE_MAX_FIELD in value
+        ) != (value["schema_version"] == ANNOUNCED_GRAVEYARD_RETURN_VERSION) or (
+            (frozenset(value) == _SET_FIELDS_SAME_NAME) != (value["schema_version"] == PUBLIC_SAME_NAME_MOVE_VERSION)
+        ):
             raise PublicZoneMoveError(
                 "Public zone-move set fields are incomplete or unknown"
             )
@@ -343,6 +481,10 @@ class PublicZoneMoveSetSpec:
                 ),
                 battlefield_tapped=value.get("battlefield_tapped", False),
                 schema_version=value["schema_version"],
+                graveyard_power=(TargetNumericCharacteristicSpec.from_mapping(value["graveyard_power"])
+                                 if "graveyard_power" in value else None),
+                announced_mana_value_max=value.get(ANNOUNCED_MANA_VALUE_MAX_FIELD),
+                same_name_target=value.get(PUBLIC_SAME_NAME_MOVE_TARGET_FIELD),
             )
         except (
             KeyError,
@@ -433,6 +575,8 @@ class PublicZoneMoveQuery(Protocol):
     def public_zone_move_object_rows(
         self, actor: str
     ) -> tuple[ObjectQueryResult, ...]: ...
+
+    def public_zone_move_rules_names(self, row: ObjectQueryResult) -> tuple[str, ...]: ...
 
 
 class PublicZoneMoveHost(PublicZoneMoveQuery, Protocol):
@@ -527,6 +671,14 @@ def select_public_zone_move_objects(
         )
     if spec.exclude_source:
         selected = tuple(row for row in selected if row.ref != source_ref)
+    if spec.announced_mana_value_max is not None:
+        selected = tuple(row for row in selected if row.mana_value <= spec.announced_mana_value_max)
+    if spec.graveyard_power is not None:
+        if any(type(row.effective_power) is not int for row in selected):
+            raise PublicZoneMoveError("Graveyard power return requires exact current creature-card power")
+        selected = tuple(row for row in selected if spec.graveyard_power.permits(
+            power=row.effective_power, toughness=row.effective_toughness,
+        ))
     if any(
         _relation_seat(row, spec) not in order_index
         or not row.object_id
@@ -575,6 +727,10 @@ def snapshot_public_zone_move_set(
         apnap_order=query.public_zone_move_apnap_order(),
         source_ref=source_ref,
     )
+    if spec.same_name_target is not None:
+        from .rules.same_name_zone_moves import select_same_name_zone_rows
+
+        selected = select_same_name_zone_rows(query, spec, selected)
     return PublicZoneMoveSnapshot(
         spec=spec,
         objects=tuple(
@@ -632,7 +788,7 @@ def resolve_public_zone_move_set(
     _nonempty(actor, field="Public zone-move actor")
     _nonempty(reason, field="Public zone-move reason")
     if aura_target_refs is not None and (
-        spec.schema_version != PUBLIC_AURA_ENTRY_VERSION or spec.destination is not PublicZoneDestination.BATTLEFIELD
+        spec.schema_version not in PUBLIC_AURA_ENTRY_VERSIONS or spec.destination is not PublicZoneDestination.BATTLEFIELD
     ):
         raise PublicZoneMoveError("Aura entry selections require version-three battlefield entry")
     rows = _exile_followup_rows(host, actor, spec, followup) if followup is not None else None
@@ -687,6 +843,7 @@ def resolve_public_zone_move_set(
                 else None
             ),
             destination_controllers=controllers,
+            putting_players={object_id: actor for object_id in controllers} if controllers is not None else None,
             **({"aura_target_refs": aura_target_refs} if aura_target_refs is not None else {}),
             replacement_selections=replacement_selections,
         )
@@ -776,6 +933,9 @@ def exile_public_graveyard_card_transition(
 
 __all__ = [
     "PUBLIC_AURA_ENTRY_VERSION",
+    "PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY",
+    "PUBLIC_GRAVEYARD_POWER_RETURN_VERSION",
+    "public_graveyard_power_return_spec",
     "exile_public_graveyard_card",
     "exile_public_graveyard_card_transition",
     "FIXED_OWNER_ZONE_MOVE_CAPABILITY",

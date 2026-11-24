@@ -1,0 +1,92 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}{U}",
+      "name": "Supplant Form",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "oracle_text": "Return target creature to its owner's hand. You create a token that's a copy of that creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-01-23",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If you return a face-down creature to its owner’s hand, the token will be a face-up colorless 2/2 creature with no name, no abilities, and no creature types. (The face-down creature card will be revealed to all players as it leaves the battlefield.)",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "published_at": "2014-11-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature had {X} in its mana cost, X is 0.",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "published_at": "2014-11-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, the token created by Supplant Form copies the original characteristics of that token as stated by the effect that put it onto the battlefield.",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "published_at": "2014-11-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature was copying something else, the token enters the battlefield as whatever that creature was copying.",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "published_at": "2014-11-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the creature and nothing else (unless that creature was copying something else or was a token; see below). It doesn’t copy whether that creature was tapped or untapped, whether it had any counters on it or Auras and/or Equipment attached to it, or any non-copy effects that changed its power, toughness, types, color, and so on.",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "published_at": "2014-11-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any “As [this creature] enters the battlefield” or “[This creature] enters the battlefield with” abilities of the copied creature will also work.",
+      "oracle_id": "7e49f689-996a-477e-a327-32b69fbc0d85",
+      "published_at": "2014-11-24",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC rulings for an original returned target copied by the same spell"
+}

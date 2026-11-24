@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [],
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120351",
+      "name": "Trial Memorial Warden",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "keywords": [],
+      "type_line": "Creature — Scout",
+      "mana_cost": "{R}{G}",
+      "cmc": 2,
+      "colors": [
+        "R",
+        "G"
+      ],
+      "color_identity": [
+        "R",
+        "G"
+      ],
+      "power": "2",
+      "toughness": "2",
+      "oracle_text": "Whenever another creature you control dies, put a +1/+1 counter on this creature. When this ability resolves for the third time this turn, this creature fights up to one target creature you don't control."
+    }
+  ],
+  "source": "Original offline witness for an ordinal reflexive fight."
+}

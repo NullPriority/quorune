@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Mapping
 from .replacement.immutable import FrozenMap
+from .discard_effect_origin import DiscardEffectOrigin
 
 WHOLE_HAND_DISCARD_OPERATION='discard_whole_hands'
 WHOLE_HAND_DISCARD_CAPABILITY='zone.discard.whole_hand'
@@ -17,12 +18,17 @@ class DiscardWholeHandsIntent:
     players: tuple[str,...]
     reason: str
     replacement_selections: tuple[str|FrozenMap,...]=()
+    effect_origin: DiscardEffectOrigin | None = None
 
     def __post_init__(self):
         if type(self.actor) is not str or not self.actor or type(self.reason) is not str or not self.reason:
             raise ValueError('Whole-hand discard requires actor and reason')
         if not isinstance(self.players,(list,tuple)) or any(type(p) is not str or not p for p in self.players) or len(self.players)!=len(set(self.players)):
             raise ValueError('Whole-hand discard players are malformed')
+        if self.effect_origin is not None and (
+            not isinstance(self.effect_origin, DiscardEffectOrigin) or self.effect_origin.controller != self.actor
+        ):
+            raise ValueError("Whole-hand discard requires its resolving controller")
         object.__setattr__(self,'players',tuple(self.players))
         if not isinstance(self.replacement_selections,(list,tuple)) or any(not isinstance(v,(str,Mapping)) or (isinstance(v,str) and not v) for v in self.replacement_selections):
             raise ValueError('Whole-hand discard replacements are malformed')

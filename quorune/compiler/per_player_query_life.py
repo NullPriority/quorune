@@ -8,7 +8,8 @@ from ..object_predicate import ObjectQuerySpec
 from ..query_effect_amount_model import PublicQueryAmountSpec
 from ..per_player_query_life_model import (
     PerPlayerQueryLifeLossSpec, PlayerLifeLossRelation, PER_PLAYER_QUERY_LIFE_MECHANIC,
-    OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION,
+    OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION, OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
+    PoisonCounterThresholdLifeLoss,
 )
 
 
@@ -37,6 +38,33 @@ def source_attack_opponent_subtype_absence_life_result(binding, body):
     effect = {'op': 'lose_life_each_opponent', 'amount': spec.to_dict()}
     return ('per-player-opponent-subtype-absence-life-loss-v1', (effect,), None,
         (PER_PLAYER_QUERY_LIFE_MECHANIC, 'cr-119-life', 'cr-101-the-magic-golden-rules'))
+
+
+_OPPONENT_POISON_THRESHOLD = re.compile(
+    rf"Each opponent who has (?P<minimum>{FIXED_COUNT_PATTERN}) or more poison counters "
+    rf"loses (?P<life>{FIXED_COUNT_PATTERN}) life\.", re.IGNORECASE,
+)
+
+
+def source_tap_opponent_poison_threshold_life_result(binding, body):
+    if (binding.variant != 'source_public_tap_state_transition'
+            or binding.event != 'permanent.tap'
+            or binding.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}):
+        return None
+    match = _OPPONENT_POISON_THRESHOLD.fullmatch(body.strip())
+    if match is None:
+        return None
+    minimum = fixed_number(match['minimum'])
+    loss = fixed_number(match['life'])
+    if minimum <= 0 or loss <= 0:
+        return None
+    spec = PerPlayerQueryLifeLossSpec(
+        PoisonCounterThresholdLifeLoss(minimum, loss), PlayerLifeLossRelation.OPPONENTS,
+        schema_version=OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
+    )
+    effect = {'op': 'lose_life_each_opponent', 'amount': spec.to_dict()}
+    return ('per-opponent-poison-threshold-life-loss-v1', (effect,), None,
+            (PER_PLAYER_QUERY_LIFE_MECHANIC, 'cr-119-life', 'cr-101-the-magic-golden-rules'))
 
 
 def per_player_query_life_template(text,*,source_name,compile_fixed):

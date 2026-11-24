@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Mapping
 from .characteristic_fragments import CharacteristicQuantitySpec
+from .entry_designations import ENTRY_DESIGNATION_CAPABILITY
+from .object_predicate import ObjectQuerySpec
 from .scalar_effect_amount_model import ScalarEffectAmountSpec, ScalarAmountOrigin, SCALAR_AMOUNT_KIND
 from .mana_restrictions import valid_mana_spend_restriction
 from .characteristic_fragments import CharacteristicQuantityScope
@@ -13,6 +15,15 @@ from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec, LIVE_B
 
 PUBLIC_QUANTITY_MANA_KIND = 'public_quantity_mana'
 PUBLIC_QUANTITY_MANA_CAPABILITY = 'mana.production.public_quantity'
+CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION = 2
+CHOSEN_SUBTYPE_QUANTITY_MANA_CAPABILITY = "mana.production.controlled_chosen_creature_type"
+
+
+def chosen_subtype_quantity_mana_count() -> CharacteristicQuantitySpec:
+    return CharacteristicQuantitySpec(
+        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -24,7 +35,7 @@ class PublicQuantityManaOutput:
     schema_version: int = 1
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION}:
             raise ValueError('Unsupported public quantity mana version')
         if type(self.selection) is not str or self.selection not in {'fixed','choose_one','combination'}:
             raise ValueError('Unsupported public quantity mana selection')
@@ -47,7 +58,19 @@ class PublicQuantityManaOutput:
             raise ValueError('Public quantity mana source fields are power or toughness')
         if self.restriction is not None and not valid_mana_spend_restriction(self.restriction):
             raise ValueError('Public quantity mana spend restriction is unsupported')
+        if self.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION and (
+            self.selection != "choose_one" or colors != tuple(sorted("WUBRG"))
+            or self.restriction is not None or self.amount != chosen_subtype_quantity_mana_count()
+        ):
+            raise ValueError("Chosen subtype mana requires one full ordinary color choice and its exact controlled creature count")
         object.__setattr__(self,'colors',colors)
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION:
+            return (PUBLIC_QUANTITY_MANA_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY,
+                    CHOSEN_SUBTYPE_QUANTITY_MANA_CAPABILITY)
+        return (PUBLIC_QUANTITY_MANA_CAPABILITY,)
 
     def to_dict(self) -> dict[str, Any]:
         return {'kind':PUBLIC_QUANTITY_MANA_KIND,'schema_version':self.schema_version,

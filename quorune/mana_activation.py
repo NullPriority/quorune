@@ -100,8 +100,12 @@ def complete_mana_activation(
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
-    bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
+    from .mana_ability_runtime import tap_mana_production_factor
+
+    base_bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
         source_information=source_information)
+    factor = tap_mana_production_factor(host, seat, trigger_source)
+    bundle = {color: amount * factor for color, amount in base_bundle.items()}
     restriction = bind_mana_spend_rule(ability.mana_spend_restriction, source)
     host._add_mana_to_pool(
         seat,
@@ -113,7 +117,7 @@ def complete_mana_activation(
         (
             mode
             for mode in host._mana_modes_for_ability(seat, source, ability)
-            if normalize_mana_bundle(mode.bundle) == bundle
+            if normalize_mana_bundle(mode.bundle) == base_bundle
         ),
         None,
     )
@@ -315,6 +319,21 @@ def _commit_plan_input(host, seat, mode, input_payment):
     host._apply_mana_spend(seat, spent, price.spend_context)
 
 
+def _capture_plan_chosen_subtype(host, seat, card, mode):
+    if mode.price is None:
+        return None
+    from .public_quantity_mana_runtime import capture_mana_source_information, chosen_subtype_mana_output
+
+    for ability in host._activated_abilities(card):
+        if ability.ability_id != mode.price.ability_id:
+            continue
+        output = chosen_subtype_mana_output(ability)
+        if output is not None:
+            return output, capture_mana_source_information(host, seat, card, ability)
+        break
+    return None
+
+
 def _commit_plan_mode(
     host: ManaActivationHost,
     seat: str,
@@ -327,6 +346,7 @@ def _commit_plan_mode(
     payment_id: str | None,
     replacement_selections_by_event: Mapping[str, Any] | None,
     triggered_mana_option: str | None = None,
+    chosen_subtype_mana=None,
 ) -> None:
     trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
     from .mana_source_counter_payment_model import exact_mana_cost_order
@@ -350,6 +370,18 @@ def _commit_plan_mode(
         payment_id=payment_id,
         replacement_selections_by_event=replacement_selections_by_event,
     )
+    if chosen_subtype_mana is not None:
+        from .public_quantity_mana_runtime import public_quantity_mana_amount
+
+        output, source_information = chosen_subtype_mana
+        if sum(bundle.values()) != public_quantity_mana_amount(
+            host, seat, card, output, source_information=source_information,
+        ):
+            raise GameRuleError("The mana plan no longer matches the current chosen subtype count")
+    from .mana_ability_runtime import tap_mana_production_factor
+
+    factor = tap_mana_production_factor(host, seat, trigger_source)
+    bundle = {color: amount * factor for color, amount in bundle.items()}
     host._add_mana_to_pool(
         seat,
         bundle,
@@ -438,6 +470,7 @@ def complete_mana_plan_activations(
             tap_source=tap_source,
             input_payment=input_payment,
         )
+        chosen_subtype_mana = _capture_plan_chosen_subtype(host, seat, card, mode)
         _commit_plan_input(host, seat, mode, input_payment)
         _commit_plan_mode(
             host,
@@ -449,6 +482,7 @@ def complete_mana_plan_activations(
             "snow" in supertypes,
             payment_id=payment_id,
             replacement_selections_by_event=replacement_selections_by_event,
+            chosen_subtype_mana=chosen_subtype_mana,
             triggered_mana_option=activation.get(TRIGGERED_MANA_OPTION_FIELD),
         )
 

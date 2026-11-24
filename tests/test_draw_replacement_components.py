@@ -5,6 +5,14 @@ from unittest import mock
 
 from common import keep_all, load_assets, make_session
 
+from quorune.drawing.step_exemption import (
+    DRAW_STEP_EXEMPT_DISCARD_CAPABILITY,
+    DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+    DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY,
+    DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+    DRAW_STEP_EXEMPT_REDIRECT_CAPABILITY,
+    DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+)
 from quorune.engine import CommanderEngine
 from quorune.replacement import DredgeDraw, MultiplyAmount
 from quorune.semantics import SemanticProgram
@@ -118,12 +126,15 @@ class DrawReplacementComponentTests(unittest.TestCase):
         registry = default_draw_replacement_registry()
         inventory = registry.inventory()
 
-        self.assertEqual(3, len(inventory))
+        self.assertEqual(6, len(inventory))
         self.assertEqual(
             {
                 DREDGE_HANDLER_ID,
                 DRAW_INSTRUCTION_MULTIPLIER_HANDLER_ID,
                 DRAW_RESULT_MULTIPLIER_HANDLER_ID,
+                DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+                DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+                DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
             },
             {value["handler_id"] for value in inventory},
         )
@@ -135,6 +146,20 @@ class DrawReplacementComponentTests(unittest.TestCase):
                 ],
                 DRAW_RESULT_MULTIPLIER_HANDLER_ID: [
                     "zone.draw.result_generated_ordering"
+                ],
+                DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID: [
+                    DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY,
+                    "zone.draw.result_generated_ordering",
+                ],
+                DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID: [
+                    DRAW_STEP_EXEMPT_DISCARD_CAPABILITY,
+                    "zone.draw.result_generated_ordering",
+                    "zone.discard.typed_cause",
+                    "zone.mill.fixed",
+                ],
+                DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID: [
+                    DRAW_STEP_EXEMPT_REDIRECT_CAPABILITY,
+                    "zone.draw.result_generated_ordering",
                 ],
             },
             {

@@ -38,6 +38,7 @@ from .continuous_templates import (
 )
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 from .conditional_declaration_grants import conditional_characteristic_declaration_grant
+from .bound_declaration_rules import power_maximum_blockers_handler
 
 
 DeclarationTemplate = (
@@ -440,6 +441,32 @@ _ATTACHED_RESTRAINT_COMPOSITION = re.compile(
 )
 
 
+def _attached_activation_rule(*, nonmana=False):
+    rule = ActivationProhibitionSpec("nonmana" if nonmana else "all", schema_version=2, relation="attached")
+    return {
+        "handler_id": "ability.static.attached-activation-rule.v1", "schema_version": 1,
+        "event": "characteristics.evaluate", "fragment": ability_fragment_to_dict(rule),
+    }
+
+
+def _attached_stat_activation_prohibition(text, *, source_name):
+    match = re.fullmatch(
+        r"(?P<stats>Enchanted creature gets -[0-9]+/-[0-9]+), and its activated abilities can['’]t be activated\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    stats = attached_fixed_characteristics_handler(match["stats"] + ".", source_name=source_name)
+    if stats is None:
+        return None
+    _, modifier, capabilities = stats
+    return (
+        "static-attached-stat-activation-prohibition-v1",
+        (modifier, _attached_activation_rule()),
+        (*capabilities, "activation.restriction.attached_static_rule"),
+    )
+
+
 def _attached_restraint_composition(
     text: str,
     *,
@@ -454,13 +481,11 @@ def _attached_restraint_composition(
     )
     if not declaration.exact or declaration.template is None:
         return None
-    rule=ActivationProhibitionSpec('nonmana' if match.group('nonmana') else 'all',schema_version=2,relation='attached')
     return (
         'static-attached-restraint-rules-v2',
         ({'handler_id':DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID,'schema_version':1,
           'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(declaration.template)},
-         {'handler_id':'ability.static.attached-activation-rule.v1','schema_version':1,
-          'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(rule)}),
+         _attached_activation_rule(nonmana=bool(match.group('nonmana')))),
         (DECLARATION_COMPONENT_CAPABILITY_ID,'activation.restriction.attached_static_rule'),
     )
 
@@ -744,7 +769,9 @@ def fixed_static_declaration_grant_handler(
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     return (
         conditional_characteristic_declaration_grant(text, source_name=source_name)
+        or power_maximum_blockers_handler(text)
         or _attached_restraint_composition(text, source_name=source_name)
+        or _attached_stat_activation_prohibition(text, source_name=source_name)
         or _direct_declaration_grant(text, source_name=source_name)
         or _attached_reverse_declaration_grant(
             text,

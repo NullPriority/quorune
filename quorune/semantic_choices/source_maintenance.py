@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-"""Source-incarnation sacrifice around the shared resolution-time cost owner."""
+"""Commit the original source default using the shared resolution-time cost owner."""
 
+from dataclasses import replace
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
-from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, SetPermanentsTappedIntent
 from ..source_maintenance import SourceMaintenanceSpec
 from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
@@ -51,15 +52,20 @@ def _validated(
     return spec
 
 
-def _declined_source_sacrifice(
-    effect: Mapping[str, Any], query: SemanticChoiceQuery,
+def _declined_source_result(
+    spec: SourceMaintenanceSpec, effect: Mapping[str, Any], query: SemanticChoiceQuery,
 ) -> SemanticChoiceCompletion:
     actor = effect['_choice_actor']
     source = query.object(effect['source'], zones=('battlefield',)) if effect['source'] else None
     if (
-        source is None or source.phased_out or source.controller != actor
-        or source.logical_object_id != effect['_source_logical_object_id']
+        source is None or source.phased_out or source.logical_object_id != effect['_source_logical_object_id']
     ):
+        return SemanticChoiceCompletion()
+    if spec.decline == "tap":
+        return SemanticChoiceCompletion(intents=(SetPermanentsTappedIntent(
+            actor=actor, object_refs=(source.ref,), tapped=True, reason=effect["_stack_label"],
+        ),))
+    if source.controller != actor:
         return SemanticChoiceCompletion()
     return SemanticChoiceCompletion(intents=(MoveObjectsSimultaneouslyIntent(
         actor=actor, object_refs=(source.ref,), expected_zones=('battlefield',),
@@ -94,13 +100,18 @@ def prepare_source_maintenance(
         '_source_logical_object_id': identity, '_legal_objects': [],
     }
     if spec.payment is None:
-        completion = _declined_source_sacrifice(stored, context.query)
+        completion = _declined_source_result(spec, stored, context.query)
         return SemanticChoicePreparation(
             request=None, continuation_effect=FrozenMap(stored),
             preparation_intents=completion.intents,
             auto_continue=AutoContinue(reason='Resolve the mandatory source sacrifice.'),
         )
-    return prepare_fixed_payment_cost(spec.payment, stored, context)
+    prepared = prepare_fixed_payment_cost(spec.payment, stored, context)
+    if spec.decline != "tap":
+        return prepared
+    request = replace(prepared.request, prompt=f"Pay {spec.payment.amount} life or decline.",
+                      public_context=FrozenMap({**dict(prepared.request.public_context), "life_cost": spec.payment.amount}))
+    return replace(prepared, request=request)
 
 
 def complete_source_maintenance(
@@ -113,4 +124,4 @@ def complete_source_maintenance(
     if actor != continuation.semantic_frame.controller or spec.payment is None:
         raise SemanticChoiceError('Source maintenance has no authorized payment choice')
     completion = complete_fixed_payment_cost(spec.payment, effect, response, query)
-    return completion if completion.intents else _declined_source_sacrifice(effect, query)
+    return completion if completion.intents else _declined_source_result(spec, effect, query)

@@ -48,6 +48,7 @@ class CounterTarget(str, Enum):
     ACTIVATED_ABILITY = "activated ability"
     TRIGGERED_ABILITY = "triggered ability"
     ACTIVATED_OR_TRIGGERED_ABILITY = "activated or triggered ability"
+    OTHER_CONTROLLER_ABILITY = "activated or triggered ability you don't control"
     SPELL_OR_ABILITY = "spell, activated ability, or triggered ability"
     TRIGGERED_ABILITY_OR_COLORLESS_SPELL = "triggered ability or colorless spell"
     ABILITY_OR_NONCREATURE_SPELL = "activated ability, triggered ability, or noncreature spell"
@@ -104,6 +105,7 @@ class TargetedCounterEffectTemplate:
     counter_destination: str | None = None
     only_if_no_mana_spent: bool = False
     only_if_mana_value_equals_x: bool = False
+    only_if_controller_has_more_creatures: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, CounterTarget):
@@ -118,6 +120,11 @@ class TargetedCounterEffectTemplate:
             or self.mana_value_predicate is not None or self.counter_destination is not None
         ):
             raise ValueError("Announced X equality is a resolution condition on an ordinary spell counter")
+        if type(self.only_if_controller_has_more_creatures) is not bool or self.only_if_controller_has_more_creatures and (
+            self.target is not CounterTarget.SPELL or self.mana_value_predicate is not None
+            or self.only_if_no_mana_spent or self.only_if_mana_value_equals_x or self.counter_destination is not None
+        ):
+            raise ValueError("Creature-count comparison is a resolution condition on the ordinary spell counter")
         if self.counter_destination is not None:
             counter_destination_fields(self.counter_destination)
             if self.target_schema.get("categories") != ["spell"]:
@@ -137,6 +144,8 @@ class TargetedCounterEffectTemplate:
             return "counter-target-spell-if-no-mana-spent-v1"
         if self.only_if_mana_value_equals_x:
             return "counter-target-spell-if-mana-value-equals-x-v1"
+        if self.only_if_controller_has_more_creatures:
+            return "counter-target-spell-if-controller-has-more-creatures-v1"
         slug = direct_target_slug(self.target.value)
         if self.mana_value_predicate is not None:
             field, value = self.mana_value_predicate
@@ -155,12 +164,20 @@ class TargetedCounterEffectTemplate:
             from ..stack_counter import ANNOUNCED_X_COUNTER_FIELD
 
             effect = {**effect, ANNOUNCED_X_COUNTER_FIELD: CastXAmountSpec().to_dict()}
+        if self.only_if_controller_has_more_creatures:
+            from ..stack_counter import CREATURE_COUNT_COUNTER_FIELD
+
+            effect = {**effect, CREATURE_COUNT_COUNTER_FIELD: 1}
         if self.counter_destination is not None:
             effect = {**effect, COUNTER_DESTINATION_FIELD: self.counter_destination}
         return (effect,)
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
+        if self.target is CounterTarget.OTHER_CONTROLLER_ABILITY:
+            from ..stack_counter import other_controller_ability_counter_schema
+
+            return other_controller_ability_counter_schema()
         categories = (
             ["spell", "ability"]
             if self.target is CounterTarget.SPELL_OR_ABILITY or self.target in {
@@ -250,6 +267,11 @@ def targeted_counter_effect_template(
         return TargetedCounterEffectTemplate(CounterTarget.SPELL, only_if_no_mana_spent=True)
     if re.fullmatch(r"Counter target spell if its mana value is X[.]?", text.strip(), re.I):
         return TargetedCounterEffectTemplate(CounterTarget.SPELL, only_if_mana_value_equals_x=True)
+    if re.fullmatch(
+        r"Counter target spell if you control more creatures than that spell['’]s controller[.]?",
+        text.strip(), re.I,
+    ):
+        return TargetedCounterEffectTemplate(CounterTarget.SPELL, only_if_controller_has_more_creatures=True)
     normalized, destination = _counter_destination_clause(text)
     quantity = re.search(r" with mana value (?P<value>[0-9]+)(?P<comparison> or less| or greater)?\.?$", normalized, re.I)
     numeric = None
@@ -285,6 +307,12 @@ def targeted_counter_effect_template(
         CounterTarget(match.group("target").casefold()), mana_value_predicate=numeric,
         counter_destination=destination,
     )
+
+
+def other_controller_ability_counter_effect_template(text: str) -> TargetedCounterEffectTemplate | None:
+    if re.fullmatch(r"counter target activated or triggered ability you don['’]t control[.]?", text.strip(), re.I):
+        return TargetedCounterEffectTemplate(CounterTarget.OTHER_CONTROLLER_ABILITY)
+    return None
 
 
 _SPELL_TARGET_SUBJECTS = {
@@ -517,6 +545,7 @@ __all__ = [
     "TargetedControllerPaymentTemplate",
     "is_intrinsically_uncounterable_spell",
     "targeted_counter_effect_template",
+    "other_controller_ability_counter_effect_template",
     "spell_targeting_counter_effect_template",
     "targeted_controller_payment_template",
 ]

@@ -12,12 +12,16 @@ from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID,
     DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID,
-    FixedCountedLibrarySearchTemplate,
-    counted_search_selector_is_closed,
+    FixedCountedLibrarySearchTemplate, RECRUITING_LIBRARY_SEARCH_VERSION,
+    TARGET_NAME_LIBRARY_SEARCH_VERSION, TargetNameLibrarySearchSpec,
+    counted_search_bound_dependencies, counted_search_selector_is_closed,
 )
 from ..commander_pairing import (
     PARTNER_WITH_SEARCH_CAPABILITY_ID,
     PARTNER_WITH_SEARCH_MECHANIC_ID,
+)
+from ..named_search_model import (
+    LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, LiteralNameAnyNumberSearchSpec,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 
@@ -71,11 +75,23 @@ def fixed_counted_library_search_node_capabilities(
     target_schema: Mapping[str, object] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    if (
-        FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID not in mechanic_ids
-        or target_schema is not None or len(effects) != 1
-    ):
+    if FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID not in mechanic_ids or len(effects) != 1:
         return ()
+    if effects[0].get("schema_version") == TARGET_NAME_LIBRARY_SEARCH_VERSION:
+        try:
+            spec = TargetNameLibrarySearchSpec.from_effect(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return spec.capabilities() if target_schema == spec.target_schema() else ()
+    if target_schema is not None:
+        return ()
+    if effects[0].get("schema_version") in (
+        LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
+    ):
+        try:
+            return counted_search_bound_dependencies(effects[0])
+        except (TypeError, ValueError):
+            return ()
     if effects[0].get('schema_version') == 8:
         from ..library_search_model import QueryBoundLibrarySearchSpec,QUERY_BOUND_SEARCH_MECHANIC
         if QUERY_BOUND_SEARCH_MECHANIC not in mechanic_ids:return ()
@@ -146,6 +162,58 @@ def _query(
     if permanent_only and not (query.types_all or query.types_any):
         return None
     return query
+
+
+def target_name_library_search_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get("op") == "search" and (
+        effect.get("schema_version") == TARGET_NAME_LIBRARY_SEARCH_VERSION or "name_target" in effect
+    ) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("resolve", "stack")
+            or program.handlers or program.cost_schema is not None or len(program.effects) != 1):
+        raise ValueError("Target-name search requires its exact single spell resolution")
+    spec = TargetNameLibrarySearchSpec.from_effect(program.effects[0])
+    if program.target_schema != spec.target_schema():
+        raise ValueError("Target-name search requires the original creature target")
+    return spec.capabilities()
+
+
+def literal_name_any_number_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get("op") == "search" and effect.get("schema_version") == LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION
+               for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("permanent.enter.self", "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None
+            or program.event_condition is not None or program.handlers or len(program.effects) != 1):
+        raise ValueError("An optional any-number named search requires its original entry trigger")
+    wrapper = program.effects[0]
+    effects = wrapper.get("effects")
+    if (set(wrapper) != {"op", "player", "effects"}
+            or wrapper["op"] != "offer_optional_effect" or wrapper["player"] != "$controller"
+            or not isinstance(effects, (list, tuple)) or len(effects) != 1):
+        raise ValueError("The resolving controller must opt into this private library search")
+    LiteralNameAnyNumberSearchSpec.from_effect(effects[0])
+    return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, "effect.choice.optional_fixed",
+            "trigger.event.normalized_zone_change")
+
+
+def recruiting_library_search_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get("op") == "search" and effect.get("schema_version") == RECRUITING_LIBRARY_SEARCH_VERSION
+               for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("permanent.enter.self", "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None
+            or program.event_condition is not None or program.handlers or len(program.effects) != 1
+            or program.effects[0].get("op") != "search"
+            or program.effects[0].get("schema_version") != RECRUITING_LIBRARY_SEARCH_VERSION):
+        raise ValueError("Recruiting search requires its exact mandatory source-entry result")
+    return (*counted_search_bound_dependencies(program.effects[0]), "trigger.event.normalized_zone_change")
 
 
 def fixed_library_search_node_capabilities(

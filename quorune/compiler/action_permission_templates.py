@@ -10,8 +10,12 @@ from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.action_permissions import (
     ACTION_PERMISSION_EVENT,
+    SOURCE_LOYALTY_INSTANT_CAPABILITY,
+    SOURCE_LOYALTY_INSTANT_HANDLERS,
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
     ADDITIONAL_LAND_PLAY_HANDLER_ID,
+    SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY,
+    SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID,
     LIBRARY_TOP_ACTION_HANDLER_ID,
     LIBRARY_TOP_VISIBILITY_HANDLER_ID,
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
@@ -54,6 +58,10 @@ _REVEAL_ALL_LIBRARY_TOPS = re.compile(
 )
 _ADDITIONAL_LAND_PLAYS = re.compile(
     r"^You may play (?P<count>an|two) additional lands? on each of your turns\.?$",
+    re.IGNORECASE,
+)
+_SHARED_ADDITIONAL_LAND_PLAYS = re.compile(
+    r"^Each player may play (?P<count>an|two) additional lands? on each of their turns\.?$",
     re.IGNORECASE,
 )
 _TOP_LIBRARY_CAST = re.compile(
@@ -271,6 +279,24 @@ def _static_hand_visibility_handler(normalized: str) -> ActionPermissionHandlerT
         'schema_version':1,'event':ACTION_PERMISSION_EVENT,'scope':scope},HAND_VISIBILITY_CAPABILITY)
 
 
+def _tap_mana_production_handler(normalized: str) -> ActionPermissionHandlerTemplate | None:
+    from ..semantic_runtime.mana_spending import (
+        TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY, TAP_MANA_PRODUCTION_MULTIPLIERS,
+    )
+
+    clauses = {
+        "if you tap a permanent for mana, it produces twice as much of that mana instead.": ActionPermissionKind.DOUBLE_TAP_MANA,
+        "if you tap a permanent for mana, it produces three times as much of that mana instead.": ActionPermissionKind.TRIPLE_TAP_MANA,
+        "if you tap a basic land for mana, it produces three times as much of that mana instead.": ActionPermissionKind.TRIPLE_BASIC_LAND_TAP_MANA,
+    }
+    kind = clauses.get(" ".join(normalized.casefold().split()))
+    if kind is None:
+        return None
+    return ("tap-for-mana-production-multiplier-v1",
+            _descriptor(handler_id=TAP_MANA_PRODUCTION_MULTIPLIERS[kind][0], permission=kind),
+            TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY)
+
+
 def _static_mana_spending_handler(normalized: str) -> ActionPermissionHandlerTemplate | None:
     from ..semantic_runtime.mana_spending import MANA_SPENDING_CAPABILITY, MANA_SPENDING_HANDLERS
     spending = {'you may spend white mana as though it were red mana': 0,
@@ -282,6 +308,35 @@ def _static_mana_spending_handler(normalized: str) -> ActionPermissionHandlerTem
     return ('static-mana-spending-v1',_descriptor(handler_id=handler,permission=kind),MANA_SPENDING_CAPABILITY)
 
 
+_SELF_LOYALTY_INSTANT = re.compile(
+    r"You may activate loyalty abilities of (?P<source>.+?) on any player['’]s turn "
+    r"any time you could cast an instant[.]?",
+    re.I,
+)
+_ENTERED_SELF_LOYALTY_INSTANT = re.compile(
+    r"As long as (?P<source>.+?) entered this turn, you may activate (?:its|her|his) loyalty abilities "
+    r"any time you could cast an instant[.]?",
+    re.I,
+)
+
+
+def _self_loyalty_instant_handler(text, *, source_name):
+    if not source_name:
+        return None
+    match = _SELF_LOYALTY_INSTANT.fullmatch(text)
+    permission = ActionPermissionKind.ACTIVATE_SOURCE_LOYALTY_AT_INSTANT
+    if match is None:
+        match = _ENTERED_SELF_LOYALTY_INSTANT.fullmatch(text)
+        permission = ActionPermissionKind.ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT
+    if match is None or not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    return (
+        "self-loyalty-instant-permission-v1",
+        _descriptor(handler_id=SOURCE_LOYALTY_INSTANT_HANDLERS[permission], permission=permission),
+        SOURCE_LOYALTY_INSTANT_CAPABILITY,
+    )
+
+
 def static_action_permission_handler(
     text: str,
     *,
@@ -290,8 +345,10 @@ def static_action_permission_handler(
     """Lower one closed controller/public action-permission sentence."""
 
     normalized = text.strip()
-    if (spending := _static_mana_spending_handler(normalized)) is not None:
-        return spending
+    if loyalty := _self_loyalty_instant_handler(normalized, source_name=source_name):
+        return loyalty
+    if mana_rule := (_tap_mana_production_handler(normalized) or _static_mana_spending_handler(normalized)):
+        return mana_rule
     if (hand := _static_hand_visibility_handler(normalized)) is not None:
         return hand
     if _PLAY_LANDS_FROM_GRAVEYARD.fullmatch(normalized) is not None:
@@ -352,6 +409,18 @@ def static_action_permission_handler(
                 "amount": 1 if land_match.group("count").casefold() == "an" else 2,
             },
             "land.play.additional.static",
+        )
+    shared_land_match = _SHARED_ADDITIONAL_LAND_PLAYS.fullmatch(normalized)
+    if shared_land_match is not None:
+        return (
+            "shared-additional-land-plays-v1",
+            {
+                "handler_id": SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID,
+                "schema_version": 1,
+                "event": ACTION_PERMISSION_EVENT,
+                "amount": 1 if shared_land_match.group("count").casefold() == "an" else 2,
+            },
+            SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY,
         )
     if _LOOK_AND_PLAY_LIBRARY_TOP.fullmatch(normalized) is not None:
         return ('look-and-play-library-top-v1', (

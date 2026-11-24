@@ -80,6 +80,7 @@ class CastProposalHost(CastCostHost, Protocol):
         source_ref: str,
         acting_source: Any = None,
         target_schema: Mapping[str, Any] | None = None,
+        announcing_targets: bool = False,
     ) -> tuple[list[str], Any]: ...
 
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
@@ -91,6 +92,7 @@ class CastProposalHost(CastCostHost, Protocol):
         *,
         source_ref: str,
         acting_source: Any = None,
+        announcing_targets: bool = False,
     ) -> Mapping[str, Any] | None: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
@@ -523,7 +525,9 @@ def _cast_program_and_cost(
         if method_spec is not None
         else str(face.get("type_line") or "") if face else record.type_line
     )
-    type_line = prospective_cross_zone_spell_type_line(host, card, request.actor, type_line) or type_line
+    type_line = prospective_cross_zone_spell_type_line(
+        host, card, request.actor, type_line, include_self_characteristics=method_spec is None,
+    ) or type_line
     mana_cost = (
         "{3}"
         if method_spec is not None
@@ -683,6 +687,7 @@ def _cast_targets_and_tap_costs(
         modes=list(request.modes),
         acting_source=spell_targeting_source(host,card), source_ref=card.ref,
         target_schema=target_schema,
+        announcing_targets=True,
     )
     effective_target_schema = (
         target_schema
@@ -917,7 +922,8 @@ def _cast_offer_payload(
             from ...announced_damage import preview_cast_allocation_schema
             target_spec = preview_cast_allocation_schema(target_spec, raw)
             public_schema = host._public_target_schema(
-                seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref
+                seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref,
+                announcing_targets=True,
             )
             if public_schema is None:
                 continue
@@ -934,8 +940,10 @@ def _cast_offer_payload(
         if public_schema is not None:
             from .targeted_costs import public_payable_target_schema
             public_schema=public_payable_target_schema(public_schema,raw)
+            from .announced_mana_value_targets import with_announced_target_ranges
             from .target_cardinality import public_target_count_schema
             public_schema = public_target_count_schema(public_schema, raw)
+            public_schema = with_announced_target_ranges(host, public_schema, raw)
             projected["target_schema"] = public_schema
             from .targeted_costs import public_target_costs
             prices=public_target_costs(host,seat,raw,card=card,spell_program=program)
@@ -1033,7 +1041,9 @@ def build_cast_offer(
         if method_spec is not None
         else str(front.get("type_line") or "") if front else record.type_line
     )
-    type_line = prospective_cross_zone_spell_type_line(host, card, seat, type_line) or type_line
+    type_line = prospective_cross_zone_spell_type_line(
+        host, card, seat, type_line, include_self_characteristics=method_spec is None,
+    ) or type_line
     if type_line_has_card_type(type_line, "land"):
         return CastProposalResult("unavailable", "land_not_spell")
     if resolving_payment is None and not _zone_lifecycle_cast_timing_is_legal(host, seat, card):

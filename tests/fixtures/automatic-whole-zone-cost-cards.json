@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for automatic paid-set casts.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000903001",
+      "name": "Trial Furnace Covenant",
+      "mana_cost": "{1}{B}",
+      "cmc": 2,
+      "type_line": "Instant",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "oracle_text": "As an additional cost to cast this spell, sacrifice all permanents you control and discard your hand.\nTarget player loses 4 life.",
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000903002",
+      "name": "Trial Fuel Pebble",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact",
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "produced_mana": [
+        "B"
+      ],
+      "oracle_text": "Sacrifice this artifact: Add {B}.",
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

@@ -17,6 +17,36 @@ _ATTACHED_SUPPORTED_ABILITIES = frozenset(
 ) | {'flash'}
 
 
+FIXED_KEYWORDS_AND_COLOR_PROTECTION_TEMPLATE = "continuous-fixed-query-keywords-and-color-protection-v1"
+_COLOR = r"(?:white|blue|black|red|green)"
+_CONTROLLED_KEYWORDS_AND_COLOR_PROTECTION = re.compile(
+    rf"(?P<subject>(?:Other )?creatures you control) have (?P<ordinary>.+?)(?:,\s*|\s+)and\s+"
+    rf"(?P<protection>protection from {_COLOR}(?:\s+and from {_COLOR}){{0,4}})\.?$",
+    re.IGNORECASE,
+)
+
+
+def fixed_query_keywords_and_color_protection_handler(text: str):
+    """Compose two closed grants with exactly the same current recipient set."""
+    match = _CONTROLLED_KEYWORDS_AND_COLOR_PROTECTION.fullmatch(text.strip())
+    if match is None or _attached_abilities(match["ordinary"]) is None:
+        return None
+    colors = re.findall(rf"\bfrom ({_COLOR})", match["protection"].casefold())
+    if len(set(colors)) != len(colors):
+        return None
+    from .continuous_templates import fixed_query_keyword_grant_handler
+
+    ordinary = fixed_query_keyword_grant_handler(f"{match['subject']} have {match['ordinary']}.")
+    protected = fixed_query_keyword_grant_handler(f"{match['subject']} have {match['protection']}.")
+    if ordinary is None or protected is None:
+        return None
+    return (
+        FIXED_KEYWORDS_AND_COLOR_PROTECTION_TEMPLATE,
+        (ordinary[1], protected[1]),
+        tuple(sorted({*ordinary[2], *protected[2]})),
+    )
+
+
 def _attached_abilities(value: str) -> tuple[str, ...] | None:
     normalized = re.sub(r",?\s+and\s+", ",", value.strip())
     abilities = tuple(

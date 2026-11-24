@@ -151,6 +151,11 @@ class TriggerMultiplierSpec:
         )
 
 
+class WardSacrificeScope(str, Enum):
+    CREATURE = "creature"
+    PERMANENT_WITH_POSITIVE_MANA_VALUE = "permanent_with_positive_mana_value"
+
+
 @dataclass(frozen=True, slots=True)
 class WardSpec:
     """One represented fixed public Ward ability (CR 702.21)."""
@@ -159,6 +164,7 @@ class WardSpec:
     life_payment: int | None = None
     discard_cards: int = 0
     schema_version: int | None = None
+    sacrifice_scope: WardSacrificeScope | None = None
 
     def __post_init__(self) -> None:
         kinds = sum(
@@ -166,6 +172,7 @@ class WardSpec:
                 self.generic_cost is not None,
                 self.life_payment is not None,
                 self.discard_cards != 0,
+                self.sacrifice_scope is not None,
             )
         )
         if kinds != 1:
@@ -174,10 +181,17 @@ class WardSpec:
             )
         schema_version = self.schema_version
         if schema_version is None:
-            schema_version = 1 if self.generic_cost is not None else 2
+            if self.sacrifice_scope is not None:
+                schema_version = 3
+            else:
+                schema_version = 1 if self.generic_cost is not None else 2
             object.__setattr__(self, "schema_version", schema_version)
-        if type(schema_version) is not int or schema_version not in {1, 2}:
+        if type(schema_version) is not int or schema_version not in {1, 2, 3}:
             raise TriggerParticipationError("Unsupported Ward schema version")
+        if schema_version == 3 and not isinstance(self.sacrifice_scope, WardSacrificeScope):
+            raise TriggerParticipationError("Ward schema version 3 requires a typed sacrifice scope")
+        if schema_version != 3 and self.sacrifice_scope is not None:
+            raise TriggerParticipationError("Ward sacrifice requires schema version 3")
         if self.generic_cost is not None and (
             type(self.generic_cost) is not int or self.generic_cost < 0
         ):
@@ -212,6 +226,8 @@ class WardSpec:
 
     @property
     def payment_kind(self) -> str:
+        if self.sacrifice_scope is not None:
+            return "sacrifice"
         if self.generic_cost is not None:
             return "mana"
         if self.life_payment is not None:
@@ -220,6 +236,8 @@ class WardSpec:
 
     @property
     def capability_id(self) -> str:
+        if self.sacrifice_scope is not None:
+            return "trigger.keyword.ward.fixed_sacrifice"
         return (
             "trigger.keyword.ward.fixed_generic"
             if self.generic_cost is not None
@@ -231,6 +249,8 @@ class WardSpec:
         return ("603.3", "702.21", "702.21a")
 
     def to_dict(self) -> dict[str, Any]:
+        if self.sacrifice_scope is not None:
+            return {"schema_version": 3, "sacrifice_scope": self.sacrifice_scope.value}
         if self.schema_version == 1:
             return {
                 "schema_version": 1,
@@ -269,6 +289,12 @@ class WardSpec:
                 life_payment=value["life_payment"],
                 discard_cards=value["discard_cards"],
             )
+        if value.get("schema_version") == 3 and set(value) == {"schema_version", "sacrifice_scope"}:
+            try:
+                scope = WardSacrificeScope(value["sacrifice_scope"])
+            except (TypeError, ValueError) as exc:
+                raise TriggerParticipationError("Ward sacrifice scope is unsupported") from exc
+            return cls(schema_version=3, sacrifice_scope=scope)
         raise TriggerParticipationError(
             "Ward fragments have a closed schema"
         )

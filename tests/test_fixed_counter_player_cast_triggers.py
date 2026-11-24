@@ -1031,7 +1031,8 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
         self.assertEqual(programs, {item.semantic_key for item in items})
         self.assertEqual(3, len(items))
         for item in items:
-            self.assertEqual(7, item.context["schema_version"])
+            self.assertEqual(8, item.context["schema_version"])
+            self.assertIs(True, item.context["physical_card"])
             self.assertEqual(2, item.context["mana_spent_total"])
             self.assertEqual([], item.context["targets"])
             self.assertEqual([], item.context["creature_target_controllers"])

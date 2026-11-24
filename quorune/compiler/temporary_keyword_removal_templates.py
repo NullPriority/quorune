@@ -6,6 +6,7 @@ from . import regex_working_set as re
 
 from ..rules.temporary_keyword_removal import (
     ALL_LANDWALK_ABILITIES, CHOICE_FIELD, CHOICE_OPTION_SETS, CHOICE_PROMPT, OPERATION, MECHANIC, PROTECTION_FROM_BLACK,
+    opponent_permanent_keyword_removal_query,
 )
 from .fixed_target_effect_sequences import _keyword_list
 from .fixed_resolution_characteristics import _subject
@@ -30,10 +31,16 @@ def temporary_keyword_removal_template(text,*,source_name,source_is_permanent,so
     removed = (typed_removal,) if typed_removal else _keyword_list(parsed['remove'],extended=True)
     added=_keyword_list(parsed['before'] or parsed['after'],extended=True) if parsed['before'] or parsed['after'] else ()
     if removed is None or added is None or not removed or set(removed).intersection(added):return None
-    selected=_subject(parsed['subject'],source_name=source_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types)
-    if selected is None:return None
-    selection,schema=selected
-    if 'predicate' in selection and 'creature' not in selection['predicate'].get('types_all',()):return None
+    if body.casefold() == "permanents your opponents control lose hexproof and indestructible":
+        selection, schema = {"predicate": opponent_permanent_keyword_removal_query().to_dict()}, None
+    else:
+        selected = _subject(parsed['subject'], source_name=source_name, source_is_permanent=source_is_permanent,
+                            source_card_types=source_card_types)
+        if selected is None:
+            return None
+        selection, schema = selected
+        if 'predicate' in selection and 'creature' not in selection['predicate'].get('types_all', ()):
+            return None
     effect={'op':OPERATION,'schema_version':11,**selection,'power':int(parsed['p'] or 0),'toughness':int(parsed['t'] or 0),
         'remove_keywords':list(removed),'keywords':list(added)}
     mechanics=('cr-611-continuous-effects',MECHANIC,*(keyword.casefold() for keyword in (*removed,*added) if keyword != typed_removal),

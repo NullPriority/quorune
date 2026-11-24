@@ -18,6 +18,17 @@ ANY_NUMBER_TARGET_MECHANIC = "any-number-target-set"
 
 
 def any_number_target_set_template(text):
+    phasing = re.fullmatch(
+        r"any number of (?P<subject>target nonland permanents you control|"
+        r"other target creatures you control) phase out\.?",
+        " ".join(text.strip().split()), flags=re.I,
+    )
+    if phasing is not None:
+        from ..phasing_model import PHASE_OUT_MECHANIC, any_number_phase_out_effect, any_number_phase_out_schema
+
+        schema = any_number_phase_out_schema(other_creatures=phasing["subject"].casefold().startswith("other"))
+        return ("any-number-permanents-phase-out-v1", (any_number_phase_out_effect(),), schema,
+                (PHASE_OUT_MECHANIC, ANY_NUMBER_TARGET_MECHANIC, "cr-115-targets"))
     if len(re.findall(r"\bany number of (?:other )?target\b", text, re.I)) != 1:
         return None
     prototype = re.sub(r"\bany number of (?P<other>other )?target\b",

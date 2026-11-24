@@ -6,17 +6,29 @@ from dataclasses import replace
 from . import regex_working_set as re
 
 from ..emblem_program_model import CompiledEmblemSpec, EmblemAbilityProgram, EMBLEM_CHILD_COVERAGE, EMBLEM_PROGRAM_CAPABILITY
+from ..received_damage_model import is_command_fixed_damage_remainder
 from .dependency_gate import explicit_capabilities_gate, dependency_gate
 from .generated_program_identity import generated_ability_id
-from .runtime_templates import static_runtime_template
+from .runtime_templates import StaticRuntimeTemplate, static_runtime_template
+from .turn_cast_grants import command_graveyard_cast_grant_handler
 from .static_runtime_nodes import runtime_handler_node
 from .fixed_counter_trigger_nodes import fixed_typed_event_effect_trigger_node
 
 
 def _emblem_child(body, *, node_id, span, registry, profile, effects, trusted_mechanics):
     residuals = []
-    template = static_runtime_template(body, source_name='Emblem', source_damageable=False, source_permanent=False)
-    if template is not None and template.kind == 'static_ability' and template.event == 'characteristics.evaluate':
+    command_cast = command_graveyard_cast_grant_handler(body)
+    if command_cast is None:
+        template = static_runtime_template(body, source_name='Emblem', source_damageable=False, source_permanent=False)
+    else:
+        template = StaticRuntimeTemplate(
+            compiled=command_cast, kind='static_ability', event=command_cast[1]['event'],
+            dependency_reason='The command graveyard grant requires its exact casting authority',
+        )
+    if template is not None and (
+        template.kind == 'static_ability' and (template.event == 'characteristics.evaluate' or command_cast is not None)
+        or template.kind == 'prevention_effect' and is_command_fixed_damage_remainder(template.compiled[1])
+    ):
         child = runtime_handler_node(node_id=node_id, line=body, span=span, compiled=template.compiled,
             kind='granted_static_ability', event=template.event, active_zone='command',
             runtime_coverage=(*template.runtime_coverage, EMBLEM_CHILD_COVERAGE), mechanics=template.mechanics,

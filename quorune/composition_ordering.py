@@ -107,20 +107,49 @@ def resolve_composition_departure_batch(owner,changes,*,reason,replacement_selec
         prepared_replacement=(prepared_replacements or {}).get(object_id),damage_clears=damage_clears))
 
 
-def validate_original_composition_effect(host,item,effect,instruction_pointer):
+def _matches_chosen_owner_library_move(host, item, program, retained, instruction_pointer, request):
+    from .public_zone_moves import OWNER_LIBRARY_POSITION_OPERATION
+    from .rules.owner_library_position_shapes import owner_library_position_node_capabilities
+
+    if (instruction_pointer != 1 or not program.effects or request.destination != 'library'
+            or request.position not in {'top', 'bottom'} or request.transition_kind != 'ordinary'
+            or request.actor != item.controller):
+        return False
+    required = owner_library_position_node_capabilities(
+        effects=(program.effects[0],), target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required or not set(required) <= set(program.capability_dependencies):
+        return False
+    ref = request.root_state['ref']
+    if retained != {'op': 'move', 'card': ref, 'destination': 'library', 'position': request.position}:
+        return False
+    original = host._semantic_value(program.effects[0], item)
+    if original != {'op': OWNER_LIBRARY_POSITION_OPERATION, 'schema_version': 1,
+                    'card': ref, 'player': request.root_state['owner']}:
+        return False
+    request.validate_current(host.state)
+    return True
+
+
+def validate_original_composition_effect(host,item,effect,instruction_pointer,request):
     from .card_overrides import normalize_game_record_v3_effect
     program=host.semantics.get(item.semantic_key)
     if (program is None or not host.semantic_program_is_current_trusted(program)
-            or type(instruction_pointer) is not int or not 0<=instruction_pointer<len(program.effects)):
+            or type(instruction_pointer) is not int or instruction_pointer<0):
         raise GameRuleError('Composition ordering requires its current trusted parent instruction')
-    expected=normalize_game_record_v3_effect(host._semantic_value(program.effects[instruction_pointer],item))
     retained={key:value for key,value in effect.items() if key!='_replacement_selections'}
-    if FrozenMap(expected)!=FrozenMap(retained):
-        raise GameRuleError('Composition parent effect does not match its trusted instruction')
+    if instruction_pointer < len(program.effects):
+        expected=normalize_game_record_v3_effect(host._semantic_value(program.effects[instruction_pointer],item))
+        if FrozenMap(expected)==FrozenMap(retained):
+            return
+    # This registered owner choice inserts its single move before the next instruction.
+    if _matches_chosen_owner_library_move(host,item,program,retained,instruction_pointer,request):
+        return
+    raise GameRuleError('Composition parent effect does not match its trusted instruction')
 
 
 def issue_composition_order_choice(host,item,required,original_effect,remaining,destination,note,instruction_pointer):
-    validate_original_composition_effect(host,item,original_effect,instruction_pointer)
+    validate_original_composition_effect(host,item,original_effect,instruction_pointer,required.request)
     host._begin_registered_semantic_choice(item=item,
         effect={'op':'composition_departure_order','player':required.request.chooser,
             'request':required.request.to_dict(),'original_effect':dict(original_effect)},
@@ -146,7 +175,7 @@ def resume_composition_order(host,intent):
     item=next((item for item in host.state.stack if item.ref==frame['stack_object']),None)
     if item is None or item.controller!=request.actor:raise GameRuleError('Composition ordering parent controller changed')
     host._validate_semantic_frame(frame,item)
-    validate_original_composition_effect(host,item,intent.original_effect,frame['instruction_pointer'])
+    validate_original_composition_effect(host,item,intent.original_effect,frame['instruction_pointer'],request)
     with composition_resolution_actor(request.actor),selected_composition_order(request,intent.ordered_refs):
         plan=default_semantic_interpreter().lower_for_seats(intent.original_effect,actor=item.controller,
             default_reason=item.label,seats=host.seats,active_seats=host.active_seats,apnap_order=host.apnap_order(),

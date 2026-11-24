@@ -10,6 +10,10 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..power_sacrifice_model import (
+    ATTACK_SACRIFICE_STAT_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, GreatestPowerSacrificeSpec,
+    attack_sacrifice_stat_effect, entry_sacrifice_power_life_draw_effect,
+)
 from ..player_maximum_model import LAND_COUNT_METRIC, land_count_maximizers_reference
 from ..basic_land_types import BASIC_LAND_MANA
 from .creature_subtypes import canonical_creature_subtype_surface
@@ -32,6 +36,13 @@ _INSTRUCTION = re.compile(
     r"^(?:(?P<subject>target player|target opponent|each player|each opponent|you) )?"
     rf"(?P<verb>sacrifices?) (?P<count>another|an|{FIXED_COUNT_PATTERN}) (?P<object>.+?)\.?$",
     re.IGNORECASE,
+)
+
+
+_GREATEST_INSTRUCTION = re.compile(
+    r"Each opponent(?P<lost> who lost life this turn)? sacrifices a creature with the greatest power "
+    r"among creatures (?:that player controls|they control)\.?",
+    re.I,
 )
 
 
@@ -217,6 +228,7 @@ class FixedAffectedPlayerSacrificeTemplate:
     count: int
     predicate: ObjectQuerySpec
     exclude_source: bool = False
+    greatest_power: GreatestPowerSacrificeSpec | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.subject, AffectedPlayerSacrificeSubject):
@@ -229,6 +241,16 @@ class FixedAffectedPlayerSacrificeTemplate:
             self.predicate.to_dict()
         ):
             raise ValueError("Affected-player sacrifice predicate is unsupported")
+        if self.greatest_power is not None and (
+            not isinstance(self.greatest_power, GreatestPowerSacrificeSpec)
+            or self.subject is not (
+                AffectedPlayerSacrificeSubject.TARGET_PLAYER if self.greatest_power.target_player is not None
+                else AffectedPlayerSacrificeSubject.EACH_OPPONENT
+            )
+            or self.greatest_power.target_player not in (None, "$target.0") or self.count != 1
+            or self.exclude_source or self.predicate != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))
+        ):
+            raise ValueError('Greatest-power sacrifice keeps its exact affected creature selection')
         if self.subject is AffectedPlayerSacrificeSubject.MOST_LANDS and (
             self.count != 2 or self.predicate != LAND_COUNT_METRIC.predicate() or self.exclude_source
         ):
@@ -236,6 +258,11 @@ class FixedAffectedPlayerSacrificeTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.greatest_power is not None:
+            if self.greatest_power.target_player is not None:
+                return "fixed-target-greatest-power-sacrifice-life-v2"
+            return ('fixed-opponent-life-loss-greatest-power-sacrifice-v1' if self.greatest_power.lost_life_only
+                    else 'fixed-opponent-greatest-power-sacrifice-v1')
         digest = hashlib.sha256(
             stable_json(self.predicate.to_dict()).encode("utf-8")
         ).hexdigest()[:12]
@@ -246,6 +273,8 @@ class FixedAffectedPlayerSacrificeTemplate:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
+        if self.greatest_power is not None:
+            return (self.greatest_power.effect(),)
         players: str | list[str] | dict[str, Any] = {
             AffectedPlayerSacrificeSubject.CONTROLLER: ["$controller"],
             AffectedPlayerSacrificeSubject.EACH_PLAYER: "all",
@@ -324,12 +353,34 @@ def most_lands_attack_sacrifice_result(binding, body):
     return None
 
 
+def _targeted_greatest_power_sacrifice_life_template(normalized: str) -> FixedAffectedPlayerSacrificeTemplate | None:
+    if normalized.casefold() == (
+        "target player sacrifices a creature with the greatest power among creatures they control. "
+        "you gain life equal to its power."
+    ):
+        return FixedAffectedPlayerSacrificeTemplate(
+            AffectedPlayerSacrificeSubject.TARGET_PLAYER, 1,
+            ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+            greatest_power=GreatestPowerSacrificeSpec(target_player="$target.0"),
+        )
+    return None
+
+
 def fixed_affected_player_sacrifice_effect_template(
     text: str,
 ) -> FixedAffectedPlayerSacrificeTemplate | None:
     """Lower one mandatory fixed affected-player sacrifice instruction."""
 
     normalized = " ".join(text.strip().split())
+    targeted = _targeted_greatest_power_sacrifice_life_template(normalized)
+    if targeted is not None:
+        return targeted
+    greatest = _GREATEST_INSTRUCTION.fullmatch(normalized)
+    if greatest is not None:
+        return FixedAffectedPlayerSacrificeTemplate(
+            AffectedPlayerSacrificeSubject.EACH_OPPONENT, 1, ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+            greatest_power=GreatestPowerSacrificeSpec(lost_life_only=greatest["lost"] is not None),
+        )
     match = _INSTRUCTION.fullmatch(normalized)
     if match is None:
         return None
@@ -356,6 +407,72 @@ def fixed_affected_player_sacrifice_effect_template(
         count=count,
         predicate=predicate,
         exclude_source=exclude_source,
+    )
+
+
+_ENTRY_SACRIFICE_POWER_VARIANT = "source_entry_selected_sacrifice_power"
+_ENTRY_SACRIFICE_POWER = re.compile(
+    r"When this creature enters, (?P<body>(?P<optional>you may )?sacrifice another creature\. "
+    r"(?P<paid>If you do, )?you gain X life and draw X cards, where X is that creature['’]s power\.)",
+    re.I,
+)
+
+
+def entry_sacrifice_power_draw_binding_spec(text):
+    match = _ENTRY_SACRIFICE_POWER.fullmatch(text)
+    if match is None or (match["optional"] is None) != (match["paid"] is None):
+        return None
+    from ..rules.affected_player_sacrifice_capability_shapes import entry_sacrifice_power_condition
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+
+    return FixedPublicEventBindingSpec(
+        event="permanent.enter", variant=_ENTRY_SACRIFICE_POWER_VARIANT, body=match["body"],
+        template_id=ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, mechanic="trigger-event-normalized-zone-change",
+        condition=entry_sacrifice_power_condition(),
+    )
+
+
+def entry_sacrifice_power_draw_result(binding, body):
+    if binding.variant != _ENTRY_SACRIFICE_POWER_VARIANT or body != binding.body:
+        return None
+    return (
+        (ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE,
+         (entry_sacrifice_power_life_draw_effect(body.casefold().startswith("you may ")),), None,
+         (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", SOURCE_EXCLUDED_SACRIFICE_MECHANIC, "cr-119-life")),
+        True,
+    )
+
+
+_ATTACK_SACRIFICE_STAT_VARIANT = "source_attack_selected_sacrifice_stats"
+_ATTACK_SACRIFICE_STATS = re.compile(
+    r"(?:When|Whenever) (?P<source>.+?) attacks, (?P<body>you may sacrifice another creature\. "
+    r"If you do, you draw cards equal to that creature['’]s power and you lose life equal to that creature['’]s toughness\.)",
+    re.I,
+)
+
+
+def attack_sacrifice_stat_binding_spec(text, *, card_name):
+    match = _ATTACK_SACRIFICE_STATS.fullmatch(text)
+    if match is None:
+        return None
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec, _source_subject
+
+    if not _source_subject(match["source"], card_name=card_name):
+        return None
+    return FixedPublicEventBindingSpec(
+        event="creature.attacks", variant=_ATTACK_SACRIFICE_STAT_VARIANT, body=match["body"],
+        template_id=ATTACK_SACRIFICE_STAT_TEMPLATE, mechanic="trigger-event-normalized-public-action",
+        condition={"field": "card", "op": "eq", "value": "$source.ref"},
+    )
+
+
+def attack_sacrifice_stat_result(binding, body):
+    if binding.variant != _ATTACK_SACRIFICE_STAT_VARIANT or body != binding.body:
+        return None
+    return (
+        (ATTACK_SACRIFICE_STAT_TEMPLATE, (attack_sacrifice_stat_effect(),), None,
+         (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", SOURCE_EXCLUDED_SACRIFICE_MECHANIC, "cr-119-life")),
+        True,
     )
 
 

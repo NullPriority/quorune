@@ -345,7 +345,12 @@ def fixed_zone_change_additional_cost_capability(
     if cost.schema_version == 5:
         from ..sacrifice_union_model import SACRIFICE_UNION_CAPABILITY
         return SACRIFICE_UNION_CAPABILITY
-    from .casting_additional_costs import COLOR_RETURN_ADDITIONAL_COST_CAPABILITY, COLOR_RETURN_SCHEMA_VERSION
+    from .casting_additional_costs import (
+        COLOR_RETURN_ADDITIONAL_COST_CAPABILITY, COLOR_RETURN_SCHEMA_VERSION,
+        DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+    )
+    if cost.schema_version == DAMAGE_QUALIFIED_SACRIFICE_VERSION:
+        return DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY
     if cost.schema_version == COLOR_RETURN_SCHEMA_VERSION:
         return COLOR_RETURN_ADDITIONAL_COST_CAPABILITY
 
@@ -553,8 +558,13 @@ def fixed_additional_cost_node_capabilities(*, cost_schema):
         fixed_sacrifice_additional_cost_node_capabilities,
         fixed_zone_change_additional_cost_node_capabilities,
     )
+    from .colored_hand_credit import colored_hand_credit_dependencies
+    from .fixed_payment_groups import fixed_discard_sacrifice_dependencies
     from .tap_additional_cost import fixed_tap_additional_cost_node_capabilities
 
+    dedicated = fixed_discard_sacrifice_dependencies(cost_schema) or colored_hand_credit_dependencies(cost_schema)
+    if dedicated:
+        return dedicated
     owners = (
         fixed_alternative_additional_cost_node_capabilities,
         fixed_tap_additional_cost_node_capabilities,

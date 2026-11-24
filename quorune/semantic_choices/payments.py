@@ -7,6 +7,7 @@ from ..compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
 from ..replacement.immutable import FrozenMap, freeze_value
+from ..rules.entry_player_counter_payment import ENTRY_PLAYER_COUNTER_PAYMENT_FIELD
 from ..rules.stack_controller_payment_cost import (
     COUNTER_PAYMENT_FOLLOWUP_FIELD, STACK_CONTROLLER_DESTINATION_PAYMENT_VERSION,
     STACK_CONTROLLER_FOLLOWUP_PAYMENT_VERSION, bound_counter_payment_followup_effects,
@@ -936,6 +937,9 @@ class WardPaymentChoiceHandler:
                     reason="Ward target is no longer on the stack"
                 ),
             )
+        if spec.sacrifice_scope is not None:
+            from .ward_sacrifice import prepare_ward_sacrifice
+            return prepare_ward_sacrifice(effect, context, spec.sacrifice_scope)
         public: dict[str, Any] = {
             "stack": context.stack_ref,
             "operation": self.operation,
@@ -1070,6 +1074,12 @@ class WardPaymentChoiceHandler:
         target = str(effect.get("stack") or "")
         if query.stack_object(target) is None:
             return SemanticChoiceCompletion()
+        if spec.sacrifice_scope is not None:
+            from .ward_sacrifice import complete_ward_sacrifice
+            paid = complete_ward_sacrifice(effect, response, query, spec.sacrifice_scope, payer=actor)
+            return paid if paid.intents else self._counter_completion(
+                effect, actor=actor, source_controller=continuation.semantic_frame.controller, query=query, label=label,
+            )
         if spec.generic_cost is not None:
             requirements = _strict_fixed_mana_requirements(
                 effect.get("_requirements"),
@@ -1154,6 +1164,7 @@ class WardPaymentChoiceHandler:
                     reason=label,
                     transition_kind=ZoneTransitionKind.DISCARD,
                     owned_only=True,
+                    discard_effect_origin=getattr(query, "discard_effect_origin", None),
                 ),
             )
         )
@@ -1163,6 +1174,10 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
     """One registered owner preserves historical v1 and versioned fixed costs."""
 
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
+        from ..fixed_effect_payment import uses_mandatory_source_counter_followup
+        if uses_mandatory_source_counter_followup(effect):
+            from .fixed_effect_payment import prepare_mandatory_source_counter_followup
+            return prepare_mandatory_source_counter_followup(effect, context)
         from ..stack_target_change_model import STACK_TARGET_CHANGE_PAYMENT_VERSION
         if effect.get("schema_version") == STACK_TARGET_CHANGE_PAYMENT_VERSION:
             from .fixed_effect_payment import prepare_stack_target_change_payment
@@ -1290,6 +1305,7 @@ PAYMENT_CHOICE_HANDLERS = (
             "upkeep_effect_cost", "effect_cost_age", "effect_cost_recipients",
             "upkeep_graveyard_library_cost", "graveyard_cost_state",
             "reflexive_program",
+            ENTRY_PLAYER_COUNTER_PAYMENT_FIELD,
             "_parent_stack_ref",
             "_legal_objects",
             "_legal_mana_options",

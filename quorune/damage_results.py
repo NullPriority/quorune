@@ -2,7 +2,10 @@ from __future__ import annotations
 from .life_gain_permission import ALLOW_ALL_LIFE_GAIN, LifeGainPermissionSnapshot
 from .counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPermissionError
 
-from dataclasses import dataclass
+from copy import copy
+from hashlib import sha256
+import json
+from dataclasses import dataclass, replace
 from typing import Any, Literal, Mapping, Protocol, Sequence
 from .counter_placement_event_model import CounterPlacementOccurrence
 
@@ -22,7 +25,8 @@ from .counter_removal import (
     plan_counter_removals,
     validate_counter_removal_plan,
 )
-from .counter_state import CounterStatePlan
+from .counter_state import CounterStatePlan, apply_counter_changes
+from .damage_source import DAMAGE_PREVENTION_RESULT_VERSION_FIELD
 from .life_state import (
     apply_life_changes,
     LifeChange,
@@ -85,6 +89,7 @@ class PreparedDamageResults:
     journal: tuple[ReplacementSelection, ...]
     pending: ReplacementBatchChoice | None = None
     consumed_selections: int = 0
+    batch_id: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -443,49 +448,33 @@ def _clone_nested_result(
     )
 
 
+def _append_result_leaf(
+    accumulators: dict[tuple[str, str], _ResultAccumulator],
+    leaf: ReplaceableEvent,
+) -> None:
+    affected = leaf.affected_object
+    accumulator = _ensure_accumulator(
+        accumulators,
+        affected_player=leaf.affected_player,
+        affected_object=affected,
+        subject_ref=leaf.affected_player if affected is None else str(
+            leaf.payload.get("target") or affected.object_id
+        ),
+        target_types=() if affected is None else _normalized_strings(leaf.payload.get("target_types", ())),
+    )
+    accumulator.children.append(leaf)
+
+
 def _append_nested_results(
     accumulators: dict[tuple[str, str], _ResultAccumulator],
     damage_event: ReplaceableEvent,
 ) -> None:
-    def visit(current: ReplaceableEvent, path: tuple[int, ...]) -> None:
-        if current is not damage_event:
-            cloned = _clone_nested_result(
-                current,
-                event_id=(
-                    f"damage.result:nested:{damage_event.event_id}:"
-                    + ".".join(str(index) for index in path)
-                ),
-            )
-            if cloned.affected_player is not None:
-                accumulator = _ensure_accumulator(
-                    accumulators,
-                    affected_player=cloned.affected_player,
-                    affected_object=None,
-                    subject_ref=cloned.affected_player,
-                )
-            else:
-                affected = cloned.affected_object
-                if affected is None:
-                    raise DamageResultError(
-                        "Nested damage result lost its affected subject"
-                    )
-                accumulator = _ensure_accumulator(
-                    accumulators,
-                    affected_player=None,
-                    affected_object=affected,
-                    subject_ref=str(
-                        cloned.payload.get("target") or affected.object_id
-                    ),
-                    target_types=_normalized_strings(
-                        cloned.payload.get("target_types", ())
-                    ),
-                )
-            accumulator.children.append(cloned)
-            return
-        for index, child in enumerate(current.children):
-            visit(child, (index,))
-
-    visit(damage_event, ())
+    for index, child in enumerate(damage_event.children):
+        leaf = _clone_nested_result(
+            child,
+            event_id=f"damage.result:nested:{damage_event.event_id}:{index}",
+        )
+        _append_result_leaf(accumulators, leaf)
 
 
 def _new_materialization_state() -> _MaterializationState:
@@ -812,6 +801,8 @@ def _materialized_root(
     host: DamageResultHost,
     key: tuple[str, str],
     accumulator: _ResultAccumulator,
+    *,
+    batch_id: str,
 ) -> ReplaceableEvent:
     children = tuple(
         sorted(accumulator.children, key=lambda child: child.event_id)
@@ -853,10 +844,7 @@ def _materialized_root(
             }
         )
     return ReplaceableEvent(
-        event_id=(
-            f"damage.results:{host.state.revision}:"
-            f"{host.state.event_sequence + 1}:{key[0]}:{key[1]}"
-        ),
+        event_id=f"{batch_id.removeprefix('replacement:')}:{key[0]}:{key[1]}",
         kind="damage.results",
         affected_player=accumulator.affected_player,
         affected_object=accumulator.affected_object,
@@ -865,12 +853,21 @@ def _materialized_root(
     )
 
 
+def _damage_result_batch_id(host, damage_events):
+    if damage_events and getattr(host.state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None) == 1:
+        identities = json.dumps(sorted(event.event_id for event in damage_events), separators=(",", ":"))
+        return "replacement:damage.results:" + sha256(identities.encode("utf-8")).hexdigest()
+    return f"replacement:damage.results:{host.state.revision}:{host.state.event_sequence + 1}"
+
+
 def materialize_damage_results(
     host: DamageResultHost,
     damage_events: Sequence[ReplaceableEvent],
     *,
     gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS,
+    prevention_results: Sequence[ReplaceableEvent] = (),
+    batch_id: str | None = None,
 ) -> tuple[ReplaceableEvent, ...]:
     """Convert final dealt components into immutable CR 120.3 result trees."""
 
@@ -883,8 +880,17 @@ def materialize_damage_results(
         _accumulate_damage_event(host, state, damage_event)
     _append_accumulated_player_results(state, gain_permissions)
     _append_accumulated_permanent_results(state)
+    for leaf in prevention_results:
+        if (
+            leaf.kind not in {"life.change", "counter.place"}
+            or leaf.children
+            or leaf.payload.get("cause") != "damage_prevention_aftermath"
+        ):
+            raise DamageResultError("Invalid prevention result in a damage event")
+        _append_result_leaf(state.accumulators, leaf)
+    batch_id = batch_id or _damage_result_batch_id(host, damage_events)
     roots = tuple(
-        _materialized_root(host, key, state.accumulators[key])
+        _materialized_root(host, key, state.accumulators[key], batch_id=batch_id)
         for key in sorted(state.accumulators)
     )
     from .counter_permission_events import apply_counter_permissions_tree
@@ -901,9 +907,14 @@ def prepare_damage_results(
     require_all_selections: bool = True,
     gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS,
+    prevention_results: Sequence[ReplaceableEvent] = (),
 ) -> PreparedDamageResults:
-    roots = materialize_damage_results(host, damage_events, gain_permissions=gain_permissions,
-        counter_permissions=counter_permissions)
+    batch_id = _damage_result_batch_id(host, damage_events)
+    roots = materialize_damage_results(
+        host, damage_events, gain_permissions=gain_permissions,
+        counter_permissions=counter_permissions, prevention_results=prevention_results,
+        batch_id=batch_id,
+    )
     if not roots:
         if selections and require_all_selections:
             raise DamageResultError(
@@ -914,13 +925,11 @@ def prepare_damage_results(
             effects=tuple(effects),
             journal=(),
             consumed_selections=0,
+            batch_id=batch_id,
         )
     progress = advance_replacement_batch(
         ReplacementEventBatch(
-            batch_id=(
-                f"replacement:damage.results:{host.state.revision}:"
-                f"{host.state.event_sequence + 1}"
-            ),
+            batch_id=batch_id,
             events=roots,
             apnap_order=tuple(host.apnap_order()),
         ),
@@ -934,6 +943,7 @@ def prepare_damage_results(
         journal=progress.batch.journal,
         pending=progress.pending,
         consumed_selections=progress.consumed_selections,
+        batch_id=batch_id,
     )
 
 
@@ -1380,6 +1390,37 @@ def plan_damage_result_commit(
             )
         ),
     )
+
+
+def project_damage_result_host(
+    host: DamageResultHost,
+    plan: DamageResultCommitPlan,
+) -> DamageResultHost:
+    """Copy the exact result state needed to prepare the next damage event."""
+    cards = dict(host.state.cards)
+    players = dict(host.state.players)
+    placements = plan.counter_placements.state_plan
+    removals = plan.counter_removals.counter_plan
+    for transition in (*placements.transitions, *removals.transitions):
+        if transition.subject_kind == "player":
+            player = players[transition.subject_id]
+            players[transition.subject_id] = replace(player, counters=dict(player.counters))
+        else:
+            card = cards[transition.subject_id]
+            cards[transition.subject_id] = replace(card, counters=dict(card.counters))
+    for transition in plan.life.transitions:
+        players[transition.player] = replace(players[transition.player], life=transition.after)
+    for permanent in plan.permanents:
+        cards[permanent.object_id] = replace(
+            cards[permanent.object_id],
+            marked_damage=permanent.marked_damage_after,
+            deathtouch_damage=permanent.deathtouch_damage_after,
+        )
+    result = copy(host)
+    result.state = replace(host.state, cards=cards, players=players)
+    apply_counter_changes(result, placements)
+    apply_counter_changes(result, removals)
+    return result
 
 
 def commit_damage_result_plan(

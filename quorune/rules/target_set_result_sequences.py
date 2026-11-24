@@ -1,10 +1,11 @@
 """Require every ordered leaf to close over the same original target schema."""
 from collections.abc import Mapping
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..compiler.target_set_result_sequences import (
     TARGET_SET_SEQUENCE_CAPABILITY,TARGET_SET_SEQUENCE_MECHANIC,CHARACTERISTIC_TAIL_OPERATIONS,
 )
 from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
-from .target_characteristic_sets import OPERATION as CHARACTERISTICS
+from .target_characteristic_sets import OPERATION as CHARACTERISTICS, exact_optional_creature_vehicle_keyword_grant
 
 _TARGET_OPERATIONS={'tap_targets','untap_targets','place_counters_on_targets',CHARACTERISTICS}
 
@@ -26,7 +27,54 @@ def _characteristic_tail_capabilities(effect,mechanics):
     return resolver(effects=(effect,),target_schema=None,mechanic_ids=mechanics)
 
 
+_OPTIONAL_CREATURE_VEHICLE_COUNTERS = {
+    "op": "place_counters_on_targets", "schema_version": 2, "cards": "$targets",
+    "maximum_targets": 1, "source": "$source", "counter": "+1/+1", "amount": 2,
+}
+
+
+_OPTIONAL_CREATURE_FIRST_STRIKE_TARGET = {
+    "zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"], "up_to": 1,
+}
+_OPTIONAL_CREATURE_FIRST_STRIKE_RESULT = {
+    "op": CHARACTERISTICS, "schema_version": 6, "cards": "$targets", "maximum_targets": 1,
+    "power": 0, "toughness": 0, "keywords": ["First Strike"],
+}
+
+
+def _optional_counter_keyword_sequence_capabilities(effects, target_schema, mechanics):
+    from .counter_target_set_shapes import quantified_counter_target_capabilities
+    from .target_characteristic_sets import target_characteristic_set_capabilities
+
+    if len(effects) != 2 or not isinstance(target_schema, Mapping) or type(target_schema.get("up_to")) is not int:
+        return ()
+    counter, keywords = effects
+    if type(counter.get("amount")) is not int:
+        return ()
+    if exact_optional_creature_vehicle_keyword_grant(keywords, target_schema):
+        expected_counter = _OPTIONAL_CREATURE_VEHICLE_COUNTERS
+    elif (thaw_value(FrozenMap(target_schema)) == _OPTIONAL_CREATURE_FIRST_STRIKE_TARGET
+            and thaw_value(FrozenMap(keywords)) == _OPTIONAL_CREATURE_FIRST_STRIKE_RESULT):
+        expected_counter = {**_OPTIONAL_CREATURE_VEHICLE_COUNTERS, "amount": 1}
+    else:
+        return ()
+    if dict(counter) != expected_counter:
+        return ()
+    counter_required = quantified_counter_target_capabilities(
+        effects=(counter,), target_schema=target_schema, mechanic_ids=mechanics,
+    )
+    keyword_required = target_characteristic_set_capabilities(
+        effects=(keywords,), target_schema=target_schema, mechanic_ids=mechanics,
+    )
+    if not counter_required or not keyword_required:
+        return ()
+    trigger_required = ("counter.producer.fixed_event_trigger",) if "fixed-counter-event-trigger" in mechanics else ()
+    return tuple(sorted({TARGET_SET_SEQUENCE_CAPABILITY, *counter_required, *keyword_required, *trigger_required}))
+
+
 def target_set_result_sequence_capabilities(*,effects,target_schema,mechanic_ids):
+    if effects and effects[0].get("op") == "place_counters_on_targets":
+        return _optional_counter_keyword_sequence_capabilities(effects, target_schema, mechanic_ids)
     if (not 2<=len(effects)<=4 or not isinstance(target_schema,Mapping)
             or 'count_parameter' in target_schema or effects[0].get('op') not in {'tap_targets','untap_targets',CHARACTERISTICS}):return ()
     from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities

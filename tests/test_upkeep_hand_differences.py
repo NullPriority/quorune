@@ -146,6 +146,7 @@ class UpkeepHandDifferenceCompilerTests(unittest.TestCase):
 
 from pathlib import Path
 import tempfile
+from dataclasses import replace
 from unittest.mock import patch
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
@@ -160,7 +161,7 @@ from quorune.record import authoritative_state_hash
 
 FIXTURE=ROOT/'tests/fixtures/upkeep-hand-difference-cards.json'
 CANDIDATES=('Iron Maiden','Viseling','Rackling','Wheel of Torture')
-EXCLUDED=('Black Vise','The Rack')
+UNPAIRED_CONTROLS=('Black Vise','The Rack')
 RETENTION=("Misers' Cage","Paupers' Cage",'Sudden Impact','Storm Seeker')
 
 
@@ -170,15 +171,17 @@ class UpkeepHandDifferenceRegistrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'originals.sqlite3';build_fixture_database([FIXTURE],path)
             with CardDatabase(path) as db:
-                for name in (*CANDIDATES,*EXCLUDED,*RETENTION):
+                for name in (*CANDIDATES,*UNPAIRED_CONTROLS,*RETENTION):
                     with self.subTest(name=name):
                         card=db.lookup(name,fuzzy=False)
+                        if name in UNPAIRED_CONTROLS:
+                            card = replace(card, oracle_text=card.oracle_text.split("\n", 1)[-1])
                         register_generated_programs(db,semantics,(card,),trust_level='provisional',capability_registry=registry,
                             capability_profile='commander_review',promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,
                             promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
                         program=compile_best_available_card_program(db,card,semantic_registry=semantics,capability_registry=registry,capability_profile='commander_review')
                         bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
-                        self.assertEqual(name not in EXCLUDED,bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),bound['blockers'])
+                        self.assertEqual(name not in UNPAIRED_CONTROLS,bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),bound['blockers'])
 
 
 class UpkeepHandDifferenceGameplayTests(InheritedNativeFixture,unittest.TestCase):

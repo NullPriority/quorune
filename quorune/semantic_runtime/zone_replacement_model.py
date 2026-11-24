@@ -6,6 +6,7 @@ from typing import Any
 from ..entry_keyword_grants import EntryKeywordGrant
 from ..entry_counters import EffectEntryCounter, IntrinsicEntryCounter
 from ..entry_state_conditions import FixedEntryMetric
+from ..replacement.entry_counter_types import EntryTimeCounterTypes
 from ..replacement.immutable import FrozenMap
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot
 from ..replacement_effects import (
@@ -169,6 +170,20 @@ def _validated_commander_subject_components(subject):
     except ValueError as exc:raise ZoneReplacementError(str(exc)) from exc
 
 
+def _validated_prospective_types(subject):
+    object_types = tuple(sorted(set(subject.object_types)))
+    if any(type(value) is not str or not value for value in object_types):
+        raise ZoneReplacementError("Zone replacement subject types must be canonical strings")
+    counter_view = subject.entry_time_counter_types
+    if counter_view is not None and (
+        not isinstance(counter_view, EntryTimeCounterTypes)
+        or (subject.origin, subject.destination) != ("stack", "battlefield")
+        or counter_view.without_counter != object_types
+    ):
+        raise ZoneReplacementError("Time-counter type preview must match the prospective stack entry")
+    return object_types
+
+
 @dataclass(frozen=True, slots=True)
 class ZoneChangeSubjectSnapshot:
     object_id: str
@@ -202,6 +217,7 @@ class ZoneChangeSubjectSnapshot:
     commander_components: tuple[CommanderZoneComponent,...] = ()
     card_components: tuple[CardZoneComponent,...] = ()
     active_players: tuple[str,...] = ()
+    entry_time_counter_types: EntryTimeCounterTypes | None = None
 
     def __post_init__(self) -> None:
         if (type(self.active_players) is not tuple or any(type(p) is not str or not p for p in self.active_players)
@@ -239,12 +255,7 @@ class ZoneChangeSubjectSnapshot:
             raise ZoneReplacementError(
                 "Zone replacement subjects require a supported destination"
             )
-        object_types = tuple(sorted(set(self.object_types)))
-        if any(type(value) is not str or not value for value in object_types):
-            raise ZoneReplacementError(
-                "Zone replacement subject types must be canonical strings"
-            )
-        object.__setattr__(self, "object_types", object_types)
+        object.__setattr__(self, "object_types", _validated_prospective_types(self))
         entry_counters = tuple(self.intrinsic_entry_counters)
         if any(
             not isinstance(value, IntrinsicEntryCounter)
@@ -445,6 +456,8 @@ class PreparedZoneChange:
     keyword_grants: tuple[EntryKeywordGrant, ...] = ()
     journal: tuple[ReplacementSelection, ...] = ()
     devour_sacrifices: tuple[PreparedZoneChange,...] = ()
+    graveyard_copy_exiles: tuple[PreparedZoneChange,...] = ()
+    entry_chosen_card_name: str | None = None
 
     def __post_init__(self) -> None:
         sacrifices=tuple(self.devour_sacrifices)
@@ -520,6 +533,24 @@ class PreparedZoneChange:
             raise ZoneReplacementError(
                 "Prepared zone changes require a typed resolved event"
             )
+        from ..rules.graveyard_entry_copy import GRAVEYARD_COPY_PAIRS_FIELD, GraveyardCopyPair
+        from ..rules.linked_graveyard_entry import linked_graveyard_entry_actual_exiles, linked_graveyard_entry_choices
+        exiles=tuple(self.graveyard_copy_exiles)
+        selected_exiles=tuple(card for row in self.event.payload.get(GRAVEYARD_COPY_PAIRS_FIELD,())
+            for card in GraveyardCopyPair.from_dict(row["pair"]).cards)
+        selected_exiles += tuple(card for choice in linked_graveyard_entry_choices(self.event) for card in choice.cards)
+        if (len(exiles)!=len(selected_exiles) or len({card.object_id for card in selected_exiles})!=len(exiles)
+                or any(not isinstance(plan,PreparedZoneChange) or plan.devour_sacrifices or plan.graveyard_copy_exiles
+                    or plan.origin!="graveyard" or plan.requested_destination!="exile"
+                    or plan.state_revision!=self.state_revision or plan.object_id!=card.object_id
+                    or plan.logical_object_id!=card.incarnation or plan.event.payload.get("object_ref")!=card.ref
+                    for plan,card in zip(exiles,selected_exiles,strict=True))):
+            raise ZoneReplacementError("Prepared graveyard copy exiles differ from their selected incarnations")
+        try:
+            linked_graveyard_entry_actual_exiles(self.event, exiles)
+        except ValueError as exc:
+            raise ZoneReplacementError(str(exc)) from exc
+        object.__setattr__(self,"graveyard_copy_exiles",exiles)
         from ..devour import DevourProposal
         selected={}
         for value in self.event.payload.get('devour_proposals',()):
@@ -533,7 +564,14 @@ class PreparedZoneChange:
             if (sacrifice.logical_object_id!=obj.logical_object_id or sacrifice.event.payload.get('object_ref')!=obj.ref
                     or sacrifice.event.affected_object is None or sacrifice.event.affected_object.controller!=controller):
                 raise ZoneReplacementError('Prepared Devour sacrifice lost its selected controller or incarnation')
-        from ..entry_designations import EntryDesignationKind, validate_designation
+        from ..entry_designations import ENTRY_CARD_NAME_FIELD, EntryDesignationKind, validate_bound_entry_card_name, validate_designation
+        if self.entry_chosen_card_name is not None:
+            try:
+                name = validate_bound_entry_card_name(self.entry_chosen_card_name)
+                if self.event is None or self.event.payload.get(ENTRY_CARD_NAME_FIELD) != name:
+                    raise ValueError("The prepared name does not match its original entry choice")
+            except ValueError as exc:
+                raise ZoneReplacementError(str(exc)) from exc
         for kind, value in ((EntryDesignationKind.COLOR, self.entry_chosen_color), (EntryDesignationKind.CREATURE_TYPE, self.entry_chosen_creature_type)):
             if value is not None:
                 try:

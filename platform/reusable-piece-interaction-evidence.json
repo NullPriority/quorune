@@ -22835,6 +22835,51 @@
       ],
       "interaction_order": 2,
       "assertion": "A player exiles the targeted graveyard card with an actual response. After reloading the pending stack, target revalidation removes the original spell by rule, leaves the card in exile, and preserves the owner's private library order. The accepted history replays to the same state."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_reanimation_followup.ReanimationFollowupNativeTests.test_linked_reanimation_revalidates_the_original_graveyard_target",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.reanimate.fixed_haste_and_departure"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.reanimate.fixed_haste_and_departure"
+      ],
+      "interaction_order": 2,
+      "assertion": "Two actual casts choose the same graveyard incarnation. Reload preserves the pending stack, the later cast returns the target with haste, and the other cast loses its target. Only the resolving cast schedules a departure and the accepted history replays exactly."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_linked_exile_return.LinkedAbilityExileNativeTests.test_journey_early_departure_returns_nothing_and_entry_still_checks_the_old_target",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.exile.linked_ability_pair"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.exile.linked_ability_pair"
+      ],
+      "interaction_order": 2,
+      "assertion": "A saved pending linked entry checks the original target after it blinks. The new incarnation stays on the battlefield. A separate branch resolves early source departure and the original exile, and both branches replay to the same respective states."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_attachment_actions.EntryEquipmentAttachmentTests.test_mandatory_entry_attachment_resolves_without_a_choice",
+      "piece_ids": [
+        "capability.attachment.action.entry_equipment",
+        "capability.continuous.attached.fixed_characteristics"
+      ],
+      "capability_ids": [
+        "attachment.action.entry_equipment",
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real creature cast creates the mandatory equipment entry attachment. The attached rule applies its printed power and toughness modifiers to that bearer. Exact replay reproduces the result."
     }
   ],
   "schema_version": 2

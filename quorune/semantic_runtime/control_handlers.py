@@ -8,10 +8,14 @@ from typing import Any, Mapping
 from ..continuous_effect_model import ContinuousEffectDuration
 from ..continuous_effect_state import ResolutionEffectSource
 from ..object_predicate import ObjectQuerySpec
+from ..control_exchange_model import (
+    PERMANENT_CONTROL_EXCHANGE_DEPENDENCIES, PERMANENT_CONTROL_EXCHANGE_OPERATION,
+    decode_permanent_control_exchange,
+)
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .control_intents import (
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
-    GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+    ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
 from ..stack_target_change_model import STACK_SPELL_CONTROL_FIELD, validate_stack_spell_control_effect
 from .direct_target_fields import validate_direct_target_effect
@@ -86,6 +90,27 @@ class FixedControlSetHandler:
     capability_dependencies: tuple[str, ...] = ("continuous.control.fixed_resolution",)
 
     def lower(self, effect: Mapping[str, Any], context: ReadOnlyHandlerContext) -> IntentPlan:
+        from ..recipient_control_model import (
+            TWO_CONTROLLER_CREATURE_TRANSFER_FIELD, two_controller_creature_transfer_query,
+            validate_two_controller_creature_transfer,
+        )
+
+        if TWO_CONTROLLER_CREATURE_TRANSFER_FIELD in effect:
+            try:
+                original = _source(context)
+                opponent = validate_two_controller_creature_transfer(
+                    effect, resolved_source=context.source.card_ref or context.source.stack_ref,
+                )
+                context.query.require_active_seat(opponent)
+                intent = GainControlSetIntent(
+                    actor=context.actor, predicate=two_controller_creature_transfer_query(),
+                    controller=context.actor, duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+                    source=original, steps=("untap", "gain_control", "haste"),
+                    reason=context.default_reason, opponent=opponent,
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(self.operation, self.handler_id, (intent,))
         required = {"op", "predicate", "controller", "duration", "source", "steps"}
         if not required.issubset(effect) or set(effect) - required - {"reason"} or effect["op"] != self.operation:
             raise SemanticNodeError("Control-set fields are missing or unknown")
@@ -173,4 +198,28 @@ class RecipientControlSetHandler:
         return IntentPlan(self.operation,self.handler_id,(intent,),result_shape='by_player')
 
 
-CONTROL_HANDLERS = (FixedControlHandler(), FixedControlSetHandler(),RecipientControlHandler(),OwnerControlHandler(),RecipientControlSetHandler())
+@dataclass(frozen=True, slots=True)
+class PermanentControlExchangeHandler:
+    handler_id: str = "generic.permanent-control-exchange.v1"
+    schema_version: int = 1
+    family: str = "effect.control.permanent_exchange"
+    operation: str = PERMANENT_CONTROL_EXCHANGE_OPERATION
+    rule_references: tuple[str, ...] = ("608.2b", "611.2a", "613.1b", "701.12a", "701.12b", "800.4a")
+    capability_dependencies: tuple[str, ...] = PERMANENT_CONTROL_EXCHANGE_DEPENDENCIES
+
+    def lower(self, effect, context):
+        try:
+            _scope, references = decode_permanent_control_exchange(effect, resolved=True)
+            intents = () if None in references else (
+                ExchangePermanentControlIntent(context.actor, references, _source(context),
+                    effect.get("reason", context.default_reason)),
+            )
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return IntentPlan(self.operation, self.handler_id, intents, result_shape="by_player")
+
+
+CONTROL_HANDLERS = (
+    FixedControlHandler(), FixedControlSetHandler(), RecipientControlHandler(), OwnerControlHandler(),
+    RecipientControlSetHandler(), PermanentControlExchangeHandler(),
+)

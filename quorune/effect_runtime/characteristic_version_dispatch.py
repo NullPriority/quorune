@@ -10,7 +10,12 @@ from ..rules.fixed_stat_multipliers import is_fixed_stat_multiplier
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
+    from ..rules.creature_subtype_set_results import is_creature_subtype_set_result
     from ..resolution_color_model import TARGET_COLOR_VERSIONS
+    if is_creature_subtype_set_result(effect):
+        from .creature_subtype_set_results import apply_creature_subtype_set_result
+
+        return True, apply_creature_subtype_set_result(host, effect, actor=actor, reason=reason)
     if version in TARGET_COLOR_VERSIONS:
         from ..rules.resolution_colors import apply_resolution_color
         return True,apply_resolution_color(host,effect,actor=actor,reason=reason)

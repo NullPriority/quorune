@@ -5,6 +5,7 @@ from . import regex_working_set as re
 
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..object_predicate import ObjectQuerySpec
+from ..object_query_union import historic_creature_receiver_query
 from ..type_subtype_vocabulary import MOUNT_VEHICLE_SUBTYPES
 
 
@@ -40,6 +41,9 @@ def fixed_receiver_union_subject(subject: str) -> tuple[str, ObjectQuerySpec, bo
     """Parse a flat union with shared or explicitly repeated controller scope."""
     text = ' '.join(subject.casefold().split())
     text = text.removeprefix('each ')
+    historic = re.fullmatch(r"(?P<other>other )?historic creatures you control", text)
+    if historic is not None:
+        return "source_controller", historic_creature_receiver_query(), bool(historic["other"])
     listed = _fixed_card_type_list_subject(text)
     if listed is not None:
         return listed

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Complete intrinsic graveyard clauses with fixed canonical payment data."""
+"""Complete intrinsic graveyard clauses with canonical payment data."""
 
 from . import regex_working_set as re
 
@@ -18,6 +18,12 @@ _COUNT = r'(?:a|an|one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*)
 _CLAUSE = re.compile(r'You may cast this (?:card|creature) from your graveyard by (?P<price>.+?) '
     r'(?P<mode>rather than paying its mana cost|in addition to paying its other costs)\.', re.I)
 _MANA = r'(?:\{(?:[0-9]+|[WUBRGC])\})+'
+
+_SURCHARGE = re.compile(
+    r'You may cast this (?:card|creature) from your graveyard if you pay '
+    r'\{(?P<rate>[1-9][0-9]*)\} more to cast it for each other creature card in your graveyard\.',
+    re.I,
+)
 
 
 def _resource_price(text):
@@ -47,6 +53,14 @@ def paid_graveyard_spec(text):
         # also includes flavor words, so it cannot classify the label.
         if (re.fullmatch(r"[A-Z][A-Za-z']*(?: [A-Z][A-Za-z']*)*", label) is None
                 or label.casefold().startswith(('if ', 'when ', 'whenever ', 'as ', 'you ', 'this ', 'that '))):
+            return None
+    surcharge = _SURCHARGE.fullmatch(material)
+    if surcharge is not None:
+        try:
+            return PaidGraveyardCastSpec(
+                schema_version=2, generic_per_other_creature_card=int(surcharge['rate'])
+            )
+        except ValueError:
             return None
     match = _CLAUSE.fullmatch(material)
     if match is None:

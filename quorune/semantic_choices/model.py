@@ -773,7 +773,7 @@ class IntentResultAmount:
     def __post_init__(self):
         _integer(self.intent_index,field_name='result intent index')
         _integer(self.effect_index,field_name='result effect index')
-        if self.field_name not in {'amount','count','quantity'}:raise SemanticChoiceError('Intent result amount field is unsupported')
+        if self.field_name not in {'amount','count','quantity','delta'}:raise SemanticChoiceError('Intent result amount field is unsupported')
 
 
 @dataclass(frozen=True,slots=True)
@@ -795,12 +795,26 @@ class AutoContinue:
     amount_from_result: IntentResultAmount | None = None
     objects_from_result: IntentResultObjects | None = None
     player_draws_from_result: IntentResultPlayerDraws | None = None
+    draw_after_life_from_result: bool = False
+    committed_effects_from_result: int | None = None
 
     def __post_init__(self) -> None:
         _string(self.reason, field_name="auto-continue reason")
         if self.player_draws_from_result is not None and not isinstance(self.player_draws_from_result, IntentResultPlayerDraws):raise SemanticChoiceError('Player result drawing must be typed')
         if self.amount_from_result is not None and not isinstance(self.amount_from_result,IntentResultAmount):raise SemanticChoiceError('Automatic result amount binding must be typed')
         if self.objects_from_result is not None and not isinstance(self.objects_from_result,IntentResultObjects):raise SemanticChoiceError('Automatic object result binding must be typed')
+        if type(self.draw_after_life_from_result) is not bool or self.draw_after_life_from_result and (
+            self.amount_from_result != IntentResultAmount(0, 0, "delta")
+            or len(self.prepend_effects) != 1
+            or self.objects_from_result is not None or self.player_draws_from_result is not None
+        ):
+            raise SemanticChoiceError("A committed life and draw result needs exactly one shared amount")
+        if self.committed_effects_from_result is not None and (
+            type(self.committed_effects_from_result) is not int or self.committed_effects_from_result < 0
+            or self.amount_from_result is not None or self.objects_from_result is not None
+            or self.player_draws_from_result is not None or self.draw_after_life_from_result
+        ):
+            raise SemanticChoiceError("Committed effects require one exclusive result index")
         object.__setattr__(
             self,
             "prepend_effects",
@@ -814,6 +828,13 @@ class AutoContinue:
 
 
     def resolved_effects(self,results):
+        if self.committed_effects_from_result is not None:
+            from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+
+            result = results.get(self.committed_effects_from_result)
+            if not isinstance(result, CommittedQuantityFollowup):
+                raise SemanticChoiceError("Automatic continuation requires its committed effects")
+            return (*result.effects, *self.prepend_effects)
         if self.player_draws_from_result is not None:
             if self.amount_from_result is not None or self.objects_from_result is not None:raise SemanticChoiceError('Player draw results cannot share a scalar result binding')
             try:return (*self.player_draws_from_result.resolved_effects(results.get(self.player_draws_from_result.intent_index)), *self.prepend_effects)
@@ -833,7 +854,20 @@ class AutoContinue:
             raise SemanticChoiceError('Automatic result amount is missing or malformed')
         if spec.effect_index>=len(self.prepend_effects) or spec.field_name not in self.prepend_effects[spec.effect_index]:
             raise SemanticChoiceError('Automatic result destination is missing')
-        effects[spec.effect_index]=FrozenMap({**dict(effects[spec.effect_index]),spec.field_name:amount})
+        result_effect = effects[spec.effect_index]
+        if spec.field_name == "delta":
+            delta = result_effect["delta"]
+            if (
+                set(result_effect) != {"op", "player", "delta"} or result_effect.get("op") != "life"
+                or type(delta) is not int or delta != 1
+            ):
+                raise SemanticChoiceError("A committed life amount requires its exact positive life instruction")
+            if amount == 0:
+                del effects[spec.effect_index]
+                return tuple(effects)
+        effects[spec.effect_index]=FrozenMap({**dict(result_effect),spec.field_name:amount})
+        if self.draw_after_life_from_result:
+            effects.append(FrozenMap({"op": "draw", "player": result_effect["player"], "count": amount, "private": True}))
         return tuple(effects)
 
 

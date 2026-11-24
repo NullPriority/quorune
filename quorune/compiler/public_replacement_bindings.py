@@ -7,6 +7,7 @@ from . import regex_working_set as re
 
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .kicked_same_target_replacements import same_target_kicked_replacement
+from ..query_effect_amount_model import CastXAmountSpec
 from ..rules.source_references import SourceReferenceSpec
 
 
@@ -16,6 +17,14 @@ def public_same_target_replacement(normal_text, alternative, normal, compile_com
         return None
     original=normal[1][0]
     if original.get('op')=='damage' and original.get('source')=='$source' and original.get('target')=='$target.0':
+        source = SourceReferenceSpec(source_name).regex_pattern
+        if (
+            original.get("amount") == CastXAmountSpec().to_dict()
+            and re.fullmatch(rf"{source} deals X damage to any target\.", normal_text, re.I)
+            and re.fullmatch(rf"(?:{source}|it) deals X plus 2 damage\.", alternative, re.I)
+        ):
+            amount = CastXAmountSpec(schema_version=3, bonus=2)
+            return normal[0], ({**original, "amount": amount.to_dict()},), deepcopy(schema), normal[3]
         pattern=rf'(?:{SourceReferenceSpec(source_name).regex_pattern}|it) deals (?P<count>{FIXED_COUNT_PATTERN}) damage(?: to (?P<reference>that creature|that permanent or player))?\.'
         match=re.fullmatch(pattern,alternative,re.I)
         if match is None:return None

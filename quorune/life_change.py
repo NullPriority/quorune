@@ -31,6 +31,8 @@ class LifeChangeError(ValueError):
 
 
 _LOSS_DIRECTION = "".join(("lo", "ss"))
+LIFE_LOSS_EVENT = 'life.lost'
+LIFE_LOSS_CAPABILITY = 'trigger.event.normalized_life_loss'
 FIRST_LIFE_GAIN_EVENT = 'life.first_gain'
 FIRST_LIFE_GAIN_CAPABILITY = 'trigger.event.first_life_gain'
 
@@ -204,7 +206,7 @@ class LifeBatchResult:
         }
 
 
-def _event(request: LifeChangeRequest) -> ReplaceableEvent:
+def life_change_request_event(request: LifeChangeRequest) -> ReplaceableEvent:
     direction = "gain" if request.amount >= 0 else _LOSS_DIRECTION
     amount = abs(request.amount)
     return ReplaceableEvent(
@@ -356,7 +358,7 @@ def prepare_life_change_batch(
     """Resolve one simultaneous life batch without mutating state."""
 
     nonzero = tuple(request for request in requests if request.amount != 0)
-    requested_events = tuple(_event(request) for request in nonzero)
+    requested_events = tuple(life_change_request_event(request) for request in nonzero)
     event_ids = tuple(event.event_id for event in requested_events)
     if len(event_ids) != len(set(event_ids)):
         raise LifeChangeError("Life-change event IDs must be unique")
@@ -521,6 +523,9 @@ def commit_life_change_batch(
                 importance=2,
                 changed_players=[str(event.affected_player)],
             )
+    from .player_result_events import dispatch_life_loss_records
+
+    dispatch_life_loss_records(host, prepared.records)
     return LifeChangeCommit(
         records=prepared.records,
         changed_players=tuple(

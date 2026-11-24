@@ -11,6 +11,7 @@ from ..continuous_effect_model import ContinuousEffectDuration
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
+    ChosenCreatureTypeModifier, ChosenCreatureTypeResult,
     CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_CHOICE_VERSION, PERMANENT_CHARACTERISTIC_MECHANIC,
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, RECIPIENT_MANA_VALUE,
     SUBTYPE_GRANT_INSTRUCTION_VERSION, DerivedResolutionCharacteristicsSpec,
@@ -46,6 +47,27 @@ _CHOSEN_SUBTYPE_PREFIX = re.compile(
     r"Choose a creature type(?: other than (?P<excluded>[^.]+))?\. "
     r"(?P<subject>.+?) becomes that type until end of turn\.", re.I,
 )
+
+
+def _chosen_creature_type_result_template(text: str):
+    normalized = " ".join(text.casefold().replace("’", "'").split())
+    boost = re.fullmatch(
+        r"creatures of the creature type of your choice get \+(?P<amount>[1-9][0-9]?)/\+(?P=amount)"
+        r"(?P<trample> and gain trample)? until end of turn[.]?", normalized,
+    )
+    if boost is not None:
+        result = ChosenCreatureTypeModifier(int(boost["amount"]), bool(boost["trample"]))
+        mechanics = ("cr-611-continuous-effects", *(("trample",) if result.trample else ()))
+        return "chosen-type-temporary-modifier-v1", (result.choice_effect(),), None, mechanics
+    if normalized == "choose a creature type. draw a card for each permanent you control of that type.":
+        result = ChosenCreatureTypeResult.CONTROLLED_PERMANENT_DRAW
+        mechanics = ("cr-121-drawing-a-card",)
+    elif normalized == "choose a creature type. creatures that aren't of the chosen type get -3/-3 until end of turn.":
+        result = ChosenCreatureTypeResult.NONMATCHING_CREATURE_STATS
+        mechanics = ("cr-611-continuous-effects",)
+    else:
+        return None
+    return f"chosen-creature-type-{result.value}-v1", (result.choice_effect(),), None, mechanics
 
 
 def _chosen_subtype_template(text, *, source_is_permanent, source_attachment_relation):
@@ -248,6 +270,8 @@ def fixed_resolution_characteristics_effect_template(
                   "predicate": query.to_dict(), "power": power, "toughness": toughness}
         return ("source-excluded-public-fixed-stats-eot-v1", (effect,), None,
                 ("cr-611-continuous-effects",))
+    if result := _chosen_creature_type_result_template(text):
+        return result
     chosen = _chosen_subtype_template(text, source_is_permanent=source_is_permanent,
                                      source_attachment_relation=source_attachment_relation)
     if chosen is not None:

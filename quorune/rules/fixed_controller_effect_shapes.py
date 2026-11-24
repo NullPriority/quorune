@@ -145,6 +145,19 @@ def fixed_life_node_capabilities(
     if 'public_life_gain_version' in effect:
         from .public_life_gain_scopes import public_life_gain_node_capabilities
         return public_life_gain_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+    from .characteristic_life_exchange import CHARACTERISTIC_LIFE_EXCHANGE_OPERATION, exchange_instruction_dependencies
+
+    from .player_life_exchange import PLAYER_LIFE_EXCHANGE_OPERATION, player_life_exchange_instruction_dependencies
+
+    exchange_owners = {
+        CHARACTERISTIC_LIFE_EXCHANGE_OPERATION: exchange_instruction_dependencies,
+        PLAYER_LIFE_EXCHANGE_OPERATION: player_life_exchange_instruction_dependencies,
+    }
+    if resolve_exchange := exchange_owners.get(operation):
+        try:
+            return resolve_exchange(effects, target_schema)
+        except (ValueError, TypeError):
+            return ()
     if operation=='set_life_total':
         from .life_total_setting_shapes import life_total_setting_capabilities
         return life_total_setting_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)

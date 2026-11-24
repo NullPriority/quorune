@@ -8,13 +8,18 @@ from typing import Any, Mapping
 
 from ..linked_exile_return_model import (
     LinkedExileReturnSpec, LINKED_ABILITY_BINDING_PREFIX, LINKED_ABILITY_TIMING,
+    LINKED_BATCH_DEPARTURE_RETURN_VERSION, LINKED_FADING_EXILE_VERSION,
+    LINKED_FADING_HAND_BINDING, LinkedFadingScope,
     LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION,
 )
+from ..rules.linked_batch_departure_return import linked_batch_departure_target_schema
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+from .affected_player_discard_templates import fixed_affected_player_hand_exile_effect_template
 from .direct_target import direct_permanent_target_spec
 from .exile_templates import targeted_exile_effect_template
 from .fixed_homogeneous_target_sets import _singularize_subject
 from .fixed_target_effect_sequences import _keyword_list
+from .linked_batch_departure_return import linked_batch_departure_scope
 
 
 _INSTRUCTION = re.compile(
@@ -30,6 +35,25 @@ _COUNTS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
 _LINKED_LEAVE_BODY = re.compile(r"return the exiled card to the battlefield under its owner['’]s control\.", re.I)
 
 
+def linked_face_ability_compilers(record, material_rows, effect_template, compile_ability, *,
+                                  card_name, card_types, permanent, trigger_node, match_source):
+    """Assemble linked source abilities against the prepared face rows."""
+    from .entry_x_results import entry_result_trigger_node_compiler
+
+    trigger_compiler = entry_result_trigger_node_compiler(
+        record, trigger_node=trigger_node, ordinary_effect=effect_template,
+        match_source=match_source, material_rows=material_rows,
+    )
+    trigger_compiler = linked_ability_trigger_compiler(
+        trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
+        card_name=card_name, match_source=match_source, permanent=permanent,
+    )
+    return linked_fading_compilers(
+        compile_ability, trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
+        card_name=card_name, match_source=match_source, card_types=card_types,
+    )
+
+
 def linked_ability_trigger_compiler(fallback, *, trigger_node, material_rows, card_name, match_source, permanent):
     """Bind one unambiguous printed exile and separate return to two source spans."""
     if not permanent:
@@ -39,8 +63,7 @@ def linked_ability_trigger_compiler(fallback, *, trigger_node, material_rows, ca
         return fallback
     leave_text, leave_span = leaving[0]
     departure = match_source(leave_text, card_name=card_name)
-    if (departure is None or departure["event"].casefold() != "leaves the battlefield"
-            or _LINKED_LEAVE_BODY.fullmatch(departure["body"]) is None):
+    if departure is None or departure["event"].casefold() != "leaves the battlefield":
         return fallback
     exiling = [(text, span) for _, text, span in material_rows if re.search(r"\bexile\b", text, re.I)]
     if len(exiling) != 1:
@@ -50,21 +73,35 @@ def linked_ability_trigger_compiler(fallback, *, trigger_node, material_rows, ca
     if entry is None or entry["event"].casefold() != "enters":
         return fallback
     body = entry["body"]
-    optional = body.casefold().startswith("you may ")
-    exile = targeted_exile_effect_template(body[8:] if optional else body)
-    if exile is None:
-        return fallback
+    scope = linked_batch_departure_scope(body, departure["body"])
+    if scope is None:
+        if _LINKED_LEAVE_BODY.fullmatch(departure["body"]) is None:
+            return fallback
+        optional = body.casefold().startswith("you may ")
+        exile = targeted_exile_effect_template(body[8:] if optional else body)
+        if exile is None:
+            return fallback
+        target_schema = exile.target_schema
+        mechanics = (LINKED_EXILE_RETURN_MECHANIC, *exile.mechanics)
+        spec = LinkedExileReturnSpec(timing=LINKED_ABILITY_TIMING, schema_version=3)
+    else:
+        optional = False
+        target_schema = linked_batch_departure_target_schema(scope)
+        mechanics = (LINKED_EXILE_RETURN_MECHANIC, "exile", *(("cr-115-targets",) if target_schema else ()))
+        spec = LinkedExileReturnSpec(
+            timing=LINKED_ABILITY_TIMING, schema_version=LINKED_BATCH_DEPARTURE_RETURN_VERSION,
+            tapped=scope.tapped_return, batch_departure_scope=scope,
+        )
     seed = f"{card_name}:{entry_span.line}:{leave_span.line}"
     pair = LINKED_ABILITY_BINDING_PREFIX + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:24]
-    spec = LinkedExileReturnSpec(timing=LINKED_ABILITY_TIMING, schema_version=3).to_dict()
-    common = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": pair, "spec": spec}
+    common = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": pair, "spec": spec.to_dict()}
     effect = {**common, "phase": "exile", "cards": "$targets"}
     effects = ({"op": "offer_optional_effect", "player": "$controller", "effects": [effect]},) if optional else (effect,)
-    mechanics = (LINKED_EXILE_RETURN_MECHANIC, *exile.mechanics)
     if optional:
         mechanics = (*mechanics, "fixed-optional-effect-choice")
     templates = {
-        entry_span.line: ("linked-ability-target-exile-v1", effects, exile.target_schema, mechanics),
+        entry_span.line: ("linked-ability-target-exile-v1" if scope is None else "linked-batch-exile-v1",
+                          effects, target_schema, mechanics),
         leave_span.line: ("linked-ability-owner-return-v1", ({**common, "phase": "return"},), None, (LINKED_EXILE_RETURN_MECHANIC,)),
     }
 
@@ -75,6 +112,72 @@ def linked_ability_trigger_compiler(fallback, *, trigger_node, material_rows, ca
         return trigger_node(**values, effect_template=lambda _body, **_source: compiled)
 
     return compile_trigger
+
+
+def linked_fading_compilers(activation_compiler, departure_compiler, *, trigger_node,
+                           material_rows, card_name, match_source, card_types):
+    """Join a single fade-counter activation to its printed owner return."""
+    if "enchantment" not in card_types or len(material_rows) != 3:
+        return activation_compiler, departure_compiler
+    (_, fading, _), (_, activation, activation_span), (_, departure, departure_span) = material_rows
+    if re.fullmatch(r"Fading [1-9][0-9]*", fading, re.I) is None:
+        return activation_compiler, departure_compiler
+    source = SourceReferenceSpec(card_name).regex_pattern
+    paid = re.fullmatch(rf"Remove a fade counter from (?:this enchantment|{source}): (?P<body>.+)", activation, re.I)
+    leaving = match_source(departure, card_name=card_name)
+    if paid is None or leaving is None or leaving["event"].casefold() != "leaves the battlefield":
+        return activation_compiler, departure_compiler
+    owner_return = re.fullmatch(
+        r"each player returns to (?P<destination>the battlefield|their hand) all cards they own exiled with it\.",
+        leaving["body"], re.I,
+    )
+    if owner_return is None:
+        return activation_compiler, departure_compiler
+    body = paid["body"]
+    if owner_return["destination"].casefold() == "their hand":
+        hand = re.fullmatch(
+            r"(Target opponent exiles a card from their hand\.) Activate only as a sorcery\.", body, re.I,
+        )
+        if hand is None:
+            return activation_compiler, departure_compiler
+        scope = LinkedFadingScope.OPPONENT_HAND
+        _, (choice,), target_schema, mechanics = fixed_affected_player_hand_exile_effect_template(hand[1])
+    else:
+        public = re.fullmatch(r"Exile target (land|creature)\.", body, re.I)
+        if public is None:
+            return activation_compiler, departure_compiler
+        scope = LinkedFadingScope(public[1].casefold())
+        exile = targeted_exile_effect_template(body)
+        target_schema, mechanics = exile.target_schema, exile.mechanics
+    seed = f"{card_name}:{activation_span.line}:{departure_span.line}"
+    pair = LINKED_ABILITY_BINDING_PREFIX + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:24]
+    spec = LinkedExileReturnSpec(
+        timing=LINKED_ABILITY_TIMING, schema_version=LINKED_FADING_EXILE_VERSION, fading_scope=scope,
+    )
+    common = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": pair, "spec": spec.to_dict()}
+    effect = (
+        {**choice, LINKED_FADING_HAND_BINDING: pair}
+        if scope is LinkedFadingScope.OPPONENT_HAND
+        else {**common, "phase": "exile", "cards": "$targets"}
+    )
+    compiled_activation = (
+        "linked-fading-activation-v1", (effect,), target_schema, (LINKED_EXILE_RETURN_MECHANIC, *mechanics),
+    )
+    compiled_return = (
+        "linked-fading-departure-v1", ({**common, "phase": "return"},), None, (LINKED_EXILE_RETURN_MECHANIC,),
+    )
+
+    def compile_activation(**values):
+        if values["span"].line == activation_span.line:
+            values["effect_template"] = lambda _body, **_source: compiled_activation
+        return activation_compiler(**values)
+
+    def compile_departure(**values):
+        if values["span"].line == departure_span.line:
+            return trigger_node(**values, effect_template=lambda _body, **_source: compiled_return)
+        return departure_compiler(**values)
+
+    return compile_activation, compile_departure
 
 
 def scope_linked_return_bindings(value: Any, scope: str) -> Any:

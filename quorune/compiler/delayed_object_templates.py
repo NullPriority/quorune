@@ -6,6 +6,14 @@ from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT,DAMAGE_PERMANENT_O
 
 
 def delayed_object_result(binding,body,*,card_name):
+    if (binding.event.value == "creature.attacks"
+            and binding.variant == "public_attack_a_creature_you_control"
+            and re.fullmatch(r"it phases out at end of combat\.?", body.strip(), re.I)):
+        from ..delayed_object_model import controlled_attacker_delayed_phase_out_effect
+
+        return (("controlled-attacker-delayed-phase-out-v1", (controlled_attacker_delayed_phase_out_effect(),),
+                 None, (DELAYED_OBJECT_MECHANIC,)), False)
+
     counter=_delayed_source_counter_result(binding,body,card_name=card_name)
     if counter is not None:return counter
     match=re.fullmatch(r'(?P<action>Destroy|Sacrifice) (?P<subject>.+?) (?P<time>at end of combat|at the beginning of the next end step)\.',body,re.I)

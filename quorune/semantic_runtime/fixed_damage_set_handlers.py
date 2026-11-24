@@ -4,7 +4,10 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, AllocatedDamageRecipient
+from ..rules.collective_source_damage import COLLECTIVE_DAMAGE_RECIPIENTS, allocated_collective_damage
 from ..fixed_damage_set_model import (
+    DEALT_LIFE_GAIN_FIELD,
+    DefendingCreatureDamageGroup,
     FixedDamageSetError,
     FixedDamageSetSpec,
     PermanentControllerRelation,
@@ -23,12 +26,14 @@ _FIELDS = frozenset(
         "amount",
         "groups",
         ANNOUNCED_DAMAGE_EFFECT_FIELD,
+        COLLECTIVE_DAMAGE_RECIPIENTS,
         'fixed_target_controller_damage',
         _REASON_FIELD,
         "_replacement_selections",
         "_replacement_event_ids",
         "source_snapshot",
         DAMAGE_DEATH_EXILE_FIELD,
+        DEALT_LIFE_GAIN_FIELD,
     }
 )
 
@@ -77,6 +82,9 @@ class FixedDamageSetHandler:
                 "Fixed damage-set effect has unknown fields: "
                 + ", ".join(unknown)
             )
+        gain_life = DEALT_LIFE_GAIN_FIELD in effect
+        if gain_life and (type(effect[DEALT_LIFE_GAIN_FIELD]) is not int or effect[DEALT_LIFE_GAIN_FIELD] != 1):
+            raise SemanticNodeError("Dealt damage life gain requires its exact result version")
         source_ref = effect.get("source")
         if type(source_ref) is not str or not source_ref:
             raise SemanticNodeError(
@@ -85,7 +93,8 @@ class FixedDamageSetHandler:
         amount = effect.get("amount")
         bound_recipients = None
         if isinstance(amount, Mapping):
-            if any(field in effect for field in ('fixed_target_controller_damage',ANNOUNCED_DAMAGE_EFFECT_FIELD,DAMAGE_DEATH_EXILE_FIELD)):
+            if any(field in effect for field in ('fixed_target_controller_damage',ANNOUNCED_DAMAGE_EFFECT_FIELD,
+                                                   DAMAGE_DEATH_EXILE_FIELD,COLLECTIVE_DAMAGE_RECIPIENTS)):
                 raise SemanticNodeError('Per-player query damage cannot mix recipient encodings')
             try:amount,bound_recipients=_bound_player_damage_recipients(effect,context=context)
             except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
@@ -99,12 +108,23 @@ class FixedDamageSetHandler:
             allocated_recipients = bound_recipients
         elif 'fixed_target_controller_damage' in effect:
             from ..rules.fixed_dual_damage import bound_fixed_dual_damage_recipients
-            if any(field in effect for field in ('groups',ANNOUNCED_DAMAGE_EFFECT_FIELD,DAMAGE_DEATH_EXILE_FIELD)):
+            if any(field in effect for field in ('groups',ANNOUNCED_DAMAGE_EFFECT_FIELD,DAMAGE_DEATH_EXILE_FIELD,
+                                                   COLLECTIVE_DAMAGE_RECIPIENTS)):
                 raise SemanticNodeError('Fixed target/controller damage cannot mix recipient encodings')
             try:
                 allocated_recipients = bound_fixed_dual_damage_recipients(
                     effect['fixed_target_controller_damage'],actor=context.actor,amount=amount)
             except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+        elif COLLECTIVE_DAMAGE_RECIPIENTS in effect:
+            if any(field in effect for field in ("groups", ANNOUNCED_DAMAGE_EFFECT_FIELD, DAMAGE_DEATH_EXILE_FIELD)):
+                raise SemanticNodeError("Collective damage cannot mix recipient encodings")
+            try:
+                allocated_recipients = allocated_collective_damage(
+                    effect[COLLECTIVE_DAMAGE_RECIPIENTS], amount=amount, query=context.query,
+                )
+                amount = sum(recipient.amount for recipient in allocated_recipients)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
         elif ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
             recipients = effect[ANNOUNCED_DAMAGE_EFFECT_FIELD]
             if "groups" in effect or not isinstance(recipients, (list, tuple)):
@@ -119,6 +139,9 @@ class FixedDamageSetHandler:
             except FixedDamageSetError as exc:
                 raise SemanticNodeError(str(exc)) from exc
         for group in spec.groups if spec is not None else ():
+            if isinstance(group, DefendingCreatureDamageGroup):
+                context.query.require_known_seat(group.player)
+                continue
             if (
                 isinstance(group, PermanentDamageGroup)
                 and group.controller_relation
@@ -158,6 +181,7 @@ class FixedDamageSetHandler:
                 source_snapshot=effect.get('source_snapshot'),
                 death_exile_scope=damage_death_exile_scope(effect),
                 allocated_recipients=allocated_recipients,
+                gain_life_from_dealt=gain_life,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

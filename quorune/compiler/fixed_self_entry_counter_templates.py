@@ -13,6 +13,7 @@ from ..entry_counter_model import (
     DynamicEntryCounterValueSource,
     EntryCounterError,
     PAID_COLOR_ENTRY_CAPABILITY,
+    CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
 )
 from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
 from ..characteristic_fragments import characteristic_quantity_capabilities
@@ -172,6 +173,7 @@ def _dynamic_compiled(
     counter_name: str,
     amount_spec: DynamicEntryCounterAmountSpec,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]]:
+    uses_current_life = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL
     return (
         DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE,
         {
@@ -180,7 +182,8 @@ def _dynamic_compiled(
             "event": "zone.change",
             "counter_name": counter_name,
             "amount_spec": amount_spec.to_dict(),
-            **({'requires_complete_card_program':True} if amount_spec.mana_color is not None else {}),
+            **({"requires_complete_card_program": True}
+               if amount_spec.mana_color is not None or uses_current_life else {}),
             "rule_id": (
                 "702.138c"
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -190,6 +193,7 @@ def _dynamic_compiled(
         (
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
             *characteristic_quantity_capabilities(amount_spec.quantity),
+            *((CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,) if uses_current_life else ()),
             *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
             *(
                 ("casting.lifecycle.fixed_zone_cast",)
@@ -222,7 +226,11 @@ def _x_dynamic_amount_body(
         quantity = None
         if definition is not None:
             normalized = " ".join(definition.casefold().split())
-            if normalized == "the total life lost by your opponents this turn":
+            if normalized == "your life total":
+                if x_match["counter"].casefold() != "charge" or x_match["twice"]:
+                    return None
+                value_source = DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL
+            elif normalized == "the total life lost by your opponents this turn":
                 value_source = DynamicEntryCounterValueSource.OPPONENTS_LIFE_LOST
             elif normalized in {"the amount of life you've gained this turn", "the amount of life you gained this turn"}:
                 value_source = DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED
@@ -262,7 +270,7 @@ def _counted_dynamic_amount_body(
     )
     numbered = re.fullmatch(
         rf"a number of (?P<counter>{FIXED_COUNTER_NAME_PATTERN}) counters "
-        r"on it equal to the number of (?P<quantity>.+)",
+        r"on it equal to (?P<plus_one>one plus )?the number of (?P<quantity>.+)",
         body,
         re.IGNORECASE,
     )
@@ -276,6 +284,7 @@ def _counted_dynamic_amount_body(
         )
         if coefficient is None:
             return None
+        offset = 1 if numbered is not None and numbered["plus_one"] else 0
         quantity_text = match.group("quantity")
         normalized = " ".join(quantity_text.casefold().split())
         value_source = None
@@ -302,6 +311,7 @@ def _counted_dynamic_amount_body(
                 value_source=value_source,
                 calculation=DynamicEntryCounterCalculation.MULTIPLY,
                 coefficient=coefficient,
+                offset=offset,
                 quantity=quantity,
             )
         except EntryCounterError:
@@ -497,6 +507,9 @@ def dynamic_self_entry_counter_handler(
     if compiled is None:
         return None
     counter_name, amount_spec = compiled
+    if (amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL
+            and subject.casefold() != "this artifact"):
+        return None
     return _dynamic_compiled(
         counter_name=counter_name,
         amount_spec=amount_spec,

@@ -23,11 +23,36 @@ descriptor-one/payment-one records keep their stored source behavior and exact
 replay. An absent identity version preserves other builtin source sacrifices;
 declared boolean, missing-source or unknown-version identity contexts reject.
 
+An additional beginning phase uses the optional `additional_beginning_phases`
+state. It records how many phases remain queued, whether an added phase is
+active, and how many actual draws have completed during its draw step.
+Each added phase follows the normal untap, upkeep and draw sequence in the
+current turn. Checkpoints omit the field when no queued or active phase exists.
+
+The optional paid Impending choice carries the fixed price and time-counter
+count on the stack. A copied spell carries the same choice. When the spell
+becomes a permanent, its paid choice follows that entry and supports the
+current type and end-step condition. A later zone change clears the stored
+choice for the departed permanent.
+
 The `shield_counter_damage_version` marker has value `1` in current checkpoints
 and the manifest. It binds damage-side shield counter consumption to the
 record. Historical records omit the marker and retain their original damage
 execution. Declared null, boolean or unknown versions and disagreements
 between the manifest and checkpoint are rejected.
+
+The damage prevention result marker has value 1 in new checkpoints and
+manifests. Prevention-produced life and counters enter the original damage
+result. A reflected damage event reads the resolved state of its containing
+event. Historical records with an absent marker keep their recorded ordering.
+
+The battlefield entry player marker has value 1 in new checkpoints and
+manifests. A permanent arrival can record the player who put it onto the
+battlefield. This field is separate from the object's owner and post-entry
+controller. The movement owner binds the player before the move resolves.
+This includes lands that enter from a library selection, return through their
+own activated ability, or enter tapped and attacking during an effect.
+Historical records with an absent marker keep their earlier event encoding.
 
 The priority concession stabilization marker has value 1 in new checkpoints
 and manifests. When a player concedes while holding priority, the game
@@ -112,6 +137,13 @@ without the earlier declaration fact. Printed declare-attackers casting
 restrictions consume this occurrence only in that step after declaration.
 Historical absence stays absent and creates no new declaration fact. Unknown
 or boolean versions and manifest/checkpoint mismatches reject before replay.
+
+`upkeep_completion_version: 1` records the presence of the current turn's
+`upkeep_completed` Boolean. It starts false at each turn boundary and becomes
+true when the first actual upkeep ends. A skipped upkeep leaves it false.
+The after-upkeep cast window reads this fact. Historical absence survives
+loading and replay with no field added. Unknown versions, malformed facts
+and manifest/checkpoint mismatches reject before replay.
 
 Ordinary fixed attacking-token results use
 `choose_fixed_attacking_token_destinations` with `token_entry_version: 1`.
@@ -290,6 +322,13 @@ Unknown response fields and changed delivered choice schemas reject. Physical
 ordering options are issued only to the destination's ordering principal, and
 unknown face-down library parts keep masked labels.
 
+An APNAP object choice with merged departures uses
+`permanent.composition_order` with a schema-one `apnap_composition_order`
+continuation. It keeps the parent semantic frame, resolved physical groups,
+replacement selections and collected orders. Completion verifies the parent
+controller and each issued permutation, then recomputes the batch and commits
+all arrivals before resuming the original stack instruction.
+
 State-based physical ordering uses `permanent.composition_order` with a closed
 schema-one `composition_state_based_order` continuation. It records every
 departing subject and physical incarnation, resolved destination, ordering actor,
@@ -413,6 +452,10 @@ remains absent on serialization. Boolean, unknown and mismatched versions
 reject under the same manifest/checkpoint agreement contract. This marker
 does not change timestamp or unrelated copy semantics; see
 [ADR 0151](../adr/0151-versioned-face-down-characteristics.md).
+The initial checkpoint and manifest carry `face_down_departure_reveal_version`
+for the public reveal when a face-down permanent moves from the battlefield to
+its owner's hand. Replay uses the reveal behavior pinned by the record.
+
 Declared runtime-trust identity remains exact; records pinned to a different
 identity retain the existing provenance rejection.
 
@@ -730,6 +773,12 @@ the move. Shared Devour resources use the existing simultaneous-event selector;
 the payload associates each offered effect with its event and eligible objects.
 Empty arrays are omitted so ordinary prepared entries keep their prior keys.
 
+A named entry replacement records its canonical `card_name` alongside the
+selected effect and original event. The catalogue supplies the selected card
+or face name and its type. This choice is separate from object selections and
+prevention allocations. Historical records that capture a reviewed name-only
+resolution still use their captured program and ordinary name choice.
+
 Derived mana activations omit `tap_source` for the historical tap-cost form,
 which defaults to true. A nontapping self-sacrifice mode explicitly records
 `tap_source: false`; its compact mode similarly includes `tap: false`.
@@ -791,6 +840,14 @@ recorded pending state intact until the player submits it.
 
 ## Replay contract
 
+Current records pin resolving discard provenance with
+\`discard_effect_origin_version: 1\`. A resolving discard keeps the public
+stack reference, effect kind and controller in its replacement continuation
+and committed discard event. The record format and initial checkpoint
+version must agree. Earlier checkpoints omit the version and retain the
+original discard event shape.
+
+
 Current records pin Ward discard option ordering with
 `ward_discard_order_version: 1`. The private choice and its saved identities
 share a stable order by current object reference. Earlier records preserve
@@ -803,6 +860,12 @@ as an individual attacker while the current unrelated attack bands retain
 their members. A checkpoint without the marker keeps the recorded Ninjutsu
 behavior and omits the marker on serialization. The manifest and checkpoint
 must agree.
+
+Current manifests also pin `combat_relationship_version` to `1`. The combat
+checkpoint records `detached_blocker_ids` even when the list is empty. These
+creatures retain their blocking role when the same physical card starts a new
+attack and replaces its previous blocker row. Earlier checkpoints omit the
+list and replay their original relationship behavior.
 
 Native records use `command_replay`. Verification loads the exact initial
 checkpoint and pinned semantic identity, then resubmits each accepted command
@@ -870,13 +933,18 @@ incarnation's Unearth replacement in the ordinary replacement choice. Unmarked
 checkpoints use the historical Unearth priority and omit the marker from state
 hashes.
 
-Current games also pin `ability_source_information_version: 1`. Every nonmana
-activation captures its original source before costs, and every triggered
-ability captures its source when created, including abilities without targets.
-The existing targeting-source binding follows current characteristics while
-that incarnation remains in its expected public zone and pins immediate
-departure information through the canonical zone owner. An absent marker
-retains historical targeted-only capture and does not add fields during replay.
+Current games pin `ability_source_information_version: 2`. As in version one,
+nonmana activations capture their original source before costs, and triggered
+abilities capture their source when created, including abilities without
+targets. The targeting-source binding follows current characteristics while
+that incarnation occupies its expected public zone. The zone transition owner
+captures its immediate departure information.
+
+Version two also records the original tap status on supported intervening-if
+triggers. An untapped draw-step trigger checks its original incarnation on
+resolution or uses the tap status captured when it left the battlefield.
+Version-one records retain their previous resolution behavior on replay.
+An absent marker retains historical targeted-only capture.
 
 `cast_face_offers_version: 2` binds a cast Omen's chosen alternative face
 in a version-one stack context. The binding is also carried by stack copies.
@@ -1159,14 +1227,17 @@ declines every optional untap; a stale or malformed continuation fails before
 the step commits. Completing the choice preserves held triggers and commits
 the selected physical untap set once before advancing to upkeep.
 
-Current checkpoints declare `phasing_lifecycle_version` 1. A phased-out
+Current checkpoints declare `phasing_lifecycle_version` 2. A phased-out
 permanent retains the controller at phase-out, its attachment incarnation or
 player when applicable, and whether it follows a phased-out host. Direct
 returns also retain whether the ordinary turn rotation crossed a departed
 controller's seat. The untap owner commits one simultaneous status batch before
 day and night or untap choices. Reloading a timestamp choice during untap
-resumes after that batch. Historical checkpoints without the version retain
-their previous untap behavior and state encoding.
+resumes after that batch. Version two excludes phased-out battlefield sources
+from new trigger discovery using their status at the occurrence. Announced
+triggers still resolve. Version one keeps its historical trigger discovery.
+Checkpoints without the version retain their previous untap behavior and
+state encoding.
 
 Fixed selection limits use an `untap_selection` version-one continuation in the
 same decision kind. It retains the scoped plan, effective public battlefield
@@ -1313,6 +1384,26 @@ Regeneration shields use the same additive compatibility rule. A positive
 logical-object state; zero is omitted so historical Game Record v3 card payloads
 retain their byte representation and hashes. Cleanup and any zone change that
 creates a new object clear the value.
+
+Turn-bound combat prevention scopes can carry `source_power_max`. Damage
+preparation reads the effective power of current battlefield creatures and seals
+eligible logical identities in the replacement predicate. A scope omits this
+field when it has no power restriction, preserving older record payloads.
+
+A combat prevention scope can store the logical object identity of its exempt
+target. The shield compares incoming damage against that saved identity. A
+creature that leaves and returns has a new identity and is subject to the
+existing shield. The older scope encoding omits this optional field.
+
+Version-three cast-X damage amounts store the fixed bonus alongside the unit
+coefficient. They read the original announced stack X. The same-target
+self-replacement selects one result before damage is proposed, leaving the
+original mana payment and both earlier amount encodings intact.
+
+Proliferate instructions with `proliferate_order_version` value 1 order the
+eligible battlefield references lexicographically and append eligible players
+in seat order. Both the offered choices and the saved continuation use that
+order. Earlier unmarked instructions retain their historical choice ordering.
 
 ## Lifecycle and atomicity
 

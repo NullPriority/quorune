@@ -147,8 +147,12 @@ def activation_target_price_preview(host, seat, source, ability, public_schema):
         'requirements': min(prices.values(), key=lambda value: sum(value['requirements'].values()))['requirements']}
 
 
-def activation_priced_offer_payload(host, seat, source, ability, hint, public_schema):
+def activation_priced_offer_payload(host, seat, source, ability, hint, public_schema, *, program=None):
     from .offer_payload import activation_offer_payload
+    from ..announced_graveyard_copy import is_announced_graveyard_copy_program
+
+    if is_announced_graveyard_copy_program(program):
+        return activation_offer_payload(source, ability, hint), public_schema
     projection = activation_target_price_preview(host, seat, source, ability, public_schema)
     if projection is None:
         if not ability.mana_cost_options and (getattr(ability, 'ability_local_mana_reduction', None) is not None

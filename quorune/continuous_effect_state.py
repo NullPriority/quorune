@@ -23,7 +23,9 @@ from .as_unblocked_rule import AsUnblockedAssignmentRule
 from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import ResolvedBlockCapacityRule
 from .temporary_cast_rule_model import ResolvedCastRestriction
+from .draw_redirect_model import ResolvedDrawRedirect
 from .next_spell_cost_model import ResolvedNextSpellCostReduction
+from .protected_attack_payment_model import ResolvedProtectedAttackPayment
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
@@ -187,7 +189,7 @@ def commit_continuous_effect(
         effect,
         (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint,
          ResolvedLinkedDepartureExile, ResolvedNextSpellCostReduction,
-         ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition),
+         ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition, ResolvedProtectedAttackPayment, ResolvedDrawRedirect),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -358,6 +360,13 @@ def apply_fixed_resolution_characteristics(
                 history = prepare_source_presence_duration(host.state, source)
                 if history is None:
                     return []
+            elif duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT:
+                from .control_effects import source_battlefield_exit_pending
+
+                source = ResolutionEffectSource.from_effect(effect)
+                identity = ContinuousObjectIdentity(source.object_id, source.logical_object_id)
+                if not source_battlefield_exit_pending(host.state, identity):
+                    duration = ContinuousEffectDuration.ZONE_OBJECT
             timing = duration, None, history
         if timing is None:
             return []
@@ -380,6 +389,10 @@ def apply_fixed_resolution_characteristics(
         duration_label = "for this battlefield incarnation"
     elif duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES:
         duration_label = "while the source remains on the battlefield"
+    elif duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT:
+        duration_label = "until the source leaves the battlefield"
+    elif duration is ContinuousEffectDuration.UNTIL_RECIPIENT_CONTROLLER_UNTAP:
+        duration_label = "until the recipient controller's next untap step"
     elif history is not None:
         duration_label = "until the source untaps or leaves the battlefield"
     else:
@@ -569,7 +582,8 @@ def create_resolution_continuous_effect_components(
     source_id = source.object_id or source.stack_ref
     duration_source = (
         ContinuousObjectIdentity(source.object_id, source.logical_object_id)
-        if duration_history is not None else None
+        if duration_history is not None or duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT
+        else None
     )
     prototypes = tuple(
         ContinuousEffect(
@@ -766,7 +780,15 @@ def expire_zone_departure_effects(state: Any, card: Any) -> None:
     identity = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
     journal[:] = [effect for effect in journal if not (
         isinstance(effect, ResolvedLinkedDepartureExile) and effect.subject == identity
-        or (is_fixed_target_color_effect(effect) or _is_paid_mana_haste_effect(effect)) and identity in effect.locked_objects
+        or isinstance(effect, ContinuousEffect)
+        and effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT
+        and (effect.duration_source == identity or identity in effect.locked_objects)
+        or (
+            is_fixed_target_color_effect(effect)
+            or _is_paid_mana_haste_effect(effect)
+            or isinstance(effect, ContinuousEffect)
+            and effect.duration is ContinuousEffectDuration.UNTIL_RECIPIENT_CONTROLLER_UNTAP
+        ) and identity in effect.locked_objects
     )]
 
 
@@ -798,6 +820,31 @@ def expire_next_turn_continuous_effects(state: Any, player: str) -> None:
         retained = [effect for effect in journal if getattr(effect, "expires_on_next_turn_of", None) != player]
         if len(retained) != len(journal):
             journal[:] = retained
+
+
+def expire_recipient_controller_untap_effects(state: Any, player: str) -> None:
+    """End locked effects as the recipient's current controller enters untap."""
+    journal = state.continuous_effects
+    if not journal:
+        return
+    retained = []
+    for effect in journal:
+        if (
+            isinstance(effect, ContinuousEffect)
+            and effect.duration is ContinuousEffectDuration.UNTIL_RECIPIENT_CONTROLLER_UNTAP
+        ):
+            identity, = effect.locked_objects
+            card = state.cards.get(identity.object_id)
+            if (
+                card is None
+                or card.logical_object_id != identity.logical_object_id
+                or card.zone != "battlefield"
+                or card.controller == player
+            ):
+                continue
+        retained.append(effect)
+    if len(retained) != len(journal):
+        journal[:] = retained
 
 
 def expire_control_change_continuous_effects(state: Any, card: Any) -> int:

@@ -21,6 +21,24 @@ from .keyword_templates import printed_keyword_parts
 from .ward_cost_templates import fixed_ward_spec
 
 
+def attacking_creature_count_bushido_handler(text, *, source_name):
+    from ..rules.source_references import SourceReferenceSpec
+
+    source = SourceReferenceSpec(source_name).regex_pattern
+    if re.fullmatch(
+        rf"(?:{source}|this creature) has bushido X, where X is the number of attacking creatures\.?",
+        text.strip(), re.I,
+    ) is None:
+        return None
+    fragment = CombatKeywordTriggerSpec(CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT, 1)
+    return (
+        "attacking-creature-count-bushido-v1",
+        {"handler_id": "ability.trigger.bushido.v1", "schema_version": 1, "event": "continuous",
+         "fragment": ability_fragment_to_dict(fragment)},
+        ("combat.trigger.bushido",),
+    )
+
+
 def _lower_fixed_public_ward(
     material_line: str,
     mechanics: tuple[str, ...],
@@ -49,7 +67,9 @@ def _lower_fixed_public_ward(
         handlers=tuple(
             {
                 "handler_id": (
-                    "ability.trigger.ward.v1"
+                    "ability.trigger.ward.fixed-sacrifice.v1"
+                    if spec.sacrifice_scope is not None
+                    else "ability.trigger.ward.v1"
                     if spec.generic_cost is not None
                     else "ability.trigger.ward.fixed-nonmana.v1"
                 ),

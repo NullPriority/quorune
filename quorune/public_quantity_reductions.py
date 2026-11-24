@@ -8,7 +8,7 @@ from typing import Any, Mapping, Sequence
 from .characteristic_fragments import CharacteristicQuantityReduction
 from .object_query import ObjectQueryResult
 from .mana_symbol_counts import colored_mana_symbol_count
-from .counter_snapshot import permanent_counter_total
+from .counter_snapshot import permanent_counter_snapshot, permanent_counter_total
 
 
 def public_mana_value(data: Mapping[str, Any]) -> int:
@@ -21,12 +21,16 @@ def public_mana_value(data: Mapping[str, Any]) -> int:
 def reduce_public_quantity(
     rows: Sequence[tuple[ObjectQueryResult, Mapping[str, Any], str]],
     reduction: CharacteristicQuantityReduction,
-    *, mana_colors: tuple[str, ...] = (),
+    *, mana_colors: tuple[str, ...] = (), counter_name: str | None = None,
 ) -> int:
     if reduction is CharacteristicQuantityReduction.OBJECT_COUNT:
         return len(rows)
     if reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS:
         return sum(permanent_counter_total(row.counters) for row, _data, _kind in rows)
+    if reduction is CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL:
+        if counter_name != "+1/+1":
+            raise ValueError("Named public counter totals require the represented counter")
+        return sum(permanent_counter_snapshot(row.counters).get(counter_name, 0) for row, _data, _kind in rows)
     if reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS,CharacteristicQuantityReduction.DEVOTION}:
         count = 0
         for _row, data, _kind in rows:

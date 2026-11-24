@@ -45,10 +45,14 @@ def entry_x_amount_runtime_dependencies(program):
     return required
 
 
-def resolve_entry_x_amount(value,item):
-    spec=EntryXAmountSpec.from_dict(value)
-    info=EntryXInformation.from_dict(item.context.get(ENTRY_X_FIELD))
-    if (info.object_id!=item.source_object_id or info.logical_object_id!=item.context.get('source_logical_object_id')
-            or item.context.get('event')!='permanent.enter'):
-        raise PublicQueryAmountError('Entry X result lost its original committed entry identity')
-    return spec.coefficient*info.amount
+def resolve_entry_x_amount(value, item):
+    return resolve_entry_x_for_occurrence(value, source_object_id=item.source_object_id, context=item.context)
+
+
+def resolve_entry_x_for_occurrence(value, *, source_object_id, context):
+    spec = EntryXAmountSpec.from_dict(value)
+    info = EntryXInformation.from_dict(context.get(ENTRY_X_FIELD))
+    if (info.object_id != source_object_id or info.logical_object_id != context.get("source_logical_object_id")
+            or context.get("event") != "permanent.enter"):
+        raise PublicQueryAmountError("Entry X result lost its original committed entry identity")
+    return spec.coefficient * info.amount

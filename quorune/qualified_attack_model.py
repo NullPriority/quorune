@@ -2,6 +2,11 @@
 
 QUALIFIED_ATTACK_CAPABILITY = 'trigger.event.qualified_attack_singular'
 QUALIFIED_ATTACK_VARIANT = 'singular_qualified_attack'
+OPPOSING_PLAYER_ATTACK_VARIANT = 'public_attack_opposing_player'
+OPPOSING_PLAYER_ATTACK_TRIGGER_TEMPLATE = 'fixed-counter-public-opponent-attack-trigger-v1'
+OPPOSING_PLAYER_ATTACK_PROGRAM_TEMPLATE = OPPOSING_PLAYER_ATTACK_TRIGGER_TEMPLATE.replace(
+    'fixed-counter-', 'fixed-typed-effect-', 1,
+)
 ATTACK_CHARACTERISTIC_RESULT_CAPABILITY = 'resolution.event_object.attack_characteristics'
 ATTACK_FACT_PREFIX = 'attacker_characteristics_'
 ATTACK_FACT_EQUAL_POWER_TOUGHNESS = ATTACK_FACT_PREFIX + 'equal_power_toughness'
@@ -31,11 +36,31 @@ def qualified_player_defense_condition(minimum_power: int):
     ]}
 
 
+def defended_player_condition():
+    return {'all': [
+        {'field': 'defending_player', 'op': 'eq', 'value': '$source.controller'},
+        {'field': ATTACK_RECIPIENT_KIND_FIELD, 'op': 'eq', 'value': 'player'},
+    ]}
+
+
 def defended_player_or_planeswalker_condition():
     return {'all': [
         {'field': 'defending_player', 'op': 'eq', 'value': '$source.controller'},
         {'field': ATTACK_RECIPIENT_KIND_FIELD, 'op': 'in', 'value': ['player', 'planeswalker']},
     ]}
+
+
+def opposing_player_attack_condition(*, with_counter: bool = False):
+    clauses = [
+        {'field': 'defending_player', 'op': 'ne', 'value': '$source.controller'},
+        {'field': ATTACK_RECIPIENT_KIND_FIELD, 'op': 'eq', 'value': 'player'},
+    ]
+    if with_counter:
+        clauses.extend((
+            {'field': ATTACK_FACT_PREFIX + 'version', 'op': 'eq', 'value': 1},
+            {'field': ATTACK_FACT_PREFIX + 'total_counters', 'op': 'gte', 'value': 1},
+        ))
+    return {'all': clauses}
 
 
 def source_attacks_battle_condition():

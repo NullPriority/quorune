@@ -31,6 +31,7 @@ MORPH_RUNTIME_EVENT = "morph.action"
 MEGAMORPH_RUNTIME_EVENT = "megamorph.action"
 DISGUISE_RUNTIME_EVENT = "disguise.action"
 MORPH_FACE_DOWN_ANNOTATION = "face_down_characteristics"
+EFFECT_FACE_DOWN_ANNOTATION = "turned_face_down_by_effect"
 MORPH_METHOD_ANNOTATION = "face_down_method"
 MORPH_CAST_METHOD = "morph"
 MEGAMORPH_CAST_METHOD = "megamorph"
@@ -298,6 +299,19 @@ def validate_morph_face_down_state(
         raise MorphError(
             "Face-down permanent is not the represented method object"
         )
+
+
+def is_turned_face_down_by_effect(card: Any) -> bool:
+    annotations = getattr(card, "annotations", {})
+    marker = annotations.get(EFFECT_FACE_DOWN_ANNOTATION)
+    if marker is None:
+        return False
+    if (not getattr(card, "face_down", False) or not isinstance(marker, Mapping)
+            or set(marker) != {"schema_version"} or type(marker["schema_version"]) is not int
+            or marker["schema_version"] != 1 or MORPH_METHOD_ANNOTATION in annotations
+            or annotations.get(MORPH_FACE_DOWN_ANNOTATION) != face_down_characteristics(MORPH_CAST_METHOD)):
+        raise MorphError("Effect face-down state has a closed physical representation")
+    return True
 
 
 class MorphCharacteristicHost(Protocol):

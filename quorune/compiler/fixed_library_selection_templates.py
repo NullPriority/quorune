@@ -393,12 +393,51 @@ def _optional_slots_shape(
     return None
 
 
+@dataclass(frozen=True, slots=True)
+class ChosenTypeLibrarySelectionEffectTemplate:
+    def compiled(self):
+        from ..rules.library_selection_capability_shapes import chosen_type_library_selection_effect
+
+        return ("chosen-type-library-selection-v5", (chosen_type_library_selection_effect(),), None,
+                (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
+@dataclass(frozen=True, slots=True)
+class ChosenTypeTopSelectionEffectTemplate:
+    may_put_in_graveyard: bool
+
+    def compiled(self):
+        from ..rules.library_selection_capability_shapes import chosen_type_top_selection_effect
+
+        return ("chosen-type-top-selection-v6",
+                (chosen_type_top_selection_effect(may_put_in_graveyard=self.may_put_in_graveyard),),
+                None, (FIXED_LIBRARY_SELECTION_MECHANIC,))
+
+
 def fixed_library_selection_effect_template(
     text: str,
-) -> FixedLibrarySelectionEffectTemplate | None:
+) -> FixedLibrarySelectionEffectTemplate | ChosenTypeLibrarySelectionEffectTemplate | ChosenTypeTopSelectionEffectTemplate | None:
     """Lower one complete fixed self-library hand/remainder instruction."""
 
     normalized = " ".join(text.strip().split())
+    if normalized.casefold() == (
+        "look at the top three cards of your library. "
+        "you may reveal a creature card of the chosen type from among them and put it into your hand. "
+        "put the rest on the bottom of your library in a random order."
+    ):
+        return ChosenTypeLibrarySelectionEffectTemplate()
+    top = normalized.casefold()
+    if top == (
+        "look at the top card of your library. if it's a creature card of the chosen type, "
+        "you may reveal it and put it into your hand."
+    ):
+        return ChosenTypeTopSelectionEffectTemplate(may_put_in_graveyard=False)
+    if top == (
+        "look at the top card of your library. if it's a card of the chosen type, "
+        "you may reveal it and put it into your hand. "
+        "if you don't put the card into your hand, you may put it into your graveyard."
+    ):
+        return ChosenTypeTopSelectionEffectTemplate(may_put_in_graveyard=True)
     from .targeted_library_exile_templates import targeted_library_exile_template
     exile_search = targeted_library_exile_template(normalized)
     if exile_search is not None:return exile_search

@@ -5,6 +5,7 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..fractional_quantity_model import HALF_MILL_MECHANIC, HalfQuantitySpec
+from ..query_effect_amount_model import OPPONENT_HAND_MILL_MECHANIC, OpponentHandMillCount
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
@@ -102,7 +103,13 @@ def _mill_template(subject, count, *, count_kind="fixed", extra_mechanics=()):
 
 
 def fixed_mill_effect_template(text: str) -> FixedMillEffectTemplate | None:
-    """Lower a mandatory fixed or explicitly rounded half-library Mill."""
+    """Lower one mandatory Mill through a closed count and recipient shape."""
+    if re.fullmatch(r"Each opponent mills cards equal to the number of cards in their hand\.?$",
+                    text.strip(), re.IGNORECASE):
+        return _mill_template(
+            "each opponent", OpponentHandMillCount().to_dict(), count_kind="current-hand",
+            extra_mechanics=(OPPONENT_HAND_MILL_MECHANIC,),
+        )
     fixed = _FIXED_MILL.fullmatch(text.strip())
     match = fixed or _HALF_MILL.fullmatch(text.strip())
     if match is None:
@@ -132,14 +139,49 @@ __all__ = [
 
 EVENT_MILL_RECIPIENT_CAPABILITY='zone.mill.event_recipient'
 EVENT_MILL_RECIPIENT_MECHANIC='fixed-event-recipient-mill'
+ATTACKER_CONTROLLER_MILL_MECHANIC = "fixed-attacker-controller-mill"
+
+
+EQUIPPED_WOLF_MILL_MECHANIC = "equipped-combat-wolf-and-mill"
 
 
 def event_recipient_mill_result(binding,body,*,compile_fixed,source_name):
     """One mandatory mill bound to an independently guaranteed event player."""
-    match=re.fullmatch(r'(?P<subject>that player|they|defending player) mills? (?P<body>.+)',body,re.I)
-    if match is None:return None
-    player=None
-    if match['subject'].casefold()=='defending player':
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        == ("damage.dealt", "equipped_creature_combat_damage_a_player", "battlefield")
+        and body == binding.body
+        and body.casefold() == "you create a 2/2 green wolf creature token and that player mills ten cards."
+    ):
+        token = compile_fixed("Create a 2/2 green Wolf creature token.")
+        mill = event_recipient_mill_result(binding, "That player mills ten cards.",
+                                           compile_fixed=compile_fixed, source_name=source_name)
+        if token[0] is None or token[2] is not None or len(token[1]) != 1 or mill is None:
+            return None
+        _, effects, _, mechanics = mill[0]
+        return (
+            "equipped-combat-wolf-and-mill-v1", (*token[1], *effects), None,
+            (*token[3], *mechanics, EQUIPPED_WOLF_MILL_MECHANIC),
+        ), False
+    match = re.fullmatch(
+        r"(?P<subject>that player|they|defending player|that creature['’]s controller) mills? (?P<body>.+)",
+        body, re.I,
+    )
+    if match is None:
+        return None
+    subject = match["subject"].casefold()
+    attacker_controller = subject in {"that creature's controller", "that creature’s controller"}
+    player = None
+    if attacker_controller:
+        from ..qualified_attack_model import defended_player_or_planeswalker_condition
+        from ..target_controller_information import occurrence_controller_reference
+
+        if ((binding.event.value, binding.variant, binding.active_zone)
+                != ("creature.attacks", "public_attack_a_creature", "battlefield")
+                or binding.event_condition != defended_player_or_planeswalker_condition()):
+            return None
+        player = occurrence_controller_reference()
+    elif subject == 'defending player':
         from .event_player_results import _event_player
         player=_event_player(binding,'defending player')
     elif binding.event.value in {'damage.dealt','damage.dealt.self'}:
@@ -164,5 +206,9 @@ def event_recipient_mill_result(binding,body,*,compile_fixed,source_name):
     if compiled is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if effect.get('op')!='mill' or effect.get('player')!='$controller':return None
-    return ('fixed-event-recipient-mill-v1',({**effect,'player':player},),None,
-        (*compiled[3],EVENT_MILL_RECIPIENT_MECHANIC)),False
+    if attacker_controller and type(effect.get("count")) is not int:
+        return None
+    mechanics = (*compiled[3], EVENT_MILL_RECIPIENT_MECHANIC)
+    if attacker_controller:
+        mechanics += (ATTACKER_CONTROLLER_MILL_MECHANIC,)
+    return ('fixed-event-recipient-mill-v1',({**effect,'player':player},),None,mechanics),False

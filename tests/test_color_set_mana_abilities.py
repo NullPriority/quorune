@@ -8,6 +8,7 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.abilities import parse_activated_abilities
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.color_set_mana_abilities import (
@@ -862,6 +863,166 @@ class ColorSetManaRuntimeTests(unittest.TestCase):
             session.save(game_dir)
             replay = replay_record(game_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+
+
+
+class CommanderIdentityManaTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "commander-identity.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/commander-identity-mana-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Commander identity mana", [
+            DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Isamaru, Hound of Konda"])
+
+    def _activation(self, game, source):
+        ability = next(row for row in game.engine._activated_abilities(source)
+                       if row.color_set_mana_output is not None)
+        self.assertTrue(ability.color_set_mana_output.uses_commander_identity)
+        actions = game.packet("pilot:" + source.controller, full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row.get("source") == source.ref
+                     and row.get("ability") == ability.ability_id)
+        return offer, {"a": "activate", "source": source.ref, "ability": ability.ability_id}
+
+    def test_commander_identity_descriptor_requires_its_own_source_authority(self):
+        from quorune.color_set_mana_abilities import (
+            COMMANDER_IDENTITY_MANA_HANDLER_ID, color_set_mana_handler_descriptor,
+        )
+        from quorune.semantic_runtime.color_set_mana_abilities import ColorSetActivatedManaAbilityHandler
+        from quorune.semantic_runtime.context import SemanticNodeError
+
+        spec = compiled_spec("{T}: Add one mana of any color in your commander's color identity.")
+        descriptor = color_set_mana_handler_descriptor(spec)
+        self.assertIsNone(spec.query)
+        self.assertEqual(COMMANDER_IDENTITY_MANA_HANDLER_ID, descriptor["handler_id"])
+        self.assertEqual(spec, ColorSetActivatedManaAbilityHandler(handler_id=descriptor["handler_id"]).validate(descriptor))
+        with self.assertRaises(SemanticNodeError):
+            ColorSetActivatedManaAbilityHandler().validate({**descriptor, "handler_id": COLOR_SET_MANA_HANDLER_ID})
+        for updates in ({"query": compiled_spec().query.to_dict()}, {"tap_source": False}, {"selection": "one_each"}):
+            with self.subTest(updates=updates), self.assertRaises(ColorSetManaAbilityError):
+                ColorSetActivatedManaAbilitySpec.from_dict({**spec.to_dict(), **updates})
+        from types import SimpleNamespace
+        from quorune.mana_ability_runtime import _color_set_mana_modes
+
+        identity = mock.Mock(side_effect=lambda seat: {"U", "G"} if seat == "B" else {"W"})
+        host = SimpleNamespace(_commander_identity=identity)
+
+        def verify_modes():
+            modes = _color_set_mana_modes(host, "B", spec.to_activated_ability())
+            actual = {color for mode in modes for color, amount in mode.bundle.items() if amount}
+            self.assertEqual({"U", "G"}, actual)
+
+        verify_modes()
+        identity.assert_called_once_with("B")
+        with mock.patch.object(host, "_commander_identity", return_value={"W"}):
+            with self.assertRaises(AssertionError):
+                verify_modes()
+
+    def test_actual_commander_mana_offer_uses_partner_union_and_replays(self):
+        from quorune.record import authoritative_state_hash
+
+        game = self.session(63211801)
+        tower = self.add(game.engine, "Command Tower")
+        signet = self.add(game.engine, "Arcane Signet")
+        hidden = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand", ref="identity-private")
+        self.assert_closed(game, tower)
+        self.assert_closed(game, signet)
+        game.state.commander_oracle_ids["A"] = [
+            self.db.lookup("Thrasios, Triton Hero", fuzzy=False).oracle_id,
+            self.db.lookup("Vial Smasher the Fierce", fuzzy=False).oracle_id,
+        ]
+        self.prepare(game)
+        self.checkpoint(game)
+        offer, command = self._activation(game, tower)
+        modes = [option["value"] for option in offer["choice_schema"]["mana_output"]["options"]]
+        self.assertEqual([{"U": 1}, {"B": 1}, {"R": 1}, {"G": 1}], modes)
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {**command, "mana_output": {"U": 1}}).ok)
+        self.assertFalse(game.act("pilot:A", {**command, "mana_output": {"W": 1}}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        outcome = game.act("pilot:A", {**command, "mana_output": {"G": 1}})
+        self.assertTrue(outcome.ok, outcome.summary)
+        self.assertEqual(1, game.state.players["A"].mana_pool["G"])
+        self.assertTrue(game.state.cards[tower.object_id].tapped)
+        for seat in "ABC":
+            self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+    def test_actual_colorless_identity_taps_without_mana_and_preserves_sphere_draw(self):
+        game = self.session(63211802)
+        sphere = self.add(game.engine, "Commander's Sphere")
+        self.assert_closed(game, sphere)
+        game.state.commander_oracle_ids["A"] = [self.db.lookup("Ulamog, the Ceaseless Hunger", fuzzy=False).oracle_id]
+        self.prepare(game)
+        self.checkpoint(game)
+        before = dict(game.state.players["A"].mana_pool)
+        _, command = self._activation(game, sphere)
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(before, game.state.players["A"].mana_pool)
+        self.assertTrue(game.state.cards[sphere.object_id].tapped)
+        hand_size = len(game.state.players["A"].zones["hand"])
+        other = next(ability for ability in game.engine._activated_abilities(game.state.cards[sphere.object_id])
+                    if ability.sacrifice_source)
+        outcome = game.act("pilot:A", {"a": "activate", "source": sphere.ref, "ability": other.ability_id})
+        self.assertTrue(outcome.ok, outcome.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[sphere.object_id].zone)
+        self.assertEqual(hand_size + 1, len(game.state.players["A"].zones["hand"]))
+        self.replay(game, load=True)
+
+
+    def test_actual_hidden_hideout_enters_tapped_and_checks_counters_for_lifelink(self):
+        from quorune.record import authoritative_state_hash
+
+        entry = self.session(63211803)
+        land = self.add(entry.engine, "Hidden Hideout", zone="hand")
+        self.assert_closed(entry, land)
+        self.prepare(entry)
+        self.checkpoint(entry)
+        result = entry.act("pilot:A", {"action_id": "play-land:" + land.ref})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("battlefield", entry.state.cards[land.object_id].zone)
+        self.assertTrue(entry.state.cards[land.object_id].tapped)
+        self.replay(entry, load=True)
+
+        game = self.session(63211804)
+        mana_land = self.add(game.engine, "Hidden Hideout", ref="hideout-mana")
+        source = self.add(game.engine, "Hidden Hideout", ref="hideout-lifelink")
+        creature = self.add(game.engine, "Generic Bound Body", ref="hideout-eligible")
+        plain = self.add(game.engine, "Generic Bound Body", ref="hideout-no-counter")
+        foreign = self.add(game.engine, "Generic Bound Body", seat="B", ref="hideout-foreign-counter")
+        foreign.counters["charge"] = creature.counters["charge"] = 1
+        self.prepare(game, mana={"C": 2})
+        self.checkpoint(game)
+        _, mana_command = self._activation(game, mana_land)
+        added = game.act("pilot:A", {**mana_command, "mana_output": {"W": 1}})
+        self.assertTrue(added.ok, added.summary)
+        self.assertEqual(1, game.state.players["A"].mana_pool["W"])
+        activated = next(ability for ability in game.engine._activated_abilities(source) if not ability.mana_ability)
+        command = {"a": "activate", "source": source.ref, "ability": activated.ability_id, "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {**command, "targets": [plain.ref]}).ok)
+        self.assertFalse(game.act("pilot:A", {**command, "targets": [foreign.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", {**command, "targets": [creature.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertIn("lifelink", game.engine._combat_keywords(game.state.cards[creature.object_id]))
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertEqual(1, sum(game.state.players["A"].mana_pool.values()))
+        self.replay(game, load=True)
 
 
 if __name__ == "__main__":

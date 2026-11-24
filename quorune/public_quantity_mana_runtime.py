@@ -9,7 +9,10 @@ from .characteristic_fragments import CharacteristicQuantitySpec, Characteristic
 from .dynamic_characteristics import query_characteristic_count
 from .errors import GameRuleError
 from .mana import ManaMode
-from .public_quantity_mana_model import PublicQuantityManaOutput, PUBLIC_QUANTITY_MANA_KIND
+from .public_quantity_mana_model import (
+    CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION, PUBLIC_QUANTITY_MANA_KIND, PublicQuantityManaOutput,
+)
+from .rules.chosen_type_events import chosen_type_event_value
 from .scalar_effect_amounts import resolve_scalar_effect_amount, scalar_source_context
 from .util import normalize_mana_bundle
 from .replacement.immutable import FrozenMap, thaw_value
@@ -21,11 +24,20 @@ from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 class ManaSourceInformation:
     source: Any
     scalar_context: Mapping[str, Any]
+    chosen_creature_type: str | None = None
 
 
 def public_quantity_output(ability) -> PublicQuantityManaOutput | None:
     raw = ability.dynamic_mana_output
     return PublicQuantityManaOutput.from_dict(raw) if isinstance(raw, Mapping) and raw.get('kind') == PUBLIC_QUANTITY_MANA_KIND else None
+
+
+def chosen_subtype_mana_output(ability) -> PublicQuantityManaOutput | None:
+    raw = ability.dynamic_mana_output
+    if (isinstance(raw, Mapping) and raw.get("kind") == PUBLIC_QUANTITY_MANA_KIND
+            and raw.get("schema_version") == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION):
+        return PublicQuantityManaOutput.from_dict(raw)
+    return None
 
 
 def capture_mana_source_information(host, seat, source, ability):
@@ -35,7 +47,8 @@ def capture_mana_source_information(host, seat, source, ability):
         return None
     locked = replace(source, controller=seat, counters=dict(source.counters))
     context = scalar_source_context(host, source, (output.to_dict(),))
-    return ManaSourceInformation(locked, FrozenMap(context))
+    chosen = chosen_type_event_value(source) if output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION else None
+    return ManaSourceInformation(locked, FrozenMap(context), chosen)
 
 
 def public_quantity_mana_amount(host, seat, source, output, *, source_information=None):
@@ -44,7 +57,13 @@ def public_quantity_mana_amount(host, seat, source, output, *, source_informatio
     info = source_information
     locked = info.source if info is not None else replace(source, controller=seat)
     try:
-        if isinstance(output.amount, LiveBattlefieldQuantitySpec):
+        if output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION:
+            chosen = info.chosen_creature_type if info is not None else chosen_type_event_value(locked)
+            if chosen is None:
+                return 0
+            query = replace(output.amount.query, subtypes_all=(chosen,))
+            amount = query_characteristic_count(host, locked, replace(output.amount, query=query))
+        elif isinstance(output.amount, LiveBattlefieldQuantitySpec):
             amount = current_live_battlefield_count(host, seat, output.amount, source_ref=locked.ref)
         elif isinstance(output.amount, CharacteristicQuantitySpec):
             amount = query_characteristic_count(host, locked, output.amount)
@@ -74,8 +93,10 @@ def public_quantity_mana_modes(host, seat, source, ability):
     amount = public_quantity_mana_amount(host, seat, source, output)
     # Pure-color allocations are useful payment candidates. Mixed allocations
     # are represented by the closed choice schema, never exponential modes.
-    explicit = bool(output.selection == 'combination' or ability.sacrifice_source
-        or ability.source_counter_removal_cost is not None or sum(ability.mana.values()))
+    explicit = output.schema_version != CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION and bool(
+        output.selection == 'combination' or ability.sacrifice_source
+        or ability.source_counter_removal_cost is not None or sum(ability.mana.values())
+    )
     colors = output.colors if amount else output.colors[:1]
     return tuple(ManaMode(normalize_mana_bundle({color: amount}), requires_choice=explicit)
         for color in colors)

@@ -39,3 +39,28 @@ def current_live_battlefield_count(host, controller: str, spec: LiveBattlefieldQ
                 known_to_actor=True, attached_to_ref=None)
         count += object_matches_query(row, query)
     return count
+
+
+def current_live_attacking_shared_type_count(host, controller: str, spec: LiveBattlefieldQuantitySpec,
+                                            *, source_ref: str) -> int:
+    """Count each other current attacking creature once when any type overlaps."""
+    from .continuous_effect_model import ContinuousObjectIdentity
+    from .object_query import query_objects
+    from .shared_creature_type_model import (
+        SharedCreatureTypeObject, canonical_creature_types, shared_creature_type_count,
+    )
+
+    rows = host.affected_permanent_object_rows(controller)
+    subject = next((row for row in rows if row.ref == source_ref and row.zone == "battlefield"
+                    and not row.phased_out), None)
+    if subject is None:
+        return 0
+    recipient = ContinuousObjectIdentity(subject.object_id, subject.logical_object_id)
+    members = tuple(
+        SharedCreatureTypeObject(
+            ContinuousObjectIdentity(row.object_id, row.logical_object_id),
+            canonical_creature_types(row.subtypes),
+        )
+        for row in query_objects(rows, spec.query)
+    )
+    return shared_creature_type_count(members, recipient=recipient, creature_types=subject.subtypes)

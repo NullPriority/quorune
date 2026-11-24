@@ -16,6 +16,8 @@ from quorune.carddb import CardDatabase
 from quorune.commander import initial_commander_state
 from quorune.commander_pairing import (
     COMMANDER_PAIRING_TEMPLATE_ID,
+    PRINTED_COMMANDER_ELIGIBILITY_CAPABILITY,
+    PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE,
     PARTNER_WITH_SEARCH_CAPABILITY_ID,
     PARTNER_WITH_SEARCH_MECHANIC_ID,
     PARTNER_WITH_SEARCH_TEMPLATE_ID,
@@ -254,6 +256,157 @@ class CommanderPairingTests(unittest.TestCase):
             self.assertTrue(passed.ok, passed.summary)
         self.assertEqual("semantic.search", engine.state.pending_decision.kind)
         return source, partner
+
+
+    @staticmethod
+    def printed_commander_deck(name: str) -> DeckDefinition:
+        return DeckDefinition(
+            name=f"Harbor setup with {name}",
+            entries=[DeckEntry(name, board="commander"), DeckEntry("Harbor Reach", quantity=99)],
+            commanders=[name],
+        )
+
+    def test_printed_commander_permission_requires_exact_printed_source(self):
+        from quorune.carddb import CardRecord
+
+        source = CardRecord(
+            oracle_id="ae7513fb-e5c1-4279-86dc-000000002311",
+            name="Harbor Curator, Tidekeeper",
+            mana_cost="{2}",
+            mana_value=2,
+            type_line="Legendary Planeswalker — Curator",
+            oracle_text="",
+            power=None,
+            toughness=None,
+            loyalty="3",
+            defense=None,
+            colors=(),
+            color_identity=(),
+            keywords=(),
+            produced_mana=(),
+            layout="normal",
+            released_at="2026-08-07",
+            legalities={"commander": "legal"},
+            faces=(),
+            raw={},
+        )
+
+        def declarations(text: str):
+            ir = compile_oracle_card(
+                replace(source, oracle_text=text),
+                capability_registry=self.capabilities,
+                capability_profile="commander_review",
+            )
+            return [
+                node for face in ir.faces for node in face.nodes
+                if node.template_id == PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
+            ]
+
+        for subject in (source.name, "Harbor Curator", "This card", "This planeswalker"):
+            with self.subTest(subject=subject):
+                text = f"{subject} can be your commander."
+                nodes = declarations(text)
+                self.assertEqual(len(nodes), 1)
+                node = nodes[0]
+                self.assertTrue(node.exact)
+                self.assertEqual((node.kind, node.event, node.active_zone), ("static_ability", "game.setup", "all"))
+                self.assertEqual(node.capability_dependencies, (PRINTED_COMMANDER_ELIGIBILITY_CAPABILITY,))
+                self.assertEqual(text[node.span.start:node.span.end], node.text)
+
+        for text in (
+            "Harbor Archivist can be your commander.",
+            "This creature can be your commander.",
+            "Harbor Curator can be your commander if you are the starting player.",
+            "Harbor Curator can be your commander. You gain 1 life.",
+        ):
+            with self.subTest(text=text):
+                self.assertEqual(declarations(text), [])
+
+    def test_printed_commander_permission_opens_trusted_multiplayer_and_replays(self):
+        name = "Harbor Curator, Tidekeeper"
+        deck = self.printed_commander_deck(name)
+        session = CommanderSession.create(
+            self.db,
+            {seat: deck for seat in "ABCD"},
+            first_player="A",
+            seed=903_003_01,
+            config=GameConfig(semantic_policy="trusted_only", auto_pass_empty_priority=False),
+        )
+        oracle_id = self.db.lookup(name).oracle_id
+        self.assertEqual(session.state.commander_oracle_ids, {seat: [oracle_id] for seat in "ABCD"})
+        public_ids = set()
+        for seat, player in session.state.players.items():
+            self.assertEqual(len(player.zones["command"]), 1)
+            card = session.state.cards[player.zones["command"][0]]
+            self.assertEqual((card.owner, card.zone), (seat, "command"))
+            self.assertTrue(card.is_commander)
+            self.assertCountEqual(card.revealed_to, "ABCD")
+            public_ids.add(card.commander_designation_id)
+        self.assertNotIn(None, public_ids)
+        self.assertEqual(len(public_ids), 4)
+        for principal in tuple(session.pending_principals()):
+            action = session.act(principal, {"a": "keep"})
+            self.assertTrue(action.ok, action.summary)
+        expected_hash = authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "printed-commander-setup"
+            session.save(target)
+            replay = replay_record(target, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(replay["final_state_hash"], expected_hash)
+
+    def test_trusted_solo_commander_preserves_ordinary_printed_types(self):
+        names = ("Named Partner Alpha", "Harbor Carrier", "Harbor Relay")
+        for name in names:
+            with self.subTest(name=name):
+                deck = self.printed_commander_deck(name)
+                state = initial_commander_state(
+                    self.db, {"A": deck, "B": deck},
+                    config=GameConfig(semantic_policy="trusted_only"),
+                )
+                self.assertEqual(state.commander_oracle_ids["A"], [self.db.lookup(name).oracle_id])
+        for name in ("Harbor Archivist", "Harbor Beacon", "Harbor Reach"):
+            with self.subTest(ineligible=name):
+                deck = self.printed_commander_deck(name)
+                with self.assertRaisesRegex(ValueError, "lacks supported eligibility"):
+                    initial_commander_state(
+                        self.db, {"A": deck, "B": deck},
+                        config=GameConfig(semantic_policy="trusted_only"),
+                    )
+
+    def test_printed_commander_program_missing_stale_or_paired_fails_closed(self):
+        from quorune.carddb import Ruling
+
+        name = "Harbor Curator, Tidekeeper"
+        deck = self.printed_commander_deck(name)
+        registry = self.registry_for(name)
+        oracle_id = self.db.lookup(name).oracle_id
+        program, = registry.programs_for_oracle(oracle_id, event="game.setup")
+
+        def setup(semantics):
+            return initial_commander_state(
+                self.db, {"A": deck, "B": deck},
+                config=GameConfig(semantic_policy="trusted_only"),
+                semantics=semantics,
+            )
+
+        self.assertEqual(setup(registry).commander_oracle_ids["A"], [oracle_id])
+        with patch.object(
+            self.db, "rulings", return_value=[Ruling(oracle_id, "2026-08-08", "fixture", "Revised.")]
+        ):
+            with self.assertRaisesRegex(ValueError, "lacks supported eligibility"):
+                setup(registry)
+        with self.assertRaises(CommanderPairingError):
+            validate_commander_pair(
+                self.db, registry, (self.db.lookup(name), self.db.lookup("Named Partner Alpha"))
+            )
+        registry.remove(program.key)
+        with self.assertRaisesRegex(ValueError, "lacks supported eligibility"):
+            setup(registry)
+
+        # Compatibility sessions can still construct fixtures without a canonical catalog.
+        result = initial_commander_state(self.db, {"A": deck, "B": deck}, semantics=registry)
+        self.assertEqual(result.commander_oracle_ids["A"], [oracle_id])
 
     def test_pairing_keywords_compile_as_exact_typed_setup_declarations(self):
         expected = {

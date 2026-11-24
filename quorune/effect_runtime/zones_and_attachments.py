@@ -158,9 +158,18 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         "bounce": "hand",
         "discard": "graveyard",
     }.get(op, str(effect.get("destination") or "graveyard"))
+    from ..discard_effect_origin import authorized_legacy_discard_origin
+
+    try:
+        discard_origin = authorized_legacy_discard_origin(host.state, effect, controller=actor)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
     moved = host.move_card(
         card.object_id,
         destination,
+        **({"discard_effect_origin": discard_origin} if discard_origin is not None else {}),
+        **({"putting_player": actor}
+               if destination == "battlefield" and card.zone != "battlefield" else {}),
         controller=effect.get("controller"),
         tapped=(
             bool(effect["tapped"])
@@ -308,6 +317,7 @@ def _apply_reanimate_attached_creature_aura(
         creature.object_id,
         "battlefield",
         controller=actor,
+        putting_player=actor,
         reason=reason,
         semantic_events=True,
     )
@@ -737,16 +747,22 @@ def _apply_mill(
 ) -> Any:
     del operation
     if "scope" in effect:
-        from ..milling import mill_player_batch
-        if (
-            set(effect) - {"op", "scope", "count", "reason", "_runtime_source"}
-            or effect.get("scope") not in {"all_active_players","controller_opponents"}
-            or type(effect.get("count")) is not int
-            or effect["count"] < 0
-        ):
+        from ..milling import mill_player_batch, mill_request
+        from ..query_effect_amount_model import OPPONENT_HAND_MILL_KIND, OpponentHandMillCount
+        scope = effect.get("scope")
+        if (set(effect) - {"op", "scope", "count", "reason", "_runtime_source"}
+                or scope not in {"all_active_players", "controller_opponents"}):
+            raise GameRuleError("All-player Mill instruction is malformed")
+        count = effect.get("count")
+        if isinstance(count, Mapping) and count.get("kind") == OPPONENT_HAND_MILL_KIND:
+            try:
+                count = OpponentHandMillCount.from_dict(count, scope=scope)
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+        elif type(count) is not int or count < 0:
             raise GameRuleError("All-player Mill instruction is malformed")
         results = mill_player_batch(host, tuple(
-            MillRequest(actor=actor, player=seat, count=effect["count"], reason=reason)
+            mill_request(host, actor=actor, player=seat, count=count, reason=reason)
             for seat in host.apnap_order()
             if effect['scope']!='controller_opponents' or seat!=actor
         ))
@@ -855,6 +871,7 @@ def _apply_reanimate(
         card.object_id,
         "battlefield",
         controller=controller,
+        putting_player=actor,
         tapped=tapped,
         reason=reason,
         semantic_events=True,
@@ -1039,6 +1056,16 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.same_name_creature_modifiers import SAME_NAME_STAT_VERSION_FIELD, resolve_same_name_creature_stats
+
+    if SAME_NAME_STAT_VERSION_FIELD in effect:
+        try:
+            spec, affected = resolve_same_name_creature_stats(host, effect)
+        except (ContinuousEffectStateError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return _commit_temporary_stat_set(
+            host, effect, affected, actor=actor, power_delta=spec.power, toughness_delta=spec.toughness,
+        )
     if 'event_player_set_version' in effect:
         from ..rules.event_player_modifiers import prepare_event_player_modifier_runtime
         try:effect=prepare_event_player_modifier_runtime(host,effect)
@@ -1053,7 +1080,6 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     if next_turn and host.state.continuous_effects is None:
         raise GameRuleError("Next-turn expiry requires the resolution effect journal")
     expiry_player = actor if next_turn else None
-    op = operation
     keywords = _fixed_characteristic_keywords(effect)
     raw_predicate = effect.get("predicate")
     if raw_predicate is not None:
@@ -1083,6 +1109,14 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
         affected = matching_battlefield_objects(host, predicate)
     except ContinuousEffectStateError as exc:
         raise GameRuleError(str(exc)) from exc
+    return _commit_temporary_stat_set(
+        host, effect, affected, actor=actor, power_delta=power_delta, toughness_delta=toughness_delta,
+        keywords=keywords, expiry_player=expiry_player,
+    )
+
+
+def _commit_temporary_stat_set(host, effect, affected, *, actor, power_delta, toughness_delta,
+                              keywords=(), expiry_player=None):
     affected_ids = [card.object_id for card in affected]
     if host.state.continuous_effects is not None:
         try:
@@ -1277,6 +1311,7 @@ def _apply_shuffle_into_library(
         "library",
         reason=reason,
         semantic_events=True,
+        replacement_selections=tuple(effect.get("_replacement_selections") or ()),
     )
     host.shuffle_library(owner, reason=reason)
     return moved.ref
@@ -1400,6 +1435,7 @@ def _apply_reveal_top_permanent(
             card.object_id,
             "battlefield",
             controller=seat,
+            putting_player=seat,
             reason=reason,
             semantic_events=True,
         )

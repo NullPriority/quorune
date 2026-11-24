@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact
+from ..cast_timing import OpponentUpkeepCastWindow
+from ..continuous_conditions import (
+    BLOCK_DECLARATION_TIMING_FACTS, FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+)
 from ..object_predicate import ObjectQuerySpec
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -16,12 +19,17 @@ SELF_CAST_RESTRICTION_EVENT = 'cast.restriction'
 
 
 def _current_public_cast_condition(condition):
+    from ..public_history_query_model import opponent_life_loss_including_departed_query
+
+    if (condition.kind is FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST
+            and condition.amount == 1 and condition.history_query == opponent_life_loss_including_departed_query()):
+        return condition
     if (condition.terms or condition.counter_name is not None or condition.predicate is not None
             or condition.history_query is not None or condition.aggregate is not None):
         raise SemanticNodeError('Intrinsic public cast conditions require one independent leaf')
     if condition.kind is FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST:
         if (condition.schema_version == 4 and condition.amount == 1
-                and condition.fact is FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN
+                and condition.fact in BLOCK_DECLARATION_TIMING_FACTS | {FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN}
                 and condition.fact_parameter is None and condition.quantity is None):
             return condition
     elif condition.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST:
@@ -59,11 +67,20 @@ class SelfCastRestrictionHandler:
                 or descriptor['event'] != self.event):
             raise SemanticNodeError('Intrinsic cast-restriction identity changed')
         if marked:
-            if (type(descriptor['intrinsic_condition_version']) is not int
-                    or descriptor['intrinsic_condition_version'] != 2):
+            version = descriptor['intrinsic_condition_version']
+            if type(version) is not int or version not in (2, 3, 4):
                 raise SemanticNodeError('Unsupported intrinsic public cast condition version')
+            if version == 4:
+                try:
+                    return OpponentUpkeepCastWindow.from_dict(descriptor["source_condition"])
+                except ValueError as exc:
+                    raise SemanticNodeError(str(exc)) from exc
             try:condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
             except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+            if version == 3:
+                if condition != FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_TURN):
+                    raise SemanticNodeError('Own-turn casting requires the exact controller-turn condition')
+                return condition
             return _current_public_cast_condition(condition)
         condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
         if condition.terms or condition.amount != 1 or condition.counter_name is not None or condition.predicate is not None:

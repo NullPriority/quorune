@@ -71,6 +71,24 @@ class QuickGatePlanTests(unittest.TestCase):
         self.assertNotIn('target-player-sequence-owner-contract',[row.name for row in unrelated['steps']])
 
     @patch("scripts.quick_gate.validate_partition")
+    def test_retained_program_owner_changes_select_a_single_scoped_gate(self, _partition):
+        token = "quorune/fixed_token_production.py"
+        ordered = "quorune/rules/closed_effect_program_shapes.py"
+
+        def selected(*paths):
+            return [step.command[3:] for step in build_plan(paths, phase="pre-corpus")["steps"]
+                    if step.name == "retained-program-owner-contract"]
+
+        token_checks, = selected(token)
+        ordered_checks, = selected(ordered)
+        combined, = selected(token, ordered)
+        self.assertEqual(1, len(token_checks))
+        self.assertEqual(3, len(ordered_checks))
+        self.assertEqual((*token_checks, *ordered_checks), combined)
+        self.assertTrue(all(name.startswith("tests.test_") for name in combined))
+        self.assertEqual([], selected("quorune/compiler/query_characteristic_templates.py"))
+
+    @patch("scripts.quick_gate.validate_partition")
     def test_changed_workflows_run_the_generated_contract_early(self, _partition):
         for phase in ("normal", "pre-corpus"):
             with self.subTest(phase=phase):
@@ -278,8 +296,21 @@ class QuickGatePlanTests(unittest.TestCase):
         )
         boundaries = [step for step in plan["steps"]
                       if step.name.startswith("quantity-boundary-")]
-        self.assertEqual(6, len(boundaries))
-        self.assertTrue(all("-k" in step.command for step in boundaries))
+        step, = boundaries
+        self.assertEqual(("-m", "unittest", "-v"), step.command[1:4])
+        selected = step.command[4:]
+        self.assertTrue(all(name.startswith("tests.") for name in selected))
+        self.assertEqual(
+            (
+                "test_versioned_codec_keeps_legacy_counts_and_closed_exclusions",
+                "test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual",
+                "test_query_characteristic_grammar_keeps_ambiguous_families_residual",
+                "test_query_power_toughness_definition_grammar_keeps_open_families_residual",
+                "test_public_condition_closure_compiles_typed_queries_and_facts",
+                "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
+            ),
+            tuple(name.rsplit(".", 1)[-1] for name in selected),
+        )
         self.assertEqual((), plan["test_modules"])
 
     def test_pre_corpus_plan_runs_affected_manual_performance_contract(self):

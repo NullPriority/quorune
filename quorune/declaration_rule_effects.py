@@ -21,6 +21,7 @@ from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
 from .toughness_assignment_rule import TOUGHNESS_RULE_KIND,ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import BLOCK_CAPACITY_RULE_KIND, ResolvedBlockCapacityRule
 from .temporary_cast_rule_model import EFFECT_KIND as CAST_RESTRICTION_KIND,ResolvedCastRestriction
+from .draw_redirect_model import DRAW_REDIRECT_KIND, ResolvedDrawRedirect
 from .next_spell_cost_model import EFFECT_KIND as NEXT_SPELL_COST_KIND,ResolvedNextSpellCostReduction
 from .source_block_pair_model import SOURCE_BLOCK_PAIR_EFFECT_KIND, ResolvedSourceBlockPair
 from .library_search_model import LIBRARY_SEARCH_TEMP_KIND,ResolvedLibrarySearchProhibition
@@ -29,6 +30,7 @@ from .linked_departure_exile_model import LINKED_DEPARTURE_EXILE_KIND, ResolvedL
 from .source_untap_rule_model import SOURCE_UNTAP_RESTRAINT_KIND, ResolvedSourceUntapRestraint
 from .life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_KIND, ResolvedLifeGainProhibition
 from .damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_KIND, ResolvedDamagePreventionProhibition
+from .protected_attack_payment_model import EFFECT_KIND as ATTACK_PAYMENT_KIND, ResolvedProtectedAttackPayment
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
@@ -94,8 +96,9 @@ class ResolutionDeclarationRuleEffect:
         requirement = isinstance(self.restriction, DeclarationRequirementTemplate)
         defender_permission = isinstance(self.restriction, DefenderAttackPermission)
         if requirement and (
-            self.restriction.schema_version != 1
-            or self.restriction.kind not in {'all_able_blockers', 'attack_each_combat'}
+            (self.restriction.schema_version, self.restriction.kind) not in {
+                (1, "all_able_blockers"), (1, "attack_each_combat"), (3, "attack_specific_player"),
+            }
             or self.live_query is not None
         ):
             raise ContinuousEffectError('Resolved requirements need one locked attack or all-able-blocker subject')
@@ -268,6 +271,7 @@ class ResolutionDeclarationRuleEffect:
 ContinuousJournalEffect: TypeAlias = (
     ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule | ResolvedCastRestriction | ResolvedSourceBlockPair | ResolvedLibrarySearchProhibition | ResolvedDamageDeathExile | ResolvedSourceUntapRestraint
     | ResolvedLinkedDepartureExile | ResolvedNextSpellCostReduction | ResolvedLifeGainProhibition | ResolvedDamagePreventionProhibition
+    | ResolvedProtectedAttackPayment | ResolvedDrawRedirect
 )
 
 
@@ -277,6 +281,10 @@ def continuous_journal_effect_from_dict(
     """Deserialize additive journal records while preserving legacy effects."""
 
     if isinstance(value, Mapping) and "effect_kind" in value:
+        if value["effect_kind"] == DRAW_REDIRECT_KIND:
+            return ResolvedDrawRedirect.from_dict(value)
+        if value["effect_kind"] == ATTACK_PAYMENT_KIND:
+            return ResolvedProtectedAttackPayment.from_dict(value)
         if value["effect_kind"] == TEMPORARY_DAMAGE_PROHIBITION_KIND:
             return ResolvedDamagePreventionProhibition.from_dict(value)
         if value["effect_kind"] == TEMPORARY_LIFE_GAIN_PROHIBITION_KIND:

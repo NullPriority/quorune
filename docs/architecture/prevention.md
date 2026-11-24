@@ -131,12 +131,23 @@ Fixed-amount static prevention shares the
 It remains a separate fixed reduction for each applicable event and does not
 create or consume a finite shield.
 
+An intrinsic noncombat prevention ability can protect its current controller
+and gain life equal to the damage it actually prevents. The prevention
+participates in the affected player's normal replacement ordering. The
+life result joins the containing damage event, and gain prohibitions still
+apply. Damage that cannot be prevented contributes zero life.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial
 mutation.
 
 ## Aftermath and ordering
+
+The intrinsic descriptor requires its current battlefield ability. Its
+version-three prevention operation seals one player and the same noncombat
+recipient predicate, so truncated descriptors and rebound replay operations
+cannot create a life result for a different player.
 
 Wording dependent on damage "prevented this way" uses the prevented-amount
 aftermath transaction. Fixed static self-prevention has a separate closed
@@ -149,15 +160,15 @@ their remainder. The existing partial counter-removal owner does as much as
 possible; this result is not a removal cost.
 
 Additional counter results retain their applying source incarnation through
-redirection and use current layer-6 component presence. Nested damage prepares
-against detached counter overlays, including earlier nested removals, and
-validates the complete removal tree before any live damage commits. Copying,
-face-down entry, protection ordering, private suspension, and replay retain the
-same canonical boundaries. Independent later instructions remain ordinary
-ordered siblings. Typed aftermath can route represented life, counter, or nested
-damage results through those subsystems' canonical replacement-aware
-transactions. Triggered prevention aftermath requiring a stack object remains
-a trigger concern, not an implicit immediate effect.
+redirection and use current layer-6 component presence. Prevention-produced
+life gains and counter placements enter the original damage result. Replacement
+effects can see those results alongside the damage consequences under CR 120.4c.
+Reflected damage is a new damage event. It reads the projected outcome of its
+containing event, including life totals, counters, marked damage and consumed
+shields. The engine collects replacement choices before mutating the damage
+transaction. Historical records retain the ordering pinned by their game record.
+Independent instructions and triggered prevention use their existing resolution
+and trigger owners.
 
 Competing prevention effects follow the affected-player ordering rules and are
 rediscovered after each application. Simultaneous events preserve APNAP and

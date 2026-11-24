@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original temporary-copy fixtures.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000931001",
+      "name": "Trial Copying Lens",
+      "type_line": "Artifact",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "oracle_text": "{2}: This artifact becomes a copy of target artifact, creature, enchantment, or land until end of turn.",
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000931002",
+      "name": "Trial Signal Relic",
+      "type_line": "Artifact",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "oracle_text": "{T}: Add {G}.",
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "produced_mana": [
+        "G"
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000931003",
+      "name": "Trial Artifact Break",
+      "type_line": "Instant",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "oracle_text": "Destroy target artifact.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000931004",
+      "name": "Trial Swift Rebuild",
+      "type_line": "Instant",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "oracle_text": "Return target artifact card from your graveyard to the battlefield.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

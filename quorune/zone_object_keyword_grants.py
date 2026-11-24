@@ -88,6 +88,39 @@ def commit_zone_object_keyword_grant(
     return effect
 
 
+def commit_controlled_creature_indestructible(host, *, actor, source, reason):
+    from .affected_permanents import (
+        AffectedPermanentSetError, AffectedPermanentSetSpec, PermanentControllerRelation,
+        select_affected_permanents,
+    )
+    from .object_predicate import ObjectQuerySpec
+
+    spec = AffectedPermanentSetSpec(ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+                                    PermanentControllerRelation.ACTOR)
+    try:
+        selected = select_affected_permanents(
+            host.affected_permanent_object_rows(actor), spec, actor=actor,
+            active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
+        )
+        if not selected:
+            return ()
+        cards = tuple(host.state.cards[row.object_id] for row in selected)
+        effect = create_resolution_continuous_effect(
+            host, source=source, targets=cards, layer=Layer.ABILITY, sublayer="6",
+            operations=(ContinuousOperation("add_ability", "indestructible"),),
+            duration=ContinuousEffectDuration.ZONE_OBJECT,
+        )
+    except (AffectedPermanentSetError, ContinuousEffectStateError) as exc:
+        raise ZoneObjectKeywordGrantError(str(exc)) from exc
+    if effect is None:
+        raise ZoneObjectKeywordGrantError("Zone-object keyword grants require continuous-effect state")
+    refs = tuple(card.ref for card in cards)
+    host._log(actor, "permanent.keyword", "The selected creatures gained Indestructible.",
+              {"objects": list(refs), "keyword": "indestructible", "reason": reason},
+              changed_objects=[card.object_id for card in cards])
+    return refs
+
+
 __all__ = [
     "ZONE_OBJECT_KEYWORDS",
     "ZoneObjectKeywordGrantError",

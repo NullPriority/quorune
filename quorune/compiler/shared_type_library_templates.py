@@ -1,7 +1,7 @@
 """Full-consumption private top-look/shared-type optional reveal composition."""
 from . import regex_working_set as re
 from ..rules.shared_type_library_model import (
-    SharedTypeLibraryResult, SHARED_TYPE_LIBRARY_MECHANIC,
+    SharedTypeLibraryResult, SHARED_TYPE_LIBRARY_MECHANIC, SHARED_TYPE_PLAY_MECHANIC, SHARED_TYPE_PLAY_OPERATION,
 )
 
 _LOOK = re.compile(
@@ -17,6 +17,11 @@ def shared_type_library_result_template(binding, body, *, compile_result):
     matched = _LOOK.fullmatch(" ".join(body.split()))
     if matched is None:
         return None
+    if matched["result"].casefold() == "you may play that card without paying its mana cost.":
+        mechanics = (SHARED_TYPE_PLAY_MECHANIC,)
+        result = SharedTypeLibraryResult(({"op": SHARED_TYPE_PLAY_OPERATION},), mechanics)
+        return ("private-top-shared-type-play-v1", (result.effect(),), None,
+                (*mechanics, SHARED_TYPE_LIBRARY_MECHANIC))
     template, effects, targets, mechanics = compile_result(matched["result"])
     if template is None or targets is not None:
         return None

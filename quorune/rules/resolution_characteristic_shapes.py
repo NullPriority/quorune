@@ -11,7 +11,7 @@ from ..source_tap_effect import source_tap_effect_dependencies
 from ..basic_type_setting_model import BASIC_TYPE_SETTING_CAPABILITY
 from ..target_land_type_model import (
     FIXED_TARGET_LAND_TYPE_CAPABILITY, FIXED_TARGET_LAND_TYPE_MECHANIC, FixedTargetLandTypeSpec,
-    SOURCE_PRESENT_LAND_TYPE_CAPABILITY,
+    SOURCE_PRESENT_LAND_TYPE_CAPABILITY, NEXT_UNTAP_LAND_TYPE_CAPABILITY, SOURCE_EXIT_LAND_TYPE_CAPABILITY,
 )
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC,
@@ -26,6 +26,10 @@ from ..resolution_characteristic_model import (
     fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
+from .creature_subtype_set_results import (
+    CREATURE_SUBTYPE_SET_RESULT_CAPABILITY, CREATURE_SUBTYPE_SET_RESULT_MECHANIC,
+    creature_subtype_set_node_capabilities, is_creature_subtype_set_result,
+)
 
 
 _CONTINUOUS_EFFECT_MECHANIC_OWNERS = frozenset({
@@ -52,6 +56,8 @@ def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add(TARGET_CARD_TYPE_ADDITION_MECHANIC)
     if INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY in supplied:
         covered.add(INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC)
+    if CREATURE_SUBTYPE_SET_RESULT_CAPABILITY in supplied:
+        covered.update((CREATURE_SUBTYPE_SET_RESULT_MECHANIC, "cr-611-continuous-effects"))
     if FIXED_TARGET_LAND_TYPE_CAPABILITY in supplied:
         covered.update((FIXED_TARGET_LAND_TYPE_MECHANIC, "cr-611-continuous-effects"))
     return covered
@@ -142,6 +148,12 @@ def temporary_creature_type_runtime_dependencies(program):
 
 def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema: Any, mechanic_ids: Any) -> tuple[str, ...]:
     mechanics=set(mechanic_ids)
+    from .source_block_defender import is_source_block_defender_instruction, source_block_defender_node_capabilities
+
+    if any(is_source_block_defender_instruction(effect) for effect in effects):
+        return source_block_defender_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
+    if any(is_creature_subtype_set_result(effect) for effect in effects):
+        return creature_subtype_set_node_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
     if FIXED_TARGET_LAND_TYPE_MECHANIC in mechanics:
         from ..replacement.immutable import FrozenMap
 
@@ -159,6 +171,10 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
                     "continuous.resolution.fixed_characteristics_until_end_of_turn", "target.revalidate_resolution")
         if spec.duration == "until_source_leaves":
             return (*required, SOURCE_PRESENT_LAND_TYPE_CAPABILITY)
+        if spec.duration == "until_recipient_controller_untap":
+            return (*required, NEXT_UNTAP_LAND_TYPE_CAPABILITY)
+        if spec.duration == "until_source_battlefield_exit":
+            return (*required, SOURCE_EXIT_LAND_TYPE_CAPABILITY)
         return required
     if ('cr-611-continuous-effects' not in mechanics or len(effects) != 1
             or not mechanics.intersection({PERMANENT_CHARACTERISTIC_MECHANIC,

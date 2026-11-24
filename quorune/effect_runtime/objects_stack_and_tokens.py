@@ -306,8 +306,14 @@ def _apply_delayed_trigger(
     reason: str,
 ) -> Any:
     op = operation
+    from ..rules.destruction_result_model import NEXT_END_STEP_DESTRUCTION_FIELD, validate_next_end_step_destruction
     from ..event_spell_copy_model import NEXT_CAST_COPY_FIELD
 
+    if NEXT_END_STEP_DESTRUCTION_FIELD in effect:
+        try:
+            validate_next_end_step_destruction(effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
     if NEXT_CAST_COPY_FIELD in effect:
         from ..rules.event_spell_copy import schedule_next_cast_copy
 
@@ -426,8 +432,13 @@ def _apply_create_token_batch(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..token_copy_recipes import TOKEN_COPY_BATCH_FIELD, TokenCopyRecipeError
+
     try:
+        if TOKEN_COPY_BATCH_FIELD in effect:
+            from ..token_copy_runtime import apply_copy_batch
+
+            return apply_copy_batch(host, effect, actor=actor, reason=reason)
         return create_token_batch(
             host,
             str(effect.get("controller") or actor),
@@ -437,7 +448,7 @@ def _apply_create_token_batch(
                 effect.get("_replacement_selections") or ()
             ),
         )
-    except TokenCreationError as exc:
+    except (TokenCreationError, TokenCopyRecipeError) as exc:
         raise GameRuleError(str(exc)) from exc
 
 
@@ -672,7 +683,62 @@ def _apply_copy_until_end_of_turn(
     operation: str,
     reason: str,
 ) -> Any:
+    from .persistent_copy import persistent_copy_effect_handler
+
+    handler = persistent_copy_effect_handler(effect)
+    if handler is not None:
+        return handler(host, effect, actor=actor, reason=reason)
     op = operation
+    from ..rules.temporary_self_copy import (
+        apply_temporary_artifact_copy_exception, decode_temporary_creature_copy_set,
+        is_temporary_creature_copy_set, is_versioned_self_copy, prepare_temporary_creature_copy_set,
+        validate_bound_self_copy,
+    )
+
+    from ..rules.temporary_copy_subject import (
+        TEMPORARY_COPY_SUBJECT_COMMIT_VERSION, prepare_temporary_copy_subject_commit,
+    )
+
+    from ..rules.temporary_occurrence_copy import (
+        TEMPORARY_OCCURRENCE_COPY_COMMIT_VERSION, prepare_temporary_occurrence_copy_commit,
+    )
+
+    from ..rules.linked_clue_copy import has_linked_clue_copy_version
+    if has_linked_clue_copy_version(effect):
+        from .linked_clue_copy import prepare_linked_clue_copy_commit
+
+        try:
+            target_ref, recipients, values = prepare_linked_clue_copy_commit(host, effect, actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return _commit_temporary_creature_copies(host, actor, target_ref, recipients, values, reason)
+    if TEMPORARY_OCCURRENCE_COPY_COMMIT_VERSION in effect:
+        try:
+            target_ref, recipients, values = prepare_temporary_occurrence_copy_commit(host, effect)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return _commit_temporary_creature_copies(host, actor, target_ref, recipients, values, reason)
+    if TEMPORARY_COPY_SUBJECT_COMMIT_VERSION in effect:
+        try:
+            target_ref, recipients, values = prepare_temporary_copy_subject_commit(host, effect, actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return _commit_temporary_creature_copies(host, actor, target_ref, recipients, values, reason)
+    if is_temporary_creature_copy_set(effect):
+        try:
+            scope = decode_temporary_creature_copy_set(effect, resolved=True)
+            recipients, values = prepare_temporary_creature_copy_set(host, effect, actor, scope)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return _commit_temporary_creature_copies(host, actor, effect["target"], recipients, values, reason)
+    versioned = is_versioned_self_copy(effect)
+    if versioned:
+        try:
+            validate_bound_self_copy(effect)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if effect["source"] is None:
+            return None
     source = host._resolve_object(
         actor,
         str(effect.get("source") or effect.get("card")),
@@ -681,17 +747,12 @@ def _apply_copy_until_end_of_turn(
     target = host._resolve_object(
         actor,
         str(effect.get("target")),
+        zones={"battlefield"} if versioned else None,
     )
-    until_end = source.annotations.setdefault(
-        "until_end_of_turn",
-        {},
-    )
-    if "copy_overrides_previous" not in until_end:
-        until_end["copy_overrides_previous"] = copy.deepcopy(
-            source.annotations.get("copy_overrides")
-        )
     from ..defined_token_faces import single_face_copy_values
     characteristics = single_face_copy_values(host._copyable_characteristics(target))
+    if versioned:
+        characteristics = apply_temporary_artifact_copy_exception(effect, characteristics)
     if effect.get("except_nonlegendary"):
         type_line = str(
             characteristics.get("type_line") or ""
@@ -703,24 +764,34 @@ def _apply_copy_until_end_of_turn(
             count=1,
             flags=re.IGNORECASE,
         )
-    source.annotations["copy_overrides"] = characteristics
-    host._log(
-        actor,
-        "permanent.copy",
-        (
-            f"{source.ref} became a copy of {target.ref} until "
-            "end of turn."
-        ),
-        {
-            "source": source.ref,
-            "target": target.ref,
-            "duration": "until_end_of_turn",
-            "reason": reason,
-        },
-        importance=2,
-        changed_objects=[source.object_id],
-    )
+    from ..replacement.face_status_copy import COPY_HISTORY_FIELD
+    clock = host._next_zone_timestamp() if COPY_HISTORY_FIELD in source.annotations else 0
+    _record_temporary_copy(source, characteristics, timestamp=clock)
+    _log_temporary_copy(host, actor, source, target.ref, reason)
     return source.ref
+
+
+def _commit_temporary_creature_copies(host, actor, target_ref, recipients, values, reason):
+    from ..replacement.face_status_copy import COPY_HISTORY_FIELD
+    clock = host._next_zone_timestamp() if any(COPY_HISTORY_FIELD in recipient.annotations for recipient in recipients) else 0
+    for recipient in recipients:
+        _record_temporary_copy(recipient, copy.deepcopy(values), timestamp=clock)
+    for recipient in recipients:
+        _log_temporary_copy(host, actor, recipient, target_ref, reason)
+    return [recipient.ref for recipient in recipients]
+
+
+def _record_temporary_copy(source, characteristics, *, timestamp):
+    from ..entry_results import record_temporary_copy
+    record_temporary_copy(source, characteristics, timestamp=timestamp)
+
+
+def _log_temporary_copy(host, actor, source, target_ref, reason):
+    host._log(
+        actor, "permanent.copy", f"{source.ref} became a copy of {target_ref} until end of turn.",
+        {"source": source.ref, "target": target_ref, "duration": "until_end_of_turn", "reason": reason},
+        importance=2, changed_objects=[source.object_id],
+    )
 
 
 
@@ -1038,7 +1109,10 @@ def _apply_grant_cast_permission(
     from ..fixed_top_exile import CHOSEN_IMPULSE_GRANT_FIELD
     from ..impulse_access import apply_chosen_impulse_access
     from ..rules.temporary_cast_timing import TEMPORARY_CAST_TIMING_FIELD, apply_temporary_cast_timing
+    from ..rules.land_play_permissions import TURN_LAND_PLAY_ALLOWANCE_FIELD, grant_turn_land_plays
 
+    if TURN_LAND_PLAY_ALLOWANCE_FIELD in effect:
+        return grant_turn_land_plays(host, effect, actor=actor, reason=reason)
     if CHOSEN_IMPULSE_GRANT_FIELD in effect:
         return apply_chosen_impulse_access(host, effect, actor=actor, reason=reason)
     if TEMPORARY_CAST_TIMING_FIELD in effect:
@@ -1366,6 +1440,7 @@ def _apply_transform(
 def _apply_turn_face_up(host,effect,**context):
     from .face_up import apply_targeted_face_up
     return apply_targeted_face_up(host,effect,**context)
+
 
 
 def _apply_phase_out(host, effect, **context):

@@ -136,7 +136,112 @@ def nonowner_creature_modifier_handler(text):
     return "static-nonowner-creature-modifier-v1", descriptor, required
 
 
+def fixed_opponent_base_toughness_handler(text: str):
+    match = re.fullmatch(r"Creatures your opponents control have base toughness (-?[0-9]+)\.?", text.strip(), re.I)
+    if match is None:
+        return None
+    from ..semantic_runtime.fixed_characteristic_settings import FixedOpponentBaseToughnessHandler
+
+    owner = FixedOpponentBaseToughnessHandler()
+    descriptor = {
+        "handler_id": owner.handler_id, "schema_version": owner.schema_version, "event": owner.event,
+        "predicate": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)).to_dict(),
+        "toughness": int(match[1]),
+    }
+    owner.validate(descriptor)
+    return "static-fixed-opponent-base-toughness-v1", descriptor, owner.capability_dependencies
+
+
+_AURA_BAND_COUNTS = "one two three four five six seven eight nine ten".split()
+_AURA_BAND_NUMBER = "|".join((*_AURA_BAND_COUNTS, r"[1-9][0-9]*"))
+_AURA_COUNT_SETTING = re.compile(
+    rf"As long as this creature is enchanted by (?:exactly (?P<exact>{_AURA_BAND_NUMBER})"
+    rf"|(?P<minimum>{_AURA_BAND_NUMBER}) or more) (?P<auras>Auras?), "
+    r"it has base power and toughness (?P<stats>-?[0-9]+/-?[0-9]+)"
+    r"(?:(?: and |, )(?P<abilities>.+?))?\.?$",
+    re.IGNORECASE,
+)
+
+
+def _source_aura_count_setting(text):
+    match = _AURA_COUNT_SETTING.fullmatch(text.strip())
+    if match is None:
+        return None
+    count = (match["exact"] or match["minimum"]).casefold()
+    amount = int(count) if count.isdecimal() else _AURA_BAND_COUNTS.index(count) + 1
+    if (amount == 1) != (match["auras"].casefold() == "aura"):
+        return None
+    from ..semantic_runtime.fixed_characteristic_settings import (
+        AuraCountCharacteristicSettingsHandler, attached_aura_count_setting_condition,
+    )
+
+    modifier = _attached_modifier()
+    if not _setting_part(modifier, "has base power and toughness " + match["stats"]):
+        return None
+    if match["abilities"] and not _grant_attached_abilities(modifier, match["abilities"]):
+        return None
+    handler = AuraCountCharacteristicSettingsHandler()
+    descriptor = {
+        "handler_id": handler.handler_id,
+        "schema_version": handler.schema_version,
+        "event": handler.event,
+        "target": {"kind": "source", "controller": None, "exclude_source": False,
+                   "predicate": ObjectQuerySpec(zones=("battlefield",)).to_dict()},
+        "modifier": modifier,
+        "source_condition": attached_aura_count_setting_condition(amount, exact=match["exact"] is not None).to_dict(),
+    }
+    try:
+        handler.validate(descriptor)
+    except (TypeError, ValueError):
+        return None
+    capabilities = {*handler.capability_dependencies, *_attached_ability_capabilities(modifier["add_abilities"])}
+    return "static-source-aura-count-setting-v3", descriptor, tuple(sorted(capabilities))
+
+
+def _controlled_aura_receiver_setting(text):
+    match = re.fullmatch(
+        r"Other creatures you control that are enchanted by Auras you control have base power and "
+        r"toughness (?P<stats>-?[0-9]+/-?[0-9]+) and have (?P<abilities>.+?)\.?$",
+        text.strip(), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from ..semantic_runtime.fixed_characteristic_settings import ControlledAuraRecipientSettingsHandler
+
+    modifier = _attached_modifier()
+    if not _setting_part(modifier, "has base power and toughness " + match["stats"]):
+        return None
+    if not _grant_attached_abilities(modifier, match["abilities"]):
+        return None
+    handler = ControlledAuraRecipientSettingsHandler()
+    descriptor = {
+        "handler_id": handler.handler_id,
+        "schema_version": handler.schema_version,
+        "event": handler.event,
+        "target": {
+            "kind": "fixed_query", "controller": "source_controller", "exclude_source": True,
+            "predicate": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)).to_dict(),
+        },
+        "modifier": modifier,
+    }
+    try:
+        handler.validate(descriptor)
+    except (TypeError, ValueError):
+        return None
+    capabilities = {*handler.capability_dependencies, *_attached_ability_capabilities(modifier["add_abilities"])}
+    return "static-controlled-aura-recipient-setting-v1", descriptor, tuple(sorted(capabilities))
+
+
 def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):
+    aura_recipient = _controlled_aura_receiver_setting(text)
+    if aura_recipient is not None:
+        return aura_recipient
+    aura_count = _source_aura_count_setting(text)
+    if aura_count is not None:
+        return aura_count
+    opponent_toughness = fixed_opponent_base_toughness_handler(text)
+    if opponent_toughness is not None:
+        return opponent_toughness
     from .shared_type_quantities import shared_type_quantity_handler
     shared=shared_type_quantity_handler(text)
     if shared is not None:return shared

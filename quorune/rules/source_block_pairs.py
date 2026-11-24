@@ -31,7 +31,9 @@ def source_block_pair_node_capabilities(*, effects, target_schema, mechanic_ids)
 
 
 def source_block_pair_runtime_dependencies(program):
-    required = set()
+    from .source_optional_unblockable import source_optional_unblockable_runtime_dependencies
+
+    required = set(source_optional_unblockable_runtime_dependencies(program))
     def visit(value):
         if isinstance(value, Mapping):
             spec = value.get('restriction')

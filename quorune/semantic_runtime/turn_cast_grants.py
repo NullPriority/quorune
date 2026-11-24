@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ..rules.turn_cast_grant_model import (
+    COMMAND_GRAVEYARD_CAST_CAPABILITY, COMMAND_GRAVEYARD_CAST_HANDLER,
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
     TURN_CAST_EXILE_CAPABILITY, TURN_CAST_EXILE_HANDLER, TURN_CAST_TAPPED_CAPABILITY, TURN_CAST_TAPPED_HANDLER,
     TURN_CAST_MILL_CAPABILITY, TURN_CAST_MILL_HANDLER, TURN_CAST_LIBRARY_SHARED_CAPABILITY, TURN_CAST_LIBRARY_SHARED_HANDLER,
@@ -49,6 +50,12 @@ def turn_cast_rider_handlers():
         TurnCastGrantHandler(handler_id=TURN_CAST_TAPPED_HANDLER, family=TURN_CAST_TAPPED_CAPABILITY,
             rule_references=('118.9', '400.7', '601.2i', '614.1c', '614.12', '616.1'),
             capability_dependencies=(TURN_CAST_GRANT_CAPABILITY, TURN_CAST_TAPPED_CAPABILITY), cast_rider='tapped_entry'),
+        TurnCastGrantHandler(
+            handler_id=COMMAND_GRAVEYARD_CAST_HANDLER, family=COMMAND_GRAVEYARD_CAST_CAPABILITY,
+            rule_references=('114.2', '114.4', '400.7', '601.2i', '614.1a'),
+            capability_dependencies=(COMMAND_GRAVEYARD_CAST_CAPABILITY, TURN_CAST_EXILE_CAPABILITY),
+            cast_rider='graveyard_exile',
+        ),
     )
 
 

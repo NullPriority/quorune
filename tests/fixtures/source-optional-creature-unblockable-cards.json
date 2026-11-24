@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "name": "Trial Clue Trailblazer",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120321",
+      "type_line": "Creature — Human Scout",
+      "mana_cost": "{2}{U}",
+      "cmc": 3,
+      "oracle_text": "When this creature enters, investigate.\nWhenever you sacrifice a Clue, this creature and up to one other target creature can't be blocked this turn.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "name": "Trial Trail Companion",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120322",
+      "type_line": "Creature — Beast",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "oracle_text": "",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "name": "Trial Trail Retreat",
+      "oracle_id": "00000000-0000-4f40-8f56-000000120323",
+      "type_line": "Instant",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "oracle_text": "Return target creature to its owner's hand.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for optional targeting and source declaration effects."
+}

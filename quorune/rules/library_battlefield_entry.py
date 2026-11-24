@@ -57,6 +57,7 @@ def commit_library_battlefield_selection(host,*,actor,player,arrangement,cards,r
     moved=owner.move_cards_simultaneously(changes,reason=reason,log=False,
         tapped=arrangement.entry_tapped,
         destination_controllers={object_id:player for object_id,_ in changes},
+        putting_players={object_id:actor for object_id,_ in changes},
         effect_entry_counters=entry_counters,
         replacement_selections=replacement_selections) if changes else ()
     _finish_library_remainder(host, owner, actor=actor, player=player, arrangement=arrangement,

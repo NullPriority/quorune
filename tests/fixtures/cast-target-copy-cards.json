@@ -1,0 +1,833 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{U}",
+      "name": "Cytoshape",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "oracle_text": "Choose a nonlegendary creature on the battlefield. Target creature becomes a copy of that creature until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-05-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Flicker of Fate",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "oracle_text": "Exile target creature or enchantment, then return it to the battlefield under its owner's control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-01-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{W}",
+      "name": "Martial Glory",
+      "oracle_id": "e8aa12f8-8922-41ed-8cdb-219c9e4b9e36",
+      "oracle_text": "Target creature gets +3/+0 until end of turn.\nTarget creature gets +0/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Reality Ripple",
+      "oracle_id": "504d5c29-7c37-4c31-8549-2a49eeef74c8",
+      "oracle_text": "Target artifact, creature, or land phases out. (While it's phased out, it's treated as though it doesn't exist. It phases in before its controller untaps during their next untap step.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Redirect",
+      "oracle_id": "74a7d880-5a49-412b-af4d-0b4cdb8453ee",
+      "oracle_text": "You may choose new targets for target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Shatter",
+      "oracle_id": "84d32e68-72b9-432d-a023-7bc6a26b8ad0",
+      "oracle_text": "Destroy target artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-01-19",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Vesuvan Duplimancy",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "oracle_text": "Whenever you cast a spell that targets only a single artifact or creature you control, create a token that's a copy of that artifact or creature, except it's not legendary.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-09-09",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A creature may become a copy of itself this way. This generally won’t have any visible effect.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "At the end of the turn, the creature reverts to what it was before. If two Cytoshapes affect the same creature on the same turn, they’ll both wear off at the same time.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that have already applied to the target creature will continue to apply to it. For example, if Giant Growth had given it +3/+3 earlier in the turn, then Cytoshape makes it a copy of Grizzly Bears, it will be a 5/5 Grizzly Bears.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature becomes a copy of a face-down creature, it will become a 2/2 creature with no name, creature type, abilities, mana cost, or color. It will not become face-down and thus can’t be turned face up.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature copies a creature that’s copying a creature, it will become whatever the chosen creature is copying.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Only the creature that’s becoming a copy is targeted. The creature that it will copy isn’t chosen until Cytoshape resolves.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature copies the printed values of the chosen creature, plus any copy effects that have been applied to it. It won’t copy counters on that creature. It won’t copy effects that have changed the creature’s power, toughness, types, color, or so on.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This effect can cause the target to stop being a creature. For example, if it becomes a copy of an animated Blinkmoth Nexus, the printed wording will be copied and it will become an unanimated Blinkmoth Nexus.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when the token enters the battlefield. Any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities of the copied permanent will also work.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied permanent has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied permanent is a token, the token that’s created copies the original characteristics of that token as stated by the effect that created that token.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied permanent is copying something else (for example, if the copied creature is a Clone), then the token enters the battlefield as whatever that permanent copied.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target of the spell is changed after the triggered ability is put on the stack, the token that is created is a copy of the spell’s original target, not the new target.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target of the spell leaves the battlefield before the triggered ability resolves, use its characteristics as it last existed on the battlefield to determine the characteristics of the token created.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token copies exactly what was printed on the original artifact or creature and nothing else (unless that permanent is copying something else or is a token; see below). It doesn’t copy whether that permanent is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token isn’t legendary, and this exception is copiable. If something else copies the token later, that copy also won’t be legendary. If you control two or more permanents with the same name but only one is legendary, the “legend rule” doesn’t apply.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability of Vesuvan Duplimancy triggers only if you cast a spell that targets a single artifact or a single creature and nothing else. The ability will resolve before the spell that caused it to trigger, and a token will be created even if the spell you cast was countered or permanent it was targeting is now an illegal target.",
+      "oracle_id": "6058fab1-9878-42b7-93be-b0a5aa99bd6d",
+      "published_at": "2022-09-09",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted spell is modal (that is, it says “Choose one —” or the like), you can’t choose a different mode.",
+      "oracle_id": "74a7d880-5a49-412b-af4d-0b4cdb8453ee",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast Redirect targeting a spell that targets a spell on the stack (like Cancel does, for example), you can’t change that spell’s target to itself. You can, however, change that spell’s target to Redirect. If you do, that spell won’t resolve when it tries to resolve because Redirect will have left the stack by then.",
+      "oracle_id": "74a7d880-5a49-412b-af4d-0b4cdb8453ee",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Redirect can target any spell, not just an instant or sorcery spell. For example, you could use it to change the target of an Aura spell. However, if the targeted spell has no targets (for example, if it’s an instant or sorcery spell that doesn’t specifically use the word “target,” or if it’s a creature spell), Redirect won’t have any effect on it.",
+      "oracle_id": "74a7d880-5a49-412b-af4d-0b4cdb8453ee",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can’t choose a new legal target, then it remains unchanged (even if the current target is illegal).",
+      "oracle_id": "74a7d880-5a49-412b-af4d-0b4cdb8453ee",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Regenerating artifacts can regenerate from this.",
+      "oracle_id": "84d32e68-72b9-432d-a023-7bc6a26b8ad0",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won’t return to the battlefield.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an Aura is put onto the battlefield without being cast, the Aura’s controller-to-be chooses what it will enchant as it comes back onto the battlefield. An Aura put onto the battlefield this way doesn’t target anything (so it could be attached to an opponent’s permanent with hexproof, for example), but the Aura’s enchant ability restricts what it can be attached to. If the Aura can’t legally be attached to anything, it remains in its current zone.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it’s considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners’ graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "d5b9d250-92f5-40d8-b962-4ae4adb466c8",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may choose the same creature for both targets since the card says \"target creature\" multiple times. You may also choose two different creatures.",
+      "oracle_id": "e8aa12f8-8922-41ed-8cdb-219c9e4b9e36",
+      "published_at": "2013-01-24",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

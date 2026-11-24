@@ -2,15 +2,17 @@ from __future__ import annotations
 
 """Giver-owned declaration rules with immutable current receiver bindings."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Mapping
 from .object_predicate import ObjectQuerySpec,object_query_capabilities
 from .object_query_union import validate_receiver_union_template
-from .continuous_conditions import FixedPublicStateConditionSpec
+from .continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from .declaration_fragments import DeclarationRestrictionTemplate,DeclarationRequirementTemplate,DECLARATION_COMPONENT_CAPABILITY_ID
 
 BOUND_DECLARATION_CAPABILITY='combat.declaration.bound_static_rules'
 BOUND_DECLARATION_HANDLER='ability.static.bound-declaration-rules.v1'
+ATTACHED_SUBTYPE_OTHERWISE_TEMPLATE = "static-attached-subtype-otherwise-declaration-v1"
+_ATTACHED_CREATURE = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
 
 
 @dataclass(frozen=True,slots=True)
@@ -93,3 +95,20 @@ class BoundStaticDeclarationRulesSpec:
             rules.append(kind.from_dict(child['value']))
         return cls(value['scope'],ObjectQuerySpec.from_dict(value['query']),tuple(rules),value['controller'],value['exclude_source'],
             FixedPublicStateConditionSpec.from_dict(value['source_condition']) if value['source_condition'] is not None else None,value['schema_version'])
+
+
+def attached_subtype_otherwise_restrictions(condition):
+    """Bind the ordinary attack and block restriction to the complement on the same attachment."""
+    from .declaration_rule_effects import ATTACK_BLOCK_PROHIBITION
+
+    query = condition.predicate
+    if (condition.kind is not FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY
+            or condition.schema_version != 2 or query is None or len(query.subtypes_any) != 1
+            or query != replace(_ATTACHED_CREATURE, subtypes_any=query.subtypes_any)):
+        raise ValueError("Attached subtype branches require one positive creature subtype")
+    complement = replace(condition, predicate=replace(
+        query, subtypes_any=(), excluded_subtypes=query.subtypes_any,
+    ))
+    return BoundStaticDeclarationRulesSpec(
+        "attached", _ATTACHED_CREATURE, (ATTACK_BLOCK_PROHIBITION,), source_condition=complement,
+    )

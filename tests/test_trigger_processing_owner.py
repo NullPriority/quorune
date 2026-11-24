@@ -357,6 +357,18 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
             if card.owner == seat and card.printed_name == name
         )
 
+    def enter_roaming_throne(self, engine, throne):
+        from quorune.replacement.ordering import ReplacementChoiceRequired
+
+        with self.assertRaises(ReplacementChoiceRequired) as pending:
+            engine.move_card(throne.object_id, "battlefield", controller="A", log=False)
+        choice = pending.exception.pending.choice
+        self.assertEqual("A", choice.chooser)
+        goblin, = (option for option in choice.legal_selections if option.endswith(":goblin"))
+        engine.move_card(throne.object_id, "battlefield", controller="A", log=False,
+                         replacement_selections=(goblin,))
+        self.assertEqual("goblin", throne.annotations["chosen_creature_type"])
+
     def prepare_panharmonicon(self, engine):
         panharmonicon = self.card(engine, "A", "Panharmonicon")
         source = self.card(engine, "A", "Ichor Wellspring")
@@ -464,16 +476,14 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         throne = self.card(engine, "A", "Roaming Throne")
         engineer = self.card(engine, "A", "Goblin Engineer")
         wellspring = self.card(engine, "A", "Ichor Wellspring")
-        for card in (throne, engineer, wellspring):
+        self.enter_roaming_throne(engine, throne)
+        for card in (engineer, wellspring):
             engine.move_card(
                 card.object_id,
                 "battlefield",
                 controller="A",
                 log=False,
             )
-        throne.annotations["chosen_creature_type"] = "Goblin"
-        throne.annotations["chosen_creature_type_adds_subtype"] = True
-
         matching = applicable_trigger_multipliers(
             engine,
             source=engineer,
@@ -653,15 +663,8 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         engine = session.engine
         throne = self.card(engine, "A", "Roaming Throne")
         engineer = self.card(engine, "A", "Goblin Engineer")
-        for card in (throne, engineer):
-            engine.move_card(
-                card.object_id,
-                "battlefield",
-                controller="A",
-                log=False,
-            )
-        throne.annotations["chosen_creature_type"] = "Goblin"
-        throne.annotations["chosen_creature_type_adds_subtype"] = True
+        self.enter_roaming_throne(engine, throne)
+        engine.move_card(engineer.object_id, "battlefield", controller="A", log=False)
 
         refs = engine._dispatch_semantic_event(
             "permanent.enter",
@@ -735,12 +738,7 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
 
         engine = self.session(7022101).engine
         throne = self.card(engine, "A", "Roaming Throne")
-        engine.move_card(
-            throne.object_id,
-            "battlefield",
-            controller="A",
-            log=False,
-        )
+        self.enter_roaming_throne(engine, throne)
         targeted = self.targeted_item(engine, throne)
         self.assertEqual(1, len(collect_ward_occurrences(engine, targeted)))
         engine.state.pending_trigger_batches.clear()
@@ -778,12 +776,7 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         throne = self.card(engine, "A", "Roaming Throne")
         private_a = self.card(engine, "A", "Deflecting Swat")
         private_b = self.card(engine, "B", "Mystic Remora")
-        engine.move_card(
-            throne.object_id,
-            "battlefield",
-            controller="A",
-            log=False,
-        )
+        self.enter_roaming_throne(engine, throne)
         engine.move_card(private_a.object_id, "hand", log=False)
         engine.move_card(private_b.object_id, "hand", log=False)
         engine.change_control(
@@ -845,16 +838,52 @@ class TriggerProcessingOwnerIntegrationTests(unittest.TestCase):
         )
         self.assertEqual([], collect_ward_occurrences(engine, targeted))
 
+    def test_affordable_ward_offers_the_same_mana_payment_that_commits(self):
+        session = self.session(7022104, players=4)
+        engine = session.engine
+        throne = self.card(engine, "A", "Roaming Throne")
+        self.enter_roaming_throne(engine, throne)
+        targeted = self.targeted_item(engine, throne, controller="B")
+        self.assertEqual(1, len(collect_ward_occurrences(engine, targeted)))
+        self.assertFalse(engine._stabilize())
+        engine.state.players["B"].mana_pool["C"] = 2
+        engine.state.active_player = "A"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        engine._grant_priority("A")
+        engine._issue_priority("A")
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        for seat in engine.seats:
+            passed = session.act(f"pilot:{seat}", {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+
+        pending = engine.state.pending_decision
+        self.assertEqual(("semantic.choice", ["B"]), (pending.kind, pending.actors))
+        payment = pending.payload_by_actor["B"]
+        self.assertTrue(payment["payable"])
+        self.assertEqual([True, False], payment["legal_actions"][0]["choice_schema"]["legal_values"])
+        start = authoritative_state_hash(engine.state)
+        command = {"action_id": "choose", "pay": True, "plan": "auto"}
+        self.assertFalse(session.act("pilot:C", command).ok)
+        self.assertEqual(start, authoritative_state_hash(engine.state))
+        paid = session.act("pilot:B", command)
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertEqual(0, engine.state.players["B"].mana_pool["C"])
+        self.assertIn(targeted, engine.state.stack)
+        with tempfile.TemporaryDirectory() as directory:
+            record_dir = Path(directory) / "affordable-ward"
+            session.save(record_dir)
+            replay = replay_record(record_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(engine.state), replay["final_state_hash"])
+
     def test_ward_occurrence_replays_exactly(self):
         session = self.session(7022103, players=4)
         engine = session.engine
         throne = self.card(engine, "A", "Roaming Throne")
-        engine.move_card(
-            throne.object_id,
-            "battlefield",
-            controller="A",
-            log=False,
-        )
+        self.enter_roaming_throne(engine, throne)
         targeted = self.targeted_item(engine, throne, controller="B")
         self.assertEqual(1, len(collect_ward_occurrences(engine, targeted)))
         self.assertFalse(engine._stabilize())

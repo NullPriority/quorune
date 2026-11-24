@@ -6,10 +6,13 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from .received_damage_model import RECEIVED_DAMAGE_EVENTS
+from .token_copy_recipient_model import has_occurrence_copy_recipient
+from .rules.token_copy_recipients import represents_occurrence_controller_copy
 from .selection.target_query import target_identity_matches_snapshot
 from .target_controller_reference import (
     TARGET_CONTROLLER_INFORMATION_KIND,TARGET_CONTROLLER_INFORMATION_CAPABILITY,TARGET_CONTROLLER_INFORMATION_MECHANIC,
     target_controller_reference,controller_reference_index,
+    DAMAGE_DEALER_CONTROLLER_INFORMATION_KIND, damage_dealer_controller_reference, is_damage_dealer_controller_reference,
 )
 
 _LKI_FIELD='target_controller_information_lki'
@@ -141,14 +144,27 @@ def is_occurrence_controller_reference(value):
 
 
 def _occurrence_reference(value):
-    if not is_occurrence_controller_reference(value):
-        raise ValueError('Occurrence controller information uses one closed schema')
+    if not (is_occurrence_controller_reference(value) or is_damage_dealer_controller_reference(value)):
+        raise ValueError("Occurrence controller information requires a closed incarnation reference")
+
+
+def _uses_damage_dealer_controller(value):
+    if isinstance(value, Mapping):
+        return is_damage_dealer_controller_reference(value) or any(
+            _uses_damage_dealer_controller(child) for child in value.values()
+        )
+    return isinstance(value, (tuple, list)) and any(_uses_damage_dealer_controller(child) for child in value)
 
 
 def _uses_occurrence_controller(value):
     if isinstance(value,Mapping):
-        if value.get('kind')==OCCURRENCE_CONTROLLER_INFORMATION_KIND:
-            _occurrence_reference(value);return True
+        if has_occurrence_copy_recipient(value):
+            return True
+        if value.get("kind") in {
+            OCCURRENCE_CONTROLLER_INFORMATION_KIND, DAMAGE_DEALER_CONTROLLER_INFORMATION_KIND,
+        }:
+            _occurrence_reference(value)
+            return True
         return any(_uses_occurrence_controller(v) for v in value.values())
     if isinstance(value,(tuple,list)):return any(_uses_occurrence_controller(v) for v in value)
     return False
@@ -181,8 +197,39 @@ def _attacking_controller_identity(context):
     raise ValueError('Attacking controller information requires the original declared attacker')
 
 
+def _damage_dealer_controller_context(host, context):
+    object_id = context.get("source_object_id")
+    identity = context.get("source_logical_object_id")
+    ref = context.get("source")
+    controller = context.get("source_controller")
+    if (any(type(value) is not str or not value for value in (object_id, identity, ref, controller))
+            or identity.rpartition("@")[0] != object_id
+            or context.get("source_zone") != "battlefield"
+            or context.get("combat") is not True
+            or context.get("target_kind") != "player"
+            or "creature" not in context.get("source_types", ())
+            or type(context.get("amount")) is not int or context["amount"] <= 0):
+        raise ValueError("Damage dealer controller information requires a committed creature combat damage occurrence")
+    result = {"card_object_id": object_id, "card_object_identity": identity}
+    card = host.state.cards.get(object_id)
+    if (card is None or card.zone != "battlefield" or card.logical_object_id != identity
+            or card.phased_out):
+        counter = identity.rpartition("@")[2]
+        if not counter.isascii() or not counter.isdecimal():
+            raise ValueError("Damage dealer controller has a malformed source incarnation")
+        result[_OCCURRENCE_LKI_FIELD] = {
+            "logical_object_id": identity,
+            "information": TargetControllerInformation(object_id, int(counter), controller).to_dict(),
+        }
+    elif card.ref != ref:
+        raise ValueError("Damage dealer controller information has a contradictory source reference")
+    return result
+
+
 def occurrence_controller_context(host, program, event, context):
     """Seal the original permanent for a public occurrence controller read."""
+    if event == "damage.dealt" and _uses_damage_dealer_controller(program.effects):
+        return _damage_dealer_controller_context(host, context)
     combat_events = {'creature.attacks', 'creature.blocks'}
     if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | combat_events
             or not _uses_occurrence_controller(program.effects)):
@@ -214,10 +261,12 @@ def _occurrence_identity(item):
     return object_id,identity
 
 
-def resolve_occurrence_controller_information(host,value,item):
+def resolve_occurrence_controller_information(host, value, item, *, use_phased_lki=False):
     _occurrence_reference(value);object_id,identity=_occurrence_identity(item)
+    use_phased_lki = use_phased_lki or is_damage_dealer_controller_reference(value)
     card=host.state.cards.get(object_id)
-    if card is not None and card.zone=='battlefield' and card.logical_object_id==identity:
+    if (card is not None and card.zone=='battlefield' and card.logical_object_id==identity
+            and not (use_phased_lki and card.phased_out)):
         return host._effective_card_data(card).get('controller',card.controller)
     raw=item.context.get(_OCCURRENCE_LKI_FIELD)
     if not isinstance(raw,Mapping) or set(raw)!={'logical_object_id','information'} or raw['logical_object_id']!=identity:
@@ -228,11 +277,19 @@ def resolve_occurrence_controller_information(host,value,item):
     return info.controller
 
 
-def pin_occurrence_controller_departures(host,cards):
+def pin_occurrence_controller_departures(host, cards, *, phase_out=False):
+    def retains_recipient(program):
+        if program is None:
+            return False
+        if phase_out:
+            return (represents_occurrence_controller_copy(program.effects)
+                    or _uses_damage_dealer_controller(program.effects))
+        return _uses_occurrence_controller(program.effects)
+
     departing={c.object_id:c for c in cards};updates=[]
     for item in host.state.stack:
         program=host.semantics.get(item.semantic_key) if item.semantic_key else None
-        if program is None or not _uses_occurrence_controller(program.effects):continue
+        if not retains_recipient(program):continue
         object_id,identity=_occurrence_identity(item);card=departing.get(object_id)
         if card is None or card.zone!='battlefield' or card.logical_object_id!=identity:continue
         controller=host._effective_card_data(card).get('controller',card.controller)
@@ -247,7 +304,7 @@ def pin_occurrence_controller_departures(host,cards):
         for group in data['groups']:
             for frame in group['items']:
                 program=host.semantics.get(frame.get('semantic_key'))
-                if program is None or not _uses_occurrence_controller(program.effects):continue
+                if not retains_recipient(program):continue
                 context=frame['context'];object_id=context.get('card_object_id');identity=context.get('card_object_identity')
                 card=departing.get(object_id)
                 if card is None or card.zone!='battlefield' or card.logical_object_id!=identity:continue

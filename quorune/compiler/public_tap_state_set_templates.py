@@ -9,6 +9,9 @@ from typing import Any, Mapping
 from ..affected_permanents import (
     AffectedPermanentSetSpec,
     PermanentControllerRelation,
+    TARGET_UNSPENT_MANA_FIELD,
+    target_unspent_mana_tap_spec,
+    target_unspent_mana_target_schema,
 )
 from .destruction_templates import fixed_affected_permanent_query
 
@@ -31,6 +34,7 @@ class FixedPublicTapStateSetTemplate:
     spec: AffectedPermanentSetSpec
     tapped: bool
     target_schema: Mapping[str, Any] | None = None
+    lose_unspent_mana: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.spec, AffectedPermanentSetSpec):
@@ -43,11 +47,17 @@ class FixedPublicTapStateSetTemplate:
         )
         if targeted is not (self.target_schema is not None):
             raise ValueError("Public tap-state target shape is inconsistent")
+        if type(self.lose_unspent_mana) is not bool or self.lose_unspent_mana and (
+            not self.tapped or self.spec != target_unspent_mana_tap_spec("$target.0")
+            or self.target_schema != target_unspent_mana_target_schema()
+        ):
+            raise ValueError("Unspent mana loss requires the closed targeted land tap")
 
     @property
     def template_id(self) -> str:
         action = "tap" if self.tapped else "untap"
-        return f"{action}-fixed-public-set-{self.spec.fingerprint[:16]}-v1"
+        version = 2 if self.lose_unspent_mana else 1
+        return f"{action}-fixed-public-set-{self.spec.fingerprint[:16]}-v{version}"
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
@@ -57,6 +67,7 @@ class FixedPublicTapStateSetTemplate:
                 "source": "$source",
                 "set": self.spec.to_dict(),
                 "tapped": self.tapped,
+                **({TARGET_UNSPENT_MANA_FIELD: 1} if self.lose_unspent_mana else {}),
             },
         )
 
@@ -80,11 +91,17 @@ class FixedPublicTapStateSetTemplate:
 def fixed_public_tap_state_set_effect_template(
     text: str,
 ) -> FixedPublicTapStateSetTemplate | None:
+    normalized = " ".join(text.strip().split())
+    if normalized.casefold() == "tap all lands target player controls and that player loses all unspent mana.":
+        return FixedPublicTapStateSetTemplate(
+            target_unspent_mana_tap_spec("$target.0"), True, target_unspent_mana_target_schema(),
+            lose_unspent_mana=True,
+        )
     match = re.fullmatch(
         r"(?P<action>Tap|Untap) (?P<quantifier>all|each) (?P<subject>.+?)"
         r"(?P<relation> target opponent controls| target player controls|"
         r" you control| you don't control| your opponents control)?\.?",
-        " ".join(text.strip().split()),
+        normalized,
         re.IGNORECASE,
     )
     if match is None:

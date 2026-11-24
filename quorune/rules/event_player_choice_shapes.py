@@ -7,7 +7,7 @@ from ..compiler.event_player_choice_templates import (
     EVENT_PLAYER_CHOICE_CAPABILITY, EVENT_PLAYER_CHOICE_MECHANIC,
     SPELL_CASTER_LAND_RETURN_MECHANIC, spell_caster_land_return_effect,
 )
-from ..compiler.fixed_entry_return_requirements import FIXED_ENTRY_RETURN_MECHANIC
+from ..compiler.fixed_entry_return_requirements import FIXED_ENTRY_RETURN_MECHANIC, FixedEntryReturnRequirementSpec
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..replacement.immutable import thaw_value
 from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
@@ -18,6 +18,52 @@ from .event_player_result_shapes import _event_player_reference_is_closed
 
 _PLAYERS = frozenset({'$context.player', '$context.target', '$context.defending_player',
                       '$context.previous_controller', '$context.controller'})
+
+
+UPKEEP_CREATURE_RETURN_MECHANIC = "upkeep-participant-creature-return"
+_UPKEEP_CREATURE_RETURN = FixedEntryReturnRequirementSpec(
+    count=1, predicate=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+    excludes_source=False, sacrifice_source_unless_paid=False,
+)
+
+
+def upkeep_creature_return_effect():
+    return {**_UPKEEP_CREATURE_RETURN.effects[0], "players": ["$context.player"]}
+
+
+def upkeep_creature_return_effect_is_closed(effect):
+    return (_uses_event_player_return(effect) and type(effect.get("count")) is int
+            and thaw_value(effect) == upkeep_creature_return_effect())
+
+
+def upkeep_creature_return_node_capabilities(effects, target_schema, mechanic_ids):
+    from .scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_MECHANIC
+
+    if (target_schema is not None or len(effects) != 1
+            or not {UPKEEP_CREATURE_RETURN_MECHANIC, SCHEDULED_PLAYER_MECHANIC} <= set(mechanic_ids)
+            or not upkeep_creature_return_effect_is_closed(effects[0])):
+        return ()
+    normalized = {**thaw_value(effects[0]), "players": ["$controller"]}
+    base = fixed_entry_return_node_capabilities(
+        effects=(normalized,), target_schema=None, mechanic_ids=(FIXED_ENTRY_RETURN_MECHANIC,),
+    )
+    if not base:
+        return ()
+    return (*base, SCHEDULED_PLAYER_CAPABILITY, "trigger.placement.apnap", "zone.change.destination_replacement")
+
+
+def upkeep_creature_return_runtime_dependencies(program):
+    from .scheduled_life_return import UPKEEP_CONDITION
+
+    if (UPKEEP_CREATURE_RETURN_MECHANIC not in program.coverage
+            and not any(upkeep_creature_return_effect_is_closed(effect) for effect in program.effects)):
+        return ()
+    required = upkeep_creature_return_node_capabilities(program.effects, program.target_schema, program.coverage)
+    if (not required or (program.event, program.active_zone) != ("step.begin", "battlefield")
+            or thaw_value(program.event_condition) != UPKEEP_CONDITION
+            or program.cost_schema is not None or program.handlers):
+        raise ValueError("A scheduled creature return requires the sealed each-player upkeep and one controlled creature")
+    return required
 
 
 def event_player_sacrifice_node_capabilities(*, effects, target_schema, mechanic_ids):
@@ -102,7 +148,7 @@ def attacked_defender_exile_program_dependencies(program):
         raise ValueError("Defender exile requires its complete untargeted controlled-permanent choice")
     return owned
 
-def _uses_spell_caster_land_return(effect):
+def _uses_event_player_return(effect):
     players = effect.get("players")
     return (
         effect.get("op") == "choose_cards_apnap" and effect.get("then") == "return_owner_hand"
@@ -111,7 +157,7 @@ def _uses_spell_caster_land_return(effect):
 
 
 def spell_caster_land_return_effect_is_closed(effect):
-    if not _uses_spell_caster_land_return(effect) or type(effect.get("count")) is not int:
+    if not _uses_event_player_return(effect) or type(effect.get("count")) is not int:
         return False
     if thaw_value(effect) != spell_caster_land_return_effect():
         return False
@@ -135,9 +181,13 @@ def _spell_caster_land_return_capabilities(effects, target_schema):
 
 
 def spell_caster_land_return_runtime_dependencies(program):
+    from .scheduled_life_return import has_closed_scheduled_life_return
+
+    if has_closed_scheduled_life_return(program) or upkeep_creature_return_runtime_dependencies(program):
+        return ()
     effects = (*program.effects, *getattr(program, "handlers", ()))
     if SPELL_CASTER_LAND_RETURN_MECHANIC not in program.coverage and not any(
-        _uses_spell_caster_land_return(effect) for effect in nested_effects(effects)
+        _uses_event_player_return(effect) for effect in nested_effects(effects)
     ):
         return ()
     required = _spell_caster_land_return_capabilities(program.effects, program.target_schema)
@@ -151,7 +201,9 @@ def spell_caster_land_return_runtime_dependencies(program):
 
 
 def event_bound_public_choice_recipient_has_left(host, raw_effect, effect):
-    if not (attacked_defender_exile_effect_is_closed(raw_effect) or spell_caster_land_return_effect_is_closed(raw_effect)):
+    if not (attacked_defender_exile_effect_is_closed(raw_effect)
+            or spell_caster_land_return_effect_is_closed(raw_effect)
+            or upkeep_creature_return_effect_is_closed(raw_effect)):
         return False
     players = effect.get("players")
     if not isinstance(players, (list, tuple)) or len(players) != 1:
@@ -165,6 +217,8 @@ def event_player_choice_node_capabilities(*, effects, target_schema, mechanic_id
     mechanics = tuple(mechanic_ids)
     if SPELL_CASTER_LAND_RETURN_MECHANIC in mechanics:
         return _spell_caster_land_return_capabilities(effects, target_schema)
+    if UPKEEP_CREATURE_RETURN_MECHANIC in mechanics:
+        return upkeep_creature_return_node_capabilities(effects, target_schema, mechanics)
     return (
         event_player_sacrifice_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,

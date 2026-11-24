@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed values for one fixed multi-layer resolution characteristic result."""
 
 from dataclasses import dataclass, replace
+from enum import Enum
 import re
 from typing import Any, Mapping
 
@@ -10,8 +11,10 @@ from .continuous_effects import ContinuousEffectDuration, ContinuousOperation, L
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS, FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from .object_predicate import ObjectQuerySpec
+from .query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
 from .replacement.immutable import thaw_value
 from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
+from .source_block_defender_model import SOURCE_BLOCK_DEFENDER_VERSION, SourceBlockDefenderSpec
 from .type_subtype_vocabulary import CARD_TYPE_SUBTYPES
 from .target_land_type_model import FIXED_TARGET_LAND_TYPE_VERSION, FixedTargetLandTypeSpec
 
@@ -42,7 +45,7 @@ INDEFINITE_TARGET_LAND_ANIMATION_VERSION = 21
 INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC = "indefinite-target-land-animation"
 INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_target_land_animation"
 INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
-    INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_ENCHANTMENT_FORM_VERSION,
+    INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_ENCHANTMENT_FORM_VERSION, SOURCE_BLOCK_DEFENDER_VERSION,
 })
 DERIVED_CHARACTERISTIC_CAPABILITY = "continuous.resolution.derived_base_power_toughness"
 RECIPIENT_MANA_VALUE = "recipient_mana_value"
@@ -449,6 +452,124 @@ class FixedResolutionSubtypeSettingSpec:
         return ((Layer.TYPE, "4", (ContinuousOperation("set_creature_subtype", self.subtype),)),)
 
 
+CHOSEN_CREATURE_TYPE_RESULT_FIELD = "chosen_creature_type_result"
+CHOSEN_CREATURE_TYPE_RESULT_CAPABILITY = "choice.creature_type.fixed_battlefield_result"
+CHOSEN_CREATURE_TYPE_MODIFIER_FIELD = "chosen_creature_type_modifier"
+
+
+class ChosenCreatureTypeResult(str, Enum):
+    CONTROLLED_PERMANENT_DRAW = "controlled_permanent_draw"
+    NONMATCHING_CREATURE_STATS = "nonmatching_creature_stats"
+
+    def choice_effect(self) -> dict[str, Any]:
+        return {
+            "op": "choose_creature_type",
+            CHOSEN_CREATURE_TYPE_RESULT_FIELD: {"schema_version": 1, "result": self.value},
+        }
+
+    @classmethod
+    def from_effect(cls, effect: Mapping[str, Any]) -> ChosenCreatureTypeResult:
+        if (
+            not isinstance(effect, Mapping)
+            or set(effect) != {"op", CHOSEN_CREATURE_TYPE_RESULT_FIELD}
+            or effect["op"] != "choose_creature_type"
+        ):
+            raise ValueError("Chosen creature type result requires its exact choice envelope")
+        result = effect[CHOSEN_CREATURE_TYPE_RESULT_FIELD]
+        if (
+            not isinstance(result, Mapping)
+            or set(result) != {"schema_version", "result"}
+            or type(result["schema_version"]) is not int
+            or result["schema_version"] != 1
+            or type(result["result"]) is not str
+        ):
+            raise ValueError("Chosen creature type result has a closed versioned outcome")
+        return cls(result["result"])
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        result = (
+            "zone.draw.library_to_hand" if self is self.CONTROLLED_PERMANENT_DRAW
+            else "continuous.resolution.fixed_characteristics_until_end_of_turn"
+        )
+        return CHOSEN_CREATURE_TYPE_RESULT_CAPABILITY, result
+
+    def battlefield_query(self, subtype: str, *, actor: str) -> ObjectQuerySpec:
+        if type(subtype) is not str or subtype not in CREATURE_SUBTYPES:
+            raise ValueError("Chosen creature type result requires one canonical creature type")
+        if self is self.CONTROLLED_PERMANENT_DRAW:
+            return ObjectQuerySpec(zones=("battlefield",), controller=actor, subtypes_all=(subtype,))
+        return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), excluded_subtypes=(subtype,))
+
+
+@dataclass(frozen=True, slots=True)
+class ChosenCreatureTypeModifier:
+    """Equal power and toughness boosts with optional Trample."""
+
+    amount: int | CastXAmountSpec
+    trample: bool = False
+
+    def __post_init__(self) -> None:
+        if (type(self.trample) is not bool
+                or not (type(self.amount) is int and self.amount >= 0 or self.amount == CastXAmountSpec())
+                or self.trample and type(self.amount) is not int):
+            raise ValueError("A chosen-type modifier needs matching nonnegative stats or its closed Trample boost")
+
+    def choice_effect(self) -> dict[str, Any]:
+        return {
+            "op": "choose_creature_type",
+            CHOSEN_CREATURE_TYPE_MODIFIER_FIELD: {
+                "schema_version": 1,
+                "amount": self.amount.to_dict() if isinstance(self.amount, CastXAmountSpec) else self.amount,
+                "trample": self.trample,
+            },
+        }
+
+    @classmethod
+    def from_effect(cls, effect: Mapping[str, Any], *, resolved=False) -> ChosenCreatureTypeModifier:
+        if (not isinstance(effect, Mapping) or set(effect) != {"op", CHOSEN_CREATURE_TYPE_MODIFIER_FIELD}
+                or effect["op"] != "choose_creature_type"):
+            raise ValueError("Chosen-type modifiers require their exact choice envelope")
+        raw = effect[CHOSEN_CREATURE_TYPE_MODIFIER_FIELD]
+        if (not isinstance(raw, Mapping) or set(raw) != {"schema_version", "amount", "trample"}
+                or type(raw["schema_version"]) is not int or raw["schema_version"] != 1):
+            raise ValueError("Chosen-type modifiers require their closed versioned payload")
+        amount = raw["amount"]
+        if not resolved and isinstance(amount, Mapping):
+            amount = CastXAmountSpec.from_dict(amount)
+        elif not resolved and (type(amount) is not int or not 1 <= amount <= 99):
+            raise ValueError("A fixed subtype boost requires a supported positive amount")
+        if resolved and type(amount) is not int:
+            raise ValueError("The resolved type choice needs the materialized amount")
+        return cls(amount, raw["trample"])
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        return (
+            CHOSEN_CREATURE_TYPE_RESULT_CAPABILITY, "continuous.resolution.fixed_characteristics_until_end_of_turn",
+            *(("combat.damage.assignment.trample",) if self.trample else ()),
+            *((DECLARED_AMOUNT_CAPABILITY,) if isinstance(self.amount, CastXAmountSpec) else ()),
+        )
+
+    def modifier_effect(self, subtype: str) -> dict[str, Any]:
+        if type(self.amount) is not int or type(subtype) is not str or subtype not in CREATURE_SUBTYPES:
+            raise ValueError("The chosen-type result requires its concrete amount and canonical subtype")
+        predicate = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), subtypes_all=(subtype,))
+        return {
+            "op": "modify_all_matching_permanents_until_end_of_turn",
+            "predicate": predicate.to_dict(), "power": self.amount, "toughness": self.amount,
+            **({"keywords": ["Trample"]} if self.trample else {}),
+        }
+
+
+def chosen_creature_type_result_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if CHOSEN_CREATURE_TYPE_RESULT_FIELD in value:
+        return ChosenCreatureTypeResult.from_effect(value).capability_dependencies
+    if CHOSEN_CREATURE_TYPE_MODIFIER_FIELD in value:
+        return ChosenCreatureTypeModifier.from_effect(value).capability_dependencies
+    return ()
+
+
 def decode_temporary_creature_type_choice(effect, *, resolved=False):
     """Validate the choice and its one typed resolution subject."""
     fields = {"op", "schema_version", "excluded"}
@@ -483,7 +604,7 @@ def decode_temporary_creature_type_choice(effect, *, resolved=False):
 
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any], *, resolved: bool = False,
-) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | IndefiniteSourceAnimationSpec | IndefiniteTargetLandAnimationSpec | IndefiniteEnchantmentFormSpec | DerivedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionCardTypeAdditionSpec | FixedResolutionModifierSpec | FixedResolutionSubtypeSettingSpec | FixedTargetLandTypeSpec | SourceBlockDefenderSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
@@ -521,6 +642,8 @@ def fixed_resolution_characteristic_instruction(
             if value["characteristics"] != {"card_type": "Enchantment"}:
                 raise ValueError("Indefinite enchantment form has one closed type setting")
             return IndefiniteEnchantmentFormSpec(), card
+        if version == SOURCE_BLOCK_DEFENDER_VERSION:
+            return SourceBlockDefenderSpec.from_dict(value["characteristics"]), card
         return IndefiniteSourceAnimationSpec.from_dict(value["characteristics"]), card
     from .next_turn_effect import split_next_turn_effect
 

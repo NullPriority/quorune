@@ -3,6 +3,11 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 
+CONTROLLED_TOUGHNESS_LIFE_KIND = "controlled_creature_toughness"
+CONTROLLED_TOUGHNESS_LIFE_CAPABILITY = "life.change.set_total.controlled_creature_toughness"
+COUNTED_LIFE_TOTAL_KINDS = frozenset({"creatures", "permanents", "library", CONTROLLED_TOUGHNESS_LIFE_KIND})
+
+
 @dataclass(frozen=True,slots=True)
 class LifeTotalValueSpec:
     kind: str
@@ -12,7 +17,7 @@ class LifeTotalValueSpec:
     def __post_init__(self):
         if (type(self.schema_version) is not int or self.schema_version!=1
                 or type(self.kind) is not str or self.kind not in {
-                    'fixed','starting','starting_half_rounded_up','highest','lowest','creatures','permanents','library',
+                    'fixed','starting','starting_half_rounded_up','highest','lowest',*COUNTED_LIFE_TOTAL_KINDS,
                 }
                 or self.kind=='fixed' and (type(self.total) is not int or self.total<0)
                 or self.kind!='fixed' and self.total is not None):
@@ -53,8 +58,13 @@ def plan_life_total_setting(value,players,life_totals,*,starting_life,counts=Non
             or any(type(player) is not str or player not in life_totals for player in players)
             or type(starting_life) is not int or starting_life<1):
         raise ValueError('Life-total setting requires one complete live-player snapshot')
-    if value.kind in {'creatures','permanents','library'} and (not isinstance(counts,Mapping)
-            or set(counts)!=set(players) or any(type(count) is not int or count<0 for count in counts.values())):
+    if value.kind in COUNTED_LIFE_TOTAL_KINDS and (
+        not isinstance(counts, Mapping)
+        or set(counts) != set(players)
+        or any(type(count) is not int or (
+            count < 0 and value.kind != CONTROLLED_TOUGHNESS_LIFE_KIND
+        ) for count in counts.values())
+    ):
         raise ValueError('Count-based life totals require exact known counts for every affected player')
     fixed={'fixed':value.total,'starting':starting_life,'starting_half_rounded_up':(starting_life + 1) // 2,
         'highest':max(life_totals.values()),'lowest':min(life_totals.values())}

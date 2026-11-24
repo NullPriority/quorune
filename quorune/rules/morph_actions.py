@@ -99,31 +99,36 @@ def _eligible_spec(host: MorphActionHost, seat: str, card: Any, *, method: str |
         return option.spec if option is not None else None
     if face_up_ability is not None:return None
     from ..manifest import manifest_turn_up_spec, is_manifested
+    from ..morph import is_turned_face_down_by_effect
+
     manifested = is_manifested(card)
+    effect_face_down = is_turned_face_down_by_effect(card)
     if manifested and method in {None, 'manifest'}:
         return manifest_turn_up_spec(host, seat, card)
     if (
         card.zone != "battlefield"
         or card.controller != seat
         or card.phased_out
-        or card.object_kind != "card"
+        or card.object_kind != "card" and not (effect_face_down and card.is_token)
         or not card.face_down
-        or card.annotations.get("copy_overrides") is not None
+        or not effect_face_down and card.annotations.get("copy_overrides") is not None
     ):
         return None
     marker = card.annotations.get("face_down_method")
-    method = method if manifested else marker.get("kind") if isinstance(marker, Mapping) else None
+    if not manifested and not effect_face_down:
+        method = marker.get("kind") if isinstance(marker, Mapping) else None
     if method not in FACE_DOWN_CAST_METHODS:
         return None
     spec = compiled_fixed_mana_face_down_method_spec(
         host,
         card,
         method=method,
+        use_copiable_source=effect_face_down,
     )
     if spec is None:
         return None
     try:
-        if not manifested:
+        if not manifested and not effect_face_down:
             validate_morph_face_down_state(card, spec)
         if not current_face_up_has_face_down_method(
             host,
@@ -166,6 +171,7 @@ def _composed_offer_and_spec(host,seat,card,*,method,mana_cost_option,face_up_ab
 
 def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_option, face_up_ability=None, extra_source=False):
     from ..manifest import is_manifested
+    from ..morph import is_turned_face_down_by_effect
     from .nonmana_morph_costs import nonmana_morph_offer_fields
 
     nonmana_fields = nonmana_morph_offer_fields(host, seat, spec)
@@ -189,7 +195,8 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
     ):
         return None
     return ActionOffer(
-        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None and is_manifested(card) else '')
+        action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None
+            and (is_manifested(card) or is_turned_face_down_by_effect(card)) else '')
             + (f':{mana_cost_option}' if mana_cost_option is not None else '')
             + (f':ability:{face_up_ability}' if extra_source else ''),
         action="turn_face_up",
@@ -227,7 +234,9 @@ def build_turn_face_up_offers(host, seat, card):
                 if offer is not None:offers.append(offer)
         return tuple(offers)
     from ..manifest import is_manifested
-    methods = ('manifest', *FACE_DOWN_CAST_METHODS) if is_manifested(card) else (None,)
+    from ..morph import is_turned_face_down_by_effect
+    methods = ('manifest', *FACE_DOWN_CAST_METHODS) if is_manifested(card) else (
+        FACE_DOWN_CAST_METHODS if is_turned_face_down_by_effect(card) else (None,))
     offers = []
     for method in methods:
         spec = _eligible_spec(host, seat, card, method=method)
@@ -282,6 +291,12 @@ def commit_turn_face_up(
         method=method,face_up_ability=response.get('face_up_ability'))
     if spec is None:
         raise GameRuleError("The face-down method contract changed before payment")
+    from ..replacement.face_status_copy import split_face_up_copy_payment
+
+    try:
+        response,copy_selections=split_face_up_copy_payment(card,response)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
     requirements = offer.to_dict()['requirements']
     clear_mana_undo_stack(host.state.players[seat].stats)
     spent, activations = host._pay_for_cost(
@@ -297,7 +312,7 @@ def commit_turn_face_up(
         host.turn_priority.complete_special_action(seat)
         return
     try:
-        changed=ZoneTransitionOwner(host).turn_face_up(card, viewers=tuple(host.seats))
+        changed=ZoneTransitionOwner(host).turn_face_up(card,viewers=tuple(host.seats),copy_selections=copy_selections)
     except ZoneObjectStateError as exc:
         raise GameRuleError(str(exc)) from exc
     if not changed:
@@ -347,9 +362,12 @@ def commit_turn_face_up(
         except CounterPlacementError as exc:
             raise GameRuleError(str(exc)) from exc
     elif response.get("_mana_replacement_selections") and morph_zone_cost(spec) is None:
-        raise GameRuleError(
-            "Turn-face-up replacement selections require Megamorph"
-        )
+        from ..mana_mode_effects import mana_damage_event_belongs_to_payment
+
+        journal = response["_mana_replacement_selections"]
+        if not copy_selections or not all(mana_damage_event_belongs_to_payment(event_id, response["_mana_payment_id"])
+                for event_id in journal):
+            raise GameRuleError("Turn-face-up replacement selections require Megamorph")
     host._log(
         seat,
         "permanent.turn_face_up",

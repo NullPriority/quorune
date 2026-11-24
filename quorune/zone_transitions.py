@@ -31,6 +31,10 @@ from .entry_counters import (
 from .entry_results import commit_prepared_entry_results
 from .errors import GameRuleError, StateInvariantError
 from .library_order_model import LibraryArrivalOrder
+from .rules.graveyard_arrival_order import place_ordered_graveyard_arrivals, validate_prepared_graveyard_orders
+from .rules.library_partition import (
+    commit_ordered_library_arrivals, publish_library_search_reveal, validate_ordered_library_destination,
+)
 from .life_state import (
     LifeStateError,
     commit_life_payment,
@@ -49,9 +53,10 @@ from .semantic_runtime import (
     prepare_zone_change_replacement_batch,
 )
 from .semantic_runtime.explore import capture_explore_source_departure
-from .trigger_processing import enqueue_trigger_batch
+from .trigger_processing import enqueue_trigger_batch, pin_zone_departure_trigger_facts
 from .zone_object_state import reset_card_after_zone_change, stack_entry_cast_facts
 from .multikicker_result_amounts import needs_multikicker_entry_fact
+from .discard_effect_origin import DiscardEffectOrigin
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
@@ -60,6 +65,7 @@ from .zone_trigger_events import (
     validate_zone_transition_request,
 )
 from .zone_trigger_processing import (
+    dispatch_committed_batch_zone_events,
     DepartureTriggerSnapshot,
     capture_departure_trigger_sources,
     dispatch_zone_change_occurrence,
@@ -69,6 +75,8 @@ from .zone_trigger_processing import (
 from .day_night import synchronize_day_night
 from .permanent_transform import trusted_daybound_entry_face
 from .zone_transition_model import (
+    library_insertion_index, replacement_library_position,
+    batch_putting_players, capture_simultaneous_departure, entry_putting_player,
     EXILE_ZONE,
     JOURNAL_REASON_FIELD,
     LIBRARY_ZONE,
@@ -77,7 +85,7 @@ from .zone_transition_model import (
     ZoneMovePlan,
     ZoneTransitionHost,
 )
-from .zone_transition_journal import journal_zone_move
+from .zone_transition_journal import finish_self_graveyard_shuffles, journal_zone_move, prepare_zone_side_effects
 
 
 class ZoneTransitionOwner:
@@ -96,7 +104,7 @@ class ZoneTransitionOwner:
         self.state.timestamp_sequence += 1
         return self.state.timestamp_sequence
 
-    def turn_face_up(self,card:CardInstance,*,viewers:tuple[str,...])->bool:
+    def turn_face_up(self,card:CardInstance,*,viewers:tuple[str,...],copy_selections=())->bool:
         if not isinstance(card,CardInstance) or self.state.cards.get(card.object_id) is not card:
             raise GameRuleError('Turning face up requires its exact current object')
         if card.permanent_composition is not None:
@@ -106,7 +114,7 @@ class ZoneTransitionOwner:
                 ContinuousObjectIdentity(card.object_id,card.logical_object_id))
             if prepared is None or prepared.viewers!=viewers:
                 raise GameRuleError('Composed face-up viewers or state changed')
-            self.commit_composition_face_up(prepared)
+            self.commit_composition_face_up(prepared,copy_selections=copy_selections)
             return prepared.can_turn_face_up
         if card.zone=='battlefield' and card.face_down and not card.phased_out and not card.is_token and card.object_kind=='card':
             from .rules.composition_faces import _physical_turn_up_face
@@ -115,8 +123,12 @@ class ZoneTransitionOwner:
                 self.reveal_face_up_refusal(card,viewers=viewers,components=(
                     {'object':card.ref,'oracle_id':card.oracle_id,'card':card.printed_name},))
                 return False
-        self._turn_face_up_status(card,viewers=viewers)
+        self._turn_face_up_status(card,viewers=viewers,copy_selections=copy_selections)
         return True
+
+    def turn_face_down(self,card:CardInstance)->bool:
+        from .composition_face_changes import commit_face_down_status
+        return commit_face_down_status(self,card)
 
     def reveal_face_up_refusal(self,card,*,viewers,components):
         if (self.state.cards.get(card.object_id) is not card or card.zone!='battlefield' or not card.face_down
@@ -127,17 +139,9 @@ class ZoneTransitionOwner:
             {'player':card.controller,'object':card.ref,'components':list(components),'reason':'face_up_refused'},
             changed_objects=[card.object_id],changed_players=[card.controller],importance=1)
 
-    def _turn_face_up_status(self,card:CardInstance,*,viewers:tuple[str,...])->None:
-        """Validate the planned face timestamp before publishing any face-up observers."""
-        from .face_status_timestamp_model import planned_face_up_timestamp
-        from .zone_object_state import turn_card_face_up
-        if not isinstance(card,CardInstance) or self.state.cards.get(card.object_id) is not card:
-            raise GameRuleError('Turning face up requires its exact current object')
-        try:timestamp=planned_face_up_timestamp(self.state)
-        except ValueError as error:raise GameRuleError(str(error)) from error
-        turn_card_face_up(card,viewers=viewers,timestamp=timestamp)
-        if timestamp is not None and self.next_timestamp()!=timestamp:
-            raise StateInvariantError('Face-up timestamp changed during commitment')
+    def _turn_face_up_status(self,card:CardInstance,*,viewers:tuple[str,...],copy_selections=(),prospective_composition=None)->None:
+        from .composition_face_changes import commit_face_up_status
+        commit_face_up_status(self,card,viewers=viewers,copy_selections=copy_selections,prospective_composition=prospective_composition)
 
     def pin_characteristic_departures(
         self,
@@ -151,8 +155,9 @@ class ZoneTransitionOwner:
         )
         pending_before = tuple(self.state.pending_trigger_batches)
         try:
-            from .rules.event_counter_threshold import pin_event_counter_threshold_departures
-            pin_event_counter_threshold_departures(self.host, cards, error_type=StateInvariantError)
+            pin_zone_departure_trigger_facts(self.host, cards, error_type=StateInvariantError)
+            from .rules.source_charge_life_totals import pin_source_charge_life_departures
+            pin_source_charge_life_departures(self.host, cards, error_type=StateInvariantError)
             from .target_controller_information import pin_target_controller_departures
             pin_target_controller_departures(self.host,cards,error_type=StateInvariantError)
             from .attachment_information import pin_attachment_information_departures
@@ -265,9 +270,9 @@ class ZoneTransitionOwner:
         from .composition_face_changes import commit_composition_transform
         return commit_composition_transform(self,prepared)
 
-    def commit_composition_face_up(self,prepared):
+    def commit_composition_face_up(self,prepared,*,copy_selections=()):
         from .composition_face_changes import commit_composition_face_up
-        return commit_composition_face_up(self,prepared)
+        return commit_composition_face_up(self,prepared,copy_selections=copy_selections)
 
     def depart_composition(self,object_id,destination,**kwargs):
         from .composition_departure_commit import depart_composition
@@ -279,12 +284,15 @@ class ZoneTransitionOwner:
         destination: str,
         *,
         zone_timestamp: int | None = None,
+        revealed_library_reorder: bool = False,
     ) -> None:
         if card.permanent_composition is not None:
             raise GameRuleError('Composed-permanent reset requires its complete physical group transaction')
         origin = card.zone
+        if revealed_library_reorder and (origin != LIBRARY_ZONE or destination != LIBRARY_ZONE):
+            raise GameRuleError("A revealed library reorder requires a current library object")
         creates_new_object = (
-            origin != destination or origin in {EXILE_ZONE, "command"}
+            origin != destination or origin in {EXILE_ZONE, "command"} or revealed_library_reorder
         )
         if not creates_new_object:
             return
@@ -342,6 +350,8 @@ class ZoneTransitionOwner:
         defer_control_sync: bool = False,
         manifest_entry: bool = False,
         _devour_batch: bool = False,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
+        putting_player: str | None = None,
     ) -> CardInstance:
         if type(defer_control_sync) is not bool:
             raise GameRuleError("Zone-move control synchronization policy must be boolean")
@@ -351,6 +361,12 @@ class ZoneTransitionOwner:
             destination,
             transition_kind,
         )
+        putting_player = entry_putting_player(self.host, card, destination, putting_player)
+        if discard_effect_origin is not None:
+            normalized_transition_kind_map(
+                [(object_id, destination)], {object_id: transition_kind},
+                discard_effect_origin=discard_effect_origin,
+            )
         if card.permanent_composition is not None:
             from .composition_ordering import resolve_composition_departure
             moved=resolve_composition_departure(self,object_id,destination,reason=reason,position=position,
@@ -381,14 +397,17 @@ class ZoneTransitionOwner:
         if isinstance(plan_or_card, CardInstance):
             return plan_or_card
         plan = plan_or_card
-        if plan.prepared_replacement.devour_sacrifices and not _devour_batch:
+        if (plan.prepared_replacement.devour_sacrifices or plan.prepared_replacement.graveyard_copy_exiles) and not _devour_batch:
             from .zone_devour import commit_single_devour_entry
-            return commit_single_devour_entry(self,plan,reason=reason,log=log,aura_target_ref=aura_target_ref,semantic_events=semantic_events)
+            return commit_single_devour_entry(self,plan,reason=reason,log=log,aura_target_ref=aura_target_ref,
+                semantic_events=semantic_events, putting_player=putting_player)
+        reveals = () if _devour_batch else prepare_zone_side_effects(self.host, (plan.prepared_replacement,))
         if plan.origin in {"battlefield", "graveyard"} and not characteristic_lki_prepared:
             self.pin_characteristic_departures((card,))
         departure = self._capture_departure(
             card,
             semantic_events=semantic_events,
+            putting_player=putting_player,
         )
         self._commit_move(
             plan,
@@ -400,6 +419,7 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
             reveal_to=tuple(reveal_to or ()),
         )
+        finish_self_graveyard_shuffles(self, reveals)
         from .rules.cipher import reconcile_cipher_links
         reconcile_cipher_links(self.host)
         self._journal_move(
@@ -416,7 +436,7 @@ class ZoneTransitionOwner:
             log=log,
             semantic_events=semantic_events,
             transition_kind=transition_kind,
-            defer_control_sync=defer_control_sync,
+            defer_control_sync=defer_control_sync, discard_effect_origin=discard_effect_origin,
         )
         return card
 
@@ -547,13 +567,14 @@ class ZoneTransitionOwner:
                 )
             except LifeStateError as exc:
                 raise GameRuleError(str(exc)) from exc
+        from .face_down_characteristics_model import reveals_face_down_owner_hand_departure
         return ZoneMovePlan(
             card=card,
             requested_destination=requested_destination,
             destination=aura_move.destination,
             origin=origin,
             origin_identity_public=origin_identity_public,
-            library_position=library_position,
+            library_position=replacement_library_position(replacement, library_position),
             destination_type_line=destination_type_line,
             enter_face=enter_face,
             prepared_replacement=replacement,
@@ -561,6 +582,7 @@ class ZoneTransitionOwner:
             prospective_battle_protector=prospective_protector,
             aura_entry_plan=aura_move.entry_plan,
             manifest_entry=manifest_entry,
+            reveal_face_down_departure=reveals_face_down_owner_hand_departure(self.state, card, aura_move.destination),
         )
 
     def _entry_characteristics(self, card, enter_face, manifest_entry, battlefield_entry):
@@ -599,6 +621,7 @@ class ZoneTransitionOwner:
         card: CardInstance,
         *,
         semantic_events: bool,
+        putting_player: str | None = None,
     ) -> ZoneDepartureSnapshot:
         from .conditional_exile_model import source_conditional_bindings
         from .creature_power_damage import with_occurrence_power_departure
@@ -633,6 +656,7 @@ class ZoneTransitionOwner:
             conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
             characteristics=characteristics,
             counters=dict(card.counters) if semantic_events else None,
+            putting_player=putting_player,
             attachments=attachments,
             attached_to=attached_to,
             trigger_sources=capture_departure_trigger_sources(
@@ -744,7 +768,9 @@ class ZoneTransitionOwner:
         card.battle_protector = plan.prospective_battle_protector
         self.state.players[card.controller].zones["battlefield"].append(card.object_id)
         from .entry_results import commit_entry_designations
-        commit_entry_designations(self.host, card, color=plan.prepared_replacement.entry_chosen_color, creature_type=plan.prepared_replacement.entry_chosen_creature_type)
+        commit_entry_designations(self.host, card, color=plan.prepared_replacement.entry_chosen_color,
+                                  creature_type=plan.prepared_replacement.entry_chosen_creature_type,
+                                  card_name=plan.prepared_replacement.entry_chosen_card_name)
         commit_aura_zone_move(
             self.host,
             card,
@@ -807,7 +833,7 @@ class ZoneTransitionOwner:
             card.revealed_to = list(self.host.seats)
             return
         known = {card.owner, *reveal_to}
-        if plan.destination == "hand" and plan.origin_identity_public:
+        if plan.destination == "hand" and (plan.origin_identity_public or plan.reveal_face_down_departure):
             known.update(self.host.seats)
         card.known_to = sorted(known)
         card.revealed_to = sorted(set(reveal_to))
@@ -840,6 +866,7 @@ class ZoneTransitionOwner:
         semantic_events: bool,
         transition_kind: ZoneTransitionKind,
         defer_control_sync: bool = False,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
     ) -> None:
         card = plan.card
         log_applied_zone_replacements(
@@ -892,6 +919,8 @@ class ZoneTransitionOwner:
                 read_ahead_chapter=(
                     plan.prepared_replacement.read_ahead_chapter
                 ),
+                **({"discard_effect_origin": discard_effect_origin} if discard_effect_origin is not None else {}),
+                **({"putting_player": departure.putting_player} if departure.putting_player is not None else {}),
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
                 multikicker_paid=departure.multikicker_paid, declared_cast_costs=departure.declared_cast_costs if card.zone == 'battlefield' else None,
@@ -985,15 +1014,7 @@ class ZoneTransitionOwner:
                 changed_players=[card.owner],
             )
 
-    @staticmethod
-    def library_insertion_index(library_size: int, position: str | int | None) -> int:
-        if position == "top":
-            return library_size
-        if position == "bottom":
-            return 0
-        if isinstance(position, int):
-            return max(0, library_size - position + 1)
-        raise GameRuleError("Validated library position is required")
+    library_insertion_index = staticmethod(library_insertion_index)
 
     def dispatch_zone_change_events(
         self,
@@ -1006,6 +1027,7 @@ class ZoneTransitionOwner:
         read_ahead_chapter: int | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
     ) -> tuple[ZoneChangeOccurrence, list[StackItem], bool]:
         from .rules.city_blessing import synchronize_citys_blessing
         synchronize_citys_blessing(self.host,reason='zone transition before trigger facts')
@@ -1016,6 +1038,7 @@ class ZoneTransitionOwner:
             reason=reason,
             transition_kind=transition_kind,
             read_ahead_chapter=read_ahead_chapter,
+            discard_effect_origin=discard_effect_origin,
         )
         owns_trigger_batch = trigger_batch is None
         event_triggers = trigger_batch if trigger_batch is not None else []
@@ -1047,6 +1070,7 @@ class ZoneTransitionOwner:
         reason: str,
         transition_kind: ZoneTransitionKind,
         read_ahead_chapter: int | None,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
     ) -> ZoneChangeOccurrence:
         return ZoneChangeOccurrence(
             object_id=card.object_id,
@@ -1082,6 +1106,8 @@ class ZoneTransitionOwner:
             source_entry_cast_information=self._source_entry_cast_information(card,departure),
             source_entry_x_information=self._source_entry_x_information(card,departure),
             paid_alternative_entry_information=self._paid_alternative_entry_information(card,departure),
+            discard_effect_origin=discard_effect_origin,
+            putting_player=departure.putting_player if card.zone == "battlefield" else None,
         )
 
     def _source_entry_cast_information(self,card,departure):
@@ -1115,12 +1141,19 @@ class ZoneTransitionOwner:
         damage_clears: Sequence[tuple[str, str]] = (),
         attacking_entries: Mapping[str, Any] | None = None,
         library_order: LibraryArrivalOrder | None = None,
+        graveyard_orders=None,
+        require_graveyard_order: bool = False,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
+        putting_players: Mapping[str, str] | None = None,
     ) -> list[CardInstance]:
+        entry_players = batch_putting_players(self.host, changes, putting_players)
         tapped_entries = dict(tapped_by_object or {})
         if (set(tapped_entries) - {oid for oid, dest in changes if dest == 'battlefield'}
                 or any(type(value) is not bool for value in tapped_entries.values())):
             raise GameRuleError('Per-object tappedness must describe entering battlefield objects')
-        library_owner = self._ordered_library_destination(changes, library_order) if library_order is not None else None
+        library_owner = validate_ordered_library_destination(
+            self.host, self.state.cards, changes, library_order,
+        ) if library_order is not None else None
         if attacking_entries:
             from .rules.attacking_card_entry import AttackingEntryRecipient
 
@@ -1130,11 +1163,13 @@ class ZoneTransitionOwner:
                 raise GameRuleError('Attacking entry requires typed recipients for the entering cards')
         if any(self.state.cards.get(object_id) is not None
                 and self.state.cards[object_id].permanent_composition is not None for object_id,_ in changes):
+            if graveyard_orders is not None or require_graveyard_order:
+                raise GameRuleError("A composed departure needs its complete physical order")
             from .composition_ordering import resolve_composition_departure_batch
             return resolve_composition_departure_batch(self,changes,reason=reason,replacement_selections=replacement_selections,
                 transition_kinds=transition_kinds,prepared_replacements=prepared_replacements,
                 damage_clears=damage_clears)
-        kinds = normalized_transition_kind_map(changes, transition_kinds)
+        kinds = normalized_transition_kind_map(changes, transition_kinds, discard_effect_origin=discard_effect_origin)
         controllers = dict(destination_controllers or {})
         aura_targets = dict(aura_target_refs or {})
         faces=dict(entry_faces or {})
@@ -1146,47 +1181,38 @@ class ZoneTransitionOwner:
             changes,prepared,kinds,source_snapshot=self._prepare_simultaneous_zone_batch(changes,controllers,aura_targets,faces,
                 tapped=tapped,effect_entry_counters=effect_entry_counters,replacement_selections=replacement_selections,
                 kinds=kinds,prepared_replacements=prepared_replacements,log=log,tapped_by_object=tapped_entries)
+        if graveyard_orders is not None or require_graveyard_order:
+            validate_prepared_graveyard_orders(
+                graveyard_orders, prepared=prepared if changes else {}, cards=self.state.cards,
+                apnap_order=self.host.apnap_order(),
+            )
         if damage_clears:
             from .damage_results import clear_damage_for_permanents
 
             clear_damage_for_permanents(self.host, damage_clears)
         if not changes:return []
-        snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,reason=reason,log=log)
+        snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,
+            source_snapshot,reason=reason,log=log,entry_players=entry_players)
         if library_order is not None:
-            from .rules.library_partition import commit_ordered_library_arrivals
-
             commit_ordered_library_arrivals(
                 self.state.players[library_owner].zones["library"], library_order,
                 (card for card, _ in snapshots),
             )
+        if graveyard_orders is not None:
+            for group, refs in zip(graveyard_orders.groups, graveyard_orders.choices, strict=True):
+                graveyard = self.state.players[group.owner].zones["graveyard"]
+                graveyard[:] = place_ordered_graveyard_arrivals(graveyard, group, refs)
         return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,
-            publish_events=publish_events,attacking_entries=attacking_entries)
+            publish_events=publish_events,attacking_entries=attacking_entries, discard_effect_origin=discard_effect_origin)
 
-    def _ordered_library_destination(self, changes, order: LibraryArrivalOrder) -> str:
-        if not isinstance(order, LibraryArrivalOrder) or (
-            len(changes) != len(order.members) or set(changes) != {(member, "library") for member in order.members}
-        ):
-            raise GameRuleError("Library order must describe the whole requested batch")
-        self.host._require_seat(order.chooser, in_game=True)
-        cards = tuple(self.state.cards.get(member) for member in order.members)
-        if any(card is None or card.zone not in order.origin_zones or card.permanent_composition is not None for card in cards):
-            raise GameRuleError("Ordered library movements require the original public-zone cards")
-        owners = {card.owner for card in cards}
-        if len(owners) != 1:
-            raise GameRuleError("Ordered library movements require a single library")
-        owner, = owners
-        from .library_order_model import DepartedLibraryArrivalOrder
-
-        if isinstance(order, DepartedLibraryArrivalOrder) and order.chooser != owner:
-            raise GameRuleError("The library owner must order a departed card group")
-        return owner
-
-    def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None):
+    def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None,entry_players=None):
         """Commit an already validated group without publishing partial facts."""
+        reveals = prepare_zone_side_effects(self.host, prepared.values())
         snapshots = tuple(
-            self._simultaneous_departure(
-                self.state.cards[object_id],
+            capture_simultaneous_departure(
+                self.host, self.state.cards[object_id],
                 source_snapshot=source_snapshot,
+                putting_player=(entry_players or {}).get(object_id),
             )
             for object_id, _destination in changes
         )
@@ -1213,9 +1239,13 @@ class ZoneTransitionOwner:
                 defer_control_sync=True,
                 _devour_batch=True,
             )
+        finish_self_graveyard_shuffles(self, reveals)
         return snapshots
 
-    def _publish_simultaneous_zone_batch(self,snapshots,prepared,kinds,*,reason,publish_events=True,attacking_entries=None):
+    def _publish_simultaneous_zone_batch(
+        self, snapshots, prepared, kinds, *, reason, publish_events=True,
+        attacking_entries=None, discard_effect_origin=None,
+    ):
         """Seal history and discover triggers after every group member commits."""
         from .control_effects import synchronize_control_effects
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
@@ -1245,6 +1275,7 @@ class ZoneTransitionOwner:
                 read_ahead_chapter=prepared[
                     card.object_id
                 ].read_ahead_chapter,
+                discard_effect_origin=discard_effect_origin,
             )
             for card, departure in snapshots
         )
@@ -1253,35 +1284,8 @@ class ZoneTransitionOwner:
         trigger_batch: list[StackItem] = []
         from .counter_placement_events import dispatch_counter_event_trees
         dispatch_counter_event_trees(self.host, tuple(prepared.values()), reason=reason, trigger_batch=trigger_batch)
-        for card, departure in snapshots:
-            if not publish_events:continue
-            sources = departure.trigger_sources
-            self.host._dispatch_zone_change_events(
-                card,
-                origin=departure.origin,
-                destination=card.zone,
-                origin_controller=departure.controller,
-                origin_logical_object_id=departure.logical_object_id,
-                origin_data=departure.characteristics,
-                origin_counters=departure.counters,
-                origin_attachments=departure.attachments,
-                origin_attached_to=departure.attached_to,
-                cast_option=departure.cast_option,
-                paid_entry_copy=departure.paid_entry_copy,
-                multikicker_paid=departure.multikicker_paid, declared_cast_costs=departure.declared_cast_costs if card.zone == 'battlefield' else None,
-                departure_sources=sources.sources,
-                departure_source_zones=sources.source_zones,
-                departure_source_characteristics=(
-                    sources.source_characteristics
-                ),
-                reason=reason,
-                transition_kind=kinds.get(card.object_id, ZoneTransitionKind.ORDINARY),
-                read_ahead_chapter=(
-                    prepared[card.object_id].read_ahead_chapter
-                ),
-                trigger_batch=trigger_batch,
-                history_pre_recorded=True,
-            )
+        if publish_events:
+            dispatch_committed_batch_zone_events(self.host, snapshots, occurrences, trigger_batch=trigger_batch)
         if any(card.zone == "battlefield" for card, _departure in snapshots):
             synchronize_day_night(
                 self.host,
@@ -1341,7 +1345,9 @@ class ZoneTransitionOwner:
         if not changes:return (),prepared,kinds,source_snapshot
         prepared={object_id:prepared[object_id] for object_id,_destination in changes}
         from .zone_devour import expand_devour_zone_plans
+        from .rules.graveyard_entry_copy import expand_graveyard_copy_zone_plans
         changes,prepared,kinds=expand_devour_zone_plans(self.host,changes,prepared,kinds)
+        changes,prepared,kinds=expand_graveyard_copy_zone_plans(self.host,changes,prepared,kinds)
         for oid,destination in changes:
             plan=prepared[oid]
             prepare_zone_change_replacement(self.host,self.state.cards[oid],destination,
@@ -1371,40 +1377,6 @@ class ZoneTransitionOwner:
                 origin=self.state.cards[object_id].zone, log=log, error_type=GameRuleError)
             if not plan.remain_in_origin:admitted.append((object_id,destination))
         return tuple(admitted)
-
-    def _simultaneous_departure(
-        self,
-        card: CardInstance,
-        *,
-        source_snapshot: DepartureTriggerSnapshot,
-    ) -> tuple[CardInstance, ZoneDepartureSnapshot]:
-        from .conditional_exile_model import source_conditional_bindings
-        from .death_history_names import capture_departure_rules_names
-        from .creature_power_damage import with_occurrence_power_departure
-        return (
-            card,
-            ZoneDepartureSnapshot(
-                origin=card.zone,
-                controller=card.controller,
-                logical_object_id=card.logical_object_id,
-                conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
-                characteristics=capture_departure_rules_names(self.host, card, with_occurrence_power_departure(
-                    self.host, card, copy.deepcopy(current_zone_event_characteristics(self.host, card)),
-                )),
-                counters=dict(card.counters),
-                attachments=tuple(
-                    self.state.cards[attachment_id].ref
-                    for attachment_id in card.attachments
-                    if attachment_id in self.state.cards
-                ),
-                attached_to=attachment_target_ref(
-                    self.state.cards,
-                    self.state.players,
-                    card,
-                ),
-                trigger_sources=source_snapshot,
-            ),
-        )
 
     def move_exiled_cards_to_library_bottom_random(
         self,
@@ -1482,11 +1454,12 @@ class ZoneTransitionOwner:
 
     def reveal_library_search_results(
         self, seat: str, object_ids: Sequence[str], *, public: bool,
-        expected_zone: str = LIBRARY_ZONE,
+        expected_zone: str = LIBRARY_ZONE, announce_public_results: bool = False,
     ) -> None:
         """Retain found-card knowledge before a search's shuffle or placement."""
         self.host._require_seat(seat)
-        if type(public) is not bool or expected_zone not in {LIBRARY_ZONE, "hand"}:
+        if (type(public) is not bool or expected_zone not in {LIBRARY_ZONE, "hand"}
+                or type(announce_public_results) is not bool or (announce_public_results and not public)):
             raise GameRuleError("Search-result visibility is malformed")
         if any(
             type(object_id) is not str or object_id not in self.state.cards
@@ -1508,11 +1481,7 @@ class ZoneTransitionOwner:
             if public:
                 card.revealed_to = sorted(set(card.revealed_to).union(viewers))
         if public and cards:
-            self.host._log(
-                seat, "library.search.reveal", f"{seat} revealed search results.",
-                {"objects": [card.ref for card in cards]}, importance=1,
-                changed_objects=list(object_ids), changed_players=[seat],
-            )
+            publish_library_search_reveal(self.host, seat, cards, announce=announce_public_results)
 
     def shuffle_library(
         self, seat: str, *, reason: str = "shuffle",

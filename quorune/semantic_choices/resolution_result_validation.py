@@ -29,10 +29,16 @@ def _closed_apnap_result(child, actor, mechanics):
 
 
 def validate_resolution_result_children(effect, effects, otherwise, context):
+    from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
     from .optional_effect import _represented_effect
 
     for children, mechanics in ((effects, effect['mechanic_ids']), (otherwise, effect.get('otherwise_mechanic_ids', ()))):
         for child in children:
+            try:
+                if controlled_creature_counter_choice_dependencies(child):
+                    continue
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
             if child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') in {3, 4, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION}:
                 _closed_apnap_result(child, context.actor, mechanics)
             elif child.get('op') == 'choose_cards_apnap' and effect.get('schema_version') == 2:

@@ -326,6 +326,31 @@ def _validate_color_return_cost(cost) -> None:
         raise AdditionalCostError("Color return requires one current color of controlled creature")
 
 
+DAMAGE_QUALIFIED_SACRIFICE_VERSION = 9
+DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY = "casting.additional_cost.zone_change.damage_dealt_sacrifice"
+
+
+def damage_qualified_sacrifice_predicate() -> ObjectQuerySpec:
+    return ObjectQuerySpec(zones=("battlefield",), controller="$actor", known_to_actor=True,
+                           types_all=("creature",))
+
+
+def _validate_damage_qualified_sacrifice(cost) -> None:
+    if (cost.operation != SACRIFICE_ONE_COST or cost.count != 1 or cost.unblocked_attacker is not False
+            or cost.predicate != damage_qualified_sacrifice_predicate()):
+        raise AdditionalCostError("Damage-qualified sacrifice requires one controlled creature")
+
+
+def _damage_qualified_sacrifice_candidates(host, actor, rows):
+    from ..target_history import TargetDamageHistoryKind, TargetDamageHistorySpec, target_damage_history_matches
+
+    history = TargetDamageHistorySpec(TargetDamageHistoryKind.DEALT_DAMAGE)
+    return tuple(row for row in rows if target_damage_history_matches(
+        history, history=host.state.turn_history, turn_sequence=host.state.turn_sequence,
+        actor=actor, object_incarnation=host.state.cards[row.object_id].logical_object_id,
+    ))
+
+
 @dataclass(frozen=True, slots=True)
 class FixedZoneChangeAdditionalCost:
     """Move one fixed-size selected set between operation-owned zones."""
@@ -343,7 +368,8 @@ class FixedZoneChangeAdditionalCost:
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION}
+            or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION,
+                QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -371,6 +397,8 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional costs require a typed object predicate"
             )
+        if self.schema_version == DAMAGE_QUALIFIED_SACRIFICE_VERSION:
+            _validate_damage_qualified_sacrifice(self)
         if self.schema_version == COLOR_RETURN_SCHEMA_VERSION:
             _validate_color_return_cost(self)
         if self.schema_version == QUALIFIED_RETURN_COST_VERSION:
@@ -505,8 +533,10 @@ class FixedZoneChangeAdditionalCost:
                 "Zone-change additional-cost descriptor fields are closed"
             )
         try:
-            if value["schema_version"] in {COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION} and set(value) != _FIXED_ZONE_CHANGE_FIELDS:
-                raise ValueError("Color return fields are closed")
+            if (value["schema_version"] in {COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION,
+                    KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}
+                    and set(value) != _FIXED_ZONE_CHANGE_FIELDS):
+                raise ValueError("Versioned fixed zone-change cost fields are closed")
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
             if ('predicate_union' in value) != (value['schema_version'] == 5):
                 raise ValueError('Sacrifice union fields require exactly schema five')
@@ -714,7 +744,7 @@ def fixed_zone_change_cost_candidates(
 ) -> tuple[str, ...]:
     """Return operation-owned candidates through one immutable query path."""
 
-    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION}:
+    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}:
         from .casting.source_placement import prospective_sacrifice_read_host
         host = prospective_sacrifice_read_host(host, actor, exclude_object_id)
 
@@ -739,20 +769,20 @@ def fixed_zone_change_cost_candidates(
     if cost.predicate_union is not None:
         admitted = {row.ref for query in cost.predicate_union.bound_predicates(actor) for row in query_objects(rows, query)}
         matched = tuple(row for row in matched if row.ref in admitted)
+    if cost.schema_version == DAMAGE_QUALIFIED_SACRIFICE_VERSION:
+        matched = _damage_qualified_sacrifice_candidates(host, actor, matched)
     if cost.unblocked_attacker:
-        blockers = (
-            host.state.combat.blockers
-            if host.state.combat is not None
-            else {}
-        )
-        matched = tuple(
-            row for row in matched if not blockers.get(row.object_id)
-        )
-        if (
-            host.state.combat is None
-            or not host.state.combat.blockers_declared
-        ):
+        from ..combat_relationship_state import is_unblocked_attacker_after_declaration
+        from ..unblocked_attacker_model import CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
+
+        combat = host.state.combat
+        if combat is None or not combat.blockers_declared:
             matched = ()
+        elif getattr(host.state, "unblocked_attacker_event_version", None) == CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION:
+            matched = tuple(row for row in matched if is_unblocked_attacker_after_declaration(
+                combat, host.state.cards.get(row.object_id)))
+        else:
+            matched = tuple(row for row in matched if not combat.blockers.get(row.object_id))
     return tuple(row.ref for row in matched)
 
 

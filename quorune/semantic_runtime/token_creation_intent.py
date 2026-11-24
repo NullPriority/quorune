@@ -113,6 +113,7 @@ class DistributedTokenCreationIntent:
     instruction_pointer: int
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    creator_quantities: tuple[int, ...] = ()
 
     def __post_init__(self) -> None:
         if any(type(value) is not str or not value for value in (self.actor, self.stack_ref, self.reason)):
@@ -123,6 +124,10 @@ class DistributedTokenCreationIntent:
                 or any(type(creator) is not str or not creator for creator in self.creators)
                 or len(self.creators) != len(set(self.creators))):
             raise ValueError("Distributed token creators must be distinct ordered principals")
+        if (type(self.creator_quantities) is not tuple
+                or self.creator_quantities and len(self.creator_quantities) != len(self.creators)
+                or any(type(quantity) is not int or quantity <= 0 for quantity in self.creator_quantities)):
+            raise ValueError("Distributed token quantities must match the ordered creators")
         if not isinstance(self.token, FrozenMap):
             raise ValueError("Distributed token creation requires a frozen token definition")
         object.__setattr__(self, "replacement_selections", _freeze_replacement_selections(

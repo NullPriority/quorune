@@ -157,6 +157,7 @@ from .trigger_discovery import (
     semantic_event_matches,
     semantic_event_value,
 )
+from .discard_effect_origin import DiscardEffectOrigin
 from .zone_trigger_events import (
     cost_transition_kind,
     uniform_transition_kind_map,
@@ -217,14 +218,13 @@ from .stack_counter import (
     stack_item_can_be_countered,
 )
 from .stack_resolution import (
-    arbiter_resolution_program_key, complete_stack_resolution,
+    arbiter_resolution_program_key, bind_ability_resolution_ordinals, complete_stack_resolution,
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
 from .library_order_model import LibraryArrivalOrder
 from .model import (
     CardInstance,
-    CombatState,
     Event,
     GameConfig,
     GameState,
@@ -279,13 +279,15 @@ from .rules.activation import (
     is_builtin_activation_semantic,
 )
 from .rules.action_catalog import build_priority_action_catalog
+from .rules.protected_attack_payments import protected_attack_payment_costs, source_controls_planeswalker
+from .cast_event_type_model import physical_card_event_context
 from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
     consume_land_play_permission,
     land_play_face_type_line,
     land_play_timing_matches,
     land_play_timing_window,
-    resolving_exile_land_play_response,
+    resolving_land_play_response,
     selected_land_play_permission,
 )
 from .rules.zone_action_permissions import (
@@ -1146,6 +1148,8 @@ class CommanderEngine(
         prepared_replacement: PreparedZoneChange | None = None,
         transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY,
         _characteristic_lki_prepared: bool = False,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
+        putting_player: str | None = None,
     ) -> CardInstance:
         """Compatibility facade for the canonical zone-transition owner."""
 
@@ -1170,6 +1174,8 @@ class CommanderEngine(
             prepared_replacement=prepared_replacement,
             transition_kind=transition_kind,
             characteristic_lki_prepared=_characteristic_lki_prepared,
+            discard_effect_origin=discard_effect_origin,
+            putting_player=putting_player,
         )
 
     @staticmethod
@@ -1210,6 +1216,8 @@ class CommanderEngine(
         transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None, multikicker_paid: Mapping[str, Any] | None = None, declared_cast_costs: Mapping[str, Any] | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
+        putting_player: str | None = None,
     ) -> None:
         """Game Record v3 compatibility facade for normalized zone events."""
 
@@ -1227,12 +1235,14 @@ class CommanderEngine(
                     sources=departure_sources,
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,
+                    putting_player=putting_player,
                 ),
                 destination=destination,
                 reason=reason,
                 transition_kind=transition_kind, read_ahead_chapter=read_ahead_chapter,
                 trigger_batch=trigger_batch,
                 history_pre_recorded=history_pre_recorded,
+                discard_effect_origin=discard_effect_origin,
             )
         )
         origin_types, _, _ = self._type_parts(
@@ -1305,6 +1315,8 @@ class CommanderEngine(
         tapped: bool | None = None,
         destination_controllers: Mapping[str,str] | None = None,
         library_order: LibraryArrivalOrder | None = None,
+        discard_effect_origin: DiscardEffectOrigin | None = None,
+        putting_players: Mapping[str, str] | None = None,
     ) -> list[CardInstance]:
         """Compatibility facade for one simultaneous zone transaction."""
 
@@ -1315,6 +1327,8 @@ class CommanderEngine(
             replacement_selections=replacement_selections,
             transition_kinds=transition_kinds,
             tapped=tapped,destination_controllers=destination_controllers,library_order=library_order,
+            discard_effect_origin=discard_effect_origin,
+            putting_players=putting_players,
         )
 
     def shuffle_library(self, seat: str, *, reason: str = "shuffle", actor: str | None = None) -> None:
@@ -1998,7 +2012,7 @@ class CommanderEngine(
             card.blocking = None
             changed_objects.append(card.object_id)
         previous = self.state.combat
-        self.state.combat = CombatState()
+        self.state.combat = previous.fresh()
         self._log(
             None,
             "combat.end",
@@ -2062,12 +2076,11 @@ class CommanderEngine(
             if card is not None and object_id not in candidate_ids:
                 candidates.append(card)
                 candidate_ids.add(object_id)
-        for blocker_ids in self.state.combat.blockers.values():
-            for object_id in blocker_ids:
-                card = self.state.cards.get(object_id)
-                if card is not None and object_id not in candidate_ids:
-                    candidates.append(card)
-                    candidate_ids.add(object_id)
+        for object_id in self.state.combat.blocker_object_ids():
+            card = self.state.cards.get(object_id)
+            if card is not None and object_id not in candidate_ids:
+                candidates.append(card)
+                candidate_ids.add(object_id)
 
         changed = False
         for card in candidates:
@@ -2433,7 +2446,7 @@ class CommanderEngine(
             if timing is None:
                 self._sorcery_timing(seat)
         else:
-            response = resolving_exile_land_play_response(self, seat, resolving)
+            response = resolving_land_play_response(self, seat, resolving)
         player = self.state.players[seat]
         selected_permission = selected_land_play_permission(self, seat, response if resolving is None else {})
         raw_from = str(response.get("from") or "hand")
@@ -2495,6 +2508,7 @@ class CommanderEngine(
             card.object_id,
             "battlefield",
             controller=seat,
+            putting_player=seat,
             entry_pay_life=pay_entry_life,
             enter_face=(str(face.get("name")) if face is not None else None),
             reason="land play",
@@ -2522,7 +2536,11 @@ class CommanderEngine(
             changed_objects=[card.object_id],
             changed_players=[seat],
         )
-        dispatch_semantic_event(self, LAND_PLAY_EVENT, {"player": seat, "from": origin})
+        dispatch_semantic_event(self, LAND_PLAY_EVENT, {
+            "player": seat,
+            "from": origin,
+            **physical_card_event_context(self.state, card),
+        })
         if resolving is not None:
             return
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
@@ -3827,7 +3845,7 @@ class CommanderEngine(
         control_effects.begin_control_duration_resolution(self, item)
         self._continue_resolution(
             stack_ref=item.ref,
-            effects=[dict(effect) for effect in effects],
+            effects=bind_ability_resolution_ordinals(self, item, effects),
             destination=destination,
             note=note,
             instruction_pointer=0,
@@ -4072,11 +4090,7 @@ class CommanderEngine(
 
     def _combat_damage_participants(self) -> list[CardInstance]:
         object_ids = set(self.state.combat.attackers)
-        object_ids.update(
-            blocker_id
-            for blocker_ids in self.state.combat.blockers.values()
-            for blocker_id in blocker_ids
-        )
+        object_ids.update(self.state.combat.blocker_object_ids())
         participants: list[CardInstance] = []
         for object_id in sorted(object_ids):
             card = self.state.cards.get(object_id)
@@ -4159,6 +4173,7 @@ class CommanderEngine(
         if protection_verdict(
             attacker_data,
             ProtectionSource.from_characteristics(blocker_data),
+            source_player=blocker.controller,
         ) is not ProtectionVerdict.ALLOWED:
             return False, "attacker_has_protection"
         return True, None
@@ -4241,21 +4256,7 @@ class CommanderEngine(
                     continue
 
                 def source_planeswalker(option: str) -> bool:
-                    target = by_ref.get(option)
-                    if (
-                        target is None
-                        or target.controller != source.controller
-                    ):
-                        return False
-                    target_types, _, _ = self._type_parts(
-                        str(
-                            self._effective_card_data(target).get(
-                                "type_line"
-                            )
-                            or ""
-                        )
-                    )
-                    return "planeswalker" in target_types
+                    return source_controls_planeswalker(self, by_ref.get(option), source.controller)
 
                 selections: list[tuple[str, str]] = []
                 if template.scope == "self" and source.ref in domains:
@@ -4333,6 +4334,7 @@ class CommanderEngine(
                             ),
                         )
                     )
+        costs.extend(protected_attack_payment_costs(self, kind=kind, payer=payer, domains=domains, by_ref=by_ref))
         return tuple(costs), ()
 
     def _attack_declaration_costs(

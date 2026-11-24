@@ -50,7 +50,7 @@ def scalar_source_context(host, source, effects, *, characteristics=None):
     return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics,include_counters=counters)}}
 
 
-def _reference(host, item, spec):
+def _reference(host, item, spec, *, use_phased_source_lki=False):
     snapshots = item.context.setdefault(SCALAR_REFERENCE_CONTEXT, {})
     if not isinstance(snapshots, dict):
         raise PublicQueryAmountError("Scalar reference continuation is malformed")
@@ -63,7 +63,9 @@ def _reference(host, item, spec):
             if card is None or card.logical_object_id != item.context.get("source_logical_object_id"):
                 raise PublicQueryAmountError("Scalar source identity is unavailable")
             initial = _snapshot(host, card,include_counters=spec.counter_name is not None)
-    elif spec.origin in {ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}:
+    elif spec.origin in {
+        ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER,
+    }:
         if len(item.targets) != 1 or item.targets[0] is None:
             raise PublicQueryAmountError("Scalar characteristic requires its single target")
         ref = item.targets[0]
@@ -102,6 +104,8 @@ def _reference(host, item, spec):
     card = host.state.cards.get(initial["object_id"])
     if card is not None and card.logical_object_id == initial["logical_object_id"] and card.zone == initial["zone"]:
         if card.phased_out:
+            if use_phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE:
+                return initial
             raise PublicQueryAmountError("Scalar characteristic object is phased out")
         return _snapshot(host, card,include_counters='counters' in initial or spec.counter_name is not None,
             requested_characteristic='mana_value' if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
@@ -125,7 +129,9 @@ def _reference_identity(host, item, spec):
             return None
         return card.object_id, expected_identity, card.zone
 
-    if spec.origin in {ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}:
+    if spec.origin in {
+        ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER,
+    }:
         if len(item.targets) != 1 or item.targets[0] is None:
             return None
         ref = item.targets[0]
@@ -146,8 +152,10 @@ def _reference_identity(host, item, spec):
     return card.object_id, context.get("card_object_identity"), "battlefield"
 
 
-def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_type=PublicQueryAmountError):
-    """Use the existing zone batch's predeparture checkpoint for pending reads."""
+def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_type=PublicQueryAmountError, phase_out=False):
+    """Use the original object immediately before a supported loss of availability."""
+    from .library_bottom_result_model import library_bottom_uses_source_power
+
     try:
         departing = {card.object_id: card for card in cards if card.zone in {"battlefield", "graveyard"}}
         if not departing:
@@ -157,11 +165,16 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
             if program is None:
                 continue
+            phased_source_lki = library_bottom_uses_source_power(program.effects)
+            if phase_out and not phased_source_lki:
+                continue
             specs = scalar_amount_specs(program.effects)
             selected = [spec for spec in specs if spec.origin in {
                 ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
-                ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE}]
+                ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER}]
             for spec in selected:
+                if phase_out and spec.origin is not ScalarAmountOrigin.SOURCE:
+                    continue
                 identity = _reference_identity(host, item, spec)
                 if identity is None:
                     continue
@@ -170,13 +183,21 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
                 expected_zone = 'graveyard' if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else 'battlefield'
                 if card is None or zone != expected_zone or card.zone != expected_zone or card.logical_object_id != logical_object_id:
                     continue
-                snapshot = _reference(host, item, spec)
+                snapshot = _reference(host, item, spec, use_phased_source_lki=phased_source_lki)
                 key = "source" if spec.origin is ScalarAmountOrigin.SOURCE else spec.origin.value
                 updates.append((item, key, snapshot))
         for item, key, value in updates:
             item.context.setdefault(SCALAR_REFERENCE_CONTEXT, {})[key] = value
     except (KeyError, TypeError, ValueError) as exc:
         raise error_type(str(exc)) from exc
+
+
+def library_bottom_source_power(host, item):
+    """Compare the original public source's signed power after the committed move."""
+    from .library_bottom_result_model import LIBRARY_BOTTOM_SOURCE_POWER
+
+    power = _reference(host, item, LIBRARY_BOTTOM_SOURCE_POWER, use_phased_source_lki=True)["power"]
+    return power if type(power) is int else 0
 
 
 def _history_amount(host, item, fact):
@@ -239,6 +260,16 @@ def _paid_creature_stat_amount(item, characteristic):
 
 def resolve_paid_sacrifice_condition(value: Mapping, item) -> bool:
     condition = paid_sacrifice_condition_from_reference(value)
+    from .paid_sacrifice_conditions import PAID_SUSPECTED_CONDITION_KIND, is_activation_paid_creature_reference
+
+    if is_activation_paid_creature_reference(value):
+        from .activation_paid_characteristic_model import (
+            resolve_activation_paid_creature_characteristics, resolve_activation_paid_creature_suspected,
+        )
+
+        if condition.kind == PAID_SUSPECTED_CONDITION_KIND:
+            return resolve_activation_paid_creature_suspected(item)
+        return condition.matches(resolve_activation_paid_creature_characteristics(item))
     snapshot = PaidSacrificeCharacteristics.from_dict(item.context.get(PAID_SACRIFICE_CHARACTERISTICS_CONTEXT))
     _validate_paid_incarnation(item, snapshot.logical_object_id, "Paid sacrifice characteristics")
     return condition.matches(snapshot)

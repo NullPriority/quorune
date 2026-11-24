@@ -29,13 +29,16 @@ _SPAN_START_FIELD = "start"
 
 @dataclass(frozen=True, slots=True)
 class _EffectComponentView:
+    active_zone: str
     capability_dependencies: list[str]
     cost_schema: dict[str, Any] | None
     coverage: list[str]
     effects: list[dict[str, Any]]
+    event: str
     event_condition: dict[str, Any] | None
     provenance: dict[str, str]
     target_schema: dict[str, Any] | None
+    handlers: tuple[Mapping[str, Any], ...] = ()
 
 
 def _copy_mapping(value: Any) -> dict[str, Any] | None:
@@ -238,6 +241,7 @@ def is_closed_composed_spell_effect_program(
         if multi_target and target_schema is not None and not _component_target_roles_are_exact(program.effects[offset:end], target_offset):
             return False
         component_shape = _EffectComponentView(
+            active_zone=program.active_zone,
             capability_dependencies=list(component_dependencies),
             cost_schema=(
                 dict(cost_schema) if cost_schema is not None else None
@@ -245,6 +249,7 @@ def is_closed_composed_spell_effect_program(
             coverage=list(coverage),
             effects=[_scoped_component_effect(effect, target_offset, restore=True) if multi_target and target_schema is not None
                 else dict(effect) for effect in program.effects[offset:end]],
+            event=program.event,
             event_condition=(
                 dict(event_condition)
                 if event_condition is not None

@@ -1200,9 +1200,6 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    from .special_node_shapes import special_node_capabilities,special_trigger_envelope_capabilities
-    special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
-    if special is not None:return special_trigger_envelope_capabilities(special,mechanics)
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -1212,6 +1209,10 @@ def capability_dependencies_for_node(
         from .spree_capability_shapes import modal_cost_capabilities
         return modal_cost_capabilities(effects=effects, target_schema=target_schema,
             mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
+
+    from .special_node_shapes import special_node_capabilities,special_trigger_envelope_capabilities
+    special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
+    if special is not None:return special_trigger_envelope_capabilities(special,mechanics)
 
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
@@ -1419,7 +1420,7 @@ def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add("return-to-owner-hand")
     if _entry.FIXED_ENTRY_RETURN_CAPABILITY in supplied:
         covered.update(
-            {_entry.FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand", SPELL_CASTER_LAND_RETURN_MECHANIC}
+            {_entry.FIXED_ENTRY_RETURN_MECHANIC, "return-to-owner-hand", SPELL_CASTER_LAND_RETURN_MECHANIC, "upkeep-participant-creature-return"}
         )
     return covered
 
@@ -1473,8 +1474,8 @@ def capability_covered_mechanics(
     covered.update(fixed_owner_zone_move_covered_mechanics(supplied)); covered.update(fixed_target_reanimation_covered_mechanics(supplied))
     covered.update(_return_to_hand_covered_mechanics(supplied))
     covered.update(stack_counter_covered_mechanics(supplied))
-    from .next_spell_payment import temporary_cast_grant_covered_mechanics
-    covered.update(_shape_gated_covered_mechanics(supplied) | temporary_cast_grant_covered_mechanics(supplied))
+    from .next_spell_payment import temporary_player_rule_covered_mechanics
+    covered.update(_shape_gated_covered_mechanics(supplied) | temporary_player_rule_covered_mechanics(supplied))
     if supplied.intersection(
         {
             "zone.draw.result_generated_ordering",

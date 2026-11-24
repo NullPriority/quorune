@@ -35,7 +35,15 @@ def fixed_monarch_node_capabilities(
     return (MONARCH_DESIGNATION_CAPABILITY,)
 
 
+def is_closed_fixed_monarch_program(program) -> bool:
+    required = fixed_monarch_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
 __all__ = [
     "MONARCH_DESIGNATION_CAPABILITY",
     "fixed_monarch_node_capabilities",
+    "is_closed_fixed_monarch_program",
 ]

@@ -4,12 +4,15 @@ import copy
 from contextlib import AbstractContextManager
 from typing import Any, Mapping, Protocol
 
+from .damage_transaction import damage_proposal_continuation_fields
 from .errors import GameRuleError
 from .mana_undo import clear_mana_undo_stack
 from .additional_cost_vocabulary import BLIGHT_CAST_PAYMENT_FIELD
 from .rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
+from .rules.casting.ordered_zone_cost_frame import ORDERED_ZONE_COST_FRAME_FIELD, OrderedZoneCostChoiceRequired
+from .rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, WholeZoneCostChoiceRequired
 from .rules.morph_actions import commit_turn_face_up
 from .suspend import commit_suspend
 from .rules.staged_cast_lifecycles import commit_staged_cast_lifecycle
@@ -77,13 +80,23 @@ def issue_mana_payment_replacement_choice(
         response=freeze_random_spell_cost_response(host,seat,response)
         if isinstance(required, BlightCastPaymentChoiceRequired):
             response = {**response, BLIGHT_CAST_PAYMENT_FIELD: required.payment.to_dict()}
+        if isinstance(required, OrderedZoneCostChoiceRequired):
+            response = {**response, ORDERED_ZONE_COST_FRAME_FIELD: required.frame.to_dict()}
+        if isinstance(required, WholeZoneCostChoiceRequired):
+            response = {**response, WHOLE_ZONE_COST_FRAME_FIELD: required.frame.to_dict()}
     pending = required.pending
     if pending.choice.chooser != seat:
         raise ReplacementEffectError(
             "Priority-action cost replacement must be chosen by the affected player"
         )
     event_kinds = tuple(event.kind for event in required.batch.events)
-    if event_kinds and all(kind == "damage" for kind in event_kinds):
+    from .replacement.face_status_copy import FACE_UP_COPY_EVENT
+
+    if event_kinds == (FACE_UP_COPY_EVENT,) and action == "turn_face_up":
+        resume_kind = "face_up_copy"
+    elif damage_proposal_continuation_fields(required) or (
+        event_kinds and all(kind == "damage" for kind in event_kinds)
+    ):
         resume_kind = "mana_payment"
     elif event_kinds == ("counter.place",) and action in {
         "cast",
@@ -99,6 +112,10 @@ def issue_mana_payment_replacement_choice(
         "suspend",
         "stage_cast_lifecycle",
     }:
+        resume_kind = "priority_action_cost"
+    elif action == "cast" and isinstance(required, WholeZoneCostChoiceRequired) and event_kinds and all(
+        kind == "zone.change" for kind in event_kinds
+    ):
         resume_kind = "priority_action_cost"
     elif event_kinds and all(kind == 'zone.change' for kind in event_kinds) and action == "activate":
         event_index = getattr(pending, "event_index", None)
@@ -126,6 +143,7 @@ def issue_mana_payment_replacement_choice(
         payload_by_actor={seat: context},
         continuation={
             "replacement_resume_kind": resume_kind,
+            **damage_proposal_continuation_fields(required),
             "priority_seat": seat,
             "priority_action": action,
             "priority_response": copy.deepcopy(dict(response)),
@@ -170,6 +188,8 @@ def execute_mana_choice_capable_priority_action(
         "_mana_payment_id",
         "_mana_replacement_selections",
         "_counted_cost_replacement_sequence",
+        ORDERED_ZONE_COST_FRAME_FIELD,
+        WHOLE_ZONE_COST_FRAME_FIELD,
         "_random_discard_cost_refs",
         "_waterbend_payment",
         BLIGHT_CAST_PAYMENT_FIELD,

@@ -171,6 +171,13 @@ def commit_attack_declaration(
         combat.declared_player_attacks = DeclaredPlayerAttackFact(tuple(sorted({
             assignment.target for assignment in committed if assignment.target_kind == 'player'})))
     for assignment in committed:
+        detached = combat.detached_blocker_ids
+        if detached is not None:
+            # This object had no current attack when the batch was validated.
+            # Its former blockers retain their role, separate from the new attack.
+            former = combat.blockers.pop(assignment.attacker_object_id, None)
+            if former:
+                detached[:] = sorted(set(detached).union(former))
         attacker = cards[assignment.attacker_object_id]
         attacker.attacking = assignment.target
         combat.attackers[assignment.attacker_object_id] = assignment.target
@@ -251,6 +258,25 @@ def commit_block_declaration(
     return tuple(committed)
 
 
+def is_unblocked_attacker_after_declaration(combat: CombatState, card: Any) -> bool:
+    return (
+        combat is not None and combat.blockers_declared and card is not None
+        and card.zone == "battlefield" and not card.phased_out
+        and card.attacking is not None and card.object_id in combat.attackers
+        and card.object_id not in combat.blockers
+    )
+
+
+def commit_blocked_status(combat: CombatState, card: Any, *, logical_object_id: str) -> bool:
+    """Record the blocked status without adding a physical blocker assignment."""
+
+    if (not is_unblocked_attacker_after_declaration(combat, card)
+            or card.logical_object_id != logical_object_id):
+        return False
+    combat.blockers[card.object_id] = []
+    return True
+
+
 def remove_combat_relationships(
     combat: CombatState,
     object_id: str,
@@ -267,7 +293,11 @@ def remove_combat_relationships(
         )
 
     was_attacker = object_id in combat.attackers
+    detached = combat.detached_blocker_ids
     removed_as_blocker = False
+    if detached is not None and object_id in detached:
+        detached.remove(object_id)
+        removed_as_blocker = True
     for blocker_ids in combat.blockers.values():
         if object_id not in blocker_ids:
             continue
@@ -301,6 +331,8 @@ __all__ = [
     "CombatRelationshipRemoval",
     "CombatRelationshipStateError",
     "commit_block_declaration",
+    "commit_blocked_status",
+    "is_unblocked_attacker_after_declaration",
     "commit_attack_declaration",
     "remove_combat_relationships",
 ]

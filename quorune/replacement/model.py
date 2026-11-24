@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .immutable import FrozenMap, ImmutableValueError, thaw_value
 from .operations import (
+    PreventAmount,
     SetField,
     ReplacementOperation,
     ReplacementOperationError,
@@ -19,9 +20,18 @@ class ReplacementEffectError(ValueError):
 
 
 COUNTER_REPLACEMENT_GENERATED_FIELD = "counter_replacement_generated"
+COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD = "counter_placement_rounded_to_zero"
 
 
-def _validate_shared_entry_occurrence(effect, operations, decline_operations):
+def _validate_shared_replacement_occurrence(effect, operations, decline_operations):
+    from .face_status_copy import FACE_UP_COPY_EVENT, validate_face_up_copy_replacement
+
+    if effect.event_kind == FACE_UP_COPY_EVENT:
+        try:
+            validate_face_up_copy_replacement(effect, operations, decline_operations)
+        except (ValueError, TypeError) as exc:
+            raise ReplacementEffectError(str(exc)) from exc
+        return
     if effect.occurrence_id is None:
         return
     if (type(effect.occurrence_id) is not str or not effect.occurrence_id
@@ -38,6 +48,22 @@ def _validate_shared_entry_occurrence(effect, operations, decline_operations):
             or effect.conditions.get('destination') != {'eq': 'battlefield'}
             or effect.optional or decline_operations):
         raise ReplacementEffectError('Shared ordinary entry occurrence requires mandatory tap state')
+
+
+def _validate_prevention_life_scope(effect, operations, decline_operations):
+    bound = tuple(operation.life_gain_player for operation in (*operations, *decline_operations)
+                  if isinstance(operation, PreventAmount) and operation.life_gain_player is not None)
+    if not bound:
+        return
+    if (
+        len(bound) != 1 or len(operations) != 1 or decline_operations
+        or effect.event_kind != "damage" or effect.replacement_class is not ReplacementClass.OTHER
+        or effect.optional or thaw_value(effect.conditions) != {
+            "target_controller": {"eq": bound[0]}, "target_kind": {"in": ["player"]},
+            "amount": {"not_in": [0]}, "combat": {"eq": False},
+        }
+    ):
+        raise ReplacementEffectError("Prevention life gain requires one mandatory noncombat controller prevention")
 
 
 def _translate_error(exc: Exception) -> ReplacementEffectError:
@@ -295,6 +321,11 @@ class ReplaceableEvent:
                 or type(generated) is not bool or (generated and not applied)
             ):
                 raise ReplacementEffectError("Counter replacement provenance is malformed")
+        if COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD in self.payload:
+            amount = self.payload.get("amount")
+            if (self.kind != "counter.place" or self.payload[COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD] is not True
+                    or type(amount) is not int or amount != 0 or not applied):
+                raise ReplacementEffectError("Rounded-to-zero counter placement requires its applied quantity result")
         children = tuple(self.children)
         if any(not isinstance(child, ReplaceableEvent) for child in children):
             raise ReplacementEffectError(
@@ -306,6 +337,12 @@ class ReplaceableEvent:
             raise ReplacementEffectError(
                 "Nested replaceable event IDs must be unique"
             )
+        from .face_status_copy import FACE_UP_COPY_EVENT, validate_face_up_copy_event
+        if self.kind == FACE_UP_COPY_EVENT:
+            try:
+                validate_face_up_copy_event(self)
+            except (ValueError, TypeError) as exc:
+                raise ReplacementEffectError(str(exc)) from exc
         from ..tribute_model import TRIBUTE_ENTRY_EVENT
         if self.kind==TRIBUTE_ENTRY_EVENT:
             from .tribute import validate_tribute_choice_event
@@ -486,7 +523,13 @@ class ReplacementEffect:
             )
         from .tribute import validate_tribute_replacement
         validate_tribute_replacement(self,lowered,lowered_decline)
-        _validate_shared_entry_occurrence(self, lowered, lowered_decline)
+        _validate_shared_replacement_occurrence(self, lowered, lowered_decline)
+        _validate_prevention_life_scope(self, lowered, lowered_decline)
+        from ..entry_designations import EntryCardNameChoice
+        if any(isinstance(operation, EntryCardNameChoice) for operation in (*lowered, *lowered_decline)):
+            if (self.event_kind != "zone.change" or self.optional or len(lowered) != 1
+                    or not isinstance(lowered[0], EntryCardNameChoice) or lowered_decline):
+                raise ReplacementEffectError("An entry name is one mandatory zone-change choice")
         if self.application_group_id is not None and (
             len(lowered) != 1
             or operation_to_dict(lowered[0]) != {"op": "prevent"}
@@ -642,6 +685,7 @@ class ReplacementSelection:
     effect_id: str
     allocation: Mapping[str, int] | None = None
     objects: tuple[str,...] | None = None
+    card_name: str | None = None
 
     def __post_init__(self) -> None:
         if not self.event_id or not self.chooser:
@@ -659,6 +703,11 @@ class ReplacementSelection:
                     or len(set(self.objects))!=len(self.objects) or self.allocation is not None):
                 raise ReplacementEffectError('Replacement object choices require distinct references and cannot be prevention allocations')
             object.__setattr__(self,'objects',tuple(self.objects))
+        if self.card_name is not None and (
+            type(self.card_name) is not str or not self.card_name or self.card_name != self.card_name.strip()
+            or self.objects is not None or self.allocation is not None
+        ):
+            raise ReplacementEffectError("An entry card name is one distinct replacement choice")
         if not isinstance(self.effect_id, str) or not self.effect_id:
             raise ReplacementEffectError(
                 "Replacement selection effect IDs must be canonical strings"
@@ -694,6 +743,7 @@ class ReplacementSelection:
             "chooser": self.chooser,
             "effect_id": self.effect_id,
             **({'objects':list(self.objects)} if self.objects is not None else {}),
+            **({"card_name": self.card_name} if self.card_name is not None else {}),
             **(
                 {"allocation": thaw_value(self.allocation)}
                 if self.allocation is not None
@@ -707,6 +757,10 @@ class ReplacementSelection:
         if "allocation" in value:
             expected.add("allocation")
         if 'objects' in value:expected.add('objects')
+        if "card_name" in value:
+            if type(value["card_name"]) is not str:
+                raise ReplacementEffectError("A replacement card name must be a string")
+            expected.add("card_name")
         exact_fields(value, expected, field_name="selection")
         if 'objects' in value and not isinstance(value['objects'],(list,tuple)):
             raise ReplacementEffectError('Replacement object selections must be an array')
@@ -728,6 +782,7 @@ class ReplacementSelection:
                 value["allocation"] if "allocation" in value else None
             ),
             objects=value['objects'] if 'objects' in value else None,
+            card_name=value.get("card_name"),
         )
 
 

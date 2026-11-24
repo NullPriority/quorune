@@ -515,6 +515,27 @@ class FixtureAliasPriorityTests(unittest.TestCase):
                     self.assertEqual(db.lookup('Blazing Firesinger // Seething Song', fuzzy=False).oracle_id,
                                      indexed['oracle_by_normalized_name']['blazing firesinger // seething song'])
 
+    def test_game_card_alias_precedes_art_series_in_either_fixture_order(self):
+        from scripts.build_test_database import build_fixture_database
+        from quorune.carddb import CardDatabase
+
+        original = json.loads((ROOT / "tests/fixtures/deck-alias-collision-cards.json").read_bytes())["cards"]
+        playable, art = original
+        another = {
+            **art, "oracle_id": "00000000-0000-4891-8060-00000000da03",
+            "name": "Boundary Gate // Boundary Artwork",
+        }
+        for cards in ((playable, art, another), (art, another, playable)):
+            with self.subTest(first=cards[0]["layout"]), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                indexed = self.index(root, cards)
+                self.assertEqual([], indexed["conflicts"])
+                self.assertEqual(playable["oracle_id"], indexed["oracle_by_normalized_name"]["boundary gate"])
+                database = root / "cards.sqlite3"
+                build_fixture_database(root / "cards.json", database)
+                with CardDatabase(database) as db:
+                    self.assertEqual(playable["oracle_id"], db.lookup("Boundary Gate", fuzzy=False).oracle_id)
+
     def test_duplicate_canonical_names_still_fail_closed(self):
         with tempfile.TemporaryDirectory() as directory:
             indexed = self.index(Path(directory), [card('Same Name', 'first'), card('Same Name', 'second')])

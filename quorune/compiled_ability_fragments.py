@@ -17,6 +17,8 @@ from .enchant_spec import (
     SimpleEnchantSpec,
     TypedEnchantSpec,
 )
+from .card_programs.admission import program_has_complete_card_program_admission
+from .off_battlefield_creatures import OFF_BATTLEFIELD_SELF_CREATURE_HANDLER
 from .semantic_runtime.ability_fragments import fragments_from_descriptors
 
 
@@ -100,17 +102,26 @@ def compiled_static_ability_fragments(
                 if program.handlers
             }
         )
-    for zone in ("battlefield", "all"):
-        programs_by_key.update(
-            {
-                program.key: program
-                for program in semantics.programs_for_oracle(record.oracle_id, active_zone=zone)
-                if program.handlers or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
-            }
-        )
-    if card.zone in {'graveyard','stack'}:
-        programs_by_key.update({program.key:program for program in host.semantics.programs_for_oracle(
-            record.oracle_id,active_zone=card.zone) if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage})
+    from .discard_effect_origin import PUBLIC_DISCARD_DESTINATION_SCOPE
+    from .event_card_return import GRAVEYARD_SOURCE_ARRIVAL_EVENT
+    from .zone_transition_model import PUBLIC_ZONES
+
+    handler_zones = {"battlefield", "all"}
+    ability_zones = set(handler_zones)
+    if card.zone in {"graveyard", "stack"}:
+        ability_zones.add(card.zone)
+    if card.zone in PUBLIC_ZONES and not card.face_down:
+        ability_zones.add(PUBLIC_DISCARD_DESTINATION_SCOPE)
+    for program in semantics.programs_for_oracle(record.oracle_id):
+        # Copies retain this printed ability through the arrival that precedes token cleanup.
+        copiable_arrival = (card.zone in {"battlefield", "stack"} and program.active_zone == "graveyard"
+                            and program.event == GRAVEYARD_SOURCE_ARRIVAL_EVENT)
+        if (
+            (program.active_zone in handler_zones and program.handlers)
+            or ((program.active_zone in ability_zones or copiable_arrival)
+                and CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage)
+        ):
+            programs_by_key[program.key] = program
     for program in (
         programs_by_key[key] for key in sorted(programs_by_key)
     ):
@@ -132,7 +143,10 @@ def compiled_static_ability_fragments(
             fragments.append(StaticComponentSpec(program.key))
         if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
             fragments.append(StaticComponentSpec(program.key))
-        descriptor_fragments = fragments_from_descriptors(program.handlers)
+        handlers = tuple(d for d in program.handlers
+                         if d.get("handler_id") != OFF_BATTLEFIELD_SELF_CREATURE_HANDLER
+                         or program_has_complete_card_program_admission(program))
+        descriptor_fragments = fragments_from_descriptors(handlers)
         if any(
             isinstance(fragment, StaticComponentScopeSpec)
             and fragment.parent_semantic_key != program.key

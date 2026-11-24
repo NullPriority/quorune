@@ -1,9 +1,41 @@
 """Complete whole-hand discard instructions with explicitly linked draw counts."""
 from . import regex_working_set as re
-from ..discard_result_model import DISCARD_RESULT_MECHANIC, DISCARD_RESULT_OPERATION
+from ..discard_result_model import (
+    DAMAGE_RECIPIENT_REFERENCE, DISCARD_RESULT_MECHANIC, DISCARD_RESULT_OPERATION, SELECTED_LAND_DISCARD_RESULT_VERSION,
+    event_player_discard_result_effect,
+)
+from ..event_player_modifier_model import DEFENDING_PLAYER_REFERENCE
 from ..discard_result_model import FIXED_SUBSET_DISCARD_DRAW_MECHANIC
 from ..discard_result_model import VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+
+
+def selected_land_discard_result_template(body):
+    if re.fullmatch(
+        r'You may discard any number of land cards\. Put that many \+1/\+1 counters on this creature and draw that many cards\.',
+        ' '.join(body.split()), re.I,
+    ):
+        effect = {'op': DISCARD_RESULT_OPERATION, 'schema_version': SELECTED_LAND_DISCARD_RESULT_VERSION,
+            'actor': '$controller', 'players': ['$controller'], 'reduction': 'own', 'offset': 0}
+        return 'source-entry-selected-land-discard-result-v4', (effect,), None, (DISCARD_RESULT_MECHANIC,)
+    return None
+
+
+def event_player_discard_result_template(binding, body):
+    """Bind one printed whole-hand result to its own combat or damage occurrence."""
+    if binding.active_zone != 'battlefield' or body != binding.body:
+        return None
+    scope = (binding.event.value, binding.variant)
+    if scope == ('creature.becomes_blocked', 'this_creature_becomes_blocked'):
+        subject, player = 'defending player', DEFENDING_PLAYER_REFERENCE
+    elif scope == ('damage.dealt.self', 'source_damage_player'):
+        subject, player = 'that player', DAMAGE_RECIPIENT_REFERENCE
+    else:
+        return None
+    if not re.fullmatch(rf'{subject} discards all the cards in their hand, then draws that many cards\.', body, re.I):
+        return None
+    return ('event-player-whole-hand-discard-result-v3', (event_player_discard_result_effect(player),),
+            None, (DISCARD_RESULT_MECHANIC,))
 
 
 def discard_result_draw_template(text):

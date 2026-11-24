@@ -20,6 +20,9 @@ def qualified_destruction_query(phrase,*,parse_base):
         return ObjectQuerySpec(zones=('battlefield',),types_all=('enchantment',),excluded_subtypes=('aura',))
     if phrase=='nonbasic lands':
         return ObjectQuerySpec(zones=('battlefield',),types_all=('land',),excluded_supertypes=('basic',))
+    if phrase == "nonartifact, nonblack creatures":
+        return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+                               excluded_types=("artifact",), colors_none=("B",))
     color=re.fullmatch(r'non(?P<color>white|blue|black|red|green) creatures',phrase)
     if color:
         return ObjectQuerySpec(zones=('battlefield',),types_all=('creature',),

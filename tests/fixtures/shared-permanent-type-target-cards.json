@@ -1,0 +1,62 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Legerdemain",
+      "oracle_id": "107d5f67-1395-444f-b612-c5cc770df956",
+      "oracle_text": "Exchange control of target artifact or creature and another target permanent that shares one of those types with it. (This effect lasts indefinitely.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-05-06",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "You can’t cast Legerdemain unless both targets share a type at that time. It will also check to make sure they share a type as it resolves. If they no longer do so, the exchange will not occur.",
+      "oracle_id": "107d5f67-1395-444f-b612-c5cc770df956",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC shared card-type targeting rulings"
+}

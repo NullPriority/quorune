@@ -146,6 +146,12 @@ class FixedCounterPlacementHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        from ..reflexive_trigger_model import SOURCE_COUNTER_REFLEXIVE_FIELD
+
+        if SOURCE_COUNTER_REFLEXIVE_FIELD in effect:
+            from .source_counter_reflexive_intent import lower_source_counter_reflexive
+
+            return lower_source_counter_reflexive(effect, context, handler_id=self.handler_id)
         if effect.get('card', '') is None:
             if 'cards' in effect:
                 raise SemanticNodeError('Counter placement cannot combine single and group subjects')
@@ -307,7 +313,10 @@ class FixedCounterPlacementSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        from ..counter_placement_sets import PAIRED_PLANESWALKER_LOYALTY_FIELD, paired_planeswalker_loyalty_dependencies
+
         allowed = {
+            PAIRED_PLANESWALKER_LOYALTY_FIELD,
             "op",
             "source",
             "set",
@@ -366,6 +375,15 @@ class FixedCounterPlacementSetHandler:
                 "Counter-set replacement selections must be an array"
             )
         try:
+            paired_loyalty_source = None
+            if PAIRED_PLANESWALKER_LOYALTY_FIELD in effect:
+                instruction = {key: value for key, value in effect.items()
+                               if key not in {_REASON_FIELD, "_replacement_selections"}}
+                paired_planeswalker_loyalty_dependencies(instruction, source_ref=source_ref)
+                original = context.source
+                if original is None or original.card_ref != source_ref or original.object_id is None:
+                    raise ValueError("Paired loyalty lost its original resolving source identity")
+                paired_loyalty_source = (original.object_id, original.logical_object_id)
             intent = PlaceCountersOnSetIntent(
                 actor=context.actor,
                 spec=spec,
@@ -374,6 +392,7 @@ class FixedCounterPlacementSetHandler:
                 reason=raw_reason or context.default_reason,
                 source_ref=source_ref,
                 replacement_selections=tuple(raw_selections),
+                paired_loyalty_source=paired_loyalty_source,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

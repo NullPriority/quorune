@@ -4,6 +4,10 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..rules.cast_creature_set_spell_copy import CAST_CREATURE_SET_COPY_FIELD
+from ..rules.cast_source_spell_copy import SOURCE_CAST_COPY_FIELD
+from ..rules.source_directed_redirect_model import is_source_directed_redirect
+from ..stack_spell_copy_model import FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec
 from ..stack_target_change_model import is_mandatory_single_stack_target_change, is_optional_stack_target_change
 from ..semantic_runtime.intents import (
     CopyStackItemIntent,
@@ -43,6 +47,12 @@ class StackTargetChoiceHandler:
         "_stack_label",
         "copy_source",
         "retain_targets_only",
+        FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD,
+        "_redirect_slots",
+        SOURCE_CAST_COPY_FIELD,
+        CAST_CREATURE_SET_COPY_FIELD,
+        "player",
+        "_copy_receiver_ids",
     )
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
@@ -50,6 +60,8 @@ class StackTargetChoiceHandler:
         "target_stack",
         "default_targets",
         "target_schema",
+        "legal_actions.choice_schema.legal_values",
+        "legal_actions.choice_schema.legal_refs",
     )
     mutation_path: tuple[str, ...] = (
         "authoritative target-plan query",
@@ -66,6 +78,29 @@ class StackTargetChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if CAST_CREATURE_SET_COPY_FIELD in effect:
+            from .cast_creature_set_copy import prepare_cast_creature_set_copy
+            return prepare_cast_creature_set_copy(effect, context)
+        if SOURCE_CAST_COPY_FIELD in effect:
+            from .source_cast_copy import prepare_source_cast_copy
+            return prepare_source_cast_copy(effect, context)
+        if is_source_directed_redirect(effect):
+            from .source_directed_redirect import prepare_source_directed_redirect
+            return prepare_source_directed_redirect(effect, context)
+        permanent_copy = None
+        if PERMANENT_SPELL_COPY_FIELD in effect:
+            try:
+                permanent_copy = PermanentSpellCopySpec.from_dict(effect[PERMANENT_SPELL_COPY_FIELD])
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if self.mode != "copy" or effect.get("retain_targets_only") is not True:
+                raise SemanticChoiceError("Permanent spell copy must retain the original choices")
+        copies = effect.get(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, 1)
+        if FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD in effect and (
+            self.mode != "copy" or type(copies) is not int or copies != 3
+            or effect.get("retain_targets_only") is not True or permanent_copy is not None or "copy_source" in effect
+        ):
+            raise SemanticChoiceError("Three copies require the complete retained-target instruction")
         target_ref = str(effect.get("stack") or "")
         target = context.query.stack_object(
             target_ref,
@@ -79,6 +114,15 @@ class StackTargetChoiceHandler:
                     reason="target stack object no longer exists"
                 ),
             )
+        if permanent_copy is not None:
+            if permanent_copy.kind == "artifact" and target.copy_source is None:
+                raise SemanticChoiceError("Artifact spell copy requires its retained cast source")
+            if permanent_copy.kind == "nonlegendary" and (
+                target.controller != context.actor or target.copy_source is not None
+            ):
+                raise SemanticChoiceError("Nonlegendary spell copy requires its controlled target")
+        if copies == 3 and target.controller != context.actor:
+            raise SemanticChoiceError("Three copies require the current controlled spell target")
         validation_actor = (
             context.actor if self.mode == "copy" else target.controller
         )
@@ -101,8 +145,9 @@ class StackTargetChoiceHandler:
                         reason=context.stack_label,
                         target_snapshots=target.target_snapshots,
                         copy_source=target.copy_source,
+                        permanent_copy=permanent_copy,
                     ),
-                )
+                ) * copies
             return SemanticChoicePreparation(
                 request=None,
                 continuation_effect=FrozenMap(effect),
@@ -172,6 +217,15 @@ class StackTargetChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if CAST_CREATURE_SET_COPY_FIELD in effect:
+            from .cast_creature_set_copy import complete_cast_creature_set_copy
+            return complete_cast_creature_set_copy(effect, response, query)
+        if SOURCE_CAST_COPY_FIELD in effect:
+            from .source_cast_copy import complete_source_cast_copy
+            return complete_source_cast_copy(effect, response, query)
+        if is_source_directed_redirect(effect):
+            from .source_directed_redirect import complete_source_directed_redirect
+            return complete_source_directed_redirect(continuation, response, query)
         target_ref = str(effect.get("_target_stack_ref") or "")
         target = query.stack_object(target_ref)
         if target is None:

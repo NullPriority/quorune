@@ -503,6 +503,245 @@ class EventSpellCopyNativeTests(unittest.TestCase):
         hand=len(session.state.players['B'].zones['hand']);session=self.replay(session,load=True);self.finish(session)
         self.assertEqual('graveyard',session.state.cards[counter.object_id].zone);self.assertEqual(hand+2,len(session.state.players['B'].zones['hand']));self.replay(session,load=True)
 
+    def test_complete_real_permanent_copy_exceptions_bind_exact_roles(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.stack_spell_copy_model import (
+            PERMANENT_SPELL_COPY_CAPABILITY, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec,
+            beast_or_bird_creature_cast_condition,
+        )
+        from test_controller_creature_keyword_absence import register_card
+
+        for name, kind in (("Double Major", "nonlegendary"), ("Tawnos, the Toymaker", "artifact")):
+            with self.subTest(name=name):
+                source = self.db.lookup(name, fuzzy=False)
+                result, semantics = register_card(self.db, self.registry, name)
+                self.assertTrue(result["strict_capability_ready"], result["blockers"])
+                self.assertEqual("capability_closed", result["trust_basis"])
+                program, = semantics.programs_for_oracle(source.oracle_id)
+                spec = PermanentSpellCopySpec(kind)
+                self.assertEqual(spec.target_schema, program.target_schema)
+                self.assertIn(PERMANENT_SPELL_COPY_CAPABILITY, program.capability_dependencies)
+                if kind == "artifact":
+                    self.assertEqual("spell.cast", program.event)
+                    self.assertEqual(beast_or_bird_creature_cast_condition(), program.event_condition)
+                    parent, = program.effects
+                    self.assertEqual(("offer_optional_effect", "$controller"), (parent["op"], parent["player"]))
+                    original, = parent["effects"]
+                    invalid_scope = replace(program, event_condition={"field": "types", "op": "contains_any", "value": ["creature"]})
+                else:
+                    self.assertEqual("resolve", program.event)
+                    original, = program.effects
+                    invalid_scope = replace(program, target_schema={**program.target_schema, "controller_relation": "opponent"})
+                self.assertEqual(spec.effects[0], original)
+                self.assertFalse(bind_semantic_program_runtime(
+                    invalid_scope, capability_registry=self.registry, profile="commander_review",
+                )["strict"])
+                altered = {**original, PERMANENT_SPELL_COPY_FIELD: {"schema_version": True, "kind": kind}}
+                wrong = replace(program, effects=[{**parent, "effects": [altered]}] if kind == "artifact" else [altered])
+                self.assertFalse(bind_semantic_program_runtime(
+                    wrong, capability_registry=self.registry, profile="commander_review",
+                )["strict"])
+        with patch("quorune.compiler.fixed_stack_spell_copy.cast_event_spell_copy_template", return_value=None):
+            withheld, _ = register_card(self.db, self.registry, "Tawnos, the Toymaker")
+            self.assertFalse(withheld["strict_capability_ready"], withheld)
+
+    def test_actual_bird_decline_and_kicked_beast_keep_original_choice_and_become_one_artifact(self):
+        game = self.session(7071001)
+        source = self.add(game.engine, "Tawnos, the Toymaker")
+        bear = self.add(game.engine, "Grizzly Bears", zone="hand")
+        bird = self.add(game.engine, "Trial Wing Scout", zone="hand")
+        beast = self.add(game.engine, "Baloth Gorger", zone="hand")
+        doubler = self.add(game.engine, "Parallel Lives")
+        game.state.config.semantic_policy = "trusted_only"
+        for card in (source, beast, bird, doubler):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"G": 3, "U": 1, "C": 8})
+        self.checkpoint(game)
+        self.cast(game, "A", bear)
+        self.assertIsNone(self.resolve(game))
+        self.cast(game, "A", bird)
+        decline = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (decline.kind, decline.actors))
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "choice": "apply"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(any(card.is_token for card in game.state.cards.values()))
+
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        cast, = (row for row in actions if row["id"] == f"cast:{beast.ref}")
+        result = game.act("pilot:A", {"action_id": cast["id"], "cost_option": "kicked", "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        original, = (item for item in game.state.stack if item.card_object_id == beast.object_id)
+        self.assertIs(True, original.context["kicked"])
+        choice = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (choice.kind, choice.actors))
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        casts = len(game.engine._current_turn_history("spell_cast"))
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertIs(True, copied.context["kicked"])
+        self.assertEqual((), copied.mana_colors_spent)
+        card = game.state.cards[copied.card_object_id]
+        self.assertEqual("stack", card.zone)
+        self.assertIn("Artifact", game.engine._spell_copy_characteristics(card)["type_line"])
+        self.assertFalse(any(item.is_token for item in game.state.cards.values()))
+        game = self.replay(game, load=True)
+        self.finish(game)
+        token, = (card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield")
+        self.assertEqual(3, token.counters.get("+1/+1"))
+        self.assertEqual(3, game.state.cards[beast.object_id].counters.get("+1/+1"))
+        self.assertIn("Artifact", game.engine._copyable_characteristics(token)["type_line"])
+        self.assertNotIn("Artifact", game.engine._copyable_characteristics(game.state.cards[beast.object_id])["type_line"])
+        self.assertEqual(casts, len(game.engine._current_turn_history("spell_cast")))
+        self.assertFalse(any(event.code == "token.create" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_actual_tawnos_can_copy_the_retained_countered_bird_spell(self):
+        game = self.session(7071002)
+        source = self.add(game.engine, "Tawnos, the Toymaker")
+        bird = self.add(game.engine, "Trial Wing Scout", zone="hand")
+        counter = self.add(game.engine, "Counterspell", seat="B", zone="hand")
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, source)
+        self.assert_closed(game, counter)
+        game.state.players["B"].mana_pool.update({"U": 2})
+        self.prepare(game, mana={"U": 1, "C": 1})
+        self.checkpoint(game)
+        self.cast(game, "A", bird)
+        spell, = (item for item in game.state.stack if item.card_object_id == bird.object_id)
+        self.cast(game, "B", counter, [spell.ref])
+        choice = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (choice.kind, choice.actors))
+        self.assertEqual("graveyard", game.state.cards[bird.object_id].zone)
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        copied, = (item for item in game.state.stack if item.kind == "spell_copy")
+        self.assertIsNotNone(copied.card_object_id)
+        self.finish(game)
+        token, = (card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield")
+        self.assertEqual("Trial Wing Scout", game.engine._effective_card_data(token)["name"])
+        self.assertIn("Artifact", game.engine._effective_card_data(token)["type_line"])
+        self.assertEqual("graveyard", game.state.cards[bird.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_double_major_targets_own_spell_and_the_copy_can_be_countered(self):
+        for counter_copy in (False, True):
+            with self.subTest(counter_copy=counter_copy):
+                game = self.session(7071010 + int(counter_copy))
+                source = self.add(game.engine, "Double Major", zone="hand")
+                legend = self.add(game.engine, "Isamaru, Hound of Konda", zone="hand")
+                foreign = self.add(game.engine, "Ambush Viper", seat="B", zone="hand")
+                counter = self.add(game.engine, "Counterspell", seat="B", zone="hand")
+                game.state.config.semantic_policy = "trusted_only"
+                for card in (source, legend, foreign, counter):
+                    self.assert_closed(game, card)
+                game.state.players["B"].mana_pool.update({"G": 1, "C": 1, "U": 2})
+                self.prepare(game, mana={"G": 1, "U": 1, "W": 1})
+                self.checkpoint(game)
+                self.cast(game, "A", legend)
+                self.cast_for(game, "B", foreign, reserve={"U": 2})
+                self.assertEqual(2, game.state.players["B"].mana_pool["U"])
+                original, = (item for item in game.state.stack if item.card_object_id == legend.object_id)
+                foreign_spell, = (item for item in game.state.stack if item.card_object_id == foreign.object_id)
+                self.priority(game, "A")
+                actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action, = (row for row in actions if row["id"] == f"cast:{source.ref}")
+                before = authoritative_state_hash(game.state)
+                rejected = game.act("pilot:A", {"action_id": action["id"], "targets": [foreign_spell.ref], "pay": "auto"})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                self.cast(game, "A", source, [original.ref])
+                self.until(game, lambda current: any(item.kind == "spell_copy" for item in current.state.stack))
+                copy, = (item for item in game.state.stack if item.kind == "spell_copy")
+                card = game.state.cards[copy.card_object_id]
+                self.assertEqual("stack", card.zone)
+                self.assertNotIn("Legendary", game.engine._spell_copy_characteristics(card)["type_line"])
+                if counter_copy:
+                    self.cast(game, "B", counter, [copy.ref])
+                game = self.replay(game, load=True)
+                self.finish(game)
+                self.assertEqual("battlefield", game.state.cards[legend.object_id].zone)
+                self.assertIn("Legendary", game.engine._copyable_characteristics(game.state.cards[legend.object_id])["type_line"])
+                tokens = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                self.assertEqual(0 if counter_copy else 1, len(tokens))
+                if tokens:
+                    self.assertEqual(("A", "Isamaru, Hound of Konda"), (
+                        tokens[0].controller, game.engine._effective_card_data(tokens[0])["name"],
+                    ))
+                    self.assertNotIn("Legendary", game.engine._copyable_characteristics(tokens[0])["type_line"])
+                self.replay(game, load=True)
+
+
+    def test_actual_double_major_keeps_a_face_down_creature_spells_identity_private(self):
+        game = self.session(7071020)
+        source = self.add(game.engine, "Double Major", zone="hand")
+        hidden = self.add(game.engine, "Lumithread Field", zone="hand", ref="permanent-copy-hidden")
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, source)
+        self.assert_closed(game, hidden)
+        self.prepare(game, mana={"C": 3, "G": 1, "U": 1})
+        self.checkpoint(game)
+        morph = game.act("pilot:A", {"action_id": f"cast-morph:{hidden.ref}", "pay": "auto",
+                                    "reserve": {"G": 1, "U": 1}})
+        self.assertTrue(morph.ok, morph.summary)
+        original, = (item for item in game.state.stack if item.card_object_id == hidden.object_id)
+        self.cast(game, "A", source, [original.ref])
+        self.until(game, lambda current: any(item.kind == "spell_copy" for item in current.state.stack))
+        for seat in "BCD":
+            state = json.dumps(game.packet(f"pilot:{seat}", full=True)["state"])
+            self.assertNotIn("Lumithread Field", state)
+            self.assertNotIn(hidden.oracle_id, state)
+        game = self.replay(game, load=True)
+        self.finish(game)
+        token, = (card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield")
+        values = game.engine._effective_card_data(token)
+        self.assertEqual(("", "Creature", 0, [], []),
+                         (values["name"], values["type_line"], values["mana_value"], values["colors"], values["keywords"]))
+        self.assertFalse(token.face_down)
+        self.assertTrue(game.state.cards[hidden.object_id].face_down)
+        self.assertEqual((2, 2), (game.engine._numeric_stat(token.object_id, "power"),
+                                  game.engine._numeric_stat(token.object_id, "toughness")))
+        for seat in "BCD":
+            state = json.dumps(game.packet(f"pilot:{seat}", full=True)["state"])
+            self.assertNotIn("Lumithread Field", state)
+            self.assertNotIn(hidden.oracle_id, state)
+        self.replay(game, load=True)
+
+    def test_verified_permanent_copy_exception_withdrawal_preserves_ordinary_cast_copies(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.stack_spell_copy_model import PERMANENT_SPELL_COPY_CAPABILITY
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        capability = PERMANENT_SPELL_COPY_CAPABILITY
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        next(row for row in raw["capabilities"] if row["id"] == capability).update(
+            status="blocked", blockers=["Scoped permanent spell copy exception withdrawal"],
+        )
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        closure = registry.closure((capability,), profile="commander_review")
+        self.assertIn(f"status:{capability}:blocked", closure.blockers)
+        self.assertFalse(any("unverified" in blocker for blocker in closure.blockers))
+        for name in ("Double Major", "Tawnos, the Toymaker"):
+            rejected, _ = register_card(self.db, registry, name)
+            self.assertFalse(rejected["strict_capability_ready"], rejected)
+        retained, _ = register_card(self.db, registry, "Reflections of Littjara")
+        self.assertTrue(retained["strict_capability_ready"], retained["blockers"])
+
+
 class DirectCastSpellTokenReferenceTests(unittest.TestCase):
     def test_new_recipe_and_old_spelled_origins_have_distinct_closed_codecs(self):
         from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec

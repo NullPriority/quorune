@@ -1,0 +1,356 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}",
+      "name": "Anointed Procession",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Boon Reflection",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Giant Cindermaw",
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)\nPlayers can't gain life.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "3",
+      "type_line": "Creature — Dinosaur Beast"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 9.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{B}{B}{B}",
+      "name": "Profane Transfusion",
+      "oracle_id": "2eaee808-b72a-4950-ab4f-ab8e8d12f838",
+      "oracle_text": "Two target players exchange life totals. You create an X/X colorless Horror artifact creature token, where X is the difference between those players' life totals.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a player can't gain life, that player can't exchange life totals with a player with a higher life total. Similarly, a player who can't lose life can't exchange life totals with a player with a lower life total.",
+      "oracle_id": "2eaee808-b72a-4950-ab4f-ab8e8d12f838",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Use the difference between the life totals after the exchange to determine the size of the Horror token. Because replacement effects can modify the life gain and life loss, this number may be different from what it was before the exchange.",
+      "oracle_id": "2eaee808-b72a-4950-ab4f-ab8e8d12f838",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "When life totals are exchanged, each player gains or loses the amount of life necessary to equal the other player's life total. For example, if one player has 10 life and the other has 17 life, the first player gains 7 life and the other one loses 7 life. Replacement effects may modify these gains and losses, and triggered abilities may trigger on them.",
+      "oracle_id": "2eaee808-b72a-4950-ab4f-ab8e8d12f838",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "All of the tokens enter the battlefield simultaneously. They’ll be created with the same name, color, type and subtype, abilities, power, toughness, and so on.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect creates more than one kind of token, it’ll create twice as many of each kind. For example, if you cast Bestial Menace while controlling Anointed Procession, you’ll create two Snake tokens, two Wolf tokens, and two Elephant tokens.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the effect creating the tokens instructs you to do something with those tokens at a later time, like exiling them at the end of combat, you’ll do that for all the tokens.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the token you create has any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities, first determine how many tokens are being created, then apply those abilities individually for each one. For example, if a token with “You may have [this permanent] enter the battlefield as a copy of any creature on the battlefield” would be created (such as an embalmed Vizier of Many Faces), the resulting two tokens can each copy a different creature.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control two Anointed Processions, then the number of tokens created is four times the original number. If you control three, then the number of tokens created is eight times the original number, and so on.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "There are many important moments in the story, but the most crucial—called “story spotlights”—are shown on cards. These cards have the Planeswalker symbol in their text box; this symbol has no effect on gameplay. You can read more about these events in the official Magic fiction at http://www.mtgstory.com.",
+      "oracle_id": "7246d45b-2185-4cdd-981b-5419b7d52bce",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total “becomes 10,” your life total will actually become 17.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, only Boon Reflection's controller is affected by it. If that player's teammate gains life, Boon Reflection will have no effect, even when that life gain is applied to the shared team life total.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Boon Reflections are cumulative. For example, if you control two Boon Reflections, you'll gain four times the original amount of life. If you control three Boon Reflections, you'll gain eight times the original amount, and so on.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says to set a player's life total to a number that's higher than the player's current life total while Giant Cindermaw is on the battlefield, the player's life total doesn't change.",
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Spells and abilities that cause players to gain life still resolve while Giant Cindermaw is on the battlefield. No player will gain life, but any other effects of that spell or ability will happen.",
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

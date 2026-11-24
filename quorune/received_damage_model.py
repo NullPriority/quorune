@@ -1,5 +1,54 @@
 """Immutable actual damage received by one incarnation in one transaction."""
+from collections.abc import Mapping
 from dataclasses import dataclass
+
+from .creature_subtypes import canonical_creature_subtype
+
+FIXED_DAMAGE_REMAINDER_HANDLER = "prevention.damage.fixed_remainder.v1"
+FIXED_DAMAGE_REMAINDER_CAPABILITY = "damage.prevention.fixed_remainder"
+
+
+@dataclass(frozen=True, slots=True)
+class FixedDamageRemainderScope:
+    kind: str
+    subtype: str | None = None
+
+    def __post_init__(self):
+        if self.kind == "controller_or_planeswalker" and self.subtype is None:
+            return
+        if (self.kind not in {"other_controlled_subtype", "controller_or_controlled_subtype"}
+                or type(self.subtype) is not str
+                or canonical_creature_subtype(self.subtype) != self.subtype):
+            raise ValueError("Fixed damage remainder requires a closed live recipient scope")
+
+    def descriptor(self):
+        return {
+            "handler_id": FIXED_DAMAGE_REMAINDER_HANDLER, "schema_version": 1,
+            "event": "damage", "condition": {"kind": self.kind, "subtype": self.subtype},
+            "modification": {"damage_remaining": 1},
+        }
+
+    @classmethod
+    def from_descriptor(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {"handler_id", "schema_version", "event", "condition", "modification"}
+                or value["handler_id"] != FIXED_DAMAGE_REMAINDER_HANDLER or type(value["schema_version"]) is not int
+                or value["schema_version"] != 1 or value["event"] != "damage"):
+            raise ValueError("Fixed damage remainder requires its exact damage component")
+        condition, modification = value["condition"], value["modification"]
+        if (not isinstance(condition, Mapping) or set(condition) != {"kind", "subtype"}
+                or type(condition["kind"]) is not str or not isinstance(modification, Mapping)
+                or set(modification) != {"damage_remaining"}
+                or type(modification["damage_remaining"]) is not int or modification["damage_remaining"] != 1):
+            raise ValueError("Fixed damage remainder requires one explicit retained damage")
+        return cls(condition["kind"], condition["subtype"])
+
+
+def is_command_fixed_damage_remainder(descriptor):
+    try:
+        return FixedDamageRemainderScope.from_descriptor(descriptor).kind == "controller_or_planeswalker"
+    except (TypeError, ValueError):
+        return False
+
 
 RECEIVED_DAMAGE_EVENT = 'damage.received'
 RECEIVED_COMBAT_DAMAGE_EVENT = 'combat.damage.received'

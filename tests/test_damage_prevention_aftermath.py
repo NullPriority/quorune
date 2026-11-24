@@ -444,6 +444,61 @@ class DamagePreventionAftermathTests(DamageReplacementPipelineBase):
         self.assertEqual(4, result.aftermath_events[0].applied_amount)
         self.assertEqual("place_counters", result.aftermath_events[0].kind)
 
+    def test_counter_result_is_visible_to_reflected_damage_before_live_commit(self):
+        engine = self.session(615217, players=4).engine
+        source = self.add_permanent(engine, seat="A", name="Mishra, Eminent One", ref="damage")
+        reflector = self.add_permanent(engine, seat="C", name="Goblin Engineer", ref="reflector")
+        target = self.add_permanent(engine, seat="B", name="Goblin Engineer", ref="shield-counter-target")
+        protected = DamageSubject(
+            ref=target.ref, kind="permanent", controller="B", owner="B",
+            object_id=target.object_id, logical_object_id=target.logical_object_id,
+        )
+        engine.state.damage_prevention_shields.extend((
+            DamagePreventionShield(
+                shield_id="create-shield-counter",
+                source_id="counter-grant",
+                controller="B",
+                subject=DamageSubject(ref="B", kind="player", controller="B"),
+                mode=PreventionMode.NEXT_INSTANCE,
+                remaining=None,
+                duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+                created_turn_sequence=engine.state.turn_sequence,
+                aftermath=(PlaceCountersPreventionAftermath(
+                    subject=protected, counter_name="shield", placing_player="B", fixed_amount=1,
+                ),),
+            ),
+            DamagePreventionShield(
+                shield_id="reflect-to-permanent",
+                source_id=reflector.ref,
+                controller="C",
+                subject=DamageSubject(ref="C", kind="player", controller="C"),
+                mode=PreventionMode.NEXT_INSTANCE,
+                remaining=None,
+                duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+                created_turn_sequence=engine.state.turn_sequence,
+                aftermath=(DealDamagePreventionAftermath(
+                    source=source_snapshot(engine, reflector.ref, controller="C"),
+                    recipient=DamageAftermathRecipient(kind="fixed", subject=protected),
+                    per_prevented=1,
+                ),),
+            ),
+        ))
+        before = authoritative_state_hash(engine.state)
+        prepared = prepare_damage_batch(engine, (
+            self.proposal(engine, source=source, target="B", amount=2, event_id="damage:shield-grant"),
+            self.proposal(engine, source=source, target="C", amount=2, event_id="damage:reflection"),
+        ))
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        result = commit_prepared_damage_batch(engine, prepared)
+        self.assertEqual(0, target.marked_damage)
+        self.assertNotIn("shield", target.counters)
+        nested, = result.nested_damage_results
+        self.assertEqual(0, nested.dealt_amount)
+        self.assertEqual(2, nested.events[0].prevented_amount)
+        self.assertEqual([("place_counters", 1), ("deal_damage", 0)], [
+            (event.kind, event.applied_amount) for event in result.aftermath_events
+        ])
+
     def test_fixed_additional_effect_happens_when_damage_cannot_be_prevented(self):
         engine = self.session(615203).engine
         source = self.add_permanent(

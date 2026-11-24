@@ -39,17 +39,45 @@ def fixed_alternative_activation_mana_cost(ability: ActivatedAbility) -> Activat
         complex_symbols=(), uncompiled_costs=(), tap_source=not equip)
 
 
+_PHYREXIAN_SELECTED_PRICE = re.compile(
+    r"(?:\{[0-9]+\})?\{(?P<color>[WUBRG])/P\}\{(?P=color)/P\}, "
+    r"(?:Sacrifice two other creatures|Discard two cards|"
+    r"Exile three creature cards from your graveyard)",
+    re.IGNORECASE,
+)
+
+
+def _phyrexian_selected_zone_change_price(ability: ActivatedAbility) -> ActivatedAbility | None:
+    """Compose a known object selection with two fixed Phyrexian symbols."""
+    if (
+        ability.mana_ability
+        or ability.zones != ("battlefield",)
+        or _PHYREXIAN_SELECTED_PRICE.fullmatch(ability.cost_text.strip()) is None
+    ):
+        return None
+    from .activated_zone_change_costs import fixed_activated_zone_change_cost
+
+    composed = fixed_activated_zone_change_cost(ability)
+    if (
+        composed.uncompiled_costs
+        or len(composed.choices) != 1
+        or composed.choices[0].fixed_zone_change_cost() is None
+    ):
+        return None
+    return composed
+
+
 def fixed_complex_activation_mana_cost(
     ability: ActivatedAbility,
 ) -> ActivatedAbility:
     ability = fixed_alternative_activation_mana_cost(ability)
-    if (
-        not ability.complex_symbols
-        or ability.uncompiled_costs
-        or ability.choices
-        or ability.generic_reduction_per_legendary_creature
-    ):
+    if not ability.complex_symbols or ability.generic_reduction_per_legendary_creature:
         return ability
+    if ability.uncompiled_costs or ability.choices:
+        composed = _phyrexian_selected_zone_change_price(ability)
+        if composed is None:
+            return ability
+        ability = composed
     options = fixed_complex_activation_mana_options(
         ability.mana,
         ability.complex_symbols,

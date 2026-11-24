@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed multiple-controller phasing and payment witnesses.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f880",
+      "name": "Hush Lattice",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4,
+      "type_line": "Instant",
+      "oracle_text": "Convoke\nAny number of target nonland permanents you control phase out.",
+      "keywords": [
+        "Convoke"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f881",
+      "name": "Threadfold Sentinel",
+      "mana_cost": "{1}{W}{W}",
+      "cmc": 3,
+      "type_line": "Creature - Spirit",
+      "oracle_text": "Flash\nWhen this creature enters, any number of other target creatures you control phase out.",
+      "keywords": [
+        "Flash"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f882",
+      "name": "Filament Watch",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "type_line": "Creature - Human",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    }
+  ],
+  "rulings": []
+}

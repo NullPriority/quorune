@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+from contextlib import nullcontext
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
@@ -10,6 +11,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+from tempfile import TemporaryDirectory
 import time
 from typing import Sequence
 
@@ -223,6 +225,33 @@ def build_plan(
                  'tests.test_fixed_damage_effect_clauses.FixedDamageEffectTemplateTests.test_whole_source_damage_life_composition_preserves_source_and_controller_roles',
                  'tests.test_discard_results.DiscardResultCompilerTests.test_discard_result_compiler_rejects_filtered_unknown_and_unbound_counts'),
             ))
+        retained_program_checks = []
+        if {
+            "quorune/compiler/token_templates.py", "quorune/fixed_token_production.py",
+            "quorune/semantic_runtime/token_replacements.py", "tests/test_additional_token_compiler.py",
+        }.intersection(paths):
+            retained_program_checks.append(
+                "tests.test_additional_token_compiler.AdditionalTokenDescriptorContractTests."
+                "test_predefined_replacement_preserves_the_executable_token_profile"
+            )
+        if {
+            "quorune/rules/closed_effect_program_shapes.py", "quorune/compiler/program_composition.py",
+            "quorune/rules/resolution_condition_shapes.py", "quorune/compiler/nonleaf_effect_closure.py",
+        }.intersection(paths):
+            retained_program_checks.extend((
+                "tests.test_ordered_composition_followups.OrderedCompositionFollowupTests."
+                "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+                "tests.test_runtime_owner_alignment.RuntimeOwnerAlignmentTests."
+                "test_originals_have_complete_normal_runtime_admission",
+                "tests.test_cipher_player_results.CipherPlayerResultTests."
+                "test_actual_undercity_plague_orders_life_discard_sacrifice_before_encoding_and_copies",
+            ))
+        if retained_program_checks:
+            steps.append(QuickStep(
+                "retained-program-owner-contract",
+                (python, "-c", "import sys\nimport unittest\nsys.path.insert(0, 'tests')\n"
+                 "unittest.main(module=None)\n", *retained_program_checks),
+            ))
         if {'quorune/compiler/target_player_sequences.py',
                 'quorune/compiler/bound_effect_programs.py',
                 'quorune/compiler/effect_template_composition.py'}.intersection(paths):
@@ -362,19 +391,24 @@ def build_plan(
             "quorune/compiler/query_characteristic_templates.py",
         }
         if quantity_sources.intersection(paths):
-            for module, test in (
-                ("test_typed_dynamic_characteristics", "test_versioned_codec_keeps_legacy_counts_and_closed_exclusions"),
-                ("test_typed_dynamic_characteristics", "test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual"),
-                ("test_typed_query_self_characteristics", "test_query_characteristic_grammar_keeps_ambiguous_families_residual"),
-                ("test_query_power_toughness_definitions", "test_query_power_toughness_definition_grammar_keeps_open_families_residual"),
-                ("test_public_state_condition_compiler", "test_public_condition_closure_compiles_typed_queries_and_facts"),
-                ("test_declared_effect_amounts", "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual"),
-            ):
-                steps.append(QuickStep(
-                    "quantity-boundary-" + test,
-                    (python, "-m", "unittest", "discover", "-s", "tests",
-                     "-p", module + ".py", "-k", test),
-                ))
+            steps.append(QuickStep(
+                "quantity-boundary-contract",
+                (
+                    python, "-m", "unittest", "-v",
+                    "tests.test_typed_dynamic_characteristics.PublicCollectionReductionTests."
+                    "test_versioned_codec_keeps_legacy_counts_and_closed_exclusions",
+                    "tests.test_typed_dynamic_characteristics.TypedDynamicCharacteristicCompilerTests."
+                    "test_closed_characteristic_families_compile_exact_and_near_misses_remain_residual",
+                    "tests.test_typed_query_self_characteristics.TypedQuerySelfCharacteristicCompilerTests."
+                    "test_query_characteristic_grammar_keeps_ambiguous_families_residual",
+                    "tests.test_query_power_toughness_definitions.QueryPowerToughnessDefinitionCompilerTests."
+                    "test_query_power_toughness_definition_grammar_keeps_open_families_residual",
+                    "tests.test_public_state_condition_compiler.FixedPublicStateCharacteristicCompilerTests."
+                    "test_public_condition_closure_compiles_typed_queries_and_facts",
+                    "tests.test_declared_effect_amounts.DeclaredEffectAmountCompilerTests."
+                    "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
+                ),
+            ))
     if phase == "normal" and "compact-ci-dependencies" in impact.checks:
         steps.append(
             QuickStep(
@@ -525,7 +559,15 @@ def _run(plan: dict) -> int:
         run_options = {"cwd": ROOT, "env": environment}
         if step.input_text is not None:
             run_options.update(input=step.input_text,text=True,encoding='utf-8')
-        result = subprocess.run(step.command, **run_options)
+        cache = (
+            TemporaryDirectory(prefix="quorune-gate-bytecode-")
+            if step.name == "compile" and not environment.get("PYTHONPYCACHEPREFIX")
+            else nullcontext()
+        )
+        with cache as cache_path:
+            if cache_path is not None:
+                run_options["env"] = dict(environment, PYTHONPYCACHEPREFIX=cache_path)
+            result = subprocess.run(step.command, **run_options)
         if result.returncode:
             print(
                 json.dumps(

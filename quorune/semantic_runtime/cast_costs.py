@@ -23,6 +23,7 @@ from ..casting_payment_keywords import (
     ImproviseSpec,
 )
 from ..convoke import ConvokeError, ConvokeSpec
+from ..impending_model import FixedManaImpendingSpec
 from ..evoke import (
     EVOKE_CAPABILITY_ID,
     EVOKE_HANDLER_ID,
@@ -605,6 +606,7 @@ class CastCostComponentRegistry(
         | DelveSpec
         | FixedManaEvokeSpec
         | HandExileEvokeSpec
+        | FixedManaImpendingSpec
         | FixedSpellCostReductionSpec
         | SelfSpellCostReductionSpec
         | FixedManaMultikickerSpec
@@ -628,6 +630,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
     from .chosen_type_cast_costs import ChosenTypeSpellCostModifierHandler
     from .global_alternative_costs import GlobalAlternativeCostHandler
     from .splice_costs import SpliceCostHandler
+    from .impending import FixedManaImpendingHandler
     from .target_count_costs import FixedManaPerTargetCostHandler
     from .optional_life_costs import OptionalLifeColorReductionHandler
     from .turn_cast_grants import TurnCastGrantHandler, turn_cast_rider_handlers, qualified_turn_grant_handlers
@@ -639,6 +642,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             DelveCostHandler(),
             EvokeCostHandler(),
             HandExileEvokeCostHandler(),
+            FixedManaImpendingHandler(),
             FixedSpellCostReductionHandler(),
             TargetedSpellCostHandler(),
             ConditionalSpellCostModifierHandler(),

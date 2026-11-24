@@ -135,8 +135,13 @@ def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic
 
 
 def fixed_event_player_result_covered_mechanics(supplied):
+    from .entry_player_counter_payment import (
+        ENTRY_PLAYER_COUNTER_PAYMENT_CAPABILITY, ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC,
+    )
+
+    payment = {ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC} if ENTRY_PLAYER_COUNTER_PAYMENT_CAPABILITY in supplied else set()
     poison = {UNBLOCKED_DEFENDER_POISON_MECHANIC} if UNBLOCKED_DEFENDER_POISON_CAPABILITY in supplied else set()
-    return poison | ({EVENT_PLAYER_RESULT_MECHANIC} if EVENT_PLAYER_RESULT_CAPABILITY in supplied else set()) | mill_covered_mechanics(supplied) | (
+    return payment | poison | ({EVENT_PLAYER_RESULT_MECHANIC} if EVENT_PLAYER_RESULT_CAPABILITY in supplied else set()) | mill_covered_mechanics(supplied) | (
         {EVENT_PLAYER_DAMAGE_MECHANIC} if EVENT_PLAYER_DAMAGE_CAPABILITY in supplied else set())
 
 
@@ -209,11 +214,13 @@ def attack_occurrence_controller_runtime_dependencies(program):
     if attached:
         return attached
 
-    from .qualified_attacks import qualified_player_defense_is_closed
+    from .qualified_attacks import declared_defender_scope_is_closed, qualified_player_defense_is_closed
     from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY
 
+    condition = program.event_condition
     if (program.event != 'creature.attacks' or program.active_zone != 'battlefield' or program.target_schema is not None
-            or not qualified_player_defense_is_closed(program.event_condition) or not program.effects
+            or not (qualified_player_defense_is_closed(condition) or declared_defender_scope_is_closed(condition))
+            or not program.effects
             or 'one_or_more_event_batch' in program.coverage
             or not is_occurrence_controller_reference(program.effects[0].get('player'))):
         return ()

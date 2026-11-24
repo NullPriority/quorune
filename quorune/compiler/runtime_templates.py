@@ -152,10 +152,25 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
     draw_result = static_draw_result_handler(text)
     if draw_result is None:
         return None
+    from ..drawing.step_exemption import (
+        DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+        DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+        DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+    )
+
+    step_exempt_handlers = {
+        DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+        DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+        DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+    }
     return StaticRuntimeTemplate(
         compiled=draw_result,
         kind="replacement_effect",
         event="draw",
+        runtime_coverage=(
+            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+            if draw_result[1]["handler_id"] in step_exempt_handlers else ()
+        ),
         dependency_reason=(
             "generic result-draw replacement depends on an untrusted rules "
             "capability"
@@ -416,6 +431,66 @@ def _basic_land_type_runtime_template(text):
     return None
 
 
+def _self_characteristic_runtime_template(text: str, *, source_name: str) -> StaticRuntimeTemplate | None:
+    from .all_colors_definitions import all_colors_definition_handler
+    definition=all_colors_definition_handler(text,source_name=source_name)
+    if definition is not None:
+        return StaticRuntimeTemplate(compiled=definition,kind='static_ability',event='continuous',active_zone='all',
+            runtime_coverage=('layer_5_all_colors_characteristic',),dependency_reason='All-colors source definitions require their all-zone typed color owner')
+    from .cross_zone_type_addition_templates import off_battlefield_self_creature_handler
+    off_battlefield = off_battlefield_self_creature_handler(text, source_name=source_name)
+    if off_battlefield is not None:
+        return StaticRuntimeTemplate(
+            compiled=off_battlefield,
+            kind="static_ability",
+            event="continuous",
+            active_zone="all",
+            runtime_coverage=("source_scoped_off_battlefield_creature",),
+            dependency_reason="Off-battlefield creature characteristics require their typed layer and casting owners",
+        )
+    return None
+
+
+def _combat_counterpart_lifelink_runtime_template(text: str) -> StaticRuntimeTemplate | None:
+    if text.casefold().rstrip(".") != "creatures blocking or blocked by this creature have lifelink":
+        return None
+    from ..semantic_runtime.combat_metadata import CombatCounterpartLifelinkHandler
+
+    handler = CombatCounterpartLifelinkHandler()
+    return StaticRuntimeTemplate(
+        compiled=("continuous-block-counterpart-lifelink-v1",
+                  {"handler_id": handler.handler_id, "schema_version": handler.schema_version, "event": handler.event},
+                  handler.capability_dependencies),
+        kind="static_ability", event=handler.event, runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        dependency_reason="Live combat counterparts require the canonical block relation and lifelink",
+    )
+
+
+def _conditional_keyword_components(text: str, *, source_name: str):
+    from .conditional_granted_ability_templates import (
+        conditional_typed_keyword_handler,
+        turn_source_enchantment_creature_keyword_handler,
+    )
+
+    return (
+        turn_source_enchantment_creature_keyword_handler(text, source_name=source_name)
+        or conditional_typed_keyword_handler(text, source_name=source_name)
+        or conditional_self_keyword_handler(text, source_name=source_name)
+    )
+
+
+def _attacking_count_bushido_runtime_template(text, *, source_name):
+    from .ability_keyword_fragments import attacking_creature_count_bushido_handler
+
+    keyword = attacking_creature_count_bushido_handler(text, source_name=source_name)
+    if keyword is None:
+        return None
+    return StaticRuntimeTemplate(
+        compiled=keyword, kind="static_ability", event="continuous",
+        dependency_reason="Dynamic Bushido requires the typed combat keyword owner",
+    )
+
+
 def _continuous_static_runtime_template(
     text: str,
     *,
@@ -423,11 +498,10 @@ def _continuous_static_runtime_template(
     source_is_class: bool,
 ) -> StaticRuntimeTemplate | None:
     if source_name is not None and not source_is_class:
-        from .all_colors_definitions import all_colors_definition_handler
-        definition=all_colors_definition_handler(text,source_name=source_name)
+        definition = (_self_characteristic_runtime_template(text, source_name=source_name)
+                      or _attacking_count_bushido_runtime_template(text, source_name=source_name))
         if definition is not None:
-            return StaticRuntimeTemplate(compiled=definition,kind='static_ability',event='continuous',active_zone='all',
-                runtime_coverage=('layer_5_all_colors_characteristic',),dependency_reason='All-colors source definitions require their all-zone typed color owner')
+            return definition
     from .keyword_prohibition_templates import opponent_keyword_prohibition_handler
     prohibition = None if source_is_class else opponent_keyword_prohibition_handler(text)
     if prohibition is not None:
@@ -468,8 +542,13 @@ def _continuous_static_runtime_template(
                 "closed continuous-effect capabilities"
             ),
         )
-    keyword_grant = (
-        None if source_is_class else fixed_query_keyword_grant_handler(text,allow_disjoint_negative=True)
+    from .attached_ability_templates import fixed_query_keywords_and_color_protection_handler
+    from .conditional_color_grants import controller_creature_color_keyword_handler
+
+    keyword_grant = None if source_is_class else (
+        controller_creature_color_keyword_handler(text)
+        or fixed_query_keywords_and_color_protection_handler(text)
+        or fixed_query_keyword_grant_handler(text, allow_disjoint_negative=True)
     )
     if keyword_grant is not None:
         return StaticRuntimeTemplate(
@@ -498,10 +577,14 @@ def _continuous_static_runtime_template(
             )
         )
         if query_characteristics is not None:
+            from ..characteristic_fragments import CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE
+
             return StaticRuntimeTemplate(
                 compiled=query_characteristics,
                 kind="static_ability",
                 event="continuous",
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+                    if query_characteristics[0] == CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE else (),
                 dependency_reason=(
                     "typed public quantities require their cycle-safe "
                     "characteristic capability"
@@ -525,16 +608,12 @@ def _continuous_static_runtime_template(
                     "continuous-effect capability"
                 ),
             )
-        from .conditional_granted_ability_templates import conditional_typed_keyword_handler
-        conditional_keyword = (
-            conditional_typed_keyword_handler(text, source_name=source_name)
-            or conditional_self_keyword_handler(text, source_name=source_name)
-        )
+        conditional_keyword = _conditional_keyword_components(text, source_name=source_name)
         if conditional_keyword is not None:
             return StaticRuntimeTemplate(
                 compiled=conditional_keyword,
                 kind="static_ability",
-                event=conditional_keyword[1]['event'],
+                event=conditional_keyword[1][0]['event'] if isinstance(conditional_keyword[1], tuple) else conditional_keyword[1]['event'],
                 dependency_reason=(
                     "generic conditional characteristics require their closed "
                     "typed capability"
@@ -675,7 +754,12 @@ def _static_damage_runtime_template(
     source_is_class: bool,
 ) -> StaticRuntimeTemplate | None:
     """Assemble closed damage handlers and their current-ability contract."""
+    from ..entry_designations import LINKED_PLAYER_DAMAGE_HANDLER_ID
+    from ..rules.damage_capability_shapes import (
+        CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER, NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER,
+    )
     from .counter_prevention_templates import fixed_counter_prevention_handler
+
     static_damage = (fixed_counter_prevention_handler(text, source_name=source_name or '')
                      if source_permanent and not source_is_class else None)
     static_damage = static_damage or static_damage_handler(text, card_name=source_name)
@@ -684,7 +768,9 @@ def _static_damage_runtime_template(
     if (
         (source_is_class or not source_permanent)
         and static_damage[1]["handler_id"]
-        == "replacement.damage.quantity.v2"
+        in {"replacement.damage.quantity.v2", "prevention.damage.fixed.untapped.v3",
+            NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER, CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER,
+            LINKED_PLAYER_DAMAGE_HANDLER_ID}
     ):
         return None
     if (
@@ -704,7 +790,7 @@ def _static_damage_runtime_template(
             if static_damage[1]["handler_id"].startswith("prevention.")
             else "replacement_effect"
         ),
-        event="damage",
+        event=static_damage[1]["event"],
         dependency_reason=(
             "generic damage replacement depends on an untrusted rules "
             "capability"
@@ -739,6 +825,18 @@ def static_runtime_template(
         )
 
     if source_permanent:
+        from .target_requirement_templates import flagbearer_target_requirement_template
+
+        requirement = flagbearer_target_requirement_template(text)
+        if requirement is not None:
+            return StaticRuntimeTemplate(
+                compiled=requirement, kind="static_ability", event=requirement[1]["event"],
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+                dependency_reason="Flagbearer requires the shared cast and activation target-choice owner.",
+            )
+        counterpart = None if source_is_class else _combat_counterpart_lifelink_runtime_template(text)
+        if counterpart is not None:
+            return counterpart
         graveyard = _graveyard_static_template(text, source_name=source_name, source_is_class=source_is_class)
         if graveyard is not None:
             return graveyard

@@ -10,6 +10,11 @@ from typing import Any, Callable, Mapping
 
 FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC = "fixed-effect-clause-sequence"
 SOURCE_CHARACTERISTIC_TAP_TEMPLATE = 'fixed-source-characteristic-tap-sequence-v1'
+DAMAGE_ATTACK_REQUIREMENT_TEMPLATE = "fixed-source-damage-then-attack-requirement-v1"
+_DAMAGE_ATTACK_REQUIREMENT = re.compile(
+    r"(?P<damage>This artifact deals [1-9][0-9]* damage to target creature\.) "
+    r"That creature attacks this turn if able\.?$", re.I,
+)
 
 CompiledEffectTemplate = tuple[
     str | None,
@@ -138,6 +143,7 @@ class FixedEffectClauseSequenceTemplate:
     _effects: tuple[Mapping[str, Any], Mapping[str, Any]]
     _target_schema: Mapping[str, Any] | None
     mechanic_ids: tuple[str, ...]
+    shares_damage_target: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -153,6 +159,8 @@ class FixedEffectClauseSequenceTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.shares_damage_target:
+            return DAMAGE_ATTACK_REQUIREMENT_TEMPLATE
         first,second = self._effects
         if (self._target_schema is None and first.get('op')=='apply_source_characteristics_until_end_of_turn'
                 and first.get('card')=='$source.zone_object' and second.get('card')=='$source.zone_object'
@@ -184,7 +192,8 @@ def fixed_effect_clause_sequence_template(
 ) -> FixedEffectClauseSequenceTemplate | None:
     """Lower two complete clauses already owned independently, in order."""
 
-    clauses = _two_sentence_clauses(text)
+    shared = _DAMAGE_ATTACK_REQUIREMENT.fullmatch(" ".join(text.strip().split()))
+    clauses = (shared["damage"], "Target creature attacks this turn if able.") if shared else _two_sentence_clauses(text)
     if clauses is None:
         return None
     compiled = tuple(compile_clause(clause) for clause in clauses)
@@ -207,7 +216,10 @@ def fixed_effect_clause_sequence_template(
         for _template_id, _effects, target_schema, _mechanics in compiled
         if target_schema is not None
     )
-    if len(targeted) > 1:
+    if shared is not None:
+        if len(targeted) != 2 or targeted[0] != targeted[1]:
+            return None
+    elif len(targeted) > 1:
         return None
     return FixedEffectClauseSequenceTemplate(
         component_template_ids=tuple(
@@ -219,6 +231,7 @@ def fixed_effect_clause_sequence_template(
             for _template_id, effects, _target_schema, _mechanics in compiled
         ),
         _target_schema=targeted[0] if targeted else None,
+        shares_damage_target=shared is not None,
         mechanic_ids=tuple(
             dict.fromkeys(
                 (

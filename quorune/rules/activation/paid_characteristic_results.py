@@ -4,14 +4,22 @@ from dataclasses import replace
 from ...activation_cost_choice import CostChoice
 from ...activation_paid_characteristic_model import (
     ACTIVATION_PAID_STAT_CONTEXT, ACTIVATION_PAID_STAT_MECHANIC, ACTIVATION_PAID_STAT_CAPABILITY,
-    ActivationPaidCreatureFact,
+    ActivationPaidCreatureFact, ActivationPaidCreatureCharacteristics, ACTIVATION_PAID_SUBTYPE_CONTEXT,
 )
 from ...scalar_effect_amount_model import (PaidCreatureStatSnapshot, ScalarAmountOrigin, ScalarEffectAmountSpec,
     SCALAR_AMOUNT_CAPABILITY, scalar_amount_specs)
 from ...object_predicate import ObjectQuerySpec
 from ...object_query import exact_numeric_characteristic
+from ...paid_sacrifice_conditions import (
+    ACTIVATION_PAID_LEGENDARY_AMASS_CAPABILITY, ACTIVATION_PAID_SUBTYPE_CAPABILITY, ACTIVATION_PAID_THRULL_COUNTERS_CAPABILITY,
+    ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY, PAID_SUSPECTED_CONDITION_KIND,
+    PaidSacrificeCharacteristics, paid_sacrifice_condition_from_reference,
+    is_activation_paid_creature_reference,
+)
 from ..activation_costs import activation_choice_candidates
-from .paid_characteristic_price import activation_creature_sacrifice_choice
+from .paid_characteristic_price import (
+    activation_creature_sacrifice_choice, activation_paid_creature_choice, activation_paid_suspected_choice,
+)
 
 
 def _activation_price_matches(ability, program, choice):
@@ -86,10 +94,70 @@ def granted_paid_activation_price_matches(program, ability):
     return _activation_price_matches(equivalent, program, priced)
 
 
+def activation_paid_characteristic_runtime_dependencies(program):
+    references = tuple(effect["cast_fact"] for effect in program.effects
+                       if is_activation_paid_creature_reference(effect.get("cast_fact")))
+    if not references:
+        return ()
+    if len(references) != 1:
+        raise ValueError("Activation paid characteristics require one retained condition")
+    condition = paid_sacrifice_condition_from_reference(references[0])
+    legendary = condition.trait == "legendary"
+    suspected = condition.kind == PAID_SUSPECTED_CONDITION_KIND
+    from ...semantic_runtime.activated_abilities import ActivatedAbilityCatalogHandler
+    from ..resolution_condition_shapes import resolution_condition_node_capabilities
+
+    choice = (activation_paid_suspected_choice(program.cost_schema) if suspected
+              else activation_paid_creature_choice(program.cost_schema, legendary=legendary))
+    if ((program.event, program.active_zone) != ("activate", "battlefield")
+            or len(program.handlers) != 1 or choice is None):
+        raise ValueError("Activation paid creature characteristics require its ordinary sacrifice ability")
+    ability = ActivatedAbilityCatalogHandler().validate(program.handlers[0])
+    if not _activation_price_matches(ability, program, choice):
+        raise ValueError("Activation paid creature characteristics changed its printed price")
+    dependencies = resolution_condition_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage, cost_schema=program.cost_schema,
+    )
+    capabilities = ((ACTIVATION_PAID_LEGENDARY_AMASS_CAPABILITY,) if legendary
+                    else (ACTIVATION_PAID_SUBTYPE_CAPABILITY, ACTIVATION_PAID_THRULL_COUNTERS_CAPABILITY))
+    expected = (ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY,) if suspected else capabilities
+    if not set(expected).intersection(dependencies):
+        raise ValueError("Activation paid creature characteristics require its complete source effects")
+    return dependencies
+
+
+def _selected_paid_creature(host, proposal, source, ability, response, choice):
+    if choice is None or 'cost_cards' in response and 'cost_objects' in response:
+        raise ValueError('Paid activation creature selection is unavailable or ambiguous')
+    refs = response.get('cost_cards', response.get('cost_objects', ()))
+    if (not isinstance(refs, (list, tuple)) or len(refs) != 1 or type(refs[0]) is not str
+            or refs[0] not in activation_choice_candidates(host, proposal.seat, source, choice, ability=ability)):
+        raise ValueError('Paid activation requires one legal controlled creature')
+    return host._resolve_object(proposal.seat, refs[0], zones={'battlefield'})
+
+
+def _capture_activation_paid_characteristics(host, proposal, source, ability, response, program):
+    choice = activation_creature_sacrifice_choice(ability)
+    dependencies = activation_paid_characteristic_runtime_dependencies(program)
+    if not set(dependencies) <= set(program.capability_dependencies) or not _activation_price_matches(ability, program, choice):
+        raise ValueError("Activation paid creature characteristics require the reviewed current sacrifice price")
+    card = _selected_paid_creature(host, proposal, source, ability, response, choice)
+    data = host._effective_card_data(card)
+    facts = PaidSacrificeCharacteristics(
+        card.logical_object_id, *(tuple(sorted(values)) for values in host._type_parts(data["type_line"])),
+    )
+    suspected = card.suspected_at is not None if ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY in dependencies else None
+    fact = ActivationPaidCreatureCharacteristics(program.key, source.logical_object_id, card.ref, facts, suspected=suspected)
+    return ACTIVATION_PAID_SUBTYPE_CONTEXT, fact.to_dict()
+
+
 def capture_activation_paid_creature_fact(host, proposal, source, ability, response):
     program = host.semantics.get(proposal.semantic_key)
-    if program is None or not any(s.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE
-            for s in scalar_amount_specs(program.effects)):
+    if program is None:
+        return None
+    if any(is_activation_paid_creature_reference(effect.get("cast_fact")) for effect in program.effects):
+        return _capture_activation_paid_characteristics(host, proposal, source, ability, response, program)
+    if not any(s.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE for s in scalar_amount_specs(program.effects)):
         return None
     if not activation_paid_stat_program_is_closed(program):
         raise ValueError('Paid activation creature result has no complete price and result owner')
@@ -97,13 +165,7 @@ def capture_activation_paid_creature_fact(host, proposal, source, ability, respo
         raise ValueError('Granted paid creature result has a different effective activation price')
     choice = (ability.choices[0] if program.provenance.get('granted_only') is True
         else activation_creature_sacrifice_choice(ability))
-    if choice is None or 'cost_cards' in response and 'cost_objects' in response:
-        raise ValueError('Paid activation creature selection is unavailable or ambiguous')
-    refs = response.get('cost_cards', response.get('cost_objects', ()))
-    if (not isinstance(refs, (list, tuple)) or len(refs) != 1 or type(refs[0]) is not str
-            or refs[0] not in activation_choice_candidates(host, proposal.seat, source, choice, ability=ability)):
-        raise ValueError('Paid activation requires one legal controlled creature')
-    card = host._resolve_object(proposal.seat, refs[0], zones={'battlefield'})
+    card = _selected_paid_creature(host, proposal, source, ability, response, choice)
     data = host._effective_card_data(card)
     stats = PaidCreatureStatSnapshot(card.logical_object_id,
         exact_numeric_characteristic(card, data, 'power'), exact_numeric_characteristic(card, data, 'toughness'))

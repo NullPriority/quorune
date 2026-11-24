@@ -937,7 +937,8 @@ class AbilityWordEventTriggerRuntimeTests(unittest.TestCase):
         trigger = next(
             item for item in engine.state.stack if item.semantic_key == program.key
         )
-        self.assertEqual(7, trigger.context["schema_version"])
+        self.assertEqual(8, trigger.context["schema_version"])
+        self.assertIs(True, trigger.context["physical_card"])
         self.assertEqual(1, trigger.context["mana_spent_total"])
         self.assertEqual([source.ref], trigger.context["targets"])
         self.assertEqual(["A"], trigger.context["creature_target_controllers"])

@@ -4,7 +4,7 @@ from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..semantic_runtime.control_intents import (
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
-    GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+    ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
 from ..semantic_runtime.connive_intent import ConniveCompletedIntent
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent
@@ -29,6 +29,7 @@ from ..counter_placement_targets import (
     resolve_counter_placement_targets,
 )
 from ..counter_removal import (
+    AllPermanentCountersThenTokenExileIntent,
     commit_all_counter_removal_effect,
     commit_counter_removal_effect,
     AllCounterRemovalResult,
@@ -167,9 +168,15 @@ class SemanticChoiceIntentHostMixin:
         except ControlEffectError as exc:
             raise GameRuleError(str(exc)) from exc
 
-    def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent):
-        from ..control_effects import execute_control_set,execute_recipient_control_set,execute_owner_control_restoration,ControlEffectError
+    def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent
+                                | RestoreOwnerControlIntent | ExchangePermanentControlIntent):
+        from ..control_effects import (
+            ControlEffectError, execute_control_set, execute_owner_control_restoration,
+            execute_permanent_control_exchange, execute_recipient_control_set,
+        )
         try:
+            if isinstance(intent, ExchangePermanentControlIntent):
+                return execute_permanent_control_exchange(self, intent)
             if isinstance(intent,RestoreOwnerControlIntent):return execute_owner_control_restoration(self,intent)
             if isinstance(intent,GiveControlSetIntent):return execute_recipient_control_set(self,intent)
             return execute_control_set(self,intent)
@@ -193,6 +200,12 @@ class SemanticChoiceIntentHostMixin:
 
     def public_zone_move_object_rows(self, actor: str):
         return tuple(self._semantic_choice_object_rows(actor))
+
+    def public_zone_move_rules_names(self, row) -> tuple[str, ...]:
+        from ..carddb_characteristics import public_object_rules_names
+
+        card = self.state.cards[row.object_id]
+        return public_object_rules_names(card, self._effective_card_data(card), self.card_record(card))
 
     def counter_target_active_seats(self) -> tuple[str, ...]:
         return tuple(self.active_seats)
@@ -226,7 +239,7 @@ class SemanticChoiceIntentHostMixin:
         intent: DealFixedDamageSetIntent,
     ):
         try:
-            return resolve_fixed_damage_set(
+            result = resolve_fixed_damage_set(
                 self,
                 actor=intent.actor,
                 source_ref=intent.source_ref,
@@ -242,6 +255,11 @@ class SemanticChoiceIntentHostMixin:
                 death_exile_scope=intent.death_exile_scope,
                 allocated_recipients=intent.allocated_recipients,
             )
+            if intent.gain_life_from_dealt:
+                from ..rules.committed_quantity_followups import damage_dealt_life_followup
+
+                return damage_dealt_life_followup(result.dealt_amount)
+            return result
         except FixedDamageSetError as exc:
             raise GameRuleError(str(exc)) from exc
 
@@ -489,7 +507,7 @@ class SemanticChoiceIntentHostMixin:
         if intent.manifest_entry:
             from ..zone_transitions import ZoneTransitionOwner
             ZoneTransitionOwner(self).move_card(card.object_id, 'battlefield', controller=intent.actor,
-                manifest_entry=True, reason=intent.reason, semantic_events=True,
+                manifest_entry=True, reason=intent.reason, semantic_events=True, putting_player=intent.actor,
                 replacement_selections=replacement_selections)
             return card.ref if card.zone == 'battlefield' and card.face_down else ''
         if intent.effect_entry_counters:
@@ -509,6 +527,8 @@ class SemanticChoiceIntentHostMixin:
             card.object_id,
             intent.destination,
             controller=intent.new_controller,
+            **({"putting_player": intent.actor}
+               if intent.destination == "battlefield" and card.zone != "battlefield" else {}),
             tapped=tapped,
             reason=intent.reason,
             semantic_events=intent.semantic_events,
@@ -546,9 +566,16 @@ class SemanticChoiceIntentHostMixin:
     def move_objects_simultaneously_intent(
         self,
         intent: MoveObjectsSimultaneouslyIntent,
-    ) -> tuple[str, ...] | CommittedQuantityFollowup:
+        *,
+        graveyard_orders=None,
+        require_graveyard_order=False,
+        prepared_composition=None,
+    ) -> tuple[str, ...] | CommittedQuantityFollowup | int:
         from .simultaneous_movement import commit_simultaneous_movement
-        return commit_simultaneous_movement(self,intent)
+        return commit_simultaneous_movement(
+            self, intent, graveyard_orders=graveyard_orders, require_graveyard_order=require_graveyard_order,
+            prepared_composition=prepared_composition,
+        )
 
     def choose_one_rest_bottom_random_intent(
         self,
@@ -1062,8 +1089,26 @@ class SemanticChoiceIntentHostMixin:
 
     def remove_all_counters_intent(
         self,
-        intent: RemoveAllCountersIntent,
-    ) -> AllCounterRemovalResult:
+        intent: RemoveAllCountersIntent | AllPermanentCountersThenTokenExileIntent,
+    ) -> AllCounterRemovalResult | tuple[AllCounterRemovalResult, ...]:
+        if isinstance(intent, AllPermanentCountersThenTokenExileIntent):
+            from ..counter_removal import commit_all_permanent_counter_removals
+
+            try:
+                results = commit_all_permanent_counter_removals(self)
+            except CounterRemovalError as exc:
+                raise GameRuleError(str(exc)) from exc
+            for result in results:
+                self._record_all_removed_counters(
+                    result, self.state.cards[result.object_id], actor=intent.actor, source_ref=intent.source_ref,
+                )
+            token_ids = sorted(card.object_id for card in self.state.cards.values()
+                               if card.zone == "battlefield" and card.is_token and not card.phased_out)
+            if token_ids:
+                self._move_cards_simultaneously(
+                    [(object_id, "exile") for object_id in token_ids], reason=intent.reason, log=True,
+                )
+            return results
         try:
             card = self._resolve_object(
                 intent.actor,
@@ -1082,23 +1127,26 @@ class SemanticChoiceIntentHostMixin:
             )
         except CounterRemovalError as exc:
             raise GameRuleError(str(exc)) from exc
+        self._record_all_removed_counters(result, card, actor=intent.actor, source_ref=intent.source_ref)
+        return result
+
+    def _record_all_removed_counters(self, result, card, *, actor, source_ref):
         removed = dict(result.removed)
         self._log(
-            intent.actor,
+            actor,
             "permanent.counters_removed",
             f"{card.ref} had {result.total_removed} counter(s) removed.",
             {
                 "object": card.ref,
                 "removed": removed,
                 "total_removed": result.total_removed,
-                "source": intent.source_ref,
+                "source": source_ref,
             },
             importance=1,
             changed_objects=([card.object_id] if result.total_removed else []),
         )
         if removed.get("defense", 0):
             self._queue_siege_defeated_trigger(card)
-        return result
 
     def place_counters_on_set_intent(
         self,
@@ -1113,6 +1161,7 @@ class SemanticChoiceIntentHostMixin:
                 amount=intent.amount,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                paired_loyalty_source=intent.paired_loyalty_source,
                 replacement_selections=tuple(
                     thaw_value(value)
                     for value in intent.replacement_selections
@@ -1120,9 +1169,7 @@ class SemanticChoiceIntentHostMixin:
             )
         except CounterPlacementSetError as exc:
             raise GameRuleError(str(exc)) from exc
-        return tuple(
-            self.state.cards[result.object_id].ref for result in results
-        )
+        return tuple(unique_preserving_order(self.state.cards[result.object_id].ref for result in results))
 
     def place_counters_on_targets_intent(
         self,
@@ -1211,6 +1258,19 @@ class SemanticChoiceIntentHostMixin:
             raise GameRuleError(
                 "The stack object selected for copying no longer exists"
             )
+        characteristics = thaw_value(bound.characteristics) if bound is not None else None
+        if intent.permanent_copy is not None:
+            from ..rules.stack_spell_copy_shapes import apply_permanent_spell_copy_exception
+
+            if characteristics is None:
+                original = self.state.cards.get(target.card_object_id or "")
+                if original is None:
+                    raise GameRuleError("Permanent spell copy lost its original card or snapshot")
+                characteristics = self._spell_copy_characteristics(original)
+            try:
+                characteristics = apply_permanent_spell_copy_exception(intent.permanent_copy, characteristics)
+            except (TypeError, ValueError) as exc:
+                raise GameRuleError(str(exc)) from exc
         copied = self._copy_stack_item(
             controller=intent.controller,
             target=target,
@@ -1218,7 +1278,7 @@ class SemanticChoiceIntentHostMixin:
             target_groups=thaw_value(intent.target_groups),
             reason=intent.reason,
             target_snapshots=thaw_value(intent.target_snapshots) if intent.target_snapshots is not None else None,
-            copiable_characteristics=thaw_value(bound.characteristics) if bound is not None else None,
+            copiable_characteristics=characteristics,
         )
         return copied.ref
 
@@ -1360,7 +1420,19 @@ class SemanticChoiceIntentHostMixin:
     def grant_zone_object_keyword_intent(
         self,
         intent: GrantZoneObjectKeywordIntent,
-    ) -> str:
+    ) -> str | tuple[str, ...]:
+        source = ResolutionEffectSource(
+            stack_ref=intent.source.stack_ref, object_id=intent.source.object_id,
+            logical_object_id=intent.source.logical_object_id, card_ref=intent.source.card_ref,
+        )
+        if intent.controlled_creature_set:
+            from ..zone_object_keyword_grants import commit_controlled_creature_indestructible
+
+            try:
+                return commit_controlled_creature_indestructible(self, actor=intent.actor,
+                    source=source, reason=intent.reason)
+            except ZoneObjectKeywordGrantError as exc:
+                raise GameRuleError(str(exc)) from exc
         card = self._resolve_object(
             intent.actor,
             intent.object_ref,
@@ -1374,12 +1446,7 @@ class SemanticChoiceIntentHostMixin:
             commit_zone_object_keyword_grant(
                 self,
                 card=card,
-                source=ResolutionEffectSource(
-                    stack_ref=intent.source.stack_ref,
-                    object_id=intent.source.object_id,
-                    logical_object_id=intent.source.logical_object_id,
-                    card_ref=intent.source.card_ref,
-                ),
+                source=source,
                 keyword=intent.keyword,
             )
         except ZoneObjectKeywordGrantError as exc:

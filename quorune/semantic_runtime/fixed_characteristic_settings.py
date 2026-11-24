@@ -7,8 +7,9 @@ from typing import Any, Mapping
 
 from ..continuous_effect_model import ContinuousEffect, ContinuousEffectOrigin, ContinuousEffectRelation, ContinuousObjectIdentity, ContinuousOperation, Layer
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
-from ..characteristic_fragments import CharacteristicQuantityReduction
+from ..characteristic_fragments import CharacteristicQuantityReduction, CharacteristicQuantitySpec, CharacteristicQuantityScope
 from ..object_predicate import NONOWNER_CONTROL_QUERY_CAPABILITY, ObjectQuerySpec, PermanentStatePredicateSpec
+from ..object_query import object_matches_query
 from .attached_continuous import _attached_characteristics_node, _has_characteristic_modifier
 from .fixed_characteristic_effects import fixed_characteristic_effects
 from .component_registry import exact_fields
@@ -18,6 +19,8 @@ from .continuous_components import ContinuousEffectSourceContext, _fixed_query_e
 
 FIXED_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v1"
 CONDITIONAL_SETTING_HANDLER_ID = "continuous.characteristics.fixed-public-setting.v2"
+AURA_COUNT_SETTING_HANDLER_ID = "continuous.characteristics.fixed-aura-count-setting.v3"
+CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID = "continuous.characteristics.fixed-controlled-aura-recipient-setting.v1"
 FIXED_SETTING_CAPABILITY = "continuous.characteristics.fixed_public_setting"
 NONOWNER_CREATURE_MODIFIER_HANDLER = "continuous.characteristics.nonowner-creature-modifier.v1"
 NONOWNER_CREATURE_MODIFIER_CAPABILITY = "continuous.characteristics.fixed_nonowner_creature_modifier"
@@ -87,20 +90,23 @@ class FixedCharacteristicSettingsHandler:
         if node.color_operations:return Layer.COLOR
         return Layer.ABILITY
 
+    def _validate_source_condition(self, condition):
+        validate_setting_condition(condition)
+
     def validate(self, descriptor: Mapping[str, Any]):
         version = descriptor.get('schema_version')
         fields = {"handler_id", "schema_version", "event", "target", "modifier"}
-        if version == 2:
+        if version in (2, 3):
             fields.add('source_condition')
         exact_fields(descriptor, fields, field="fixed characteristic setting")
         if descriptor["handler_id"] != self.handler_id or type(version) is not int or version != self.schema_version or descriptor["event"] != self.event:
             raise SemanticNodeError("Fixed characteristic setting identity changed")
         condition = descriptor.get('source_condition')
         if condition is not None:
-            validate_setting_condition(condition)
+            self._validate_source_condition(condition)
         target = descriptor["target"]
         exact_fields(target, {"kind", "controller", "predicate", "exclude_source"}, field="fixed setting target")
-        if target["kind"] not in ({"attached", "fixed_query", "source"} if version == 2 else {"attached", "fixed_query"}) or type(target["exclude_source"]) is not bool:
+        if target["kind"] not in ({"attached", "fixed_query", "source"} if version in (2, 3) else {"attached", "fixed_query"}) or type(target["exclude_source"]) is not bool:
             raise SemanticNodeError("Fixed settings require an attachment or public battlefield query")
         predicate = ObjectQuerySpec.from_dict(target["predicate"])
         if predicate.zones not in {(), ("battlefield",)} or predicate.owner is not None or predicate.controller is not None or predicate.excluded_controllers or predicate.known_to_actor is not None or predicate.exclude_ref is not None:
@@ -223,6 +229,54 @@ class NonownerCreatureModifierHandler:
         return tuple(replace(effect,recipient_scope_anchor=anchor) for effect in effects)
 
 
+
+OPPONENT_BASE_TOUGHNESS_HANDLER = "continuous.characteristics.fixed-opponent-base-toughness.v1"
+OPPONENT_BASE_TOUGHNESS_CAPABILITY = "continuous.characteristics.fixed_opponent_base_toughness"
+
+
+@dataclass(frozen=True, slots=True)
+class FixedOpponentBaseToughnessHandler:
+    handler_id: str = OPPONENT_BASE_TOUGHNESS_HANDLER
+    schema_version: int = 1
+    family: str = OPPONENT_BASE_TOUGHNESS_CAPABILITY
+    event: str = "characteristics.evaluate"
+    source_component_layer: Layer = Layer.ABILITY
+    rule_references: tuple[str, ...] = ("109.5", "611.3a", "611.3b", "613.4b", "613.7a")
+    capability_dependencies: tuple[str, ...] = (
+        OPPONENT_BASE_TOUGHNESS_CAPABILITY, FIXED_SETTING_CAPABILITY,
+    )
+
+    def validate(self, descriptor: Mapping[str, Any]) -> tuple[ObjectQuerySpec, int]:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event", "predicate", "toughness"},
+                     field="opponent base toughness")
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version):
+            raise SemanticNodeError("Opponent base toughness setting identity changed")
+        predicate = ObjectQuerySpec.from_dict(descriptor["predicate"])
+        if predicate != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)):
+            raise SemanticNodeError("Opponent base toughness settings require current battlefield creatures")
+        amount = descriptor["toughness"]
+        if type(amount) is not int:
+            raise SemanticNodeError("A fixed base toughness setting requires one integer")
+        return predicate, amount
+
+    def lower(self, descriptor: Mapping[str, Any], context: ContinuousEffectSourceContext):
+        predicate, amount = self.validate(descriptor)
+        if not context.source_logical_object_id:
+            raise SemanticNodeError("Opponent base toughness requires the current source incarnation")
+        return (
+            ContinuousEffect(
+                effect_id=f"{context.source_object_id}:{context.component_id}:7b",
+                source_id=context.source_object_id, layer=Layer.POWER_TOUGHNESS, sublayer="7b",
+                timestamp=context.source_timestamp, origin=ContinuousEffectOrigin.STATIC_ABILITY,
+                applies=_fixed_query_effect_predicate(
+                    predicate, target_controller="source_opponents", exclude_source=False, context=context,
+                ),
+                operations=(ContinuousOperation("set_toughness", amount),),
+            ),
+        )
+
 @dataclass(frozen=True, slots=True)
 class ConditionalCharacteristicSettingsHandler(FixedCharacteristicSettingsHandler):
     handler_id: str = CONDITIONAL_SETTING_HANDLER_ID
@@ -230,6 +284,91 @@ class ConditionalCharacteristicSettingsHandler(FixedCharacteristicSettingsHandle
     capability_dependencies: tuple[str, ...] = (
         FIXED_SETTING_CAPABILITY, 'continuous.characteristics.fixed_public_state',
     )
+
+
+def attached_aura_count_setting_condition(amount: int, *, exact: bool) -> FixedPublicStateConditionSpec:
+    quantity = CharacteristicQuantitySpec(
+        CharacteristicQuantityScope.ATTACHED_TO_SOURCE,
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("enchantment",), subtypes_all=("aura",)),
+    )
+    minimum = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=amount, quantity=quantity, schema_version=2,
+    )
+    if not exact:
+        return minimum
+    maximum = replace(minimum, kind=FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST)
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.ALL, terms=(minimum, maximum), schema_version=6,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class AuraCountCharacteristicSettingsHandler(ConditionalCharacteristicSettingsHandler):
+    """Use the earlier-layer source Aura count for fixed layer-6 and layer-7b results."""
+
+    handler_id: str = AURA_COUNT_SETTING_HANDLER_ID
+    schema_version: int = 3
+
+    def _validate_source_condition(self, condition):
+        parsed = FixedPublicStateConditionSpec.from_dict(condition)
+        minimum = parsed.leaf_conditions()[0]
+        if (minimum.kind is not FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
+                or parsed != attached_aura_count_setting_condition(minimum.amount, exact=bool(parsed.terms))):
+            raise SemanticNodeError("Source Aura settings require a closed exact or minimum attached-Aura count")
+
+    def validate(self, descriptor: Mapping[str, Any]):
+        target, predicate, node = FixedCharacteristicSettingsHandler.validate(self, descriptor)
+        if (target["kind"] != "source" or descriptor["source_condition"] is None
+                or node.base_power is None or node.type_operations or node.color_operations
+                or node.remove_all_abilities or node.remove_abilities or node.power or node.toughness):
+            raise SemanticNodeError("Source Aura counts support only fixed self base stats and keyword grants")
+        return target, predicate, node
+
+
+@dataclass(frozen=True, slots=True)
+class ControlledAuraRecipientSettingsHandler(FixedCharacteristicSettingsHandler):
+    """Set characteristics on other creatures enchanted by the source controller's Auras."""
+
+    handler_id: str = CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID
+
+    def validate(self, descriptor: Mapping[str, Any]):
+        target, predicate, node = FixedCharacteristicSettingsHandler.validate(self, descriptor)
+        if (target["kind"] != "fixed_query" or target["controller"] != "source_controller"
+                or not target["exclude_source"]
+                or predicate != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+                or node.base_power is None or not node.add_abilities or node.type_operations or node.color_operations
+                or node.remove_all_abilities or node.remove_abilities or node.power or node.toughness):
+            raise SemanticNodeError("Controlled Aura recipients require other controlled creatures and fixed base stats and keywords")
+        return target, predicate, node
+
+    def lower(self, descriptor: Mapping[str, Any], context: ContinuousEffectSourceContext):
+        _target, predicate, node = self.validate(descriptor)
+        if context.public_type_objects is None:
+            raise SemanticNodeError("Controlled Aura recipient facts are unavailable")
+        aura_query = ObjectQuerySpec(
+            zones=("battlefield",), controller=context.source_controller, types_all=("enchantment",),
+            subtypes_all=("aura",),
+        )
+        attached_refs = {
+            row.attached_to_ref for row in context.public_type_objects
+            if row.attached_to_ref is not None and object_matches_query(row, aura_query)
+        }
+        recipient_query = _fixed_query_effect_predicate(
+            predicate, target_controller="source_controller", exclude_source=True, context=context,
+        )
+        effects = []
+        for row in context.public_type_objects:
+            if row.ref not in attached_refs or not object_matches_query(row, recipient_query):
+                continue
+            common = {
+                "source_id": context.source_object_id, "timestamp": context.source_timestamp,
+                "origin": ContinuousEffectOrigin.STATIC_ABILITY, "applies": recipient_query,
+                "relation": ContinuousEffectRelation.SOURCE_CONTROLLED_AURA_RECIPIENT,
+                "related_object": ContinuousObjectIdentity(row.object_id, row.logical_object_id),
+            }
+            recipient_context = replace(context, component_id=f"{context.component_id}:recipient:{row.object_id}")
+            effects.extend(fixed_characteristic_effects(node, recipient_context, common=common))
+        return tuple(effects)
 
 
 @dataclass(frozen=True, slots=True)
@@ -271,7 +410,9 @@ class ConditionalCreatureTypeRemovalHandler:
             related_object=ContinuousObjectIdentity(context.source_object_id, context.source_logical_object_id)),)
 
 
-def prospective_creature_type_characteristics(host, card, characteristics, *, destination_controller):
+def prospective_creature_type_characteristics(
+    host, card, characteristics, *, destination_controller, include_controlled_subtypes=True,
+):
     """CR 614.12/700.5a: evaluate the entering source against pre-entry facts."""
     import copy
     from ..ability_fragments import static_component_keys
@@ -285,7 +426,10 @@ def prospective_creature_type_characteristics(host, card, characteristics, *, de
     programs = tuple(program for program in host.semantics.runtime_handler_programs_for_oracle(
         copiable_oracle_id(card, characteristics), active_zone='battlefield', event='characteristics.evaluate')
         if program.key in keys and host.semantic_program_is_current_trusted(program))
-    if not programs:
+    from ..rules.cross_zone_characteristics import controlled_chosen_subtype_entry_effects
+
+    effects = list(controlled_chosen_subtype_entry_effects(host, destination_controller)) if include_controlled_subtypes else []
+    if not programs and not effects:
         return characteristics
     prospective = copy.copy(card)
     prospective.zone = 'battlefield'
@@ -294,7 +438,6 @@ def prospective_creature_type_characteristics(host, card, characteristics, *, de
     handler = ConditionalCreatureTypeRemovalHandler()
     resolver = _FixedPublicStateSnapshotResolver(state=host.state, public_object_resolver=None,
         quantity_resolver=lambda source, quantity: query_characteristic_count(host, source, quantity))
-    effects = []
     for program in programs:
         if not program_matches_face(record, program, card, prospective_name=characteristics.get('name')):
             continue

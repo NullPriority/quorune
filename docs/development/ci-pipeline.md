@@ -868,12 +868,11 @@ registered consumer reintroduces its own `--fixture` list. Add a required
 fixture once to the manifest; all consumers retain isolated output paths while
 receiving the same composed card set automatically.
 
-After editing fixture payloads, build that composed database locally as well as
-validating the manifest. The build rejects inconsistent records for one Oracle
-ID across files, including empty face encodings and metadata differences that
-isolated test databases cannot expose. Reuse the existing canonical record for
-shared controls; preserve rules text, characteristics and supported format
-legality when reconciling metadata.
+The same validation also checks fixture identities before SQLite generation.
+It rejects distinct records with one Oracle ID and distinct Oracle IDs with one
+name. Reuse the existing canonical record for shared controls and keep rules
+text, characteristics and supported format legality when reconciling metadata.
+Build the composed database locally after editing fixture payloads.
 
 `python scripts/build_test_database.py validate-ci-dependencies` proves that
 the set is sufficient. The structural analyzer discovers exact `CardDatabase`
@@ -883,9 +882,9 @@ and `DeckLoader` paths from every module assigned by
 manifest, loads every discovered deck, resolves every dependency, and verifies
 that no `full_database_only` module is assigned to a compact shard. It also
 indexes fixture ownership and rejects conflicting canonical names, equally
-ranked aliases, or Oracle IDs. Canonical card names take precedence over face
-aliases, matching database lookup when an inset shares the name of a standalone
-card.
+ranked aliases, or Oracle IDs. The fixture index follows database lookup
+precedence. Playable records outrank art-series records, and canonical card
+names outrank face aliases within each group.
 
 Genuinely dynamic requirements must be declared in the existing manifest by
 exact source path and symbol, with sorted card, Oracle-ID, deck, or fixture

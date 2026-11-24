@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import tempfile
 import unittest
 from pathlib import Path
@@ -12,6 +13,7 @@ from quorune.compiler.runtime_templates import (
 )
 from quorune.compiler.draw_templates import (
     fixed_draw_effect_template,
+    static_draw_result_handler,
 )
 from quorune.cast_timing import type_line_has_card_type
 from quorune.engine import CommanderEngine
@@ -69,6 +71,24 @@ def result_draw_effect(effect_id: str = "double:A11@2") -> ReplacementEffect:
 
 
 class DrawResultModelTests(unittest.TestCase):
+    def test_opponent_draw_redirect_compiles_its_exact_recipient_and_dependencies(self):
+        text = (
+            "If an opponent would draw a card except the first one they draw in each of their draw steps, "
+            "instead that player skips that draw and you draw a card."
+        )
+        _, descriptor, dependencies = static_draw_result_handler(text)
+        self.assertEqual(
+            "replacement.draw.result.redirect_after_first.v1",
+            descriptor["handler_id"],
+        )
+        self.assertEqual({"affected_player_relation": "opponent"}, descriptor["condition"])
+        self.assertEqual({"recipient": "source_controller"}, descriptor["modification"])
+        self.assertEqual(
+            ("zone.draw.result_redirect_after_first", "zone.draw.result_generated_ordering"),
+            dependencies,
+        )
+        self.assertIsNone(static_draw_result_handler(text.replace("you draw a card", "they mill a card")))
+
     def test_result_draw_operation_is_closed_and_strict(self):
         operation = CreateResultDraws(count=2)
         self.assertEqual(
@@ -82,6 +102,61 @@ class DrawResultModelTests(unittest.TestCase):
                     operation_from_dict(
                         {"op": "create_result_draws", "count": count}
                     )
+
+    def test_result_draw_with_bound_recipient_round_trips(self):
+        operation = CreateResultDraws(count=1, recipient="B")
+        self.assertEqual(
+            {"op": "create_result_draws", "count": 1, "recipient": "B"},
+            operation.to_dict(),
+        )
+        self.assertEqual(operation, operation_from_dict(operation.to_dict()))
+        for recipient in (None, "", True, 2):
+            with self.subTest(recipient=recipient):
+                with self.assertRaisesRegex(ReplacementOperationError, "recipient"):
+                    operation_from_dict({**operation.to_dict(), "recipient": recipient})
+
+    def test_result_draw_queues_the_bound_recipient_with_ancestor_exclusions(self):
+        effect = result_draw_effect("redirect:source")
+        request = DrawEventRequest(
+            "draw:event:original", "A", 8, reason="fixture draw", private=True,
+            excluded_effect_ids=("redirect:ancestor",),
+        )
+        for recipient in ("A", "B"):
+            with self.subTest(recipient=recipient):
+                selected = replace(
+                    effect, operations=(CreateResultDraws(count=1, recipient=recipient),)
+                )
+                prepared = prepare_draw_event(request, apnap_order=ORDER, effects=(selected,))
+                self.assertEqual("A", prepared.resolution.player)
+                self.assertFalse(prepared.event.payload["is_draw"])
+                self.assertEqual(
+                    (
+                        QueuedDraw(
+                            recipient, 1, "fixture draw", True,
+                            ("redirect:ancestor", effect.effect_id),
+                        ),
+                    ),
+                    prepared.resolution.result_draws,
+                )
+                validate_prepared_draw(prepared, apnap_order=ORDER)
+        redirected = replace(
+            effect, operations=(CreateResultDraws(count=1, recipient="B"),)
+        )
+        competing = result_draw_effect()
+        undecided = prepare_draw_event(
+            request, apnap_order=ORDER, effects=(redirected, competing),
+            require_all_selections=False,
+        )
+        self.assertIsNotNone(undecided.pending)
+        self.assertEqual("A", undecided.pending.choice.chooser)
+        self.assertEqual(
+            {redirected.effect_id, competing.effect_id}, set(undecided.pending.choice.options)
+        )
+        outside = replace(
+            effect, operations=(CreateResultDraws(count=1, recipient="outside"),)
+        )
+        with self.assertRaisesRegex(DrawError, "missing from APNAP order"):
+            prepare_draw_event(request, apnap_order=ORDER, effects=(outside,))
 
     def test_result_draws_are_typed_and_exclude_the_producing_effect(self):
         effect = result_draw_effect()

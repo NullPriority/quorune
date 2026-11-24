@@ -2,10 +2,21 @@ from __future__ import annotations
 
 """Validate the shared authoritative APNAP instruction boundary."""
 
+from collections.abc import Mapping
+
 from ..errors import GameRuleError
 from ..library_order_model import HAND_TOP_APNAP_RESULT, is_affected_hand_top_choice
+from ..linked_exile_return_model import LINKED_FADING_HAND_BINDING, validate_linked_ability_binding
 from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_dependencies
 from ..object_predicate import ObjectQuerySpec
+from ..power_sacrifice_model import (
+    ATTACK_SACRIFICE_STAT_FIELD, CONTROLLER_SACRIFICE_LIFE_FIELD, ENTRY_SACRIFICE_POWER_DRAW_FIELD,
+    GREATEST_POWER_SACRIFICE_FIELD, GREATEST_POWER_SACRIFICE_INCARNATIONS,
+    GREATEST_POWER_SACRIFICE_LIFE_RESULT, GreatestPowerSacrificeLifeResult, GreatestPowerSacrificeSpec,
+    validate_attack_sacrifice_stat_effect, validate_controller_sacrifice_toughness_life,
+    validate_entry_sacrifice_power_life_draw,
+)
+from ..turn_history import current_turn_history_events
 from ..player_maximum import current_players_at_maximum
 from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
 from .fractional_counts import validate_apnap_count
@@ -33,6 +44,147 @@ def bind_most_lands_sacrifice_players(host, effect, continuation):
     return {**effect, "players": list(players)}
 
 
+def greatest_power_sacrifice_players(host, effect, continuation):
+    if GREATEST_POWER_SACRIFICE_FIELD not in effect:
+        return None
+    stack_ref = continuation.get("stack_ref")
+    item = next((candidate for candidate in host.state.stack if candidate.ref == stack_ref), None)
+    if (item is None or item.controller not in host.active_seats
+            or item.context.get("currently_resolving") is not True):
+        raise GameRuleError("Greatest-power sacrifice requires its current resolving source")
+    try:
+        spec = GreatestPowerSacrificeSpec.from_effect(effect, actor=item.controller)
+    except (ValueError, TypeError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    kinds = {"activated_ability"} if spec.lost_life_only else {"spell", "spell_copy"}
+    if item.kind not in kinds:
+        raise GameRuleError("Greatest-power sacrifice has the wrong resolving object kind")
+    if spec.target_player is not None:
+        if (tuple(item.targets) != (spec.target_player,) or spec.target_player not in host.active_seats
+                or item.context.get("targets_revalidated") is not True):
+            raise GameRuleError("Greatest-power sacrifice lost its revalidated affected player")
+        return [spec.target_player]
+    if item.targets:
+        raise GameRuleError("Greatest-power sacrifice requires its current resolving source")
+    opponents = [seat for seat in host.apnap_order() if seat != item.controller]
+    if not spec.lost_life_only:
+        return opponents
+    history = host.state.turn_history
+    turn = host.state.turn_sequence
+    if history is None or history.schema_version != 1 or history.turn_sequence != turn:
+        raise GameRuleError("Current opponent life-loss facts are unavailable")
+    lost = {
+        event.target for event in current_turn_history_events(history, turn_sequence=turn, kind="player_lost_life")
+        if event.amount > 0
+    }
+    return [seat for seat in opponents if seat in lost]
+
+
+def _controller_sacrifice_life_player(host, effect, continuation):
+    item = next((item for item in host.state.stack if item.ref == continuation.get("stack_ref")), None)
+    if (
+        item is None or item.kind != "triggered_ability" or item.targets
+        or item.controller not in host.active_seats or item.context.get("currently_resolving") is not True
+        or (item.context.get("event"), item.context.get("step"), item.context.get("player"))
+        != ("step.begin", "upkeep", item.controller)
+    ):
+        raise GameRuleError("Controller sacrifice life requires its original resolving upkeep trigger")
+    try:
+        validate_controller_sacrifice_toughness_life(effect, actor=item.controller)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return item.controller
+
+
+def _source_sacrifice_stat_player(host, effect, continuation):
+    from ..semantic_runtime.values import resolve_semantic_value
+
+    attacking = ATTACK_SACRIFICE_STAT_FIELD in effect
+    event = "creature.attacks" if attacking else "permanent.enter"
+    validate_effect = validate_attack_sacrifice_stat_effect if attacking else validate_entry_sacrifice_power_life_draw
+    item = next((item for item in host.state.stack if item.ref == continuation.get("stack_ref")), None)
+    if (
+        item is None or item.kind != "triggered_ability" or item.targets
+        or item.controller not in host.active_seats or item.context.get("currently_resolving") is not True
+        or item.context.get("event") != event
+        or not item.source_object_id or not item.context.get("source_logical_object_id")
+    ):
+        raise GameRuleError("Creature sacrifice stats require the original resolving source occurrence")
+    try:
+        excluded = resolve_semantic_value(host, "$source.zone_object", item)
+        validate_effect(effect, actor=item.controller, excluded=excluded)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return item.controller
+
+
+def sacrifice_can_decline(effect):
+    marker = effect.get(ENTRY_SACRIFICE_POWER_DRAW_FIELD)
+    return ATTACK_SACRIFICE_STAT_FIELD in effect or (isinstance(marker, Mapping) and marker.get("optional") is True)
+
+
+def revalidate_sacrifice_incarnations(host, state, player_order):
+    effect = state["effect"]
+    if ATTACK_SACRIFICE_STAT_FIELD in effect or ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
+        players = [_source_sacrifice_stat_player(host, effect, state["resume"])]
+    elif CONTROLLER_SACRIFICE_LIFE_FIELD in effect:
+        players = [_controller_sacrifice_life_player(host, effect, state["resume"])]
+    else:
+        players = greatest_power_sacrifice_players(host, effect, state["resume"])
+    if players is None:
+        return
+    selected = state["selected"]
+    if players != player_order or not isinstance(selected, Mapping) or set(selected) != set(players):
+        raise GameRuleError("Creature sacrifice has incomplete affected-player choices")
+    incarnations = state.get(GREATEST_POWER_SACRIFICE_INCARNATIONS, {})
+    if not isinstance(incarnations, Mapping):
+        raise GameRuleError("Creature sacrifice incarnation evidence is malformed")
+    for seat in players:
+        refs = selected[seat]
+        options = host._choice_options(seat, effect)
+        required = min(1, len(options))
+        cardinalities = (0, required) if sacrifice_can_decline(effect) else (required,)
+        if (not isinstance(refs, (list, tuple)) or len(refs) not in cardinalities
+                or any(type(ref) is not str or ref not in options for ref in refs)):
+            raise GameRuleError("A creature sacrifice choice is stale or ineligible")
+        for ref in refs:
+            card = host._resolve_object(seat, ref, zones={"battlefield"})
+            if card.logical_object_id != incarnations.get(ref):
+                raise GameRuleError("A creature sacrifice incarnation changed before commit")
+
+
+def sacrifice_life_commit_fields(effect, state, *, actor, selected_refs):
+    if not selected_refs:
+        return {}
+    try:
+        draw_after_life = ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect
+        draw_then_lose_life = ATTACK_SACRIFICE_STAT_FIELD in effect
+        if draw_then_lose_life:
+            validate_attack_sacrifice_stat_effect(effect, actor=actor, excluded=effect.get("exclude_ref"))
+            player, characteristic = actor, "power"
+        elif draw_after_life:
+            validate_entry_sacrifice_power_life_draw(effect, actor=actor, excluded=effect.get("exclude_ref"))
+            player, characteristic = actor, "power"
+        elif CONTROLLER_SACRIFICE_LIFE_FIELD in effect:
+            validate_controller_sacrifice_toughness_life(effect, actor=actor)
+            player, characteristic = actor, "toughness"
+        elif GREATEST_POWER_SACRIFICE_FIELD in effect:
+            spec = GreatestPowerSacrificeSpec.from_effect(effect, actor=actor)
+            if spec.target_player is None:
+                return {}
+            player, characteristic = spec.target_player, "power"
+        else:
+            return {}
+        ref, = selected_refs
+        result = GreatestPowerSacrificeLifeResult(
+            player, state[GREATEST_POWER_SACRIFICE_INCARNATIONS][ref], characteristic,
+            draw_after_life=draw_after_life, draw_then_lose_life=draw_then_lose_life,
+        )
+        return {GREATEST_POWER_SACRIFICE_LIFE_RESULT: result.to_dict()}
+    except (KeyError, TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+
+
 def is_typed_hand_exile(effect):
     return (
         effect.get("zone") == "hand" and effect.get("then") == "exile"
@@ -41,7 +193,34 @@ def is_typed_hand_exile(effect):
 
 
 def validate_apnap_choice_effect(host, effect, continuation):
+    from ..rules.keep_three_sacrifice import KEEP_THREE_SACRIFICE_FIELD, keep_three_sacrifice_scope
+
     validate_apnap_count(effect)
+    if LINKED_FADING_HAND_BINDING in effect and not is_typed_hand_exile(effect):
+        raise GameRuleError("A linked hand choice requires its typed hand exile")
+    if KEEP_THREE_SACRIFICE_FIELD in effect:
+        ref = continuation.get("stack_ref")
+        item = next((item for item in host.state.stack if item.ref == ref), None)
+        if (item is None or item.targets or item.controller not in host.active_seats
+                or item.context.get("currently_resolving") is not True):
+            raise GameRuleError("Keep-three sacrifice requires its original resolving object")
+        try:
+            scope = keep_three_sacrifice_scope(effect, actor=item.controller)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if (scope == "land" and (item.kind != "triggered_ability" or item.context.get("event") != "permanent.enter")
+                or scope == "permanent" and item.kind not in {"spell", "spell_copy"}):
+            raise GameRuleError("Keep-three sacrifice requires its admitted resolution kind")
+        return
+    if GREATEST_POWER_SACRIFICE_FIELD in effect:
+        greatest_power_sacrifice_players(host, effect, continuation)
+        return
+    if CONTROLLER_SACRIFICE_LIFE_FIELD in effect:
+        _controller_sacrifice_life_player(host, effect, continuation)
+        return
+    if ATTACK_SACRIFICE_STAT_FIELD in effect or ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
+        _source_sacrifice_stat_player(host, effect, continuation)
+        return
     hand_top = is_affected_hand_top_choice(effect)
     if hand_top and effect.get("predicate") is None:
         raise GameRuleError("Hand ordering requires a private own-hand predicate")
@@ -68,6 +247,7 @@ def validate_apnap_choice_effect(host, effect, continuation):
             *(("hidden",) if private_hand_choice else ()),
             *((DECLINED_LIFE_LOSS,) if optional_payment else ()),
             *(('target',) if "target" in effect else ()),
+            *((LINKED_FADING_HAND_BINDING,) if LINKED_FADING_HAND_BINDING in effect else ()),
         }
         stack_ref = str(continuation.get("stack_ref") or "")
         item = next(
@@ -139,6 +319,17 @@ def validate_apnap_choice_effect(host, effect, continuation):
             raise GameRuleError("Typed hand exile requires a fixed private own-hand choice")
         if hand_top and "target" in effect and effect["target"] not in item.targets:
             raise GameRuleError("The ordered hand choice lost its announced player target")
+        if LINKED_FADING_HAND_BINDING in effect:
+            try:
+                validate_linked_ability_binding(effect[LINKED_FADING_HAND_BINDING])
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            target = effect.get("target")
+            if (effect.get("count") != 1 or target == item.controller or target not in host.active_seats
+                    or tuple(item.targets) != (target,) or item.kind != "activated_ability"
+                    or item.context.get("currently_resolving") is not True
+                    or item.context.get("targets_revalidated") is not True):
+                raise GameRuleError("Linked hand exile requires the activated ability's revalidated opponent")
 
 
 def revalidate_ordered_hand_choices(host, state, player_order):

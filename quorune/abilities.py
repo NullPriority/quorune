@@ -41,6 +41,7 @@ from .granted_activation_model import (
 from .boast import keyword_activation_restrictions,validate_boast_ability,validate_forecast_ability
 from .forecast_model import FORECAST_UNCOMPILED
 from .ability_line_normalization import forecast_cost_without_source_reveal
+from .colored_hand_reveal_model import VariableColoredRevealPrice, VARIABLE_COLORED_REVEAL_PRICE_FIELD
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .creature_subtypes import canonical_creature_subtype
@@ -174,6 +175,7 @@ class ActivatedAbility:
     granting_attachment_payment: GrantingAttachmentPayment | None = None
     saddle_threshold: int | None = None
     ability_local_mana_reduction: AbilityLocalManaReduction | None = None
+    variable_colored_reveal_price: VariableColoredRevealPrice | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -182,6 +184,17 @@ class ActivatedAbility:
             validate_bound_granting_attachment_payment(self)
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
+        price = self.variable_colored_reveal_price
+        if price is not None and (
+            not isinstance(price, VariableColoredRevealPrice) or not price.matches_mana(self.mana)
+            or self.zones != ("battlefield",) or not self.sacrifice_source
+            or self.loyalty_delta is not None or self.announced_x_symbols is not None
+            or any((self.mana_ability, self.tap_source, self.untap_source, self.discard_source,
+                self.exile_source, self.life_payment, self.energy_payment, self.random_discard_payment,
+                self.mana_cost_options, self.waterbend, self.choices, self.uncompiled_costs,
+                self.complex_symbols, self.source_counter_removal_cost))
+        ):
+            raise ValueError("Variable colored reveal requires its ordinary battlefield activation price")
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
             raise ValueError('Fixed mana result must be typed')
         _validate_ability_identity_and_cost(self)
@@ -201,6 +214,10 @@ class ActivatedAbility:
             validate_saddle_ability(self)
         validate_boast_ability(self)
         validate_forecast_ability(self)
+
+    @property
+    def chooses_activation_x(self) -> bool:
+        return self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -268,6 +285,8 @@ class ActivatedAbility:
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
+        if self.variable_colored_reveal_price is not None:
+            result[VARIABLE_COLORED_REVEAL_PRICE_FIELD] = self.variable_colored_reveal_price.to_dict()
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         if self.forecast:result['forecast']=True
@@ -289,6 +308,10 @@ class ActivatedAbility:
                 if ABILITY_LOCAL_MANA_REDUCTION_FIELD in value else None
             ),
             announced_x_symbols=value.get('announced_x_symbols'),
+            variable_colored_reveal_price=(
+                VariableColoredRevealPrice.from_dict(value[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
+                if VARIABLE_COLORED_REVEAL_PRICE_FIELD in value else None
+            ),
             boast=value.get('boast',False),
             reconfigure=value.get('reconfigure', False),
             forecast=value.get('forecast', False),

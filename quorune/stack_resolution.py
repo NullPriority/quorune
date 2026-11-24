@@ -5,6 +5,10 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from .ability_resolution_ordinal import (
+    ABILITY_RESOLVED_HISTORY, is_ability_resolution_ordinal, is_second_ability_draw,
+    validate_ability_resolution_ordinal,
+)
 from .aura import aura_resolution_move_kwargs
 from .cast_lifecycles import (
     complete_fixed_cast_lifecycle_resolution,
@@ -16,7 +20,7 @@ from .stack_resolution_authority_model import (
     INTRINSIC_EMPTY_SPELL_ADMISSION,
     stack_resolution_authority_version,
 )
-from .errors import StateInvariantError
+from .errors import GameRuleError, StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker, evoke_payment_annotation
 from .model import CardInstance, StackItem
 from .rules.casting.face_queries import prospective_cast_record
@@ -77,6 +81,50 @@ class StackResolutionCompletionHost(Protocol):
     def shuffle_library(self, seat: str, *, reason: str, actor: str | None = None) -> None: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+
+def bind_ability_resolution_ordinals(host, item, effects):
+    """Seal the ordinal after the normal stack target checks."""
+    from .rules.third_resolved_source_trigger import ordinary_third_source_counter
+
+    prepared = [dict(effect) for effect in effects]
+    ordinary_counter = ordinary_third_source_counter(host, item, prepared)
+    if ordinary_counter is not None:
+        return ordinary_counter
+    found = [index for index, effect in enumerate(prepared) if is_ability_resolution_ordinal(effect)]
+    if not found:
+        return prepared
+    if len(prepared) != 2 or found != [1]:
+        raise GameRuleError("An ability-resolution result requires its fixed prefix")
+    instruction = prepared[1]
+    expected_kind = "triggered_ability" if is_second_ability_draw(instruction) else "activated_ability"
+    if item.kind != expected_kind:
+        raise GameRuleError("An ability-resolution result requires its exact stack ability kind")
+    try:
+        validate_ability_resolution_ordinal(instruction)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    instruction["resolution_ordinal"] = _record_ability_resolution_ordinal(host, item)
+    return prepared
+
+
+def _record_ability_resolution_ordinal(host, item):
+    incarnation = item.context.get("source_logical_object_id")
+    key = item.semantic_key
+    history = host.state.turn_history
+    if (history is None or history.schema_version != 1 or history.turn_sequence != host.state.turn_sequence
+            or item.context.get("targets_revalidated") is not True
+            or any(type(value) is not str or not value for value in (incarnation, key))):
+        raise GameRuleError("An ability-resolution result requires current history and its source ability identity")
+    prior = sum(
+        event.object_incarnation == incarnation and event.target == key
+        for event in host._current_turn_history(ABILITY_RESOLVED_HISTORY)
+    )
+    host._record_turn_history(
+        ABILITY_RESOLVED_HISTORY, actor=item.controller, object_incarnation=incarnation,
+        target=key, target_kind="ability_program",
+    )
+    return prior + 1
 
 
 @dataclass(frozen=True, slots=True)
@@ -223,6 +271,9 @@ def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackI
     from .rules.paid_alternative_cast_facts import resolving_paid_alternative_entry
     from .rules.paradigm import schedule_paradigm_resolution
     schedule_paradigm_resolution(host, item)
+    from .rules.third_resolved_source_trigger import complete_third_source_trigger
+
+    complete_third_source_trigger(host, item, record_ordinal=_record_ability_resolution_ordinal)
     shuffle_owner = _printed_shuffle_owner(host, item, destination)
     library_position = _printed_library_position(host, item, destination)
     with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item),resolving_paid_alternative_entry(host,item):
@@ -246,10 +297,9 @@ def _complete_stack_resolution(
 
     item.context.pop("currently_resolving", None)
     if item.card_object_id:
-        from .zone_object_state import mark_resolving_paid_entry_copy, mark_multikicker_paid, mark_declared_cast_costs
-        mark_resolving_paid_entry_copy(host.state.cards[item.card_object_id], item.context)
-        mark_multikicker_paid(host.state.cards[item.card_object_id], item.context)
-        mark_declared_cast_costs(host.state.cards[item.card_object_id], item.context)
+        from .zone_object_state import mark_resolving_cast_facts
+
+        mark_resolving_cast_facts(host.state.cards[item.card_object_id], item)
     from .rules.event_spell_copy import pin_event_spell_copy_departure
     pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)
@@ -281,6 +331,7 @@ def _complete_stack_resolution(
             card.object_id,
             "battlefield",
             controller=item.controller,
+            putting_player=item.controller,
             **aura_resolution_move_kwargs(item),
             prepared_replacement=prepared_replacement,
             reason="permanent spell copy resolved",
@@ -310,6 +361,7 @@ def _complete_stack_resolution(
         card.object_id,
         final_destination,
         controller=item.controller,
+        **({"putting_player": item.controller} if final_destination == "battlefield" else {}),
         **({"position": library_position} if library_position is not None and final_destination == "library" else {}),
         enter_face=item.chosen_face if final_destination == 'battlefield' else None,
         tapped=(

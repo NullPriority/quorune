@@ -18,7 +18,7 @@ from .object_query import object_query_result, query_objects
 from .util import normalize_mana_bundle
 from .chosen_color_mana_runtime import chosen_color_mana_output, chosen_color_mana_modes
 from .public_quantity_mana_runtime import (
-    public_quantity_output, public_quantity_mana_modes, select_public_quantity_mana,
+    chosen_subtype_mana_output, public_quantity_output, public_quantity_mana_modes, select_public_quantity_mana,
 )
 
 
@@ -63,6 +63,11 @@ def _mana_result_effects(
     )
 
 
+def _one_mana_color_modes(colors) -> tuple[ManaMode, ...]:
+    modes = tuple(ManaMode(normalize_mana_bundle({color: 1})) for color in "WUBRG" if color in colors)
+    return modes or (ManaMode(normalize_mana_bundle(None)),)
+
+
 def _color_set_mana_modes(
     host: ManaAbilityRuntimeHost,
     seat: str,
@@ -71,6 +76,8 @@ def _color_set_mana_modes(
     spec = ability.color_set_mana_output
     if spec is None:
         return ()
+    if spec.uses_commander_identity:
+        return _one_mana_color_modes(host._commander_identity(seat))
     query = replace(
         spec.query,
         controller=(
@@ -114,12 +121,7 @@ def _color_set_mana_modes(
             ),
         )
     if spec.selection is ColorSetSelection.CHOOSE_ONE:
-        if not colors:
-            return (ManaMode(normalize_mana_bundle(None)),)
-        return tuple(
-            ManaMode(normalize_mana_bundle({color: 1}))
-            for color in colors
-        )
+        return _one_mana_color_modes(colors)
     raise GameRuleError("Unsupported typed color-set mana selection")
 
 
@@ -263,6 +265,38 @@ def _opponent_land_colors(
     return tuple(color for color in "WUBRG" if color in colors)
 
 
+def _current_tap_mana_multipliers(host, seat, source, *, current_source):
+    from .semantic_runtime.action_permissions import controller_action_permissions
+    from .semantic_runtime.mana_spending import (
+        TAP_MANA_PRODUCTION_MULTIPLIERS, has_tap_mana_multiplier_program,
+    )
+
+    if source is None or not has_tap_mana_multiplier_program(host):
+        return ()
+    types, supertypes = source.types, source.supertypes
+    if current_source:
+        current = host.state.cards.get(source.object_id)
+        if (current is not None and current.zone == "battlefield" and not current.phased_out
+                and current.logical_object_id == source.logical_object_id):
+            types, _, supertypes = host._type_parts(str(host._effective_card_data(current).get("type_line") or ""))
+    is_basic_land = "land" in types and "basic" in supertypes
+    providers = {card.logical_object_id: card.object_id for card in host.state.cards.values()
+                 if card.zone == "battlefield" and card.controller == seat and not card.phased_out}
+    return tuple(
+        (providers[permission.source_logical_object_id], factor)
+        for permission in controller_action_permissions(host, seat)
+        if permission.kind in TAP_MANA_PRODUCTION_MULTIPLIERS
+        for _, factor, basics_only in (TAP_MANA_PRODUCTION_MULTIPLIERS[permission.kind],)
+        if (not basics_only or is_basic_land) and permission.source_logical_object_id in providers
+    )
+
+
+def tap_mana_production_factor(host, seat, source):
+    from math import prod
+
+    return prod(factor for _, factor in _current_tap_mana_multipliers(host, seat, source, current_source=True))
+
+
 def typed_mana_modes_for_abilities(
     host: ManaAbilityRuntimeHost,
     seat: str,
@@ -271,34 +305,50 @@ def typed_mana_modes_for_abilities(
 ) -> tuple[ManaMode, ...]:
     """Return deduplicated modes owned by typed mana descriptors."""
 
+    from .semantic_runtime.mana_spending import has_tap_mana_multiplier_program
+    from .triggered_mana import tap_mana_source
+
     result = {}
+    source_snapshot = (tap_mana_source(host, source, tap_source=True)
+                       if has_tap_mana_multiplier_program(host) else None)
+    multipliers = _current_tap_mana_multipliers(host, seat, source_snapshot, current_source=False)
     for ability in abilities:
         if not ability.mana_ability:
             continue
         modes = mana_modes_for_ability(host, seat, source, ability)
-        if ability.mana_cost_options:
-            modes = _priced_filter_modes(host, seat, source, ability, modes)
+        if ability.tap_source and multipliers:
+            surviving = tuple((provider, factor) for provider, factor in multipliers
+                              if not ability.sacrifice_source or provider != source.object_id)
+            modes = tuple(replace(mode, tap_mana_multipliers=surviving) for mode in modes)
+        if ability.mana_cost_options or chosen_subtype_mana_output(ability) is not None:
+            modes = _priced_mana_modes(host, seat, source, ability, modes)
         for mode in modes:
             key = tuple(
                 (color, int(mode.bundle.get(color, 0)))
                 for color in "WUBRGC"
                 if int(mode.bundle.get(color, 0))
             )
-            result.setdefault((key, mode.tap_source, mode.price.key if mode.price else None), mode)
+            result.setdefault((key, mode.tap_source, mode.price.key if mode.price else None,
+                               mode.tap_mana_multipliers), mode)
     return tuple(result.values())
 
 
-def _priced_filter_modes(host, seat, source, ability, modes):
+def _priced_mana_modes(host, seat, source, ability, modes):
+    from .activation_mana_cost import ActivationManaCostOption
     from .fixed_mana_abilities import supports_hybrid_filter_price
     from .mana_restrictions import ability_mana_spend_context
-    from .rules.activation.pricing import targetless_activation_prices
+    from .rules.activation.pricing import ordinary_activation_prices, targetless_activation_prices
     from .semantic_runtime.mana_spending import current_mana_spending_policy
 
-    if not supports_hybrid_filter_price(ability, ability.mana_cost_options, ability.fixed_mana_outputs):
+    if chosen_subtype_mana_output(ability) is not None:
+        prices, _, _ = ordinary_activation_prices(host, seat, source, ability, targets=())
+        options = tuple(ActivationManaCostOption(price.order, price.requirements) for price in prices)
+    elif supports_hybrid_filter_price(ability, ability.mana_cost_options, ability.fixed_mana_outputs):
+        options = targetless_activation_prices(host, seat, source, ability)
+    else:
         return ()
     context = ability_mana_spend_context(str(host._effective_card_data(source).get("type_line") or ""))
     policy = current_mana_spending_policy(host, seat, context)
-    options = targetless_activation_prices(host, seat, source, ability)
     return tuple(replace(mode, price=ManaModePrice(ability.ability_id, option, context, policy))
                  for mode in modes for option in options)
 
@@ -316,7 +366,7 @@ def payable_mana_modes(
             if int(mode.bundle.get(color, 0))
         )
         if key:
-            result.setdefault((key, mode.price.key if mode.price else None), mode)
+            result.setdefault((key, mode.price.key if mode.price else None, mode.tap_mana_multipliers), mode)
     return tuple(result.values())
 
 

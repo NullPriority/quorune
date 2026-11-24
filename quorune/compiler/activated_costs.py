@@ -23,8 +23,15 @@ from ..activation_condition_model import (
 
 _PUBLIC_ACTIVATION_TAIL = re.compile(
     r"(?P<body>[^:\n]+:\s*.+?\.)\s+Any player may activate this ability"
-    r"(?P<sorcery> but only as a sorcery)?\.", re.IGNORECASE,
+    r"(?: but only (?P<window>as a sorcery|during any upkeep step|during their draw step))?\.",
+    re.IGNORECASE,
 )
+_PUBLIC_ACTIVATION_WINDOWS = {
+    "": PublicActivationTiming.PRIORITY,
+    "as a sorcery": PublicActivationTiming.SORCERY,
+    "during any upkeep step": PublicActivationTiming.ANY_UPKEEP,
+    "during their draw step": PublicActivationTiming.ACTIVATORS_DRAW_STEP,
+}
 
 
 def public_activation_material(
@@ -33,7 +40,7 @@ def public_activation_material(
     match = _PUBLIC_ACTIVATION_TAIL.fullmatch(line.strip())
     if match is None:
         return line, None
-    timing = PublicActivationTiming.SORCERY if match["sorcery"] else PublicActivationTiming.PRIORITY
+    timing = _PUBLIC_ACTIVATION_WINDOWS[(match["window"] or "").casefold()]
     material = match["body"] + (" Activate only as a sorcery." if timing is PublicActivationTiming.SORCERY else "")
     abilities = parse_activated_abilities(card_name=card_name, oracle_text=material, keywords=keywords)
     if (len(abilities) != 1 or abilities[0].zones != ("battlefield",) or abilities[0].mana_ability
@@ -73,6 +80,10 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.variable_colored_reveal_price is not None:
+        from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_CAPABILITY
+
+        additional.append(VARIABLE_COLORED_REVEAL_CAPABILITY)
     if ability.ability_local_mana_reduction is not None:
         additional.extend(ability_local_mana_reduction_capabilities(ability.ability_local_mana_reduction, ability.zones[0]))
     if ability.forecast:
@@ -191,6 +202,10 @@ def activated_ability_cost(
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.variable_colored_reveal_price is not None:
+        from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_PRICE_FIELD
+
+        result[VARIABLE_COLORED_REVEAL_PRICE_FIELD] = ability.variable_colored_reveal_price.to_dict()
     if ability.ability_local_mana_reduction is not None:
         result[ABILITY_LOCAL_MANA_REDUCTION_FIELD] = ability.ability_local_mana_reduction.to_dict()
     if ability.boast:result['boast']=True

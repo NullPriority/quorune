@@ -10,10 +10,127 @@ from .attached_granted_ability_nodes import attached_granted_ability_plan
 from .entry_copy_templates import entry_copy_node,entry_copy_spec
 
 
+def _conditional_vanishing_copy_nodes(*, record, face_id, node_id, line, material_line, span,
+        source_name, capability_registry, capability_profile):
+    match = re.fullmatch(
+        r"(?P<shell>.+), except it has vanishing 3 if that creature doesn['’]t have vanishing\.?",
+        " ".join(material_line.split()), re.I,
+    )
+    if match is None:
+        return None
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..fixed_keyword_entry_counters import FixedKeywordEntryCounterSpec
+    from ..token_copy_recipes import TokenCopyExceptionSpec
+    from .vanishing_nodes import vanishing_lifecycle_nodes
+
+    base = entry_copy_spec(match["shell"] + ".", source_name=source_name)
+    if base is None or base.schema_version != 1 or base.exception != TokenCopyExceptionSpec():
+        return None
+
+    residuals = []
+    keyword = "Vanishing 3"
+    lifecycle = vanishing_lifecycle_nodes(node_id=node_id, line=keyword, span=span,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if residuals:
+        return None
+    children, fragments = [], [ability_fragment_to_dict(FixedKeywordEntryCounterSpec("vanishing", 3))]
+    for index, inner in enumerate(lifecycle, 1):
+        child_id = f"{node_id}:quoted-ability:{index}"
+        plan = attached_granted_ability_plan(node=inner, quoted_text=keyword, oracle_id=record.oracle_id,
+            face_id=face_id, source_line=span.line, card_name="Copied creature", keywords=("Vanishing",), node_id=child_id)
+        if plan is None:
+            return None
+        fragments.append(plan.fragment)
+        children.append(replace(inner, node_id=child_id, kind=plan.node_kind,
+            runtime_coverage=tuple(value for value in inner.runtime_coverage if value != CURRENT_ABILITY_FRAGMENT_COVERAGE)))
+    try:
+        spec = replace(base, schema_version=11, exception=TokenCopyExceptionSpec(
+            schema_version=5, add_keywords=("Vanishing",), add_ability_fragments=tuple(fragments)))
+    except ValueError:
+        return None
+    owner = entry_copy_node(node_id=node_id, line=line, material_line=material_line, span=span,
+        source_name=source_name, capability_registry=capability_registry, capability_profile=capability_profile,
+        residuals=residuals, spec=spec)
+    if owner is None or not owner.exact or residuals:
+        return None
+    return (owner, *children)
+
+
+def _face_status_copy_nodes(*, record, face_id, node_id, line, material_line, span,
+        source_name, capability_registry, capability_profile):
+    match = re.fullmatch(
+        r'As (?P<source>[^,]+?) enters or is turned face up, you may choose another creature on the battlefield\. '
+        r'If you do, until this creature is turned face down, it becomes a copy of that creature, '
+        r'except it has "At the beginning of your upkeep, you may turn this creature face down\.?"\.?',
+        " ".join(material_line.split()), re.I,
+    )
+    if match is None:
+        return None
+    from ..entry_copy import EntryCopySpec, FACE_UP_OR_ENTRY_COPY_CAPABILITY, FACE_UP_OR_ENTRY_COPY_QUERY
+    from ..replacement.face_status_copy import (
+        UPKEEP_REFACING_MECHANIC, UPKEEP_REFACING_TEMPLATE, upkeep_refacing_condition, upkeep_refacing_effect,
+    )
+    from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+    from ..token_copy_recipes import TokenCopyExceptionSpec
+    from .ir_model import OracleNode
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_CAPABILITY, FIXED_OPTIONAL_EFFECT_MECHANIC
+
+    if not (source_self_permanent_type(match["source"]) == "creature"
+            or SourceReferenceSpec(source_name).matches(match["source"])):
+        return None
+    child_id = f"{node_id}:quoted-ability:1"
+    deps = (FIXED_OPTIONAL_EFFECT_CAPABILITY, FACE_UP_OR_ENTRY_COPY_CAPABILITY)
+    closure = capability_registry.closure(deps, profile=capability_profile)
+    if not closure.trusted or closure.blockers:
+        return None
+    label = "Optional upkeep refacing"
+    child = OracleNode(
+        node_id=child_id, kind="triggered_ability", text=label, span=span,
+        active_zone="battlefield", event="step.begin", event_condition=upkeep_refacing_condition(),
+        lowerable=True, exact=True, template_id=UPKEEP_REFACING_TEMPLATE,
+        effects=(upkeep_refacing_effect(),), mechanics=(FIXED_OPTIONAL_EFFECT_MECHANIC, UPKEEP_REFACING_MECHANIC),
+        capability_dependencies=deps, capability_closure=closure.reachable,
+        capability_profile=closure.profile, capability_fingerprint=closure.fingerprint,
+    )
+    plan = attached_granted_ability_plan(node=child,quoted_text=label,oracle_id=record.oracle_id,face_id=face_id,
+        source_line=span.line,card_name="Copied creature",keywords=(),node_id=child_id)
+    if plan is None:
+        return None
+    spec = EntryCopySpec(FACE_UP_OR_ENTRY_COPY_QUERY,schema_version=12,
+                         exception=TokenCopyExceptionSpec(add_ability_fragments=(plan.fragment,)))
+    residuals = []
+    parent = entry_copy_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,
+        residuals=residuals,spec=spec)
+    if parent is None or not parent.exact or residuals:
+        return None
+    return parent,replace(child,kind=plan.node_kind)
+
+
 def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
         source_name,trusted_mechanics,capability_registry,capability_profile,
         compile_inner,effect_template,trigger_effect_template,material_line_for,keyword_node_compiler):
     if capability_registry is None:return None
+    if "doesn't copy" in material_line.casefold().replace("’", "'"):
+        from .color_retaining_copy import retained_color_copy_nodes
+
+        retained = retained_color_copy_nodes(record=record, face_id=face_id, node_id=node_id, line=line,
+            material_line=material_line, span=span, source_name=source_name,
+            capability_registry=capability_registry, capability_profile=capability_profile)
+        if retained is not None:
+            return retained
+    if "enters or is turned face up" in material_line.casefold():
+        status_copy = _face_status_copy_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
+            material_line=material_line,span=span,source_name=source_name,capability_registry=capability_registry,
+            capability_profile=capability_profile)
+        if status_copy is not None:
+            return status_copy
+    if "if that creature" in material_line.casefold():
+        conditional = _conditional_vanishing_copy_nodes(record=record, face_id=face_id, node_id=node_id,
+            line=line, material_line=material_line, span=span, source_name=source_name,
+            capability_registry=capability_registry, capability_profile=capability_profile)
+        if conditional is not None:
+            return conditional
     match=re.fullmatch(r'(?P<shell>You may have .+? enter as a copy of .+?), except '
         r'(?:(?P<exception>[^\"]+?) and )?it has "(?P<ability>[^\"]+)"\.?',material_line,re.I)
     keyword_match=None

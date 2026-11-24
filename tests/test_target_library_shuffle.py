@@ -79,7 +79,7 @@ class TargetShuffleCompilerTests(unittest.TestCase):
      register_generated_programs(db,semantics,(card,),trust_level='provisional',capability_registry=self.registry,capability_profile='commander_review',promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
      program=compile_best_available_card_program(db,card,semantic_registry=semantics,capability_registry=self.registry,capability_profile='commander_review')
      bound=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-     self.assertEqual(name!='Elixir of Immortality',bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),(name,bound['blockers']))
+     self.assertTrue(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed',(name,bound['blockers']))
 
  def test_fixed_target_shuffle_requires_both_shuffle_authorities_and_target_revalidation(self):
   card=compiler_controls.record('Target player shuffles their library.','Sorcery')

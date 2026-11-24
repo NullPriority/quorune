@@ -117,6 +117,28 @@ def static_runtime_node(
 ) -> OracleNode | None:
     """Lower one closed static descriptor and its capability evidence."""
 
+    from ..commander_pairing import (
+        COMMANDER_PAIRING_EVENT,
+        PRINTED_COMMANDER_ELIGIBILITY_CAPABILITY,
+        PRINTED_COMMANDER_ELIGIBILITY_COVERAGE,
+        PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE,
+    )
+    from .commander_pairing_nodes import has_printed_commander_permission
+
+    if (
+        not source_is_class
+        and "planeswalker" in card_types
+        and has_printed_commander_permission(material_line, source_name=source_name)
+    ):
+        return runtime_handler_node(
+            node_id=node_id, line=line, span=span,
+            compiled=(PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE, (), PRINTED_COMMANDER_ELIGIBILITY_CAPABILITY),
+            kind="static_ability", event=COMMANDER_PAIRING_EVENT, active_zone="all",
+            runtime_coverage=(PRINTED_COMMANDER_ELIGIBILITY_COVERAGE,),
+            dependency_reason="Printed commander eligibility requires its trusted setup authority",
+            capability_registry=capability_registry, capability_profile=capability_profile,
+            residuals=residuals,
+        )
     from .devotion_templates import fixed_devotion_increase_handler
     from .token_templates import static_token_quantity_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
@@ -157,7 +179,10 @@ def static_runtime_node(
             kind='static_ability',event=UNPREVENTABLE_EVENT,runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
             dependency_reason='Static unpreventable damage requires its typed permission owner',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    from .life_templates import static_life_gain_prohibition_handler
+    from .life_templates import (
+        static_life_gain_prohibition_handler,
+        static_opponent_life_gain_to_loss_handler,
+    )
     from ..life_gain_permission import LIFE_GAIN_PROHIBITION_EVENT
     prohibition = (static_life_gain_prohibition_handler(material_line)
         if not source_is_class and card_types.intersection(permanent_card_types) else None)
@@ -166,6 +191,17 @@ def static_runtime_node(
             kind='static_ability',event=LIFE_GAIN_PROHIBITION_EVENT,runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
             dependency_reason='Static life-gain permission requires its typed rules owner',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    life_conversion = (
+        static_opponent_life_gain_to_loss_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None
+    )
+    if life_conversion is not None:
+        return runtime_handler_node(
+            node_id=node_id, line=line, span=span, compiled=life_conversion,
+            kind="replacement_effect", event="life.change", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Opposing life-gain conversion requires its typed current replacement owner",
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        )
     devotion = (fixed_devotion_increase_handler(material_line)
         if not source_is_class and card_types.intersection(permanent_card_types) else None)
     if devotion is not None:

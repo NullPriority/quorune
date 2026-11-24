@@ -4,6 +4,7 @@ from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
@@ -197,6 +198,17 @@ def _with_committed_quantity_followup(completion, intent, index, result):
     from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
     from ..semantic_runtime.graveyard_exile_result_intent import GraveyardExileLifeResultIntent
 
+    from ..discard_result_model import (
+        DiscardWholeHandsResultIntent, IntentResultPlayerDraws, PlayerDiscardCounts, SelectedLandDiscardCounterDraws,
+    )
+
+    if (isinstance(intent, DiscardWholeHandsResultIntent) and intent.graveyard_orders is not None
+            and intent.require_graveyard_order):
+        if not isinstance(result, PlayerDiscardCounts) or index != len(completion.intents) - 1:
+            raise SemanticChoiceError("An ordered discard requires its exact committed result")
+        binding = SelectedLandDiscardCounterDraws if intent.selected_lands else IntentResultPlayerDraws
+        effects = binding(0, "own").resolved_effects(result)
+        return replace(completion, prepend_effects=(*effects, *completion.prepend_effects))
     if not isinstance(result, CommittedQuantityFollowup):
         return completion
     if not isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent)) or index != len(completion.intents) - 1:
@@ -289,6 +301,7 @@ def continue_semantic_completion(
                     *CHAMPION_INTENT_TYPES,
                     DiscoverCastIntent,
                     ResolvingExileLandPlayIntent,
+                    ResolvingSharedTypeLibraryPlayIntent,
                     ResolveCapturedDrawCastIntent,
                     ResolveBoundedHandCastIntent,
                     GraveyardCastIntent,

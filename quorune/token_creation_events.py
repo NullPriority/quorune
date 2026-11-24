@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Sequence, TYPE_CHECKING
 
 from .counter_placement_events import dispatch_prepared_counter_events
+from .permanent_event_state_model import BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD
 from .replacement_effects import ReplacementChoiceRequired
 from .token_creation_batch_model import TOKEN_CREATION_BATCH_EVENT, TokenCreationBatchFact
 from .token_creation_identity import token_copy_snapshot
@@ -89,6 +90,7 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
         card = host.state.cards[object_id]
         data = host._effective_card_data(card)
         from .tribute_entry_results import tribute_entry_identity_context
+        from .devour import devour_entry_context
         contexts.append({
             "card": card.ref,
             "card_object_identity": card.logical_object_id,
@@ -104,6 +106,7 @@ def _entry_contexts(host: TokenCreationHost, creation: CommittedTokenCreation, r
             "tapped": card.tapped,
             "reason": reason,
             **tribute_entry_identity_context(card,card.logical_object_id),
+            **devour_entry_context(card, card.logical_object_id),
         })
     return tuple(contexts)
 
@@ -124,10 +127,13 @@ def publish_token_creations(
     for creation, entries, previous_quantity in zip(creations, contexts, previous_quantities, strict=True):
         for context in entries:
             host._dispatch_semantic_event("token.created", context, trigger_batch=trigger_batch)
-            host._dispatch_semantic_event("permanent.enter", context, trigger_batch=trigger_batch)
+            entry = context
+            if getattr(host.state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None) == 1:
+                entry = {**context, "putting_player": creation.controller}
+            host._dispatch_semantic_event("permanent.enter", entry, trigger_batch=trigger_batch)
             for card_type in ("artifact", "creature", "land", "enchantment"):
-                if card_type in context["types"]:
-                    host._dispatch_semantic_event(f"{card_type}.enter", context, trigger_batch=trigger_batch)
+                if card_type in entry["types"]:
+                    host._dispatch_semantic_event(f"{card_type}.enter", entry, trigger_batch=trigger_batch)
         if entries:
             fact = TokenCreationBatchFact(
                 creation.controller, len(entries),

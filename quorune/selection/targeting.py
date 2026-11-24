@@ -20,7 +20,7 @@ from ..rules.modal_selection import canonical_modes
 from ..semantics import SemanticProgram
 from ..target_characteristics import TargetCharacteristicSnapshot
 from ..target_history import target_damage_history_matches, target_player_history_matches
-from ..target_predicates import TargetPredicateError, target_predicate_matches
+from ..target_predicates import TargetPredicateError, materialize_greatest_power_target_rows, target_predicate_matches
 from ..target_protection import TargetProtectionVerdict
 from ..target_protection_engine_adapter import target_protection_verdict_for_row
 from ..targets import (
@@ -40,7 +40,11 @@ from .target_query import (
     target_identity_matches_snapshot,
     target_snapshot,
 )
-from .target_validation import CopyTargetValidation, validate_grouped_target_assignment
+from .target_validation import (
+    CopyTargetValidation, target_choice_requirement, shared_permanent_type_pair_matches, shared_type_pair_candidates,
+    shared_type_pair_resolution_rejections, single_choice_required_target_candidates,
+    target_assignment_meets_requirement, validate_grouped_target_assignment,
+)
 
 
 TARGET_OPERATION_ID = "selection.target.semantic.v1"
@@ -117,6 +121,19 @@ def _target_group_attachment_state(host, group, card):
     return {'enchanted': enchanted, 'equipped': equipped, 'modified': modified}
 
 
+def _current_public_target_state_matches(host, group, card, actor):
+    from ..rules.aura_attachment_targets import aura_attachment_target_matches
+
+    if group.aura_attachment is not None and not aura_attachment_target_matches(
+        host, group.aura_attachment, card, actor=actor,
+    ):
+        return False
+    return _target_group_public_state_matches(
+        group, card=card, turn_sequence=host.state.turn_sequence,
+        attachment_state=_target_group_attachment_state(host, group, card),
+    )
+
+
 def _current_combat_target_matches(host, group, card, controller, source_ref):
     return _target_group_combat_state_matches(group,card=card,actor=controller,
         source_ref=source_ref,cards=host.state.cards,combat=host.state.combat)
@@ -141,6 +158,12 @@ def _target_group_combat_state_matches(
         return False
     if group.combat_state == "attacking":
         return attacking
+    if group.combat_state == "attacking_or_tapped":
+        return attacking or bool(card and card.tapped)
+    if group.combat_state == "unblocked_attacking":
+        from ..combat_relationship_state import is_unblocked_attacker_after_declaration
+
+        return is_unblocked_attacker_after_declaration(combat, card)
     if group.combat_state == "blocking":
         return blocking
     if group.combat_state == "attacking_or_blocking":
@@ -396,7 +419,10 @@ class TargetSelectionOwnerMixin:
                             "card": card,
                         }
                     )
-        return rows
+        try:
+            return materialize_greatest_power_target_rows(self, controller, group, rows)
+        except TargetPredicateError as exc:
+            raise GameRuleError(str(exc)) from exc
 
     def _target_row_matches(
         self,
@@ -503,11 +529,8 @@ class TargetSelectionOwnerMixin:
             bool(card and card.tapped) != group.tapped
         ):
             return False
-        if not _target_group_public_state_matches(
-            group,
-            card=card if isinstance(card, CardInstance) else None,
-            turn_sequence=self.state.turn_sequence,
-            attachment_state=_target_group_attachment_state(self, group, card),
+        if not _current_public_target_state_matches(
+            self, group, card if isinstance(card, CardInstance) else None, controller,
         ):
             return False
         if not _target_group_object_facts_match(
@@ -534,6 +557,8 @@ class TargetSelectionOwnerMixin:
                 derived=derived,
                 source_ref=source_ref, controller=controller,
                 source_incarnation=getattr(acting_source, "logical_object_id", None),
+                source_chosen_creature_type=getattr(acting_source, "chosen_creature_type", None),
+                source_chosen_color=getattr(acting_source, "chosen_color", None),
             ):
                 return False
         except TargetPredicateError as exc:
@@ -557,6 +582,7 @@ class TargetSelectionOwnerMixin:
         *,
         source_ref: str | None = None,
         acting_source: TargetingSource | None = None,
+        record_optimization: bool = True,
     ) -> list[str]:
         from ..target_restrictions import current_target_prohibitions
         prohibitions=current_target_prohibitions(self)
@@ -572,9 +598,8 @@ class TargetSelectionOwnerMixin:
             )
         ]
         values = unique_preserving_order(values)
-        self._optimization_stats(controller)["target_candidates_generated"] += len(
-            values
-        )
+        if record_optimization:
+            self._optimization_stats(controller)["target_candidates_generated"] += len(values)
         return values
 
     def _target_snapshot(self, ref: str) -> dict[str, Any]:
@@ -596,6 +621,7 @@ class TargetSelectionOwnerMixin:
         *,
         source_ref: str | None,
         acting_source: TargetingSource | None = None,
+        record_optimization: bool = True,
     ) -> dict[str, list[str]]:
         return {
             group.group_id: self._target_candidates(
@@ -603,6 +629,7 @@ class TargetSelectionOwnerMixin:
                 group,
                 source_ref=source_ref,
                 acting_source=acting_source,
+                record_optimization=record_optimization,
             )
             for group in plan.groups
         }
@@ -641,7 +668,10 @@ class TargetSelectionOwnerMixin:
                         for right_ref in right
                     ):
                         return False
-                return True
+                pair = plan.shared_permanent_type_pair
+                return pair is None or shared_permanent_type_pair_matches(
+                    self, pair, selected[pair.left][0], selected[pair.right][0],
+                )
             group = slots[index]
             for ref in candidates.get(group.group_id, ()):
                 own = selected.setdefault(group.group_id, [])
@@ -686,12 +716,19 @@ class TargetSelectionOwnerMixin:
         *,
         source_ref: str | None,
         acting_source: TargetingSource | None = None,
+        announcing_targets: bool = False,
     ) -> dict[str, Any] | None:
         from ..target_cardinality import bind_any_number_target_schema
         schema = bind_any_number_target_schema(schema,
             len(self.state.cards)+len(self.state.players)+len(self.state.stack))
+        flagbearers = frozenset()
+        if announcing_targets:
+            from ..semantic_runtime.target_requirements import current_flagbearer_target_refs
+
+            flagbearers = current_flagbearer_target_refs(self, controller)
         modes = available_modes(schema)
         if modes:
+            maximum_modes = int(schema.get("max_modes", schema.get("mode_count", 1)))
             legal_modes: list[str] = []
             mode_schemas: dict[str, Any] = {}
             for mode in modes:
@@ -707,6 +744,11 @@ class TargetSelectionOwnerMixin:
                 )
                 if not self._target_plan_feasible(plan, candidates):
                     continue
+                if maximum_modes == 1:
+                    candidates = single_choice_required_target_candidates(plan, candidates, flagbearers)
+                    requirement = target_choice_requirement(self, plan, candidates, flagbearers)
+                else:
+                    requirement = None
                 legal_modes.append(mode)
                 mode_schemas[mode] = {
                     "groups": [
@@ -714,6 +756,8 @@ class TargetSelectionOwnerMixin:
                         for group in plan.groups
                     ]
                 }
+                if requirement is not None:
+                    mode_schemas[mode]["target_choice_requirement"] = requirement
             minimum_modes = int(
                 schema.get("min_modes", schema.get("mode_count", 1))
             )
@@ -731,18 +775,33 @@ class TargetSelectionOwnerMixin:
                 for group in mode_schemas[mode]["groups"]
                 for ref in group["legal_refs"]
             )
-            return {
+            combined_requirements = []
+            if flagbearers and maximum_modes > 1:
+                from itertools import combinations
+
+                for size in range(max(1, minimum_modes), min(len(legal_modes), maximum_modes) + 1):
+                    for selected_modes in combinations(legal_modes, size):
+                        try:
+                            plan = target_plan(schema, selected_modes)
+                        except ValueError:
+                            continue
+                        rows = (group for mode in selected_modes for group in mode_schemas[mode]["groups"])
+                        candidates = {group.group_id: row["legal_refs"]
+                                      for group, row in zip(plan.groups, rows, strict=True)}
+                        requirement = target_choice_requirement(self, plan, candidates, flagbearers)
+                        if requirement is not None:
+                            combined_requirements.append({"modes": list(selected_modes), **requirement})
+            public_schema = {
                 "mode_count": int(schema.get("mode_count", 1)),
-                "min_modes": int(
-                    schema.get("min_modes", schema.get("mode_count", 1))
-                ),
-                "max_modes": int(
-                    schema.get("max_modes", schema.get("mode_count", 1))
-                ),
+                "min_modes": minimum_modes,
+                "max_modes": maximum_modes,
                 "legal_modes": legal_modes,
                 "mode_schemas": mode_schemas,
                 "legal_refs": legal_refs,
             }
+            if combined_requirements:
+                public_schema["combined_target_choice_requirements"] = combined_requirements
+            return public_schema
         try:
             plan = target_plan(schema)
         except ValueError:
@@ -753,6 +812,8 @@ class TargetSelectionOwnerMixin:
             source_ref=source_ref,
             acting_source=acting_source,
         )
+        if plan.shared_permanent_type_pair is not None:
+            candidates = shared_type_pair_candidates(self, plan.shared_permanent_type_pair, candidates)
         if not self._target_plan_feasible(plan, candidates):
             self._increment_optimization(
                 controller, "illegal_target_actions_prevented"
@@ -761,6 +822,7 @@ class TargetSelectionOwnerMixin:
                 controller, "actions_removed_for_no_targets"
             )
             return None
+        candidates = single_choice_required_target_candidates(plan, candidates, flagbearers)
         result = copy.deepcopy(dict(schema))
         result["groups"] = [
             group.public_dict(candidates[group.group_id])
@@ -768,6 +830,9 @@ class TargetSelectionOwnerMixin:
         ]
         if len(plan.groups) == 1:
             result["legal_refs"] = list(candidates[plan.groups[0].group_id])
+        requirement = target_choice_requirement(self, plan, candidates, flagbearers)
+        if requirement is not None:
+            result["target_choice_requirement"] = requirement
         return result
 
     @staticmethod
@@ -819,6 +884,8 @@ class TargetSelectionOwnerMixin:
         grouped: dict[str, list[str]] = {
             group.group_id: [] for group in plan.groups
         }
+        if not targets and all(group.min_targets == 0 for group in plan.groups):
+            return grouped
         if targets and all(isinstance(value, Mapping) for value in targets):
             for value in targets:
                 group_id = str(value.get("group") or value.get("group_id") or "")
@@ -858,6 +925,8 @@ class TargetSelectionOwnerMixin:
         acting_source: TargetingSource | None = None,
         target_schema: Mapping[str, Any] | None = None,
         copy_targets: CopyTargetValidation | None = None,
+        record_optimization: bool = True,
+        announcing_targets: bool = False,
     ) -> tuple[list[str], dict[str, list[str]]]:
         schema = (
             target_schema
@@ -868,9 +937,8 @@ class TargetSelectionOwnerMixin:
         )
         if schema is None:
             if targets or modes:
-                self._increment_optimization(
-                    controller, "target_submissions_rejected"
-                )
+                if record_optimization:
+                    self._increment_optimization(controller, "target_submissions_rejected")
                 raise GameRuleError(
                     "This semantic program does not accept targets or modes"
                 )
@@ -896,16 +964,22 @@ class TargetSelectionOwnerMixin:
                 plan,
                 source_ref=source_ref,
                 acting_source=acting_source,
+                record_optimization=record_optimization,
             )
             grouped = self._group_target_submission(plan, targets)
             flattened = validate_grouped_target_assignment(
                 self, plan, grouped, candidates, copy_targets=copy_targets,
             )
+            if announcing_targets and flattened:
+                from ..semantic_runtime.target_requirements import current_flagbearer_target_refs
+
+                flagbearers = current_flagbearer_target_refs(self, controller)
+                if not target_assignment_meets_requirement(self, plan, candidates, grouped, flagbearers):
+                    raise GameRuleError("Choose at least one legal Flagbearer as a target")
             return flattened, grouped
         except (GameRuleError, ValueError) as exc:
-            self._increment_optimization(
-                controller, "target_submissions_rejected"
-            )
+            if record_optimization:
+                self._increment_optimization(controller, "target_submissions_rejected")
             if isinstance(exc, GameRuleError):
                 raise
             raise GameRuleError(str(exc)) from exc
@@ -1052,6 +1126,19 @@ class TargetSelectionOwnerMixin:
         else:
             self._prepare_stack_resolution()
 
+    def _invalidate_changed_target_pair(self, item, plan, grouped, flattened):
+        rejected = shared_type_pair_resolution_rejections(self, plan.shared_permanent_type_pair, grouped)
+        for group_id, ref in rejected:
+            grouped[group_id] = [None]
+            flattened[flattened.index(ref)] = None
+            self._increment_optimization(item.controller, "targets_became_illegal_on_resolution")
+            self._log(
+                item.controller, "target.illegal", f"{ref} no longer shares the required type for {item.ref}.",
+                {"stack": item.ref, "target": ref, "group": group_id, "reason": "shared_permanent_type_changed"},
+                importance=2,
+            )
+        return len(rejected)
+
     def _revalidate_resolution_targets(self, item: StackItem) -> bool:
         if item.context.get("targets_revalidated"):
             return True
@@ -1135,6 +1222,7 @@ class TargetSelectionOwnerMixin:
                     importance=2,
                 )
             current_groups[group.group_id] = current
+        valid_count -= self._invalidate_changed_target_pair(item, plan, current_groups, updated)
         item.targets = updated
         item.context["target_groups_current"] = current_groups
         item.context["targets_revalidated"] = True

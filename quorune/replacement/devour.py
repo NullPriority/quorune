@@ -8,9 +8,9 @@ from dataclasses import replace
 from .immutable import thaw_value
 
 
-def combine_devour_entry_counters(event,payload,children):
+def combine_devour_entry_counters(event,payload,children,*,force=False):
     """One entry puts each same-player, same-kind counter contribution together."""
-    if event.kind!='zone.change' or not payload.get('devour_proposals'):return
+    if event.kind!='zone.change' or not (force or payload.get('devour_proposals')):return
     grouped={};result=[]
     for child in children:
         value=child.payload

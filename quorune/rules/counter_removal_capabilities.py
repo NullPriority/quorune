@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..counter_removal import (
+    ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD, validate_all_permanent_counters_then_token_exile,
+)
+
 from .node_capability_shapes import (
     direct_target_predicate_capabilities,
     fixed_counter_target_schema_is_closed,
@@ -55,6 +59,17 @@ def fixed_counter_removal_node_capabilities(
     )
 
 
+def all_permanent_counters_then_token_exile_dependencies(effects, target_schema, mechanics):
+    if (len(effects) != 1 or target_schema is not None
+            or not {"cr-122-counters", "fixed-public-zone-move", "fixed-public-zone-move-set"} <= set(mechanics)):
+        return ()
+    try:
+        validate_all_permanent_counters_then_token_exile(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return ("counter.removal.all_effect", "zone.move.fixed_public_set")
+
+
 def all_counter_removal_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -64,6 +79,8 @@ def all_counter_removal_node_capabilities(
     """Return capabilities only for one direct all-counter removal."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if len(effects) == 1 and isinstance(effects[0], Mapping) and ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD in effects[0]:
+        return all_permanent_counters_then_token_exile_dependencies(effects, target_schema, mechanics)
     if (len(effects) == 1 and (effects[0].get('schema_version') == 3
             or isinstance(target_schema, Mapping) and 'up_to' in target_schema)):
         from .target_all_counter_removal import target_all_counter_variant_capabilities

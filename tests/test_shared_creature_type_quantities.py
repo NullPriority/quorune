@@ -646,7 +646,8 @@ class SharedTypeLibraryNativeTests(SharedTypeLibraryNativeFixture,unittest.TestC
             p=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
                 capability_registry=self.registry,capability_profile="commander_review")
             self.assertTrue(bind_card_program_runtime(p,capability_registry=self.registry,profile="commander_review")["strict_capability_ready"],name)
-        c=self.db.lookup("Leaf-Crowned Elder")
+        original=self.db.lookup("Leaf-Crowned Elder")
+        c=replace(original,oracle_text=original.oracle_text.replace("play that card","play the next unexamined card"))
         self.assertNotEqual("exact",compile_oracle_card(c,capability_registry=self.registry).status)
 
     def test_actual_paid_patrol_private_look_optional_public_reveal_counter_pending_load_and_replay(self):

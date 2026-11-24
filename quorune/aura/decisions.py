@@ -94,11 +94,11 @@ class AuraEntryContinuation:
             )
         object.__setattr__(self, "remaining", frozen_remaining)
         if self.effect.get("op") == "move_public_zone_set" and "_aura_target_refs" in self.effect:
-            from ..public_zone_moves import PUBLIC_AURA_ENTRY_VERSION
+            from ..public_zone_moves import PUBLIC_AURA_ENTRY_VERSIONS
 
             selections = self.effect["_aura_target_refs"]
             if (not isinstance(self.effect.get("set"), Mapping)
-                    or self.effect["set"].get("schema_version") != PUBLIC_AURA_ENTRY_VERSION
+                    or self.effect["set"].get("schema_version") not in PUBLIC_AURA_ENTRY_VERSIONS
                     or self.effect["set"].get("destination") != "battlefield"
                     or not isinstance(selections, Mapping)
                     or any(type(key) is not str or not key or type(value) is not str or not value
@@ -369,13 +369,13 @@ def complete_aura_entry_choice(
     effect = thaw_value(restored.effect)
     from ..private_hand_entry_model import SELECTED_HAND_ENTRY_OPERATION
     from ..linked_exile_return_model import LINKED_ABILITY_TIMING, LINKED_EXILE_RETURN_OPERATION
-    from ..public_zone_moves import PUBLIC_AURA_ENTRY_VERSION
+    from ..public_zone_moves import PUBLIC_AURA_ENTRY_VERSIONS
     if (effect.get("op") == SELECTED_HAND_ENTRY_OPERATION
             or (effect.get("op") == LINKED_EXILE_RETURN_OPERATION and effect.get("phase") == "return"
             and effect.get("spec", {}).get("timing") == LINKED_ABILITY_TIMING)
             or (effect.get("op") == "move_public_zone_set"
                 and isinstance(effect.get("set"), Mapping)
-                and effect["set"].get("schema_version") == PUBLIC_AURA_ENTRY_VERSION
+                and effect["set"].get("schema_version") in PUBLIC_AURA_ENTRY_VERSIONS
                 and effect["set"].get("destination") == "battlefield")):
         effect.setdefault("_aura_target_refs", {})[restored.source_object_id] = selected
     else:

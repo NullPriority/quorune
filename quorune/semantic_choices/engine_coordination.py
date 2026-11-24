@@ -14,6 +14,7 @@ from typing import Any, Mapping, Sequence
 
 from ..errors import GameRuleError
 from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
+from ..rules.optional_draw_discard import is_source_shared_type_draw_discard
 from ..rules.target_library_inspection import scoped_target_library_inspection_libraries
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
@@ -156,6 +157,7 @@ class SemanticChoiceCoordinationMixin:
                 target_groups=dict(item.context.get("target_groups") or {}),
                 target_snapshots=dict(item.context.get("target_snapshots") or {}),
                 copy_source=source.to_dict() if source is not None and item.ref==referenced.ref else None,
+                upkeep_player=item.context.get("player") if (item.context.get("event"), item.context.get("step")) == ("step.begin", "upkeep") else None,
             )
             for item in items
         )
@@ -230,8 +232,16 @@ class SemanticChoiceCoordinationMixin:
         actor: str,
         effect: Mapping[str, Any],
         source_ref: str | None,
+        *,
+        stack_item: StackItem | None = None,
     ) -> tuple[str, ...]:
         from ..rules.attachment_actions import ATTACH_CREATED_TOKEN
+        from ..rules.linked_clue_copy import has_linked_clue_copy_version
+        from ..rules.temporary_copy_subject import TEMPORARY_COPY_SUBJECT_OPERATION
+        if effect.get("op") == TEMPORARY_COPY_SUBJECT_OPERATION and has_linked_clue_copy_version(effect):
+            from .linked_clue_copy import linked_clue_copy_candidates
+
+            return linked_clue_copy_candidates(self, stack_item, actor, effect)
         from ..rules.graveyard_return_choices import OPERATION, graveyard_return_candidates
         from ..rules.targeted_graveyard_exile import targeted_graveyard_exile_candidates
         if effect.get('op') == 'choose_target_player_graveyard_exile':
@@ -272,12 +282,24 @@ class SemanticChoiceCoordinationMixin:
         actor: str,
         effect: Mapping[str, Any],
         response: Mapping[str, Any] | None,
+        *,
+        stack_item: StackItem | None = None,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
         target_schemas: dict[str, Any] = {}
         validated_targets: dict[str, Any] = {}
         operation = str(effect.get("op") or "")
         if operation not in {"copy_stack_item", "retarget_stack_item"}:
             return target_schemas, validated_targets
+        from ..rules.cast_creature_set_spell_copy import CAST_CREATURE_SET_COPY_FIELD, materialize_cast_creature_set_copy
+        from ..rules.cast_source_spell_copy import SOURCE_CAST_COPY_FIELD, materialize_source_cast_copy
+        if CAST_CREATURE_SET_COPY_FIELD in effect:
+            return materialize_cast_creature_set_copy(self, effect, actor=actor, trigger=stack_item)
+        if SOURCE_CAST_COPY_FIELD in effect:
+            return materialize_source_cast_copy(self, effect, actor=actor, trigger=stack_item)
+        from ..rules.source_directed_redirect_model import is_source_directed_redirect
+        if is_source_directed_redirect(effect):
+            from ..selection.source_directed_redirect import materialize_source_directed_redirect
+            return materialize_source_directed_redirect(self, effect, response, actor=actor, stack_item=stack_item)
         if is_mandatory_single_stack_target_change(effect):
             return materialize_single_stack_target_change(self, effect, response)
         if is_optional_stack_target_change(effect):
@@ -324,6 +346,7 @@ class SemanticChoiceCoordinationMixin:
                 self, validation_actor, raw_schema, target_item.modes,
                 list(target_item.targets), dict(target_item.context.get("target_groups") or {}),
                 copy_source_ref, acting_source=acting_copy_source,
+                original_snapshots=target_item.context.get("target_snapshots"),
             )
         elif available_modes(raw_schema):
             plan = target_plan(
@@ -426,6 +449,12 @@ class SemanticChoiceCoordinationMixin:
             cost_value = effect["_requirements"]
         elif isinstance(effect.get("cost"), Mapping):
             cost_value = effect["cost"]
+        elif effect.get("op") == "ward_counter_unless_pay" and self.state.ward_mana_offer_version == 1:
+            from ..trigger_participation import WardSpec
+
+            spec = WardSpec.from_dict(effect.get("ward_spec"))
+            if spec.generic_cost is not None:
+                cost_value = {"GENERIC": spec.generic_cost}
         elif (effect.get('op')=='offer_optional_mana_payment'
                 and isinstance(effect.get('payment'),Mapping)
                 and effect['payment'].get('kind')=='mana_discard'):
@@ -493,6 +522,11 @@ class SemanticChoiceCoordinationMixin:
         if RIPPLE_FIELD in effect:
             from ..rules.ripple_casting import ripple_cast_options
             return ripple_cast_options(self,item=stack_item,actor=actor,effect=effect)
+        from ..rules.shared_type_library_model import SHARED_TYPE_LIBRARY_OPERATION
+        from ..rules.shared_type_library_play_model import PLAY_STAGE
+        if effect.get("op") == SHARED_TYPE_LIBRARY_OPERATION and effect.get("_shared_type_stage") == PLAY_STAGE:
+            from ..rules.shared_type_library_play import shared_type_library_play_options
+            return shared_type_library_play_options(self, item=stack_item, actor=actor, effect=effect)
         if BOUNDED_HAND_CAST_FIELD in effect:
             from ..rules.bounded_hand_cast import bounded_hand_cast_options
             return bounded_hand_cast_options(self, item=stack_item, actor=actor, effect=effect)
@@ -554,7 +588,12 @@ class SemanticChoiceCoordinationMixin:
 
     def _semantic_choice_resolution_condition_facts(self,actor,choice_effect):
         """Snapshot a resolution condition through its existing rules owner."""
+        from ..ability_resolution_ordinal import is_ability_resolution_ordinal
+        from ..other_spell_history_model import is_other_spell_draw
+
         condition_facts = {}
+        if is_ability_resolution_ordinal(choice_effect) or is_other_spell_draw(choice_effect):
+            return condition_facts
         if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,18,PAID_SACRIFICE_CONDITION_VERSION}:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
@@ -586,11 +625,13 @@ class SemanticChoiceCoordinationMixin:
         from ..discover_casting import resolving_exile_library_refs
         from ..dungeon_progress import DUNGEON_VENTURE_FIELD, DungeonJourney
         from ..semantic_runtime.venture_limit import current_venture_allowed
+        from ..discard_effect_origin import origin_for_resolving_hand_choice
+
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
             self._semantic_choice_target_facts(
-                actor, choice_effect, response
+                actor, choice_effect, response, stack_item=stack_item,
             )
         )
         from ..rules.library_search_rules import optional_search_permissions
@@ -600,6 +641,14 @@ class SemanticChoiceCoordinationMixin:
         from ..life_gain_permission import ALLOW_ALL_LIFE_GAIN
         from ..semantic_runtime.explore import materialize_explore_source_types
         from ..rules.shared_type_library import materialize_shared_type_library_source
+        from ..public_history_query_model import current_opponent_spell_colors, uses_sealed_opponent_cast_colors
+
+        sealed_cast_colors = None
+        if uses_sealed_opponent_cast_colors(choice_effect):
+
+            sealed_cast_colors = current_opponent_spell_colors(self.state, actor, include_departed=True)
+            if sealed_cast_colors is None:
+                raise GameRuleError("Current opposing spell-color facts are unavailable")
         return SnapshotSemanticChoiceQuery(
             resolution_source_is_physical_card=(
                 (self.state.cards[stack_item.card_object_id].object_kind == 'card')
@@ -609,6 +658,7 @@ class SemanticChoiceCoordinationMixin:
             explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
             shared_type_library_source=materialize_shared_type_library_source(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
+            discard_effect_origin=origin_for_resolving_hand_choice(self.state, stack_item, choice_effect),
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             venture_journey=((self.state.players[actor].dungeon_journey or DungeonJourney())
                              if DUNGEON_VENTURE_FIELD in choice_effect else None),
@@ -663,7 +713,8 @@ class SemanticChoiceCoordinationMixin:
                     if entry.get("turn_sequence") == self.state.turn_sequence
                 )
             },
-            opponent_cast_colors_by_seat={
+            opponent_cast_colors_by_seat={actor: tuple(sorted(sealed_cast_colors))}
+            if sealed_cast_colors is not None else {
                 seat: tuple(
                     sorted(
                         {
@@ -685,11 +736,11 @@ class SemanticChoiceCoordinationMixin:
                     seat: current_draw_permission(self, seat).to_dict()
                     for seat in self.active_seats
                 }
-                if choice_effect.get("op") == "offer_draw"
+                if choice_effect.get("op") == "offer_draw" or is_source_shared_type_draw_discard(choice_effect)
                 else {}
             ),
             materialized_choice_candidates=self._semantic_choice_candidates(
-                actor, choice_effect, source_ref
+                actor, choice_effect, source_ref, stack_item=stack_item,
             ),
             materialized_damage_source_candidates=(
                 self._semantic_choice_damage_source_candidates(
@@ -759,7 +810,13 @@ class SemanticChoiceCoordinationMixin:
     ) -> None:
         registry = default_semantic_choice_registry()
         try:
+            from ..rules.entry_player_counter_payment import bind_entry_player_counter_choice
             from ..rules.gravestorm import bind_gravestorm_instruction
+            bind_entry_player_counter_choice(item, effect)
+            from ..rules.optional_source_damage import require_optional_source_damage_choice
+            require_optional_source_damage_choice(self, item, effect)
+            from ..rules.collective_source_damage import bind_collective_source_damage
+            effect = bind_collective_source_damage(self, item, effect)
             effect = bind_gravestorm_instruction(self,item,effect)
             effect = bind_connive_instruction(self, item, effect)
             effect = bind_endure_instruction(self, item, effect)
@@ -899,6 +956,15 @@ class SemanticChoiceCoordinationMixin:
             item,
         )
         try:
+            from ..rules.optional_source_damage import require_optional_source_damage_choice
+            require_optional_source_damage_choice(self, item, continuation.effect, resuming_actor=seat)
+            from ..rules.entry_player_counter_payment import bind_entry_player_counter_choice
+            try:
+                bind_entry_player_counter_choice(item, continuation.effect, resuming_actor=seat)
+            except (ValueError, TypeError, KeyError) as exc:
+                raise GameRuleError(str(exc)) from exc
+            from ..rules.collective_source_damage import bind_collective_source_damage
+            bind_collective_source_damage(self, item, continuation.effect, resuming_actor=seat)
             completion = handler.complete(
                 continuation,
                 response,

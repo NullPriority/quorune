@@ -247,7 +247,11 @@ class TargetLandTypeNativeTests(InheritedNativeFixture,unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();p=Path(cls.temp.name)/'native.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/target-land-type-choice-cards.json'],p)
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/target-land-type-choice-cards.json',
+            ROOT / 'tests/fixtures/fixed-direct-phasing-cards.json',
+        ], p)
         cls.db=CardDatabase(p);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Basic type choices',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',12)],['Generic Bound Commander'])
 
@@ -266,6 +270,186 @@ class TargetLandTypeNativeTests(InheritedNativeFixture,unittest.TestCase):
         offered=next(r for r in rows if r['id'].startswith('activate:'+source.ref+':') and r.get('target_schema'))
         command={'action_id':offered['id'],'targets':[target.ref],'pay':'auto','cost_cards':list(cost_cards)}
         self.reject(s,'D',command);result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
+
+    def test_recipient_untap_registered_activation_replays_and_expires_before_untapping(self):
+        session = self.session(305742)
+        engine = session.engine
+        source = self.add(engine, "Generic Step Cartographer")
+        land = self.add(engine, "Generic Bound Plains", seat="B", ref="registered-untap-land")
+        land.tapped = True
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 4})
+        self.checkpoint(session)
+        self.activate(session, source, land)
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual({"mountain"}, engine._effective_type_parts(session.state.cards[land.object_id])[1])
+        session = self.replay(session, load=True)
+        self.assertEqual({"mountain"}, session.engine._effective_type_parts(session.state.cards[land.object_id])[1])
+        self.until(session, lambda game: game.state.active_player == "B" and game.state.step == "upkeep")
+        live = session.state.cards[land.object_id]
+        self.assertEqual(("B", False), (live.controller, live.tapped))
+        self.assertEqual({"plains"}, session.engine._effective_type_parts(live)[1])
+        self.assertEqual({"intrinsic_plains"}, {ability.ability_id for ability in session.engine._activated_abilities(live)})
+        self.finish(session, private)
+
+    def test_recipient_untap_registry_withdrawal_and_template_omission_keep_residuals(self):
+        from unittest.mock import patch
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.target_land_type_model import NEXT_UNTAP_LAND_TYPE_CAPABILITY
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        owner = next(row for row in raw["capabilities"] if row["id"] == NEXT_UNTAP_LAND_TYPE_CAPABILITY)
+        owner.update(status="blocked", blockers=["Test withdrawal of the recipient untap duration"])
+        source = self.db.lookup("Generic Step Cartographer")
+        profile = "commander_review"
+        normal = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", normal.status)
+        withdrawn = compile_oracle_card(source, capability_registry=CapabilityRegistry(raw), capability_profile=profile)
+        self.assertNotEqual("exact", withdrawn.status)
+        self.assertTrue(any(NEXT_UNTAP_LAND_TYPE_CAPABILITY in blocker
+            for residual in withdrawn.material_residuals for blocker in residual.blockers))
+        with patch("quorune.compiler.target_land_type_templates.fixed_target_land_type_template", return_value=None):
+            omitted = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertNotEqual("exact", omitted.status)
+        self.assertTrue(omitted.material_residuals)
+
+
+    def _source_exit_land_fixture(self, seed, *, first_player="A"):
+        from copy import deepcopy
+        from common import keep_all
+        from quorune.model import GameConfig
+        from quorune.session import CommanderSession
+
+        session = CommanderSession.create(
+            self.db, {seat: deepcopy(self.deck) for seat in "ABCD"},
+            first_player=first_player, seed=seed,
+            config=GameConfig(seed=seed, auto_pass_empty_priority=False),
+        )
+        keep_all(session)
+        engine = session.engine
+        for player in session.state.players.values():
+            for card_id in tuple(player.zones["hand"][:2]):
+                engine.move_card(card_id, "library", log=False)
+        source = self.add(engine, "Harbor Exit Keeper")
+        target = self.add(engine, "Generic Bound Plains", seat="C", ref="departure-target")
+        phase = self.add(engine, "Reality Ripple", seat="B", zone="hand")
+        bounce = self.add(engine, "Boomerang", seat="B", zone="hand")
+        private = self.add(engine, "Counterspell", seat="C", zone="hand", ref="departure-private")
+        for i in range(4):
+            self.add(engine, "Tropical Island", seat="B", ref=f"departure-island-{i}")
+        for i in range(2):
+            self.add(engine, "Generic Bound Plains", ref=f"departure-mana-{i}")
+        self.assert_closed(session, source)
+        for reply in (phase, bounce):
+            self.assert_closed(session, reply)
+        self.prepare(session, active=first_player)
+        self.checkpoint(session)
+        return session, source, target, phase, bounce, private
+
+    def test_source_exit_keeps_land_setting_through_phasing_and_ends_at_departure(self):
+        from quorune.continuous_effect_model import ContinuousEffectDuration
+
+        for phase_before_resolution in (False, True):
+            with self.subTest(phase_before_resolution=phase_before_resolution):
+                session, source, land, phase, bounce, private = self._source_exit_land_fixture(
+                    305743 + int(phase_before_resolution), first_player="D",
+                )
+                original_identity = source.logical_object_id
+                self.activate(session, source, land)
+                if not phase_before_resolution:
+                    self.assertIsNone(self.resolve(session))
+                self.cast(session, "B", phase, [source.ref])
+                self.assertIsNone(self.resolve(session))
+                current_source = session.state.cards[source.object_id]
+                self.assertTrue(current_source.phased_out)
+                self.assertEqual(current_source.logical_object_id, original_identity)
+                live_land = session.state.cards[land.object_id]
+                self.assertEqual({"swamp"}, session.engine._effective_type_parts(live_land)[1])
+                self.assertEqual(
+                    {"intrinsic_swamp"},
+                    {ability.ability_id for ability in session.engine._activated_abilities(live_land)},
+                )
+                spell_effect, = [e for e in session.state.continuous_effects
+                                if e.duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT]
+                self.assertEqual(spell_effect.duration_source.logical_object_id, original_identity)
+                self.assertIsNone(spell_effect.duration_history)
+
+                session = self.replay(session, load=True)
+                self.assertTrue(session.state.cards[source.object_id].phased_out)
+                self.until(session, lambda s: not s.state.cards[source.object_id].phased_out)
+                self.assertEqual(session.state.active_player, "A")
+                current_source = session.state.cards[source.object_id]
+                self.assertFalse(current_source.phased_out)
+                self.assertEqual({"swamp"}, session.engine._effective_type_parts(session.state.cards[land.object_id])[1])
+
+                self.cast(session, "B", session.state.cards[bounce.object_id], [current_source.ref])
+                self.assertIsNone(self.resolve(session))
+                current_source = session.state.cards[source.object_id]
+                self.assertNotEqual(current_source.logical_object_id, original_identity)
+                self.assertEqual("hand", current_source.zone)
+                self.assertFalse(any(e.effect_id == spell_effect.effect_id for e in session.state.continuous_effects))
+                self.assertEqual({"plains"}, session.engine._effective_type_parts(session.state.cards[land.object_id])[1])
+
+                self.until(session, lambda s: s.state.active_player == "A" and s.state.step == "main")
+                self.cast(session, "A", session.state.cards[source.object_id], [])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                self.assertEqual({"plains"}, session.engine._effective_type_parts(session.state.cards[land.object_id])[1])
+                self.finish(session, private)
+
+    def test_source_exit_before_resolution_keeps_original_target_incarnation(self):
+        from quorune.continuous_effect_model import ContinuousEffectDuration, Layer
+
+        session, source, land, _, bounce, private = self._source_exit_land_fixture(305745)
+        original_source, original_land = source.logical_object_id, land.logical_object_id
+        self.activate(session, source, land)
+        self.cast(session, "B", bounce, [source.ref])
+        self.resolve_top(session)
+        self.assertNotEqual(session.state.cards[source.object_id].logical_object_id, original_source)
+        self.assertIsNone(self.resolve(session))
+        effect, = [e for e in session.state.continuous_effects if e.layer is Layer.TYPE]
+        self.assertEqual(effect.duration, ContinuousEffectDuration.ZONE_OBJECT)
+        self.assertIsNone(effect.duration_source)
+        self.assertEqual(effect.locked_objects[0].logical_object_id, original_land)
+        self.assertEqual({"swamp"}, session.engine._effective_type_parts(session.state.cards[land.object_id])[1])
+
+        self.cast(session, "A", session.state.cards[source.object_id], [])
+        self.assertIsNone(self.resolve(session))
+        current_source = session.state.cards[source.object_id]
+        self.assertEqual(current_source.zone, "battlefield")
+        self.assertNotEqual(current_source.logical_object_id, original_source)
+        self.assertEqual({"swamp"}, session.engine._effective_type_parts(session.state.cards[land.object_id])[1])
+        self.finish(session, private)
+
+    def test_source_exit_owner_withdrawal_preserves_the_source_presence_family(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from test_granted_skulk import record
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        owner = next(row for row in raw["capabilities"] if row["id"] == SOURCE_EXIT_LAND_TYPE_CAPABILITY)
+        owner.update(status="blocked", blockers=["Test withdrawal of the battlefield exit owner"])
+        profile = "commander_review"
+        source = self.db.lookup("Harbor Exit Keeper")
+        normal = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", normal.status)
+        withdrawn = compile_oracle_card(source, capability_registry=CapabilityRegistry(raw), capability_profile=profile)
+        self.assertNotEqual("exact", withdrawn.status)
+        self.assertTrue(any(SOURCE_EXIT_LAND_TYPE_CAPABILITY in blocker
+                            for residual in withdrawn.material_residuals for blocker in residual.blockers))
+        presence = record(
+            "{T}: Target land becomes a Swamp for as long as this creature remains on the battlefield.",
+            "Creature — Scout",
+        )
+        current = compile_oracle_card(presence, capability_registry=CapabilityRegistry(raw), capability_profile=profile)
+        self.assertTrue(any(SOURCE_PRESENT_LAND_TYPE_CAPABILITY in node.capability_dependencies
+                            for face in current.faces for node in face.nodes))
+        with patch("quorune.compiler.target_land_type_templates.fixed_target_land_type_template", return_value=None):
+            omitted = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertNotEqual("exact", omitted.status)
 
     def test_four_original_tap_sources_choose_for_foreign_dual_land_and_expire_at_cleanup(self):
         s=self.session(305701);land=self.add(s.engine,'Tropical Island',seat='B');land.counters['charge']=2
@@ -913,7 +1097,10 @@ class FixedTargetLandTypeCompilerTests(unittest.TestCase):
 
         for text in (
             "Target land becomes a Plains or an Island until end of turn.",
-            "Target land becomes an Island until its controller’s next untap step.",
+            "Target land becomes an Island until your next untap step.",
+            "Target land becomes an Island until its controller’s next two untap steps.",
+            "Target land becomes an Island until its controller’s next untap step in addition to its other types.",
+            "Target land you control becomes an Island until its controller’s next untap step.",
             "Target land becomes an Island for as long as this creature is tapped.",
             "Target land becomes an Island until end of turn. Draw a card.",
         ):
@@ -922,6 +1109,26 @@ class FixedTargetLandTypeCompilerTests(unittest.TestCase):
         self.assertIsNotNone(target_land_type_choice_template(
             "Target land becomes the basic land type of your choice until end of turn.",
         ))
+
+    def test_recipient_untap_type_setting_requires_its_own_closed_duration(self):
+        from quorune.compiler.target_land_type_templates import fixed_target_land_type_template
+        from quorune.resolution_characteristic_model import fixed_resolution_characteristic_instruction
+        from quorune.rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+        from quorune.target_land_type_model import NEXT_UNTAP_LAND_TYPE_CAPABILITY
+
+        parsed = fixed_target_land_type_template(
+            "Target land becomes an Island until its controller’s next untap step.",
+        )
+        self.assertIsNotNone(parsed)
+        _, effects, schema, _ = parsed
+        spec, reference = fixed_resolution_characteristic_instruction(effects[0])
+        self.assertEqual(("until_recipient_controller_untap", "$target.0"), (spec.duration, reference))
+        self.assertEqual(effects[0], spec.to_effect())
+        program = SimpleNamespace(effects=effects, handlers=(), target_schema=schema, coverage=())
+        self.assertIn(NEXT_UNTAP_LAND_TYPE_CAPABILITY, fixed_resolution_characteristics_runtime_dependencies(program))
+        program.target_schema = {**schema, "count": 2}
+        with self.assertRaisesRegex(ValueError, "closed single target"):
+            fixed_resolution_characteristics_runtime_dependencies(program)
 
     def test_fixed_type_round_trips_and_compiler_omission_loses_the_instruction(self):
         import json
@@ -1064,6 +1271,57 @@ class FixedTargetLandTypeCompilerTests(unittest.TestCase):
                               capability_profile=profile).status)
         self.assertEqual("exact", compile_oracle_card(all_types, capability_registry=registry,
                            capability_profile=profile).status)
+
+
+    def test_source_exit_duration_has_a_closed_identity_only_codec(self):
+        from quorune.compiler.target_land_type_templates import fixed_target_land_type_template
+        from quorune.continuous_effect_model import (
+            ContinuousEffect, ContinuousEffectDuration, ContinuousObjectIdentity, ContinuousEffectOrigin,
+            ContinuousOperation, Layer,
+        )
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+
+        _, effects, schema, mechanics = fixed_target_land_type_template(
+            "Target land becomes a Swamp until this creature leaves the battlefield.",
+        )
+        program = SimpleNamespace(
+            effects=effects, target_schema=schema, handlers=(), coverage=mechanics,
+            event="activate", active_zone="battlefield", event_condition=None,
+        )
+        required = fixed_resolution_characteristics_runtime_dependencies(program)
+        self.assertIn(SOURCE_EXIT_LAND_TYPE_CAPABILITY, required)
+        self.assertNotIn(SOURCE_PRESENT_LAND_TYPE_CAPABILITY, required)
+        with self.assertRaisesRegex(ValueError, "battlefield source"):
+            fixed_resolution_characteristics_runtime_dependencies(
+                SimpleNamespace(**{**vars(program), "active_zone": "stack"}),
+            )
+        for phrase in (
+            "Target land becomes a Swamp until another creature leaves the battlefield.",
+            "Target land becomes a Swamp until this creature leaves the battlefield in addition to its other types.",
+        ):
+            self.assertIsNone(fixed_target_land_type_template(phrase))
+        event = ContinuousEffect(
+            effect_id="land-exit", source_id="source", layer=Layer.TYPE, sublayer="4", timestamp=3,
+            origin=ContinuousEffectOrigin.RESOLUTION,
+            duration=ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT,
+            operations=(ContinuousOperation("set_basic_land_types", ("swamp",)),),
+            applies=ObjectQuerySpec(zones=("battlefield",)),
+            locked_objects=(ContinuousObjectIdentity("land", "land@1"),),
+            duration_source=ContinuousObjectIdentity("source", "source@1"),
+        )
+        payload = event.to_dict()
+        self.assertEqual(event, ContinuousEffect.from_dict(payload))
+        self.assertNotIn("duration_history", payload)
+        self.assertNotIn("duration_controller", payload)
+        for forged in (
+            {k: v for k, v in payload.items() if k != "duration_source"},
+            {**payload, "source_id": "other"},
+            {**payload, "duration_controller": "A"},
+            {**payload, "layer": int(Layer.CONTROL)},
+        ):
+            with self.subTest(forged=forged), self.assertRaises(ValueError):
+                ContinuousEffect.from_dict(forged)
 
     def test_source_presence_land_setting_uses_the_battlefield_source_and_requires_its_owner(self):
         from quorune.compiler.target_land_type_templates import fixed_target_land_type_template

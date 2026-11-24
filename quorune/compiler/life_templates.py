@@ -35,6 +35,22 @@ def static_life_gain_prohibition_handler(text):
          'condition':FixedLifeGainProhibitionSpec(relation).to_dict()},LIFE_GAIN_PROHIBITION_CAPABILITY)
 
 
+def static_opponent_life_gain_to_loss_handler(text: str) -> tuple[str, Mapping[str, Any], str] | None:
+    if re.fullmatch(r"If an opponent would gain life, that player loses that much life instead\.", text, re.I) is None:
+        return None
+
+    from ..semantic_runtime.life_replacements import (
+        OPPONENT_LIFE_GAIN_TO_LOSS_CAPABILITY,
+        OPPONENT_LIFE_GAIN_TO_LOSS_HANDLER_ID,
+    )
+
+    return (
+        "life-gain-to-equal-loss-opponent-static-v1",
+        {"handler_id": OPPONENT_LIFE_GAIN_TO_LOSS_HANDLER_ID, "schema_version": 1, "event": "life.change"},
+        OPPONENT_LIFE_GAIN_TO_LOSS_CAPABILITY,
+    )
+
+
 def static_life_handler(
     text: str,
 ) -> tuple[str, Mapping[str, Any], str] | None:

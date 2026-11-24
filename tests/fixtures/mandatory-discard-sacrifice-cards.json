@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed distinct-origin cast prices and public replacement-order interactions.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4891-8060-000000006011",
+      "name": "Cinder's Verdict",
+      "mana_cost": "{1}{B}",
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard a card and sacrifice a creature.\nTarget creature gets -2/-2 until end of turn.",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-000000006012",
+      "name": "Stillglass Keeper",
+      "mana_cost": "{2}{W}",
+      "cmc": 3,
+      "type_line": "Enchantment Creature — Spirit",
+      "oracle_text": "If a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "power": "1",
+      "toughness": "3",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

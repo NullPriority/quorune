@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000da01",
+      "name": "Boundary Gate // Boundary Guide",
+      "layout": "transform",
+      "released_at": "2024-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000da02",
+      "name": "Boundary Gate // Boundary Gate",
+      "layout": "art_series",
+      "released_at": "2025-01-01",
+      "legalities": {
+        "commander": "not_legal"
+      }
+    }
+  ],
+  "rulings": []
+}

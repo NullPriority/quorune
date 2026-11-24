@@ -39,6 +39,7 @@ LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID = (
 ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID = (
     "permission.action.activate-controlled-creature-as-haste.v1"
 )
+SOURCE_LOYALTY_INSTANT_CAPABILITY = "activation.permission.self_loyalty_instant"
 LIBRARY_TOP_VISIBILITY_HANDLER_ID = (
     "permission.action.library-top-visibility.v1"
 )
@@ -48,6 +49,8 @@ QUALIFIED_LIBRARY_TOP_CAPABILITY = 'library.action.top.qualified'
 LIBRARY_TOP_MANA_VALUE_CAPABILITY = 'library.action.top.mana_value'
 LIBRARY_TOP_HISTORY_CAPABILITY = 'library.action.top.turn_history'
 ADDITIONAL_LAND_PLAY_HANDLER_ID = "permission.action.additional-land-play.v1"
+SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID = "permission.action.additional-land-play.all-players.v1"
+SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY = "land.play.additional.all_players"
 OPENING_HAND_BATTLEFIELD_HANDLER_ID = "permission.action.opening-hand-battlefield.v1"
 OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 
@@ -56,6 +59,9 @@ class ActionPermissionKind(StrEnum):
     MANA_WHITE_AS_RED = 'mana_white_as_red'
     MANA_ANY_COLOR = 'mana_any_color'
     MANA_ANY_TYPE_CREATURE = 'mana_any_type_creature'
+    DOUBLE_TAP_MANA = "double_tap_mana"
+    TRIPLE_TAP_MANA = "triple_tap_mana"
+    TRIPLE_BASIC_LAND_TAP_MANA = "triple_basic_land_tap_mana"
     PUBLIC_HAND = 'public_hand'
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
     OPENING_HAND_REVEAL = "opening_hand_reveal"
@@ -63,10 +69,18 @@ class ActionPermissionKind(StrEnum):
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE = (
         "activate_controlled_creature_as_haste"
     )
+    ACTIVATE_SOURCE_LOYALTY_AT_INSTANT = "activate_source_loyalty_at_instant"
+    ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT = "activate_entered_source_loyalty_at_instant"
     LIBRARY_TOP_VISIBILITY = "library_top_visibility"
     LIBRARY_TOP_ACTION = "library_top_action"
     ADDITIONAL_LAND_PLAY = "additional_land_play"
     LIBRARY_SEARCH_RULE = 'library_search_rule'
+
+
+SOURCE_LOYALTY_INSTANT_HANDLERS = {
+    ActionPermissionKind.ACTIVATE_SOURCE_LOYALTY_AT_INSTANT: "permission.action.self-loyalty-instant.v1",
+    ActionPermissionKind.ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT: "permission.action.entered-self-loyalty-instant.v1",
+}
 
 
 class LibraryTopVisibility(StrEnum):
@@ -469,6 +483,7 @@ class AdditionalLandPlayHandler:
     capability_dependencies: tuple[str, ...] = (
         "land.play.additional.static",
     )
+    scope: ActionPermissionScope = ActionPermissionScope.CONTROLLER
 
     def validate(self, descriptor: Mapping[str, Any]) -> int:
         exact_fields(
@@ -501,15 +516,22 @@ class AdditionalLandPlayHandler:
         descriptor: Mapping[str, Any],
         context: ActionPermissionSourceContext,
     ) -> tuple[StaticActionPermission, ...]:
-        return (
+        amount = self.validate(descriptor)
+        players = (
+            context.active_seats
+            if self.scope is ActionPermissionScope.ALL_PLAYERS
+            else (context.source_controller,)
+        )
+        return tuple(
             StaticActionPermission(
                 kind=ActionPermissionKind.ADDITIONAL_LAND_PLAY,
-                player=context.source_controller,
+                player=player,
                 source_ref=context.source_ref,
                 source_logical_object_id=context.source_logical_object_id,
                 source_semantic_key=context.source_semantic_key,
-                additional_land_plays=self.validate(descriptor),
-            ),
+                additional_land_plays=amount,
+            )
+            for player in players
         )
 
 
@@ -526,12 +548,27 @@ class ActionPermissionRegistry(
 def default_action_permission_registry() -> ActionPermissionRegistry:
     from .library_search_rules import LibrarySearchRuleHandler
     from .hand_visibility import StaticHandVisibilityHandler
-    from .mana_spending import mana_spending_handlers
+    from .mana_spending import (
+        TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY, mana_spending_handlers, tap_mana_multiplier_handlers,
+    )
+    capabilities = load_default_capability_registry()
+    loyalty_handlers = ()
+    if capabilities.capability(SOURCE_LOYALTY_INSTANT_CAPABILITY) is not None:
+        loyalty_handlers = tuple(
+            StaticActionPermissionHandler(
+                handler_id=handler_id, permission=permission,
+                rule_references=("101.1", "117.1b", "606.3", "611.3a"),
+                capability_dependencies=(SOURCE_LOYALTY_INSTANT_CAPABILITY,),
+            )
+            for permission, handler_id in SOURCE_LOYALTY_INSTANT_HANDLERS.items()
+        )
     registry = ActionPermissionRegistry(
         (
             LibrarySearchRuleHandler(),
             StaticHandVisibilityHandler(),
             *mana_spending_handlers(),
+            *(tap_mana_multiplier_handlers() if capabilities.capability(TAP_MANA_PRODUCTION_MULTIPLIER_CAPABILITY) is not None else ()),
+            *loyalty_handlers,
             OpeningHandBattlefieldPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(
@@ -560,11 +597,14 @@ def default_action_permission_registry() -> ActionPermissionRegistry:
             LibraryTopActionHandler(),
             _QUALIFIED_LIBRARY_TOP_HANDLER,
             AdditionalLandPlayHandler(),
+            AdditionalLandPlayHandler(
+                handler_id=SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID,
+                capability_dependencies=(SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY,),
+                scope=ActionPermissionScope.ALL_PLAYERS,
+            ),
         )
     )
-    registry.require_registered_capabilities(
-        load_default_capability_registry()
-    )
+    registry.require_registered_capabilities(capabilities)
     return registry.freeze()
 
 
@@ -666,6 +706,22 @@ def controller_has_action_permission(
         permission.kind is kind and permission.player == player
         for permission in controller_action_permissions(host, player)
     )
+
+
+def source_has_instant_loyalty_permission(host: ActionPermissionHost, player: str, source: Any) -> bool:
+    """Check current static authority for the exact source of the loyalty ability."""
+    if (getattr(host, "semantics", None) is None or source.zone != "battlefield"
+            or source.phased_out or source.controller != player):
+        return False
+    entered = source.entered_battlefield_turn_sequence == host.state.turn_sequence
+    for permission in controller_action_permissions(host, player):
+        if (permission.source_ref != source.ref
+                or permission.source_logical_object_id != source.logical_object_id):
+            continue
+        if (permission.kind is ActionPermissionKind.ACTIVATE_SOURCE_LOYALTY_AT_INSTANT
+                or entered and permission.kind is ActionPermissionKind.ACTIVATE_ENTERED_SOURCE_LOYALTY_AT_INSTANT):
+            return True
+    return False
 
 
 def _is_owned_library_top(
@@ -885,7 +941,10 @@ def land_play_quota(
     additional_allowance = len(
         additional_land_play_permission_slots(host, player)
     )
-    total_allowance = base_allowance + additional_allowance
+    from ..rules.land_play_permissions import additional_land_plays_this_turn
+
+    temporary = additional_land_plays_this_turn(host.state.players[player].stats, host.state.turn_sequence)
+    total_allowance = base_allowance + additional_allowance + temporary
     return total_allowance, played, max(0, total_allowance - played)
 
 

@@ -59,6 +59,7 @@ class DrawResume:
             "turn_draw",
             "semantic_resolution",
             "draw_batch",
+            "draw_remainder",
         }:
             raise DrawError(f"Unsupported post-draw continuation {self.kind!r}")
         if self.kind == "none":
@@ -87,7 +88,9 @@ class DrawResume:
             ):
                 raise DrawError("Turn-draw continuation carries extra state")
             return
-        if self.kind == "draw_batch":
+        if self.kind in {"draw_batch", "draw_remainder"}:
+            if self.kind == "draw_remainder" and len(self.draws) != 1:
+                raise DrawError("A draw remainder requires one prepared instruction")
             if not self.draws or any(
                 not isinstance(draw, QueuedDraw) for draw in self.draws
             ):
@@ -136,7 +139,7 @@ class DrawResume:
         if kind == "turn_draw":
             _exact(value, {"kind", "seat"}, name="Turn-draw continuation")
             return cls(kind="turn_draw", seat=_string(value["seat"], name="Turn-draw continuation seat"))
-        if kind == "draw_batch":
+        if kind in {"draw_batch", "draw_remainder"}:
             fields = set(value)
             if fields not in (
                 {"kind", "draws"},
@@ -153,7 +156,7 @@ class DrawResume:
             ):
                 raise DrawError("Draw-batch continuation draws must be objects")
             return cls(
-                kind="draw_batch",
+                kind=kind,
                 draws=tuple(QueuedDraw.from_dict(draw) for draw in draws),
                 after=(
                     cls.from_dict(value["after"])
@@ -191,9 +194,9 @@ class DrawResume:
             return {"kind": "none"}
         if self.kind == "turn_draw":
             return {"kind": "turn_draw", "seat": self.seat}
-        if self.kind == "draw_batch":
+        if self.kind in {"draw_batch", "draw_remainder"}:
             value = {
-                "kind": "draw_batch",
+                "kind": self.kind,
                 "draws": [draw.to_dict() for draw in self.draws],
             }
             if self.after is not None:

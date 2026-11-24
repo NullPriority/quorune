@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 from ..ability_fragments import ability_fragment_to_dict
-from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY, BLOCK_CAPACITY_HANDLER
+from ..block_capacity_model import (
+    BLOCK_CAPACITY_CAPABILITY, BLOCK_CAPACITY_HANDLER, EQUIPMENT_BLOCK_CAPACITY_CAPABILITY, BlockCapacitySpec,
+)
 from ..declaration_costs import normalized_oracle_line
 from .continuous_templates import (
     fixed_query_keyword_grant_handler, attached_fixed_characteristics_handler,
@@ -19,11 +21,21 @@ def static_block_capacity_handler(text, *, source_name):
     matches=list(_PERMISSION.finditer(text))
     if len(matches)!=1 or 'until end' in text.casefold():return None
     match=matches[0]
-    spec=BlockCapacitySpec(unlimited=True) if match['any'] else BlockCapacitySpec(additional=_COUNTS[match['count'].casefold()])
-    fragment=ability_fragment_to_dict(spec)
     normalized=normalized_oracle_line(text,card_name=source_name)
-    if _PERMISSION.fullmatch(normalized.removeprefix('this creature ').rstrip('.')):
-        return ('fixed-source-block-capacity-v1',{'handler_id':BLOCK_CAPACITY_HANDLER,'schema_version':1,'event':'characteristics.evaluate','fragment':fragment},(BLOCK_CAPACITY_CAPABILITY,))
+    equipment = normalized.rstrip(".") == (
+        "this creature can block an additional creature each combat "
+        "for each equipment attached to this creature"
+    )
+    if equipment:
+        spec = BlockCapacitySpec(additional=1, schema_version=2)
+    else:
+        spec = BlockCapacitySpec(unlimited=True) if match["any"] else BlockCapacitySpec(additional=_COUNTS[match["count"].casefold()])
+    fragment=ability_fragment_to_dict(spec)
+    if equipment or _PERMISSION.fullmatch(normalized.removeprefix('this creature ').rstrip('.')):
+        template = "equipment-linked-block-capacity-v2" if equipment else "fixed-source-block-capacity-v1"
+        required = (BLOCK_CAPACITY_CAPABILITY, EQUIPMENT_BLOCK_CAPACITY_CAPABILITY) if equipment else (BLOCK_CAPACITY_CAPABILITY,)
+        return (template, {"handler_id": BLOCK_CAPACITY_HANDLER, "schema_version": 1,
+            "event": "characteristics.evaluate", "fragment": fragment}, required)
     printed_vigilance=bool(re.search(r'\bhas vigilance\b',text,re.I))
     synthetic=_PERMISSION.sub('has vigilance',text)
     synthetic=re.sub(r', has vigilance, and has vigilance',', and has vigilance',synthetic,flags=re.I)

@@ -17,6 +17,7 @@ ACTIVATION_PUBLIC_QUERY_CAPABILITY = "activation.condition.public_query"
 ACTIVATION_PUBLIC_STATE_CAPABILITY='activation.condition.fixed_public_state'
 CLASS_LEVEL_ACTIVATION_CAPABILITY = "permanent.class.fixed_lifecycle"
 PUBLIC_ACTIVATION_CAPABILITY = "activation.permission.public_battlefield"
+PUBLIC_TIMED_ACTIVATION_CAPABILITY = "activation.permission.public_step_window"
 PUBLIC_ACTIVATION_FIELD = "public_activation"
 _BASIC_LAND_SUBTYPES = frozenset(
     {"plains", "island", "swamp", "mountain", "forest"}
@@ -26,10 +27,31 @@ _BASIC_LAND_SUBTYPES = frozenset(
 class PublicActivationTiming(str, Enum):
     PRIORITY = "priority"
     SORCERY = "sorcery"
+    ANY_UPKEEP = "any_upkeep"
+    ACTIVATORS_DRAW_STEP = "activators_draw_step"
+
+    @property
+    def has_step_window(self) -> bool:
+        return self in (self.ANY_UPKEEP, self.ACTIVATORS_DRAW_STEP)
+
+    def permits_step(self, *, phase: str, step: str, actor_is_active: bool) -> bool:
+        if self is self.ANY_UPKEEP:
+            return (phase, step) == ("beginning", "upkeep")
+        if self is self.ACTIVATORS_DRAW_STEP:
+            return actor_is_active and (phase, step) == ("beginning", "draw")
+        return True
+
+
+def public_activation_capabilities(timing: PublicActivationTiming | None) -> tuple[str, ...]:
+    if timing is None:
+        return ()
+    if timing.has_step_window:
+        return (PUBLIC_ACTIVATION_CAPABILITY, PUBLIC_TIMED_ACTIVATION_CAPABILITY)
+    return (PUBLIC_ACTIVATION_CAPABILITY,)
 
 
 def public_activation_descriptor(timing: PublicActivationTiming) -> dict[str, Any]:
-    return {"schema_version": 1, "timing": timing.value}
+    return {"schema_version": 2 if timing.has_step_window else 1, "timing": timing.value}
 
 
 def public_activation_program_timing(program: Any) -> PublicActivationTiming | None:
@@ -46,11 +68,13 @@ def public_activation_program_timing(program: Any) -> PublicActivationTiming | N
         or not isinstance(descriptor, Mapping)
         or set(descriptor) != {"schema_version", "timing"}
         or type(descriptor["schema_version"]) is not int
-        or descriptor["schema_version"] != 1
         or type(descriptor["timing"]) is not str
     ):
         raise ValueError("Public activation requires a versioned battlefield activation permission")
-    return PublicActivationTiming(descriptor["timing"])
+    timing = PublicActivationTiming(descriptor["timing"])
+    if descriptor["schema_version"] != public_activation_descriptor(timing)["schema_version"]:
+        raise ValueError("Public activation timing does not match its permission version")
+    return timing
 
 
 class ActivationConditionKind(str, Enum):
@@ -453,6 +477,13 @@ def activation_restriction_spec(text: str, *, source_name: str | None = None) ->
     """Parse one complete activation restriction without interpreting an effect."""
 
     normalized = " ".join(text.casefold().rstrip(".").split())
+    if normalized == "during combat after blockers are declared":
+        from .continuous_conditions import block_declaration_timing_condition
+
+        return ActivationRestrictionSpec(conditions=(ActivationCondition(
+            ActivationConditionKind.FIXED_PUBLIC_STATE,
+            public_state=block_declaration_timing_condition(declare_blockers_only=False),
+        ),))
     fixed = {
         "once": ActivationRestrictionSpec(activation_limit=ActivationLimit.ONCE_PER_OBJECT),
         "if an opponent lost life this turn": ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN),)),

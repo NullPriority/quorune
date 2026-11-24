@@ -51,7 +51,11 @@ def fixed_resolving_cast_options(host, *, actor, card, cost_option, option_id):
             target_specification = dict(option['target_schema']) if isinstance(option.get('target_schema'), Mapping) else dict(aura_target_schema) if aura_target_schema is not None else program.target_schema if program is not None else None
             public_target_schema = None
             if target_specification is not None:
-                public_target_schema = host._public_target_schema(actor, target_specification, acting_source=spell_targeting_source(host, prospective_cast_card(host, card, face_name)), source_ref=card.ref)
+                public_target_schema = host._public_target_schema(
+                    actor, target_specification, acting_source=spell_targeting_source(
+                        host, prospective_cast_card(host, card, face_name),
+                    ), source_ref=card.ref, announcing_targets=True,
+                )
                 if public_target_schema is None:
                     continue
             public_option = {key: copy.deepcopy(value) for key, value in option.items() if key in _PUBLIC_COST_OPTION_FIELDS}

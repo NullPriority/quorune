@@ -3,14 +3,65 @@ from __future__ import annotations
 """Immutable acting-object facts for targeting and immediate source LKI."""
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from math import isfinite
 from .characteristic_evaluation import type_parts
+from .creature_subtypes import canonical_creature_subtype
 from .errors import GameRuleError
 from .protection import ProtectionSource
 
 TARGETING_SOURCE_CONTEXT='targeting_source_characteristics'
 BOUND_TARGETING_SOURCE_VERSION = 2
+TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION = "grant_turn_spell_source_color_protection"
+TURN_SPELL_SOURCE_COLOR_PROTECTION_MECHANIC = "fixed-turn-spell-source-color-protection"
+TURN_SPELL_SOURCE_COLOR_PROTECTION_CAPABILITY = "resolution.turn_spell_source_color_protection"
+TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW = "turn_spell_source_color_protection"
+
+
+def _turn_spell_source_colors(raw):
+    if (not isinstance(raw, (list, tuple)) or not raw
+            or any(type(color) is not str or color not in set("WUBRG") for color in raw)
+            or tuple(raw) != tuple(color for color in "WUBRG" if color in raw)):
+        raise ValueError("Turn-long spell-source color protection requires distinct canonical colors")
+    return tuple(raw)
+
+
+def turn_spell_source_color_grant(effect, *, player="$controller"):
+    fields = {"op", "schema_version", "player", "colors"}
+    if (not isinstance(effect, Mapping) or set(effect) != fields
+            or effect["op"] != TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != 1
+            or effect["player"] != player):
+        raise ValueError("Turn-long spell-source protection requires a closed controller result")
+    colors = _turn_spell_source_colors(effect["colors"])
+    if len(colors) != 2:
+        raise ValueError("Turn-long spell-source protection requires two fixed colors")
+    return colors
+
+
+def current_turn_spell_source_protection_colors(stats, turn_sequence):
+    raw = stats.get(TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW)
+    if raw is None:
+        return ()
+    if (not isinstance(raw, Mapping) or set(raw) != {"schema_version", "turn_sequence", "colors"}
+            or type(raw["schema_version"]) is not int or raw["schema_version"] != 1
+            or type(raw["turn_sequence"]) is not int or not 0 <= raw["turn_sequence"] <= turn_sequence):
+        raise ValueError("Turn-long spell-source protection has an invalid duration")
+    colors = _turn_spell_source_colors(raw["colors"])
+    return colors if raw["turn_sequence"] == turn_sequence else ()
+
+
+def granted_turn_spell_source_colors(stats, turn_sequence, colors):
+    previous = current_turn_spell_source_protection_colors(stats, turn_sequence)
+    return {"schema_version": 1, "turn_sequence": turn_sequence,
+            "colors": [color for color in "WUBRG" if color in previous or color in colors]}
+
+
+def spell_source_is_prohibited_by_color(source, colors):
+    if not colors:
+        return False
+    return source is None or (source.kind == "spell"
+                              and (source.colors is None or not source.colors.isdisjoint(colors)))
 
 
 @dataclass(frozen=True,slots=True)
@@ -23,6 +74,8 @@ class TargetingSource:
     spell_owner: str | None=None
     protection_source: ProtectionSource | None = None
     logical_object_id: str | None = None
+    chosen_creature_type: str | None = None
+    chosen_color: str | None = None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
@@ -30,6 +83,15 @@ class TargetingSource:
             type(self.logical_object_id) is not str or not self.logical_object_id
         ):
             raise ValueError("Targeting source incarnation must be explicit")
+        if self.chosen_creature_type is not None and (
+            self.kind != "ability" or canonical_creature_subtype(self.chosen_creature_type) != self.chosen_creature_type
+        ):
+            raise ValueError("A targeting designation requires a canonical source creature type")
+        if self.chosen_color is not None and (
+            self.kind != "ability" or type(self.chosen_color) is not str
+            or self.chosen_color not in {"W", "U", "B", "R", "G"}
+        ):
+            raise ValueError("A targeting designation requires a canonical source color")
         if self.source_controller is not None and (type(self.source_controller) is not str or not self.source_controller):raise ValueError('Targeting source controller must be a seat or unavailable')
         if self.spell_owner is not None and (self.kind!='spell' or type(self.spell_owner) is not str
                 or not self.spell_owner or self.spell_owner.strip()!=self.spell_owner):
@@ -118,7 +180,43 @@ def spell_targeting_source(host,card):
 
 
 def ability_targeting_source(host,card):
-    return capture_targeting_source(host,card).facts()
+    facts = capture_targeting_source(host, card).facts()
+    from .rules.chosen_color_target_shapes import current_linked_target_color
+
+    annotations = getattr(card, "annotations", {})
+    subtype = annotations.get("chosen_creature_type")
+    color = current_linked_target_color(card)
+    choices = {}
+    if subtype is not None and canonical_creature_subtype(subtype) == subtype:
+        choices["chosen_creature_type"] = subtype
+    if type(color) is str and color in {"W", "U", "B", "R", "G"}:
+        choices["chosen_color"] = color
+    return replace(facts, **choices) if choices else facts
+
+
+def _with_retained_designations(item, facts):
+    from .designation_prevention import DESIGNATION_INFORMATION_FIELD, source_entry_designation_value
+    from .entry_designations import EntryDesignationKind
+
+    info = item.context.get(DESIGNATION_INFORMATION_FIELD)
+    values = info.get("values") if isinstance(info, Mapping) else None
+    if not isinstance(values, Mapping):
+        return facts
+    try:
+        choices = {
+            kind.annotation: source_entry_designation_value(item, kind)
+            for kind in (EntryDesignationKind.CREATURE_TYPE, EntryDesignationKind.COLOR)
+            if kind.value in values
+        }
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return replace(facts, **choices) if choices else facts
+
+
+def _requires_shared_draw_source(program):
+    from .rules.optional_draw_discard import is_source_shared_type_draw_discard
+
+    return program is not None and any(is_source_shared_type_draw_discard(effect) for effect in program.effects)
 
 
 def stack_targeting_source(host,item):
@@ -138,15 +236,23 @@ def stack_targeting_source(host,item):
         if binding.object_id!=source_id or expected not in {None,binding.logical_object_id}:
             raise GameRuleError('Targeting source binding refers to another incarnation')
         if (source is not None and source.ref==binding.object_ref and source.logical_object_id==binding.logical_object_id
-                and source.zone==binding.zone):
-            return capture_targeting_source(host,source,schema_version=binding.schema_version).facts()
-        return binding.facts()
-    if source is not None and expected==source.logical_object_id:return ability_targeting_source(host,source)
-    return TargetingSource('ability')
+                and source.zone==binding.zone
+                and not (getattr(source, "phased_out", False)
+                         and _requires_shared_draw_source(host.semantics.get(item.semantic_key)))):
+            facts = capture_targeting_source(host, source, schema_version=binding.schema_version).facts()
+        else:
+            facts = binding.facts()
+    elif source is not None and expected == source.logical_object_id:
+        facts = capture_targeting_source(host, source).facts()
+    else:
+        facts = TargetingSource("ability")
+    return _with_retained_designations(item, facts)
 
 
-def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError):
-    """Use the canonical departure transaction for immediate source LKI."""
+def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError,phase_out=False):
+    """Capture source information before a departure or a supported phase-out batch."""
+    if not cards:
+        return
     from .trigger_batches import PendingTriggerBatch
     from .trigger_processing import replace_pending_trigger_batch
     try:
@@ -161,8 +267,13 @@ def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError):
             binding=TargetingSourceBinding.from_dict(raw)
             if binding.object_id!=item.get('source_object_id'):raise ValueError('Targeting source frame identity changed')
             source=departures.get((binding.object_id,binding.logical_object_id))
-            if source is not None and source.zone==binding.zone:
-                updates[item['ref']]=capture_targeting_source(host,source,schema_version=binding.schema_version).to_dict()
+            if source is None or source.zone != binding.zone:
+                continue
+            if phase_out or getattr(source, "phased_out", False):
+                shared_draw = _requires_shared_draw_source(host.semantics.get(item.get("semantic_key")))
+                if phase_out != shared_draw:
+                    continue
+            updates[item['ref']]=capture_targeting_source(host,source,schema_version=binding.schema_version).to_dict()
         for index,batch in enumerate(host.state.pending_trigger_batches):
             data=batch.to_dict();changed=False
             for group in data['groups']:
@@ -180,7 +291,7 @@ def ensure_trigger_targeting_source(host,item):
     program=host.semantics.get(item.semantic_key)
     from .ability_source_information import complete_ability_source_information
     if not (item.targets or item.context.get('target_schema_override') or getattr(program,'target_schema',None)
-            or complete_ability_source_information(host.state)):return
+            or _requires_shared_draw_source(program) or complete_ability_source_information(host.state)):return
     source=host.state.cards.get(item.source_object_id)
     if source is not None and item.context.get('source_logical_object_id',source.logical_object_id)==source.logical_object_id:
         item.context[TARGETING_SOURCE_CONTEXT]=capture_targeting_source(host,source).to_dict()

@@ -82,6 +82,10 @@ def spell_caster_sacrifice_payment_capabilities(effect):
 
 
 def spell_caster_sacrifice_payment_program_dependencies(program):
+    from .rules.scheduled_life_return import has_closed_scheduled_life_return
+
+    if has_closed_scheduled_life_return(program):
+        return ()
     effects = (*program.effects, *getattr(program, "handlers", ()))
     if not any(uses_spell_caster_sacrifice_payment(effect) for effect in nested_effects(effects)):
         return ()

@@ -220,6 +220,8 @@
       "quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner"
     },
     "read_only_consumers": {
+      "quorune/ability_resolution_ordinal.py": "read-only committed ability resolution order for typed conditions",
+      "quorune/other_spell_history_model.py": "read-only current spell history for typed conditions",
       "quorune/__init__.py": "public type re-export",
       "quorune/attack_transition_engine_adapter.py": "narrow read-only CommanderEngine compatibility query and trigger coordinator for immutable completed attack transitions",
       "quorune/attack_transition_resolution.py": "attack-trigger result coordinator delegating mutation to the canonical continuous-effect and delayed-trigger owners",
@@ -329,6 +331,7 @@
       "quorune/rules/entry_cast_information.py": "canonical cast-history receipt query, scoped resolving-entry information and immutable controller-relative condition read; delegates every move/trigger mutation to existing owners",
       "quorune/rules/incubate_capability_shapes.py": "closed Incubate node shape and complete component ownership query; no mutation authority",
       "quorune/rules/library_battlefield_entry.py": "delegates simultaneous entry and subsequent bottom ordering to the canonical zone and library partition owners; no local card writes",
+      "quorune/rules/library_bottom_results.py": "Pins the private library input and reads the committed public card and its source power. Delegates mutation to the existing move and outcome owners.",
       "quorune/rules/morph_actions.py": "typed Morph special-action planner delegating payment, object-state mutation, trigger discovery, and priority progression to canonical owners",
       "quorune/rules/random_discard_additional_cost.py": "read-only random spell-price selection and sealed continuation validation delegating mutation to canonical discard-cost owners",
       "quorune/rules/resolving_cast_payments.py": "atomic resolving free-exile-cast payment replay using canonical event identifiers and cast/transaction owners; no local GameState writes or priority-cast authority",
@@ -341,6 +344,7 @@
       "quorune/rules/trigger_limits.py": "closed trigger-limit codecs, immutable event-time usage and pending-claim read/planning; current live annotation mutation remains in activation_usage and accepted trigger publication in existing trigger owner",
       "quorune/rules/trigger_participation_queries.py": "pure closed participation catalog or immutable event/source predicate read; no GameState, usage, stack, target, zone or APNAP mutation authority",
       "quorune/rules/trigger_participation_runtime.py": "pure closed participation catalog or immutable event/source predicate read; no GameState, usage, stack, target, zone or APNAP mutation authority",
+      "quorune/rules/temporary_copy_subject.py": "Reads public resolving copy candidates and captures one detached subject. Delegates choices and changes to the existing continuation and copy owners.",
       "quorune/rules/variable_library_selection_shapes.py": "closed variable library selection and complete component dependency query; no mutation authority",
       "quorune/rules/waterbend_payments.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/saga_lifecycle.py": "immutable ordinary Saga final-chapter state-action model",

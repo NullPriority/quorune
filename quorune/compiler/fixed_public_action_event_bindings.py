@@ -10,6 +10,7 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..initiative_model import TAKE_INITIATIVE_CAPABILITY
 from ..rules.event_subscriptions import (
     FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
+    PHYSICAL_CARD_PLAY_TEMPLATE, physical_card_play_event_condition,
 )
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..source_sacrifice_model import SOURCE_UNATTACHMENT_VARIANT, UNATTACHMENT_EVENT, UNATTACHMENT_TRIGGER_CAPABILITY
@@ -156,6 +157,12 @@ def _actor_condition(
 
 
 def _public_land_play_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    if material_line.casefold().rstrip(".") == "whenever you play a card, draw a card":
+        return _spec(
+            LAND_PLAY_EVENT, "independent_dual_event", "Draw a card.", PHYSICAL_CARD_PLAY_TEMPLATE,
+            "trigger-event-normalized-public-action", condition=physical_card_play_event_condition(),
+            capabilities=("trigger.event.normalized_spell_cast", "trigger.subscription.fixed_multi_event"),
+        )
     match = _PUBLIC_LAND_PLAY_TRIGGER.fullmatch(material_line)
     if match is None:
         return None
@@ -600,8 +607,11 @@ def _public_entry_zone_spec(
 def _public_zone_spec(
     material_line: str, *, card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .affected_player_sacrifice_templates import entry_sacrifice_power_draw_binding_spec
+
     return (
-        _public_token_zone_spec(material_line)
+        entry_sacrifice_power_draw_binding_spec(material_line)
+        or _public_token_zone_spec(material_line)
         or _public_controlled_departure_spec(material_line)
         or _public_entry_zone_spec(material_line)
         or _graveyard_departure_spec(material_line)

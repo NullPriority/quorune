@@ -1,0 +1,768 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}{U}",
+      "name": "Aethersnatch",
+      "oracle_id": "45892ec2-8996-444f-a61c-5151926baa0b",
+      "oracle_text": "Gain control of target spell. You may choose new targets for it. (If that spell becomes a permanent, it enters under your control.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-11-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Cast Down",
+      "oracle_id": "cdaab6b0-1a2d-4809-8e6b-56013acd8f78",
+      "oracle_text": "Destroy target nonlegendary creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Hexproof"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Gladecover Scout",
+      "oracle_id": "385c1208-bfea-44e2-b236-4f38bc90db9f",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2013-07-19",
+      "toughness": "1",
+      "type_line": "Creature — Elf Scout"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Holy Strength",
+      "oracle_id": "9357de36-f8be-4f49-b2c8-9fe9eaf82b07",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+2.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-07-16",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{W}",
+      "name": "Martial Glory",
+      "oracle_id": "e8aa12f8-8922-41ed-8cdb-219c9e4b9e36",
+      "oracle_text": "Target creature gets +3/+0 until end of turn.\nTarget creature gets +0/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Mirrorwing Dragon",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "oracle_text": "Flying\nWhenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": "5",
+      "type_line": "Creature — Dragon"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Zada, Hedron Grinder",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "oracle_text": "Whenever you cast an instant or sorcery spell that targets only Zada, copy that spell for each other creature you control that the spell could target. Each copy targets a different one of those creatures.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": "3",
+      "type_line": "Legendary Creature — Goblin Ally"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Aethersnatch can target any spell, even one without targets.",
+      "oracle_id": "45892ec2-8996-444f-a61c-5151926baa0b",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Combat damage dealt by a commander is tracked without regard to who controlled the commander at the time it dealt damage. For example, say a commander deals 10 combat damage to a player, leaves the battlefield, is recast, and you gain control of it with Aethersnatch. If it deals another 11 combat damage to that same player, they will lose the game.",
+      "oracle_id": "45892ec2-8996-444f-a61c-5151926baa0b",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of a commander spell, the commander’s owner chooses whether to put it in the command zone if it later leaves the battlefield.",
+      "oracle_id": "45892ec2-8996-444f-a61c-5151926baa0b",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain control of an instant or sorcery spell, it will be put into its owner’s graveyard as it resolves.",
+      "oracle_id": "45892ec2-8996-444f-a61c-5151926baa0b",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may change any or none of the spell’s targets. If you change a target, you must choose a legal target for the spell. If you can’t, you must leave the target unchanged (even if the current target is illegal). Notably, if you were originally chosen as a “target opponent” for a spell you gain control with Aethersnatch, you are now an illegal target as you aren’t your own opponent.",
+      "oracle_id": "45892ec2-8996-444f-a61c-5151926baa0b",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any creature the player controls that couldn't be targeted by the original spell (due to shroud, protection abilities, targeting restrictions, or any other reason) is just ignored by Mirrorwing Dragon's ability. If the spell has multiple targets, a given creature must be a legal target for all of them or else a copy won't be created for that creature.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player casts an instant or sorcery spell that has multiple targets and Mirrorwing Dragon is chosen as the target in each instance, Mirrorwing Dragon's ability will trigger. Each of the copies will similarly be targeting only one of the player's other creatures.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast (like Burn from Within does), the copies have the same value of X.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copies will have the same mode. A different mode cannot be chosen.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability triggers whenever a player casts an instant or sorcery spell that targets only Mirrorwing Dragon and no other object or player.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copies are only created targeting creatures that the spell's controller controls. Copies are not created for all creatures on the battlefield, and the affected creatures may be controlled by a different player than the controller of Mirrorwing Dragon. Notably, if you cast Murder targeting your opponent's Mirrorwing Dragon, your creatures will each get a Murder, not your opponent's.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copies that the ability creates are created on the stack, so they're not cast. Abilities that trigger when a player casts a spell (like Mirrorwing Dragon's ability itself) won't trigger.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "The player who cast the original spell controls all the copies. That player chooses the order the copies are put onto the stack. The original spell will be on the stack beneath those copies and will resolve last.",
+      "oracle_id": "9ea14a03-c6a2-49ec-953d-4249a2c27e1d",
+      "published_at": "2016-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any creature you control that couldn't be targeted by the original spell (due to shroud, protection abilities, targeting restrictions, or any other reason) is just ignored by Zada's ability.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast (like Rolling Thunder does), the copies have the same value of X.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copies will have the same mode. You can't choose a different one.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast an instant or sorcery spell that has multiple targets, but it's targeting only Zada with all of them, Zada's ability will trigger. The copies will similarly each be targeting only one of your other creatures. You can't change any of the copy's targets to other creatures.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copies that the ability creates are created on the stack, so they're not cast. Abilities that trigger when a player casts a spell (like Zada's ability itself) won't trigger.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You control all the copies. You choose the order the copies are put onto the stack. The original spell will be on the stack beneath those copies and will resolve last.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Zada's ability triggers whenever you cast an instant or sorcery spell that targets only Zada and no other object or player.",
+      "oracle_id": "9f7d5e1c-bf5b-4ab9-bd6e-2627b4d22b36",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may choose the same creature for both targets since the card says \"target creature\" multiple times. You may also choose two different creatures.",
+      "oracle_id": "e8aa12f8-8922-41ed-8cdb-219c9e4b9e36",
+      "published_at": "2013-01-24",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

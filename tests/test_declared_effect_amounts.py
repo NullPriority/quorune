@@ -192,6 +192,23 @@ class DeclaredEffectAmountCompilerTests(unittest.TestCase):
                     effects=(malformed,),target_schema=program.target_schema,
                     mechanic_ids=program.coverage))
 
+    def test_composed_spell_keeps_declared_draw_and_fixed_scry_closed(self):
+        from quorune.compiler.program_generation import _is_closed_effect_program
+        from quorune.oracle_ir import generated_programs
+
+        record = generic_spell("Draw X cards.\nScry 1.")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "composed-declared-draw.sqlite3"
+            build_fixture_database([helpers.FIXTURE], path)
+            with CardDatabase(path) as db:
+                program, = generated_programs(
+                    db, record, trust_level="trusted", capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+        self.assertEqual("composed-spell-effect-sequence-v1", program.provenance["template_id"])
+        self.assertEqual(["draw", "scry"], [effect["op"] for effect in program.effects])
+        self.assertTrue(_is_closed_effect_program(program))
+
     def test_registered_measurement_requires_actual_whole_card_runtime_closure(self):
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
         from scripts.work_selection_cohort_measurements import _bound_effect_program_measurement

@@ -45,6 +45,39 @@ _OPERATION_MECHANICS = {
 }
 
 
+OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION = 3
+
+
+def validate_optional_graveyard_target_return(effect, *, player, resolved=False):
+    children = effect.get("effects")
+    if (
+        set(effect) != {"op", "player", "effects", "schema_version"}
+        or effect["op"] != "offer_optional_effect"
+        or effect["player"] != player
+        or type(effect["schema_version"]) is not int
+        or effect["schema_version"] != OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION
+        or not isinstance(children, (list, tuple))
+        or len(children) != 1
+        or not isinstance(children[0], Mapping)
+    ):
+        raise ValueError("Expected one versioned optional graveyard return")
+    child = children[0]
+    if (
+        set(child) != {"op", "cards", "maximum_targets"}
+        or child["op"] != "return_graveyard_targets_to_owner_hand"
+        or type(child["maximum_targets"]) is not int
+        or child["maximum_targets"] != 1
+    ):
+        raise ValueError("Expected the original own-graveyard return instruction")
+    cards = child["cards"]
+    if resolved:
+        if (not isinstance(cards, (list, tuple)) or len(cards) > 1
+                or any(type(ref) is not str or not ref for ref in cards)):
+            raise ValueError("Expected zero or one revalidated graveyard card")
+    elif cards != "$targets":
+        raise ValueError("Expected the announced graveyard target set")
+
+
 def _target_bounds(schema: Mapping[str, Any]) -> tuple[int, int] | None:
     count_fields = set(schema).intersection({"count", "min", "max", "up_to"})
     if count_fields == {"count"}:
@@ -108,6 +141,9 @@ def fixed_homogeneous_target_set_node_capabilities(
     effect = effects[0]
     operation = effect.get("op")
     maximum = effect.get("maximum_targets")
+    if operation == 'exile_permanent_targets' and 'followup' in effect:
+        from .targeted_exile_token_results import targeted_exile_token_node_capabilities
+        return targeted_exile_token_node_capabilities(effect, target_schema, mechanics)
     if operation == 'exile_public_graveyard_targets' and 'followup' in effect:
         from .targeted_graveyard_outcomes import targeted_graveyard_outcome_node_capabilities
 
@@ -219,9 +255,15 @@ def announced_target_set_node_capabilities(
     if ANNOUNCED_TARGET_SET_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    from ..phasing_model import PHASE_OUT_OPERATION, PHASE_OUT_TARGET_SET_SUBJECT
+    if effect.get("op") == PHASE_OUT_OPERATION and effect.get("subject") == PHASE_OUT_TARGET_SET_SUBJECT:
+        from .occurrence_object_results import phase_out_node_capabilities
+        return phase_out_node_capabilities(effects, target_schema)
     from .target_characteristic_sets import OPERATION, target_characteristic_set_capabilities
     characteristic = effect.get('op') == OPERATION
     fields = {"op", "cards", "maximum_targets", "announced_target_count"}
+    if effect.get("op") == "exile_permanent_targets" and "followup" in effect:
+        fields.add("followup")
     if characteristic:
         fields.update(('schema_version', 'power', 'toughness', 'keywords'))
     if (set(effect) != fields
@@ -252,8 +294,9 @@ def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
         if not owned:raise ValueError('Any-number target result or schema is malformed')
         return owned
     parameterized = isinstance(schema, Mapping) and "count_parameter" in schema
+    from ..phasing_model import PHASE_OUT_OPERATION
     from .target_characteristic_sets import OPERATION
-    effects = tuple(effect for effect in program.effects if effect.get("op") in {*_OPERATION_CAPABILITIES, OPERATION}
+    effects = tuple(effect for effect in program.effects if effect.get("op") in {*_OPERATION_CAPABILITIES, OPERATION, PHASE_OUT_OPERATION}
         and ("announced_target_count" in effect or isinstance(effect.get("maximum_targets"), Mapping)))
     if not parameterized and not effects:
         return ()
@@ -276,16 +319,28 @@ def is_closed_announced_target_set_program(program: Any) -> bool:
         if event != "activate":return False
         from ..activation_x import activation_x_symbols, activation_x_capabilities
         cost = program.cost_schema or {}
-        if (type(cost.get("announced_x_symbols")) is not int
-                or not set(activation_x_capabilities(symbols=cost.get('announced_x_symbols'),
-                    sacrifice_source=cost.get('sacrifice_source',False),
-                    discard_cards=bool(cost.get('choices')),
-                    discard_source=cost.get('discard_source', False))).issubset(program.capability_dependencies)
-                or activation_x_symbols(str(cost.get("text") or ""),
-                    allow_source_sacrifice=cost.get('sacrifice_source') is True,
-                    allow_fixed_discard=bool(cost.get('choices')),
-                    allow_source_discard=cost.get('discard_source') is True) != cost["announced_x_symbols"]):
-            return False
+        from ..colored_hand_reveal_model import (
+            VARIABLE_COLORED_REVEAL_PRICE_FIELD, variable_colored_reveal_program_dependencies,
+        )
+
+        if VARIABLE_COLORED_REVEAL_PRICE_FIELD in cost:
+            try:
+                price_dependencies = variable_colored_reveal_program_dependencies(program)
+            except (TypeError, ValueError):
+                return False
+            if not price_dependencies or not set(price_dependencies).issubset(program.capability_dependencies):
+                return False
+        else:
+            if (type(cost.get("announced_x_symbols")) is not int
+                    or not set(activation_x_capabilities(symbols=cost.get('announced_x_symbols'),
+                        sacrifice_source=cost.get('sacrifice_source',False),
+                        discard_cards=bool(cost.get('choices')),
+                        discard_source=cost.get('discard_source', False))).issubset(program.capability_dependencies)
+                    or activation_x_symbols(str(cost.get("text") or ""),
+                        allow_source_sacrifice=cost.get('sacrifice_source') is True,
+                        allow_fixed_discard=bool(cost.get('choices')),
+                        allow_source_discard=cost.get('discard_source') is True) != cost["announced_x_symbols"]):
+                return False
     required = announced_target_set_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)
     return bool(required) and set(required).issubset(program.capability_dependencies)

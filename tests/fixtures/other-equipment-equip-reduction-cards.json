@@ -1,0 +1,97 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "For Mirrodin!",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}{W}",
+      "name": "Bladehold War-Whip",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "oracle_text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nEquip abilities you activate of other Equipment cost {1} less to activate.\nEquipped creature has double strike.\nEquip {3}{R}{W}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-02-10",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Bladehold War-Whip's second ability reduces only the amount of generic mana in equip abilities. For example, it will reduce an equip cost of {1} to {0}, but it will have no effect on an equip cost of {G}.",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Rebel is destroyed, the Equipment stays on the battlefield. Similarly, you may pay its equip cost to move it from the Rebel token to another creature you control.",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the ability causes two Rebel tokens to be created (due to an effect such as that of Mondrak, Glory Dominus), the Equipment becomes attached to only one of them.",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some Equipment creature cards in other sets have reconfigure, a different ability that attaches them to a creature. Reconfigure is not an equip ability, and reconfigure costs are not reduced by Bladehold War-Whip's second ability.",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Rebel enters the battlefield as a 2/2 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 2/2 creature entered the battlefield.",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The second ability affects other Equipment even if it isn't currently attached to a creature.",
+      "oracle_id": "d3142c6b-86e9-42b7-916c-ce7c34e7bd53",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

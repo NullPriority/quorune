@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original offline witnesses for graveyard exile and persistent copy.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707901",
+      "name": "Trial Exile Weaver",
+      "mana_cost": "{1}{U}{B}",
+      "cmc": 3,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "{1}{U}{B}: Exile target creature card from a graveyard. This creature becomes a copy of that card, except it has this ability.",
+      "keywords": [],
+      "layout": "normal",
+      "power": "0",
+      "toughness": "2",
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707902",
+      "name": "Trial River Form",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707903",
+      "name": "Trial Ridge Form",
+      "mana_cost": "{3}{W}{W}",
+      "cmc": 4,
+      "type_line": "Creature — Bird",
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "power": "4",
+      "toughness": "4",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707904",
+      "name": "Trial Shrouded Form",
+      "mana_cost": "{2}{B}",
+      "cmc": 3,
+      "type_line": "Creature — Wraith",
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "power": "2",
+      "toughness": "3",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707905",
+      "name": "Trial Tidal Scout // Trial Harbor Keeper",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature — Human Scout // Legendary Creature — Human Scout",
+      "oracle_text": "",
+      "layout": "flip",
+      "keywords": [],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "card_faces": [
+        {
+          "name": "Trial Tidal Scout",
+          "mana_cost": "{1}{G}",
+          "type_line": "Creature — Human Scout",
+          "oracle_text": "",
+          "colors": [
+            "G"
+          ],
+          "power": "2",
+          "toughness": "1"
+        },
+        {
+          "name": "Trial Harbor Keeper",
+          "mana_cost": "",
+          "type_line": "Legendary Creature — Human Scout",
+          "oracle_text": "",
+          "power": "3",
+          "toughness": "3"
+        }
+      ]
+    }
+  ],
+  "rulings": []
+}

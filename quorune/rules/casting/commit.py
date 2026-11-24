@@ -3,9 +3,12 @@ from __future__ import annotations
 from ..temporary_cast_timing import consume_temporary_play_timing
 from ...spell_mana_counts import capture_spell_mana_counts
 from .spell_context import (
-    PAID_SACRIFICE_FACT_FIELDS, capture_paid_sacrifice_facts,
-    declared_spell_context, fixed_cast_cost_object_context, require_paid_sacrifice_facts,
+    PAID_SACRIFICE_FACT_FIELDS, declared_spell_context,
 )
+from .zone_cost_commit import commit_card_cost_changes, commit_ordered_zone_costs
+from .whole_zone_costs import commit_whole_zone_costs
+from .colored_hand_credit import commit_hand_credit_payment, hand_credit_reserved_ids, selected_hand_credit_objects
+from ...impending_model import impending_payment_context
 from ..paid_alternative_cast_facts import paid_alternative_cast_context
 from ...scalar_effect_amount_model import (
     PAID_SACRIFICE_STAT_CAPABILITY,
@@ -26,7 +29,7 @@ from ...trigger_discovery import _ordered_event_sources
 
 import copy
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
@@ -74,7 +77,11 @@ from ...morph import (
     MORPH_CAST_METHOD,
     MorphError,
 )
-from ...cast_event_type_model import CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD, cast_event_type_line
+from ...cast_event_type_model import (
+    CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD,
+    cast_event_type_line,
+    physical_card_event_context,
+)
 from ..spell_cast_events import SpellCastEvent, _colors, cast_creature_target_controllers
 from ...selection.exile_cast import mana_value_of_cost
 from ...zone_object_state import (
@@ -195,6 +202,7 @@ class _AdditionalCostCommit:
     paid_refs: list[str]
     paid_contexts: list[dict[str, Any]]
     paid_creature_stats: PaidCreatureStatSnapshot | None = None
+    pre_recorded_zone_history_ids: set[str] = field(default_factory=set)
     paid_sacrifice_mana_value: PaidSacrificeManaValueSnapshot | None = None
     paid_sacrifice_characteristics: PaidSacrificeCharacteristics | None = None
 
@@ -480,11 +488,12 @@ def _resolve_fixed_zone_change_additional_cost(
         raise CastProposalError(
             str(exc), reason="additional_cost_malformed"
         ) from exc
-    from ..fixed_payment_groups import fixed_color_tap_zone_costs, fixed_life_zone_costs
+    from ..fixed_payment_groups import fixed_color_tap_zone_costs, fixed_discard_sacrifice_order, fixed_life_zone_costs
     from ...nonmana_kicker import distinct_kicker_zone_costs
     if cost is None or (len(raw_costs) != 1 and not fixed_life_zone_costs(raw_costs)
             and not distinct_kicker_zone_costs(selected_option,raw_costs)
-            and not fixed_color_tap_zone_costs(raw_costs)):
+            and not fixed_color_tap_zone_costs(raw_costs)
+            and not fixed_discard_sacrifice_order(selected_option, raw_costs)):
         raise CastProposalError(
             "The zone-change additional cost is outside the represented family",
             reason="additional_cost_unsupported",
@@ -649,68 +658,6 @@ def _ordinary_card_cost_commit_entries(
     return entries
 
 
-def _commit_card_cost_changes(
-    host, proposal, card, result, changes, *, required_paid_facts,
-) -> None:
-    """Apply selected cost moves and record their predeparture facts."""
-    for (
-        paid,
-        origin,
-        controller,
-        logical_id,
-        data,
-        attachments,
-        kind,
-        destination,
-        replacement_selections,
-    ) in changes:
-        from ...death_history_names import capture_departure_rules_names
-        data = capture_departure_rules_names(host, paid, data)
-        if required_paid_facts and kind == "sacrifice":
-            capture_paid_sacrifice_facts(host, paid, logical_id, data, result, required_paid_facts)
-        result.paid_contexts.append(
-            fixed_cast_cost_object_context(host, paid)
-        )
-        transition_kind = (
-            ZoneTransitionKind.DISCARD
-            if kind == "discard"
-            else ZoneTransitionKind.SACRIFICE
-            if kind == "sacrifice"
-            else ZoneTransitionKind.ORDINARY
-        )
-        host.move_card(
-            paid.object_id,
-            destination,
-            reason=f"{card.printed_name} {kind} cost",
-            semantic_events=False,
-            replacement_selections=replacement_selections,
-            transition_kind=transition_kind,
-        )
-        result.paid_refs.append(paid.ref)
-        result.deferred_events.append(
-            (
-                paid,
-                origin,
-                controller,
-                logical_id,
-                data,
-                attachments,
-                paid.zone,
-                transition_kind,
-            )
-        )
-        host._log(
-            proposal.seat,
-            f"cost.{kind}",
-            f"{proposal.seat} paid {paid.ref} as a {kind} cost.",
-            {"spell": card.ref, "object": paid.ref},
-            importance=1,
-            changed_objects=[paid.object_id],
-            changed_players=[proposal.seat],
-        )
-    require_paid_sacrifice_facts(result, required_paid_facts)
-
-
 def _commit_additional_costs(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -722,6 +669,8 @@ def _commit_additional_costs(
     result = _AdditionalCostCommit([], [], {}, {}, [], [])
     capabilities = program.capability_dependencies if program is not None else ()
     required_paid_facts = PAID_SACRIFICE_FACT_FIELDS.keys() & set(capabilities)
+    if commit_whole_zone_costs(host, proposal, response, card, selected_option, program, result, required_paid_facts):
+        return result
     selected_exile = selected_option.get("selected_exile_card")
     if selected_exile:
         exiled = host._resolve_object(
@@ -764,7 +713,8 @@ def _commit_additional_costs(
                 host, proposal, response, card, selected_option
             )
     selections = list(selected_option.get("selected_additional_costs", []))
-    if not selections:
+    pledged_hand = selected_hand_credit_objects(host, proposal, card, program, selected_option)
+    if not selections and not pledged_hand:
         if required_paid_facts:
             message = ('The paid creature selection is missing' if PAID_SACRIFICE_STAT_CAPABILITY in required_paid_facts
                        else 'The paid sacrifice is missing')
@@ -783,6 +733,18 @@ def _commit_additional_costs(
         )
         for source in result.source_snapshots
     }
+    if pledged_hand:
+        commit_hand_credit_payment(host, proposal, card, pledged_hand, result)
+    from .additional_zone_costs import ordered_discard_sacrifice_selections
+    cost_schema = program.cost_schema if program is not None else None
+    try:
+        ordered = ordered_discard_sacrifice_selections(selected_option, cost_schema, response)
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason="additional_cost_malformed") from exc
+    if ordered:
+        commit_ordered_zone_costs(host, proposal, response, card, result, selected_option, ordered,
+                                  required_paid_facts, resolve_entries=_fixed_zone_change_commit_entries)
+        return result
     changes = []
     for selected in selections:
         kind = str(selected["kind"])
@@ -815,7 +777,7 @@ def _commit_additional_costs(
         changes.extend(
             _ordinary_card_cost_commit_entries(host, proposal, selected)
         )
-    _commit_card_cost_changes(
+    commit_card_cost_changes(
         host, proposal, card, result, changes,
         required_paid_facts=required_paid_facts,
     )
@@ -1011,6 +973,7 @@ def _create_spell_item(
             lifecycle_context=lifecycle_context,method_spec=method_spec,used_uncounterable=used_uncounterable,
             intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise,next_payments=next_payments),
             **paid_alternative_cast_context(host,card,selected_option),
+            **impending_payment_context(selected_option),
             **({} if preparing else consume_paid_mana_protection(host.state.players[proposal.seat].stats))},
     )
 
@@ -1136,6 +1099,7 @@ def _dispatch_cast_events(
             reason=f"{card.printed_name} additional cost",
             transition_kind=transition_kind,
             trigger_batch=trigger_batch,
+            history_pre_recorded=paid.object_id in costs.pre_recorded_zone_history_ids,
         )
     effective_spell = host._effective_card_data(card)
     cast_type_line = cast_event_type_line(
@@ -1162,8 +1126,9 @@ def _dispatch_cast_events(
         from ...turn_history import record_warped_spell
 
         record_warped_spell(host, actor=proposal.seat, object_incarnation=card.logical_object_id)
+    card_fact = physical_card_event_context(host.state, card)
     context = SpellCastEvent(
-        schema_version=7,
+        schema_version=8 if card_fact else 7,
         card_ref=card.ref,
         object_id=card.object_id,
         logical_object_id=card.logical_object_id,
@@ -1190,6 +1155,7 @@ def _dispatch_cast_events(
         targets=proposal.targets,
         creature_target_controllers=cast_creature_target_controllers(host, item),
         mana_spent_total=item.context.get('mana_spent_total'),
+        **card_fact,
     ).to_context()
     event_sources = _ordered_event_sources(host,None)
     if all(source.object_id != card.object_id for source in event_sources):
@@ -1480,7 +1446,7 @@ def _commit_cast_costs_and_stack(
     from .splice_costs import announce_splice_sources
     spliced_cards = announce_splice_sources(host, proposal, card, selected_option)
     from .spell_mana_payments import capture_spell_mana_payment
-    excluded = {payment_card.object_id for payment_card in tap_cards}
+    excluded = {payment_card.object_id for payment_card in tap_cards} | hand_credit_reserved_ids(selected_option)
     from .face_queries import TYPED_MANA_SPEND_TYPE_LINE_FIELD
     spend_context = host._spell_mana_spend_context(details.get(TYPED_MANA_SPEND_TYPE_LINE_FIELD, proposal.type_line))
     blight_payment = prepare_blight_cast_payment(host, proposal, selected_option, response)

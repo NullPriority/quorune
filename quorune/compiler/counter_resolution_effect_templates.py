@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """One resolution grammar dispatcher for ordinary and named counter placements."""
 
+from . import regex_working_set as re
+from ..counter_placement_sets import PAIRED_PLANESWALKER_LOYALTY_FIELD, controlled_counter_subjects
 from .counter_doubling_templates import named_counter_doubling_effect_template
 from .counter_placement_group_templates import fixed_counter_placement_group_effect_template
 from .counter_placement_templates import (fixed_counter_placement_batch_effect_template,
@@ -9,7 +11,19 @@ from .counter_placement_templates import (fixed_counter_placement_batch_effect_t
     fixed_counter_placement_target_set_effect_template)
 
 
+_PAIRED_PLANESWALKER_LOYALTY = re.compile(
+    r"Put a \+1/\+1 counter on each creature you control and a loyalty counter on each other planeswalker you control\.?",
+    re.IGNORECASE,
+)
+
+
 def counter_resolution_effect_template(text, *, card_name, source_is_permanent, source_attachment_relation):
+    if source_is_permanent and _PAIRED_PLANESWALKER_LOYALTY.fullmatch(" ".join(text.split())):
+        effect = {"op": "place_counters_on_set", "source": "$source",
+                  "set": controlled_counter_subjects("creature").to_dict(),
+                  "counter": "+1/+1", "amount": 1, PAIRED_PLANESWALKER_LOYALTY_FIELD: 1}
+        return "fixed-paired-creature-planeswalker-counter-placement-v1", (effect,), None, ("cr-122-counters",)
+
     from .all_kind_counter_doubling import all_kind_counter_doubling_template
     all_kinds=all_kind_counter_doubling_template(text)
     if all_kinds is not None:return all_kinds

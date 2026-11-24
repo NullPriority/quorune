@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping
 
 from .model import (
+    COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD,
     COUNTER_REPLACEMENT_GENERATED_FIELD,
     ReplaceableEvent,
     ReplacementChoice,
@@ -147,10 +148,11 @@ def replacement_choice(
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementChoice | None:
     from ..counter_permission_events import counter_event_is_prohibited
-    if counter_event_is_prohibited(event):
+    if event.payload.get(COUNTER_PLACEMENT_ROUNDED_TO_ZERO_FIELD) is True or counter_event_is_prohibited(event):
         return None
     values=canonical_effects(effects)
     from .amplify import AmplifyEntryOperation
+    from .operations import GraveyardCopyEntryOperation, LinkedGraveyardEntryOperation
     from .composition_scope import replacement_condition_event
     def matches(effect):
         try:return condition_matches(effect.conditions,replacement_condition_event(event,effect))
@@ -163,6 +165,10 @@ def replacement_choice(
         and effect.effect_id not in event.applied_effects
         and (effect.occurrence_id is None or effect.occurrence_id not in used_occurrences)
         and matches(effect)
+        and all(not isinstance(operation,GraveyardCopyEntryOperation) or len(operation.eligible_cards(event)) >= 2
+                for operation in effect.operations)
+        and all(not isinstance(operation, LinkedGraveyardEntryOperation) or operation.eligible_cards(event)
+                for operation in effect.operations)
         and (event.kind != "zone.change" or all(
             not isinstance(operation, AmplifyEntryOperation) or operation.eligible_cards(event)
             for operation in effect.operations
@@ -179,12 +185,13 @@ def replacement_choice(
         ),
         key=lambda effect: effect.effect_id,
     )
+    from .face_status_copy import FACE_UP_COPY_EVENT
+
+    optional = tuple(effect.effect_id for effect in options if effect.optional)
     return ReplacementChoice(
         event=event,
         chooser=event.chooser,
         options=tuple(effect.effect_id for effect in options),
-        optional_options=tuple(
-            effect.effect_id for effect in options if effect.optional
-        ),
+        optional_options=optional[:1] if event.kind == FACE_UP_COPY_EVENT else optional,
         replacement_class=selected_class,
     )

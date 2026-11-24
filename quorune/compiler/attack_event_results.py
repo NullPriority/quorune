@@ -5,7 +5,9 @@ from dataclasses import replace
 
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..qualified_attack_model import QUALIFIED_ATTACK_VARIANT
-from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND, PublicQueryAmountSpec
+from ..query_effect_amount_model import (
+    PUBLIC_QUERY_AMOUNT_KIND, PublicQueryAmountSpec, attack_shared_type_amount_spec,
+)
 from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
@@ -38,6 +40,18 @@ def qualified_attack_characteristic_result(binding,body,*,effect_template,card_n
         return None
     from .fixed_stat_multipliers import attack_occurrence_multiplier_template
     from ..rules.attack_event_results import attack_event_characteristic_capabilities
+
+    if (
+        binding.variant == "public_attack_a_creature_you_control"
+        and " ".join(body.casefold().split()) ==
+            "it gets +1/+0 until end of turn for each other attacking creature that shares a creature type with it."
+    ):
+        from .public_query_effect_amounts import PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC
+
+        base = FixedSourceCharacteristicsTemplate("attack-occurrence", power=1, toughness=0).compiled()
+        effect = {**base[1][0], "card": "$event.permanent_object", "power": attack_shared_type_amount_spec().to_dict()}
+        mechanics = (*base[3], PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC)
+        return ("fixed-attack-shared-type-power-v1", (effect,), None, mechanics), True
 
     multiplier = attack_occurrence_multiplier_template(body)
     if multiplier is not None and attack_event_characteristic_capabilities(

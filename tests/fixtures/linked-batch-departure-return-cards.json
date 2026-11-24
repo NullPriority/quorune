@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000607201",
+      "name": "Trial Boundary Warden",
+      "mana_cost": "{3}{R}{G}{W}",
+      "cmc": 6,
+      "type_line": "Creature — Beast",
+      "power": "4",
+      "toughness": "2",
+      "colors": [
+        "R",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "oracle_text": "When this creature enters, exile all lands.\nWhen this creature leaves the battlefield, return the exiled cards to the battlefield tapped under their owners' control.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000607202",
+      "name": "Trial Horizon Drake",
+      "mana_cost": "{3}{R}{R}{R}",
+      "cmc": 6,
+      "type_line": "Creature — Drake",
+      "power": "7",
+      "toughness": "7",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "oracle_text": "Flying\nWhen this creature enters, exile all other permanents you control.\nWhen this creature leaves the battlefield, return the exiled cards to the battlefield under their owners' control.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000607203",
+      "name": "Trial Stone Sentinel",
+      "mana_cost": "{6}{R}{R}",
+      "cmc": 8,
+      "type_line": "Creature — Beast",
+      "power": "5",
+      "toughness": "6",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "oracle_text": "When this creature enters, exile two target lands.\nWhen this creature leaves the battlefield, return the exiled cards to the battlefield under their owners' control.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000607204",
+      "name": "Trial Public Beast",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature — Beast",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "oracle_text": "",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000607205",
+      "name": "Trial Calming Spell",
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "type_line": "Enchantment — Aura",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000607206",
+      "name": "Trial Departure Gust",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "oracle_text": "Return target creature to its owner's hand.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for linked batch exile and return."
+}

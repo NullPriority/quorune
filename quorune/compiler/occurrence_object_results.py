@@ -101,7 +101,57 @@ def entry_equipment_attachment_result(binding, body, *, card_name, effect_templa
     return (template, effects, None, mechanics), True
 
 
+def _optional_combat_dealer_blink_result(binding, body, *, card_name):
+    from ..rules.occurrence_object_results import controlled_combat_dealer_condition
+
+    if (
+        (binding.event.value, binding.active_zone) != ("damage.dealt", "battlefield")
+        or binding.event_condition != controlled_combat_dealer_condition()
+        or " ".join(body.split()).casefold()
+        != "you may exile it, then return it to the battlefield under its owner's control."
+    ):
+        return None
+    from .linked_exile_return_templates import linked_exile_return_effect_template
+
+    compiled = linked_exile_return_effect_template(
+        "You may exile this creature, then return it to the battlefield under its owner's control.",
+        card_name=card_name, source_is_permanent=True,
+    )
+    if compiled is None:
+        return None
+    _, (wrapper,), schema, mechanics = compiled
+    exile, returning = wrapper["effects"]
+    if schema is not None or exile.get("cards") != "$source.zone_object":
+        return None
+    owned = {**wrapper, "effects": [{**exile, "cards": OCCURRENCE_OBJECT}, returning]}
+    return ("optional-combat-dealer-owner-return-v1", (owned,), None, mechanics), True
+
+
 def occurrence_object_result(binding,body,*,effect_template,card_name):
+    if blink := _optional_combat_dealer_blink_result(binding, body, card_name=card_name):
+        return blink
+    from ..rules.optional_counter_capability_shapes import (
+        RECIPIENT_DAMAGE_COUNTER_VARIANT, opponent_damage_source_counter_effect,
+    )
+
+    if binding.variant in {"opponent_damage_optional_source_counters", RECIPIENT_DAMAGE_COUNTER_VARIANT} and re.fullmatch(
+        r"put that many \+1/\+1 counters on this creature\.", body, re.I,
+    ):
+
+        return (
+            binding.template_id, (opponent_damage_source_counter_effect(),), None,
+            ("cr-122-counters", "fixed-public-event-source-counter",
+             "scalar-effect-amount"),
+        ), binding.variant == RECIPIENT_DAMAGE_COUNTER_VARIANT
+    from ..rules.occurrence_object_results import (
+        DAMAGE_DEALER_RESULT_TEMPLATE, DAMAGE_DEALER_RESULT_VARIANTS, damage_dealer_result_effects,
+    )
+
+    if body == binding.body and binding.variant in DAMAGE_DEALER_RESULT_VARIANTS:
+        mechanics = ("return-to-owner-hand",) if binding.variant == "damage_permanent_return" else ("destroy",)
+        if binding.variant == "combat_damage_creature_destroy_token":
+            mechanics = (*mechanics, "cr-111-tokens", "flying")
+        return (DAMAGE_DEALER_RESULT_TEMPLATE, damage_dealer_result_effects(binding.variant), None, mechanics), True
     if body == binding.body and _EVENT_NEXT_UNTAP.fullmatch(body):
         reference = {
             DAMAGE_PERMANENT_VARIANT: DAMAGE_PERMANENT_OBJECT,

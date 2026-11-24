@@ -4,9 +4,15 @@ from dataclasses import dataclass
 from typing import Any, Mapping, TypeAlias
 
 from .immutable import FrozenMap, freeze_value, thaw_value
+from ..entry_designations import ENTRY_CARD_NAME_OPERATION, EntryCardNameChoice
 from .amplify import AmplifyEntryOperation
+from .counted_entry_counters import (
+    ENTRY_COUNTER_TRANSFER_OPERATION, CreateCountedEntryCounters, TransferEntryCounters,
+)
 from .tribute import OpenTributeEntryChoice,CompleteTributeEntryChoice
 from ..devour import DevourSpec,DevourObject,DevourProposal
+from ..self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_OPERATION, RevealForOwnerLibraryShuffle
+from ..rules.linked_graveyard_entry import LINKED_GRAVEYARD_ENTRY_OPERATION, LinkedGraveyardEntryOperation
 
 
 OPERATION_SCHEMA_VERSION = 1
@@ -74,7 +80,48 @@ class DevourEntryOperation:
         return cls(value['controller'],value['component_id'],DevourSpec.from_dict(value['spec']),tuple(DevourObject.from_dict(v) for v in value['candidates']))
 
 
-ENTRY_OBJECT_SELECTION_OPERATIONS = (DevourEntryOperation, AmplifyEntryOperation)
+@dataclass(frozen=True, slots=True)
+class GraveyardCopyEntryOperation:
+    controller: str
+    component_id: str
+    candidates: tuple[Any, ...]
+
+    def __post_init__(self) -> None:
+        from ..rules.graveyard_entry_copy import GraveyardCopyCard
+
+        if (any(type(value) is not str or not value for value in (self.controller,self.component_id))
+                or type(self.candidates) is not tuple
+                or any(not isinstance(card,GraveyardCopyCard) for card in self.candidates)
+                or any(len({getattr(card, key) for card in self.candidates}) != len(self.candidates)
+                       for key in ("object_id","incarnation","ref"))):
+            raise ReplacementOperationError("A graveyard copy proposal needs unique captured public cards")
+
+    def eligible_cards(self,event):
+        scope=event.entry_scope
+        if scope is None:
+            return ()
+        allowed=set(scope.eligible_zone_choices(card.object_id for card in self.candidates))
+        return tuple(card for card in self.candidates if card.object_id in allowed)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op":"prepare_graveyard_copy_pair","schema_version":1,"controller":self.controller,
+                "component_id":self.component_id,"candidates":[card.to_dict() for card in self.candidates]}
+
+    @classmethod
+    def from_dict(cls,value: Mapping[str, Any]) -> "GraveyardCopyEntryOperation":
+        from ..rules.graveyard_entry_copy import GraveyardCopyCard
+
+        _exact_fields(value,{"op","schema_version","controller","component_id","candidates"},
+                      operation="prepare_graveyard_copy_pair")
+        if (type(value["schema_version"]) is not int or value["schema_version"]!=1
+                or not isinstance(value["candidates"],(list,tuple))):
+            raise ReplacementOperationError("Graveyard copy candidates require their closed version-one array")
+        return cls(value["controller"],value["component_id"],tuple(GraveyardCopyCard.from_dict(v) for v in value["candidates"]))
+
+
+ENTRY_OBJECT_SELECTION_OPERATIONS = (
+    DevourEntryOperation, AmplifyEntryOperation, GraveyardCopyEntryOperation, LinkedGraveyardEntryOperation,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -126,15 +173,52 @@ class MultiplyAmount:
 
 
 @dataclass(frozen=True, slots=True)
-class PreventAmount:
-    amount: int | None = None
+class HalveCounterPlacementAmount:
     schema_version: int = OPERATION_SCHEMA_VERSION
 
     def __post_init__(self) -> None:
-        if self.amount is not None:
-            _integer(self.amount, field="prevent amount", minimum=0)
+        if type(self.schema_version) is not int or self.schema_version != OPERATION_SCHEMA_VERSION:
+            raise ReplacementEffectError("Counter placement halving requires the supported operation version")
 
     def to_dict(self) -> dict[str, Any]:
+        return {"op": "halve_counter_placement_amount"}
+
+
+@dataclass(frozen=True, slots=True)
+class PreventAmount:
+    amount: int | None = None
+    schema_version: int = OPERATION_SCHEMA_VERSION
+    damage_remaining: int | None = None
+    life_gain_player: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.life_gain_player is not None or self.schema_version == 3:
+            if (
+                type(self.schema_version) is not int or self.schema_version != 3
+                or type(self.life_gain_player) is not str or not self.life_gain_player
+                or self.life_gain_player.startswith("$") or self.life_gain_player != self.life_gain_player.strip()
+                or self.amount is not None or self.damage_remaining is not None
+            ):
+                raise ReplacementOperationError("Prevention life gain requires one player and complete prevention")
+        elif self.damage_remaining is not None:
+            if (self.amount is not None or type(self.schema_version) is not int or self.schema_version != 2
+                    or type(self.damage_remaining) is not int or self.damage_remaining != 1):
+                raise ReplacementOperationError("Fixed-remainder prevention requires its version and a remainder of one")
+        elif type(self.schema_version) is not int or self.schema_version != OPERATION_SCHEMA_VERSION:
+            raise ReplacementOperationError("Ordinary prevention requires the supported operation version")
+        elif self.amount is not None:
+            _integer(self.amount, field="prevent amount", minimum=0)
+
+    def requested_prevention(self, available: int) -> int:
+        if self.damage_remaining is not None:
+            return max(0, available - self.damage_remaining)
+        return available if self.amount is None else self.amount
+
+    def to_dict(self) -> dict[str, Any]:
+        if self.life_gain_player is not None:
+            return {"op": "prevent", "schema_version": self.schema_version, "life_gain_player": self.life_gain_player}
+        if self.damage_remaining is not None:
+            return {"op": "prevent", "schema_version": self.schema_version, "damage_remaining": self.damage_remaining}
         return {
             "op": "prevent",
             **({"amount": self.amount} if self.amount is not None else {}),
@@ -606,19 +690,36 @@ class PreventDraw:
 class CreateResultDraws:
     """Replace one draw with a new fixed-count draw instruction.
 
-    The application layer binds the affected player and the producing effect
-    identity.  Keeping those runtime facts out of the descriptor prevents a
-    component from forging a chooser or bypassing CR 614.5.
+    The application layer binds the result recipient and the producing effect
+    identity. The original affected player still chooses replacement order.
     """
 
     count: int
     schema_version: int = OPERATION_SCHEMA_VERSION
+    recipient: str | None = None
 
     def __post_init__(self) -> None:
         _integer(self.count, field="result draw count", minimum=1)
+        if self.recipient is not None and (
+            type(self.recipient) is not str or not self.recipient
+        ):
+            raise ReplacementOperationError("A result draw recipient requires a player ID")
 
     def to_dict(self) -> dict[str, Any]:
-        return {"op": "create_result_draws", "count": self.count}
+        result = {"op": "create_result_draws", "count": self.count}
+        if self.recipient is not None:
+            result["recipient"] = self.recipient
+        return result
+
+
+@dataclass(frozen=True, slots=True)
+class DiscardInsteadOfDraw:
+    """Replace one draw with one discard attempt and its draw-or-mill result."""
+
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op": "discard_instead_of_draw"}
 
 
 @dataclass(frozen=True, slots=True)
@@ -680,9 +781,13 @@ ReplacementOperation: TypeAlias = (
     | OpenTributeEntryChoice
     | CompleteTributeEntryChoice
     | DevourEntryOperation
+    | EntryCardNameChoice
+    | GraveyardCopyEntryOperation
+    | LinkedGraveyardEntryOperation
     | AmplifyEntryOperation
     | AddAmount
     | MultiplyAmount
+    | HalveCounterPlacementAmount
     | PreventAmount
     | PreventUsingShield
     | RedirectDamage
@@ -690,6 +795,9 @@ ReplacementOperation: TypeAlias = (
     | UnionValues
     | CreateNestedEvent
     | CreateAffectedObjectCounter
+    | CreateCountedEntryCounters
+    | TransferEntryCounters
+    | RevealForOwnerLibraryShuffle
     | AddAffectedObjectCounter
     | ApplyEntryCounterReplacement
     | GrantAffectedObjectSubtype
@@ -700,6 +808,7 @@ ReplacementOperation: TypeAlias = (
     | CapResultLifeLoss
     | PreventDraw
     | CreateResultDraws
+    | DiscardInsteadOfDraw
     | DredgeDraw
 )
 
@@ -708,10 +817,14 @@ _TYPED_OPERATION_TYPES = (
     SetField,
     OpenTributeEntryChoice,
     CompleteTributeEntryChoice,
+    EntryCardNameChoice,
     DevourEntryOperation,
+    GraveyardCopyEntryOperation,
+    LinkedGraveyardEntryOperation,
     AmplifyEntryOperation,
     AddAmount,
     MultiplyAmount,
+    HalveCounterPlacementAmount,
     PreventAmount,
     PreventUsingShield,
     RedirectDamage,
@@ -719,6 +832,9 @@ _TYPED_OPERATION_TYPES = (
     UnionValues,
     CreateNestedEvent,
     CreateAffectedObjectCounter,
+    CreateCountedEntryCounters,
+    TransferEntryCounters,
+    RevealForOwnerLibraryShuffle,
     AddAffectedObjectCounter,
     ApplyEntryCounterReplacement,
     GrantAffectedObjectSubtype,
@@ -729,6 +845,7 @@ _TYPED_OPERATION_TYPES = (
     CapResultLifeLoss,
     PreventDraw,
     CreateResultDraws,
+    DiscardInsteadOfDraw,
     DredgeDraw,
 )
 
@@ -955,6 +1072,29 @@ def _redirect_damage_from_dict(
     )
 
 
+_ZONE_OUTCOME_OPERATION_DECODERS = {
+    SELF_GRAVEYARD_SHUFFLE_OPERATION: RevealForOwnerLibraryShuffle.from_dict,
+    ENTRY_COUNTER_TRANSFER_OPERATION: TransferEntryCounters.from_dict,
+    "create_counted_entry_counters": CreateCountedEntryCounters.from_dict,
+}
+
+
+def _result_draws_from_dict(
+    value: Mapping[str, Any], *, operation: str
+) -> CreateResultDraws:
+    fields = {"op", "count"}
+    recipient = value.get("recipient")
+    if "recipient" in value:
+        fields.add("recipient")
+        if recipient is None:
+            raise ReplacementOperationError("A result draw recipient requires a player ID")
+    _exact_fields(value, fields, operation=operation)
+    return CreateResultDraws(
+        _integer(value["count"], field="result draw count", minimum=1),
+        recipient=recipient,
+    )
+
+
 def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
     if not isinstance(value, Mapping):
         raise ReplacementOperationError(
@@ -965,9 +1105,25 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         try:return (OpenTributeEntryChoice if op=='open_tribute_entry_choice' else CompleteTributeEntryChoice).from_dict(value)
         except ValueError as exc:raise ReplacementOperationError(str(exc)) from exc
     if op=='prepare_devour_entry':return DevourEntryOperation.from_dict(value)
+    if op=="prepare_graveyard_copy_pair":return GraveyardCopyEntryOperation.from_dict(value)
+    if op == LINKED_GRAVEYARD_ENTRY_OPERATION:
+        try:
+            return LinkedGraveyardEntryOperation.from_dict(value)
+        except ValueError as exc:
+            raise ReplacementOperationError(str(exc)) from exc
+    if op == ENTRY_CARD_NAME_OPERATION:
+        try:
+            return EntryCardNameChoice.from_dict(value)
+        except ValueError as exc:
+            raise ReplacementOperationError(str(exc)) from exc
     if op == "prepare_amplify_entry":
         try:
             return AmplifyEntryOperation.from_dict(value)
+        except ValueError as exc:
+            raise ReplacementOperationError(str(exc)) from exc
+    if decoder := _ZONE_OUTCOME_OPERATION_DECODERS.get(op):
+        try:
+            return decoder(value)
         except ValueError as exc:
             raise ReplacementOperationError(str(exc)) from exc
     if op == "set":
@@ -985,7 +1141,17 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
             _field(value["field"], operation=op),
             _integer(value["factor"], field="multiply factor", minimum=0),
         )
+    if op == "halve_counter_placement_amount":
+        _exact_fields(value, {"op"}, operation=op)
+        return HalveCounterPlacementAmount()
     if op == "prevent":
+        if "life_gain_player" in value or value.get("schema_version") == 3:
+            _exact_fields(value, {"op", "schema_version", "life_gain_player"}, operation=op)
+            return PreventAmount(schema_version=value["schema_version"], life_gain_player=value["life_gain_player"])
+        if "schema_version" in value or "damage_remaining" in value:
+            _exact_fields(value, {"op", "schema_version", "damage_remaining"}, operation=op)
+            remaining = _integer(value["damage_remaining"], field="damage remaining", minimum=1)
+            return PreventAmount(schema_version=value["schema_version"], damage_remaining=remaining)
         expected = {"op", "amount"} if "amount" in value else {"op"}
         _exact_fields(value, expected, operation=op)
         return PreventAmount(
@@ -1070,10 +1236,10 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         _exact_fields(value, {"op"}, operation=op)
         return PreventDraw()
     if op == "create_result_draws":
-        _exact_fields(value, {"op", "count"}, operation=op)
-        return CreateResultDraws(
-            _integer(value["count"], field="result draw count", minimum=1)
-        )
+        return _result_draws_from_dict(value, operation=op)
+    if op == "discard_instead_of_draw":
+        _exact_fields(value, {"op"}, operation=op)
+        return DiscardInsteadOfDraw()
     if op == "dredge_draw":
         return _dredge_draw_from_dict(value, operation=op)
     raise ReplacementOperationError(

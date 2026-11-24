@@ -72,6 +72,8 @@ def generated_ability_id(
         parts = str(node_id or "").split(":")
         if len(parts)>=2 and parts[-2]=='champion' and parts[-1] in {'enter','leave'}:
             return f'{base}:champion:{parts[-1]}'
+        if len(parts) >= 2 and parts[-2] == "cycle-and-dies" and parts[-1] in {"cycle", "dies"}:
+            return f"{base}:cycle-and-dies:{parts[-1]}"
         if (len(parts) >= 3 and parts[-3] == 'soulbond' and parts[-2].isdigit()
                 and parts[-1] in {'self', 'other'}):
             return f'{base}:soulbond:{parts[-2]}:{parts[-1]}'
@@ -112,7 +114,7 @@ def generated_ability_id(
         if str(node_id or '').endswith(':max-speed-scope'):return f'static:{face_id}:n{line}:max-speed-scope'
         parts = str(node_id or "").split(":")
         suffix = parts[-1]
-        if suffix in {'flash-keyword', 'flash-stack', 'attached-counter-prohibition'}:
+        if suffix in {'flash-keyword', 'flash-stack', 'attached-counter-prohibition', 'impending-price'}:
             return f'static:{face_id}:n{line}:{suffix}'
         if suffix in {"unleash-entry", "unleash-block"}:
             if (

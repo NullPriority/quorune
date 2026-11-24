@@ -29,6 +29,24 @@ _NUMBERS = {
 _COLORS = {"black": "B", "blue": "U", "green": "G", "red": "R", "white": "W"}
 
 
+def greatest_creature_power_control_condition(text: str) -> FixedPublicStateConditionSpec | None:
+    """Read closed current greatest-power clauses used by fixed trigger owners."""
+
+    fact = {
+        "you control a creature with the greatest power among creatures on the battlefield":
+            FixedPublicStateFact.CONTROLS_A_GREATEST_POWER_CREATURE,
+        "you control the creature with the greatest power or tied for the greatest power":
+            FixedPublicStateFact.CONTROLS_A_GREATEST_POWER_CREATURE,
+        "you control each creature on the battlefield with the greatest power":
+            FixedPublicStateFact.CONTROLS_EACH_GREATEST_POWER_CREATURE,
+    }.get(" ".join(text.casefold().split()))
+    if fact is None:
+        return None
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=1, fact=fact, schema_version=4,
+    )
+
+
 def _amount(value: str) -> int | None:
     normalized = value.casefold()
     return int(normalized) if normalized.isdigit() else _NUMBERS.get(normalized)
@@ -64,7 +82,7 @@ def _query_condition(
         ),
         amount=amount,
         quantity=CharacteristicQuantitySpec(scope=scope, query=query,
-            schema_version=2 if query.zones==('graveyard',) and query.token is False else 1),
+            schema_version=2 if query.colors_none or (query.zones == ('graveyard',) and query.token is False) else 1),
         schema_version=2,
     )
 
@@ -136,6 +154,14 @@ def fixed_graveyard_condition_query(
 def fixed_public_condition_query_extension(
     normalized: str,
 ) -> FixedPublicStateConditionSpec | None:
+    nonartifact = re.fullmatch(
+        r"you control no nonartifact, non(?P<color>white|blue|black|red|green) creatures", normalized, re.I,
+    )
+    if nonartifact is not None:
+        return _query_condition(amount=0, at_most=True,
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",),
+                                  excluded_types=("artifact",), colors_none=(_COLORS[nonartifact["color"].casefold()],)))
     empty = re.fullmatch(
         r"no (?P<subject>creatures|artifacts|enchantments|lands|planeswalkers|battles|permanents) are on the battlefield",
         normalized, re.IGNORECASE,

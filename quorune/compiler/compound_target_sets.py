@@ -11,6 +11,13 @@ _OPERATIONS = {'destroy','exile_permanent','bounce'}
 
 def compound_target_set_effect_template(text):
     material = ' '.join(text.strip().split())
+    if material.casefold() == 'destroy up to one target planeswalker and up to one target artifact.':
+        from ..rules.compound_target_sets import OPTIONAL_DESTROY_ROLES_VERSION_FIELD, optional_destroy_roles_schema
+
+        effect = {'op': 'destroy_targets', 'cards': '$targets', 'maximum_targets': 2,
+                  'target_roles': True, OPTIONAL_DESTROY_ROLES_VERSION_FIELD: 1}
+        return ('fixed-compound-destroy-optional-roles-v1', (effect,), optional_destroy_roles_schema(),
+                ('destroy', COMPOUND_TARGET_SET_MECHANIC, 'cr-115-targets'))
     prohibited = False
     no_regen = re.fullmatch(r"(.+?\.) (?:They|Those permanents) can['’]t be regenerated\.",material,re.I)
     if no_regen:

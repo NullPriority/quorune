@@ -69,8 +69,9 @@ class FadingCompilerTests(unittest.TestCase):
         ir = compile_oracle_card(repeated, capability_registry=self.registry)
         self.assertEqual(2, sum(n.template_id == "fading-fixed-upkeep-v1" for n in ir.faces[0].nodes))
         self.assertEqual(2, sum(n.template_id == "fading-fixed-entry-counter-v1" for n in ir.faces[0].nodes))
-        sibling = compile_oracle_card(self.db.lookup("Parallax Wave"), capability_registry=self.registry)
-        self.assertNotEqual("exact", sibling.status)
+        sibling = self.db.lookup("Parallax Wave")
+        changed = replace(sibling, oracle_text=sibling.oracle_text.replace("all cards they own", "up to two cards they own"))
+        self.assertNotEqual("exact", compile_oracle_card(changed, capability_registry=self.registry).status)
 
     def test_fading_shape_and_blocked_dependencies_fail_closed(self):
         shape = dict(effects=(EFFECT,), target_schema=None, mechanic_ids=("fading", "cr-122-counters"))

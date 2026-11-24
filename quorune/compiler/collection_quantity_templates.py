@@ -55,6 +55,22 @@ def fixed_devotion_condition(text: str):
 
 
 def collection_quantity(value: str, *, compile_count) -> CharacteristicQuantitySpec | None:
+    if value.startswith("+1/+1 "):
+        named_counter = re.fullmatch(
+            r"\+1/\+1 counters? on (?P<objects>(?:other )?(?:creatures|lands) you control)",
+            value, re.I,
+        )
+        if named_counter is not None:
+            quantity = compile_count(named_counter["objects"])
+            if quantity is None or quantity.schema_version != 1:
+                return None
+            try:
+                return replace(
+                    quantity, schema_version=2, counter_name="+1/+1",
+                    reduction=CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL,
+                )
+            except ValueError:
+                return None
     counter_total = re.fullmatch(r'(?:the )?(?:number of )?counters (?:among|on) (?P<objects>.+)', value, re.I)
     if counter_total is not None:
         quantity = compile_count(counter_total['objects'])

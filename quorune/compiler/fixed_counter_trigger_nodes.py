@@ -10,6 +10,11 @@ from . import regex_working_set as re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..entry_designations import LINKED_PLAYER_CAST_MILL_TEMPLATE, LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE
+from ..rules.event_subscriptions import GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT
+from ..power_sacrifice_model import (
+    ATTACK_SACRIFICE_STAT_TEMPLATE, CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE,
+)
 from ..attack_batch_model import DECLARED_ATTACK_POWER_CAPABILITY, declared_attack_power_condition
 from ..rules.source_references import SourceReferenceSpec
 from .source_self_effect_templates import normalized_source_event_line, named_source_union_candidate
@@ -18,7 +23,7 @@ from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
 )
 from ..rules.capabilities import CapabilityRegistry
-from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..rules.event_subscriptions import COMBAT_PARTICIPANT_DAMAGE_VARIANT, FixedEventSubscriptionSet
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE, SCHEDULED_PLAYER_MECHANIC
 from .announced_damage_templates import fixed_announced_damage_template
 from .dependency_gate import dependency_gate
@@ -26,10 +31,8 @@ from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
 from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition, validate_public_trigger_metadata
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
-from .fixed_source_combat_growth import (
-    FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
-    fixed_source_combat_growth_effect_template,
-)
+from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
+from .trigger_runtime_coverage import fixed_typed_result_requires_current_ability
 from .fixed_entry_return_requirements import (
     fixed_entry_return_effect_template,
 )
@@ -74,9 +77,14 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         MUTATE_TRIGGER_TEMPLATE,
         'fixed-counter-creature-explore-trigger-v1',
         "fixed-counter-step-trigger-v1",
+        CONTROLLER_SACRIFICE_LIFE_TEMPLATE,
+        ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE,
+        ATTACK_SACRIFICE_STAT_TEMPLATE,
+        "fixed-counter-upkeep-target-hand-life-v1",
         "fixed-counter-controlled-land-entry-trigger-v1",
         "fixed-counter-controller-spell-cast-trigger-v1",
         "fixed-counter-spell-cast-trigger-v1",
+        LINKED_PLAYER_CAST_MILL_TEMPLATE,
         "fixed-counter-spell-cast-characteristic-trigger-v1",
         "fixed-counter-source-attacks-trigger-v1",
         "fixed-counter-direct-player-attack-v1",
@@ -97,15 +105,22 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-source-damage-opponent-trigger-v1",
         "fixed-counter-source-dealt-damage-trigger-v1",
         "fixed-counter-source-received-damage-trigger-v1",
+        LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE,
         "fixed-counter-source-received-combat-damage-trigger-v1",
         "fixed-counter-public-zone-trigger-v1",
         "fixed-counter-public-damage-trigger-v1",
+        "fixed-counter-public-damage-dealer-response-v1",
+        "fixed-counter-source-graveyard-arrival-shuffle-v1",
+        "fixed-counter-opponent-damage-source-counters-optional-v1",
+        "fixed-counter-recipient-damage-source-counters-optional-v1",
+        "fixed-counter-opponent-damage-untapped-source-draw-v1",
         "fixed-counter-public-attack-trigger-v1",
         "fixed-counter-public-block-trigger-v1",
         "fixed-counter-public-cycle-trigger-v1",
         "fixed-counter-public-face-up-trigger-v1",
         "fixed-counter-public-designation-trigger-v1",
         "fixed-counter-public-multi-event-trigger-v1",
+        GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE,
         "fixed-counter-public-room-door-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
         "fixed-counter-public-second-draw-trigger-v1",
@@ -232,6 +247,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "enchanted_creature_tap_or_received_damage",
         "independent_dual_event",
         "qualified_zone_event_pair",
+        GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
         "source_enters_or_attacks",
         "source_enters_or_dies",
         "source_attacks_or_blocks",
@@ -244,6 +260,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_transform_pair",
         "source_artifact_enters_and_is_sacrificed",
         "enchanted_creature_attacks_or_blocks",
+        COMBAT_PARTICIPANT_DAMAGE_VARIANT,
         "source_attacks_or_blocks_with_controlled_dinosaur",
     }
 )
@@ -651,15 +668,16 @@ class FixedCounterTriggerBinding:
         from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
+        from ..other_spell_history_model import other_spell_self_cast_condition_capabilities
         from ..rules.spell_cast_events import spell_cast_keyword_condition_dependencies
 
         ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
-        cast_keywords = spell_cast_keyword_condition_dependencies(
-            self.spell_subject.event_condition if self.spell_subject is not None else None,
-        )
+        cast_condition = self.spell_subject.event_condition if self.spell_subject is not None else None
+        cast_keywords = spell_cast_keyword_condition_dependencies(cast_condition)
+        other_spell = other_spell_self_cast_condition_capabilities(cast_condition)
         attacked_life = (ATTACKED_PLAYER_LIFE_CAPABILITY,) if self.attacked_player_life else ()
         attack_power = (DECLARED_ATTACK_POWER_CAPABILITY,) if self.minimum_declared_attack_power is not None else ()
-        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*attack_power,*cast_keywords,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*attack_power,*cast_keywords,*other_spell,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
@@ -1252,19 +1270,18 @@ def fixed_counter_event_trigger_node(
         if optional_match is not None
         else binding.body
     )
-    if optional_match is None:
-        compiled, requires_current_ability = _binding_effect_template(
-            binding,
-            body,
-            card_name=card_name,
-            effect_template=effect_template,
-        )
-    else:
-        compiled, requires_current_ability = _binding_effect_template(binding,body,card_name=card_name,effect_template=effect_template)
+    compiled, requires_current_ability = _binding_effect_template(
+        binding, body, card_name=card_name, effect_template=effect_template,
+    )
     template, effects, target_schema, body_mechanics = compiled
     if any(e.get("op") == "look_top_shared_type_reveal" for e in effects):
         return None
-    if optional_match is not None and {'fixed-public-event-source-counter', 'fixed-public-event-target-counter'}.intersection(body_mechanics) and binding.event not in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED, FixedCounterTriggerEvent.CARD_DISCARDED}:
+    from ..rules.optional_counter_capability_shapes import optional_public_counter_event_dependencies
+    optional_public = (
+        optional_public_counter_event_dependencies(binding.event.value, binding.event_condition, body_mechanics, effects, target_schema)
+        if optional_match is not None else ()
+    )
+    if optional_public is None:
         return None
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
@@ -1307,6 +1324,7 @@ def fixed_counter_event_trigger_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         explicit_capabilities=(
+            *optional_public,
             *(('counter.producer.fixed_public_source_event',)
               if 'fixed-public-event-source-counter' in body_mechanics else ()),
             *(('counter.producer.fixed_public_target_event',)
@@ -1488,14 +1506,7 @@ def fixed_typed_event_effect_trigger_node(
         runtime_coverage=(
             *_event_runtime_coverage(
                 binding, effect_mechanics=body_mechanics,
-                current_ability=(
-                    requires_current_ability
-                    and (
-                        template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
-                        or binding.variant == "fixed_entry_return_requirement"
-                        or template == "scheduled-player-hand-difference-v1"
-                    )
-                ),
+                current_ability=fixed_typed_result_requires_current_ability(binding, template, requires_current_ability),
             ),
             *((SCHEDULED_PLAYER_DEPARTURE_COVERAGE,) if SCHEDULED_PLAYER_MECHANIC in body_mechanics else ()),
         ),

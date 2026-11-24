@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original native witnesses for retained-color copies.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707911",
+      "name": "Trial Color Weaver",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it doesn't copy that creature's color and it has \"At the beginning of your upkeep, you may have this creature become a copy of target creature, except it doesn't copy that creature's color and it has this ability.\"",
+      "keywords": [],
+      "layout": "normal",
+      "power": "0",
+      "toughness": "0",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707912",
+      "name": "Trial Ember Form",
+      "mana_cost": "{1}{R}",
+      "cmc": 2,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707913",
+      "name": "Trial Moss Form",
+      "mana_cost": "{2}{G}",
+      "cmc": 3,
+      "type_line": "Creature — Plant",
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707914",
+      "name": "Trial Hidden Model",
+      "mana_cost": "{3}{B}",
+      "cmc": 4,
+      "type_line": "Creature — Zombie",
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "power": "5",
+      "toughness": "3",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707915",
+      "name": "Trial Sprout Keeper // Trial Grove Elder",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature — Human Monk // Legendary Creature — Human Monk",
+      "oracle_text": "",
+      "layout": "flip",
+      "keywords": [],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "legalities": {"commander": "legal"},
+      "released_at": "2026-01-01",
+      "card_faces": [
+        {
+          "name": "Trial Sprout Keeper",
+          "mana_cost": "{1}{G}",
+          "type_line": "Creature — Human Monk",
+          "oracle_text": "",
+          "colors": ["G"],
+          "power": "2",
+          "toughness": "1"
+        },
+        {
+          "name": "Trial Grove Elder",
+          "mana_cost": "",
+          "type_line": "Legendary Creature — Human Monk",
+          "oracle_text": "",
+          "power": "3",
+          "toughness": "3"
+        }
+      ]
+    }
+  ],
+  "rulings": []
+}

@@ -8,6 +8,7 @@ from .live_modifier_quantities import current_modifier_quantity
 
 
 _LIFE = CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL, schema_version=4)
+_SOURCE_GROWTH = "apply_source_characteristics_until_end_of_turn"
 
 
 def resolve_current_life_effect_amount(host, value, item):
@@ -97,7 +98,18 @@ def _fixed_result_ownership(effects, target_schema):
         required = owner(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
         if required:
             return required, mechanics
-    raise ValueError('Current life requires an independently closed token or counter result')
+    if operations == (_SOURCE_GROWTH,) and target_schema is None:
+        from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+        from .node_capability_shapes import fixed_source_characteristics_node_capabilities
+
+        fixed = FixedSourceCharacteristicsTemplate(source_kind="query-stat-modifier", power=1, toughness=1)
+        if effects == fixed.effects:
+            required = fixed_source_characteristics_node_capabilities(
+                effects=effects, target_schema=None, mechanic_ids=fixed.mechanics,
+            )
+            if required:
+                return required, set(fixed.mechanics)
+    raise ValueError("Current life requires an independently closed token, counter or source-growth result")
 
 
 def current_life_node_capabilities(*, effects, target_schema, mechanic_ids, cost_schema=None):
@@ -105,6 +117,11 @@ def current_life_node_capabilities(*, effects, target_schema, mechanic_ids, cost
         return ()
     if _contains_life((target_schema, cost_schema)):
         raise ValueError('Current life cannot choose targets or pay source costs')
+    if len(effects) == 1 and effects[0].get("op") == _SOURCE_GROWTH:
+        power = CurrentLifeEffectAmountSpec.from_dict(effects[0].get("power"))
+        toughness = CurrentLifeEffectAmountSpec.from_dict(effects[0].get("toughness"))
+        if power != toughness or power.coefficient != 1:
+            raise ValueError("Current-life source growth requires one positive amount for both stats")
     projected = _fixed_life_results(effects)
     from .capabilities import capability_dependencies_for_node
     leaf, mechanics = _fixed_result_ownership(projected, target_schema)
@@ -122,6 +139,8 @@ def current_life_program_dependencies(program):
             and str(program.ability_id).startswith('spell:'))
             or (program.event == 'activate' and program.active_zone == 'battlefield')):
         raise ValueError('Current life requires an ordinary spell or battlefield activation')
+    if any(effect.get("op") == _SOURCE_GROWTH for effect in program.effects) and program.event != "activate":
+        raise ValueError("Current-life source growth requires an ordinary battlefield activation")
     return current_life_node_capabilities(effects=program.effects, target_schema=program.target_schema,
         mechanic_ids=program.coverage, cost_schema=program.cost_schema)
 

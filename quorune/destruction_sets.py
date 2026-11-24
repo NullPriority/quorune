@@ -20,6 +20,7 @@ from .destruction import (
 from .rules.committed_quantity_followups import CommittedQuantityFollowup
 from .rules.destruction_result_model import DestructionFollowup
 from .object_query import ObjectQueryResult
+from .rules.qualified_destruction import RelativePowerDestructionSetSpec, select_relative_power_destruction_rows
 from .util import stable_json
 
 _REASON_FIELD = "reason"
@@ -147,6 +148,8 @@ def snapshot_destruction_set(
             apnap_order=query.affected_permanent_apnap_order(),
             source_ref=source_ref,
         )
+        if isinstance(spec, RelativePowerDestructionSetSpec):
+            selected = select_relative_power_destruction_rows(selected, spec, actor=actor)
     except AffectedPermanentSetError as exc:
         raise DestructionSetError(str(exc)) from exc
     return DestructionSetSnapshot(
@@ -189,9 +192,14 @@ def resolve_destruction_set(
             host.state, "effect_destruction_replacement_version", None
         ) != 1:
             raise DestructionSetError("Destruction follow-up requires the current typed replacement transaction")
-        rows = host.affected_permanent_object_rows(actor)
-        count_snapshot = snapshot_destruction_set(host, actor=actor, spec=followup.scope, object_rows=rows)
-        counted = frozenset(permanent.object_id for permanent in count_snapshot.permanents)
+        try:
+            followup.validate_destruction_set(spec)
+        except ValueError as exc:
+            raise DestructionSetError(str(exc)) from exc
+        if not followup.uses_destroyed_controllers:
+            rows = host.affected_permanent_object_rows(actor)
+            count_snapshot = snapshot_destruction_set(host, actor=actor, spec=followup.scope, object_rows=rows)
+            counted = frozenset(permanent.object_id for permanent in count_snapshot.permanents)
     snapshot = snapshot_destruction_set(
         host, actor=actor, spec=spec, source_ref=source_ref, object_rows=rows,
     )
@@ -236,6 +244,12 @@ def resolve_destruction_set(
         ),
     )
     if followup is not None:
+        if followup.uses_destroyed_controllers:
+            destroyed = frozenset(result.destroyed_object_ids)
+            return followup.from_committed_controllers(
+                permanent.controller for permanent in snapshot.permanents
+                if permanent.object_id in destroyed
+            )
         return followup.from_committed_count(sum(object_id in counted for object_id in result.destroyed_object_ids))
     return result
 

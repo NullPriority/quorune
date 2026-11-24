@@ -184,6 +184,32 @@ def commit_activation_usage(
     annotations[field] = sorted(values)
 
 
+def reset_copied_activation_usage(source, *, ability_ids) -> None:
+    """Discard marks for the newly acquired instances from a copied form."""
+    selected = {_ability_id(identity) for identity in ability_ids}
+    if not selected:
+        return
+    annotations = _annotations(source)
+    updated = {}
+    for field in (_ONCE_PER_TURN_FIELD, _ONCE_PER_OBJECT_FIELD, _EXHAUST_FIELD):
+        if field not in annotations:
+            continue
+        stored = annotations[field]
+        if field == _ONCE_PER_TURN_FIELD:
+            if not isinstance(stored, Mapping):
+                raise ActivationUsageError("Once-per-turn activation usage is malformed")
+            updated[field] = {identity: turn for identity, turn in stored.items() if identity not in selected}
+        else:
+            if not isinstance(stored, (tuple, list)):
+                raise ActivationUsageError("Once-per-object activation usage is malformed")
+            updated[field] = [identity for identity in stored if identity not in selected]
+    for field, retained in updated.items():
+        if retained:
+            source.annotations[field] = retained
+        else:
+            source.annotations.pop(field)
+
+
 __all__ = [
     "ACTIVATION_ONCE_PER_TURN_CAPABILITY",
     "ACTIVATION_ONCE_PER_OBJECT_CAPABILITY",

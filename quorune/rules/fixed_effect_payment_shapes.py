@@ -4,10 +4,19 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
+from ..fixed_effect_payment import (
+    FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC,
+    RETURN_PAYMENT_KIND, FixedEffectPaymentSpec,
+    mandatory_source_counter_followup_parts, uses_mandatory_source_counter_followup,
+)
+from ..util import stable_json
 from ..compiler.optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
 from .blight_model import blight_decline_branch_is_closed
 from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
+from .targeted_life_decline import is_targeted_life_decline_effect, targeted_life_decline_node_capabilities
+from .scheduled_life_return import (
+    is_scheduled_life_return, scheduled_life_return_node_dependencies, scheduled_life_return_program_dependencies,
+)
 
 
 def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,
@@ -45,8 +54,103 @@ def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],targe
     return ()
 
 
+_MANDATORY_COUNTER_DAMAGE_SCHEMA = {
+    "zones": ["player", "battlefield"], "categories": ["player", "permanent"],
+    "predicate": "damageable", "count": 1,
+}
+
+
+def _mandatory_source_counter_node_capabilities(wrapper, target_schema, mechanics):
+    try:
+        payment, child = mandatory_source_counter_followup_parts(wrapper)
+    except (TypeError, ValueError, KeyError):
+        return ()
+    if child["op"] == "damage":
+        if (stable_json(child) != stable_json({"op": "damage", "source": "$source", "target": "$target.0", "amount": 1})
+                or stable_json(target_schema) != stable_json(_MANDATORY_COUNTER_DAMAGE_SCHEMA)):
+            return ()
+    elif (target_schema is not None or child.get("controller") != "$controller"
+          or type(child.get("quantity")) is not int or child["quantity"] != 1
+          or not isinstance(child.get("characteristics"), Mapping) or "copy_of" in child):
+        return ()
+    result = fixed_payment_result_capabilities(effects=(child,), target_schema=target_schema, mechanic_ids=mechanics)
+    return (*payment.capabilities, *result) if result else ()
+
+
+def _mandatory_source_counter_program_dependencies(program, wrapper):
+    owned = _mandatory_source_counter_node_capabilities(wrapper, program.target_schema, program.coverage)
+    if (not owned or len(program.effects) != 1 or program.effects[0] != wrapper
+            or program.active_zone != "battlefield" or program.cost_schema is not None or program.handlers):
+        raise ValueError("Mandatory counter payment requires one complete battlefield trigger")
+    effect = wrapper["effects"][0]
+    if effect["op"] == "damage":
+        from .event_subscriptions import FixedEventSubscription, fixed_event_subscription_condition
+
+        source = {"field": "card", "op": "eq", "value": "$source.ref"}
+        expected = fixed_event_subscription_condition(tuple(
+            FixedEventSubscription(event, source) for event in ("creature.attacks", "creature.blocks")
+        ))
+        if program.event != "creature.attacks" or stable_json(program.event_condition) != stable_json(expected):
+            raise ValueError("Mandatory counter damage requires its original attack and block subscriptions")
+        return (*owned, "trigger.event.normalized_public_action", "trigger.subscription.fixed_multi_event")
+    if program.event != "spell.cast" or program.event_condition is not None:
+        raise ValueError("Mandatory counter token creation requires its original any-player cast event")
+    return (*owned, "trigger.event.normalized_spell_cast")
+
+
+SOURCE_COUNTER_UPKEEP_DRAW_COVERAGE = "source-counter-upkeep-draw"
+
+
+def source_counter_upkeep_draw_condition():
+    from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST, amount=1, counter_name="+1/+1",
+    )
+
+
+def _source_counter_upkeep_draw_dependencies(program):
+    from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE, FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD
+    from .cumulative_object_upkeep import CONTROLLER_UPKEEP
+
+    coverage = set(program.coverage)
+    condition = {"all": [CONTROLLER_UPKEEP, {
+        "field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, "op": "truthy", "value": True,
+        "condition": source_counter_upkeep_draw_condition().to_dict(),
+    }]}
+    payment = FixedEffectPaymentSpec("remove_source_counter", schema_version=4, counter_name="+1/+1",
+                                     source_ref="$source.zone_object")
+    effect = {
+        "op": OPTIONAL_MANA_PAYMENT_OPERATION, "schema_version": 2, "player": "$controller",
+        "payment": payment.to_dict(),
+        "effects": [{"op": "draw", "player": "$controller", "count": 1, "private": True}],
+    }
+    if (
+        (program.event, program.active_zone) != ("step.begin", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or not {"intervening_condition", FIXED_PUBLIC_STATE_INTERVENING_COVERAGE} <= coverage
+        or stable_json(program.event_condition) != stable_json(condition)
+        or stable_json(program.effects) != stable_json((effect,))
+    ):
+        raise ValueError("Upkeep counter draw requires the original source threshold, price and private draw")
+    owned = fixed_effect_payment_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not owned:
+        raise ValueError("Upkeep counter draw requires the existing fixed-payment owner")
+    return (*owned, "trigger.condition.fixed_public_state")
+
+
 def fixed_payment_event_player_runtime_dependencies(program):
-    """Keep occurrence-player proof when a closed result sits behind a cost."""
+    """Keep occurrence and payment authority for each closed result."""
+    if SOURCE_COUNTER_UPKEEP_DRAW_COVERAGE in getattr(program, "coverage", ()):
+        return _source_counter_upkeep_draw_dependencies(program)
+    if MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC in getattr(program, "coverage", ()):
+        if len(program.effects) != 1 or not uses_mandatory_source_counter_followup(program.effects[0]):
+            raise ValueError("Mandatory counter follow-up requires its explicit payment version")
+    from .entry_player_counter_payment import (
+        entry_player_counter_payment_dependencies, uses_entry_player_counter_payment,
+    )
     from .life_gain_counted_results import life_gain_counter_payment_program_dependencies
     players={'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
     def references(value):
@@ -63,11 +167,21 @@ def fixed_payment_event_player_runtime_dependencies(program):
     from .event_player_result_shapes import _event_player_reference_is_closed
     def visit(value):
         if isinstance(value,Mapping):
+            if uses_mandatory_source_counter_followup(value):
+                required.update(_mandatory_source_counter_program_dependencies(program, value))
+                return
+            if uses_entry_player_counter_payment(value):
+                required.update(entry_player_counter_payment_dependencies(program, value))
+                return
+            if is_scheduled_life_return(value):
+                required.update(scheduled_life_return_program_dependencies(program, value))
+                return
             if value.get('op')==OPTIONAL_MANA_PAYMENT_OPERATION and value.get('schema_version')==2:
                 payment=value.get('payment')
                 if not isinstance(payment,Mapping):raise ValueError('Fixed payment descriptor is unavailable')
                 refs=references(value.get('effects',())) | references(value.get('declined_effects',()))
-                if refs or payment.get('kind') in ('source_sacrifice', HYBRID_RESOLUTION_PAYMENT_KIND, RETURN_PAYMENT_KIND):
+                if (refs or is_targeted_life_decline_effect(value)
+                        or payment.get('kind') in ('source_sacrifice', HYBRID_RESOLUTION_PAYMENT_KIND, RETURN_PAYMENT_KIND)):
                     owned=fixed_effect_payment_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
                     if not owned or any(not _event_player_reference_is_closed(program,ref) for ref in refs):
                         raise ValueError('Fixed payment result lacks its closed occurrence-player scope')
@@ -84,6 +198,22 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     mechanics=set(mechanic_ids)
     if FIXED_EFFECT_PAYMENT_MECHANIC not in mechanics or len(effects)!=1:return ()
     wrapper=effects[0]
+    if uses_mandatory_source_counter_followup(wrapper):
+        return _mandatory_source_counter_node_capabilities(wrapper, target_schema, mechanics)
+    from .entry_player_counter_payment import (
+        ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC, entry_player_counter_payment_capabilities,
+        is_entry_player_counter_payment, uses_entry_player_counter_payment,
+    )
+
+    if uses_entry_player_counter_payment(wrapper):
+        if (target_schema is not None or ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC not in mechanics
+                or not is_entry_player_counter_payment(wrapper)):
+            return ()
+        return entry_player_counter_payment_capabilities()
+    if is_scheduled_life_return(wrapper):
+        return scheduled_life_return_node_dependencies(wrapper, target_schema, mechanics)
+    if is_targeted_life_decline_effect(wrapper):
+        return targeted_life_decline_node_capabilities(wrapper, target_schema, mechanics)
     from ..spell_caster_sacrifice_payment import (
         spell_caster_sacrifice_payment_capabilities, uses_spell_caster_sacrifice_payment,
     )

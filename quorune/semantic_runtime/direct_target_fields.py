@@ -7,6 +7,7 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, ImmutableValueError, freeze_value
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
+from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_OPERATION
 from ..graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_OPERATION
 from ..rules.graveyard_exile_type_outcomes import GRAVEYARD_EXILE_TYPE_OUTCOME_OPERATION
 from ..public_zone_moves import GRAVEYARD_LIBRARY_TARGET_FIELD
@@ -34,6 +35,10 @@ _MUTATING_TARGET_FIELDS = {
 
 def bound_mutation_target_overrides(host, effect, item, resolve_reference):
     """Omit mutations of a bound incarnation lost during earlier instructions."""
+    if effect.get("op") == PERMANENT_CONTROL_EXCHANGE_OPERATION:
+        if any(_bound_target_departed(host, effect.get(role), item, resolve_reference) for role in ("left", "right")):
+            return {"left": None, "right": None}
+        return {}
     field = _MUTATING_TARGET_FIELDS.get(effect.get('op'))
     if effect.get('op') == 'move' and GRAVEYARD_LIBRARY_TARGET_FIELD in effect:
         field = 'card'
@@ -43,18 +48,20 @@ def bound_mutation_target_overrides(host, effect, item, resolve_reference):
         if isinstance(subject, str) and subject.startswith("$target_group.") and resolve_reference(subject) is None:
             return {"target": None}
     reference = effect.get(field) if field is not None else None
-    if not isinstance(reference, str) or not reference.startswith('$target'):
-        return {}
+    return {field: None} if _bound_target_departed(host, reference, item, resolve_reference) else {}
+
+
+def _bound_target_departed(host, reference, item, resolve_reference):
+    if not isinstance(reference, str) or not reference.startswith("$target"):
+        return False
     ref = resolve_reference(reference)
     if not isinstance(ref, str):
-        return {}
-    snapshot = item.context.get('target_snapshots', {}).get(ref)
-    if (not isinstance(snapshot, Mapping) or snapshot.get('object_id') is None
-            or snapshot.get('zone_change_counter') is None):
-        return {}
-    if not target_identity_matches_snapshot(host, ref, snapshot):
-        return {field: None}
-    return {}
+        return False
+    snapshot = item.context.get("target_snapshots", {}).get(ref)
+    if (not isinstance(snapshot, Mapping) or snapshot.get("object_id") is None
+            or snapshot.get("zone_change_counter") is None):
+        return False
+    return not target_identity_matches_snapshot(host, ref, snapshot)
 
 
 @dataclass(frozen=True, slots=True)

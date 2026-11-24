@@ -69,6 +69,48 @@ class CiPipelineTests(unittest.TestCase):
                 self.assertGreater(len(selected), 1)
                 self.assertEqual([name for name in expected if name in selected], [row['shard'] for row in rows])
 
+    def test_quick_gate_isolates_only_the_compile_step_bytecode_cache(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        import os
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        from scripts import quick_gate
+
+        compile_command = (quick_gate._python(), "-m", "compileall", "-q", "quorune")
+        sentinel_command = (quick_gate._python(), "-V")
+        observed = []
+
+        def run(command, *, cwd, env):
+            prefix = env.get("PYTHONPYCACHEPREFIX")
+            observed.append((command, prefix))
+            if command == compile_command:
+                self.assertTrue(Path(prefix).is_dir())
+            return SimpleNamespace(returncode=0)
+
+        with TemporaryDirectory() as directory:
+            plan = {
+                "database": str(Path(directory) / "test-ci.sqlite3"),
+                "test_modules": (),
+                "steps": (
+                    quick_gate.QuickStep("compile", compile_command),
+                    quick_gate.QuickStep("sentinel", sentinel_command),
+                ),
+            }
+            with patch.dict(os.environ, {"PYTHONPYCACHEPREFIX": ""}), (
+                patch.object(quick_gate.subprocess, "run", side_effect=run)
+            ), redirect_stdout(StringIO()):
+                self.assertEqual(0, quick_gate._run(plan))
+                self.assertEqual("", os.environ["PYTHONPYCACHEPREFIX"])
+
+        (compile_call, prefix), (sentinel_call, sentinel_prefix) = observed
+        self.assertEqual(compile_command, compile_call)
+        self.assertIsNotNone(prefix)
+        self.assertTrue(Path(prefix).name.startswith("quorune-gate-bytecode-"))
+        self.assertFalse(Path(prefix).exists())
+        self.assertEqual((sentinel_command, ""), (sentinel_call, sentinel_prefix))
+
     def test_pre_corpus_validates_pinned_contracts_without_opening_the_database(self):
         from unittest import mock
         from scripts.quick_gate import build_plan, implicit_text_encoding_lines

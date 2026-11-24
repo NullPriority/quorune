@@ -566,14 +566,12 @@ def _opponent_history_price_met(host, seat, condition):
     from .public_history_query_model import PublicHistoryQuerySpec, matching_public_history_events
 
     if kind is FixedPublicAlternativeConditionKind.OPPONENT_BLUE_CAST:
-        if getattr(getattr(host.state, "turn_history", None), "spell_color_history_version", None) != 1:
-            return False
-        spec = PublicHistoryQuerySpec(event="spell_cast", relation="any_player")
-        occurrences = matching_public_history_events(host.state, seat, spec)
-        casts = [fact for fact in occurrences or () if fact.actor in opponents]
-        if any(fact.spell_colors is None for fact in casts):
-            return False
-        return any("U" in fact.spell_colors for fact in casts)
+        from .public_history_query_model import current_opponent_spell_colors
+
+        colors = current_opponent_spell_colors(
+            host.state, seat, include_departed=condition.schema_version != _LEGACY_OPPONENT_HISTORY_PRICE_VERSION,
+        )
+        return colors is not None and "U" in colors
 
     if kind is FixedPublicAlternativeConditionKind.OPPONENT_COUNTERED_CREATURE_CAST:
         from .turn_history_model import CAST_CREATURE_COUNTERED_EVENT

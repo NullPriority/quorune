@@ -56,6 +56,13 @@ _TARGETS = {
 }
 
 
+_OPPONENT_HALVES = re.compile(
+    r"If an opponent would put one or more counters on a permanent or player, "
+    r"they put half that many of each of those kinds of counters on that permanent or player instead, rounded down\.",
+    re.I,
+)
+
+
 _DIRECT = re.compile(
     r"^If (?P<actor>an effect|you) would put one or more "
     r"(?P<counters>counters|\+1/\+1 counters) on (?P<target>.+?), "
@@ -110,6 +117,14 @@ def static_counter_quantity_replacement_handler(
 ) -> tuple[str, Mapping[str, Any], str] | None:
     """Lower the closed ordinary counter-quantity replacement grammar."""
 
+    if _OPPONENT_HALVES.fullmatch(text):
+        from ..semantic_runtime.counter_replacements import OPPONENT_COUNTER_HALVING_HANDLER_ID
+
+        return (
+            "static-opponent-counter-halving-v1",
+            {"handler_id": OPPONENT_COUNTER_HALVING_HANDLER_ID, "schema_version": 1, "event": "counter.place"},
+            _CAPABILITY,
+        )
     match = _DIRECT.fullmatch(text)
     if match is not None:
         actor = match.group("actor").casefold()

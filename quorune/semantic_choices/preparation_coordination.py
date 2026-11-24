@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
+
+from ..rules.graveyard_arrival_order import GraveyardArrivalChoiceRequired
 
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import (
@@ -10,6 +13,7 @@ from ..replacement_effects import (
     replacement_choice_payload,
 )
 from ..semantic_runtime import IntentPlan, execute_intent_plan
+from ..semantic_runtime.executor import execute_prepared_composition_movement
 from .defaults import default_semantic_choice_registry
 from .intent_replacement import (
     semantic_intent_identity,
@@ -143,6 +147,7 @@ def continue_semantic_preparation(
     ] = (),
     expected_intent_kind: str | None = None,
     expected_intent: Mapping[str, Any] | None = None,
+    apnap_order: Any = None,
 ) -> bool:
     """Commit preparation intents, suspending before replaceable mutation."""
 
@@ -177,14 +182,43 @@ def continue_semantic_preparation(
             intent = with_replacement_selections(intent, selections)
         try:
             from ..conditional_exile_return import defer_conditional_cost_returns
+            from .apnap_commit import APNAP_OBJECT_COMMIT_HANDLER_ID
+
+            prepared_composition = None
+            if index == 0 and continuation.handler_id == APNAP_OBJECT_COMMIT_HANDLER_ID:
+                from .apnap_composition import prepare_apnap_composition_movement
+
+                prepared_composition, waiting_for_order = prepare_apnap_composition_movement(
+                    host, continuation, intent, apnap_order,
+                )
+                if waiting_for_order:
+                    return False
             with defer_conditional_cost_returns() as waiting:
-                committed_results[index]=execute_intent_plan(host,IntentPlan(
-                    operation=str(continuation.effect.get('op') or ''),handler_id=continuation.handler_id,intents=(intent,)))
+                plan = IntentPlan(
+                    operation=str(continuation.effect.get("op") or ""), handler_id=continuation.handler_id, intents=(intent,),
+                )
+                committed_results[index] = (
+                    execute_intent_plan(host, plan) if prepared_composition is None
+                    else execute_prepared_composition_movement(host, plan, prepared_composition)
+                )
             if waiting:
                 from .completed_choice import encode_preparation_after_commit,finish_choice_intent_returns
                 saved=encode_preparation_after_commit(continuation,actor,preparation,intents[index+1:],committed_results)
                 if finish_choice_intent_returns(host,waiting,saved):return False
+        except GraveyardArrivalChoiceRequired as required:
+            from .discard_graveyard_order import prepare_discard_graveyard_order
+
+            owner, waiting_order = prepare_discard_graveyard_order(
+                host, continuation, intent, required, index=index, count=len(intents),
+            )
+            _finish_preparation(
+                host, continuation=replace(continuation, effect=waiting_order.continuation_effect),
+                actor=owner, preparation=waiting_order, committed_results={},
+            )
+            return False
         except ReplacementChoiceRequired as required:
+            if index == 0 and apnap_order is not None:
+                raise SemanticChoiceError("APNAP replacement inputs changed after physical ordering") from required
             semantic_intent_identity(intent)
             _issue_preparation_replacement_choice(
                 host,

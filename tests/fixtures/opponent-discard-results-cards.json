@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_opponent_discard_result",
+  "source": "Constructed resolving discard examples",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001080",
+      "name": "Generic Discarded Return",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Creature — Construct",
+      "oracle_text": "When a spell or ability an opponent controls causes you to discard this card, return it to your hand.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001081",
+      "name": "Generic Discarded Life",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "When a spell or ability an opponent controls causes you to discard this card, that player loses 5 life.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000001082",
+      "name": "Generic Discarded Token",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "When a spell or ability an opponent controls causes you to discard this card, create four 1/1 colorless Gnome artifact creature tokens.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "type_line": "Instant",
+      "name": "Generic Discard Damage",
+      "oracle_id": "9b7dc3a9-6066-4dea-a236-12f41ab2065f",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "oracle_text": "This spell deals 1 damage to any target.\nWhen a spell or ability an opponent controls causes you to discard this card, it deals 3 damage to any target."
+    },
+    {
+      "cmc": 1.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "type_line": "Instant",
+      "name": "Generic Graveyard Removal",
+      "oracle_id": "1353bdfa-18e2-4dfa-aa83-e54fc9a1f35d",
+      "mana_cost": "{B}",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "oracle_text": "Exile target card from a graveyard."
+    },
+    {
+      "cmc": 1.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "type_line": "Instant",
+      "name": "Generic Creature Return",
+      "oracle_id": "a82db6ce-53df-4936-a502-80cc253f4488",
+      "mana_cost": "{U}",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "oracle_text": "Return target creature to its owner's hand."
+    },
+    {
+      "cmc": 1.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "type_line": "Instant",
+      "name": "Generic Delayed Discard Return",
+      "oracle_id": "8dfea1ad-8f72-470d-b83e-f8154bf65b06",
+      "mana_cost": "{W}",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "oracle_text": "You gain 1 life.\nWhen a spell or ability an opponent controls causes you to discard this card, you gain 2 life, and you return this card from your graveyard to your hand at the beginning of the next end step."
+    },
+    {
+      "cmc": 1.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "type_line": "Instant",
+      "name": "Generic Return Exiled Card",
+      "oracle_id": "48c81690-8eb2-4933-b3b0-96de26204b61",
+      "mana_cost": "{W}",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "oracle_text": "Put target face-up exiled card into its owner's graveyard."
+    },
+    {
+      "oracle_id": "a27f174f-11ab-4fa8-b358-cc9b6c6cd56d",
+      "name": "Generic Plains Discard Token",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "When a spell or ability an opponent controls causes you to discard this card, if you control a Plains, create a 2/2 white Bird creature token with flying.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "bb880f4d-41e2-488e-ac63-81151a52d95d",
+      "name": "Generic Nonbasic Plains",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Plains",
+      "oracle_text": "{T}: Add {W}.",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "produced_mana": [
+        "W"
+      ]
+    },
+    {
+      "oracle_id": "0ba46f8b-a560-4cfb-b242-54ef638ff21c",
+      "name": "Generic Discard Counter Return",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "When a spell or ability an opponent controls causes you to discard this card, return this card from your graveyard to the battlefield with a +1/+1 counter on it at the beginning of the next end step.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    }
+  ],
+  "rulings": []
+}

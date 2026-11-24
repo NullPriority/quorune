@@ -25,18 +25,24 @@ def compiled_fixed_mana_face_down_method_spec(
     card: Any,
     *,
     method: str,
+    use_copiable_source: bool = False,
 ) -> FixedManaMorphSpec | None:
     """Return one current trusted fixed-cost face-down method descriptor."""
 
     if method not in FACE_DOWN_CAST_METHODS:
         return None
     record = host.card_record(card)
+    if use_copiable_source:
+        from .entry_copy import copiable_oracle_id
+        identity = copiable_oracle_id(card)
+        if record is None or identity != record.oracle_id:
+            record = host.card_db.by_oracle_id(identity)
     if (
         record is None
         or record.layout != "normal"
         or record.faces
         or method not in {str(value).casefold() for value in record.keywords}
-        or card.annotations.get("copy_overrides") is not None
+        or not use_copiable_source and card.annotations.get("copy_overrides") is not None
     ):
         return None
     registry = default_fixed_mana_morph_registry()

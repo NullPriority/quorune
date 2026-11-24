@@ -238,11 +238,12 @@ def temporary_declaration_restriction_effect_template(
     *,
     card_name: str,
     allow_source: bool,
-) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | TemporaryAllBlockerTemplate | None:
+    source_attachment_relation=None,
+) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | TemporaryAllBlockerTemplate | TemporaryAttackRequirementTemplate | None:
     """Parse fixed targets, source creatures, or live public creature groups."""
 
     normalized = " ".join(text.strip().split())
-    if attack_requirement := temporary_attack_requirement_template(normalized):
+    if attack_requirement := temporary_attack_requirement_template(normalized, source_attachment_relation=source_attachment_relation):
         return attack_requirement
     if requirement := temporary_all_blocker_template(normalized, card_name=card_name, allow_source=allow_source):
         return requirement

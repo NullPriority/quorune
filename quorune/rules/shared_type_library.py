@@ -30,8 +30,12 @@ def shared_type_library_node_capabilities(*, effects, target_schema, mechanic_id
 def materialize_shared_type_library_source(host, item, effect):
     if effect.get("op") != SHARED_TYPE_LIBRARY_OPERATION:
         return None
+    return materialize_shared_type_source(host, item)
+
+
+def materialize_shared_type_source(host, item):
     if item is None or item.kind not in {"activated_ability", "triggered_ability"}:
-        raise ValueError("Shared-type library inspection requires its original ability source")
+        raise ValueError("Shared-type inspection requires its original ability source")
     from ..target_source import stack_targeting_source, TargetingSourceBinding, TARGETING_SOURCE_CONTEXT
     raw = item.context.get(TARGETING_SOURCE_CONTEXT)
     binding = TargetingSourceBinding.from_dict(raw) if raw is not None else None

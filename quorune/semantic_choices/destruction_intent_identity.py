@@ -41,7 +41,14 @@ def validate_destruction_intent_identity(kind: str, value: Mapping[str, Any]) ->
         elif kind == "destroy_permanent_targets":
             intent = DestroyPermanentTargetsIntent(**dict(value))
         else:
-            intent = DestroyPermanentSetIntent(**{**value, "spec": AffectedPermanentSetSpec.from_dict(value["spec"])})
+            from ..rules.qualified_destruction import RelativePowerDestructionSetSpec, is_relative_power_destruction_set
+
+            raw = value["spec"]
+            spec = (RelativePowerDestructionSetSpec.from_dict(raw) if is_relative_power_destruction_set(raw)
+                    else AffectedPermanentSetSpec.from_dict(raw))
+            if isinstance(spec, RelativePowerDestructionSetSpec) and spec.target_ref.startswith("$"):
+                raise ValueError("Relative-power destruction continuation requires its resolved target")
+            intent = DestroyPermanentSetIntent(**{**value, "spec": spec})
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
     return destruction_intent_identity(intent)[1]

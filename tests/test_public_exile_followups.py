@@ -40,6 +40,7 @@ class PublicExileFollowupCompilerTests(unittest.TestCase):
             "Exile target creature. Draw a card for each creature card exiled this way.",
             "Exile target player's hand. You gain 1 life for each card exiled this way.",
             "Exile all graveyards. You gain 1 life for each card exiled this way.",
+            "Exile all creature cards from all graveyards. You gain 3 life for each card exiled this way.",
         ):
             with self.subTest(text=text):
                 ir = compile_oracle_card(record(text, "Sorcery"), capability_registry=registry)
@@ -143,6 +144,36 @@ class PublicExileFollowupNativeTests(unittest.TestCase):
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertIsNone(self.resolve(session))
         return session
+
+    def test_actual_exile_life_uses_the_committed_creature_count_and_own_scope(self):
+        for index, (name, mana, targets, gain) in enumerate((
+            ("Crypt Incursion", {"C": 2, "B": 1}, ("B",), 6),
+            ("Honor the Fallen", {"C": 1, "W": 1}, (), 4),
+        )):
+            with self.subTest(name=name):
+                session = self.session(712_080_930 + index)
+                engine = session.engine
+                spell = self.add(engine, name, zone="hand")
+                own = self.add(engine, "Grizzly Bears", zone="graveyard", ref="own-creature")
+                opposing = self.add(engine, "Grizzly Bears", seat="B", zone="graveyard", ref="opposing-creature")
+                modal = self.add(engine, "Kazandu Mammoth // Kazandu Valley", seat="B", zone="graveyard")
+                noncreature = self.add(engine, "Bala Ged Recovery // Bala Ged Sanctuary", seat="B", zone="graveyard")
+                other = self.add(engine, "Grizzly Bears", seat="D", zone="graveyard", ref="other-creature")
+                private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand")
+                self.assert_closed(session, spell)
+                self.priority(session, "A", mana)
+                self.checkpoint(session)
+                initial_life = session.state.players["A"].life
+                self.cast(session, "A", spell, targets=targets)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(initial_life + gain, session.state.players["A"].life)
+                self.assertEqual("graveyard", session.state.cards[noncreature.object_id].zone)
+                for card in (opposing, modal):
+                    self.assertEqual("exile", session.state.cards[card.object_id].zone)
+                for card in (own, other):
+                    self.assertEqual("graveyard" if targets else "exile", session.state.cards[card.object_id].zone)
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:B", full=True)))
+                self.replay(session)
 
     def test_actual_release_to_memory_counts_only_the_opponents_front_creatures(self):
         session = self.session(712_080_921)

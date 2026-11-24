@@ -1144,6 +1144,27 @@
       "released_at": "2026-11-13",
       "toughness": null,
       "type_line": "Basic Land — Plains"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000116310023",
+      "name": "Generic Shared Land Allowance",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "Each player may play an additional land on each of their turns.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",

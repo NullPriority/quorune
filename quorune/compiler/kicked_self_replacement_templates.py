@@ -3,6 +3,7 @@ from __future__ import annotations
 """Fixed result self-replacement using an already sealed Kicker choice."""
 
 from copy import deepcopy
+from dataclasses import replace
 from . import regex_working_set as re
 
 from ..resolution_conditions import (
@@ -10,7 +11,7 @@ from ..resolution_conditions import (
     CAST_FACT_CONDITION_MECHANIC, KickedCastCondition, cast_fact_result_is_fixed,
 )
 from .closed_effect_programs import _top_level_positions
-from .fixed_numbers import FIXED_COUNT_PATTERN
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .public_self_replacement_templates import _alternative_body,is_fixed_public_self_replacement
 from .token_templates import _positive_fixed_number
 
@@ -72,6 +73,22 @@ def _kicked_untap_stat_replacement(text, compile_component):
     return _kicked_condition_branches(normal.compiled(), kicked.compiled(), targeted=True)
 
 
+def _kicked_target_copy_count(normal_text, alternative, *, source_name):
+    if normal_text.casefold() != "create a token that's a copy of target creature.":
+        return None
+    match = re.fullmatch(r"Create (?P<count>two|three|four|five|[2-5]) of those tokens\.", alternative, re.I)
+    if match is None:
+        return None
+
+    from .token_copy_templates import token_copy_recipe_template
+
+    normal = token_copy_recipe_template(normal_text, source_name=source_name)
+    if normal is None:
+        return None
+    kicked = replace(normal, effect={**normal.effect, "quantity": fixed_number(match["count"])})
+    return _kicked_condition_branches(normal.compiled(), kicked.compiled(), targeted=True)
+
+
 def kicked_self_replacement_template(text, *, source_name,compile_component):
     shared = _kicked_untap_stat_replacement(text, compile_component)
     if shared is not None:
@@ -90,6 +107,9 @@ def kicked_self_replacement_template(text, *, source_name,compile_component):
     alternative=_alternative_body(normal_text,clause['body'])
     if alternative is None:
         return None
+    copy_count = _kicked_target_copy_count(normal_text, alternative, source_name=source_name)
+    if copy_count is not None:
+        return copy_count
     normal=compile_component(normal_text)
     if normal[0] is None or len(normal[1])!=1:
         return None

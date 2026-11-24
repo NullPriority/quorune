@@ -1,0 +1,127 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Crippling Fear",
+      "oracle_id": "e7a7ba65-ad14-41d5-889b-9bbeae9ab3f7",
+      "oracle_text": "Choose a creature type. Creatures that aren't of the chosen type get -3/-3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Distant Melody",
+      "oracle_id": "ac6c5852-71c7-4f19-8c87-ccb345052862",
+      "oracle_text": "Choose a creature type. Draw a card for each permanent you control of that type.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "You choose the creature type as Crippling Fear resolves, and then creatures not of that type get -3/-3. Once Crippling Fear starts to resolve, players can't respond to the choice or take any actions until Crippling Fear finishes resolving.",
+      "oracle_id": "e7a7ba65-ad14-41d5-889b-9bbeae9ab3f7",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must choose an existing creature type, such as Fish or Artificer. You can't choose card types (e.g., artifact) or supertypes (e.g., snow).",
+      "oracle_id": "e7a7ba65-ad14-41d5-889b-9bbeae9ab3f7",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Crippling Fear affects only creatures that aren't of the chosen type that are on the battlefield as it resolves. It won't affect creatures that enter the battlefield later in the turn, regardless of creature type. If a creature changes creature types later in the turn, Crippling Fear won't start or stop affecting that creature.",
+      "oracle_id": "e7a7ba65-ad14-41d5-889b-9bbeae9ab3f7",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Note that this spell counts the number of permanents you control of the chosen type, not just the number of creatures you control. It will also take your kindred permanents of the chosen type into account.",
+      "oracle_id": "ac6c5852-71c7-4f19-8c87-ccb345052862",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

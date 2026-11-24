@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for same-name source-duration exiles",
+  "cards": [
+    {
+      "oracle_id": "9c9b3bf7-afb7-4e9b-bdbc-e2b4d5ba477f",
+      "name": "Banishment",
+      "mana_cost": "{3}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "Flash\nWhen this enchantment enters, exile target nonland permanent an opponent controls and all other nonland permanents your opponents control with the same name as that permanent until this enchantment leaves the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "cmc": 4.0,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "name": "Deputy of Detention",
+      "mana_cost": "{1}{W}{U}",
+      "type_line": "Creature — Vedalken Wizard",
+      "oracle_text": "When this creature enters, exile target nonland permanent an opponent controls and all other nonland permanents that player controls with the same name as that permanent until this creature leaves the battlefield.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2019-01-25",
+      "cmc": 3.0,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "This ability has only one target. The other permanents with that name aren't targeted. For example, a permanent with hexproof will be exiled if it has the same name as the target nonland permanent."
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "A face-down creature has no name, so it can't share a name with anything. This includes other creatures with no name."
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "If the target nonland permanent is an illegal target by the time this ability tries to resolve, the ability doesn't resolve. Nothing is exiled."
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "If Deputy of Detention leaves the battlefield before its triggered ability resolves, nothing is exiled."
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "Auras attached to the exiled permanents will be put into their owners' graveyards. Any Equipment will become unattached and remain on the battlefield. Any counters on the exiled permanents will cease to exist."
+    },
+    {
+      "oracle_id": "0e4150db-ac43-48b4-9791-0d874906acf5",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Unless a token is a copy of another permanent or was explicitly given a name by the effect that created it, its name is the subtypes it was given when it was created plus the word \"Token.\" For example, if an effect creates a 1/1 Soldier creature token, that token is named \"Soldier Token.\""
+    }
+  ]
+}

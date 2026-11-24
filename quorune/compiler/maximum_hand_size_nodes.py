@@ -7,10 +7,15 @@ from . import regex_working_set as re
 from ..maximum_hand_size import (
     NO_MAXIMUM_HAND_SIZE_CAPABILITY_ID,
     NO_MAXIMUM_HAND_SIZE_TEMPLATE_ID,
+    GLOBAL_NO_MAXIMUM_HAND_SIZE_TEMPLATE_ID,
+    NoMaximumHandSizeSpec,
     no_maximum_hand_size_handler_descriptor,
     HAND_SIZE_ADJUSTMENT_CAPABILITY_ID,HAND_SIZE_ADJUSTMENT_TEMPLATE_ID,
     FixedHandSizeAdjustmentSpec,fixed_hand_size_adjustment_descriptor,
+    HAND_SIZE_SETTING_TEMPLATE_ID,
+    FixedHandSizeSettingSpec, fixed_hand_size_setting_descriptor,
 )
+from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY, LINKED_OPPONENT_MAXIMUM_TEMPLATE
 from .fixed_numbers import fixed_number
 from ..rules.capabilities import CapabilityRegistry
 from .ir_model import OracleNode, OracleResidual, SourceSpan
@@ -27,8 +32,24 @@ def no_maximum_hand_size_node(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
-    if material_line.casefold().rstrip(".") == "you have no maximum hand size":
+    line_scope = material_line.casefold().rstrip(".")
+    if line_scope == "you have no maximum hand size":
         compiled=(NO_MAXIMUM_HAND_SIZE_TEMPLATE_ID,no_maximum_hand_size_handler_descriptor(),NO_MAXIMUM_HAND_SIZE_CAPABILITY_ID)
+    elif line_scope == "players have no maximum hand size":
+        spec = NoMaximumHandSizeSpec(schema_version=2, player_scope="all_players")
+        compiled = (GLOBAL_NO_MAXIMUM_HAND_SIZE_TEMPLATE_ID,
+                    no_maximum_hand_size_handler_descriptor(spec), NO_MAXIMUM_HAND_SIZE_CAPABILITY_ID)
+    elif line_scope in {"the chosen player's maximum hand size is four", "the chosen player’s maximum hand size is four"}:
+        spec = FixedHandSizeSettingSpec(4, schema_version=2, player_scope="linked_opponent")
+        compiled = (LINKED_OPPONENT_MAXIMUM_TEMPLATE, fixed_hand_size_setting_descriptor(spec),
+                    (HAND_SIZE_ADJUSTMENT_CAPABILITY_ID, ENTRY_DESIGNATION_CAPABILITY))
+    elif setting := re.fullmatch(
+        r"your maximum hand size is (zero|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]{1,2})",
+        line_scope,
+    ):
+        spec = FixedHandSizeSettingSpec(0 if setting[1] == "zero" else fixed_number(setting[1]))
+        compiled = (HAND_SIZE_SETTING_TEMPLATE_ID, fixed_hand_size_setting_descriptor(spec),
+                    HAND_SIZE_ADJUSTMENT_CAPABILITY_ID)
     else:
         match=re.fullmatch(r"(?P<who>Your|Each opponent's) maximum hand size is (?P<direction>increased|reduced) by (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+)\.?",material_line,re.I)
         if match is None:return None

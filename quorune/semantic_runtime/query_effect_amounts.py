@@ -4,12 +4,14 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol
 
 from ..dynamic_characteristics import query_characteristic_count
-from ..live_battlefield_quantities import current_live_battlefield_count
+from ..live_battlefield_quantities import current_live_battlefield_count, current_live_attacking_shared_type_count
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from ..query_effect_amount_model import (
     PublicQueryAmountError,
     PublicQueryAmountSpec,
     CastXAmountSpec,
+    ATTACK_SHARED_TYPE_AMOUNT_VERSION,
+    SOURCE_SHARED_TYPE_AMOUNT_VERSION,
 )
 
 
@@ -62,6 +64,48 @@ def _relative_quantity(host, item, spec: PublicQueryAmountSpec):
     return quantity, None
 
 
+def _current_shared_source_type_count(host, item, spec, controller):
+    from ..continuous_effect_model import ContinuousObjectIdentity
+    from ..object_query import query_objects
+    from ..rules.shared_type_library import materialize_shared_type_source
+    from ..shared_creature_type_model import (
+        SharedCreatureTypeObject, canonical_creature_types, shared_creature_type_count,
+    )
+
+    if controller != item.controller:
+        raise PublicQueryAmountError("A shared source count requires the ability controller")
+    source = materialize_shared_type_source(host, item)
+    query = replace(spec.quantity.query, controller=controller)
+    peers = tuple(
+        SharedCreatureTypeObject(
+            ContinuousObjectIdentity(row.object_id, row.logical_object_id),
+            canonical_creature_types(row.subtypes),
+        )
+        for row in query_objects(host.affected_permanent_object_rows(controller), query)
+    )
+    return shared_creature_type_count(peers, recipient=source.identity, creature_types=source.creature_types)
+
+
+def _current_public_amount_count(host, item, spec, controller, stack_ref):
+    if spec.schema_version == SOURCE_SHARED_TYPE_AMOUNT_VERSION:
+        return _current_shared_source_type_count(host, item, spec, controller)
+    if spec.schema_version == ATTACK_SHARED_TYPE_AMOUNT_VERSION:
+        from ..event_counter_reference import resolve_event_counter_recipient
+
+        if item.context.get("event") != "creature.attacks":
+            raise PublicQueryAmountError("Shared-type attack counts require a sealed attack occurrence")
+        source_ref = resolve_event_counter_recipient(host, item)
+        if source_ref is None:
+            return 0
+        return current_live_attacking_shared_type_count(host, controller, spec.quantity, source_ref=source_ref)
+    quantity, source_ref = _relative_quantity(host, item, spec)
+    if isinstance(quantity, LiveBattlefieldQuantitySpec):
+        return current_live_battlefield_count(host, controller, quantity, source_ref=source_ref)
+    return query_characteristic_count(
+        host, _ResolutionQuantitySource(controller=controller, ref=source_ref or stack_ref), quantity,
+    )
+
+
 def resolve_public_query_amount(
     host: PublicQueryAmountHost,
     value: Mapping[str, Any],
@@ -93,12 +137,7 @@ def resolve_public_query_amount(
                 raise PublicQueryAmountError("Declared amount continuation changed its identity or value")
             return spec.coefficient * previous["value"]
     try:
-        quantity, source_ref = _relative_quantity(host, item, spec)
-        if isinstance(quantity, LiveBattlefieldQuantitySpec):
-            count = current_live_battlefield_count(host, controller, quantity, source_ref=source_ref)
-        else:
-            count = query_characteristic_count(host,
-                _ResolutionQuantitySource(controller=controller, ref=source_ref or stack_ref), quantity)
+        count = _current_public_amount_count(host, item, spec, controller, stack_ref)
     except ValueError as exc:
         raise PublicQueryAmountError(str(exc)) from exc
     if type(count) is not int or count < 0:
@@ -113,10 +152,12 @@ def resolve_cast_x_amount(value: Mapping[str, Any], item: Any) -> int:
     spec = CastXAmountSpec.from_dict(value)
     amount = getattr(item, "x_value", None)
     if amount is None:
+        if spec.schema_version == 3:
+            raise PublicQueryAmountError("Cast-X bonus requires an actual announced X")
         amount = 0
     if type(amount) is not int or amount < 0:
         raise PublicQueryAmountError("Announced cast X is malformed")
-    return spec.coefficient * amount
+    return spec.coefficient * amount + spec.bonus
 
 
 __all__ = ["PublicQueryAmountHost", "resolve_public_query_amount", "resolve_cast_x_amount"]

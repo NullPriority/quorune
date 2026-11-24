@@ -8,7 +8,8 @@ from typing import Literal, Mapping
 from ..entry_counter_model import EffectEntryCounter
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..zone_trigger_events import ZoneTransitionKind
-from ..public_zone_moves import PublicZoneMoveSetSpec, PUBLIC_AURA_ENTRY_VERSION
+from ..continuous_effect_model import ContinuousObjectIdentity
+from ..public_zone_moves import PublicZoneMoveSetSpec, PUBLIC_AURA_ENTRY_VERSIONS
 from ..rules.public_exile_result_model import PublicExileFollowup
 
 
@@ -104,8 +105,16 @@ class ExilePublicGraveyardCardIntent:
     object_ref: str
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    linked_source: ContinuousObjectIdentity | None = None
+    linked_pair: str | None = None
 
     def __post_init__(self) -> None:
+        if self.linked_source is not None or self.linked_pair is not None:
+            from ..rules.linked_clue_copy import validate_linked_clue_pair
+
+            if not isinstance(self.linked_source, ContinuousObjectIdentity):
+                raise ValueError("Linked graveyard exile requires the original source incarnation")
+            validate_linked_clue_pair(self.linked_pair)
         if not all((self.actor, self.object_ref, self.reason)):
             raise ValueError(
                 "Public-graveyard exile intents require actor, object, and reason"
@@ -147,7 +156,7 @@ class MovePublicZoneSetIntent:
                 "Public zone-move set intents require a typed affected set"
             )
         if self.aura_target_refs is not None:
-            if (self.spec.schema_version != PUBLIC_AURA_ENTRY_VERSION or self.spec.destination.value != "battlefield"
+            if (self.spec.schema_version not in PUBLIC_AURA_ENTRY_VERSIONS or self.spec.destination.value != "battlefield"
                     or not isinstance(self.aura_target_refs, Mapping)
                     or any(type(key) is not str or not key or type(value) is not str or not value
                            for key, value in self.aura_target_refs.items())):

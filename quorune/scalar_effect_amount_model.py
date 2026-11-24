@@ -19,6 +19,8 @@ SCALAR_AMOUNT_KIND = "scalar_effect_amount"
 SCALAR_AMOUNT_CAPABILITY = "quantity_expression.scalar_effect_amount"
 SCALAR_AMOUNT_MECHANIC = "scalar-effect-amount"
 GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY = "quantity_expression.graveyard_target_mana_value"
+TARGET_CREATURE_POWER_CAPABILITY = "quantity_expression.target_creature_power"
+TARGET_CREATURE_POWER_VERSION = 16
 SCALAR_REFERENCE_CONTEXT = "scalar_reference_snapshots"
 TARGET_HAND_COUNT_MECHANIC='target-player-hand-count-amount'
 TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
@@ -43,6 +45,7 @@ class ScalarAmountOrigin(StrEnum):
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     SOURCE = "source_characteristic"
     TARGET = "target_characteristic"
+    TARGET_CREATURE_POWER = "target_creature_power"
     TARGET_GRAVEYARD_MANA_VALUE = "target_graveyard_mana_value"
     EVENT_OBJECT = "event_object_characteristic"
     EVENT_AMOUNT = "committed_event_amount"
@@ -76,7 +79,7 @@ class ScalarEffectAmountSpec:
     hand_difference: UpkeepHandDifferenceSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in range(1, 16):
+        if type(self.schema_version) is not int or self.schema_version not in range(1, TARGET_CREATURE_POWER_VERSION + 1):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
         if (self.schema_version == 13) != (self.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE):
             raise PublicQueryAmountError('Paid activation stats require their explicit scalar version')
@@ -84,6 +87,12 @@ class ScalarEffectAmountSpec:
                 or self.binding_id is not None):
             raise PublicQueryAmountError('Paid activation stats read one sealed power or toughness')
         _validate_graveyard_target_mana_value(self)
+        if (self.schema_version == TARGET_CREATURE_POWER_VERSION) != (self.origin is ScalarAmountOrigin.TARGET_CREATURE_POWER):
+            raise PublicQueryAmountError("Target creature power requires its explicit scalar version")
+        if self.origin is ScalarAmountOrigin.TARGET_CREATURE_POWER and (
+            self.characteristic != "power" or self.coefficient != 1 or self.binding_id is not None
+        ):
+            raise PublicQueryAmountError("Target creature power requires one unscaled current power")
         _validate_reflexive_paid_power(self)
         _validate_upkeep_hand_difference(self)
         _validate_paid_sacrifice_mana_value(self)
@@ -147,7 +156,7 @@ class ScalarEffectAmountSpec:
             ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE,
             ScalarAmountOrigin.PAID_ACTIVATION_CREATURE,
             ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE,
-            ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE,
+            ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
@@ -179,6 +188,7 @@ class ScalarEffectAmountSpec:
         from .commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
         return tuple(sorted({*self.history_count_capabilities,
             *((GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else ()),
+            *((TARGET_CREATURE_POWER_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_CREATURE_POWER else ()),
             *((UPKEEP_HAND_DIFFERENCE_CAPABILITY,) if self.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE else ()),
             *((COMMANDER_CAST_COUNT_CAPABILITY,) if self.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT else ()),
             *(self.aggregate.capability_dependencies if self.aggregate is not None else ())}))

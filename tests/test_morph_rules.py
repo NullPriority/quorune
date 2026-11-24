@@ -1313,6 +1313,58 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             json.dumps(session.packet("pilot:A", full=True), sort_keys=True),
         )
 
+    def test_face_down_return_to_hand_reveals_only_the_departing_card(self):
+        self._face_down_return_to_hand(legacy=False)
+
+    def test_legacy_face_down_return_to_hand_keeps_original_replay_visibility(self):
+        self._face_down_return_to_hand(legacy=True)
+
+    def _face_down_return_to_hand(self, *, legacy):
+        session = self.session(708_900_1)
+        if legacy:
+            session.state.face_down_departure_reveal_version = None
+        card = self.add_card(session, name="Lumithread Field", ref="REVEAL-DEPARTURE")
+        hidden = self.add_card(session, name="Zoetic Cavern", ref="UNRELATED-PRIVATE-CARD")
+        spell = self.add_card(session, name="Unsummon", ref="BOUNCE-FACE-DOWN", seat="C",
+                              promote_exact_capability_declarations=True)
+        session.state.players["B"].mana_pool["C"] = 3
+        session.state.players["C"].mana_pool["U"] = 1
+        self.prepare_priority(session)
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        self.cast_face_down(session, card, method="morph")
+        hidden_packet = json.dumps(session.packet("pilot:D", full=True))
+        self.assertNotIn(card.printed_name, hidden_packet)
+        self.assertNotIn(hidden.ref, hidden_packet)
+        passed = session.act("pilot:B", {"action_id": "pass"})
+        self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual(["pilot:C"], session.pending_principals())
+        cast = session.act("pilot:C", {"action_id": f"cast:{spell.ref}", "targets": [card.ref]})
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_spell_with_passes(session, spell)
+
+        self.assertEqual("hand", card.zone)
+        self.assertFalse(card.face_down)
+        self.assertNotIn("face_down_method", card.annotations)
+        self.assertFalse(card.revealed_to)
+        self.assertEqual(["B"] if legacy else list(session.engine.seats), card.known_to)
+        events = [event for event in session.state.events
+                  if event.code == "card.reveal" and event.details.get("object") == card.ref]
+        self.assertEqual(0 if legacy else 1, len(events))
+        if events:
+            self.assertEqual(("B", card.printed_name), (events[0].details["player"], events[0].details["card"]))
+        packet = json.dumps(session.packet("pilot:D", full=True))
+        self.assertEqual(not legacy, card.printed_name in packet)
+        self.assertNotIn(hidden.ref, packet)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary) / "face-down-hand-departure"
+            session.save(directory)
+            replay = replay_record(directory, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
+
     def test_land_card_has_only_the_trusted_morph_cast_offer(self):
         session = self.session(70237004, players=2)
         card = self.add_card(session, name="Zoetic Cavern", ref="MORPH4")

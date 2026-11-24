@@ -29,7 +29,8 @@ def target_count_price_variants(host,seat,card,program,option,response,*,hint):
     if hint:
         from ...target_source import spell_targeting_source
         schema=option.get('target_schema') or getattr(program,'target_schema',None)
-        public=host._public_target_schema(seat,schema,acting_source=spell_targeting_source(host,card),source_ref=card.ref) if schema else None
+        public=host._public_target_schema(seat,schema,acting_source=spell_targeting_source(host,card),source_ref=card.ref,
+            announcing_targets=True) if schema else None
         if public is None or len(public.get('groups',()))!=1:return
         group,=public['groups']
         counts=range(group['min'],min(group['max'],len(group['legal_refs']))+1)
@@ -54,42 +55,62 @@ def validate_target_count_cost_commit(host,card,option,targets):
         raise ValueError('Per-target additional mana contract changed before commitment')
 
 
-def counted_target_tax_assignments(host,seat,card,schema,sources,count):
+def counted_target_tax_assignments(host,seat,card,schema,sources,count=None,*,required_refs=frozenset()):
     """One witness per tax signature/count/ref, without enumerating subsets."""
     from .distinct_target_costs import has_distinct_target_modifiers, distinct_target_tax_assignments
     if has_distinct_target_modifiers(sources):
-        yield from distinct_target_tax_assignments(host,seat,card,schema,sources,count)
+        yield from distinct_target_tax_assignments(host,seat,card,schema,sources,count,required_refs=required_refs)
         return
     from ...targets import target_plan
     from ...target_source import spell_targeting_source
-    from ...selection.target_validation import validate_grouped_target_assignment
+    from ...selection.target_validation import target_assignment_can_include, validate_grouped_target_assignment
     from ...errors import GameRuleError
     plan=target_plan(schema)
     if len(plan.groups)!=1:return
     group,=plan.groups
     candidates=host._target_candidate_map(seat,plan,acting_source=spell_targeting_source(host,card),source_ref=card.ref)
     refs=candidates[group.group_id]
-    if not group.min_targets<=count<=min(group.max_targets,len(refs)):return
+    minimum = group.min_targets if count is None else count
+    maximum = min(group.max_targets,len(refs)) if count is None else count
+    if not group.min_targets <= minimum <= maximum <= min(group.max_targets,len(refs)):
+        return
+    requires_target = {}
     signatures={ref:frozenset(s.component_id for s in sources if ref in s.eligible_target_refs) for ref in refs}
-    for required in (None,) if count==0 else refs:
+    if minimum == 0:
+        grouped = {group.group_id: []}
+        try:
+            validate_grouped_target_assignment(host,plan,grouped,candidates)
+        except (ValueError,GameRuleError):
+            pass
+        else:
+            yield (),grouped,0
+    for required in refs if maximum else ():
         initial=() if required is None else (required,)
         initial_signature=frozenset() if required is None else signatures[required]
-        states={(len(initial),initial_signature):initial}
+        states={(len(initial),initial_signature,required in required_refs):initial}
         buckets={}
         for ref in refs:
             if ref==required:continue
             if group.same_owner and required is not None and host._target_snapshot(ref).get('owner')!=host._target_snapshot(required).get('owner'):continue
-            buckets.setdefault(signatures[ref],[]).append(ref)
-        for signature,values in buckets.items():
+            buckets.setdefault((signatures[ref],ref in required_refs),[]).append(ref)
+        for (signature,has_required),values in buckets.items():
             updated={}
-            for (size,applied),chosen in states.items():
-                for take in range(min(count-size,len(values))+1):
-                    key=(size+take,applied|signature if take else applied)
+            for (size,applied,includes_required),chosen in states.items():
+                for take in range(min(maximum-size,len(values))+1):
+                    key=(size+take,applied|signature if take else applied,includes_required or bool(take and has_required))
                     updated.setdefault(key,(*chosen,*values[:take]))
             states=updated
-        for (size,applied),chosen in states.items():
-            if size!=count:continue
+        for (size,applied,includes_required),chosen in states.items():
+            if not max(1,minimum) <= size <= maximum:
+                continue
+            if required_refs and not includes_required:
+                if size not in requires_target:
+                    requires_target[size] = target_assignment_can_include(
+                        host,plan,candidates,{group.group_id:size},required_refs,
+                    )
+                if requires_target[size]:
+                    continue
             grouped={group.group_id:list(chosen)}
             try:targets=validate_grouped_target_assignment(host,plan,grouped,candidates)
             except (ValueError,GameRuleError):continue
-            yield tuple(targets),grouped,count
+            yield tuple(targets),grouped,size

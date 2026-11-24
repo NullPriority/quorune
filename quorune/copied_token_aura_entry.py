@@ -9,11 +9,19 @@ from typing import Any, Mapping
 from .aura.model import AuraEntryChoiceRequired, AuraEntryOutcome, AuraRuleError
 from .aura.runtime import prepare_aura_entry
 from .continuous_effect_model import ContinuousObjectIdentity
-from .token_copy_recipes import TokenCopyRecipeSpec
+from .token_copy_recipes import TOKEN_COPY_BATCH_FIELD, TokenCopyBatchSpec, TokenCopyRecipeSpec
+from .token_copy_recipient_model import has_occurrence_copy_recipient
 
 
 COPIED_AURA_TOKEN_CHOICE = "copied_aura_token_choice"
 COPIED_AURA_TOKEN_SELECTIONS = "copied_aura_token_selections"
+
+
+def copied_token_instruction(effect: Mapping[str, Any]) -> bool:
+    return (
+        effect.get("op") == "create_token" and "copy_spec" in effect
+        or effect.get("op") == "create_token_batch" and TOKEN_COPY_BATCH_FIELD in effect
+    )
 
 
 def _copy_slot(value: Any) -> tuple[int, int]:
@@ -159,7 +167,7 @@ def complete_copied_aura_token_choice(host, decision, *, error_type: type[Except
     if set(raw) != fields or type(version) is not int or version != 1:
         raise error_type("Copied Aura token continuation fields are closed")
     frame, effect, remaining = raw["semantic_frame"], raw["effect"], raw["remaining"]
-    if (not isinstance(frame, dict) or not isinstance(effect, dict) or effect.get("op") != "create_token"
+    if (not isinstance(frame, dict) or not isinstance(effect, dict) or not copied_token_instruction(effect)
             or not isinstance(remaining, list) or any(not isinstance(row, dict) for row in remaining)
             or raw["destination"] is not None and type(raw["destination"]) is not str
             or type(raw["note"]) is not str or len(decision.actors) != 1):
@@ -167,12 +175,22 @@ def complete_copied_aura_token_choice(host, decision, *, error_type: type[Except
     item = host.state.stack[-1] if host.state.stack else None
     actor = decision.actors[0]
     pointer = frame.get("instruction_pointer")
-    if (item is None or item.controller != actor or actor not in host.active_seats
+    if (item is None or actor not in host.active_seats
             or item.context.get("currently_resolving") is not True or type(pointer) is not int or pointer < 0):
         raise error_type("Copied Aura token continuation has no current resolving controller")
     try:
         slot = _copy_slot(raw["slot"])
-        TokenCopyRecipeSpec.from_dict(effect.get("copy_spec"))
+        if has_occurrence_copy_recipient(effect):
+            from .rules.token_copy_recipients import resolved_occurrence_copy_recipient
+
+            if resolved_occurrence_copy_recipient(host, effect, item) != actor:
+                raise AuraRuleError("Copied Aura choice requires its occurrence copy recipient")
+        elif item.controller != actor:
+            raise AuraRuleError("Copied Aura choice requires its resolving controller")
+        elif effect["op"] == "create_token":
+            TokenCopyRecipeSpec.from_dict(effect["copy_spec"])
+        else:
+            TokenCopyBatchSpec.from_effect(effect, actor=actor)
         expected = host._semantic_frame(item, instruction_pointer=pointer,
                                         locals={"copied_aura_token_slot": list(slot)},
                                         pending_choice_id=decision.decision_id)

@@ -98,3 +98,54 @@ def decode_colored_hand_reveal(effect,*,player='$controller'):
             or effect['op']!=COLORED_REVEAL_OPERATION or effect['player']!=player):
         raise ValueError('Colored hand reveal requires its closed controller instruction')
     return ColoredHandRevealSpec.from_dict(effect['reveal'])
+
+
+@dataclass(frozen=True, slots=True)
+class VariableColoredRevealPrice:
+    generic_mana: int
+    color: str
+
+    def __post_init__(self):
+        if type(self.generic_mana) is not int or self.generic_mana < 1 or self.color not in tuple('WUBRG'):
+            raise ValueError("The reveal price requires fixed generic mana and one hand color")
+
+    def to_dict(self):
+        return {"schema_version": 1, "generic_mana": self.generic_mana, "color": self.color}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {"schema_version", "generic_mana", "color"}
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+            raise ValueError("The colored reveal price requires its closed version")
+        return cls(value["generic_mana"], value["color"])
+
+    def matches_mana(self, mana):
+        return (isinstance(mana, Mapping) and mana.get("GENERIC") == self.generic_mana
+                and all(type(n) is int and (k == "GENERIC" or n == 0) for k, n in mana.items()))
+
+
+
+VARIABLE_COLORED_REVEAL_PRICE_FIELD = "variable_colored_reveal_price"
+VARIABLE_COLORED_REVEAL_CAPABILITY = "activation.cost.variable_colored_hand_reveal"
+
+
+def variable_colored_reveal_program_dependencies(program):
+    cost = getattr(program, "cost_schema", None) or {}
+    descriptors = tuple(d["ability"] for d in getattr(program, "handlers", ())
+                        if isinstance(d.get("ability"), Mapping)
+                        and VARIABLE_COLORED_REVEAL_PRICE_FIELD in d["ability"])
+    if VARIABLE_COLORED_REVEAL_PRICE_FIELD not in cost:
+        if descriptors:
+            raise ValueError("The colored reveal catalog price must match its compiled cost")
+        return ()
+    price = VariableColoredRevealPrice.from_dict(cost[VARIABLE_COLORED_REVEAL_PRICE_FIELD])
+    if (program.event != "activate" or program.active_zone != "battlefield"
+            or cost.get("sacrifice_source") is not True or not price.matches_mana(cost.get("mana"))
+            or any(cost.get(k) for k in ("tap_source", "untap_source", "discard_source", "exile_source",
+                "life_payment", "energy_payment", "loyalty_delta", "choices", "uncompiled_costs",
+                "complex_symbols", "announced_x_symbols", "mana_cost_options", "waterbend",
+                "source_counter_removal_cost", "random_discard_payment"))
+            or len(descriptors) != 1
+            or thaw_value(descriptors[0][VARIABLE_COLORED_REVEAL_PRICE_FIELD]) != price.to_dict()):
+        raise ValueError("The colored reveal needs its closed battlefield mana and source-sacrifice price")
+    return (VARIABLE_COLORED_REVEAL_CAPABILITY,)

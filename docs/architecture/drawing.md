@@ -127,6 +127,32 @@ with a separate controller count. It never draws for the controller early just
 because that count appears first in the sentence. A replacement pause retains
 the remaining ordered recipients through save/load and replay. Source ownership
 does not select those recipients.
+
+The version-three source-sacrifice instruction used by Standstill retains the
+original caster from its unqualified normalized spell-cast occurrence.
+Starting the mandatory sacrifice cost permits the draw under CR 118.12,
+including when a replacement redirects the destination. The original trigger
+controller can sacrifice only the original controlled incarnation. The result
+draws three for the original caster's surviving free-for-all opponents in APNAP
+order. This uses the existing replacement and private draw continuations.
+The earlier source-sacrifice instruction versions retain their stored behavior.
+
+The version-four optional draw used by Heartwood Storyteller retains the
+caster of one normalized noncreature spell. The caster's surviving opponents
+choose in APNAP order and see earlier choices. Existing draw permissions
+suppress an illegal offer. An empty library still permits the choice.
+The typed choice continuation stores the ordered answers before any selected
+draw occurs. The canonical draw owner then draws one private card for each
+player who chose to draw. Earlier optional draw variants use their existing
+choice payloads and results.
+
+The version-five source attack offer gives the original defending player
+the choice and the original trigger controller the draw. Acceptance queues
+the private draw before the untap and combat removal. A draw replacement
+resumes that same continuation after its result. The combat result looks
+up the original battlefield incarnation after the draw. A departed source
+still leaves the accepted draw available.
+
 Fixed "additional card" wording preserves the stated count as an ordinary draw
 instruction. Draw-step triggers remain separate from the turn-based draw under
 CR 504.1: the active player draws normally before those triggers are placed,
@@ -152,6 +178,15 @@ under CR 614.5, while another applicable doubler may replace each new draw;
 result draws finish before the unreplaced remainder of the original
 instruction. Historical Game Record v3 instruction-multiplier descriptors keep
 an explicit compatibility handler and are not silently reinterpreted.
+An individual result draw can bind its own recipient. Replacement order begins
+with the current affected player. Each new recipient uses their own library,
+draw permissions, and available replacements. A consumed replacement identity
+follows the resulting draw through consecutive choices and replay.
+The first completed draw in an opponent’s own draw step is exempt from
+the corresponding static redirect. A resolving target-player redirect
+stores its target and controller in the duration journal and expires in cleanup.
+When the controller leaves before cleanup, the target's draw is still skipped.
+
 Unsupported material or noncommutative choices fail closed.
 `replacement.draw.dredge.v1` is generated from `Dredge N`, is
 active only for a trusted exact graveyard CardProgram, requires enough cards in
@@ -191,6 +226,15 @@ Oracle text at runtime or bypass draw replacement, prohibition, event, privacy,
 or replay ownership. Other delayed times, controller- or player-relative
 upkeeps, optional or variable counts, and unresolved enclosing spell
 composition remain outside trust.
+
+The fixed discard replacement preserves the affected player's first actual draw in
+their draw step. Its later draws ask that player to choose one card privately.
+The chosen discard uses the canonical zone owner, including any discard
+destination replacement. An actual discard produces one new draw with the
+consumed replacement excluded. An unsuccessful discard or empty hand mills
+one card. The remaining original draws resume with their already prepared
+count. Save and replay retain the private choice and any nested replacement
+order before the next draw or mill commits.
 
 The represented CR 121.6c family applies a public reveal and then a conditional
 discard to the exact card moved by an ordinary draw. Those actions do not apply

@@ -20,6 +20,7 @@ DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID = (
 )
 DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT = "dynamic_self_entry_counter_amounts"
 PAID_COLOR_ENTRY_CAPABILITY = 'counter.producer.paid_color_self_entry'
+CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY = "counter.producer.current_life_self_entry"
 
 
 class DynamicEntryCounterValueSource(str, Enum):
@@ -38,6 +39,7 @@ class DynamicEntryCounterValueSource(str, Enum):
     MANA_WAS_SPENT = "mana_was_spent"
     CONTROLLER_PERMANENTS_LEFT = "controller_permanents_left"
     CONTROLLER_LIFE_GAINED = "controller_life_gained"
+    CONTROLLER_LIFE_TOTAL = "controller_life_total"
     CONTROLLER_CREATURES_DIED = "controller_creatures_died"
 
 
@@ -139,6 +141,12 @@ class DynamicEntryCounterAmountSpec:
             self.calculation is not DynamicEntryCounterCalculation.FIXED_IF_AT_LEAST or self.minimum != 1
         ):
             raise EntryCounterError("Departure entry counters require one fixed existence threshold")
+        if self.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL and (
+            self.calculation is not DynamicEntryCounterCalculation.MULTIPLY
+            or self.coefficient != 1
+            or self.offset != 0
+        ):
+            raise EntryCounterError("Life-total entry counters require exactly the entering controller's life")
         if self.value_source in {
             DynamicEntryCounterValueSource.CONTROLLER_LIFE_GAINED,
             DynamicEntryCounterValueSource.CONTROLLER_CREATURES_DIED,
@@ -225,17 +233,18 @@ def _normalized_nonempty(value: Any, *, field: str) -> str:
 class IntrinsicEntryCounter:
     counter_name: str
     amount: int
-    required_type: str
+    required_type: str | None
     rule_id: str
 
     def __post_init__(self) -> None:
         counter_name = " ".join(self.counter_name.casefold().split())
-        required_type = " ".join(self.required_type.casefold().split())
+        required_type = (
+            _normalized_nonempty(self.required_type, field="Intrinsic entry type")
+            if self.required_type is not None else None
+        )
         rule_id = str(self.rule_id or "")
-        if not counter_name or not required_type or not rule_id:
-            raise EntryCounterError(
-                "Intrinsic entry counters require a counter, type, and rule"
-            )
+        if not counter_name or not rule_id:
+            raise EntryCounterError("Intrinsic entry counters require a counter and rule")
         if type(self.amount) is not int or self.amount < 0:
             raise EntryCounterError(
                 "Intrinsic entry counter amounts must be nonnegative integers"
@@ -248,6 +257,10 @@ class IntrinsicEntryCounter:
     def capability_id(self) -> str:
         if self.required_type == "saga":
             return "counter.producer.saga_lore"
+        if self.required_type is None:
+            from .fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_CAPABILITY
+
+            return FIXED_KEYWORD_ENTRY_CAPABILITY
         return "counter.producer.intrinsic_entry"
 
 
@@ -377,7 +390,13 @@ def intrinsic_entry_counters(
     normalized_keywords = {
         " ".join(str(value).casefold().split()) for value in keywords
     }
+    from .fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_FRAGMENT, FixedKeywordEntryCounterSpec
+
     counters: list[IntrinsicEntryCounter] = []
+    for fragment in characteristics.get("ability_fragments", ()):
+        if isinstance(fragment, Mapping) and fragment.get("kind") == FIXED_KEYWORD_ENTRY_FRAGMENT:
+            spec = FixedKeywordEntryCounterSpec.from_dict(fragment.get("value"))
+            counters.append(IntrinsicEntryCounter(spec.counter_name, spec.amount, None, spec.rule_id))
     if "planeswalker" in types:
         counters.append(
             IntrinsicEntryCounter(

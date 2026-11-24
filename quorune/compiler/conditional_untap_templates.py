@@ -8,7 +8,10 @@ from ..characteristic_fragments import CharacteristicQuantityScope, Characterist
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec
-from ..untap_step import CONDITIONAL_UNTAP_CAPABILITY, CONDITIONAL_UNTAP_HANDLER_ID
+from ..untap_step import (
+    CONDITIONAL_UNTAP_CAPABILITY, CONDITIONAL_UNTAP_HANDLER_ID, SOURCE_QUEST_UNTAP_CAPABILITY,
+    SOURCE_QUEST_UNTAP_SCOPE, source_quest_untap_condition,
+)
 from .public_state_queries import fixed_public_state_condition
 from .untap_step_templates import static_untap_step_handler
 
@@ -53,6 +56,20 @@ def conditional_untap_step_handler(text: str, *, source_name: str):
     if base is None:
         return None
     descriptor = base[1]
+    if (
+        base[0] == "untap-step-additional-other-player-creatures-v1"
+        and match.groupdict().get("join") is None
+        and test.casefold() == "there are four or more quest counters on this enchantment"
+    ):
+        return (
+            "untap-step-source-quest-threshold-additional-v1",
+            {
+                **descriptor, "handler_id": CONDITIONAL_UNTAP_HANDLER_ID,
+                "public_condition": {"scope": SOURCE_QUEST_UNTAP_SCOPE,
+                                     "condition": source_quest_untap_condition().to_dict()},
+            },
+            (CONDITIONAL_UNTAP_CAPABILITY, SOURCE_QUEST_UNTAP_CAPABILITY),
+        )
     relation = descriptor["subject"]["relation"]
     if descriptor["instruction"]["kind"] != "prohibition" or relation not in {"source", "attached_object"}:
         return None

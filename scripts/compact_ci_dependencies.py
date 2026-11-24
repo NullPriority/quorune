@@ -297,8 +297,7 @@ def index_fixture_ownership(
     root: Path,
 ) -> dict[str, object]:
     by_oracle: dict[str, dict[str, object]] = {}
-    by_name: dict[str, str] = {}
-    name_priorities: dict[str, int] = {}
+    alias_matches: dict[str, tuple[tuple[bool, int], set[str]]] = {}
     conflicts: list[dict[str, object]] = []
     ruling_count = 0
     for path in paths:
@@ -337,16 +336,6 @@ def index_fixture_ownership(
                     }
                 )
                 continue
-            named_oracle = by_name.get(normalized)
-            if named_oracle is not None and named_oracle != oracle_id and name_priorities[normalized] == 100:
-                conflicts.append(
-                    {
-                        "kind": "normalized_name",
-                        "identity": normalized,
-                        "oracle_ids": sorted({named_oracle, oracle_id}),
-                    }
-                )
-                continue
             if existing is None:
                 existing = {
                     "oracle_id": oracle_id,
@@ -358,23 +347,29 @@ def index_fixture_ownership(
                 }
                 by_oracle[oracle_id] = existing
             existing["owners"].add(relative)
-            for alias, priority in sorted(_aliases(card).items()):
+            # CardDatabase ranks game cards before art-series records, then
+            # considers canonical-name, face and split-name priority.
+            playable = card.get("layout") != "art_series"
+            for alias, priority in _aliases(card).items():
                 normalized_alias = normalize_card_name(alias)
-                alias_oracle = by_name.get(normalized_alias)
                 existing["aliases"].add(alias)
-                previous_priority = name_priorities.get(normalized_alias, 0)
-                if alias_oracle is not None and alias_oracle != oracle_id and previous_priority == priority:
-                    conflicts.append(
-                        {
-                            "kind": "alias",
-                            "identity": normalized_alias,
-                            "oracle_ids": sorted({alias_oracle, oracle_id}),
-                        }
-                    )
-                    continue
-                if priority >= previous_priority:
-                    by_name[normalized_alias] = oracle_id
-                    name_priorities[normalized_alias] = priority
+                rank = (playable, priority)
+                matched = alias_matches.get(normalized_alias)
+                if matched is None or rank > matched[0]:
+                    alias_matches[normalized_alias] = (rank, {oracle_id})
+                elif rank == matched[0]:
+                    matched[1].add(oracle_id)
+
+    by_name: dict[str, str] = {}
+    for alias, ((_, priority), ids) in alias_matches.items():
+        ordered_ids = sorted(ids)
+        by_name[alias] = ordered_ids[0]
+        if len(ordered_ids) > 1:
+            conflicts.append({
+                "kind": "normalized_name" if priority == 100 else "alias",
+                "identity": alias,
+                "oracle_ids": ordered_ids,
+            })
 
     ownership = [
         {

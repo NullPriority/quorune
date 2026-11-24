@@ -6,6 +6,7 @@ from .context import ReadOnlyHandlerContext, SemanticNodeError, SemanticSourceCo
 from .intents import IntentPlan
 from .registry import SemanticHandlerRegistry
 from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, split_next_turn_effect
+from ..extra_combat_model import EXTRA_COMBAT_FOLLOWUP_FIELD
 
 
 class SemanticInterpreter:
@@ -19,6 +20,10 @@ class SemanticInterpreter:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan | None:
+        if EXTRA_COMBAT_FOLLOWUP_FIELD in effect:
+            from .extra_combat import ExtraCombatHandler
+
+            return ExtraCombatHandler().lower(effect, context)
         if NEXT_TURN_EFFECT_FIELD in effect:
             try:
                 split_next_turn_effect(effect)

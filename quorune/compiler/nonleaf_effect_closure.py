@@ -7,6 +7,20 @@ from ..rules.self_return_capability_shapes import fixed_self_return_node_capabil
 
 def effect_program_is_closed(program, *, recognizers, recursive_is_closed, composed_is_closed):
     """Apply the shared promotion policy to a complete effect program."""
+    from ..rules.colored_hand_credit import COLORED_HAND_CREDIT
+    from .colored_hand_credit_template import closed_colored_hand_credit_spell
+
+    if COLORED_HAND_CREDIT in (program.cost_schema or {}):
+        return closed_colored_hand_credit_spell(program, body_is_closed=recursive_is_closed)
+
+    from ..rules.entry_x_graveyard_target import closed_entry_x_graveyard_target_program, has_entry_x_target_limit
+    if has_entry_x_target_limit(program.target_schema):
+        return closed_entry_x_graveyard_target_program(program, body_is_closed=recursive_is_closed)
+    from ..rules.announced_mana_value_target import has_announced_mana_value_limit
+    if has_announced_mana_value_limit(program.target_schema):
+        from .announced_mana_value_target import closed_announced_mana_value_target_program
+        return closed_announced_mana_value_target_program(program, body_is_closed=recursive_is_closed)
+
     from ..rules.graveyard_exile_branches import is_closed_graveyard_exile_branch_spell
     from ..rules.graveyard_exile_tokens import is_closed_graveyard_exile_token_activation
 
@@ -73,9 +87,13 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
         return True
     from .nonmana_equip_nodes import is_closed_nonmana_equip_program
     if is_closed_nonmana_equip_program(program):return True
+    from ..draw_redirect_model import temporary_draw_redirect_node_capabilities
     from ..rules.temporary_cast_restrictions import temporary_cast_node_capabilities
-    cast_rule=temporary_cast_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
-    if cast_rule and set(cast_rule)<=set(program.capability_dependencies):return True
+
+    shape = dict(effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage)
+    player_rule = temporary_cast_node_capabilities(**shape) or temporary_draw_redirect_node_capabilities(**shape)
+    if player_rule and set(player_rule) <= set(program.capability_dependencies):
+        return True
     from ..rules.random_graveyard_returns import random_graveyard_return_node_capabilities
     random_return=random_graveyard_return_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     if random_return and set(random_return)<=set(program.capability_dependencies):return True
@@ -92,6 +110,9 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     if event_outcome_program_is_closed(program): return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
+    from ..rules.linked_clue_copy import is_closed_linked_clue_copy_program
+    if is_closed_linked_clue_copy_program(program):
+        return True
     from ..rules.stack_target_change_shapes import single_stack_target_change_program_is_closed
     if single_stack_target_change_program_is_closed(program):return True
     from ..face_up_effect_model import face_up_node_capabilities

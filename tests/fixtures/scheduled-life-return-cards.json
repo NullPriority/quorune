@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_scheduled_life_return",
+  "source": "Constructed fixed upkeep alternatives",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000996",
+      "name": "Generic Scheduled Life Return",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of each player's upkeep, that player returns a permanent they control to its owner's hand unless they pay 2 life.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000997",
+      "name": "Generic Scheduled Life Return Option",
+      "mana_cost": "{4}",
+      "cmc": 4,
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of each player's upkeep, that player may pay 2 life. If they don't, they return a permanent they control to its owner's hand.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

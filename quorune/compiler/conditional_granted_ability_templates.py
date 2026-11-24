@@ -29,20 +29,14 @@ def graveyard_quoted_source_parts(text):
 def conditional_typed_keyword_handler(text: str, *, source_name: str):
     """Gate an existing complete keyword modifier without discarding fragments."""
     from .public_state_queries import fixed_public_state_parts
-    from .continuous_templates import _TRAILING_REMINDER, _conditional_target
+    from .continuous_templates import _TRAILING_REMINDER, _conditional_target, bind_conditional_subject
     from ..continuous_conditions import FixedPublicStateConditionKind
     parts = fixed_public_state_parts(text, source_name=source_name)
     if parts is None:
         return None
     source_condition, body = parts
     body = _TRAILING_REMINDER.sub('', body.strip()).rstrip('.')
-    if re.match(r'^it\b', body, re.I):
-        subject = 'This creature'
-        attached=next((leaf for leaf in source_condition.leaf_conditions() if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
-        if attached is not None:
-            subject = ('Enchanted land' if 'land' in attached.predicate.types_all
-                else 'Enchanted creature')
-        body = re.sub(r'^it\b', subject, body, count=1, flags=re.I)
+    body = bind_conditional_subject(body, source_condition)
     match = re.fullmatch(r'(?P<prefix>.+?)(?P<verb>has|have) (?P<abilities>.+)', body, re.I)
     if match is None or '"' in text:
         return None
@@ -73,6 +67,39 @@ def conditional_typed_keyword_handler(text: str, *, source_name: str):
             capabilities.add('permanent.designation.renowned')
         return 'continuous-conditional-typed-keywords-v1', descriptor, tuple(sorted(capabilities))
     return None
+
+
+TURN_SOURCE_ENCHANTMENT_CREATURE_KEYWORDS_TEMPLATE = "continuous-turn-source-enchantment-creature-keywords-v1"
+
+
+def turn_source_enchantment_creature_keyword_handler(text: str, *, source_name: str):
+    """Apply one closed typed grant over the disjoint source and creature sets."""
+    from ..rules.source_references import SourceReferenceSpec
+
+    match = re.fullmatch(
+        r"During your turn, (?P<source>.+?) and (?:other )?enchantment creatures you control "
+        r"have (?P<keywords>.+)",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    source = match["source"]
+    if source.casefold() != "this creature" and not SourceReferenceSpec(source_name).matches(source):
+        return None
+    keywords = match["keywords"]
+    self_grant = conditional_typed_keyword_handler(
+        "During your turn, this creature has " + keywords, source_name=source_name,
+    )
+    other_grant = conditional_typed_keyword_handler(
+        "During your turn, other enchantment creatures you control have " + keywords, source_name=source_name,
+    )
+    if self_grant is None or other_grant is None:
+        return None
+    return (
+        TURN_SOURCE_ENCHANTMENT_CREATURE_KEYWORDS_TEMPLATE,
+        (self_grant[1], other_grant[1]),
+        tuple(sorted(set(self_grant[2]) | set(other_grant[2]))),
+    )
 
 
 def graveyard_static_characteristics_handler(text: str, *, source_name: str):

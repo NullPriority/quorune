@@ -5,7 +5,7 @@ from enum import Enum
 import hashlib
 from typing import Any, Mapping
 
-from .affected_permanents import PermanentControllerRelation
+from .affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .util import stable_json
 
@@ -25,6 +25,10 @@ _LEGACY_PERMANENT_GROUP_FIELDS = frozenset(
     {"kind", "controller_relation", "target_controller", "query"}
 )
 _PERMANENT_GROUP_FIELDS = _LEGACY_PERMANENT_GROUP_FIELDS | {"exclude_source"}
+DEFENDING_CREATURE_DAMAGE_GROUP_KIND = "defending_player_creatures"
+DEALT_LIFE_GAIN_FIELD = "dealt_life_gain_version"
+TARGETED_DEALT_LIFE_GAIN_VERSION = 2
+DEALT_LIFE_GAIN_CAPABILITY = "damage.batch.dealt_life_gain"
 
 
 def require_nonempty_string(value: Any, *, field: str) -> str:
@@ -91,10 +95,10 @@ class PermanentDamageGroup:
             raise FixedDamageSetError(
                 "Fixed permanent damage uses its typed source-exclusion flag"
             )
-        if self.controller_relation is PermanentControllerRelation.ACTOR:
-            raise FixedDamageSetError(
-                "Fixed permanent damage does not support actor-only groups"
-            )
+        if self.controller_relation is PermanentControllerRelation.ACTOR and (
+            not self.exclude_source or self.query != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        ):
+            raise FixedDamageSetError("Actor-controlled damage requires the exact other-creature group")
         represented_by_all = bool(
             set(self.query.types_all).intersection(_DAMAGEABLE_TYPES)
         )
@@ -127,7 +131,27 @@ class PermanentDamageGroup:
         return payload
 
 
-FixedDamageGroup = PlayerDamageGroup | PermanentDamageGroup
+@dataclass(frozen=True, slots=True)
+class DefendingCreatureDamageGroup:
+    player: str
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise FixedDamageSetError("Defending-player creature damage requires its exact version")
+        require_nonempty_string(self.player, field="Defending player")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"kind": DEFENDING_CREATURE_DAMAGE_GROUP_KIND, "schema_version": self.schema_version, "player": self.player}
+
+    def affected_set(self) -> AffectedPermanentSetSpec:
+        return AffectedPermanentSetSpec(
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+            controller_relation=PermanentControllerRelation.TARGET_PLAYER, target_controller=self.player,
+        )
+
+
+FixedDamageGroup = PlayerDamageGroup | PermanentDamageGroup | DefendingCreatureDamageGroup
 
 
 def _group_from_dict(value: Mapping[str, Any]) -> FixedDamageGroup:
@@ -145,6 +169,10 @@ def _group_from_dict(value: Mapping[str, Any]) -> FixedDamageGroup:
             raise FixedDamageSetError(
                 "Player damage relation is unsupported"
             ) from exc
+    if kind == DEFENDING_CREATURE_DAMAGE_GROUP_KIND:
+        if set(value) != {"kind", "schema_version", "player"}:
+            raise FixedDamageSetError("Defending-player creature damage fields are closed")
+        return DefendingCreatureDamageGroup(value["player"], value["schema_version"])
     if kind != "permanents":
         raise FixedDamageSetError("Fixed damage group kind is unsupported")
     fields = frozenset(value)
@@ -181,12 +209,17 @@ class FixedDamageSetSpec:
                 "Fixed damage sets require at least one recipient group"
             )
         if any(
-            not isinstance(group, (PlayerDamageGroup, PermanentDamageGroup))
+            not isinstance(group, (PlayerDamageGroup, PermanentDamageGroup, DefendingCreatureDamageGroup))
             for group in groups
         ):
             raise FixedDamageSetError(
                 "Fixed damage sets require typed recipient groups"
             )
+        if len(groups) != 1 and any(
+            isinstance(group, PermanentDamageGroup) and group.controller_relation is PermanentControllerRelation.ACTOR
+            for group in groups
+        ):
+            raise FixedDamageSetError("The actor-controlled creature group is a complete damage result")
         serialized = [stable_json(group.to_dict()) for group in groups]
         if len(serialized) != len(set(serialized)):
             raise FixedDamageSetError(
@@ -215,7 +248,13 @@ class FixedDamageSetSpec:
         ).hexdigest()
 
 
+def dealt_life_gain_group_is_closed(spec):
+    return (isinstance(spec, FixedDamageSetSpec)
+            and spec.groups == (PlayerDamageGroup(PlayerDamageRelation.OPPONENTS),))
+
+
 __all__ = [
+    "DefendingCreatureDamageGroup",
     "FixedDamageGroup",
     "FixedDamageSetError",
     "FixedDamageSetSpec",

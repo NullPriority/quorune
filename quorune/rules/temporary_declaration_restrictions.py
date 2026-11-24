@@ -76,7 +76,7 @@ class CurrentDeclarationRestriction:
 
 
 def temporary_declaration_restriction(
-    kind: TemporaryDeclarationRestrictionKind | str | Mapping,
+    kind: TemporaryDeclarationRestrictionKind | str | Mapping, *, attack_defender: str | None = None,
 ) -> DeclarationRestrictionTemplate | DeclarationRequirementTemplate:
     """Decode one closed prohibition, blocker predicate or all-blocker requirement."""
 
@@ -84,7 +84,7 @@ def temporary_declaration_restriction(
         from ..temporary_attack_requirement_model import TEMPORARY_ATTACK_REQUIREMENT_KIND, TemporaryAttackRequirementSpec
         if kind.get('kind') == TEMPORARY_ATTACK_REQUIREMENT_KIND:
             try:
-                return TemporaryAttackRequirementSpec.from_dict(kind).to_requirement()
+                return TemporaryAttackRequirementSpec.from_dict(kind).to_requirement(defender=attack_defender)
             except (TypeError, ValueError) as exc:
                 raise TemporaryDeclarationRestrictionError(str(exc)) from exc
         from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND, TemporaryAllBlockerSpec
@@ -130,6 +130,7 @@ def commit_temporary_declaration_restriction(
     source: ResolutionEffectSource,
     kind: TemporaryDeclarationRestrictionKind | str | Mapping,
     expires_on_next_turn_of: str | None = None,
+    attack_defender: str | None = None,
 ) -> ResolutionDeclarationRuleEffect:
     """Create one locked, duration-bound declaration rule."""
 
@@ -143,7 +144,10 @@ def commit_temporary_declaration_restriction(
         raise TemporaryDeclarationRestrictionError(
             "Temporary declaration restrictions require typed resolution source identity"
         )
-    restriction = temporary_declaration_restriction(kind)
+    restriction = temporary_declaration_restriction(kind, attack_defender=attack_defender)
+    if (isinstance(restriction, DeclarationRequirementTemplate) and restriction.defender is not None
+            and restriction.defender not in host.state.players):
+        raise TemporaryDeclarationRestrictionError("A specific attack requirement must bind a represented player")
     try:
         effect = create_resolution_declaration_rule_effect(
             host,

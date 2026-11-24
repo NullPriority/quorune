@@ -5,16 +5,21 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..replacement.operations import SetField
 from ..replacement_effects import ReplacementClass, ReplacementEffect
 from ..rules.capabilities import load_default_capability_registry
 from ..life_gain_permission import FixedLifeGainProhibitionSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
+from .current_ability_components import program_has_current_ability_fragments
 from .context import SemanticNodeError
 
 
 _LIFE_GAIN_HANDLER_ID = "replacement.life.gain.multiplier.v1"
 _LIFE_GAIN_ADDITION_HANDLER_ID = "replacement.life.gain.addition.v1"
 _LIFE_GAIN_ADDITION_CAPABILITY = "life.gain.replacement.static_addition"
+OPPONENT_LIFE_GAIN_TO_LOSS_HANDLER_ID = "replacement.life.gain.to_loss.opponent.v1"
+OPPONENT_LIFE_GAIN_TO_LOSS_CAPABILITY = "life.gain.replacement.to_loss.opponent"
 _RELATIONS = {"any", "source_controller", "opponent"}
 
 
@@ -35,6 +40,8 @@ class LifeReplacementHost(Protocol):
     def _semantic_event_sources(
         self, *, zones: set[str] | None = None
     ) -> list[Any]: ...
+
+    def _effective_card_data(self, source: Any) -> Mapping[str, Any]: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
@@ -217,6 +224,42 @@ class LifeGainAdditionHandler:
         return (self.replacement_effect(descriptor, context),)
 
 
+@dataclass(frozen=True, slots=True)
+class OpponentLifeGainToLossHandler:
+    handler_id: str = OPPONENT_LIFE_GAIN_TO_LOSS_HANDLER_ID
+    schema_version: int = 1
+    family: str = "replacement.life.gain.to_loss"
+    event: str = "life.change"
+    rule_references: tuple[str, ...] = (
+        "119.3", "119.7", "119.9", "119.10", "120.4c", "614.1",
+        "614.4", "614.5", "614.6", "616.1", "616.1f",
+    )
+    capability_dependencies: tuple[str, ...] = (OPPONENT_LIFE_GAIN_TO_LOSS_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="runtime handler")
+        if (descriptor["handler_id"] != self.handler_id
+                or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version
+                or descriptor["event"] != self.event):
+            raise SemanticNodeError("Opposing life-gain conversion requires its exact versioned life-change descriptor")
+
+    def replacement_effect(
+        self, descriptor: Mapping[str, Any], context: LifeReplacementSourceContext,
+    ) -> ReplacementEffect:
+        self.validate(descriptor)
+        return _positive_life_gain_replacement(
+            context, handler_id=self.handler_id, event=self.event, relation="opponent",
+            quantity="opponent", operation=SetField(field="direction", value="loss"),
+            label="lose that much life instead",
+        )
+
+    def lower(
+        self, descriptor: Mapping[str, Any], context: LifeReplacementSourceContext,
+    ) -> tuple[ReplacementEffect, ...]:
+        return (self.replacement_effect(descriptor, context),)
+
+
 class LifeReplacementRegistry(
     RuntimeComponentRegistry[
         LifeReplacementSourceContext,
@@ -241,7 +284,10 @@ class LifeReplacementRegistry(
 @lru_cache(maxsize=1)
 def default_life_replacement_registry() -> LifeReplacementRegistry:
     from .life_prohibitions import LifeGainProhibitionHandler
-    registry = LifeReplacementRegistry((LifeGainMultiplierHandler(), LifeGainAdditionHandler(), LifeGainProhibitionHandler()))
+    registry = LifeReplacementRegistry((
+        LifeGainMultiplierHandler(), LifeGainAdditionHandler(),
+        OpponentLifeGainToLossHandler(), LifeGainProhibitionHandler(),
+    ))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )
@@ -283,6 +329,11 @@ def collect_life_change_replacement_effects(
         for program in programs:
             if not host.semantic_program_is_current_trusted(program):
                 continue
+            if any(descriptor.get("handler_id") == OPPONENT_LIFE_GAIN_TO_LOSS_HANDLER_ID for descriptor in program.handlers):
+                if CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage:
+                    raise SemanticNodeError("Opposing life-gain conversion lacks current source-ability scope")
+                if not program_has_current_ability_fragments(program, host._effective_card_data(source)):
+                    continue
             for descriptor_index, descriptor in enumerate(program.handlers):
                 effects.append(
                     registry.replacement_effect(

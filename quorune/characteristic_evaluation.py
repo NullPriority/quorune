@@ -8,6 +8,7 @@ from .continuous_effects import (
     CharacteristicState,
     ContinuousEffect,
     ContinuousEffectDuration,
+    ContinuousObjectIdentity,
     ContinuousOperation,
     Layer,
     evaluate_continuous_effects,
@@ -29,7 +30,9 @@ from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD, defined_token_curren
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     ColorlessCharacteristicDefinitionSpec,
+    DEFINING_LIFE_SCOPES,
     PowerToughnessCalculation,
+    CharacteristicQuantityScope,
     QueryCharacteristicModifierSpec,
     QueryPowerToughnessDefinitionSpec,
     CharacteristicQuantitySpec,
@@ -37,6 +40,7 @@ from .characteristic_fragments import (
 from .creature_subtypes import CREATURE_SUBTYPES
 from .type_subtype_vocabulary import CARD_SUPERTYPES
 from .all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS
+from .off_battlefield_creatures import OffBattlefieldSelfCreatureSpec
 
 
 _CARD_TYPES = {
@@ -111,6 +115,8 @@ def _annotation_terms(
 ) -> tuple[dict[str, Any], list[str], list[str]]:
     temporary = dict(card.annotations.get("until_end_of_turn") or {})
     overrides = dict(card.annotations.get("copy_overrides") or {})
+    from .rules.copied_flip_faces import current_flip_copy_values
+    overrides = current_flip_copy_values(card, overrides)
     if DEFINED_TOKEN_FACES_FIELD in overrides:
         overrides = defined_token_current_characteristics(card, overrides)
     from .shared_type_doors import SHARED_TYPE_COPY_FIELD
@@ -319,9 +325,16 @@ def _all_creature_types_effect(
 
 
 def _copy_layer_effects(card,overrides):
+    from dataclasses import replace
     from .composition_characteristics import composition_copy_effect
-    return [effect for effect in (_copy_effect(card,overrides),composition_copy_effect(card))
-        if effect is not None]
+    from .replacement.face_status_copy import COPY_HISTORY_FIELD, ScopedCopyValues
+
+    copy_effect = _copy_effect(card,overrides)
+    history = card.annotations.get(COPY_HISTORY_FIELD)
+    if copy_effect is not None and history is not None:
+        timestamp = ScopedCopyValues.from_dict(history).effective.timestamp
+        copy_effect = replace(copy_effect,timestamp=timestamp)
+    return [effect for effect in (copy_effect,composition_copy_effect(card)) if effect is not None]
 
 
 def _suspect_ability_effect(card: CardInstance) -> ContinuousEffect:
@@ -502,6 +515,7 @@ def _query_characteristic_effects(
     context: Mapping[str, Any],
     count_resolver: Callable[[CharacteristicQuantitySpec], int],
     maximum_layer: Layer | None = None,
+    active_player: str | None = None,
 ) -> list[ContinuousEffect]:
     """Materialize typed live quantities at their CR 613 layer boundary.
 
@@ -518,9 +532,9 @@ def _query_characteristic_effects(
     for index, fragment in enumerate(fragments):
         if isinstance(fragment, QueryPowerToughnessDefinitionSpec):
             count = count_resolver(fragment.quantity)
-            if type(count) is not int or count < 0:
+            if type(count) is not int or (count < 0 and fragment.quantity.scope not in DEFINING_LIFE_SCOPES):
                 raise ContinuousEffectError(
-                    "Characteristic quantity resolvers must return a nonnegative integer"
+                    "A characteristic definition requires a permitted integer quantity"
                 )
             operations = tuple(
                 ContinuousOperation(operation, count + adjustment)
@@ -550,18 +564,25 @@ def _query_characteristic_effects(
             or card.zone != "battlefield"
         ):
             continue
-        if fragment.quantity.schema_version == 6 and maximum_layer is not None and maximum_layer < Layer.POWER_TOUGHNESS:
+        if maximum_layer is not None and maximum_layer < Layer.POWER_TOUGHNESS and (
+            fragment.controller_turn_only or fragment.quantity.schema_version == 6
+            or fragment.quantity.scope is CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE
+        ):
+            continue
+        if fragment.controller_turn_only and card.controller != active_player:
             continue
         count = count_resolver(fragment.quantity)
         if type(count) is not int or count < 0:
             raise ContinuousEffectError(
                 "Characteristic quantity resolvers must return a nonnegative integer"
             )
+        if count < fragment.minimum_count:
+            continue
         multiplier = (
             count
             if fragment.calculation
             is PowerToughnessCalculation.PER_MATCHING_OBJECT
-            else int(count >= fragment.minimum_count)
+            else 1
         )
         if not multiplier:
             continue
@@ -727,6 +748,21 @@ def battlefield_type_dependency_view(
     return state, context, tuple(effect for effect in effects if effect.layer is Layer.TYPE)
 
 
+
+def off_battlefield_self_creature_effects(
+    card: CardInstance, fragments: Sequence[Any], *, ignore_face_down: bool = False,
+) -> tuple[ContinuousEffect, ...]:
+    if card.zone == "battlefield" or (card.face_down and not ignore_face_down):
+        return ()
+    specs = tuple(fragment for fragment in canonical_ability_fragments(fragments)
+                  if isinstance(fragment, OffBattlefieldSelfCreatureSpec))
+    if not specs:
+        return ()
+    source = ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+    return tuple(effect for index, spec in enumerate(specs)
+                 for effect in spec.layer_effects(source, timestamp=card.zone_timestamp, occurrence=index))
+
+
 def evaluate_card_characteristics(
     card: CardInstance,
     base: Mapping[str, Any],
@@ -741,6 +777,7 @@ def evaluate_card_characteristics(
     enchanted: bool = False,
     equipped: bool = False,
     modified: bool = False,
+    active_player: str | None = None,
     type_order=None,
     dependency_order_version: int | None = CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ) -> dict[str, Any]:
@@ -765,6 +802,12 @@ def evaluate_card_characteristics(
             overrides,
         )
     )
+    source_zone_effects = () if maximum_layer is not None and maximum_layer < Layer.TYPE else (
+        off_battlefield_self_creature_effects(
+            card, overrides.get("ability_fragments", result.get("ability_fragments", ())),
+            ignore_face_down=ignore_face_down,
+        )
+    )
     layered = bool(
         overrides
         or card.permanent_composition is not None
@@ -783,6 +826,7 @@ def evaluate_card_characteristics(
             and card.annotations.get(MORPH_FACE_DOWN_ANNOTATION) is not None
         )
         or runtime_effects
+        or source_zone_effects
         or query_count_resolver is not None
     )
     if not layered:
@@ -802,7 +846,7 @@ def evaluate_card_characteristics(
         has_all_colors_definition=has_all_colors_definition,
         ignore_face_down=ignore_face_down,
     )
-    effects.extend(runtime_effects)
+    effects.extend((*source_zone_effects, *runtime_effects))
     context = _card_characteristic_query_context(card, enchanted=enchanted, equipped=equipped, modified=modified)
     context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
     if type_order is not None:
@@ -818,6 +862,7 @@ def evaluate_card_characteristics(
                 context=context,
                 count_resolver=query_count_resolver,
                 maximum_layer=maximum_layer,
+                active_player=active_player,
             )
         )
     if maximum_layer is not None:

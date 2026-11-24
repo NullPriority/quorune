@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707811",
+      "name": "Trial Binding Reflection",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "oracle_text": "Target artifact or creature becomes a copy of another target artifact or creature.",
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707812",
+      "name": "Trial Growth Spark",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707813",
+      "name": "Trial River Guardian",
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "type_line": "Creature — Human Soldier",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707814",
+      "name": "Trial Oak Guard",
+      "mana_cost": "{2}{G}",
+      "cmc": 3,
+      "type_line": "Creature — Treefolk",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707815",
+      "name": "Trial Surveyor Harness",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact — Equipment",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "oracle_text": "Equip {1}",
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707816",
+      "name": "Trial Outrider Mantle",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact — Equipment",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "oracle_text": "Equip {2}",
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707817",
+      "name": "Trial Sealed Watcher",
+      "mana_cost": "{3}{B}",
+      "cmc": 4,
+      "type_line": "Creature — Wraith",
+      "power": "4",
+      "toughness": "1",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "oracle_text": "",
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000707818",
+      "name": "Trial Echoing Ink",
+      "mana_cost": "{R}{R}",
+      "cmc": 2,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original unit and native fixtures for a persistent public copy spell."
+}

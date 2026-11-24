@@ -24,6 +24,37 @@ class CounterRemovalHost(CounterStateHost, Protocol):
     pass
 
 
+ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD = "all_permanents_then_token_exile_version"
+
+
+def all_permanent_counters_then_token_exile_effect(source="$source"):
+    return {"op": "remove_all_counters", "source": source,
+            ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD: 1}
+
+
+def validate_all_permanent_counters_then_token_exile(effect, *, resolved=False):
+    if not isinstance(effect, Mapping):
+        raise CounterRemovalError("The global counter and token result requires its exact instruction")
+    source = effect.get("source")
+    if resolved and (type(source) is not str or not source or source.startswith("$")):
+        raise CounterRemovalError("The global counter and token result requires its resolving source")
+    expected = all_permanent_counters_then_token_exile_effect(source if resolved else "$source")
+    if effect != expected or type(effect[ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD]) is not int:
+        raise CounterRemovalError("The global result removes permanent counters before exiling tokens")
+    return source
+
+
+@dataclass(frozen=True, slots=True)
+class AllPermanentCountersThenTokenExileIntent:
+    actor: str
+    source_ref: str
+    reason: str
+
+    def __post_init__(self):
+        if any(type(value) is not str or not value for value in (self.actor, self.source_ref, self.reason)):
+            raise CounterRemovalError("The global counter and token result requires its actor and source")
+
+
 @dataclass(frozen=True, slots=True)
 class CounterRemoval:
     object_id: str
@@ -470,6 +501,63 @@ def commit_counter_removals(
 
     validate_counter_removal_plan(host, plan)
     return _commit_removal_counter_plan(host, plan.counter_plan)
+
+
+def snapshot_all_permanent_counter_removals(host: CounterRemovalHost) -> tuple[CounterRemoval, ...]:
+    return tuple(
+        CounterRemoval(card.object_id, name, count, expected_logical_object_id=card.logical_object_id)
+        for card in host.state.cards.values() if card.zone == "battlefield" and not card.phased_out
+        for name, count in _permanent_counter_snapshot(
+            host, object_id=card.object_id, expected_zone="battlefield", expected_logical_object_id=card.logical_object_id,
+        )
+    )
+def commit_all_permanent_counter_removals(
+    host: CounterRemovalHost, *, captured: tuple[CounterRemoval, ...] | None = None,
+) -> tuple[AllCounterRemovalResult, ...]:
+    removals = snapshot_all_permanent_counter_removals(host)
+    if captured is not None and tuple(sorted(removals, key=lambda row: row.key)) != captured:
+        raise CounterRemovalError("The captured entry counter inventory changed before commit")
+    if not removals:
+        return ()
+    transitions = commit_counter_removals(host, plan_counter_removals(host, removals))
+    by_permanent: dict[str, list[tuple[str, int]]] = {}
+    for transition in transitions:
+        if transition.applied_delta:
+            by_permanent.setdefault(transition.subject_id, []).append(
+                (transition.counter_name, -transition.applied_delta),
+            )
+    return tuple(AllCounterRemovalResult(object_id, tuple(removed))
+                 for object_id, removed in by_permanent.items())
+
+
+def commit_entry_counter_transfer(host, prepared_entries):
+    from .errors import GameRuleError
+    from .replacement.counted_entry_counters import ENTRY_COUNTER_TRANSFER_RESULT, TransferEntryCounters
+
+    selected = [(plan, plan.event.payload[ENTRY_COUNTER_TRANSFER_RESULT]) for plan in prepared_entries
+                if ENTRY_COUNTER_TRANSFER_RESULT in plan.event.payload]
+    if not selected:
+        return
+    if len(selected) != 1:
+        raise GameRuleError("A simultaneous entry can consume its shared counter inventory only once")
+    plan, data = selected[0]
+    try:
+        operation = TransferEntryCounters.from_dict(data)
+        applied = [effect for effect in plan.effects if effect.effect_id in plan.event.applied_effects
+                   and effect.operations == (operation,)]
+        if (len(applied) != 1 or plan.event.affected_object is None
+                or plan.event.affected_object.object_id != plan.object_id
+                or operation.source_ref != plan.event.payload.get("object_ref")
+                or operation.placing_player != plan.destination_controller):
+            raise CounterRemovalError("Entry counter transfer lost its original replacement authority")
+        results = commit_all_permanent_counter_removals(host, captured=operation.removals)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    for result in results:
+        host._record_all_removed_counters(
+            result, host.state.cards[result.object_id],
+            actor=operation.placing_player, source_ref=operation.source_ref,
+        )
 
 
 def validate_counter_removal_plan(

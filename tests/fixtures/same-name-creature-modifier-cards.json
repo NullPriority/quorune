@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for current same-name creature stat spells",
+  "cards": [
+    {
+      "oracle_id": "0dd95516-893d-477e-a38c-3cc37c6e7ae0",
+      "name": "Bile Blight",
+      "mana_cost": "{B}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature and all other creatures with the same name as that creature get -3/-3 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "cmc": 2.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "359db1e6-bed9-412f-9e7c-f827ff6f2229",
+      "name": "Echoing Courage",
+      "mana_cost": "{1}{G}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature and all other creatures with the same name as that creature get +2/+2 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2018-03-16",
+      "cmc": 2.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1e46cc7-47da-4165-8c6b-f1cd2aa79aa5",
+      "name": "Echoing Decay",
+      "mana_cost": "{1}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Target creature and all other creatures with the same name as that creature get -2/-2 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2004-02-06",
+      "cmc": 2.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0dd95516-893d-477e-a38c-3cc37c6e7ae0",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If the target creature is an illegal target as Bile Blight tries to resolve, it won't resolve and none of its effects will happen. No creature will get -3/-3."
+    },
+    {
+      "oracle_id": "0dd95516-893d-477e-a38c-3cc37c6e7ae0",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Bile Blight has only one target. Other creatures with that name are not targeted. For example, a creature with hexproof will still get -3/-3 if it has the same name as the target creature."
+    },
+    {
+      "oracle_id": "0dd95516-893d-477e-a38c-3cc37c6e7ae0",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Unless a token is a copy of another permanent or was explicitly given a name by the effect that created it, its name is the subtypes it was given when it was created plus the word \"Token.\" For example, if an effect creates a 1/1 Soldier creature token, that token is named \"Soldier Token.\""
+    },
+    {
+      "oracle_id": "359db1e6-bed9-412f-9e7c-f827ff6f2229",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If the target creature is an illegal target by the time Echoing Courage tries to resolve, the spell doesn't resolve. No creatures get +2/+2."
+    },
+    {
+      "oracle_id": "359db1e6-bed9-412f-9e7c-f827ff6f2229",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "A face-down creature has no name, so it can't share a name with anything. This includes other creatures with no name."
+    },
+    {
+      "oracle_id": "359db1e6-bed9-412f-9e7c-f827ff6f2229",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "Echoing Courage has only one target. Other creatures with that name are not targeted. For example, a creature with protection from green will still get +2/+2 if it has the same name as the target creature."
+    },
+    {
+      "oracle_id": "359db1e6-bed9-412f-9e7c-f827ff6f2229",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Unless a token is a copy of another permanent or was explicitly given a name by the effect that created it, its name is the subtypes it was given when it was created plus the word \"Token.\" For example, if an effect creates a 1/1 Soldier creature token, that token is named \"Soldier Token.\""
+    }
+  ]
+}

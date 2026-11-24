@@ -351,6 +351,133 @@ def shadowed_reviewed_subtype_anthem_keys(
     return shadowed
 
 
+def shadowed_reviewed_self_chosen_subtype_keys(
+    record, generated, reviewed, *, capability_registry=None, capability_profile="traditional", oracle_ir=None,
+) -> set[str]:
+    """Retire a whole reviewed cast wrapper only under complete current printed authority."""
+    if capability_registry is None:
+        return set()
+    candidates = [
+        old for old in reviewed
+        if old.oracle_id == record.oracle_id and old.trust_level == "trusted"
+        and old.ability_id == "spell:front" and old.event == "resolve" and old.active_zone == "stack"
+        and old.destination == "battlefield" and len(old.effects) == 1 and not old.handlers
+        and set(old.effects[0]) == {"op", "apply_as_subtype"}
+        and old.effects[0]["op"] == "choose_creature_type" and old.effects[0]["apply_as_subtype"] is True
+        and old.target_schema is None and old.cost_schema is None and old.event_condition is None
+        and not old.requires_arbiter and old.provenance.get("review_status") == "reviewed"
+    ]
+    if len(candidates) != 1:
+        return set()
+    old, = candidates
+    from ..entry_designations import SELF_CHOSEN_SUBTYPE_CAPABILITY, SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID, SELF_CHOSEN_SUBTYPE_CONTINUOUS_HANDLER_ID
+    from .admission import program_has_complete_card_program_admission
+    current = _current_entry_choice_programs(record, generated, old)
+    linked = {descriptor["handler_id"] for p in current
+              if SELF_CHOSEN_SUBTYPE_CAPABILITY in p.capability_dependencies
+              and program_has_complete_card_program_admission(p)
+              for descriptor in p.handlers}
+    if linked != {SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID, SELF_CHOSEN_SUBTYPE_CONTINUOUS_HANDLER_ID}:
+        return set()
+    return {old.key} if _has_complete_entry_choice_program(
+        record, current, capability_registry, capability_profile, oracle_ir,
+    ) else set()
+
+
+def _current_entry_choice_programs(record, generated, reviewed):
+    hashes = ("source_oracle_hash", "source_rulings_hash")
+    return tuple(
+        program for program in generated
+        if program.oracle_id == record.oracle_id and program.trust_level == "trusted"
+        and str(program.provenance.get("authored_by", "")).startswith("oracle-ir-v")
+        and all(reviewed.provenance.get(field) and reviewed.provenance[field] == program.provenance.get(field)
+                for field in hashes)
+    )
+
+
+def _has_complete_entry_choice_program(record, current, capability_registry, capability_profile, oracle_ir):
+    from .binding import bind_semantic_program_runtime
+    from ..oracle_ir import compile_oracle_card
+
+    ir = oracle_ir or compile_oracle_card(record, capability_registry=capability_registry,
+                                          capability_profile=capability_profile)
+    if ir.oracle_id != record.oracle_id or ir.status != "exact" or len(ir.faces) != 1:
+        return False
+    for node in ir.faces[0].nodes:
+        if not node.handlers and not node.effects:
+            continue
+        represented = [p for p in current if p.event == node.event and p.active_zone == node.active_zone
+                       and tuple(p.handlers) == tuple(node.handlers) and tuple(p.effects) == tuple(node.effects)
+                       and p.target_schema == node.target_schema and p.event_condition == node.event_condition]
+        if len(represented) != 1 or not bind_semantic_program_runtime(
+            represented[0], capability_registry=capability_registry, profile=capability_profile,
+        )["strict"]:
+            return False
+    return True
+
+
+def _shadowed_reviewed_entry_card_name_keys(
+    record, generated, reviewed, *, capability_registry, capability_profile, oracle_ir,
+):
+    if capability_registry is None:
+        return set()
+    candidates = [
+        program for program in reviewed
+        if program.oracle_id == record.oracle_id and program.trust_level == "trusted"
+        and program.ability_id == "spell:front" and (program.event, program.active_zone) == ("resolve", "stack")
+        and program.destination == "battlefield" and _canonical_effects(program) == [{"op": "choose_card_name"}]
+        and not program.handlers and program.target_schema is None and program.cost_schema is None
+        and program.event_condition is None and not program.requires_arbiter
+        and program.provenance.get("review_status") == "reviewed"
+    ]
+    if len(candidates) != 1:
+        return set()
+    old, = candidates
+    from ..entry_designations import ENTRY_CARD_NAME_HANDLER_ID
+
+    current = _current_entry_choice_programs(record, generated, old)
+    linked = {
+        item.get("handler_id") for program in current
+        if program.capability_closure and program.capability_closure.get("trusted") is True
+        for item in program.handlers
+        if item.get("handler_id") in {ENTRY_CARD_NAME_HANDLER_ID, "restriction.activation.chosen-name-nonmana.v1"}
+        and (item.get("handler_id") != ENTRY_CARD_NAME_HANDLER_ID or item.get("nonland") is False)
+    }
+    if linked != {ENTRY_CARD_NAME_HANDLER_ID, "restriction.activation.chosen-name-nonmana.v1"}:
+        return set()
+    return {old.key} if _has_complete_entry_choice_program(
+        record, current, capability_registry, capability_profile, oracle_ir,
+    ) else set()
+
+
+def _shadowed_reviewed_turn_color_protection_keys(record, generated, reviewed):
+    """Keep the historical view available while admitting the current typed body."""
+    from ..public_history_query_model import SPELL_COLOR_HISTORY_FIELD
+    from ..rules.next_spell_payment import is_closed_turn_color_spell_protection_program
+
+    fields = ("active_zone", "event", "event_condition", "target_schema", "cost_schema",
+              "handlers", "destination", "requires_arbiter")
+    hashes = ("source_oracle_hash", "source_rulings_hash")
+    shadowed = set()
+    for program in generated:
+        if (program.oracle_id != record.oracle_id or program.trust_level != "trusted"
+                or not program.capability_closure or program.capability_closure.get("trusted") is not True
+                or not is_closed_turn_color_spell_protection_program(program)):
+            continue
+        legacy = tuple(
+            {key: value for key, value in effect.items() if key not in (SPELL_COLOR_HISTORY_FIELD, "schema_version")}
+            for effect in program.effects
+        )
+        for prior in reviewed:
+            if (prior.oracle_id == program.oracle_id and prior.trust_level == "trusted"
+                    and tuple(prior.effects) == legacy
+                    and all(getattr(prior, field) == getattr(program, field) for field in fields)
+                    and all(program.provenance.get(field) and prior.provenance.get(field) == program.provenance[field]
+                            for field in hashes)):
+                shadowed.add(prior.key)
+    return shadowed
+
+
 def shadowed_reviewed_program_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -361,9 +488,11 @@ def shadowed_reviewed_program_keys(
     generated = tuple(generated_programs)
     reviewed = tuple(reviewed_programs)
     from .alternative_price_overlay import shadowed_reviewed_pitch_counter_keys, shadowed_reviewed_zero_price_keys
-    from .current_view_equivalence import shadowed_reviewed_fixed_search_keys,shadowed_reviewed_upkeep_type_count_keys
+    from .current_view_equivalence import (
+        shadowed_reviewed_fixed_search_keys, shadowed_reviewed_reanimation_life_loss_keys, shadowed_reviewed_upkeep_type_count_keys,
+    )
     from .kicker_view_equivalence import shadowed_reviewed_kicker_target_keys
-    from .modal_catalog_equivalence import shadowed_reviewed_modal_catalog_keys
+    from .modal_catalog_equivalence import shadowed_reviewed_color_modal_keys, shadowed_reviewed_modal_catalog_keys
     from .resolution_mana_overlay import shadowed_reviewed_resolution_mana_keys
     from .additional_token_equivalence import shadowed_reviewed_additional_token_keys
     from .empty_permanent_equivalence import shadowed_reviewed_empty_permanent_keys
@@ -371,7 +500,16 @@ def shadowed_reviewed_program_keys(
     from .activation_view_equivalence import shadowed_reviewed_activation_view_keys
     from .attached_grant_equivalence import shadowed_reviewed_attached_grant_keys
     from .overload_view_equivalence import shadowed_reviewed_overload_keys
-    return shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
+    self_type = shadowed_reviewed_self_chosen_subtype_keys(
+        record, generated, reviewed, capability_registry=capability_registry,
+        capability_profile=capability_profile, oracle_ir=oracle_ir,
+    )
+    card_name = _shadowed_reviewed_entry_card_name_keys(
+        record, generated, reviewed, capability_registry=capability_registry,
+        capability_profile=capability_profile, oracle_ir=oracle_ir,
+    )
+    color_modal = shadowed_reviewed_color_modal_keys(record, generated, reviewed)
+    return self_type | card_name | color_modal | shadowed_reviewed_reanimation_life_loss_keys(record, generated, reviewed) | _shadowed_reviewed_turn_color_protection_keys(record,generated,reviewed) | shadowed_reviewed_overload_keys(record,generated,reviewed,capability_registry=capability_registry,
         capability_profile=capability_profile) | shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(

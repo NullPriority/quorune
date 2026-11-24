@@ -23,6 +23,8 @@ from .reveal_until_library_selection import RevealUntilLibrarySelectionHandler
 from .extort import ExtortChoiceHandler
 from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
+from .temporary_copy_subject import TemporaryCopySubjectChoiceHandler
+from .temporary_occurrence_copy import TemporaryOccurrenceCopyChoiceHandler
 from .object_selection import OBJECT_SELECTION_HANDLERS
 from .hand_entry_collections import PrivateHandCollectionHandler
 from .named_zone_search import NamedZoneSearchChoiceHandler
@@ -31,6 +33,7 @@ from .shared_type_library import SharedTypeLibraryHandler
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
 from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
+from .owner_library_position_choice import OwnerLibraryPositionChoiceHandler
 from .targeted_graveyard_cast import TargetedGraveyardCastChoiceHandler
 from .graveyard_copy_cast import GRAVEYARD_COPY_HANDLERS
 from .untargeted_untap import FixedLandUntapChoiceHandler
@@ -93,6 +96,8 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             CompositionOrderHandler(),
             MutateMergeChoiceHandler(),
             ActualLifeTransferHandler(),
+            TemporaryCopySubjectChoiceHandler(),
+            TemporaryOccurrenceCopyChoiceHandler(),
             DiscardResultDrawHandler(),
             HandLibraryRedrawHandler(),
             FixedHandPutbackHandler(),
@@ -142,6 +147,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
             *FIXED_TOP_ORDER_HANDLERS,
+            OwnerLibraryPositionChoiceHandler(),
             TargetedGraveyardCastChoiceHandler(),
             *GRAVEYARD_COPY_HANDLERS,
             FixedLandUntapChoiceHandler(),

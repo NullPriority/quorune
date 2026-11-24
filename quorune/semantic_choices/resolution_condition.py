@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..ability_resolution_ordinal import is_ability_resolution_ordinal, validate_ability_resolution_ordinal
+from ..other_spell_history_model import is_other_spell_draw, validate_other_spell_draw
 from ..replacement.immutable import FrozenMap
 from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VERSION
 from ..resolution_conditions import (
@@ -26,7 +28,7 @@ class PublicResolutionConditionHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 109.5", "CR 608.2c", "CR 608.2h")
     capability_dependencies: tuple[str, ...] = (RESOLUTION_CONDITION_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding','condition_target')
+    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding','condition_target', 'resolution_ordinal')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -36,6 +38,10 @@ class PublicResolutionConditionHandler:
     test_modules: tuple[str, ...] = ("tests.test_resolution_public_conditions",)
 
     def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        if is_other_spell_draw(effect):
+            return _prepare_other_spell_draw(effect, context)
+        if is_ability_resolution_ordinal(effect):
+            return _prepare_ability_resolution_ordinal(effect, context)
         if effect.get('schema_version') == 18:
             from .paid_alternative_cast import prepare_paid_alternative_result
             return prepare_paid_alternative_result(effect,context)
@@ -86,6 +92,39 @@ class PublicResolutionConditionHandler:
 
     def complete(self, continuation: SemanticChoiceContinuation, response: Mapping[str, Any], query: SemanticChoiceQuery) -> SemanticChoiceCompletion:
         raise SemanticChoiceError("Public resolution conditions issue no player choice")
+
+
+def _prepare_other_spell_draw(effect, context):
+    try:
+        results = validate_other_spell_draw(effect, bound=True)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    if effect["player"] != context.actor or context.actor != context.stack_controller:
+        raise SemanticChoiceError("An other-spell draw requires its resolving controller")
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue(
+            reason="Check the committed other-spell cast.",
+            prepend_effects=tuple(FrozenMap(child) for child in results) if effect["cast_fact"] else (),
+        ),
+    )
+
+
+def _prepare_ability_resolution_ordinal(effect, context):
+    try:
+        children = validate_ability_resolution_ordinal(effect, bound=True)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    if effect["player"] != context.actor or context.actor != context.stack_controller:
+        raise SemanticChoiceError("An ability-resolution result requires its resolving controller")
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue(
+            reason="Check the committed resolution ordinal.",
+            prepend_effects=tuple(FrozenMap(child) for child in children)
+            if effect["resolution_ordinal"] == effect["condition"]["ordinal"] else (),
+        ),
+    )
 
 
 PUBLIC_RESOLUTION_CONDITION_HANDLERS = (PublicResolutionConditionHandler(),)

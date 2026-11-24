@@ -5,12 +5,38 @@ from . import regex_working_set as re
 from ..object_predicate import ObjectQuerySpec
 from ..rules.turn_cast_grant_model import (
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
-    TURN_CAST_RIDER_HANDLERS,
+    TURN_CAST_RIDER_HANDLERS, TurnCastGrantScope,
 )
 
 _CLAUSE = re.compile(r'^Once during each of your turns, you may cast (?P<subject>.+?) spell '
     r'from (?P<origin>your hand or the top of your library|your hand|your graveyard)'
     r'(?P<free> without paying its mana cost)?\.?$', re.I)
+
+
+_COMMAND_GRAVEYARD_CAST = re.compile(
+    r"You may cast instant and sorcery spells from your graveyard\. "
+    r"If a spell cast this way would be put into your graveyard, exile it instead\.",
+    re.IGNORECASE,
+)
+
+
+def command_graveyard_cast_grant_handler(text):
+    if _COMMAND_GRAVEYARD_CAST.fullmatch(" ".join(text.strip().split())) is None:
+        return None
+    spec = TurnCastGrantSpec(
+        origins=("graveyard",),
+        predicates_any=(ObjectQuerySpec(types_any=("instant", "sorcery")),),
+        cast_rider="graveyard_exile",
+        source_scope=TurnCastGrantScope.COMMAND_UNLIMITED,
+    )
+    return (
+        "command-graveyard-cast-grant-v1",
+        {
+            "handler_id": spec.handler_id, "schema_version": 1, "event": TURN_CAST_GRANT_EVENT,
+            "requires_complete_card_program": True, "grant": spec.to_dict(),
+        },
+        spec.capability_dependencies,
+    )
 
 
 def _spell_predicate(subject):

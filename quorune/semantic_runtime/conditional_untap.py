@@ -10,9 +10,10 @@ from ..card_programs.runtime import fixed_public_state_condition_matches
 from ..characteristic_fragments import CharacteristicQuantityScope
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from ..dynamic_characteristics import query_characteristic_count
+from ..object_predicate import ObjectQuerySpec
 from ..untap_step import (
     CONDITIONAL_UNTAP_CAPABILITY, CONDITIONAL_UNTAP_HANDLER_ID, UntapInstruction,
-    UntapSubjectRelation, UntapTurnRelation,
+    SOURCE_QUEST_UNTAP_SCOPE, UntapSubjectRelation, UntapTurnRelation, source_quest_untap_condition,
 )
 from .context import SemanticNodeError
 from .untap_steps import StaticUntapStepParticipationHandler
@@ -27,7 +28,10 @@ def _public_condition(descriptor):
         condition = FixedPublicStateConditionSpec.from_dict(payload["condition"])
     except (TypeError, ValueError) as exc:
         raise SemanticNodeError(str(exc)) from exc
-    if scope == "subject_controller_not_monarch":
+    if scope == SOURCE_QUEST_UNTAP_SCOPE:
+        if condition != source_quest_untap_condition():
+            raise SemanticNodeError("Additional creature untaps require the exact source quest counter threshold")
+    elif scope == "subject_controller_not_monarch":
         if condition.kind is not FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH:
             raise SemanticNodeError("Attached untap exception requires the subject controller's monarchy")
     else:
@@ -46,6 +50,11 @@ def conditional_untap_applies(host, source, descriptor):
     if descriptor.get("handler_id") != CONDITIONAL_UNTAP_HANDLER_ID:
         return None
     scope, condition = _public_condition(descriptor)
+    if scope == SOURCE_QUEST_UNTAP_SCOPE:
+        return fixed_public_state_condition_matches(
+            host.state, source, condition, public_object_resolver=None,
+            quantity_resolver=None, require_available=True,
+        )
     if scope == "subject_controller_not_monarch":
         subject = host.state.cards.get(source.attached_to)
         if subject is None or subject.zone != "battlefield" or subject.phased_out:
@@ -76,6 +85,16 @@ class ConditionalUntapStepParticipationHandler(StaticUntapStepParticipationHandl
         node = super(ConditionalUntapStepParticipationHandler, self).validate(
             {key: value for key, value in descriptor.items() if key != "public_condition"}
         )
+        if scope == SOURCE_QUEST_UNTAP_SCOPE:
+            if (
+                node.instruction is not UntapInstruction.ADDITIONAL or node.maximum is not None
+                or node.turn_relation is not UntapTurnRelation.OTHER_PLAYER or node.source_state != "any"
+                or node.subject_relation is not UntapSubjectRelation.QUERY
+                or node.controller_relation != "source_controller"
+                or node.predicate != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+            ):
+                raise SemanticNodeError("The source quest threshold changes only its controller's other-player creature untaps")
+            return node
         if (node.instruction is not UntapInstruction.PROHIBIT
                 or node.turn_relation is not UntapTurnRelation.SUBJECT_CONTROLLER or node.source_state != "any"
                 or node.subject_relation not in (UntapSubjectRelation.SOURCE, UntapSubjectRelation.ATTACHED_OBJECT)

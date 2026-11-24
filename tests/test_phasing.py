@@ -398,6 +398,67 @@ class FixedDirectPhaseOutNativeTests(InheritedNativeFixture, unittest.TestCase):
         ], ["Generic Bound Commander"])
 
     @staticmethod
+    def leave_room_for_extra_draws(session):
+        opening_hand = tuple(session.state.players["A"].zones["hand"])
+        for object_id in opening_hand[:-3]:
+            session.engine.move_card(object_id, "library", position="bottom", log=False)
+
+    def test_phased_source_skips_beginning_of_step_and_phased_in_source_observes_again(self):
+        for version in (1, 2):
+            with self.subTest(version=version):
+                session = self.session(61341712)
+                if version == 1:
+                    session.state.phasing_lifecycle_version = 1
+                self.assertEqual(version, session.state.phasing_lifecycle_version)
+                self.leave_room_for_extra_draws(session)
+                font = self.add(session.engine, "Font of Mythos", seat="B")
+                ripple = self.add(session.engine, "Reality Ripple", zone="hand")
+                warp = self.add(session.engine, "Time Warp", zone="hand")
+                for card in (font, ripple, warp):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 4, "U": 3})
+                self.checkpoint(session)
+                self.cast_for(session, "A", ripple, [font.ref], reserve={"C": 3, "U": 2})
+                self.resolve_top(session)
+                self.assertTrue(session.state.cards[font.object_id].phased_out)
+                self.cast_for(session, "A", warp, ["A"])
+                self.resolve_top(session)
+                extra, = session.state.extra_turns
+                self.until(session, lambda game: game.state.current_turn is not None
+                           and game.state.current_turn.turn_id == extra.turn_id
+                           and game.state.step == "draw" and game.state.pending_decision.kind == "priority")
+                self.assertTrue(session.state.cards[font.object_id].phased_out)
+                self.assertEqual(int(version == 1), self.trigger_count(session, font))
+                session = self.replay(session, load=True)
+                self.assertEqual(version, session.state.phasing_lifecycle_version)
+                self.until(session, lambda game: game.state.active_player == "B"
+                           and game.state.step == "draw" and game.state.pending_decision.kind == "priority")
+                self.assertFalse(session.state.cards[font.object_id].phased_out)
+                self.assertEqual(1, self.trigger_count(session, font))
+                self.replay(session, load=True)
+
+    def test_announced_beginning_of_step_trigger_resolves_after_its_source_phases_out(self):
+        session = self.session(61341713)
+        self.leave_room_for_extra_draws(session)
+        font = self.add(session.engine, "Font of Mythos", seat="B")
+        ripple = self.add(session.engine, "Reality Ripple", zone="hand")
+        for index in range(2):
+            self.add(session.engine, "Island", ref=f"phase-response-mana-{index}")
+        self.prepare(session)
+        self.checkpoint(session)
+        self.until(session, lambda game: game.state.active_player == "B"
+                   and game.state.step == "draw" and game.state.pending_decision.kind == "priority")
+        self.assertEqual(1, self.trigger_count(session, font))
+        before = len(session.state.players["B"].zones["hand"])
+        self.cast_for(session, "A", ripple, [font.ref])
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[font.object_id].phased_out)
+        self.assertEqual(1, self.trigger_count(session, font))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before + 2, len(session.state.players["B"].zones["hand"]))
+        self.replay(session, load=True)
+
+    @staticmethod
     def activation_offer(session, seat, source):
         legal = session.packet("pilot:" + seat, full=True)["decision"]["ctx"]["legal"]["actions"]
         offer, = (row for row in legal if row["id"].startswith("activate:" + source.ref + ":"))

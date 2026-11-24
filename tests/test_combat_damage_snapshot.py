@@ -256,6 +256,21 @@ class CombatDamageSnapshotTests(unittest.TestCase):
         )
         self.assertEqual({}, combat.attack_target_context)
 
+    def test_detached_blocker_ids_round_trip_and_end_with_their_combat(self):
+        current = CombatState(detached_blocker_ids=["first", "second"])
+        payload = current.to_dict()
+        restored = CombatState.from_dict(payload)
+        self.assertEqual(["first", "second"], list(restored.blocker_object_ids()))
+        self.assertTrue(remove_combat_relationships(restored, "first").removed_as_blocker)
+        self.assertEqual(["second"], restored.detached_blocker_ids)
+        self.assertEqual([], restored.fresh().detached_blocker_ids)
+        payload.pop("detached_blocker_ids")
+        old = CombatState.from_dict(payload)
+        self.assertEqual(payload, old.fresh().to_dict())
+        for malformed in (None, [True], ["second", "first"], ["first", "first"]):
+            with self.subTest(value=malformed), self.assertRaises(ValueError):
+                CombatState.from_dict({**payload, "detached_blocker_ids": malformed})
+
 
 if __name__ == "__main__":
     unittest.main()

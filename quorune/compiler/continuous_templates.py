@@ -268,8 +268,19 @@ def fixed_query_keyword_grant_handler(
     )
     if match is None:
         return None
-    parsed = fixed_characteristic_battlefield_query_subject(
-        match.group("subject"),allow_negative_keyword=allow_disjoint_negative
+    subject = match["subject"]
+    placement = re.fullmatch(
+        r"Each (?P<other>other )?creature you control that you(?:['’]ve| have) put "
+        r"one or more \+1/\+1 counters on this turn",
+        subject, re.IGNORECASE,
+    )
+    parsed = (
+        ("source_controller", ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+         bool(placement["other"]))
+        if placement is not None
+        else fixed_characteristic_battlefield_query_subject(
+            subject, allow_negative_keyword=allow_disjoint_negative,
+        )
     )
     commander = re.fullmatch(r'(?P<other>Other )?Commanders you (?P<relation>own|control)',
                              match.group('subject'), re.I)
@@ -302,10 +313,18 @@ def fixed_query_keyword_grant_handler(
         COMMANDER_KEYWORD_GRANT_HANDLER, commander_permanent_query_dependencies,
     )
     capabilities.update(commander_permanent_query_dependencies(predicate.to_dict()))
+    if placement is not None:
+        if fragments:
+            return None
+        from ..semantic_runtime.counter_placement_keyword_grants import CounterPlacementKeywordGrantHandler
+        placement_handler = CounterPlacementKeywordGrantHandler()
+        capabilities.update(placement_handler.capability_dependencies)
     return (
+        "continuous-counter-placement-keyword-grant-v1" if placement is not None else
         "continuous-fixed-query-keyword-grant-v2",
         {
-            "handler_id": (COMMANDER_KEYWORD_GRANT_HANDLER if commander is not None else
+            "handler_id": (placement_handler.handler_id if placement is not None else
+                           COMMANDER_KEYWORD_GRANT_HANDLER if commander is not None else
                            'continuous.ability.disjoint-negative-keyword-grant.v1' if negative else
                            'continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
                            else "continuous.ability.fixed-query-keyword-grant.v1"),
@@ -1226,7 +1245,13 @@ def _fixed_additive_modifier_body(body: str) -> str:
 
 def bind_conditional_subject(body,source_condition,*,attached_permanent_subject=False):
     """Bind a leading pronoun through its already parsed public condition."""
-    if not re.match(r'^it\b',body,re.I):return body
+    source_placement = any(
+        leaf.history_query is not None and leaf.history_query.source_only
+        for leaf in source_condition.leaf_conditions()
+    )
+    pronoun = r"^(?:it|he|she)\b" if source_placement else r"^it\b"
+    if not re.match(pronoun, body, re.I):
+        return body
     attached=next((leaf for leaf in source_condition.leaf_conditions()
         if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
     if attached is None:subject='This creature'
@@ -1234,7 +1259,7 @@ def bind_conditional_subject(body,source_condition,*,attached_permanent_subject=
         assert attached.predicate is not None
         subject=('Enchanted land' if 'land' in attached.predicate.types_all else
             'Enchanted permanent' if attached_permanent_subject and 'creature' not in attached.predicate.types_all else 'Enchanted creature')
-    return re.sub(r'^it\b',subject,body,count=1,flags=re.I)
+    return re.sub(pronoun, subject, body, count=1, flags=re.I)
 
 
 def _conditional_target(

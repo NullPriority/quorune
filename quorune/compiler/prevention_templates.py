@@ -617,6 +617,11 @@ def _fixed_combat_shield(normalized: str) -> PreventionTemplate | None:
 
 
 def _all_combat_damage(normalized: str) -> PreventionTemplate | None:
+    if re.fullmatch(r"Prevent all combat damage that would be dealt by creatures other than target creature this turn\.?", normalized, re.I):
+        from ..source_prevention import targeted_source_exclusion_effect
+
+        schema = _target_schema("target creature")
+        return ("combat-prevention-exempt-original-target-v1", (targeted_source_exclusion_effect(),), schema, _rules(schema))
     targeted=re.fullmatch(r'prevent all combat damage that would be dealt (?:this turn by creatures '
         r'(?P<first>target player|target opponent) controls|by creatures (?P<last>target player|target opponent) controls this turn)\.?',normalized,re.I)
     if targeted is not None:
@@ -681,6 +686,7 @@ def _all_combat_damage(normalized: str) -> PreventionTemplate | None:
                     "source": "$source",
                     "subject": "*",
                     "chosen_source": "$target.0",
+                    "source_predicate": _source_predicate("creature").to_dict(),
                     "mode": "all",
                     "duration": "until_end_of_turn",
                     "damage_kind": "combat",
@@ -865,7 +871,44 @@ _PREVENTION_PRODUCTIONS = (
 )
 
 
+def _target_source_next_damage_life_result(text):
+    if re.fullmatch(
+        r"You gain life equal to target creature['’]s power\. The next time that creature would deal damage "
+        r"this turn, prevent that damage[.]?",
+        text, re.I,
+    ) is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.prevention_component_shapes import target_source_next_damage_effects
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+
+    schema = direct_permanent_target_spec("target creature").to_target_schema()
+    return "target-source-next-damage-life-v1", target_source_next_damage_effects(), schema, (
+        *_rules(schema), "cr-119-life", SCALAR_AMOUNT_MECHANIC,
+    )
+
+
+def _target_combat_mana_value_toughness_result(text):
+    if re.fullmatch(
+        r"Prevent all combat damage that would be dealt by target creature this turn\. "
+        r"That creature gets \+0/\+X until end of turn, where X is its mana value[.]?",
+        text, re.I,
+    ) is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.prevention_component_shapes import TARGET_COMBAT_MANA_VALUE_TEMPLATE, target_combat_mana_value_effects
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC
+
+    schema = direct_permanent_target_spec("target creature").to_target_schema()
+    return TARGET_COMBAT_MANA_VALUE_TEMPLATE, target_combat_mana_value_effects(), schema, (
+        *_rules(schema), "cr-611-continuous-effects", SCALAR_AMOUNT_MECHANIC,
+    )
+
+
 def _targeted_damage_source_prevention(normalized):
+    if result := (_target_source_next_damage_life_result(normalized)
+                  or _target_combat_mana_value_toughness_result(normalized)):
+        return result
     recipient=re.fullmatch(r'prevent all damage that would be dealt to (?P<subject>target .+?) this turn\.?',normalized,re.I)
     if recipient is not None:
         from .direct_target import direct_permanent_target_spec

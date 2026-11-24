@@ -20,21 +20,30 @@ def default_continuous_effect_component_registry(
     from .conditional_color_grants import ConditionalColorGrantHandler
     from .keyword_prohibitions import OpponentKeywordProhibitionHandler
     from .basic_type_addition import ScopedBasicTypeAdditionHandler
-    from .cross_zone_type_additions import CrossZoneTypeAdditionHandler
+    from .cross_zone_type_additions import (
+        ControlledChosenCreatureSubtypeHandler, CrossZoneChosenCreatureTypeHandler,
+        CrossZoneTypeAdditionHandler, SelfChosenCreatureSubtypeHandler,
+    )
     from .basic_type_setting import FixedBasicTypeSettingHandler
-    from .chosen_characteristics import ChosenCharacteristicsHandler
+    from .chosen_characteristics import ChosenCharacteristicsHandler, LinkedPlayerProtectionHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
     from .qualified_attached_settings import QualifiedAttachedCharacteristicsHandler
     from .chosen_aura_protection import SourceChosenAuraProtectionHandler
     from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
-    from .fixed_characteristic_settings import NonownerCreatureModifierHandler
+    from .fixed_characteristic_settings import (
+        AuraCountCharacteristicSettingsHandler, ControlledAuraRecipientSettingsHandler,
+        FixedOpponentBaseToughnessHandler, NonownerCreatureModifierHandler,
+    )
     from .attached_control import AttachedControlHandler
+    from .combat_metadata import CombatCounterpartLifelinkHandler
+    from .counter_placement_keyword_grants import CounterPlacementKeywordGrantHandler
     from .quantified_anthems import QuantifiedAnthemHandler
     from .recipient_anthems import RecipientAnthemHandler
     from .shared_type_anthems import SharedTypeAnthemHandler
     from .graveyard_grants import GraveyardQueryAbilityGrantHandler, GraveyardConditionalAbilityGrantHandler
+    from .graveyard_unearth_grants import GraveyardUnearthGrantHandler
     from .composite_grants import CompositeAbilityGrantHandler, FixedTypeReplacementGrantHandler
     from .subtype_composite_grants import FixedSubtypeCompositeGrantHandler
     from .conditional_continuous import (
@@ -52,6 +61,7 @@ def default_continuous_effect_component_registry(
         (
             OpponentKeywordProhibitionHandler(),
             ChosenCharacteristicsHandler(),
+            LinkedPlayerProtectionHandler(),
             ConditionalChosenCharacteristicsHandler(),
             FixedPowerToughnessAnthemHandler(),
             FixedQueryPowerToughnessAnthemHandler(),
@@ -61,9 +71,14 @@ def default_continuous_effect_component_registry(
             AddBasicLandTypeHandler(),
             ScopedBasicTypeAdditionHandler(),
             CrossZoneTypeAdditionHandler(),
+            CrossZoneChosenCreatureTypeHandler(),
+            ControlledChosenCreatureSubtypeHandler(),
+            SelfChosenCreatureSubtypeHandler(),
             FixedBasicTypeSettingHandler(),
             FixedQueryAbilityGrantHandler(),
             FixedQueryKeywordGrantHandler(),
+            CombatCounterpartLifelinkHandler(),
+            CounterPlacementKeywordGrantHandler(),
             CommanderKeywordGrantHandler(),
             FixedQueryCharacteristicGrantHandler(),
             FixedQueryProtectionGrantHandler(),
@@ -86,6 +101,7 @@ def default_continuous_effect_component_registry(
             ConditionalDeclarationGrantHandler(),
             GraveyardStaticCharacteristicsHandler(),
             GraveyardQueryAbilityGrantHandler(),
+            GraveyardUnearthGrantHandler(),
             CompositeAbilityGrantHandler(),
             FixedTypeReplacementGrantHandler(),
             FixedSubtypeCompositeGrantHandler(),
@@ -96,10 +112,13 @@ def default_continuous_effect_component_registry(
             SourceChosenAuraProtectionHandler(),
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
+            FixedOpponentBaseToughnessHandler(),
             NonownerCreatureModifierHandler(),
             EnchantedPlayerCharacteristicsHandler(),
             DisjointNegativeKeywordGrantHandler(),
             ConditionalCharacteristicSettingsHandler(),
+            AuraCountCharacteristicSettingsHandler(),
+            ControlledAuraRecipientSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
             QuantifiedAnthemHandler(),

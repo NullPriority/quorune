@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import json
+from collections.abc import Iterable, Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Mapping
@@ -28,17 +29,26 @@ from .damage_modifier_state import (
     SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
     read_shield_counter_damage_version,
 )
+from .permanent_event_state_model import BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, read_battlefield_entry_player_version
 from .turn_priority_model import (
     PRIORITY_CONCESSION_RESUME_FIELD,
     PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD,
     read_priority_concession_resume,
     read_priority_concession_stabilization_version,
 )
+from .damage_source import (
+    DAMAGE_PREVENTION_RESULT_VERSION_FIELD,
+    read_damage_prevention_result_version,
+)
 from .declaration_rule_effects import (
     ContinuousJournalEffect,
     continuous_journal_effect_from_dict,
 )
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
+from .extra_combat_model import EXTRA_COMBAT_PHASES_FIELD, decode_extra_combat_phases
+from .additional_beginning_model import (
+    ADDITIONAL_BEGINNING_FIELD, AdditionalBeginningPhases, decode_additional_beginning,
+)
 from .turn_skip_model import ScheduledTurnSkip, decode_scheduled_turn_skips
 from .next_player_untap_model import NextPlayerUntapRestriction, decode_next_player_untap_restrictions
 from .util import normalize_mana_bundle, stable_json
@@ -49,13 +59,16 @@ from .mana_source_counter_payment_model import (
     mana_source_counter_payment_fields,read_mana_source_counter_payment_version,
     mana_cost_order_fields,read_mana_cost_order_version,
 )
-from .ability_source_information import ability_source_information_version
+from .ability_source_information import (
+    ABILITY_SOURCE_INFORMATION_VERSION,
+    ability_source_information_version,
+)
 from .declare_attack_cast_model import DeclaredPlayerAttackFact, declare_attack_cast_version
 from .qualified_attack_model import QUALIFIED_ATTACK_FULL_STATS_VERSION, qualified_attack_facts_version
 from .permanent_event_state_model import ZONE_EVENT_NUMERICS_VERSION, permanent_event_state_version
 from .battle_cry_resolution_model import battle_cry_resolution_version
 from .block_characteristic_model import block_characteristics_version
-from .unblocked_attacker_model import unblocked_attacker_event_version
+from .unblocked_attacker_model import CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION, unblocked_attacker_event_version
 from .cast_face_offers import (
     CURRENT_CAST_FACE_OFFERS_VERSION,
     cast_face_offers_version,
@@ -68,29 +81,40 @@ from .cast_event_type_model import (
     cast_event_type_snapshot_fields,
     cast_event_type_snapshot_version,
     read_cast_event_type_snapshot_version,
+    CURRENT_CARD_PLAY_EVENT_FACT_VERSION,
+    card_play_event_fact_state_fields,
+    card_play_event_fact_version,
+    read_card_play_event_fact_version,
 )
 from .cast_source_placement_model import (
     cast_placement_state_fields, cast_source_placement_version, read_target_announcement_timing_version,
 )
-from .phasing_model import PhasingRecord, phasing_lifecycle_version
+from .phasing_model import PHASING_TRIGGER_SOURCE_VISIBILITY_VERSION, PhasingRecord, phasing_lifecycle_version
 from .printed_mana_cost_model import (
     CURRENT_PRINTED_MANA_COST_VERSION,
     printed_mana_cost_format_fields,
     read_printed_mana_cost_version,
 )
 from .explore_action_model import explore_action_version
+from .discard_effect_origin import (
+    DISCARD_EFFECT_ORIGIN_VERSION, discard_effect_origin_version_fields, read_discard_effect_origin_version,
+)
+from .evolve import EVOLVE_ENTRANT_LKI_VERSION, EVOLVE_ENTRANT_LKI_VERSION_FIELD, evolve_entrant_lki_fields, evolve_entrant_lki_version
 from .transform_timestamp_model import (
     modal_dfc_transform_version, transform_event_characteristics_version, transform_timestamp_version,
 )
 from .face_status_timestamp_model import face_status_timestamp_version
 from .shared_type_doors import SHARED_TYPE_DOORS_VERSION, SharedTypeDoors
-from .face_down_characteristics_model import face_down_characteristics_version
+from .face_down_characteristics_model import (
+    FACE_DOWN_DEPARTURE_REVEAL_VERSION, face_down_characteristics_version, face_down_departure_reveal_version,
+)
 from .library_selection_knowledge_model import library_selection_knowledge_version
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION, characteristic_query_boundary_version
 from .stack_resolution_authority_model import (
     COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
     stack_resolution_authority_version,
     ward_discard_order_version,
+    ward_mana_offer_version,
 )
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
@@ -702,6 +726,9 @@ class CombatState:
     defending_players: list[str] = field(default_factory=list)
     blocker_cursor: int = 0
     blockers: dict[str, list[str]] = field(default_factory=dict)  # attacker -> blocker object ids
+    # These creatures still block after their former attack's row is replaced.
+    # Absence in a checkpoint retains the historical combat representation.
+    detached_blocker_ids: list[str] | None = field(default_factory=list)
     damage_assignments: list[dict[str, Any]] = field(default_factory=list)
     # Allocated once when this combat's first damage step is initialized.  The
     # same identity covers both first-strike and ordinary damage steps while a
@@ -723,6 +750,28 @@ class CombatState:
             raise ValueError('Combat declaration facts require a typed snapshot')
         self.blocking_requirements=normalize_blocking_requirements(self.blocking_requirements)
         self.attack_bands=normalize_attack_bands(self.attack_bands)
+        detached = self.detached_blocker_ids
+        if detached is not None and (
+            type(detached) is not list
+            or any(type(object_id) is not str or not object_id for object_id in detached)
+            or detached != sorted(set(detached))
+        ):
+            raise ValueError("Detached blockers require distinct object identities in canonical order")
+
+    def blocker_object_ids(self) -> Iterator[str]:
+        """Read all blocking roles, including those without a current pair."""
+        for assigned in self.blockers.values():
+            yield from assigned
+        yield from self.detached_blocker_ids or ()
+
+    def fresh(
+        self, *, damage_sequence_id: str | None = None, defending_players: Iterable[str] = (),
+    ) -> "CombatState":
+        """Reset phase-local facts while retaining the checkpoint's combat semantics."""
+        return CombatState(
+            damage_sequence_id=damage_sequence_id, defending_players=list(defending_players),
+            detached_blocker_ids=None if self.detached_blocker_ids is None else [],
+        )
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -734,6 +783,8 @@ class CombatState:
         # Omitting the empty value preserves their canonical serialization.
         if self.damage_sequence_id is None:
             payload.pop("damage_sequence_id")
+        if self.detached_blocker_ids is None:
+            payload.pop("detached_blocker_ids")
         if self.blocking_requirements:payload['blocking_requirements']=[v.to_dict() for v in self.blocking_requirements]
         else:payload.pop('blocking_requirements')
         if self.attack_bands:payload['attack_bands']=[value.to_dict() for value in self.attack_bands]
@@ -742,7 +793,11 @@ class CombatState:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "CombatState":
-        return cls(**data)
+        fields = dict(data)
+        if "detached_blocker_ids" in fields and fields["detached_blocker_ids"] is None:
+            raise ValueError("A checkpoint's detached blockers must be a list")
+        fields.setdefault("detached_blocker_ids", None)
+        return cls(**fields)
 
 
 @dataclass(slots=True)
@@ -886,6 +941,38 @@ def land_entry_payment_validation_fields(value: Any) -> dict[str, int]:
     return {LAND_ENTRY_PAYMENT_VALIDATION_FIELD: version} if version is not None else {}
 
 
+def upkeep_completion_version(value: bool | None) -> int | None:
+    if value is None:
+        return None
+    if type(value) is not bool:
+        raise ValueError("Upkeep completion must be a Boolean")
+    return 1
+
+
+def read_upkeep_completion(data: dict[str, Any]) -> bool | None:
+    if "upkeep_completed" not in data:
+        return None
+    value = data["upkeep_completed"]
+    if type(value) is not bool:
+        raise ValueError("A recorded upkeep completion must be a Boolean")
+    return value
+
+
+def read_scheduled_turn_fields(data: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "extra_turns": [TurnEntry.from_dict(turn) for turn in data.get("extra_turns", [])],
+        "extra_combat_phases": decode_extra_combat_phases(data),
+        "additional_beginning_phases": decode_additional_beginning(data),
+        "scheduled_turn_skips": decode_scheduled_turn_skips(
+            data.get("scheduled_turn_skips", ()), data["players"],
+            active_player=data.get("active_player"), turn_sequence=int(data.get("turn_sequence", 0)),
+        ),
+        "next_player_untap_restrictions": decode_next_player_untap_restrictions(
+            data.get("next_player_untap_restrictions", ()), data["players"],
+        ),
+    }
+
+
 @dataclass(slots=True)
 class GameState:
     game_id: str
@@ -908,12 +995,12 @@ class GameState:
     # Absent until a Soulbond pair first exists; preserve historical hashes.
     soulbond_pairs: tuple[SoulbondPair, ...] | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
+    extra_combat_phases: int = field(default=0, kw_only=True)
+    additional_beginning_phases: AdditionalBeginningPhases | None = field(default=None, kw_only=True)
     scheduled_turn_skips: list[ScheduledTurnSkip] = field(default_factory=list)
     next_player_untap_restrictions: tuple[NextPlayerUntapRestriction, ...] = field(default=(), kw_only=True)
     active_player: str | None = None
     priority_player: str | None = None
-    priority_concession_stabilization_version: int | None = 1
-    priority_concession_resume_from: str | None = None
     priority_passes: list[str] = field(default_factory=list)
     priority_epoch: int = 0
     turn_sequence: int = 0
@@ -924,6 +1011,7 @@ class GameState:
     delayed_triggers: list[DelayedTrigger] = field(default_factory=list)
     # Additive Game Record v3 state for durable CR 609.7/614.9/615 effects.
     shield_counter_damage_version: int | None = 1
+    damage_prevention_result_version: int | None = 1
     # Historical checkpoints omit both arrays and deserialize as empty.
     damage_prevention_shields: list[DamagePreventionShield] = field(
         default_factory=list
@@ -973,21 +1061,27 @@ class GameState:
     spell_mana_counts_version: int | None = 1
     mana_source_counter_payment_version: int | None = 1
     mana_cost_order_version: int | None = 1
-    ability_source_information_version: int | None = 1
+    ability_source_information_version: int | None = ABILITY_SOURCE_INFORMATION_VERSION
     declare_attack_cast_version: int | None = 1
+    upkeep_completed: bool | None = False
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
     target_announcement_timing_version: int | None = None
+    ward_mana_offer_version: int | None = 1
     cast_event_type_snapshot_version: int | None = CURRENT_CAST_EVENT_TYPE_SNAPSHOT_VERSION
-    phasing_lifecycle_version: int | None = 1
+    card_play_event_fact_version: int | None = CURRENT_CARD_PLAY_EVENT_FACT_VERSION
+    phasing_lifecycle_version: int | None = PHASING_TRIGGER_SOURCE_VISIBILITY_VERSION
     printed_mana_cost_version: int | None = CURRENT_PRINTED_MANA_COST_VERSION
     explore_action_version: int | None = 1
+    evolve_entrant_lki_version: int | None = EVOLVE_ENTRANT_LKI_VERSION
+    discard_effect_origin_version: int | None = DISCARD_EFFECT_ORIGIN_VERSION
     transform_timestamp_version: int | None = 1
     modal_dfc_transform_version: int | None = 1
     transform_event_characteristics_version: int | None = 1
     face_status_timestamp_version: int | None = 1
     split_permanent_face_values_version: int | None = SHARED_TYPE_DOORS_VERSION
     face_down_characteristics_version: int | None = 1
+    face_down_departure_reveal_version: int | None = FACE_DOWN_DEPARTURE_REVEAL_VERSION
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
     stack_resolution_authority_version: int | None = COPIED_SPELL_ENTRY_AUTHORITY_VERSION
@@ -999,10 +1093,13 @@ class GameState:
     ninjutsu_band_retention_version: int | None = 1
     ward_discard_order_version: int | None = 1
     block_characteristics_version: int | None = 1
-    unblocked_attacker_event_version: int | None = 1
+    unblocked_attacker_event_version: int | None = CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
     legend_rule_choice_version: int | None = 1
     effect_destruction_replacement_version: int | None = 1
     land_entry_affordability_version: int | None = 1
+    battlefield_entry_player_version: int | None = 1
+    priority_concession_stabilization_version: int | None = 1
+    priority_concession_resume_from: str | None = None
     unearth_leave_replacement_version: int | None = 1
     counter_quantity_provenance_version: int | None = 1
     departed_turn_boundary_version: int | None = None
@@ -1034,6 +1131,9 @@ class GameState:
             **({PRIORITY_CONCESSION_RESUME_FIELD: self.priority_concession_resume_from}
                if self.priority_concession_resume_from is not None else {}),
             "extra_turns": [turn.to_dict() for turn in self.extra_turns],
+            **({EXTRA_COMBAT_PHASES_FIELD: self.extra_combat_phases} if self.extra_combat_phases else {}),
+            **({ADDITIONAL_BEGINNING_FIELD: self.additional_beginning_phases.to_dict()}
+               if self.additional_beginning_phases is not None else {}),
             **(
                 {"scheduled_turn_skips": [grant.to_dict() for grant in self.scheduled_turn_skips]}
                 if self.scheduled_turn_skips else {}
@@ -1047,6 +1147,8 @@ class GameState:
     def _record_version_fields(self) -> dict[str, int]:
         versions = {
             SHIELD_COUNTER_DAMAGE_VERSION_FIELD: self.shield_counter_damage_version,
+            DAMAGE_PREVENTION_RESULT_VERSION_FIELD: self.damage_prevention_result_version,
+            BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD: self.battlefield_entry_player_version,
             PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD: self.priority_concession_stabilization_version,
             "qualified_attack_facts_version": qualified_attack_facts_version(self.qualified_attack_facts_version),
             "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
@@ -1056,14 +1158,43 @@ class GameState:
             "unearth_leave_replacement_version": unearth_leave_replacement_version(self.unearth_leave_replacement_version),
             "block_characteristics_version": block_characteristics_version(self.block_characteristics_version),
             "unblocked_attacker_event_version": unblocked_attacker_event_version(self.unblocked_attacker_event_version),
+            "ward_mana_offer_version": ward_mana_offer_version(self.ward_mana_offer_version),
         }
         present = {name: version for name, version in versions.items() if version is not None}
         read_shield_counter_damage_version(present)
+        read_damage_prevention_result_version(present)
+        read_battlefield_entry_player_version(present)
         read_priority_concession_stabilization_version(present)
         present.update(continuous_dependency_order_fields(self.continuous_dependency_order_version))
         present.update(fetch_entry_placement_fields(self.fetch_entry_placement_version))
+        present.update(evolve_entrant_lki_fields(self.evolve_entrant_lki_version))
+        present.update(discard_effect_origin_version_fields(self.discard_effect_origin_version))
         present.update(land_entry_payment_validation_fields(self.land_entry_affordability_version))
         return present
+
+    def _face_status_provenance_fields(self) -> dict[str, int]:
+        fields = {
+            "transform_timestamp_version": self.transform_timestamp_version,
+            "modal_dfc_transform_version": self.modal_dfc_transform_version,
+            "transform_event_characteristics_version": self.transform_event_characteristics_version,
+            "face_status_timestamp_version": self.face_status_timestamp_version,
+            "face_down_characteristics_version": self.face_down_characteristics_version,
+            "face_down_departure_reveal_version": self.face_down_departure_reveal_version,
+        }
+        return {key: value for key, value in fields.items() if value is not None}
+
+    def reset_upkeep_completion(self) -> None:
+        if self.upkeep_completed is not None:
+            self.upkeep_completed = False
+
+    def record_additional_beginning_draw(self) -> None:
+        extra = self.additional_beginning_phases
+        if extra is not None and extra.active:
+            self.additional_beginning_phases = extra.record_draw()
+
+    def complete_upkeep(self) -> None:
+        if self.upkeep_completed is not None:
+            self.upkeep_completed = True
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
         record_versions = self._record_version_fields()
@@ -1083,7 +1214,9 @@ class GameState:
         transform_event_characteristics_version(self.transform_event_characteristics_version)
         face_status_timestamp_version(self.face_status_timestamp_version)
         cast_event_type_snapshot_version(self.cast_event_type_snapshot_version)
+        card_play_event_fact_version(self.card_play_event_fact_version)
         face_down_characteristics_version(self.face_down_characteristics_version)
+        face_down_departure_reveal_version(self.face_down_departure_reveal_version)
         library_selection_knowledge_version(self.library_selection_knowledge_version)
         characteristic_query_boundary_version(self.characteristic_query_boundary_version)
         stack_resolution_authority_version(self.stack_resolution_authority_version)
@@ -1124,6 +1257,8 @@ class GameState:
             **mana_cost_order_fields(self.mana_cost_order_version),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
             **({'declare_attack_cast_version':self.declare_attack_cast_version} if self.declare_attack_cast_version is not None else {}),
+            **({"upkeep_completed": self.upkeep_completed}
+               if upkeep_completion_version(self.upkeep_completed) is not None else {}),
             **record_versions,
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
             **(
@@ -1137,16 +1272,11 @@ class GameState:
             **selected_face_state_fields(self.cast_face_offers_version, self.split_permanent_face_values_version),
             **cast_placement_state_fields(self.cast_source_placement_version, self.target_announcement_timing_version),
             **cast_event_type_snapshot_fields(self.cast_event_type_snapshot_version),
+            **card_play_event_fact_state_fields(self.card_play_event_fact_version),
             **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
             **printed_mana_cost_format_fields(self.printed_mana_cost_version),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
-            **({'transform_timestamp_version':self.transform_timestamp_version} if self.transform_timestamp_version is not None else {}),
-            **({"modal_dfc_transform_version": self.modal_dfc_transform_version}
-               if self.modal_dfc_transform_version is not None else {}),
-            **({"transform_event_characteristics_version": self.transform_event_characteristics_version}
-               if self.transform_event_characteristics_version is not None else {}),
-            **({'face_status_timestamp_version':self.face_status_timestamp_version} if self.face_status_timestamp_version is not None else {}),
-            **({'face_down_characteristics_version':self.face_down_characteristics_version} if self.face_down_characteristics_version is not None else {}),
+            **self._face_status_provenance_fields(),
             **({'library_selection_knowledge_version':self.library_selection_knowledge_version} if self.library_selection_knowledge_version is not None else {}),
             **({'characteristic_query_boundary_version':self.characteristic_query_boundary_version} if self.characteristic_query_boundary_version is not None else {}),
             **({"stack_resolution_authority_version": self.stack_resolution_authority_version}
@@ -1219,6 +1349,9 @@ class GameState:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
+            battlefield_entry_player_version=read_battlefield_entry_player_version(data),
+            priority_concession_stabilization_version=read_priority_concession_stabilization_version(data),
+            priority_concession_resume_from=read_priority_concession_resume(data),
             land_entry_affordability_version=land_entry_affordability_version(
                 data.get(LAND_ENTRY_PAYMENT_VALIDATION_FIELD)
             ),
@@ -1234,10 +1367,14 @@ class GameState:
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
             target_announcement_timing_version=read_target_announcement_timing_version(data),
+            ward_mana_offer_version=ward_mana_offer_version(data.get("ward_mana_offer_version")),
             cast_event_type_snapshot_version=read_cast_event_type_snapshot_version(data),
+            card_play_event_fact_version=read_card_play_event_fact_version(data),
             phasing_lifecycle_version=phasing_lifecycle_version(data.get("phasing_lifecycle_version")),
             printed_mana_cost_version=read_printed_mana_cost_version(data),
             explore_action_version=explore_action_version(data.get('explore_action_version')),
+            evolve_entrant_lki_version=evolve_entrant_lki_version(data.get(EVOLVE_ENTRANT_LKI_VERSION_FIELD)),
+            discard_effect_origin_version=read_discard_effect_origin_version(data),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
             modal_dfc_transform_version=modal_dfc_transform_version(data.get("modal_dfc_transform_version")),
             transform_event_characteristics_version=transform_event_characteristics_version(
@@ -1248,6 +1385,9 @@ class GameState:
                 data.get("split_permanent_face_values_version"),
             ),
             face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
+            face_down_departure_reveal_version=face_down_departure_reveal_version(
+                data.get("face_down_departure_reveal_version"),
+            ),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),
             stack_resolution_authority_version=stack_resolution_authority_version(data.get("stack_resolution_authority_version")),
@@ -1270,6 +1410,7 @@ class GameState:
             mana_cost_order_version=read_mana_cost_order_version(data),
             ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
             declare_attack_cast_version=declare_attack_cast_version(data.get('declare_attack_cast_version')),
+            upkeep_completed=read_upkeep_completion(data),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
@@ -1289,18 +1430,9 @@ class GameState:
             control_history_version=(
                 cls._control_history_version_from_dict(data)
             ),
-            extra_turns=[TurnEntry.from_dict(turn) for turn in data.get("extra_turns", [])],
-            scheduled_turn_skips=decode_scheduled_turn_skips(
-                data.get("scheduled_turn_skips", ()), data["players"],
-                active_player=data.get("active_player"), turn_sequence=int(data.get("turn_sequence", 0)),
-            ),
-            next_player_untap_restrictions=decode_next_player_untap_restrictions(
-                data.get("next_player_untap_restrictions", ()), data["players"],
-            ),
+            **read_scheduled_turn_fields(data),
             active_player=data.get("active_player"),
             priority_player=data.get("priority_player"),
-            priority_concession_stabilization_version=read_priority_concession_stabilization_version(data),
-            priority_concession_resume_from=read_priority_concession_resume(data),
             priority_passes=list(data.get("priority_passes", [])),
             priority_epoch=int(data.get("priority_epoch", 0)),
             turn_sequence=int(data.get("turn_sequence", 0)),
@@ -1310,6 +1442,7 @@ class GameState:
             stack=[StackItem.from_dict(item) for item in data.get("stack", [])],
             delayed_triggers=[DelayedTrigger.from_dict(item) for item in data.get("delayed_triggers", [])],
             shield_counter_damage_version=read_shield_counter_damage_version(data),
+            damage_prevention_result_version=read_damage_prevention_result_version(data),
             damage_prevention_shields=[
                 DamagePreventionShield.from_dict(item)
                 for item in data.get("damage_prevention_shields", [])

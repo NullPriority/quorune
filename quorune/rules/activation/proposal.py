@@ -7,6 +7,7 @@ from dataclasses import replace
 from typing import Any, Protocol, Sequence
 
 from ...abilities import ActivatedAbility, choose_ability
+from ...activation_condition_model import public_activation_program_timing
 from ...announced_damage import announced_allocation_details
 from ...crew import activation_power_tap_hint
 from .pricing import (
@@ -75,6 +76,7 @@ class ActivationProposalHost(Protocol):
         source_ref: str,
         acting_source: Any = None,
         target_schema: Mapping[str, Any] | None = None,
+        announcing_targets: bool = False,
     ) -> tuple[list[str], Any]: ...
 
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
@@ -102,6 +104,7 @@ class ActivationProposalHost(Protocol):
         *,
         source_ref: str,
         acting_source: Any = None,
+        announcing_targets: bool = False,
     ) -> Mapping[str, Any] | None: ...
 
     def _crew_threshold(self, ability: ActivatedAbility) -> int | None: ...
@@ -186,6 +189,19 @@ def _validate_activation_cost_contract(
     from ...granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
     payment = ability.granting_attachment_payment
     program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    try:
+        public_timing = public_activation_program_timing(program)
+    except ValueError as exc:
+        raise ActivationProposalError(
+            str(exc), status="unresolved", reason="unresolved_public_activation_permission",
+        ) from exc
+    if public_timing is not None and public_timing.has_step_window and not public_timing.permits_step(
+        phase=host.state.phase, step=host.state.step,
+        actor_is_active=request.actor == host.state.active_player,
+    ):
+        raise ActivationProposalError(
+            "The current step does not allow this activation", reason="public_activation_step_window",
+        )
     from .paid_characteristic_results import granted_paid_activation_price_matches
     if not granted_paid_activation_price_matches(program, ability):
         raise ActivationProposalError(
@@ -307,6 +323,49 @@ def _activation_effect_context(
     )
 
 
+def _collect_activation_payment(host, actor, source, ability, response, targets):
+    """Collect the same announced mana and object choices for proposal and commit."""
+    mana_option = None
+    announced_x = None
+    if ability.mana_cost_options:
+        try:
+            mana_option = select_activation_mana_option(
+                host,
+                actor,
+                source,
+                ability,
+                response.get("cost_option"),
+                targets=targets,
+            )
+        except ValueError as exc:
+            raise ActivationProposalError(
+                str(exc),
+                status="unpayable",
+                reason="activation_mana_cost_option",
+            ) from exc
+        requirements = dict(mana_option.requirements)
+    else:
+        from .x_costs import activation_requirements, validate_activation_x_payment
+        requirements, announced_x = activation_requirements(host, actor, source, ability, response, targets=targets)
+        if announced_x is not None:
+            try: validate_activation_x_payment(host,actor,source,ability,requirements)
+            except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
+    waterbend_details={}
+    if not ability.mana_cost_options:
+        from .pricing import activation_price_details
+        waterbend_details.update(activation_price_details(host,actor,source,ability,response,targets=targets))
+    if ability.waterbend is not None:
+        from ..waterbend_payments import activation_waterbend_plan
+        try:payment=activation_waterbend_plan(host,actor,source,ability,requirements,response,hint=False)
+        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_waterbend_payment') from exc
+        if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
+        requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
+    from .variable_colored_reveal import variable_colored_reveal_proposal_details
+
+    details = {**waterbend_details, **variable_colored_reveal_proposal_details(host, actor, ability, announced_x, response)}
+    return requirements, announced_x, mana_option, details
+
+
 def build_activation_proposal(
     host: ActivationProposalHost,
     request: ActivationProposalRequest,
@@ -357,9 +416,9 @@ def build_activation_proposal(
         if ability.target_schema is not None
         else getattr(program, "target_schema", None)
     )
-    from ...activation_x import bind_activation_target_cardinality
+    from .graveyard_copy import bind_activation_targets
     try:
-        target_schema = bind_activation_target_cardinality(ability, target_schema, response,
+        target_schema = bind_activation_targets(program, ability, target_schema, response, announced_x=announced_x,
             target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
     except ValueError as exc:
         raise ActivationProposalError(str(exc), reason="invalid_announced_target_count") from exc
@@ -370,6 +429,7 @@ def build_activation_proposal(
         modes=list(request.modes),
         acting_source=ability_targeting_source(host,source), source_ref=source.ref,
         target_schema=target_schema,
+        announcing_targets=True,
     )
     effective_target_schema = (
         target_schema
@@ -390,40 +450,9 @@ def build_activation_proposal(
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     context = host._fetch_context(request.actor, ability, response, program=program)
     context.update(_activation_effect_context(host, source, program, effective_target_schema, targets, response))
-    mana_option = None
-    if ability.mana_cost_options:
-        try:
-            mana_option = select_activation_mana_option(
-                host,
-                request.actor,
-                source,
-                ability,
-                response.get("cost_option"),
-                targets=tuple(targets),
-            )
-        except ValueError as exc:
-            raise ActivationProposalError(
-                str(exc),
-                status="unpayable",
-                reason="activation_mana_cost_option",
-            ) from exc
-        requirements = dict(mana_option.requirements)
-    else:
-        from .x_costs import activation_requirements, validate_activation_x_payment
-        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response, targets=tuple(targets))
-        if announced_x is not None:
-            try: validate_activation_x_payment(host,request.actor,source,ability,requirements)
-            except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
-    waterbend_details={}
-    if not ability.mana_cost_options:
-        from .pricing import activation_price_details
-        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response,targets=tuple(targets)))
-    if ability.waterbend is not None:
-        from ..waterbend_payments import activation_waterbend_plan
-        try:payment=activation_waterbend_plan(host,request.actor,source,ability,requirements,response,hint=False)
-        except ValueError as exc:raise ActivationProposalError(str(exc),reason='stale_waterbend_payment') from exc
-        if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
-        requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
+    requirements, announced_x, mana_option, price_details = _collect_activation_payment(
+        host, request.actor, source, ability, response, tuple(targets),
+    )
     proposal = ActivationProposal(
         seat=request.actor,
         source_ref=source.ref,
@@ -446,7 +475,7 @@ def build_activation_proposal(
                 "target_schema_override": target_schema,
                 "builtin_context": context,
                 **({'announced_x':announced_x} if announced_x is not None else {}),
-                **waterbend_details,
+                **price_details,
                 **(
                     {
                         "mana_cost_option": mana_option.to_dict(),
@@ -596,9 +625,9 @@ def build_activation_offer(
         return ActivationProposalResult("unavailable", "invalid_announced_target_count")
     public_schema = None
     if target_schema is not None:
-        public_schema = host._public_target_schema(
-            seat, target_schema, acting_source=ability_targeting_source(host,source), source_ref=source.ref
-        )
+        from .graveyard_copy import activation_public_targets
+
+        public_schema = activation_public_targets(host, seat, source, selected, program, target_schema)
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
     cost_hint = activation_offer_cost_hint(host, seat, source, selected)
@@ -635,7 +664,7 @@ def build_activation_offer(
     if fetch_types:
         hint["search_types"] = list(fetch_types)
     from .pricing import activation_priced_offer_payload
-    payload, public_schema = activation_priced_offer_payload(host,seat,source,selected,hint,public_schema)
+    payload, public_schema = activation_priced_offer_payload(host, seat, source, selected, hint, public_schema, program=program)
     if selected.mana_cost_options:
         payload["cost_options"] = [
             {
@@ -661,8 +690,16 @@ def build_activation_offer(
         payment=activation_waterbend_plan(host,seat,source,selected,requirements,{},hint=True)
         if payment is None:return ActivationProposalResult('unpayable','waterbend_unpayable')
         choice_schema={**(choice_schema or {}),**payment[3]}
-    if selected.announced_x_symbols is not None:
-        choice_schema={**(choice_schema or {}),'x':{'type':'integer','label':'X','minimum':0,'default':0}}
+    if selected.chooses_activation_x:
+        from .graveyard_copy import announced_activation_choice
+
+        choice_schema = {**(choice_schema or {}), "x": announced_activation_choice(public_schema)}
+    if selected.variable_colored_reveal_price is not None:
+        from .variable_colored_reveal import variable_colored_reveal_offer
+
+        choice_schema.update(variable_colored_reveal_offer(
+            host, seat, selected.variable_colored_reveal_price, choice_schema["x"],
+        ))
     if not selected.mana_cost_options:
         from .pricing import activation_price_choice_schema
         price_choices=activation_price_choice_schema(host,seat,source,selected)

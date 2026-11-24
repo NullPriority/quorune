@@ -10,6 +10,7 @@ from .declared_cast_cost_model import DECLARED_CAST_COSTS_FIELD, DeclaredCastCos
 
 from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
+from .impending_model import PAID_IMPENDING_FIELD
 from .stack_resolution_authority_model import COPIED_SPELL_ENTRY_AUTHORITY_VERSION
 from .multikicker_model import MULTIKICKER_FIELD, validate_multikicker_fact
 from .flashback import FLASHBACK_CAST_ANNOTATION
@@ -58,6 +59,21 @@ def mark_resolving_paid_entry_copy(card: CardInstance, context) -> None:
     if card.zone != 'stack':
         raise ZoneObjectStateError('Paid entry copy facts require the resolving spell incarnation')
     card.annotations[PAID_ENTRY_COPY_FIELD] = validate_paid_entry_copy_fact(value)
+
+
+def mark_resolving_cast_facts(card: CardInstance, item) -> None:
+    mark_resolving_paid_entry_copy(card, item.context)
+    mark_multikicker_paid(card, item.context)
+    mark_declared_cast_costs(card, item.context)
+    mark_resolving_impending(card, item)
+
+
+def mark_resolving_impending(card: CardInstance, item) -> None:
+    from .rules.impending import resolving_impending_spec
+
+    spec = resolving_impending_spec(item, card)
+    if spec is not None:
+        card.annotations[PAID_IMPENDING_FIELD] = spec.to_dict()
 
 
 def mark_multikicker_paid(card: CardInstance, context) -> None:
@@ -274,8 +290,29 @@ def turn_card_face_up(
     card.annotations.pop('manifested_card', None)
     card.annotations.pop(MORPH_FACE_DOWN_ANNOTATION, None)
     card.annotations.pop(MORPH_METHOD_ANNOTATION, None)
+    from .morph import EFFECT_FACE_DOWN_ANNOTATION
+    card.annotations.pop(EFFECT_FACE_DOWN_ANNOTATION, None)
     card.known_to = list(viewers)
     card.revealed_to = list(viewers)
+
+
+def turn_card_face_down(card: CardInstance, *, timestamp: int | None = None) -> None:
+    from .entry_results import expire_copy_scope
+    from .morph import EFFECT_FACE_DOWN_ANNOTATION
+    from .replacement.face_status_copy import CopyExpiry
+
+    if (not isinstance(card, CardInstance) or card.zone != "battlefield" or card.face_down or card.phased_out
+            or timestamp is not None and (type(timestamp) is not int or timestamp <= card.zone_timestamp)):
+        raise ZoneObjectStateError("Turn-face-down state is malformed")
+    expire_copy_scope(card, CopyExpiry.FACE_DOWN)
+    card.face_down = True
+    if timestamp is not None:
+        card.zone_timestamp = timestamp
+    card.annotations.pop("manifested_card", None)
+    card.annotations.pop(MORPH_METHOD_ANNOTATION, None)
+    card.annotations[MORPH_FACE_DOWN_ANNOTATION] = face_down_characteristics("morph")
+    card.annotations[EFFECT_FACE_DOWN_ANNOTATION] = {"schema_version": 1}
+    card.revealed_to = []
 
 
 def reset_card_after_zone_change(
@@ -323,6 +360,8 @@ def reset_card_after_zone_change(
     card.phased_out = False
     card.phasing_record = None
     card.source_continuity = None
+    from .entry_results import reset_scoped_copy_on_departure
+    reset_scoped_copy_on_departure(card)
     card.shared_type_doors = None
     if not stack_to_battlefield:
         card.battle_protector = None
@@ -366,6 +405,7 @@ def reset_card_after_zone_change(
                 "prototype_characteristics",
                 FIXED_CAST_LIFECYCLE_STACK_ANNOTATION,
                 DECLARED_CAST_COSTS_FIELD,
+                PAID_IMPENDING_FIELD,
             }
         )
     card.annotations = {

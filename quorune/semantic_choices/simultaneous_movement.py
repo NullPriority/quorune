@@ -5,10 +5,36 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
-from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+from ..rules.committed_quantity_followups import CommittedQuantityFollowup, token_followup_from_committed_controllers
+from ..semantic_runtime.targeted_exile_token_intent import (
+    CommittedTargetExileIntent, OpponentExileDrawIntent, TargetedExileTokensIntent,
+)
+from ..semantic_runtime.targeted_power_sacrifice_life_intent import TargetedPowerSacrificeLifeIntent
+from ..rules.targeted_power_sacrifice_life import capture_sacrifice_life_amount, committed_sacrifice_life_amount
 
 
-def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent)->tuple[str,...] | CommittedQuantityFollowup:
+def _commit_physical_movement(host, intent, changes, prepared):
+    from ..composition_departure_batch import PreparedCompositionDepartureBatch
+    from ..composition_departure_commit import commit_prepared_composition_departures
+    from ..errors import GameRuleError
+    from ..zone_transitions import ZoneTransitionOwner
+
+    if (
+        not isinstance(prepared, PreparedCompositionDepartureBatch) or prepared.orders is None
+        or tuple(changes) != prepared.changes or prepared.reason != intent.reason
+        or any(
+            group.actor != intent.actor or group.subject.transition_kind != intent.transition_kind.value
+            for group in prepared.groups
+        )
+    ):
+        raise GameRuleError("APNAP physical departures changed before the movement could commit")
+    return commit_prepared_composition_departures(ZoneTransitionOwner(host), prepared)
+
+
+def commit_simultaneous_movement(
+    host: Any, intent: MoveObjectsSimultaneouslyIntent, *, graveyard_orders=None, require_graveyard_order=False,
+    prepared_composition=None,
+) -> tuple[str, ...] | CommittedQuantityFollowup | int:
     from ..semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
 
     if isinstance(intent, TargetedGraveyardExileOutcomeIntent):
@@ -33,6 +59,9 @@ def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent
         )
         for ref in intent.object_refs
     )
+    sacrifice_life_amount = None
+    if isinstance(intent, TargetedPowerSacrificeLifeIntent):
+        sacrifice_life_amount = capture_sacrifice_life_amount(host, intent, cards[0])
     entry={}
     if intent.battlefield_controller is not None:
         from ..public_zone_moves import PublicBattlefieldController
@@ -56,23 +85,56 @@ def commit_simultaneous_movement(host:Any,intent:MoveObjectsSimultaneouslyIntent
                     or not object_matches_query(row, intent.selection.query)):
                 raise GameRuleError('Selected hand entry changed its incarnation or predicate')
         entry['aura_target_refs'] = dict(intent.aura_target_refs)
+    if graveyard_orders is not None or require_graveyard_order:
+        from ..errors import GameRuleError
+        from ..zone_transitions import ZoneTransitionOwner
+
+        if intent.destination != "graveyard":
+            raise GameRuleError("Graveyard order requires a graveyard movement")
+        move_batch = ZoneTransitionOwner(host).move_cards_simultaneously
+        entry.update(graveyard_orders=graveyard_orders, require_graveyard_order=require_graveyard_order)
     if intent.library_order is not None:
         by_ref = {card.ref: card.object_id for card in cards}
         entry["library_order"] = replace(
             intent.library_order, members=tuple(by_ref[ref] for ref in intent.library_order.members),
         )
-    move_batch(
-        [
-            (card.object_id, intent.destination)
-            for card in cards
-        ],
-        reason=intent.reason,
-        log=False,
-        replacement_selections=intent.replacement_selections,
-        transition_kinds={
-            card.object_id: intent.transition_kind
-            for card in cards
-        },
-        **entry,
-    )
+    if intent.discard_effect_origin is not None:
+        entry["discard_effect_origin"] = intent.discard_effect_origin
+    exile_controllers = {}
+    if isinstance(intent, CommittedTargetExileIntent):
+        exile_controllers = {card.object_id: (card.logical_object_id, card.controller) for card in cards}
+    if isinstance(intent, OpponentExileDrawIntent):
+        from ..errors import GameRuleError
+
+        controllers = {controller for _identity, controller in exile_controllers.values()}
+        if (len(controllers) != len(cards) or intent.actor in controllers
+                or not controllers.issubset(host.apnap_order())):
+            raise GameRuleError("Opponent exile draws require one live target per opposing controller")
+    changes = [(card.object_id, intent.destination) for card in cards]
+    if intent.destination == "battlefield":
+        entry["putting_players"] = {card.object_id: intent.actor for card in cards if card.zone != "battlefield"}
+    if prepared_composition is None:
+        moved = move_batch(
+            changes, reason=intent.reason, log=False,
+            replacement_selections=intent.replacement_selections,
+            transition_kinds={card.object_id: intent.transition_kind for card in cards},
+            **entry,
+        )
+    else:
+        if entry:
+            from ..errors import GameRuleError
+            raise GameRuleError("APNAP physical departures require their own complete arrival plan")
+        moved = _commit_physical_movement(host, intent, changes, prepared_composition)
+    if isinstance(intent, CommittedTargetExileIntent):
+        committed = dict.fromkeys(card.object_id for card in moved
+            if card.zone == "exile" and card.object_id in exile_controllers
+            and card.logical_object_id != exile_controllers[card.object_id][0])
+        creators = tuple(exile_controllers[object_id][1] for object_id in committed)
+        if isinstance(intent, TargetedExileTokensIntent):
+            return token_followup_from_committed_controllers(intent.followup.token, creators)
+        from ..rules.opponent_exile_draw_results import opponent_exile_draw_followup
+
+        return opponent_exile_draw_followup(tuple(seat for seat in host.apnap_order() if seat in creators))
+    if sacrifice_life_amount is not None:
+        return committed_sacrifice_life_amount(host, intent, cards[0].object_id, sacrifice_life_amount)
     return tuple(card.ref for card in cards)

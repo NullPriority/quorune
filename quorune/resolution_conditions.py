@@ -9,12 +9,16 @@ from .characteristic_fragments import CharacteristicQuantityScope, Characteristi
 from .continuous_conditions import (
     FixedPublicStateConditionKind,
     FixedPublicStateConditionSpec,
+    FixedPublicStateFact,
 )
+from .damage_prevention_scope import public_combat_prevention_replacement_side
 from .replacement.immutable import FrozenMap
 from .spell_mana_conditions import ManaSpentCondition, PAID_MANA_CONDITION_CAPABILITY, PAID_MANA_CONDITION_MECHANIC
 from .declared_cost_conditions import DeclaredCastCostCondition
 from .paid_sacrifice_conditions import (
     PAID_SACRIFICE_CONDITION_CAPABILITY, PAID_SACRIFICE_CONDITION_MECHANIC, PAID_SACRIFICE_CONDITION_VERSION,
+    ACTIVATION_PAID_LEGENDARY_AMASS_CAPABILITY, ACTIVATION_PAID_SUBTYPE_CAPABILITY, ACTIVATION_PAID_THRULL_COUNTERS_CAPABILITY,
+    ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY,
     PaidSacrificeCharacteristicCondition, validate_paid_sacrifice_instruction,
 )
 
@@ -24,6 +28,7 @@ RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
 RESOLUTION_ALTERNATIVE_SCHEMA_VERSION = 13
 CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION = 15
+GREATEST_POWER_TARGET_DISCARD_VERSION = 19
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
 PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_target_self_replacement'
@@ -34,6 +39,10 @@ CAST_FACT_CONDITION_MECHANICS = {
     CAST_FACT_CONDITION_CAPABILITY: CAST_FACT_CONDITION_MECHANIC,
     PAID_MANA_CONDITION_CAPABILITY: PAID_MANA_CONDITION_MECHANIC,
     PAID_SACRIFICE_CONDITION_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
+    ACTIVATION_PAID_SUBTYPE_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
+    ACTIVATION_PAID_LEGENDARY_AMASS_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
+    ACTIVATION_PAID_THRULL_COUNTERS_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
+    ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY: PAID_SACRIFICE_CONDITION_MECHANIC,
 }
 _DERIVED_RESULT_MECHANICS = frozenset({
     "declared-effect-amount", "public-query-effect-amount", "scalar-effect-amount",
@@ -77,7 +86,45 @@ def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any, *, allow_fixed_da
     return resolution_result_is_fixed(values, mechanic_ids)
 
 
+_ANNOUNCED_DAMAGE_MECHANICS = frozenset(("declared-effect-amount", "cr-120-damage", "cr-115-targets"))
+
+
+def _announced_replacement_damage_amount(effects, mechanics):
+    from .query_effect_amount_model import CastXAmountSpec
+
+    if len(effects) != 1 or set(mechanics) != _ANNOUNCED_DAMAGE_MECHANICS:
+        return None
+    effect = effects[0]
+    amount = effect.get("amount")
+    fields = {"op", "source", "target", "amount"}
+    if type(amount) is int:
+        fields.add("source_snapshot")
+    if (
+        set(effect) != fields
+        or effect["op"] != "damage"
+        or any(type(effect[key]) is not str or not effect[key] for key in ("source", "target"))
+    ):
+        return None
+    if type(amount) is int:
+        from .damage_source import DamageSourceSnapshot
+
+        try:
+            snapshot = DamageSourceSnapshot.from_dict(effect["source_snapshot"])
+        except (TypeError, ValueError):
+            return None
+        if effect["source"].startswith("$") or effect["target"].startswith("$"):
+            return None
+        return amount if amount >= 0 and snapshot.ref == effect["source"] else None
+    try:
+        spec = CastXAmountSpec.from_dict(amount)
+    except (TypeError, ValueError):
+        return None
+    return spec if spec.coefficient == 1 and spec.schema_version in {1, 3} else None
+
+
 def public_replacement_result_is_fixed(effects, mechanic_ids):
+    if _announced_replacement_damage_amount(effects, mechanic_ids) is not None:
+        return True
     values=tuple({key:value for key,value in effect.items() if key!='source'}
         if effect.get('op')=='place_counters' and effect.get('source')=='$source' else effect for effect in effects)
     return cast_fact_result_is_fixed(values,mechanic_ids,allow_targeted_damage_source=True)
@@ -85,9 +132,65 @@ def public_replacement_result_is_fixed(effects, mechanic_ids):
 
 def public_source_replacement_result_is_fixed(effects,mechanic_ids,*,source_binding='$source'):
     if any('source' in effect and effect['source']!=source_binding for effect in effects):return False
-    values=tuple({key:value for key,value in effect.items() if key!='source'}
-        if effect.get('op')=='mana' and effect.get('source')==source_binding else effect for effect in effects)
+
+    values = tuple(
+        {key: value for key, value in effect.items() if key != "source"}
+        if effect.get("source") == source_binding and (
+            effect.get("op") == "mana"
+            or effect.get("op") == "create_damage_prevention_shield"
+            and public_combat_prevention_replacement_side(effect, source_binding=source_binding) is not None
+        ) else effect
+        for effect in effects
+    )
     return cast_fact_result_is_fixed(values,mechanic_ids,allow_fixed_damage_source=True)
+
+
+def _controller_power_minimum_is_closed(condition):
+    from .object_predicate import ObjectQuerySpec
+
+    predicate = condition.predicate
+    numeric = predicate.numeric_characteristic if predicate is not None else None
+    return (
+        condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS
+        and numeric is not None and numeric.characteristic.value == "power" and numeric.comparison.value == "at_least"
+        and predicate == ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), numeric_characteristic=numeric)
+    )
+
+
+def _validate_public_announced_damage_replacement(effect, condition):
+    from .query_effect_amount_model import CastXAmountSpec
+
+    normal = _announced_replacement_damage_amount(effect["otherwise_effects"], effect["otherwise_mechanic_ids"])
+    replacement = _announced_replacement_damage_amount(effect["effects"], effect["mechanic_ids"])
+    schema = effect["target_binding"]
+    valid_bonus = (
+        normal == CastXAmountSpec() and replacement == CastXAmountSpec(schema_version=3, bonus=2)
+        or type(normal) is int and type(replacement) is int and replacement == normal + 2
+    )
+    if (
+        not valid_bonus or effect["prefix_mechanic_ids"] or not _controller_power_minimum_is_closed(condition)
+        or set(schema) != {"zones", "categories", "predicate", "count"}
+        or len(schema["zones"]) != 2 or set(schema["zones"]) != {"player", "battlefield"}
+        or len(schema["categories"]) != 2 or set(schema["categories"]) != {"player", "permanent"}
+        or schema["predicate"] != "damageable"
+        or any(effect["effects"][0].get(key) != effect["otherwise_effects"][0].get(key)
+               for key in ("source", "target", "source_snapshot"))
+    ):
+        raise ValueError("Announced damage self-replacement requires the same target, source, and exact cast-X bonus")
+
+
+def _validate_public_combat_prevention_replacement(effect, condition):
+    normal = effect["otherwise_effects"]
+    replacement = effect["effects"]
+    binding = effect["source_binding"]
+    if (
+        effect["prefix_mechanic_ids"]
+        or not _controller_power_minimum_is_closed(condition)
+        or len(normal) != 1 or len(replacement) != 1
+        or public_combat_prevention_replacement_side(normal[0], source_binding=binding) != "all"
+        or public_combat_prevention_replacement_side(replacement[0], source_binding=binding) != "opponent_creatures"
+    ):
+        raise ValueError("Combat prevention self-replacement requires the exact two shield scopes and a fixed power minimum")
 
 
 def _conditional_branch_result_is_fixed(effects,mechanic_ids,version,source_binding='$source'):
@@ -164,6 +267,32 @@ def resolution_condition_is_closed(
     )
 
 
+def _validate_greatest_power_target_discard(effect, condition, children):
+    if (
+        type(effect["schema_version"]) is not int
+        or condition.fact is not FixedPublicStateFact.CONTROLS_A_GREATEST_POWER_CREATURE
+        or effect["prefix_mechanic_ids"] or len(children) != 1
+    ):
+        raise ValueError("Conditional opponent discard requires the exact current greatest-power result")
+    child = children[0]
+    actor, target = effect["player"], child.get("target")
+    if type(target) is not str or not target:
+        raise ValueError("Conditional opponent discard requires its bound target")
+    if actor == "$controller":
+        if target != "$target.0":
+            raise ValueError("Conditional opponent discard requires the announced target slot")
+    elif actor.startswith("$") or target.startswith("$") or actor == target:
+        raise ValueError("Conditional opponent discard requires another bound seat")
+    if (
+        child.get("op") != "choose_cards_apnap" or child.get("actor") != actor
+        or child.get("zone") != "hand" or child.get("then") != "discard"
+        or type(child.get("count")) is not int or child["count"] != 1
+        or child.get("hidden") is not True or not isinstance(child.get("players"), (list, tuple))
+        or tuple(child["players"]) != (target,)
+    ):
+        raise ValueError("Conditional opponent discard requires one private hand choice by the target")
+
+
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
 ) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition, tuple[Mapping[str, Any], ...]]:
@@ -196,6 +325,9 @@ def validate_resolution_condition_instruction(
         "op", "player", "condition", "effects",
         "mechanic_ids", "prefix_mechanic_ids",
     }
+    greatest_power_discard = effect.get("schema_version") == GREATEST_POWER_TARGET_DISCARD_VERSION
+    if greatest_power_discard:
+        expected_fields.add("schema_version")
     cast_fact = effect.get('schema_version') in {2,4,5}
     ordinary_alternative = effect.get('schema_version') == RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
     has_otherwise = effect.get('schema_version') in {3, 4, 5, 8, 9, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION}
@@ -260,6 +392,16 @@ def validate_resolution_condition_instruction(
     if has_otherwise:
         if type(effect['schema_version']) is not int:raise ValueError('Conditional branch version must be an exact integer')
         _validate_otherwise_program(effect)
+        if effect["schema_version"] == 8 and (
+            "declared-effect-amount" in effect["mechanic_ids"] or "declared-effect-amount" in effect["otherwise_mechanic_ids"]
+        ):
+            _validate_public_announced_damage_replacement(effect, condition)
+        if effect["schema_version"] == 9 and any(
+            value.get("op") == "create_damage_prevention_shield" for value in (*nested, *effect["otherwise_effects"])
+        ):
+            _validate_public_combat_prevention_replacement(effect, condition)
+    if greatest_power_discard:
+        _validate_greatest_power_target_discard(effect, condition, nested)
     return condition, tuple(nested)
 
 

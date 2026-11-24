@@ -19,10 +19,13 @@ from .damage_results import (
     DamageResultError,
     DamageResultRecord,
     plan_damage_result_commit,
+    project_damage_result_host,
     prepare_damage_results,
     PreparedDamageResults,
 )
+from .damage_source import DAMAGE_PREVENTION_RESULT_VERSION_FIELD
 from .damage_transaction import (
+    DamageReplacementChoiceRequired,
     DamageTransactionPort,
     DamageTransactionResult,
     PreparedDamageTransaction,
@@ -59,12 +62,14 @@ from .damage_prevention import (
     DamageModifierSnapshot,
     plan_damage_modifier_commit,
     project_damage_modifier_snapshot,
+    project_damage_modifier_snapshot,
     validate_damage_modifier_plan,
 )
 from .damage_prevention_aftermath import (
     commit_prevention_aftermath,
     PreparedPreventionAftermath,
-    prepare_prevention_aftermath,
+    prevention_aftermath_requests,
+    prevention_result_events,
     PreventionAftermathError,
     PreventionAftermathEvent,
     validate_prevention_aftermath,
@@ -86,11 +91,11 @@ from .prevention_triggers import (
     prevention_trigger_stack_item,
 )
 from .protection import (
-    ProtectionSource,
     ProtectionVerdict,
-    protection_verdict,
+    protection_verdict_for_damage,
 )
 from .player_result_events import (
+    dispatch_life_loss_records,
     dispatch_lifelink_gain_events,
     dispatch_prevention_life_gain_event,
 )
@@ -401,6 +406,32 @@ class _CanonicalDamageTransactionPort(DamageTransactionPort):
         from .counter_prevention import projected_counter_prevention_host
         return _CanonicalDamageTransactionPort(projected_counter_prevention_host(self.host, prepared))
 
+    def with_damage_results(self, results, modifiers):
+        return _projected_damage_port(
+            self.host, plan_damage_result_commit(self.host, results), modifiers,
+        )
+
+    def with_prepared_damage(self, prepared):
+        if not isinstance(prepared, PreparedDamageBatch) or not prepared.aftermath.in_damage_results:
+            raise DamageError("Projected damage requires a prepared current damage batch")
+        from .counter_prevention import projected_counter_prevention_host, validate_counter_prevention_snapshot
+
+        _materialized_damage_events(self.host, prepared)
+        _validate_damage_replacement_journal(prepared)
+        _validate_result_replacement_journal(prepared)
+        _validate_damage_result_life_snapshot(self.host, prepared)
+        validate_counter_prevention_snapshot(self.host, prepared)
+        validate_damage_modifier_plan(self.host, prepared.modifier_plan)
+        result_host = projected_counter_prevention_host(self.host, prepared.aftermath.counter_removals)
+        plan = _plan_batch_damage_results(result_host, prepared)
+        validate_prevention_aftermath(self.host, prepared.aftermath, result_records=plan.records)
+        modifiers = project_damage_modifier_snapshot(self.modifier_snapshot(), prepared.modifier_plan)
+        port = _projected_damage_port(result_host, plan, modifiers)
+        return _project_nested_damage(port, prepared.aftermath)
+
+    def modifier_snapshot(self):
+        return damage_modifier_snapshot(self.host)
+
     def recipient(
         self,
         ref: str,
@@ -419,6 +450,7 @@ class _CanonicalDamageTransactionPort(DamageTransactionPort):
         modifier_snapshot: DamageModifierSnapshot,
         aftermath_depth: int,
         aftermath_effect_chain: tuple[str, ...],
+        require_all_selections: bool = True,
     ) -> PreparedDamageTransaction:
         return prepare_damage_batch(
             self.host,
@@ -430,6 +462,7 @@ class _CanonicalDamageTransactionPort(DamageTransactionPort):
             modifier_snapshot=modifier_snapshot,
             aftermath_depth=aftermath_depth,
             aftermath_effect_chain=aftermath_effect_chain,
+            require_all_selections=require_all_selections,
         )
 
     def commit(
@@ -616,16 +649,7 @@ def _protection_prevention_effects(
             assert recipient.object_id is not None
             card = host.state.cards.get(recipient.object_id)
             if card is not None:
-                verdict = protection_verdict(
-                    host._effective_card_data(card),
-                    ProtectionSource(
-                        colors=frozenset(source.colors),
-                        card_types=frozenset(source.types),
-                        subtypes=frozenset(source.subtypes),
-                        supertypes=frozenset(source.supertypes),
-                        mana_value=source.mana_value,
-                    ),
-                )
+                verdict = protection_verdict_for_damage(host._effective_card_data(card), source)
                 if verdict is ProtectionVerdict.UNRESOLVED:
                     raise DamageError(
                         "Damage recipient has unresolved protection semantics"
@@ -653,6 +677,60 @@ def _protection_prevention_effects(
     return tuple(effects[key] for key in sorted(effects))
 
 
+def _prepare_damage_result_batch(host, events, *, damage_effects, sources, source_zones, selections):
+    from .semantic_runtime.counter_replacements import collect_counter_placement_replacement_effects
+    from .semantic_runtime.damage_results import collect_damage_result_replacement_effects
+
+    result_effects = (
+        *collect_damage_result_replacement_effects(
+            host,
+            sources=sources,
+            source_zones=source_zones,
+        ),
+        *collect_counter_placement_replacement_effects(
+            host,
+            sources=sources,
+            source_zones=source_zones,
+        ),
+    )
+    try:
+        from .semantic_runtime.counter_permissions import collect_counter_permissions
+
+        gain_permissions = collect_life_gain_permissions(host, sources=sources, source_zones=source_zones)
+        requests = (
+            prevention_aftermath_requests(host, events, effects=damage_effects, in_damage_results=True)
+            if getattr(host.state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None) == 1 else None
+        )
+        immediate_results = (
+            prevention_result_events(host, requests, gain_permissions)
+            if requests is not None else ()
+        )
+        result_progress = prepare_damage_results(
+            host,
+            events,
+            effects=result_effects,
+            gain_permissions=gain_permissions,
+            prevention_results=immediate_results,
+            counter_permissions=collect_counter_permissions(host,sources=sources,source_zones=source_zones),
+            selections=selections,
+            require_all_selections=False,
+        )
+    except (DamageResultError, ReplacementEffectError) as exc:
+        raise DamageError(str(exc)) from exc
+    if result_progress.pending is not None:
+        raise ReplacementChoiceRequired(
+            batch=ReplacementEventBatch(
+                batch_id=result_progress.batch_id,
+                events=result_progress.events,
+                apnap_order=tuple(host.apnap_order()),
+                journal=result_progress.journal,
+            ),
+            effects=result_effects,
+            pending=result_progress.pending,
+        )
+    return result_progress, requests
+
+
 def prepare_damage_batch(
     host: DamageHost,
     proposals: Sequence[DamageProposal],
@@ -663,13 +741,14 @@ def prepare_damage_batch(
     modifier_snapshot: DamageModifierSnapshot | None = None,
     aftermath_depth: int = 0,
     aftermath_effect_chain: tuple[str, ...] = (),
+    require_all_selections: bool = True,
 ) -> PreparedDamageBatch:
     """Resolve CR 120.4b damage and CR 120.4c results before mutation."""
 
     current_modifiers = modifier_snapshot or damage_modifier_snapshot(host)
     nonzero = tuple(proposal for proposal in proposals if proposal.amount > 0)
     if not nonzero:
-        if selections:
+        if selections and require_all_selections:
             raise DamageError(
                 "Replacement selections were supplied without damage"
             )
@@ -694,12 +773,6 @@ def prepare_damage_batch(
     # CardProgram runtime registry that lowers ambient battlefield abilities.
     from .semantic_runtime.damage_replacements import (
         collect_damage_replacement_effects,
-    )
-    from .semantic_runtime.damage_results import (
-        collect_damage_result_replacement_effects,
-    )
-    from .semantic_runtime.counter_replacements import (
-        collect_counter_placement_replacement_effects,
     )
 
     permission = collect_damage_prevention_permissions(host,sources=sources,source_zones=source_zones)
@@ -743,45 +816,10 @@ def prepare_damage_batch(
         damage_journal = ()
         consumed = 0
 
-    result_effects = (
-        *collect_damage_result_replacement_effects(
-            host,
-            sources=sources,
-            source_zones=source_zones,
-        ),
-        *collect_counter_placement_replacement_effects(
-            host,
-            sources=sources,
-            source_zones=source_zones,
-        ),
+    result_progress, requests = _prepare_damage_result_batch(
+        host, events, damage_effects=effects, sources=sources, source_zones=source_zones,
+        selections=tuple(selections[consumed:]),
     )
-    try:
-        from .semantic_runtime.counter_permissions import collect_counter_permissions
-        result_progress = prepare_damage_results(
-            host,
-            events,
-            effects=result_effects,
-            gain_permissions=collect_life_gain_permissions(host,sources=sources,source_zones=source_zones),
-            counter_permissions=collect_counter_permissions(host,sources=sources,source_zones=source_zones),
-            selections=tuple(selections[consumed:]),
-            require_all_selections=False,
-        )
-    except (DamageResultError, ReplacementEffectError) as exc:
-        raise DamageError(str(exc)) from exc
-    if result_progress.pending is not None:
-        raise ReplacementChoiceRequired(
-            batch=ReplacementEventBatch(
-                batch_id=(
-                    f"replacement:damage.results:{host.state.revision}:"
-                    f"{host.state.event_sequence + 1}"
-                ),
-                events=result_progress.events,
-                apnap_order=tuple(host.apnap_order()),
-                journal=result_progress.journal,
-            ),
-            effects=result_effects,
-            pending=result_progress.pending,
-        )
     aftermath_selection_offset = (
         consumed + result_progress.consumed_selections
     )
@@ -789,13 +827,14 @@ def prepare_damage_batch(
     modifier_plan, aftermath = prepare_damage_aftermath(host, events, effects, current_modifiers,
         damage_port=_CanonicalDamageTransactionPort(host),
         selections=tuple(selections[aftermath_selection_offset:]), sources=sources, source_zones=source_zones,
-        depth=aftermath_depth, effect_chain=aftermath_effect_chain)
+        depth=aftermath_depth, effect_chain=aftermath_effect_chain,
+        requests=requests, prepared_results=result_progress, require_all_selections=require_all_selections)
     return PreparedDamageBatch(
         events=events,
         effects=tuple(effects),
         journal=tuple(damage_journal),
         result_events=result_progress.events,
-        result_effects=tuple(result_effects),
+        result_effects=result_progress.effects,
         result_journal=result_progress.journal,
         modifier_plan=modifier_plan,
         aftermath=aftermath,
@@ -1202,14 +1241,7 @@ def _prevention_applied_events(
     return result
 
 
-def commit_prepared_damage_batch(
-    host: DamageHost,
-    prepared: PreparedDamageBatch,
-    *,
-    log_replacements: bool = True,
-) -> DamageBatchResult:
-    """Atomically validate and commit a choice-complete damage batch."""
-
+def _materialized_damage_events(host: DamageHost, prepared: PreparedDamageBatch) -> list[DamageEvent]:
     final_events: list[DamageEvent] = []
     for event in prepared.events:
         proposed, amount, prevented = _event_result(event)
@@ -1230,23 +1262,57 @@ def commit_prepared_damage_batch(
                 prevented=prevented,
             )
         )
+    return final_events
 
+
+def _plan_batch_damage_results(host, prepared):
     has_results = any(
         int(event.payload.get("amount", 0)) > 0 or event.children
         for event in prepared.events
     )
     if has_results and not prepared.result_events:
         raise DamageError("Prepared damage is missing its result event batch")
+    return plan_damage_result_commit(host, PreparedDamageResults(
+        events=prepared.result_events,
+        effects=prepared.result_effects,
+        journal=prepared.result_journal,
+    ))
+
+
+def _validate_damage_result_life_snapshot(host, prepared):
+    for event in prepared.result_events:
+        player = event.affected_player
+        if player is not None and event.payload.get("life_before") != host.state.players[player].life:
+            raise DamageError("Prepared damage result life total changed before commit")
+
+
+def _projected_damage_port(host, plan, modifiers):
+    result = project_damage_result_host(host, plan)
+    result.state.damage_prevention_shields = list(modifiers.shields)
+    result.state.damage_redirections = list(modifiers.redirections)
+    return _CanonicalDamageTransactionPort(result)
+
+
+def _project_nested_damage(port, aftermath):
+    for instruction in aftermath.instructions:
+        if instruction.nested_damage is not None:
+            port = port.with_prepared_damage(instruction.nested_damage)
+    return port
+
+
+def commit_prepared_damage_batch(
+    host: DamageHost,
+    prepared: PreparedDamageBatch,
+    *,
+    log_replacements: bool = True,
+) -> DamageBatchResult:
+    """Atomically validate and commit a choice-complete damage batch."""
+
+    final_events = _materialized_damage_events(host, prepared)
     from .counter_prevention import projected_counter_prevention_host, commit_immediate_counter_prevention
+    result_host = projected_counter_prevention_host(host, prepared.aftermath.counter_removals)
     try:
-        result_plan = plan_damage_result_commit(
-            projected_counter_prevention_host(host, prepared.aftermath.counter_removals),
-            PreparedDamageResults(
-                events=prepared.result_events,
-                effects=prepared.result_effects,
-                journal=prepared.result_journal,
-            ),
-        )
+        result_plan = _plan_batch_damage_results(result_host, prepared)
     except (DamageResultError, ReplacementEffectError) as exc:
         raise DamageError(str(exc)) from exc
 
@@ -1259,8 +1325,13 @@ def commit_prepared_damage_batch(
     except DamageModifierError as exc:
         raise DamageError(str(exc)) from exc
     try:
-        validate_prevention_aftermath(host, prepared.aftermath)
-    except PreventionAftermathError as exc:
+        validate_prevention_aftermath(host, prepared.aftermath, result_records=result_plan.records)
+        if prepared.aftermath.in_damage_results:
+            _validate_damage_result_life_snapshot(host, prepared)
+            if any(row.nested_damage is not None for row in prepared.aftermath.instructions):
+                modifiers = project_damage_modifier_snapshot(damage_modifier_snapshot(host), prepared.modifier_plan)
+                _project_nested_damage(_projected_damage_port(result_host, result_plan, modifiers), prepared.aftermath)
+    except (PreventionAftermathError, DamageResultError, DamageModifierError) as exc:
         raise DamageError(str(exc)) from exc
     prevention_events = _prevention_applied_events(host, prepared)
 
@@ -1305,6 +1376,7 @@ def commit_prepared_damage_batch(
             host,
             aftermath_prepared,
             damage_port=_CanonicalDamageTransactionPort(host),
+            result_records=committed.records,
         )
     except PreventionAftermathError as exc:
         raise DamageError(str(exc)) from exc
@@ -1374,6 +1446,9 @@ def _collect_damage_result_triggers(
         source_zones=trigger_source_zones,
         trigger_batch=trigger_batch,
     )
+
+    dispatch_life_loss_records(host, result.result_events, trigger_batch=trigger_batch,
+        sources=trigger_sources, source_zones=trigger_source_zones)
 
     for prevention in result.prevention_events:
         occurrence = prevention.trigger_occurrence()
@@ -1516,13 +1591,21 @@ def resolve_damage_batch(
     trigger_source_zones = {
         source.object_id: source.zone for source in trigger_sources
     }
-    prepared = prepare_damage_batch(
-        host,
-        proposals,
-        selections=replacement_selections,
-        sources=trigger_sources,
-        source_zones=trigger_source_zones,
-    )
+    try:
+        prepared = prepare_damage_batch(
+            host,
+            proposals,
+            selections=replacement_selections,
+            sources=trigger_sources,
+            source_zones=trigger_source_zones,
+        )
+    except ReplacementChoiceRequired as required:
+        if getattr(host.state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None) == 1:
+            proposal_ids = tuple(proposal.proposal_id for proposal in proposals)
+            waiting_ids = tuple(event.event_id for event in required.batch.events)
+            if waiting_ids != proposal_ids:
+                raise DamageReplacementChoiceRequired(required, proposal_ids) from required
+        raise
     result = commit_prepared_damage_batch(host, prepared)
 
     trigger_batch: list[Any] = []

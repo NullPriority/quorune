@@ -9,8 +9,10 @@ from ..preparation_model import preparation_result_node_capabilities
 from ..emblem_program_model import compiled_emblem_node_capabilities
 from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .control_capability_shapes import resolution_control_node_capabilities
+from .graveyard_recycling import source_graveyard_recycling_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
+from ..extra_combat_model import extra_combat_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
 from .combat_removal_shapes import combat_removal_node_capabilities
@@ -82,6 +84,41 @@ from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_ta
 from .closed_effect_program_shapes import closed_effect_program_node_capabilities
 from .linked_exile_return_shapes import linked_ability_exile_node_capabilities
 from .next_spell_payment import temporary_player_rule_node_capabilities
+from .token_mill_repeat import token_mill_repeat_node_capabilities
+from .library_bottom_results import library_bottom_result_node_capabilities
+from .temporary_self_copy import temporary_creature_copy_set_node_capabilities, temporary_self_copy_node_capabilities
+from .temporary_copy_subject import temporary_copy_subject_node_capabilities
+from .linked_exile_copy import linked_exile_copy_node_capabilities
+from .announced_graveyard_copy import announced_graveyard_copy_node_capabilities
+from .graveyard_exile_copy import graveyard_exile_copy_node_capabilities
+from .persistent_public_copy import persistent_public_copy_node_capabilities
+from .temporary_occurrence_copy import temporary_occurrence_copy_node_capabilities
+
+
+_TURN_SCHEDULE_NODE_RESOLVERS = (
+    fixed_extra_turn_node_capabilities,
+    extra_combat_node_capabilities,
+    scheduled_turn_skip_node_capabilities,
+)
+
+
+_TEMPORARY_CHARACTERISTIC_RESOLVERS = (
+    fixed_target_characteristics_node_capabilities,
+    temporary_target_interaction_node_capabilities,
+    fixed_source_characteristics_node_capabilities,
+    source_keyword_choice_capabilities,
+    source_protection_choice_capabilities,
+    source_fixed_protection_capabilities,
+    temporary_declaration_restriction_node_capabilities,
+    temporary_self_copy_node_capabilities,
+    linked_exile_copy_node_capabilities,
+    announced_graveyard_copy_node_capabilities,
+    graveyard_exile_copy_node_capabilities,
+    persistent_public_copy_node_capabilities,
+    temporary_creature_copy_set_node_capabilities,
+    temporary_copy_subject_node_capabilities,
+    temporary_occurrence_copy_node_capabilities,
+)
 
 
 def effect_node_capabilities(
@@ -91,6 +128,7 @@ def effect_node_capabilities(
     mechanics: set[str],
 ) -> set[str]:
     from .reanimation_entry_counters import reanimation_entry_counter_node_capabilities
+    from ..zone_devour import devour_entry_result_node_capabilities
     from .revealed_library_top import reveal_top_node_capabilities
     from .actual_life_transfer import actual_life_transfer_capabilities
     from .per_player_target_sets import per_player_target_node_capabilities
@@ -106,10 +144,13 @@ def effect_node_capabilities(
     except AttachmentReferenceError:
         return set()
     for resolver in (
+        devour_entry_result_node_capabilities,
         colored_hand_reveal_node_capabilities,
         library_result_node_capabilities,
         reanimation_entry_counter_node_capabilities,
         reveal_top_node_capabilities,
+        token_mill_repeat_node_capabilities,
+        library_bottom_result_node_capabilities,
         actual_life_transfer_capabilities,
         per_player_target_node_capabilities,
         block_counterpart_zone_capabilities,
@@ -131,8 +172,7 @@ def effect_node_capabilities(
         targeted_graveyard_exile_node_capabilities,
         event_outcome_node_capabilities,
         *STACK_TARGET_EFFECT_RESOLVERS,
-        fixed_extra_turn_node_capabilities,
-        scheduled_turn_skip_node_capabilities,
+        *_TURN_SCHEDULE_NODE_RESOLVERS,
         combat_removal_node_capabilities,
         ascend_spell_node_capabilities,
         public_event_counter_set_node_capabilities,
@@ -155,11 +195,7 @@ def effect_node_capabilities(
         announced_target_set_node_capabilities,
         fixed_player_counter_placement_node_capabilities,
         optional_fixed_counter_event_trigger_node_capabilities,
-        fixed_target_characteristics_node_capabilities, temporary_target_interaction_node_capabilities,
-        fixed_source_characteristics_node_capabilities, source_keyword_choice_capabilities,
-        source_protection_choice_capabilities,
-        source_fixed_protection_capabilities,
-        temporary_declaration_restriction_node_capabilities,
+        *_TEMPORARY_CHARACTERISTIC_RESOLVERS,
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,
         fixed_creature_power_damage_node_capabilities,
@@ -219,6 +255,7 @@ def effect_node_capabilities(
         targeted_graveyard_return_node_capabilities, fixed_target_reanimation_node_capabilities,
         public_graveyard_card_exile_node_capabilities,
         fixed_owner_zone_move_node_capabilities,
+        source_graveyard_recycling_node_capabilities,
         fixed_public_zone_move_set_node_capabilities,
         targeted_tap_state_node_capabilities,
         fixed_token_creation_node_capabilities,

@@ -10,6 +10,10 @@ from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.blight_model import blight_decline_branch_is_closed
 from ..rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
+from ..rules.targeted_life_decline import is_targeted_life_decline_effect
+from ..rules.scheduled_life_return import is_scheduled_life_return
+from .scheduled_life_return import complete_scheduled_life_return, prepare_scheduled_life_return
+from .targeted_life_decline import complete_targeted_life_decline, prepare_targeted_life_decline
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent, SetPermanentsTappedIntent, RemoveCountersIntent
 from ..semantic_runtime.energy_payment import PayEnergyIntent
 from ..zone_trigger_events import ZoneTransitionKind
@@ -101,6 +105,29 @@ def _validated(
 def prepare_fixed_effect_payment(
     effect: Mapping[str, Any], context: SemanticChoiceContext,
 ) -> SemanticChoicePreparation:
+    from ..rules.entry_player_counter_payment import resolved_entry_player_payment, uses_entry_player_counter_payment
+
+    if uses_entry_player_counter_payment(effect):
+        try:
+            spec, declined = resolved_entry_player_payment(effect, context.actor)
+        except (ValueError, TypeError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        if context.actor not in context.query.active_seats:
+            return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("The land entry player left the game"))
+        prepared = prepare_fixed_payment_cost(spec, effect, context)
+        if prepared.request is not None and not prepared.request.public_context["payable"]:
+            return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("No eligible creature can receive the counter", declined))
+        if prepared.request is not None:
+            request = replace(prepared.request,
+                prompt="Put a -1/-1 counter on a creature you control or take 3 damage.")
+            return replace(prepared, request=request)
+        return prepared
+    if is_scheduled_life_return(effect):
+        return prepare_scheduled_life_return(effect, context)
+    if is_targeted_life_decline_effect(effect):
+        return prepare_targeted_life_decline(effect, context)
     actor = context.actor
     spec, _ = _validated(effect, actor, context.query)
     return prepare_fixed_payment_cost(spec, effect, context)
@@ -119,13 +146,39 @@ def _source_counter_payment_intent(spec,effect,query):
     legal={value['ref']:value['logical_object_id'] for value in effect['_legal_objects']}
     if row is None or legal.get(row.ref)!=row.logical_object_id:
         raise SemanticChoiceError('Source counter payment is unavailable or changed incarnation')
-    return RemoveCountersIntent(actor=effect['_choice_actor'],object_ref=row.ref,counter_name=spec.counter_name,
-        amount=spec.amount,reason=effect['_stack_label'],source_ref=row.ref)
+    return _counter_payment_intent(spec, row, effect["_choice_actor"], effect["_stack_label"])
+
+
+def _counter_payment_intent(spec, row, actor, reason):
+    return RemoveCountersIntent(actor=actor, object_ref=row.ref, counter_name=spec.counter_name,
+        amount=spec.amount, reason=reason, source_ref=row.ref)
+
+
+def prepare_mandatory_source_counter_followup(effect, context):
+    from ..fixed_effect_payment import mandatory_source_counter_followup_parts
+
+    try:
+        spec, child = mandatory_source_counter_followup_parts(effect, resolved=True)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    if effect["player"] != context.actor:
+        raise SemanticChoiceError("Mandatory counter payment controller changed")
+    row = _source_counter_payment_row(spec, context.query)
+    if row is None or context.actor not in context.query.active_seats:
+        return SemanticChoicePreparation(
+            request=None, continuation_effect=FrozenMap(effect),
+            auto_continue=AutoContinue("The original source cannot pay the required counter"),
+        )
+    intent = _counter_payment_intent(spec, row, context.actor, context.stack_label)
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect), preparation_intents=(intent,),
+        auto_continue=AutoContinue("The source pays one required counter", (FrozenMap(child),)),
+    )
 
 
 def prepare_fixed_payment_cost(
     spec: FixedEffectPaymentSpec, effect: Mapping[str, Any],
-    context: SemanticChoiceContext,
+    context: SemanticChoiceContext, *, object_filter=None,
 ) -> SemanticChoicePreparation:
     """Publish the existing closed cost independently of its result branch."""
     if spec.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
@@ -155,7 +208,8 @@ def prepare_fixed_payment_cost(
                 controller=actor if spec.kind in _CONTROLLED_OBJECT_PAYMENTS else None,
             )
             legal = tuple(sorted(
-                (row for row in candidates if _object_matches_payment(row, spec, actor, context.query)),
+                (row for row in candidates if _object_matches_payment(row, spec, actor, context.query)
+                 and (object_filter is None or object_filter(row))),
                 key=lambda row: (row.ref, row.logical_object_id),
             ))
         payable = len(legal) >= required
@@ -212,6 +266,19 @@ def complete_fixed_effect_payment(
     query: SemanticChoiceQuery,
 ) -> SemanticChoiceCompletion:
     effect = continuation.effect
+    from ..rules.entry_player_counter_payment import resolved_entry_player_payment, uses_entry_player_counter_payment
+
+    if uses_entry_player_counter_payment(effect):
+        try:
+            spec, declined = resolved_entry_player_payment(effect, effect.get("_choice_actor"), continuation=True)
+        except (ValueError, TypeError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        completion = complete_fixed_payment_cost(spec, effect, response, query)
+        return completion if completion.intents else SemanticChoiceCompletion(prepend_effects=declined)
+    if is_scheduled_life_return(effect):
+        return complete_scheduled_life_return(continuation, response, query)
+    if is_targeted_life_decline_effect(effect):
+        return complete_targeted_life_decline(continuation, response, query)
     actor = effect.get('_choice_actor')
     spec, consequences = _validated(effect, actor, query, continuation=True)
     completion = complete_fixed_payment_cost(spec, effect, response, query)
@@ -280,7 +347,7 @@ def _object_payment_intent(spec, actor, selected, label):
 
 def complete_fixed_payment_cost(
     spec: FixedEffectPaymentSpec, effect: Mapping[str, Any],
-    response: Mapping[str, Any], query: SemanticChoiceQuery,
+    response: Mapping[str, Any], query: SemanticChoiceQuery, *, object_filter=None,
 ) -> SemanticChoiceCompletion:
     """Validate and commit one fixed cost through the canonical intent owner."""
     if spec.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
@@ -315,7 +382,8 @@ def complete_fixed_payment_cost(
             current = (_source_sacrifice_payment_row(spec,actor,query) if spec.kind=='source_sacrifice'
                 else query.object(ref,zones=spec.predicate.zones))
             if (ref not in legal or current is None or spec.kind=='source_sacrifice' and current.ref!=ref or current.logical_object_id != legal[ref]
-                    or spec.kind!='source_sacrifice' and not _object_matches_payment(current,spec,actor,query)):
+                    or spec.kind!='source_sacrifice' and not _object_matches_payment(current,spec,actor,query)
+                    or object_filter is not None and not object_filter(current)):
                 raise SemanticChoiceError('Fixed payment object is stale or ineligible')
         intent = _object_payment_intent(spec, actor, selected, label)
     else:

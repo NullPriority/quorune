@@ -4,11 +4,15 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import replace
+from hashlib import sha256
 from typing import Any, Mapping, Sequence
 
 from ..entry_counters import EffectEntryCounter
 from ..zone_trigger_events import ZoneTransitionKind
-from ..replacement_effects import AffectedObject, EntryReplacementScope, ReplaceableEvent
+from ..replacement.entry_counter_types import ENTRY_TIME_COUNTER_TYPES_FIELD
+from ..replacement_effects import AffectedObject, EntryReplacementScope, ReplaceableEvent, ReplacementEffect
+from .context import SemanticNodeError
+from .entry_designations import CountedCreatureTypeEntryDesignationHandler, EntryOpponentDesignationHandler
 from .zone_replacement_model import ZoneChangeReplacementSnapshot, ZoneChangeSubjectSnapshot
 
 
@@ -95,9 +99,26 @@ def conditional_counter_entry_types(host, card, controller, *, copy_values=None)
         )
     data = host._effective_card_data(preview, maximum_layer=Layer.TYPE)
     data = prospective_creature_type_characteristics(
-        host, preview, data, destination_controller=controller,
+        host, preview, data, destination_controller=controller, include_controlled_subtypes=False,
     )
     return tuple(sorted(set().union(*host._type_parts(str(data["type_line"])))))
+
+
+def subject_entry_counter_fields(host, card, destination, controller, characteristics, type_parts, counters):
+    """Capture type facts used by entry-counter instructions and their replacements."""
+    from .impending import prospective_impending_entry_types
+
+    tags = (
+        conditional_counter_entry_types(host, card, controller)
+        if any(counter.required_entry_type is not None for counter in counters)
+        else tuple(sorted(set().union(*type_parts)))
+    )
+    return {
+        "object_types": tags,
+        "entry_time_counter_types": prospective_impending_entry_types(
+            host, card, destination, controller, characteristics, tags, counters,
+        ),
+    }
 
 
 def validated_zone_change_snapshot_inputs(
@@ -213,15 +234,24 @@ def validated_zone_change_snapshot_inputs(
     )
 
 
+def _zone_change_snapshot_event_id(snapshot, subject):
+    from ..replacement.counted_entry_counters import TransferEntryCounters
+
+    if any(isinstance(operation, TransferEntryCounters)
+           for effect in snapshot.effects for operation in effect.operations):
+        # A resumed simultaneous ordering rebuilds the same subjects at a new
+        # revision. Bind the offer to each original incarnation instead.
+        incarnation = sha256(subject.logical_object_id.encode("utf-8")).hexdigest()[:24]
+        return f"zone.change:entry-counter-transfer:{incarnation}:{subject.object_ref}"
+    return f"zone.change:{snapshot.revision}:{snapshot.event_sequence + 1}:{subject.object_ref}"
+
+
 def zone_change_snapshot_event(
     snapshot: ZoneChangeReplacementSnapshot,
     subject: ZoneChangeSubjectSnapshot,
 ) -> ReplaceableEvent:
     return ReplaceableEvent(
-        event_id=(
-            f"zone.change:{snapshot.revision}:"
-            f"{snapshot.event_sequence + 1}:{subject.object_ref}"
-        ),
+        event_id=_zone_change_snapshot_event_id(snapshot, subject),
         kind="zone.change",
         affected_player=None,
         affected_object=AffectedObject(
@@ -248,6 +278,8 @@ def zone_change_snapshot_event(
             "object_kind": "card" if subject.is_card_object else "noncard",
             "object_ref": subject.object_ref,
             "object_types": list(subject.object_types),
+            **({ENTRY_TIME_COUNTER_TYPES_FIELD: subject.entry_time_counter_types.to_dict()}
+               if subject.entry_time_counter_types is not None else {}),
             "logical_object_id": subject.logical_object_id,
             **({"prospective_subject": True} if subject.prospective_subject else {}),
             "transition_kind": subject.transition_kind.value,
@@ -293,6 +325,43 @@ def zone_change_snapshot_events(snapshot: ZoneChangeReplacementSnapshot) -> tupl
     scope = snapshot_entry_scope(snapshot)
     return tuple(replace(event, entry_scope=scope) for event in events)
 
+
+def intrinsic_subject_replacement_effects(
+    handler, descriptor, *, subject, component_id, host, simultaneous_departures, fallback,
+) -> tuple[ReplacementEffect, ...]:
+    """Bind an intrinsic replacement against its immutable subject information."""
+    from .linked_graveyard_entry import LinkedGraveyardEntryHandler
+    from .self_entry_counters import EntryCounterTransferHandler
+
+    if isinstance(handler, (CountedCreatureTypeEntryDesignationHandler, EntryOpponentDesignationHandler,
+                            LinkedGraveyardEntryHandler, EntryCounterTransferHandler)):
+        return handler.subject_replacement_effects(
+            descriptor, subject=subject, component_id=component_id, host=host,
+            simultaneous_departures=simultaneous_departures,
+        )
+    compiler = getattr(handler, "subject_replacement_effects", None)
+    if compiler is not None:
+        effects = tuple(
+            compiler(
+                descriptor,
+                subject=subject,
+                component_id=component_id,
+            )
+        )
+        if any(
+            not isinstance(effect, ReplacementEffect)
+            for effect in effects
+        ):
+            raise SemanticNodeError(
+                "Affected-object replacement compilation must be typed"
+            )
+        return effects
+    effect = fallback(
+        descriptor,
+        subject=subject,
+        component_id=component_id,
+    )
+    return () if effect is None else (effect,)
 
 __all__ = [
     "active_zone_replacement_sources",

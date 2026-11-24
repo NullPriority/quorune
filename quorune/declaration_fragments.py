@@ -68,6 +68,7 @@ DeclarationTurnHistoryFact = Literal[
 ]
 DeclarationRequirementKind = Literal[
     "attack_each_combat",
+    "attack_specific_player",
     "block_each_combat",
     "must_be_blocked",
     "all_able_blockers",
@@ -237,10 +238,17 @@ class DeclarationRequirementTemplate:
     schema_version: int = 1
     scope: str = 'self'
     condition: FixedPublicStateConditionSpec | None = None
+    defender: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise ValueError('Unsupported declaration requirement version')
+        if self.schema_version == 3:
+            if (self.kind != "attack_specific_player" or self.scope != "self" or self.condition is not None
+                    or type(self.defender) is not str or not self.defender or self.defender.startswith("$")):
+                raise ValueError("A specific attack requirement needs its exact resolved defending player")
+        elif self.defender is not None or self.kind == "attack_specific_player":
+            raise ValueError("A specific attack requirement reserves its own version")
         if type(self.scope) is not str:
             raise ValueError('Declaration requirement scope must be a string')
         if self.schema_version == 1 and (self.scope != 'self' or self.condition is not None):
@@ -256,6 +264,7 @@ class DeclarationRequirementTemplate:
             raise ValueError('Bound requirements need an attached subject or a closed public condition')
         expected_domain = {
             "attack_each_combat": "attack",
+            "attack_specific_player": "attack",
             "block_each_combat": "block",
             "must_be_blocked": "block",
             "all_able_blockers": "block",
@@ -266,6 +275,7 @@ class DeclarationRequirementTemplate:
             raise ValueError("Declaration requirement kind and domain disagree")
         expected_template = {
             "attack_each_combat": "intrinsic-attack-each-combat-if-able-v1",
+            "attack_specific_player": "resolved-attack-specific-player-this-turn-v1",
             "block_each_combat": "intrinsic-block-each-combat-if-able-v1",
             "must_be_blocked": "intrinsic-must-be-blocked-if-able-v1",
             "all_able_blockers": "intrinsic-all-able-blockers-v1",
@@ -290,6 +300,8 @@ class DeclarationRequirementTemplate:
         if self.schema_version == 2:
             value.update(schema_version=2, scope=self.scope,
                 condition=self.condition.to_dict() if self.condition is not None else None)
+        if self.schema_version == 3:
+            value.update(schema_version=3, defender=self.defender)
         return value
 
     @classmethod
@@ -303,6 +315,8 @@ class DeclarationRequirementTemplate:
         }
         if isinstance(value, Mapping) and value.get('schema_version') == 2:
             expected |= {'schema_version', 'scope', 'condition'}
+        if isinstance(value, Mapping) and value.get("schema_version") == 3:
+            expected |= {"schema_version", "defender"}
         if not isinstance(value, Mapping) or set(value) != expected:
             raise ValueError(
                 "Declaration requirement fragments have a closed schema"
@@ -313,6 +327,7 @@ class DeclarationRequirementTemplate:
             kind=value["kind"],
             schema_version=value.get('schema_version', 1), scope=value.get('scope', 'self'),
             condition=FixedPublicStateConditionSpec.from_dict(value['condition']) if value.get('condition') is not None else None,
+            defender=value.get("defender"),
         )
 
 

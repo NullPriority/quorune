@@ -280,6 +280,48 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+
+    def test_restricted_token_mana_binds_creator_and_quoted_activation(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_card_program
+        from quorune.granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY
+
+        inner = "{T}: Add {R}. Spend this mana only to cast a planeswalker spell."
+        record = token_record(
+            "Harbor Signal Fixture",
+            'Create a 1/1 red Wizard creature token with "' + inner + '".',
+            470099, type_line="Sorcery",
+        )
+        profile = "commander_review"
+        ir = compile_oracle_card(record, capability_registry=self.capabilities, capability_profile=profile)
+        self.assertEqual(ir.status, "exact")
+        creator, activation = ir.faces[0].nodes
+        self.assertEqual(activation.kind, "granted_mana_ability")
+        self.assertIn(RESTRICTED_MANA_GRANT_CAPABILITY, creator.capability_dependencies)
+        self.assertIn(RESTRICTED_MANA_GRANT_CAPABILITY, activation.capability_dependencies)
+        binding = bind_card_program_runtime(
+            compile_card_program(
+                self.db, record, capability_registry=self.capabilities,
+                capability_profile=profile, trust_level="trusted",
+            ),
+            capability_registry=self.capabilities, profile=profile,
+        )
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+        with patch(
+            "quorune.compiler.granted_static_costs.bind_granted_plan_dependencies",
+            side_effect=lambda node, plan, registry, profile: node,
+        ):
+            mutated = bind_card_program_runtime(
+                compile_card_program(
+                    self.db, record, capability_registry=self.capabilities,
+                    capability_profile=profile, trust_level="trusted",
+                ),
+                capability_registry=self.capabilities, profile=profile,
+            )
+        self.assertFalse(mutated["strict_capability_ready"])
+        self.assertTrue(any(RESTRICTED_MANA_GRANT_CAPABILITY in blocker for blocker in mutated["blockers"]))
+
     def test_adventure_token_shape_keeps_independent_intrinsic_authority(self):
         from quorune.adventure import ADVENTURE_CAPABILITY, ADVENTURE_COVERAGE
         from quorune.card_programs.binding import bind_semantic_program_runtime

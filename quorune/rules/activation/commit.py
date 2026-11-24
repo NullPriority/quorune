@@ -179,6 +179,16 @@ def _revalidate_activation(
             reason=condition_reason or "stale_activation_condition",
         )
     details = thaw_json(proposal.details)
+    if ability.variable_colored_reveal_price is not None:
+        from .variable_colored_reveal import revalidate_variable_colored_reveal_payment
+
+        try:
+            revalidate_variable_colored_reveal_payment(
+                host, proposal.seat, ability.variable_colored_reveal_price,
+                details.get("announced_x"), details.get("variable_colored_reveal_payment"),
+            )
+        except ValueError as exc:
+            raise ActivationProposalError(str(exc), reason="stale_colored_reveal_payment") from exc
     if not ability.mana_cost_options:
         from .x_costs import activation_requirements, validate_activation_x_payment
         try:
@@ -825,6 +835,22 @@ def commit_activation(
     commit_activation_with_conditional_returns(host,proposal,response)
 
 
+def _publish_activation_stack_placement(host, proposal, source, ability, item, *, append, targets_announced):
+    """Publish paid reveals and the final placement through the ordinary stack owners."""
+    from ..target_announcements import dispatch_target_announcements
+
+    if append:
+        host.state.stack.append(item)
+    from .variable_colored_reveal import commit_activation_reveal_price
+    commit_activation_reveal_price(host, proposal, source, ability, item)
+    if not targets_announced:
+        dispatch_target_announcements(host, item)
+    from ..crime import record_crime_for_stack_placement
+    record_crime_for_stack_placement(host,item)
+    if not targets_announced:
+        collect_ward_occurrences(host, item)
+
+
 def _commit_activation_costs_and_stack(
     host: ActivationCommitHost,
     proposal: ActivationProposal,
@@ -853,8 +879,8 @@ def _commit_activation_costs_and_stack(
     from ..attachment_controller_information import capture_attachment_controller_context
     attachment_controller_context=(capture_attachment_controller_context(host.state.cards,program,attachment_snapshot)
         if attachment_snapshot is not None and program is not None else {})
-    from ...designation_prevention import capture_designation_information, DESIGNATION_INFORMATION_FIELD
-    designation_information=capture_designation_information(source,program.effects) if program is not None else None
+    from ...designation_prevention import capture_program_designation_information, DESIGNATION_INFORMATION_FIELD
+    designation_information = capture_program_designation_information(source, program)
     if not ability.mana_ability:
         clear_mana_undo_stack(host.state.players[proposal.seat].stats)
     from ...chosen_color_mana_runtime import capture_chosen_color_mana_source
@@ -863,7 +889,7 @@ def _commit_activation_costs_and_stack(
     from ...triggered_mana import tap_mana_source
     trigger_source = tap_mana_source(host, source, tap_source=ability.mana_ability and ability.tap_source)
     announcement = announce_targeted_activation(host,proposal,source,ability,response,attachment_snapshot,transmute_context)
-    from ..target_announcements import announce_initial_target_triggers, dispatch_target_announcements
+    from ..target_announcements import announce_initial_target_triggers
     initial_targets_announced = announce_initial_target_triggers(host, announcement)
     paid_objects, activations, spent, special_cost_context = commit_activation_payments(
         host, proposal, source, ability, response, mana_option,
@@ -927,13 +953,10 @@ def _commit_activation_costs_and_stack(
     begin_ninjutsu_reveal(host, source, item)
     if duration_tracked:
         item.context["control_duration_snapshot"] = duration_snapshot.to_dict() if duration_snapshot is not None else None
-    if announcement is None:host.state.stack.append(item)
-    if not initial_targets_announced:
-        dispatch_target_announcements(host, item)
-    from ..crime import record_crime_for_stack_placement
-    record_crime_for_stack_placement(host,item)
-    if not initial_targets_announced:
-        collect_ward_occurrences(host, item)
+    _publish_activation_stack_placement(
+        host, proposal, source, ability, item, append=announcement is None,
+        targets_announced=initial_targets_announced,
+    )
     host._log(
         proposal.seat,
         "stack.activate",

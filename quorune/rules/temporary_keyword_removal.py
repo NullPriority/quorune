@@ -11,6 +11,8 @@ from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, next_turn_effect_dependen
 OPERATION='apply_source_characteristics_until_end_of_turn'
 MECHANIC='fixed-temporary-keyword-removal'
 CAPABILITY='continuous.resolution.fixed_keyword_removal'
+OPPONENT_PERMANENT_KEYWORD_REMOVAL_CAPABILITY = 'continuous.resolution.opponent_permanent_keyword_removal'
+_OPPONENT_PERMANENT_REMOVALS = ('Hexproof', 'Indestructible')
 PROTECTION_FROM_BLACK='Protection from Black'
 ALL_LANDWALK_ABILITIES='All Landwalk Abilities'
 _TYPED_REMOVAL_CAPABILITIES = {
@@ -20,6 +22,20 @@ _TYPED_REMOVAL_CAPABILITIES = {
 CHOICE_FIELD='target_keyword_removal_choice_version'
 CHOICE_PROMPT='Choose a keyword to remove.'
 CHOICE_OPTION_SETS=(('Flying','First Strike','Trample'), ('First Strike','Swampwalk'))
+
+
+def opponent_permanent_keyword_removal_query(*, actor="$controller"):
+    """The current battlefield permanents controlled by opponents."""
+    return ObjectQuerySpec(zones=("battlefield",), excluded_controllers=(actor,))
+
+
+def _is_opponent_permanent_keyword_removal(effect, query, *, actor="$controller"):
+    return (
+        query == opponent_permanent_keyword_removal_query(actor=actor)
+        and tuple(effect["remove_keywords"]) == _OPPONENT_PERMANENT_REMOVALS
+        and not effect["keywords"] and effect["power"] == effect["toughness"] == 0
+        and NEXT_TURN_EFFECT_FIELD not in effect
+    )
 
 
 def temporary_keyword_removal_instruction(effect):
@@ -139,7 +155,13 @@ def temporary_keyword_removal_capabilities(*,effects,target_schema,mechanic_ids)
                   *damage_dependencies, *next_turn_effect_dependencies(effects[0])}
     if isinstance(selection,ObjectQuerySpec):
         from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
-        if 'creature' not in selection.types_all or not fixed_resolution_characteristic_query_is_closed(selection,target_schema=target_schema):return ()
+        if _is_opponent_permanent_keyword_removal(effects[0], selection):
+            if target_schema is not None or damage_dependencies:
+                return ()
+            dependencies.add(OPPONENT_PERMANENT_KEYWORD_REMOVAL_CAPABILITY)
+        elif ('creature' not in selection.types_all
+              or not fixed_resolution_characteristic_query_is_closed(selection, target_schema=target_schema)):
+            return ()
         dependencies.update(object_query_capabilities(selection))
     elif selection=='$source.zone_object':
         if target_schema is not None:return ()
@@ -239,7 +261,12 @@ def temporary_keyword_removal_runtime_dependencies(program):
 
     if any(_keyword_removal_choice_marker(effect) for effect in nested_effects(program.effects)):
         return chosen_keyword_removal_runtime_dependencies(program)
-    if not any(effect.get('op')==OPERATION and effect.get('schema_version')==11 for effect in program.effects):return ()
+    if not any(
+        effect.get('op') == OPERATION
+        and (effect.get('schema_version') == 11 or 'remove_keywords' in effect)
+        for effect in program.effects
+    ):
+        return ()
     if any(effect.get('card')=='$event.permanent_object' for effect in program.effects):
         from .occurrence_object_results import occurrence_object_runtime_dependencies
         owned=occurrence_object_runtime_dependencies(program)
@@ -265,7 +292,9 @@ def apply_temporary_keyword_removal(host,effect,*,actor,reason):
         selection=temporary_keyword_removal_instruction(instruction)
         if isinstance(selection,ObjectQuerySpec):
             from .resolution_characteristic_shapes import fixed_resolution_characteristic_set_is_closed
-            if not fixed_resolution_characteristic_set_is_closed(selection):raise ValueError('Temporary removal query is unavailable')
+            opponent_permanents = _is_opponent_permanent_keyword_removal(instruction, selection, actor=actor)
+            if not opponent_permanents and not fixed_resolution_characteristic_set_is_closed(selection):
+                raise ValueError('Temporary removal query is unavailable')
             affected=matching_battlefield_objects(host,selection)
         else:
             if stale:return ()

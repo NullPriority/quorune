@@ -23,13 +23,17 @@ def face_up_target_schema(relation):
 
 
 def validate_face_up_instruction(effect,*,allow_runtime_source=False):
-    allowed={'op','schema_version','card','reason'}|({'_runtime_source'} if allow_runtime_source else set())
+    allowed={'op','schema_version','card','reason'}|({'_runtime_source','_replacement_selections'} if allow_runtime_source else set())
     if (not isinstance(effect,Mapping) or set(effect)-allowed or not {'op','schema_version','card'}.issubset(effect)
             or effect['op']!=FACE_UP_EFFECT_OPERATION or type(effect['schema_version']) is not int
             or effect['schema_version']!=1 or type(effect['card']) is not str or not effect['card']
             or effect['card']!=effect['card'].strip()
             or 'reason' in effect and (type(effect['reason']) is not str or not effect['reason'])):
         raise ValueError('Face-up instruction has a closed versioned single-reference shape')
+    if '_replacement_selections' in effect:
+        selections=effect['_replacement_selections']
+        if not isinstance(selections,(list,tuple)) or len(selections)!=1 or type(selections[0]) is not str or not selections[0]:
+            raise ValueError('Face-up replacement continuation requires one offered selection')
 
 
 def face_up_node_capabilities(*,effects,target_schema,mechanics):
@@ -39,3 +43,21 @@ def face_up_node_capabilities(*,effects,target_schema,mechanics):
     if not isinstance(target_schema,Mapping) or type(target_schema.get('count')) is not int or target_schema.get('face_down') is not True:return ()
     if not any(target_schema==face_up_target_schema(relation) for relation in ('any','you','opponent')):return ()
     return FACE_UP_EFFECT_CAPABILITY,'target.revalidate_resolution'
+
+
+SOURCE_FACE_DOWN_SCHEMA_VERSION = 2
+
+
+def source_face_down_instruction():
+    return {"op": FACE_UP_EFFECT_OPERATION,"schema_version": SOURCE_FACE_DOWN_SCHEMA_VERSION,
+            "face_down": True,"card": "$source.zone_object"}
+
+
+def validate_source_face_down_instruction(effect, *, runtime=False):
+    allowed = {"op", "schema_version", "face_down", "card", "reason"} | ({"_runtime_source"} if runtime else set())
+    if (not isinstance(effect, Mapping) or set(effect) - allowed
+            or effect.get("op") != FACE_UP_EFFECT_OPERATION
+            or type(effect.get("schema_version")) is not int or effect["schema_version"] != SOURCE_FACE_DOWN_SCHEMA_VERSION
+            or effect.get("face_down") is not True or "card" not in effect
+            or (effect["card"] is not None and (type(effect["card"]) is not str or not effect["card"].strip()))):
+        raise ValueError("Turning a source face down requires its one typed current reference")

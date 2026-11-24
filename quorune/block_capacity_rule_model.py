@@ -31,7 +31,8 @@ class ResolvedBlockCapacityRule:
             raise ContinuousEffectError('Blocking rule identity is malformed')
         if type(self.timestamp) is not int or self.timestamp < 0:
             raise ContinuousEffectError('Blocking rule timestamp is malformed')
-        if not isinstance(self.subject, ContinuousObjectIdentity) or not isinstance(self.capacity, BlockCapacitySpec):
+        if (not isinstance(self.subject, ContinuousObjectIdentity)
+                or not isinstance(self.capacity, BlockCapacitySpec) or self.capacity.schema_version != 1):
             raise ContinuousEffectError('Blocking rule requires a locked object and closed capacity')
         if self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN:
             raise ContinuousEffectError('Resolved blocking capacity expires at end of turn')

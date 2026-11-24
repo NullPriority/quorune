@@ -12,6 +12,7 @@ from .block_transitions import (
     BLOCK_KEYWORD_TRIGGER_SEMANTIC_KEY,
     BlockKeywordTriggerOccurrence,
     BlockTransitionError,
+    BlockTransitionEvent,
     BlockTransitionParticipant,
     BlockTransitionQuery,
     block_keyword_trigger_stack_item,
@@ -24,6 +25,8 @@ from .combat_relationship_state import (
     BlockDeclarationAssignment,
     CombatRelationshipStateError,
     commit_block_declaration,
+    commit_blocked_status,
+    is_unblocked_attacker_after_declaration,
 )
 from .trigger_processing import enqueue_trigger_batch
 from .keyword_abilities import normalized_characteristic_keywords
@@ -123,14 +126,29 @@ def _block_event_context(event, participant, **extra):
     }
 
 
+def _dispatch_attacker_becomes_blocked(engine, event, attacker, sources, stack_items):
+    target = engine.state.combat.attackers.get(attacker.object_id)
+    defender = (engine._defending_player_for_attacker(attacker.object_id, target)
+                if isinstance(target, str) else None)
+    if defender not in engine.state.players:
+        raise BlockTransitionError("A blocked attacker requires one sealed defending player")
+    return engine._dispatch_semantic_event(
+        "creature.becomes_blocked", _block_event_context(event, attacker, defending_player=defender),
+        sources=sources, trigger_batch=stack_items,
+    )
+
+
 def _dispatch_block_relationship_triggers(
     engine, event, stack_items, *, put_blocking, already_blocked,
 ):
+    sources = tuple(engine._semantic_event_sources(zones={"battlefield"}))
+    if event.schema_version == 2:
+        attacker, = event.participants
+        return _dispatch_attacker_becomes_blocked(engine, event, attacker, sources, stack_items)
     participants = {value.object_id: value for value in event.participants}
     from .rules.block_characteristics import block_characteristic_contexts
     from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONTEXT
     characteristic_contexts=block_characteristic_contexts(engine,event)
-    sources = tuple(engine._semantic_event_sources(zones={"battlefield"}))
     refs = []
     blocked = set(already_blocked)
     for assignment in event.assignments:
@@ -154,14 +172,7 @@ def _dispatch_block_relationship_triggers(
         if attacker.object_id in blocked:
             continue
         blocked.add(attacker.object_id)
-        target = engine.state.combat.attackers.get(attacker.object_id)
-        defender = (engine._defending_player_for_attacker(attacker.object_id, target)
-                    if isinstance(target, str) else None)
-        if defender not in engine.state.players:
-            raise BlockTransitionError('A blocked attacker requires one sealed defending player')
-        refs.extend(engine._dispatch_semantic_event(
-            "creature.becomes_blocked", _block_event_context(event, attacker,
-                defending_player=defender), sources=sources, trigger_batch=stack_items))
+        refs.extend(_dispatch_attacker_becomes_blocked(engine, event, attacker, sources, stack_items))
     return refs
 
 
@@ -275,6 +286,41 @@ def commit_engine_put_blocking(engine: Any, *, controller: str, assignments):
     return committed
 
 
+def commit_engine_blocked_status(engine: Any, attacker: Any) -> bool:
+    """Seal the current attacking incarnation and emit its begins-blocked occurrence."""
+
+    from .unblocked_attacker_model import CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
+
+    combat = engine.state.combat
+    if engine.state.unblocked_attacker_event_version != CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION:
+        raise StateInvariantError("Blocked-status effects require their represented combat-state version")
+    if not is_unblocked_attacker_after_declaration(combat, attacker):
+        return False
+    try:
+        query = EngineBlockTransitionQuery(engine)
+        participant = query.participant(attacker.object_id)
+        event = BlockTransitionEvent.create(
+            turn_sequence=query.turn_sequence(), priority_epoch=query.priority_epoch(),
+            active_player=query.active_player(), participants=(participant,), assignments=(),
+            schema_version=2,
+        )
+        with engine.transaction():
+            if not commit_blocked_status(combat, attacker, logical_object_id=participant.logical_object_id):
+                return False
+            items, occurrences, refs = _block_transition_trigger_items(engine, event)
+            engine._log(
+                None, "combat.block_transition", f"{attacker.ref} became blocked.",
+                {"transition": event.to_dict(),
+                 "trigger_occurrences": [value.occurrence_id for value in occurrences],
+                 "semantic_trigger_refs": refs},
+                importance=2, changed_objects=[attacker.object_id],
+            )
+            enqueue_trigger_batch(engine, items)
+    except (AbilityFragmentError, BlockTransitionError, CombatRelationshipStateError) as exc:
+        raise StateInvariantError(str(exc)) from exc
+    return True
+
+
 def prepare_block_keyword_trigger_resolution(
     engine: Any,
     item: Any,
@@ -319,6 +365,7 @@ __all__ = [
     "EngineBlockTransitionQuery",
     "commit_engine_block_declaration",
     "commit_engine_put_blocking",
+    "commit_engine_blocked_status",
     "enqueue_block_transition_triggers",
     "prepare_block_keyword_trigger_resolution",
 ]

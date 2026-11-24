@@ -46,12 +46,16 @@ def dispatch_completed_decision(host,decision):
         complete_transform_timestamp_order(host,decision)
     elif kind=='permanent.composition_order':
         from .composition_state_based_order import complete_state_based_composition_order
-        complete_state_based_composition_order(host,decision)
+        from .semantic_choices.apnap_composition import APNAP_PHYSICAL_ORDER_FIELD, complete_apnap_composition_order
+        if APNAP_PHYSICAL_ORDER_FIELD in decision.continuation:
+            complete_apnap_composition_order(host, decision)
+        else:
+            complete_state_based_composition_order(host, decision)
     elif kind=='arbiter.resolve':host._complete_arbiter_resolution(decision)
     elif kind=='search.fetch':host._complete_fetch_choice(decision)
     elif kind=='semantic.target':host._complete_semantic_target(decision)
     elif kind=='semantic.choice':host._complete_semantic_choice(decision)
     elif kind=='semantic.search':host._complete_semantic_search(decision)
     elif kind=='semantic.storm':host._complete_storm_choice(decision)
-    elif kind in {'draw.replacement','draw.reveal','draw.miracle_reveal'}:host._complete_draw_replacement(decision)
+    elif kind in {'draw.replacement','draw.reveal','draw.miracle_reveal','draw.discard'}:host._complete_draw_replacement(decision)
     else:raise GameRuleError(f'Unsupported completed decision {kind}')

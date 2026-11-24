@@ -1,1 +1,316 @@
-{"cards":[{"cmc":4.0,"color_identity":["R"],"colors":["R"],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{3}{R}","name":"Inferno Trap","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","oracle_text":"If you've been dealt damage by two or more creatures this turn, you may pay {R} rather than pay this spell's mana cost.\nInferno Trap deals 4 damage to target creature.","power":null,"produced_mana":[],"released_at":"2014-09-05","toughness":null,"type_line":"Instant — Trap"},{"cmc":6.0,"color_identity":[],"colors":[],"defense":null,"keywords":[],"layout":"normal","legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"not_legal","predh":"legal","premodern":"legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"},"loyalty":null,"mana_cost":"{6}","name":"Triskelion","oracle_id":"74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1","oracle_text":"This creature enters with three +1/+1 counters on it.\nRemove a +1/+1 counter from this creature: It deals 1 damage to any target.","power":"1","produced_mana":[],"released_at":"2023-04-21","toughness":"1","type_line":"Artifact Creature — Construct"}],"fixture_kind":"public_exact-list_card_data","rulings":[{"comment":"If Triskelion has damage marked on it, activating its ability may cause that damage to become lethal. For example, say a Triskelion with two +1/+1 counters on it has been dealt 2 damage earlier in the turn. If you activate its ability by removing a +1/+1 counter from it, it now has 2 toughness and is destroyed as a state-based action. You won’t be able to remove the other +1/+1 counter from it to activate its ability again. The first activation of the ability will still resolve.","oracle_id":"74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1","published_at":"2022-12-08","source":"wotc"},{"comment":"If you activate the ability of an attacking or blocking Triskelion during the declare blockers step, it will deal less combat damage as a result. If you wait until the combat damage step, but Triskelion is dealt lethal damage, it’ll be destroyed before you get a chance to activate its ability.","oracle_id":"74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1","published_at":"2022-12-08","source":"wotc"},{"comment":"Casting a Trap by paying its alternative cost doesn't change its mana cost or mana value. The only difference is the cost you actually pay.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"},{"comment":"Effects that increase or reduce the cost to cast a Trap will apply to whichever cost you chose to pay.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"},{"comment":"Inferno Trap's alternative cost condition checks for any damage, not just combat damage.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"},{"comment":"The alternative cost condition doesn't check who controlled the creatures that dealt damage to you. Damage dealt to you by your own creatures counts.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"},{"comment":"The alternative cost condition is satisfied only if two different creatures dealt damage to you, not if one creature dealt damage to you twice. The damage may have been dealt to you simultaneously (as with combat damage), or at separate times.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"},{"comment":"You may ignore a Trap's alternative cost condition and simply cast it for its normal mana cost. This is true even if its alternative cost condition has been met.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"},{"comment":"You may target any creature, not just one that dealt damage to you this turn.","oracle_id":"83a71000-942b-4472-9521-0e1070a3343b","published_at":"2009-10-01","source":"wotc"}],"schema_version":1,"source":"Scryfall Oracle/rulings subset for offline tests"}
+{
+  "cards": [
+    {
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "name": "Act of Treason",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "power": null,
+      "toughness": null,
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "oracle_id": "ab4a25d8-e1d0-454e-9d06-f7960a0352bc",
+      "name": "Cunning Sparkmage",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Shaman",
+      "oracle_text": "Haste\n{T}: This creature deals 1 damage to any target.",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "power": "0",
+      "toughness": "1",
+      "layout": "normal",
+      "released_at": "2010-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Inferno Trap",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "oracle_text": "If you've been dealt damage by two or more creatures this turn, you may pay {R} rather than pay this spell's mana cost.\nInferno Trap deals 4 damage to target creature.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-09-05",
+      "toughness": null,
+      "type_line": "Instant — Trap"
+    },
+    {
+      "oracle_id": "5483f787-7aca-4efe-a39a-ea29f8c07f0d",
+      "name": "Treacherous Greed",
+      "mana_cost": "{1}{W}{B}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature that dealt damage this turn.\nDraw three cards. Each opponent loses 3 life and you gain 3 life.",
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "power": null,
+      "toughness": null,
+      "layout": "normal",
+      "released_at": "2024-02-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "defense": null,
+      "produced_mana": []
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}",
+      "name": "Triskelion",
+      "oracle_id": "74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1",
+      "oracle_text": "This creature enters with three +1/+1 counters on it.\nRemove a +1/+1 counter from this creature: It deals 1 damage to any target.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2023-04-21",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Construct"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "5483f787-7aca-4efe-a39a-ea29f8c07f0d",
+      "published_at": "2024-02-02",
+      "source": "wotc",
+      "comment": "You can sacrifice any creature you control that dealt damage this turn to pay Treacherous Greed's additional cost, even if the permanent it dealt damage to is no longer on the battlefield or the player it dealt damage to is no longer in the game."
+    },
+    {
+      "comment": "If Triskelion has damage marked on it, activating its ability may cause that damage to become lethal. For example, say a Triskelion with two +1/+1 counters on it has been dealt 2 damage earlier in the turn. If you activate its ability by removing a +1/+1 counter from it, it now has 2 toughness and is destroyed as a state-based action. You won’t be able to remove the other +1/+1 counter from it to activate its ability again. The first activation of the ability will still resolve.",
+      "oracle_id": "74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you activate the ability of an attacking or blocking Triskelion during the declare blockers step, it will deal less combat damage as a result. If you wait until the combat damage step, but Triskelion is dealt lethal damage, it’ll be destroyed before you get a chance to activate its ability.",
+      "oracle_id": "74f67dcf-5afb-45aa-8d4b-3cdb23f6f2a1",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting a Trap by paying its alternative cost doesn't change its mana cost or mana value. The only difference is the cost you actually pay.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that increase or reduce the cost to cast a Trap will apply to whichever cost you chose to pay.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Inferno Trap's alternative cost condition checks for any damage, not just combat damage.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The alternative cost condition doesn't check who controlled the creatures that dealt damage to you. Damage dealt to you by your own creatures counts.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The alternative cost condition is satisfied only if two different creatures dealt damage to you, not if one creature dealt damage to you twice. The damage may have been dealt to you simultaneously (as with combat damage), or at separate times.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may ignore a Trap's alternative cost condition and simply cast it for its normal mana cost. This is true even if its alternative cost condition has been met.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may target any creature, not just one that dealt damage to you this turn.",
+      "oracle_id": "83a71000-942b-4472-9521-0e1070a3343b",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control."
+    },
+    {
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

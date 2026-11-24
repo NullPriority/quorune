@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_life_alternative",
+  "source": "Constructed targeted life-payment fixture",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000992",
+      "name": "Generic Targeted Life Alternative",
+      "mana_cost": "{2}{B/R}{B/R}",
+      "cmc": 4,
+      "type_line": "Sorcery",
+      "oracle_text": "Target player discards their hand unless they pay 7 life.",
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

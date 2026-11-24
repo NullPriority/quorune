@@ -36,6 +36,12 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
             compile_effect,has_faces=bool(record.faces)):
         return None
+    if spell and re.search(r"\bX plus 2 damage\b", material_line, re.I):
+        from .declared_effect_amounts import declared_spell_effect_compiler
+
+        declared = declared_spell_effect_compiler(record, is_spell=True, oracle_text=oracle_text, compile_effect=compile_effect)
+        if declared(material_line, card_name=source_name)[0] == "public-same-target-self-replacement-v1":
+            return None
     if spell and " damage divided as you choose among " in material_line.casefold():
         from .announced_damage_templates import VARIABLE_DAMAGE_TEMPLATE_ID
         from .declared_effect_amounts import declared_spell_effect_compiler
@@ -74,6 +80,14 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     if spell and "without paying its mana cost" in material_line.casefold():
         from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
         if targeted_graveyard_cast_template(material_line) is not None:
+            return None
+    if spell and material_line.casefold().startswith("until end of turn, if target player would draw "):
+        from ..draw_redirect_model import temporary_draw_redirect_node_capabilities
+
+        _, effects, target, mechanics = compile_effect(material_line, card_name=source_name)
+        if temporary_draw_redirect_node_capabilities(
+            effects=effects, target_schema=target, mechanic_ids=mechanics,
+        ):
             return None
     if spell and re.search(r"\bskip\b", material_line, re.I):
         if TURN_SKIP_MECHANIC in compile_effect(material_line, card_name=source_name)[3]:

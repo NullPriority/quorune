@@ -14,7 +14,9 @@ from .card_programs.runtime import (
     collect_card_program_continuous_effects,
     fixed_public_state_condition_matches,
 )
-from .continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+from .continuous_conditions import (
+    GREATEST_CREATURE_POWER_FACTS, FixedPublicStateConditionKind, FixedPublicStateConditionSpec,
+)
 from .ability_fragments import (
     CURRENT_ABILITY_FRAGMENT_COVERAGE,
     StaticComponentScopeSpec,
@@ -115,6 +117,7 @@ class CharacteristicEvaluationHostMixin:
                 require_available=require_available)
         needs_effective_power = any(
             leaf.kind is FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST
+            or leaf.fact in GREATEST_CREATURE_POWER_FACTS
             for leaf in condition.leaf_conditions()
         )
         return fixed_public_state_condition_matches(
@@ -215,6 +218,7 @@ class CharacteristicEvaluationHostMixin:
                 enchanted=enchanted,
                 equipped=equipped,
                 modified=modified,
+                active_player=self.state.active_player,
                 type_order=type_order,
                 dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
             ),
@@ -796,6 +800,12 @@ class CharacteristicEvaluationHostMixin:
             from .rules.cross_zone_characteristics import cross_zone_type_effects_for_card
 
             runtime_effects = (*runtime_effects, *cross_zone_type_effects_for_card(self, card, maximum_layer=maximum_layer))
+        if card.zone == "graveyard" and _enforce_static_component_applicability:
+            from .semantic_runtime.graveyard_unearth_grants import graveyard_unearth_effects_for_card
+
+            runtime_effects = (*runtime_effects, *graveyard_unearth_effects_for_card(
+                self, card, maximum_layer=maximum_layer,
+            ))
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,

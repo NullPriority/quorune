@@ -1,5 +1,6 @@
 """Validate a sealed opponent-upkeep quantity and read only its public count."""
 from collections.abc import Mapping
+from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY, is_linked_opponent_upkeep_condition
 from ..query_effect_amount_model import PublicQueryAmountError
 from ..upkeep_hand_difference_model import UPKEEP_HAND_DIFFERENCE_CAPABILITY,UPKEEP_HAND_DIFFERENCE_ORIGIN
 
@@ -22,9 +23,12 @@ def upkeep_hand_difference_program_dependencies(program):
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY,ScalarEffectAmountSpec
     specs=_difference_specs(program)
     if not specs:return ()
+    linked = is_linked_opponent_upkeep_condition(program.event_condition)
+    if linked and any(spec.hand_difference.schema_version != 1 for spec in specs):
+        raise ValueError("The linked upkeep only owns the closed hand differences")
     if (len(specs)!=1 or getattr(program,'event',None)!='step.begin' or getattr(program,'active_zone',None)!='battlefield'
             or getattr(program,'target_schema',False) is not None or getattr(program,'handlers',()) or len(program.effects)!=1
-            or not is_upkeep_participant_schedule(program.event_condition)
+            or not (linked or is_upkeep_participant_schedule(program.event_condition))
             or len(program.event_condition['all'])!=2):
         raise ValueError('Hand difference requires its single nontargeted opponent-upkeep frame')
     effect=program.effects[0]
@@ -33,7 +37,8 @@ def upkeep_hand_difference_program_dependencies(program):
             or ScalarEffectAmountSpec.from_dict(effect['amount'])!=specs[0]):
         raise ValueError('Hand difference requires one sealed upkeep-player source-damage result')
     return (UPKEEP_HAND_DIFFERENCE_CAPABILITY,SCALAR_AMOUNT_CAPABILITY,SCHEDULED_PLAYER_CAPABILITY,
-            'damage.amount.positive','damage.result.player_life')
+            'damage.amount.positive','damage.result.player_life',
+            *((ENTRY_DESIGNATION_CAPABILITY,) if linked else ()))
 
 
 def is_closed_upkeep_hand_difference_program(program):
@@ -45,9 +50,10 @@ def is_closed_upkeep_hand_difference_program(program):
 def resolve_upkeep_hand_difference(host,item,difference):
     program=host.semantics.get(item.semantic_key)
     context=item.context;seat=context.get('player')
+    linked = program is not None and is_linked_opponent_upkeep_condition(program.event_condition)
     if (program is None or not upkeep_hand_difference_program_dependencies(program)
             or item.kind!='triggered_ability' or item.targets or context.get('event')!='step.begin'
-            or context.get('step')!='upkeep' or type(seat) is not str or seat==item.controller
+            or context.get('step')!='upkeep' or type(seat) is not str or not linked and seat==item.controller
             or seat not in host.state.players):
         raise PublicQueryAmountError('Hand difference lost its sealed upkeep participant')
     player=host.state.players[seat]

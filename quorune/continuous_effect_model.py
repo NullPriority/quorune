@@ -66,16 +66,19 @@ class ContinuousEffectDuration(str, Enum):
     WHILE_SOURCE_PRESENT = "while_source_present"
     UNTIL_END_OF_TURN = "until_end_of_turn"
     UNTIL_NEXT_TURN = "until_next_turn"
+    UNTIL_RECIPIENT_CONTROLLER_UNTAP = "until_recipient_controller_untap"
     UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
     UNTIL_UNATTACHED = "until_unattached"
     UNTIL_SOURCE_LEAVES = "until_source_leaves"
+    UNTIL_SOURCE_BATTLEFIELD_EXIT = "until_source_battlefield_exit"
     UNTIL_SOURCE_CONTROL_CHANGES = "until_source_control_changes"
     UNTIL_SOURCE_LEAVES_OR_UNTAPS = "until_source_leaves_or_untaps"
     UNTIL_SOURCE_CONTROL_CHANGES_OR_UNTAPS = "until_source_control_changes_or_untaps"
 
     @property
     def source_bound(self) -> bool:
+        """Whether the duration requires a source continuity snapshot."""
         return self in {
             self.UNTIL_SOURCE_LEAVES, self.UNTIL_SOURCE_CONTROL_CHANGES,
             self.UNTIL_SOURCE_LEAVES_OR_UNTAPS,
@@ -107,6 +110,9 @@ class ContinuousEffectRelation(str, Enum):
     SOURCE_ATTACHED_TO_OBJECT = "source_attached_to_object"
     SOURCE_PAIRED_WITH_OBJECT = "source_paired_with_object"
     SOURCE_RING_BEARER_OBJECT = "source_ring_bearer_object"
+    SOURCE_CONTROLLED_AURA_RECIPIENT = "source_controlled_aura_recipient"
+    SOURCE_BLOCK_COUNTERPART_OBJECT = "source_block_counterpart_object"
+    SOURCE_COUNTER_PLACEMENT_RECIPIENT = "source_counter_placement_recipient"
 
 
 _OPERATION_LAYERS = {
@@ -117,6 +123,8 @@ _OPERATION_LAYERS = {
     "set_types": Layer.TYPE,
     "set_basic_land_types": Layer.TYPE,
     "set_creature_subtype": Layer.TYPE,
+    "set_creature_subtypes": Layer.TYPE,
+    "set_creature_subtype_set": Layer.TYPE,
     "add_types": Layer.TYPE,
     "remove_types": Layer.TYPE,
     "remove_creature_card_type": Layer.TYPE,
@@ -334,6 +342,16 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         words=_nonempty_words(value,field_name=op)
         if field is not None or any(word not in BASIC_LAND_MANA for word in words):
             raise ContinuousEffectError('Basic land type setting requires canonical basic subtypes and no field')
+    elif op == "set_creature_subtype_set":
+        if field is not None or type(value) is not str or value not in {"all", "none"}:
+            raise ContinuousEffectError("Creature subtype sets require all or none without a field")
+    elif op == "set_creature_subtypes":
+        from .creature_subtypes import canonical_creature_subtype
+
+        subtypes = _nonempty_words(value, field_name=op)
+        if (field is not None or any(canonical_creature_subtype(word) != word for word in subtypes)
+                or tuple(subtypes) != tuple(sorted(set(subtypes)))):
+            raise ContinuousEffectError("A creature subtype replacement needs distinct canonical types")
     elif op == "set_creature_subtype":
         from .creature_subtypes import canonical_creature_subtype
 
@@ -513,7 +531,28 @@ def _validate_continuous_effect_identity_scope(
     if (effect.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN
             and effect.origin is not ContinuousEffectOrigin.RESOLUTION):
         raise ContinuousEffectError("Next-turn duration requires a resolution-created effect")
-    if effect.duration.source_bound:
+    if effect.duration in {
+        ContinuousEffectDuration.UNTIL_RECIPIENT_CONTROLLER_UNTAP,
+        ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT,
+    }:
+        if (
+            effect.origin is not ContinuousEffectOrigin.RESOLUTION
+            or effect.layer is not Layer.TYPE
+            or len(locked) != 1
+            or len(effect.operations) != 1
+            or effect.operations[0].op != "set_basic_land_types"
+            or effect.applies != ObjectQuerySpec(zones=("battlefield",))
+        ):
+            raise ContinuousEffectError("Land type duration requires one locked battlefield land-type setting")
+    if effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT:
+        if (
+            not isinstance(effect.duration_source, ContinuousObjectIdentity)
+            or effect.source_id != effect.duration_source.object_id
+            or effect.duration_controller is not None
+            or effect.duration_history is not None
+        ):
+            raise ContinuousEffectError("Battlefield-exit duration requires only the original source identity")
+    elif effect.duration.source_bound:
         if (effect.origin is not ContinuousEffectOrigin.RESOLUTION
                 or (effect.layer is not Layer.CONTROL and not (
                     effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS
@@ -578,6 +617,34 @@ def _validate_continuous_effect_identity_scope(
         raise ContinuousEffectError(
             "Live source relations require source presence"
         )
+    if effect.relation is ContinuousEffectRelation.SOURCE_CONTROLLED_AURA_RECIPIENT:
+        valid_layer = (
+            effect.layer is Layer.ABILITY and all(op.op == "add_ability" for op in effect.operations)
+            or (effect.layer, effect.sublayer) == (Layer.POWER_TOUGHNESS, "7b")
+            and tuple(op.op for op in effect.operations) == ("set_power_toughness",)
+        )
+        predicate = effect.applies
+        if (not valid_layer or effect.related_object.object_id == effect.source_id
+                or not predicate.controller or not predicate.exclude_ref
+                or predicate != ObjectQuerySpec(
+                    zones=("battlefield",), types_all=("creature",),
+                    controller=predicate.controller, exclude_ref=predicate.exclude_ref,
+                )):
+            raise ContinuousEffectError("Controlled Aura recipients require one other controlled creature and fixed late layers")
+    elif effect.relation is ContinuousEffectRelation.SOURCE_BLOCK_COUNTERPART_OBJECT and (
+            (effect.layer, effect.sublayer) != (Layer.ABILITY, "6")
+            or effect.operations != (ContinuousOperation("add_ability", "Lifelink"),)
+            or effect.related_object.object_id == effect.source_id
+            or effect.applies != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))):
+        raise ContinuousEffectError("A live block counterpart requires one other creature and ordinary lifelink")
+    elif effect.relation is ContinuousEffectRelation.SOURCE_COUNTER_PLACEMENT_RECIPIENT:
+        predicate = effect.applies
+        if (effect.layer is not Layer.ABILITY or any(op.op != "add_ability" for op in effect.operations)
+                or not predicate.controller or predicate != ObjectQuerySpec(
+                    zones=("battlefield",), types_all=("creature",),
+                    controller=predicate.controller, exclude_ref=predicate.exclude_ref,
+                )):
+            raise ContinuousEffectError("Counter placement recipients require a current controlled creature and fixed keywords")
 
 
 def _validate_recipient_scope_anchor(effect: "ContinuousEffect") -> None:
@@ -772,6 +839,8 @@ class ContinuousEffect:
             payload.update({"duration_source": self.duration_source.to_dict(),
                             "duration_controller": self.duration_controller,
                             "duration_history": self.duration_history.to_dict()})
+        elif self.duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT:
+            payload["duration_source"] = self.duration_source.to_dict()
         if self.denied_keyword_grants:
             payload['denied_keyword_grants'] = [list(row) for row in self.denied_keyword_grants]
         if self.attachment_duration is not None:
@@ -813,6 +882,7 @@ class ContinuousEffect:
             frozenset(legacy_fields),
             frozenset(relation_fields),
             frozenset(duration_fields),
+            frozenset(legacy_fields | {"duration_source"}),
         }:
             raise ContinuousEffectError(
                 "Continuous effect fields are missing or unknown"

@@ -414,6 +414,8 @@ def _apply_create_damage_prevention_shield(
         if source_prevention_subject_unavailable(host, effect, actor=actor):return []
         from ..source_prevention import materialize_source_combat_prevention
         effect=materialize_source_combat_prevention(effect)
+        from ..source_prevention import materialize_targeted_source_exclusion
+        effect = materialize_targeted_source_exclusion(host, effect, actor=actor)
         from ..designation_prevention import unavailable_designation
         if unavailable_designation(effect.get('scope')):return []
         if _bound_prevention_subject_is_unavailable(host,effect,actor=actor):return []

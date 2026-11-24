@@ -1148,7 +1148,9 @@
       "released_at": "2016-06-10",
       "toughness": null,
       "type_line": "Instant"
-    }
+    },
+    {"oracle_id":"00000000-0000-4000-8000-001221001091","name":"Generic Gear Guard","oracle_text":"This creature can block an additional creature each combat for each Equipment attached to this creature.","type_line":"Creature — Scout","power":"2","toughness":"5","cmc":2.0,"mana_cost":"{2}","color_identity":[],"colors":[],"keywords":[],"layout":"normal","legalities":{"commander":"legal"},"released_at":"2026-01-01"},
+    {"oracle_id":"00000000-0000-4000-8000-001221001092","name":"Generic Practice Gear","oracle_text":"Equip {1}","type_line":"Artifact — Equipment","power":null,"toughness":null,"cmc":2.0,"mana_cost":"{2}","color_identity":[],"colors":[],"keywords":[],"layout":"normal","legalities":{"commander":"legal"},"released_at":"2026-01-01"}
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [

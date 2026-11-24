@@ -260,6 +260,55 @@ class AdditionalDrawStepRuntimeTests(unittest.TestCase):
                                  len(session.state.players['B'].zones['hand']))
                 self.replay(session)
 
+    def test_original_howling_mine_rechecks_departure_tap_status_through_loaded_replay(self):
+        self.assert_admission("Howling Mine")
+        for name, version, tap_first, extra_draw in (
+            ("untapped departure", 2, False, True),
+            ("tapped departure", 2, True, False),
+            ("version one", 1, False, False),
+        ):
+            with self.subTest(name=name):
+                session = self.session(346240 + version + int(tap_first) * 2)
+                session.state.ability_source_information_version = version
+                mine = self.add(session.engine, "Howling Mine")
+                removal = self.add(session.engine, "Disenchant", zone="hand")
+                tapper = self.add(session.engine, "Icy Manipulator")
+                session.state.players["A"].mana_pool.update({"W": 1, "C": 1 + int(tap_first)})
+                before = len(session.state.players["B"].zones["hand"])
+                self.enter_draw_step(session, "B")
+                # Draw-step priority empties mana from the previous step.
+                session.state.players["A"].mana_pool.update({"W": 1, "C": 1 + int(tap_first)})
+                self.checkpoint(session)
+                trigger, = [item for item in session.state.stack if item.source_object_id == mine.object_id]
+                responses = [f"cast:{removal.ref}"]
+                if tap_first:
+                    responses.insert(0, f"activate:{tapper.ref}:")
+                for action_prefix in responses:
+                    for _ in range(4):
+                        if session.state.priority_player == "A":
+                            break
+                        result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+                        self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("A", session.state.priority_player)
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    action = next(row for row in actions if row["id"].startswith(action_prefix))
+                    result = session.act("pilot:A", {"action_id": action["id"], "targets": [mine.ref], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    response = session.state.stack[-1].stack_id
+                    for _ in range(4):
+                        result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+                        self.assertTrue(result.ok, result.summary)
+                        if all(item.stack_id != response for item in session.state.stack):
+                            break
+                    self.assertEqual([trigger.stack_id], [item.stack_id for item in session.state.stack])
+                    if action_prefix.startswith("activate:"):
+                        self.assertTrue(session.state.cards[mine.object_id].tapped)
+                self.assertEqual("graveyard", session.state.cards[mine.object_id].zone)
+                resumed = self.replay(session, load=True)
+                self.resolve(resumed)
+                self.assertEqual(before + 1 + int(extra_draw), len(resumed.state.players["B"].zones["hand"]))
+                self.replay(resumed, load=True)
+
     def test_additional_draw_active_player_binding_mutant_is_killed(self):
         from quorune.semantic_runtime.values import resolve_semantic_value
 

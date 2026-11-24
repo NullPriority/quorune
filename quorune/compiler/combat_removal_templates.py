@@ -10,18 +10,27 @@ from .optional_effect_templates import fixed_optional_effect_template
 
 
 def combat_removal_effect_template(text):
-    match = re.fullmatch(
-        r'Remove (?P<target>target attacking or blocking creature|target attacking creature you control) '
-        r'from combat(?P<untap> and untap it)?\.?', text.strip(), re.I,
+    text = text.strip()
+    opposing = re.fullmatch(
+        r'Untap (?P<target>target attacking creature an opponent controls) and remove it from combat\.?',
+        text, re.I,
     )
-    if match is None or bool(match['untap']) != (match['target'].casefold() == 'target attacking creature you control'):
-        return None
-    target = direct_permanent_target_spec(match['target'])
+    if opposing:
+        target_text, untap = opposing['target'], 'before'
+    else:
+        match = re.fullmatch(
+            r'Remove (?P<target>target attacking or blocking creature|target attacking creature you control) '
+            r'from combat(?P<untap> and untap it)?\.?', text, re.I,
+        )
+        if match is None or bool(match['untap']) != (match['target'].casefold() == 'target attacking creature you control'):
+            return None
+        target_text, untap = match['target'], 'after' if match['untap'] else None
+    target = direct_permanent_target_spec(target_text)
     if target is None:
         return None
     instruction = {'op': COMBAT_REMOVAL_OPERATION, 'card': '$target.0'}
-    if match['untap']:
-        instruction['untap'] = 'after'
+    if untap is not None:
+        instruction['untap'] = untap
     return ('fixed-target-combat-removal-v1', (instruction,), target.to_target_schema(),
             (COMBAT_REMOVAL_MECHANIC, 'cr-115-targets'))
 

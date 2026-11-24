@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for a linked exile copy activation.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f51-000000607201",
+      "name": "Trial Exile Mimic",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{X}{B}{G}{U}",
+      "cmc": 3,
+      "oracle_text": "As this creature enters, exile up to X creature cards from your graveyard. It enters with three +1/+1 counters on it for each creature card exiled this way.\n{2}: This creature becomes a copy of target creature card exiled with it, except it's 0/0 and has this ability.",
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "power": "0",
+      "toughness": "0",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f51-000000607202",
+      "name": "Trial Exile Golem",
+      "type_line": "Artifact Creature — Golem",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "oracle_text": "",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "power": "4",
+      "toughness": "4",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f51-000000602503",
+      "name": "Trial Once Per Turn",
+      "type_line": "Creature — Construct",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "oracle_text": "{0}: Draw a card. Activate only once each turn.",
+      "color_identity": [],
+      "colors": [],
+      "keywords": [],
+      "power": "2",
+      "toughness": "2",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

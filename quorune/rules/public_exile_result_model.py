@@ -47,11 +47,21 @@ class PublicExileFollowup:
             or spec.origin is not PublicZoneOrigin.GRAVEYARD
             or spec.destination is not PublicZoneDestination.EXILE
             or spec.relation_axis is not PublicZoneRelationAxis.OWNER
-            or spec.seat_relation is not PublicZoneSeatRelation.TARGET_PLAYER
             or spec.exclude_source
-            or spec.query not in (ObjectQuerySpec(zones=("graveyard",)), _SCOPES[1])
         ):
-            raise ValueError("Graveyard exile result needs one fixed targeted graveyard move")
+            raise ValueError("Graveyard exile result needs a fixed public graveyard exile")
+        targeted = (
+            spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
+            and spec.query in (ObjectQuerySpec(zones=("graveyard",)), _SCOPES[1])
+        )
+        all_graveyards = (
+            spec.seat_relation is PublicZoneSeatRelation.ANY
+            and spec.query == _SCOPES[1]
+            and self.query == _SCOPES[0]
+            and dict(self.effect) == {"op": "life", "player": "$controller", "delta": 1}
+        )
+        if not (targeted or all_graveyards):
+            raise ValueError("Graveyard exile result has an unsupported move and count scope")
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:

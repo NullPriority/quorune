@@ -8,6 +8,7 @@ from ..replacement.immutable import FrozenMap
 from ..rules.event_counter_threshold import (
     EVENT_COUNTER_THRESHOLD_CAPABILITY,
     EVENT_COUNTER_THRESHOLD_OPERATION,
+    SOURCE_DEPLETION_THRESHOLD_VERSION,
     validate_event_counter_threshold,
 )
 from .model import AutoContinue, SemanticChoiceError, SemanticChoicePreparation
@@ -42,10 +43,12 @@ class EventCounterThresholdHandler:
         if (source is not None and source.controller == context.actor and not source.phased_out
                 and source.logical_object_id == context.source_logical_object_id):
             children = (FrozenMap({"op": "sacrifice", "card": source.ref}),)
+        reason = ("Check the original source's current depletion count."
+                  if effect["schema_version"] == SOURCE_DEPLETION_THRESHOLD_VERSION
+                  else "Check the event counter total for the source sacrifice.")
         return SemanticChoicePreparation(
             request=None, continuation_effect=FrozenMap(effect),
-            auto_continue=AutoContinue(reason="Check the event counter total for the source sacrifice.",
-                                       prepend_effects=children),
+            auto_continue=AutoContinue(reason=reason, prepend_effects=children),
         )
 
     def complete(self, continuation, response, query):

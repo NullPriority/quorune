@@ -38,7 +38,8 @@ def fixed_target_land_type_template(text):
     match = re.fullmatch(
         r"Target land(?P<relation> you control| an opponent controls)? becomes "
         r"(?P<article>a|an) (?P<land>Plains|Island|Swamp|Mountain|Forest)"
-        r"(?P<duration> until end of turn| for as long as this creature remains on the battlefield)?"
+        r"(?P<duration> until end of turn| for as long as this creature remains on the battlefield"
+        r"| until this creature leaves the battlefield| until its controller['’]s next untap step)?"
         r"(?P<add> in addition to its other types)?[.]?",
         " ".join(text.strip().split()), re.I,
     )
@@ -50,13 +51,17 @@ def fixed_target_land_type_template(text):
     relation = {None: "any", " you control": "you", " an opponent controls": "opponent"}[
         match["relation"].casefold() if match["relation"] else None
     ]
-    duration = match["duration"].casefold() if match["duration"] else ""
+    duration = match["duration"].casefold().replace("’", "'") if match["duration"] else ""
     lifetime = {
         "": "zone_object",
         " until end of turn": "until_end_of_turn",
         " for as long as this creature remains on the battlefield": "until_source_leaves",
+        " until this creature leaves the battlefield": "until_source_battlefield_exit",
+        " until its controller's next untap step": "until_recipient_controller_untap",
     }[duration]
-    if lifetime == "until_source_leaves" and match["add"]:
+    if lifetime in {"until_source_leaves", "until_source_battlefield_exit"} and match["add"]:
+        return None
+    if lifetime == "until_recipient_controller_untap" and (relation != "any" or match["add"]):
         return None
     spec = FixedTargetLandTypeSpec(basic_type, relation, lifetime, bool(match["add"]))
     return ("fixed-target-basic-land-type-v1", (spec.to_effect(),), spec.target_schema(),

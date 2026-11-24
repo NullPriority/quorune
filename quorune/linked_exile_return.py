@@ -6,16 +6,19 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .continuous_effects import ContinuousOperation, Layer
 from .continuous_effect_state import (
-    create_resolution_continuous_effect,
-    resolution_effect_source,
+    ContinuousEffectStateError, create_resolution_continuous_effect,
+    matching_battlefield_objects, resolution_effect_source,
 )
+from .carddb_characteristics import public_object_rules_names
 from .entry_counter_model import EffectEntryCounter
 from .characteristic_evaluation import type_parts
 from .external_entry_state_model import PERMANENT_CARD_TYPES
 from .errors import GameRuleError
 from .linked_exile_return_model import (
-    ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_ABILITY_TIMING, LINKED_RETURN_OPERATION, validate_linked_instruction,
+    ExiledObjectIdentity, LinkedExileReturnSpec, LINKED_ABILITY_TIMING, LINKED_RETURN_OPERATION,
+    SameNameConditionalExileScope, validate_linked_instruction,
 )
+from .object_predicate import ObjectQuerySpec
 from .trigger_processing import schedule_delayed_trigger
 from .zone_transitions import ZoneTransitionOwner
 
@@ -25,6 +28,8 @@ class LinkedExileReturnHost(Protocol):
     active_seats: Sequence[str]
 
     def card_record(self, card: Any) -> Any: ...
+
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
     def _resolve_object(
         self, actor: str, ref: str, *, zones: set[str]
@@ -117,6 +122,7 @@ def return_linked_exiled_objects(
     moved = ZoneTransitionOwner(host).move_cards_simultaneously(
         tuple((card.object_id, "battlefield") for card in cards), reason=reason,
         tapped=spec.tapped, destination_controllers=controllers,
+        putting_players={card.object_id: actor for card in cards},
         effect_entry_counters=counters,
         replacement_selections=tuple(effect.get("_replacement_selections") or ()),
         aura_target_refs=effect.get('_aura_target_refs'),
@@ -135,6 +141,26 @@ def return_linked_exiled_objects(
     return [card.ref for card in returned]
 
 
+def _same_name_exile_cards(host, cards, *, actor, scope):
+    if len(cards) != 1 or cards[0].controller == actor:
+        raise GameRuleError("Same-name conditional exile requires one opposing nonland target")
+    anchor, = cards
+    controller = anchor.controller if scope is SameNameConditionalExileScope.ANCHOR_CONTROLLER else None
+    query = ObjectQuerySpec(zones=("battlefield",), excluded_types=("land",),
+                            controller=controller, excluded_controllers=() if controller is not None else (actor,))
+    try:
+        eligible = matching_battlefield_objects(host, query)
+    except ContinuousEffectStateError as exc:
+        raise GameRuleError(str(exc)) from exc
+    if not any(card is anchor for card in eligible):
+        raise GameRuleError("Same-name conditional exile target is no longer legal")
+    names = set(public_object_rules_names(anchor, host._effective_card_data(anchor)))
+    if not names:
+        return (anchor,)
+    return tuple(card for card in eligible if card is anchor or not names.isdisjoint(
+        public_object_rules_names(card, host._effective_card_data(card))))
+
+
 def resolve_linked_exile_return(
     host: LinkedExileReturnHost,
     effect: Mapping[str, Any],
@@ -149,7 +175,9 @@ def resolve_linked_exile_return(
             validate_linked_instruction(instruction)
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
-        return resolve_linked_ability_instruction(host, _source_item(host, effect), instruction, actor=actor, reason=reason)
+        return resolve_linked_ability_instruction(
+            host, _source_item(host, effect), instruction, actor=actor, reason=reason, spec=spec,
+        )
     phase = effect.get("phase")
     required = {"op", "phase", "binding_id", "spec", *(("cards",) if phase == "exile" else ())}
     if phase not in {"exile", "return"} or set(effect) - (required | {"_runtime_source", "_replacement_selections"}) or not required.issubset(effect):
@@ -180,6 +208,8 @@ def resolve_linked_exile_return(
         cards = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
         if any(card.phased_out for card in cards):
             raise GameRuleError("Linked exile target is phased out")
+        if spec.same_name_scope is not None:
+            cards = _same_name_exile_cards(host, cards, actor=actor, scope=spec.same_name_scope)
         moved = (
             ZoneTransitionOwner(host).move_cards_simultaneously(
                 tuple((card.object_id, "exile") for card in cards), reason=reason,

@@ -4,7 +4,9 @@ from . import regex_working_set as re
 
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..creature_subtypes import canonical_creature_subtype
-from ..public_history_query_model import PublicHistoryQuerySpec
+from ..public_history_query_model import (
+    PublicHistoryQuerySpec, current_plus_one_counter_placement_query,
+)
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..continuous_conditions import (
     FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
@@ -26,10 +28,36 @@ def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),
         amount=amount,schema_version=8,history_query=query)
 
 
-def fixed_public_history_condition(text):
+def _counter_placement_condition(text, *, source_pattern):
+    match = re.fullmatch(
+        r"you(?:'ve| have) put one or more \+1/\+1 counters on (?P<recipient>.+) this turn",
+        text,
+    )
+    if match is None:
+        return None
+    recipient = match["recipient"]
+    was_creature = recipient == "a creature"
+    if not was_creature and (
+        source_pattern is None or re.fullmatch(source_pattern, recipient, re.I) is None
+    ):
+        return None
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+        amount=1,
+        schema_version=8,
+        history_query=current_plus_one_counter_placement_query(
+            source_only=not was_creature, was_creature=was_creature,
+        ),
+    )
+
+
+def fixed_public_history_condition(text, *, source_pattern=None):
     qualified = qualified_creature_death_exclusion(text)
     if qualified is not None:return qualified
     text=' '.join(text.strip().rstrip('.').casefold().replace('’',"'").split())
+    placement = _counter_placement_condition(text, source_pattern=source_pattern)
+    if placement is not None:
+        return placement
     if text == "an artifact or creature was put into a graveyard from the battlefield this turn":
         return _condition("permanent_arrived_graveyard", "any_player", types_any=("artifact", "creature"))
     if text == "an enchantment was put into your graveyard from the battlefield this turn":

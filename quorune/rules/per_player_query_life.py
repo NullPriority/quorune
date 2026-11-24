@@ -5,10 +5,11 @@ from ..per_player_query_life_model import (
     PerPlayerQueryLifeLossSpec,BoundPerPlayerLifeLoss,PlayerLifeLossRelation,
     PER_PLAYER_QUERY_LIFE_KIND as KIND,BOUND_PER_PLAYER_QUERY_LIFE_KIND as BOUND_KIND,
     PER_PLAYER_QUERY_LIFE_CAPABILITY as CAP,
-    OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION,
+    OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION,OPPONENT_POISON_THRESHOLD_LIFE_VERSION,
 )
 from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
 
+POISON_THRESHOLD_CAPABILITY = 'life.loss.opponent_poison_counter_threshold'
 _RUNTIME_FIELDS=frozenset({'reason','source','cause','_runtime_source','_replacement_selections'})
 
 
@@ -18,6 +19,8 @@ def per_player_query_life_value_dependencies(value):
         BoundPerPlayerLifeLoss.from_dict(value)
         return (CAP,PUBLIC_QUERY_AMOUNT_CAPABILITY,'life.change.effect')
     spec=PerPlayerQueryLifeLossSpec.from_dict(value)
+    if spec.schema_version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION:
+        return (CAP, POISON_THRESHOLD_CAPABILITY, 'life.change.effect')
     return tuple(sorted({CAP,PUBLIC_QUERY_AMOUNT_CAPABILITY,'life.change.effect',
         *characteristic_quantity_capabilities(spec.amount.quantity)}))
 
@@ -58,9 +61,14 @@ def per_player_query_life_program_dependencies(program):
     if not _contains_life_query(program.effects):return ()
     effect = program.effects[0] if len(program.effects) == 1 else None
     amount = effect.get('amount') if isinstance(effect, Mapping) else None
-    absence = (isinstance(amount, Mapping) and amount.get('kind') == KIND
-        and amount.get('schema_version') == OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION)
-    if absence:
+    version = amount.get('schema_version') if isinstance(amount, Mapping) and amount.get('kind') == KIND else None
+    absence = version == OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION
+    poison = version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION
+    if poison:
+        if ((program.event, program.active_zone) != ('permanent.tap', 'battlefield')
+                or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}):
+            raise ValueError('Poison-qualified life loss requires its normalized source tap')
+    elif absence:
         if ((program.event, program.active_zone) != ('creature.attacks', 'battlefield')
                 or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}):
             raise ValueError('Opponent subtype absence requires its normalized source attack')
@@ -72,6 +80,8 @@ def per_player_query_life_program_dependencies(program):
     if not required:raise ValueError('Per-player life loss requires one complete independent quantity and result')
     if absence:
         return tuple(sorted({*required, 'trigger.event.normalized_self_attack', 'trigger.placement.apnap'}))
+    if poison:
+        return tuple(sorted({*required, 'trigger.event.normalized_public_action', 'trigger.placement.apnap'}))
     return required
 
 

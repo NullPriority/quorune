@@ -6,11 +6,13 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..rules.hand_inspection import (
+    DEFENDING_HAND_OBSERVATION_VERSION_FIELD,
     FIXED_HAND_INSPECTION_OPERATION,
     HandCardPredicateSpec,
     HandInspectionAction,
     HandInspectionError,
     HandInspectionMode,
+    is_defending_hand_observation,
 )
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.intents import (
@@ -84,7 +86,7 @@ class FixedHandInspectionHandler:
         "zone.change.destination_replacement",
     )
     continuation_fields: tuple[str, ...] = tuple(
-        sorted(_BASE_FIELDS | _CONTINUATION_FIELDS)
+        sorted(_BASE_FIELDS | _CONTINUATION_FIELDS | {DEFENDING_HAND_OBSERVATION_VERSION_FIELD})
     )
     private_data: tuple[str, ...] = ("target hand", "eligible card identities")
     projected_fields: tuple[str, ...] = (
@@ -108,7 +110,12 @@ class FixedHandInspectionHandler:
         HandInspectionAction,
         HandCardPredicateSpec | None,
     ]:
-        if not _BASE_FIELDS.issubset(effect) or set(effect) - (
+        if DEFENDING_HAND_OBSERVATION_VERSION_FIELD in effect:
+            if not is_defending_hand_observation(
+                effect, actor=effect.get("player"), defender=effect.get("target"),
+            ):
+                raise SemanticChoiceError("Private defending hand observation is malformed")
+        elif not _BASE_FIELDS.issubset(effect) or set(effect) - (
             _BASE_FIELDS | _CONTINUATION_FIELDS
         ):
             raise SemanticChoiceError(
@@ -246,6 +253,7 @@ class FixedHandInspectionHandler:
                         destination="graveyard",
                         reason=context.stack_label,
                         transition_kind=ZoneTransitionKind.DISCARD,
+                        discard_effect_origin=getattr(context.query, "discard_effect_origin", None),
                     ),
                 ),
                 auto_continue=AutoContinue(
@@ -323,6 +331,8 @@ class FixedHandInspectionHandler:
                         if action == HandInspectionAction.DISCARD
                         else ZoneTransitionKind.ORDINARY
                     ),
+                    discard_effect_origin=(getattr(query, "discard_effect_origin", None)
+                                           if action == HandInspectionAction.DISCARD else None),
                 ),
             )
         )
