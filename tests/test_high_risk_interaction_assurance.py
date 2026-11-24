@@ -190,28 +190,28 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.rules.capabilities import load_default_capability_registry
         from quorune.semantics import SemanticRegistry
 
-        expected = {
-            "Winds of Qal Sisma": {
+        cases = (
+            (self.db.lookup("Winds of Qal Sisma", fuzzy=False), {
                 "capability.damage.prevention.persistent_amount",
                 "capability.condition.creature.fixed_numeric_exists",
                 "capability.resolution.effect.public_source_self_replacement",
-            },
-            "Alhammarret's Archive": {
+            }),
+            (self.db.lookup("Alhammarret's Archive", fuzzy=False), {
                 "capability.life.gain.replacement.static_multiplier",
                 "capability.zone.draw.result_multiplier_after_first",
                 "capability.zone.draw.result_generated_ordering",
-            },
-            "Legacy Weapon": {
+            }),
+            (self.db.lookup("Legacy Weapon", fuzzy=False), {
                 "capability.permanent.exile.effect",
                 "capability.zone.change.self_graveyard_owner_shuffle",
                 "capability.zone.change.destination_replacement",
-            },
-        }
+            }),
+        )
         registry = load_default_capability_registry()
         profile = "commander_review"
-        for name, pieces in expected.items():
-            with self.subTest(name=name):
-                record = boundary_record(self.db, name)
+        for record, pieces in cases:
+            self.assertIsNotNone(record)
+            with self.subTest(name=record.name):
                 ir = compile_oracle_card(
                     record, capability_registry=registry, capability_profile=profile,
                 )
