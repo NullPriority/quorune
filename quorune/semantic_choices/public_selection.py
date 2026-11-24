@@ -493,11 +493,19 @@ class ProliferateChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..counter_placement_event_model import has_canonical_proliferate_choice_order
+
+        try:
+            canonical = has_canonical_proliferate_choice_order(effect)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
         objects = tuple(
             row.ref
             for row in context.query.objects(zones=("battlefield",))
             if any(int(amount) > 0 for amount in row.counters.values())
         )
+        if canonical:
+            objects = tuple(sorted(objects))
         players = tuple(
             seat
             for seat in context.query.active_seats

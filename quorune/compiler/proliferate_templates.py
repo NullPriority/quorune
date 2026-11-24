@@ -6,11 +6,15 @@ from dataclasses import dataclass
 from . import regex_working_set as re
 from typing import Any, Mapping
 
+from ..counter_placement_event_model import PROLIFERATE_ORDER_VERSION_FIELD
+
 
 @dataclass(frozen=True, slots=True)
 class ProliferateEffectTemplate:
     template_id: str = "proliferate-once-v1"
-    effects: tuple[Mapping[str, Any], ...] = ({"op": "proliferate"},)
+    effects: tuple[Mapping[str, Any], ...] = (
+        {"op": "proliferate", PROLIFERATE_ORDER_VERSION_FIELD: 1},
+    )
     target_schema: Mapping[str, Any] | None = None
     mechanics: tuple[str, ...] = ("proliferate",)
 

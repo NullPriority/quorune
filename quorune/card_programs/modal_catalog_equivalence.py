@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from copy import deepcopy
+from ..counter_placement_event_model import (
+    PROLIFERATE_ORDER_VERSION_FIELD,
+    has_canonical_proliferate_choice_order,
+)
 from ..replacement.immutable import thaw_value
 from ..util import stable_json
 
@@ -39,6 +43,12 @@ def _mode_values(schema):
         for raw_effect in effects:
             effect=dict(raw_effect)
             if effect.get('op')=='draw' and 'private' not in effect:effect['private']=True
+            if effect.get("op") == "proliferate":
+                try:
+                    if has_canonical_proliferate_choice_order(effect):
+                        effect.pop(PROLIFERATE_ORDER_VERSION_FIELD)
+                except ValueError:
+                    return None
             normalized.append(effect)
         result.append((value,normalized))
     return result
