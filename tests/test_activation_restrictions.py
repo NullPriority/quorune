@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from unittest import mock
 
+from test_linked_abilities import move_choosing_entry_name
 from common import keep_all, load_assets, make_session
 from quorune.card_programs import compile_card_program
 from quorune.carddb import CardRecord
@@ -294,7 +295,7 @@ class StaticActivationRestrictionRuntimeTests(unittest.TestCase):
         needle = self.card(engine, "A", "Pithing Needle")
         top = self.card(engine, "C", "Sensei's Divining Top")
         sol_ring = self.card(engine, "C", "Sol Ring")
-        engine.move_card(needle.object_id, "battlefield", controller="A", log=False)
+        move_choosing_entry_name(self, engine, needle, top.printed_name)
         engine.move_card(top.object_id, "battlefield", controller="C", log=False)
         engine.move_card(
             sol_ring.object_id,
@@ -361,7 +362,7 @@ class StaticActivationRestrictionRuntimeTests(unittest.TestCase):
         engine = session.engine
         needle = self.card(engine, "A", "Pithing Needle")
         top = self.card(engine, "C", "Sensei's Divining Top")
-        engine.move_card(needle.object_id, "battlefield", controller="A", log=False)
+        move_choosing_entry_name(self, engine, needle, top.printed_name)
         engine.move_card(top.object_id, "battlefield", controller="C", log=False)
         needle.annotations["chosen_name"] = "Sensei's Divining Top"
         engine.state.players["C"].mana_pool["C"] = 1

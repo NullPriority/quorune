@@ -100,7 +100,8 @@ class SourceSelfOptionalCompilerTests(unittest.TestCase):
             FixedEventSubscription('creature.becomes_blocked_by', {'field': 'card', 'op': 'eq', 'value': '$source.ref'}),
         ))
         program = SimpleNamespace(event='creature.blocks', active_zone='battlefield',
-            event_condition=condition, target_schema=None, coverage=template.mechanics,
+            event_condition=condition, target_schema=None, cost_schema=None,
+            coverage=template.mechanics, handlers=(), provenance={},
             effects=({**template.effects[0], 'card': '$event.block_counterpart'},))
         self.assertIn('trigger.event.block_pair_counterpart', occurrence_object_runtime_dependencies(program))
         for change in ({'event': 'step.begin'}, {'active_zone': 'hand'},

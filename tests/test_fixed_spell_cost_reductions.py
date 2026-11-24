@@ -247,7 +247,7 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
             "This spell costs {1} less to cast for each card you've scried this turn.",
             "This spell costs {X} less to cast, where X is the total power of creature cards in your hand.",
             "This spell costs {1} less to cast for each card with an Adventure in your graveyard.",
-            "Spells you cast of the chosen type cost {1} less to cast.",
+            "Spells you cast of the chosen type cost {1} less to cast for each opponent.",
         )
         for index, text in enumerate(unsupported, 1):
             with self.subTest(text=text):
@@ -377,7 +377,7 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 "of creature cards in your graveyard."
             ),
             "Spells you cast cost {1} less to cast for each different creature type among its targets.",
-            "Spells you cast of the chosen type cost {1} less to cast.",
+            "Spells you cast of the chosen type cost {1} less to cast for each opponent.",
             (
                 "This spell costs {1} less to cast for each creature type among "
                 "creatures you control. This effect can't reduce the amount of "
@@ -573,6 +573,8 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
         cases = (
             ("Creature spells of the chosen type cost {2} less to cast.",
              "all_players", ("creature",), {"GENERIC": -2}),
+            ("Spells you cast of the chosen type cost {1} less to cast.",
+             "source_controller", (), {"GENERIC": -1}),
             ("Spells of the chosen type you cast cost {W}{U}{B}{R}{G} less to cast. "
              "This effect reduces only the amount of colored mana you pay.",
              "source_controller", (), {color: -1 for color in "WUBRG"}),

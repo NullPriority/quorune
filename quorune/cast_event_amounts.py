@@ -32,7 +32,7 @@ def committed_cast_mana_value_facts(item):
     outer=item.context
     context=outer.get('event_context',outer) if isinstance(outer,Mapping) else None
     if not isinstance(context,Mapping) or outer.get('event')!='spell.cast':raise PublicQueryAmountError('Cast spell information requires its original cast event')
-    if type(context.get('schema_version')) is not int or context['schema_version'] not in {3,4,5,6,7}:
+    if type(context.get('schema_version')) is not int or context['schema_version'] not in {3,4,5,6,7,8}:
         raise PublicQueryAmountError('Cast spell mana value requires complete normalized cast facts')
     keys=('logical_object_id','stack','player')
     if any(type(context.get(key)) is not str or not context[key] for key in keys):raise PublicQueryAmountError('Cast spell identity is unavailable')

@@ -2259,6 +2259,52 @@
       ],
       "impact_edge_status": "added",
       "resolution": "Use one shared nonmutating full-packet normalizer that excludes only decision.cap from reference substring assertions. Fuse scans and the runtime replay helper preserve raw authorization presence and nonacting-principal exclusion checks, all semantic fields, owner visibility and private-reference exclusion. Deterministic collision and injected semantic-leak controls establish the boundary. Production projection and gameplay remain unchanged."
+    },
+    {
+      "id": "ci-20261124-pr575-azusa-promoted-saga-admission",
+      "run_id": 45428512009,
+      "head_sha": "1bd3c1c1222bde2c00dde0d8b0666a0ecdab8576",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The generated validation jobs on Ubuntu and Windows found the same stale residual expectation. Azusa's original Saga is now exact across its chapters and transformed face.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+        "test_high_risk_interaction_assurance.HighRiskPromotionSentinelTests.test_current_residual_boundaries_and_promoted_original_admission",
+        "test_transforming_saga_returns.TransformingSagaNativeTests.test_actual_azusa_chapters_and_blocked_back_face_untap"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Verify the original in the existing admission sentinel and native replay. Keep the two residual boundaries on the variant that returns under its owner's control. The other negative compositions still run in their existing suite."
+    },
+    {
+      "id": "ci-20261124-pr575-functional-10-cast-wire-and-promoted-carriers",
+      "run_id": 45428512009,
+      "head_sha": "1bd3c1c1222bde2c00dde0d8b0666a0ecdab8576",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Functional shard 10 rejected normalized cast-event version eight during a native Spirit and Arcane trigger. The same shard found stale cost and copy promotion expectations, missing fixture fields, and an entry setup that did not submit the now-supported linked name choice.",
+      "failed_surfaces": [
+        "PR / Python / functional-10",
+        "PR / Windows / functional-10"
+      ],
+      "regressions": [
+        "test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_kind_scope_model_and_whole_sentence_grammar_are_closed",
+        "test_activation_restrictions.StaticActivationRestrictionRuntimeTests.test_chosen_name_restriction_is_global_typed_and_mana_exempt",
+        "test_activation_restrictions.StaticActivationRestrictionRuntimeTests.test_raw_oracle_text_without_typed_restriction_fails_closed",
+        "test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_original_copiable_grant_carriers_require_normal_registration_and_child_closure",
+        "test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_cast_cost_closure_excludes_open_metrics",
+        "test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
+        "test_linked_abilities.LinkedAbilityRuleTests.test_undefined_chosen_name_has_no_effect",
+        "test_optional_player_results.OptionalPlayerResultNativeTests.test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
+        "test_retained_color_copy.RetainedColorCopyTests.test_entry_retains_its_color_and_upkeep_targeting_precedes_the_copy_decision",
+        "test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_reentered_current_object_mutation_is_killed",
+        "test_source_self_optional_results.SourceSelfOptionalCompilerTests.test_counterpart_runtime_admission_infers_owner_and_rejects_widened_subscriptions"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Read the same required facts from the recorded cast version and retain rejection of unsupported versions. Keep exact supported cost and copy shapes in positive checks and use nearby open cost clauses for the negative checks. Exercise the original copy in the existing native recopy and replay witness. Supply the current contract fields to the two test doubles and use the actual linked-name replacement before checking undefined names."
     }
   ],
   "recent_pull_requests": [

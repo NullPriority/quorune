@@ -169,6 +169,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         for name in (
             'Cunning Strike', 'Shadow Guildmage', 'The Shattered States Era // Nameless Conqueror',
             'Goblin Snowman', 'The Mending of Dominaria',
+            "Azusa's Many Journeys // Likeness of the Seeker",
         ):
             with self.subTest(name=name):
                 card = self.db.lookup(name)
@@ -468,6 +469,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             self.assertIn('trust_basis:unresolved', binding['blockers'])
 
     def test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission(self):
+        from dataclasses import replace
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
@@ -476,8 +478,9 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.rules.capabilities import load_default_capability_registry
         from quorune.semantics import SemanticRegistry
 
+        azusa_name = "Azusa's Many Journeys // Likeness of the Seeker"
         expected = {
-            "Azusa's Many Journeys // Likeness of the Seeker": (
+            azusa_name: (
                 'capability.permanent.untap.fixed_land_choice',
                 'residual.card_form.ordinary-saga-chapter-event-binding',
                 'residual.effect_clause.exact-typed-chapter-effect-body'),
@@ -496,6 +499,16 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         for name, pieces in expected.items():
             with self.subTest(name=name):
                 card = boundary_record(self.db, name)
+                if name == azusa_name:
+                    # Vary only the terminal chapter's return controller.
+                    front, back = card.faces
+                    original = 'under your control'
+                    variant = "under its owner's control"
+                    self.assertIn(original, front['oracle_text'])
+                    card = replace(
+                        card, oracle_text=card.oracle_text.replace(original, variant),
+                        faces=({**front, 'oracle_text': front['oracle_text'].replace(original, variant)}, back),
+                    )
                 ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
                     capability_registry=registry, capability_profile='commander_review')
@@ -1060,6 +1073,7 @@ class HighRiskPromotionSentinelTests(unittest.TestCase):
         build_fixture_database(
             [
                 fixtures / 'interaction-promotion-sentinel-cards.json',
+                fixtures / 'untargeted-untap-cards.json',
                 fixtures / 'combat-prevention-source-scopes-cards.json',
                 fixtures / 'draw-step-exempt-multiplier-cards.json',
                 fixtures / 'graveyard-salvage-cards.json',

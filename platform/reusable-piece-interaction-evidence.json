@@ -19969,7 +19969,7 @@
         "permanent.untap.fixed_land_choice"
       ],
       "interaction_order": 2,
-      "assertion": "An explicit synthetic fixed land-untap program beside an unrepresented skip-draw replacement rejects strict and compatible admission. Original Azusa retains the represented land-untap body but its remaining material chapter bodies still block whole-card admission."
+      "assertion": "An explicit synthetic fixed land-untap program beside an unrepresented skip-draw replacement rejects strict and compatible admission."
     },
     {
       "evidence_class": "interaction",
@@ -19983,7 +19983,7 @@
         "permanent.untap.fixed_land_choice"
       ],
       "interaction_order": 2,
-      "assertion": "An explicit synthetic fixed land-untap program beside an unrepresented skip-draw replacement rejects strict and compatible admission. Original Azusa retains the represented land-untap body but its remaining material chapter bodies still block whole-card admission."
+      "assertion": "An explicit synthetic fixed land-untap program beside an unrepresented skip-draw replacement rejects strict and compatible admission."
     },
     {
       "evidence_class": "interaction",
@@ -21827,7 +21827,22 @@
         "permanent.untap.fixed_land_choice"
       ],
       "interaction_order": 3,
-      "assertion": "Original Azusa retains fixed land choice; complete material Saga chapter binding remains unresolved and blocks strict and compatible whole-card admission."
+      "assertion": "An Azusa variant that returns under its owner's control retains the fixed land choice. Its changed terminal chapter remains material and blocks strict and compatible whole-card admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_transforming_saga_returns.TransformingSagaNativeTests.test_actual_azusa_chapters_and_blocked_back_face_untap",
+      "piece_ids": [
+        "capability.permanent.untap.fixed_land_choice",
+        "capability.zone.linked_exile_return.transformed_source"
+      ],
+      "capability_ids": [
+        "permanent.untap.fixed_land_choice",
+        "zone.linked_exile_return.transformed_source"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Azusa grants a second land play, gains three life and returns its physical card as a fresh transformed permanent. Once blocked, that permanent offers at most three controlled lands and replays the selected untap exactly."
     },
     {
       "evidence_class": "interaction",

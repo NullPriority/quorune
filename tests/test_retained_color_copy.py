@@ -41,6 +41,7 @@ class RetainedColorCopyTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([
             fixtures / "bound-effect-program-cards.json",
             fixtures / "retained-color-copy-cards.json",
+            fixtures / "copiable-entry-ability-grant-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -49,8 +50,8 @@ class RetainedColorCopyTests(InheritedNativeFixture, unittest.TestCase):
             DeckEntry(commander, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
         ], [commander])
 
-    def _entry(self, game, model=None):
-        source = self.add(game.engine, self.source_name, zone="hand", ref="COLOR-COPY-SOURCE")
+    def _entry(self, game, model=None, *, source_name=None):
+        source = self.add(game.engine, source_name or self.source_name, zone="hand", ref="COLOR-COPY-SOURCE")
         self.assert_closed(game, source)
         self.prepare(game, mana={"C": 3, "U": 2})
         self.checkpoint(game)
@@ -101,7 +102,7 @@ class RetainedColorCopyTests(InheritedNativeFixture, unittest.TestCase):
         model = self.add(game.engine, self.first, seat="B", ref="RED-ENTRY-MODEL")
         later = self.add(game.engine, self.second, seat="C", ref="GREEN-UPKEEP-MODEL")
         self.add(game.engine, self.hidden_model, seat="D", zone="hand", ref="HIDDEN-UPKEEP-REF")
-        heading = self._entry(game, model)
+        heading = self._entry(game, model, source_name="Vesuvan Doppelganger")
         original = heading.logical_object_id
         self.assertEqual(self.first, game.engine.display_name(heading.object_id))
         self.assertEqual(["U"], game.engine._effective_card_data(heading)["colors"])
