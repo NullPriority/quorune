@@ -45,6 +45,11 @@ preflight binds the resulting program to capability, handler, and component
 fingerprints. Runtime code executes only registered typed operations. It never
 parses Oracle prose during a state transition.
 
+Deck registration retains complete rules-derived abilities through the normal
+semantic registry. An intrinsic basic-land mana program therefore participates
+in the same preflight binding and saved registry as compiled Oracle abilities,
+even when the printed mana reminder supplies no executable Oracle body.
+
 A reviewed ability may replace generated output only for the same stable
 semantic key. Ambiguous ability identity, conflicting nonempty hashes, stale
 source data, unknown dependencies, material residuals, or fingerprint drift

@@ -1,3 +1,4 @@
+import type { PublicGameEvent } from "./api";
 import type { Decision, JsonValue, LegalAction } from "./generated/protocol";
 
 const actionNames: Record<string, string> = {
@@ -7,6 +8,53 @@ const actionNames: Record<string, string> = {
   mulligan: "Take a mulligan", order: "Confirm order", pass: "Pass priority",
   play_land: "Play land", undo_mana: "Undo mana activation",
 };
+
+const manaColors: Record<string, string> = {
+  W: "white", U: "blue", B: "black", R: "red", G: "green", C: "colorless",
+};
+
+export function publicEventSummary(
+  event: Pick<PublicGameEvent, "code" | "summary">,
+  cardLabel?: (ref: string) => string | undefined,
+): string {
+  if (event.code === "stack.cast" && event.summary) return event.summary.replace(/^[ABCD] cast S\d+ /, "Cast ");
+  if (event.code === "land.play" && event.summary) return event.summary.replace(/^[ABCD] played [ABCD]\d+ /, "Played ");
+  if (event.code === "mana.ability") {
+    const activation = /^[ABCD] activated (\S+) \S+ for mana\.$/.exec(event.summary);
+    if (activation) {
+      const source = cardLabel?.(activation[1]);
+      return source ? `Activated ${source} for mana.` : "Activated a mana ability.";
+    }
+  }
+  if (event.code === "mana.produce") {
+    const tap = /^[ABCD] tapped (\S+) for \{(.*)\}\.$/.exec(event.summary);
+    if (tap) {
+      const [, ref, pool] = tap;
+      const source = cardLabel?.(ref) || "a mana source";
+      const produced = [...pool.matchAll(/'([WUBRGC])': (\d+)/g)].map(([, color, amount]) => `${amount} ${manaColors[color]}`);
+      return `Tapped ${source} for ${produced.length ? produced.join(" and ") + " " : ""}mana.`;
+    }
+  }
+  if (event.code === "mana.undo") {
+    const undo = /^[ABCD] undid (\S+)'s mana activation\.$/.exec(event.summary);
+    if (undo) {
+      const source = cardLabel?.(undo[1]);
+      return source ? `Undid mana from ${source}.` : "Undid a mana activation.";
+    }
+  }
+  const legacyCopy = /^\S+ created (\d+) (storm|gravestorm) copy\/copies\.$/.exec(event.summary);
+  if (legacyCopy && event.code === `stack.${legacyCopy[2]}.copy`) {
+    const [, count, ability] = legacyCopy;
+    return `Created ${count} ${count === "1" ? "copy" : "copies"} with ${ability}.`;
+  }
+  return event.summary || "Game event recorded.";
+}
+
+export function modeLabel(mode: JsonValue, index: number): string {
+  if (typeof mode !== "string" || !mode.trim() || /^[a-f\d-]{20,}$/i.test(mode)) return `Mode ${index + 1}`;
+  const text = mode.replace(/[_-]/g, " ").replace(/^mode(\d+)/i, "mode $1").trim();
+  return text ? text[0].toUpperCase() + text.slice(1) : `Mode ${index + 1}`;
+}
 
 export function actionTitle(action: LegalAction): string {
   const label = action.label?.trim();
@@ -26,6 +74,8 @@ export function decisionHeading(decision: Pick<Decision, "kind" | "ctx">): strin
     case "mulligan.bottom": return "Choose cards to put on the bottom";
     case "cleanup.discard": return "Discard to your hand size";
     case "state.legend": return "Choose the permanent to keep";
+    case "battle.enter_protector":
+    case "state.battle_protector": return "Choose a battle protector";
     case "trigger.order": return "Order your triggers";
     case "combat.damage": return "Assign combat damage";
     case "semantic.target": return "Choose targets";
@@ -46,13 +96,26 @@ export function decisionDetail(decision: Pick<Decision, "kind" | "ctx">): string
     case "mulligan.bottom": return `Put ${count} ${count === 1 ? "card" : "cards"} from your hand on the bottom of your library.`;
     case "cleanup.discard": return `Discard ${count} ${count === 1 ? "card" : "cards"} to reach your maximum hand size.`;
     case "state.legend": return "Keep one of the matching legendary permanents. Put the others into their owners’ graveyards.";
-    case "trigger.order": return "Choose the order in which to put these triggered abilities on the stack.";
+    case "battle.enter_protector":
+    case "state.battle_protector":
+      return typeof decision.ctx.instruction === "string" && decision.ctx.instruction.trim()
+        ? decision.ctx.instruction : "Choose an eligible player to protect this battle.";
+    case "trigger.order": {
+      const triggers = Array.isArray(decision.ctx.triggers) ? decision.ctx.triggers.length : 0;
+      const direction = typeof decision.ctx.instruction === "string" ? decision.ctx.instruction.trim() : "";
+      const instruction = direction || "Choose the order in which the abilities go on the stack.";
+      return triggers ? `${triggers} triggered ${triggers === 1 ? "ability" : "abilities"}. ${instruction}` : instruction;
+    }
     default: return "";
   }
 }
 
+export function isMandatorySelection(kind: string): boolean {
+  return ["mulligan.bottom", "cleanup.discard", "state.legend", "trigger.order", "combat.damage"].includes(kind);
+}
+
 export function canMinimizeChoice(decision: Decision | null | undefined): boolean {
-  return Boolean(decision && (["mulligan.bottom", "cleanup.discard", "state.legend", "trigger.order"].includes(decision.kind)
+  return Boolean(decision && (isMandatorySelection(decision.kind)
     || ["scry", "surveil"].includes(String(decision.ctx.operation ?? ""))));
 }
 
@@ -64,8 +127,23 @@ function manaRequirementSymbols(requirements: JsonValue | undefined, snow = 0): 
     + "{S}".repeat(snow);
 }
 
+export function phyrexianCastCostLabels(action: LegalAction): Record<string, string> {
+  const options = action.cost_options;
+  if (action.action !== "cast" || !Array.isArray(options)) return {};
+  return Object.fromEntries(options.flatMap((raw) => {
+    const option = raw as Record<string, JsonValue>;
+    if (typeof option.id !== "string" || !option.id.startsWith("printed-phyrexian-")) return [];
+    const mana = manaRequirementSymbols(option.requirements, Number(option.snow ?? 0));
+    const life = Number(option.additional_life ?? 0);
+    const parts = [mana, life > 0 ? `${life} life` : ""].filter(Boolean);
+    const variable = (option.choice_schema as Record<string, JsonValue> | undefined)?.x;
+    return [[option.id, `${variable ? "Choose X · " : ""}Pay ${parts.join(" and ") || "no mana"}`]];
+  }));
+}
+
 export function activationCostLabel(action: LegalAction): string {
   const price = (action.cost_summary ?? {}) as Record<string, JsonValue>;
+  const loyalty = typeof price.loyalty === "number" ? price.loyalty : null;
   const symbols = manaRequirementSymbols(price.m);
   const selectedCost = action.form?.fields.find((field) => field.name === "cost_cards");
   const options = action.form?.variants?.options;
@@ -79,8 +157,17 @@ export function activationCostLabel(action: LegalAction): string {
     price.exile_self ? "Exile this card" : "",
     price.life ? `Pay ${price.life} life` : "",
     price.energy ? `Pay ${price.energy} energy` : "",
+    loyalty === null ? "" : `${loyalty > 0 ? "+" : loyalty < 0 ? "−" : ""}${Math.abs(loyalty)} loyalty`,
+    price.random_discard ? `Discard ${price.random_discard} ${price.random_discard === 1 ? "card" : "cards"} at random` : "",
     selectedCost?.label ? String(selectedCost.label) : "",
   ].filter(Boolean).join(" · ");
+}
+
+export function needsActivationConfirmation(action: LegalAction): boolean {
+  if (action.action !== "activate" || action.form) return false;
+  const price = action.cost_summary as Record<string, JsonValue> | undefined;
+  return Boolean(price?.sac_self || price?.discard_self || price?.exile_self
+    || price?.life || price?.energy || price?.random_discard);
 }
 
 export function cardActionCost(actions: readonly LegalAction[]): string {

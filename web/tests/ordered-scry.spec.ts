@@ -2,6 +2,7 @@ import { expect, test, type Browser, type Page, type TestInfo } from "@playwrigh
 import { execFile } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";
+import { submitSingleCleanupDiscard } from "./support/playtest";
 import { completeCastGesture, openGameMenu, startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
@@ -67,20 +68,6 @@ async function actionIsReady(page: Page, testId: string): Promise<boolean> {
   const action = page.getByTestId(testId);
   if (!(await action.isVisible().catch(() => false))) return false;
   return action.isEnabled({ timeout: 250 }).catch(() => false);
-}
-
-async function submitSingleCleanupDiscard(
-  pages: readonly Page[],
-): Promise<boolean> {
-  for (const page of pages) {
-    if (!(await actionIsReady(page, "action-discard"))) continue;
-    await page.getByTestId("action-discard").click();
-    await expect(page.getByTestId("choice-dialog")).toBeVisible();
-    await page.locator('[data-testid^="choice-cards-"]').first().check();
-    await submitOpenChoice(page);
-    return true;
-  }
-  return false;
 }
 
 async function driveToAction(
@@ -207,9 +194,11 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
     });
     await completeCastGesture(host, () => cast.click());
 
+    const choice = host.getByTestId("contextual-decision");
+    const destinations = choice.locator('select[data-testid^="choice-cards-"]');
     await driveUntil(
       pages,
-      () => actionIsReady(host, "action-choose"),
+      () => destinations.first().isVisible(),
       testInfo,
       { label: "resolve the commander and expose its private Scry choice" },
     );
@@ -217,7 +206,7 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
       .getByTestId("decision-panel")
       .getAttribute("data-decision-id");
     expect(decisionId).toBeTruthy();
-    await expect(opponent.getByTestId("action-choose")).toHaveCount(0);
+    await expect(opponent.getByTestId("contextual-decision")).toHaveCount(0);
 
     await openGameMenu(host);
     await host.getByTestId("stop-reason").fill("Persist the pending ordered-Scry choice");
@@ -234,10 +223,7 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
       decisionId!,
     );
 
-    await host.getByTestId("action-choose").click();
-    const dialog = host.getByTestId("choice-dialog");
-    await expect(dialog).toBeVisible();
-    const destinations = dialog.locator('select[data-testid^="choice-cards-"]');
+    await expect(choice).toBeVisible();
     await expect(destinations).toHaveCount(4);
     const refs: string[] = [];
     for (let index = 0; index < 4; index += 1) {
@@ -251,15 +237,15 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
     }
     const opponentHtml = await opponent.content();
     for (const ref of refs) expect(opponentHtml).not.toContain(ref);
-    await expect(opponent.getByTestId("choice-dialog")).toHaveCount(0);
+    await expect(opponent.getByTestId("contextual-decision")).toHaveCount(0);
 
     await destinations.nth(2).selectOption("bottom");
-    await dialog.getByRole("button", { name: "Minimize choice" }).click();
-    await expect(dialog).toHaveCount(0);
-    await host.getByRole("button", { name: "Show choice" }).click();
+    await choice.getByRole("button", { name: "Minimize choice" }).click();
+    await expect(destinations).toHaveCount(0);
+    await choice.getByRole("button", { name: "Show choice" }).click();
     await expect(destinations.nth(2)).toHaveValue("bottom");
     await destinations.nth(3).selectOption("bottom");
-    const groups = dialog.locator(".choice-partition-group");
+    const groups = choice.locator(".choice-partition-group");
     const top = groups.filter({ hasText: "Top of library" });
     const bottom = groups.filter({ hasText: "Bottom of library" });
     await expect(top).toContainText("next card drawn");

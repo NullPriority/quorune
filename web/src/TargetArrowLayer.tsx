@@ -21,6 +21,7 @@ export function targetZones(view: ProjectedView): Map<string, string> {
 }
 
 function visibleBounds(node: Element): Bounds | null {
+  if (getComputedStyle(node).visibility !== "visible") return null;
   const box = node.getBoundingClientRect();
   let left = Math.max(0, box.left);
   let right = Math.min(window.innerWidth, box.right);
@@ -73,25 +74,30 @@ function edge(bounds: Bounds, towards: Point, padding: number): Point {
   return { x: start.x + x * scale, y: start.y + y * scale };
 }
 
-function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aiming: boolean) {
+function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aiming: boolean, stackLink = false) {
   const origin = center(from);
   const destination = center(target);
   const adjacent = Math.abs(origin.y - destination.y) < 24 && Math.abs(origin.x - destination.x) < 150;
-  const start = adjacent ? { x: origin.x, y: from.top - 3 } : edge(from, destination, 3);
-  const to = adjacent ? { x: destination.x, y: target.top - 3 } : edge(target, origin, 3);
+  const start = stackLink ? { x: from.right + 1, y: origin.y }
+    : adjacent ? { x: origin.x, y: from.top - 3 } : edge(from, destination, 3);
+  const to = stackLink ? { x: target.right + 1, y: destination.y }
+    : adjacent ? { x: destination.x, y: target.top - 3 } : edge(target, origin, 3);
   if (Math.hypot(to.x - start.x, to.y - start.y) < 8) return false;
   const bend = adjacent ? 40 : Math.min(66, Math.abs(to.x - start.x) * 0.16 + 12);
-  const mid = { x: (start.x + to.x) / 2, y: (start.y + to.y) / 2 - bend };
-  ctx.strokeStyle = aiming ? "#efd58d" : "#c8f3a8";
+  const gutter = Math.min(window.innerWidth - 4, Math.max(start.x, to.x) + 11);
+  const endControl = stackLink ? { x: gutter, y: to.y }
+    : { x: (start.x + to.x) / 2, y: (start.y + to.y) / 2 - bend };
+  ctx.strokeStyle = aiming || stackLink ? "#efd58d" : "#c8f3a8";
   ctx.fillStyle = ctx.strokeStyle;
   ctx.lineWidth = 2.4;
   ctx.lineCap = "round";
   ctx.setLineDash(aiming ? [6, 5] : []);
   ctx.beginPath();
   ctx.moveTo(start.x, start.y);
-  ctx.quadraticCurveTo(mid.x, mid.y, to.x, to.y);
+  if (stackLink) ctx.bezierCurveTo(gutter, start.y, endControl.x, endControl.y, to.x, to.y);
+  else ctx.quadraticCurveTo(endControl.x, endControl.y, to.x, to.y);
   ctx.stroke();
-  const angle = Math.atan2(to.y - mid.y, to.x - mid.x);
+  const angle = Math.atan2(to.y - endControl.y, to.x - endControl.x);
   ctx.beginPath();
   ctx.moveTo(to.x, to.y);
   for (const offset of [-0.46, 0.46]) {
@@ -103,12 +109,13 @@ function arrow(ctx: CanvasRenderingContext2D, from: Bounds, target: Bounds, aimi
 }
 
 export function TargetArrowLayer({
-  sourceRef, targets, candidates, zones,
+  sourceRef, targets, candidates, zones, stackPositions,
 }: {
   sourceRef: string;
   targets: readonly string[];
   candidates: readonly string[];
   zones: Map<string, string>;
+  stackPositions: ReadonlyMap<string, number>;
 }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const pointer = useRef<Point | null>(null);
@@ -137,7 +144,8 @@ export function TargetArrowLayer({
       if (source) {
         for (const target of new Set(targets)) {
           const bounds = anchor(target, zones.get(target));
-          if (bounds && arrow(context, source, bounds, false)) count++;
+          const stackLink = stackPositions.has(sourceRef) && stackPositions.has(target);
+          if (bounds && arrow(context, source, bounds, false, stackLink)) count++;
         }
         const point = pointer.current;
         const focused = document.activeElement;
@@ -175,14 +183,18 @@ export function TargetArrowLayer({
     }
     window.addEventListener("resize", schedule);
     window.addEventListener("scroll", schedule, true);
+    const table = document.querySelector(".table-workspace");
+    const pageChanges = new MutationObserver(schedule);
+    if (table) pageChanges.observe(table, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-hidden", "hidden"] });
     return () => {
       cancelAnimationFrame(frame);
+      pageChanges.disconnect();
       window.removeEventListener("pointermove", move);
       window.removeEventListener("focusin", focus);
       window.removeEventListener("resize", schedule);
       window.removeEventListener("scroll", schedule, true);
     };
-  }, [active, candidates, sourceRef, targets, zones]);
+  }, [active, candidates, sourceRef, targets, zones, stackPositions]);
 
   return active ? createPortal(<canvas ref={canvas} className="target-arrow-layer"
     aria-hidden="true" data-testid="target-arrow-layer" />, document.body) : null;

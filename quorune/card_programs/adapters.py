@@ -425,6 +425,24 @@ def _compile_card_program_from_ir(
     )
 
 
+
+def retain_rules_only_card_program(db, record, ir, registry, *, capability_registry, capability_profile):
+    """Register complete rules-derived abilities through the normal runtime view."""
+    if ir.status != "exact" or ir.material_residuals:
+        return
+    compiled = _compile_best_available_card_program_from_ir(
+        db, record, ir, semantic_registry=registry, capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    if (compiled.residuals or compiled.trust_closure["trust_basis"] != "capability_closed"
+            or not compiled.abilities or not all(
+                "generated_card_form_rule" in ability.coverage for ability in compiled.abilities
+            )):
+        return
+    for ability in compiled.abilities:
+        registry.put(ability)
+
+
 def compile_best_available_card_program(
     db: CardDatabase,
     record: CardRecord,

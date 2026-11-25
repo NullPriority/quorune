@@ -1,6 +1,7 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { clickMove, submitSingleCleanupDiscard } from "./support/playtest";
 import { completeCastGesture, openGameMenu, startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
@@ -148,21 +149,6 @@ async function actionIsReady(action: Locator): Promise<boolean> {
   // capability is a normal projection transition, not a test failure.
   if (!(await action.isVisible())) return false;
   return action.isEnabled({ timeout: 250 }).catch(() => false);
-}
-
-async function submitSingleCleanupDiscard(
-  pages: readonly Page[],
-): Promise<boolean> {
-  for (const page of pages) {
-    const discard = page.getByTestId("action-discard");
-    if (!(await actionIsReady(discard))) continue;
-    await discard.click();
-    await expect(page.getByTestId("choice-dialog")).toBeVisible();
-    await page.locator('[data-testid^="choice-cards-"]').first().check();
-    await submitOpenChoice(page);
-    return true;
-  }
-  return false;
 }
 
 async function advanceToDecision(
@@ -1046,9 +1032,11 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
     await desert.dragTo(host.getByTestId("own-battlefield"));
     await expect.poll(() => viewRevision(host)).toBeGreaterThan(beforeDesert);
     await expect(host.getByTestId("decision-panel")).toHaveAttribute("data-decision-kind", "semantic.target");
-    await host.getByTestId("action-choose").click();
-    await expect(host.getByTestId("choice-dialog")).toContainText("Seat B");
-    await host.getByTestId("choice-target-B").check();
+    const targetChoice = host.getByTestId("contextual-decision");
+    await expect(targetChoice).toContainText("Sunscorched Desert");
+    await expect(targetChoice).toContainText("Seat B");
+    await expect(opponent.getByTestId("contextual-decision")).toHaveCount(0);
+    await targetChoice.getByTestId("choice-target-B").check();
     await submitOpenChoice(host);
     await expect(host.getByTestId("player-B").getByLabel("39 life")).toBeVisible();
     await expect(opponent.getByTestId("player-B").getByLabel("39 life")).toBeVisible();
@@ -1139,8 +1127,8 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
       },
     );
     await expect(host.getByTestId("decision-panel")).toHaveAttribute("data-decision-kind", "semantic.target");
-    await host.getByTestId("action-choose").click();
-    await host.getByTestId("choice-target-B").check();
+    await expect(targetChoice).toContainText("Orcish Bowmasters");
+    await targetChoice.getByTestId("choice-target-B").check();
     await submitOpenChoice(host);
 
     const damagedOpponent = host.getByTestId("player-B").getByLabel("38 life");
@@ -1609,18 +1597,24 @@ test("@browser-lifecycle generic private choice form executes a penalized multip
     await pages[0].getByTestId("choice-override_reason").fill("Deterministic browser regression coverage");
     await submitOpenChoice(pages[0]);
 
-    await expect(pages[0].getByTestId("action-bottom")).toBeVisible();
-    await pages[0].getByTestId("action-bottom").click();
-    await expect(pages[0].getByTestId("choice-dialog")).toBeVisible();
-    const firstCard = pages[0].locator('[data-testid^="choice-cards-"]').first();
+    const bottom = pages[0].getByTestId("contextual-decision");
+    await expect(bottom).toBeVisible();
+    await expect(bottom).toContainText("Put 1 card from your hand on the bottom of your library.");
+    const firstCard = bottom.locator('[data-testid^="choice-cards-"]').first();
     const testId = await firstCard.getAttribute("data-testid");
     expect(testId).toBeTruthy();
-    await firstCard.check();
+    await firstCard.click();
+    const revision = await viewRevision(pages[0]);
+    await bottom.getByRole("button", { name: "Minimize choice" }).click();
+    await expect(firstCard).toHaveCount(0);
+    await bottom.getByRole("button", { name: "Show choice" }).click();
+    await expect(firstCard).toHaveAttribute("aria-pressed", "true");
+    expect(await viewRevision(pages[0])).toBe(revision);
     for (const opponent of pages.slice(1)) {
       expect((await opponent.content()).includes(testId!)).toBeFalsy();
       await expect(opponent.getByTestId("choice-dialog")).toHaveCount(0);
     }
-    await submitOpenChoice(pages[0]);
+    await clickMove(pages[0], bottom.getByTestId("submit-choice"));
 
     await expect(pages[0].getByTestId("action-keep")).toBeVisible();
     await expect(pages[0].getByTestId("own-hand").locator(".hand-card")).toHaveCount(6);

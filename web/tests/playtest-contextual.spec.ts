@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type ElementHandle, type Page } from "@playwright/test";
 import { driveUntil, viewRevision } from "./support/progress";
 import { boardCard, castOffer, clickMove, driveTo, evidence, startPlaytestPod } from "./support/playtest";
 import { captureRealZoom, zoomContext } from "./support/browserZoom";
@@ -55,24 +55,47 @@ test("@browser-rules @mana-action contextual Solemn decision and repeated-name s
 
     const choices = host.getByRole("form", { name: "Choose a basic land" });
     await expect(choices.getByRole("button", { name: "Find no card" })).toBeVisible();
-    const swamps = choices.getByRole("button", { name: /^Swamp, Copy/ });
-    await expect(swamps).toHaveCount(8);
-    await expect(choices.getByRole("button", { name: /^Mountain, Copy/ })).toHaveCount(6);
-    await expect(choices.getByRole("button", { name: /^Mountain, Copy/ }).first()).toBeVisible();
-    const selected = swamps.nth(1);
+    const collection = choices.locator(".card-choice-options");
+    const previous = choices.getByRole("button", { name: "Previous Search results page" });
+    const next = choices.getByRole("button", { name: "Next Search results page" });
+    async function pageBack() {
+      while (await previous.isVisible() && await previous.getAttribute("aria-disabled") !== "true") await previous.click();
+    }
+    async function searchOnPages(name: RegExp) {
+      await pageBack();
+      const tile = choices.getByRole("button", { name }).first();
+      while (!await tile.isVisible() && await next.isVisible() && await next.getAttribute("aria-disabled") !== "true") {
+        await next.click();
+      }
+      await expect(tile).toBeVisible();
+      return tile;
+    }
+    const names = new Set<string | null>();
+    for (let page = 0; page < 14; page++) {
+      for (const title of await collection.getByRole("button").evaluateAll((buttons) =>
+        buttons.map((button) => button.getAttribute("aria-label")))) names.add(title);
+      if (!await next.isVisible() || await next.getAttribute("aria-disabled") === "true") break;
+      await next.click();
+    }
+    expect([...names].filter((name) => name?.startsWith("Swamp, Copy"))).toHaveLength(8);
+    expect([...names].filter((name) => name?.startsWith("Mountain, Copy"))).toHaveLength(6);
+    const selected = await searchOnPages(/^Swamp, Copy 2 of 8/);
     const identity = await selected.getAttribute("data-testid");
     expect(identity).toBeTruthy();
     for (const page of opponents) await expect(page.getByTestId(identity!)).toHaveCount(0);
     await selected.hover();
     await expect(choices.locator(".card-choice-preview")).toContainText("Swamp");
     const printingImages: (string | null)[] = [];
+    let previousArt: ElementHandle | null = null;
     for (const edition of [/BRC #33/, /M21 #268/]) {
-      const print = choices.getByRole("button", { name: new RegExp(`^Swamp.*${edition.source}`) }).first();
+      const print = await searchOnPages(new RegExp(`^Swamp.*${edition.source}`));
       await print.hover();
       await expect(choices.locator(".card-choice-preview")).toContainText(edition);
       if (process.env.QUORUNE_TEST_LIVE_ART === "1") {
         const image = choices.locator(".card-choice-preview .inspector-art img");
         await expect.poll(() => image.evaluate((item: HTMLImageElement) => item.naturalWidth)).toBeGreaterThan(0);
+        if (previousArt) expect(await previousArt.evaluate((item) => item.isConnected)).toBe(false);
+        previousArt = await image.elementHandle();
         printingImages.push(await image.getAttribute("src"));
       }
     }
@@ -81,11 +104,14 @@ test("@browser-rules @mana-action contextual Solemn decision and repeated-name s
       const params = new URL(url).searchParams;
       return params.get("edition") === "brc" && ["35", "36"].includes(params.get("collector") ?? "");
     })).toBe(false);
+    await searchOnPages(/^Swamp, Copy 2 of 8/);
     await selected.click();
     await expect(selected).toHaveAttribute("aria-pressed", "true");
     await expect(choices).toContainText("1 selected");
+    const confirm = choices.getByRole("button", { name: "Put onto battlefield" });
+    await expect(confirm).toBeInViewport({ ratio: 1 });
     await evidence(host, info, "solemn-visual-search-repeated-basics");
-    await clickMove(host, choices.getByRole("button", { name: "Put onto battlefield" }));
+    await clickMove(host, confirm);
     await expect(boardCard(host, "Swamp").filter({ hasNot: host.getByText("TAPPED", { exact: true }) })).toHaveCount(0);
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
@@ -213,19 +239,33 @@ test("@browser-rules @combat two distinct blockers group under the same attacker
     await clickMove(host, block.getByRole("button", { name: "Confirm blockers" }));
     const flyer = boardCard(host, "Ornithopter");
     const marked = flyer.getByTestId("card-marked-damage");
+    let damageReadoutSeen = false;
     await driveUntil(pages, () => marked.isVisible(), info, {
       label: "Resolve the assigned combat damage",
       advance: async () => {
-        const damage = attacker.getByTestId("action-assign_damage");
-        if (!(await damage.isVisible()) || !(await damage.isEnabled().catch(() => false))) return false;
-        await damage.click();
-        const choice = attacker.getByTestId("choice-dialog");
-        await choice.getByRole("spinbutton", { name: "Ornithopter" }).fill("1");
-        await choice.getByRole("spinbutton", { name: "Memnite" }).fill("0");
-        await clickMove(attacker, choice.getByTestId("submit-choice"));
+        const choice = attacker.locator('[data-testid="decision-panel"][data-decision-kind="combat.damage"]')
+          .getByTestId("contextual-decision");
+        const commit = choice.getByTestId("submit-choice");
+        if (!(await commit.isVisible()) || !(await commit.isEnabled({ timeout: 250 }).catch(() => false))) return false;
+        const source = choice.locator(".damage-source").filter({ hasText: "Raging Goblin" });
+        const assigned = source.getByRole("status");
+        const ornithopterDamage = source.getByRole("spinbutton", { name: "Ornithopter" });
+        const memniteDamage = source.getByRole("spinbutton", { name: "Memnite" });
+        await ornithopterDamage.fill("0");
+        await memniteDamage.fill("0");
+        await expect(assigned).toHaveText("0 assigned · 1 remaining");
+        await ornithopterDamage.fill("1");
+        await memniteDamage.fill("1");
+        await expect(assigned).toHaveText("2 assigned · 1 over the limit");
+        await memniteDamage.fill("0");
+        await expect(assigned).toHaveText("1 assigned · 0 remaining");
+        await evidence(attacker, info, "combat-damage-assigned-and-remaining");
+        damageReadoutSeen = true;
+        await clickMove(attacker, commit);
         return true;
       },
     });
+    expect(damageReadoutSeen).toBe(true);
     await expect(marked).toHaveText("1 dmg");
     await expect(flyer.getByTestId("card-current-stats")).toHaveText("0/2");
     await flyer.hover();

@@ -14,6 +14,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 
 from quorune.bulk import ScryfallBulkItem
+from quorune.card_printing import CardPrinting
 from quorune.carddb import CardDatabase, build_card_database
 from quorune.record import database_fingerprint
 from server.app import ServerSettings, create_app
@@ -32,7 +33,7 @@ class _ImageResponse(BytesIO):
         self.close()
 
 
-def _build_database(root: Path, *, image_host: str | None = "cards.scryfall.io") -> Path:
+def _build_database(root: Path, *, image_host: str | None = "cards.scryfall.io", **card_fields) -> Path:
     root.mkdir(parents=True, exist_ok=True)
     oracle = root / "oracle.jsonl"
     rulings = root / "rulings.jsonl"
@@ -50,6 +51,7 @@ def _build_database(root: Path, *, image_host: str | None = "cards.scryfall.io")
                     "small": f"https://{image_host}/small/front/test.jpg",
                     "normal": f"https://{image_host}/normal/front/test.jpg",
                 } if image_host is not None else {},
+                **card_fields,
             },
             sort_keys=True,
         )
@@ -107,6 +109,57 @@ class CardImageDatabaseTests(unittest.TestCase):
 
 
 class CardImageCacheTests(unittest.IsolatedAsyncioTestCase):
+    async def test_adventure_uses_the_cached_front_image_for_both_faces(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            snapshot = _build_database(
+                root, layout="adventure", card_faces=[{"name": "Creature"}, {"name": "Adventure"}],
+            )
+            with CardDatabase(snapshot) as database:
+                cache = CardImageCache(root / "images", lambda: (database,))
+                with patch("server.data.urllib.request.urlopen", return_value=_ImageResponse(b"front")) as download:
+                    front, _ = await cache.get("12345678", face=0)
+                    adventure, _ = await cache.get("12345678", face=1)
+                    with self.assertRaises(KeyError):
+                        await cache.get("12345678", face=2)
+                self.assertEqual(front, adventure)
+                download.assert_called_once()
+
+    async def test_selected_printing_uses_shared_art_or_the_requested_physical_face(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            cache = CardImageCache(Path(temporary), lambda: ())
+            shared = {"normal": "https://cards.scryfall.io/normal/front/edition-one.jpg"}
+            front = {"normal": "https://cards.scryfall.io/normal/front/edition-two.jpg"}
+            back = {"normal": "https://cards.scryfall.io/normal/back/edition-two.jpg"}
+            oracle_id = "12345678-1234-1234-1234-1234567890ab"
+            printings = {
+                "https://api.scryfall.com/cards/tst/1/en": {
+                    "oracle_id": oracle_id, "image_uris": shared, "card_faces": [{}, {}],
+                },
+                "https://api.scryfall.com/cards/tst/2/en": {
+                    "oracle_id": oracle_id, "card_faces": [{"image_uris": front}, {"image_uris": back}],
+                },
+            }
+
+            def urlopen(request, timeout):
+                payload = printings.get(request.full_url)
+                if payload is not None:
+                    return BytesIO(json.dumps(payload).encode())
+                return _ImageResponse(request.full_url.encode())
+
+            with patch("server.data.urllib.request.urlopen", side_effect=urlopen):
+                shared_printing = CardPrinting(set_code="tst", collector_number="1")
+                front_face, _ = await cache.get("12345678", printing=shared_printing)
+                other_face, _ = await cache.get("12345678", face=1, printing=shared_printing)
+                self.assertEqual(shared["normal"].encode(), front_face.read_bytes())
+                self.assertEqual(front_face.read_bytes(), other_face.read_bytes())
+
+                two_sided_printing = CardPrinting(set_code="tst", collector_number="2")
+                front_face, _ = await cache.get("12345678", printing=two_sided_printing)
+                back_face, _ = await cache.get("12345678", face=1, printing=two_sided_printing)
+                self.assertEqual(front["normal"].encode(), front_face.read_bytes())
+                self.assertEqual(back["normal"].encode(), back_face.read_bytes())
+
     async def test_image_is_downloaded_once_and_then_served_from_local_cache(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -1549,6 +1549,20 @@ def _trusted_generated_programs(
     }
 
 
+def _register_augmented_activations(registry, record, existing_programs, provisional_programs):
+    for existing, augmented in zip(
+        existing_programs,
+        with_activated_ability_catalog(
+            record,
+            existing_programs,
+            reference_programs=provisional_programs,
+        ),
+        strict=True,
+    ):
+        if existing.to_dict() != augmented.to_dict():
+            registry.put(augmented)
+
+
 def register_generated_programs(
     db: CardDatabase,
     registry: SemanticRegistry,
@@ -1580,6 +1594,7 @@ def register_generated_programs(
         if record.oracle_id in cards_seen:
             continue
         cards_seen.add(record.oracle_id)
+        ir = None
         # Custom mechanic iterables retain their original consumption order.
         if type(trusted_mechanics) is tuple and not trusted_mechanics:
             ir = compile_oracle_card(record, **generation_parameters)
@@ -1594,17 +1609,12 @@ def register_generated_programs(
             )
         provisional_programs = lower_programs(trust_level=trust_level)
         existing_programs = registry.programs_for_oracle(record.oracle_id)
-        for existing, augmented in zip(
-            existing_programs,
-            with_activated_ability_catalog(
-                record,
-                existing_programs,
-                reference_programs=provisional_programs,
-            ),
-            strict=True,
-        ):
-            if existing.to_dict() != augmented.to_dict():
-                registry.put(augmented)
+        if (not provisional_programs and not existing_programs and ir is not None
+                and capability_registry is not None and promote_exact_capability_declarations):
+            from ..card_programs.adapters import retain_rules_only_card_program
+
+            retain_rules_only_card_program(db, record, ir, registry, **generation_parameters)
+        _register_augmented_activations(registry, record, existing_programs, provisional_programs)
         program_key_counts = Counter(
             program.key for program in provisional_programs
         )

@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { startPlaytestPod } from "./support/playtest";
+import { startPlaytestPod, submitSingleCleanupDiscard } from "./support/playtest";
 import { viewRevision } from "./support/progress";
 
 type Marks = {
@@ -88,14 +88,7 @@ test("record loopback pass and phase timing on a warmed four-seat table", async 
       await expect.poll(async () => {
         page = await anActor();
         if (page) return true;
-        for (const candidate of pages) {
-          const discard = candidate.getByTestId("action-discard");
-          if (!(await discard.isVisible()) || !(await discard.isEnabled().catch(() => false))) continue;
-          await discard.click();
-          await candidate.locator('[data-testid^="choice-cards-"]').first().check();
-          await candidate.getByTestId("submit-choice").click();
-          break;
-        }
+        await submitSingleCleanupDiscard(pages);
         return false;
       }).toBe(true);
       await page!.bringToFront();

@@ -271,6 +271,36 @@ class CardProgramTrustTests(unittest.TestCase):
         self.assertEqual(inventory, registry.inventory())
         self.assertEqual(expected_fingerprint, registry.fingerprint)
 
+
+    def test_deck_preflight_registers_and_reloads_complete_basic_land_mana(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.preflight import semantic_preflight
+        from quorune.semantics import SemanticRegistry
+
+        commander = "Mishra, Eminent One"
+        deck = DeckDefinition("Basic-land admission witness",
+            [DeckEntry(commander, 1, "commander"), DeckEntry("Mountain", 49), DeckEntry("Swamp", 50)],
+            [commander])
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "registry.json"
+            registry = SemanticRegistry(path)
+            report = semantic_preflight(self.db, deck, registry=registry)
+            rows = {row["name"]: row for row in report["cards"]}
+            reopened = SemanticRegistry(path)
+            for name in ("Mountain", "Swamp"):
+                with self.subTest(name=name):
+                    row = rows[name]
+                    self.assertTrue(row["card_program_strict_capability_ready"], row["unresolved"])
+                    self.assertEqual("capability_closed", row["card_program_trust_basis"])
+                    oid = self.db.lookup(name, fuzzy=False).oracle_id
+                    program = reopened.card_program_for_oracle(oid)
+                    self.assertIsNotNone(program)
+                    self.assertEqual(row["card_program_fingerprint"], program.fingerprint)
+                    self.assertEqual(["intrinsic_ability"], [ability.event for ability in program.abilities])
+
     def test_global_handler_and_component_inventory_is_capability_bound(self):
         status = runtime_component_status("commander_review")
         self.assertEqual(

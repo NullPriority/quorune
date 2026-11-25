@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import { asRecord, CardTile } from "./CardSurface";
+import { CardPages } from "./CardPages";
 import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { HandZoneOffer } from "./handZoneOffers";
 import type { ProjectedView } from "./protocol";
@@ -30,12 +32,11 @@ export function HandRail({
   }
 
   return <div className="hand-scroll">
-    {zoneOffers.size > 0 && <div className="hand-cards hand-zone-offers" role="group"
-      aria-label="Available from other zones" data-testid="hand-zone-offers">
-      {Array.from(zoneOffers.values(), (offer, index) => renderCard(offer.card, index, offer.origin))}
-    </div>}
-    <div className="hand-cards" data-testid="own-hand">
-      {cards.map((card, index) => renderCard(card, index))}
-    </div>
+    {zoneOffers.size > 0 && <CardPages items={[...zoneOffers.values()]} label="Available from other zones"
+      className="hand-other-pages" trackClassName="hand-cards hand-zone-offers" testId="hand-zone-offers"
+      style={{ "--offered-card-count": zoneOffers.size } as CSSProperties}
+      render={(offer, index) => renderCard(offer.card, index, offer.origin)} />}
+    <CardPages items={cards} label="Hand" className="hand-main-pages" trackClassName="hand-cards"
+      testId="own-hand" render={renderCard} />
   </div>;
 }

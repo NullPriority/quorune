@@ -22,13 +22,12 @@ test("@browser-rules private hand shortcuts show the offered costs for Flashback
     const looting = castOffer(host, "Faithless Looting");
     await driveTo(pages, looting, info, "Cast Faithless Looting from hand");
     await clickMove(host, looting);
-    const discard = tray.getByTestId("action-choose");
+    const choice = tray.getByTestId("contextual-decision");
+    const discard = choice.getByTestId("submit-choice");
     await driveTo(pages, discard, info, "Resolve Looting and discard two cards");
-    await discard.click();
-    const choice = host.getByTestId("choice-dialog");
     await choice.getByRole("checkbox", { name: deskName, exact: true }).check();
     await choice.getByRole("checkbox", { name: "Swamp", exact: true }).first().check();
-    await clickMove(host, choice.getByTestId("submit-choice"));
+    await clickMove(host, discard);
 
     const swamp = offeredLand(host, "Swamp");
     await driveTo(pages, swamp, info, "Reach the next turn and play the Swamp");

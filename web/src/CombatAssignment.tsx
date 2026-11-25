@@ -88,8 +88,9 @@ export function CombatAssignment({
     <div className="combat-lanes" aria-label={isBlock ? "Incoming attackers" : "Defenders"}>
       {destinations.map((target) => {
         const card = cards.get(target);
-        const attackerSeat = isBlock ? Object.entries(players).find(([, player]) =>
+        const controller = card ? Object.entries(players).find(([, player]) =>
           asList(asRecord(player).bf).some((object) => asRecord(object).id === target))?.[0] : undefined;
+        const protector = asRecord(card).protect;
         const legal = current?.options.includes(target) ?? false;
         const attached = rows.filter((row) => targetsOf(row.ref).includes(target));
         const minimum = Number(minimumGroups[target] ?? 0);
@@ -113,7 +114,9 @@ export function CombatAssignment({
               <span className="seat-letter small">{target}</span><strong>{targetLabel(target)}</strong>
             </>}
           </button>
-          {attackerSeat && <small>Attacking from Seat {attackerSeat}</small>}
+          {isBlock && controller && <small>Attacking from Seat {controller}</small>}
+          {!isBlock && typeof protector === "string" && <small>Protected by Seat {protector}</small>}
+          {!isBlock && !protector && controller && <small>Controlled by Seat {controller}</small>}
           {minimum > 1 && <small>Block with at least {minimum}, or leave unblocked</small>}
           {attached.length > 0 ? <ul className="combat-connections">
             {attached.map((row) =>

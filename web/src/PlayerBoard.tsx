@@ -1,5 +1,6 @@
 import { type DragEvent, useEffect, useState } from "react";
 import { asList, asRecord, cardName, CardTile } from "./CardSurface";
+import { CardPages } from "./CardPages";
 import { CommanderDamage } from "./TableStatus";
 import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
@@ -11,7 +12,9 @@ export function PlayerBoard({
   active,
   priority,
   mine,
+  hidden,
   view,
+  labelFor,
   cardActions,
   onCardIntent,
   onManaIntent,
@@ -32,7 +35,9 @@ export function PlayerBoard({
   active: boolean;
   priority: boolean;
   mine: boolean;
+  hidden: boolean;
   view: ProjectedView;
+  labelFor: (ref: string) => string;
   cardActions: LegalAction[];
   onCardIntent: (actions: LegalAction[], card: JsonValue) => void;
   onManaIntent: (actions: LegalAction[], card: JsonValue) => void;
@@ -88,14 +93,18 @@ export function PlayerBoard({
     setArrangement((prior) => [...prior.filter((ref) => !refs.includes(ref)), ...refs]);
   }
   function permanent(card: JsonValue, index: number, row: JsonValue[]) {
-    const ref = String(asRecord(card).id ?? "");
+    const data = asRecord(card);
+    const ref = String(data.id ?? "");
+    const attached = typeof data.at === "string" && data.at ? labelFor(data.at) : "";
     const actions = mine && !arranging && !selection
       ? cardActions.filter((action) => String(action.card ?? action.source ?? "") === ref)
       : [];
     const manaOnly = actions.length > 0 && actions.every((action) =>
       action.mana_ability === true || action.action === "undo_mana");
     return <div className="battlefield-card-slot" key={ref || index}>
-      <CardTile value={card} view={view} table actions={actions}
+      <CardTile value={card} view={view} table actions={actions} onOpenInspector={onOpenInspector}
+        inspectOnActivate={!selection && !arranging}
+        attachment={attached}
         onIntent={arranging || selection ? undefined : manaOnly ? onManaIntent : onCardIntent} onInspect={onInspectCard}
         manualMana={manaOnly} selected={selectedCardRef === ref || selection?.selected.includes(ref)}
         explainUnavailable={mine && !arranging && !selection}
@@ -108,17 +117,26 @@ export function PlayerBoard({
           <button type="button" className="link-button" disabled={index === row.length - 1}
             aria-label={`Move ${cardName(card)} later`} onClick={() => moveInRow(row, index, 1)}>→</button>
         </div>
-        : <button type="button" className="inspect-card-button" aria-label={`Inspect ${cardName(card)}`}
-          onClick={() => onOpenInspector(card)}>Inspect</button>}
+        : null}
     </div>;
   }
+  function lane(group: keyof typeof groups, label: string) {
+    const cards = groups[group];
+    return cards.length > 0 && <CardPages
+      items={cards} label={label} heading={<span className="battlefield-lane-label">{label}</span>}
+      className={`battlefield-lane lane-${group}`}
+      trackClassName={`battlefield-row battlefield-${group}${cards.some((card) => asRecord(card).at) ? " has-attachments" : ""}`}
+      render={(card, index) => permanent(card, index, cards)} />;
+  }
+  const lands = lane("lands", "Lands");
   return (
-    <article className={`player-board${active ? " active-player" : ""}${priority ? " has-priority" : ""}${mine ? " own-board" : ""}`} data-testid={`player-${seat}`}>
+    <article className={`player-board${active ? " active-player" : ""}${priority ? " has-priority" : ""}${mine ? " own-board" : ""}`}
+      hidden={hidden} data-seat={seat} data-testid={`player-${seat}`}>
       <header>
         <span className="seat-letter small">{seat}</span>
-        <div>
-          <div className="player-name"><strong>Seat {seat}</strong>{mine && <span className="you-chip">You</span>}</div>
-          <small>{String(player.hand_n ?? 0)} hand · {String(player.lib_n ?? 0)} library</small>
+        <div className="player-name">
+          <strong>Seat {seat}</strong>{mine && <span className="you-chip">You</span>}
+          <small>{String(player.hand_n ?? 0)} in hand</small>
         </div>
         {selection?.refs.includes(seat) ? <button type="button" className="life player-selection" data-player-ref={seat}
           aria-label={`Select Seat ${seat}, ${String(player.life ?? 0)} life`} aria-pressed={selection.selected.includes(seat)}
@@ -126,10 +144,10 @@ export function PlayerBoard({
           : <div className={`life${highlightedTargets.includes(seat) ? " target-highlight" : ""}`} data-player-ref={seat} aria-label={`${String(player.life ?? 0)} life`}><span>{String(player.life ?? 0)}</span><small>Life</small></div>}
       </header>
       {(active || priority) && <div className="turn-flags" aria-label={`Seat ${seat} turn status`}>{active && <span className="active-flag"><span aria-hidden="true">▶</span> Active turn</span>}{priority && <span className="priority-flag"><span aria-hidden="true">◎</span> Priority</span>}</div>}
-      <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />
       <div className={`card-strip command-zone${isZoneTarget(command) ? " zone-target" : ""}`} data-target-zone={`${seat}-cmd`} aria-label={`Seat ${seat} command zone`}>
-        <span className="command-zone-label">Command zone</span>
-        {command.length ? command.map((card, index) => {
+        <CardPages items={command} label="Command zone" layout="column" trackClassName="command-cards"
+          heading={<span className="command-zone-label">Command zone</span>}
+          render={(card, index) => {
         const ref = String(asRecord(card).id ?? "");
         const actions = mine && !selection
           ? cardActions.filter((action) => String(action.card ?? action.source ?? "") === ref)
@@ -139,7 +157,9 @@ export function PlayerBoard({
           selected={selectedCardRef === ref || selection?.selected.includes(ref)} explainUnavailable={mine && !selection}
           highlight={highlightedTargets.includes(ref)}
           choice={selection?.refs.includes(ref) ? { selected: selection.selected.includes(ref), select: () => selection.select(ref) } : undefined} />;
-      }) : <em>Empty</em>}</div>
+      }} />
+        {!command.length && <em>Empty</em>}
+      </div>
       <div
         className={`card-strip battlefield${mine && dropEnabled ? " drop-target" : ""}${dragActive ? " drag-active" : ""}`}
         data-testid={mine ? "own-battlefield" : undefined}
@@ -171,10 +191,14 @@ export function PlayerBoard({
           if (ref) onCardDrop(ref);
         }}
       >
-        {battlefield.length ? Object.entries(groups).map(([group, cards]) => cards.length > 0 &&
-          <div className={`battlefield-row battlefield-${group}`} key={group} aria-label={group}>
-            {cards.map((card, index) => permanent(card, index, cards))}
-          </div>) : <em>{mine && dropEnabled ? "Drop a playable card here" : "Empty battlefield"}</em>}
+        {battlefield.length ? <div className="battlefield-lanes">
+          {!mine && lands}
+          {(groups.creatures.length > 0 || groups.support.length > 0) && <div className="battlefield-permanents">
+            {lane("creatures", "Creatures")}
+            {lane("support", "Other permanents")}
+          </div>}
+          {mine && lands}
+        </div> : <em>{mine && dropEnabled ? "Drop a playable card here" : "Empty battlefield"}</em>}
       </div>
       <footer className="zone-summary">
         <span data-target-zone={`${seat}-known_top`} title={`Seat ${seat} library`}>Library <strong>{String(player.lib_n ?? 0)}</strong></span>
@@ -182,8 +206,9 @@ export function PlayerBoard({
           className={isZoneTarget(graveyard) ? "zone-target" : undefined} onClick={() => onOpenZone(seat, "gy")}>Graveyard <strong>{graveyard.length}</strong></button>
         <button type="button" data-testid={`zone-${seat}-exile`} data-target-zone={`${seat}-ex`} disabled={!exile.length}
           className={isZoneTarget(exile) ? "zone-target" : undefined} onClick={() => onOpenZone(seat, "ex")}>Exile <strong>{exile.length}</strong></button>
-        <span>LAND <strong>{String(player.lands ?? 0)}</strong></span>
-        <span>MANA <strong>{Object.entries(mana).map(([color, amount]) => `${color}${amount}`).join(" ") || "—"}</strong></span>
+        <span>Land plays left <strong>{String(player.lands ?? 0)}</strong></span>
+        {Object.keys(mana).length > 0 && <span>Mana <strong>{Object.entries(mana).map(([color, amount]) => `${color}${amount}`).join(" ")}</strong></span>}
+        <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />
         {mine && <button type="button" className="link-button" aria-pressed={arranging} disabled={Boolean(selection)}
           onClick={() => setArranging((active) => !active)}>{arranging ? "Done arranging" : "Arrange"}</button>}
         {mine && (arranging || arrangement.length > 0) && <button type="button" className="link-button"

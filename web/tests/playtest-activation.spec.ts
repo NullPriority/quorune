@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { startRoomGame } from "./support/startup";
+import { submitSingleCleanupDiscard } from "./support/playtest";
 import { driveUntil, viewRevision } from "./support/progress";
 import { list, record } from "../src/choices";
 import type { DecisionPacket, JsonValue } from "../src/generated/protocol";
@@ -64,14 +65,8 @@ test("@browser-rules @mana-action @playtest-activation selected creature costs w
       overallMs: 120_000,
       noProgressMs: 25_000,
       advance: async () => {
+        if (await submitSingleCleanupDiscard(pages)) return true;
         for (const page of pages) {
-          const discard = page.getByTestId("action-discard");
-          if (await discard.isVisible() && await discard.isEnabled()) {
-            await discard.click();
-            await page.locator('[data-testid^="choice-cards-"]').first().check();
-            await submit(page, page.getByTestId("submit-choice"));
-            return true;
-          }
           const emptyAttack = page.getByRole("button", { name: "Confirm attackers" });
           if (await emptyAttack.isVisible() && await emptyAttack.isEnabled()) {
             await submit(page, emptyAttack);
@@ -188,8 +183,14 @@ test("@browser-rules @mana-action @playtest-activation selected creature costs w
     const wrongCost = onBoard("Swamp").first();
     await expect(wrongCost).not.toHaveAttribute("data-choice-candidate", "true");
     await wrongCost.click();
+    await expect(host.getByRole("dialog", { name: /Card viewer/ })).toHaveCount(0);
     await expect(dock.getByTestId("submit-choice")).toBeDisabled();
     expect(await viewRevision(host)).toBe(beforeSacrifice);
+    await wrongCost.press("i");
+    await expect(host.getByRole("dialog", { name: "Card viewer: Swamp" })).toBeVisible();
+    await host.keyboard.press("Escape");
+    await expect(host.getByRole("dialog", { name: /Card viewer/ })).toHaveCount(0);
+    await expect(dock.getByTestId("submit-choice")).toBeDisabled();
     await onBoard("Ornithopter").focus();
     await onBoard("Ornithopter").press("Enter");
     await expect(dock).toContainText("1 / 1 · Ornithopter");

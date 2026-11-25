@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { COMBAT_PRIORITY_STOPS, type CombatPriorityStop } from "./tableAutomation";
+import { tableSeat } from "./SeatLabel";
 import {
   presentTurn,
   type MacroPhase,
@@ -42,8 +43,8 @@ export function TurnStatus({ value, compact, combatStops, onCombatStop, holding 
     <section className={`turn-status${compact ? " compact" : ""}`} data-testid="turn-status" aria-label="Current turn and priority">
       <div className="turn-status-copy">
         <span className="eyebrow">AUTHORITATIVE TURN STATE</span>
-        <strong data-testid="active-turn-label">{presentation.headline}</strong>
-        <span className="priority-holder" data-testid="priority-label"><span aria-hidden="true">◎</span>{presentation.priority}</span>
+        <strong data-testid="active-turn-label" data-seat={tableSeat(value.activeSeat)}>{presentation.headline}</strong>
+        <span className="priority-holder" data-testid="priority-label" data-seat={tableSeat(value.prioritySeat)}><span aria-hidden="true">◎</span>{presentation.priority}</span>
         <span className="exact-step" data-testid="exact-step-label">{presentation.exactStep}</span>
         {holding && <span className="priority-held" role="status" title={holding}>Holding priority</span>}
       </div>

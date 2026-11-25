@@ -427,7 +427,7 @@ function refsForCopyGroup(
   return list(record(rawTargets)[stringValue(group.id || "target")]).map(String);
 }
 
-function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
+function fieldErrors(field: ChoiceField, values: ChoiceValues, compatibility: string[]): string[] {
   const name = stringValue(field.name);
   const label = stringValue(field.label || name);
   const control = stringValue(field.control);
@@ -700,14 +700,29 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       }
     }
   } else if (required) {
-    errors.push(`Update Quorune to complete ${label}. This browser build does not support the required control.`);
+    const message = `Update Quorune to complete ${stringValue(field.label || "this choice")}. A required control uses a newer format.`;
+    errors.push(message);
+    compatibility.push(message);
   }
   return errors;
 }
 
+function inspectChoices(form: ChoiceForm, values: ChoiceValues): { errors: string[]; compatibility: string[] } {
+  if (form.v !== 1) {
+    const compatibility = ["Update Quorune to use this version of the action form."];
+    return { errors: compatibility, compatibility };
+  }
+  const compatibility: string[] = [];
+  const errors = activeFields(form, values).flatMap((field) => fieldErrors(field, values, compatibility));
+  return { errors, compatibility };
+}
+
 export function validateChoices(form: ChoiceForm, values: ChoiceValues): string[] {
-  if (form.v !== 1) return ["Update Quorune to use this version of the action form."];
-  return activeFields(form, values).flatMap((field) => fieldErrors(field, values));
+  return inspectChoices(form, values).errors;
+}
+
+export function choiceCompatibilityErrors(form: ChoiceForm | undefined, values: ChoiceValues): string[] {
+  return form ? inspectChoices(form, values).compatibility : [];
 }
 
 export function executableChoices(form: ChoiceForm, values: ChoiceValues): ChoiceValues {
@@ -735,4 +750,12 @@ export function executableChoices(form: ChoiceForm, values: ChoiceValues): Choic
 
 export function targetGroups(field: ChoiceField, values: ChoiceValues): ChoiceField[] {
   return selectedTargetGroups(field, values);
+}
+
+export function targetGroupModes(field: ChoiceField): Map<string, string> {
+  const schema = record(field.schema);
+  const modeSchemas = record(schema.mode_schemas);
+  return new Map(list(schema.legal_modes).map(String).flatMap((mode) =>
+    list(record(modeSchemas[mode]).groups).map((group) => [String(record(group).id ?? "target"), mode] as const),
+  ));
 }

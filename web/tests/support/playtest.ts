@@ -72,22 +72,25 @@ export function boardCard(page: Page, name: string) {
   });
 }
 
+export async function submitSingleCleanupDiscard(pages: readonly Page[]): Promise<boolean> {
+  for (const page of pages) {
+    const form = page.locator('[data-testid="decision-panel"][data-decision-kind="cleanup.discard"]')
+      .getByTestId("contextual-decision");
+    const submit = form.getByTestId("submit-choice");
+    if (!(await submit.isVisible()) || !(await submit.isEnabled({ timeout: 250 }).catch(() => false))) continue;
+    await form.locator('[data-testid^="choice-cards-"]').first().click();
+    await clickMove(page, submit);
+    return true;
+  }
+  return false;
+}
+
 export async function driveTo(pages: readonly Page[], target: Locator, testInfo: TestInfo, label: string) {
   await driveUntil(pages, async () => await target.isVisible() && await target.isEnabled().catch(() => false), testInfo, {
     label,
     overallMs: 180_000,
     noProgressMs: 30_000,
-    advance: async () => {
-      for (const page of pages) {
-        const discard = page.getByTestId("action-discard");
-        if (!await discard.isVisible() || !await discard.isEnabled().catch(() => false)) continue;
-        await discard.click();
-        await page.locator('[data-testid^="choice-cards-"]').first().check();
-        await clickMove(page, page.getByTestId("submit-choice"));
-        return true;
-      }
-      return false;
-    },
+    advance: () => submitSingleCleanupDiscard(pages),
   });
 }
 

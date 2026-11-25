@@ -53,8 +53,10 @@ The table renders only the current projected state:
   dialog and falls back to projected text when art is unavailable;
 - tapping, counters, attachments, combat assignments, and terminal results
   update only after an authoritative packet;
+- each attached battlefield card names the permanent or player it is on;
 - the complete public log is paginated from the durable record through
-  spectator visibility filtering.
+  spectator visibility filtering. It shows the acting seat and a readable
+  description for each entry.
 
 Highlighted cards and the action tray are two presentations of the same
 server-issued action IDs. Click or drag can select an action but cannot bypass
@@ -63,9 +65,21 @@ Versioned generic forms render server-issued modes, targets, ordering,
 assignments, private selections, and confirmations. Unknown forms remain
 unavailable rather than being guessed.
 
-The three opponents sit above your battlefield in a four-player match. Each
-board groups creatures, lands, and other permanents. Use **Arrange** to reorder
-your cards within a lane. **Reset layout** restores the default order.
+Use **All opponents** to see the three opposing boards or select a seat to
+give that opponent the full upper row. Seat buttons show eligible targets
+while a target choice is open. On short or narrow screens, **Your board**
+switches back to your own battlefield.
+
+Each board separates lands, creatures, and other permanents. Opposing lands
+go above their other permanents. Your lands sit below yours. A permanent
+with a current Creature type appears in the creature group. Use the page
+buttons in a crowded group to browse the rest of its cards. **Arrange**
+changes the order within your own lanes, and **Reset layout** restores it.
+
+**Table card size** scales the card displays together. Open **Game menu**,
+then **Table settings** and **Card sizes by zone** to adjust one zone
+relative to that size. Quorune remembers the selected opponent and card
+sizes in this browser. Card pages recalculate as the available space changes.
 
 Click a permanent with an offered activated ability to use it. The picker shows
 the effect and available cost information when more than one action is offered.
@@ -76,9 +90,21 @@ confirm the commitment. Cancel closes the draft.
 When choosing targets, hover or focus an eligible player or card to see an
 arrow from the source. If a target is in the graveyard or exile, the highlighted
 zone opens a picker for its eligible cards. The arrow stays on the selected
-target while you finish the remaining choices. Hover or focus an item on the
-stack to see its targets. Card badges show game information and available
-actions. Use **Inspect** to open a full view.
+target while you finish the remaining choices. Card badges show game
+information and available actions. Right-click a battlefield card or press
+**I** while it has focus to open the full card view.
+
+The stack opens for everyone while it has items. **Minimize** returns that
+space to the battlefield and keeps the stack count in the toolbar. A new
+stack-targeting draft opens the stack again. Each item has a numbered
+position, with the next to resolve at the top. Select an eligible spell to
+target it, then confirm your cast. Page buttons appear when the stack fills
+its rail. A response's target link opens the page containing that exact
+entry and that entry links back to the response. An arrow connects them
+when both are in view.
+
+Seat colors match across the battlefield, priority status, stack, and
+player-specific dialogs. Seat labels identify players alongside the colors.
 
 When your offered actions include a card in another zone, the hand area shows
 a shortcut marked with its source zone. Those shortcuts are visible to the
@@ -86,14 +112,21 @@ acting player. Hover or focus a card to see its offered cost above its name.
 Select the card to choose an action or inspect its full text. The mana symbols
 are bundled with the browser. [Mana by Andrew Gioia](https://mana.andrewgioia.com/icons.html)
 
+Hand cards grow wider on larger tables and reserve their size while artwork
+loads. Card previews use the copy’s imported printing when available. Faces
+printed on the same side share the artwork for that physical side.
+
 Click an eligible attacker and its defender, or drag the attacker onto the
 defender. Blockers work the same way. Multiple blockers on one attacker appear
 in one group. Remove an assignment or clear the draft before confirming.
+Battle lanes identify the protector, and planeswalker lanes identify the
+controller. Choose a protector in the decision dock when a Siege enters.
 
-Mode checkboxes maintain the server-issued printed order regardless of click
-order. Each target group shows the mode that offers it. Adding or removing a
-mode preserves targets for every still-selected mode and drops only groups
-that are no longer legal.
+Choose spell modes in the decision dock. The modes stay in printed order,
+and each target group identifies its mode. Select eligible targets on the
+table for the active group. Changing modes keeps targets that are still
+legal for the selected modes. Open **Spell text** to read the printed
+effects when an offer identifies modes by number.
 
 Target-dependent prices update from the server's quotes for the selected
 objects, players and modes. Distinct-target prices count a repeated selection
@@ -107,13 +140,17 @@ Imported printing details follow each card copy, including through a search.
 The picker shows the set and collector number when available. If that art is
 unavailable, the copy keeps its printing label and readable card details.
 
-The ordered Scry form labels every looked-at card from the seat-private
-projection. It separates top and bottom groups, states which end of each list
-is nearest the top or bottom of the library, and provides card-specific native
-buttons for keyboard and screen-reader reordering. Other seats never receive
-the looked-at identities or partition.
+Ordered Scry and Surveil label the cards from the player’s private
+projection. Drag a card between destinations or use its destination
+menu. Drag within a destination or use the arrow buttons to reorder.
+The trays identify the next card drawn and the order at the bottom of
+the library or in the graveyard. Other seats see only cards that move
+to a public zone.
 
 ## Mana, priority, and turn controls
+
+Phyrexian casting prices show the mana symbols and the life amount for
+each available payment. Choose one before confirming the spell.
 
 Automatic mana selects from authoritative mana abilities and routine payment;
 manual mana lets the player choose the activation order and exact issued modes.
@@ -146,7 +183,8 @@ compact layout. A selected stop holds the next available priority for your
 seat at that step, even when Auto-pass or Pass turn is active. Pass manually
 to continue. Attacker and blocker stops apply after those assignments.
 
-Combat forms consume only the current legal assignment maps. Concession uses a
+Combat forms use the current legal assignment maps. Damage shows the assigned
+and remaining amounts beside each source and its recipients. Concession uses a
 true-only confirmation on an active player decision. A completed game removes
 gameplay controls and preserves the result after restart. Choose **Decks and
 games** to open your saved lists or recent matches. The host can choose
@@ -157,8 +195,10 @@ available in **Recent games**.
 ## Inspect, stop, and resume
 
 Hover, focus, or use **Inspect** to see current power and toughness, marked
-damage, counters, and the active face. **Game menu** contains playtest feedback,
-build details, the public log, and match controls.
+damage, counters, and the active face. Planeswalker cards show their current
+loyalty on the table. Select a planeswalker to see the loyalty abilities
+available in the current decision window. **Game menu** contains playtest
+feedback, build details, the public log, and match controls.
 
 Every game member can inspect safe lifecycle metadata. The view contains no
 record path, checkpoint, private zone, capability, or analyst artifact. Only
@@ -172,6 +212,19 @@ command.
 Administrative resume cannot clear a rules, semantic, fidelity, abort,
 corruption, or completion boundary. A stale tab that loses game access stops
 reconnecting and returns to the lobby.
+
+When a required choice uses a newer format, the browser explains the update
+and keeps the action’s submit control disabled.
+
+A pending choice with one available action opens directly in the decision
+dock. This includes triggered targets, ordering cards after Scry, and damage
+assignment. Minimize the choice to inspect the table and reopen it with the
+selection preserved.
+
+The card picker shows which cards you can put on the bottom after a
+mulligan or discard at cleanup. During a legend choice, it distinguishes
+commanders from same-name token copies. Trigger ordering shows which end
+of the list goes on the bottom of the stack.
 
 ## Card data and images
 

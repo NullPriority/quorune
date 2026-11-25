@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { asList, asRecord, cardName, CardInspector, CardTile, printingLabel } from "./CardSurface";
+import { CardPages } from "./CardPages";
 import { list, record, type ChoiceField } from "./choices";
 import type { JsonValue } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
@@ -52,12 +53,14 @@ export function CardChoiceGrid({
   cards: Map<string, JsonValue>;
 }) {
   const options = list(field.options).map(record);
-  const selected = list(value).map(String);
-  const max = Number(field.maximum ?? options.length);
-  const min = Number(field.minimum ?? 0);
+  const singleChoice = field.control === "ref" || field.control === "select";
+  const selected = singleChoice && typeof value === "string" && value ? [value] : list(value).map(String);
+  const max = singleChoice ? 1 : Number(field.maximum ?? options.length);
+  const min = singleChoice ? Number(Boolean(field.required)) : Number(field.minimum ?? 0);
   const [previewed, setPreviewed] = useState("");
   const preview = cards.get(previewed || selected[0] || String(options[0]?.value ?? ""));
   const countLabel = min === max ? `${selected.length} / ${max} selected` : `${selected.length} selected · choose ${min}–${max}`;
+  const source = field.name === "search_cards" ? "library" : field.name === "cards" ? "hand" : "battlefield";
   const labels = options.map((option) => {
     const ref = String(option.value);
     const card = cards.get(ref);
@@ -70,8 +73,9 @@ export function CardChoiceGrid({
       <legend>{field.name === "search_cards" ? "Available cards" : String(field.label)}</legend>
       <p className="card-choice-count" aria-live="polite">{countLabel}</p>
       <div className="card-choice-layout">
-        <div className="card-choice-options">
-          {options.map((option, index) => {
+        {options.length > 0 ? <CardPages items={options} label={field.name === "search_cards" ? "Search results" : "Card choices"}
+          className={`card-choice-pages from-${source}`} trackClassName="card-choice-options" layout="grid"
+          render={(option, index) => {
             const ref = String(option.value);
             const card = cards.get(ref);
             const active = selected.includes(ref);
@@ -81,18 +85,22 @@ export function CardChoiceGrid({
               ? `Copy ${labels.slice(0, index + 1).filter((label) => label === name).length} of ${copies}`
               : "";
             const printing = card ? printingLabel(card) : "";
+            const cardState = asRecord(card);
+            const designation = cardState.cmd ? "Commander" : cardState.tok ? "Token" : "";
             return (
               <button key={ref} type="button" className="card-choice-button"
                 data-testid={`choice-${field.name}-${ref}`}
-                aria-label={[name, copy, printing].filter(Boolean).join(", ")}
+                aria-label={[name, copy, designation, printing].filter(Boolean).join(", ")}
                 aria-pressed={active}
                 disabled={!active && (option.available === false || max === 0 || (max !== 1 && selected.length >= max))}
                 onMouseEnter={() => setPreviewed(ref)}
                 onFocus={() => setPreviewed(ref)}
                 onClick={() => {
                   setPreviewed(ref);
-                  onValue(active ? selected.filter((entry) => entry !== ref) : max === 1 ? [ref] : [...selected, ref]);
+                  if (singleChoice) onValue(ref);
+                  else onValue(active ? selected.filter((entry) => entry !== ref) : max === 1 ? [ref] : [...selected, ref]);
                 }}>
+                {designation && <small>{designation}</small>}
                 {card
                   ? <CardTile value={card} view={view} table />
                   : <strong>{name}</strong>}
@@ -100,9 +108,7 @@ export function CardChoiceGrid({
                 {printing && <small>{printing}</small>}
               </button>
             );
-          })}
-          {options.length === 0 && <p>No eligible cards.</p>}
-        </div>
+          }} /> : <p>No eligible cards.</p>}
         {preview && <div className="card-choice-preview">
           <CardInspector value={preview} view={view} />
         </div>}

@@ -28,6 +28,7 @@ from quorune.record import database_fingerprint
 
 SCRYFALL_IMAGE_HOSTS = frozenset({"cards.scryfall.io"})
 IMAGE_SIZES = frozenset({"small", "normal", "large", "png", "art_crop"})
+SHARED_ART_LAYOUTS = frozenset({"adventure", "flip", "prepare", "split"})
 
 
 def _utc_now() -> datetime:
@@ -362,10 +363,10 @@ class CardImageCache:
         if not isinstance(oracle_id, str) or not oracle_id.casefold().startswith(oracle_prefix.casefold()):
             raise KeyError("The imported printing does not match this Oracle card")
         faces = card.get("card_faces") or []
-        image_uris = card.get("image_uris") if face == 0 else None
-        if not image_uris and face < len(faces):
-            image_uris = faces[face].get("image_uris")
-        source = (image_uris or {}).get(size)
+        if not 0 <= face < max(1, len(faces)):
+            raise KeyError("No image is available for this printing and face")
+        face_images = faces[face].get("image_uris") if faces else None
+        source = (face_images or card.get("image_uris") or {}).get(size)
         if not isinstance(source, str):
             raise KeyError("No image is available for this printing and face")
         parsed = urllib.parse.urlparse(source)
@@ -373,7 +374,7 @@ class CardImageCache:
             raise ValueError("Image URL is not on the approved Scryfall CDN")
         return source
 
-    def _source(self, oracle_prefix: str, face: int, size: str) -> tuple[str, str]:
+    def _source(self, oracle_prefix: str, face: int, size: str) -> tuple[str, int, str]:
         if size not in IMAGE_SIZES:
             raise ValueError("Unsupported image size")
         databases = tuple(self._databases())
@@ -383,6 +384,10 @@ class CardImageCache:
         for database in databases:
             rows = database.image_uris(oracle_prefix)
             row = next((candidate for candidate in rows if candidate["face_index"] == face and candidate.get(size)), None)
+            if row is None and face > 0 and len(rows) == 1 and rows[0]["face_index"] == 0 and rows[0].get(size):
+                card = database.by_oracle_id(rows[0]["oracle_id"])
+                if card.layout in SHARED_ART_LAYOUTS and face < len(card.faces):
+                    row = rows[0]
             if row is not None:
                 break
         if row is None:
@@ -391,7 +396,7 @@ class CardImageCache:
         parsed = urllib.parse.urlparse(source)
         if parsed.scheme.casefold() != "https" or (parsed.hostname or "").casefold() not in SCRYFALL_IMAGE_HOSTS:
             raise ValueError("Image URL is not on the approved Scryfall CDN")
-        return str(row["oracle_id"]), source
+        return str(row["oracle_id"]), int(row["face_index"]), source
 
     @staticmethod
     def _download(source: str, destination: Path) -> str:
@@ -426,7 +431,7 @@ class CardImageCache:
         printing: CardPrinting | None = None,
     ) -> tuple[Path, str]:
         if printing is None:
-            oracle_id, source = self._source(oracle_prefix, face, size)
+            oracle_id, face, source = self._source(oracle_prefix, face, size)
             printing_path = None
             suffix = Path(urllib.parse.urlparse(source).path).suffix.casefold()
         else:

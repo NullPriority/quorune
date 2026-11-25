@@ -1,4 +1,4 @@
-import { type CSSProperties, FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {
   api,
   ApiError,
@@ -15,8 +15,9 @@ import {
 import { ChoiceFormView } from "./ChoiceForm";
 import { DeckReadiness } from "./DeckReadiness";
 import { ContextualDecision, contextualDecisionAction } from "./ContextualDecision";
-import { projectedLabels } from "./CardChoiceGrid";
+import { projectedChoiceCards, projectedLabels } from "./CardChoiceGrid";
 import {
+  choiceCompatibilityErrors,
   executableChoices,
   initialChoices,
 } from "./choices";
@@ -24,25 +25,31 @@ import type { DecisionPacket, JsonValue, LegalAction } from "./generated/protoco
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
 import { ingestPacket, type ProjectedView } from "./protocol";
 import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, isIgnoredActivation, turnYieldPause, type CombatPriorityStop, type TurnYieldBoundary } from "./tableAutomation";
-import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, visibleActionLabel } from "./tablePresentation";
+import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, needsActivationConfirmation, phyrexianCastCostLabels, publicEventSummary, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, ManaHelp } from "./TableStatus";
-import { TableSettings } from "./TableSettings";
+import { CardSizeSlider, TableSettings } from "./TableSettings";
+import { CardPages } from "./CardPages";
 import { CombatStopOptions, TurnStatus } from "./TurnStatus";
 import { PlayerBoard } from "./PlayerBoard";
 import { StackPanel } from "./StackPanel";
-import { BuildIdentity, GameMenu } from "./GameMenu";
+import { projectedCardSeat, SeatLabel, tableSeat } from "./SeatLabel";
+import { GameMenu } from "./GameMenu";
+import { SetupScreen } from "./SetupScreen";
+import { RecentActivity } from "./RecentActivity";
 import { Lobby, Welcome } from "./Lobby";
 import type { SavedDeckSelection } from "./PlayLibrary";
 import { handZoneOffers, type HandZoneOffer } from "./handZoneOffers";
 import { HandRail } from "./HandRail";
 import { ManaText } from "./ManaText";
 import { useDecisionInteraction } from "./useDecisionInteraction";
-import { PublicActionDraft, publicObjectSteps, stageTableObject, type TableObjectSelection } from "./PublicActionDraft";
+import { PublicActionDraft, publicObjectSteps, stageTableObject, usesModeTargetDraft, type TableObjectSelection } from "./PublicActionDraft";
 import { TargetArrowLayer, targetZones } from "./TargetArrowLayer";
 import {
   DEFAULT_TABLE_PREFERENCES,
+  tablePreferenceStyle,
   loadTablePreferences,
   saveTablePreferences,
+  type OpponentView,
   type RightRailPanel,
   type TablePreferences,
 } from "./tablePreferences";
@@ -505,75 +512,6 @@ function RoomView({
   );
 }
 
-function SetupScreen({ initial, onReady }: { initial: SystemStatus; onReady: () => void }) {
-  const [status, setStatus] = useState(initial);
-  const [retrying, setRetrying] = useState(false);
-
-  useEffect(() => {
-    let stopped = false;
-    const poll = async () => {
-      try {
-        const next = await api.system();
-        if (stopped) return;
-        setStatus(next);
-        if (next.card_data.ready) onReady();
-      } catch {
-        // Keep the last actionable setup status visible while the server restarts.
-      }
-    };
-    const timer = window.setInterval(poll, 1000);
-    return () => {
-      stopped = true;
-      window.clearInterval(timer);
-    };
-  }, [onReady]);
-
-  async function retry() {
-    setRetrying(true);
-    try {
-      await api.refreshSystem();
-      setStatus(await api.system());
-    } catch {
-      // Polling keeps the last server-provided failure visible.
-    } finally {
-      setRetrying(false);
-    }
-  }
-
-  const data = status.card_data;
-  const stage: Record<string, string> = {
-    starting: "Starting the card library",
-    checking: "Checking for new card data",
-    downloading: "Downloading card data",
-    building: "Preparing the local card database",
-    error: "Card library needs attention",
-  };
-  return (
-    <main className="setup-shell" data-testid="setup-screen">
-      <section className="setup-card" aria-live="polite">
-        <div className="brand-mark" aria-hidden="true">Q</div>
-        <div>
-          <h1>{stage[data.phase] ?? "Preparing the card library"}</h1>
-          {data.phase === "error" && <p>{data.automatic_updates
-            ? "Check the server’s network connection and retry setup."
-            : "Ask the host to restore the local card database and restart Quorune."}</p>}
-        </div>
-        <dl className="setup-facts">
-          <div><dt>Server</dt><dd><span className="status-dot" /> Running</dd></div>
-          <div><dt>Card data</dt><dd>{data.phase === "error" ? "Needs attention" : "Setting up"}</dd></div>
-        </dl>
-        <details><summary>Setup details</summary>
-          <p>{data.detail}</p>{data.last_error && data.last_error !== data.detail && <p>{data.last_error}</p>}
-          <BuildIdentity system={status} />
-        </details>
-        {data.phase === "error" && data.automatic_updates && (
-          <button type="button" onClick={retry} disabled={retrying}>{retrying ? "Retrying…" : "Retry setup"}</button>
-        )}
-      </section>
-    </main>
-  );
-}
-
 function GameView({ gameId, system, onExit, onRoom }: {
   gameId: string; system: SystemStatus | null; onExit: () => void;
   onRoom: (room: Room, invite?: string) => void;
@@ -586,20 +524,26 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [notice, setNotice] = useState("");
   const [actionChoices, setActionChoices] = useState<LegalAction[]>([]);
+  const choosingLoyaltyAbility = actionChoices.every((action) =>
+    action.action === "activate" && typeof asRecord(action.cost_summary as JsonValue | undefined).loyalty === "number",
+  );
   const [minimizedChoice, setMinimizedChoice] = useState<string | null>(null);
   const [tablePreferences, setTablePreferences] = useState<TablePreferences>(loadTablePreferences);
+  const [compactBoards, setCompactBoards] = useState(() =>
+    window.matchMedia("(max-height: 520px), (max-width: 650px)").matches);
+  const [compactOwnBoard, setCompactOwnBoard] = useState(true);
   const [turnYield, setTurnYield] = useState<TurnYieldBoundary | null>(null);
   const [combatStops, setCombatStops] = useState<CombatPriorityStop[]>([]);
   const [ignoredStops, setIgnoredStops] = useState<{ turn: number; offers: ReadonlyMap<string, string> }>();
   const [handManuallyCollapsed, setHandManuallyCollapsed] = useState(false);
   const [inspectedCard, setInspectedCard] = useState<JsonValue | null>(null);
-  const [stackTargets, setStackTargets] = useState<string[]>([]);
-  const [stackSource, setStackSource] = useState("");
+  const [focusedStackId, setFocusedStackId] = useState("");
+  const [stackMinimized, setStackMinimized] = useState(false);
   const [railOpen, setRailOpen] = useState(false);
   const [cardContext, setCardContext] = useState<JsonValue | null>(null);
   const [publicStage, setPublicStage] = useState("");
   const [zoneBrowser, setZoneBrowser] = useState<{ seat: string; zone: "gy" | "ex" } | null>(null);
-  const [expandedInspector, setExpandedInspector] = useState(false);
+  const [pinnedCardRef, setPinnedCardRef] = useState<string | null>(null);
   const [lifecycle, setLifecycle] = useState<GameLifecycle | null>(null);
   const [stopReason, setStopReason] = useState("Pause for a table break");
   const [showInspection, setShowInspection] = useState(false);
@@ -615,6 +559,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const zoneDialogRef = useRef<HTMLElement | null>(null);
   const previewDialogRef = useRef<HTMLElement | null>(null);
   const publicLogDialogRef = useRef<HTMLElement | null>(null);
+  const stackToggleRef = useRef<HTMLButtonElement | null>(null);
   const handPanelRef = useRef<HTMLElement | null>(null);
   const publicEventCursor = useRef(0);
   const publicLogCall = useRef<Promise<void> | null>(null);
@@ -635,7 +580,15 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const minimizeInsteadOfCancel = canMinimizeChoice(view?.decision);
   const currentChoiceDetail = view?.decision ? decisionDetail(view.decision) : "";
   const choiceValues = draft?.values ?? {};
-  const choiceErrors = draft?.errors ?? [];
+  const stack = asList(view?.state.stack);
+  const hasStack = stack.length > 0;
+  const stackPositions = new Map(stack.map((item, index) => [String(asRecord(item).id), index + 1]));
+  const publicSteps = view ? publicObjectSteps(selectedAction, view, choiceValues) : [];
+  const currentStep = publicSteps.find((step) => step.id === publicStage) ?? publicSteps[0];
+  const stackTargetStep = currentStep?.refs.some((ref) => stackPositions.has(ref)) ? currentStep.id : null;
+  const compatibilityErrors = choiceCompatibilityErrors(selectedAction?.form, choiceValues);
+  const commitBlocked = compatibilityErrors.length > 0;
+  const choiceErrors = commitBlocked ? compatibilityErrors : draft?.errors ?? [];
   const projectedTurn = asRecord(view?.state.turn);
   const turnBoundary = {
     turn: Number(projectedTurn.seq ?? 0),
@@ -701,6 +654,12 @@ function GameView({ gameId, system, onExit, onRoom }: {
   }
 
   useEffect(() => saveTablePreferences(tablePreferences), [tablePreferences]);
+  useEffect(() => {
+    const query = window.matchMedia("(max-height: 520px), (max-width: 650px)");
+    const update = () => setCompactBoards(query.matches);
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
 
   useEffect(() => {
     const overOwnBattlefield = (target: EventTarget | null) =>
@@ -839,7 +798,10 @@ function GameView({ gameId, system, onExit, onRoom }: {
     setActionChoices([]);
     setCardContext(null);
   }, [view?.decision?.id]);
-  useEffect(() => { setStackTargets([]); setStackSource(""); }, [view?.viewRevision]);
+  useEffect(() => setFocusedStackId(""), [view?.viewRevision]);
+  useEffect(() => {
+    if (!hasStack || stackTargetStep) setStackMinimized(false);
+  }, [hasStack, selectedAction?.id, stackTargetStep]);
 
   useEffect(() => {
     const decision = view?.decision;
@@ -882,7 +844,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   ]);
 
   useEffect(() => {
-    if ((!selectedAction || choiceMinimized) && actionChoices.length === 0 && !zoneBrowser && !expandedInspector && !showPublicLog) return;
+    if ((!selectedAction || choiceMinimized) && actionChoices.length === 0 && !zoneBrowser && !pinnedCardRef && !showPublicLog) return;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const oldOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -893,13 +855,16 @@ function GameView({ gameId, system, onExit, onRoom }: {
     function keydown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
+        if (pinnedCardRef) {
+          setPinnedCardRef(null);
+          return;
+        }
         if (zoneBrowser) {
           setZoneBrowser(null);
           return;
         }
         dismissChoice();
         setActionChoices([]);
-        setExpandedInspector(false);
         setShowPublicLog(false);
         return;
       }
@@ -923,7 +888,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
       document.body.style.overflow = oldOverflow;
       previous?.focus();
     };
-  }, [selectedAction, actionChoices, choiceMinimized, minimizeInsteadOfCancel, view?.decision?.id, zoneBrowser, expandedInspector, showPublicLog]);
+  }, [selectedAction, actionChoices, choiceMinimized, minimizeInsteadOfCancel, view?.decision?.id, zoneBrowser, pinnedCardRef, showPublicLog]);
 
   async function stopMatch() {
     setControlling(true);
@@ -968,7 +933,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
     setMinimizedChoice(null);
     setCardContext(null);
     setPublicStage("");
-    if (!action.form || action.action === "pass" || isRoutineCast(action)) {
+    if (action.action === "pass" || isRoutineCast(action) || (!action.form && !needsActivationConfirmation(action))) {
       if (action.action === "pass" && turnYield) setTurnYield(turnBoundary);
       const choices = action.action === "cast" && action.form
         ? executableChoices(action.form, initialChoices(action.form)) : {};
@@ -992,7 +957,12 @@ function GameView({ gameId, system, onExit, onRoom }: {
     }
   }
 
-  function selectCardActions(_actions: LegalAction[], card: JsonValue) {
+  function selectCardActions(actions: LegalAction[], card: JsonValue) {
+    const [action] = actions;
+    if (actions.length === 1 && action?.action === "play_land" && !action.form) {
+      chooseAction(action);
+      return;
+    }
     setInspectedCard(card);
     setCardContext(card);
     setActionChoices([]);
@@ -1080,13 +1050,38 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const zoneOffers = !isSpectator && connection === "LIVE" && lifecycle?.status === "active"
     ? handZoneOffers(view) : new Map<string, HandZoneOffer>();
   const inspectionTarget = inspectedCard ?? hand[0] ?? null;
+  const pinnedCard = pinnedCardRef
+    ? stack.find((item) => asRecord(item).id === pinnedCardRef) ?? projectedChoiceCards(view).get(pinnedCardRef) ?? null
+    : null;
+  const inspectionSeat = pinnedCard ? projectedCardSeat(view, pinnedCard) : undefined;
+  const pinInspector = (value: JsonValue | null) => {
+    const ref = asRecord(value).id;
+    if (typeof ref === "string" && ref) setPinnedCardRef(ref);
+  };
+  const decisionSeat = tableSeat(view.decision?.actor) ?? tableSeat(ownSeat);
   const compactInspector = inspectionTarget && <button type="button" className="mobile-inspector-trigger link-button"
-    aria-label={`View ${cardName(inspectionTarget)}`} onClick={() => setExpandedInspector(true)}>Inspect</button>;
-  const stack = asList(state.stack);
-  const showRail = stack.length > 0 || railOpen;
+    aria-label={`View ${cardName(inspectionTarget)}`} onClick={() => pinInspector(inspectionTarget)}>Inspect</button>;
+  const showRail = hasStack ? !stackMinimized : railOpen;
+  const focusedStackItem = showRail ? stack.find((item) => asRecord(item).id === focusedStackId) : undefined;
+  const response = showRail && !focusedStackItem
+    ? stack.find((item) => asList(asRecord(item).targets).some((ref) => stackPositions.has(String(ref))))
+    : undefined;
+  const tracedStackItem = asRecord(focusedStackItem ?? response);
+  const stackSource = String(tracedStackItem.id ?? "");
+  const stackTargets = asList(tracedStackItem.targets).map(String).filter((ref) => focusedStackItem || stackPositions.has(ref));
+  const stackCountLabel = `${stack.length} ${stack.length === 1 ? "item" : "items"}`;
   const labels = projectedLabels(view);
-  const labelFor = (value: string) => labels.get(value) ?? "Unavailable object";
-  const legalActions = view.decision?.legal_actions ?? [];
+  const labelFor = (ref: string) => {
+    const name = labels.get(ref) ?? "Unavailable object";
+    const position = stackPositions.get(ref);
+    return position && stack.length > 1 ? `${name} · Stack #${position}` : name;
+  };
+  const describeEvent = (event: PublicGameEvent) => publicEventSummary(event, (ref) => labels.get(ref));
+  const legalActions = (view.decision?.legal_actions ?? []).map((action) => {
+    if (action.action !== "undo_mana" || typeof action.source !== "string") return action;
+    const source = labels.get(action.source);
+    return { ...action, label: source ? `Undo mana from ${source}` : "Undo mana" };
+  });
   const cardActions = legalActions.filter((action) =>
     typeof (action.card ?? action.source) === "string",
   );
@@ -1105,9 +1100,8 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const optionalActivations = legalActions.filter((action) => action.action === "activate" && action.mana_ability !== true);
   const contextualAction = contextualDecisionAction(view);
   const actionDisabled = submitting || Boolean(pendingRetry) || connection !== "LIVE" || lifecycle?.status !== "active";
-  const publicSteps = publicObjectSteps(selectedAction, view, choiceValues);
-  const currentStep = publicSteps.find((step) => step.id === publicStage) ?? publicSteps[0];
-  const draftSource = currentStep && selectedAction ? String(selectedAction.card ?? selectedAction.source ?? "") : "";
+  const showPublicDraft = Boolean(currentStep) || usesModeTargetDraft(selectedAction, choiceValues);
+  const draftSource = showPublicDraft && selectedAction ? String(selectedAction.card ?? selectedAction.source ?? "") : "";
   const draftTargets = publicSteps.flatMap((step) => step.group ? step.selected : []);
   const publicSelection: TableObjectSelection | null = currentStep ? {
     refs: currentStep.refs,
@@ -1125,7 +1119,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
     String(action.card ?? action.source ?? "") === ref
     && (action.mana_ability !== true || manualMana),
   );
-  const dropEnabled = !publicSelection && !isSpectator && [...hand, ...ownCommand, ...Array.from(zoneOffers.values(), (offer) => offer.card)].some((card) =>
+  const dropEnabled = !showPublicDraft && !isSpectator && [...hand, ...ownCommand, ...Array.from(zoneOffers.values(), (offer) => offer.card)].some((card) =>
     actionsForCard(String(asRecord(card).id ?? "")).some((action) => ["play_land", "cast"].includes(action.action)),
   );
   const activeSeat = String(turn.active ?? "");
@@ -1144,12 +1138,28 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const handCollapsed = handManuallyCollapsed || spaceForChoice || (
     tablePreferences.handAutoCollapse && hand.length === 0 && zoneOffers.size === 0
   );
-  const tableStyle = {
-    ...(shellStyle ?? {}),
-    "--hand-panel-height": `${tablePreferences.handPanelHeight}px`,
-    "--card-scale": String(tablePreferences.cardScale),
-    "--right-rail-width": `${tablePreferences.rightRailWidth}px`,
-  } as CSSProperties;
+  const orderedPlayers = Object.entries(players).sort(([left], [right]) =>
+    Number(left === ownSeat) - Number(right === ownSeat));
+  const opponents = orderedPlayers.filter(([seat]) => seat !== ownSeat);
+  const opponentView = opponents.some(([seat]) => seat === tablePreferences.opponentView)
+    ? tablePreferences.opponentView : "all";
+  const showOwnOnly = !isSpectator && compactBoards && compactOwnBoard;
+  const showOpponentsOnly = !isSpectator && compactBoards && !compactOwnBoard;
+  const singleOpponent = !isSpectator && (opponents.length <= 1 || opponentView !== "all");
+  const isBoardHidden = (seat: string) => !isSpectator && (seat === ownSeat
+    ? showOpponentsOnly : showOwnOnly || (opponents.length > 1 && opponentView !== "all" && opponentView !== seat));
+  function selectOpponent(next: OpponentView) {
+    setTablePreference("opponentView", next);
+    setCompactOwnBoard(false);
+  }
+  function opponentTargets(seat: string, player: JsonValue) {
+    if (!publicSelection) return 0;
+    const board = asRecord(player);
+    const refs = [seat, ...["bf", "cmd", "gy", "ex"].flatMap((zone) =>
+      asList(board[zone]).map((card) => String(asRecord(card).id ?? "")))];
+    return refs.filter((ref) => publicSelection.refs.includes(ref)).length;
+  }
+  const tableStyle = { ...shellStyle, ...tablePreferenceStyle(tablePreferences) };
   const turnPresentation = {
     turnSequence: Number(turn.seq ?? 0),
     activeSeat,
@@ -1161,24 +1171,26 @@ function GameView({ gameId, system, onExit, onRoom }: {
     lifecycleStatus: lifecycle?.status ?? "loading",
   };
 
+  function toggleStackRail() {
+    if (hasStack) setStackMinimized((minimized) => !minimized);
+    else setRailOpen((open) => !open);
+    setFocusedStackId("");
+  }
+
   function railPanel(panel: RightRailPanel) {
     if (panel === "stack") {
       return <StackPanel key={panel} stack={stack} view={currentView} labelFor={labelFor}
-        targets={stackTargets} onTargets={(source, targets) => { setStackSource(source); setStackTargets(targets); }}
+        positions={stackPositions} targets={draftSource ? [] : stackTargets}
+        onFocusItem={setFocusedStackId} onMinimize={() => {
+          toggleStackRail();
+          stackToggleRef.current?.focus();
+        }}
         onInspect={setInspectedCard} selection={publicSelection}
-        onOpenInspector={(item) => { setInspectedCard(item); setExpandedInspector(true); }} />;
+        onOpenInspector={pinInspector} />;
     }
     if (panel === "activity") {
-      if (!tablePreferences.activityVisible) return null;
-      return (
-        <section className="activity-panel" key={panel} data-testid="activity-panel">
-          <header><div className="zone-label">RECENT ACTIVITY</div><button type="button" className="link-button" onClick={() => setShowPublicLog(true)}>Full log</button></header>
-          <ol>
-            {publicEvents.slice(-5).reverse().map((event) => <li key={event.id}><span>{event.actor ? `Seat ${event.actor}` : "Game"}</span>{event.summary || readable(event.code)}</li>)}
-            {!publicEvents.length && <li className="empty-activity">Game events will appear here.</li>}
-          </ol>
-        </section>
-      );
+      return tablePreferences.activityVisible ? <RecentActivity key={panel} events={publicEvents}
+        describeEvent={describeEvent} onOpenLog={() => setShowPublicLog(true)} /> : null;
     }
     if (tablePreferences.inspectorCollapsed) {
       return (
@@ -1188,7 +1200,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
         </section>
       );
     }
-    return <CardInspector key={panel} value={inspectionTarget} view={currentView} onExpand={() => setExpandedInspector(true)} />;
+    return <CardInspector key={panel} value={inspectionTarget} view={currentView} onExpand={() => pinInspector(inspectionTarget)} />;
   }
   return (
     <main
@@ -1240,8 +1252,10 @@ function GameView({ gameId, system, onExit, onRoom }: {
           {turnYield && <small role="status">{yieldPause ?? `Armed for turn ${turnYield.turn}`}</small>}
         </div>}
           </div>
-          <button type="button" className="table-control-toggle" aria-expanded={showRail}
-            onClick={() => setRailOpen(!railOpen)}>{showRail ? "Stack open" : "Stack"}</button>
+          <button ref={stackToggleRef} type="button" className="table-control-toggle stack-toggle" aria-expanded={showRail} data-testid="stack-toggle"
+            aria-controls={showRail ? "match-stack" : undefined}
+            aria-label={hasStack ? `${showRail ? "Minimize" : "Expand"} stack (${stackCountLabel})` : undefined}
+            onClick={toggleStackRail}>{hasStack ? `Stack (${stack.length})` : showRail ? "Stack open" : "Stack"}</button>
           <span data-testid="game-status" className={`game-status ${lifecycle?.status ?? "loading"}`}>
             {statusLabel}
           </span>
@@ -1348,10 +1362,29 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </div>
         </div>
       )}
-      <div className={`table-workspace${showRail ? " has-stack-rail" : ""}`}>
-        <section className={`boards-grid${isSpectator ? " watching" : ""}`} aria-label="Commander battlefield">
-          {Object.entries(players).sort(([left], [right]) =>
-            Number(left === ownSeat) - Number(right === ownSeat)).map(([seat, player]) => (
+      <div className={`table-workspace${showRail ? " has-stack-rail" : ""}${hasStack ? " has-active-stack" : ""}`}>
+        <div className="boards-panel">
+          <div className="board-view-bar">
+            {!isSpectator && (opponents.length > 1 || compactBoards) && <div className="opponent-views" role="group" aria-label="Battlefield views">
+              {compactBoards && <button type="button" className="link-button" data-seat={ownSeat}
+                aria-pressed={showOwnOnly} onClick={() => setCompactOwnBoard(true)}>Your board</button>}
+              {opponents.length > 1 && <button type="button" className="link-button"
+                aria-pressed={!showOwnOnly && opponentView === "all"} onClick={() => selectOpponent("all")}>All opponents</button>}
+              {opponents.map(([seat, player]) => {
+                const targetCount = opponentTargets(seat, player);
+                return <button key={seat} type="button" className="link-button" data-seat={seat}
+                  aria-pressed={!showOwnOnly && (opponentView === seat || opponents.length === 1)}
+                  onClick={() => { const next = tableSeat(seat); if (next) selectOpponent(next); }}>
+                  Seat {seat}{targetCount > 0 && <span className="opponent-target-count"> · {targetCount} {targetCount === 1 ? "target" : "targets"}</span>}
+                </button>;
+              })}
+            </div>}
+            <CardSizeSlider label="Table card size" value={tablePreferences.cardScale}
+              onChange={(next) => setTablePreference("cardScale", next)} />
+          </div>
+        <section className={`boards-grid${isSpectator ? " watching" : ""}${singleOpponent || showOwnOnly ? " one-opponent" : ""}${showOwnOnly || showOpponentsOnly ? " compact-board-row" : ""}`}
+          aria-label="Commander battlefield" data-opponent-view={opponentView}>
+          {orderedPlayers.map(([seat, player]) => (
             <PlayerBoard
               key={seat}
               seat={seat}
@@ -1359,12 +1392,14 @@ function GameView({ gameId, system, onExit, onRoom }: {
               active={activeSeat === seat}
               priority={prioritySeat === seat}
               mine={ownSeat === seat}
+              hidden={isBoardHidden(seat)}
               view={view}
+              labelFor={labelFor}
               cardActions={cardActions}
               onCardIntent={selectPermanentActions}
               onManaIntent={chooseCardAction}
               onInspectCard={setInspectedCard}
-              onOpenInspector={(card) => { setInspectedCard(card); setExpandedInspector(true); }}
+              onOpenInspector={pinInspector}
               highlightedTargets={stackTargets}
               selection={publicSelection}
               selectedCardRef={selectedCardRef}
@@ -1381,8 +1416,9 @@ function GameView({ gameId, system, onExit, onRoom }: {
             />
           ))}
         </section>
+        </div>
         {showRail && <aside className="table-sidebar" aria-label="Stack and recent game activity">
-          {tablePreferences.rightRailOrder.map(railPanel)}
+          {(hasStack ? ["stack", "activity"] as const : tablePreferences.rightRailOrder).map(railPanel)}
         </aside>}
       </div>
       <div ref={bottomDockRef} className={`table-bottom-dock${isSpectator ? " spectator" : ""}`} data-testid="table-bottom-dock">
@@ -1413,7 +1449,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
                   <ManaText text={actionTitle(action)} />
                 </button>
               ))}
-              <button type="button" className="secondary-button" onClick={() => { setInspectedCard(cardContext); setExpandedInspector(true); }}>Inspect</button>
+              <button type="button" className="secondary-button" onClick={() => pinInspector(cardContext)}>Inspect</button>
               <button type="button" className="secondary-button" onClick={() => setCardContext(null)}>Close</button>
             </div>
           </div>
@@ -1443,6 +1479,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
       {lifecycle?.status !== "complete" && <section
         id="decision-tray"
         className="decision-panel"
+        data-seat={view.decision ? decisionSeat : undefined}
         data-testid="decision-panel"
         data-decision-id={view.decision?.id ?? ""}
         data-decision-kind={view.decision?.kind ?? ""}
@@ -1452,11 +1489,11 @@ function GameView({ gameId, system, onExit, onRoom }: {
           <div className="waiting-decision" data-testid="paused-decision"><span className="status-dot muted" /><div><strong>Match paused</strong><p>No player action or priority pass is pending while this boundary is reviewed.</p></div></div>
         ) : isSpectator ? (
           <div className="waiting-decision"><span className="status-dot muted" /><div><strong>Watching the table</strong><p>Player decisions and private information remain seat-scoped.</p></div></div>
-        ) : selectedAction && currentStep ? (
-          <PublicActionDraft action={selectedAction} values={choiceValues} steps={publicSteps} activeStep={currentStep.id} view={view}
+        ) : selectedAction && showPublicDraft ? (
+          <PublicActionDraft action={selectedAction} values={choiceValues} steps={publicSteps} activeStep={currentStep?.id ?? ""} view={view}
             onStage={setPublicStage} onValues={stageChoices} onCancel={closeDraft} onSubmit={submitDraft}
             onPayManually={selectedAction.action === "cast" && !manualMana ? startManualPayment : undefined}
-            labelFor={labelFor} errors={choiceErrors} disabled={actionDisabled} />
+            labelFor={labelFor} errors={choiceErrors} disabled={actionDisabled} commitBlocked={commitBlocked} />
         ) : contextualAction ? (
           <ContextualDecision key={view.decision?.id} action={contextualAction} view={view}
             disabled={actionDisabled} submitting={submitting} labelFor={labelFor} onSubmit={(action, choices) => { void act(action, choices); }} />
@@ -1503,7 +1540,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
               {publicEvents.map((event) => (
                 <li key={event.id} data-testid="public-log-entry">
                   <span>#{event.id}</span>
-                  <div><strong>{event.actor ? `Seat ${event.actor}` : "Game"}</strong><p>{event.summary || readable(event.code)}</p><small>{readable(event.code)}</small></div>
+                  <div>{tableSeat(event.actor) ? <SeatLabel seat={event.actor} /> : <strong>Game</strong>}<p>{describeEvent(event)}</p></div>
                 </li>
               ))}
               {!publicEvents.length && <li className="empty-activity">{publicLogLoading ? "Loading public events…" : "No public events have been recorded."}</li>}
@@ -1513,14 +1550,14 @@ function GameView({ gameId, system, onExit, onRoom }: {
       )}
       {zoneBrowser && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setZoneBrowser(null); }}>
-          <section ref={zoneDialogRef} className="choice-dialog zone-browser" role="dialog" aria-modal="true" aria-labelledby="zone-browser-title" data-testid="zone-browser">
+          <section ref={zoneDialogRef} className="choice-dialog zone-browser" data-seat={zoneBrowser.seat} role="dialog" aria-modal="true" aria-labelledby="zone-browser-title" data-testid="zone-browser">
             <header>
-              <div><span className="eyebrow">PUBLIC ZONE · SEAT {zoneBrowser.seat}</span><h2 id="zone-browser-title">{zoneName} · {zoneCards.length}</h2></div>
+              <div><SeatLabel seat={zoneBrowser.seat} /><h2 id="zone-browser-title">{zoneName} · {zoneCards.length}</h2></div>
               <button type="button" className="secondary-button" onClick={() => setZoneBrowser(null)}>{canChooseFromZone ? "Back to table" : "Close"}</button>
             </header>
             <div className="zone-browser-layout">
-              <div className="zone-card-grid">
-                {zoneCards.map((card, index) => {
+              <CardPages items={zoneCards} className={`zone-card-pages ${zoneBrowser.zone === "gy" ? "graveyard-pages" : "exile-pages"}`}
+                label={zoneName} trackClassName="zone-card-grid" layout="grid" render={(card, index) => {
                   const ref = String(asRecord(card).id ?? "");
                   const actions = !publicSelection && zoneBrowser.seat === ownSeat ? actionsForCard(ref) : [];
                   return (
@@ -1541,26 +1578,28 @@ function GameView({ gameId, system, onExit, onRoom }: {
                       } : undefined}
                     />
                   );
-                })}
-              </div>
+                }} />
               <CardInspector value={inspectedCard ?? zoneCards[0] ?? null} view={view} expanded />
             </div>
           </section>
         </div>
       )}
-      {expandedInspector && (
-        <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setExpandedInspector(false); }}>
-          <section ref={previewDialogRef} className="choice-dialog card-preview-dialog" role="dialog" aria-modal="true" aria-label={`Card viewer: ${inspectionTarget ? cardName(inspectionTarget) : "No card selected"}`}>
-            <header><div><span className="eyebrow">CARD VIEWER</span><h2>{inspectionTarget ? cardName(inspectionTarget) : "No card selected"}</h2></div><button type="button" className="secondary-button" onClick={() => setExpandedInspector(false)}>Close</button></header>
-            <CardInspector value={inspectionTarget} view={view} expanded />
+      {pinnedCardRef && (
+        <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPinnedCardRef(null); }}>
+          <section ref={previewDialogRef} className="choice-dialog card-preview-dialog" data-seat={inspectionSeat} role="dialog" aria-modal="true" aria-label={`Card viewer: ${pinnedCard ? cardName(pinnedCard) : "Card no longer visible"}`}>
+            <header><div><SeatLabel seat={inspectionSeat} /><h2>{pinnedCard ? cardName(pinnedCard) : "Card no longer visible"}</h2></div><button type="button" className="secondary-button" onClick={() => setPinnedCardRef(null)}>Close</button></header>
+            {pinnedCard && <CardInspector value={pinnedCard} view={view} expanded />}
           </section>
         </div>
       )}
       {actionChoices.length > 0 && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setActionChoices([]); }}>
-          <section ref={actionPickerRef} className="choice-dialog action-picker" role="dialog" aria-modal="true" aria-labelledby="action-picker-title">
+          <section ref={actionPickerRef} className="choice-dialog action-picker" data-seat={decisionSeat} role="dialog" aria-modal="true" aria-labelledby="action-picker-title">
             <header>
-              <div><span className="eyebrow">CHOOSE CARD ACTION</span><h2 id="action-picker-title">How should this card be used?</h2></div>
+              <div>
+                <SeatLabel seat={decisionSeat} />
+                <h2 id="action-picker-title">{choosingLoyaltyAbility ? "Choose a loyalty ability" : "How should this card be used?"}</h2>
+              </div>
               <button type="button" className="secondary-button" onClick={() => setActionChoices([])}>Cancel</button>
             </header>
             <div className="action-picker-options">
@@ -1574,16 +1613,18 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </section>
         </div>
       )}
-      {selectedAction && !choiceMinimized && !currentStep && (selectedAction.form || selectedAction.action === "cast") && (
+      {selectedAction && !choiceMinimized && !showPublicDraft && (
+        selectedAction.form || selectedAction.action === "cast" || needsActivationConfirmation(selectedAction)
+      ) && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => {
           if (event.target === event.currentTarget) dismissChoice();
         }}>
-          <form ref={choiceDialogRef} className="choice-dialog" role="dialog" aria-modal="true" aria-labelledby="choice-dialog-title" aria-describedby="choice-dialog-description" data-testid="choice-dialog" onSubmit={submitChoice}>
+          <form ref={choiceDialogRef} className="choice-dialog" data-seat={decisionSeat} role="dialog" aria-modal="true" aria-labelledby="choice-dialog-title" aria-describedby="choice-dialog-description" data-testid="choice-dialog" onSubmit={submitChoice}>
             <header>
               <div>
-                {selectedAction.action === "activate" && <span className="eyebrow">Activate ability</span>}
+                <SeatLabel seat={decisionSeat} />
                 <h2 id="choice-dialog-title">{minimizeInsteadOfCancel && view.decision ? decisionHeading(view.decision) : actionTitle(selectedAction)}</h2>
-                <p id="choice-dialog-description">{selectedAction.action === "activate" ? activationCostLabel(selectedAction)
+                <p id="choice-dialog-description">{selectedAction.action === "activate" ? <ManaText text={activationCostLabel(selectedAction)} />
                   : selectedAction.action === "concede" ? "Leave this game. Play continues for any remaining players."
                     : selectedAction.action === "cast" ? <ManaText text={cardActionCost([selectedAction]) || "Review the spell’s choices."} />
                       : currentChoiceDetail || String(view.decision?.ctx.prompt ?? "")}</p>
@@ -1602,10 +1643,11 @@ function GameView({ gameId, system, onExit, onRoom }: {
                 onChange={stageChoices}
                 labelFor={labelFor}
                 view={view}
+                costLabels={phyrexianCastCostLabels(selectedAction)}
               />
             )}
             {choiceErrors.length > 0 && (
-              <ul className="choice-errors" data-testid="choice-errors">
+              <ul className="choice-errors" data-testid="choice-errors" role="alert">
                 {choiceErrors.map((error) => <li key={error}>{error}</li>)}
               </ul>
             )}
@@ -1613,7 +1655,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
               {selectedAction.action === "cast" && !manualMana && (
                 <button type="button" className="secondary-button" onClick={startManualPayment}>Use manual mana</button>
               )}
-              <button type="submit" data-testid="submit-choice" disabled={submitting || connection !== "LIVE"}>
+              <button type="submit" data-testid="submit-choice" disabled={submitting || connection !== "LIVE" || commitBlocked}>
                 {choiceSubmitLabel(selectedAction, manualMana, submitting, choiceValues.mana_pool_payment)}
               </button>
             </div>
@@ -1622,7 +1664,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
       )}
       <TargetArrowLayer sourceRef={draftSource || stackSource}
         targets={draftSource ? draftTargets : stackTargets} candidates={currentStep?.group ? currentStep.refs : []}
-        zones={targetZones(view)} />
+        zones={targetZones(view)} stackPositions={stackPositions} />
       {notice && <div className="toast" role="status" aria-live="polite">{notice}</div>}
     </main>
   );

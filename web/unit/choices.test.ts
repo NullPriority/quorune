@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   activeFields,
+  choiceCompatibilityErrors,
   choicesWithDefaults,
   executableChoices,
   initialChoices,
@@ -69,7 +70,21 @@ test("A target requirement uses the chosen count and the complete set of modes",
 test("required controls from newer forms block commitment with a version message", () => {
   const required = form([{ name: "future", label: "Choose a value", control: "future_control", required: true }]);
   assert.match(validateChoices(required, {})[0], /Update Quorune.*required control/);
+  assert.deepEqual(choiceCompatibilityErrors(required, {}), validateChoices(required, {}));
   assert.match(validateChoices({ ...required, v: 2 }, {})[0], /version of the action form/);
+  assert.deepEqual(choiceCompatibilityErrors({ ...required, v: 2 }, {}), validateChoices({ ...required, v: 2 }, {}));
+  const ordinary = form([{ name: "name", label: "Name", control: "text", required: true }]);
+  assert.match(validateChoices(ordinary, {})[0], /required/);
+  assert.deepEqual(choiceCompatibilityErrors(ordinary, {}), []);
+  const variants = {
+    ...form([]),
+    variants: { field: "cost_option", default: "normal", options: [
+      { value: "normal", fields: [] },
+      { value: "future", fields: required.fields },
+    ] },
+  };
+  assert.deepEqual(choiceCompatibilityErrors(variants, { cost_option: "normal" }), []);
+  assert.match(choiceCompatibilityErrors(variants, { cost_option: "future" })[0], /required control/);
 });
 
 test("resuming a cast keeps offered targets and costs and clears choices that expired", () => {

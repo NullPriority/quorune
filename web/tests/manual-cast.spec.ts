@@ -22,9 +22,14 @@ test("@browser-rules @mana-action manual payment preserves a cast target across 
 
     const spell = castOffer(opponent, "An Offer You Can't Refuse");
     await driveTo(pages, spell, info, "Offer the counterspell response");
+    const stack = opponent.getByTestId("stack-panel");
+    await expect(host.getByTestId("stack-panel")).toContainText("Sol Ring");
+    await stack.getByRole("button", { name: "Minimize stack", exact: true }).click();
+    await expect(opponent.getByTestId("stack-toggle")).toHaveText("Stack (1)");
+    await expect(stack).toHaveCount(0);
     await spell.click();
     const draft = opponent.getByTestId("public-action-draft");
-    await opponent.getByTestId("stack-panel").getByRole("button", { name: "Select Sol Ring" }).click();
+    await stack.getByRole("button", { name: "Select Sol Ring" }).click();
     await expect(draft).toContainText("1 / 1 · Sol Ring");
     await draft.getByRole("button", { name: "Use manual mana" }).click();
     const parked = opponent.locator(".manual-cast-draft");
@@ -33,11 +38,21 @@ test("@browser-rules @mana-action manual payment preserves a cast target across 
     await clickMove(opponent, boardCard(opponent, "Island"));
     await expect(boardCard(opponent, "Island")).toHaveAttribute("data-tapped", "true");
     await expect(opponent.getByTestId("player-B").locator(".zone-summary")).toContainText("U1");
+    await expect(opponent.getByRole("button", { name: "Undo mana from Island", exact: true }).first()).toBeVisible();
+    await opponent.getByTestId("activity-panel").getByRole("button", { name: "Full log" }).click();
+    const log = opponent.getByTestId("public-game-log");
+    await expect(log.getByText("Activated Island for mana.", { exact: true })).toBeVisible();
+    await expect(log.getByText("Tapped Swamp for 1 black mana.", { exact: true })).toBeVisible();
+    await expect(log.getByText("Played Island.", { exact: true })).toBeVisible();
+    await log.getByRole("button", { name: "Close", exact: true }).click();
     await parked.getByRole("button", { name: "Resume cast" }).click();
     await expect(draft).toContainText("1 / 1 · Sol Ring");
     await evidence(opponent, info, "manual-mana-resumed-target");
     await clickMove(opponent, draft.getByTestId("submit-choice"));
-    await expect(opponent.getByTestId("stack-panel")).toContainText("An Offer You Can't Refuse");
+    const counter = stack.locator(".stack-row").first();
+    const target = stack.locator(".stack-row").last();
+    await expect(counter.getByRole("button", { name: "Sol Ring · Stack #2" })).toBeVisible();
+    await expect(target.getByRole("button", { name: "An Offer You Can't Refuse · Stack #1" })).toBeVisible();
   } finally {
     await Promise.all(contexts.map((context) => context.close()));
   }
