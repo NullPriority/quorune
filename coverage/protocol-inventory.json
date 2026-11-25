@@ -58,6 +58,17 @@
     },
     {
       "method": "POST",
+      "operation_id": "rematch_api_v1_games__game_id__rematch_post",
+      "path": "/api/v1/games/{game_id}/rematch",
+      "request_schema": null,
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Rematch"
+    },
+    {
+      "method": "POST",
       "operation_id": "resume_game_api_v1_games__game_id__resume_post",
       "path": "/api/v1/games/{game_id}/resume",
       "request_schema": "#/components/schemas/ResumeGameRequest",
@@ -119,6 +130,37 @@
         "200"
       ],
       "summary": "Me"
+    },
+    {
+      "method": "GET",
+      "operation_id": "saved_decks_api_v1_me_decks_get",
+      "path": "/api/v1/me/decks",
+      "request_schema": null,
+      "response_statuses": [
+        "200"
+      ],
+      "summary": "Saved Decks"
+    },
+    {
+      "method": "GET",
+      "operation_id": "saved_deck_api_v1_me_decks__deck_id__get",
+      "path": "/api/v1/me/decks/{deck_id}",
+      "request_schema": null,
+      "response_statuses": [
+        "200",
+        "422"
+      ],
+      "summary": "Saved Deck"
+    },
+    {
+      "method": "GET",
+      "operation_id": "recent_games_api_v1_me_games_get",
+      "path": "/api/v1/me/games",
+      "request_schema": null,
+      "response_statuses": [
+        "200"
+      ],
+      "summary": "Recent Games"
     },
     {
       "method": "POST",
@@ -898,7 +940,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "b7564c251423aa90674ac88b930900bde6dade056b2787e717986b62d69fceff",
+  "source_fingerprint": "eb290a8c79b95405bbe2b6f2464303c5e902b8850e678f01c2481ba7476fb07f",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"

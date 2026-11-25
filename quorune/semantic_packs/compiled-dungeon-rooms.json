@@ -43,7 +43,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "fe4f14304754f14802aba90a5d5865c82069413ab7e30f6aee4d2ab1922c3943",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -54,7 +54,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "6d9a37fc6df5f4e2f856512c6540b444b8051704dc3ff4849daa46bdf51e6b63",
+        "semantic_hash": "bc1fc82b8a45a9abc10776c13847bd6214862bdb5d2af0a78f28e2b2feac8dd7",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -125,7 +125,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "971b5114c7ad3fa5d6e95b1b17c966e755be9cfa5ead4d9fd7f7121995942084",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -136,7 +136,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "6844cd57d39e7f9eb0a05ce15a2fecf6fc420958f6cbf9eb21fddecbe23095e5",
+        "semantic_hash": "89f45ff42f63ff462b7004ac69d55f947d66769785e745441be7ae3740c4000b",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -208,7 +208,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "3d043581597965e9bc4c7dcf7cdd5317224e5a94635310198d924ca640fe289e",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -219,7 +219,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "b71a4c016926d19564b762e284686e1230f7d139884938d57bc89fdccdd6681c",
+        "semantic_hash": "824c167c7e1eaafa954e513f29c23e0f20c4adf9e9e68b4639530428da185341",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -287,7 +287,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "c95e743aca8aa04ec082e0cf8607d48e445d55fced8aa12c074628df326dbc1f",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -298,7 +298,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "d711b1dd8fa120bee278a6ac61a3c009cc14f945396bbb0daec7a82986f3b5c2",
+        "semantic_hash": "766648cb44b0a7fa989e9f17c8edd849e8ce5b2560e973f481d1a1ec3ed41f11",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -370,7 +370,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "bab2e4802f37142424656aa455832e3656e57822d9851027cee04b48917ecc05",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -381,7 +381,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "80334a71fe61eeb75b1f1907880ecce19aed51af4165626ae1a15b5d9b9705c3",
+        "semantic_hash": "dcee2a300c0e8b69a39f647a39ccdbb68c43037aaef388010779524275bc0a5d",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -461,7 +461,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "b82f5a843502848a6aeae886f83667e5e293c838e7226459b3250c647c0629c5",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -472,7 +472,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "1a989f8015f8817c649c42bd406f24b488ede6593c7821e4e5da8b52d2e95bdd",
+        "semantic_hash": "f956a5f6ae926ee6503f18f6e569e3e3573afec59948ae646682e7b9b2aca554",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -545,7 +545,7 @@
       "notes": "",
       "oracle_id": "5c446a7f-0301-4343-b0df-146cf2db605b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "017d77eba7610fe73089194f2d6ec4a6c1ba75e92030d0aed730ba5feed5df6e",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -556,7 +556,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "823e65e9f19f380fba5754da4470d8dce3898172453461e5a92484085442f7e9",
+        "semantic_hash": "987e69ad07a517101c228771625cf229bdaa7445193b64e577aa6dae596e9662",
         "source_oracle_hash": "55879de18ec50882cd575a146ec21bef3f9b9af6889835be4a1d9f15cc0220c5",
         "source_rulings_hash": "de1fbfc41596011f0ec9af63e62673ac7b236aea114236bb52a8396a7aebed24",
         "source_span": {
@@ -617,7 +617,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "bab2e4802f37142424656aa455832e3656e57822d9851027cee04b48917ecc05",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -628,7 +628,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "dc631080bb68a493c2a919b366bc8be56a9abcdf8cf0c0284089d00d1c43ce1c",
+        "semantic_hash": "2f890b0bc387ac6158bf935896584214f0a09921c808f88e26a5ba3b6b8c67ca",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -689,7 +689,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "fe4f14304754f14802aba90a5d5865c82069413ab7e30f6aee4d2ab1922c3943",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -700,7 +700,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "57ca216d121ba5f8f2dbd581769fb8e12c545d23ba8089cdc0dba9d3a31b2aec",
+        "semantic_hash": "04f13f82b1ae35e70869d0f3fd3d3c92a0daf4ac56de887d51ee9d9d4273bdf5",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -772,7 +772,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "3d043581597965e9bc4c7dcf7cdd5317224e5a94635310198d924ca640fe289e",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -783,7 +783,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "9c9f762fcb56bfb636133d08974357a52369bc5f70a84c5ab635f6cb018dd036",
+        "semantic_hash": "58ef01c8555a4a8dae76d1547ef3c688d17d6cd4f307e0d405104e2d59914721",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -859,7 +859,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "ba102123c669e757c1654f030dbb58c04eb2309c279d6594115a1b5050c2c8f0",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -870,7 +870,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "c293253fdbdc21dac79e61ebd646734646021eba25ffdba3cfd49bc192c3e04e",
+        "semantic_hash": "78feb54b4c4627f10098e954799ead31b49314115e40d39b41219b8a2f659ed7",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -942,7 +942,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "fe4f14304754f14802aba90a5d5865c82069413ab7e30f6aee4d2ab1922c3943",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -953,7 +953,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "166b61df605c2383fb7a3bdd3798891e23c4516134b042ec085ce7bb6354bc9e",
+        "semantic_hash": "6b9abcfc8f6b9f359eb41c9d12346e280e33cfbe5ab538fb780f446117d80f96",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1023,7 +1023,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "baa1c5ecb526291f12d36c9ee7447e8d117ecfb68e2c0c2f4977065de2b3dda4",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1034,7 +1034,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "8a0b036efbce9cbbfc3079c959d473d47d919dfdded60634887f9e0a673bf789",
+        "semantic_hash": "92b3df5f0b264c7da6ab8de1afa5f2c9d1ffdb75d7ab297e193a88e29eab9fb1",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1105,7 +1105,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "971b5114c7ad3fa5d6e95b1b17c966e755be9cfa5ead4d9fd7f7121995942084",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1116,7 +1116,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "117ba14fe6419885365ac701017d34b4412ed83d2bbc9348669dea6ef9c4050b",
+        "semantic_hash": "ca1c7c414536033b325dbd2f8a563cfd1639b7c8e55375b8b2428e6185dcba0e",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1177,7 +1177,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "fe4f14304754f14802aba90a5d5865c82069413ab7e30f6aee4d2ab1922c3943",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1188,7 +1188,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "4827f5728395c7c6ad43a98da411e82b80b91c8c46e3da554b63757572b1b5b9",
+        "semantic_hash": "df66b723a0496a62b6c490dc621f174516fab0d75a1112d7c4d4a10d8f0eabc5",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1255,7 +1255,7 @@
       "notes": "",
       "oracle_id": "30d0398c-bf5a-4b30-936f-afdb5a109b4b",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "af91c83dbd28e8b4ca994f00fb4a7eb9f024ea5d2aacc8ee782f34582f4150ef",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1266,7 +1266,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "7dfda9d6725b8aae07dfe8c155c1607eedc08b19659aefec740a4ec8f68fe636",
+        "semantic_hash": "7ecb114431076c47fcdb53c96037081bfde15c1d69abd64beb8c98f85fc7974a",
         "source_oracle_hash": "9d45d5133873200e22cffb9957e6e6162cc8af5f3ebea9499c34a46e7bfbd40e",
         "source_rulings_hash": "1c04a8dc72a51dfa5c3dbd77226a776d12c60496c5e649db7bea9583bc44cfa8",
         "source_span": {
@@ -1328,7 +1328,7 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "bab2e4802f37142424656aa455832e3656e57822d9851027cee04b48917ecc05",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1339,7 +1339,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "ad01d700521e6ca1b0f611ea0fe1705e605781b6b2ea2f96ff0d59b724f7ba65",
+        "semantic_hash": "f63f5d30da7d040ab7ced9ffcc90166f4232148b550de9467f240946019f7793",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1434,7 +1434,7 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "4cb78bdb48fd2a5b195a8b93ebefd52e02d1bc453e88b588e61a28b5aae71a8b",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1445,7 +1445,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "af5cfc4bdc59165bb99f0a05b30e954cc5d955f3d49bc8a5840692a3a882e13d",
+        "semantic_hash": "a7a6ce608077506b303cef3fe1314f9159a5a2c171892948bec75bea8566063e",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1543,7 +1543,7 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "85c549bd1b10eaf078b911ef91bcc4b54a6be135a55c942ca147ae6ace5bf7d0",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1554,7 +1554,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "412b41cf07c172c175555ace71e56ac8905ec6aacbf54522127b19528e95923d",
+        "semantic_hash": "b761e0d1a99ac49ea4a0f45a89ab0625194b7cd31fc72c68aecb62c183fdcdb0",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1669,7 +1669,7 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "c3fdd5c38c027f4b8eeadecfad5e45872e5b666585c4b00d541dfc6531491b09",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1680,7 +1680,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "e3ac7207d3eac45089ec8e8a326631c31eec851d4ba38709a1879198432fba4a",
+        "semantic_hash": "2cb040ce89cb76e11616cc34e44f3d08f2f802ca4555c21b6f7089744cef0f6d",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1766,7 +1766,7 @@
       "notes": "",
       "oracle_id": "d2ea2605-0ca0-4782-851d-e706bd0114e4",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "4206a43d84aa76a70ca6b54015b87bd0be3ff6aebf146fa386fb47f368dbfb0a",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1777,7 +1777,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "2bfd69d879e07133a05c089bf31a791be54a25b52dbbbd3745fa84ccf24fe05d",
+        "semantic_hash": "1dff43653d3730ec0de60b0677e19103f3aa95a57f4d85af1365b120380300e3",
         "source_oracle_hash": "7440b5707e9acbe5a3fcf6f6acbe7be3049a10ca36e085cefb76b84d11d399fb",
         "source_rulings_hash": "bba313ed166bf68eeb5d0a4716a6b51497574a7ef2747c8baf4da3e38344aed9",
         "source_span": {
@@ -1854,7 +1854,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "d313f231a199a8fe36c3de33125def52f12836e7a572a213ccd7db70bd260648",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1865,7 +1865,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "69dee3880c4099a8e495a5f3c56f23a2c217ae2a8c999029b72c9b95e2432042",
+        "semantic_hash": "bbd77285c312ab44de72d9f927e51a5c6411414608aeff67b97a4c10987bb594",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -1933,7 +1933,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "c95e743aca8aa04ec082e0cf8607d48e445d55fced8aa12c074628df326dbc1f",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -1944,7 +1944,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "cf546d1b2494e08fb2c6985f7f9bb8a69cb85d1d11f8783d055e39e4efb1b3d5",
+        "semantic_hash": "4771cee62130bec381cf92074461b53886bb004dec1da83c67000d37c2a98e17",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2016,7 +2016,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "fe4f14304754f14802aba90a5d5865c82069413ab7e30f6aee4d2ab1922c3943",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2027,7 +2027,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "c838db1dec804a0919397e9b4083cc7993ebf292ba2c7683dac99d01d85eb4f1",
+        "semantic_hash": "4bb2172b7509f8331378385c684fafa68bf6395efd022077dae38a39ac9442f5",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2092,7 +2092,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "f1b44d25b2281d4a4656486f6a9fe3238afb80ba53337b84e852d8918482d0ef",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2103,7 +2103,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "b9518a76090fcb58057f9ab5c400b4f16542c3728298d2d290e41a028f57b053",
+        "semantic_hash": "fbba13c4f31f25913a75d3878536b720fcb0d3fdf8ea0ae9c4e37566e5ec2802",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2178,7 +2178,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "06171c3bc78ad5c334eeb34c05e43062ea90be6a8a959617faa80242fdf761ee",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2189,7 +2189,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "d79b8de488ff6b2c5adedae0dbcbea2305ba903a14639aeaf1003a4df0ba8026",
+        "semantic_hash": "e2455fc2fb568dafe92b0077cb1b334e92cf29bd3a28f5f769519e9ef3b33174",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2272,7 +2272,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "3d043581597965e9bc4c7dcf7cdd5317224e5a94635310198d924ca640fe289e",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2283,7 +2283,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "bfe780998302325b1ae0174f47a8c31f26a407d6bda9af97183566f1c24b1e35",
+        "semantic_hash": "f370ce302a4296608457d5e8ae0b38412c059d9f6c64bf751d940bb6a51ec088",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2345,7 +2345,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "017d77eba7610fe73089194f2d6ec4a6c1ba75e92030d0aed730ba5feed5df6e",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2356,7 +2356,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "7255aa3c778232ecc68c05f4211ef8f0cd8ef886192bcc869da66bad90e969b5",
+        "semantic_hash": "10a4d8926f51bc0a3b3367f8a36a1dfc1a046ce2c704f4e152e13b149e7c871c",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2434,7 +2434,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "779bf1882df0bba9684ee34bd785bc4ea06c539cf24c96d951f27f306790b76c",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2445,7 +2445,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "4b82fbfa9c2adc0fed70e19aff8bc59c0b3ab1b9db4b6d21eb2d35806e0b2126",
+        "semantic_hash": "938ccf75b99679b6a617e907d24d80d4d55e790315d7fb52b2ec89bd60993efe",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {
@@ -2572,7 +2572,7 @@
       "notes": "",
       "oracle_id": "36b61021-72f0-4c22-a41d-9b2f093d7ca8",
       "provenance": {
-        "authored_by": "oracle-ir-v1230",
+        "authored_by": "oracle-ir-v1231",
         "capability_closure_fingerprint": "580e6cd18300dfff1c148172fc2aae6295caf162d90b4623ace41afe60fd7458",
         "capability_profile": "commander_review",
         "capability_registry_fingerprint": "96ab9dea59e80163c070bfaae3dd9e008fede44fa3785becf29165524872a673",
@@ -2583,7 +2583,7 @@
         },
         "face_id": "front",
         "review_status": "capability_closure_verified",
-        "semantic_hash": "82adf483a6b740a94d46e7fe5085076402df81f4b24a456506f344148cab8e77",
+        "semantic_hash": "b3e3ab9fc039d0b5d8900f4f58b8349be6b9a6416651a8c73495d6828258e21e",
         "source_oracle_hash": "7d6fee7a515876c03f8b3e69ecaad666b11ec47d91ebaa7fe1346b69da514ccd",
         "source_rulings_hash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
         "source_span": {

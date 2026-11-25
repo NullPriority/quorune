@@ -2,7 +2,7 @@
 title: "Generated protocol inventory"
 status: "generated"
 authoritative_source: "server FastAPI OpenAPI output and versioned schemas/*.json"
-verified: "c0b36dd4c2931debb376a5aa44097ad6c460e580418285ecf252e1d4a3996089"
+verified: "5a9544f0e2fa3bbbab48c676f06a7979deb86bf31be5ceb680bccf82af06566e"
 audience: "client, server, and protocol contributors"
 maintenance: "generated"
 generated_source: "coverage/protocol-inventory.json"
@@ -11,13 +11,13 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_protocol_referenc
 
 # Generated protocol inventory
 
-Source fingerprint: `b7564c251423aa90674ac88b930900bde6dade056b2787e717986b62d69fceff`
+Source fingerprint: `eb290a8c79b95405bbe2b6f2464303c5e902b8850e678f01c2481ba7476fb07f`
 
 ## Current top-level state
 
 - API title: `Quorune Server`
 - API version: `0.9.0`
-- HTTP operations: `24`
+- HTTP operations: `28`
 - WebSocket routes: `1`
 - Versioned schemas: `17`
 
@@ -34,12 +34,16 @@ Source fingerprint: `b7564c251423aa90674ac88b930900bde6dade056b2787e717986b62d69
 | `POST` | `/api/v1/games/{game_id}/commands` | `submit_command_api_v1_games__game_id__commands_post` |
 | `GET` | `/api/v1/games/{game_id}/events` | `public_game_events_api_v1_games__game_id__events_get` |
 | `GET` | `/api/v1/games/{game_id}/progress` | `game_progress_api_v1_games__game_id__progress_get` |
+| `POST` | `/api/v1/games/{game_id}/rematch` | `rematch_api_v1_games__game_id__rematch_post` |
 | `POST` | `/api/v1/games/{game_id}/resume` | `resume_game_api_v1_games__game_id__resume_post` |
 | `GET` | `/api/v1/games/{game_id}/state` | `game_state_api_v1_games__game_id__state_get` |
 | `POST` | `/api/v1/games/{game_id}/stop` | `stop_game_api_v1_games__game_id__stop_post` |
 | `POST` | `/api/v1/guests` | `create_guest_api_v1_guests_post` |
 | `GET` | `/api/v1/health` | `health_api_v1_health_get` |
 | `GET` | `/api/v1/me` | `me_api_v1_me_get` |
+| `GET` | `/api/v1/me/decks` | `saved_decks_api_v1_me_decks_get` |
+| `GET` | `/api/v1/me/decks/{deck_id}` | `saved_deck_api_v1_me_decks__deck_id__get` |
+| `GET` | `/api/v1/me/games` | `recent_games_api_v1_me_games_get` |
 | `POST` | `/api/v1/rooms` | `create_room_api_v1_rooms_post` |
 | `POST` | `/api/v1/rooms/join` | `join_room_api_v1_rooms_join_post` |
 | `POST` | `/api/v1/rooms/watch` | `watch_room_api_v1_rooms_watch_post` |
