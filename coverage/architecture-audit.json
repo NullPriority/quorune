@@ -584,36 +584,36 @@
           "classification": "compiler_binding",
           "file": "quorune/card_programs/adapters.py",
           "flow_id": "card-identity-flow:9ece818729299cb37a82",
-          "line": 492,
+          "line": 510,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 492,
+          "source_line": 510,
           "symbol": "card_program_from_semantic_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/card_programs/adapters.py",
           "flow_id": "card-identity-flow:14113e6ca0f897b04169",
-          "line": 564,
+          "line": 582,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 564,
+          "source_line": 582,
           "symbol": "card_programs_from_semantic_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/card_programs/adapters.py",
           "flow_id": "card-identity-flow:004e8e5d00fc40a62f11",
-          "line": 565,
+          "line": 583,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 565,
+          "source_line": 583,
           "symbol": "card_programs_from_semantic_programs"
         },
         {
@@ -3836,30 +3836,18 @@
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:bb6c235e650a6a84d250",
-          "line": 1580,
+          "line": 1594,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1580,
+          "source_line": 1594,
           "symbol": "register_generated_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:46fe221950447b70c665",
-          "line": 1582,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "oracle_id",
-          "source_kind": "attribute",
-          "source_line": 1582,
-          "symbol": "register_generated_programs"
-        },
-        {
-          "classification": "compiler_binding",
-          "file": "quorune/compiler/program_generation.py",
-          "flow_id": "card-identity-flow:aa4298afb2b017b682d4",
           "line": 1596,
           "selector": null,
           "sink_kind": "identity_as_data",
@@ -3871,25 +3859,37 @@
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
-          "flow_id": "card-identity-flow:a796f8669390e5c5b8a7",
-          "line": 1650,
+          "flow_id": "card-identity-flow:aa4298afb2b017b682d4",
+          "line": 1611,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1650,
+          "source_line": 1611,
+          "symbol": "register_generated_programs"
+        },
+        {
+          "classification": "compiler_binding",
+          "file": "quorune/compiler/program_generation.py",
+          "flow_id": "card-identity-flow:a796f8669390e5c5b8a7",
+          "line": 1660,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "attribute",
+          "source_line": 1660,
           "symbol": "register_generated_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:d30ac7f81792b4c65366",
-          "line": 1656,
+          "line": 1666,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1656,
+          "source_line": 1666,
           "symbol": "register_generated_programs"
         },
         {
@@ -6776,106 +6776,82 @@
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:6f7b6996b9fb9b75a627",
-          "line": 45,
+          "line": 46,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 45,
+          "source_line": 46,
           "symbol": "_commander_damage_rows"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:6c20378ccd85363fe044",
-          "line": 219,
+          "line": 220,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 219,
+          "source_line": 220,
           "symbol": "StateProjector._effective"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:5cc7e07ee9964f0d79db",
-          "line": 223,
+          "line": 224,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 223,
+          "source_line": 224,
           "symbol": "StateProjector._effective"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:c11360a9936d2068863c",
-          "line": 237,
+          "line": 238,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 237,
+          "source_line": 238,
           "symbol": "StateProjector._effective"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:7837f88ac6324ab14420",
-          "line": 273,
+          "line": 274,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 273,
+          "source_line": 274,
           "symbol": "StateProjector._effective"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:9c1a779c53ede6c0dc05",
-          "line": 301,
+          "line": 302,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 301,
+          "source_line": 302,
           "symbol": "StateProjector._effective"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:49104806894e112c9874",
-          "line": 359,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "oracle_id",
-          "source_kind": "attribute",
-          "source_line": 359,
-          "symbol": "StateProjector._obj"
-        },
-        {
-          "classification": "display_metadata",
-          "file": "quorune/projection.py",
-          "flow_id": "card-identity-flow:d0afad497d345040ed41",
-          "line": 365,
-          "selector": null,
-          "sink_kind": "identity_as_data",
-          "source_field": "oracle_id",
-          "source_kind": "attribute",
-          "source_line": 365,
-          "symbol": "StateProjector._obj"
-        },
-        {
-          "classification": "display_metadata",
-          "file": "quorune/projection.py",
-          "flow_id": "card-identity-flow:fde47c5ac0cbf9174340",
           "line": 366,
           "selector": null,
           "sink_kind": "identity_as_data",
-          "source_field": "name",
+          "source_field": "oracle_id",
           "source_kind": "attribute",
           "source_line": 366,
           "symbol": "StateProjector._obj"
@@ -6883,85 +6859,109 @@
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
+          "flow_id": "card-identity-flow:d0afad497d345040ed41",
+          "line": 372,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "attribute",
+          "source_line": 372,
+          "symbol": "StateProjector._obj"
+        },
+        {
+          "classification": "display_metadata",
+          "file": "quorune/projection.py",
+          "flow_id": "card-identity-flow:fde47c5ac0cbf9174340",
+          "line": 373,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "name",
+          "source_kind": "attribute",
+          "source_line": 373,
+          "symbol": "StateProjector._obj"
+        },
+        {
+          "classification": "display_metadata",
+          "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:257d868e7f4ad0028b6a",
-          "line": 368,
+          "line": 375,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 368,
+          "source_line": 375,
           "symbol": "StateProjector._obj"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:cdd2176e1bd3878a88ec",
-          "line": 382,
+          "line": 389,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 382,
+          "source_line": 389,
           "symbol": "StateProjector._obj"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:973fce8cb280b58fdb2e",
-          "line": 561,
+          "line": 578,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 561,
+          "source_line": 578,
           "symbol": "StateProjector._present_resolution_choice"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:19a396def6d56dc37a26",
-          "line": 840,
+          "line": 857,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 840,
+          "source_line": 857,
           "symbol": "StateProjector._visible_oracles.walk"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:d1a677bf676d0a377c27",
-          "line": 841,
+          "line": 858,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 841,
+          "source_line": 858,
           "symbol": "StateProjector._visible_oracles.walk"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:fde249711389addee1c3",
-          "line": 856,
+          "line": 873,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 856,
+          "source_line": 873,
           "symbol": "StateProjector._definition"
         },
         {
           "classification": "display_metadata",
           "file": "quorune/projection.py",
           "flow_id": "card-identity-flow:d5bbdc9c16fbc6ea193f",
-          "line": 867,
+          "line": 884,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "attribute",
-          "source_line": 867,
+          "source_line": 884,
           "symbol": "StateProjector._definition"
         },
         {
@@ -11444,96 +11444,108 @@
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:54b142a7e2f168bb3060",
-          "line": 339,
+          "line": 340,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "set_code",
           "source_kind": "attribute",
-          "source_line": 339,
+          "source_line": 340,
           "symbol": "CardImageCache._printing_path"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:ac221cd8408b43551a42",
-          "line": 339,
+          "line": 340,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "collector_number",
           "source_kind": "attribute",
-          "source_line": 339,
+          "source_line": 340,
           "symbol": "CardImageCache._printing_path"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:bf3be0e7ac9f690115d0",
-          "line": 341,
+          "line": 342,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "set_code",
           "source_kind": "attribute",
-          "source_line": 341,
+          "source_line": 342,
           "symbol": "CardImageCache._printing_path"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:ba7dbc334e8082a6013c",
-          "line": 343,
+          "line": 344,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "collector_number",
           "source_kind": "attribute",
-          "source_line": 343,
+          "source_line": 344,
           "symbol": "CardImageCache._printing_path"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:309fcca7b56d79919224",
-          "line": 346,
+          "line": 347,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "set_code",
           "source_kind": "attribute",
-          "source_line": 346,
+          "source_line": 347,
           "symbol": "CardImageCache._printing_path"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:e04235693ac50a49ab20",
-          "line": 346,
+          "line": 347,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "collector_number",
           "source_kind": "attribute",
-          "source_line": 346,
+          "source_line": 347,
           "symbol": "CardImageCache._printing_path"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
           "flow_id": "card-identity-flow:c7ad32d01156c56a85e1",
-          "line": 361,
+          "line": 362,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "mapping_get",
-          "source_line": 361,
+          "source_line": 362,
           "symbol": "CardImageCache._printing_image"
         },
         {
           "classification": "display_metadata",
           "file": "server/data.py",
-          "flow_id": "card-identity-flow:7225a87577d6ea54c54c",
-          "line": 394,
+          "flow_id": "card-identity-flow:3542cd4f602cbf8e0afc",
+          "line": 388,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "mapping_subscript",
-          "source_line": 394,
+          "source_line": 388,
+          "symbol": "CardImageCache._source"
+        },
+        {
+          "classification": "display_metadata",
+          "file": "server/data.py",
+          "flow_id": "card-identity-flow:7225a87577d6ea54c54c",
+          "line": 399,
+          "selector": null,
+          "sink_kind": "identity_as_data",
+          "source_field": "oracle_id",
+          "source_kind": "mapping_subscript",
+          "source_line": 399,
           "symbol": "CardImageCache._source"
         },
         {
@@ -11564,13 +11576,13 @@
       "counts": {
         "by_classification": {
           "compiler_binding": 327,
-          "display_metadata": 33,
+          "display_metadata": 34,
           "generated_provenance": 15,
           "reviewed_historical_compatibility": 1,
           "reviewed_override": 3,
           "rules_value": 580
         },
-        "classified_flow_count": 959,
+        "classified_flow_count": 960,
         "prohibited_identity_dispatch_count": 0
       },
       "external_dependencies": {
@@ -14272,7 +14284,7 @@
         },
         {
           "fan_in": 4,
-          "fan_out": 99,
+          "fan_out": 100,
           "module": "quorune.compiler.program_generation"
         },
         {
@@ -14321,7 +14333,7 @@
           "module": "quorune.semantic_runtime.intents"
         }
       ],
-      "internal_edges": 16672,
+      "internal_edges": 16674,
       "modules": [
         {
           "fan_in": 2,
@@ -14759,7 +14771,7 @@
           "module": "quorune.card_programs.activation_view_equivalence"
         },
         {
-          "fan_in": 6,
+          "fan_in": 7,
           "fan_out": 13,
           "module": "quorune.card_programs.adapters"
         },
@@ -17275,7 +17287,7 @@
         },
         {
           "fan_in": 4,
-          "fan_out": 99,
+          "fan_out": 100,
           "module": "quorune.compiler.program_generation"
         },
         {
@@ -20149,7 +20161,7 @@
           "module": "quorune.object_predicate"
         },
         {
-          "fan_in": 116,
+          "fan_in": 117,
           "fan_out": 6,
           "module": "quorune.object_query"
         },
@@ -20380,7 +20392,7 @@
         },
         {
           "fan_in": 3,
-          "fan_out": 24,
+          "fan_out": 25,
           "module": "quorune.projection"
         },
         {
@@ -26708,7 +26720,7 @@
       ]
     },
     "production": {
-      "file_count": 2495,
+      "file_count": 2500,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -27041,7 +27053,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 406899,
+      "logical_lines": 408231,
       "methods": {
         "dunder": 1227,
         "private": 1148,
@@ -27074,8 +27086,8 @@
           "file": "web/src/App.tsx",
           "functions_and_methods": null,
           "language": "web",
-          "logical_lines": 1681,
-          "physical_lines": 1739
+          "logical_lines": 1692,
+          "physical_lines": 1745
         },
         {
           "file": "quorune/record.py",
@@ -27134,6 +27146,13 @@
           "physical_lines": 1585
         },
         {
+          "file": "quorune/compiler/program_generation.py",
+          "functions_and_methods": 72,
+          "language": "python",
+          "logical_lines": 1493,
+          "physical_lines": 1714
+        },
+        {
           "file": "quorune/damage.py",
           "functions_and_methods": 52,
           "language": "python",
@@ -27153,13 +27172,6 @@
           "language": "python",
           "logical_lines": 1488,
           "physical_lines": 1651
-        },
-        {
-          "file": "quorune/compiler/program_generation.py",
-          "functions_and_methods": 71,
-          "language": "python",
-          "logical_lines": 1486,
-          "physical_lines": 1704
         },
         {
           "file": "quorune/semantic_choices/intent_host.py",
@@ -27351,6 +27363,13 @@
           "physical_lines": 1341
         },
         {
+          "file": "web/src/styles.css",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 1256,
+          "physical_lines": 1271
+        },
+        {
           "file": "quorune/damage_modifier_state.py",
           "functions_and_methods": 40,
           "language": "python",
@@ -27491,6 +27510,13 @@
           "physical_lines": 1049
         },
         {
+          "file": "quorune/projection.py",
+          "functions_and_methods": 27,
+          "language": "python",
+          "logical_lines": 985,
+          "physical_lines": 1052
+        },
+        {
           "file": "quorune/work_selection_evidence.py",
           "functions_and_methods": 20,
           "language": "python",
@@ -27505,18 +27531,18 @@
           "physical_lines": 1066
         },
         {
-          "file": "quorune/projection.py",
-          "functions_and_methods": 27,
-          "language": "python",
-          "logical_lines": 968,
-          "physical_lines": 1035
-        },
-        {
           "file": "quorune/compiler/activated_mana_nodes.py",
           "functions_and_methods": 12,
           "language": "python",
           "logical_lines": 957,
           "physical_lines": 1010
+        },
+        {
+          "file": "web/src/ChoiceForm.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 948,
+          "physical_lines": 975
         },
         {
           "file": "quorune/rules/activation/commit.py",
@@ -27638,13 +27664,6 @@
           "physical_lines": 935
         },
         {
-          "file": "web/src/ChoiceForm.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 865,
-          "physical_lines": 889
-        },
-        {
           "file": "quorune/trigger_processing.py",
           "functions_and_methods": 50,
           "language": "python",
@@ -27706,13 +27725,6 @@
           "language": "python",
           "logical_lines": 831,
           "physical_lines": 903
-        },
-        {
-          "file": "web/src/styles.css",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 829,
-          "physical_lines": 844
         },
         {
           "file": "quorune/work_selection_bundles.py",
@@ -27869,6 +27881,13 @@
           "physical_lines": 780
         },
         {
+          "file": "web/src/choices.ts",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 728,
+          "physical_lines": 761
+        },
+        {
           "file": "quorune/semantic_runtime/token_replacements.py",
           "functions_and_methods": 21,
           "language": "python",
@@ -27881,13 +27900,6 @@
           "language": "python",
           "logical_lines": 715,
           "physical_lines": 777
-        },
-        {
-          "file": "web/src/choices.ts",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 708,
-          "physical_lines": 738
         },
         {
           "file": "quorune/compiler/fixed_target_effect_sequences.py",
@@ -28205,6 +28217,13 @@
           "physical_lines": 637
         },
         {
+          "file": "quorune/card_programs/adapters.py",
+          "functions_and_methods": 16,
+          "language": "python",
+          "logical_lines": 555,
+          "physical_lines": 599
+        },
+        {
           "file": "quorune/station.py",
           "functions_and_methods": 28,
           "language": "python",
@@ -28245,13 +28264,6 @@
           "language": "python",
           "logical_lines": 541,
           "physical_lines": 594
-        },
-        {
-          "file": "quorune/card_programs/adapters.py",
-          "functions_and_methods": 15,
-          "language": "python",
-          "logical_lines": 540,
-          "physical_lines": 581
         },
         {
           "file": "quorune/compiler/leveler_context_nodes.py",
@@ -28597,6 +28609,13 @@
           "physical_lines": 463
         },
         {
+          "file": "server/data.py",
+          "functions_and_methods": 24,
+          "language": "python",
+          "logical_lines": 429,
+          "physical_lines": 470
+        },
+        {
           "file": "quorune/record_trust.py",
           "functions_and_methods": 19,
           "language": "python",
@@ -28623,13 +28642,6 @@
           "language": "python",
           "logical_lines": 424,
           "physical_lines": 462
-        },
-        {
-          "file": "server/data.py",
-          "functions_and_methods": 24,
-          "language": "python",
-          "logical_lines": 424,
-          "physical_lines": 465
         },
         {
           "file": "quorune/compiler/fixed_resolution_characteristics.py",
@@ -28707,6 +28719,13 @@
           "language": "python",
           "logical_lines": 406,
           "physical_lines": 456
+        },
+        {
+          "file": "web/src/CardSurface.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 406,
+          "physical_lines": 422
         },
         {
           "file": "quorune/compiler/public_state_fact_queries.py",
@@ -29010,13 +29029,6 @@
           "physical_lines": 406
         },
         {
-          "file": "web/src/CardSurface.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 355,
-          "physical_lines": 371
-        },
-        {
           "file": "quorune/record_state_provenance.py",
           "functions_and_methods": 8,
           "language": "python",
@@ -29281,6 +29293,13 @@
           "language": "python",
           "logical_lines": 312,
           "physical_lines": 346
+        },
+        {
+          "file": "web/src/tablePresentation.ts",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 312,
+          "physical_lines": 338
         },
         {
           "file": "quorune/compiler/fixed_characteristic_settings.py",
@@ -30046,13 +30065,6 @@
           "physical_lines": 268
         },
         {
-          "file": "web/src/tablePresentation.ts",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 231,
-          "physical_lines": 251
-        },
-        {
           "file": "quorune/compiler/combat_entry_activation_nodes.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -30268,6 +30280,13 @@
           "language": "python",
           "logical_lines": 214,
           "physical_lines": 243
+        },
+        {
+          "file": "web/src/PlayerBoard.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 214,
+          "physical_lines": 215
         },
         {
           "file": "quorune/card_overrides/game_record_v3.py",
@@ -30613,13 +30632,6 @@
           "physical_lines": 219
         },
         {
-          "file": "web/src/PlayerBoard.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 193,
-          "physical_lines": 194
-        },
-        {
           "file": "quorune/rules/activation/query.py",
           "functions_and_methods": 6,
           "language": "python",
@@ -30660,6 +30672,13 @@
           "language": "python",
           "logical_lines": 191,
           "physical_lines": 217
+        },
+        {
+          "file": "web/src/TargetArrowLayer.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 191,
+          "physical_lines": 201
         },
         {
           "file": "quorune/compiler/mill_templates.py",
@@ -30940,13 +30959,6 @@
           "language": "python",
           "logical_lines": 180,
           "physical_lines": 213
-        },
-        {
-          "file": "web/src/TargetArrowLayer.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 179,
-          "physical_lines": 189
         },
         {
           "file": "quorune/permissions.py",
@@ -31425,6 +31437,13 @@
           "physical_lines": 194
         },
         {
+          "file": "web/src/PublicActionDraft.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 155,
+          "physical_lines": 161
+        },
+        {
           "file": "quorune/ability_fragment_host.py",
           "functions_and_methods": 7,
           "language": "python",
@@ -31479,6 +31498,13 @@
           "language": "python",
           "logical_lines": 154,
           "physical_lines": 181
+        },
+        {
+          "file": "web/src/StackPanel.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 154,
+          "physical_lines": 161
         },
         {
           "file": "quorune/compiler/public_history_conditions.py",
@@ -31605,6 +31631,13 @@
           "language": "python",
           "logical_lines": 148,
           "physical_lines": 167
+        },
+        {
+          "file": "web/src/TableZones.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 148,
+          "physical_lines": 156
         },
         {
           "file": "quorune/compiled_activated_abilities.py",
@@ -32321,6 +32354,13 @@
           "physical_lines": 156
         },
         {
+          "file": "web/src/CombatAssignment.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 128,
+          "physical_lines": 132
+        },
+        {
           "file": "quorune/composition_order_model.py",
           "functions_and_methods": 10,
           "language": "python",
@@ -32389,13 +32429,6 @@
           "language": "python",
           "logical_lines": 125,
           "physical_lines": 152
-        },
-        {
-          "file": "web/src/CombatAssignment.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 125,
-          "physical_lines": 129
         },
         {
           "file": "quorune/activated_ability_descriptor.py",
@@ -32762,13 +32795,6 @@
           "physical_lines": 135
         },
         {
-          "file": "web/src/PublicActionDraft.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 116,
-          "physical_lines": 121
-        },
-        {
           "file": "quorune/compiler/named_equipment_token_templates.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -32802,6 +32828,13 @@
           "language": "python",
           "logical_lines": 115,
           "physical_lines": 129
+        },
+        {
+          "file": "web/src/tablePreferences.ts",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 115,
+          "physical_lines": 128
         },
         {
           "file": "quorune/compiler/announced_damage_templates.py",
@@ -32858,6 +32891,13 @@
           "language": "python",
           "logical_lines": 114,
           "physical_lines": 129
+        },
+        {
+          "file": "web/src/CardChoiceGrid.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 114,
+          "physical_lines": 118
         },
         {
           "file": "quorune/compiler/granted_keyword_event_nodes.py",
@@ -33175,13 +33215,6 @@
           "physical_lines": 126
         },
         {
-          "file": "web/src/CardChoiceGrid.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 108,
-          "physical_lines": 112
-        },
-        {
           "file": "quorune/compiler/composite_grant_nodes.py",
           "functions_and_methods": 4,
           "language": "python",
@@ -33236,6 +33269,13 @@
           "language": "python",
           "logical_lines": 106,
           "physical_lines": 112
+        },
+        {
+          "file": "web/src/ContextualDecision.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 106,
+          "physical_lines": 109
         },
         {
           "file": "quorune/compiler/public_quantity_mana.py",
@@ -33866,13 +33906,6 @@
           "language": "python",
           "logical_lines": 94,
           "physical_lines": 115
-        },
-        {
-          "file": "web/src/ContextualDecision.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 94,
-          "physical_lines": 97
         },
         {
           "file": "quorune/cumulative_graveyard_upkeep.py",
@@ -34624,6 +34657,13 @@
           "physical_lines": 104
         },
         {
+          "file": "web/src/CardPages.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 83,
+          "physical_lines": 92
+        },
+        {
           "file": "quorune/compiler/block_capacity_templates.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -35310,13 +35350,6 @@
           "physical_lines": 86
         },
         {
-          "file": "web/src/tablePreferences.ts",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 75,
-          "physical_lines": 83
-        },
-        {
           "file": "quorune/compiled_flashback.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -35800,6 +35833,20 @@
           "physical_lines": 82
         },
         {
+          "file": "web/src/TableSettings.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 70,
+          "physical_lines": 72
+        },
+        {
+          "file": "web/src/TurnStatus.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 70,
+          "physical_lines": 74
+        },
+        {
           "file": "quorune/compiler/end_combat_counterpart_templates.py",
           "functions_and_methods": 2,
           "language": "python",
@@ -35903,13 +35950,6 @@
           "language": "python",
           "logical_lines": 69,
           "physical_lines": 76
-        },
-        {
-          "file": "web/src/TurnStatus.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 69,
-          "physical_lines": 73
         },
         {
           "file": "quorune/compiler/bestow_nodes.py",
@@ -36253,6 +36293,13 @@
           "language": "python",
           "logical_lines": 66,
           "physical_lines": 81
+        },
+        {
+          "file": "web/src/SetupScreen.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 66,
+          "physical_lines": 72
         },
         {
           "file": "quorune/card_programs/kicker_view_equivalence.py",
@@ -38222,13 +38269,6 @@
           "physical_lines": 59
         },
         {
-          "file": "web/src/StackPanel.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 50,
-          "physical_lines": 52
-        },
-        {
           "file": "quorune/attachment_duration.py",
           "functions_and_methods": 5,
           "language": "python",
@@ -39713,6 +39753,13 @@
           "physical_lines": 52
         },
         {
+          "file": "web/src/HandRail.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 40,
+          "physical_lines": 42
+        },
+        {
           "file": "quorune/awaken_model.py",
           "functions_and_methods": 3,
           "language": "python",
@@ -39844,13 +39891,6 @@
           "language": "python",
           "logical_lines": 39,
           "physical_lines": 50
-        },
-        {
-          "file": "web/src/HandRail.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 39,
-          "physical_lines": 41
         },
         {
           "file": "quorune/compiler/adventure_faces.py",
@@ -40621,13 +40661,6 @@
           "language": "python",
           "logical_lines": 35,
           "physical_lines": 44
-        },
-        {
-          "file": "web/src/TableSettings.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 35,
-          "physical_lines": 37
         },
         {
           "file": "quorune/compiler/ascend_nodes.py",
@@ -42436,6 +42469,13 @@
           "physical_lines": 34
         },
         {
+          "file": "web/src/SeatLabel.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 25,
+          "physical_lines": 29
+        },
+        {
           "file": "quorune/compiler/attacking_token_results.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -43316,6 +43356,13 @@
           "language": "python",
           "logical_lines": 19,
           "physical_lines": 28
+        },
+        {
+          "file": "web/src/RecentActivity.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 19,
+          "physical_lines": 20
         },
         {
           "file": "quorune/apnap_object_payment.py",
@@ -44820,8 +44867,8 @@
           "file": "web/src/App.tsx",
           "functions_and_methods": null,
           "language": "web",
-          "logical_lines": 1681,
-          "physical_lines": 1739
+          "logical_lines": 1692,
+          "physical_lines": 1745
         },
         {
           "file": "quorune/record.py",
@@ -44831,7 +44878,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 455408,
+      "physical_lines": 456792,
       "python_file_count": 2464,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -44849,8 +44896,8 @@
           "web/src"
         ]
       },
-      "top_level_functions": 10500,
-      "web_file_count": 31
+      "top_level_functions": 10502,
+      "web_file_count": 36
     },
     "runtime_oracle_text_access": {
       "accesses": [
@@ -46358,7 +46405,7 @@
           ],
           "file": "quorune/projection.py",
           "lines": [
-            860
+            877
           ],
           "member": "oracle_text",
           "rationale": "Card storage, inspection, or projection metadata.",
@@ -46372,7 +46419,7 @@
           ],
           "file": "quorune/projection.py",
           "lines": [
-            871
+            888
           ],
           "member": "oracle_text",
           "rationale": "Card storage, inspection, or projection metadata.",
@@ -46386,7 +46433,7 @@
           ],
           "file": "quorune/projection.py",
           "lines": [
-            253
+            254
           ],
           "member": "oracle_text",
           "rationale": "Card storage, inspection, or projection metadata.",
@@ -46401,8 +46448,8 @@
           ],
           "file": "quorune/projection.py",
           "lines": [
-            251,
-            278
+            252,
+            279
           ],
           "member": "oracle_text",
           "rationale": "Card storage, inspection, or projection metadata.",
@@ -46416,7 +46463,7 @@
           ],
           "file": "quorune/projection.py",
           "lines": [
-            336
+            337
           ],
           "member": "oracle_text",
           "rationale": "Card storage, inspection, or projection metadata.",
@@ -61852,7 +61899,7 @@
         {
           "condition": "not is_search and operation not in {\"offer_optional_effect\", \"offer_draw\", \"scry\"}",
           "file": "quorune/projection.py",
-          "line": 534,
+          "line": 551,
           "string_literals": [
             "offer_draw",
             "offer_optional_effect",
@@ -61863,7 +61910,7 @@
         {
           "condition": "operation == \"scry\"",
           "file": "quorune/projection.py",
-          "line": 545,
+          "line": 562,
           "string_literals": [
             "scry"
           ],
@@ -61872,7 +61919,7 @@
         {
           "condition": "operation == \"offer_draw\"",
           "file": "quorune/projection.py",
-          "line": 547,
+          "line": 564,
           "string_literals": [
             "offer_draw"
           ],
@@ -61881,7 +61928,7 @@
         {
           "condition": "effect.get(\"op\") == \"search\"",
           "file": "quorune/projection.py",
-          "line": 571,
+          "line": 588,
           "string_literals": [
             "op",
             "search"
@@ -61891,7 +61938,7 @@
         {
           "condition": "effect.get(\"op\") == \"draw\" and effect.get(\"count\") == 1",
           "file": "quorune/projection.py",
-          "line": 573,
+          "line": 590,
           "string_literals": [
             "count",
             "draw",
@@ -85979,7 +86026,7 @@
             "quorune/engine.py:39"
           ],
           "register_generated_programs": [
-            "quorune/compiler/program_generation.py:1552",
+            "quorune/compiler/program_generation.py:1566",
             "quorune/oracle_ir.py:1529",
             "quorune/preflight.py:19",
             "quorune/session.py:14"
@@ -86029,7 +86076,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "5dae4d45d7597646ce09c505262b1b294ca8ca2d8a3eeae36decc5cb8ac09148",
+      "fingerprint": "9c3886a097f1e94c60a94c3759e2cfb9a5af594f1664072aae9584765749da66",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -86858,8 +86905,8 @@
   },
   "tests": {
     "browser": {
-      "node_unit_cases": 61,
-      "playwright_e2e_journeys": 25
+      "node_unit_cases": 66,
+      "playwright_e2e_journeys": 29
     },
     "mutation_testing": {
       "capability_mutation_declarations": 2538,
@@ -86890,8 +86937,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 17818,
-      "discovered_total": 21127,
+      "conventional_ast_cases": 17822,
+      "discovered_total": 21131,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 414,
