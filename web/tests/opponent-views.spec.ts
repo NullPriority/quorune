@@ -9,7 +9,7 @@ test("@browser-lifecycle opponents can be focused and crowded card groups page w
     { commander: "Mishra, Eminent One", cards: "1 Ornithopter\n1 Memnite\n1 Phyrexian Walker\n1 Sol Ring\n95 Mountain" },
     { commander: "Zimone and Dina", cards: "99 Island" },
     { commander: "Adeline, Resplendent Cathar", cards: "99 Plains" },
-    { commander: "Krenko, Mob Boss", cards: "99 Mountain" },
+    { commander: "Krenko, Tin Street Kingpin", cards: "99 Mountain" },
   ], 97249, { width: 1280, height: 720 });
   const [host, observer] = pages;
   try {

@@ -1,5 +1,6 @@
 import {
   KeyboardEvent as ReactKeyboardEvent,
+  type ReactNode,
   useId,
   useLayoutEffect,
   useState,
@@ -49,7 +50,10 @@ export function printingLabel(value: JsonValue): string {
   ].filter(Boolean).join(" · ");
 }
 
-function imageUrl(card: Record<string, JsonValue>, cid: string, face: number, size: string): string {
+export function cardImageUrl(value: JsonValue, size: string, face = Number(asRecord(value).face ?? 0)): string | undefined {
+  const card = asRecord(value);
+  const cid = typeof card.cid === "string" ? card.cid : "";
+  if (!cid || card.n === "?") return undefined;
   const query = new URLSearchParams({ size, face: String(face) });
   const printing = asRecord(card.printing);
   if (typeof printing.scryfall_id === "string") query.set("printing", printing.scryfall_id);
@@ -88,13 +92,14 @@ export function CardTile({
   artCrop = false,
   origin,
   attachment,
+  showFaceStatus = false,
   choice,
 }: {
   value: JsonValue;
   view: ProjectedView;
   compact?: boolean;
   targetLabel?: (ref: string) => string;
-  table?: boolean;
+  table?: boolean | "battlefield";
   actions?: LegalAction[];
   onIntent?: (actions: LegalAction[], card: JsonValue) => void;
   onInspect?: (card: JsonValue) => void;
@@ -110,6 +115,7 @@ export function CardTile({
   artCrop?: boolean;
   origin?: string;
   attachment?: string;
+  showFaceStatus?: boolean;
   choice?: { selected: boolean; select: () => void; label?: string };
 }) {
   const card = asRecord(value);
@@ -119,22 +125,32 @@ export function CardTile({
     const label = typeof ref === "string" ? targetLabel?.(ref) ?? "Target" : "Unavailable target";
     return `${share} to ${label}`;
   }).join(" · ");
-  const cid = typeof card.cid === "string" ? card.cid : "";
+  const cid = typeof card.cid === "string" && card.n !== "?" ? card.cid : "";
   const definition = cid ? view.definitions[cid] : undefined;
   const [failedImages, setFailedImages] = useState<string[]>([]);
   const [previewAnchor, setPreviewAnchor] = useState<HTMLElement | null>(null);
   const costDescription = useId();
   const loyaltyDescription = useId();
   const attachmentDescription = useId();
+  const tappedDescription = useId();
   const interactive = Boolean(choice) || Boolean(onIntent) && (actions.length > 0 || explainUnavailable);
   const actionable = Boolean(choice) || Boolean(onIntent) && actions.length > 0;
   const inspectable = Boolean(onInspect || onOpenInspector);
   const ref = String(card.id ?? "");
   const face = Number(card.face ?? 0);
   const imageSizes = artCrop ? ["art_crop", "normal"] : [compact || table ? "small" : "normal"];
-  const image = cid ? imageSizes.map((size) => imageUrl(card, cid, face, size))
-    .find((source) => !failedImages.includes(source)) : undefined;
-  const showImage = Boolean(image);
+  const image = imageSizes.map((size) => cardImageUrl(value, size, face))
+    .find((source) => source !== undefined && !failedImages.includes(source));
+  const battlefield = table === "battlefield";
+  const printedImage = image && (
+    <img
+      key={image}
+      src={image}
+      alt=""
+      loading="lazy"
+      onError={() => setFailedImages((failed) => failed.includes(image) ? failed : [...failed, image])}
+    />
+  );
   const stats = currentStats(card, definition);
   const counters = asRecord(card.ctr);
   const loyalty = typeof counters.loyalty === "number" ? counters.loyalty : undefined;
@@ -173,13 +189,16 @@ export function CardTile({
   }
   return (
     <article
-      className={`card-tile${compact ? " compact" : table ? " table-card" : " hand-card"}${showImage ? " has-image" : ""}${card.tap ? " tapped" : ""}${actionable ? " actionable" : ""}${inspectable ? " inspectable" : ""}${manualMana ? " mana-source" : ""}${selected ? " selected-card" : ""}${highlight ? " target-highlight" : ""}${offerCost ? " has-offered-cost" : ""}`}
+      className={`card-tile${compact ? " compact" : table ? " table-card" : " hand-card"}${battlefield ? " battlefield-card" : ""}${image ? " has-image" : ""}${card.tap ? " tapped" : ""}${actionable ? " actionable" : ""}${inspectable ? " inspectable" : ""}${manualMana ? " mana-source" : ""}${selected ? " selected-card" : ""}${highlight ? " target-highlight" : ""}${offerCost ? " has-offered-cost" : ""}`}
       role={interactive || inspectable ? "button" : undefined}
       tabIndex={interactive || inspectable ? 0 : undefined}
       aria-label={choice ? `Select ${choice.label ?? cardName(value)}` : actionable
         ? [actions.map((action) => spokenMana(action.label ? actionTitle(action) : `${actionHint} ${cardName(value)}`)).join(" or "), origin].filter(Boolean).join(" · ")
         : interactive || inspectable ? `Inspect ${cardName(value)}` : undefined}
-      aria-describedby={[offerCost ? costDescription : "", loyalty === undefined ? "" : loyaltyDescription, attachment ? attachmentDescription : ""].filter(Boolean).join(" ") || undefined}
+      aria-describedby={[
+        offerCost ? costDescription : "", loyalty === undefined ? "" : loyaltyDescription,
+        attachment ? attachmentDescription : "", card.tap && table ? tappedDescription : "",
+      ].filter(Boolean).join(" ") || undefined}
       aria-pressed={choice?.selected}
       aria-keyshortcuts={onOpenInspector ? "I" : undefined}
       draggable={canDrag}
@@ -187,6 +206,7 @@ export function CardTile({
       data-zone-offer={origin ? "true" : undefined}
       data-choice-candidate={choice ? "true" : undefined}
       data-tapped={card.tap ? "true" : "false"}
+      data-concealed={showFaceStatus && card.n === "?" ? "true" : undefined}
       onClick={activate}
       onKeyDown={keydown}
       onContextMenu={onOpenInspector ? (event) => {
@@ -231,18 +251,13 @@ export function CardTile({
         window.setTimeout(() => onDragCard?.(null), 0);
       }}
     >
-      {image && (
-        <img
-          key={image}
-          src={image}
-          alt=""
-          loading="lazy"
-          onError={() => setFailedImages((failed) => failed.includes(image) ? failed : [...failed, image])}
-        />
-      )}
+      {battlefield ? <div className="battlefield-card-art" aria-hidden="true">
+        <div className="battlefield-printed-face">{printedImage}</div>
+      </div> : printedImage}
       <div className="card-copy">
         {!offerCost && !origin && printedCost && <small><ManaText text={printedCost} /></small>}
         <strong>{cardName(value)}</strong>
+        {showFaceStatus && card.fd && card.n !== "?" && <small className="zone-face-status">Face down</small>}
         {attachment && <small id={attachmentDescription} className="attachment-label" title={`Attached to ${attachment}`}>
           <span className="attachment-prefix">Attached to </span>{attachment}
         </small>}
@@ -256,7 +271,7 @@ export function CardTile({
         {loyalty !== undefined && <strong id={loyaltyDescription} data-testid="card-current-loyalty">{loyalty} loyalty</strong>}
         {damage > 0 && <span data-testid="card-marked-damage" aria-label={`${damage} damage marked`}>{damage} dmg</span>}
       </div>}
-      {card.tap && table && <span className="tapped-state">TAPPED</span>}
+      {card.tap && table && <span className="tapped-state" id={tappedDescription}>Tapped</span>}
       {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && <span className="card-action-hint">{actionHint}</span>}
       {offerCost && <>
         <span id={costDescription} hidden>{spokenMana(offerCost)}</span>
@@ -281,7 +296,7 @@ export function CardInspector({
   previewOnly?: boolean;
 }) {
   const card = asRecord(value ?? undefined);
-  const cid = typeof card.cid === "string" ? card.cid : "";
+  const cid = typeof card.cid === "string" && card.n !== "?" ? card.cid : "";
   const definition = cid ? view.definitions[cid] : undefined;
   const faces = asList(definition?.faces).map(asRecord);
   const projectedFace = Number(card.face ?? 0);
@@ -289,7 +304,7 @@ export function CardInspector({
   const [faceChoice, setFaceChoice] = useState<{ identity: string; index: number } | null>(null);
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const faceIndex = faceChoice?.identity === identity ? faceChoice.index : projectedFace;
-  const image = cid ? imageUrl(card, cid, faceIndex, "large") : null;
+  const image = value == null ? undefined : cardImageUrl(value, "large", faceIndex);
 
   if (!value || !Object.keys(card).length) {
     return (
@@ -308,7 +323,8 @@ export function CardInspector({
   const name = isCurrentFace ? cardName(value) : String(face.n ?? cardName(value));
   const mana = String((isCurrentFace ? card.m : face.m) ?? definition?.m ?? "");
   const typeLine = String((isCurrentFace ? card.t : face.t) ?? definition?.t ?? "");
-  const oracle = String((isCurrentFace ? card.o : face.o) ?? definition?.o ?? "No projected rules text.");
+  const oracle = card.n === "?" ? "This card’s identity is hidden." :
+    String((isCurrentFace ? card.o : face.o) ?? definition?.o ?? "No rules text available.");
   const stats = isCurrentFace ? currentStats(card, definition) : "";
   const counters = Object.entries(asRecord(card.ctr));
   return (
@@ -362,12 +378,11 @@ export function CardInspector({
   );
 }
 
-function FloatingCardPreview({
-  anchor, value, view,
+export function FloatingTablePreview({
+  anchor, children,
 }: {
   anchor: HTMLElement;
-  value: JsonValue;
-  view: ProjectedView;
+  children: ReactNode;
 }) {
   const [position, setPosition] = useState({ left: 0, top: 0, width: 0 });
   useLayoutEffect(() => {
@@ -392,6 +407,16 @@ function FloatingCardPreview({
     };
   }, [anchor]);
   return createPortal(<div className="floating-card-preview" style={position} aria-hidden="true">
-    <CardInspector value={value} view={view} previewOnly />
+    {children}
   </div>, document.body);
+}
+
+function FloatingCardPreview({ anchor, value, view }: {
+  anchor: HTMLElement;
+  value: JsonValue;
+  view: ProjectedView;
+}) {
+  return <FloatingTablePreview anchor={anchor}>
+    <CardInspector value={value} view={view} previewOnly />
+  </FloatingTablePreview>;
 }

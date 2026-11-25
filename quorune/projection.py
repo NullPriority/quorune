@@ -22,6 +22,7 @@ from .model import (
     PlayerState,
     PLAYER_COUNTERS_FIELD,
 )
+from .object_query import exact_numeric_characteristic
 from .protocol import PROTOCOL_VERSION, json_patch, view_hash
 from .util import stable_json, truncate
 
@@ -344,8 +345,14 @@ class StateProjector:
         )
         return data
 
-    def _obj(self, card: CardInstance, principal: str, *, public_hand: bool = False) -> dict[str, Any]:
-        visible = (public_hand and card.zone == 'hand') or self._card_visible(card, principal)
+    def _obj(
+        self, card: CardInstance, principal: str, *, public_hand: bool = False, known_library_top: bool = False,
+    ) -> dict[str, Any]:
+        visible = (
+            (public_hand and card.zone == "hand")
+            or (known_library_top and card.zone == "library")
+            or self._card_visible(card, principal)
+        )
         public_characteristics = card.zone in {"battlefield", "stack"}
         resolution_effects = active_resolution_effects(self.state, card) if visible or public_characteristics else ()
         effective = None
@@ -394,6 +401,16 @@ class StateProjector:
                     obj["k"] = list(effective["k"])
                 if effective.get("face") is not None:
                     obj["face"] = effective["face"]
+            if card.zone == "battlefield" and not card.face_down:
+                characteristics = {
+                    "type_line": effective["t"],
+                    "power": effective["p"],
+                    "toughness": effective["q"],
+                }
+                for key, stat in (("p", "power"), ("q", "toughness")):
+                    current = exact_numeric_characteristic(card, characteristics, stat)
+                    if current is not None:
+                        obj[key] = current
         else:
             obj["n"] = "?"
         if public_characteristics and any(is_fixed_target_color_effect(effect) for effect in resolution_effects):
@@ -760,7 +777,7 @@ class StateProjector:
             )
             if known_top:
                 summary["known_top"] = [
-                    self._obj(card, principal) for card in known_top[:5]
+                    self._obj(card, principal, known_library_top=True) for card in known_top[:5]
                 ]
             players[player_seat] = summary
 

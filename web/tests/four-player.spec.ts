@@ -1095,9 +1095,10 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
     await expect(hostTappedLand).toHaveCount(1);
     await expect(opponentTappedLand).toHaveCount(1);
     await expect(hostTappedLand).toHaveAttribute("data-tapped", "true");
-    await expect(hostTappedLand.locator(".tapped-state")).toHaveText("TAPPED");
-    await expect(opponentTappedLand.locator(".tapped-state")).toHaveText("TAPPED");
-    expect(await hostTappedLand.evaluate((element) => getComputedStyle(element).transform)).not.toBe("none");
+    await expect(hostTappedLand.locator(".tapped-state")).toHaveText("Tapped");
+    await expect(opponentTappedLand.locator(".tapped-state")).toHaveText("Tapped");
+    await expect(hostTappedLand.locator(".battlefield-printed-face")).toHaveCSS("rotate", "90deg");
+    await expect(opponentTappedLand.locator(".battlefield-printed-face")).toHaveCSS("rotate", "90deg");
 
     const offer = opponent
       .getByTestId("own-hand")

@@ -106,6 +106,23 @@ when both are in view.
 Seat colors match across the battlefield, priority status, stack, and
 player-specific dialogs. Seat labels identify players alongside the colors.
 
+The desktop table fits a centered 16:9 area. Narrow or very short windows
+use the compact layout. Battlefield card faces turn 90 degrees when tapped,
+with their names and game state kept upright.
+
+In very short windows, the stack uses shorter cards and the table-wide
+card size slider moves to Table settings in the game menu. Battlefield lane
+labels sit beside the cards. Collapse your hand to give the battlefield
+more room while using the opponent views, zones, or current decision.
+
+Each seat’s library, graveyard, and exile appear beside the battlefield.
+Hover or focus a zone for a preview, and open it to page through its cards.
+**Collapse zones** keeps the counts and links in a smaller area. The library
+view shows the library count. Top cards appear when an effect grants visibility.
+Public top-card reveals show the card to every seat. Private looks show its
+identity to the permitted viewer. Exile uses a card back for concealed cards
+and marks a visible face-down card with its status.
+
 When your offered actions include a card in another zone, the hand area shows
 a shortcut marked with its source zone. Those shortcuts are visible to the
 acting player. Hover or focus a card to see its offered cost above its name.

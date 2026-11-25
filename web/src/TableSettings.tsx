@@ -40,6 +40,9 @@ export function TableSettings({
     <details className="table-settings" data-testid="table-settings">
       <summary>Table settings</summary>
       <div className="table-settings-grid">
+        <div className="compact-table-size">
+          <CardSizeSlider label="Table card size" value={value.cardScale} onChange={(next) => onChange("cardScale", next)} />
+        </div>
         <label>Hand height <input aria-label="Hand panel height" type="range" min={190} max={650} step={10} value={value.handPanelHeight} onChange={(event) => onChange("handPanelHeight", Number(event.target.value))} /></label>
         <label>Right rail width <input aria-label="Right rail width" type="range" min={260} max={520} step={10} value={value.rightRailWidth} onChange={(event) => onChange("rightRailWidth", Number(event.target.value))} /></label>
         <label>Right rail first <select value={firstPanel} onChange={(event) => setFirstPanel(event.target.value as RightRailPanel)}><option value="stack">Stack</option><option value="activity">Activity</option><option value="card">Card viewer</option></select></label>

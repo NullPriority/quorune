@@ -1,6 +1,7 @@
 import { type DragEvent, useEffect, useState } from "react";
 import { asList, asRecord, cardName, CardTile } from "./CardSurface";
 import { CardPages } from "./CardPages";
+import { type TableZone, ZonePiles } from "./TableZones";
 import { CommanderDamage } from "./TableStatus";
 import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
@@ -46,7 +47,7 @@ export function PlayerBoard({
   highlightedTargets: string[];
   selection?: TableObjectSelection | null;
   selectedCardRef: string;
-  onOpenZone: (seat: string, zone: "gy" | "ex") => void;
+  onOpenZone: (seat: string, zone: TableZone) => void;
   dropEnabled: boolean;
   onCardDrop: (cardRef: string) => void;
   onCardDrag: (cardRef: string | null) => void;
@@ -78,8 +79,6 @@ export function PlayerBoard({
   const rank = (card: JsonValue) => positions.get(String(asRecord(card).id ?? "")) ?? Number.MAX_SAFE_INTEGER;
   for (const group of Object.values(groups)) group.sort((left, right) => rank(left) - rank(right));
   const command = asList(player.cmd);
-  const graveyard = asList(player.gy);
-  const exile = asList(player.ex);
   const mana = asRecord(player.mana);
   const isZoneTarget = (cards: JsonValue[]) => cards.some((card) => {
     const ref = String(asRecord(card).id ?? "");
@@ -102,7 +101,7 @@ export function PlayerBoard({
     const manaOnly = actions.length > 0 && actions.every((action) =>
       action.mana_ability === true || action.action === "undo_mana");
     return <div className="battlefield-card-slot" key={ref || index}>
-      <CardTile value={card} view={view} table actions={actions} onOpenInspector={onOpenInspector}
+      <CardTile value={card} view={view} table="battlefield" actions={actions} onOpenInspector={onOpenInspector}
         inspectOnActivate={!selection && !arranging}
         attachment={attached}
         onIntent={arranging || selection ? undefined : manaOnly ? onManaIntent : onCardIntent} onInspect={onInspectCard}
@@ -201,11 +200,8 @@ export function PlayerBoard({
         </div> : <em>{mine && dropEnabled ? "Drop a playable card here" : "Empty battlefield"}</em>}
       </div>
       <footer className="zone-summary">
-        <span data-target-zone={`${seat}-known_top`} title={`Seat ${seat} library`}>Library <strong>{String(player.lib_n ?? 0)}</strong></span>
-        <button type="button" data-testid={`zone-${seat}-graveyard`} data-target-zone={`${seat}-gy`} disabled={!graveyard.length}
-          className={isZoneTarget(graveyard) ? "zone-target" : undefined} onClick={() => onOpenZone(seat, "gy")}>Graveyard <strong>{graveyard.length}</strong></button>
-        <button type="button" data-testid={`zone-${seat}-exile`} data-target-zone={`${seat}-ex`} disabled={!exile.length}
-          className={isZoneTarget(exile) ? "zone-target" : undefined} onClick={() => onOpenZone(seat, "ex")}>Exile <strong>{exile.length}</strong></button>
+        <ZonePiles seat={seat} player={player} hidden={hidden} selection={selection}
+          highlightedTargets={highlightedTargets} onOpen={onOpenZone} />
         <span>Land plays left <strong>{String(player.lands ?? 0)}</strong></span>
         {Object.keys(mana).length > 0 && <span>Mana <strong>{Object.entries(mana).map(([color, amount]) => `${color}${amount}`).join(" ")}</strong></span>}
         <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />

@@ -79,6 +79,27 @@ class PermissionProjectionTests(unittest.TestCase):
                 damage,
             )
 
+    def test_public_battlefield_stats_include_counters_and_report_damage_separately(self):
+        session = make_session(self.db, self.mishra, self.zimone, seed=232)
+        commander = next(
+            card for card in session.state.cards.values()
+            if card.owner == "A" and card.is_commander
+        )
+        session.engine._remove_from_zone(commander)
+        session.engine._reset_zone_change(commander, "battlefield")
+        commander.zone = "battlefield"
+        session.state.players["A"].zones["battlefield"].append(commander.object_id)
+        commander.counters["+1/+1"] = 1
+        commander.marked_damage = 2
+
+        for principal in ("pilot:A", "pilot:B", "spectator"):
+            with self.subTest(principal=principal):
+                packet = session.packet(principal, full=True)
+                projected, = packet["state"]["players"]["A"]["bf"]
+                self.assertEqual(commander.ref, projected["id"])
+                self.assertEqual((6, 5), (projected["p"], projected["q"]))
+                self.assertEqual(2, projected["dmg"])
+
     def test_public_spell_on_stack_includes_visible_card_definition(self):
         from quorune.model import StackItem
 

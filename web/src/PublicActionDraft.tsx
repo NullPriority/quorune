@@ -38,7 +38,7 @@ export function publicObjectSteps(action: LegalAction | null, view: ProjectedVie
   if (!action?.form || !["activate", "cast"].includes(action.action)) return [];
   const players = asRecord(view.state.players);
   const cardRows = [...asList(view.state.stack), ...Object.values(players).flatMap((player) =>
-    ["bf", "hand", "gy", "ex", "cmd"].flatMap((zone) => asList(asRecord(player)[zone])))];
+    ["bf", "hand", "gy", "ex", "cmd", "known_top"].flatMap((zone) => asList(asRecord(player)[zone])))];
   const visible = new Set([...Object.keys(players), ...cardRows.map((card) => String(asRecord(card).id))]);
   const fields = activeFields(action.form, values);
   const result: Step[] = [];

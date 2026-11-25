@@ -28,7 +28,7 @@ import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, is
 import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, needsActivationConfirmation, phyrexianCastCostLabels, publicEventSummary, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, ManaHelp } from "./TableStatus";
 import { CardSizeSlider, TableSettings } from "./TableSettings";
-import { CardPages } from "./CardPages";
+import { type OpenTableZone, ZoneBrowser } from "./TableZones";
 import { CombatStopOptions, TurnStatus } from "./TurnStatus";
 import { PlayerBoard } from "./PlayerBoard";
 import { StackPanel } from "./StackPanel";
@@ -542,7 +542,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const [railOpen, setRailOpen] = useState(false);
   const [cardContext, setCardContext] = useState<JsonValue | null>(null);
   const [publicStage, setPublicStage] = useState("");
-  const [zoneBrowser, setZoneBrowser] = useState<{ seat: string; zone: "gy" | "ex" } | null>(null);
+  const [zoneBrowser, setZoneBrowser] = useState<OpenTableZone | null>(null);
   const [pinnedCardRef, setPinnedCardRef] = useState<string | null>(null);
   const [lifecycle, setLifecycle] = useState<GameLifecycle | null>(null);
   const [stopReason, setStopReason] = useState("Pause for a table break");
@@ -1129,10 +1129,6 @@ function GameView({ gameId, system, onExit, onRoom }: {
   const contextualActions = selectedCardRef ? actionsForCard(selectedCardRef) : [];
   const actionExplanations = asRecord(state.action_explanations);
   const selectedExplanation = asRecord(actionExplanations[selectedCardRef]);
-  const zonePlayer = zoneBrowser ? asRecord(players[zoneBrowser.seat]) : {};
-  const zoneCards = zoneBrowser ? asList(zonePlayer[zoneBrowser.zone]) : [];
-  const zoneName = zoneBrowser?.zone === "gy" ? "Graveyard" : "Exile";
-  const canChooseFromZone = zoneCards.some((card) => publicSelection?.refs.includes(String(asRecord(card).id ?? "")));
   const spaceForChoice = contextualAction?.action === "block" || contextualAction?.action === "attack"
     || view.decision?.kind === "semantic.search";
   const handCollapsed = handManuallyCollapsed || spaceForChoice || (
@@ -1145,6 +1141,9 @@ function GameView({ gameId, system, onExit, onRoom }: {
     ? tablePreferences.opponentView : "all";
   const showOwnOnly = !isSpectator && compactBoards && compactOwnBoard;
   const showOpponentsOnly = !isSpectator && compactBoards && !compactOwnBoard;
+  const showOpponentControls = !isSpectator && (opponents.length > 1 || compactBoards);
+  const tableSizeControl = <CardSizeSlider label="Table card size" value={tablePreferences.cardScale}
+    onChange={(next) => setTablePreference("cardScale", next)} />;
   const singleOpponent = !isSpectator && (opponents.length <= 1 || opponentView !== "all");
   const isBoardHidden = (seat: string) => !isSpectator && (seat === ownSeat
     ? showOpponentsOnly : showOwnOnly || (opponents.length > 1 && opponentView !== "all" && opponentView !== seat));
@@ -1155,7 +1154,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
   function opponentTargets(seat: string, player: JsonValue) {
     if (!publicSelection) return 0;
     const board = asRecord(player);
-    const refs = [seat, ...["bf", "cmd", "gy", "ex"].flatMap((zone) =>
+    const refs = [seat, ...["bf", "cmd", "gy", "ex", "known_top"].flatMap((zone) =>
       asList(board[zone]).map((card) => String(asRecord(card).id ?? "")))];
     return refs.filter((ref) => publicSelection.refs.includes(ref)).length;
   }
@@ -1234,6 +1233,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
         </div>
         <div className="game-identity"><small>{lifecycle?.format_profile === "commander_duel" ? "Commander duel" : "Commander pod"}</small></div>
         <div className="game-status-line">
+          {!showOpponentControls && tableSizeControl}
           <div className="routine-table-actions" aria-label="Priority and mana">
         {!isSpectator && lifecycle?.status !== "complete" && (
           <AutomationControls
@@ -1364,8 +1364,8 @@ function GameView({ gameId, system, onExit, onRoom }: {
       )}
       <div className={`table-workspace${showRail ? " has-stack-rail" : ""}${hasStack ? " has-active-stack" : ""}`}>
         <div className="boards-panel">
-          <div className="board-view-bar">
-            {!isSpectator && (opponents.length > 1 || compactBoards) && <div className="opponent-views" role="group" aria-label="Battlefield views">
+          {showOpponentControls && <div className="board-view-bar">
+            <div className="opponent-views" role="group" aria-label="Battlefield views">
               {compactBoards && <button type="button" className="link-button" data-seat={ownSeat}
                 aria-pressed={showOwnOnly} onClick={() => setCompactOwnBoard(true)}>Your board</button>}
               {opponents.length > 1 && <button type="button" className="link-button"
@@ -1378,10 +1378,9 @@ function GameView({ gameId, system, onExit, onRoom }: {
                   Seat {seat}{targetCount > 0 && <span className="opponent-target-count"> · {targetCount} {targetCount === 1 ? "target" : "targets"}</span>}
                 </button>;
               })}
-            </div>}
-            <CardSizeSlider label="Table card size" value={tablePreferences.cardScale}
-              onChange={(next) => setTablePreference("cardScale", next)} />
-          </div>
+            </div>
+            {tableSizeControl}
+          </div>}
         <section className={`boards-grid${isSpectator ? " watching" : ""}${singleOpponent || showOwnOnly ? " one-opponent" : ""}${showOwnOnly || showOpponentsOnly ? " compact-board-row" : ""}`}
           aria-label="Commander battlefield" data-opponent-view={opponentView}>
           {orderedPlayers.map(([seat, player]) => (
@@ -1403,11 +1402,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
               highlightedTargets={stackTargets}
               selection={publicSelection}
               selectedCardRef={selectedCardRef}
-              onOpenZone={(nextSeat, zone) => {
-                const nextCards = asList(asRecord(players[nextSeat])[zone]);
-                setInspectedCard(nextCards[0] ?? null);
-                setZoneBrowser({ seat: nextSeat, zone });
-              }}
+              onOpenZone={(seat, zone) => setZoneBrowser({ seat, zone })}
               dropEnabled={dropEnabled}
               onCardDrop={handleCardDrop}
               onCardDrag={(ref) => { draggedCardRef.current = ref ?? ""; }}
@@ -1548,42 +1543,11 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </section>
         </div>
       )}
-      {zoneBrowser && (
-        <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setZoneBrowser(null); }}>
-          <section ref={zoneDialogRef} className="choice-dialog zone-browser" data-seat={zoneBrowser.seat} role="dialog" aria-modal="true" aria-labelledby="zone-browser-title" data-testid="zone-browser">
-            <header>
-              <div><SeatLabel seat={zoneBrowser.seat} /><h2 id="zone-browser-title">{zoneName} · {zoneCards.length}</h2></div>
-              <button type="button" className="secondary-button" onClick={() => setZoneBrowser(null)}>{canChooseFromZone ? "Back to table" : "Close"}</button>
-            </header>
-            <div className="zone-browser-layout">
-              <CardPages items={zoneCards} className={`zone-card-pages ${zoneBrowser.zone === "gy" ? "graveyard-pages" : "exile-pages"}`}
-                label={zoneName} trackClassName="zone-card-grid" layout="grid" render={(card, index) => {
-                  const ref = String(asRecord(card).id ?? "");
-                  const actions = !publicSelection && zoneBrowser.seat === ownSeat ? actionsForCard(ref) : [];
-                  return (
-                    <CardTile
-                      key={ref || index}
-                      value={card}
-                      view={view}
-                      actions={actions}
-                      onInspect={setInspectedCard}
-                      onIntent={(nextActions, selectedCard) => {
-                        setZoneBrowser(null);
-                        selectCardActions(nextActions, selectedCard);
-                      }}
-                      selected={selectedCardRef === ref || publicSelection?.selected.includes(ref)}
-                      choice={!actionDisabled && publicSelection?.refs.includes(ref) ? {
-                        selected: publicSelection.selected.includes(ref),
-                        select: () => publicSelection.select(ref),
-                      } : undefined}
-                    />
-                  );
-                }} />
-              <CardInspector value={inspectedCard ?? zoneCards[0] ?? null} view={view} expanded />
-            </div>
-          </section>
-        </div>
-      )}
+      {zoneBrowser && <ZoneBrowser key={`${zoneBrowser.seat}-${zoneBrowser.zone}`} opened={zoneBrowser}
+        player={asRecord(players[zoneBrowser.seat])} dialogRef={zoneDialogRef} view={view}
+        selection={publicSelection} selectedCardRef={selectedCardRef} actionsForCard={actionsForCard}
+        actionDisabled={actionDisabled} onClose={() => setZoneBrowser(null)}
+        onIntent={(actions, card) => { setZoneBrowser(null); selectCardActions(actions, card); }} />}
       {pinnedCardRef && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setPinnedCardRef(null); }}>
           <section ref={previewDialogRef} className="choice-dialog card-preview-dialog" data-seat={inspectionSeat} role="dialog" aria-modal="true" aria-label={`Card viewer: ${pinnedCard ? cardName(pinnedCard) : "Card no longer visible"}`}>
