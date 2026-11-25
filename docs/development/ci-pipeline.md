@@ -568,34 +568,34 @@ receipts replace duplicate automatic-owner checks in this tail; assembly never
 reruns an owner. A main run then requires the assembled bytes to match the
 commit.
 
-Ordinary feature branches run this workflow automatically when opened,
-reopened, or synchronized:
+Generate a source-only checkpoint on its reserved remote ref before
+updating the pull request branch. The generation dispatch binds owner
+planning to the full comparison with the planned PR base.
 
 ```powershell
+$source = (git rev-parse HEAD).Trim()
+$base = (git rev-parse origin/main).Trim()
+$generationRef = "quorune-cloud-source/$source"
 $env:QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON = "seed exact-source cloud generation"
-git push -u origin <branch>
-Remove-Item Env:QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON
-gh run list --workflow generated-artifacts.yml --limit 10
-gh run download <run-id> --name cloud-generated-<source-sha> `
-  --dir local\cloud-generated-download
-.\.venv\Scripts\python.exe scripts\cloud_generated_artifacts.py install-bundle `
-  --bundle-dir local\cloud-generated-download --expected-commit <source-sha>
+try { git push origin "HEAD:refs/heads/$generationRef" }
+finally { Remove-Item Env:QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON }
+gh workflow run generated-artifacts.yml --ref $generationRef -f "ref=$source" -f "base=$base"
+gh run download <run-id> --name "cloud-generated-$source" --dir local/cloud-generated-download
+./.venv/Scripts/python.exe scripts/cloud_generated_artifacts.py install-bundle --bundle-dir local/cloud-generated-download --expected-commit $source
 ```
 
-The named checkpoint mode is restricted to non-`main` branches. It still runs
-test-shard/dependency validation and the compiler-identity sentinel, but allows
-the intermediate push before the expensive generated bundle and final receipt
-exist. Its pre-push gate requires a clean tracked worktree so the local
-pre-corpus validation reads the same bytes as the pushed commit. Commit cheap
-source-policy outputs such as new module classifications first; stash or remove
-other tracked partial-finalizer output. Never use checkpoint mode for the
-subsequent generated-output push or as merge evidence.
+The pre-push hook accepts checkpoint mode for one outgoing ref whose name
+and object ID both match the checked-out non-main commit. This leaves the
+pull request head available for protected certification after its outputs
+are installed. The source push requires a clean tracked worktree and runs
+the repository, dependency and compiler sentinels. Commit policies such as
+module classifications before dispatching generation.
 
-For recovery or diagnosis only, a manual exact-ref dispatch remains available:
-
-```powershell
-gh workflow run generated-artifacts.yml --ref main -f ref=<source-sha>
-```
+After verifying and committing the bundle, push to the PR branch with
+ordinary pre-push validation. That route compares the actual outgoing
+branch tip with the checked-out commit and runs the same architecture
+source-readiness check as PR / Plan. A failed local check prevents the
+stale head from reaching required CI.
 
 The installer accepts only the current `HEAD`, validates the bundle receipt,
 the canonical manifest output set, the source-tree fingerprint, and each file

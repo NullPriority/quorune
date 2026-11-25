@@ -13,6 +13,10 @@ on:
         required: false
         default: main
         type: string
+      base:
+        description: Exact ancestor for changed-owner planning
+        required: false
+        type: string
 
 permissions:
   actions: read
@@ -41,12 +45,17 @@ jobs:
         env:
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PUSH_BASE_SHA: ${{ github.event.before }}
+          MANUAL_BASE_REF: ${{ inputs.base }}
         run: |
           echo "source_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             echo "base_sha=$PR_BASE_SHA" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.event_name }}" == "push" && -n "$PUSH_BASE_SHA" ]]; then
             echo "base_sha=$PUSH_BASE_SHA" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event_name }}" == 'workflow_dispatch' && -n "$MANUAL_BASE_REF" ]]; then
+            base_sha=$(git rev-parse --verify --end-of-options "$MANUAL_BASE_REF^{commit}")
+            git merge-base --is-ancestor "$base_sha" HEAD
+            echo "base_sha=$base_sha" >> "$GITHUB_OUTPUT"
           else
             echo "base_sha=$(git rev-parse HEAD^)" >> "$GITHUB_OUTPUT"
           fi
