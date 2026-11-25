@@ -406,6 +406,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/library_search_model.py",
         "quorune/modular.py",
         "quorune/renown.py",
+        "quorune/card_printing.py",
         "quorune/model.py",
         "quorune/object_predicate.py",
         "quorune/target_forms.py",

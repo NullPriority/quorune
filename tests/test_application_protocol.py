@@ -5,16 +5,18 @@ import copy
 from dataclasses import replace
 import json
 from pathlib import Path
+import tempfile
 import unittest
 
 from jsonschema import Draft202012Validator
 
-from common import load_assets, make_session
+from common import keep_all, load_assets, make_session
 from quorune import (
     CommandEnvelope,
     GameService,
     PROTOCOL_VERSION,
 )
+from quorune.record import authoritative_state_hash, replay_record
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,6 +96,34 @@ class ApplicationProtocolTests(unittest.TestCase):
             CommandEnvelope.from_mapping(
                 {key: value for key, value in body.items() if key != "command_id"}
             )
+
+    def test_current_turn_pass_intent_rejects_stale_scope_and_unknown_activations(self):
+        session, service = self.make_service(31017)
+        keep_all(session)
+        principal = session.pending_principals()[0]
+        baseline = authoritative_state_hash(session.state)
+        turn = session.state.turn_sequence
+        for key, choices in (
+            ("old-turn", {"pass_turn_sequence": turn - 1}),
+            ("forged-ability", {"pass_turn_sequence": turn, "ignored_activation_ids": ["activate:missing:ab1"]}),
+            ("missing-scope", {"ignored_activation_ids": []}),
+        ):
+            rejected = service.command(self.envelope(
+                session, principal=principal, command_id=key, action_id="pass", choices=choices,
+            ), principal=principal)
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(baseline, authoritative_state_hash(session.state))
+        accepted = service.command(self.envelope(
+            session, principal=principal, command_id="turn-pass", action_id="pass",
+            choices={"pass_turn_sequence": turn},
+        ), principal=principal)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(turn, session.commands[-1]["payload"]["pass_turn_sequence"])
+        with tempfile.TemporaryDirectory() as directory:
+            session.save(directory)
+            replay = replay_record(directory, session.card_db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
 
     def test_projected_packet_is_protocol_v3_strict_and_uses_full_game_id(self):
         session, service = self.make_service(31002)

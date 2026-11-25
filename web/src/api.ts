@@ -70,6 +70,36 @@ export interface Guest {
   expires_at: string;
 }
 
+export interface SavedDeck {
+  id: string;
+  name: string;
+  commanders: string[];
+}
+
+export interface RecentGame {
+  game_id: string;
+  room_id: string;
+  status: GameLifecycle["status"];
+  created_at: string;
+  format_profile: string;
+}
+
+export interface DeckPreflight {
+  trusted_only_ready: boolean;
+  data_integrity_issue?: boolean;
+  card_behavior_ready?: boolean;
+  format_verification_pending?: boolean;
+  affected_cards?: { name: string; reasons: string[] }[];
+  affected_card_count?: number;
+  data_integrity_blockers?: {
+    diagnostic_id: string;
+    kind: string;
+    card: string;
+    oracle_id: string;
+    programs: { key: string; origin: string; oracle_hash: string | null; rulings_hash: string | null }[];
+  }[];
+}
+
 export interface Seat {
   seat: string;
   guest_id: string | null;
@@ -80,6 +110,7 @@ export interface Seat {
     deck_id: string;
     name: string;
     deck_list_fingerprint: string;
+    preflight?: DeckPreflight;
     format_legality: {
       status: string;
       issue_count: number;
@@ -169,6 +200,7 @@ export interface PublicEventPage {
 export interface SystemStatus {
   server: string;
   protocol: string;
+  build?: string;
   card_data: {
     ready: boolean;
     phase: string;
@@ -205,6 +237,14 @@ export const api = {
       { method: "POST", body: JSON.stringify({}) },
     ),
   me: () => request<{ guest: Guest }>("/api/v1/me"),
+  savedDecks: () => request<{ decks: SavedDeck[] }>("/api/v1/me/decks"),
+  savedDeck: (deckId: string) => request<{
+    deck: { name: string; commanders: string[]; entries: {
+      name: string; quantity: number; board: string;
+      printing?: { set_code?: string; collector_number?: string; finish?: string };
+    }[] };
+  }>(`/api/v1/me/decks/${deckId}`),
+  recentGames: () => request<{ games: RecentGame[] }>("/api/v1/me/games"),
   guest: (display_name: string) =>
     request<{ guest: Guest }>("/api/v1/guests", {
       method: "POST",
@@ -251,10 +291,11 @@ export const api = {
     decklist: string,
     source_url?: string,
     legality_confirmation?: string,
+    saved_deck_id?: string,
   ) =>
     request<{
-      deck: unknown;
-      preflight: { trusted_only_ready: boolean };
+      deck: { deck_id: string; name: string; commanders: string[] };
+      preflight: DeckPreflight;
       format_legality: { status: string; issues: LegalityIssue[] };
     }>(
       `/api/v1/rooms/${roomId}/deck`,
@@ -266,6 +307,7 @@ export const api = {
           decklist,
           source_url: source_url || null,
           legality_confirmation: legality_confirmation || null,
+          saved_deck_id: saved_deck_id || null,
         }),
       },
     ),
@@ -280,6 +322,10 @@ export const api = {
     }),
   game: (gameId: string) =>
     request<{ game: GameLifecycle }>(`/api/v1/games/${gameId}`),
+  rematch: (gameId: string) =>
+    request<{ room: Room; invite_code: string }>(`/api/v1/games/${gameId}/rematch`, {
+      method: "POST", body: JSON.stringify({}),
+    }),
   events: (gameId: string, after = 0, limit = 100) =>
     request<PublicEventPage>(
       `/api/v1/games/${gameId}/events?after=${after}&limit=${limit}`,

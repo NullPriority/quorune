@@ -223,6 +223,7 @@ class TurnPriorityDecisionOwner:
         response = dict(decision.responses[seat])
         action = response.pop("action")
         if action == "pass":
+            self._validate_pass_intent(decision, seat, response)
             clear_mana_undo_stack(self.state.players[seat].stats)
             self.set_yield(seat, response.get("yield"))
             self.pass_priority(seat)
@@ -275,6 +276,27 @@ class TurnPriorityDecisionOwner:
                 self.complete_special_action(self.host._next_active_after(seat))
         else:
             raise GameRuleError(f"Unsupported priority action {action}")
+
+    def _validate_pass_intent(self, decision: DecisionGroup, seat: str, response: Mapping[str, Any]) -> None:
+        if "pass_turn_sequence" not in response and "ignored_activation_ids" not in response:
+            return
+        scope = response.get("pass_turn_sequence")
+        if type(scope) is not int or scope != self.state.turn_sequence:
+            raise GameRuleError("The current turn ended. Arm Pass turn again if needed.")
+        ignored = response.get("ignored_activation_ids", [])
+        if (
+            not isinstance(ignored, list)
+            or any(type(ref) is not str for ref in ignored)
+            or len(set(ignored)) != len(ignored)
+        ):
+            raise GameRuleError("Choose distinct activation stops to ignore.")
+        offered = decision.payload_by_actor[seat]["legal"]["actions"]
+        allowed = {
+            row["id"] for row in offered
+            if row.get("action") == "activate" and row.get("mana_ability") is not True
+        }
+        if set(ignored) - allowed:
+            raise GameRuleError("An ignored activation is no longer available.")
 
     def complete_special_action(self, seat: str) -> None:
         """Stabilize one committed no-stack action before restoring priority."""

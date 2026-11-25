@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
-import { startRoomGame } from "./support/startup";
+import { completeCastGesture, startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
   driveUntil,
@@ -112,9 +112,7 @@ test("@browser-rules @modal modal clicks preserve targets and submit printed ord
       testInfo,
       { label: "expose the zero-mana modal commander cast" },
     );
-    await host.getByTestId(castId).click();
-    await expect(host.getByTestId("choice-dialog")).toBeVisible();
-    await submitOpenChoice(host);
+    await completeCastGesture(host, () => host.getByTestId(castId).click());
     await driveUntil(
       pages,
       async () =>

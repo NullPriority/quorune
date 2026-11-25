@@ -37,7 +37,7 @@ def projected_action_explanations(
     host: ActionCatalogHost,
     seat: str,
 ) -> dict[str, dict[str, Any]]:
-    """Return hidden-safe reasons for the authenticated seat's own lands.
+    """Return hidden-safe reasons for the authenticated seat's own cards.
 
     These are explanatory projections, never executable offers. The browser
     displays them verbatim and does not reproduce Magic timing rules.
@@ -94,6 +94,20 @@ def projected_action_explanations(
                     active=host.state.active_player,
                 ),
             )
+    for object_id in player.zones["battlefield"]:
+        card = host.state.cards[object_id]
+        if card.controller != seat:
+            continue
+        clauses = [
+            clause for ability in host._activated_abilities(card)
+            for clause in ability.uncompiled_costs if card.zone in ability.zones
+        ]
+        if clauses:
+            result[card.ref] = {
+                "status": "unresolved",
+                "reason": "uncompiled_activation_cost",
+                "message": "Unsupported activation cost · " + ", ".join(dict.fromkeys(clauses)),
+            }
     return result
 
 

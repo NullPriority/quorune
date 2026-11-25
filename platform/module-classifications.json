@@ -1081,6 +1081,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/card_printing.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/card_program_faces.py",
       "layer": "semantics",
       "owning_subsystem": "legacy_semantics",
@@ -34984,6 +34996,23 @@
       "replay_participation": "none"
     },
     {
+      "file": "server/deck_readiness.py",
+      "layer": "transport",
+      "owning_subsystem": "server_transport",
+      "allowed_dependency_layers": [
+        "adapter",
+        "application",
+        "domain",
+        "rules",
+        "semantics",
+        "transport"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "principal_scoped",
+      "replay_participation": "none"
+    },
+    {
       "file": "server/store.py",
       "layer": "transport",
       "owning_subsystem": "server_transport",
@@ -35018,5 +35047,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1c8a76d14686482a290796481ae2c56721cfb16d0322734c9660a7d77ab24260"
+  "fingerprint": "aa75daea7b78dc3689ab2010a8c83636af08b661012644429ca992bb1e7d995a"
 }

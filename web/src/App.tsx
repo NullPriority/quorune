@@ -1,32 +1,44 @@
-import { type CSSProperties, DragEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { type CSSProperties, FormEvent, useEffect, useRef, useState } from "react";
 import {
   api,
   ApiError,
-  beginGuestSession,
   type GameLifecycle,
   type Guest,
   type LegalityConfirmationRequired,
   type PublicGameEvent,
   type Room,
+  type SavedDeck,
   type SystemStatus,
   streamUrl,
   streamProtocols,
 } from "./api";
 import { ChoiceFormView } from "./ChoiceForm";
+import { DeckReadiness } from "./DeckReadiness";
+import { ContextualDecision, contextualDecisionAction } from "./ContextualDecision";
+import { projectedLabels } from "./CardChoiceGrid";
 import {
   executableChoices,
   initialChoices,
-  validateChoices,
-  type ChoiceValues,
 } from "./choices";
-import type { CommandEnvelope, DecisionPacket, JsonValue, LegalAction } from "./generated/protocol";
+import type { DecisionPacket, JsonValue, LegalAction } from "./generated/protocol";
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
 import { ingestPacket, type ProjectedView } from "./protocol";
-import { findSafeAutoPass } from "./tableAutomation";
-import { choiceSubmitLabel, visibleActionLabel } from "./tablePresentation";
-import { AutomationControls, CommanderDamage, ManaHelp } from "./TableStatus";
+import { activeCombatPriorityStop, findSafeAutoPass, isIgnoredActivation, turnYieldPause, type CombatPriorityStop, type TurnYieldBoundary } from "./tableAutomation";
+import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, visibleActionLabel } from "./tablePresentation";
+import { AutomationControls, ManaHelp } from "./TableStatus";
 import { TableSettings } from "./TableSettings";
-import { TurnStatus } from "./TurnStatus";
+import { CombatStopOptions, TurnStatus } from "./TurnStatus";
+import { PlayerBoard } from "./PlayerBoard";
+import { StackPanel } from "./StackPanel";
+import { BuildIdentity, GameMenu } from "./GameMenu";
+import { Lobby, Welcome } from "./Lobby";
+import type { SavedDeckSelection } from "./PlayLibrary";
+import { handZoneOffers, type HandZoneOffer } from "./handZoneOffers";
+import { HandRail } from "./HandRail";
+import { ManaText } from "./ManaText";
+import { useDecisionInteraction } from "./useDecisionInteraction";
+import { PublicActionDraft, publicObjectSteps, stageTableObject, type TableObjectSelection } from "./PublicActionDraft";
+import { TargetArrowLayer, targetZones } from "./TargetArrowLayer";
 import {
   DEFAULT_TABLE_PREFERENCES,
   loadTablePreferences,
@@ -54,172 +66,6 @@ function actionTone(action: LegalAction): string {
   return "primary";
 }
 
-function projectedLabels(view: ProjectedView): Map<string, string> {
-  const labels = new Map<string, string>();
-  function walk(value: JsonValue | undefined) {
-    if (Array.isArray(value)) {
-      value.forEach(walk);
-      return;
-    }
-    if (!value || typeof value !== "object") return;
-    const row = value as Record<string, JsonValue>;
-    const id = row.id;
-    if (typeof id === "string") {
-      const label = row.label ?? row.n ?? row.name;
-      if (typeof label === "string") labels.set(id, label);
-    }
-    Object.values(row).forEach(walk);
-  }
-  walk(view.state);
-  walk(view.decision?.ctx);
-  for (const seat of ["A", "B", "C", "D"]) labels.set(seat, `Seat ${seat}`);
-  return labels;
-}
-
-function Welcome({ onReady }: { onReady: (guest: Guest) => void }) {
-  const [name, setName] = useState("");
-  const [error, setError] = useState("");
-  async function submit(event: FormEvent) {
-    event.preventDefault();
-    try {
-      setError("");
-      beginGuestSession();
-      const result = await api.guest(name.trim());
-      onReady(result.guest);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
-    }
-  }
-  return (
-    <main className="welcome-shell">
-      <section className="hero-card">
-        <div className="hero-copy">
-          <div className="brand-mark" aria-hidden="true">Q</div>
-          <div className="eyebrow">QUORUNE · SERVER-AUTHORITATIVE PLAY</div>
-          <h1>Authoritative rules.<br />Private state. Exact replay.</h1>
-          <p>
-            Play multiplayer card games through a deterministic rules engine.
-            Your hand stays private, every accepted move is replayable, and each
-            player sees only their own projected table.
-          </p>
-          <ul className="trust-list" aria-label="Platform guarantees">
-            <li>Seat-private game views</li>
-            <li>Server-validated actions</li>
-            <li>Durable match recovery</li>
-          </ul>
-        </div>
-        <form onSubmit={submit} className="stack-form entry-form">
-          <div>
-            <span className="step-kicker">01 · PLAYER IDENTITY</span>
-            <h2>Enter Quorune</h2>
-            <p>Choose the name your pod will see. No account is required.</p>
-          </div>
-          <label>
-            Display name
-            <input
-              data-testid="display-name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              maxLength={40}
-              autoComplete="nickname"
-              autoFocus
-              required
-            />
-          </label>
-          <button data-testid="create-guest" type="submit">Continue to tables <span aria-hidden="true">→</span></button>
-          {error && <div className="error-banner" role="alert">{error}</div>}
-        </form>
-      </section>
-    </main>
-  );
-}
-
-function Lobby({ guest, system, onRoom }: { guest: Guest; system: SystemStatus | null; onRoom: (room: Room, invite?: string) => void }) {
-  const [invite, setInvite] = useState("");
-  const [seat, setSeat] = useState("B");
-  const [playerCount, setPlayerCount] = useState<2 | 4>(4);
-  const [error, setError] = useState("");
-  async function create() {
-    try {
-      setError("");
-      const result = await api.createRoom(playerCount);
-      onRoom(result.room, result.invite_code);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
-    }
-  }
-  async function join(event: FormEvent) {
-    event.preventDefault();
-    try {
-      setError("");
-      const result = await api.joinRoom(invite.trim(), seat);
-      onRoom(result.room);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
-    }
-  }
-  async function watch() {
-    try {
-      setError("");
-      const result = await api.watchRoom(invite.trim());
-      onRoom(result.room);
-    } catch (caught) {
-      setError(caught instanceof Error ? caught.message : String(caught));
-    }
-  }
-  return (
-    <main className="page-shell narrow">
-      <header className="page-header">
-        <div className="session-line">
-          <span className="status-dot" /> Session ready · {guest.display_name}
-          {system?.card_data.database && <> · {system.card_data.database.cards.toLocaleString()} local cards</>}
-        </div>
-        <div className="eyebrow">QUORUNE</div>
-        <h1>Find your table</h1>
-        <p className="page-lede">Host a private duel or four-player table using the current Commander profile, join a seat, or watch with an invite code.</p>
-      </header>
-      <div className="lobby-grid">
-        <section className="panel">
-          <div className="panel-number">01</div>
-          <h2>Host a pod</h2>
-          <p>Create an invite-only 1v1 duel or four-player Commander room.</p>
-          <label>
-            Table size
-            <select
-              data-testid="room-size"
-              value={playerCount}
-              onChange={(event) => setPlayerCount(Number(event.target.value) as 2 | 4)}
-            >
-              <option value={4}>Four-player Commander</option>
-              <option value={2}>1v1 Commander duel</option>
-            </select>
-          </label>
-          <button data-testid="create-room" onClick={create}>Create room</button>
-        </section>
-        <section className="panel">
-          <div className="panel-number">02</div>
-          <h2>Join a pod</h2>
-          <form onSubmit={join} className="stack-form">
-            <label>
-              Invite code
-              <input data-testid="invite-code" value={invite} onChange={(event) => setInvite(event.target.value)} required />
-            </label>
-            <label>
-              Seat
-              <select data-testid="seat-select" value={seat} onChange={(event) => setSeat(event.target.value)}>
-                {"ABCD".split("").map((value) => <option key={value}>{value}</option>)}
-              </select>
-            </label>
-            <button data-testid="join-room" type="submit">Take seat</button>
-            <button data-testid="watch-room" className="quiet-button" type="button" disabled={!invite.trim()} onClick={watch}>Watch only</button>
-          </form>
-        </section>
-      </div>
-      {error && <div className="error-banner" role="alert">{error}</div>}
-    </main>
-  );
-}
-
 function RoomView({
   guest,
   initial,
@@ -227,6 +73,7 @@ function RoomView({
   onGame,
   onRoom,
   onLeave,
+  initialSavedDeck,
 }: {
   guest: Guest;
   initial: Room;
@@ -234,6 +81,7 @@ function RoomView({
   onGame: (gameId: string) => void;
   onRoom: (room: Room, invite?: string) => void;
   onLeave: () => void;
+  initialSavedDeck?: SavedDeckSelection;
 }) {
   const [room, setRoom] = useState(initial);
   const [currentInvite, setCurrentInvite] = useState(invite);
@@ -241,6 +89,8 @@ function RoomView({
   const [commander, setCommander] = useState("");
   const [decklist, setDecklist] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
+  const [savedDecks, setSavedDecks] = useState<SavedDeck[]>([]);
+  const [savedDeckId, setSavedDeckId] = useState(initialSavedDeck?.id ?? "");
   const [message, setMessage] = useState("");
   const [messageKind, setMessageKind] = useState<"success" | "warning" | "error">("success");
   const [busy, setBusy] = useState(false);
@@ -249,6 +99,59 @@ function RoomView({
   const mine = room.seats.find((seat) => seat.mine);
   const owner = room.owner_guest_id === guest.guest_id;
   const readyCount = room.seats.filter((seat) => seat.ready).length;
+  const reviewingDraft = !mine?.ready && Boolean(mine?.deck?.preflight?.data_integrity_issue);
+
+  useEffect(() => {
+    if (room.spectator) return;
+    let stopped = false;
+    void api.savedDecks().then(({ decks }) => {
+      if (stopped) return;
+      setSavedDecks(decks);
+      const preferred = decks.find((deck) => deck.id === initialSavedDeck?.id);
+      if (!preferred) return;
+      if (initialSavedDeck?.edit) void editSavedDeck(preferred.id);
+      else setName(preferred.name);
+    }).catch(() => {
+      if (stopped) return;
+      setMessageKind("warning");
+      setMessage("Saved decks could not be loaded. You can still paste a list or use a Moxfield link.");
+    });
+    return () => { stopped = true; };
+  }, [initialSavedDeck, room.spectator]);
+
+  function chooseSavedDeck(id: string) {
+    setSavedDeckId(id);
+    const selected = savedDecks.find((deck) => deck.id === id);
+    if (selected) setName(selected.name);
+  }
+
+  async function editSavedDeck(id: string) {
+    setBusy(true);
+    try {
+      const { deck } = await api.savedDeck(id);
+      const sections = { commander: "Commander", mainboard: "Mainboard", sideboard: "Sideboard", companion: "Companion", maybeboard: "Maybeboard" };
+      const text = Object.entries(sections).flatMap(([board, title]) => {
+        const entries = deck.entries.filter((entry) => entry.board === board);
+        const lines = entries.map(({ quantity, name, printing }) => {
+          const edition = printing?.set_code && printing.collector_number
+            ? ` (${printing.set_code}) ${printing.collector_number}` : "";
+          const finish = printing?.finish?.toLowerCase() === "foil" ? " *F*" : "";
+          return `${quantity} ${name}${edition}${finish}`;
+        });
+        return lines.length ? [`${title}:\n${lines.join("\n")}`] : [];
+      }).join("\n\n");
+      setName(deck.name);
+      setCommander(deck.commanders[0] ?? "");
+      setDecklist(text);
+      setSourceUrl("");
+      setSavedDeckId("");
+    } catch (caught) {
+      setMessageKind("error");
+      setMessage(caught instanceof Error ? caught.message : "Couldn't open the saved list.");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function copyInvite() {
     try {
@@ -374,20 +277,26 @@ function RoomView({
         room.room_id,
         name,
         commander,
-        sourceUrl.trim() ? "" : decklist,
-        sourceUrl.trim() || undefined,
+        savedDeckId || sourceUrl.trim() ? "" : decklist,
+        savedDeckId ? undefined : sourceUrl.trim() || undefined,
         legalityConfirmation,
+        savedDeckId || undefined,
       );
       setLegalityReview(null);
       const preview = result.format_legality.status === "preview_override_confirmed";
-      if (!result.preflight.trusted_only_ready) {
-        setMessage("Deck accepted with semantic fidelity warnings. Unsupported card behavior will still fail closed during play.");
+      if (result.preflight.data_integrity_issue) {
+        const { deck_id: id, name, commanders } = result.deck;
+        setSavedDecks((decks) => [{ id, name, commanders }, ...decks.filter((deck) => deck.id !== id)]);
+        setMessage("Draft saved. Review the card data before starting a game with this deck.");
+        setMessageKind("warning");
+      } else if (!result.preflight.trusted_only_ready) {
+        setMessage("Deck accepted. Review the listed cards before you play.");
         setMessageKind("warning");
       } else if (preview) {
-        setMessage("Preview-card legality warning confirmed. The exact override is recorded with this list.");
+        setMessage("Deck validated with the preview cards you confirmed.");
         setMessageKind("warning");
       } else {
-        setMessage("Deck validated: trusted-only semantic gate passes.");
+        setMessage("Deck validated and submitted.");
         setMessageKind("success");
       }
       setRoom((await api.room(room.room_id)).room);
@@ -421,9 +330,15 @@ function RoomView({
     try {
       const result = await api.clearDeck(room.room_id);
       setRoom(result.room);
+      const previous = mine?.deck;
+      if (previous) {
+        setSavedDecks((decks) => decks.some((deck) => deck.id === previous.deck_id)
+          ? decks : [{ id: previous.deck_id, name: previous.name, commanders: [] }, ...decks]);
+        await editSavedDeck(previous.deck_id);
+      }
       setLegalityReview(null);
       setMessageKind("success");
-      setMessage("You are unready. Update or replace your deck, then validate it again.");
+      setMessage("Edit your current list or choose another deck, then check and submit it.");
     } catch (caught) {
       setMessageKind("error");
       setMessage(caught instanceof Error ? caught.message : String(caught));
@@ -450,9 +365,11 @@ function RoomView({
       <header className="room-header">
         <div>
           <div className="eyebrow">{room.seat_count === 2 ? "COMMANDER DUEL" : "COMMANDER MULTIPLAYER"} · 40 LIFE</div>
-          <h1>Room {room.room_id.slice(0, 8)}</h1>
+          <h1>{room.seat_count === 2 ? "Commander duel" : "Commander table"}</h1>
         </div>
         <div className="room-header-actions">
+          {owner && <button type="button" className="quiet-button" data-testid="room-library" disabled={busy}
+            onClick={onLeave}>Decks and games</button>}
           {owner && currentInvite && (
             <div className="invite-chip">
               <div><span>Invite code</span><strong data-testid="room-invite">{currentInvite}</strong></div>
@@ -491,7 +408,9 @@ function RoomView({
               <strong>{seat.display_name ?? "Open seat"}</strong>
               <small>{seat.deck?.name ?? "No deck submitted"}</small>
             </div>
-            <span className={`seat-state ${seat.ready ? "ready" : "waiting"}`}><i aria-hidden="true" />{seat.ready ? "READY" : "WAITING"}</span>
+            <span className={`seat-state ${seat.ready ? "ready" : "waiting"}`}><i aria-hidden="true" />
+              {seat.ready ? "Deck submitted" : seat.deck ? "Deck needs review" : seat.guest_id ? "Choosing a deck" : "Open"}
+            </span>
             {owner && seat.guest_id && !seat.mine && (
               <button type="button" className="seat-remove" data-testid={`remove-seat-${seat.seat}`} disabled={busy} onClick={() => void removeSeat(seat.seat)}>Remove</button>
             )}
@@ -508,21 +427,15 @@ function RoomView({
           <button type="button" className="quiet-button" data-testid="leave-watch-room" disabled={busy} onClick={leaveRoom}>Leave table</button>
         </section>
       )}
-      {!room.spectator && mine?.ready && mine.deck && (
-        <section className="deck-ready-card" data-testid="deck-ready-summary">
-          <div className="deck-ready-icon" aria-hidden="true">✓</div>
+      {!room.spectator && mine?.deck && (mine.ready || reviewingDraft) && (
+        <section className="deck-ready-card" data-testid={reviewingDraft ? "deck-review-summary" : "deck-ready-summary"}>
           <div>
-            <div className="eyebrow">YOUR DECK · SEAT {mine.seat}</div>
             <h2>{mine.deck.name}</h2>
-            {mine.deck.format_legality.status === "preview_override_confirmed" ? (
-              <p><span className="preview-chip">PREVIEW OVERRIDE</span> {mine.deck.format_legality.issue_count} not-yet-legal card{mine.deck.format_legality.issue_count === 1 ? "" : "s"} explicitly confirmed. Images are cached locally.</p>
-            ) : (
-              <p>Validated, fingerprinted, and ready. Card images are cached locally in the background.</p>
-            )}
+            <DeckReadiness deck={mine.deck} />
           </div>
           <div className="deck-ready-actions">
-            <code title="Exact deck-list fingerprint">{mine.deck.deck_list_fingerprint.slice(0, 12)}</code>
-            <button type="button" className="quiet-button" data-testid="unready-deck" disabled={busy} onClick={unready}>Change deck / Unready</button>
+            {mine.ready ? <button type="button" className="quiet-button" data-testid="unready-deck" disabled={busy} onClick={unready}>Change deck</button>
+              : <button type="button" className="quiet-button" disabled={busy} onClick={() => void editSavedDeck(mine.deck!.deck_id)}>Edit saved draft</button>}
           </div>
         </section>
       )}
@@ -531,15 +444,24 @@ function RoomView({
           <div>
             <div className="eyebrow">SEAT {mine?.seat}</div>
             <h2>Validate your deck</h2>
-            <p>The server resolves names against the pinned card database, checks Commander legality, and runs semantic preflight before marking you ready.</p>
+            <p>Choose a saved deck, import from Moxfield, or paste a list.</p>
           </div>
           <form onSubmit={upload} className="deck-form">
+            {savedDecks.length > 0 && <label className="wide">Saved deck
+              <select value={savedDeckId} onChange={(event) => chooseSavedDeck(event.target.value)}>
+                <option value="">Use a pasted list or Moxfield link</option>
+                {savedDecks.map((deck) => <option key={deck.id} value={deck.id}>{deck.name}</option>)}
+              </select>
+            </label>}
             <label>Deck name<input data-testid="deck-name" value={name} onChange={(event) => setName(event.target.value)} required /></label>
-            <label>Commander (required for pasted text)<input data-testid="commander-name" value={commander} onChange={(event) => setCommander(event.target.value)} required={!sourceUrl.trim()} /></label>
-            <label className="wide">Public Moxfield URL<input data-testid="deck-source-url" value={sourceUrl} onChange={(event) => setSourceUrl(event.target.value)} placeholder="https://moxfield.com/decks/…" /></label>
-            <div className="import-divider wide"><span>or paste a list</span></div>
-            <label className="wide">Deck list<textarea data-testid="deck-list" value={decklist} onChange={(event) => setDecklist(event.target.value)} rows={12} required={!sourceUrl.trim()} /></label>
-            <button data-testid="submit-deck" disabled={busy} type="submit">{busy ? "Validating…" : "Validate and ready"}</button>
+            {savedDeckId ? <button type="button" className="secondary-button" disabled={busy}
+              onClick={() => void editSavedDeck(savedDeckId)}>Edit saved list</button> : <>
+              <label>Commander (required for pasted text)<input data-testid="commander-name" value={commander} onChange={(event) => setCommander(event.target.value)} required={!sourceUrl.trim()} /></label>
+              <label className="wide">Public Moxfield URL<input data-testid="deck-source-url" value={sourceUrl} onChange={(event) => setSourceUrl(event.target.value)} placeholder="https://moxfield.com/decks/…" /></label>
+              <div className="import-divider wide"><span>or paste a list</span></div>
+              <label className="wide">Deck list<textarea data-testid="deck-list" value={decklist} onChange={(event) => setDecklist(event.target.value)} rows={12} required={!sourceUrl.trim()} /></label>
+            </>}
+            <button data-testid="submit-deck" disabled={busy} type="submit">{busy ? "Checking deck…" : "Check and submit deck"}</button>
           </form>
         </section>
       )}
@@ -548,7 +470,7 @@ function RoomView({
           <div>
             <div className="eyebrow">PREVIEW CARD WARNING</div>
             <h2>These cards are not Commander-legal yet.</h2>
-            <p>They exist in the current Scryfall snapshot but have future release dates. Confirming records an override for this exact deck fingerprint; it does not waive rules-semantic failures.</p>
+            <p>These cards have future release dates. Confirm to submit this list and check its card behavior.</p>
           </div>
           <ul>
             {legalityReview.issues.map((issue) => (
@@ -571,141 +493,15 @@ function RoomView({
       {owner && (
         <div className="start-bar">
           <div className="readiness-copy">
-            <strong>{readyCount}/{room.seat_count} decks ready</strong>
-            <span>{readyCount === room.seat_count ? "Your table is ready to begin." : "Waiting for every seat to validate a deck."}</span>
+            <strong>{readyCount} of {room.seat_count} decks submitted</strong>
+            <span>{readyCount === room.seat_count ? "You can start the game." : "Each player needs to submit a deck."}</span>
           </div>
-          <div className="readiness-meter" aria-label={`${readyCount} of ${room.seat_count} decks ready`}><span style={{ width: `${readyCount / room.seat_count * 100}%` }} /></div>
+          <div className="readiness-meter" aria-hidden="true"><span style={{ width: `${readyCount / room.seat_count * 100}%` }} /></div>
           <button data-testid="start-game" disabled={busy || !room.seats.every((seat) => seat.ready)} onClick={start}>{room.seat_count === 2 ? "Start duel" : "Start game"}</button>
         </div>
       )}
       {message && <div className={`${messageKind}-banner`} role={messageKind === "error" ? "alert" : "status"}>{message}</div>}
     </main>
-  );
-}
-
-function PlayerBoard({
-  seat,
-  player,
-  active,
-  priority,
-  mine,
-  view,
-  manualMana,
-  cardActions,
-  onCardIntent,
-  onManaIntent,
-  onInspectCard,
-  selectedCardRef,
-  onOpenZone,
-  dropEnabled,
-  onCardDrop,
-  onCardDrag,
-  getDraggedCard,
-  dragRelease,
-}: {
-  seat: string;
-  player: Record<string, JsonValue>;
-  active: boolean;
-  priority: boolean;
-  mine: boolean;
-  view: ProjectedView;
-  manualMana: boolean;
-  cardActions: LegalAction[];
-  onCardIntent: (actions: LegalAction[], card: JsonValue) => void;
-  onManaIntent: (actions: LegalAction[], card: JsonValue) => void;
-  onInspectCard: (card: JsonValue) => void;
-  selectedCardRef: string;
-  onOpenZone: (seat: string, zone: "gy" | "ex") => void;
-  dropEnabled: boolean;
-  onCardDrop: (cardRef: string) => void;
-  onCardDrag: (cardRef: string | null) => void;
-  getDraggedCard: () => string;
-  dragRelease: number;
-}) {
-  const [dragActive, setDragActive] = useState(false);
-  useEffect(() => setDragActive(false), [dragRelease]);
-  const battlefield = asList(player.bf);
-  const command = asList(player.cmd);
-  const graveyard = asList(player.gy);
-  const exile = asList(player.ex);
-  const mana = asRecord(player.mana);
-  return (
-    <article className={`player-board${active ? " active-player" : ""}${priority ? " has-priority" : ""}${mine ? " own-board" : ""}`} data-testid={`player-${seat}`}>
-      <header>
-        <span className="seat-letter small">{seat}</span>
-        <div>
-          <div className="player-name"><strong>Seat {seat}</strong>{mine && <span className="you-chip">You</span>}</div>
-          <small>{String(player.hand_n ?? 0)} hand · {String(player.lib_n ?? 0)} library</small>
-        </div>
-        <div className="life" aria-label={`${String(player.life ?? 0)} life`}><span>{String(player.life ?? 0)}</span><small>LIFE</small></div>
-      </header>
-      {(active || priority) && <div className="turn-flags" aria-label={`Seat ${seat} turn status`}>{active && <span className="active-flag"><span aria-hidden="true">▶</span> Active turn</span>}{priority && <span className="priority-flag"><span aria-hidden="true">◎</span> Priority</span>}</div>}
-      <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />
-      <div className="zone-label">COMMAND</div>
-      <div className="card-strip command-zone">{command.length ? command.map((card, index) => {
-        const ref = String(asRecord(card).id ?? "");
-        const actions = mine
-          ? cardActions.filter((action) => String(action.card ?? action.source ?? "") === ref)
-          : [];
-        return <CardTile key={ref || index} value={card} view={view} compact actions={actions} onIntent={onCardIntent} onInspect={onInspectCard} onDragCard={onCardDrag} onDropCard={onCardDrop} selected={selectedCardRef === ref} explainUnavailable={mine} />;
-      }) : <em>Empty</em>}</div>
-      <div className="zone-label">BATTLEFIELD</div>
-      <div
-        className={`card-strip battlefield${mine && dropEnabled ? " drop-target" : ""}${dragActive ? " drag-active" : ""}`}
-        data-testid={mine ? "own-battlefield" : undefined}
-        data-own-battlefield={mine ? "true" : undefined}
-        onDragOver={(event) => {
-          if (!mine || !dropEnabled) return;
-          event.preventDefault();
-          event.dataTransfer.dropEffect = "move";
-        }}
-        onDragEnter={(event) => {
-          if (!mine || !dropEnabled) return;
-          event.preventDefault();
-          setDragActive(true);
-        }}
-        onDragLeave={(event) => {
-          if (event.currentTarget.contains(event.relatedTarget as Node | null)) return;
-          setDragActive(false);
-        }}
-        onDrop={(event: DragEvent<HTMLDivElement>) => {
-          if (!mine || !dropEnabled) return;
-          event.preventDefault();
-          setDragActive(false);
-          const ref = event.dataTransfer.getData("application/x-commander-card") || event.dataTransfer.getData("text/plain") || getDraggedCard();
-          if (ref) onCardDrop(ref);
-        }}
-        onPointerUp={(event) => {
-          if (!mine || !dropEnabled || event.button !== 0) return;
-          const ref = getDraggedCard();
-          if (ref) onCardDrop(ref);
-        }}
-      >
-        {battlefield.length ? battlefield.map((card, index) => {
-          const ref = String(asRecord(card).id ?? "");
-          const actions = mine
-            ? cardActions.filter((action) =>
-                String(action.card ?? action.source ?? "") === ref
-                && (action.mana_ability !== true || manualMana),
-              )
-            : [];
-          const manaOnly = actions.length > 0 && actions.every((action) =>
-            action.mana_ability === true || action.action === "undo_mana",
-          );
-          return (
-            <div className="battlefield-card-slot" key={ref || index}>
-              <CardTile value={card} view={view} table actions={actions} onIntent={manaOnly ? onManaIntent : onCardIntent} onInspect={onInspectCard} manualMana={manaOnly} selected={selectedCardRef === ref} />
-            </div>
-          );
-        }) : <em>{mine && dropEnabled ? "Drop a playable card here" : "Empty battlefield"}</em>}
-      </div>
-      <footer className="zone-summary">
-        <button type="button" data-testid={`zone-${seat}-graveyard`} disabled={!graveyard.length} onClick={() => onOpenZone(seat, "gy")}>GY <strong>{graveyard.length}</strong></button>
-        <button type="button" data-testid={`zone-${seat}-exile`} disabled={!exile.length} onClick={() => onOpenZone(seat, "ex")}>EXILE <strong>{exile.length}</strong></button>
-        <span>LAND <strong>{String(player.lands ?? 0)}</strong></span>
-        <span>MANA <strong>{Object.entries(mana).map(([color, amount]) => `${color}${amount}`).join(" ") || "—"}</strong></span>
-      </footer>
-    </article>
   );
 }
 
@@ -745,35 +541,43 @@ function SetupScreen({ initial, onReady }: { initial: SystemStatus; onReady: () 
   }
 
   const data = status.card_data;
-  const progress = data.phase === "building" ? 72 : data.phase === "downloading" ? 38 : data.phase === "checking" ? 18 : 8;
+  const stage: Record<string, string> = {
+    starting: "Starting the card library",
+    checking: "Checking for new card data",
+    downloading: "Downloading card data",
+    building: "Preparing the local card database",
+    error: "Card library needs attention",
+  };
   return (
     <main className="setup-shell" data-testid="setup-screen">
       <section className="setup-card" aria-live="polite">
         <div className="brand-mark" aria-hidden="true">Q</div>
         <div>
-          <div className="eyebrow">QUORUNE · FIRST-RUN SETUP</div>
-          <h1>Preparing your card library.</h1>
-          <p>{data.detail}</p>
-        </div>
-        <div className="setup-progress" role="progressbar" aria-label="Card library setup" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
-          <span style={{ width: `${progress}%` }} />
+          <h1>{stage[data.phase] ?? "Preparing the card library"}</h1>
+          {data.phase === "error" && <p>{data.automatic_updates
+            ? "Check the server’s network connection and retry setup."
+            : "Ask the host to restore the local card database and restart Quorune."}</p>}
         </div>
         <dl className="setup-facts">
           <div><dt>Server</dt><dd><span className="status-dot" /> Running</dd></div>
-          <div><dt>Card data</dt><dd>{readable(data.phase)}</dd></div>
-          <div><dt>Images</dt><dd>Local cache · {status.images.downloaded}</dd></div>
+          <div><dt>Card data</dt><dd>{data.phase === "error" ? "Needs attention" : "Setting up"}</dd></div>
         </dl>
-        {data.last_error && <div className="error-banner" role="alert">{data.last_error}</div>}
+        <details><summary>Setup details</summary>
+          <p>{data.detail}</p>{data.last_error && data.last_error !== data.detail && <p>{data.last_error}</p>}
+          <BuildIdentity system={status} />
+        </details>
         {data.phase === "error" && data.automatic_updates && (
           <button type="button" onClick={retry} disabled={retrying}>{retrying ? "Retrying…" : "Retry setup"}</button>
         )}
-        <small>Initial setup downloads compressed Scryfall bulk data once. Future checks run every 24 hours.</small>
       </section>
     </main>
   );
 }
 
-function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
+function GameView({ gameId, system, onExit, onRoom }: {
+  gameId: string; system: SystemStatus | null; onExit: () => void;
+  onRoom: (room: Room, invite?: string) => void;
+}) {
   const [view, setView] = useState<ProjectedView | null>(null);
   const viewRef = useRef<ProjectedView | null>(null);
   const ingestChain = useRef(Promise.resolve());
@@ -781,17 +585,21 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
   const [reconnectNonce, setReconnectNonce] = useState(0);
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [notice, setNotice] = useState("");
-  const [selectedAction, setSelectedAction] = useState<LegalAction | null>(null);
   const [actionChoices, setActionChoices] = useState<LegalAction[]>([]);
+  const [minimizedChoice, setMinimizedChoice] = useState<string | null>(null);
   const [tablePreferences, setTablePreferences] = useState<TablePreferences>(loadTablePreferences);
+  const [turnYield, setTurnYield] = useState<TurnYieldBoundary | null>(null);
+  const [combatStops, setCombatStops] = useState<CombatPriorityStop[]>([]);
+  const [ignoredStops, setIgnoredStops] = useState<{ turn: number; offers: ReadonlyMap<string, string> }>();
   const [handManuallyCollapsed, setHandManuallyCollapsed] = useState(false);
   const [inspectedCard, setInspectedCard] = useState<JsonValue | null>(null);
+  const [stackTargets, setStackTargets] = useState<string[]>([]);
+  const [stackSource, setStackSource] = useState("");
+  const [railOpen, setRailOpen] = useState(false);
   const [cardContext, setCardContext] = useState<JsonValue | null>(null);
+  const [publicStage, setPublicStage] = useState("");
   const [zoneBrowser, setZoneBrowser] = useState<{ seat: string; zone: "gy" | "ex" } | null>(null);
   const [expandedInspector, setExpandedInspector] = useState(false);
-  const [choiceValues, setChoiceValues] = useState<ChoiceValues>({});
-  const [choiceErrors, setChoiceErrors] = useState<string[]>([]);
-  const [submitting, setSubmitting] = useState(false);
   const [lifecycle, setLifecycle] = useState<GameLifecycle | null>(null);
   const [stopReason, setStopReason] = useState("Pause for a table break");
   const [showInspection, setShowInspection] = useState(false);
@@ -799,7 +607,7 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
   const [publicEvents, setPublicEvents] = useState<PublicGameEvent[]>([]);
   const [publicLogLoading, setPublicLogLoading] = useState(false);
   const [controlling, setControlling] = useState(false);
-  const [pendingRetry, setPendingRetry] = useState<{ envelope: CommandEnvelope; label: string } | null>(null);
+  const [preparingRematch, setPreparingRematch] = useState(false);
   const [dragRelease, setDragRelease] = useState(0);
   const [bottomDockRef, shellStyle] = useTableDockClearance();
   const choiceDialogRef = useRef<HTMLFormElement | null>(null);
@@ -809,41 +617,87 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
   const publicLogDialogRef = useRef<HTMLElement | null>(null);
   const handPanelRef = useRef<HTMLElement | null>(null);
   const publicEventCursor = useRef(0);
-  const publicLogChain = useRef(Promise.resolve());
+  const publicLogCall = useRef<Promise<void> | null>(null);
+  const queuedLogRefresh = useRef<boolean | null>(null);
   const draggedCardRef = useRef("");
   const dragOverOwnBattlefieldRef = useRef(false);
   const lastDroppedCardRef = useRef("");
   const cardDropHandlerRef = useRef<(cardRef: string) => void>(() => undefined);
   const autoPassDecisionRef = useRef("");
   const manualMana = !tablePreferences.autoMana;
+  const {
+    draft, openDraft, closeDraft, stageChoices, submitDraft, act, retry, lastMove,
+    pendingRetry, submitting, awaitingProjection, parkedAction, parkDraft, resumeDraft,
+    canResumeDraft, dismissParkedDraft,
+  } = useDecisionInteraction({ view, gameId, enabled: connection === "LIVE" && lifecycle?.status === "active", onNotice: setNotice });
+  const selectedAction = draft?.action ?? null;
+  const choiceMinimized = Boolean(selectedAction && minimizedChoice === view?.decision?.id);
+  const minimizeInsteadOfCancel = canMinimizeChoice(view?.decision);
+  const currentChoiceDetail = view?.decision ? decisionDetail(view.decision) : "";
+  const choiceValues = draft?.values ?? {};
+  const choiceErrors = draft?.errors ?? [];
+  const projectedTurn = asRecord(view?.state.turn);
+  const turnBoundary = {
+    turn: Number(projectedTurn.seq ?? 0),
+    phase: String(projectedTurn.phase ?? ""),
+    stack: asList(view?.state.stack).map((item) => String(asRecord(item).id)),
+  };
+  const combatStop = view?.decision?.kind === "priority" ? activeCombatPriorityStop(
+    turnBoundary.phase, String(projectedTurn.step ?? ""), Boolean(asRecord(view.state.combat).first_strike_step), combatStops,
+  ) : undefined;
+  function toggleCombatStop(stop: CombatPriorityStop) {
+    setCombatStops((selected) => selected.includes(stop) ? selected.filter((value) => value !== stop) : [...selected, stop]);
+  }
+  const ignoredOffers = ignoredStops?.turn === turnBoundary.turn ? ignoredStops.offers : undefined;
+  const passWindow = {
+    activePlayer: String(projectedTurn.active ?? ""),
+    phase: turnBoundary.phase,
+    principalSeat: view?.principal.split(":").at(-1) ?? "",
+    stackDepth: turnBoundary.stack.length,
+    allowActiveMain: Boolean(turnYield),
+    ignoredActivations: turnYield ? ignoredOffers : undefined,
+  };
+  const autoPass = findSafeAutoPass(view?.decision?.legal_actions ?? [], passWindow);
+  const yieldPause = turnYield && (combatStop ? `Priority held · ${combatStop}`
+    : turnYieldPause(turnYield, turnBoundary, view?.decision?.kind, Boolean(autoPass)));
+
+  useEffect(() => {
+    if (turnYield && turnYield.turn !== turnBoundary.turn) setTurnYield(null);
+  }, [turnYield, turnBoundary.turn]);
 
   function refreshPublicLog(reset = false): Promise<void> {
-    publicLogChain.current = publicLogChain.current
-      .then(async () => {
-        setPublicLogLoading(true);
-        let after = reset ? 0 : publicEventCursor.current;
-        const collected: PublicGameEvent[] = [];
-        while (true) {
-          const page = await api.events(gameId, after, 200);
-          collected.push(...page.events);
-          if (page.next_after <= after && page.has_more) {
-            throw new Error("Public event log pagination did not advance");
+    queuedLogRefresh.current = reset || queuedLogRefresh.current === true;
+    if (publicLogCall.current) return publicLogCall.current;
+    publicLogCall.current = (async () => {
+      setPublicLogLoading(true);
+      try {
+        while (queuedLogRefresh.current !== null) {
+          const reload = queuedLogRefresh.current;
+          queuedLogRefresh.current = null;
+          let after = reload ? 0 : publicEventCursor.current;
+          const collected: PublicGameEvent[] = [];
+          while (true) {
+            const page = await api.events(gameId, after, 200);
+            collected.push(...page.events);
+            if (page.next_after <= after && page.has_more) {
+              throw new Error("Public event log pagination did not advance");
+            }
+            after = page.next_after;
+            if (!page.has_more) break;
           }
-          after = page.next_after;
-          if (!page.has_more) break;
+          publicEventCursor.current = after;
+          setPublicEvents((current) => [...new Map(
+            (reload ? collected : [...current, ...collected]).map((event) => [event.id, event]),
+          ).values()].sort((left, right) => left.id - right.id));
         }
-        publicEventCursor.current = after;
-        setPublicEvents((current) => {
-          const rows = reset ? collected : [...current, ...collected];
-          return [...new Map(rows.map((event) => [event.id, event])).values()]
-            .sort((left, right) => left.id - right.id);
-        });
-      })
-      .catch((caught) => {
+      } catch (caught) {
         setNotice(caught instanceof Error ? caught.message : String(caught));
-      })
-      .finally(() => setPublicLogLoading(false));
-    return publicLogChain.current;
+      } finally {
+        setPublicLogLoading(false);
+        publicLogCall.current = null;
+      }
+    })();
+    return publicLogCall.current;
   }
 
   useEffect(() => saveTablePreferences(tablePreferences), [tablePreferences]);
@@ -911,13 +765,12 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
     function connect() {
       if (stopped) return;
       setConnection("CONNECTING");
-      socket = new WebSocket(streamUrl(gameId), streamProtocols());
-      socket.onopen = () => {
-        retry = 250;
-        setReconnectAttempts(0);
-        setConnection("LIVE");
-      };
-      socket.onmessage = (event) => {
+      const stream = new WebSocket(streamUrl(gameId), streamProtocols());
+      let streamView: ProjectedView | null = null;
+      socket = stream;
+      stream.onopen = () => { if (!stopped && socket === stream) setConnection("SYNCING"); };
+      stream.onmessage = (event) => {
+        if (stopped || socket !== stream) return;
         const message = JSON.parse(String(event.data)) as {
           type: string;
           packet?: DecisionPacket;
@@ -928,25 +781,38 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
           terminal = true;
           setConnection("STOPPED");
           setNotice(message.message ?? "This game connection is no longer available.");
-          socket?.close();
+          stream.close();
           return;
         }
         if (message.game) setLifecycle(message.game);
         if (message.type !== "projection" || !message.packet) return;
         ingestChain.current = ingestChain.current
           .then(async () => {
-            const next = await ingestPacket(viewRef.current, message.packet!);
+            if (stopped || socket !== stream || stream.readyState !== WebSocket.OPEN) return;
+            const next = await ingestPacket(streamView, message.packet!);
+            if (stopped || socket !== stream || stream.readyState !== WebSocket.OPEN) return;
+            if (viewRef.current && next.principal !== viewRef.current.principal) {
+              throw new Error("The reconnected projection belongs to another player.");
+            }
+            const refreshEvents = !streamView || next.state.event !== streamView.state.event;
+            if (!streamView) {
+              retry = 250;
+              setReconnectAttempts(0);
+            }
+            streamView = next;
             viewRef.current = next;
             setView(next);
-            void refreshPublicLog(false);
+            setConnection("LIVE");
+            if (refreshEvents) void refreshPublicLog(false);
           })
           .catch((error) => {
+            if (stopped || socket !== stream) return;
             setNotice(error instanceof Error ? error.message : String(error));
-            socket?.close();
+            stream.close();
           });
       };
-      socket.onclose = () => {
-        if (stopped || terminal) return;
+      stream.onclose = () => {
+        if (stopped || terminal || socket !== stream) return;
         setConnection("RECONNECTING");
         setReconnectAttempts((value) => value + 1);
         timer = window.setTimeout(connect, retry);
@@ -970,18 +836,10 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
   }, [gameId, reconnectNonce]);
 
   useEffect(() => {
-    setSelectedAction(null);
     setActionChoices([]);
     setCardContext(null);
-    setChoiceValues({});
-    setChoiceErrors([]);
   }, [view?.decision?.id]);
-
-  useEffect(() => {
-    if (pendingRetry && view?.decision?.id !== pendingRetry.envelope.decision_id) {
-      setPendingRetry(null);
-    }
-  }, [pendingRetry, view?.decision?.id]);
+  useEffect(() => { setStackTargets([]); setStackSource(""); }, [view?.viewRevision]);
 
   useEffect(() => {
     const decision = view?.decision;
@@ -994,37 +852,37 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
       || submitting
       || pendingRetry
       || selectedAction
+      || parkedAction
       || actionChoices.length > 0
       || autoPassDecisionRef.current === decision.id
     ) return;
-    const projectedState = asRecord(view?.state);
-    const projectedTurn = asRecord(projectedState.turn);
-    const principalSeat = view?.principal === "spectator"
-      ? ""
-      : view?.principal.split(":").at(-1) ?? "";
-    const pass = findSafeAutoPass(decision.legal_actions, {
-      activePlayer: String(projectedTurn.active ?? ""),
-      phase: String(projectedTurn.phase ?? ""),
-      principalSeat,
-      stackDepth: asList(projectedState.stack).length,
-    });
-    if (!pass) return;
+    if (!autoPass || yieldPause || combatStop) return;
     autoPassDecisionRef.current = decision.id;
-    void act(pass);
+    const ignored = decision.legal_actions.filter((row) => isIgnoredActivation(row, ignoredOffers)).map((row) => row.id);
+    void act(autoPass, turnYield ? {
+      pass_turn_sequence: turnBoundary.turn,
+      ...(ignored.length > 0 ? { ignored_activation_ids: ignored } : {}),
+    } : {});
   }, [
     connection,
     lifecycle?.status,
     pendingRetry,
     selectedAction,
+    parkedAction,
     actionChoices.length,
     submitting,
     tablePreferences.autoPass,
+    autoPass,
+    combatStop,
+    yieldPause,
+    turnYield,
+    turnBoundary.turn,
     view?.decision?.id,
     view?.viewRevision,
   ]);
 
   useEffect(() => {
-    if (!selectedAction && actionChoices.length === 0 && !zoneBrowser && !expandedInspector && !showPublicLog) return;
+    if ((!selectedAction || choiceMinimized) && actionChoices.length === 0 && !zoneBrowser && !expandedInspector && !showPublicLog) return;
     const previous = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const oldOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -1035,9 +893,12 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
     function keydown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
-        setSelectedAction(null);
+        if (zoneBrowser) {
+          setZoneBrowser(null);
+          return;
+        }
+        dismissChoice();
         setActionChoices([]);
-        setZoneBrowser(null);
         setExpandedInspector(false);
         setShowPublicLog(false);
         return;
@@ -1062,49 +923,7 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
       document.body.style.overflow = oldOverflow;
       previous?.focus();
     };
-  }, [selectedAction, actionChoices, zoneBrowser, expandedInspector, showPublicLog]);
-
-  async function submitEnvelope(envelope: CommandEnvelope, label: string) {
-    setSubmitting(true);
-    try {
-      const result = await api.command(gameId, envelope);
-      setPendingRetry(null);
-      setNotice(result.receipt.summary);
-      if (!result.receipt.ok) {
-        setNotice(
-          ["stale_decision", "stale_view", "stale_action"].includes(result.receipt.code)
-            ? "That action expired because the authoritative decision window changed. Review the refreshed legal actions and try again."
-            : `${result.receipt.code}: ${result.receipt.summary}`,
-        );
-      } else {
-        setSelectedAction(null);
-        setChoiceValues({});
-        setChoiceErrors([]);
-      }
-    } catch (caught) {
-      setPendingRetry({ envelope, label });
-      setNotice(`Delivery uncertain: ${caught instanceof Error ? caught.message : String(caught)}`);
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  async function act(action: LegalAction, choices: ChoiceValues = {}) {
-    if (!view?.decision || lifecycle?.status !== "active" || pendingRetry) return;
-    await submitEnvelope(
-      {
-        protocol_version: "3.0",
-        game_id: gameId,
-        command_id: `web-${crypto.randomUUID()}`,
-        decision_id: view.decision.id,
-        action_id: action.id,
-        capability: view.decision.cap,
-        expected_view_revision: view.viewRevision,
-        choices,
-      },
-      action.label ?? action.action,
-    );
-  }
+  }, [selectedAction, actionChoices, choiceMinimized, minimizeInsteadOfCancel, view?.decision?.id, zoneBrowser, expandedInspector, showPublicLog]);
 
   async function stopMatch() {
     setControlling(true);
@@ -1132,16 +951,36 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
     }
   }
 
+  async function playAgain() {
+    setPreparingRematch(true);
+    try {
+      const result = await api.rematch(gameId);
+      onRoom(result.room, result.invite_code);
+    } catch (caught) {
+      setNotice(caught instanceof Error ? caught.message : "Couldn't open the next table.");
+    } finally {
+      setPreparingRematch(false);
+    }
+  }
+
   function chooseAction(action: LegalAction) {
     setActionChoices([]);
+    setMinimizedChoice(null);
     setCardContext(null);
-    if (!action.form && action.action !== "cast") {
-      void act(action);
+    setPublicStage("");
+    if (!action.form || action.action === "pass" || isRoutineCast(action)) {
+      if (action.action === "pass" && turnYield) setTurnYield(turnBoundary);
+      const choices = action.action === "cast" && action.form
+        ? executableChoices(action.form, initialChoices(action.form)) : {};
+      void act(action, choices);
       return;
     }
-    setSelectedAction(action);
-    setChoiceValues(action.form ? initialChoices(action.form) : {});
-    setChoiceErrors([]);
+    openDraft(action);
+  }
+
+  function dismissChoice() {
+    if (selectedAction && minimizeInsteadOfCancel && view?.decision) setMinimizedChoice(view.decision.id);
+    else closeDraft();
   }
 
   function chooseCardAction(actions: LegalAction[], card?: JsonValue) {
@@ -1157,6 +996,14 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
     setInspectedCard(card);
     setCardContext(card);
     setActionChoices([]);
+  }
+
+  function selectPermanentActions(actions: LegalAction[], card: JsonValue) {
+    if (actions.length > 0 && actions.every((action) => action.action === "activate")) {
+      chooseCardAction(actions, card);
+    } else {
+      selectCardActions(actions, card);
+    }
   }
 
   function projectedUnavailableMessage(ref: string): string {
@@ -1189,7 +1036,10 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
     key: K,
     value: TablePreferences[K],
   ) {
-    if (key === "autoPass" && value) autoPassDecisionRef.current = "";
+    if (key === "autoPass") {
+      if (value) autoPassDecisionRef.current = "";
+      else setTurnYield(null);
+    }
     setTablePreferences((current) => ({ ...current, [key]: value }));
   }
 
@@ -1204,24 +1054,21 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
 
   function submitChoice(event: FormEvent) {
     event.preventDefault();
-    if (!selectedAction) return;
-    const errors = selectedAction.form
-      ? validateChoices(selectedAction.form, choiceValues)
-      : [];
-    setChoiceErrors(errors);
-    if (errors.length) return;
-    void act(
-      selectedAction,
-      selectedAction.form
-        ? executableChoices(selectedAction.form, choiceValues)
-        : {},
-    );
+    submitDraft();
+  }
+
+  function startManualPayment() {
+    if (!parkDraft()) return;
+    setTablePreference("autoMana", false);
+    setNotice("Add mana from your sources, then resume your cast.");
   }
 
   if (!view) return <main className="loading-screen"><div className="spinner" /><p>Opening your projected table…</p>{notice && <div className="error-banner">{notice}</div>}</main>;
   const currentView = view;
   const state = view.state;
   const game = asRecord(state.game);
+  const statusLabel = lifecycle?.status === "complete" ? "Complete" : lifecycle?.status === "paused" ? "Paused"
+    : lifecycle?.status === "aborted" ? "Ended" : lifecycle?.status === "active" ? "In progress" : "Loading";
   const turn = asRecord(state.turn);
   const combat = asRecord(state.combat);
   const players = asRecord(state.players);
@@ -1230,10 +1077,15 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
   const ownPlayer = asRecord(players[ownSeat]);
   const hand = asList(ownPlayer.hand);
   const ownCommand = asList(ownPlayer.cmd);
+  const zoneOffers = !isSpectator && connection === "LIVE" && lifecycle?.status === "active"
+    ? handZoneOffers(view) : new Map<string, HandZoneOffer>();
   const inspectionTarget = inspectedCard ?? hand[0] ?? null;
+  const compactInspector = inspectionTarget && <button type="button" className="mobile-inspector-trigger link-button"
+    aria-label={`View ${cardName(inspectionTarget)}`} onClick={() => setExpandedInspector(true)}>Inspect</button>;
   const stack = asList(state.stack);
+  const showRail = stack.length > 0 || railOpen;
   const labels = projectedLabels(view);
-  const labelFor = (value: string) => labels.get(value) ?? value;
+  const labelFor = (value: string) => labels.get(value) ?? "Unavailable object";
   const legalActions = view.decision?.legal_actions ?? [];
   const cardActions = legalActions.filter((action) =>
     typeof (action.card ?? action.source) === "string",
@@ -1244,28 +1096,53 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
   const manaUndoActions = legalActions.filter((action) =>
     action.action === "undo_mana",
   );
+  const handActionIds = new Set(handManuallyCollapsed ? [] : Array.from(zoneOffers.values())
+    .filter((offer) => offer.zone !== "cmd").flatMap((offer) => offer.actions.map((action) => action.id)));
   const displayActions = legalActions.filter((action) =>
-    action.mana_ability !== true || manualMana,
+    action.action !== "concede" && !handActionIds.has(action.id) && (action.mana_ability !== true || manualMana),
   );
-  const actionsForCard = (ref: string) => cardActions.filter((action) =>
+  const concedeAction = legalActions.find((action) => action.action === "concede");
+  const optionalActivations = legalActions.filter((action) => action.action === "activate" && action.mana_ability !== true);
+  const contextualAction = contextualDecisionAction(view);
+  const actionDisabled = submitting || Boolean(pendingRetry) || connection !== "LIVE" || lifecycle?.status !== "active";
+  const publicSteps = publicObjectSteps(selectedAction, view, choiceValues);
+  const currentStep = publicSteps.find((step) => step.id === publicStage) ?? publicSteps[0];
+  const draftSource = currentStep && selectedAction ? String(selectedAction.card ?? selectedAction.source ?? "") : "";
+  const draftTargets = publicSteps.flatMap((step) => step.group ? step.selected : []);
+  const publicSelection: TableObjectSelection | null = currentStep ? {
+    refs: currentStep.refs,
+    selected: currentStep.selected,
+    select(ref) {
+      if (actionDisabled) return;
+      stageChoices(stageTableObject(currentStep, ref, choiceValues));
+      if (currentStep.maximum === 1 && !currentStep.selected.includes(ref)) {
+        const next = publicSteps[publicSteps.indexOf(currentStep) + 1];
+        if (next && next.selected.length < next.minimum) setPublicStage(next.id);
+      }
+    },
+  } : null;
+  const actionsForCard = (ref: string) => zoneOffers.get(ref)?.actions ?? cardActions.filter((action) =>
     String(action.card ?? action.source ?? "") === ref
     && (action.mana_ability !== true || manualMana),
   );
-  const dropEnabled = !isSpectator && [...hand, ...ownCommand].some((card) =>
+  const dropEnabled = !publicSelection && !isSpectator && [...hand, ...ownCommand, ...Array.from(zoneOffers.values(), (offer) => offer.card)].some((card) =>
     actionsForCard(String(asRecord(card).id ?? "")).some((action) => ["play_land", "cast"].includes(action.action)),
   );
   const activeSeat = String(turn.active ?? "");
   const prioritySeat = String(turn.priority ?? "");
   const actionWindow = { activeSeat, ownSeat, phase: String(turn.phase ?? ""), stackDepth: stack.length };
-  const selectedCardRef = String(asRecord(cardContext ?? undefined).id ?? "");
+  const selectedCardRef = draftSource || String(asRecord(cardContext ?? undefined).id ?? "");
   const contextualActions = selectedCardRef ? actionsForCard(selectedCardRef) : [];
   const actionExplanations = asRecord(state.action_explanations);
   const selectedExplanation = asRecord(actionExplanations[selectedCardRef]);
   const zonePlayer = zoneBrowser ? asRecord(players[zoneBrowser.seat]) : {};
   const zoneCards = zoneBrowser ? asList(zonePlayer[zoneBrowser.zone]) : [];
   const zoneName = zoneBrowser?.zone === "gy" ? "Graveyard" : "Exile";
-  const handCollapsed = handManuallyCollapsed || (
-    tablePreferences.handAutoCollapse && hand.length === 0
+  const canChooseFromZone = zoneCards.some((card) => publicSelection?.refs.includes(String(asRecord(card).id ?? "")));
+  const spaceForChoice = contextualAction?.action === "block" || contextualAction?.action === "attack"
+    || view.decision?.kind === "semantic.search";
+  const handCollapsed = handManuallyCollapsed || spaceForChoice || (
+    tablePreferences.handAutoCollapse && hand.length === 0 && zoneOffers.size === 0
   );
   const tableStyle = {
     ...(shellStyle ?? {}),
@@ -1286,14 +1163,10 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
 
   function railPanel(panel: RightRailPanel) {
     if (panel === "stack") {
-      return (
-        <section className="stack-panel" key={panel} data-testid="stack-panel">
-          <header><div className="zone-label">STACK</div><strong>{stack.length}</strong></header>
-          <div className="stack-items">
-            {stack.length ? stack.map((item, index) => <CardTile key={String(asRecord(item).id ?? index)} value={item} view={currentView} compact targetLabel={labelFor} onInspect={setInspectedCard} />) : <em>The stack is empty</em>}
-          </div>
-        </section>
-      );
+      return <StackPanel key={panel} stack={stack} view={currentView} labelFor={labelFor}
+        targets={stackTargets} onTargets={(source, targets) => { setStackSource(source); setStackTargets(targets); }}
+        onInspect={setInspectedCard} selection={publicSelection}
+        onOpenInspector={(item) => { setInspectedCard(item); setExpandedInspector(true); }} />;
     }
     if (panel === "activity") {
       if (!tablePreferences.activityVisible) return null;
@@ -1341,26 +1214,15 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
       <header className="game-topbar">
         <div className="connection-group">
           <span className={`connection ${connection.toLowerCase()}`} />
-          <span>{connection}</span>
+          <span data-testid="connection-label">{connection === "LIVE" ? "Connected"
+            : connection === "SYNCING" ? "Syncing table" : connection === "RECONNECTING" ? "Reconnecting"
+              : connection === "STOPPED" ? "Connection ended" : "Connecting"}</span>
           {connection !== "LIVE" && connection !== "STOPPED" && <button type="button" className="link-button" onClick={() => setReconnectNonce((value) => value + 1)}>Retry now</button>}
           {connection === "STOPPED" && <button type="button" className="link-button" onClick={onExit}>Return to lobby</button>}
         </div>
-        <div className="game-identity"><small>{lifecycle?.format_profile === "commander_duel" ? "COMMANDER DUEL" : "COMMANDER POD"}</small><strong>{String(game.id ?? gameId).slice(0, 8)}</strong></div>
+        <div className="game-identity"><small>{lifecycle?.format_profile === "commander_duel" ? "Commander duel" : "Commander pod"}</small></div>
         <div className="game-status-line">
-          <span data-testid="game-status" className={`game-status ${lifecycle?.status ?? "loading"}`}>
-            {(lifecycle?.status ?? "loading").toUpperCase()}
-          </span>
-        </div>
-      </header>
-      <TurnStatus value={turnPresentation} compact={tablePreferences.compactPhaseRail} />
-      {connection !== "LIVE" && (
-        <div className="connection-banner" role="status">
-          <div><strong>{connection === "STOPPED" ? "This game tab is stale" : "Restoring your seat projection"}</strong><span>{connection === "STOPPED" ? "Return to the lobby instead of repeatedly reconnecting to an inaccessible game." : "No actions are sent while the live table connection is unavailable."}</span></div>
-          <span>Attempt {Math.max(1, reconnectAttempts)}</span>
-        </div>
-      )}
-      <section className="operations-panel" aria-label="Match operations">
-        <div className="operations-heading"><span className="eyebrow">{isSpectator ? "TABLE VIEW" : "TABLE CONTROLS"}</span><strong>{isSpectator ? "Spectator" : `Seat ${ownSeat}`}</strong></div>
+          <div className="routine-table-actions" aria-label="Priority and mana">
         {!isSpectator && lifecycle?.status !== "complete" && (
           <AutomationControls
             autoPass={tablePreferences.autoPass}
@@ -1369,46 +1231,91 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
             onAutoMana={() => setTablePreference("autoMana", !tablePreferences.autoMana)}
           />
         )}
-        <button
-          type="button"
-          className="secondary-button"
-          data-testid="inspect-game"
-          aria-expanded={showInspection}
-          onClick={() => setShowInspection((value) => !value)}
-        >Inspect match</button>
-        <button type="button" className="secondary-button" data-testid="open-public-log" onClick={() => setShowPublicLog(true)}>Public log</button>
-        <TableSettings value={tablePreferences} onChange={setTablePreference} onReset={resetTablePreferences} />
-        {lifecycle?.owner && lifecycle.can_stop && (
-          <label className="stop-control">
-            Stop reason
-            <input
-              data-testid="stop-reason"
-              value={stopReason}
-              maxLength={500}
-              onChange={(event) => setStopReason(event.target.value)}
-            />
-            <button
-              type="button"
-              data-testid="stop-game"
-              disabled={controlling || !stopReason.trim()}
-              onClick={stopMatch}
-            >Stop match</button>
-          </label>
-        )}
-        {lifecycle?.owner && lifecycle.can_resume && (
-          <button
-            type="button"
-            data-testid="resume-game"
-            disabled={controlling}
-            onClick={resumeMatch}
-          >Resume match</button>
-        )}
-      </section>
+        {!isSpectator && lifecycle?.status === "active" && turnBoundary.turn > 0 && <div className="turn-yield">
+          <button type="button" className="table-control-toggle" aria-pressed={Boolean(turnYield)}
+            disabled={!tablePreferences.autoPass && !turnYield}
+            onClick={() => setTurnYield(turnYield ? null : turnBoundary)}>
+            {turnYield ? "Cancel pass turn" : "Pass turn"}
+          </button>
+          {turnYield && <small role="status">{yieldPause ?? `Armed for turn ${turnYield.turn}`}</small>}
+        </div>}
+          </div>
+          <button type="button" className="table-control-toggle" aria-expanded={showRail}
+            onClick={() => setRailOpen(!railOpen)}>{showRail ? "Stack open" : "Stack"}</button>
+          <span data-testid="game-status" className={`game-status ${lifecycle?.status ?? "loading"}`}>
+            {statusLabel}
+          </span>
+          <GameMenu system={system} lifecycle={lifecycle} decision={view.decision?.kind} move={lastMove}
+            disabled={actionDisabled} onConcede={concedeAction ? () => chooseAction(concedeAction) : undefined}>
+            <button type="button" className="secondary-button" onClick={onExit}>Decks and games</button>
+            {!isSpectator && <details>
+              <summary>Combat priority stops</summary>
+              <CombatStopOptions selected={combatStops} onToggle={toggleCombatStop} />
+            </details>}
+            {optionalActivations.length > 0 && <details>
+              <summary>Priority stops for this turn</summary>
+              {optionalActivations.map((action) => <label key={action.id} className="choice-option">
+                <input type="checkbox" checked={isIgnoredActivation(action, ignoredOffers)}
+                  onChange={(event) => {
+                    const offers = new Map(ignoredOffers);
+                    if (event.target.checked) offers.set(action.id, JSON.stringify(action));
+                    else offers.delete(action.id);
+                    setIgnoredStops({ turn: turnBoundary.turn, offers });
+                  }} />
+                Ignore stop for {action.label ?? "this ability"}
+              </label>)}
+            </details>}
+                <button
+                  type="button"
+                  className="secondary-button"
+                  data-testid="inspect-game"
+                  aria-expanded={showInspection}
+                  onClick={() => setShowInspection((value) => !value)}
+                >Inspect match</button>
+                <button type="button" className="secondary-button" data-testid="open-public-log" onClick={() => setShowPublicLog(true)}>Public log</button>
+                <TableSettings value={tablePreferences} onChange={setTablePreference} onReset={resetTablePreferences} />
+                {lifecycle?.owner && lifecycle.can_stop && (
+                  <label className="stop-control">
+                    Stop reason
+                    <input
+                      data-testid="stop-reason"
+                      value={stopReason}
+                      maxLength={500}
+                      onChange={(event) => setStopReason(event.target.value)}
+                    />
+                    <button
+                      type="button"
+                      data-testid="stop-game"
+                      disabled={controlling || !stopReason.trim()}
+                      onClick={stopMatch}
+                    >Stop match</button>
+                  </label>
+                )}
+                {lifecycle?.owner && lifecycle.can_resume && (
+                  <button
+                    type="button"
+                    data-testid="resume-game"
+                    disabled={controlling}
+                    onClick={resumeMatch}
+                  >Resume match</button>
+                )}
+          </GameMenu>
+        </div>
+      </header>
+      <TurnStatus value={turnPresentation} compact={tablePreferences.compactPhaseRail}
+        combatStops={combatStops} onCombatStop={isSpectator ? undefined : toggleCombatStop} holding={combatStop} />
+      {connection !== "LIVE" && (
+        <div className="connection-banner" role="status">
+          <div><strong>{connection === "STOPPED" ? "Connection closed" : "Restoring your table"}</strong><span>{connection === "STOPPED" ? "Open the game again from Decks and games." : "Wait for the table to sync before sending a move."}</span></div>
+          <span>Attempt {Math.max(1, reconnectAttempts)}</span>
+        </div>
+      )}
+
       {showInspection && lifecycle && (
         <section className="inspection-panel" data-testid="game-inspection">
           <h2>Match record</h2>
           <dl>
-            <div><dt>Status</dt><dd>{lifecycle.status}</dd></div>
+            <div><dt>Status</dt><dd>{statusLabel}</dd></div>
             <div><dt>Revision</dt><dd>{lifecycle.state_revision}</dd></div>
             <div><dt>Commands</dt><dd>{lifecycle.commands}</dd></div>
             <div><dt>Decisions</dt><dd>{lifecycle.decisions}</dd></div>
@@ -1431,13 +1338,20 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
               ? "The game ended in a draw."
               : lifecycle.winner
                 ? `Seat ${lifecycle.winner} wins.`
-                : "The authoritative game record is complete."}
+                : "This match has ended."}
           </span>
+          <div className="game-over-actions">
+            {!isSpectator && <button type="button" disabled={preparingRematch} onClick={() => void playAgain()}>
+              {preparingRematch ? "Opening the next table…" : lifecycle.owner ? "Play again with these decks" : "Join the next table"}
+            </button>}
+            <button type="button" className="secondary-button" onClick={onExit}>Decks and games</button>
+          </div>
         </div>
       )}
-      <div className="table-workspace">
-        <section className="boards-grid" aria-label="Commander battlefield">
-          {Object.entries(players).map(([seat, player]) => (
+      <div className={`table-workspace${showRail ? " has-stack-rail" : ""}`}>
+        <section className={`boards-grid${isSpectator ? " watching" : ""}`} aria-label="Commander battlefield">
+          {Object.entries(players).sort(([left], [right]) =>
+            Number(left === ownSeat) - Number(right === ownSeat)).map(([seat, player]) => (
             <PlayerBoard
               key={seat}
               seat={seat}
@@ -1446,11 +1360,13 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
               priority={prioritySeat === seat}
               mine={ownSeat === seat}
               view={view}
-              manualMana={manualMana}
               cardActions={cardActions}
-              onCardIntent={selectCardActions}
+              onCardIntent={selectPermanentActions}
               onManaIntent={chooseCardAction}
               onInspectCard={setInspectedCard}
+              onOpenInspector={(card) => { setInspectedCard(card); setExpandedInspector(true); }}
+              highlightedTargets={stackTargets}
+              selection={publicSelection}
               selectedCardRef={selectedCardRef}
               onOpenZone={(nextSeat, zone) => {
                 const nextCards = asList(asRecord(players[nextSeat])[zone]);
@@ -1465,52 +1381,58 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
             />
           ))}
         </section>
-        <aside className="table-sidebar" aria-label="Stack and recent game activity">
+        {showRail && <aside className="table-sidebar" aria-label="Stack and recent game activity">
           {tablePreferences.rightRailOrder.map(railPanel)}
-        </aside>
+        </aside>}
       </div>
       <div ref={bottomDockRef} className={`table-bottom-dock${isSpectator ? " spectator" : ""}`} data-testid="table-bottom-dock">
       {!isSpectator && handCollapsed && (
         <section className="hand-panel-collapsed" data-testid="hand-panel-collapsed">
           <span>Your hand · {hand.length} cards</span>
-          <button type="button" className="link-button" onClick={() => setHandManuallyCollapsed(false)}>Show hand</button>
+          {!spaceForChoice && <button type="button" className="link-button" onClick={() => setHandManuallyCollapsed(false)}>Show hand</button>}
+          {compactInspector}
         </section>
       )}
       {!isSpectator && !handCollapsed && <section ref={handPanelRef} className="hand-panel" data-testid="hand-panel" data-resizable="true" onPointerUp={() => {
         const height = handPanelRef.current?.getBoundingClientRect().height;
         if (height) setTablePreference("handPanelHeight", Math.round(height));
       }}>
-        <header><div><span className="eyebrow">YOUR PRIVATE ZONE · SEAT {ownSeat}</span><h2>Your hand</h2></div><div className="hand-panel-controls"><span className="zone-count">{hand.length} cards</span><button type="button" className="link-button" onClick={() => setHandManuallyCollapsed(true)}>Collapse</button></div></header>
+        <header><h2>Your hand</h2><div className="hand-panel-controls">
+          <span className="zone-count">{hand.length} cards</span>{!cardContext && compactInspector}
+          <button type="button" className="link-button" onClick={() => setHandManuallyCollapsed(true)}>Collapse</button>
+        </div></header>
         {cardContext && (
           <div className="selected-card-actions" data-testid="selected-card-actions">
             <div>
-              <span className="eyebrow">SELECTED CARD</span>
               <strong>{cardName(cardContext)}</strong>
-              <small>{contextualActions.length ? "Choose a legal action, or drag the card to your battlefield for the fast path." : typeof selectedExplanation.message === "string" ? selectedExplanation.message : "No server-authorized action is available for this card in the current decision window."}</small>
+              {contextualActions.length === 0 && <small>{typeof selectedExplanation.message === "string" ? selectedExplanation.message : "No action is available for this card right now."}</small>}
             </div>
             <div className="selected-card-action-buttons">
               {contextualActions.map((action) => (
                 <button type="button" key={action.id} disabled={submitting || Boolean(pendingRetry) || connection !== "LIVE" || lifecycle?.status !== "active"} onClick={() => chooseAction(action)}>
-                  {action.action === "cast" && !manualMana ? `Auto-mana · ${action.label ?? "Cast"}` : action.label ?? action.action}
+                  <ManaText text={actionTitle(action)} />
                 </button>
               ))}
-              <button type="button" className="secondary-button" onClick={() => setCardContext(null)}>Cancel</button>
+              <button type="button" className="secondary-button" onClick={() => { setInspectedCard(cardContext); setExpandedInspector(true); }}>Inspect</button>
+              <button type="button" className="secondary-button" onClick={() => setCardContext(null)}>Close</button>
             </div>
           </div>
         )}
-        <div className="hand-cards" data-testid="own-hand">
-          {hand.map((card, index) => {
-            const ref = String(asRecord(card).id ?? "");
-            return <CardTile key={ref || index} value={card} view={view} actions={actionsForCard(ref)} onIntent={selectCardActions} onInspect={setInspectedCard} onDragCard={(nextRef) => { draggedCardRef.current = nextRef ?? ""; }} onDropCard={handleCardDrop} selected={selectedCardRef === ref} explainUnavailable />;
-          })}
-        </div>
+        <HandRail cards={hand} zoneOffers={zoneOffers} view={view} selection={publicSelection}
+          selectedRef={selectedCardRef} actionsForCard={actionsForCard} onIntent={selectCardActions}
+          onInspect={setInspectedCard} onDrag={(ref) => { draggedCardRef.current = ref ?? ""; }} onDrop={handleCardDrop} />
       </section>}
       {pendingRetry && (
         <section className="retry-panel" role="alert" data-testid="command-retry">
-          <div><strong>Command delivery is uncertain</strong><span>Retrying “{pendingRetry.label}” will reuse command {pendingRetry.envelope.command_id} exactly.</span></div>
-          <button type="button" disabled={submitting} onClick={() => void submitEnvelope(pendingRetry.envelope, pendingRetry.label)}>{submitting ? "Checking…" : "Retry exact command"}</button>
+          <div><strong>Command delivery is uncertain</strong><span>Retry “{pendingRetry.label}” to recover its result.</span></div>
+          <button type="button" disabled={submitting || connection !== "LIVE"} onClick={retry}>{submitting ? "Checking…" : "Retry exact command"}</button>
         </section>
       )}
+      {parkedAction && <aside className="manual-cast-draft">
+        <strong>{parkedAction.label ?? "Spell to cast"}</strong>
+        <button type="button" disabled={!canResumeDraft} onClick={resumeDraft}>Resume cast</button>
+        <button type="button" className="secondary-button" onClick={dismissParkedDraft}>Discard draft</button>
+      </aside>}
       {manualMana && (manaActions.length > 0 || manaUndoActions.length > 0) && (
         <ManaHelp
           actions={manaUndoActions}
@@ -1523,15 +1445,28 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
         className="decision-panel"
         data-testid="decision-panel"
         data-decision-id={view.decision?.id ?? ""}
+        data-decision-kind={view.decision?.kind ?? ""}
         aria-live="polite"
       >
         {lifecycle?.status === "paused" ? (
           <div className="waiting-decision" data-testid="paused-decision"><span className="status-dot muted" /><div><strong>Match paused</strong><p>No player action or priority pass is pending while this boundary is reviewed.</p></div></div>
         ) : isSpectator ? (
           <div className="waiting-decision"><span className="status-dot muted" /><div><strong>Watching the table</strong><p>Player decisions and private information remain seat-scoped.</p></div></div>
+        ) : selectedAction && currentStep ? (
+          <PublicActionDraft action={selectedAction} values={choiceValues} steps={publicSteps} activeStep={currentStep.id} view={view}
+            onStage={setPublicStage} onValues={stageChoices} onCancel={closeDraft} onSubmit={submitDraft}
+            onPayManually={selectedAction.action === "cast" && !manualMana ? startManualPayment : undefined}
+            labelFor={labelFor} errors={choiceErrors} disabled={actionDisabled} />
+        ) : contextualAction ? (
+          <ContextualDecision key={view.decision?.id} action={contextualAction} view={view}
+            disabled={actionDisabled} submitting={submitting} labelFor={labelFor} onSubmit={(action, choices) => { void act(action, choices); }} />
         ) : view.decision ? (
           <>
-            <div className="decision-copy"><span className="eyebrow">YOUR DECISION · {view.decision.id}</span><h2>{readable(view.decision.kind)}</h2><small>{displayActions.length} shown · {view.decision.legal_actions.length} legal</small></div>
+            <div className="decision-copy">
+              <h2>{awaitingProjection ? "Updating the table…" : submitting ? "Sending move…" : decisionHeading(view.decision)}</h2>
+              {currentChoiceDetail && <p>{currentChoiceDetail}</p>}
+            </div>
+            {choiceMinimized ? <button type="button" onClick={() => setMinimizedChoice(null)}>Show choice</button> :
             <div className="action-tools">
               {manaActions.length > 0 && (
                 <button
@@ -1546,19 +1481,14 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
               )}
               <div className="action-row">
                 {displayActions.map((action) => (
-                  <button className={`action-button ${actionTone(action)}`} key={action.id} data-testid={`action-${action.id}`} disabled={submitting || Boolean(pendingRetry) || connection !== "LIVE" || lifecycle?.status !== "active"} onClick={() => chooseAction(action)}>{action.action === "cast" && !manualMana ? `Auto-mana · ${action.label ?? "Cast"}` : visibleActionLabel(action, actionWindow)}</button>
+                  <button className={`action-button ${action.action === "pass" ? "primary" : actionTone(action)}`} key={action.id} data-testid={`action-${action.id}`} disabled={actionDisabled} onClick={() => chooseAction(action)}>{visibleActionLabel(action, actionWindow)}</button>
                 ))}
               </div>
-            </div>
+            </div>}
           </>
         ) : <div className="waiting-decision"><span className="status-dot muted" /><div><strong>Waiting for the table</strong><p>Waiting for another player’s decision.</p></div></div>}
       </section>}
       </div>
-      {inspectionTarget && (
-        <button type="button" className="mobile-inspector-trigger" onClick={() => setExpandedInspector(true)}>
-          View {cardName(inspectionTarget)}
-        </button>
-      )}
       {showPublicLog && (
         <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowPublicLog(false); }}>
           <section ref={publicLogDialogRef} className="choice-dialog public-log-dialog" role="dialog" aria-modal="true" aria-labelledby="public-log-title" data-testid="public-game-log">
@@ -1586,13 +1516,13 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
           <section ref={zoneDialogRef} className="choice-dialog zone-browser" role="dialog" aria-modal="true" aria-labelledby="zone-browser-title" data-testid="zone-browser">
             <header>
               <div><span className="eyebrow">PUBLIC ZONE · SEAT {zoneBrowser.seat}</span><h2 id="zone-browser-title">{zoneName} · {zoneCards.length}</h2></div>
-              <button type="button" className="secondary-button" onClick={() => setZoneBrowser(null)}>Close</button>
+              <button type="button" className="secondary-button" onClick={() => setZoneBrowser(null)}>{canChooseFromZone ? "Back to table" : "Close"}</button>
             </header>
             <div className="zone-browser-layout">
               <div className="zone-card-grid">
                 {zoneCards.map((card, index) => {
                   const ref = String(asRecord(card).id ?? "");
-                  const actions = zoneBrowser.seat === ownSeat ? actionsForCard(ref) : [];
+                  const actions = !publicSelection && zoneBrowser.seat === ownSeat ? actionsForCard(ref) : [];
                   return (
                     <CardTile
                       key={ref || index}
@@ -1604,7 +1534,11 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
                         setZoneBrowser(null);
                         selectCardActions(nextActions, selectedCard);
                       }}
-                      selected={selectedCardRef === ref}
+                      selected={selectedCardRef === ref || publicSelection?.selected.includes(ref)}
+                      choice={!actionDisabled && publicSelection?.refs.includes(ref) ? {
+                        selected: publicSelection.selected.includes(ref),
+                        select: () => publicSelection.select(ref),
+                      } : undefined}
                     />
                   );
                 })}
@@ -1632,38 +1566,42 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
             <div className="action-picker-options">
               {actionChoices.map((action) => (
                 <button type="button" key={action.id} onClick={() => chooseAction(action)}>
-                  {action.action === "cast" && !manualMana ? `Auto-mana · ${action.label ?? "Cast"}` : action.label ?? action.action}
+                  {action.action === "cast" && !manualMana ? `Auto-mana · ${actionTitle(action)}` : actionTitle(action)}
+                  {action.action === "activate" && <small>{activationCostLabel(action)}</small>}
                 </button>
               ))}
             </div>
           </section>
         </div>
       )}
-      {selectedAction && (selectedAction.form || selectedAction.action === "cast") && (
-        <div className="choice-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setSelectedAction(null); }}>
+      {selectedAction && !choiceMinimized && !currentStep && (selectedAction.form || selectedAction.action === "cast") && (
+        <div className="choice-overlay" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget) dismissChoice();
+        }}>
           <form ref={choiceDialogRef} className="choice-dialog" role="dialog" aria-modal="true" aria-labelledby="choice-dialog-title" aria-describedby="choice-dialog-description" data-testid="choice-dialog" onSubmit={submitChoice}>
             <header>
               <div>
-                <span className="eyebrow">SERVER-ISSUED CHOICES</span>
-                <h2 id="choice-dialog-title">{selectedAction.label ?? selectedAction.action}</h2>
-                <p id="choice-dialog-description">{selectedAction.action === "cast" ? manualMana ? "Float mana before casting. Choose an exact pool payment when the form offers it." : "Use Auto-mana for a routine payment, or cancel and enable Manual mana to activate sources first." : "Choose from the legal values supplied for your seat. The server validates the final action."}</p>
+                {selectedAction.action === "activate" && <span className="eyebrow">Activate ability</span>}
+                <h2 id="choice-dialog-title">{minimizeInsteadOfCancel && view.decision ? decisionHeading(view.decision) : actionTitle(selectedAction)}</h2>
+                <p id="choice-dialog-description">{selectedAction.action === "activate" ? activationCostLabel(selectedAction)
+                  : selectedAction.action === "concede" ? "Leave this game. Play continues for any remaining players."
+                    : selectedAction.action === "cast" ? <ManaText text={cardActionCost([selectedAction]) || "Review the spell’s choices."} />
+                      : currentChoiceDetail || String(view.decision?.ctx.prompt ?? "")}</p>
               </div>
               <button
                 type="button"
                 className="secondary-button"
                 data-testid="cancel-choice"
-                onClick={() => setSelectedAction(null)}
-              >Cancel</button>
+                onClick={dismissChoice}
+              >{minimizeInsteadOfCancel ? "Minimize choice" : "Cancel"}</button>
             </header>
-            {selectedAction.form && (
+            {selectedAction.form && selectedAction.action !== "concede" && (
               <ChoiceFormView
                 form={selectedAction.form}
                 values={choiceValues}
-                onChange={(values) => {
-                  setChoiceValues(values);
-                  setChoiceErrors([]);
-                }}
+                onChange={stageChoices}
                 labelFor={labelFor}
+                view={view}
               />
             )}
             {choiceErrors.length > 0 && (
@@ -1673,7 +1611,7 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
             )}
             <div className="choice-submit-row">
               {selectedAction.action === "cast" && !manualMana && (
-                <button type="button" className="secondary-button" onClick={() => { setTablePreference("autoMana", false); setSelectedAction(null); setNotice("Manual mana enabled. Click highlighted mana sources, then choose the spell again."); }}>Use manual mana</button>
+                <button type="button" className="secondary-button" onClick={startManualPayment}>Use manual mana</button>
               )}
               <button type="submit" data-testid="submit-choice" disabled={submitting || connection !== "LIVE"}>
                 {choiceSubmitLabel(selectedAction, manualMana, submitting, choiceValues.mana_pool_payment)}
@@ -1682,6 +1620,9 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
           </form>
         </div>
       )}
+      <TargetArrowLayer sourceRef={draftSource || stackSource}
+        targets={draftSource ? draftTargets : stackTargets} candidates={currentStep?.group ? currentStep.refs : []}
+        zones={targetZones(view)} />
       {notice && <div className="toast" role="status" aria-live="polite">{notice}</div>}
     </main>
   );
@@ -1695,6 +1636,8 @@ export default function App() {
   const [room, setRoom] = useState<Room | null>(null);
   const [invite, setInvite] = useState("");
   const [gameId, setGameId] = useState("");
+  const [preferredDeck, setPreferredDeck] = useState<SavedDeckSelection>();
+  const [bootProblem, setBootProblem] = useState("");
 
   useEffect(() => {
     let stopped = false;
@@ -1730,15 +1673,21 @@ export default function App() {
             } else {
               setScreen("room");
             }
-          } catch {
+          } catch (caught) {
+            if (!(caught instanceof ApiError) || ![403, 404].includes(caught.status)) throw caught;
+            if (stopped) return;
             sessionStorage.removeItem("commander-room");
             sessionStorage.removeItem(inviteStorageKey(roomId));
             setScreen("lobby");
           }
-        } catch {
+        } catch (caught) {
+          if (!(caught instanceof ApiError) || ![401, 403].includes(caught.status)) throw caught;
+          if (stopped) return;
           setScreen("welcome");
         }
-      } catch {
+      } catch (caught) {
+        if (stopped) return;
+        setBootProblem(caught instanceof Error ? caught.message : "The server did not respond.");
         setScreen("loading");
       }
     }
@@ -1746,9 +1695,11 @@ export default function App() {
     return () => { stopped = true; };
   }, [bootNonce]);
 
-  function enterRoom(next: Room, code = "") {
+  function enterRoom(next: Room, code = "", selection?: SavedDeckSelection) {
     setRoom(next);
     setInvite(code);
+    setPreferredDeck(selection);
+    setGameId("");
     sessionStorage.setItem("commander-room", next.room_id);
     if (code) sessionStorage.setItem(inviteStorageKey(next.room_id), code);
     setScreen("room");
@@ -1764,21 +1715,25 @@ export default function App() {
     sessionStorage.removeItem("commander-room");
     setRoom(null);
     setInvite("");
+    setPreferredDeck(undefined);
+    setGameId("");
     setScreen("lobby");
   }
 
-  if (screen === "loading") return <main className="loading-screen"><div className="spinner" /></main>;
+  if (screen === "loading") return <main className="loading-screen">
+    {bootProblem ? <section className="setup-card">
+      <h1>Couldn’t open Quorune</h1>
+      <p>Check that the server is running, then try again.</p>
+      <button type="button" onClick={() => { setBootProblem(""); setBootNonce((value) => value + 1); }}>Retry connection</button>
+      <details><summary>Connection details</summary><p>{bootProblem}</p></details>
+    </section> : <div role="status"><div className="spinner" /><p>Opening Quorune…</p></div>}
+  </main>;
   if (screen === "setup" && system) return <SetupScreen initial={system} onReady={() => { setScreen("loading"); setBootNonce((value) => value + 1); }} />;
   if (screen === "welcome") return <Welcome onReady={(value) => { setGuest(value); setScreen("lobby"); }} />;
   if (!guest) return null;
-  if (screen === "lobby") return <Lobby guest={guest} system={system} onRoom={enterRoom} />;
-  if (screen === "room" && room) return <RoomView key={room.room_id} guest={guest} initial={room} invite={invite} onGame={enterGame} onRoom={enterRoom} onLeave={leaveRoomScreen} />;
-  if (screen === "game" && gameId) return <GameView key={gameId} gameId={gameId} onExit={() => {
-    sessionStorage.removeItem("commander-room");
-    setRoom(null);
-    setGameId("");
-    setScreen("loading");
-    setBootNonce((value) => value + 1);
-  }} />;
+  if (screen === "lobby") return <Lobby guest={guest} system={system} onRoom={enterRoom} onGame={enterGame} />;
+  if (screen === "room" && room) return <RoomView key={room.room_id} guest={guest} initial={room} invite={invite}
+    onGame={enterGame} onRoom={enterRoom} onLeave={leaveRoomScreen} initialSavedDeck={preferredDeck} />;
+  if (screen === "game" && gameId) return <GameView key={gameId} gameId={gameId} system={system} onExit={leaveRoomScreen} onRoom={enterRoom} />;
   return null;
 }

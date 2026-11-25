@@ -38,6 +38,23 @@ the same principal-scoped full and delta packets plus safe lifecycle metadata.
 The in-process and network paths share protocol and validation code; neither is
 a second rules interface.
 
+The progress endpoint reports queue and persistence status without submitting
+a game command. A pilot can read the interaction ID and monotonic durations
+for their own latest command. Browser timing records the matching receipt,
+projection, and paint using the browser’s clock. Phase samples can include
+several players’ actions, so they are reported separately.
+
+The guest library exposes the authenticated guest's saved decks and games
+they can access. A saved deck is resolved and validated again when submitted
+to a table. The host of a completed match can prepare a fresh room for the
+previously seated players. The original room membership continues to govern
+access to that match and its projections.
+
+If two programs for one card have different source hashes, the deck submission
+saves an editable draft. The seat remains unavailable for match admission. The
+owner's preflight includes a diagnostic ID, the card identity, and the affected
+program sources. Other seats see that a deck needs review.
+
 The intrinsic Miracle reveal decision exposes the prospective card and fixed
 cost only to its drawer. Acceptance publishes that card and queues its linked
 trigger. The later cast-or-decline decision belongs to the resolving trigger's
@@ -72,6 +89,12 @@ action, choices, legality, costs, and targets before mutation. A rejected
 attempt rolls back and does not consume the decision capability. Reusing a
 client command ID with a byte-equivalent request returns the durable receipt;
 reusing it for different content is a conflict.
+
+An issued priority pass can carry a current turn sequence and the IDs of
+optional, non-mana activations the pilot explicitly ignored for that pass. The
+server validates the turn and the offered IDs before recording the command.
+Each subsequent pass requires its own current capability. The existing yield
+policy uses its own declared choice field.
 
 ## Projected packets
 

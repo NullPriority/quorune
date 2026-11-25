@@ -423,6 +423,39 @@ def _ref_field(
     return result
 
 
+def _priority_pass_fields(context: Mapping[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "name": "yield",
+            "label": "Pass duration",
+            "control": "select",
+            "required": False,
+            "options": _options(
+                [
+                    "none",
+                    "until_public_change",
+                    "until_my_turn",
+                    "auto_if_no_response",
+                ],
+                context,
+            ),
+            "default": "none",
+        },
+        {
+            "name": "pass_turn_sequence",
+            "label": "Current turn",
+            "control": "turn_pass_scope",
+            "required": False,
+        },
+        {
+            "name": "ignored_activation_ids",
+            "label": "Ignored activation stops",
+            "control": "turn_pass_ignored_activations",
+            "required": False,
+        },
+    ]
+
+
 def _special_fields(
     action: Mapping[str, Any],
     decision_kind: str,
@@ -466,11 +499,16 @@ def _special_fields(
         refs = list(context.get("keep_one") or [])
         return [_ref_field("card", refs, context, minimum=1, maximum=1)]
     if decision_kind == "combat.attackers" and action_name == "attack":
+        defenders = context.get("defenders") or []
+        domains = (context.get("declaration_constraints") or {}).get("domains") or {}
         rows = [
             {
                 "value": str(row["id"]),
                 "label": str(row.get("name") or row["id"]),
-                "options": _options(list(context.get("defenders") or []), context),
+                "options": _options(
+                    [ref for ref in defenders if ref in domains.get(str(row["id"]), defenders)],
+                    context,
+                ),
             }
             for row in _rows(context.get("candidates"))
             if row.get("id")
@@ -535,24 +573,7 @@ def _special_fields(
             }
         ]
     if action_name == "pass":
-        return [
-            {
-                "name": "yield",
-                "label": "Pass duration",
-                "control": "select",
-                "required": False,
-                "options": _options(
-                    [
-                        "none",
-                        "until_public_change",
-                        "until_my_turn",
-                        "auto_if_no_response",
-                    ],
-                    context,
-                ),
-                "default": "none",
-            }
-        ]
+        return _priority_pass_fields(context)
     if action_name == "mulligan":
         return [
             {
@@ -564,6 +585,62 @@ def _special_fields(
             }
         ]
     return []
+
+
+def _activation_cost_field(
+    action: Mapping[str, Any], context: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """Adapt the activation owner's compact price without changing its offer."""
+    summary = action.get("cost_summary")
+    if action.get("action") != "activate" or not isinstance(summary, Mapping):
+        return None
+    rows = _rows(summary.get("choose_cost"))
+    if len(rows) != 1:
+        return None
+    cost = rows[0]
+    kind = cost.get("k")
+    refs = cost.get("legal_refs")
+    if not isinstance(refs, (list, tuple)) or any(type(ref) is not str for ref in refs):
+        return None
+
+    from .additional_cost_vocabulary import (
+        DISCARD_ONE_COST,
+        EXILE_ONE_FROM_BATTLEFIELD_COST,
+        EXILE_ONE_FROM_GRAVEYARD_COST,
+        EXILE_ONE_FROM_HAND_COST,
+        RETURN_ONE_TO_OWNER_HAND_COST,
+        SACRIFICE_ONE_COST,
+    )
+    from .combat_entry_activations import FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
+    from .rules.activation_costs import FIXED_TAP_ACTIVATION_COST_KIND
+    from .station import STATION_COST_KIND
+
+    labels = {
+        SACRIFICE_ONE_COST: "Sacrifice",
+        DISCARD_ONE_COST: "Discard",
+        EXILE_ONE_FROM_GRAVEYARD_COST: "Exile from your graveyard",
+        EXILE_ONE_FROM_BATTLEFIELD_COST: "Exile from the battlefield",
+        EXILE_ONE_FROM_HAND_COST: "Exile from your hand",
+        RETURN_ONE_TO_OWNER_HAND_COST: "Return to owner's hand",
+        FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND: "Return unblocked attacker to owner's hand",
+        FIXED_TAP_ACTIVATION_COST_KIND: "Tap",
+        STATION_COST_KIND: "Tap a creature to station",
+    }
+    if kind in ("crew", "saddle"):
+        label = f"Tap creatures to {kind} ({cost['minimum_total_power']} total power)"
+    elif isinstance(kind, str) and kind in labels:
+        label = labels[kind]
+    else:
+        return None
+    minimum = cost.get("n", cost.get("minimum"))
+    maximum = cost.get("n", cost.get("maximum", len(refs)))
+    if type(minimum) is not int or type(maximum) is not int or not 0 <= minimum <= maximum:
+        return None
+    return {
+        **_ref_field("cost_cards", refs, context, minimum=minimum, maximum=maximum),
+        "label": label,
+        "distinct": True,
+    }
 
 
 def build_action_form(
@@ -581,6 +658,10 @@ def build_action_form(
     """
 
     fields = _schema_fields(action.get("choice_schema"), context)
+    if not any(field["name"] == "cost_cards" for field in fields):
+        cost_field = _activation_cost_field(action, context)
+        if cost_field is not None:
+            fields.append(cost_field)
     variants = _variant_form(action.get("cost_options"), context)
     if decision_kind=='choice.apnap' and 'discard_options' in context:
         variants=_variant_form(context['discard_options'],context)

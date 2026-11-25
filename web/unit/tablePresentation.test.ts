@@ -1,9 +1,26 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { presentTurn, visibleActionLabel } from "../src/tablePresentation.ts";
+import { actionTitle, cardActionCost, decisionDetail, presentTurn, visibleActionLabel } from "../src/tablePresentation.ts";
 
 const pass = { id: "pass", action: "pass", label: "Pass priority" };
+
+test("players see a readable action or choice when a label is missing", () => {
+  assert.equal(actionTitle({ id: "activate:A18:ab1", action: "activate", label: "activate:A18:ab1" }), "Activate ability");
+  assert.equal(actionTitle({ id: "unexpected_internal_action", action: "unexpected_internal_action" }), "Make a choice");
+  assert.equal(decisionDetail({ kind: "cleanup.discard", ctx: { count: 2 } }), "Discard 2 cards to reach your maximum hand size.");
+});
+
+test("the hover cost uses the offered alternate price", () => {
+  const offer = {
+    id: "cast:A15", action: "cast", label: "Cast Faithless Looting — {R}", cost: "{R}",
+    cost_options: [{ id: "flashback", requirements: { GENERIC: 2, R: 1 } }],
+  };
+  assert.equal(actionTitle(offer), "Cast Faithless Looting");
+  assert.equal(cardActionCost([offer]), "{2}{R}");
+  assert.equal(cardActionCost([{ ...offer, cost_options: [{ ...offer.cost_options[0], target_costs: { prices: [] } }] }]),
+    "Cost depends on targets");
+});
 
 test("active empty main phases label their intentional turn advance", () => {
   assert.equal(visibleActionLabel(pass, {
@@ -14,13 +31,13 @@ test("active empty main phases label their intentional turn advance", () => {
   }), "End turn");
 });
 
-test("response windows retain the ordinary priority label", () => {
+test("pass intent identifies when the stack can advance", () => {
   assert.equal(visibleActionLabel(pass, {
     activeSeat: "A", ownSeat: "B", phase: "precombat_main", stackDepth: 0,
   }), "Pass priority");
   assert.equal(visibleActionLabel(pass, {
     activeSeat: "A", ownSeat: "A", phase: "precombat_main", stackDepth: 1,
-  }), "Pass priority");
+  }), "Resolve");
 });
 
 test("turn presentation separates active player, priority, and exact step", () => {
@@ -71,4 +88,14 @@ test("completed games replace live turn and priority presentation", () => {
   assert.equal(value.terminal, true);
   assert.equal(value.headline, "Game complete");
   assert.equal(value.priority, "No live priority");
+});
+
+test("the opening table describes mulligans before there is an active seat", () => {
+  const value = presentTurn({
+    turnSequence: 0, activeSeat: "", prioritySeat: "", phase: "setup", step: "",
+    combatDamageStep: 0, firstStrikeStep: false, lifecycleStatus: "active",
+  });
+  assert.equal(value.headline, "Choosing opening hands");
+  assert.equal(value.priority, "Before the first turn");
+  assert.ok(value.rail.every((phase) => phase.state === "future"));
 });

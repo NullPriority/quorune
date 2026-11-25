@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import time
 from typing import Any, Literal, Mapping, Protocol
 
@@ -45,6 +45,7 @@ class _ActorMessage:
     reason: str | None = None
     after_event: int = 0
     limit: int = 100
+    enqueued_at: float = field(default_factory=time.perf_counter)
 
 
 class GameActor:
@@ -75,6 +76,7 @@ class GameActor:
         self._last_persistence_seconds: float | None = None
         self._last_authoritative_persistence_seconds: float | None = None
         self._last_derived_review_seconds: float | None = None
+        self._last_command_by_principal: dict[str, dict[str, str | float | int | bool]] = {}
 
     @property
     def queue_depth(self) -> int:
@@ -198,16 +200,18 @@ class GameActor:
             "persistence": self.progress_snapshot()["persistence"],
         }
 
-    def progress_snapshot(self) -> dict[str, Any]:
+    def progress_snapshot(self, principal: str | None = None) -> dict[str, Any]:
         pending_seconds = (
             round(time.perf_counter() - self._persistence_started_at, 3)
             if self._persistence_pending
             and self._persistence_started_at is not None
             else None
         )
+        timing = self._last_command_by_principal.get(principal) if principal is not None else None
         return {
             "processing_kind": self._processing_kind,
             "queue_depth": self.queue_depth,
+            "last_command": dict(timing) if timing else None,
             "persistence": {
                 "pending": self._persistence_pending,
                 "pending_seconds": pending_seconds,
@@ -278,11 +282,15 @@ class GameActor:
     async def _handle_command(self, message: _ActorMessage) -> CommandReceipt:
         if message.envelope is None:
             raise RuntimeError("Command message is missing envelope")
+        principal = str(message.principal)
+        started = time.perf_counter()
         result = self.service.command(
             message.envelope,
-            principal=str(message.principal),
+            principal=principal,
             commit_idempotency=False,
         )
+        executed = time.perf_counter()
+        persistence_ms = 0.0
         if (
             result.ok
             and result.state_changed
@@ -290,12 +298,22 @@ class GameActor:
             and self.persistence is not None
         ):
             await self._persist()
+            persistence_ms = (time.perf_counter() - executed) * 1000
         if not result.replayed:
             self.service.remember(
                 message.envelope,
-                str(message.principal),
+                principal,
                 result,
             )
+        self._last_command_by_principal[principal] = {
+            "interaction_id": message.envelope.command_id,
+            "revision": result.state_revision,
+            "replayed": result.replayed,
+            "queue_ms": round((started - message.enqueued_at) * 1000, 2),
+            "execution_ms": round((executed - started) * 1000, 2),
+            "persistence_ms": round(persistence_ms, 2),
+            "actor_ms": round((time.perf_counter() - started) * 1000, 2),
+        }
         return result
 
     async def _run(self) -> None:

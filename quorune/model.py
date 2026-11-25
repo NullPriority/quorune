@@ -6,6 +6,7 @@ from collections.abc import Iterable, Iterator
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Mapping
+from .card_printing import CardPrinting
 from .composition_storage import PermanentCompositionStorage
 from .dungeon_progress import DungeonJourney
 from .creature_subtypes import canonical_creature_subtype
@@ -193,6 +194,7 @@ class CardInstance:
     owner: str
     controller: str
     zone: str
+    printing: CardPrinting | None = field(default=None, kw_only=True)
     is_token: bool = False
     is_commander: bool = False
     # CR 903.3 designation belongs to this physical card, not its Oracle
@@ -368,6 +370,10 @@ class CardInstance:
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
+        if self.printing is None:
+            payload.pop("printing")
+        else:
+            payload["printing"] = self.printing.to_dict()
         if self.permanent_composition is None:
             payload.pop('permanent_composition')
         else:
@@ -412,6 +418,8 @@ class CardInstance:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "CardInstance":
         payload = dict(data)
+        if "printing" in payload:
+            payload["printing"] = CardPrinting.from_dict(payload["printing"])
         if 'permanent_composition' in payload:
             payload['permanent_composition']=PermanentCompositionStorage.from_dict(payload['permanent_composition'])
         if "source_continuity" in payload:

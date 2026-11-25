@@ -62,7 +62,7 @@ export function AutomationControls({
         data-testid="auto-pass-toggle"
         title="Automatically submit pass-only priority capabilities. Turn this off to hold every priority stop, including stops during another player's turn."
         onClick={onAutoPass}
-      >{autoPass ? "Auto-pass enabled" : "Hold every priority"}</button>
+      >{autoPass ? "Auto-pass enabled" : "Full control · Hold every priority"}</button>
       <button
         type="button"
         className={`table-control-toggle${autoMana ? " active" : " manual-control"}`}

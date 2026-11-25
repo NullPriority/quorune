@@ -23,7 +23,10 @@ from quorune.rules.capabilities import (
     capability_dependencies_for_node,
     load_default_capability_registry,
 )
-from quorune.rules.component_resolution import implementation_component_resolves
+from quorune.rules.component_resolution import (
+    component_resolution_snapshot,
+    implementation_component_resolves,
+)
 from quorune.semantics import SemanticProgram
 
 
@@ -153,6 +156,20 @@ class CapabilityValidationSnapshotTests(unittest.TestCase):
 
 
 class ComponentResolutionTests(unittest.TestCase):
+    def test_registry_component_snapshot_reads_module_once_and_refreshes(self):
+        with TemporaryDirectory() as directory:
+            package = Path(directory) / "quorune"
+            rules = package / "rules"
+            rules.mkdir(parents=True)
+            module = package / "witness.py"
+            module.write_text("First = 1\nSecond = 2\n", encoding="utf-8")
+            with patch("quorune.rules.component_resolution.__file__", str(rules / "component_resolution.py")):
+                with component_resolution_snapshot():
+                    self.assertTrue(implementation_component_resolves("quorune.witness.First"))
+                    module.write_text("First = 1\n", encoding="utf-8")
+                    self.assertTrue(implementation_component_resolves("quorune.witness.Second"))
+                self.assertFalse(implementation_component_resolves("quorune.witness.Second"))
+
     def test_identical_source_reuses_exports_without_importing_the_module(self):
         source = (
             "raise RuntimeError('component validation must not execute source')\n"

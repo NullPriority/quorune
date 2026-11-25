@@ -9,6 +9,7 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from quorune import CommandEnvelope, GameService, PROTOCOL_VERSION
 from quorune.abilities import CostChoice, parse_activated_abilities
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.activated_ability_catalog import (
@@ -777,6 +778,9 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         )
 
     def test_selected_zone_cost_offer_and_command_share_candidates(self):
+        # CR 601.2h, 602.2, 701.21a. The controller commits the offered
+        # permanent as a cost before opponents can respond. Failed payment
+        # leaves the same board, stack, and priority available for a retry.
         session = self.session(7031303)
         engine = session.engine
         source = self.add_card(
@@ -821,24 +825,57 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
             action["cost_summary"]["choose_cost"][0]["legal_refs"],
         )
         before = authoritative_state_hash(engine.state)
+        service = GameService(session)
+        packet = service.observe("pilot:A", full=True)
+        decision = packet["decision"]
+        offered = next(row for row in decision["legal_actions"] if row["id"] == action_id)
+        field = next(row for row in offered["form"]["fields"] if row["name"] == "cost_cards")
+        from quorune.choice_forms import delegated_choice_fields
 
-        rejected = session.act(
-            "pilot:A",
-            {"action_id": action_id, "cost_cards": [source.ref]},
-        )
+        typed_cost, = ability.choices
+        compact_cost, = offered["cost_summary"]["choose_cost"]
+        for key, value in typed_cost.compact().items():
+            self.assertEqual(value, compact_cost[key])
+        self.assertEqual(typed_cost.compact()["n"], field["minimum"])
+        self.assertEqual(typed_cost.compact()["n"], field["maximum"])
+        self.assertTrue(field["required"])
+        self.assertIn("cost_cards", delegated_choice_fields(
+            action, decision_kind=decision["kind"], context=decision["ctx"],
+        ))
+        self.assertEqual("Sacrifice", field["label"])
+        self.assertEqual((1, 1), (field["minimum"], field["maximum"]))
+        self.assertEqual([fodder.ref], [row["value"] for row in field["options"]])
+        self.assertIsNone(service.observe("pilot:B", full=True)["decision"])
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
 
-        self.assertFalse(rejected.ok)
-        self.assertEqual(before, authoritative_state_hash(engine.state))
-        rejected = session.act(
-            "pilot:A",
-            {"action_id": action_id, "cost_cards": [opposing.ref]},
+        def submit(command_id, choices):
+            return service.command(
+                CommandEnvelope(
+                    protocol_version=PROTOCOL_VERSION,
+                    game_id=session.state.game_id,
+                    command_id=command_id,
+                    decision_id=decision["id"],
+                    action_id=action_id,
+                    capability=decision["cap"],
+                    expected_view_revision=packet["view_revision"],
+                    choices=choices,
+                ),
+                principal="pilot:A",
+            )
+
+        unsupported = (
+            ("missing", {}, "action_rejected"),
+            ("wrong_type", {"cost_cards": {fodder.ref: True}}, "invalid_choices"),
+            ("excluded_source", {"cost_cards": [source.ref]}, "action_rejected"),
+            ("other_controller", {"cost_cards": [opposing.ref]}, "action_rejected"),
+            ("stale_object", {"cost_cards": ["A-stale-ref"]}, "action_rejected"),
+            ("duplicate", {"cost_cards": [fodder.ref, fodder.ref]}, "action_rejected"),
         )
-        self.assertFalse(rejected.ok)
-        self.assertEqual(before, authoritative_state_hash(engine.state))
-        accepted = session.act(
-            "pilot:A",
-            {"action_id": action_id, "cost_cards": [fodder.ref]},
-        )
+        for name, choices, code in unsupported:
+            with self.subTest(name=name):
+                self.assertEqual(code, submit(name, choices).code)
+                self.assertEqual(before, authoritative_state_hash(engine.state))
+        accepted = submit("valid", {"cost_cards": [fodder.ref]})
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertEqual(
             "graveyard",
@@ -846,6 +883,12 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         )
         self.assertEqual("battlefield", source.zone)
         self.assertTrue(engine.state.stack)
+        with tempfile.TemporaryDirectory() as temporary:
+            game_dir = Path(temporary) / "selected-object-cost"
+            session.save(game_dir)
+            replay = replay_record(game_dir, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(engine.state), replay["final_state_hash"])
 
     def test_selected_zone_cost_uses_current_effective_characteristics(self):
         session = self.session(7031306)

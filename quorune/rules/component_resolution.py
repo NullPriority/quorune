@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import ast
-from functools import lru_cache
+from collections.abc import Callable
+from contextlib import contextmanager
+from contextvars import ContextVar
+from functools import cache, lru_cache
 from pathlib import Path
 
 
@@ -30,27 +33,59 @@ def _module_exports(source: str) -> frozenset[str] | None:
     return frozenset(exported)
 
 
+_RESOLVE_COMPONENT: ContextVar[Callable[[str], bool] | None] = ContextVar(
+    "resolve_component", default=None,
+)
+
+
+def _component_resolver() -> Callable[[str], bool]:
+    package_root = Path(__file__).resolve().parents[1]
+
+    @cache
+    def module_location(parts: tuple[str, ...]) -> Path | None:
+        relative = Path(*parts)
+        module_path = package_root / relative.with_suffix(".py")
+        if module_path.is_file():
+            return module_path
+        package_path = package_root / relative / "__init__.py"
+        return package_path if package_path.is_file() else None
+
+    @cache
+    def exports(module_path: Path) -> frozenset[str] | None:
+        try:
+            return _module_exports(module_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError):
+            return None
+
+    def resolve(component: str) -> bool:
+        prefix = "quorune."
+        if not component.startswith(prefix):
+            return False
+        parts = tuple(component.removeprefix(prefix).split("."))
+        for length in range(len(parts), 0, -1):
+            module_path = module_location(parts[:length])
+            if module_path is None:
+                continue
+            if length == len(parts):
+                return True
+            exported = exports(module_path)
+            return exported is not None and parts[length] in exported
+        return False
+
+    return resolve
+
+
+@contextmanager
+def component_resolution_snapshot():
+    """Read each module once per registry validation and refresh next time."""
+    token = _RESOLVE_COMPONENT.set(_component_resolver())
+    try:
+        yield
+    finally:
+        _RESOLVE_COMPONENT.reset(token)
+
+
 def implementation_component_resolves(component: str) -> bool:
     """Resolve a package component without importing runtime game modules."""
-
-    prefix = "quorune."
-    if not component.startswith(prefix):
-        return False
-    parts = component.removeprefix(prefix).split(".")
-    package_root = Path(__file__).resolve().parents[1]
-    for length in range(len(parts), 0, -1):
-        relative = Path(*parts[:length])
-        module_path = package_root / relative.with_suffix(".py")
-        if not module_path.is_file():
-            module_path = package_root / relative / "__init__.py"
-            if not module_path.is_file():
-                continue
-        remaining = parts[length:]
-        if not remaining:
-            return True
-        try:
-            exported = _module_exports(module_path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeError):
-            return False
-        return exported is not None and remaining[0] in exported
-    return False
+    resolve = _RESOLVE_COMPONENT.get() or _component_resolver()
+    return resolve(component)

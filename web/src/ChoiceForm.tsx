@@ -1,4 +1,7 @@
+import { CardChoiceGrid, projectedChoiceCards } from "./CardChoiceGrid";
+import { CombatAssignment } from "./CombatAssignment";
 import type { ChoiceForm, JsonValue } from "./generated/protocol";
+import type { ProjectedView } from "./protocol";
 import {
   activeFields,
   activeVariants,
@@ -23,6 +26,7 @@ interface Props {
   values: ChoiceValues;
   onChange: (values: ChoiceValues) => void;
   labelFor: (value: string) => string;
+  view?: ProjectedView;
 }
 
 function text(value: JsonValue | undefined): string {
@@ -33,8 +37,21 @@ function testValue(value: JsonValue | undefined): string {
   return text(value).replace(/[^A-Za-z0-9_-]/g, "-");
 }
 
+function optionLabel(label: JsonValue | undefined, value: JsonValue | undefined, labelFor: (value: string) => string): string {
+  const ref = text(value);
+  const supplied = text(label);
+  if (supplied && supplied !== ref) return supplied;
+  if (/^(?:[ABCD]\d+|S\d+|[a-f0-9-]{24,})$/i.test(ref)) return labelFor(ref);
+  const words = ref.replaceAll("_", " ").replaceAll("-", " ").trim();
+  return words ? words[0].toUpperCase() + words.slice(1) : "Choose an option";
+}
+
 function FieldLabel({ field }: { field: ChoiceField }) {
-  return <span>{text(field.label || field.name)}{field.required ? " *" : ""}</span>;
+  return <span>{fieldTitle(field)}{field.required ? " *" : ""}</span>;
+}
+
+function fieldTitle(field: ChoiceField): string {
+  return optionLabel(field.label, field.name, () => "Choice");
 }
 
 function RefOptions({
@@ -81,7 +98,7 @@ function RefOptions({
                 disabled={option.available === false && !selected.includes(ref)}
                 onChange={(event) => toggle(ref, event.target.checked)}
               />
-              <span>{text(option.label) || labelFor(ref)}</span>
+              <span>{optionLabel(option.label, option.value, labelFor)}</span>
             </label>
           );
         })}
@@ -93,13 +110,13 @@ function RefOptions({
               <span>{labelFor(ref)}</span>
               <button
                 type="button"
-                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, earlier in ${text(field.label || field.name)}`}
+                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, earlier in ${fieldTitle(field)}`}
                 onClick={() => move(index, -1)}
                 disabled={index === 0}
               >↑</button>
               <button
                 type="button"
-                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, later in ${text(field.label || field.name)}`}
+                aria-label={`Move ${labelFor(ref)}, item ${index + 1} of ${selected.length}, later in ${fieldTitle(field)}`}
                 onClick={() => move(index, 1)}
                 disabled={index === selected.length - 1}
               >↓</button>
@@ -135,7 +152,7 @@ function OrderedPartition({
   const optionLabels = new Map(
     options.map((option) => [
       text(option.value),
-      text(option.label) || labelFor(text(option.value)),
+      optionLabel(option.label, option.value, labelFor),
     ]),
   );
 
@@ -392,7 +409,7 @@ function TargetControl({
                 checked={modes.includes(mode)}
                 onChange={(event) => toggleMode(mode, event.target.checked)}
               />
-              <span>{mode}</span>
+              <span>{optionLabel(record(schema.mode_labels)[mode], mode, labelFor)}</span>
             </label>
           ))}
         </div>
@@ -402,7 +419,7 @@ function TargetControl({
         const selected = list(targets[id]).map(String);
         return (
           <div key={id} className="target-group">
-            <strong>{text(group.label || id)} ({text(group.min ?? 1)}–{text(group.max ?? 1)})</strong>
+            <strong>{text(group.label || "Targets")} ({text(group.min ?? 1)}–{text(group.max ?? 1)})</strong>
             <div className="choice-options">
               {list(group.legal_refs).map((rawRef) => {
                 const ref = text(rawRef);
@@ -480,7 +497,7 @@ function AssignmentMap({
           const chosen = Array.isArray(selected[key]) ? list(selected[key]).map(text) : text(selected[key]) ? [text(selected[key])] : [];
           return (
             <fieldset key={key} className="choice-field">
-              <legend>{text(row.label) || labelFor(key)}</legend>
+              <legend>{optionLabel(row.label, row.value, labelFor)}</legend>
               <p className="choice-help">Choose up to {maximum} {text(field.choice_label) || "attackers"}.</p>
               {list(row.options).map((rawOption) => {
                 const option = record(rawOption);
@@ -495,7 +512,7 @@ function AssignmentMap({
                       else delete next[key];
                       onValue(next);
                     }} />
-                  <span>{text(option.label) || labelFor(ref)}</span>
+                  <span>{optionLabel(option.label, option.value, labelFor)}</span>
                 </label>;
               })}
             </fieldset>
@@ -503,7 +520,7 @@ function AssignmentMap({
         }
         return (
           <label key={key}>
-            {text(row.label) || labelFor(key)}
+            {optionLabel(row.label, row.value, labelFor)}
             <select
               data-testid={`choice-${text(field.name)}-${testValue(key)}`}
               value={text(selected[key])}
@@ -517,7 +534,7 @@ function AssignmentMap({
               <option value="">Do not assign</option>
               {list(row.options).map((rawOption) => {
                 const option = record(rawOption);
-                return <option key={text(option.value)} value={text(option.value)}>{text(option.label) || labelFor(text(option.value))}</option>;
+                return <option key={text(option.value)} value={text(option.value)}>{optionLabel(option.label, option.value, labelFor)}</option>;
               })}
             </select>
           </label>
@@ -720,7 +737,7 @@ function CopyTargets({
               const selected = selectedFor(submitted[index], group, groups.length);
               return (
                 <div key={id} className="target-group">
-                  <span>{text(group.label || id)}</span>
+                  <span>{text(group.label || "Targets")}</span>
                   <div className="choice-options">
                     {list(group.legal_refs).map((rawRef) => {
                       const ref = text(rawRef);
@@ -814,7 +831,7 @@ function ChoiceControl({
           {list(field.options).map((rawOption) => {
             const option = record(rawOption);
             const rawValue = option.value;
-            return <option key={text(rawValue)} value={text(rawValue)}>{text(option.label) || labelFor(text(rawValue))}</option>;
+            return <option key={text(rawValue)} value={text(rawValue)}>{optionLabel(option.label, rawValue, labelFor)}</option>;
           })}
         </select>
       </label>
@@ -824,13 +841,18 @@ function ChoiceControl({
   return <p className="choice-warning">This server-issued control is not renderable by this browser version.</p>;
 }
 
-export function ChoiceFormView({ form, values, onChange, labelFor }: Props) {
+export function ChoiceFormView({ form, values, onChange, labelFor, view }: Props) {
   const variants = activeVariants(form, values);
   const selector = text(variants.field || "cost_option");
   const variantOptions = list(variants.options).map(record);
+  const fields = activeFields(form, values);
+  const cardPicker = (field: ChoiceField) => field.control === "refs"
+    && (field.name === "cost_cards" || field.name === "search_cards");
+  const cards = view && fields.some(cardPicker)
+    ? projectedChoiceCards(view) : null;
   return (
     <div className="choice-form-fields">
-      {variantOptions.length > 0 && (
+      {variantOptions.length > 1 && (
         <label className="choice-field">
           {text(variants.label || "Casting cost")}
           <select
@@ -842,9 +864,18 @@ export function ChoiceFormView({ form, values, onChange, labelFor }: Props) {
           </select>
         </label>
       )}
-      {activeFields(form, values).map((field) => (
-        <ChoiceControl key={text(field.name)} field={field} values={values} onChange={onChange} labelFor={labelFor} />
-      ))}
+      {fields.map((field) => {
+        const name = text(field.name);
+        const onValue = (value: JsonValue) => onChange({ ...values, [name]: value });
+        if (view && cards && cardPicker(field)) {
+          return <CardChoiceGrid key={name} field={field} value={values[name]}
+            onValue={onValue} labelFor={labelFor} view={view} cards={cards} />;
+        }
+        if (view && field.control === "assignment_map" && (name === "attackers" || name === "blocks")) {
+          return <CombatAssignment key={name} field={field} value={values[name]} onValue={onValue} view={view} labelFor={labelFor} />;
+        }
+        return <ChoiceControl key={name} field={field} values={values} onChange={onChange} labelFor={labelFor} />;
+      })}
     </div>
   );
 }

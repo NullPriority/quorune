@@ -1,11 +1,16 @@
 import {
   KeyboardEvent as ReactKeyboardEvent,
   useEffect,
+  useId,
+  useLayoutEffect,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 
 import type { JsonValue, LegalAction } from "./generated/protocol";
 import type { ProjectedView } from "./protocol";
+import { ManaText, spokenMana } from "./ManaText";
+import { actionTitle, cardActionCost } from "./tablePresentation";
 
 
 export function asRecord(value: JsonValue | undefined): Record<string, JsonValue> {
@@ -18,7 +23,49 @@ export function asList(value: JsonValue | undefined): JsonValue[] {
 
 export function cardName(value: JsonValue): string {
   const card = asRecord(value);
-  return String(card.n ?? card.name ?? card.id ?? "Unknown card");
+  const name = card.n ?? card.name ?? card.label;
+  return name === "?" ? "Face-down card" : String(name ?? "Unknown card");
+}
+
+const languageNames = new Intl.DisplayNames(["en"], { type: "language", fallback: "none" });
+const printingLanguages: Record<string, string> = {
+  zhs: "Simplified Chinese", zht: "Traditional Chinese", ph: "Phyrexian",
+};
+
+function printingLanguage(language: JsonValue): string {
+  if (typeof language !== "string" || !/^[a-z]{2,3}$/i.test(language)) return "";
+  const key = language.toLowerCase();
+  return printingLanguages[key] ?? languageNames.of(key) ?? "";
+}
+
+export function printingLabel(value: JsonValue): string {
+  const printing = asRecord(asRecord(value).printing);
+  const edition = String(printing.set_code ?? "").toUpperCase();
+  const finishes: Record<string, string> = { foil: "Foil", nonfoil: "Nonfoil", etched: "Etched foil" };
+  const finish = String(printing.finish ?? "");
+  return [
+    edition && printing.collector_number ? `${edition} #${printing.collector_number}` : edition,
+    printingLanguage(printing.language),
+    finishes[finish.toLowerCase()] ?? finish,
+  ].filter(Boolean).join(" · ");
+}
+
+function imageUrl(card: Record<string, JsonValue>, cid: string, face: number, size: string): string {
+  const query = new URLSearchParams({ size, face: String(face) });
+  const printing = asRecord(card.printing);
+  if (typeof printing.scryfall_id === "string") query.set("printing", printing.scryfall_id);
+  else if (typeof printing.set_code === "string" && typeof printing.collector_number === "string") {
+    query.set("edition", printing.set_code);
+    query.set("collector", printing.collector_number);
+    if (typeof printing.language === "string") query.set("language", printing.language);
+  }
+  return `/api/v1/cards/${cid}/image?${query}`;
+}
+
+function currentStats(card: Record<string, JsonValue>, definition: Record<string, JsonValue> = {}) {
+  const power = card.p ?? (card.fd ? undefined : definition.p);
+  const toughness = card.q ?? (card.fd ? undefined : definition.q);
+  return power != null && toughness != null ? `${power}/${toughness}` : "";
 }
 
 export function CardTile({
@@ -35,6 +82,11 @@ export function CardTile({
   manualMana = false,
   selected = false,
   explainUnavailable = false,
+  highlight = false,
+  previewOnHover = true,
+  artCrop = false,
+  origin,
+  choice,
 }: {
   value: JsonValue;
   view: ProjectedView;
@@ -49,37 +101,53 @@ export function CardTile({
   manualMana?: boolean;
   selected?: boolean;
   explainUnavailable?: boolean;
+  highlight?: boolean;
+  previewOnHover?: boolean;
+  artCrop?: boolean;
+  origin?: string;
+  choice?: { selected: boolean; select: () => void };
 }) {
   const card = asRecord(value);
   const targetRefs = asList(card.targets);
   const damageDetail = asList(card.damage_shares).map((share, slot) => {
     const ref = targetRefs[slot];
-    const label = typeof ref === "string" ? targetLabel?.(ref) ?? ref : "an illegal target";
+    const label = typeof ref === "string" ? targetLabel?.(ref) ?? "Target" : "Unavailable target";
     return `${share} to ${label}`;
   }).join(" · ");
   const cid = typeof card.cid === "string" ? card.cid : "";
   const definition = cid ? view.definitions[cid] : undefined;
-  const [showImage, setShowImage] = useState(Boolean(cid));
-  const interactive = Boolean(onIntent) && (actions.length > 0 || explainUnavailable);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
+  const [previewAnchor, setPreviewAnchor] = useState<HTMLElement | null>(null);
+  const costDescription = useId();
+  const interactive = Boolean(choice) || Boolean(onIntent) && (actions.length > 0 || explainUnavailable);
+  const actionable = Boolean(choice) || Boolean(onIntent) && actions.length > 0;
   const inspectable = Boolean(onInspect);
   const ref = String(card.id ?? "");
   const face = Number(card.face ?? 0);
-  const canDrag = interactive && actions.some((action) => ["play_land", "cast"].includes(action.action));
+  const imageSizes = artCrop ? ["art_crop", "normal"] : [compact || table ? "small" : "normal"];
+  const image = cid ? imageSizes.map((size) => imageUrl(card, cid, face, size))
+    .find((source) => !failedImages.includes(source)) : undefined;
+  const showImage = Boolean(image);
+  const stats = currentStats(card, definition);
+  const damage = Number(card.dmg ?? 0);
+  const canDrag = interactive && !choice && actions.some((action) => ["play_land", "cast"].includes(action.action));
   const actionKinds = new Set(actions.map((action) => action.action));
-  const actionHint = manualMana
-    ? actionKinds.has("undo_mana") ? "UNTAP" : "TAP"
-    : actionKinds.size === 0
-      ? "INFO"
-      : actionKinds.size > 1
-      ? "CHOOSE"
+  const offerCost = !choice && actionable ? cardActionCost(actions) : "";
+  const printedCost = String(card.m ?? definition?.m ?? "");
+  const actionHint = choice || !actionable ? "" : manualMana
+    ? actionKinds.has("undo_mana") ? "Untap" : "Tap"
+    : actions.length > 1
+      ? "Choose"
       : actionKinds.has("cast")
-        ? "CAST"
+        ? "Cast"
         : actionKinds.has("activate")
-          ? "ACTIVATE"
-        : "PLAY";
+          ? "Activate"
+        : "Play";
   function activate() {
     onInspect?.(value);
-    if (interactive) onIntent?.(actions, value);
+    setPreviewAnchor(null);
+    if (choice) choice.select();
+    else if (interactive) onIntent?.(actions, value);
   }
   function keydown(event: ReactKeyboardEvent<HTMLElement>) {
     if ((!interactive && !inspectable) || !["Enter", " "].includes(event.key)) return;
@@ -88,18 +156,31 @@ export function CardTile({
   }
   return (
     <article
-      className={`card-tile${compact ? " compact" : table ? " table-card" : " hand-card"}${showImage ? " has-image" : ""}${card.tap ? " tapped" : ""}${interactive ? " actionable" : ""}${inspectable ? " inspectable" : ""}${manualMana ? " mana-source" : ""}${selected ? " selected-card" : ""}`}
-      title={String(card.o ?? definition?.o ?? cardName(value))}
+      className={`card-tile${compact ? " compact" : table ? " table-card" : " hand-card"}${showImage ? " has-image" : ""}${card.tap ? " tapped" : ""}${actionable ? " actionable" : ""}${inspectable ? " inspectable" : ""}${manualMana ? " mana-source" : ""}${selected ? " selected-card" : ""}${highlight ? " target-highlight" : ""}${offerCost ? " has-offered-cost" : ""}`}
       role={interactive || inspectable ? "button" : undefined}
       tabIndex={interactive || inspectable ? 0 : undefined}
-      aria-label={interactive ? `${actions.map((action) => action.label ?? action.action).join(" or ")}: ${cardName(value)}` : inspectable ? `Inspect ${cardName(value)}` : undefined}
+      aria-label={choice ? `Select ${cardName(value)}` : actionable
+        ? [actions.map((action) => spokenMana(action.label ? actionTitle(action) : `${actionHint} ${cardName(value)}`)).join(" or "), origin].filter(Boolean).join(" · ")
+        : interactive || inspectable ? `Inspect ${cardName(value)}` : undefined}
+      aria-describedby={offerCost ? costDescription : undefined}
+      aria-pressed={choice?.selected}
       draggable={canDrag}
       data-card-ref={ref}
+      data-zone-offer={origin ? "true" : undefined}
+      data-choice-candidate={choice ? "true" : undefined}
       data-tapped={card.tap ? "true" : "false"}
       onClick={activate}
       onKeyDown={keydown}
-      onMouseEnter={() => onInspect?.(value)}
-      onFocus={() => onInspect?.(value)}
+      onMouseEnter={(event) => {
+        onInspect?.(value);
+        if (inspectable && previewOnHover && !choice && !offerCost) setPreviewAnchor(event.currentTarget);
+      }}
+      onMouseLeave={() => setPreviewAnchor(null)}
+      onFocus={(event) => {
+        onInspect?.(value);
+        if (inspectable && previewOnHover && !choice && !offerCost && event.currentTarget.matches(":focus-visible")) setPreviewAnchor(event.currentTarget);
+      }}
+      onBlur={() => setPreviewAnchor(null)}
       onPointerDown={(event) => {
         if (canDrag && event.button === 0) onDragCard?.(ref);
       }}
@@ -127,24 +208,33 @@ export function CardTile({
         window.setTimeout(() => onDragCard?.(null), 0);
       }}
     >
-      {showImage && (
+      {image && (
         <img
-          src={`/api/v1/cards/${cid}/image?size=${compact || table ? "small" : "normal"}&face=${face}`}
+          src={image}
           alt=""
           loading="lazy"
-          onError={() => setShowImage(false)}
+          onError={() => setFailedImages((failed) => failed.includes(image) ? failed : [...failed, image])}
         />
       )}
       <div className="card-copy">
-        <small>{String(card.m ?? definition?.m ?? card.id ?? "")}</small>
+        {!offerCost && !origin && printedCost && <small><ManaText text={printedCost} /></small>}
         <strong>{cardName(value)}</strong>
         {damageDetail && <span>{damageDetail}</span>}
         {!compact && (card.t ?? definition?.t) && <span>{String(card.t ?? definition?.t)}</span>}
         {card.ctr && <span>{Object.entries(asRecord(card.ctr)).map(([key, amount]) => `${key} ${amount}`).join(" · ")}</span>}
         {Boolean(card.prepared) && <span>PREPARED</span>}
       </div>
+      {(stats || damage > 0) && <div className="card-stats">
+        {stats && <strong data-testid="card-current-stats" aria-label={`Current power and toughness ${stats}`}>{stats}</strong>}
+        {damage > 0 && <span data-testid="card-marked-damage" aria-label={`${damage} damage marked`}>{damage} dmg</span>}
+      </div>}
       {card.tap && table && <span className="tapped-state">TAPPED</span>}
-      {interactive && <span className="card-action-hint">{actionHint}</span>}
+      {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && <span className="card-action-hint">{actionHint}</span>}
+      {offerCost && <>
+        <span id={costDescription} hidden>{spokenMana(offerCost)}</span>
+        <span className="card-cost-overlay" data-testid="card-offer-cost" aria-hidden="true"><ManaText text={offerCost} /></span>
+      </>}
+      {previewAnchor && <FloatingCardPreview anchor={previewAnchor} value={value} view={view} />}
     </article>
   );
 }
@@ -154,11 +244,13 @@ export function CardInspector({
   view,
   onExpand,
   expanded = false,
+  previewOnly = false,
 }: {
   value: JsonValue | null;
   view: ProjectedView;
   onExpand?: () => void;
   expanded?: boolean;
+  previewOnly?: boolean;
 }) {
   const card = asRecord(value ?? undefined);
   const cid = typeof card.cid === "string" ? card.cid : "";
@@ -187,12 +279,15 @@ export function CardInspector({
   }
 
   const face = faces[faceIndex] ?? {};
-  const name = String(face.n ?? card.n ?? definition?.n ?? card.id ?? "Unknown card");
-  const mana = String(face.m ?? card.m ?? definition?.m ?? "");
-  const typeLine = String(face.t ?? card.t ?? definition?.t ?? "");
-  const oracle = String(face.o ?? card.o ?? definition?.o ?? "No projected rules text.");
+  const isCurrentFace = faceIndex === projectedFace;
+  const name = isCurrentFace ? cardName(value) : String(face.n ?? cardName(value));
+  const mana = String((isCurrentFace ? card.m : face.m) ?? definition?.m ?? "");
+  const typeLine = String((isCurrentFace ? card.t : face.t) ?? definition?.t ?? "");
+  const oracle = String((isCurrentFace ? card.o : face.o) ?? definition?.o ?? "No projected rules text.");
+  const stats = isCurrentFace ? currentStats(card, definition) : "";
+  const counters = Object.entries(asRecord(card.ctr));
   return (
-    <section className={`card-inspector-panel${expanded ? " expanded" : ""}`} data-testid={expanded ? "card-inspector-expanded" : "card-inspector"}>
+    <section className={`card-inspector-panel${expanded ? " expanded" : ""}`} data-testid={previewOnly ? "hover-card-preview" : expanded ? "card-inspector-expanded" : "card-inspector"}>
       <header>
         <div><span className="eyebrow">CARD VIEWER</span><strong>{name}</strong></div>
         {onExpand && <button type="button" className="link-button" onClick={onExpand}>Enlarge</button>}
@@ -200,15 +295,17 @@ export function CardInspector({
       <div className="inspector-art">
         {showImage && cid ? (
           <img
-            src={`/api/v1/cards/${cid}/image?size=large&face=${faceIndex}`}
+            src={imageUrl(card, cid, faceIndex, "large")}
             alt={name}
             onError={() => setShowImage(false)}
           />
         ) : (
-          <div className="inspector-art-fallback"><strong>{name}</strong><span>{typeLine}</span></div>
+          <div className="inspector-art-fallback"><strong>{name}</strong><span>{typeLine}</span>
+            {printingLabel(value) && <span>Printing art unavailable</span>}
+          </div>
         )}
       </div>
-      {faces.length > 1 && (
+      {!previewOnly && faces.length > 1 && (
         <div className="face-switcher" aria-label="Card faces">
           {faces.map((candidate, index) => (
             <button
@@ -224,10 +321,51 @@ export function CardInspector({
         </div>
       )}
       <div className="inspector-text">
-        <div><strong>{name}</strong><span>{mana}</span></div>
+        <div><strong>{name}</strong>{mana && <ManaText text={mana} />}</div>
         {typeLine && <small>{typeLine}</small>}
+        {printingLabel(value) && <small className="printing-label">{printingLabel(value)}</small>}
+        {isCurrentFace && <div className="inspector-condition">
+          {stats && <strong>Current {stats}</strong>}
+          {card.dmg ? <span>{String(card.dmg)} damage marked</span> : null}
+          {card.tap ? <span>Tapped</span> : null}
+          {counters.map(([key, count]) => <span key={key}>{String(count)} × {key} {Number(count) === 1 ? "counter" : "counters"}</span>)}
+        </div>}
         <p>{oracle}</p>
       </div>
     </section>
   );
+}
+
+function FloatingCardPreview({
+  anchor, value, view,
+}: {
+  anchor: HTMLElement;
+  value: JsonValue;
+  view: ProjectedView;
+}) {
+  const [position, setPosition] = useState({ left: 0, top: 0, width: 0 });
+  useLayoutEffect(() => {
+    function place() {
+      const bounds = anchor.getBoundingClientRect();
+      const width = Math.min(260, window.innerWidth - 24);
+      const maxHeight = Math.min(460, window.innerHeight - 24);
+      const x = bounds.right + width + 18 <= window.innerWidth
+        ? bounds.right + 10 : bounds.left - width - 10;
+      setPosition({
+        left: Math.min(window.innerWidth - width - 12, Math.max(12, x)),
+        top: Math.min(window.innerHeight - maxHeight - 12, Math.max(12, bounds.top - 12)),
+        width,
+      });
+    }
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [anchor]);
+  return createPortal(<div className="floating-card-preview" style={position} aria-hidden="true">
+    <CardInspector value={value} view={view} previewOnly />
+  </div>, document.body);
 }

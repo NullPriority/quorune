@@ -11,9 +11,12 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from fastapi.testclient import TestClient
+
 from quorune.bulk import ScryfallBulkItem
 from quorune.carddb import CardDatabase, build_card_database
 from quorune.record import database_fingerprint
+from server.app import ServerSettings, create_app
 from server.data import CardImageCache, ManagedScryfallData
 
 
@@ -29,7 +32,7 @@ class _ImageResponse(BytesIO):
         self.close()
 
 
-def _build_database(root: Path, *, image_host: str = "cards.scryfall.io") -> Path:
+def _build_database(root: Path, *, image_host: str | None = "cards.scryfall.io") -> Path:
     root.mkdir(parents=True, exist_ok=True)
     oracle = root / "oracle.jsonl"
     rulings = root / "rulings.jsonl"
@@ -46,7 +49,7 @@ def _build_database(root: Path, *, image_host: str = "cards.scryfall.io") -> Pat
                 "image_uris": {
                     "small": f"https://{image_host}/small/front/test.jpg",
                     "normal": f"https://{image_host}/normal/front/test.jpg",
-                },
+                } if image_host is not None else {},
             },
             sort_keys=True,
         )
@@ -80,6 +83,27 @@ class CardImageDatabaseTests(unittest.TestCase):
                     rows[0]["normal"],
                 )
                 self.assertEqual("1", database.metadata()["image_reference_count"])
+
+    def test_compact_rules_database_can_serve_art_from_a_separate_catalog(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            compact = _build_database(root / "compact", image_host=None)
+            art = _build_database(root / "art")
+            app = create_app(ServerSettings(
+                card_db=compact,
+                database=root / "server.sqlite3",
+                game_root=root / "games",
+                image_cache=root / "images",
+                card_image_db=art,
+            ))
+            with TestClient(app) as client, patch(
+                "server.data.urllib.request.urlopen", return_value=_ImageResponse(b"jpeg-bytes")
+            ) as download:
+                response = client.get("/api/v1/cards/12345678/image?size=normal")
+                self.assertEqual(200, response.status_code)
+                self.assertEqual(b"jpeg-bytes", response.content)
+                self.assertEqual(compact, app.state.runtime.card_db.path)
+                self.assertEqual("https://cards.scryfall.io/normal/front/test.jpg", download.call_args.args[0].full_url)
 
 
 class CardImageCacheTests(unittest.IsolatedAsyncioTestCase):

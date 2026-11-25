@@ -298,24 +298,33 @@ class GameService:
         )
 
     @staticmethod
-    def _choice_fields(
+    def _choice_error(
         action: Mapping[str, Any],
+        choices: Mapping[str, Any],
         *,
         decision_kind: str,
         context: Mapping[str, Any],
-    ) -> set[str]:
-        """Return the fields the current server-issued action delegates.
+    ) -> str | None:
+        """Validate submitted fields against the current action.
 
         This is intentionally conservative.  Server-derived action metadata
         such as a card ref, source, cost, zone, or semantic key never becomes
         writable merely because it is present in the catalog entry.
         """
 
-        return delegated_choice_fields(
+        allowed = delegated_choice_fields(
             action,
             decision_kind=decision_kind,
             context=context,
         )
+        unknown = sorted(str(key) for key in set(choices) - allowed)
+        if unknown:
+            return "Choices contain field(s) not delegated by this action: " + ", ".join(unknown)
+        if action.get("action") == "activate" and "cost_cards" in choices:
+            refs = choices["cost_cards"]
+            if not isinstance(refs, list) or any(type(ref) is not str or not ref for ref in refs):
+                return "Activation cost cards must be an array of card references"
+        return None
 
     def _selected_action(
         self, principal: str, action_id: str
@@ -482,26 +491,20 @@ class GameService:
                 principal,
                 receipt,
             ) if commit_idempotency else receipt
-        allowed_choices = self._choice_fields(
-            selected,
+        choice_error = self._choice_error(
+            selected, envelope.choices,
             decision_kind=decision_kind,
             context=mana_pool_choice_context(
                 self.session.state, capability.actor, decision_kind,
                 decision.payload_by_actor.get(capability.actor or principal, {}),
             ),
         )
-        unknown_choices = sorted(
-            str(key) for key in set(envelope.choices) - allowed_choices
-        )
-        if unknown_choices:
+        if choice_error is not None:
             receipt = self._receipt(
                 envelope,
                 ok=False,
                 code="invalid_choices",
-                summary=(
-                    "Choices contain field(s) not delegated by this action: "
-                    + ", ".join(unknown_choices)
-                ),
+                summary=choice_error,
             )
             return self.remember(
                 envelope,

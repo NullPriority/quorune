@@ -689,6 +689,7 @@ def build_manifest(
     status: str | None = None,
     pause_reason: Mapping[str, Any] | None = None,
     migrated_from: str | None = None,
+    checkpoint_state_hash: str | None = None,
 ) -> dict[str, Any]:
     effective_status = (
         "complete"
@@ -711,6 +712,8 @@ def build_manifest(
         if any(value is not None for value in match_values)
         else "unavailable"
     )
+    semantics_hash = semantics_fingerprint(semantics)
+    program_fingerprints = semantics.card_program_fingerprints()
     return {
         "schema_version": RECORD_SCHEMA_VERSION,
         "record_schema_version": RECORD_SCHEMA_VERSION,
@@ -749,14 +752,11 @@ def build_manifest(
         "profile_fingerprint_match": overall_profile_match,
         "seed": state.config.seed,
         "trace_level": state.config.trace_level,
-        "semantics_fingerprint": semantics_fingerprint(semantics),
-        "semantics_registry": {
-            "schema_version": 1,
-            "hash": semantics_fingerprint(semantics),
-        },
+        "semantics_fingerprint": semantics_hash,
+        "semantics_registry": {"schema_version": 1, "hash": semantics_hash},
         "card_programs": {
             "schema_version": 2,
-            "fingerprints": semantics.card_program_fingerprints(),
+            "fingerprints": program_fingerprints,
             "trust": card_program_trust_provenance(semantics),
         },
         "runtime_trust": runtime_trust_provenance(),
@@ -782,15 +782,13 @@ def build_manifest(
         ),
         "winner": state.winner,
         "draw": state.draw,
-        "final_state_hash": authoritative_state_hash(state),
+        "final_state_hash": checkpoint_state_hash if checkpoint_state_hash is not None else authoritative_state_hash(state),
         "replay": {
             "mode": replay_mode,
             "verification": "not_run",
             "engine_version": ENGINE_VERSION,
-            "semantics_fingerprint": semantics_fingerprint(semantics),
-            "card_program_fingerprints": (
-                semantics.card_program_fingerprints()
-            ),
+            "semantics_fingerprint": semantics_hash,
+            "card_program_fingerprints": dict(program_fingerprints),
         },
         "review": {
             "classification": "unreviewed",
@@ -852,6 +850,7 @@ def write_record(
     metrics["persistent_threads_reused"] = derived_arena[
         "persistent_threads_reused"
     ]
+    checkpoint = checkpoint_envelope(state)
     manifest = build_manifest(
         state=state,
         card_db=card_db,
@@ -866,6 +865,7 @@ def write_record(
         status=status,
         pause_reason=pause_reason,
         migrated_from=migrated_from,
+        checkpoint_state_hash=checkpoint["state_hash"],
     )
     if prior_manifest:
         if not migrated_from and prior_manifest.get("migrated_from"):
@@ -890,7 +890,7 @@ def write_record(
                     manifest["replay"][field] = copy.deepcopy(
                         prior_replay[field]
                     )
-    _atomic_json(directory / "checkpoint.json", checkpoint_envelope(state))
+    _atomic_json(directory / "checkpoint.json", checkpoint)
     _atomic_jsonl(directory / "commands.jsonl", commands)
     _atomic_jsonl(
         directory / "events.jsonl",

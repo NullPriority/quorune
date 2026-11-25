@@ -2,7 +2,7 @@
 title: "Browser product"
 status: "current"
 authoritative_source: "web client, projected protocol, server application, and headless browser tests"
-verified: "2026-08-25"
+verified: "2026-11-24"
 audience: "local players, spectators, and product contributors"
 maintenance: "hand-maintained"
 concern: "browser-product"
@@ -23,11 +23,19 @@ invite. Each top-level browser tab receives its own HttpOnly guest binding even
 when tabs share a cookie jar. A guest may claim one open seat or join watch-only
 as a spectator.
 
-Players submit a public deck URL or pasted Commander list. Validation resolves
-the list against the pinned local snapshot, reports owner-private issues, and
-requires every configured seat to be ready before the owner can start. Players
-may clear only their own deck/readiness. The owner can rotate the invite,
-remove a nonowner before start, or replace an unstarted room.
+Players choose a saved deck, submit a public deck URL, or paste a Commander
+list. The editor reports Commander legality, card behavior, and match readiness
+separately. It shows affected cards only to the person who submitted the list.
+For a card data mismatch it saves the list as an editable draft and leaves
+that seat waiting for review. The deck owner can open the affected card’s data
+details to see the diagnostic ID and the two program sources. Use the Oracle
+and rulings snapshot for the running release before checking the list again.
+Every seat submits a list before the host can start. The owner can rotate the
+invite, remove a nonowner before start, or replace an unstarted room.
+
+Use **Edit deck** in **Saved decks** to open a copy in a new table’s editor.
+Checking and submitting saves the edited list. The host can use **Decks and
+games** from the editor to return to saved lists and recent games.
 
 Preview-card exceptions use an exact confirmation fingerprint and never waive
 banned, missing, already-released illegal, or unsupported semantic behavior.
@@ -55,6 +63,33 @@ Versioned generic forms render server-issued modes, targets, ordering,
 assignments, private selections, and confirmations. Unknown forms remain
 unavailable rather than being guessed.
 
+The three opponents sit above your battlefield in a four-player match. Each
+board groups creatures, lands, and other permanents. Use **Arrange** to reorder
+your cards within a lane. **Reset layout** restores the default order.
+
+Click a permanent with an offered activated ability to use it. The picker shows
+the effect and available cost information when more than one action is offered.
+The decision dock highlights offered targets and payments on the table when
+those objects are visible there. Choose a target and a payment separately, then
+confirm the commitment. Cancel closes the draft.
+
+When choosing targets, hover or focus an eligible player or card to see an
+arrow from the source. If a target is in the graveyard or exile, the highlighted
+zone opens a picker for its eligible cards. The arrow stays on the selected
+target while you finish the remaining choices. Hover or focus an item on the
+stack to see its targets. Card badges show game information and available
+actions. Use **Inspect** to open a full view.
+
+When your offered actions include a card in another zone, the hand area shows
+a shortcut marked with its source zone. Those shortcuts are visible to the
+acting player. Hover or focus a card to see the offered cost directly on it.
+Select the card to choose an action or inspect its full text. The mana symbols
+are bundled with the browser. [Mana by Andrew Gioia](https://mana.andrewgioia.com/icons.html)
+
+Click an eligible attacker and its defender, or drag the attacker onto the
+defender. Blockers work the same way. Multiple blockers on one attacker appear
+in one group. Remove an assignment or clear the draft before confirming.
+
 Mode checkboxes maintain the server-issued printed order regardless of click
 order. Adding or removing a mode preserves targets for every still-selected
 mode and drops only groups that are no longer legal.
@@ -63,6 +98,13 @@ Target-dependent prices update from the server's quotes for the selected
 objects, players and modes. Distinct-target prices count a repeated selection
 once. An unavailable target combination or a value of X above its quoted
 maximum cannot be submitted as a payable choice.
+
+The search picker presents the offered card copies, selection count, and
+destination. **Find no card** completes a search when the rules permit an
+empty result. **Decline** answers the preceding optional-effect decision.
+Imported printing details follow each card copy, including through a search.
+The picker shows the set and collector number when available. If that art is
+unavailable, the copy keeps its printing label and readable card details.
 
 The ordered Scry form labels every looked-at card from the seat-private
 projection. It separates top and bottom groups, states which end of each list
@@ -74,27 +116,57 @@ the looked-at identities or partition.
 
 Automatic mana selects from authoritative mana abilities and routine payment;
 manual mana lets the player choose the activation order and exact issued modes.
+Choose **Use manual mana** on a prepared spell, tap mana sources, then choose
+**Resume cast**. The current offer keeps still-available choices and refreshes
+the spell’s payment options before commitment.
 Only an unchanged pure tap-for-mana activation can be undone before spending or
 passing. Costs with sacrifice, life payment, restrictions, or other side
 effects are not locally reversible.
 
-Automatic pass submits only an ordinary pass-only capability. It stops for a
-meaningful nonmana action or player choice. Full control waits for the player to
-press the pass control. Empty-stack main phases label the intentional advance,
-and the read-only phase rail distinguishes active player, priority holder, and
-current step without submitting commands itself.
+Pass or Resolve sends one pass from this seat. Other seats still receive
+priority. Automatic pass submits only routine pass-only decisions. Full
+control holds each decision for the player, including priority on their own
+triggers.
+
+Pass turn arms a yield for the current turn. It also passes empty-stack main
+phases and combat priority windows with no meaningful actions. A newly arrived
+stack object, an available response, or a required decision pauses the yield.
+Choosing a response keeps the yield available until the turn ends. A manual pass
+acknowledges the current stack. Cancel pass turn,
+enabling Full control, refreshing the page, or reaching the next turn ends
+the yield. Each automatic pass uses its own current seat capability and is
+recorded with the current turn. The game menu can ignore specific activation
+stops for that turn. Each ignored ability stays available for manual activation.
+A change to an ignored ability’s offer restores its stop.
+
+Open **Combat** in the turn rail to select the steps where you want to hold
+priority. **Game menu → Combat priority stops** offers the same controls in a
+compact layout. A selected stop holds the next available priority for your
+seat at that step, even when Auto-pass or Pass turn is active. Pass manually
+to continue. Attacker and blocker stops apply after those assignments.
 
 Combat forms consume only the current legal assignment maps. Concession uses a
 true-only confirmation on an active player decision. A completed game removes
-all action controls and restores the same winner or draw after restart.
+gameplay controls and preserves the result after restart. Choose **Decks and
+games** to open your saved lists or recent matches. The host can choose
+**Play again with these decks** to prepare a fresh table. Players can join
+that table, change their deck, and start a new match. The original game remains
+available in **Recent games**.
 
 ## Inspect, stop, and resume
+
+Hover, focus, or use **Inspect** to see current power and toughness, marked
+damage, counters, and the active face. **Game menu** contains playtest feedback,
+build details, the public log, and match controls.
 
 Every game member can inspect safe lifecycle metadata. The view contains no
 record path, checkpoint, private zone, capability, or analyst artifact. Only
 the room owner can request an administrative stop or resume. The stop is
 durable and disables actions for every seat; resume returns to the preserved
-decision after refresh or process restart.
+decision after refresh or process restart. During reconnect, the table remains
+available for reading. Actions become available after the browser validates
+a fresh projection. A retry after uncertain delivery uses the original
+command.
 
 Administrative resume cannot clear a rules, semantic, fidelity, abort,
 corruption, or completion boundary. A stale tab that loses game access stops

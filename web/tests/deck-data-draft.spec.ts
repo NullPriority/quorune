@@ -1,0 +1,30 @@
+import { expect, test } from "@playwright/test";
+
+test("a rulings mismatch keeps the list editable and blocks match startup", async ({ page }, info) => {
+  test.skip(process.env.QUORUNE_TEST_RULINGS_MISMATCH !== "1", "Select the local snapshot that reproduces the mismatch");
+  await page.goto("/");
+  await page.getByTestId("display-name").fill("Deck review tester");
+  await page.getByTestId("create-guest").click();
+  await page.getByTestId("room-size").selectOption("2");
+  await page.getByTestId("create-room").click();
+  const list = "1 Deflecting Swat\n98 Mountain";
+  await page.getByTestId("deck-name").fill("Rulings check witness");
+  await page.getByTestId("commander-name").fill("Mishra, Eminent One");
+  await page.getByTestId("deck-list").fill(list);
+  await page.getByTestId("submit-deck").click();
+  const summary = page.getByTestId("deck-review-summary");
+  await expect(summary).toContainText("Commander legalityLegal");
+  await expect(summary).toContainText("Snapshot needs review");
+  await expect(summary).toContainText("Waiting for card data");
+  await expect(summary).toContainText("Draft saved for review");
+  await expect(page.getByTestId("deck-list")).toHaveValue(list);
+  await expect(page.getByTestId("start-game")).toBeDisabled();
+  await page.reload();
+  await summary.getByText("Deflecting Swat uses different rulings versions", { exact: true }).click();
+  await expect(summary.getByText("Diagnostic ID", { exact: true })).toBeVisible();
+  await expect(summary.getByText(/^Reviewed program/)).toBeVisible();
+  await expect(summary.getByText(/^Generated program/)).toBeVisible();
+  await info.attach("editable-rulings-draft", { body: await page.screenshot(), contentType: "image/png" });
+  await summary.getByRole("button", { name: "Edit saved draft" }).click();
+  await expect(page.getByTestId("deck-list")).toHaveValue(/1 Deflecting Swat/);
+});

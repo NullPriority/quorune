@@ -2,7 +2,7 @@ import { expect, test, type Browser, type Page, type TestInfo } from "@playwrigh
 import { execFile } from "node:child_process";
 import path from "node:path";
 import { promisify } from "node:util";
-import { startRoomGame } from "./support/startup";
+import { completeCastGesture, openGameMenu, startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
   driveUntil,
@@ -205,9 +205,7 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
       label: "expose the Scry commander cast",
       noProgressMs: 90_000,
     });
-    await cast.click();
-    await expect(host.getByTestId("choice-dialog")).toContainText("Cast Ordered Scry Witness");
-    await submitOpenChoice(host);
+    await completeCastGesture(host, () => cast.click());
 
     await driveUntil(
       pages,
@@ -221,14 +219,16 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
     expect(decisionId).toBeTruthy();
     await expect(opponent.getByTestId("action-choose")).toHaveCount(0);
 
+    await openGameMenu(host);
     await host.getByTestId("stop-reason").fill("Persist the pending ordered-Scry choice");
     await host.getByTestId("stop-game").click();
-    await expect(host.getByTestId("game-status")).toHaveText("PAUSED");
-    await expect(opponent.getByTestId("game-status")).toHaveText("PAUSED");
+    await expect(host.getByTestId("game-status")).toHaveText("Paused");
+    await expect(opponent.getByTestId("game-status")).toHaveText("Paused");
     await Promise.all([host.reload(), opponent.reload()]);
+    await openGameMenu(host);
     await expect(host.getByTestId("resume-game")).toBeVisible();
     await host.getByTestId("resume-game").click();
-    await expect(host.getByTestId("game-status")).toHaveText("ACTIVE");
+    await expect(host.getByTestId("game-status")).toHaveText("In progress");
     await expect(host.getByTestId("decision-panel")).toHaveAttribute(
       "data-decision-id",
       decisionId!,
@@ -254,6 +254,10 @@ test("@browser-rules @scry @privacy @persistence ordered Scry is accessible, pri
     await expect(opponent.getByTestId("choice-dialog")).toHaveCount(0);
 
     await destinations.nth(2).selectOption("bottom");
+    await dialog.getByRole("button", { name: "Minimize choice" }).click();
+    await expect(dialog).toHaveCount(0);
+    await host.getByRole("button", { name: "Show choice" }).click();
+    await expect(destinations.nth(2)).toHaveValue("bottom");
     await destinations.nth(3).selectOption("bottom");
     const groups = dialog.locator(".choice-partition-group");
     const top = groups.filter({ hasText: "Top of library" });

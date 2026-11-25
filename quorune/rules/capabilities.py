@@ -30,7 +30,7 @@ from ..class_levels import (
     CLASS_LIFECYCLE_CAPABILITY_ID,
     CLASS_MECHANIC_ID,
 )
-from .component_resolution import implementation_component_resolves
+from .component_resolution import component_resolution_snapshot, implementation_component_resolves
 from .effect_shape_walkers import (
     contains_aftermath_kind as _contains_aftermath_kind,
     contains_nested_key as _contains_nested_key,
@@ -790,14 +790,12 @@ class CapabilityRegistry:
     available for migration reporting, but they do not gate a smaller closure.
     """
 
+    @component_resolution_snapshot()
     def __init__(self, value: Mapping[str, Any]):
         raw = json.loads(json.dumps(dict(value)))
         _require_exact_fields(raw, _REGISTRY_FIELDS, field="registry")
-        if type(raw.get("schema_version")) is not int or raw[
-            "schema_version"
-        ] != (
-            CAPABILITY_REGISTRY_SCHEMA_VERSION
-        ):
+        schema_version = raw.get("schema_version")
+        if type(schema_version) is not int or schema_version != CAPABILITY_REGISTRY_SCHEMA_VERSION:
             raise CapabilityRegistryError(
                 "Unsupported capability registry schema_version"
             )

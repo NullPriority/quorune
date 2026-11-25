@@ -239,6 +239,37 @@ export function initialChoices(form: ChoiceForm): ChoiceValues {
   return choicesWithDefaults(form, {});
 }
 
+export function restoreCastChoices(form: ChoiceForm, previous: ChoiceValues): ChoiceValues {
+  const values = { ...previous };
+  // Mana activation can change which mana in the pool is available to spend.
+  delete values[MANA_POOL_PAYMENT_FIELD];
+  const variants = activeVariants(form, values);
+  const options = list(variants.options).map(record);
+  const selector = stringValue(variants.field || "cost_option");
+  if (options.length && !options.some((option) => option.value === values[selector])) {
+    values[selector] = variants.default ?? options[0].value;
+  }
+  for (const field of activeFields(form, values)) {
+    const name = stringValue(field.name);
+    if (field.control === "refs" && Array.isArray(values[name])) {
+      const permitted = field.legal_refs === undefined
+        ? list(field.options).map((option) => record(option).value)
+        : list(field.legal_refs);
+      values[name] = list(values[name]).filter((candidate) => permitted.includes(candidate));
+    }
+    if (field.control !== "targets") continue;
+    const schema = record(field.schema);
+    if (Array.isArray(schema.legal_modes)) {
+      values.modes = list(values.modes).filter((mode) => list(schema.legal_modes).includes(mode));
+    }
+    const existing = record(values[name]);
+    values[name] = retainTargetGroups(selectedTargetGroups(field, values), existing);
+    if (JSON.stringify(existing) !== JSON.stringify(values[name])) delete values[DAMAGE_ALLOCATION_FIELD];
+  }
+  const retained = executableChoices(form, values);
+  return { ...choicesWithDefaults(form, retained), ...retained };
+}
+
 function selectedTargetGroups(field: ChoiceField, values: ChoiceValues): ChoiceField[] {
   const schema = record(field.schema);
   const modeSchemas = record(schema.mode_schemas);
@@ -302,6 +333,10 @@ export function updateModalTargetSelection(
   const modeSchemas = record(schema.mode_schemas);
   const groups = next.flatMap((selectedMode) =>
     list(record(modeSchemas[selectedMode]).groups).map((group) => record(group)));
+  return { modes: next, targets: retainTargetGroups(groups, targets) };
+}
+
+function retainTargetGroups(groups: ChoiceField[], targets: ChoiceField): ChoiceField {
   const retained: ChoiceField = {};
   for (const group of groups) {
     const groupId = stringValue(group.id || "target");
@@ -314,7 +349,7 @@ export function updateModalTargetSelection(
       .slice(0, Number(group.max ?? 1));
     if (selected.length) retained[groupId] = selected;
   }
-  return { modes: next, targets: retained };
+  return retained;
 }
 
 export function copyTargetGroups(copy: ChoiceField): ChoiceField[] {
@@ -579,16 +614,19 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
       const groupId = stringValue(group.id || "target");
       const selected = list(targets[groupId]);
       const count = selected.length;
-      if (count < Number(group.min ?? 1) || count > Number(group.max ?? 1)) {
-        errors.push(
-          `${stringValue(group.label || groupId)} requires between ${group.min ?? 1} and ${group.max ?? 1} target(s).`,
-        );
+      const label = stringValue(group.label || "Targets");
+      const minimum = Number(group.min ?? 1);
+      const maximum = Number(group.max ?? 1);
+      if (count < minimum || count > maximum) {
+        errors.push(minimum === maximum
+          ? `${label} requires exactly ${minimum} ${minimum === 1 ? "target" : "targets"}.`
+          : `${label} requires between ${minimum} and ${maximum} targets.`);
       }
-      if (schema.x_bounds_by_ref !== undefined && (schema.x_bound_group ?? "target") === groupId) {
-        const legal = new Set(list(group.legal_refs));
-        if (selected.some((ref) => !legal.has(ref))) {
-          errors.push("Choose an X within the offered range for each target.");
-        }
+      if (Array.isArray(group.legal_refs) && selected.some((ref) => !list(group.legal_refs).includes(ref))) {
+        const boundsApply = schema.x_bounds_by_ref !== undefined && (schema.x_bound_group ?? "target") === groupId;
+        errors.push(boundsApply
+          ? "Choose an X within the offered range for each target."
+          : `${label} changed. Choose from the current targets.`);
       }
     }
     const selectedRefs = targetGroups.flatMap((group) => list(targets[stringValue(group.id || "target")]));
@@ -661,11 +699,14 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues): string[] {
         errors.push(`${source} must assign exactly ${required} damage.`);
       }
     }
+  } else if (required) {
+    errors.push(`Update Quorune to complete ${label}. This browser build does not support the required control.`);
   }
   return errors;
 }
 
 export function validateChoices(form: ChoiceForm, values: ChoiceValues): string[] {
+  if (form.v !== 1) return ["Update Quorune to use this version of the action form."];
   return activeFields(form, values).flatMap((field) => fieldErrors(field, values));
 }
 

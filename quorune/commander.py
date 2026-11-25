@@ -285,6 +285,7 @@ def initial_commander_state(
                     owner=seat,
                     controller=seat,
                     zone=zone,
+                    printing=entry.printing,
                     is_commander=is_commander,
                     commander_designation_id=(
                         commander_designation_id(seat, commander_ordinal)

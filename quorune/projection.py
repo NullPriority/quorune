@@ -357,6 +357,8 @@ class StateProjector:
             obj["kind"] = "emblem"
         elif visible:
             obj["cid"] = card.oracle_id[:8]
+            if card.printing is not None:
+                obj["printing"] = card.printing.to_dict()
             effective = self._effective(card)
             if card.face_down:
                 try:
@@ -487,6 +489,7 @@ class StateProjector:
             return None
         actor_key = capability.actor or principal
         context = copy.deepcopy(decision.payload_by_actor.get(actor_key, {}))
+        self._present_resolution_choice(decision, context, principal)
         from .rules.mana_pool_payment import mana_pool_choice_context
 
         context = mana_pool_choice_context(self.state, capability.actor, decision.kind, context)
@@ -524,6 +527,56 @@ class StateProjector:
             "ctx": context,
         }
 
+    def _present_resolution_choice(self, decision, context, principal):
+        """Describe the current effect and the cards offered to this principal."""
+        operation = context.get("operation")
+        is_search = decision.kind == "semantic.search" and operation == "search"
+        if not is_search and operation not in {"offer_optional_effect", "offer_draw", "scry"}:
+            return
+        item = next((row for row in self.state.stack if row.ref == context.get("stack")), None)
+        if item is None:
+            return
+        source = self.state.cards.get(item.source_object_id or item.card_object_id)
+        if source is not None and self._card_visible(source, principal):
+            source_name = self._effective(source)["n"]
+        else:
+            source_name = "Resolving ability"
+        presentation = {"source": source_name}
+        if operation == "scry":
+            presentation.update(title="Scry", detail="Put the card on the top or bottom of your library.")
+        elif operation == "offer_draw":
+            one_for_chooser = context.get("count") == 1 and context.get("drawer") in decision.actors
+            presentation.update(title="Draw a card?" if one_for_chooser else str(context["prompt"]), accept="Draw")
+        elif is_search:
+            effect = (decision.continuation.get("selection") or {}).get("payload", {}).get("effect", {})
+            spec = context.get("search_spec") or {}
+            if effect and spec:
+                presentation.update(_search_presentation(effect, choosing=True))
+            rows = context.get("search_cards") or []
+            allowed = {
+                row["id"]: row["name"] for row in rows
+                if isinstance(row, Mapping) and "id" in row and "name" in row
+            }
+            context["preview_cards"] = [
+                {"id": card.ref, "n": allowed[card.ref], "cid": card.oracle_id[:8],
+                 **({"printing": card.printing.to_dict()} if card.printing else {})}
+                for card in self.state.cards.values()
+                if card.zone == "library" and card.ref in allowed and not card.face_down
+            ]
+        else:
+            effects = (decision.continuation.get("effect") or {}).get("effects") or ()
+            if len(effects) != 1:
+                return
+            effect = effects[0]
+            if effect.get("op") == "search":
+                presentation.update(_search_presentation(effect, choosing=False))
+            elif effect.get("op") == "draw" and effect.get("count") == 1:
+                presentation.update(title="Draw a card?", accept="Draw")
+            else:
+                return
+        if "title" in presentation:
+            context["presentation"] = presentation
+
     def _turn_snapshot(self) -> dict[str, Any]:
         return {
             "seq": self.state.turn_sequence,
@@ -558,6 +611,18 @@ class StateProjector:
                 "label": "Face-down spell" if hidden_face_down else item.label,
                 **({"targets": item.targets} if item.targets else {}),
             }
+            if not hidden_face_down:
+                if item.modes:
+                    row["modes"] = list(item.modes)
+                if item.x_value is not None:
+                    row["x"] = item.x_value
+                source = self.state.cards.get(item.source_object_id)
+                if card is None and source is not None and self._card_visible(source, principal):
+                    visible_source = self._obj(source, principal)
+                    row.update({
+                        key: visible_source[key] for key in ("cid", "n", "face", "printing")
+                        if key in visible_source
+                    })
             allocation = item.context.get(ANNOUNCED_DAMAGE_CONTEXT)
             if isinstance(allocation, Mapping) and not hidden_face_down:
                 shares = allocation.get("shares")
@@ -912,6 +977,10 @@ class StateProjector:
         payload["view_revision"] = snapshot["rev"]
 
         visible = self._visible_oracles(snapshot)
+        if payload["decision"] is not None:
+            visible.update(self._visible_oracles(
+                {"preview_cards": payload["decision"]["ctx"].get("preview_cards", [])}
+            ))
         new_oracles = sorted(visible - cursor.seen_oracles)
         if new_oracles:
             payload["defs"] = [self._definition(oracle_id) for oracle_id in new_oracles]
@@ -937,3 +1006,30 @@ class StateProjector:
             "pretty_chars": len(pretty),
             "estimated_tokens": max(1, len(compact) // 4),
         }
+
+
+def _search_presentation(effect: Mapping[str, Any], *, choosing: bool) -> dict[str, str]:
+    selector = effect.get("selector") or {}
+    basic = "basic" in (selector.get("supertypes") or ()) and "land" in (selector.get("types") or ())
+    destination = effect.get("destination")
+    if isinstance(destination, str) and destination == "battlefield":
+        detail = "The selected card enters the battlefield tapped." if effect.get("enters_tapped_override") else "Put the selection onto the battlefield."
+        confirm = "Put onto battlefield"
+    elif destination == "hand":
+        detail = "Put the selection into your hand."
+        confirm = "Put into hand"
+    elif destination == "exile":
+        detail = "Exile the selection."
+        confirm = "Exile selected cards"
+    else:
+        detail = ""
+        confirm = "Confirm selection"
+    zone = effect.get("zone", "library")
+    if (zone == "library" or "library" in zone) and effect.get("shuffle_after", True):
+        detail = (detail + " Shuffle the searched library afterward.").strip()
+    return {
+        "title": ("Choose a basic land" if choosing else "Search for a basic land?") if basic
+            else ("Choose cards from the search" if choosing else "Search for cards?"),
+        "detail": detail,
+        "accept": confirm if choosing else "Search",
+    }

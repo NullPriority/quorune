@@ -106,6 +106,38 @@ class DeckLoaderTests(unittest.TestCase):
         self.assertIn("Sol Ring", names)
         self.assertNotIn("Sol Ring #Mana-Fast", names)
 
+    def test_moxfield_board_retains_same_name_printings_and_finish(self):
+        # The v3 board/card fields are from a live public Moxfield import.
+        # A second real Scryfall printing exercises the same-name copy split.
+        first = "5205f782-e6af-4152-a15f-080935017e4b"
+        second = "0863a079-1cc2-4388-85bb-a24eae251e99"
+        payload = {"boards": {"mainboard": {"cards": {
+            "kOzVw": {"quantity": 4, "finish": "nonFoil", "card": {
+                "id": "kOzVw", "name": "Swamp", "scryfall_id": first,
+                "set": "brc", "cn": "33", "lang": "en",
+            }},
+            "second-print": {"quantity": 3, "finish": "foil", "card": {
+                "id": "second-print", "name": "Swamp", "scryfall_id": second,
+                "set": "m21", "cn": "268", "lang": "en",
+            }},
+        }}}}
+        deck = parse_moxfield_json(payload)
+        self.assertEqual(7, deck.total_cards())
+        self.assertEqual(["Swamp"] * 7, deck.expanded())
+        self.assertEqual([first, second], [entry.printing.scryfall_id for entry in deck.entries])
+        self.assertEqual(["nonFoil", "foil"], [entry.printing.finish for entry in deck.entries])
+        projected = deck.to_dict()
+        self.assertEqual(projected, type(deck).from_dict(projected).to_dict())
+        self.assertEqual("33", projected["entries"][0]["printing"]["collector_number"])
+
+    def test_plain_text_set_and_collector_number_are_retained(self):
+        deck = parse_deck_text("4 Swamp (BRC) 33\n3 Swamp (M21) 268 *F*")
+        first, second = deck.entries
+        self.assertEqual(("brc", "33"), (first.printing.set_code, first.printing.collector_number))
+        self.assertEqual(("m21", "268", "foil"), (
+            second.printing.set_code, second.printing.collector_number, second.printing.finish,
+        ))
+
     def test_moxfield_source_parsing_is_host_and_path_aware(self):
         public_id = "g5vtVfRuS0W5KxZuYqZHGQ"
         self.assertEqual(

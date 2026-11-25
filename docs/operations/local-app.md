@@ -71,6 +71,7 @@ caches are local runtime data and must not be committed.
 | `MTG_BULK_DIR` | Managed bulk-download directory |
 | `MTG_CARD_SNAPSHOT_DIR` | Record-pinned database retention directory |
 | `MTG_IMAGE_CACHE` | Local image-cache directory |
+| `MTG_CARD_IMAGE_DB` | Optional fallback SQLite catalog for card artwork when using compact card data |
 | `MTG_WEB_DIST` | Built browser asset directory |
 | `MTG_AUTO_UPDATE_CARDS` | Enable or disable managed refresh |
 | `MTG_CARD_UPDATE_SECONDS` | Manifest-check interval |
@@ -92,6 +93,35 @@ If an accepted request loses its response, retry the byte-equivalent command
 with the same client command ID. If an actor fails during ambiguous persistence,
 restart and let durable recovery recreate it. Do not edit checkpoints, SQLite
 rows, journals, or manifests by hand.
+
+## Update a Windows source ZIP installation
+
+Stop the Quorune console with `Ctrl+C`. From a directory outside the installed
+app, run the release's `scripts/update_playtest_windows.ps1` and pass its full
+merged commit. The helper downloads that source archive, keeps the existing
+install as a rollback sibling, copies its runtime data, and builds the
+environment and browser assets at the original path. Leave any configured
+external directories and launch environment settings in place.
+
+```powershell
+$quoruneCommit = Read-Host 'Enter the full merged Quorune commit'
+& .\update_playtest_windows.ps1 -Commit $quoruneCommit
+Set-Location (Join-Path $env:LOCALAPPDATA 'QuorunePlay/app')
+.\.venv\Scripts\quorune-server.exe --host 127.0.0.1 --port 8765
+```
+
+For a comparison using a retained usable database, start with `--offline`.
+Use the same launch environment and Tailscale Serve origin. From another
+terminal, check `(Invoke-RestMethod 'http://127.0.0.1:8765/api/v1/health')`
+for an `ok` status and the expected build. Open **Game menu → About Quorune**
+to compare the browser and server builds. Keep the browser's site data and
+start a fresh game for the first playtest. Saved games still require their
+compatible Oracle and rulings snapshot.
+
+To roll back, stop the new server with `Ctrl+C`, move the current `app`
+directory to an unused sibling to retain any new records, and rename the
+reported `app.rollback-*` directory to `app`. Restart it using the original
+settings and port.
 
 ## Validate browser changes
 

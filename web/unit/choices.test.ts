@@ -6,6 +6,7 @@ import {
   choicesWithDefaults,
   executableChoices,
   initialChoices,
+  restoreCastChoices,
   updateModalTargetSelection,
   validateChoices,
   selectedTargetCostLabel,
@@ -63,6 +64,25 @@ test("A target requirement uses the chosen count and the complete set of modes",
   assert.match(validateChoices(modal, {
     modes: ["one", "two"], targets: { first: ["A"], second: ["B"], third: ["flag"] },
   }).join(), /Choose at least one Flagbearer/);
+});
+
+test("required controls from newer forms block commitment with a version message", () => {
+  const required = form([{ name: "future", label: "Choose a value", control: "future_control", required: true }]);
+  assert.match(validateChoices(required, {})[0], /Update Quorune.*required control/);
+  assert.match(validateChoices({ ...required, v: 2 }, {})[0], /version of the action form/);
+});
+
+test("resuming a cast keeps offered targets and costs and clears choices that expired", () => {
+  const current = form([
+    { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 1, max: 2, legal_refs: ["B", "C"] }] } },
+    { name: "cost_cards", control: "refs", minimum: 1, maximum: 1, legal_refs: ["A1"] },
+    { name: "mana_pool_payment", control: "mana_pool_payment", rows: [{ id: "new-pool", maximum: 1 }] },
+  ]);
+  const restored = restoreCastChoices(current, {
+    targets: { target: ["B", "D"] }, cost_cards: ["A1"], mana_pool_payment: { "old-pool": 1 },
+  });
+  assert.deepEqual(restored, { targets: { target: ["B"] }, cost_cards: ["A1"] });
+  assert.deepEqual(validateChoices(current, restored), []);
 });
 
 test("Exact pool payment submits only bounded quantities from offered mana classes", () => {
@@ -187,10 +207,21 @@ test("Declared X uses the server's minimum and maximum for each target", () => {
   ]);
   assert.deepEqual(validateChoices(choices, { x: 0, targets: { target: ["LOW"] } }), []);
   assert.deepEqual(validateChoices(choices, { x: 3, targets: { target: ["HIGH"] } }), []);
-  assert.ok(validateChoices(choices, { x: 1, targets: { target: ["HIGH"] } }).length);
+  assert.deepEqual(validateChoices(choices, { x: 1, targets: { target: ["HIGH"] } }), [
+    "Choose an X within the offered range for each target.",
+  ]);
   assert.ok(validateChoices(choices, { x: 3, targets: { target: ["LOW"] } }).length);
   const schema = activeFields(choices, { x: 3 })[1].schema as { groups: { legal_refs: string[] }[] };
   assert.deepEqual(schema.groups[0].legal_refs, ["HIGH"]);
+});
+
+test("A stale ordinary target receives one readable group message", () => {
+  const choices = form([{ name: "targets", control: "targets", schema: {
+    groups: [{ id: "raw_target_group", min: 1, max: 1, legal_refs: ["A"] }],
+  } }]);
+  assert.deepEqual(validateChoices(choices, { targets: { raw_target_group: ["stale"] } }), [
+    "Targets changed. Choose from the current targets.",
+  ]);
 });
 
 test("Declared X updates the exact graveyard payment count", () => {

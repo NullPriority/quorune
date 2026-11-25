@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from dataclasses import asdict, replace
 import hashlib
-from typing import Any, Iterable, Mapping
+from typing import Any, Iterable, Literal, Mapping
 
 from ..carddb import CardDatabase, CardRecord
 from ..compiler.program_generation import (
@@ -25,11 +25,53 @@ from ..oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.capabilities import load_default_capability_registry
 from ..semantics import SemanticProgram, SemanticRegistry
+from ..util import stable_json
 from .model import CardProgram, CardProgramError, CardProgramFace
 from .reviewed_overlay import shadowed_reviewed_program_keys
 
 
 SEMANTIC_PACK_COMPATIBILITY_COMPILER = "semantic-pack-v3-card-program-v2"
+
+
+class CardProgramSourceMismatch(CardProgramError):
+    """Two implementations for one card were built against different data."""
+
+    def __init__(self, source: Literal["Oracle", "rulings"], oracle_id: str,
+                 programs: tuple[SemanticProgram, ...], card_name: str | None) -> None:
+        super().__init__(f"Semantic compatibility group has inconsistent {source} hashes")
+        self.source = source
+        self.oracle_id = oracle_id
+        self.card_name = card_name
+        self.program_sources = tuple(_program_source_identity(program) for program in sorted(programs, key=lambda row: row.key))
+        fingerprint = _text_hash(stable_json([source, oracle_id, self.program_sources]))[:16]
+        self.diagnostic_id = f"card-data-{fingerprint}"
+
+    def diagnostic(self, card_name: str) -> dict[str, Any]:
+        return {
+            "diagnostic_id": self.diagnostic_id,
+            "kind": f"{self.source.lower()}_source_mismatch",
+            "card": card_name,
+            "oracle_id": self.oracle_id,
+            "programs": [dict(identity) for identity in self.program_sources],
+        }
+
+
+def _program_source_identity(program: SemanticProgram) -> dict[str, str | None]:
+    provenance = program.provenance
+    author = str(provenance.get("authored_by") or "")
+    template = str(provenance.get("template_id") or "")
+    if template or author.startswith("oracle-ir-"):
+        origin = f"Generated program · {template or author}"
+    elif author:
+        origin = f"Reviewed program · {author}"
+    else:
+        origin = "Semantic program"
+    return {
+        "key": program.key,
+        "origin": origin,
+        "oracle_hash": str(provenance.get("source_oracle_hash") or "") or None,
+        "rulings_hash": str(provenance.get("source_rulings_hash") or "") or None,
+    }
 
 
 def _text_hash(value: str) -> str:
@@ -452,6 +494,7 @@ def card_program_from_semantic_programs(
         raise CardProgramError(
             "A semantic compatibility group requires one oracle_id"
         )
+    oracle_id = str(next(iter(oracle_ids)))
     oracle_hashes = {
         str(program.provenance.get("source_oracle_hash") or "")
         for program in values
@@ -461,13 +504,9 @@ def card_program_from_semantic_programs(
         for program in values
     } - {""}
     if len(oracle_hashes) > 1:
-        raise CardProgramError(
-            "Semantic compatibility group has inconsistent Oracle hashes"
-        )
+        raise CardProgramSourceMismatch("Oracle", oracle_id, values, card_name)
     if len(rulings_hashes) > 1:
-        raise CardProgramError(
-            "Semantic compatibility group has inconsistent rulings hashes"
-        )
+        raise CardProgramSourceMismatch("rulings", oracle_id, values, card_name)
     face_ids = sorted({_program_face_id(program) for program in values})
     oracle_hash = (
         next(iter(oracle_hashes)) if oracle_hashes else _text_hash("")
@@ -487,7 +526,7 @@ def card_program_from_semantic_programs(
     abilities = _bind_program_faces(values, faces)
     return CardProgram.create(
         compiler_version=SEMANTIC_PACK_COMPATIBILITY_COMPILER,
-        oracle_id=str(next(iter(oracle_ids))),
+        oracle_id=oracle_id,
         card_name=card_name,
         faces=faces,
         oracle_source_hash=oracle_hash,

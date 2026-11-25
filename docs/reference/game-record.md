@@ -15,6 +15,11 @@ The hash normalizes top-level log and capability fields and preserves
 historical omissions. The stored checkpoint owns an independent copy
 of its mutable values.
 
+A physical card can carry imported printing details in the optional
+`printing` field. Oracle identity still selects the card's rules program.
+Historical cards without printing data continue to omit the field when
+serialized.
+
 Fixed-mana Evoke descriptor version two emits payment-marker version two and
 records `evoke_source_identity_version: 2` with the source battlefield incarnation.
 Resolution requires that same incarnation under the trigger controller; blink,

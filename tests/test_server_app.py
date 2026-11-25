@@ -112,6 +112,102 @@ class ServerApplicationTests(unittest.TestCase):
             )
         )
 
+    def test_submitted_deck_readiness_separates_snapshot_drift_and_private_card_reasons(self):
+        from unittest.mock import patch
+
+        host, _ = self.guest("Deck owner")
+        guest, _ = self.guest("Second seat")
+        created = self.client.post("/api/v1/rooms", headers=self.auth(host), json={"player_count": 2})
+        self.assertEqual(201, created.status_code, created.text)
+        room = created.json()["room"]["room_id"]
+        invite = created.json()["invite_code"]
+        joined = self.client.post("/api/v1/rooms/join", headers=self.auth(guest), json={"invite_code": invite, "seat": "B"})
+        self.assertEqual(200, joined.status_code, joined.text)
+
+        assessment = {
+            "trusted_only_ready": False,
+            "source_hash_drift_cards": ["Ornithopter"],
+            "cards": [
+                {"name": "Ornithopter", "status": "partial", "source_hash_match": False, "unresolved": ["cast_cost"]},
+                {"name": "Viscera Seer", "status": "partial", "unresolved": ["activated_ability:ab1"]},
+            ],
+        }
+        with patch("server.deck_readiness.semantic_preflight", return_value=assessment):
+            submitted = self.client.put(f"/api/v1/rooms/{room}/deck", headers=self.auth(host), json={
+                "name": "Saved deck", "commander": "Yargle and Multani",
+                "decklist": "1 Viscera Seer\n1 Ornithopter\n97 Swamp",
+            })
+        self.assertEqual(200, submitted.status_code, submitted.text)
+        self.assertEqual("legal", submitted.json()["format_legality"]["status"])
+        readiness = submitted.json()["preflight"]
+        self.assertFalse(readiness["trusted_only_ready"])
+        self.assertTrue(readiness["data_integrity_issue"])
+        self.assertEqual(readiness["affected_cards"], [
+            {"name": "Ornithopter", "reasons": ["The verified rules use different card data"]},
+            {"name": "Viscera Seer", "reasons": ["Activated ability needs additional rules support"]},
+        ])
+
+        self.restart_client()
+        owned = self.client.get(f"/api/v1/rooms/{room}", headers=self.auth(host)).json()["room"]["seats"][0]
+        public = self.client.get(f"/api/v1/rooms/{room}", headers=self.auth(guest)).json()["room"]["seats"][0]
+        self.assertEqual(readiness, owned["deck"]["preflight"])
+        self.assertFalse(public["ready"])
+        self.assertNotIn("preflight", public["deck"])
+
+    def test_rulings_conflict_saves_a_private_draft_and_blocks_admission(self):
+        from unittest.mock import AsyncMock, patch
+
+        from quorune.card_programs.adapters import card_program_from_semantic_programs
+        from quorune.semantics import SemanticProgram
+
+        host, _ = self.guest("Deck owner")
+        guest, _ = self.guest("Other player")
+        created = self.client.post("/api/v1/rooms", headers=self.auth(host), json={"player_count": 2}).json()
+        room_id = created["room"]["room_id"]
+        room_path = f"/api/v1/rooms/{room_id}"
+        joined = self.client.post("/api/v1/rooms/join", headers=self.auth(guest), json={"invite_code": created["invite_code"], "seat": "B"})
+        self.assertEqual(200, joined.status_code, joined.text)
+        deck = {"name": "Rules check witness", "commander": "Yargle and Multani", "decklist": "99 Swamp"}
+        with patch("server.app.CardImageCache.prefetch", new_callable=AsyncMock):
+            ready = self.client.put(f"{room_path}/deck", headers=self.auth(guest), json=deck)
+        self.assertEqual(200, ready.status_code, ready.text)
+        with CardDatabase(self.settings.card_db) as card_db:
+            oracle_id = card_db.lookup("Swamp", fuzzy=False).oracle_id
+        reviewed = SemanticProgram(key="swamp-reviewed", label="Reviewed fixture", oracle_id=oracle_id, ability_id="ability:reviewed",
+            provenance={"authored_by": "fixture review", "source_rulings_hash": "1" * 64})
+        generated = SemanticProgram(key="swamp-generated", label="Generated fixture", oracle_id=oracle_id, ability_id="ability:generated",
+            provenance={"template_id": "fixture template", "source_rulings_hash": "2" * 64})
+
+        def conflict(*_args):
+            return card_program_from_semantic_programs([reviewed, generated])
+
+        with patch("server.deck_readiness.semantic_preflight", side_effect=conflict), patch(
+            "server.app.CardImageCache.prefetch", new_callable=AsyncMock,
+        ) as prefetch:
+            draft = self.client.put(f"{room_path}/deck", headers=self.auth(host), json=deck)
+        prefetch.assert_not_called()
+        self.assertEqual(200, draft.status_code, draft.text)
+        receipt = draft.json()
+        self.assertEqual("legal", receipt["format_legality"]["status"])
+        self.assertTrue(receipt["preflight"]["data_integrity_issue"])
+        blocker, = receipt["preflight"]["data_integrity_blockers"]
+        self.assertEqual("rulings_source_mismatch", blocker["kind"])
+        self.assertEqual("Swamp", blocker["card"])
+        self.assertEqual(oracle_id, blocker["oracle_id"])
+        self.assertTrue(blocker["diagnostic_id"].startswith("card-data-"))
+        self.assertEqual({"1" * 64, "2" * 64}, {program["rulings_hash"] for program in blocker["programs"]})
+
+        owned = self.client.get(room_path, headers=self.auth(host)).json()["room"]["seats"][0]
+        other = self.client.get(room_path, headers=self.auth(guest)).json()["room"]["seats"][0]
+        self.assertFalse(owned["ready"])
+        self.assertEqual([blocker], owned["deck"]["preflight"]["data_integrity_blockers"])
+        self.assertNotIn("preflight", other["deck"])
+        deck_id = receipt["deck"]["deck_id"]
+        saved = self.client.get(f"/api/v1/me/decks/{deck_id}", headers=self.auth(host))
+        self.assertEqual(200, saved.status_code, saved.text)
+        self.assertIn("Swamp", {entry["name"] for entry in saved.json()["deck"]["entries"]})
+        self.assertEqual(409, self.client.post(f"{room_path}/start", headers=self.auth(host)).status_code)
+
     def test_browser_tabs_keep_distinct_guests_in_one_cookie_jar(self):
         tab_a = "a" * 32
         tab_b = "b" * 32
@@ -498,6 +594,37 @@ class ServerApplicationTests(unittest.TestCase):
         )
         self.assertEqual(200, response.status_code, response.text)
         return response.json()["game_id"], tokens, room_id
+
+    def test_command_progress_shows_only_the_requesting_pilots_timing(self):
+        game_id, tokens, _room = self.create_ready_game(player_count=2)
+        base = f"/api/v1/games/{game_id}"
+        spectator, _ = self.guest("Timing spectator")
+        watched = self.client.post("/api/v1/rooms/watch", headers=self.auth(spectator),
+            json={"invite_code": self.last_ready_invite})
+        self.assertEqual(200, watched.status_code, watched.text)
+        packet = self.client.get(f"{base}/state?full=true", headers=self.auth(tokens[0])).json()["packet"]
+        decision = packet["decision"]
+        interaction_id = "timing-test-a-keep"
+        reply = self.client.post(f"{base}/commands", headers=self.auth(tokens[0]), json={
+            "protocol_version": "3.0", "game_id": game_id, "command_id": interaction_id,
+            "decision_id": decision["id"], "action_id": "keep", "capability": decision["cap"],
+            "expected_view_revision": packet["view_revision"], "choices": {},
+        })
+        self.assertEqual(200, reply.status_code, reply.text)
+        self.assertTrue(reply.json()["receipt"]["ok"], reply.text)
+        revision = reply.json()["receipt"]["state_revision"]
+        yours = self.client.get(f"{base}/progress", headers=self.auth(tokens[0])).json()["last_command"]
+        self.assertEqual(interaction_id, yours["interaction_id"])
+        self.assertEqual(revision, yours["revision"])
+        for field in ("queue_ms", "execution_ms", "persistence_ms", "actor_ms"):
+            self.assertGreaterEqual(yours[field], 0)
+        for token in (tokens[1], spectator):
+            progress = self.client.get(f"{base}/progress", headers=self.auth(token))
+            self.assertEqual(200, progress.status_code, progress.text)
+            self.assertIsNone(progress.json()["last_command"])
+            self.assertNotIn(interaction_id, progress.text)
+        after = self.client.get(f"{base}/state?full=true", headers=self.auth(tokens[1])).json()["packet"]
+        self.assertEqual(revision, after["view_revision"])
 
     def test_spectator_projection_public_log_and_restart_are_read_only(self):
         game_id, tokens, room_id = self.create_ready_game()
@@ -1178,6 +1305,51 @@ class ServerApplicationTests(unittest.TestCase):
                 verify=True,
             )
         self.assertTrue(replay["ok"])
+
+        next_table = f"/api/v1/games/{game_id}/rematch"
+        too_early = self.client.post(next_table, headers=self.auth(tokens[1]))
+        self.assertEqual(409, too_early.status_code, too_early.text)
+        opened = self.client.post(next_table, headers=self.auth(tokens[0]))
+        self.assertEqual(200, opened.status_code, opened.text)
+        room = opened.json()["room"]
+        self.assertNotEqual(payload["game"]["room_id"], room["room_id"])
+        self.assertIsNone(room["game_id"])
+        self.assertTrue(all(seat["ready"] for seat in room["seats"]))
+        for token in tokens[:2]:
+            reused = self.client.post(next_table, headers=self.auth(token))
+            self.assertEqual(room["room_id"], reused.json()["room"]["room_id"])
+
+        own = self.client.get("/api/v1/me/decks", headers=self.auth(tokens[0])).json()["decks"]
+        opposing = self.client.get("/api/v1/me/decks", headers=self.auth(tokens[1])).json()["decks"]
+        self.assertTrue(own)
+        self.assertTrue(opposing)
+        self.assertTrue({deck["id"] for deck in own}.isdisjoint(deck["id"] for deck in opposing))
+        private = self.client.get(
+            f"/api/v1/me/decks/{opposing[0]['id']}", headers=self.auth(tokens[0]),
+        )
+        self.assertEqual(404, private.status_code, private.text)
+
+        room_id = room["room_id"]
+        unready = self.client.delete(f"/api/v1/rooms/{room_id}/deck", headers=self.auth(tokens[0]))
+        self.assertEqual(200, unready.status_code, unready.text)
+        reused = self.client.put(
+            f"/api/v1/rooms/{room_id}/deck", headers=self.auth(tokens[0]),
+            json={"name": "Rematch list", "saved_deck_id": own[0]["id"]},
+        )
+        self.assertEqual(200, reused.status_code, reused.text)
+
+        removed = self.client.delete(f"/api/v1/rooms/{room_id}/seats/B", headers=self.auth(tokens[0]))
+        self.assertEqual(200, removed.status_code, removed.text)
+        newcomer, _ = self.guest("Next table guest")
+        joined = self.client.post(
+            "/api/v1/rooms/join", headers=self.auth(newcomer),
+            json={"invite_code": opened.json()["invite_code"], "seat": "B"},
+        )
+        self.assertEqual(200, joined.status_code, joined.text)
+        historical = self.client.get(f"/api/v1/games/{game_id}/state", headers=self.auth(tokens[1]))
+        self.assertEqual(200, historical.status_code, historical.text)
+        inaccessible = self.client.get(f"/api/v1/games/{game_id}/state", headers=self.auth(newcomer))
+        self.assertEqual(403, inaccessible.status_code, inaccessible.text)
 
     def test_owner_stop_resume_inspection_and_restart_are_durable(self):
         game_id, tokens, _ = self.create_ready_game()
