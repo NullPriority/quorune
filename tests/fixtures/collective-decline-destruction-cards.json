@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "synthetic_rules_tests",
+  "cards": [
+    {
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "name": "Generic Decline Destruction",
+      "oracle_id": "07bce7b2-c42f-48dd-a702-a439da50911b",
+      "type_line": "Sorcery",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "oracle_text": "Any player may have this spell deal 3 damage to them. If no one does, destroy all creatures. Those creatures cannot be regenerated."
+    },
+    {
+      "defense": null,
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": "1",
+      "toughness": "1",
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "name": "Generic Indestructible Sentinel",
+      "oracle_id": "92f2d9a1-f35d-43e6-aa8f-bedfb6de5e26",
+      "type_line": "Artifact Creature — Construct",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "oracle_text": "Indestructible"
+    }
+  ],
+  "rulings": []
+}

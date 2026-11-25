@@ -16,8 +16,45 @@ from .public_state_queries import fixed_public_state_parts
 CONDITIONAL_QUERY_DECLARATION_CAPABILITY = 'continuous.declaration.conditional_query_grant'
 
 
+def _attached_subtype_otherwise_declaration(text: str, *, source_name: str):
+    match = re.fullmatch(
+        r"(?P<stats>Enchanted creature gets [+-][0-9]+/[+-][0-9]+ as long as it['\u2019]s "
+        r"(?:a|an) [^.]+\.) Otherwise, it can['\u2019]t attack or block\.?$",
+        text.strip(), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from ..bound_declaration_model import (
+        ATTACHED_SUBTYPE_OTHERWISE_TEMPLATE, attached_subtype_otherwise_restrictions,
+    )
+    from ..continuous_conditions import FixedPublicStateConditionSpec
+    from .bound_declaration_rules import bound_rule_handler
+    from .continuous_templates import fixed_public_state_characteristics_handler
+
+    stats = fixed_public_state_characteristics_handler(match["stats"], source_name=source_name)
+    if stats is None:
+        return None
+    condition = FixedPublicStateConditionSpec.from_dict(stats[1]["source_condition"])
+    try:
+        restraint = attached_subtype_otherwise_restrictions(condition)
+    except ValueError:
+        return None
+    _, descriptor, dependencies = bound_rule_handler(
+        scope=restraint.scope, query=restraint.query, rules=restraint.rules,
+        condition=restraint.source_condition,
+    )
+    return (
+        ATTACHED_SUBTYPE_OTHERWISE_TEMPLATE,
+        (stats[1], descriptor),
+        tuple(sorted({*stats[2], *dependencies})),
+    )
+
+
 def conditional_characteristic_declaration_grant(text: str, *, source_name: str):
-    """Compose a pure queried declaration or the existing characteristic suffix."""
+    """Compose closed queried declarations and characteristic branches."""
+    attached = _attached_subtype_otherwise_declaration(text, source_name=source_name)
+    if attached is not None:
+        return attached
     parsed = fixed_public_state_parts(text, source_name=source_name)
     if parsed is None:
         return None

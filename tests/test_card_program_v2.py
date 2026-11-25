@@ -890,9 +890,9 @@ class CardProgramV2Tests(unittest.TestCase):
         historical = program("fixture:historical")
         shadowed = program("fixture:shadowed")
 
-        def current_programs(oracle_id, *, active_zone):
+        def current_programs(oracle_id, *, active_zone=None):
             self.assertEqual("fixture-oracle", oracle_id)
-            return (current, shadowing) if active_zone == "battlefield" else ()
+            return (current, shadowing) if active_zone in (None, "battlefield") else ()
 
         calls = []
         def fallback(oracle_id, *, active_zone, event):
@@ -903,7 +903,7 @@ class CardProgramV2Tests(unittest.TestCase):
         registry = SimpleNamespace(programs_for_oracle=current_programs,
             runtime_handler_programs_for_oracle=fallback, runtime_handler_compatibility_enabled=False)
         host = SimpleNamespace(semantics=registry, semantic_program_is_current_trusted=lambda program: True)
-        card = SimpleNamespace(zone="battlefield", active_face=None)
+        card = SimpleNamespace(zone="battlefield", active_face=None, face_down=False)
         record = SimpleNamespace(oracle_id="fixture-oracle", faces=())
         current_values = compiled_static_ability_fragments(host, card, record=record)
         self.assertEqual(["fixture:current"], [fragment.semantic_key for fragment in current_values])

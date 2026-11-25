@@ -30,6 +30,8 @@ class DynamicCharacteristicHost(Protocol):
         self, type_line: str
     ) -> tuple[set[str], set[str], set[str]]: ...
 
+    def _defending_player_for_attacker(self, attacker_id: str, target: str) -> str | None: ...
+
     def _effective_card_data(
         self,
         card: Any,
@@ -37,6 +39,27 @@ class DynamicCharacteristicHost(Protocol):
         maximum_layer: Layer | None = None,
         _enforce_static_component_applicability: bool = True,
     ) -> Mapping[str, Any]: ...
+
+
+def _combat_land_count_seat(
+    host: DynamicCharacteristicHost, source: Any, scope: CharacteristicQuantityScope,
+) -> str | None:
+    """Resolve the live attack's defending role or the source's ordinary player."""
+    source_id = getattr(source, "object_id", None)
+    current = host.state.cards.get(source_id)
+    combat = host.state.combat
+    current_source = (
+        current is not None
+        and current.logical_object_id == getattr(source, "logical_object_id", None)
+        and current.zone == "battlefield"
+        and not current.phased_out
+    )
+    target = combat.attackers.get(source_id) if combat is not None and current_source else None
+    if target is not None:
+        return host._defending_player_for_attacker(source_id, target)
+    if scope is CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE:
+        return None
+    return source.controller if source.zone in {"battlefield", "stack"} else source.owner
 
 
 def query_characteristic_count(
@@ -48,6 +71,15 @@ def query_characteristic_count(
     _maximum_layer: Layer | None = Layer.COLOR,
 ) -> int:
     """Resolve a public quantity, using layer 5 unless a full view is requested."""
+    linked_seat = None
+    if quantity.scope in {CharacteristicQuantityScope.LINKED_OPPONENT_HAND, CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION}:
+        from .rules.linked_entry_opponent import current_linked_entry_opponent
+
+        linked_seat = current_linked_entry_opponent(host, source)
+        if linked_seat is None:
+            return quantity.offset
+        if quantity.query is None or quantity.query.zones == ("hand",):
+            return len(host.state.players[linked_seat].zones["hand"]) + quantity.offset
     if quantity.schema_version == 8:
         from .commander_cast_counts import controller_commander_cast_count
         return controller_commander_cast_count(host.state, source.controller)
@@ -55,7 +87,7 @@ def query_characteristic_count(
         from .public_zone_quantities import current_public_zone_quantity
         return current_public_zone_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
 
-    if quantity.schema_version == 4:
+    if quantity.schema_version in {4, 11, 12}:
         from .rules.live_modifier_quantities import current_modifier_quantity
         return current_modifier_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
     if quantity.schema_version == 3:
@@ -83,7 +115,10 @@ def query_characteristic_count(
     assert quantity.query is not None
     zone = quantity.query.zones[0]
     controller = source.controller
-    if quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
+    if linked_seat is not None:
+        object_ids = tuple(host.state.players[linked_seat].zones[zone])
+        _maximum_layer = Layer.COLOR
+    elif quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
         object_ids = tuple(source.attachments)
     elif quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT:
         from .attachments import attached_object_identity
@@ -94,6 +129,16 @@ def query_characteristic_count(
         object_ids = tuple(object_id for object_id in dict.fromkeys(recipient.attachments)
             if object_id in host.state.cards
             and host.state.cards[object_id].attached_to == recipient.object_id)
+    elif quantity.scope in {
+        CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE,
+        CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE,
+    }:
+        counted_player = _combat_land_count_seat(host, source, quantity.scope)
+        player = host.state.players.get(counted_player)
+        if player is None or not player.in_game:
+            return 0
+        object_ids = tuple(player.zones[zone])
+        _maximum_layer = Layer.COLOR
     elif quantity.scope is CharacteristicQuantityScope.CONTROLLER_ZONE:
         object_ids = tuple(host.state.players[controller].zones[zone])
     elif quantity.scope is CharacteristicQuantityScope.OPPONENT_ZONES:
@@ -170,7 +215,11 @@ def query_characteristic_count(
             if quantity.literal_name not in public_object_rules_names(candidate, effective, record):
                 continue
         matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
-    return reduce_public_quantity(matched, quantity.reduction, mana_colors=quantity.mana_colors) * quantity.multiplier + quantity.offset
+    amount = reduce_public_quantity(
+        matched, quantity.reduction, mana_colors=quantity.mana_colors,
+        counter_name=quantity.counter_name,
+    )
+    return amount * quantity.multiplier + quantity.offset
 
 
 def _quantity_attachment_state(host, candidate, quantity, *, enforce_applicability):

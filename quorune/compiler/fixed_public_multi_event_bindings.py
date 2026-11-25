@@ -7,7 +7,11 @@ from typing import Any, Mapping
 
 from ..rules.event_subscriptions import (
     FixedEventSubscription,
-    fixed_event_subscription_condition,
+    COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES, COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE,
+    COMBAT_PARTICIPANT_DAMAGE_VARIANT, combat_participant_damage_condition,
+    GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
+    GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, fixed_event_subscription_condition,
+    graveyard_creature_transition_condition, graveyard_creature_transition_damage_effect,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_public_event_trigger_bindings import (
@@ -48,6 +52,14 @@ _SOURCE_ATTACK_BLOCK_DINOSAUR = re.compile(
 )
 
 
+_ENTRY_OR_CAST_SHARED_ORIGIN = re.compile(
+    r"Whenever (?P<first>you cast a spell|a land you control enters) from "
+    r"(?P<origin>exile|anywhere other than your hand) or "
+    r"(?P<second>you cast a spell|a land you control enters) from (?P=origin), (?P<body>.+)",
+    re.IGNORECASE,
+)
+
+
 def _source_condition(*conditions: Mapping[str, Any]) -> Mapping[str, Any]:
     values = [
         {"field": "card", "op": "eq", "value": "$source.ref"},
@@ -60,6 +72,13 @@ def _event_pair(
     pair: str,
 ) -> tuple[tuple[FixedEventSubscription, ...], str, tuple[str, ...]]:
     source = _source_condition()
+    combat_to_player = FixedEventSubscription(
+        "damage.dealt",
+        _source_condition(
+            {"field": "target_kind", "op": "eq", "value": "player"},
+            {"field": "combat", "op": "truthy", "value": True},
+        ),
+    )
     values: dict[
         str,
         tuple[tuple[FixedEventSubscription, ...], str, tuple[str, ...]],
@@ -121,24 +140,12 @@ def _event_pair(
             ("trigger.event.normalized_public_action",),
         ),
         "enters or deals combat damage to a player": (
-            (
-                FixedEventSubscription("permanent.enter", source),
-                FixedEventSubscription(
-                    "damage.dealt",
-                    _source_condition(
-                        {
-                            "field": "target_kind",
-                            "op": "eq",
-                            "value": "player",
-                        },
-                        {
-                            "field": "combat",
-                            "op": "truthy",
-                            "value": True,
-                        },
-                    ),
-                ),
-            ),
+            (FixedEventSubscription("permanent.enter", source), combat_to_player),
+            "trigger-event-normalized-zone-change",
+            ("trigger.event.normalized_damage",),
+        ),
+        "deals combat damage to a player or dies": (
+            (combat_to_player, FixedEventSubscription("creature.dies", source)),
             "trigger-event-normalized-zone-change",
             ("trigger.event.normalized_damage",),
         ),
@@ -198,6 +205,17 @@ def _scheduled_pair_has_local_linked_target(body, card_name):
             reflexive_payment_template(body, compile_effect=compile_targeted_link, bound_trigger=True) is not None)
 
 
+def _scheduled_top_card_result(heads, body):
+    if tuple(head.casefold() for head in heads) != (
+        "when this artifact enters", "at the beginning of your upkeep",
+    ):
+        return False
+    from .fixed_library_selection_templates import ChosenTypeTopSelectionEffectTemplate, fixed_library_selection_effect_template
+
+    template = fixed_library_selection_effect_template(body)
+    return isinstance(template, ChosenTypeTopSelectionEffectTemplate) and template.may_put_in_graveyard
+
+
 def _scheduled_pair_spec(material_line, *, card_name):
     """Compose a step and a closed entry/cast head without sharing predicates."""
     match = re.fullmatch(
@@ -216,7 +234,8 @@ def _scheduled_pair_spec(material_line, *, card_name):
     # branch's object/player from the other branch's primary event.
     if (re.search(r'\b(?:it|its|they|them|their|that player|that creature|that card|'
             r'that spell|this way|that much)\b', match['body'], re.I)
-            and not _scheduled_pair_has_local_linked_target(match['body'], card_name)):
+            and not _scheduled_pair_has_local_linked_target(match['body'], card_name)
+            and not _scheduled_top_card_result(heads, match['body'])):
         return None
     from .fixed_counter_trigger_nodes import (
         fixed_counter_trigger_binding, _public_state_source_self_trigger_binding,
@@ -336,6 +355,50 @@ def _color_cast_or_land_entry_spec(material_line):
     )
 
 
+def _entry_or_cast_origin_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    match = _ENTRY_OR_CAST_SHARED_ORIGIN.fullmatch(material_line)
+    if match is None or match["first"].casefold() == match["second"].casefold():
+        return None
+
+    from .token_templates import fixed_token_creation_effect_template
+
+    body = match["body"]
+    token = fixed_token_creation_effect_template(body)
+    if token is None or token.template_id != "create-fixed-creature-token-v2":
+        return None
+    characteristics = token.effect["characteristics"]
+    if (token.effect["quantity"] != 1 or token.effect.get("tapped")
+            or token.mechanics != ("cr-111-tokens",)
+            or not characteristics["type_line"].startswith("Token Creature — ")):
+        return None
+
+    controller = {"field": "controller", "op": "eq", "value": "$source.controller"}
+    origin: Mapping[str, Any] = {"field": "from", "op": "eq", "value": "exile"}
+    if match["origin"].casefold() != "exile":
+        # CR 400.3 identifies the hand by the object's sealed owner.
+        origin = {"all": [
+            {"field": "from", "op": "truthy", "value": True},
+            {"any": [
+                {"field": "from", "op": "ne", "value": "hand"},
+                {"all": [
+                    {"field": "owner", "op": "truthy", "value": True},
+                    {"field": "owner", "op": "ne", "value": "$source.controller"},
+                ]},
+            ]},
+        ]}
+    condition = {"all": [controller, origin]}
+    return _spec(
+        "spell.cast", "independent_dual_event", body,
+        "fixed-origin-cast-or-land-entry-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=fixed_event_subscription_condition((
+            FixedEventSubscription("spell.cast", condition),
+            FixedEventSubscription("land.enter", condition),
+        )),
+        capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_spell_cast",
+                      "trigger.event.normalized_zone_change"),
+    )
+
+
 def _face_transition_pair_spec(first, second, body):
     children = tuple(_face_transition_spec(head + ", " + body) for head in (first, second))
     if any(child is None for child in children) or tuple(child.variant for child in children) != (
@@ -405,14 +468,61 @@ def _independent_pair_spec(independent, card_name):
         active_zone=first.active_zone)
 
 
+_GRAVEYARD_CREATURE_TRANSITIONS = re.compile(
+    r"Whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, "
+    r"or a creature card leaves your graveyard, (?P<body>(?P<source>.+?) deals 1 damage to each opponent\.)",
+    re.I,
+)
+
+
+def graveyard_creature_transition_binding(text, *, card_name):
+    from .fixed_public_event_trigger_bindings import _source_subject
+
+    match = _GRAVEYARD_CREATURE_TRANSITIONS.fullmatch(text)
+    if match is None or not _source_subject(match["source"], card_name=card_name):
+        return None
+    return _spec(
+        GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT, match["body"],
+        GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, "trigger-event-normalized-zone-change",
+        condition=graveyard_creature_transition_condition(),
+        capabilities=("trigger.event.normalized_zone_change", "trigger.subscription.fixed_multi_event"),
+    )
+
+
+def graveyard_creature_transition_result(binding, body):
+    if binding.variant != GRAVEYARD_CREATURE_TRANSITIONS_VARIANT or body != binding.body:
+        return None
+    return (
+        (GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, (graveyard_creature_transition_damage_effect(),), None,
+         ("cr-120-damage",)), True,
+    )
+
+
+def _combat_participant_damage_spec(material_line: str):
+    match = re.fullmatch(r"Whenever a creature attacks or blocks, (?P<body>.+)", material_line, re.I)
+    if match is None:
+        return None
+    return _spec(
+        "creature.attacks", COMBAT_PARTICIPANT_DAMAGE_VARIANT, match["body"],
+        COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE, "trigger-event-normalized-public-action",
+        condition=combat_participant_damage_condition(),
+        capabilities=COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES,
+    )
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
-    """Parse one exact two-event source subscription with one active zone."""
+    """Parse one exact source subscription set with one active zone."""
 
-    paired = _source_block_pair_spec(material_line) or _color_cast_or_land_entry_spec(material_line)
+    if transitions := graveyard_creature_transition_binding(material_line, card_name=card_name):
+        return transitions
+    paired = (_source_block_pair_spec(material_line)
+              or _color_cast_or_land_entry_spec(material_line)
+              or _entry_or_cast_origin_spec(material_line)
+              or _combat_participant_damage_spec(material_line))
     if paired is not None:return paired
 
     cast_or_death = _opponent_cast_or_source_death_spec(material_line, card_name=card_name)
@@ -442,6 +552,8 @@ def fixed_public_multi_event_binding_spec(
     if independent is not None and _SOURCE_ARTIFACT_ENTRY_SACRIFICE.fullmatch(material_line) is None:
         return _independent_pair_spec(independent, card_name)
 
+    if re.fullmatch(r"Whenever this creature deals combat damage to a player or dies, proliferate\.", material_line, re.I):
+        return _source_pair_spec(pair="deals combat damage to a player or dies", body="proliferate.")
     source = _THIS_SOURCE_MULTI_EVENT.fullmatch(material_line)
     if source is not None:
         return _source_pair_spec(

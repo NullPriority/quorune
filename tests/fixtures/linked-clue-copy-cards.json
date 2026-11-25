@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000119771",
+      "name": "Trial Clue Shapeshifter",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{W}{U}",
+      "cmc": 2,
+      "power": "2",
+      "toughness": "3",
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "keywords": [],
+      "oracle_text": "Whenever this creature attacks, exile target card from a graveyard, then investigate.\nWhenever you sacrifice a Clue, you may have this creature become a copy of a creature card exiled with it until end of turn.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000119772",
+      "name": "Trial Linked Copy Model",
+      "type_line": "Creature — Bird",
+      "mana_cost": "{3}{W}",
+      "cmc": 4,
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "oracle_text": "Flying",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000119773",
+      "name": "Trial Clue Inspector",
+      "type_line": "Creature — Scout",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "power": "1",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "oracle_text": "When this creature enters, investigate.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for linked public exile and Clue sacrifice."
+}

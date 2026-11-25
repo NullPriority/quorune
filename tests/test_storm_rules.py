@@ -60,7 +60,7 @@ class CopyTargetModelTests(unittest.TestCase):
         from types import SimpleNamespace
         class Host(TargetSelectionOwnerMixin):
             state=SimpleNamespace(cards={'CURRENT':None,'OTHER':None},players={'A':None,'B':None},stack=[])
-            def _target_candidate_map(self, actor, plan, *, source_ref, acting_source=None):
+            def _target_candidate_map(self, actor, plan, *, source_ref, acting_source=None, record_optimization=True):
                 return {group.group_id: ["CURRENT", "OTHER"] for group in plan.groups}
 
             def _target_snapshot(self, ref):

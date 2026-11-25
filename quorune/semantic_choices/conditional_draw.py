@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..public_history_query_model import (
+    OPPONENT_CAST_COLOR_DRAW, SPELL_COLOR_HISTORY_FIELD, uses_sealed_opponent_cast_colors,
+)
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.intents import DrawCardsIntent
 from .context import SemanticChoiceContext, SemanticChoiceQuery
@@ -35,7 +38,7 @@ def _colors(effect: Mapping[str, Any]) -> tuple[str, ...]:
 class OpponentCastColorDrawHandler:
     """Lower one public turn-history predicate to a canonical draw intent."""
 
-    operation: str = "draw_if_opponent_cast_colors_this_turn"
+    operation: str = OPPONENT_CAST_COLOR_DRAW
     handler_id: str = "choice.draw.opponent-cast-colors.v1"
     schema_version: int = 1
     rule_references: tuple[str, ...] = (
@@ -46,7 +49,7 @@ class OpponentCastColorDrawHandler:
     capability_dependencies: tuple[str, ...] = (
         "zone.draw.library_to_hand",
     )
-    continuation_fields: tuple[str, ...] = ("player", "colors")
+    continuation_fields: tuple[str, ...] = ("player", "colors", SPELL_COLOR_HISTORY_FIELD)
     private_data: tuple[str, ...] = ("drawn card",)
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -68,6 +71,14 @@ class OpponentCastColorDrawHandler:
             raise SemanticChoiceError(
                 "Conditional draw player must still be in the game"
             )
+        sealed = uses_sealed_opponent_cast_colors(effect)
+        if sealed and (
+            type(effect[SPELL_COLOR_HISTORY_FIELD]) is not int
+            or effect[SPELL_COLOR_HISTORY_FIELD] != 1
+            or set(effect) != {"op", "player", "colors", SPELL_COLOR_HISTORY_FIELD}
+            or player != context.stack_controller or player != context.actor
+        ):
+            raise SemanticChoiceError("Sealed spell-color draw requires its exact controller and history version")
         colors = _colors(effect)
         matched = bool(
             set(colors).intersection(
@@ -77,7 +88,8 @@ class OpponentCastColorDrawHandler:
         return SemanticChoicePreparation(
             request=None,
             continuation_effect=FrozenMap(
-                {"op": self.operation, "player": player, "colors": colors}
+                {"op": self.operation, "player": player, "colors": colors,
+                 **({SPELL_COLOR_HISTORY_FIELD: 1} if sealed else {})}
             ),
             preparation_intents=(
                 DrawCardsIntent(

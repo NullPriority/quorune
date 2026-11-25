@@ -85,11 +85,13 @@ def _protection_allows_attachment(
     host: AuraRuntimeHost,
     aura: CardInstance,
     target: CardInstance,
+    *, controller: str,
 ) -> bool:
     aura_data = host._effective_card_data(aura)
     verdict = protection_verdict(
         host._effective_card_data(target),
         ProtectionSource.from_characteristics(aura_data),
+        source_player=controller,
         retaining_aura=aura.logical_object_id if aura.zone=='battlefield' and aura.attached_to==target.object_id else None,
     )
     return verdict is ProtectionVerdict.ALLOWED
@@ -133,7 +135,7 @@ def legal_aura_target_refs(
         ):
             continue
         if isinstance(target, CardInstance) and not _protection_allows_attachment(
-            host, aura, target
+            host, aura, target, controller=controller,
         ):
             continue
         refs.append(str(row["ref"]))

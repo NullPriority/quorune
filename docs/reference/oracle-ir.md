@@ -166,13 +166,13 @@ current counts and residual inventories.
 Scalar version fifteen distinguishes one graveyard-target mana value from a
 battlefield-target characteristic. It permits one intrinsic, unscaled mana
 value and requires its own quantity capability. Historical scalar versions
-cannot carry this origin, and the new version cannot relabel an older origin.
-Its source production preserves the original graveyard target query and ordered
-return/life instructions. The canonical departure owner seals only the requested
-mana value before movement to a hidden hand; a later incarnation never replaces
-that public snapshot. This quantity does not query power or toughness. The
-separate terminal spell-move and intrinsic copy owners retain their boundaries.
-Admission requires the quantity capability and every composed instruction owner.
+cannot carry this origin. This quantity belongs to two ordered results. A
+return from the controller's graveyard to hand can grant that player life. A
+creature card from any graveyard can enter under the caster's control and
+then cause that player to lose life before the entry triggers resolve.
+The departure owner seals the original graveyard mana value. Copying a
+different permanent during entry does not change the amount. Admission
+requires the quantity capability and every composed instruction owner.
 
 Source-self counter result quantities use the existing scalar amount owner.
 The closed version-two descriptor names one canonical counter kind. Current

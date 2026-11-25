@@ -11,6 +11,23 @@ if TYPE_CHECKING:
 RECEIVER_UNION_CAPABILITY = 'state_query.permanent.receiver_union'
 
 
+def _historic_creature_branches() -> tuple[ObjectQuerySpec, ...]:
+    from .object_predicate import ObjectQuerySpec
+
+    return (
+        ObjectQuerySpec(zones=("battlefield",), types_all=("artifact", "creature")),
+        ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), supertypes_all=("legendary",)),
+        ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), subtypes_all=("saga",)),
+    )
+
+
+def historic_creature_receiver_query() -> ObjectQuerySpec:
+    """Use the earlier-layer artifact, legendary, or Saga creature set."""
+    from .object_predicate import ObjectQuerySpec
+
+    return ObjectQuerySpec(zones=("battlefield",), any_of=_historic_creature_branches())
+
+
 def validate_receiver_union_wire(value: Mapping) -> None:
     """Reject nondefault reserved data before legacy version promotion."""
     from .object_predicate import ObjectQueryError, ObjectQuerySpec
@@ -47,11 +64,15 @@ def validate_receiver_union(query: ObjectQuerySpec) -> tuple[ObjectQuerySpec, ..
                 continue
             if getattr(value, item.name) != getattr(empty, item.name):
                 raise ObjectQueryError('Receiver unions only support fixed public characteristic leaves')
+    historic_creatures = (
+        any(part.supertypes_all == ("legendary",) for part in branches)
+        and set(branches) == set(_historic_creature_branches())
+    )
     for part in branches:
         if not any((part.types_all, part.subtypes_all, part.supertypes_all, part.colors_all)):
             raise ObjectQueryError('Receiver union branches must select a characteristic')
-        if part.supertypes_all not in {(), ('snow',)}:
-            raise ObjectQueryError('Receiver union supertype leaves only support snow')
+        if part.supertypes_all not in {(), ('snow',)} and not historic_creatures:
+            raise ObjectQueryError("Receiver union supertypes require snow or the exact historic creature set")
     if len(set(branches)) != len(branches):
         raise ObjectQueryError('Receiver unions require distinct branches')
     return tuple(branches)

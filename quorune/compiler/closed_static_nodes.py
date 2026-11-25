@@ -100,14 +100,15 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     return closed_static_or_replacement_node(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=face_name or record.name, card_types=card_types,
         permanent_card_types=permanent_card_types, source_is_class='class' in subtypes,
-        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        announced_x_available=not record.faces and record.mana_cost.count('{X}') == 1)
 
 
 def closed_static_or_replacement_node(
     *, node_id: str, line: str, material_line: str, span: SourceSpan,
     source_name: str, card_types: Iterable[str], permanent_card_types: set[str],
     source_is_class: bool, capability_registry: CapabilityRegistry | None,
-    capability_profile: str, residuals: list[OracleResidual],
+    capability_profile: str, residuals: list[OracleResidual], announced_x_available: bool = False,
 ) -> OracleNode | None:
     """Give exact owners their full source before generic label fallback."""
     material = without_ability_word_label(material_line)
@@ -115,7 +116,7 @@ def closed_static_or_replacement_node(
     arguments=dict(node_id=node_id,line=line,span=span,source_name=source_name,
         card_types=card_types,permanent_card_types=permanent_card_types,
         source_is_class=source_is_class,capability_registry=capability_registry,
-        capability_profile=capability_profile,residuals=residuals)
+        capability_profile=capability_profile,residuals=residuals,announced_x_available=announced_x_available)
     original=_closed_static_body_node(material_line=material_line,**arguments)
     if original is not None:return original
     if material==material_line:
@@ -136,6 +137,7 @@ def _closed_static_body_node(
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
     residuals: list[OracleResidual],
+    announced_x_available: bool = False,
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
 
@@ -160,10 +162,11 @@ def _closed_static_body_node(
         capability_profile=capability_profile,residuals=residuals)
     if revealed_entry is not None:return revealed_entry
 
-    from .entry_copy_templates import entry_copy_node
-    copied_entry = entry_copy_node(node_id=node_id, line=line, material_line=material_line,
+    from .linked_graveyard_entry_templates import entry_copy_or_linked_exile_node
+
+    copied_entry = entry_copy_or_linked_exile_node(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=source_name, capability_registry=capability_registry,
-        capability_profile=capability_profile, residuals=residuals)
+        capability_profile=capability_profile, residuals=residuals, announced_x_available=announced_x_available)
     if copied_entry is not None:
         return copied_entry
 
@@ -214,7 +217,7 @@ def _closed_static_body_node(
     if alternative_cost is not None:
         return alternative_cost
     player_protection = player_target_protection_node(
-        node_id=node_id,line=line,material_line=material_line,span=span,
+        node_id=node_id,line=line,material_line=material_line,span=span,source_name=source_name,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals,
     )
     if player_protection is not None:

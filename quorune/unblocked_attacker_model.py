@@ -4,10 +4,12 @@ from dataclasses import dataclass
 UNBLOCKED_ATTACKER_EVENT='creature.unblocked'
 UNBLOCKED_ATTACKER_CAPABILITY='trigger.event.unblocked_attacker'
 UNBLOCKED_ATTACKER_VARIANT='source_attacks_unblocked'
+CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION = 2
 
 
 def unblocked_attacker_event_version(value):
-    if value is not None and (type(value)is not int or value!=1):raise ValueError('Unsupported unblocked-attacker event version')
+    if value is not None and (type(value) is not int or value not in (1, CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION)):
+        raise ValueError('Unsupported unblocked-attacker event version')
     return value
 
 

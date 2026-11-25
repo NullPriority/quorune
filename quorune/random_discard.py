@@ -7,6 +7,7 @@ import re
 from typing import Mapping
 
 from .replacement.immutable import FrozenMap
+from .discard_effect_origin import DiscardEffectOrigin
 from .whole_hand_discard import whole_hand_input_snapshot
 from .rules.random_selection import sample_identity_rows
 
@@ -24,6 +25,7 @@ class RandomDiscardIntent:
     randomization_key: str
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    effect_origin: DiscardEffectOrigin | None = None
 
     def __post_init__(self):
         if any(type(value) is not str or not value for value in
@@ -35,6 +37,10 @@ class RandomDiscardIntent:
             type(player) is not str or not player for player in self.players
         ) or len(self.players) != len(set(self.players)):
             raise ValueError("Random discard players must be unique seats")
+        if self.effect_origin is not None and (
+            not isinstance(self.effect_origin, DiscardEffectOrigin) or self.effect_origin.controller != self.actor
+        ):
+            raise ValueError("Random discard requires its resolving controller")
         object.__setattr__(self, "players", tuple(self.players))
         from .semantic_runtime.zone_move_intent import _freeze_replacement_selections
         object.__setattr__(self, "replacement_selections", _freeze_replacement_selections(

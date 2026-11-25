@@ -430,7 +430,7 @@ def _catalog_provenance(
     references: tuple[SemanticProgram, ...],
     carrier_provenance: Mapping[str, Any] | None,
 ) -> Mapping[str, Any]:
-    if ability.announced_x_symbols is None and ability.ability_local_mana_reduction is None:
+    if not ability.chooses_activation_x and ability.ability_local_mana_reduction is None:
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}
@@ -466,8 +466,8 @@ def _append_catalog_carriers(
     }
     for face_id, abilities in catalog.items():
         for ability in abilities:
-            if ability.ability_local_mana_reduction is not None:
-                continue  # This price requires its complete cost and effect program.
+            if ability.ability_local_mana_reduction is not None or ability.variable_colored_reveal_price is not None:
+                continue  # The price binds to its complete cost and effect program.
             if (
                 _ability_source_slot(
                     record,

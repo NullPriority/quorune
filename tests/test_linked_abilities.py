@@ -5,6 +5,21 @@ import unittest
 from pathlib import Path
 
 from common import keep_all, load_assets, make_session
+from quorune.replacement.ordering import ReplacementChoiceRequired, replacement_choice_payload
+
+
+def move_choosing_entry_name(test, engine, card, name):
+    with test.assertRaises(ReplacementChoiceRequired) as suspended:
+        engine.move_card(card.object_id, "battlefield", controller=card.controller, log=False)
+    choice = suspended.exception
+    effect_id, = replacement_choice_payload(choice.pending, choice.effects)["card_name_choices"]
+    return engine.move_card(
+        card.object_id,
+        "battlefield",
+        controller=card.controller,
+        log=False,
+        replacement_selections=({"effect_id": effect_id, "card_name": name},),
+    )
 
 
 class LinkedAbilityRuleTests(unittest.TestCase):
@@ -91,12 +106,8 @@ class LinkedAbilityRuleTests(unittest.TestCase):
         engine = self.make_engine(60701)
         needle = self.card(engine, "A", "Pithing Needle")
         top = self.card(engine, "A", "Sensei's Divining Top")
-        engine.move_card(
-            needle.object_id,
-            "battlefield",
-            controller="A",
-            log=False,
-        )
+        move_choosing_entry_name(self, engine, needle, top.printed_name)
+        self.assertEqual(top.printed_name, needle.annotations.pop("chosen_name"))
         engine.move_card(
             top.object_id,
             "battlefield",

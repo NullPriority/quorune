@@ -29,6 +29,9 @@ class CharacteristicQuantityScope(str, Enum):
     """Closed seat/object relation for one characteristic quantity."""
 
     CONTROLLER_ZONE = "controller_zone"
+    LINKED_OPPONENT_HAND = "linked_opponent_hand"
+    LINKED_OPPONENT_DEFINITION = "linked_opponent_definition"
+    LINKED_PLAYER_GRAVEYARD = "linked_player_graveyard"
     OPPONENT_ZONES = "opponent_zones"
     ALL_ZONES = "all_zones"
     ATTACHED_TO_SOURCE = "attached_to_source"
@@ -36,9 +39,17 @@ class CharacteristicQuantityScope(str, Enum):
     SOURCE_COUNTER = "source_counter"
     CONTROLLER_OPPONENT_COUNT = "controller_opponent_count"
     CONTROLLER_LIFE_TOTAL = "controller_life_total"
+    CONTROLLER_TURN_LIFE_LOSS = "controller_turn_life_loss"
+    DEFINING_LIFE_TOTAL = "defining_life_total"
+    DEFINING_HALF_MAXIMUM_OPPONENT_LIFE = "defining_half_maximum_opponent_life"
+    CONTROLLER_TRANSFORMED_PERMANENTS = "controller_transformed_permanents"
     OPPONENT_POISON_COUNTERS = "opponent_poison_counters"
+    OPPONENTS_BELOW_HALF_STARTING_LIFE = "opponents_below_half_starting_life"
+    PLAYERS_AT_OR_BELOW_HALF_STARTING_LIFE = "players_at_or_below_half_starting_life"
     ATTACHED_OBJECT = "attached_object"
     CONTROLLER_COMMANDER_CAST_COUNT = "controller_commander_cast_count"
+    ATTACKING_DEFENDER_ZONE = "attacking_defender_zone"
+    COMBAT_STATE_BASIC_LAND_ZONE = "combat_state_basic_land_zone"
 
 
 class CharacteristicQuantityReduction(str, Enum):
@@ -50,12 +61,31 @@ class CharacteristicQuantityReduction(str, Enum):
     MAXIMUM_MANA_VALUE = "maximum_mana_value"
     TOTAL_MANA_VALUE = "total_mana_value"
     TOTAL_COUNTERS = "total_counters"
+    NAMED_COUNTER_TOTAL = "named_counter_total"
     SUM_QUANTITIES = "sum_quantities"
     COLORED_MANA_SYMBOLS = "colored_mana_symbols"
     DEVOTION = "devotion"
 
 
+DEFINING_LIFE_SCOPES = frozenset({
+    CharacteristicQuantityScope.DEFINING_LIFE_TOTAL,
+    CharacteristicQuantityScope.DEFINING_HALF_MAXIMUM_OPPONENT_LIFE,
+})
+CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE = "continuous-self-controller-turn-life-loss-v1"
+CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES = (
+    "condition.history.fixed_public_query", "quantity_expression.current_player_value",
+)
 PUBLIC_NAMED_COUNT_CAPABILITY = "quantity_expression.public_named_count"
+NAMED_COUNTER_TOTAL_CAPABILITY = "quantity_expression.public_named_counter_total"
+ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY = "quantity_expression.attacking_defender_land_count"
+COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY = "quantity_expression.combat_state_basic_land_count"
+
+LINKED_OPPONENT_HAND_QUERY = ObjectQuerySpec(zones=("hand",))
+LINKED_OPPONENT_TAPPED_LANDS_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("land",), tapped=True)
+LINKED_OPPONENT_CREATURES_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+_LINKED_OPPONENT_DEFINITION_QUERIES = (
+    LINKED_OPPONENT_HAND_QUERY, LINKED_OPPONENT_TAPPED_LANDS_QUERY, LINKED_OPPONENT_CREATURES_QUERY,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -78,6 +108,35 @@ class CharacteristicQuantitySpec:
     def __post_init__(self) -> None:
         self._validate_reduction_version()
         self._validate_scope_and_exclusions()
+        if self.schema_version == 12 or self.scope is CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD:
+            if (
+                self.schema_version != 12 or self.scope is not CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD
+                or self.query is not None or self.counter_name is not None or self.exclude_source
+                or self.exclude_attached_object or self.terms or self.mana_colors
+                or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+                or self.multiplier != 1 or self.offset != 0
+            ):
+                raise CharacteristicFragmentError("A linked-player graveyard count requires its exact definition quantity")
+            return
+        if self.schema_version == 11 or self.scope in DEFINING_LIFE_SCOPES:
+            if (self.schema_version != 11 or self.scope not in DEFINING_LIFE_SCOPES
+                    or self.query is not None or self.counter_name is not None or self.exclude_source
+                    or self.exclude_attached_object or self.terms or self.mana_colors
+                    or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+                    or self.multiplier != 1 or self.offset != 0):
+                raise CharacteristicFragmentError("A defining life total requires its exact signed quantity")
+            return
+        if self.schema_version in {9, 10} or self.scope in {
+            CharacteristicQuantityScope.LINKED_OPPONENT_HAND, CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION,
+        }:
+            self._validate_linked_opponent_quantity()
+            return
+        if self.scope in {
+            CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE,
+            CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE,
+        }:
+            self._validate_combat_land_count()
+            return
         if self.schema_version == 8:
             from .commander_cast_count_model import validate_commander_cast_quantity
             try:
@@ -98,8 +157,13 @@ class CharacteristicQuantitySpec:
             self._validate_current_value()
             return
         if self.scope in {CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL,
-                CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS,CharacteristicQuantityScope.ATTACHED_OBJECT}:
+                CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS,
+                CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS, CharacteristicQuantityScope.ATTACHED_OBJECT,
+                CharacteristicQuantityScope.OPPONENTS_BELOW_HALF_STARTING_LIFE,
+                CharacteristicQuantityScope.PLAYERS_AT_OR_BELOW_HALF_STARTING_LIFE}:
             raise CharacteristicFragmentError('Current player and attached-object values require version 4')
+        if self.scope is CharacteristicQuantityScope.CONTROLLER_TRANSFORMED_PERMANENTS:
+            raise CharacteristicFragmentError("Transformed-permanent counts require version 4")
         if self.schema_version == 3:
             self._validate_sum_terms()
             return
@@ -116,8 +180,44 @@ class CharacteristicQuantitySpec:
             return
         self._validate_object_query()
 
+    def _validate_linked_opponent_quantity(self) -> None:
+        hand = self.scope is CharacteristicQuantityScope.LINKED_OPPONENT_HAND
+        if hand:
+            valid = (self.schema_version, self.query, self.offset) == (9, None, 0)
+        else:
+            valid = (
+                self.scope is CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION
+                and self.schema_version == 10 and self.query in _LINKED_OPPONENT_DEFINITION_QUERIES
+                and self.offset == int(self.query == LINKED_OPPONENT_CREATURES_QUERY)
+            )
+        if (not valid or self.counter_name is not None or self.exclude_source or self.exclude_attached_object
+                or self.terms or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+                or self.multiplier != 1):
+            raise CharacteristicFragmentError("A linked opponent quantity requires its exact selected-player read")
+
+    def _validate_combat_land_count(self) -> None:
+        subtypes = ()
+        if self.scope is CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE:
+            from .basic_land_types import BASIC_LAND_MANA
+
+            subtypes = self.query.subtypes_any if isinstance(self.query, ObjectQuerySpec) else ()
+            if len(subtypes) != 1 or subtypes[0] not in BASIC_LAND_MANA:
+                raise CharacteristicFragmentError("A combat-state land count requires one basic land subtype")
+        if (
+            self.schema_version != 2
+            or self.query != ObjectQuerySpec(zones=("battlefield",), types_all=("land",), subtypes_any=subtypes)
+            or self.counter_name is not None
+            or self.exclude_source
+            or self.exclude_attached_object
+            or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+            or self.multiplier != 1
+            or self.offset != 0
+            or self.terms
+        ):
+            raise CharacteristicFragmentError("An attacking defender quantity requires the closed current land count")
+
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
@@ -161,9 +261,16 @@ class CharacteristicQuantitySpec:
                 or self.exclude_attached_object or self.terms or self.mana_colors
                 or self.multiplier != 1 or self.offset != 0):
             raise CharacteristicFragmentError('Current values require one unscaled closed public reference')
-        if self.scope in {CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL,CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS}:
+        if self.scope in {CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL,
+                CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS,
+                CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS,
+                CharacteristicQuantityScope.OPPONENTS_BELOW_HALF_STARTING_LIFE,
+                CharacteristicQuantityScope.PLAYERS_AT_OR_BELOW_HALF_STARTING_LIFE}:
             if self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
                 raise CharacteristicFragmentError('Player values cannot carry an object reduction')
+        elif self.scope is CharacteristicQuantityScope.CONTROLLER_TRANSFORMED_PERMANENTS:
+            if self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
+                raise CharacteristicFragmentError("Transformed permanents require an unscaled object count")
         elif self.scope is CharacteristicQuantityScope.ATTACHED_OBJECT:
             if self.reduction not in {CharacteristicQuantityReduction.DISTINCT_COLORS,CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE}:
                 raise CharacteristicFragmentError('Attached-object values require colors or mana value')
@@ -192,6 +299,7 @@ class CharacteristicQuantitySpec:
         invalid_leaf = any(
             not isinstance(term, CharacteristicQuantitySpec)
             or term.schema_version not in {1, 2}
+            or term.scope is CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE
             or (term.query is not None and term.query.zones == ("hand",))
             for term in self.terms
         )
@@ -224,7 +332,38 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(str(exc)) from exc
         object.__setattr__(self, "counter_name", counter_name)
 
+    def _allows_nonartifact_noncolor_count(self, query: ObjectQuerySpec) -> bool:
+        return (
+            self.schema_version == 2
+            and self.scope is CharacteristicQuantityScope.CONTROLLER_ZONE
+            and self.reduction is CharacteristicQuantityReduction.OBJECT_COUNT
+            and self.multiplier == 1 and self.offset == 0
+            and not self.exclude_source and not self.exclude_attached_object
+            and len(query.colors_none) == 1
+            and query == ObjectQuerySpec(
+                zones=("battlefield",), types_all=("creature",), excluded_types=("artifact",),
+                colors_none=query.colors_none,
+            )
+        )
+
     def _validate_object_query(self) -> None:
+        if self.reduction is CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL:
+            query = self.query
+            if (
+                self.schema_version != 2
+                or self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+                or self.counter_name != "+1/+1"
+                or self.exclude_attached_object
+                or self.multiplier != 1
+                or self.offset != 0
+                or not isinstance(query, ObjectQuerySpec)
+                or query.types_all not in {("creature",), ("land",)}
+                or query != ObjectQuerySpec(zones=("battlefield",), types_all=query.types_all)
+            ):
+                raise CharacteristicFragmentError(
+                    "Named counter totals require a closed controlled creature or land query"
+                )
+            return
         if self.reduction is CharacteristicQuantityReduction.TOTAL_COUNTERS and (
                 not isinstance(self.query, ObjectQuerySpec) or self.query.zones != ('battlefield',)):
             raise CharacteristicFragmentError('Total counters require current public battlefield objects')
@@ -282,7 +421,7 @@ class CharacteristicQuantitySpec:
             or query.exclude_ref is not None
             or query.known_to_actor is not None
             or (query.keywords_all and self.schema_version != 6)
-            or query.colors_none
+            or (query.colors_none and not self._allows_nonartifact_noncolor_count(query))
             or (query.keywords_none and self.schema_version != 6)
             or query.numeric_characteristic is not None
             or (query.any_of and any(part.exclude_ref is not None for part in query.any_of))
@@ -355,7 +494,7 @@ class CharacteristicQuantitySpec:
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
             **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
-                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6, 7, 8} else {}),
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6, 7, 8, 9, 10} else {}),
             **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
             **({"literal_name": self.literal_name} if self.schema_version == 7 else {}),
         }
@@ -384,7 +523,11 @@ class CharacteristicQuantitySpec:
                 "Characteristic quantities have a closed schema"
             )
         version = value.get("schema_version")
-        if ((version in {2, 3, 4, 5, 6, 7, 8}) != ("reduction" in value)
+        if version == 11 and set(value) != extended:
+            raise CharacteristicFragmentError("Defining life totals have a closed version-eleven schema")
+        if version == 12 and set(value) != extended:
+            raise CharacteristicFragmentError("Linked-player graveyard definitions have a closed version-twelve schema")
+        if ((version in {2, 3, 4, 5, 6, 7, 8, 9, 10}) != ("reduction" in value)
                 or (version == 3) != ("terms" in value) or (version == 7) != ("literal_name" in value)):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
@@ -437,12 +580,15 @@ class QueryCharacteristicModifierSpec:
     minimum_count: int = 0
     add_abilities: tuple[str, ...] = ()
     schema_version: int = 1
+    controller_turn_only: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2):
             raise CharacteristicFragmentError(
                 "Unsupported query characteristic modifier schema version"
             )
+        if type(self.controller_turn_only) is not bool or self.controller_turn_only != (self.schema_version == 2):
+            raise CharacteristicFragmentError("Only version two requires the current controller's turn")
         if not isinstance(self.quantity, CharacteristicQuantitySpec):
             raise CharacteristicFragmentError(
                 "Query characteristic modifiers require a typed quantity"
@@ -468,13 +614,45 @@ class QueryCharacteristicModifierSpec:
                 "Query characteristic abilities must be unique strings"
             )
         object.__setattr__(self, "add_abilities", abilities)
+        if self.quantity.scope is CharacteristicQuantityScope.LINKED_OPPONENT_HAND and (
+            self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
+            or (self.power, self.toughness) != (-1, -1)
+            or self.minimum_count or abilities or self.controller_turn_only
+        ):
+            raise CharacteristicFragmentError("The linked hand count supplies its exact additive reduction")
         if self.quantity.schema_version == 6 and abilities:
             raise CharacteristicFragmentError('Keyword-layer counts cannot supply a same-layer ability grant')
+        if self.quantity.scope is CharacteristicQuantityScope.CONTROLLER_TRANSFORMED_PERMANENTS and (
+            self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
+            or self.power != 1 or self.toughness != 0 or abilities
+        ):
+            raise CharacteristicFragmentError("Transformed permanents supply one additive source power per object")
+        if self.quantity.scope is CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS and (
+            self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
+            or (self.power, self.toughness) != (1, 0)
+            or self.minimum_count or abilities or self.controller_turn_only
+        ):
+            raise CharacteristicFragmentError("Controller turn life loss supplies exactly one additive source power per life lost")
+        if self.quantity.scope in {
+            CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE, CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION,
+            CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD, *DEFINING_LIFE_SCOPES,
+        }:
+            raise CharacteristicFragmentError("Definition quantities must define the source's statistics")
+        if self.quantity.scope is CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE and (
+            self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
+            or self.power != 1
+            or self.toughness != 0
+        ):
+            raise CharacteristicFragmentError(
+                "An attacking defender land count supplies one additive power modifier"
+            )
         if self.power == 0 and self.toughness == 0 and not abilities:
             raise CharacteristicFragmentError(
                 "Query characteristic modifiers must change characteristics"
             )
-        if self.calculation is PowerToughnessCalculation.PER_MATCHING_OBJECT:
+        if self.controller_turn_only:
+            self._validate_controller_turn_land_modifier()
+        elif self.calculation is PowerToughnessCalculation.PER_MATCHING_OBJECT:
             if self.minimum_count != 0 or abilities:
                 raise CharacteristicFragmentError(
                     "Per-object modifiers cannot carry a threshold or abilities"
@@ -482,6 +660,22 @@ class QueryCharacteristicModifierSpec:
         elif self.minimum_count <= 0:
             raise CharacteristicFragmentError(
                 "Threshold modifiers require a positive minimum_count"
+            )
+
+    def _validate_controller_turn_land_modifier(self) -> None:
+        from .basic_land_types import BASIC_LAND_MANA
+
+        query = self.quantity.query
+        if (self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
+                or self.power != 1 or self.toughness != 0 or self.minimum_count <= 0 or self.add_abilities
+                or query is None or len(query.subtypes_all) != 1 or query.subtypes_all[0] not in BASIC_LAND_MANA
+                or self.quantity != CharacteristicQuantitySpec(
+                    CharacteristicQuantityScope.CONTROLLER_ZONE,
+                    query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",),
+                                          subtypes_all=query.subtypes_all),
+                )):
+            raise CharacteristicFragmentError(
+                "Controller-turn power modifiers require one current basic land subtype and a positive threshold"
             )
 
     def to_dict(self) -> dict[str, Any]:
@@ -493,6 +687,7 @@ class QueryCharacteristicModifierSpec:
             "toughness": self.toughness,
             "minimum_count": self.minimum_count,
             "add_abilities": list(self.add_abilities),
+            **({"controller_turn_only": True} if self.controller_turn_only else {}),
         }
 
     @classmethod
@@ -508,6 +703,8 @@ class QueryCharacteristicModifierSpec:
             "minimum_count",
             "add_abilities",
         }
+        if isinstance(value, Mapping) and value.get("schema_version") == 2:
+            expected.add("controller_turn_only")
         if not isinstance(value, Mapping) or set(value) != expected:
             raise CharacteristicFragmentError(
                 "Query characteristic modifiers have a closed schema"
@@ -531,6 +728,7 @@ class QueryCharacteristicModifierSpec:
             toughness=value["toughness"],
             minimum_count=value["minimum_count"],
             add_abilities=abilities,
+            controller_turn_only=value.get("controller_turn_only", False),
         )
 
 
@@ -558,7 +756,10 @@ class QueryPowerToughnessDefinitionSpec:
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions require a typed quantity"
             )
-        if self.quantity.schema_version in {4, 6}:
+        if (
+            self.quantity.schema_version in {4, 6, 9}
+            or self.quantity.scope is CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE
+        ):
             raise CharacteristicFragmentError('Current modifier values do not define characteristic values in layer 7a')
         if (
             type(self.define_power) is not bool
@@ -571,8 +772,25 @@ class QueryPowerToughnessDefinitionSpec:
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions require at least one field"
             )
+        if self.quantity.scope in DEFINING_LIFE_SCOPES and (
+            self.schema_version != 1 or not self.define_power or not self.define_toughness
+        ):
+            raise CharacteristicFragmentError("A defining life total sets both exact statistics without offsets")
         if (not self.define_power and self.power_adjustment) or (not self.define_toughness and self.toughness_adjustment):
             raise CharacteristicFragmentError("Disabled definition fields cannot carry offsets")
+        if self.quantity.scope is CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE and (
+            self.schema_version != 1 or not self.define_power or not self.define_toughness
+        ):
+            raise CharacteristicFragmentError("The combat-state land count defines both source stats without offsets")
+        if self.quantity.scope is CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD and (
+            self.schema_version != 1 or not self.define_power or not self.define_toughness
+        ):
+            raise CharacteristicFragmentError("A linked-player graveyard count defines both stats without offsets")
+        if self.quantity.scope is CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION and (
+            self.schema_version != 1 or not self.define_power
+            or self.define_toughness == (self.quantity.query == LINKED_OPPONENT_TAPPED_LANDS_QUERY)
+        ):
+            raise CharacteristicFragmentError("A linked opponent definition uses its exact printed statistic fields")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -820,6 +1038,33 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         if value.get('schema_version')==6 and {'scope','query','counter_name','exclude_source'}<=set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own=(*own,'quantity_expression.keyword_layer_count')
+        if value.get("scope") in ("linked_opponent_hand", "linked_opponent_definition") and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            from .entry_designations import ENTRY_DESIGNATION_CAPABILITY
+
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, ENTRY_DESIGNATION_CAPABILITY)
+        if value.get("scope") == "controller_transformed_permanents" and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, "quantity_expression.controlled_transformed_permanents")
+        if value.get("scope") == "attacking_defender_zone" and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY)
+        if value.get("scope") == "combat_state_basic_land_zone" and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY)
+        if value.get("reduction") == "named_counter_total" and {
+            "scope", "query", "counter_name", "exclude_source",
+        } <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, NAMED_COUNTER_TOTAL_CAPABILITY)
         if value.get('schema_version')==7 and {'scope','query','counter_name','exclude_source'}<=set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own=(*own,PUBLIC_NAMED_COUNT_CAPABILITY)
@@ -832,6 +1077,9 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
 
             own = (*own, *source_relative_count_capabilities(value))
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
+        if type(value.get("scope")) is str and value["scope"] in DEFINING_LIFE_SCOPES:
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, "quantity_expression.current_player_value")
         if value.get('kind')=='unique_player_maximum' or value.get('fact')=='unique_player_maximum':
             own=(*own,'condition.player.unique_maximum')
         if value.get('fact')=='opponent_has_greater_metric':own=(*own,'condition.player.opponent_greater_metric')
@@ -840,13 +1088,20 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
             if value['scope'] in {'controller_life_total','opponent_poison_counters'}:
                 own=(*own,'quantity_expression.current_player_value')
             if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
+        scope = value.get("scope")
+        if type(scope) is str and scope in {"opponents_below_half_starting_life", "players_at_or_below_half_starting_life"} and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, "quantity_expression.player_half_starting_life_threshold")
         if value.get('kind') == 'live_battlefield_quantity':
             from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
             live = LiveBattlefieldQuantitySpec.from_dict(value)
             own = (*own, *live.capability_dependencies)
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
+        from .continuous_conditions import greatest_creature_power_condition_dependencies
         from .initiative_model import dungeon_status_dependencies
-        own = (*own, *dungeon_status_dependencies(value))
+        own = (*own, *dungeon_status_dependencies(value), *greatest_creature_power_condition_dependencies(value))
         if (value.get('kind')=='controller_has_citys_blessing'
                 and {'schema_version','amount','counter_name'}<=set(value)):
             own=(*own,'player.designation.citys_blessing')

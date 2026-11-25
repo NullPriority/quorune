@@ -7,12 +7,14 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import CREATURE_SUBTYPES
+from ..named_search_model import LiteralNameBattlefieldSearchSpec
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FixedCountedLibrarySearchTemplate,
+    TargetNameLibrarySearchSpec,
     SEARCH_ALTERNATIVES,
     counted_search_selector_is_closed,
     search_selector,
@@ -386,12 +388,84 @@ class FixedLibrarySearchTemplate:
         )
 
 
+def optional_literal_name_any_number_search_template(text):
+    match = re.fullmatch(
+        r"You may search your library for any number of cards named (?P<name>[A-Za-z][A-Za-z0-9'’ -]*), "
+        r"reveal them, put them into your hand, then shuffle\.",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from ..named_search_model import LiteralNameAnyNumberSearchSpec
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+    return FixedOptionalEffectTemplate(
+        component_template_id="literal-name-any-number-library-search-v1",
+        _component_effects=(LiteralNameAnyNumberSearchSpec(match["name"]).effect(),),
+        _target_schema=None,
+        mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID),
+    ).compiled()
+
+
+def recruiting_library_search_template(text):
+    match = re.fullmatch(
+        r"Search your library for any number of (?P<subtype>[^,.]+) cards, "
+        r"reveal them, then shuffle and put those cards on top in any order\.",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    from ..creature_subtypes import canonical_creature_subtype
+    from ..library_search_model import RecruitingLibrarySearchSpec
+
+    subtype = canonical_creature_subtype(match["subtype"])
+    if subtype is None:
+        return None
+    return ("creature-subtype-library-top-search-v1", (RecruitingLibrarySearchSpec(subtype).effect(),), None,
+            (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,))
+
+
+_BATTLEFIELD_LITERAL_NAME = r"[A-Z][A-Za-z0-9'’\-]*(?: (?!or )[\w'’\-]+)*"
+_LITERAL_NAME_BATTLEFIELD_SEARCH = re.compile(
+    rf"Search your library for a card named (?P<first>{_BATTLEFIELD_LITERAL_NAME})"
+    rf"(?: or (?P<second>{_BATTLEFIELD_LITERAL_NAME}))?, "
+    r"put (?:it|that card) onto the battlefield(?P<tapped> tapped)?, then shuffle\.",
+    re.IGNORECASE,
+)
+
+
+def _literal_name_battlefield_search_template(text: str) -> LiteralNameBattlefieldSearchSpec | None:
+    match = _LITERAL_NAME_BATTLEFIELD_SEARCH.fullmatch(text)
+    if match is None:
+        return None
+    names = tuple(name for name in (match["first"], match["second"]) if name)
+    if any(not name[0].isupper() for name in names):
+        return None
+    try:
+        return LiteralNameBattlefieldSearchSpec(names, bool(match["tapped"]))
+    except ValueError:
+        return None
+
+
 def fixed_library_search_effect_template(
     text: str,
-) -> FixedLibrarySearchTemplate | FixedCountedLibrarySearchTemplate | None:
+) -> (FixedLibrarySearchTemplate | FixedCountedLibrarySearchTemplate
+      | TargetNameLibrarySearchSpec | LiteralNameBattlefieldSearchSpec | None):
     """Lower one fixed restrictive library search directly to the battlefield."""
 
     normalized = " ".join(text.strip().split())
+    if literal := _literal_name_battlefield_search_template(normalized):
+        return literal
+    if re.fullmatch(
+        r"Search your library for a permanent card with the same name as target nontoken creature, "
+        r"put that card onto the battlefield, then shuffle\.?", normalized, re.I,
+    ):
+        return TargetNameLibrarySearchSpec(permanent_to_battlefield=True)
+    if re.fullmatch(
+        r"Search your library for up to three cards with the same name as target creature, "
+        r"reveal them, put them into your hand, then shuffle\.?", normalized, re.I,
+    ):
+        return TargetNameLibrarySearchSpec(permanent_to_battlefield=False)
     from .query_bound_search_templates import query_bound_library_search_template
     bounded = query_bound_library_search_template(normalized)
     if bounded is not None:

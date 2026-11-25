@@ -13,10 +13,18 @@ from ..compiler.affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_predicate_is_closed,
 )
 
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..power_sacrifice_model import (
+    ATTACK_SACRIFICE_STAT_FIELD, ATTACK_SACRIFICE_STAT_TEMPLATE, validate_attack_sacrifice_stat_effect,
+    CONTROLLER_SACRIFICE_LIFE_FIELD, CONTROLLER_SACRIFICE_LIFE_TEMPLATE,
+    ENTRY_SACRIFICE_POWER_DRAW_FIELD, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, GREATEST_POWER_SACRIFICE_FIELD,
+    GreatestPowerSacrificeSpec, validate_controller_sacrifice_toughness_life, validate_entry_sacrifice_power_life_draw,
+)
+from ..public_characteristic_aggregate_model import PUBLIC_STAT_AGGREGATE_CAPABILITY
 from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
-from ..replacement.immutable import thaw_value
-from .effect_shape_walkers import nested_effects
+from ..replacement.immutable import FrozenMap, thaw_value
+from .effect_shape_walkers import contains_nested_key, nested_effects
 
 
 def most_lands_attack_sacrifice_effect_is_closed(effect, *, actor="$controller"):
@@ -53,6 +61,135 @@ def most_lands_attack_sacrifice_runtime_dependencies(program):
     )
 
 
+_CONTROLLER_SACRIFICE_LIFE_DEPENDENCIES = (
+    FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, PUBLIC_STAT_AGGREGATE_CAPABILITY,
+    "life.change.effect", "trigger.effect.fixed_event", "trigger.placement.apnap",
+    "zone.change.destination_replacement",
+)
+
+
+def upkeep_sacrifice_life_condition():
+    return {"all": [
+        {"field": "player", "op": "eq", "value": "$source.controller"},
+        {"field": "step", "op": "eq", "value": "upkeep"},
+    ]}
+
+
+def _controller_sacrifice_life_runtime_dependencies(program):
+    template = CONTROLLER_SACRIFICE_LIFE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    if not (
+        template in str(program.provenance.get("template_id") or "").split("+")
+        or contains_nested_key((program.effects, program.handlers), CONTROLLER_SACRIFICE_LIFE_FIELD)
+    ):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("step.begin", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or len(program.effects) != 1 or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+        or thaw_value(program.event_condition) != upkeep_sacrifice_life_condition()
+    ):
+        raise ValueError("Controller sacrifice life requires the complete original upkeep ability")
+    validate_controller_sacrifice_toughness_life(program.effects[0])
+    return _CONTROLLER_SACRIFICE_LIFE_DEPENDENCIES
+
+
+_ENTRY_SACRIFICE_POWER_DRAW_DEPENDENCIES = (
+    *_CONTROLLER_SACRIFICE_LIFE_DEPENDENCIES, SOURCE_EXCLUDED_SACRIFICE_CAPABILITY,
+    "trigger.event.normalized_zone_change", "zone.draw.library_to_hand",
+)
+
+
+def entry_sacrifice_power_condition():
+    return {"field": "card", "op": "eq", "value": "$source.ref"}
+
+
+def _entry_sacrifice_power_draw_runtime_dependencies(program):
+    template = ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    if not (
+        template in str(program.provenance.get("template_id") or "").split("+")
+        or contains_nested_key((program.effects, program.handlers), ENTRY_SACRIFICE_POWER_DRAW_FIELD)
+    ):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("permanent.enter", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or len(program.effects) != 1 or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+        or thaw_value(program.event_condition) != entry_sacrifice_power_condition()
+    ):
+        raise ValueError("Entry sacrifice and power result require the exact original source entry")
+    validate_entry_sacrifice_power_life_draw(program.effects[0])
+    return _ENTRY_SACRIFICE_POWER_DRAW_DEPENDENCIES
+
+
+_ATTACK_SACRIFICE_STAT_DEPENDENCIES = (
+    *_CONTROLLER_SACRIFICE_LIFE_DEPENDENCIES, SOURCE_EXCLUDED_SACRIFICE_CAPABILITY,
+    "trigger.event.normalized_self_attack", "zone.draw.library_to_hand",
+)
+
+
+def _attack_sacrifice_stat_runtime_dependencies(program):
+    template = ATTACK_SACRIFICE_STAT_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    if not (
+        template in str(program.provenance.get("template_id") or "").split("+")
+        or contains_nested_key((program.effects, program.handlers), ATTACK_SACRIFICE_STAT_FIELD)
+    ):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("creature.attacks", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or len(program.effects) != 1 or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+        or thaw_value(program.event_condition) != {"field": "card", "op": "eq", "value": "$source.ref"}
+    ):
+        raise ValueError("Attack sacrifice and both stat results require the exact original source attack")
+    validate_attack_sacrifice_stat_effect(program.effects[0])
+    return _ATTACK_SACRIFICE_STAT_DEPENDENCIES
+
+
+def greatest_power_sacrifice_runtime_dependencies(program):
+    if required := (
+        _controller_sacrifice_life_runtime_dependencies(program)
+        or _entry_sacrifice_power_draw_runtime_dependencies(program)
+        or _attack_sacrifice_stat_runtime_dependencies(program)
+    ):
+        return required
+    effects = (*program.effects, *getattr(program, "handlers", ()))
+    marked = [effect for effect in nested_effects(effects) if GREATEST_POWER_SACRIFICE_FIELD in effect]
+    if not marked:
+        return ()
+    if len(marked) != 1 or not program.effects or marked[0] != program.effects[-1]:
+        raise ValueError("Greatest-power sacrifice requires its closed result")
+    spec = GreatestPowerSacrificeSpec.from_effect(marked[0])
+    if not _greatest_power_sacrifice_target_is_closed(program.target_schema, spec):
+        raise ValueError("Greatest-power sacrifice has the wrong affected target scope")
+    event_zone = (program.event, program.active_zone)
+    if spec.target_player is not None:
+        if event_zone != ("resolve", "stack") or len(program.effects) != 1:
+            raise ValueError("Targeted greatest-power sacrifice and life require one closed spell result")
+    elif spec.lost_life_only:
+        if event_zone != ("activate", "battlefield") or len(program.effects) != 1:
+            raise ValueError("Life-qualified greatest-power sacrifice requires its fixed battlefield activation")
+    elif event_zone != ("resolve", "stack") or len(program.effects) > 2:
+        raise ValueError("Greatest-power sacrifice requires its closed spell resolution")
+    return _greatest_power_sacrifice_dependencies(spec)
+
+
+def _greatest_power_sacrifice_target_is_closed(target_schema, spec):
+    if spec.target_schema is None:
+        return target_schema is None
+    return (isinstance(target_schema, Mapping) and type(target_schema.get("count")) is int
+            and thaw_value(FrozenMap(target_schema)) == spec.target_schema)
+
+
+def _greatest_power_sacrifice_dependencies(spec):
+    return (
+        FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
+        "zone.change.destination_replacement",
+        PUBLIC_STAT_AGGREGATE_CAPABILITY,
+        *(("condition.history.fixed_public_query",) if spec.lost_life_only else ()),
+        *(("target.revalidate_resolution", "life.change.effect") if spec.target_player is not None else ()),
+    )
+
+
 def is_closed_affected_player_sacrifice_program(program: Any) -> bool:
     required=fixed_affected_player_sacrifice_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
@@ -66,7 +203,12 @@ def fixed_affected_player_sacrifice_node_capabilities(
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
     """Recognize one fixed affected-player permanent-sacrifice choice."""
+    from .keep_three_sacrifice import KEEP_THREE_SACRIFICE_FIELD, keep_three_sacrifice_node_capabilities
 
+    if len(effects) == 1 and KEEP_THREE_SACRIFICE_FIELD in effects[0]:
+        return keep_three_sacrifice_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
         FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC,
@@ -74,6 +216,32 @@ def fixed_affected_player_sacrifice_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    if ATTACK_SACRIFICE_STAT_FIELD in effect:
+        try:
+            validate_attack_sacrifice_stat_effect(effect)
+        except ValueError:
+            return ()
+        return _ATTACK_SACRIFICE_STAT_DEPENDENCIES if target_schema is None else ()
+    if ENTRY_SACRIFICE_POWER_DRAW_FIELD in effect:
+        try:
+            validate_entry_sacrifice_power_life_draw(effect)
+        except ValueError:
+            return ()
+        return _ENTRY_SACRIFICE_POWER_DRAW_DEPENDENCIES if target_schema is None else ()
+    if CONTROLLER_SACRIFICE_LIFE_FIELD in effect:
+        try:
+            validate_controller_sacrifice_toughness_life(effect)
+        except ValueError:
+            return ()
+        return _CONTROLLER_SACRIFICE_LIFE_DEPENDENCIES if target_schema is None else ()
+    if GREATEST_POWER_SACRIFICE_FIELD in effect:
+        try:
+            spec = GreatestPowerSacrificeSpec.from_effect(effect)
+        except (TypeError, ValueError):
+            return ()
+        if not _greatest_power_sacrifice_target_is_closed(target_schema, spec):
+            return ()
+        return _greatest_power_sacrifice_dependencies(spec)
     if MOST_LANDS_ATTACK_SACRIFICE_MECHANIC in mechanics or uses_land_count_maximizers(effect.get("players")):
         if (
             MOST_LANDS_ATTACK_SACRIFICE_MECHANIC in mechanics and target_schema is None

@@ -2,7 +2,11 @@ from __future__ import annotations
 
 """Compile source-owned rules separately from characteristic and keyword grants."""
 
+from . import regex_working_set as re
+
 from ..ability_fragments import ability_fragment_to_dict
+from ..declaration_fragments import DeclarationRestrictionTemplate
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_HANDLER
 from ..object_predicate import ObjectQuerySpec
 
@@ -39,3 +43,31 @@ def with_bound_rule_characteristics(compiled,rules,*,condition):
         handlers.append(characteristic)
     handlers.append(rule[1])
     return 'static-conditional-characteristics-bound-rules-v1',tuple(handlers),tuple(sorted({*required,*rule[2]}))
+
+
+_POWER_MAXIMUM_BLOCKERS = re.compile(
+    r"Each creature you control with power (?P<power>0|[1-9][0-9]{0,2}) or greater "
+    r"can['’]t be blocked by more than one creature\.?",
+    re.IGNORECASE,
+)
+
+
+def power_maximum_blockers_handler(text):
+    match = _POWER_MAXIMUM_BLOCKERS.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    query = ObjectQuerySpec(
+        zones=("battlefield",),
+        types_all=("creature",),
+        numeric_characteristic=TargetNumericCharacteristicSpec(
+            TargetNumericCharacteristic.POWER, TargetNumericComparison.AT_LEAST, int(match["power"]),
+        ),
+    )
+    maximum = DeclarationRestrictionTemplate(
+        template_id="intrinsic-maximum-blockers-v1",
+        declarations=("block",),
+        scope="source_option",
+        mode="maximum_option_uses",
+        count=1,
+    )
+    return bound_rule_handler(scope="fixed_query", query=query, controller="source_controller", rules=(maximum,))

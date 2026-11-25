@@ -16,6 +16,12 @@ instructed viewer and the analyst record, and issue a strict schema. The respons
 revalidated against the exact looked-at identities before any library order is
 changed.
 
+When a selected target comprises multiple physical cards, its owner's
+library end applies to the entire composed target. The ordinary physical
+ordering choice uses the original owner's completed instruction and the
+current composition. The owner chooses the order privately before any
+part moves.
+
 ## Fixed targeted inspection
 
 `library.inspect.fixed_target_player` represents the resolving controller
@@ -70,6 +76,24 @@ spell or ability. A fetch activation keeps its paid activation cost when
 the entry choice suspends the search. The continuation rechecks the selected
 library object's incarnation before placement. Invalid responses preserve the
 pending choice and its transaction state.
+
+## Playing a revealed matching card
+
+After a matching card is publicly revealed during Kinship, the resolving
+controller can play that same library incarnation. Cast options use the
+ordinary resolving cast proposal and leave additional costs in force. Land
+play uses the current turn and land quota, including ordinary entry
+replacement choices. The offer, selected card, and originating trigger
+remain bound through save and replay.
+
+## Targeted owner placement
+
+The original target is revalidated before its owner chooses a library
+position. The continuation binds the original physical target and its current
+incarnation along with the separate resolving controller. A successful
+response uses the ordinary zone-transition owner to put that object on top
+or on the bottom of its owner's library. Later instructions continue for the
+original controller.
 
 ## Shared ordered partition
 
@@ -422,6 +446,29 @@ retains the original ordered selection; completion shuffles once before any
 following instruction. Revealed hand cards remain known. An unqualified
 private search keeps its hand result private while ordinary graveyard
 movement exposes only the graveyard result.
+
+Target-creature name searches retain the current legal target's name set
+and battlefield incarnation when the private search opens. The existing
+search window bounds eligible library cards. Bifurcate can put one matching
+permanent card onto the battlefield. Pack Hunt reveals up to three matching
+cards before they enter hand. A legal search can find zero matching cards
+and still shuffles through the ordinary search owner.
+
+An optional entry trigger can search for any number of cards with one
+literal printed name. Declining opens no search. Accepting uses the existing
+private search window, with a maximum equal to its eligible cards. The chosen
+cards are revealed and moved to hand through the simultaneous result owner,
+then the full library is shuffled once, including when the player finds zero.
+Version 11 derives the same eligibility limit for the offer and command. A
+resumed result checks its retained selection against the same private window.
+Earlier search versions retain their codecs.
+
+Creature-subtype top searches admit creature and kindred cards from the
+controller's private search window. Version 12 records the selected references
+in top-to-bottom order. The owner reveals the selected set in an independent
+public order, shuffles the remainder once, and places the same card objects
+on top without a zone change. Only the controller learns the permutation.
+Earlier single-result library placement retains its existing code and format.
 
 ## Library search restrictions
 

@@ -19,6 +19,8 @@ from .replacement.immutable import FrozenMap, thaw_value
 
 
 COLOR_SET_MANA_HANDLER_ID = "ability.activated.mana.color-set.v1"
+COMMANDER_IDENTITY_MANA_HANDLER_ID = "ability.activated.mana.commander-identity.v1"
+COMMANDER_IDENTITY_MANA_CAPABILITY = "mana.activated.commander_identity"
 MANA_COST_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
 
@@ -35,6 +37,7 @@ class ColorSetSelection(str, Enum):
 class ColorSetRelation(str, Enum):
     CONTROLLER = "controller"
     OWNER = "owner"
+    COMMANDER_IDENTITY = "commander_identity"
 
 
 def _exact_fields(
@@ -120,7 +123,7 @@ class ColorSetActivatedManaAbilitySpec:
     life_payment: int
     relation: ColorSetRelation
     selection: ColorSetSelection
-    query: ObjectQuerySpec
+    query: ObjectQuerySpec | None
     activation_limit: ActivationLimit | None = None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
 
@@ -182,7 +185,7 @@ class ColorSetActivatedManaAbilitySpec:
                 raise ColorSetManaAbilityError(
                     "Color-set mana selection is unsupported"
                 ) from exc
-        if not isinstance(self.query, ObjectQuerySpec):
+        if self.query is not None and not isinstance(self.query, ObjectQuerySpec):
             if not isinstance(self.query, Mapping):
                 raise ColorSetManaAbilityError(
                     "Color-set mana query must be a typed object query"
@@ -209,8 +212,22 @@ class ColorSetActivatedManaAbilitySpec:
             )
         self._validate_query()
 
+    @property
+    def uses_commander_identity(self) -> bool:
+        return self.relation is ColorSetRelation.COMMANDER_IDENTITY
+
     def _validate_query(self) -> None:
         query = self.query
+        if self.uses_commander_identity:
+            if (
+                query is not None or self.selection is not ColorSetSelection.CHOOSE_ONE
+                or not self.tap_source or self.sacrifice_source or self.life_payment
+                or any(self.mana_cost.values()) or self.source_counter_removal_cost is not None
+            ):
+                raise ColorSetManaAbilityError("Commander identity mana requires its exact tap-only color choice")
+            return
+        if query is None:
+            raise ColorSetManaAbilityError("Object color-set mana requires its typed query")
         if query.owner is not None or query.controller is not None:
             raise ColorSetManaAbilityError(
                 "Color-set mana query principal is bound only at activation time"
@@ -277,7 +294,7 @@ class ColorSetActivatedManaAbilitySpec:
             "life_payment": self.life_payment,
             "relation": self.relation.value,
             "selection": self.selection.value,
-            "query": self.query.to_dict(),
+            "query": None if self.query is None else self.query.to_dict(),
         }
         if self.activation_limit is not None:
             value["activation_limit"] = self.activation_limit.value
@@ -317,7 +334,7 @@ class ColorSetActivatedManaAbilitySpec:
             raise ColorSetManaAbilityError(
                 "Color-set mana activation cost must be an object"
             )
-        if not isinstance(query, Mapping):
+        if query is not None and not isinstance(query, Mapping):
             raise ColorSetManaAbilityError(
                 "Color-set mana query must be an object"
             )
@@ -344,7 +361,7 @@ class ColorSetActivatedManaAbilitySpec:
             life_payment=value["life_payment"],
             relation=value["relation"],
             selection=value["selection"],
-            query=ObjectQuerySpec.from_dict(query),
+            query=None if query is None else ObjectQuerySpec.from_dict(query),
             activation_limit=value.get("activation_limit"),
             source_counter_removal_cost=(
                 None
@@ -377,8 +394,11 @@ class ColorSetActivatedManaAbilitySpec:
 
 
 _TEMPLATES: dict[
-    str, tuple[ColorSetRelation, ColorSetSelection, ObjectQuerySpec]
+    str, tuple[ColorSetRelation, ColorSetSelection, ObjectQuerySpec | None]
 ] = {
+    "add one mana of any color in your commander's color identity.": (
+        ColorSetRelation.COMMANDER_IDENTITY, ColorSetSelection.CHOOSE_ONE, None,
+    ),
     (
         "add one mana of any color among legendary creatures and "
         "planeswalkers you control."
@@ -473,7 +493,7 @@ def color_set_mana_handler_descriptor(
     spec: ColorSetActivatedManaAbilitySpec,
 ) -> dict[str, Any]:
     return {
-        "handler_id": COLOR_SET_MANA_HANDLER_ID,
+        "handler_id": COMMANDER_IDENTITY_MANA_HANDLER_ID if spec.uses_commander_identity else COLOR_SET_MANA_HANDLER_ID,
         "schema_version": 1,
         "event": "activate",
         "ability": spec.to_dict(),

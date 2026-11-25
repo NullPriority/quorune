@@ -276,9 +276,12 @@ class FixedBlightRuntimeTests(unittest.TestCase):
         reef = self.add(engine, "Shivan Reef")
         for card in (source, doc, season, reef):
             self.assert_normal_admission(session, card)
-        replacement, = engine.semantics.runtime_handler_programs_for_oracle(
+        replacements = engine.semantics.runtime_handler_programs_for_oracle(
             vorinclex.oracle_id, active_zone="battlefield", event="counter.place",
         )
+        replacement, = [program for program in replacements if any(
+            handler["handler_id"] == "replacement.counter.quantity.v2" for handler in program.handlers
+        )]
         self.assertTrue(engine.semantic_program_is_current_trusted(replacement))
         self.assertIn("counter.placement.quantity_replacement", replacement.capability_dependencies)
         for label in ("one", "two"):

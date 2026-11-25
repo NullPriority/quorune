@@ -23,7 +23,11 @@ from .scalar_effect_amounts import _HISTORY
 from .live_battlefield_quantities import resolution_quantity
 
 
-from ..public_quantity_mana_model import PublicQuantityManaOutput as PublicQuantityManaTemplate
+from ..public_quantity_mana_model import (
+    CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
+    PublicQuantityManaOutput as PublicQuantityManaTemplate,
+    chosen_subtype_quantity_mana_count,
+)
 
 
 def _amount(value: str, *, source_name: str, count: bool):
@@ -64,6 +68,18 @@ def _amount(value: str, *, source_name: str, count: bool):
     if history is not None:
         return ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY, history_fact=history)
     return None
+
+
+def chosen_subtype_mana_template(text: str) -> PublicQuantityManaTemplate | None:
+    if " ".join(text.strip().split()).casefold() != (
+        "choose a color. add an amount of mana of that color equal to "
+        "the number of creatures you control of the chosen type."
+    ):
+        return None
+    return PublicQuantityManaTemplate(
+        "choose_one", tuple(sorted("WUBRG")), chosen_subtype_quantity_mana_count(),
+        schema_version=CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
+    )
 
 
 def public_quantity_mana_template(text: str, *, source_name: str) -> PublicQuantityManaTemplate | None:

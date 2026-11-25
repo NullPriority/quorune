@@ -253,6 +253,162 @@ class TemporaryKeywordRemovalRuntimeTests(unittest.TestCase):
             self.assertIn('defender',session.engine._combat_keywords(session.state.cards[source.object_id]))
             self.private_replay(session,private)
 
+    def test_shadowspear_complete_admission_requires_exact_opposing_permanent_domain(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.temporary_keyword_removal import (
+            OPPONENT_PERMANENT_KEYWORD_REMOVAL_CAPABILITY as OWNER,
+            opponent_permanent_keyword_removal_query,
+        )
+        from test_controller_creature_keyword_absence import register_card
+
+        original = self.db.lookup("Shadowspear", fuzzy=False)
+        status, semantics = register_card(self.db, self.registry, "Shadowspear")
+        self.assertTrue(status["strict_capability_ready"], status["blockers"])
+        program, = [p for p in semantics.programs_for_oracle(original.oracle_id)
+                    if OWNER in p.capability_dependencies]
+        self.assertEqual("activate", program.event)
+        self.assertIsNone(program.target_schema)
+        effect, = program.effects
+        self.assertEqual(11, effect["schema_version"])
+        self.assertEqual(opponent_permanent_keyword_removal_query().to_dict(), effect["predicate"])
+        self.assertEqual(["Hexproof", "Indestructible"], effect["remove_keywords"])
+        for changed in (
+            {**effect, "predicate": {**effect["predicate"], "excluded_controllers": []}},
+            {**effect, "predicate": {**effect["predicate"], "excluded_controllers": ["$target.0"]}},
+            {**effect, "remove_keywords": ["Hexproof"]},
+            {**effect, "power": 1},
+            {**effect, "schema_version": True},
+        ):
+            with self.subTest(changed=changed):
+                result = bind_semantic_program_runtime(replace(program, effects=[changed]),
+                    capability_registry=self.registry, profile="commander_review")
+                self.assertFalse(result["strict"], result)
+        deps = [cap for cap in program.capability_dependencies if cap != OWNER]
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        result = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(result["strict"], result)
+        self.assertIn("capability:undeclared_runtime_dependency:" + OWNER, result["blockers"])
+
+    def test_actual_shadowspear_removes_opponent_keywords_at_resolution(self):
+        game = self.session(613702110)
+        source = self.add(game.engine, "Shadowspear")
+        artifact = self.add(game.engine, "Darksteel Ingot", seat="B", ref="defended-ingot")
+        own = self.add(game.engine, "Darksteel Ingot", ref="own-ingot")
+        knight = self.add(game.engine, "Knight of Grace", seat="B")
+        field = self.add(game.engine, "Privileged Position", seat="B")
+        response = self.add(game.engine, "Disenchant", seat="B", zone="hand", ref="remove-spear")
+        later = self.add(game.engine, "Disenchant", zone="hand", ref="remove-ingot")
+        private = self.add(game.engine, "Generic Bound Growth", seat="C", zone="hand")
+        self.prepare(game, mana={"C": 2, "W": 1})
+        game.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(game)
+        self.assertTrue(self.binding(game, source)["strict_capability_ready"])
+        self.assertIsNone(source.attached_to)
+        self.assertIn("indestructible", game.engine._combat_keywords(artifact))
+        self.assertIn("hexproof", game.engine._combat_keywords(artifact))
+        self.assertIn("hexproof from black", game.engine._combat_keywords(knight))
+        self.assertNotIn(artifact.ref, self.action(game, later)["target_schema"]["legal_refs"])
+        action = self.activation(game, source)
+        self.assertIsNone(action.get("target_schema"))
+        request = {"action_id": action["id"], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", request).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", request)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.cast(game, "B", response, [source.ref])
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual("battlefield", game.state.cards[field.object_id].zone)
+        for card, missing in ((artifact, {"hexproof", "indestructible"}),
+                              (knight, {"hexproof", "hexproof from black"})):
+            self.assertFalse(missing.intersection(game.engine._combat_keywords(game.state.cards[card.object_id])))
+        self.assertIn("indestructible", game.engine._combat_keywords(game.state.cards[own.object_id]))
+        self.advance(game, lambda s: s.state.priority_player == "A")
+        self.assertIn(artifact.ref, self.action(game, game.state.cards[later.object_id])["target_schema"]["legal_refs"])
+        self.cast(game, "A", later, [artifact.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[artifact.object_id].zone)
+        self.private_replay(game, private)
+
+    def test_actual_shadowspear_keeps_later_incarnations_grants_and_cleanup(self):
+        game = self.session(613702111)
+        source = self.add(game.engine, "Shadowspear")
+        knight = self.add(game.engine, "Knight of Grace", seat="B")
+        ingot = self.add(game.engine, "Darksteel Ingot", seat="B", ref="grant-ingot")
+        expiring = self.add(game.engine, "Darksteel Ingot", seat="C", ref="cleanup-ingot")
+        wounded = self.add(game.engine, "Darksteel Myr", seat="D")
+        wounded.marked_damage = 1
+        blink = self.add(game.engine, "Cloudshift", seat="B", zone="hand")
+        grant = self.add(game.engine, "Heroic Intervention", seat="B", zone="hand")
+        private = self.add(game.engine, "Generic Bound Growth", seat="C", zone="hand")
+        self.prepare(game, mana={"C": 1})
+        game.state.players["B"].mana_pool.update({"C": 1, "W": 1, "G": 1})
+        self.checkpoint(game)
+        self.assertTrue(self.binding(game, source)["strict_capability_ready"])
+        action = self.activation(game, source)
+        result = game.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", game.state.cards[wounded.object_id].zone)
+        self.assertNotIn("indestructible", game.engine._combat_keywords(game.state.cards[expiring.object_id]))
+        original = game.state.cards[knight.object_id].logical_object_id
+        self.assertNotIn("hexproof from black", game.engine._combat_keywords(game.state.cards[knight.object_id]))
+        self.cast(game, "B", blink, [knight.ref])
+        self.assertIsNone(self.resolve(game))
+        reincarnated = game.state.cards[knight.object_id]
+        self.assertNotEqual(original, reincarnated.logical_object_id)
+        self.assertIn("hexproof from black", game.engine._combat_keywords(reincarnated))
+        self.cast(game, "B", grant)
+        self.assertIsNone(self.resolve(game))
+        keywords = game.engine._combat_keywords(game.state.cards[ingot.object_id])
+        self.assertTrue({"hexproof", "indestructible"} <= set(keywords))
+        turn = game.state.turn_sequence
+        self.advance(game, lambda s: s.state.turn_sequence > turn)
+        self.assertIn("indestructible", game.engine._combat_keywords(game.state.cards[expiring.object_id]))
+        self.assertNotIn("hexproof", game.engine._combat_keywords(game.state.cards[ingot.object_id]))
+        self.private_replay(game, private)
+
+    def test_actual_shadowspear_witness_kills_creature_only_scope_mutant(self):
+        from quorune import continuous_effect_state
+
+        read = continuous_effect_state.matching_battlefield_objects
+
+        def only_creatures(host, predicate):
+            matched = read(host, predicate)
+            if not predicate.types_all and predicate.excluded_controllers:
+                return tuple(card for card in matched
+                             if "creature" in host._type_parts(str(host._effective_card_data(card)["type_line"]))[0])
+            return matched
+
+        with patch.object(continuous_effect_state, "matching_battlefield_objects", side_effect=only_creatures):
+            with self.assertRaises(AssertionError):
+                self.test_actual_shadowspear_removes_opponent_keywords_at_resolution()
+
+    def test_shadowspear_verified_withdrawal_retains_creature_only_removal(self):
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.rules.temporary_keyword_removal import OPPONENT_PERMANENT_KEYWORD_REMOVAL_CAPABILITY as OWNER
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        source = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        known = set(discover_tests(ROOT).values())
+        for missing, retained in ((OWNER, {"Bonds of Mortality", "Disenchant"}), (CAPABILITY, {"Disenchant"})):
+            with self.subTest(missing=missing):
+                raw = deepcopy(source)
+                next(row for row in raw["capabilities"] if row["id"] == missing).update(
+                    status="blocked", blockers=["Scoped temporary removal dependency withdrawn"])
+                registry = CapabilityRegistry(raw)
+                matched = build_index(registry_value=raw, declaration_source=declarations, discovered_test_ids=known)
+                registry.mark_evidence_verified(validate_capability_evidence_index(matched, registry=registry))
+                for name in ("Shadowspear", "Bonds of Mortality", "Disenchant"):
+                    result, _ = register_card(self.db, registry, name)
+                    self.assertEqual(name in retained, result["strict_capability_ready"], result["blockers"])
+
     def test_original_bonds_group_removal_locks_only_current_opponents(self):
         session=self.session(730241);source=self.add(session.engine,'Bonds of Mortality')
         own=self.add(session.engine,'Generic Bound Body',ref='bonds-own');own.counters.update({'hexproof':1,'indestructible':1})

@@ -8,7 +8,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
 from ..activation_condition_model import (
-    PUBLIC_ACTIVATION_CAPABILITY, PublicActivationTiming, activation_restriction_spec,
+    PublicActivationTiming, activation_restriction_spec, public_activation_capabilities,
 )
 from ..combat_removal import COMBAT_REMOVAL_OPERATION
 from ..graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_OPERATION
@@ -16,6 +16,7 @@ from ..abilities import (
     ActivatedAbility,
 )
 from ..color_set_mana_abilities import (
+    COMMANDER_IDENTITY_MANA_CAPABILITY,
     color_set_mana_handler_descriptor,
     compile_color_set_activated_mana_ability,
 )
@@ -32,6 +33,7 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
 )
+from ..graveyard_recycling_model import uses_source_graveyard_recycling
 from ..intrinsic_basic_land_mana import (
     INTRINSIC_BASIC_LAND_MANA_CAPABILITY,
     expected_intrinsic_basic_land_mana_reminder,
@@ -189,6 +191,8 @@ def color_set_activated_mana_node(
     if spec is None:
         return None
     capabilities = ["mana.activated.color_set"]
+    if spec.uses_commander_identity:
+        capabilities.append(COMMANDER_IDENTITY_MANA_CAPABILITY)
     if ability.activation_limit is ActivationLimit.EXHAUST_ONCE:
         capabilities.append("activation.exhaust.once_per_object")
     capabilities.extend(activated_ability_cost_capabilities(ability))
@@ -361,12 +365,15 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     'create_role_token',
     "gain_control",
     "gain_control_set",
+    "exchange_permanent_control",
+    "resolve_library_bottom_creature_result",
     "give_control",
     "give_control_set",
     "restore_owner_control",
     "choose_control_recipient",
     "amass",
     "apply_source_characteristics_until_end_of_turn",
+    "copy_until_end_of_turn",
     "attach",
     "become_monarch",
     "bounce",
@@ -434,6 +441,8 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "fixed_library_selection",
     "life",
     "set_life_total",
+    "exchange_life_and_source_characteristic",
+    "exchange_two_life_totals",
     "lose_life",
     "lose_life_each_opponent",
     "mill",
@@ -454,6 +463,11 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
 })
 
 
+_PREVENTION_EFFECT_OPERATIONS = frozenset({
+    "choose_damage_source", "create_damage_prevention_shield", "life",
+})
+
+
 def _activated_effect_dependency_gate(
     *,
     effects: tuple[Mapping[str, Any], ...],
@@ -462,16 +476,71 @@ def _activated_effect_dependency_gate(
     trusted_mechanics: frozenset[str],
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
+    active_zone: str,
+    cost_schema: Mapping[str, Any],
 ) -> DependencyGate:
-    prevention_operations = {
-        "choose_damage_source",
-        "create_damage_prevention_shield",
-        "life",
-    }
+    from ..colored_hand_reveal_model import COLORED_REVEAL_MECHANIC, COLORED_REVEAL_OPERATION
+    from ..paid_sacrifice_conditions import is_activation_paid_creature_reference
+    from ..delayed_object_model import is_forced_block_status_effect
+    from ..rules.source_directed_redirect_shapes import source_directed_redirect_node_capabilities
+    from ..rules.source_directed_redirect_model import SOURCE_DIRECTED_REDIRECT_CAPABILITY, is_source_directed_redirect
+
+    from ..linked_exile_return_model import LINKED_FADING_EXILE_CAPABILITY
+    from ..rules.linked_exile_return_shapes import linked_fading_activation_capabilities, uses_linked_fading_exile
+
+    if any(uses_linked_fading_exile(effect) for effect in effects):
+        required = linked_fading_activation_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{LINKED_FADING_EXILE_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
+
+    if any(is_source_directed_redirect(effect) for effect in effects):
+        required = source_directed_redirect_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+        if not required or active_zone != "battlefield" or effects[0]["optional"]:
+            return DependencyGate(blockers=(f"capability:{SOURCE_DIRECTED_REDIRECT_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
+
+    if any(effect.get("op") == COLORED_REVEAL_OPERATION for effect in effects):
+        from ..rules.colored_hand_reveals import colored_hand_reveal_activation_capabilities
+
+        required = colored_hand_reveal_activation_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"mechanic:{COLORED_REVEAL_MECHANIC}",))
+        return explicit_capabilities_gate(required, capability_registry=capability_registry,
+            capability_profile=capability_profile)
+
+    from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_OPERATION
+    from ..library_bottom_result_model import LIBRARY_BOTTOM_RESULT_OPERATION
+    if active_zone != "battlefield":
+        if any(effect.get("op") == PERMANENT_CONTROL_EXCHANGE_OPERATION for effect in effects):
+            return DependencyGate(blockers=("permanent control exchange requires a battlefield source",))
+        if any(effect.get("op") == LIBRARY_BOTTOM_RESULT_OPERATION for effect in effects):
+            return DependencyGate(blockers=("library-bottom result requires a battlefield source",))
+
+    from ..rules.characteristic_life_exchange import CHARACTERISTIC_LIFE_EXCHANGE_OPERATION
+    from ..rules.temporary_self_copy import is_versioned_self_copy
+    if active_zone != "battlefield" and any(effect.get("op") == CHARACTERISTIC_LIFE_EXCHANGE_OPERATION for effect in effects):
+        return DependencyGate(blockers=("characteristic exchange requires a battlefield source",))
+    if active_zone != "battlefield" and any(is_versioned_self_copy(effect) for effect in effects):
+        return DependencyGate(blockers=("temporary self-copy requires a battlefield source",))
+
     capability_shaped_effect = (
         len(effects) == 1
         and (
             str(effects[0].get("op") or "") in _CAPABILITY_SHAPED_EFFECT_OPERATIONS
+            or is_forced_block_status_effect(effects[0])
             or effects[0] == {"op": "manifest_card", "player": "$controller", "mode": "top"}
         )
     )
@@ -479,7 +548,7 @@ def _activated_effect_dependency_gate(
         "cr-615-prevention-effects" in mechanics
         and bool(effects)
         and all(
-            str(effect.get("op") or "") in prevention_operations
+            str(effect.get("op") or "") in _PREVENTION_EFFECT_OPERATIONS
             for effect in effects
         )
     )
@@ -493,6 +562,7 @@ def _activated_effect_dependency_gate(
                 "fixed-counter-controller-effect-sequence",
                 "shared-target-set-result-sequence",
                 "fixed-resolution-control",
+                "fixed-token-mill-subtype-repeat",
                 "fixed-effect-clause-sequence",
                 "fixed-extra-turn-after-current",
                 "fixed-resolution-public-condition",
@@ -533,6 +603,7 @@ def _activated_effect_dependency_gate(
         capability_shaped_effect
         or closed_prevention_effect
         or closed_target_sequence
+        or (active_zone == "battlefield" and any(uses_source_graveyard_recycling(effect) for effect in effects))
         or FIXED_NONREPEATING_MODAL_MECHANIC in mechanics
     ) and capability_registry is not None:
         return dependency_gate(
@@ -542,6 +613,9 @@ def _activated_effect_dependency_gate(
             trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile,
+            cost_schema=cost_schema if any(
+                is_activation_paid_creature_reference(effect.get("cast_fact")) for effect in effects
+            ) else None,
         )
     return DependencyGate(
         blockers=tuple(
@@ -561,9 +635,7 @@ def _activated_cost_dependency_gate(
 ) -> DependencyGate:
     """Add closed typed cost ownership without weakening effect blockers."""
 
-    additional = activated_ability_cost_capabilities(ability)
-    if public_timing is not None:
-        additional = (*additional, PUBLIC_ACTIVATION_CAPABILITY)
+    additional = (*activated_ability_cost_capabilities(ability), *public_activation_capabilities(public_timing))
     if not additional:
         return gate
     cost_gate = explicit_capabilities_gate(
@@ -718,7 +790,20 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    from .token_mill_repeat_templates import fixed_token_mill_repeat_template
+    from .library_bottom_result_templates import library_bottom_creature_result_template
     from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
+
+    from .temporary_self_copy_templates import temporary_self_copy_template
+
+    if copy := temporary_self_copy_template(text, source_name=card_name):
+        return copy
+    bottom = library_bottom_creature_result_template(text, card_name=card_name)
+    if bottom is not None:
+        return bottom
+    repeat = fixed_token_mill_repeat_template(text, card_name=card_name)
+    if repeat is not None:
+        return repeat
     sequence=fixed_damage_life_sequence_template(text,compile_clause=lambda clause:_compiled_activated_effect(
         clause,card_name=card_name,effect_template=effect_template))
     if sequence is not None:return sequence
@@ -729,7 +814,11 @@ def _compiled_activated_effect(
         # composition cannot own that activation.
         if next_cast_copy_template(text.partition(". ")[2]) is not None:
             return None, (), None, ()
+    from .characteristic_life_exchange import compiled_characteristic_life_exchange
     from .return_to_hand_templates import opposing_graveyard_return_sequence_template
+
+    if exchange := compiled_characteristic_life_exchange(text, source_name=card_name):
+        return exchange
 
     graveyard_return = opposing_graveyard_return_sequence_template(
         text, compile_result=lambda body: _compiled_activated_effect(body, card_name=card_name, effect_template=effect_template),
@@ -836,7 +925,7 @@ def activated_oracle_node(
     else:
         from .activation_paid_sacrifice_results import compile_activation_result
         template, effects, target_schema, mechanics = compile_activation_result(
-            ability, source_name=card_name, text=effect_material,
+            ability, source_name=card_name, text=effect_material, public_timing=public_timing,
             compile_fixed=lambda text: _compiled_activated_effect(text, card_name=card_name, effect_template=effect_template))
     from .waterbend_costs import closed_waterbend_source_result
     template,effects,target_schema,mechanics=closed_waterbend_source_result(ability,(template,effects,target_schema,mechanics))
@@ -853,8 +942,11 @@ def activated_oracle_node(
     lowerable = not residual_ids and (
         template is not None or ability.mana_ability
     )
+    cost = activated_ability_cost(ability, public_timing=public_timing)
     gate = _activated_effect_dependency_gate(
         effects=effects,
+        active_zone=ability.zones[0],
+        cost_schema=cost,
         target_schema=target_schema,
         mechanics=mechanics if template is not None else (),
         trusted_mechanics=trusted_mechanics,
@@ -898,7 +990,7 @@ def activated_oracle_node(
             if ability.mana_ability and template is None
             else template
         ),
-        cost=activated_ability_cost(ability, public_timing=public_timing),
+        cost=cost,
         effects=effects,
         target_schema=target_schema,
         handlers=handlers,

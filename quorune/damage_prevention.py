@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Iterable, Protocol, Sequence
+from typing import Any, Iterable, Mapping, Protocol, Sequence
 
 from .damage_modifier_state import (
     ChosenDamageSource,
@@ -28,6 +28,8 @@ class DamageModifierHost(Protocol):
     state: Any
     active_seats: Sequence[str]
 
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+
 
 @dataclass(frozen=True, slots=True)
 class DamageModifierSnapshot:
@@ -48,10 +50,11 @@ def damage_modifier_snapshot(
 
 def _shield_replacement_effect(
     shield: DamagePreventionShield,
+    *, source_powers: Sequence[tuple[str, int]] | None = None,
 ) -> ReplacementEffect:
     conditions = shield.subject.event_conditions()
     scope_conditions = shield.scope.event_conditions(
-        controller=shield.controller
+        controller=shield.controller, source_powers=source_powers,
     )
     for field, predicate in scope_conditions.items():
         if field in conditions and conditions[field] != predicate:
@@ -138,6 +141,19 @@ def _subject_is_current(host: DamageModifierHost, subject: DamageSubject) -> boo
     )
 
 
+def _current_battlefield_source_powers(host: DamageModifierHost) -> tuple[tuple[str, int], ...]:
+    from .object_query import exact_numeric_characteristic
+
+    powers = []
+    for card in host.state.cards.values():
+        if card.zone != "battlefield" or card.phased_out:
+            continue
+        power = exact_numeric_characteristic(card, host._effective_card_data(card), "power")
+        if power is not None:
+            powers.append((card.logical_object_id, power))
+    return tuple(sorted(powers))
+
+
 def collect_damage_modifier_effects(
     host: DamageModifierHost,
     *,
@@ -149,9 +165,12 @@ def collect_damage_modifier_effects(
 
     current = snapshot or damage_modifier_snapshot(host)
     effects: list[ReplacementEffect] = []
+    source_powers = None
     for shield in current.shields:
         if _subject_is_current(host, shield.subject):
-            effects.append(_shield_replacement_effect(shield))
+            if shield.scope.source_power_max is not None and source_powers is None:
+                source_powers = _current_battlefield_source_powers(host)
+            effects.append(_shield_replacement_effect(shield, source_powers=source_powers))
     for redirection in current.redirections:
         if not _subject_is_current(host, redirection.subject) or not _subject_is_current(
             host, redirection.destination

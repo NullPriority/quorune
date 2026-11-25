@@ -282,7 +282,11 @@ class AnyNumberTargetTests(unittest.TestCase):
         self.assertTrue(all(s.state.cards[c.object_id].tapped for c in targets));self.private_replay(s,private)
 
     def test_incomplete_source_results_and_variable_prices_remain_residual(self):
-        for name in ('Colossal Heroics','Hour of Need','Silence the Believers','Twinflame','Call the Coppercoats','Polymorphous Rush'):
+        s=self.session(794049);source=self.add(s.engine,'Hour of Need',zone='hand')
+        binding=self.binding(s,source)
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+        self.assertEqual('capability_closed',binding['trust_basis'])
+        for name in ('Colossal Heroics','Silence the Believers','Twinflame','Call the Coppercoats'):
             s=self.session(794050);source=self.add(s.engine,name,zone='hand')
             self.assertFalse(self.binding(s,source)['strict_capability_ready'],name)
         from quorune.compiler.any_number_target_sets import any_number_target_set_template

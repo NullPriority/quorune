@@ -8,7 +8,11 @@ from .spell_resolution_name_codec import validate_resolution_name_provenance
 
 from .cast_event_type_model import cast_event_type_snapshot_fields, read_cast_event_type_snapshot_version
 from .cast_source_placement_model import cast_placement_state_fields, read_target_announcement_timing_version
-from .model import unearth_leave_replacement_version
+from .evolve import EVOLVE_ENTRANT_LKI_VERSION_FIELD, evolve_entrant_lki_fields, evolve_entrant_lki_version
+from .discard_effect_origin import (
+    DISCARD_EFFECT_ORIGIN_VERSION_FIELD, discard_effect_origin_version_fields, validate_discard_effect_provenance,
+)
+from .model import unearth_leave_replacement_version, upkeep_completion_version
 from .library_search_model import fetch_entry_placement_fields, read_fetch_entry_placement_version
 from .model import (
     LAND_ENTRY_PAYMENT_VALIDATION_FIELD, land_entry_payment_validation_fields, land_entry_affordability_version,
@@ -21,9 +25,14 @@ from .damage_modifier_state import (
     SHIELD_COUNTER_DAMAGE_VERSION_FIELD,
     read_shield_counter_damage_version,
 )
+from .permanent_event_state_model import BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, read_battlefield_entry_player_version
 from .turn_priority_model import (
     PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD,
     read_priority_concession_stabilization_version,
+)
+from .damage_source import (
+    DAMAGE_PREVENTION_RESULT_VERSION_FIELD,
+    read_damage_prevention_result_version,
 )
 from .stack_resolution_authority_model import (
     COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
@@ -49,21 +58,48 @@ from .record_control_history import (
 )
 
 
+def _combat_relationship_format_fields(state: Any) -> dict[str, int]:
+    combat = getattr(state, "combat", None)
+    if getattr(combat, "detached_blocker_ids", None) is None:
+        return {}
+    return {"combat_relationship_version": 1}
+
+
+def _validate_combat_relationship_format(format_value: Mapping[str, Any], state: Any) -> None:
+    from .banding_model import ninjutsu_band_retention_version
+
+    ninjutsu_bands = format_value.get("ninjutsu_band_retention_version")
+    if (
+        "ninjutsu_band_retention_version" in format_value and (type(ninjutsu_bands) is not int or ninjutsu_bands != 1)
+        or ninjutsu_bands != ninjutsu_band_retention_version(getattr(state, "ninjutsu_band_retention_version", None))
+    ):
+        raise ValueError("Ninjutsu band retention provenance does not match the initial checkpoint")
+    key = "combat_relationship_version"
+    declared = format_value.get(key)
+    if declared != _combat_relationship_format_fields(state).get(key) or key in format_value and type(declared) is not int:
+        raise ValueError("Combat relationship provenance does not match the initial checkpoint")
+
+
 def format_state_versions(state: Any) -> dict[str, int]:
     """Return canonical manifest markers for additive state semantics."""
 
     from .state_based_legend_model import legend_rule_choice_version
     shield_damage = getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None)
+    prevention_result = getattr(state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None)
+    land_entry_player = getattr(state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None)
     concession = getattr(state, PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD, None)
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
     departed_turns = getattr(state, "departed_turn_boundary_version", None)
     unearth = unearth_leave_replacement_version(getattr(state, "unearth_leave_replacement_version", None))
     return {
+        **_combat_relationship_format_fields(state),
         **({"spell_resolution_name_history_version": 1}
            if getattr(state, "spell_resolution_name_ledger", None) is not None else {}),
         **({'declare_attack_cast_version': 1}
            if declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None)) == 1 else {}),
+        **({"upkeep_completion_version": 1}
+           if upkeep_completion_version(getattr(state, "upkeep_completed", None)) == 1 else {}),
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
         **({"stack_resolution_authority_version": stack_authority} if stack_authority is not None else {}),
         **({"departed_turn_boundary_version": departed_turns} if departed_turns is not None else {}),
@@ -81,7 +117,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','spell_color_history_version','creature_spell_counter_history_version',
             'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
             'permanent_death_history_version','death_name_history_version','first_life_gain_history_version','public_movement_history_version',
-            'venture_history_version')
+            'venture_history_version','plus_one_counter_placement_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **cast_placement_state_fields(
@@ -94,10 +130,14 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **mana_source_counter_payment_fields(getattr(state,'mana_source_counter_payment_version',None)),
         **mana_cost_order_fields(getattr(state,'mana_cost_order_version',None)),
         **({SHIELD_COUNTER_DAMAGE_VERSION_FIELD: shield_damage} if shield_damage is not None else {}),
+        **({DAMAGE_PREVENTION_RESULT_VERSION_FIELD: prevention_result} if prevention_result is not None else {}),
+        **({BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD: land_entry_player} if land_entry_player is not None else {}),
         **({PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD: concession} if concession is not None else {}),
         **continuous_dependency_order_fields(getattr(state, "continuous_dependency_order_version", None)),
         **fetch_entry_placement_fields(getattr(state, "fetch_entry_placement_version", None)),
         **land_entry_payment_validation_fields(getattr(state, LAND_ENTRY_PAYMENT_VALIDATION_FIELD, None)),
+        **evolve_entrant_lki_fields(getattr(state, EVOLVE_ENTRANT_LKI_VERSION_FIELD, None)),
+        **discard_effect_origin_version_fields(getattr(state, DISCARD_EFFECT_ORIGIN_VERSION_FIELD, None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
@@ -108,6 +148,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({"split_permanent_face_values_version": state.split_permanent_face_values_version}
            if getattr(state, "split_permanent_face_values_version", None) is not None else {}),
         **({'face_down_characteristics_version':state.face_down_characteristics_version} if getattr(state,'face_down_characteristics_version',None) is not None else {}),
+        **({"face_down_departure_reveal_version": state.face_down_departure_reveal_version}
+           if getattr(state, "face_down_departure_reveal_version", None) is not None else {}),
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
         **({'characteristic_query_boundary_version':state.characteristic_query_boundary_version} if getattr(state,'characteristic_query_boundary_version',None) is not None else {}),
         **({'token_copy_value_version':state.token_copy_value_version} if getattr(state,'token_copy_value_version',None) is not None else {}),
@@ -144,12 +186,21 @@ def _validate_mana_payment_versions(format_value: Mapping[str, Any], state: Any)
 
 
 def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    validate_discard_effect_provenance(format_value, state)
+    evolve_lki = evolve_entrant_lki_version(format_value.get(EVOLVE_ENTRANT_LKI_VERSION_FIELD))
+    if (evolve_lki != getattr(state, EVOLVE_ENTRANT_LKI_VERSION_FIELD, None)
+            or evolve_lki is None and EVOLVE_ENTRANT_LKI_VERSION_FIELD in format_value):
+        raise ValueError("Evolve entrant LKI provenance does not match the initial checkpoint")
+    if read_shield_counter_damage_version(format_value) != getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None):
+        raise ValueError("Shield counter damage provenance does not match the initial checkpoint")
+    if read_damage_prevention_result_version(format_value) != getattr(state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None):
+        raise ValueError("Damage prevention result provenance does not match the initial checkpoint")
     if read_priority_concession_stabilization_version(format_value) != getattr(
         state, PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD, None
     ):
         raise ValueError("Priority concession stabilization provenance does not match the initial checkpoint")
-    if read_shield_counter_damage_version(format_value) != getattr(state, SHIELD_COUNTER_DAMAGE_VERSION_FIELD, None):
-        raise ValueError("Shield counter damage provenance does not match the initial checkpoint")
+    if read_battlefield_entry_player_version(format_value) != getattr(state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None):
+        raise ValueError("Battlefield entry player provenance does not match the initial checkpoint")
     if read_continuous_dependency_order_version(format_value) != getattr(state, "continuous_dependency_order_version", None):
         raise ValueError("Continuous dependency order provenance does not match the initial checkpoint")
     if read_fetch_entry_placement_version(format_value) != getattr(state, "fetch_entry_placement_version", None):
@@ -164,6 +215,18 @@ def _validate_effect_versions(format_value: Mapping[str, Any], state: Any) -> No
         or stack_authority != (stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None)) or 0)
     ):
         raise ValueError("Stack resolution authority provenance does not match the initial checkpoint")
+
+
+def _validate_cast_window_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    declared_attack = format_value.get('declare_attack_cast_version')
+    if (('declare_attack_cast_version' in format_value
+            and (type(declared_attack) is not int or declared_attack != 1))
+            or declared_attack != declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None))):
+        raise ValueError('Declared attack cast-window provenance does not match the checkpoint')
+    upkeep_version = format_value.get("upkeep_completion_version")
+    if (("upkeep_completion_version" in format_value and (type(upkeep_version) is not int or upkeep_version != 1))
+            or upkeep_version != upkeep_completion_version(getattr(state, "upkeep_completed", None))):
+        raise ValueError("Upkeep completion provenance does not match the initial checkpoint")
 
 
 def validate_state_versions(
@@ -182,11 +245,7 @@ def validate_state_versions(
     if not isinstance(format_value, Mapping):
         raise ValueError("Record format provenance is malformed")
     validate_resolution_name_provenance(format_value, getattr(state, 'spell_resolution_name_ledger', None))
-    declared_attack = format_value.get('declare_attack_cast_version')
-    if (('declare_attack_cast_version' in format_value
-            and (type(declared_attack) is not int or declared_attack != 1))
-            or declared_attack != declare_attack_cast_version(getattr(state, 'declare_attack_cast_version', None))):
-        raise ValueError('Declared attack cast-window provenance does not match the checkpoint')
+    _validate_cast_window_versions(format_value, state)
     _validate_mana_payment_versions(format_value, state)
     _validate_effect_versions(format_value, state)
 
@@ -210,7 +269,7 @@ def validate_state_versions(
     for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','spell_color_history_version','creature_spell_counter_history_version',
                 'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
                 'permanent_death_history_version','death_name_history_version','first_life_gain_history_version','public_movement_history_version',
-                'venture_history_version'):
+                'venture_history_version','plus_one_counter_placement_history_version'):
         declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
         if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')
     tap_version = format_value.get("tap_state_event_version", 0)
@@ -221,7 +280,7 @@ def validate_state_versions(
     from .phasing_model import phasing_lifecycle_version
 
     phasing = format_value.get("phasing_lifecycle_version", 0)
-    if (type(phasing) is not int or phasing not in {0, 1}
+    if (type(phasing) is not int
             or phasing != (phasing_lifecycle_version(getattr(state, "phasing_lifecycle_version", None)) or 0)):
         raise ValueError("Phasing lifecycle provenance does not match the initial checkpoint")
     _validate_token_state_versions(format_value, state)
@@ -267,11 +326,14 @@ def validate_state_versions(
     if (type(face_status) is not int or face_status not in {0,1}
             or face_status!=(face_status_timestamp_version(getattr(state,'face_status_timestamp_version',None)) or 0)):
         raise ValueError('Face-status timestamp provenance does not match the initial checkpoint')
-    from .face_down_characteristics_model import face_down_characteristics_version
+    from .face_down_characteristics_model import face_down_characteristics_version, face_down_departure_reveal_version
     face_down=format_value.get('face_down_characteristics_version',0)
     if (type(face_down) is not int or face_down not in {0,1}
             or face_down!=(face_down_characteristics_version(getattr(state,'face_down_characteristics_version',None)) or 0)):
         raise ValueError('Face-down characteristic provenance does not match the initial checkpoint')
+    reveal_field = "face_down_departure_reveal_version"
+    if face_down_departure_reveal_version(format_value.get(reveal_field)) != getattr(state, reveal_field, None):
+        raise ValueError("Face-down departure reveal provenance does not match the initial checkpoint")
     from .library_selection_knowledge_model import library_selection_knowledge_version
     knowledge=format_value.get('library_selection_knowledge_version',0)
     if (type(knowledge) is not int or knowledge not in {0,1}
@@ -282,7 +344,6 @@ def validate_state_versions(
     from .unblocked_attacker_model import unblocked_attacker_event_version
     from .permanent_event_state_model import permanent_event_state_version
     from .battle_cry_resolution_model import battle_cry_resolution_version
-    from .banding_model import ninjutsu_band_retention_version
 
     if unearth_leave_replacement_version(format_value.get("unearth_leave_replacement_version")) != getattr(
         state, "unearth_leave_replacement_version", None,
@@ -292,16 +353,13 @@ def validate_state_versions(
     if (type(battle_cry) is not int or battle_cry not in {0,1}
             or battle_cry!=(battle_cry_resolution_version(getattr(state,'battle_cry_resolution_version',None)) or 0)):
         raise ValueError('Battle Cry resolution provenance does not match the initial checkpoint')
-    ninjutsu_bands = format_value.get('ninjutsu_band_retention_version')
-    if ('ninjutsu_band_retention_version' in format_value and (type(ninjutsu_bands) is not int or ninjutsu_bands != 1)
-        or ninjutsu_bands != ninjutsu_band_retention_version(getattr(state, 'ninjutsu_band_retention_version', None))):
-        raise ValueError('Ninjutsu band retention provenance does not match the initial checkpoint')
+    _validate_combat_relationship_format(format_value, state)
     permanent_state=format_value.get('permanent_event_state_version',0)
     if (type(permanent_state) is not int
             or permanent_state!=(permanent_event_state_version(getattr(state,'permanent_event_state_version',None)) or 0)):
         raise ValueError('Permanent event-state version disagrees with checkpoint')
     unblocked=format_value.get('unblocked_attacker_event_version',0)
-    if (type(unblocked)is not int or unblocked not in {0,1}
+    if (type(unblocked) is not int or unblocked not in {0, 1, 2}
             or unblocked!=(unblocked_attacker_event_version(getattr(state,'unblocked_attacker_event_version',None)) or 0)):
         raise ValueError('Unblocked attacker event provenance does not match the initial checkpoint')
     blocks=format_value.get('block_characteristics_version',0)

@@ -21,6 +21,8 @@ from ..damage import (
 from ..damage_source import DamageSourceSnapshot
 from ..damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_FIELD
 from ..damage_death_exile_model import DamageDeathExileScope, damage_death_exile_scope
+from ..fixed_damage_set_model import DEALT_LIFE_GAIN_FIELD, TARGETED_DEALT_LIFE_GAIN_VERSION
+from ..rules.committed_quantity_followups import damage_dealt_life_followup
 from ..rules.damage_death_exile import commit_damage_death_exile
 from ..destruction import destroy_permanent_refs
 from ..errors import GameRuleError
@@ -89,6 +91,13 @@ def _apply_damage(
     operation: str,
     reason: str,
 ) -> Any:
+    gain_life = DEALT_LIFE_GAIN_FIELD in effect
+    if gain_life and (
+        type(effect[DEALT_LIFE_GAIN_FIELD]) is not int
+        or effect[DEALT_LIFE_GAIN_FIELD] != TARGETED_DEALT_LIFE_GAIN_VERSION
+        or TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect
+    ):
+        raise GameRuleError("Unsupported targeted damage and life gain instruction")
     if TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect:
         from ..semantic_runtime.damage_permissions import apply_temporary_damage_prevention_prohibition
 
@@ -105,7 +114,7 @@ def _apply_damage(
         if scope is DamageDeathExileScope.TARGET:
             commit_damage_death_exile(host, scope=scope, source_ref=effect['source'], events=(),
                                      original_target=recipient_snapshot(host, target, actor=actor))
-        return 0
+        return damage_dealt_life_followup(0) if gain_life else 0
     try:
         pinned_source = _source_snapshot_override(host, effect)
         effect_source = (
@@ -181,7 +190,7 @@ def _apply_damage(
         changed_objects=result.changed_objects,
         changed_players=result.changed_players,
     )
-    return event.dealt_amount
+    return damage_dealt_life_followup(event.dealt_amount) if gain_life else event.dealt_amount
 
 
 
@@ -582,8 +591,41 @@ def _apply_extra_turn(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
-    return host.schedule_extra_turn(str(effect.get("player") or actor), source=str(effect.get("source") or reason)).turn_id
+    from ..rules.extra_turn_shapes import (
+        EXTRA_TURN_END_STEP_LOSS_FIELD, extra_turn_end_step_loss_condition,
+        extra_turn_end_step_loss_template, validate_extra_turn_end_step_loss_effect,
+        uses_opponent_color_extra_turn, validate_opponent_color_extra_turn,
+    )
+
+    if uses_opponent_color_extra_turn(effect):
+        from ..public_history_query_model import current_opponent_spell_colors
+
+        try:
+            color = validate_opponent_color_extra_turn(effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        colors = current_opponent_spell_colors(host.state, actor, include_departed=True)
+        if colors is None:
+            raise GameRuleError("Current opposing spell-color facts are unavailable")
+        if color not in colors:
+            return None
+        return host.schedule_extra_turn(actor, source=effect["source"]).turn_id
+    if EXTRA_TURN_END_STEP_LOSS_FIELD not in effect:
+        return host.schedule_extra_turn(str(effect.get("player") or actor), source=str(effect.get("source") or reason)).turn_id
+    try:
+        source = validate_extra_turn_end_step_loss_effect(effect, materialized=True)
+        if effect["player"] != actor:
+            raise ValueError("The extra turn with end-step loss belongs to the resolving controller")
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    turn = host.schedule_extra_turn(actor, source=effect["source"])
+    host.schedule_delayed_trigger(
+        controller=actor, label="Lose the game at the extra turn's end step",
+        event_kind="step.begin", condition=extra_turn_end_step_loss_condition(turn.turn_id),
+        stack_template=extra_turn_end_step_loss_template(actor),
+        source_object_id=source.object_id, source_logical_object_id=source.logical_object_id,
+    )
+    return turn.turn_id
 
 
 
@@ -820,6 +862,7 @@ def _apply_return_transformed(
         source.object_id,
         "battlefield",
         controller=source.owner,
+        putting_player=actor,
         enter_face=str(record.faces[1].get("name") or ""),
         reason=reason,
         semantic_events=True,

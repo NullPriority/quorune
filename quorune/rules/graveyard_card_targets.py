@@ -797,6 +797,12 @@ def public_graveyard_return_target_spec(schema: Mapping[str, Any]) -> PublicGrav
 
 
 def targeted_graveyard_return_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if isinstance(target_schema, Mapping) and "source_exclusion" in target_schema:
+        from .source_excluding_graveyard_returns import source_excluding_graveyard_return_node_capabilities
+
+        return source_excluding_graveyard_return_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if len(effects) == 1 and effects[0].get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION:
         if not {"return-to-owner-hand", "cr-115-targets"}.issubset(mechanic_ids):
             return ()
@@ -813,10 +819,21 @@ def targeted_graveyard_return_node_capabilities(*, effects, target_schema, mecha
 def public_graveyard_return_runtime_dependencies(program):
     from ..replacement.immutable import thaw_value
 
+    from .source_excluding_graveyard_returns import (
+        SOURCE_EXCLUDING_GRAVEYARD_RETURN_CAPABILITY, source_excluding_graveyard_return_runtime_dependencies,
+    )
+
+    if SOURCE_EXCLUDING_GRAVEYARD_RETURN_CAPABILITY in program.capability_dependencies:
+        return source_excluding_graveyard_return_runtime_dependencies(program)
+    schema = thaw_value(program.target_schema)
+    if isinstance(schema, Mapping) and "source_exclusion" in schema:
+        from .effect_shape_walkers import nested_effects
+
+        if any(effect.get("op") == GRAVEYARD_RETURN_OPERATION for effect in nested_effects(program.effects)):
+            return source_excluding_graveyard_return_runtime_dependencies(program)
     returns = tuple(effect for effect in program.effects if effect.get("op") == GRAVEYARD_RETURN_OPERATION)
     if not returns:
         return ()
-    schema = thaw_value(program.target_schema)
     public_scope = isinstance(schema, Mapping) and schema.get("zones") == ["graveyard"] and schema.get("owner_relation") == "any"
     if not public_scope and not any(effect.get("schema_version") == PUBLIC_GRAVEYARD_RETURN_VERSION for effect in returns):
         from ..graveyard_target_unions import mixed_graveyard_target_dependencies

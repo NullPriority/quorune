@@ -7,7 +7,7 @@ from .errors import GameRuleError
 from .replacement.immutable import FrozenMap
 from .zone_trigger_events import ZoneTransitionKind
 from .composition_storage import PermanentCompositionStorage
-from .zone_transition_model import ZoneMovePlan,ZoneDepartureSnapshot
+from .zone_transition_model import ZoneMovePlan, ZoneDepartureSnapshot, capture_simultaneous_departure
 from .composition_replacements import composition_component_destinations
 
 
@@ -97,7 +97,7 @@ def prepare_composition_departure_batch(owner,changes,*,reason,transition_kinds=
         if plan is None or isinstance(plan,CardInstance) or plan.destination=='battlefield' or plan.prepared_life_payment is not None:
             raise GameRuleError('Physical batch requires represented departures without entry or life-payment side effects')
         chooser=composition_ordering_principal(owner.host,root,plan.prepared_replacement,current_actor)
-        departure=owner._simultaneous_departure(root,source_snapshot=sources)[1]
+        departure=capture_simultaneous_departure(owner.host, root, source_snapshot=sources)[1]
         if storage is not None:
             if departure.conditional_returns:
                 raise GameRuleError('Linked composition departures require their represented group continuation')

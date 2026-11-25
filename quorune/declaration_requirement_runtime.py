@@ -34,6 +34,12 @@ def typed_attacker_requirements(
             key=lambda effect: (effect.timestamp, effect.effect_id))
         if isinstance(effect.restriction, DeclarationRequirementTemplate))
     for index, requirement in (*intrinsic,*bound_declaration_requirements(host,attacker,error_type=error_type),*resolved):
+        if requirement.kind == "attack_specific_player" and requirement.defender in active_seats:
+            result.append(DeclarationRequirement(
+                requirement_id=f"attack:{attacker.ref}:specific-player:{index}",
+                kind="choose_option", variable=attacker.ref, option=requirement.defender,
+                label=f"{host.display_name(attacker.object_id)} attacks {requirement.defender} this combat if able.",
+            ))
         if requirement.kind != "attack_each_combat":
             continue
         result.append(

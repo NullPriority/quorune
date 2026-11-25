@@ -59,7 +59,7 @@ def composition_record(identity, name, type_line, text, keywords=()):
 
 class EntryDesignationTests(unittest.TestCase):
     def test_chosen_counter_scaling_remains_residual_without_registered_body_composition(self):
-        text='Creatures you control of the chosen type get +1/+1 for each charge counter on this artifact.'
+        text='Creatures you control of the chosen type get +1/+1 for each charge counter on them.'
         self.assertIsNone(chosen_characteristics_handler(text))
     @classmethod
     def setUpClass(cls):
@@ -235,16 +235,18 @@ class EntryDesignationTests(unittest.TestCase):
 
     def test_linked_source_type_additions_keep_the_existing_entry_owner(self):
         registry = load_default_capability_registry()
-        for name in ("Roaming Throne", "Metallic Mimic", "Adaptive Automaton"):
-            with self.subTest(card=name):
-                record = self.db.lookup(name)
-                ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
-                entry = next(node for face in ir.faces for node in face.nodes if node.template_id == "intrinsic-entry-designation-v1")
-                self.assertFalse(entry.exact)
-                self.assertFalse(entry.lowerable)
-                self.assertFalse(entry.handlers)
-                self.assertEqual(entry.text, record.oracle_text[entry.span.start:entry.span.end])
-                self.assertTrue(any(residual.kind == "entry_designation" for face in ir.faces for residual in face.residuals))
+        with patch("quorune.compiler.entry_designation_templates._compose_self_chosen_subtype_entry",
+                   side_effect=lambda face: face):
+            for name in ("Roaming Throne", "Metallic Mimic", "Adaptive Automaton"):
+                with self.subTest(card=name):
+                    record = self.db.lookup(name)
+                    ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+                    entry = next(node for face in ir.faces for node in face.nodes if node.template_id == "intrinsic-entry-designation-v1")
+                    self.assertFalse(entry.exact)
+                    self.assertFalse(entry.lowerable)
+                    self.assertFalse(entry.handlers)
+                    self.assertEqual(entry.text, record.oracle_text[entry.span.start:entry.span.end])
+                    self.assertTrue(any(residual.kind == "entry_designation" for face in ir.faces for residual in face.residuals))
 
     def test_linked_entry_fixture_preserves_reviewed_ruling_provenance(self):
         primary = json.loads((ROOT / "tests/fixtures/scryfall-exact-lists.json").read_text(encoding="utf-8"))

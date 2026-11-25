@@ -7,6 +7,7 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..continuous_effect_model import ContinuousEffectDuration
+from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_MECHANIC, PermanentControlExchange
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
@@ -146,6 +147,24 @@ class FixedControlSetTemplate:
         )
 
 
+TWO_CONTROLLER_CREATURE_TRANSFER_TEMPLATE = "two-controller-creature-untap-transfer-haste-v1"
+_TWO_CONTROLLER_CREATURE_TRANSFER_TEXT = (
+    "Untap all creatures you control and all creatures target opponent controls. "
+    "You and that opponent each gain control of all creatures the other controls until end of turn. "
+    "Those creatures gain haste until end of turn."
+)
+
+
+def fixed_two_controller_creature_transfer_template(text):
+    if " ".join(text.split()).casefold() != _TWO_CONTROLLER_CREATURE_TRANSFER_TEXT.casefold():
+        return None
+    from ..recipient_control_model import two_controller_creature_transfer_effect, two_controller_creature_transfer_target
+
+    return (TWO_CONTROLLER_CREATURE_TRANSFER_TEMPLATE,
+            (two_controller_creature_transfer_effect(),), two_controller_creature_transfer_target(),
+            (FIXED_CONTROL_MECHANIC, "cr-611-continuous-effects", "cr-115-targets", "tap-and-untap", "haste"))
+
+
 def fixed_control_set_effect_template(text: str) -> FixedControlSetTemplate | None:
     normalized = " ".join(text.strip().split())
     match = re.fullmatch(
@@ -196,4 +215,33 @@ def fixed_control_set_effect_template(text: str) -> FixedControlSetTemplate | No
         duration=(ContinuousEffectDuration.UNTIL_END_OF_TURN
                   if match["temporary"] else ContinuousEffectDuration.ZONE_OBJECT),
         steps=tuple(steps),
+    )
+
+
+
+_CONTROL_EXCHANGES = {
+    "exchange control of two target creatures.": PermanentControlExchange.CREATURE,
+    "exchange control of two target artifacts.": PermanentControlExchange.ARTIFACT,
+    "exchange control of two target enchantments.": PermanentControlExchange.ENCHANTMENT,
+    "exchange control of two target lands.": PermanentControlExchange.LAND,
+    "exchange control of two target permanents that share a permanent type.":
+        PermanentControlExchange.SHARED_PERMANENT_TYPE,
+    "exchange control of target artifact or creature and another target permanent that shares one of those types with it.":
+        PermanentControlExchange.SHARED_ARTIFACT_OR_CREATURE_TYPE,
+    "exchange control of target land you control and target land an opponent controls.":
+        PermanentControlExchange.CONTROLLER_AND_OPPONENT_LAND,
+}
+
+
+def permanent_control_exchange_template(text, *, source_is_permanent=None, source_card_types=()):
+    material = " ".join(text.split()).casefold()
+    scope = _CONTROL_EXCHANGES.get(material.removesuffix(" (this effect lasts indefinitely.)"))
+    if (scope is None and material == "exchange control of this artifact and target nonland permanent."
+            and source_is_permanent is True and "artifact" in source_card_types):
+        scope = PermanentControlExchange.SOURCE_AND_NONLAND
+    if scope is None:
+        return None
+    return (
+        f"fixed-permanent-control-exchange-{scope.value}-v1", (scope.to_effect(),), scope.target_schema(),
+        (PERMANENT_CONTROL_EXCHANGE_MECHANIC, "cr-115-targets", "cr-611-continuous-effects"),
     )

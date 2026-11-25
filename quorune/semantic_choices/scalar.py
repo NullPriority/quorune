@@ -7,10 +7,14 @@ from typing import Any, Mapping
 from ..continuous_effect_model import ContinuousObjectIdentity
 from ..creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec
+from ..object_query import query_objects
 from ..replacement.immutable import FrozenMap
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, CHOSEN_SUBTYPE_SETTING_VERSION, decode_temporary_creature_type_choice,
+    CHOSEN_CREATURE_TYPE_MODIFIER_FIELD, CHOSEN_CREATURE_TYPE_RESULT_FIELD,
+    ChosenCreatureTypeModifier, ChosenCreatureTypeResult,
 )
+from ..rules.destruction_result_model import CREATURE_TYPE_DESTRUCTION_FIELD, ChosenCreatureTypeDestruction
 from ..semantic_runtime.intents import (
     AddManaIntent,
     RecordChoiceIntent,
@@ -234,6 +238,9 @@ class ChooseCreatureTypeHandler:
     capability_dependencies: tuple[str, ...] = ()
     continuation_fields: tuple[str, ...] = (
         "apply_as_subtype",
+        CREATURE_TYPE_DESTRUCTION_FIELD,
+        CHOSEN_CREATURE_TYPE_RESULT_FIELD,
+        CHOSEN_CREATURE_TYPE_MODIFIER_FIELD,
         "schema_version",
         "excluded",
         "card",
@@ -253,11 +260,16 @@ class ChooseCreatureTypeHandler:
         "CommanderEngine.set_card_designation_intent",
         "RecordChoiceIntent",
         "apply_fixed_resolution_characteristics",
+        "DestroyPermanentSetIntent",
+        "DrawCardsIntent",
+        "create_resolution_continuous_effect",
     )
     replay_fixture: str = "semantic-choice-scalar-creature-type"
     test_modules: tuple[str, ...] = (
         "tests.test_semantic_choice_characterization",
         "tests.test_fixed_source_characteristic_effects",
+        "tests.test_chosen_creature_type_destruction",
+        "tests.test_chosen_creature_type_results",
     )
 
     def prepare(
@@ -265,6 +277,12 @@ class ChooseCreatureTypeHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if _CREATURE_TYPE_RESULT_FIELDS & effect.keys():
+            _creature_type_result_scope(effect)
+            return SemanticChoicePreparation(
+                request=_canonical_creature_type_request(context.stack_ref),
+                continuation_effect=FrozenMap({**effect, "_choice_actor": context.actor}),
+            )
         if "schema_version" in effect:
             return _prepare_temporary_creature_type(effect, context)
         if type(effect.get("apply_as_subtype", False)) is not bool:
@@ -300,6 +318,8 @@ class ChooseCreatureTypeHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if _CREATURE_TYPE_RESULT_FIELDS & continuation.effect.keys():
+            return _complete_creature_type_result(continuation, response, query)
         if "schema_version" in continuation.effect:
             return _complete_temporary_creature_type(continuation, response, query)
         creature_type = str(
@@ -327,6 +347,78 @@ class ChooseCreatureTypeHandler:
         )
 
 
+def _canonical_creature_type_request(stack_ref, *, excluded=None):
+    options = tuple(sorted(value.title() for value in CREATURE_SUBTYPES if value != excluded))
+    return SemanticChoiceRequest(
+        prompt="Choose a creature type.",
+        choice=ScalarChoice(
+            field_name="creature_type", value_type="creature_type",
+            legal_values=options, nonempty=True, max_length=48,
+        ),
+        public_context=FrozenMap({"stack": stack_ref, "operation": "choose_creature_type"}),
+    )
+
+
+def _require_resolving_type_chooser(continuation, query, actor):
+    item = query.stack_object(continuation.stack_ref)
+    if item is None or actor != item.controller or actor not in query.active_seats:
+        raise SemanticChoiceError("The creature type chooser no longer controls the resolving item")
+
+
+def _canonical_creature_type_selection(continuation, response, actor, *, excluded=None):
+    fields = {"action", "action_id", "reason", "choice_schema", "label", "creature_type", "choice"}
+    choices = [response[key] for key in ("creature_type", "choice") if key in response]
+    subtype = canonical_creature_subtype(choices[0]) if len(choices) == 1 else None
+    if set(response) - fields or subtype is None or subtype == excluded:
+        raise SemanticChoiceError("Choose one legal creature type")
+    chosen = RecordChoiceIntent(
+        actor=actor, event_code="semantic.option.chosen",
+        message=f"{actor} chose {subtype.title()}.",
+        details=FrozenMap({"stack": continuation.stack_ref, "creature_type": subtype}),
+    )
+    return subtype, chosen
+
+
+_CREATURE_TYPE_RESULT_FIELDS = {
+    CREATURE_TYPE_DESTRUCTION_FIELD, CHOSEN_CREATURE_TYPE_RESULT_FIELD, CHOSEN_CREATURE_TYPE_MODIFIER_FIELD,
+}
+
+
+def _creature_type_result_scope(effect):
+    owner = ChosenCreatureTypeDestruction if CREATURE_TYPE_DESTRUCTION_FIELD in effect else ChosenCreatureTypeResult
+    try:
+        if CHOSEN_CREATURE_TYPE_MODIFIER_FIELD in effect:
+            return ChosenCreatureTypeModifier.from_effect(effect, resolved=True)
+        return owner.from_effect(effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+
+
+def _creature_type_result_effect(scope, subtype, *, actor, query):
+    if isinstance(scope, ChosenCreatureTypeDestruction):
+        return scope.destruction_effect(subtype)
+    if isinstance(scope, ChosenCreatureTypeModifier):
+        return scope.modifier_effect(subtype)
+    predicate = scope.battlefield_query(subtype, actor=actor)
+    if scope is ChosenCreatureTypeResult.CONTROLLED_PERMANENT_DRAW:
+        count = len(query_objects(query.objects(zones=("battlefield",), controller=actor), predicate))
+        return {"op": "draw", "player": actor, "count": count, "private": True}
+    return {
+        "op": "modify_all_matching_permanents_until_end_of_turn",
+        "predicate": predicate.to_dict(), "power": -3, "toughness": -3,
+    }
+
+
+def _complete_creature_type_result(continuation, response, query):
+    effect = dict(continuation.effect)
+    actor = effect.pop("_choice_actor", None)
+    _require_resolving_type_chooser(continuation, query, actor)
+    scope = _creature_type_result_scope(effect)
+    subtype, chosen = _canonical_creature_type_selection(continuation, response, actor)
+    result = _creature_type_result_effect(scope, subtype, actor=actor, query=query)
+    return SemanticChoiceCompletion(intents=(chosen,), prepend_effects=(FrozenMap(result),))
+
+
 def _temporary_type_selection(effect, actor):
     try:
         subject, excluded = decode_temporary_creature_type_choice(effect, resolved=True)
@@ -352,14 +444,8 @@ def _prepare_temporary_creature_type(effect, context):
             request=None, continuation_effect=FrozenMap(effect),
             auto_continue=AutoContinue(reason="The original creature type recipient is unavailable"),
         )
-    options = tuple(sorted(value.title() for value in CREATURE_SUBTYPES if value != excluded))
     return SemanticChoicePreparation(
-        request=SemanticChoiceRequest(
-            prompt="Choose a creature type.",
-            choice=ScalarChoice(field_name="creature_type", value_type="creature_type", legal_values=options,
-                                nonempty=True, max_length=48),
-            public_context=FrozenMap({"stack": context.stack_ref, "operation": "choose_creature_type"}),
-        ),
+        request=_canonical_creature_type_request(context.stack_ref, excluded=excluded),
         continuation_effect=FrozenMap({**effect, "_choice_actor": context.actor,
                                        "_recipient": identity.to_dict() if identity else None}),
     )
@@ -371,17 +457,9 @@ def _complete_temporary_creature_type(continuation, response, query):
         raise SemanticChoiceError("A temporary creature type choice lost its continuation facts")
     actor = effect.pop("_choice_actor")
     recipient = effect.pop("_recipient")
-    item = query.stack_object(continuation.stack_ref)
-    if item is None or actor != item.controller or actor not in query.active_seats:
-        raise SemanticChoiceError("The creature type chooser no longer controls the resolving item")
+    _require_resolving_type_chooser(continuation, query, actor)
     subject, excluded = _temporary_type_selection(effect, actor)
-    fields = {"action", "action_id", "reason", "choice_schema", "label", "creature_type", "choice"}
-    choices = [response[key] for key in ("creature_type", "choice") if key in response]
-    subtype = canonical_creature_subtype(choices[0]) if len(choices) == 1 else None
-    if set(response) - fields or subtype is None or subtype == excluded:
-        raise SemanticChoiceError("Choose one legal creature type")
-    chosen = RecordChoiceIntent(actor=actor, event_code="semantic.option.chosen",
-        message=f"{actor} chose {subtype.title()}.", details=FrozenMap({"stack": continuation.stack_ref, "creature_type": subtype}))
+    subtype, chosen = _canonical_creature_type_selection(continuation, response, actor, excluded=excluded)
     if isinstance(subject, str):
         try:
             original = ContinuousObjectIdentity.from_dict(recipient)
@@ -526,6 +604,12 @@ class ChooseOptionHandler:
                 "Chosen option effects must be a list of mappings"
             )
         actor = str(continuation.effect["_choice_actor"])
+        from ..rules.collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD, collective_damage_option_followup
+        if COLLECTIVE_SOURCE_DAMAGE_FIELD in continuation.effect:
+            selected_effects = collective_damage_option_followup(
+                continuation.effect, choice=choice, actor=actor,
+                controller=continuation.semantic_frame.controller, active_seats=query.active_seats,
+            )
         return SemanticChoiceCompletion(
             intents=(
                 RecordChoiceIntent(

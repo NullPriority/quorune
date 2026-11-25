@@ -11,6 +11,22 @@ from .static_runtime_nodes import runtime_handler_node
 
 def self_graveyard_exile_node(*, source_name, node_id, line, material_line, span,
         capability_registry, capability_profile, residuals):
+    from ..self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_DEPENDENCIES, self_graveyard_shuffle_descriptor
+
+    shuffle = re.fullmatch(
+        r"If (?P<source>.+?) would be put into a graveyard from anywhere, "
+        r"reveal (?P<revealed>.+?) and shuffle it into its owner's library instead\.",
+        material_line.replace("’", "'"), re.I,
+    )
+    if (shuffle is not None and SourceReferenceSpec(source_name).matches(shuffle["source"])
+            and SourceReferenceSpec(source_name).matches(shuffle["revealed"])):
+        return runtime_handler_node(node_id=node_id, line=line, span=span,
+            compiled=("fixed-source-graveyard-owner-shuffle-v1", self_graveyard_shuffle_descriptor(),
+                      SELF_GRAVEYARD_SHUFFLE_DEPENDENCIES),
+            kind="replacement_effect", event="zone.change", active_zone="all",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Owner shuffle requires the current complete admitted self replacement",
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     match = re.fullmatch(r'If (?P<source>.+?) would be put into a graveyard from anywhere, exile it instead\.',
         material_line, re.I)
     if match is None:

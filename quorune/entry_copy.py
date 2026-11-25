@@ -21,6 +21,33 @@ ENTRY_COPY_VALUES_HANDLER = 'replacement.zone.entry-copy.v3'
 ENTRY_COPY_VALUES_CAPABILITY = 'zone.entry.copy_value_exceptions'
 ENTRY_COPY_TAPPED_HANDLER = 'replacement.zone.entry-copy.v6'
 ENTRY_COPY_TAPPED_CAPABILITIES = (ENTRY_COPY_CAPABILITY, ENTRY_COPY_VALUES_CAPABILITY, 'zone.entry.tapped_state')
+CONTROLLED_COPY_SHIELD_HANDLER = 'replacement.zone.entry-copy.v7'
+CONTROLLED_COPY_SHIELD_CAPABILITY = 'zone.entry.copy_controlled_shield_counter'
+CONTROLLED_COPY_SHIELD_CAPABILITIES = (ENTRY_COPY_CAPABILITY, CONTROLLED_COPY_SHIELD_CAPABILITY)
+ANNOUNCED_X_COPY_COUNTER_HANDLER = 'replacement.zone.entry-copy.v8'
+ANNOUNCED_X_COPY_COUNTER_CAPABILITY = 'zone.entry.copy_announced_x_counter'
+ANNOUNCED_X_COPY_COUNTER_CAPABILITIES = (ENTRY_COPY_CAPABILITY, ANNOUNCED_X_COPY_COUNTER_CAPABILITY)
+TYPE_DIRECTED_COPY_COUNTER_HANDLER = 'replacement.zone.entry-copy.v9'
+TYPE_DIRECTED_COPY_COUNTER_CAPABILITY = 'zone.entry.copy_type_directed_counters'
+TYPE_DIRECTED_COPY_COUNTER_CAPABILITIES = (ENTRY_COPY_CAPABILITY, TYPE_DIRECTED_COPY_COUNTER_CAPABILITY)
+LEGENDARY_SNOW_COPY_HANDLER = 'replacement.zone.entry-copy.v10'
+LEGENDARY_SNOW_COPY_CAPABILITY = 'zone.entry.copy_legendary_snow_creature'
+LEGENDARY_SNOW_COPY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, LEGENDARY_SNOW_COPY_CAPABILITY)
+LEGENDARY_SNOW_EXCEPTION = TokenCopyExceptionSpec(schema_version=4, add_supertypes=('legendary', 'snow'))
+CONDITIONAL_VANISHING_COPY_HANDLER = 'replacement.zone.entry-copy.v11'
+CONDITIONAL_VANISHING_COPY_CAPABILITY = 'zone.entry.copy_conditional_vanishing'
+CONDITIONAL_VANISHING_COPY_CAPABILITIES = (
+    ENTRY_COPY_CAPABILITY, CONDITIONAL_VANISHING_COPY_CAPABILITY,
+    'counter.producer.fixed_keyword_entry', 'counter.lifecycle.vanishing',
+)
+FACE_UP_OR_ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v12'
+FACE_UP_OR_ENTRY_COPY_CAPABILITY = 'zone.entry.or_face_up_copy'
+FACE_UP_OR_ENTRY_COPY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, FACE_UP_OR_ENTRY_COPY_CAPABILITY)
+FACE_UP_OR_ENTRY_COPY_QUERY = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), exclude_ref='$source.ref')
+GRAVEYARD_PAIR_COPY_HANDLER = 'replacement.zone.entry-copy.v13'
+GRAVEYARD_PAIR_COPY_CAPABILITY = 'zone.entry.graveyard_copy_pair'
+GRAVEYARD_PAIR_COPY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, GRAVEYARD_PAIR_COPY_CAPABILITY)
+GRAVEYARD_PAIR_COPY_QUERY = ObjectQuerySpec(zones=('graveyard',),types_all=('creature',))
 COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
 COPIABLE_FACE_FIELD = '_copiable_face_id'
 
@@ -58,9 +85,12 @@ def copied_entry_preview(card: Any, prepared: Any):
 def serialize_prepared_copy_entry(prepared):
     from dataclasses import fields
     from .replacement.immutable import thaw_value
+    linked_fields={'devour_sacrifices','graveyard_copy_exiles'}
     result = {field.name: getattr(prepared, field.name) for field in fields(prepared)
-        if field.name!='devour_sacrifices' or prepared.devour_sacrifices}
-    if prepared.devour_sacrifices:result['devour_sacrifices']=[serialize_prepared_copy_entry(v) for v in prepared.devour_sacrifices]
+        if field.name not in linked_fields}
+    for name in sorted(linked_fields):
+        plans=getattr(prepared,name)
+        if plans:result[name]=[serialize_prepared_copy_entry(v) for v in plans]
     result['transition_kind'] = prepared.transition_kind.value
     result['event'] = prepared.event.to_dict()
     for field in ('effects', 'counter_events', 'keyword_grants', 'journal'):
@@ -74,13 +104,15 @@ def restore_prepared_copy_entry(value, *, revision):
     from .entry_keyword_grants import EntryKeywordGrant
     from .zone_trigger_events import ZoneTransitionKind
     from dataclasses import fields
-    expected={field.name for field in fields(PreparedZoneChange) if field.name!='devour_sacrifices'}
-    if not isinstance(value, Mapping) or set(value) != (expected|({'devour_sacrifices'} if 'devour_sacrifices' in value else set())):
+    linked_fields={'devour_sacrifices','graveyard_copy_exiles'}
+    expected={field.name for field in fields(PreparedZoneChange) if field.name not in linked_fields}
+    if not isinstance(value,Mapping) or set(value)-linked_fields!=expected:
         raise ValueError('Retained copied entry has a closed identity')
     data = dict(value)
-    if 'devour_sacrifices' in data:
-        if type(data['devour_sacrifices']) is not list or not data['devour_sacrifices']:raise ValueError('Prepared Devour sacrifices require a nonempty array')
-        data['devour_sacrifices']=tuple(restore_prepared_copy_entry(v,revision=revision) for v in data['devour_sacrifices'])
+    for name in linked_fields & data.keys():
+        if type(data[name]) is not list or not data[name]:
+            raise ValueError('Retained entry-cost moves require a nonempty array')
+        data[name]=tuple(restore_prepared_copy_entry(v,revision=revision) for v in data[name])
     data['state_revision'] = revision  # Choices advance revision without moving this object.
     data['transition_kind'] = ZoneTransitionKind(data['transition_kind'])
     data['event'] = ReplaceableEvent.from_dict(data['event'])
@@ -119,9 +151,12 @@ class EntryCopySpec:
     predicate: EntryCopyPredicate | None = None
     conditional_exception: ConditionalCopyException | None = None
     tapped: bool = False
+    controlled_shield: bool = False
+    announced_x_counter: bool = False
+    type_directed_counters: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}:
             raise ValueError('Entry copy requires one current typed schema')
         if not isinstance(self.selection, ObjectQuerySpec) or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise ValueError('Entry copy requires typed selection and copy exceptions')
@@ -129,8 +164,49 @@ class EntryCopySpec:
         if (self.schema_version==5)!=(self.conditional_exception is not None) or self.conditional_exception is not None and not isinstance(self.conditional_exception,ConditionalCopyException):raise ValueError('Conditional exception requires version five')
         if type(self.tapped) is not bool or self.tapped != (self.schema_version == 6):
             raise ValueError('A tapped copy choice requires version six')
+        if type(self.controlled_shield) is not bool or self.controlled_shield != (self.schema_version == 7):
+            raise ValueError('A controlled copy shield requires version seven')
+        if type(self.announced_x_counter) is not bool or self.announced_x_counter != (self.schema_version == 8):
+            raise ValueError('An announced X copy counter requires version eight')
+        if (self.controlled_shield or self.announced_x_counter) and (
+            self.selection != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))
+            or self.exception != TokenCopyExceptionSpec()
+        ):
+            raise ValueError('Copy entry counters require the unqualified public creature copy')
+        if type(self.type_directed_counters) is not bool or self.type_directed_counters != (self.schema_version == 9):
+            raise ValueError('Type-directed copy counters require version nine')
+        if self.type_directed_counters and (
+            self.selection != ObjectQuerySpec(zones=('battlefield',), types_any=('creature', 'planeswalker'), controller='$controller')
+            or self.exception != TokenCopyExceptionSpec(remove_legendary=True)
+        ):
+            raise ValueError('Type-directed counters require the controlled creature or planeswalker copy')
+        if self.legendary_snow != (self.exception.schema_version == 4):
+            raise ValueError('Legendary snow entry copies require version ten')
+        if self.legendary_snow and (
+            self.selection != ObjectQuerySpec(zones=('battlefield',), controller='$controller')
+            or self.exception != LEGENDARY_SNOW_EXCEPTION
+        ):
+            raise ValueError('Legendary snow entry requires a controlled permanent copy')
+        if self.conditional_vanishing != (self.exception.schema_version == 5):
+            raise ValueError('Conditional Vanishing copies require version eleven')
+        if self.conditional_vanishing and self.selection != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)):
+            raise ValueError('Conditional Vanishing requires the unqualified public creature copy')
         query = _legacy_view_of_copy_query(self.selection) if self.schema_version == 2 else self.selection
-        if self.schema_version in {3,4} and query.zones==('graveyard',):
+        if self.face_up_or_entry or self.retains_color:
+            from .ability_fragments import GrantedTriggeredAbilitySpec, canonical_ability_fragments
+
+            expected = (FACE_UP_OR_ENTRY_COPY_QUERY if self.face_up_or_entry
+                        else ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)))
+            granted = canonical_ability_fragments(self.exception.add_ability_fragments)
+            if (query != expected
+                    or replace(self.exception, add_ability_fragments=()) != TokenCopyExceptionSpec()
+                    or len(granted) != 1 or not isinstance(granted[0], GrantedTriggeredAbilitySpec)
+                    or granted[0].schema_version != 1 or granted[0].event != 'step.begin'):
+                raise ValueError('This entry copy requires its public creature query and one typed step grant')
+            query = replace(query, exclude_ref=None)
+        if self.graveyard_pair and (query != GRAVEYARD_PAIR_COPY_QUERY or self.exception != TokenCopyExceptionSpec()):
+            raise ValueError('Graveyard entry copy requires two selected public creature cards')
+        if self.schema_version in {3,4,13} and query.zones==('graveyard',):
             if query!=ObjectQuerySpec(zones=('graveyard',),types_all=('creature',)):raise ValueError('Graveyard copy selects only public creature cards')
             query=replace(query,zones=('battlefield',))
         if self.tapped and query.zones == ('graveyard',):
@@ -160,6 +236,26 @@ class EntryCopySpec:
                 or query.subtypes_all and query.types_all != ('creature',)):
             raise ValueError('Entry copy selection is outside the closed public permanent domain')
 
+    @property
+    def legendary_snow(self) -> bool:
+        return self.schema_version == 10
+
+    @property
+    def conditional_vanishing(self) -> bool:
+        return self.schema_version == 11
+
+    @property
+    def face_up_or_entry(self) -> bool:
+        return self.schema_version == 12
+
+    @property
+    def graveyard_pair(self) -> bool:
+        return self.schema_version == 13
+
+    @property
+    def retains_color(self) -> bool:
+        return self.schema_version == 14
+
     def to_dict(self) -> dict[str, Any]:
         return {
             'schema_version': self.schema_version, 'selection': self.selection.to_dict(),
@@ -167,13 +263,17 @@ class EntryCopySpec:
             **({'predicate': self.predicate.to_dict()} if self.predicate is not None else {}),
             **({'conditional_exception': self.conditional_exception.to_dict()} if self.conditional_exception is not None else {}),
             **({'tapped': True} if self.tapped else {}),
+            **({'controlled_shield': True} if self.controlled_shield else {}),
+            **({'announced_x_counter': True} if self.announced_x_counter else {}),
+            **({'type_directed_counters': True} if self.type_directed_counters else {}),
         }
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> 'EntryCopySpec':
         if not isinstance(value, Mapping):
             raise ValueError('Entry copy fields are closed')
-        extra = {4: {'predicate'}, 5: {'conditional_exception'}, 6: {'tapped'}}
+        extra = {4: {'predicate'}, 5: {'conditional_exception'}, 6: {'tapped'},
+                 7: {'controlled_shield'}, 8: {'announced_x_counter'}, 9: {'type_directed_counters'}}
         version = value.get('schema_version')
         if type(version) is not int or set(value) != {'schema_version', 'selection', 'exception'} | extra.get(version, set()):
             raise ValueError('Entry copy fields are closed')
@@ -182,6 +282,8 @@ class EntryCopySpec:
                 TokenCopyExceptionSpec.from_dict(value['exception']), value['schema_version'],
                 EntryCopyPredicate.from_dict(value['predicate']) if value['schema_version']==4 else None,
                 ConditionalCopyException.from_dict(value['conditional_exception']) if value['schema_version']==5 else None,
-                tapped=value.get('tapped', False))
+                tapped=value.get('tapped', False), controlled_shield=value.get('controlled_shield', False),
+                announced_x_counter=value.get('announced_x_counter', False),
+                type_directed_counters=value.get('type_directed_counters', False))
         except (TypeError, KeyError) as exc:
             raise ValueError('Entry copy fields are malformed') from exc

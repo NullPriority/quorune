@@ -2,11 +2,13 @@ from __future__ import annotations
 
 """Closed fixed self-entry counter components from compound keywords."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
 
 FIXED_KEYWORD_ENTRY_CAPABILITY = "counter.producer.fixed_keyword_entry"
+FIXED_KEYWORD_ENTRY_FRAGMENT = "fixed_keyword_entry_counter"
 FIXED_KEYWORD_ENTRY_MECHANICS = frozenset(
     {
         "fading",
@@ -56,6 +58,15 @@ class FixedKeywordEntryCounterSpec:
     @property
     def template_id(self) -> str:
         return _MECHANIC_FIELDS[self.mechanic][2]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"mechanic": self.mechanic, "amount": self.amount}
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "FixedKeywordEntryCounterSpec":
+        if not isinstance(data, Mapping) or set(data) != {"mechanic", "amount"}:
+            raise FixedKeywordEntryCounterError("Fixed keyword entry values have a closed shape")
+        return cls(data["mechanic"], data["amount"])
 
     def handler_descriptor(self) -> dict[str, Any]:
         return {

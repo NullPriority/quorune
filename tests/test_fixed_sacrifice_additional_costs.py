@@ -8,6 +8,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from scripts.build_test_database import build_fixture_database
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.spell_additional_cost_templates import (
@@ -597,6 +598,218 @@ class FixedSacrificeAdditionalCostRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+
+
+class DamageQualifiedSacrificeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "damage-qualified-sacrifice.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "distinct-creature-damage-alternative-price-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Damage-qualified sacrifice", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _quote_greed(self, game, spell):
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next((row for row in actions if row["id"] == f"cast:{spell.ref}"), None)
+
+    def _ping(self, game, seat, source, recipient):
+        self.priority(game, seat)
+        actions = game.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        result = game.act(f"pilot:{seat}", {"action_id": action["id"], "targets": [recipient], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+
+    def _pay(self, game, spell, creature):
+        action = self._quote_greed(game, spell)
+        self.assertIsNotNone(action)
+        result = game.act("pilot:A", {
+            "action_id": action["id"], "sacrifice_cards": [creature.ref], "pay": "auto",
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", game.state.cards[creature.object_id].zone)
+        self.assertEqual("stack", game.state.cards[spell.object_id].zone)
+        cast = next(event for event in reversed(game.state.events) if event.code == "stack.cast")
+        self.assertEqual([creature.ref], cast.details["additional_cost_objects"])
+
+    def test_original_damage_price_and_both_results_require_complete_authority(self):
+        from dataclasses import replace
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.casting_additional_costs import (
+            DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+            FixedZoneChangeAdditionalCost, damage_qualified_sacrifice_predicate,
+        )
+        from test_controller_creature_keyword_absence import register_card
+
+        original = self.db.lookup("Treacherous Greed", fuzzy=False)
+        bound, semantics = register_card(self.db, self.registry, original.name)
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        self.assertEqual("capability_closed", bound["trust_basis"])
+        program, = semantics.programs_for_oracle(original.oracle_id)
+        cost, = program.cost_schema["additional_costs"]
+        decoded = FixedZoneChangeAdditionalCost.from_descriptor(cost)
+        self.assertEqual(DAMAGE_QUALIFIED_SACRIFICE_VERSION, decoded.schema_version)
+        self.assertEqual(damage_qualified_sacrifice_predicate(), decoded.predicate)
+        self.assertEqual(("sacrifice_one", "sacrifice_cards", 1), (decoded.operation, decoded.choice_field, decoded.count))
+        self.assertIsNone(program.target_schema)
+        self.assertEqual(["draw", "drain_each_opponent"], [effect["op"] for effect in program.effects])
+        self.assertIn(DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY, program.capability_dependencies)
+        for malformed in (
+            {**cost, "count": 2},
+            {**cost, "operation": "exile_one_from_battlefield", "choice_field": "exile_cards"},
+            {**cost, "predicate": {**cost["predicate"], "types_all": ["artifact"]}},
+            {**cost, "unblocked_attacker": False},
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(AdditionalCostError):
+                FixedZoneChangeAdditionalCost.from_descriptor(malformed)
+        remaining = tuple(cap for cap in program.capability_dependencies if cap != DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY)
+        changed = replace(program, capability_dependencies=remaining,
+                          capability_closure=self.registry.closure(remaining, profile="commander_review").to_dict())
+        self.assertIn(
+            f"capability:undeclared_runtime_dependency:{DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY}",
+            bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")["blockers"],
+        )
+        for qualifier in ("was dealt damage this turn", "dealt combat damage this turn", "dealt damage last turn"):
+            changed = replace(original, oracle_text=original.oracle_text.replace("dealt damage this turn", qualifier))
+            self.assertNotEqual("exact", compile_oracle_card(
+                changed, capability_registry=self.registry, capability_profile="commander_review",
+            ).status)
+        with patch("quorune.compiler.spell_additional_cost_nodes._damage_qualified_sacrifice_spell_cost", return_value=None):
+            omitted, _ = register_card(self.db, self.registry, original.name)
+            self.assertFalse(omitted["strict_capability_ready"], omitted)
+
+    def test_actual_paid_price_checks_damage_source_and_keeps_a_departed_recipient(self):
+        game = self.session(1200801)
+        spell = self.add(game.engine, "Treacherous Greed", zone="hand")
+        prevented = self.add(game.engine, "Cunning Sparkmage", ref="greed-prevented-source")
+        dealer = self.add(game.engine, "Cunning Sparkmage", ref="greed-qualified-source")
+        recipient = self.add(game.engine, "Grizzly Bears", ref="greed-damage-recipient")
+        shielded = self.add(game.engine, "Grizzly Bears", seat="B", ref="greed-shielded")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        shielded.counters["shield"] = 1
+        game.state.config.semantic_policy = "trusted_only"
+        for card in (spell, prevented, dealer, bounce):
+            self.assert_closed(game, card)
+        game.state.players["B"].mana_pool.update({"U": 1})
+        self.prepare(game, mana={"W": 1, "B": 1, "C": 1})
+        self.checkpoint(game)
+        self.assertIsNone(self._quote_greed(game, spell))
+        self._ping(game, "A", prevented, shielded.ref)
+        self.assertEqual(0, game.state.cards[shielded.object_id].marked_damage)
+        self.assertIsNone(self._quote_greed(game, spell))
+        self._ping(game, "A", dealer, recipient.ref)
+        action = self._quote_greed(game, spell)
+        self.assertIsNotNone(action)
+        before = authoritative_state_hash(game.state)
+        for ineligible in (recipient, prevented, shielded):
+            rejected = game.act("pilot:A", {
+                "action_id": action["id"], "sacrifice_cards": [ineligible.ref], "pay": "auto",
+            })
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        self.cast(game, "B", bounce, [recipient.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[recipient.object_id].zone)
+        before_hand = set(game.state.players["A"].zones["hand"])
+        before_life = {seat: game.state.players[seat].life for seat in "ABCD"}
+        self._pay(game, spell, dealer)
+        self.assertEqual(before_life, {seat: game.state.players[seat].life for seat in "ABCD"})
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual({seat: before_life[seat] + (3 if seat == "A" else -3) for seat in "ABCD"},
+                         {seat: game.state.players[seat].life for seat in "ABCD"})
+        drawn = set(game.state.players["A"].zones["hand"]) - before_hand
+        self.assertEqual(3, len(drawn))
+        for seat in "BCD":
+            packet = json.dumps(game.packet(f"pilot:{seat}", full=True))
+            self.assertTrue(all(game.state.cards[oid].ref not in packet for oid in drawn))
+        self.replay(game, load=True)
+
+    def test_actual_source_reentry_drops_the_old_price_eligibility(self):
+        game = self.session(1200802)
+        spell = self.add(game.engine, "Treacherous Greed", zone="hand")
+        source = self.add(game.engine, "Cunning Sparkmage", ref="greed-reentering-source")
+        bounce = self.add(game.engine, "Unsummon", zone="hand")
+        game.state.config.semantic_policy = "trusted_only"
+        for card in (spell, source, bounce):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"W": 1, "B": 1, "C": 3, "U": 1, "R": 1})
+        self.checkpoint(game)
+        first = source.logical_object_id
+        self._ping(game, "A", source, "B")
+        self.assertIsNotNone(self._quote_greed(game, spell))
+        self.cast(game, "A", bounce, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertIsNone(self._quote_greed(game, spell))
+        self.cast(game, "A", game.state.cards[source.object_id])
+        self.assertIsNone(self.resolve(game))
+        reentered = game.state.cards[source.object_id]
+        self.assertNotEqual(first, reentered.logical_object_id)
+        self.assertIsNone(self._quote_greed(game, spell))
+        self._ping(game, "A", reentered, "C")
+        self.assertIsNotNone(self._quote_greed(game, spell))
+        self.replay(game, load=True)
+
+    def test_actual_new_controller_can_sacrifice_the_same_damage_source(self):
+        game = self.session(1200803)
+        spell = self.add(game.engine, "Treacherous Greed", zone="hand")
+        source = self.add(game.engine, "Cunning Sparkmage", seat="B", ref="greed-transferred-source")
+        control = self.add(game.engine, "Act of Treason", zone="hand")
+        game.state.config.semantic_policy = "trusted_only"
+        for card in (spell, source, control):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"W": 1, "B": 1, "C": 3, "R": 1})
+        self.checkpoint(game)
+        incarnation = source.logical_object_id
+        self._ping(game, "B", source, "D")
+        self.assertIsNone(self._quote_greed(game, spell))
+        self.cast(game, "A", control, [source.ref])
+        self.assertIsNone(self.resolve(game))
+        controlled = game.state.cards[source.object_id]
+        self.assertEqual(("A", "B", incarnation), (controlled.controller, controlled.owner, controlled.logical_object_id))
+        self._pay(game, spell, controlled)
+        self.assertIn(source.object_id, game.state.players["B"].zones["graveyard"])
+        self.assertIsNone(self.resolve(game))
+        self.replay(game, load=True)
+
+    def test_verified_damage_sacrifice_withdrawal_preserves_the_distinct_damage_alternative(self):
+        from quorune.rules.casting_additional_costs import DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        capability = DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY
+        raw = json.loads(REGISTRY_PATH.read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        next(row for row in raw["capabilities"] if row["id"] == capability).update(
+            status="blocked", blockers=["Scoped damage-qualified sacrifice withdrawal"],
+        )
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        closure = registry.closure((capability,), profile="commander_review")
+        self.assertIn(f"status:{capability}:blocked", closure.blockers)
+        self.assertFalse(any("unverified" in blocker for blocker in closure.blockers))
+        rejected, _ = register_card(self.db, registry, "Treacherous Greed")
+        self.assertFalse(rejected["strict_capability_ready"], rejected)
+        retained, _ = register_card(self.db, registry, "Inferno Trap")
+        self.assertTrue(retained["strict_capability_ready"], retained["blockers"])
 
 
 if __name__ == "__main__":

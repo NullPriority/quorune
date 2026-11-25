@@ -1,6 +1,6 @@
 """Complete source clauses for fixed and resolution-count life totals."""
 from . import regex_working_set as re
-from ..life_total_setting_model import LifeTotalValueSpec
+from ..life_total_setting_model import CONTROLLED_TOUGHNESS_LIFE_KIND, LifeTotalValueSpec
 from .fixed_numbers import FIXED_COUNT_PATTERN,fixed_number
 
 
@@ -15,6 +15,10 @@ def life_total_setting_template(text):
     match=re.fullmatch(r"(?P<subject>Your|Target player's|Target opponent's|Each player's) life total becomes (?P<value>.+?)\.?",text,re.I)
     if match is None:return None
     raw=match['value'];subject=match['subject'].casefold()
+    if subject == "your" and raw.casefold() == "the number of charge counters on this artifact":
+        from ..rules.source_charge_life_totals import source_charge_life_instruction
+
+        return FixedLifeEffectTemplate("set-life-total-source-charge-v1", source_charge_life_instruction())
     if re.fullmatch(FIXED_COUNT_PATTERN,raw,re.I):value=LifeTotalValueSpec('fixed',fixed_number(raw))
     elif raw.casefold()=='equal to your starting life total' and subject=='your':value=LifeTotalValueSpec('starting')
     elif raw.casefold()=='half your starting life total, rounded up' and subject=='your':
@@ -22,6 +26,8 @@ def life_total_setting_template(text):
     elif raw.casefold() in {'the highest life total among all players','the lowest life total among all players'}:
         value=LifeTotalValueSpec('highest' if 'highest' in raw.casefold() else 'lowest')
     elif raw.casefold()=='the number of creatures they control' and subject=="each player's":value=LifeTotalValueSpec('creatures')
+    elif raw.casefold() == "the total toughness of creatures you control" and subject == "your":
+        value = LifeTotalValueSpec(CONTROLLED_TOUGHNESS_LIFE_KIND)
     else:return None
     mechanics=[LIFE_MECHANIC];target=None
     if subject=="each player's":

@@ -253,9 +253,42 @@ class FixedEffectPaymentSpec:
             *(('cost.object.repeated_resolution',) if self.schema_version==12 else ()))
 
 
+MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION = 16
+MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC = "mandatory-source-counter-followup"
+
+
+def uses_mandatory_source_counter_followup(value: Any) -> bool:
+    return (isinstance(value, Mapping) and value.get("op") == "offer_optional_mana_payment"
+            and value.get("schema_version") == MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION)
+
+
+def mandatory_source_counter_followup_parts(value, *, resolved: bool = False):
+    if (
+        not uses_mandatory_source_counter_followup(value)
+        or set(value) != {"op", "schema_version", "player", "payment", "effects"}
+        or type(value["schema_version"]) is not int
+        or type(value["player"]) is not str or not value["player"]
+        or not resolved and value["player"] != "$controller"
+    ):
+        raise ValueError("Mandatory counter payment requires its closed resolution wrapper")
+    spec = FixedEffectPaymentSpec.from_dict(value["payment"])
+    if (spec.kind, spec.counter_name, spec.amount) != ("remove_source_counter", "+1/+1", 1):
+        raise ValueError("Mandatory counter payment requires one +1/+1 counter from the source")
+    if not resolved and spec.source_ref != "$source.zone_object":
+        raise ValueError("Mandatory counter payment requires the original source incarnation")
+    effects = value["effects"]
+    if (not isinstance(effects, (tuple, list)) or len(effects) != 1 or not isinstance(effects[0], Mapping)
+            or effects[0].get("op") not in {"damage", "create_token"}):
+        raise ValueError("Mandatory counter payment requires its fixed damage or token result")
+    return spec, effects[0]
+
+
 def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     if not isinstance(value, Mapping) or value.get("op") != "offer_optional_mana_payment":
         return ()
+    if uses_mandatory_source_counter_followup(value):
+        payment, _ = mandatory_source_counter_followup_parts(value)
+        return payment.capabilities
     if value.get('schema_version') == 13:
         from .rules.optional_sacrifice_stats import optional_sacrifice_stat_node_capabilities
         required = optional_sacrifice_stat_node_capabilities(effects=(value,), target_schema=None)
@@ -264,9 +297,22 @@ def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, .
     if value.get('schema_version') == 12:
         from .rules.recover import recover_node_dependencies
         return recover_node_dependencies(value)
+    from .rules.scheduled_life_return import is_scheduled_life_return, scheduled_life_return_payload_dependencies
+    if is_scheduled_life_return(value):
+        return scheduled_life_return_payload_dependencies(value)
+    from .rules.targeted_life_decline import is_targeted_life_decline_effect, targeted_life_decline_payload_dependencies
+    if is_targeted_life_decline_effect(value):
+        return targeted_life_decline_payload_dependencies(value)
     descriptor = value.get("payment")
     if not isinstance(descriptor, Mapping):
         return ()
+    from .rules.entry_player_counter_payment import (
+        entry_player_counter_payment_capabilities, is_entry_player_counter_payment, uses_entry_player_counter_payment,
+    )
+    if uses_entry_player_counter_payment(value):
+        if not is_entry_player_counter_payment(value):
+            raise ValueError("Land entry counter payment requires its fixed scoped descriptor")
+        return entry_player_counter_payment_capabilities()
     if descriptor.get("kind") == "blight":
         payment = FixedEffectPaymentSpec.from_dict(descriptor)
         if (type(value.get("schema_version")) is not int or value["schema_version"] not in {2, 4}

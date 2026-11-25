@@ -577,7 +577,7 @@ class CardDatabase:
         for row in cursor:
             yield self._row_to_card(row)
 
-    def lookup(self, name: str, *, fuzzy: bool = True) -> CardRecord:
+    def lookup(self, name: str, *, fuzzy: bool = True, nameable_only: bool = False) -> CardRecord:
         normalized = normalize_card_name(name)
         row = self.connection.execute(
             """
@@ -585,10 +585,11 @@ class CardDatabase:
             FROM aliases a
             JOIN cards c ON c.oracle_id = a.oracle_id
             WHERE a.normalized_alias = ?
-            ORDER BY a.priority DESC, c.released_at DESC
+              AND (? = 0 OR c.layout NOT IN ('token', 'double_faced_token', 'emblem', 'art_series'))
+            ORDER BY (c.layout = 'art_series') ASC, a.priority DESC, c.released_at DESC
             LIMIT 1
             """,
-            (normalized,),
+            (normalized, int(nameable_only)),
         ).fetchone()
         if row is not None:
             return self._row_to_card(row)

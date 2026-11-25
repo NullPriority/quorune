@@ -17,6 +17,13 @@ from ..rules.detain import (
     validate_direct_action_prohibition,
 )
 from ..saddle import SADDLE_CAPABILITY, SADDLE_OPERATION
+from ..rules.player_life_exchange import (
+    PLAYER_LIFE_EXCHANGE_CAPABILITY, PLAYER_LIFE_EXCHANGE_OPERATION, PLAYER_LIFE_EXCHANGE_RULES,
+)
+from ..rules.characteristic_life_exchange import (
+    CHARACTERISTIC_LIFE_EXCHANGE_CAPABILITY, CHARACTERISTIC_LIFE_EXCHANGE_OPERATION,
+    CHARACTERISTIC_LIFE_EXCHANGE_RULES,
+)
 from ..rules.cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_OPERATION, CAST_CASCADE_RULES
 from ..rules.next_spell_payment import NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_OPERATION
 from ..phasing_model import (
@@ -45,6 +52,10 @@ class DomainEffectHandler:
             from ..next_spell_cost_model import RULES
             return RULES
         if self.operation=='set_day_night':return ('731.1','731.1a','702.145')
+        if self.operation == PLAYER_LIFE_EXCHANGE_OPERATION:
+            return PLAYER_LIFE_EXCHANGE_RULES
+        if self.operation == CHARACTERISTIC_LIFE_EXCHANGE_OPERATION:
+            return CHARACTERISTIC_LIFE_EXCHANGE_RULES
         if self.operation == DETAIN_OPERATION:
             return DETAIN_RULES
         if self.operation == DIRECT_PROHIBITION_OPERATION:
@@ -131,15 +142,25 @@ class DomainEffectHandler:
             except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
         if operation == PHASE_OUT_OPERATION:
             try:
-                subject = validate_phase_out_effect(effect)
+                subject = validate_phase_out_effect(effect, runtime=True)
                 if subject == "source" and context.source is None:
                     raise ValueError("Source phase out requires its typed source frame")
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
         if operation=='turn_face_up':
-            from ..face_up_effect_model import validate_face_up_instruction
-            try:validate_face_up_instruction(effect)
-            except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+            from ..face_up_effect_model import (
+                SOURCE_FACE_DOWN_SCHEMA_VERSION, validate_face_up_instruction, validate_source_face_down_instruction,
+            )
+            try:
+                if effect.get("schema_version") == SOURCE_FACE_DOWN_SCHEMA_VERSION:
+                    validate_source_face_down_instruction(effect)
+                    if (effect["card"] is not None and context.source is not None
+                            and context.source.card_ref != effect["card"]):
+                        raise ValueError("Turning face down requires the resolving source")
+                else:
+                    validate_face_up_instruction(effect,allow_runtime_source=True)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
         if operation == 'goad' and effect.get('schema_version') == 2:
             from ..goad_instruction import validate_fixed_goad
             try:validate_fixed_goad(effect)
@@ -185,7 +206,63 @@ class DomainEffectHandler:
         )
 
 
+def effect_descriptor_capability_dependencies(effect, registered):
+    """Apply an exact immediate-object variant's narrower registered authority."""
+
+    if registered["operation"] == "resolve_fixed_object_action":
+        from ..delayed_object_model import FORCED_BLOCK_STATUS_CAPABILITIES, is_forced_block_status_effect
+
+        if is_forced_block_status_effect(effect):
+            return FORCED_BLOCK_STATUS_CAPABILITIES
+    if registered["operation"] == "copy_until_end_of_turn":
+        from ..rules.color_retaining_copy import RETAINED_COLOR_COPY_CAPABILITY, is_retained_color_upkeep_copy
+        from ..rules.persistent_self_copy_trigger import (
+            PERSISTENT_SELF_COPY_TRIGGER_LEAF, is_persistent_self_copy_trigger, validate_self_copy_upkeep_instruction,
+        )
+
+        if is_persistent_self_copy_trigger(effect):
+            validate_self_copy_upkeep_instruction(effect)
+            return PERSISTENT_SELF_COPY_TRIGGER_LEAF
+        if is_retained_color_upkeep_copy(effect):
+            return (RETAINED_COLOR_COPY_CAPABILITY, "target.revalidate_resolution")
+        from ..rules.linked_exile_copy import LINKED_EXILE_COPY_DEPENDENCIES, is_linked_exile_copy_effect
+
+        if is_linked_exile_copy_effect(effect):
+            return LINKED_EXILE_COPY_DEPENDENCIES
+        from ..rules.announced_graveyard_copy import (
+            ANNOUNCED_GRAVEYARD_COPY_DEPENDENCIES, is_announced_graveyard_copy_effect,
+        )
+
+        if is_announced_graveyard_copy_effect(effect):
+            return ANNOUNCED_GRAVEYARD_COPY_DEPENDENCIES
+        from ..rules.graveyard_exile_copy import (
+            GRAVEYARD_EXILE_COPY_DEPENDENCIES, is_graveyard_exile_copy_effect,
+        )
+
+        if is_graveyard_exile_copy_effect(effect):
+            return GRAVEYARD_EXILE_COPY_DEPENDENCIES
+        from ..rules.persistent_public_copy import (
+            PERSISTENT_PUBLIC_COPY_DEPENDENCIES, is_persistent_public_copy_effect,
+        )
+
+        if is_persistent_public_copy_effect(effect):
+            return PERSISTENT_PUBLIC_COPY_DEPENDENCIES
+    if registered["operation"] == "set_life_total":
+        from ..life_total_setting_model import (
+            CONTROLLED_TOUGHNESS_LIFE_CAPABILITY, CONTROLLED_TOUGHNESS_LIFE_KIND,
+        )
+
+        value = effect.get("value")
+        if isinstance(value, Mapping) and value.get("kind") == CONTROLLED_TOUGHNESS_LIFE_KIND:
+            return ("life.change.set_total", CONTROLLED_TOUGHNESS_LIFE_CAPABILITY)
+    return registered["capability_dependencies"]
+
+
 def _domain_capabilities(operation):
+    from ..target_source import TURN_SPELL_SOURCE_COLOR_PROTECTION_CAPABILITY, TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION
+
+    if operation == TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION:
+        return (TURN_SPELL_SOURCE_COLOR_PROTECTION_CAPABILITY,)
     if operation=='recover_source_result':
         from ..recover_model import RECOVER_RESULT_CAPABILITY
         return (RECOVER_RESULT_CAPABILITY,)
@@ -203,6 +280,10 @@ def _domain_capabilities(operation):
         from ..delayed_object_model import DELAYED_OBJECT_CAPABILITY
         return (DELAYED_OBJECT_CAPABILITY,)
     if operation=='set_life_total':return ('life.change.set_total',)
+    if operation == PLAYER_LIFE_EXCHANGE_OPERATION:
+        return (PLAYER_LIFE_EXCHANGE_CAPABILITY,)
+    if operation == CHARACTERISTIC_LIFE_EXCHANGE_OPERATION:
+        return (CHARACTERISTIC_LIFE_EXCHANGE_CAPABILITY,)
     if operation == PHASE_OUT_OPERATION:
         return PHASE_OUT_CAPABILITY, PHASING_CAPABILITY
     if operation=='turn_face_up':

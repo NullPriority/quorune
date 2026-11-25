@@ -10,6 +10,7 @@ from ..ability_fragments import (
     ability_fragment_to_dict,
 )
 from ..characteristic_fragments import (
+    CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES, CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE,
     CharacteristicQuantityScope,
     CharacteristicQuantityReduction,
     CharacteristicQuantitySpec,
@@ -29,6 +30,13 @@ from .noncreature_quantity_subtypes import noncreature_quantity_subtype_fields
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
 _SELF_QUERY_MARKER = re.compile(r" for each |as long as |, where [XY] is ", re.IGNORECASE)
 _DEFINITION_QUERY_MARKER = re.compile(r" equal to ", re.IGNORECASE)
+_CONTROLLER_TURN_LAND_POWER = re.compile(
+    r"As long as it['’]s your turn and you control "
+    r"(?P<minimum>one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) or more "
+    r"(?P<lands>Plains|Islands|Swamps|Mountains|Forests), this creature gets \+X/\+0, "
+    r"where X is the number of (?P=lands) you control\.?",
+    re.IGNORECASE,
+)
 _COLOR_SYMBOLS = {
     "black": "B",
     "blue": "U",
@@ -459,6 +467,75 @@ def _unadjusted_characteristic_value(text: str, *, source_name: str) -> Characte
     return None
 
 
+def _combat_land_count_definition(text: str, *, subject: str) -> CharacteristicQuantitySpec | None:
+    """Match the complete nonattacking and attacking clauses together."""
+    match = re.fullmatch(
+        rf"As long as {subject} isn['’]t attacking, its power and toughness "
+        r"are each equal to the number of (?P<land>Plains|Islands|Swamps|Mountains|Forests) you control\. "
+        rf"As long as {subject} is attacking, its power and toughness "
+        r"are each equal to the number of (?P=land) (?:the )?defending player controls\.?",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    plural = match["land"].casefold()
+    subtype = "plains" if plural == "plains" else plural[:-1]
+    return CharacteristicQuantitySpec(
+        scope=CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE,
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",), subtypes_any=(subtype,)),
+        schema_version=2,
+    )
+
+
+def _query_definition_descriptor(fragment: QueryPowerToughnessDefinitionSpec) -> Mapping[str, Any]:
+    return {
+        "handler_id": "ability.static.query-power-toughness-definition.v1",
+        "schema_version": 1,
+        "event": "continuous",
+        "fragment": ability_fragment_to_dict(fragment),
+    }
+
+
+def _linked_opponent_definition_handler(text, *, subject):
+    from ..characteristic_fragments import (
+        LINKED_OPPONENT_HAND_QUERY, LINKED_OPPONENT_TAPPED_LANDS_QUERY, LINKED_OPPONENT_CREATURES_QUERY,
+    )
+    from ..entry_designations import (
+        ENTRY_DESIGNATION_CAPABILITY, LINKED_OPPONENT_DEFINITION_TEMPLATE, LINKED_PLAYER_GRAVEYARD_DEFINITION_TEMPLATE,
+    )
+
+    prefix = re.fullmatch(rf"{subject}['’]s (?P<body>.+)", text, re.I)
+    if prefix is None:
+        return None
+    body = prefix["body"].casefold().rstrip(".").replace("’", "'")
+    if body == "power and toughness are each equal to the number of cards in the chosen player's graveyard":
+        quantity = CharacteristicQuantitySpec(CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD, schema_version=12)
+        return (
+            LINKED_PLAYER_GRAVEYARD_DEFINITION_TEMPLATE,
+            _query_definition_descriptor(QueryPowerToughnessDefinitionSpec(quantity, True, True)),
+            ("continuous.characteristics.query_power_toughness_definition", ENTRY_DESIGNATION_CAPABILITY),
+        )
+    definitions = {
+        "power is equal to the number of tapped lands the chosen player controls": (LINKED_OPPONENT_TAPPED_LANDS_QUERY, False, 0),
+        "power and toughness are each equal to 1 plus the number of creatures the chosen player controls":
+            (LINKED_OPPONENT_CREATURES_QUERY, True, 1),
+        "power and toughness are each equal to the number of cards in the chosen player's hand":
+            (LINKED_OPPONENT_HAND_QUERY, True, 0),
+    }
+    if body not in definitions:
+        return None
+    query, define_toughness, offset = definitions[body]
+    fragment = QueryPowerToughnessDefinitionSpec(
+        quantity=CharacteristicQuantitySpec(CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION,
+                                            query=query, schema_version=10, offset=offset),
+        define_power=True, define_toughness=define_toughness,
+    )
+    return (
+        LINKED_OPPONENT_DEFINITION_TEMPLATE, _query_definition_descriptor(fragment),
+        ("continuous.characteristics.query_power_toughness_definition", ENTRY_DESIGNATION_CAPABILITY),
+    )
+
+
 def query_power_toughness_definition_handler(
     oracle_line: str,
     *,
@@ -475,6 +552,36 @@ def query_power_toughness_definition_handler(
     if ability_word is not None:
         text = ability_word.group("body").strip()
     subject = _self_subject_pattern(source_name)
+    life_definition = re.fullmatch(
+        rf"{subject}['’]s power and toughness are each equal to "
+        r"(?P<quantity>your life total|half the highest life total among your opponents, rounded up)\.?",
+        text, re.I,
+    )
+    if life_definition is not None:
+        scope = (CharacteristicQuantityScope.DEFINING_LIFE_TOTAL
+                 if life_definition["quantity"].casefold() == "your life total"
+                 else CharacteristicQuantityScope.DEFINING_HALF_MAXIMUM_OPPONENT_LIFE)
+        quantity = CharacteristicQuantitySpec(scope, schema_version=11)
+        return (
+            "continuous-query-life-power-toughness-definition-v1",
+            _query_definition_descriptor(QueryPowerToughnessDefinitionSpec(
+                quantity=quantity, define_power=True, define_toughness=True,
+            )),
+            ("continuous.characteristics.query_power_toughness_definition", "quantity_expression.current_player_value"),
+        )
+    if linked_definition := _linked_opponent_definition_handler(text, subject=subject):
+        return linked_definition
+    if text.casefold().startswith("as long as "):
+        quantity = _combat_land_count_definition(text, subject=subject)
+        if quantity is None:
+            return None
+        return (
+            "continuous-combat-state-basic-land-definition-v1",
+            _query_definition_descriptor(QueryPowerToughnessDefinitionSpec(
+                quantity=quantity, define_power=True, define_toughness=True,
+            )),
+            ("continuous.characteristics.query_power_toughness_definition",),
+        )
     paired = re.fullmatch(
         rf"{subject}'s power is equal to (?P<quantity>.+?) and (?:its|his|her) toughness is equal to (?:that number|the number) plus (?P<offset>[0-9]+)\.?$",
         text, re.IGNORECASE,
@@ -505,14 +612,7 @@ def query_power_toughness_definition_handler(
     )
     return (
         "continuous-query-power-toughness-definition-v1",
-        {
-            "handler_id": (
-                "ability.static.query-power-toughness-definition.v1"
-            ),
-            "schema_version": 1,
-            "event": "continuous",
-            "fragment": ability_fragment_to_dict(fragment),
-        },
+        _query_definition_descriptor(fragment),
         ("continuous.characteristics.query_power_toughness_definition",),
     )
 
@@ -685,6 +785,8 @@ def _query_gated_self_characteristics(
 
 
 def _self_collection_quantity(phrase, *, source_name, value_form):
+    if value_form and phrase.casefold().replace("’", "'") == "the amount of life you've lost this turn":
+        return CharacteristicQuantitySpec(CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS, schema_version=4)
     from .live_modifier_quantities import source_modifier_quantity
     current=source_modifier_quantity(phrase)
     if current is not None:return current
@@ -703,6 +805,41 @@ def _self_quantity_coefficient(value):
     return -1 if value.startswith('-') else 1
 
 
+def _self_quantity_modifier(where, per_object, *, source_name):
+    matched = where or per_object
+    quantity = _self_collection_quantity(matched["quantity"], source_name=source_name, value_form=where is not None)
+    # Multiple stat and fixed keyword changes need independent capability owners.
+    if quantity is None or (per_object is not None and per_object.group("abilities") is not None):
+        return None
+    if quantity.scope is CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS and (
+        where is None or (where["power"].upper(), where["toughness"]) != ("+X", "+0")
+    ):
+        return None
+    coefficient = _self_quantity_coefficient if where is not None else int
+    return QueryCharacteristicModifierSpec(
+        quantity=quantity, calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT,
+        power=coefficient(matched["power"]), toughness=coefficient(matched["toughness"]),
+    )
+
+
+def _linked_opponent_hand_modifier(oracle_line: str):
+    if re.fullmatch(r"This creature gets -1/-1 for each card in the chosen player['’]s hand[.]?",
+                    oracle_line.strip(), re.IGNORECASE) is None:
+        return None
+    from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY, LINKED_OPPONENT_HAND_MODIFIER_TEMPLATE
+
+    fragment = QueryCharacteristicModifierSpec(
+        quantity=CharacteristicQuantitySpec(CharacteristicQuantityScope.LINKED_OPPONENT_HAND, schema_version=9),
+        calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT, power=-1, toughness=-1,
+    )
+    return (
+        LINKED_OPPONENT_HAND_MODIFIER_TEMPLATE,
+        {"handler_id": "ability.static.query-characteristic-modifier.v1", "schema_version": 1,
+         "event": "continuous", "fragment": ability_fragment_to_dict(fragment)},
+        ("continuous.characteristics.query_count_modifier", ENTRY_DESIGNATION_CAPABILITY),
+    )
+
+
 def query_self_characteristics_handler(
     oracle_line: str,
     *,
@@ -710,6 +847,8 @@ def query_self_characteristics_handler(
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Compile a closed self modifier over one public typed quantity."""
 
+    if linked := _linked_opponent_hand_modifier(oracle_line):
+        return linked
     if _SELF_QUERY_MARKER.search(oracle_line) is None:
         return None
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
@@ -729,22 +868,51 @@ def query_self_characteristics_handler(
         text,
         re.IGNORECASE,
     )
-    if per_object is not None or where is not None:
-        matched=where or per_object
-        assert matched is not None
-        phrase=matched['quantity']
-        quantity=_self_collection_quantity(phrase,source_name=source_name,value_form=where is not None)
-        # Keyword grants combined with a per-object modifier are grammatically
-        # fixed, not multiplied. They remain residual until represented as two
-        # independently applicable effects.
-        if quantity is None or (per_object is not None and per_object.group("abilities") is not None):
-            return None
-        fragment = QueryCharacteristicModifierSpec(
-            quantity=quantity,
-            calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT,
-            power=_self_quantity_coefficient(where['power']) if where is not None else int(per_object.group("power")),
-            toughness=_self_quantity_coefficient(where['toughness']) if where is not None else int(per_object.group("toughness")),
+    attacking_defender = None
+    if text.casefold().startswith(("as long as ", "while ")):
+        attacking_defender = re.fullmatch(
+            rf"(?:As long as|While) {subject} is attacking, it gets \+X/\+0, "
+            r"where X is the number of lands (?:the )?defending player controls[.]?",
+            text, re.IGNORECASE,
         )
+    turn_lands = _CONTROLLER_TURN_LAND_POWER.fullmatch(text)
+    if turn_lands is not None:
+        plural = turn_lands["lands"].casefold()
+        subtype = plural if plural == "plains" else plural.removesuffix("s")
+        minimum = _fixed_condition_amount(turn_lands["minimum"])
+        fragment = QueryCharacteristicModifierSpec(
+            quantity=CharacteristicQuantitySpec(
+                CharacteristicQuantityScope.CONTROLLER_ZONE,
+                query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",), subtypes_all=(subtype,)),
+            ),
+            calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT,
+            power=1, toughness=0, minimum_count=minimum,
+            controller_turn_only=True, schema_version=2,
+        )
+        abilities = ()
+    elif re.fullmatch(r"This creature gets \+1/\+0 for each transformed permanent you control\.?", text, re.I):
+        fragment = QueryCharacteristicModifierSpec(
+            quantity=CharacteristicQuantitySpec(
+                CharacteristicQuantityScope.CONTROLLER_TRANSFORMED_PERMANENTS, schema_version=4,
+            ),
+            calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT, power=1, toughness=0,
+        )
+        abilities = ()
+    elif attacking_defender is not None:
+        quantity = CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+            schema_version=2,
+        )
+        fragment = QueryCharacteristicModifierSpec(
+            quantity=quantity, calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT,
+            power=1, toughness=0,
+        )
+        abilities = ()
+    elif per_object is not None or where is not None:
+        fragment = _self_quantity_modifier(where, per_object, source_name=source_name)
+        if fragment is None:
+            return None
         abilities: tuple[str, ...] = ()
     else:
         threshold = re.fullmatch(
@@ -800,8 +968,12 @@ def query_self_characteristics_handler(
             ]
         ),
     }
+    template = "continuous-self-query-characteristics-v1"
+    if fragment.quantity.scope is CharacteristicQuantityScope.CONTROLLER_TURN_LIFE_LOSS:
+        capabilities.update(CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES)
+        template = CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE
     return (
-        "continuous-self-query-characteristics-v1",
+        template,
         {
             "handler_id": "ability.static.query-characteristic-modifier.v1",
             "schema_version": 1,

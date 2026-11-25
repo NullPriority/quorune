@@ -39,6 +39,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "next_spell_uncounterable",
                 "grant_next_spell_cost_reduction",
                 "grant_uncounterable_hexproof_from_colors_until_end",
+                "grant_turn_spell_source_color_protection",
                 "veil_of_summer",
             }
         ),
@@ -132,6 +133,8 @@ EFFECT_FAMILY_CONTRACTS = (
                 "lose_life_each_opponent",
                 "lose_life_equal_mana_value",
                 "set_life_total",
+                "exchange_life_and_source_characteristic",
+                "exchange_two_life_totals",
             }
         ),
     ),

@@ -7,7 +7,9 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face, prospective_face_view
 from ..entry_counter_model import (
     DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID,
+    CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
     DynamicEntryCounterAmountSpec,
+    DynamicEntryCounterValueSource,
     EntryCounterError,
 )
 from ..entry_counters import dynamic_entry_counter_amount
@@ -27,6 +29,65 @@ from .zone_replacement_model import (
 
 
 SELF_ENTRY_COUNTER_HANDLER_ID = "replacement.zone.self-entry-counter.v1"
+ENTRY_COUNTER_TRANSFER_HANDLER_ID = "zone.entry.permanent-counter-transfer.v1"
+ENTRY_COUNTER_TRANSFER_DEPENDENCIES = (
+    "counter.removal.all_effect", "counter.placement.quantity_replacement",
+    "zone.change.destination_replacement",
+)
+
+
+@dataclass(frozen=True, slots=True)
+class EntryCounterTransferHandler:
+    handler_id: str = ENTRY_COUNTER_TRANSFER_HANDLER_ID
+    schema_version: int = 1
+    family: str = "replacement.zone.entry-counter-transfer"
+    event: str = "zone.change"
+    rule_references: tuple[str, ...] = ("122.6", "614.1c", "614.12", "616.1")
+    capability_dependencies: tuple[str, ...] = ENTRY_COUNTER_TRANSFER_DEPENDENCIES
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="entry counter transfer")
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version):
+            raise SemanticNodeError("Entry counter transfer requires the exact version-one entry component")
+        return self
+
+    def lower(self, descriptor, context):
+        self.validate(descriptor)
+        return ()
+
+    def subject_replacement_effects(self, descriptor, *, subject, component_id, host, simultaneous_departures=()):
+        self.validate(descriptor)
+        if subject.destination != "battlefield" or subject.origin == "battlefield":
+            return ()
+        if host is None or subject.destination_controller not in host.active_seats:
+            raise SemanticNodeError("Entry counter transfer requires a live destination controller")
+        from ..counter_removal import snapshot_all_permanent_counter_removals
+        from ..replacement.counted_entry_counters import TransferEntryCounters
+
+        removals = tuple(sorted(snapshot_all_permanent_counter_removals(host), key=lambda row: row.key))
+        if not removals:
+            return ()
+        operation = TransferEntryCounters(subject.object_ref, subject.destination_controller, removals)
+        return (ReplacementEffect(
+            effect_id=f"{self.handler_id}:{subject.object_ref}:{component_id}",
+            source_id=subject.object_ref, event_kind=self.event, replacement_class=ReplacementClass.OTHER,
+            conditions={"destination": {"eq": "battlefield"}, "object_ref": {"eq": subject.object_ref}},
+            operations=(operation,), label=f"{subject.object_ref}: transfer permanent counters on entry",
+        ),)
+
+
+def entry_counter_transfer_runtime_dependencies(program):
+    descriptors = tuple(row for row in program.handlers
+                        if row.get("handler_id") == ENTRY_COUNTER_TRANSFER_HANDLER_ID)
+    if not descriptors:
+        return ()
+    if (len(program.handlers) != 1 or (program.event, program.active_zone) != ("zone.change", "all")
+            or program.target_schema is not None or program.cost_schema is not None or program.effects
+            or program.event_condition is not None or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
+        raise ValueError("Entry counter transfer needs its original untargeted intrinsic component")
+    EntryCounterTransferHandler().validate(descriptors[0])
+    return ENTRY_COUNTER_TRANSFER_DEPENDENCIES
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,6 +219,17 @@ class SelfTappedCounterEntryHandler(SelfEntryCounterHandler):
         return replace(effect,operations=(SetField('tapped',True),*effect.operations))
 
 
+def current_life_entry_runtime_dependencies(program):
+    handler = DynamicSelfEntryCounterHandler()
+    for descriptor in program.handlers:
+        if descriptor.get("handler_id") != DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID:
+            continue
+        spec = handler.validate(descriptor).amount_spec
+        if spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL:
+            return (CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,)
+    return ()
+
+
 @dataclass(frozen=True, slots=True)
 class DynamicSelfEntryCounterNode:
     counter_name: str
@@ -244,6 +316,10 @@ class DynamicSelfEntryCounterHandler:
             raise SemanticNodeError(str(exc)) from exc
         if amount_spec.mana_color is not None and not complete:
             raise SemanticNodeError('Paid-color entry counters require complete-card admission')
+        if amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL and (
+            not complete or descriptor["counter_name"] != "charge" or descriptor["rule_id"] != "614.1c"
+        ):
+            raise SemanticNodeError("Life-total entry counters require the exact complete charge counter instruction")
         return DynamicSelfEntryCounterNode(
             counter_name=descriptor["counter_name"],
             amount_spec=amount_spec,
@@ -439,6 +515,13 @@ def subject_dynamic_self_entry_amounts(
         destination_controller=destination_controller,
         prospective_name=prospective_name,
         mana_colors_spent=tuple(mana_colors_spent.get(card.object_id, ())),
+    )
+
+
+def intrinsic_entry_counter_handlers():
+    return (
+        DynamicSelfEntryCounterHandler(), EntryCounterTransferHandler(),
+        SelfEntryCounterHandler(), SelfTappedCounterEntryHandler(),
     )
 
 

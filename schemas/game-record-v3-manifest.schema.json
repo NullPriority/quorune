@@ -96,6 +96,10 @@
       "additionalProperties": true,
       "properties": {
         "land_entry_affordability_version": { "type": "integer", "const": 1 },
+        "priority_concession_stabilization_version": { "type": "integer", "const": 1 },
+        "battlefield_entry_player_version": { "type": "integer", "const": 1 },
+        "evolve_entrant_lki_version": { "type": "integer", "const": 1 },
+        "discard_effect_origin_version": {"type": "integer", "const": 1},
         "declare_attack_cast_version": {
           "const": 1,
           "type": "integer"
@@ -167,8 +171,11 @@
           "const": 1,
           "type": "integer"
         },
-        "priority_concession_stabilization_version": { "type": "integer", "const": 1 },
         "shield_counter_damage_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "damage_prevention_result_version": {
           "const": 1,
           "type": "integer"
         },
@@ -181,6 +188,10 @@
           "type": "integer"
         },
         "face_status_timestamp_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "face_down_departure_reveal_version": {
           "const": 1,
           "type": "integer"
         },

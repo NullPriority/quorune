@@ -3,9 +3,24 @@ from . import regex_working_set as re
 from ..counter_names import normalized_counter_name
 
 
+def _is_controller_life_gain(binding):
+    return (binding.event.value == "life.gained" and binding.variant == "controller_life_gain"
+            and binding.event_condition == {"field": "player", "op": "eq", "value": "$source.controller"})
+
+
+def life_gain_counted_self_growth_result(text, *, binding):
+    if not _is_controller_life_gain(binding):
+        return None
+    if not re.fullmatch(
+        r"This creature gets \+X/\+X until end of turn, where X is the amount of life you gained\.?",
+        text.strip(), re.I,
+    ):
+        return None
+    return "This creature gets +that much/+that much until end of turn."
+
+
 def life_gain_counted_counter_result(text, *, binding):
-    if (binding.event.value != 'life.gained' or binding.variant != 'controller_life_gain'
-            or binding.event_condition != {'field': 'player', 'op': 'eq', 'value': '$source.controller'}):
+    if not _is_controller_life_gain(binding):
         return None
     match = re.fullmatch(r'Put (?:a|an|one) (?P<counter>[A-Za-z0-9+/-]+) counter on '
         r'(?P<receiver>target creature|this creature|enchanted creature) for each 1 life you gained\.',
@@ -20,8 +35,7 @@ def life_gain_counted_counter_result(text, *, binding):
 
 
 def life_gain_counted_counter_payment(text, *, binding, compile_result):
-    if (binding.event.value != 'life.gained' or binding.variant != 'controller_life_gain'
-            or binding.event_condition != {'field': 'player', 'op': 'eq', 'value': '$source.controller'}):
+    if not _is_controller_life_gain(binding):
         return None
     from .optional_payment_templates import fixed_optional_mana_payment_template
     from ..fixed_effect_payment import FixedEffectPaymentSpec

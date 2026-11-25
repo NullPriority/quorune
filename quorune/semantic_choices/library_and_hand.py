@@ -494,6 +494,7 @@ class DiscardDrawChoiceHandler:
                     reason=str(effect["_stack_label"]),
                     transition_kind=ZoneTransitionKind.DISCARD,
                     owned_only=True,
+                    discard_effect_origin=getattr(query, "discard_effect_origin", None),
                 )
             )
         intents.append(

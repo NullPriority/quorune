@@ -24,6 +24,9 @@ if TYPE_CHECKING:
 COMMANDER_PAIRING_TEMPLATE_ID = "commander-pairing-eligibility-v1"
 COMMANDER_PAIRING_EVENT = "game.setup"
 COMMANDER_PAIRING_COVERAGE = "commander_pairing_eligibility"
+PRINTED_COMMANDER_ELIGIBILITY_CAPABILITY = "format.commander.printed_eligibility"
+PRINTED_COMMANDER_ELIGIBILITY_COVERAGE = "printed_commander_eligibility"
+PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE = "printed-commander-eligibility-v1"
 PARTNER_WITH_SEARCH_CAPABILITY_ID = "library.search.partner_with_named_to_hand"
 PARTNER_WITH_SEARCH_MECHANIC_ID = "partner-with-entry-search"
 PARTNER_WITH_SEARCH_TEMPLATE_ID = "partner-with-entry-search-v1"
@@ -348,10 +351,140 @@ def validate_commander_pair(
     )
 
 
+def _has_printed_commander_permission(
+    card_db: "CardDatabase",
+    registry: PairingProgramRegistry | None,
+    card: "CardRecord",
+    capability_profile: str,
+) -> bool:
+    """Accept one current, unconditional setup declaration for the front face."""
+    if registry is None:
+        return False
+
+    from .card_program_faces import program_matches_face
+    from .card_programs.validation import (
+        canonical_program_fingerprint,
+        program_source_is_current,
+    )
+    from .rules.capabilities import load_default_capability_registry
+
+    declarations = [
+        program for program in registry.programs_for_oracle(
+            card.oracle_id, active_zone="all", event=COMMANDER_PAIRING_EVENT
+        )
+        if program.provenance.get("template_id") == PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
+        and program_matches_face(card, program)
+    ]
+    if len(declarations) != 1:
+        return False
+    program = declarations[0]
+    required = [PRINTED_COMMANDER_ELIGIBILITY_CAPABILITY]
+    if (
+        program.oracle_id != card.oracle_id
+        or program.trust_level != "trusted"
+        or program.requires_arbiter
+        or not program.ability_id.startswith("static:")
+        or program.capability_dependencies != required
+        or PRINTED_COMMANDER_ELIGIBILITY_COVERAGE not in program.coverage
+        or program.handlers
+        or program.effects
+        or program.target_schema is not None
+        or program.cost_schema is not None
+        or program.event_condition is not None
+    ):
+        return False
+    closure = load_default_capability_registry().closure(required, profile=capability_profile)
+    return (
+        closure.trusted
+        and program.capability_closure == closure.to_dict()
+        and canonical_program_fingerprint(registry, program) is not None
+        and program_source_is_current(card_db, program)
+    )
+
+
+
+def _has_off_battlefield_creature_eligibility(
+    card_db: "CardDatabase",
+    registry: PairingProgramRegistry | None,
+    card: "CardRecord",
+    capability_profile: str,
+) -> bool:
+    """Use a compiled front-face characteristic change during deck setup."""
+    if registry is None:
+        return False
+    from .card_program_faces import program_matches_face
+    from .card_programs.admission import program_has_complete_card_program_admission
+    from .card_programs.validation import canonical_program_fingerprint, program_source_is_current
+    from .off_battlefield_creatures import (
+        OFF_BATTLEFIELD_SELF_CREATURE_CAPABILITY, OFF_BATTLEFIELD_SELF_CREATURE_HANDLER,
+    )
+    from .rules.capabilities import load_default_capability_registry
+    from .semantic_runtime.off_battlefield_creatures import OffBattlefieldSelfCreatureHandler
+
+    matches = [
+        program for program in registry.programs_for_oracle(card.oracle_id, active_zone="all", event="continuous")
+        if len(program.handlers) == 1
+        and program.handlers[0].get("handler_id") == OFF_BATTLEFIELD_SELF_CREATURE_HANDLER
+        and program_matches_face(card, program)
+    ]
+    if len(matches) != 1:
+        return False
+    program = matches[0]
+    required = [OFF_BATTLEFIELD_SELF_CREATURE_CAPABILITY]
+    if (program.oracle_id != card.oracle_id or program.trust_level != "trusted"
+            or program.requires_arbiter or program.provenance.get("granted_only")
+            or not program.ability_id.startswith("static:")
+            or program.capability_dependencies != required or program.effects
+            or program.target_schema is not None or program.cost_schema is not None
+            or program.event_condition is not None
+            or not program_has_complete_card_program_admission(program)
+            or canonical_program_fingerprint(registry, program) is None
+            or not program_source_is_current(card_db, program)):
+        return False
+    closure = load_default_capability_registry().closure(required, profile=capability_profile)
+    if not closure.trusted or program.capability_closure != closure.to_dict():
+        return False
+    try:
+        OffBattlefieldSelfCreatureHandler().validate(program.handlers[0])
+    except ValueError:
+        return False
+    return True
+
+
+def _validate_single_commander(
+    card_db: "CardDatabase",
+    registry: PairingProgramRegistry | None,
+    card: "CardRecord",
+    capability_profile: str,
+) -> None:
+    front = card.faces[0] if card.faces else None
+    type_line = str(front.get("type_line") or "") if front is not None else card.type_line
+    card_types, subtypes, supertypes = type_parts(type_line)
+    power = front.get("power") if front is not None else card.power
+    toughness = front.get("toughness") if front is not None else card.toughness
+    if "legendary" in supertypes and (
+        "creature" in card_types
+        or "vehicle" in subtypes
+        or ("spacecraft" in subtypes and power and toughness)
+    ):
+        return
+    if "legendary" in supertypes and _has_off_battlefield_creature_eligibility(
+        card_db, registry, card, capability_profile,
+    ):
+        return
+    if "planeswalker" in card_types and _has_printed_commander_permission(
+        card_db, registry, card, capability_profile
+    ):
+        return
+    raise ValueError(f"{card.name} lacks supported eligibility as a single commander")
+
+
 def validated_commander_counts(
     card_db: "CardDatabase",
     registry: PairingProgramRegistry | None,
     deck: "DeckDefinition",
+    *,
+    strict_profile: str | None = None,
 ) -> dict[str, int]:
     """Validate one deck's physical and typed Commander designations."""
 
@@ -388,6 +521,8 @@ def validated_commander_counts(
             )
     if len(commander_records) == 2:
         validate_commander_pair(card_db, registry, commander_records)
+    if len(commander_records) == 1 and strict_profile is not None:
+        _validate_single_commander(card_db, registry, commander_records[0], strict_profile)
     return dict(commander_counts)
 
 

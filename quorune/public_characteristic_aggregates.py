@@ -6,8 +6,10 @@ from collections.abc import Sequence
 from dataclasses import replace
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION
 from .continuous_effect_model import Layer
-from .object_query import exact_numeric_characteristic,object_matches_query,object_query_result
-from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec,PUBLIC_STAT_AGGREGATE_CAPABILITY
+from .object_query import ObjectQueryResult,exact_numeric_characteristic,object_matches_query,object_query_result
+from .public_characteristic_aggregate_model import (
+    CONTROLLED_CREATURES_POWER_QUERY, PUBLIC_STAT_AGGREGATE_CAPABILITY, PublicCharacteristicAggregateSpec,
+)
 from .public_quantity_reductions import public_mana_value
 
 
@@ -22,6 +24,28 @@ def reduce_public_characteristic_values(values: Sequence[int | None], reduction:
     if reduction == "maximum":
         return max(values, default=0)
     raise ValueError("Public characteristic aggregate reduction is unsupported")
+
+
+def greatest_power_creatures(rows: Sequence[ObjectQueryResult]) -> tuple[ObjectQueryResult, ...]:
+    """Return all tied creatures at the highest signed current battlefield power."""
+
+    creatures = tuple(row for row in rows if object_matches_query(row, CONTROLLED_CREATURES_POWER_QUERY))
+    if not creatures:
+        return ()
+    maximum = reduce_public_characteristic_values(tuple(row.effective_power for row in creatures), "maximum")
+    return tuple(row for row in creatures if row.effective_power == maximum)
+
+
+def current_creature_power_control(
+    rows: Sequence[ObjectQueryResult], controller: str, *, require_all: bool,
+) -> bool | None:
+    """Compare the controller with the actual ties at the highest signed creature power."""
+
+    try:
+        controllers = {row.controller for row in greatest_power_creatures(rows)}
+    except ValueError:
+        return None
+    return controllers == {controller} if require_all else controller in controllers
 
 
 def current_public_characteristic_aggregate(host,controller:str,spec:PublicCharacteristicAggregateSpec):

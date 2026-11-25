@@ -233,7 +233,7 @@ class LimitedEventTriggerRuntimeTests(unittest.TestCase):
         session=self.session(301004);engine=session.engine
         observer=self.add(engine,'Dusk Legion Duelist')
         throne=self.add(engine,'Roaming Throne')
-        throne.annotations['chosen_creature_type']='Vampire'
+        throne.annotations['chosen_creature_type']='vampire'
         throne.annotations['chosen_creature_type_adds_subtype']=True
         resonator=self.add(engine,'Strionic Resonator')
         spell=self.add(engine,'Generic Counter Event Two',zone='hand')

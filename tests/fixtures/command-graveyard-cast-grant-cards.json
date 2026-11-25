@@ -1,0 +1,129 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Hero's Downfall",
+      "oracle_id": "03df6a57-37c9-46d3-83b3-4a6240100714",
+      "oracle_text": "Destroy target creature or planeswalker.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "5",
+      "mana_cost": "{2}{R}{R}{R}",
+      "name": "Jaya Ballard",
+      "oracle_id": "a56c5ca5-70eb-4d5f-8116-2acbe5f5a3cb",
+      "oracle_text": "+1: Add {R}{R}{R}. Spend this mana only to cast instant or sorcery spells.\n+1: Discard up to three cards, then draw that many cards.\n−8: You get an emblem with \"You may cast instant and sorcery spells from your graveyard. If a spell cast this way would be put into your graveyard, exile it instead.\"",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Jaya"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Jaya’s emblem doesn’t grant you permission to do anything with instant and sorcery cards in your graveyard except cast them. For example, you can’t cycle instant or sorcery cards with cycling from your graveyard.",
+      "oracle_id": "a56c5ca5-70eb-4d5f-8116-2acbe5f5a3cb",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mana produced by Jaya’s first ability can be spent among any number of instant and/or sorcery spells.",
+      "oracle_id": "a56c5ca5-70eb-4d5f-8116-2acbe5f5a3cb",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many cards to discard while Jaya’s second ability is resolving. You can choose to discard zero cards this way (and then draw zero cards) if you wish.",
+      "oracle_id": "a56c5ca5-70eb-4d5f-8116-2acbe5f5a3cb",
+      "published_at": "2018-04-27",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because it’s a loyalty ability, Jaya’s first ability isn’t a mana ability. It can be activated only any time you could cast a sorcery. It uses the stack and can be responded to.",
+      "oracle_id": "a56c5ca5-70eb-4d5f-8116-2acbe5f5a3cb",
+      "published_at": "2018-06-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

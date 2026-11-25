@@ -23,6 +23,8 @@ BOUND_REFLEXIVE_PROGRAM_VERSIONS = frozenset({BOUND_REFLEXIVE_PROGRAM_VERSION, S
 SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY = 'trigger.reflexive.selected_sacrifice'
 REFLEXIVE_PAID_CREATURE_CONTEXT = 'reflexive_paid_creature'
 TOKEN_CREATION_REFLEXIVE_FIELD = 'token_creation_reflexive'
+SOURCE_COUNTER_REFLEXIVE_FIELD = 'source_counter_reflexive'
+THIRD_SOURCE_TRIGGER_FIELD = 'third_source_resolution_reflexive'
 
 
 def _values(value):
@@ -38,6 +40,8 @@ def bound_reflexive_has_targets(effects):
         operation = effect.get('op')
         if operation == 'create_token':
             child = effect.get(TOKEN_CREATION_REFLEXIVE_FIELD)
+        elif operation == 'place_counters':
+            child = effect.get(SOURCE_COUNTER_REFLEXIVE_FIELD, effect.get(THIRD_SOURCE_TRIGGER_FIELD))
         elif operation == 'offer_optional_mana_payment' and effect.get('schema_version') == 4:
             child = effect.get('reflexive_program')
         else:

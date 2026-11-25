@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_upkeep_self_tap",
+  "source": "Constructed fixed upkeep source examples",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000994",
+      "name": "Generic Upkeep Life Alternative 1",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Creature — Construct",
+      "oracle_text": "At the beginning of your upkeep, tap this creature unless you pay 1 life.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000000995",
+      "name": "Generic Upkeep Life Alternative 2",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Creature — Construct",
+      "oracle_text": "At the beginning of your upkeep, tap this creature unless you pay 2 life.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

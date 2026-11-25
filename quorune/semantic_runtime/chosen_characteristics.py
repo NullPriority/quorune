@@ -5,11 +5,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
 
-from ..continuous_effects import ContinuousEffect
+from ..ability_fragments import ProtectionQualityKind, ProtectionSpec, ability_fragment_to_dict
+from ..continuous_effect_model import (
+    ContinuousEffect, ContinuousEffectOrigin, ContinuousEffectRelation,
+    ContinuousObjectIdentity, ContinuousOperation, Layer,
+)
 from ..entry_designations import (
     CHOSEN_CHARACTERISTICS_CAPABILITY,
     CHOSEN_CHARACTERISTICS_HANDLER_ID,
     EntryDesignationKind,
+    LINKED_PLAYER_PROTECTION_CAPABILITIES,
+    LINKED_PLAYER_PROTECTION_HANDLER_ID,
     validate_designation,
 )
 from ..object_predicate import ObjectQuerySpec
@@ -18,6 +24,21 @@ from .context import SemanticNodeError
 
 if TYPE_CHECKING:
     from .continuous_components import ContinuousEffectSourceContext
+
+
+CHOSEN_SOURCE_COUNTER_ANTHEM_CAPABILITY = "continuous.power_toughness.chosen_source_counter_anthem"
+SOURCE_COUNTER_ANTHEM_HANDLER = "continuous.anthem.source-counter-query.v3"
+_SOURCE_COUNTER_CREATURES = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+
+
+def chosen_source_counter_anthem_dependencies(descriptor: Mapping[str, Any]) -> tuple[str, ...]:
+    if descriptor.get("handler_id") != CHOSEN_CHARACTERISTICS_HANDLER_ID:
+        return ()
+    body = descriptor.get("body")
+    if not isinstance(body, Mapping) or body.get("handler_id") != SOURCE_COUNTER_ANTHEM_HANDLER:
+        return ()
+    ChosenCharacteristicsHandler().validate(descriptor)
+    return (CHOSEN_SOURCE_COUNTER_ANTHEM_CAPABILITY,)
 
 
 @dataclass(frozen=True, slots=True)
@@ -58,6 +79,7 @@ class ChosenCharacteristicsHandler:
             FixedQueryCharacteristicGrantHandler(),
             FixedQueryKeywordGrantHandler(),
             FixedQueryPowerToughnessAnthemHandler(),
+            FixedQueryPowerToughnessAnthemHandler(handler_id=SOURCE_COUNTER_ANTHEM_HANDLER, schema_version=3),
         )
         for handler in handlers:
             if body.get("handler_id") == handler.handler_id:
@@ -71,6 +93,14 @@ class ChosenCharacteristicsHandler:
                     raise SemanticNodeError(
                         "Chosen characteristic body requires one unqualified creature query"
                     )
+                if handler.handler_id == SOURCE_COUNTER_ANTHEM_HANDLER and (
+                    kind is not EntryDesignationKind.CREATURE_TYPE
+                    or node.predicate != _SOURCE_COUNTER_CREATURES
+                    or node.target_controller != "source_controller"
+                    or node.exclude_source
+                    or (node.power, node.toughness) != (1, 1)
+                ):
+                    raise SemanticNodeError("Chosen source counter anthem requires controlled creatures and +1/+1 scaling")
                 return kind, body, handler
         raise SemanticNodeError("Chosen characteristic body owner is unsupported")
 
@@ -93,3 +123,53 @@ class ChosenCharacteristicsHandler:
         raw["colors_all" if kind is EntryDesignationKind.COLOR else "subtypes_all"] = [value]
         condition["predicate"] = ObjectQuerySpec.from_dict(raw).to_dict()
         return handler.lower({**body, "condition": condition}, context)
+
+
+def linked_player_protection_descriptor() -> dict[str, Any]:
+    return {"handler_id": LINKED_PLAYER_PROTECTION_HANDLER_ID,
+            "schema_version": 1, "event": "characteristics.evaluate"}
+
+
+@dataclass(frozen=True, slots=True)
+class LinkedPlayerProtectionHandler:
+    handler_id: str = LINKED_PLAYER_PROTECTION_HANDLER_ID
+    schema_version: int = 1
+    family: str = "continuous.characteristics.linked_player_protection"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("607.2d", "613.1f", "614.12a", "702.16k")
+    capability_dependencies: tuple[str, ...] = LINKED_PLAYER_PROTECTION_CAPABILITIES
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="linked player protection")
+        if type(descriptor["schema_version"]) is not int or dict(descriptor) != linked_player_protection_descriptor():
+            raise SemanticNodeError("Linked player protection requires its current source component")
+
+    def may_affect_static_components(self, descriptor: Mapping[str, Any]) -> bool:
+        return False
+
+    def lower(
+        self, descriptor: Mapping[str, Any], context: ContinuousEffectSourceContext,
+    ) -> tuple[ContinuousEffect, ...]:
+        self.validate(descriptor)
+        if context.linked_player is None:
+            return ()
+        if context.source_logical_object_id is None:
+            raise SemanticNodeError("Linked player protection requires a source incarnation")
+        fragment = ProtectionSpec(ProtectionQualityKind.PLAYER, context.linked_player, 4)
+        return (
+            ContinuousEffect(
+                effect_id=f"{context.source_object_id}:{context.component_id}:6",
+                source_id=context.source_object_id,
+                timestamp=context.source_timestamp,
+                origin=ContinuousEffectOrigin.STATIC_ABILITY,
+                layer=Layer.ABILITY,
+                sublayer="6",
+                relation=ContinuousEffectRelation.SOURCE_OBJECT,
+                related_object=ContinuousObjectIdentity(context.source_object_id, context.source_logical_object_id),
+                applies=ObjectQuerySpec(zones=("battlefield",)),
+                operations=(
+                    ContinuousOperation("add_ability", "Protection"),
+                    ContinuousOperation("add_ability_fragment", ability_fragment_to_dict(fragment)),
+                ),
+            ),
+        )

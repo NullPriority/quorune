@@ -69,6 +69,33 @@ class ColoredRevealModelCompilerTests(unittest.TestCase):
         effect={'op':'damage','source':reveal_count(),'target':'$target.0','amount':1}
         with self.assertRaises(ValueError):ColoredRevealResult(FrozenMap(effect),None)
 
+    def test_activated_reveal_shape_requires_the_fixed_mana_and_tap_frame(self):
+        from quorune.rules.colored_hand_reveals import (
+            ACTIVATED_COLORED_REVEAL_CAPABILITY, colored_hand_reveal_program_dependencies,
+        )
+
+        spec = decode_colored_hand_reveal(compile_reveal(TEXTS[0])[1][0])
+        mana = {"GENERIC": 2, "W": 0, "U": 0, "B": 0, "R": 1, "G": 0, "C": 0}
+        cost = {"text": "{2}{R}, {T}", "mana": mana, "complex_symbols": [],
+            "tap_source": True, "untap_source": False, "discard_source": False,
+            "sacrifice_source": False, "exile_source": False, "life_payment": 0,
+            "energy_payment": 0, "loyalty_delta": None, "source_counter_removal_cost": None,
+            "choices": [], "uncompiled_costs": []}
+        body = {"effects": (spec.effect(),), "target_schema": thaw_value(spec.result.target_schema)}
+        program = Row(**body, event="activate", active_zone="battlefield", ability_id="ability:ab1",
+            cost_schema=cost, coverage=())
+        owned = colored_hand_reveal_program_dependencies(program)
+        self.assertIn(ACTIVATED_COLORED_REVEAL_CAPABILITY, owned)
+        self.assertIn(CAP, owned)
+        for malformed in (
+            {"tap_source": False}, {"mana": {**mana, "R": True}}, {"life_payment": 1},
+            {"choices": [{"kind": "unsupported"}]}, {"public_activation": {}},
+        ):
+            with self.subTest(malformed=malformed), self.assertRaisesRegex(ValueError, "fixed mana and tap"):
+                colored_hand_reveal_program_dependencies(Row(**{**vars(program), "cost_schema": {**cost, **malformed}}))
+        with self.assertRaisesRegex(ValueError, "fixed mana and tap"):
+            colored_hand_reveal_program_dependencies(Row(**{**vars(program), "active_zone": "graveyard"}))
+
     def test_owning_result_dependencies_are_derived_from_typed_instruction(self):
         from quorune.rules.colored_hand_reveals import colored_hand_reveal_program_dependencies
         spec=decode_colored_hand_reveal(compile_reveal(TEXTS[0])[1][0])
@@ -189,6 +216,85 @@ class ColoredRevealNativeTests(InheritedNativeFixture,unittest.TestCase):
                         binding=bind_semantic_program_runtime(changed,capability_registry=self.registry,profile='commander_review')
                         self.assertFalse(binding['strict'])
                         self.assertIn('capability:undeclared_runtime_dependency:'+missing,binding['blockers'])
+
+    def activate_reveal(self, session, source, target):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offered = next(row for row in actions if row["id"].startswith("activate:" + source.ref + ":"))
+        command = {"action_id": offered["id"], "targets": [target], "pay": "auto"}
+        self.reject(session, "D", command)
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+
+    def test_activated_reveal_keeps_the_original_controller_and_replays_after_source_departure(self):
+        session = self.session(714092)
+        self.trim(session)
+        source = self.add(session.engine, "Generic Red Assayer")
+        source.acquired_control_turn_count = -1
+        red = self.add(session.engine, "Lightning Bolt", zone="hand")
+        wrong = self.add(session.engine, "Boros Signet", zone="hand")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B")
+        private = self.add(session.engine, "Counterspell", seat="C", zone="hand", ref="activated-reveal-private")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "R": 1})
+        self.checkpoint(session)
+        self.activate_reveal(session, source, "D")
+        self.cast(session, "B", bounce, [source.ref])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.assertNotIn(red.ref, json.dumps(session.packet("pilot:D", full=True)))
+        self.reject(session, "A", {"action_id": "choose", "choices": {"cards": [wrong.ref]}})
+        session = self.replay(session, load=True)
+        self.choose_reveal(session, [red.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(39, session.state.players["D"].life)
+        self.assertTrue(set("ABCD") <= set(session.state.cards[red.object_id].known_to))
+        self.assertFalse(set("ABCD") <= set(session.state.cards[wrong.object_id].known_to))
+        self.finish(session, private)
+
+    def test_activated_reveal_revalidates_a_departed_target_before_showing_a_private_choice(self):
+        session = self.session(714093)
+        self.trim(session)
+        source = self.add(session.engine, "Generic Green Assayer")
+        source.acquired_control_turn_count = -1
+        green = self.add(session.engine, "Llanowar Elves", zone="hand")
+        target = self.add(session.engine, "Grizzly Bears", seat="B")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B")
+        private = self.add(session.engine, "Counterspell", seat="C", zone="hand", ref="activated-reveal-fizzle-private")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "G": 1})
+        self.checkpoint(session)
+        self.activate_reveal(session, source, target.ref)
+        self.cast(session, "B", bounce, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[target.object_id].zone)
+        self.assertFalse(set("ABCD") <= set(session.state.cards[green.object_id].known_to))
+        self.assertFalse([event for event in session.state.events if event.code == "card.reveal"])
+        self.finish(session, private)
+
+    def test_activated_reveal_withdrawal_and_owner_omission_block_the_complete_source(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.colored_hand_reveals import ACTIVATED_COLORED_REVEAL_CAPABILITY
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        owner = next(row for row in raw["capabilities"] if row["id"] == ACTIVATED_COLORED_REVEAL_CAPABILITY)
+        owner.update(status="blocked", blockers=["Test withdrawal of the colored reveal activation frame"])
+        withdrawn = CapabilityRegistry(raw)
+        for name in ("Generic Red Assayer", "Generic Green Assayer"):
+            with self.subTest(source=name):
+                record = self.db.lookup(name)
+                normal = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+                self.assertEqual("exact", normal.status)
+                blocked = compile_oracle_card(record, capability_registry=withdrawn, capability_profile="commander_review")
+                self.assertNotEqual("exact", blocked.status)
+                self.assertTrue(any(ACTIVATED_COLORED_REVEAL_CAPABILITY in item
+                    for residual in blocked.material_residuals for item in residual.blockers))
+                with patch("quorune.rules.colored_hand_reveals.colored_hand_reveal_activation_capabilities", return_value=()):
+                    omitted = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+                self.assertNotEqual("exact", omitted.status)
 
     def test_actual_damage_choice_reveals_only_selected_current_red_cards_and_keeps_cast_x(self):
         s=self.session(714000);self.trim(s);source=self.add(s.engine,NAMES[0],zone='hand')

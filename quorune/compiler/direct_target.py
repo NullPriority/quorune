@@ -314,6 +314,8 @@ def _simple_direct_type_fields(phrase: str) -> dict[str, Any] | None:
 
 
 def _excluded_direct_type_fields(phrase: str) -> dict[str, Any] | None:
+    if phrase == "nonartifact, nonblack creature":
+        return {"types_any": ("creature",), "types_none": ("artifact",), "colors_none": ("B",)}
     match=re.fullmatch(r'non(?P<excluded>artifact|creature|enchantment|land) (?P<body>.+)',phrase)
     if match is None:return None
     fields=_simple_direct_type_fields(match['body'])
@@ -729,6 +731,8 @@ class DirectPermanentTargetSpec:
     commander: bool | None = None
     combat_state: str | None = None
     damage_history: TargetDamageHistorySpec | None = None
+    controller_controls_island: bool = False
+    power_at_most_controlled_islands: bool = False
     characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
 
     def __post_init__(self) -> None:
@@ -745,6 +749,17 @@ class DirectPermanentTargetSpec:
         _validate_public_state_predicate(self)
         _validate_direct_target_flags(self)
         _validate_damage_history_predicate(self)
+        island_flags = (self.controller_controls_island, self.power_at_most_controlled_islands)
+        if any(type(flag) is not bool for flag in island_flags) or all(island_flags):
+            raise ValueError("A direct creature target can specify at most one Island qualification")
+        if any(island_flags):
+            schema = self.to_target_schema()
+            del schema["predicate"]
+            if schema not in (
+                DirectPermanentTargetSpec(types_any=("creature",)).to_target_schema(),
+                DirectPermanentTargetSpec(types_all=("creature",)).to_target_schema(),
+            ):
+                raise ValueError("An Island qualification requires the exact creature target role")
 
     @property
     def characteristic_slug(self) -> str:
@@ -845,6 +860,10 @@ class DirectPermanentTargetSpec:
                 predicate += "-with-" + direct_target_slug(
                     state.counter_name
                 ) + "-counter"
+        if self.controller_controls_island:
+            predicate += "-controller-controls-island"
+        if self.power_at_most_controlled_islands:
+            predicate += "-power-at-most-controlled-islands"
         if self.combat_state is not None:
             predicate += "-" + self.combat_state.replace("_", "-")
         if self.damage_history is not None:
@@ -938,6 +957,11 @@ class DirectPermanentTargetSpec:
             schema["commander"] = self.commander
         if self.combat_state is not None:
             schema["combat_state"] = self.combat_state
+        if self.controller_controls_island or self.power_at_most_controlled_islands:
+            from ..targets import CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE
+            schema["predicate"] = (
+                CONTROLLER_ISLAND_TARGET_PREDICATE if self.controller_controls_island else ISLAND_COUNT_POWER_TARGET_PREDICATE
+            )
         if self.damage_history is not None:
             schema["damage_history"] = self.damage_history.to_dict()
         if self.characteristic_forms_any:
@@ -983,9 +1007,15 @@ class DirectPermanentTargetSpec:
             "source_exclusion",
             "token",
             "combat_state",
+            "predicate",
             "damage_history",
             *(('commander',) if allow_commander else ()),
         }
+        from ..targets import CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE
+        if "predicate" in schema and schema["predicate"] not in (
+            CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE,
+        ):
+            raise ValueError("Direct permanent target predicate is unsupported")
         if set(schema) - allowed:
             raise ValueError("Direct permanent target schema has unknown fields")
         if (
@@ -1040,6 +1070,8 @@ class DirectPermanentTargetSpec:
             source_exclusion=source_exclusion,
             token=schema.get("token"),
             commander=schema.get("commander"),
+            controller_controls_island=schema.get("predicate") == CONTROLLER_ISLAND_TARGET_PREDICATE,
+            power_at_most_controlled_islands=schema.get("predicate") == ISLAND_COUNT_POWER_TARGET_PREDICATE,
             combat_state=schema.get("combat_state"),
             damage_history=(
                 TargetDamageHistorySpec.from_mapping(schema["damage_history"])
@@ -1115,6 +1147,10 @@ def direct_permanent_target_spec(
     if type(subject) is not str:
         return None
     phrase = " ".join(subject.casefold().split())
+    if phrase == "target creature whose controller controls an island":
+        return DirectPermanentTargetSpec(types_any=("creature",), controller_controls_island=True)
+    if phrase == "target creature with power less than or equal to the number of islands you control":
+        return DirectPermanentTargetSpec(types_any=("creature",), power_at_most_controlled_islands=True)
     exclude_source = phrase.startswith("another target ")
     if exclude_source:
         phrase = phrase[len("another target ") :]

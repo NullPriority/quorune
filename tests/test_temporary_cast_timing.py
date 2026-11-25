@@ -14,6 +14,11 @@ from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.rules.land_play_permissions import (
+    TURN_LAND_PLAY_ALLOWANCE_CAPABILITY, TURN_LAND_PLAY_ALLOWANCE_FIELD, TURN_LAND_PLAY_ALLOWANCE_STAT,
+    additional_land_plays_this_turn, turn_land_plays_effect_amount,
+)
+from quorune.semantic_runtime.action_permissions import land_play_accounting, land_play_permission_options
 from quorune.rules.temporary_cast_timing import (
     TEMPORARY_CAST_TIMING_CAPABILITY, TEMPORARY_CAST_TIMING_FIELD, TemporaryCastTimingScope,
     temporary_cast_timing_effect_scope,
@@ -322,6 +327,100 @@ class TemporaryCastTimingTests(unittest.TestCase):
         self.assertIsNone(self.offer(session, "A", dryad, "play_land"))
         self.assertIsNone(self.resolve(session))
         self.replay(session)
+
+    def test_resolved_land_allowances_stack_over_completed_plays_and_replay(self):
+        session = self.session(70208013)
+        engine = session.engine
+        survey = self.add(engine, "Generic Turn Land Survey", zone="hand")
+        burst = self.add(engine, "Generic Turn Land Burst", zone="hand")
+        lands = [
+            self.add(engine, "Mountain", ref=f"turn-land-allowance-{slot}", zone="hand")
+            for slot in range(6)
+        ]
+        self.assert_closed(session, survey)
+        self.assert_closed(session, burst)
+        program, = [
+            program for program in engine.semantics.programs_for_oracle(survey.oracle_id)
+            if TURN_LAND_PLAY_ALLOWANCE_CAPABILITY in program.capability_dependencies
+        ]
+        self.assertEqual(["grant_cast_permission", "draw"], [effect["op"] for effect in program.effects])
+        self.assertEqual(1, program.effects[0][TURN_LAND_PLAY_ALLOWANCE_FIELD])
+        self.prepare(session, mana={"G": 2, "C": 2})
+        self.checkpoint(session)
+
+        first = session.act("pilot:A", {"action_id": f"play-land:{lands[0].ref}"})
+        self.assertTrue(first.ok, first.summary)
+        self.assertEqual((1, 1), land_play_accounting(engine, "A"))
+        self.assertEqual((), land_play_permission_options(engine, "A"))
+
+        hand_before = len(session.state.players["A"].zones["hand"])
+        self.cast_for(session, "A", survey)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(hand_before, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual(1, len(land_play_permission_options(engine, "A")))
+        self.cast_for(session, "A", burst)
+        self.assertIsNone(self.resolve(session))
+        turn = session.state.turn_sequence
+        self.assertEqual(4, additional_land_plays_this_turn(session.state.players["A"].stats, turn))
+        self.assertEqual(0, additional_land_plays_this_turn(session.state.players["D"].stats, turn))
+        self.assertEqual(4, len(land_play_permission_options(engine, "A")))
+
+        command = {"action_id": f"play-land:{lands[1].ref}"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        for land in lands[1:5]:
+            accepted = session.act("pilot:A", {"action_id": f"play-land:{land.ref}"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual((1, 5), land_play_accounting(engine, "A"))
+        self.assertIsNone(self.offer(session, "A", lands[-1], "play_land"))
+        self.replay(session)
+
+    def test_resolved_land_allowance_expires_at_cleanup(self):
+        session = self.session(70208014)
+        burst = self.add(session.engine, "Generic Turn Land Burst", zone="hand")
+        self.assert_closed(session, burst)
+        self.prepare(session, mana={"G": 1, "C": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", burst)
+        self.assertIsNone(self.resolve(session))
+        turn = session.state.turn_sequence
+        self.assertEqual(4, len(land_play_permission_options(session.engine, "A")))
+
+        self.until(session, lambda game: game.state.turn_sequence > turn and game.state.pending_decision is not None)
+        self.assertNotIn(TURN_LAND_PLAY_ALLOWANCE_STAT, session.state.players["A"].stats)
+        self.assertEqual(1, len(land_play_permission_options(session.engine, session.state.active_player)))
+        self.replay(session, load=True)
+
+    def test_turn_land_allowance_rejects_malformed_and_unowned_grants(self):
+        session = self.session(70208015)
+        source = self.add(session.engine, "Generic Turn Land Survey", zone="hand")
+        self.assert_closed(session, source)
+        program, = [
+            program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+            if TURN_LAND_PLAY_ALLOWANCE_CAPABILITY in program.capability_dependencies
+        ]
+        grant = program.effects[0]
+        self.assertEqual(1, turn_land_plays_effect_amount(grant))
+        for change in ({TURN_LAND_PLAY_ALLOWANCE_FIELD: True}, {TURN_LAND_PLAY_ALLOWANCE_FIELD: 4},
+                       {TURN_LAND_PLAY_ALLOWANCE_FIELD: 0}, {"player": "B"}, {"schema_version": 2},
+                       {"op": "draw"}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                turn_land_plays_effect_amount({**grant, **change})
+        remaining = tuple(value for value in program.capability_dependencies if value != TURN_LAND_PLAY_ALLOWANCE_CAPABILITY)
+        omitted = replace(program, capability_dependencies=remaining,
+                          capability_closure=self.registry.closure(remaining, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(omitted, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + TURN_LAND_PLAY_ALLOWANCE_CAPABILITY, binding["blockers"])
+
+    def test_omitting_turn_land_allowance_leaves_a_material_residual(self):
+        card = self.db.lookup("Generic Turn Land Survey")
+        settings = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        self.assertEqual("exact", compile_oracle_card(card, **settings).status)
+        with patch("quorune.compiler.temporary_player_rule_templates._temporary_land_play_allowance_template", return_value=None):
+            changed = replace(card, oracle_id="turn-land-play-allowance-omission")
+            self.assertTrue(compile_oracle_card(changed, **settings).material_residuals)
 
     def test_borne_upon_a_wind_reuses_flashback_without_granting_zone_access(self):
         session = self.session(70208007)

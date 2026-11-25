@@ -88,3 +88,51 @@ def shadowed_reviewed_modal_catalog_keys(record,generated_programs,reviewed_prog
         if new_modes is None or old_modes is None or stable_json(new_modes)!=stable_json(old_modes):continue
         shadowed.add(old.key)
     return shadowed
+
+def shadowed_reviewed_color_modal_keys(record, generated_programs, reviewed_programs):
+    """Retire a source-matched legacy mode view from current admission."""
+    from ..compiler.modal_program_closure import is_closed_fixed_modal_program
+    from ..conditional_target_preparation_model import (
+        RESOLUTION_TARGET_COLOR_CAPABILITY, RESOLUTION_TARGET_COLOR_FIELD, resolution_target_color_primitive,
+    )
+
+    reviewed = {program.key: program for program in reviewed_programs}
+    result = set()
+    shell = ("ability_id", "version", "event", "active_zone", "destination", "requires_arbiter",
+             "event_condition", "cost_schema")
+    hashes = ("source_oracle_hash", "source_rulings_hash")
+    for program in generated_programs:
+        prior = reviewed.get(program.key)
+        if (prior is None or prior.oracle_id != program.oracle_id or program.oracle_id != record.oracle_id
+                or program.trust_level != "trusted" or prior.trust_level != "trusted"
+                or RESOLUTION_TARGET_COLOR_CAPABILITY not in program.capability_dependencies
+                or not program.capability_closure or program.capability_closure.get("trusted") is not True
+                or program.event != "resolve" or program.active_zone != "stack"
+                or program.effects or program.handlers or prior.effects or prior.handlers
+                or any(getattr(program, field) != getattr(prior, field) for field in shell)
+                or any(not program.provenance.get(key) or program.provenance[key] != prior.provenance.get(key)
+                       for key in hashes)
+                or not is_closed_fixed_modal_program(program)):
+            continue
+        current = _mode_values(thaw_value(program.target_schema))
+        if current is None or len(current) != 2:
+            continue
+        expected_modes = {}
+        for (target, effects), expected, operation in zip(
+            current, ("stack", "card"), ("counter", "destroy"), strict=True,
+        ):
+            if target is None or len(effects) != 1 or RESOLUTION_TARGET_COLOR_FIELD not in effects[0]:
+                break
+            field, color = resolution_target_color_primitive(effects[0])
+            if field != expected or color != "U":
+                break
+            expected_modes[operation] = {
+                **target,
+                "resolution_condition": {"colors_any": [color]},
+                "effects": [{"op": "counter_or_destroy_blue", "target": "$target.0"}],
+            }
+        if len(expected_modes) == 2 and thaw_value(prior.target_schema) == {
+            "mode_count": 1, "modes": expected_modes,
+        }:
+            result.add(prior.key)
+    return result

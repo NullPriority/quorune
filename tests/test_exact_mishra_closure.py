@@ -923,21 +923,28 @@ class ExactMishraClosureTests(unittest.TestCase):
             },
         )
         self.assertTrue(cast.ok, cast.summary)
+        choices = {"semantic.choice", "replacement.order"}
         for _ in range(16):
-            if engine.state.pending_decision.kind == "semantic.choice":
+            if engine.state.pending_decision.kind in choices:
                 break
             pass_current(session)
-        self.assertEqual("semantic.choice", engine.state.pending_decision.kind)
+        self.assertIn(engine.state.pending_decision.kind, choices)
         self.assertEqual("stack", throne.zone)
-        result = session.act(
-            "pilot:A",
-            {
+        if engine.state.pending_decision.kind == "replacement.order":
+            from quorune.entry_designations import SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID
+
+            options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            option, = (row["id"] for row in options if SELF_CHOSEN_SUBTYPE_ENTRY_HANDLER_ID in row["id"]
+                       and row["id"].endswith(":goblin"))
+            command = {"action_id": "choose", "replacement": option}
+        else:
+            command = {
                 "action_id": "choose",
                 "creature_type": "Goblin",
                 "plan": "SELECT_TYPE",
                 "reason": "Double the Goblin Engineer trigger.",
-            },
-        )
+            }
+        result = session.act("pilot:A", command)
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("battlefield", throne.zone)
         self.assertIn(

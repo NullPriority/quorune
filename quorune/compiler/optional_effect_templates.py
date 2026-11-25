@@ -31,6 +31,27 @@ _OPTIONAL_HAVE_RESULT = re.compile(
 )
 
 
+def _optional_source_departure_pair_is_closed(effects, target_schema, mechanics):
+    if len(effects) != 2 or not all(isinstance(effect, Mapping) for effect in effects):
+        return False
+
+    from ..linked_exile_return_model import LinkedExileReturnSpec
+    from ..rules.linked_exile_return_shapes import linked_exile_return_node_capabilities
+    from .direct_target import DirectPermanentTargetSpec
+
+    expected_target = DirectPermanentTargetSpec(
+        types_any=("creature",), controller_relation="opponent",
+    ).to_target_schema()
+    expected_spec = LinkedExileReturnSpec(schema_version=2, timing="source_departure").to_dict()
+    return (
+        target_schema == expected_target
+        and effects[0].get("spec") == expected_spec
+        and bool(linked_exile_return_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        ))
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class FixedOptionalEffectTemplate:
     """One resolution-time apply-or-decline choice around one closed clause."""
@@ -43,7 +64,13 @@ class FixedOptionalEffectTemplate:
     def __post_init__(self) -> None:
         if (
             not self.component_template_id
-            or (len(self._component_effects) != 1 and not optional_draw_discard_is_closed(self._component_effects,player='$controller'))
+            or (
+                len(self._component_effects) != 1
+                and not optional_draw_discard_is_closed(self._component_effects, player="$controller")
+                and not _optional_source_departure_pair_is_closed(
+                    self._component_effects, self._target_schema, self.mechanic_ids,
+                )
+            )
             or not self.mechanic_ids
             or self.mechanic_ids[0] != FIXED_OPTIONAL_EFFECT_MECHANIC
             or any(
@@ -103,6 +130,30 @@ class FixedOptionalEffectTemplate:
         )
 
 
+def optional_shared_source_type_trigger_result(binding, body):
+    if (binding.variant != "source_enters_or_attacks" or binding.active_zone != "battlefield"
+            or body != binding.body or " ".join(body.split()).casefold() != (
+                "you may draw a card for each other creature you control that shares a creature type with it. "
+                "if you do, discard a card."
+            )):
+        return None
+    from ..query_effect_amount_model import source_shared_type_amount_spec
+    from ..rules.optional_draw_discard import SOURCE_SHARED_TYPE_DRAW_DISCARD_VERSION
+    from .fixed_controller_effect_sequences import fixed_controller_effect_clause
+
+    discard, discard_mechanics = fixed_controller_effect_clause("discard a card.")
+    effect = {
+        "op": OPTIONAL_EFFECT_OPERATION, "player": "$controller",
+        "schema_version": SOURCE_SHARED_TYPE_DRAW_DISCARD_VERSION,
+        "effects": [
+            {"op": "draw", "player": "$controller", "count": source_shared_type_amount_spec().to_dict(), "private": True},
+            discard,
+        ],
+    }
+    return ("optional-shared-source-type-draw-discard-v2", (effect,), None,
+            (FIXED_OPTIONAL_EFFECT_MECHANIC, "cr-121-drawing-a-card", *discard_mechanics)), False
+
+
 def fixed_optional_effect_template(
     text: str,
     *,
@@ -122,6 +173,12 @@ def fixed_optional_effect_template(
     if match is None:
         return None
     body = match.group("body").strip()
+    if re.fullmatch(r"have your life total become the total toughness of creatures you control\.?", body, re.I):
+        body = "Your life total becomes the total toughness of creatures you control."
+    elif re.fullmatch(r"have your life total become the number of charge counters on this artifact\.?", body, re.I):
+        body = "Your life total becomes the number of charge counters on this artifact."
+    elif re.fullmatch(r"have two target players exchange life totals\.", body, re.I):
+        body = "Two target players exchange life totals."
     have_result = _OPTIONAL_HAVE_RESULT.fullmatch(body)
     if have_result is not None:
         verb = {"deal": "deals", "gain": "gains", "get": "gets", "lose": "loses",
@@ -134,7 +191,7 @@ def fixed_optional_effect_template(
     template_id, effects, target_schema, mechanics = compile_effect(body)
     if (
         template_id is None
-        or len(effects) != 1
+        or (len(effects) != 1 and not _optional_source_departure_pair_is_closed(effects, target_schema, mechanics))
         or not mechanics
         or FIXED_OPTIONAL_EFFECT_MECHANIC in mechanics
         or any(effect.get("op") == OPTIONAL_EFFECT_OPERATION for effect in effects)

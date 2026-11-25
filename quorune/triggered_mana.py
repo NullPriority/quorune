@@ -64,8 +64,12 @@ class _ManaProvider:
 
 
 def tap_mana_source(host: Any, card: Any, *, tap_source: bool) -> TapManaSource | None:
-    if (not tap_source or card.zone != "battlefield" or card.phased_out
-            or not host.semantics.programs_for_event(FIXED_TRIGGERED_MANA_EVENT)):
+    if not tap_source or card.zone != "battlefield" or card.phased_out:
+        return None
+    from .semantic_runtime.mana_spending import has_tap_mana_multiplier_program
+
+    if (not host.semantics.programs_for_event(FIXED_TRIGGERED_MANA_EVENT)
+            and not has_tap_mana_multiplier_program(host)):
         return None
     types, subtypes, supertypes = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
     return TapManaSource(card.object_id, card.logical_object_id, card.ref,

@@ -12,6 +12,7 @@ from ..maximum_hand_size import (
     MaximumHandSizeError,
     NoMaximumHandSizeSpec,
     HAND_SIZE_ADJUSTMENT_CAPABILITY_ID,HAND_SIZE_ADJUSTMENT_HANDLER_ID,FixedHandSizeAdjustmentSpec,
+    HAND_SIZE_SETTING_HANDLER_ID, FixedHandSizeSettingSpec,
 )
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -86,15 +87,40 @@ class FixedHandSizeAdjustmentHandler:
         return (self.validate(descriptor),)
 
 
+@dataclass(frozen=True, slots=True)
+class FixedHandSizeSettingHandler:
+    handler_id: str = HAND_SIZE_SETTING_HANDLER_ID
+    schema_version: int = 1
+    family: str = "rule.cleanup.fixed_hand_size_setting"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("402.2", "514.1", "613.7", "613.11")
+    capability_dependencies: tuple[str, ...] = (HAND_SIZE_ADJUSTMENT_CAPABILITY_ID,)
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event", "spec"}, field="fixed hand-size setting")
+        if (descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version or descriptor["event"] != self.event):
+            raise SemanticNodeError("Fixed hand-size setting identity, version or event is unsupported")
+        try:
+            return FixedHandSizeSettingSpec.from_dict(descriptor["spec"])
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
+
+
 class NoMaximumHandSizeRegistry(
-    RuntimeComponentRegistry[object, NoMaximumHandSizeSpec | FixedHandSizeAdjustmentSpec]
+    RuntimeComponentRegistry[object, NoMaximumHandSizeSpec | FixedHandSizeAdjustmentSpec | FixedHandSizeSettingSpec]
 ):
     pass
 
 
 @lru_cache(maxsize=1)
 def default_no_maximum_hand_size_registry() -> NoMaximumHandSizeRegistry:
-    registry = NoMaximumHandSizeRegistry((NoMaximumHandSizeHandler(),FixedHandSizeAdjustmentHandler()))
+    registry = NoMaximumHandSizeRegistry((
+        NoMaximumHandSizeHandler(), FixedHandSizeAdjustmentHandler(), FixedHandSizeSettingHandler(),
+    ))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 

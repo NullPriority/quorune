@@ -1,7 +1,11 @@
 """Read current typed characteristics only within the actor's legal search window."""
 
+from ..carddb_characteristics import library_card_rules_names, public_object_rules_names
+from ..errors import GameRuleError
+from ..library_search_model import TARGET_NAME_PERMANENT_TYPES, TARGET_NAME_SEARCH_SNAPSHOT, TargetNameLibrarySearchSpec
 from ..object_query import object_query_result, object_matches_query
 from ..qualified_library_search_model import QualifiedLibrarySearchSpec
+from ..named_search_model import LiteralNameBattlefieldSearchSpec, decode_literal_library_search
 from .library_search_rules import library_search_object_ids
 
 
@@ -20,4 +24,72 @@ def qualified_library_search_options(host, player, effect):
             known_to_actor=True, attached_to_ref=None)
         if qualified_library_card_matches(spec, row):
             options.append({"id": card.ref, "name": card.printed_name})
+    return options
+
+
+def literal_name_library_search_options(host, player, effect):
+    try:
+        spec = decode_literal_library_search(effect)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    battlefield = isinstance(spec, LiteralNameBattlefieldSearchSpec)
+    names = {value.casefold() for value in (spec.names if battlefield else (spec.name,))}
+    options = []
+    for object_id in library_search_object_ids(host, player, "library"):
+        card = host.state.cards[object_id]
+        record = host.card_record(card)
+        if record is None or names.isdisjoint(value.casefold() for value in library_card_rules_names(record)):
+            continue
+        if battlefield:
+            data = host._effective_card_data(card)
+            types = host._type_parts(str(data.get("type_line") or ""))[0]
+            if not set(types).intersection(TARGET_NAME_PERMANENT_TYPES):
+                continue
+        options.append({"id": card.ref, "name": card.printed_name})
+    return options
+
+
+def _target_name_snapshot(host, player, effect, spec):
+    card = host._resolve_object(player, effect["name_target"], zones={"battlefield"})
+    data = host._effective_card_data(card)
+    if (card.phased_out or (spec.permanent_to_battlefield and card.is_token)
+            or "creature" not in host._type_parts(str(data.get("type_line") or ""))[0]):
+        raise GameRuleError("Target-name search requires its current legal creature")
+    names = public_object_rules_names(card, data, host.card_record(card))
+    return {"reference": card.ref, "logical_object_id": card.logical_object_id, "names": list(dict.fromkeys(names))}
+
+
+def bind_target_name_library_search(host, player, effect):
+    try:
+        spec = TargetNameLibrarySearchSpec.from_effect(effect, materialized=True)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    if TARGET_NAME_SEARCH_SNAPSHOT in effect:
+        raise GameRuleError("The target-name snapshot is only created as the search opens")
+    return {**effect, TARGET_NAME_SEARCH_SNAPSHOT: _target_name_snapshot(host, player, effect, spec)}
+
+
+def target_name_library_search_options(host, player, effect):
+    try:
+        spec = TargetNameLibrarySearchSpec.from_effect(effect, materialized=True)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    snapshot = effect.get(TARGET_NAME_SEARCH_SNAPSHOT)
+    if snapshot != _target_name_snapshot(host, player, effect, spec):
+        raise GameRuleError("The target-name search changed its original creature snapshot")
+    names = frozenset(snapshot["names"])
+    if not names:
+        return []
+    options = []
+    for object_id in library_search_object_ids(host, player, "library"):
+        card = host.state.cards[object_id]
+        record = host.card_record(card)
+        if record is None or names.isdisjoint(library_card_rules_names(record)):
+            continue
+        if spec.permanent_to_battlefield:
+            data = host._effective_card_data(card)
+            types = host._type_parts(str(data.get("type_line") or ""))[0]
+            if not any(value in types for value in TARGET_NAME_PERMANENT_TYPES):
+                continue
+        options.append({"id": card.ref, "name": card.printed_name})
     return options

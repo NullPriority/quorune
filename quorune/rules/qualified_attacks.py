@@ -8,8 +8,9 @@ from ..qualified_attack_model import (
     ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS, ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS,
     ATTACK_FACT_EQUAL_POWER_TOUGHNESS,
     ATTACK_RECIPIENT_KIND_FIELD, QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_FULL_STATS_VERSION,
-    defended_player_or_planeswalker_condition, qualified_attack_facts_version, qualified_player_defense_condition,
-    source_attacks_battle_condition,
+    defended_player_condition, defended_player_or_planeswalker_condition,
+    qualified_attack_facts_version, qualified_player_defense_condition,
+    OPPOSING_PLAYER_ATTACK_PROGRAM_TEMPLATE, opposing_player_attack_condition, source_attacks_battle_condition,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
 
@@ -52,8 +53,35 @@ def qualified_player_defense_is_closed(condition) -> bool:
     return type(minimum) is int and minimum >= 0 and FrozenMap(condition) == FrozenMap(qualified_player_defense_condition(minimum))
 
 
+def declared_defender_scope_is_closed(condition) -> bool:
+    return isinstance(condition, Mapping) and thaw_value(condition) in (
+        defended_player_condition(), defended_player_or_planeswalker_condition(),
+    )
+
+
+def _opposing_player_attack_is_closed(condition) -> bool:
+    if not isinstance(condition, Mapping):
+        return False
+    raw = thaw_value(condition)
+    return raw == opposing_player_attack_condition() or (
+        raw == opposing_player_attack_condition(with_counter=True)
+        and all(type(row["value"]) is int for row in raw["all"][2:])
+    )
+
+
 def qualified_attack_runtime_dependencies(program):
     from .event_subscriptions import FixedEventSubscriptionSet
+
+    opposing = _opposing_player_attack_is_closed(program.event_condition)
+    opposing_template = (getattr(program, "provenance", {}).get("template_id")
+                         == OPPOSING_PLAYER_ATTACK_PROGRAM_TEMPLATE)
+    if opposing or opposing_template:
+        if not opposing or not opposing_template or (
+            (program.event, program.active_zone) != ("creature.attacks", "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None
+        ):
+            raise ValueError("Opposing player attacks require the exact singular declared opponent frame")
+        return (QUALIFIED_ATTACK_CAPABILITY,)
     subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
     if subscriptions is not None:
         required=set()
@@ -73,9 +101,13 @@ def qualified_attack_runtime_dependencies(program):
                 if thaw_value(value) == battle_scope["all"][-1]:
                     if program.event != "creature.attacks" or thaw_value(program.event_condition) != battle_scope:
                         raise ValueError("A battle-attack condition requires the source's own declared attack")
-                elif thaw_value(value) == {'field': ATTACK_RECIPIENT_KIND_FIELD, 'op': 'eq', 'value': 'player'}:
-                    if program.event != 'creature.attacks' or not qualified_player_defense_is_closed(program.event_condition):
-                        raise ValueError('Fixed-power attacks on the source controller require the exact player recipient')
+                elif thaw_value(value) == defended_player_condition()['all'][1]:
+                    if program.event != 'creature.attacks':
+                        raise ValueError('The player recipient requires an actual declared attack')
+                    if thaw_value(program.event_condition) == defended_player_condition():
+                        recipient_scope = defended_player_condition()
+                    elif not qualified_player_defense_is_closed(program.event_condition):
+                        raise ValueError('Attacks on the source controller require an exact player-recipient filter')
                 else:
                     recipient_scope = defended_player_or_planeswalker_condition()
                     if thaw_value(value) != recipient_scope['all'][1]:

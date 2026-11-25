@@ -14,9 +14,18 @@ from .relative_power_target import (
     RelativePowerTargetError,
     bound_relative_power_condition,
 )
-from .target_forms import TargetCharacteristicForm
+from .rules.aura_attachment_targets import (
+    AURA_ATTACHMENT_TARGET_FIELD, AuraAttachmentTargetSpec, validate_aura_attachment_target_group,
+)
+from .target_forms import SHARED_PERMANENT_TYPE_PAIR_FIELD, SharedPermanentTypePair, TargetCharacteristicForm
 from .target_history import PLAYER_HISTORY_FIELD, TargetDamageHistorySpec, TargetPlayerHistorySpec
 from .target_numeric import TargetNumericCharacteristicSpec
+
+
+CONTROLLER_ISLAND_TARGET_PREDICATE = "creature_controller_controls_island"
+
+
+ISLAND_COUNT_POWER_TARGET_PREDICATE = "creature_power_at_most_controlled_islands"
 
 
 PUBLIC_TARGET_ZONES = {
@@ -144,6 +153,12 @@ def _target_resolution_condition(
     if not isinstance(raw_condition, Mapping):
         raise ValueError("Target resolution_condition must be an object")
     resolution_condition = dict(raw_condition)
+    from .linked_ability_exile_model import LINKED_EXILE_COPY_TARGET_PREDICATE
+
+    if predicate == LINKED_EXILE_COPY_TARGET_PREDICATE:
+        from .rules.linked_exile_copy import linked_exile_copy_target_condition
+
+        return linked_exile_copy_target_condition(resolution_condition)
     if predicate not in RELATIVE_POWER_TARGET_PREDICATES:
         return resolution_condition
     try:
@@ -263,18 +278,17 @@ def _target_boolean_fields(raw: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
+_TARGET_COMBAT_STATES = frozenset({
+    "attacking", "unblocked_attacking", "blocking", "attacking_or_blocking",
+    "attacking_actor", "blocking_source", "blocked_by_source", "attacking_or_tapped",
+})
+
+
 def _target_combat_state(raw: Mapping[str, Any]) -> str | None:
     value = raw.get("combat_state")
     if value is None:
         return None
-    if type(value) is not str or value not in {
-        "attacking",
-        "blocking",
-        "attacking_or_blocking",
-        "attacking_actor",
-        "blocking_source",
-        "blocked_by_source",
-    }:
+    if type(value) is not str or value not in _TARGET_COMBAT_STATES:
         raise ValueError("Target combat_state is unsupported")
     return value
 
@@ -346,6 +360,7 @@ _TARGET_GROUP_FIELDS = frozenset(
         "numeric_characteristic",
         "damage_history",
         PLAYER_HISTORY_FIELD,
+        AURA_ATTACHMENT_TARGET_FIELD,
         "id",
         "group",
         # Validated by the owning compiler/capability shape rather than by
@@ -428,8 +443,11 @@ class TargetGroup:
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     damage_history: TargetDamageHistorySpec | None = None
     player_history: TargetPlayerHistorySpec | None = None
+    aura_attachment: AuraAttachmentTargetSpec | None = None
 
     def __post_init__(self) -> None:
+        if self.aura_attachment is not None:
+            validate_aura_attachment_target_group(self)
         if any(type(value)is not bool for value in (self.distinct_controllers,self.retain_controller)):
             raise ValueError('Controller target constraints must be boolean')
         if (self.distinct_controllers or self.retain_controller) and (self.zones!=('battlefield',) or self.categories!=('permanent',)):
@@ -437,10 +455,8 @@ class TargetGroup:
         if type(self.same_owner) is not bool:
             raise ValueError("Target same_owner constraint must be boolean")
         if self.combat_state is not None and (
-            self.combat_state
-            not in {"attacking", "blocking", "attacking_or_blocking"}
-            and self.combat_state
-            not in {"attacking_actor", "blocking_source", "blocked_by_source"}
+            type(self.combat_state) is not str
+            or self.combat_state not in _TARGET_COMBAT_STATES
             or self.attacking is not None
             or self.blocking is not None
         ):
@@ -625,6 +641,8 @@ class TargetGroup:
             "damage_history": _target_damage_history(raw),
             "player_history": (TargetPlayerHistorySpec.from_mapping(raw[PLAYER_HISTORY_FIELD])
                 if PLAYER_HISTORY_FIELD in raw else None),
+            "aura_attachment": (AuraAttachmentTargetSpec.from_mapping(raw[AURA_ATTACHMENT_TARGET_FIELD])
+                if AURA_ATTACHMENT_TARGET_FIELD in raw else None),
         }
         return cls(**fields)
 
@@ -651,6 +669,20 @@ class TargetPlan:
     modes: tuple[str, ...] = ()
     globally_distinct: bool = False
     same_player_groups: tuple[tuple[str, str], ...] = ()
+    shared_permanent_type_pair: SharedPermanentTypePair | None = None
+
+
+def _shared_permanent_type_pair(schema, groups):
+    if SHARED_PERMANENT_TYPE_PAIR_FIELD not in schema:
+        return None
+    pair = SharedPermanentTypePair.from_mapping(schema[SHARED_PERMANENT_TYPE_PAIR_FIELD])
+    if ("modes" in schema or schema.get("globally_distinct") is not True
+            or tuple(group.group_id for group in groups) != (pair.left, pair.right)
+            or any(group.min_targets != 1 or group.max_targets != 1
+                   or group.zones != ("battlefield",) or group.categories != ("permanent",)
+                   for group in groups)):
+        raise ValueError("A shared permanent type pair requires two distinct required battlefield groups")
+    return pair
 
 
 def available_modes(schema: Mapping[str, Any]) -> tuple[str, ...]:
@@ -773,6 +805,7 @@ def target_plan(
             for value in (*schema.get("same_player_groups", []), *child.get('same_player_groups',[]),*scoped_pairs)
             if isinstance(value, (list, tuple)) and len(value) == 2
         ),
+        shared_permanent_type_pair=_shared_permanent_type_pair(schema, parsed),
     )
 
 

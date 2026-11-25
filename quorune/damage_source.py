@@ -19,6 +19,18 @@ class DamageError(ValueError):
     """A represented damage proposal cannot be resolved exactly."""
 
 
+DAMAGE_PREVENTION_RESULT_VERSION_FIELD = "damage_prevention_result_version"
+
+
+def read_damage_prevention_result_version(data: Mapping[str, Any]) -> int | None:
+    if DAMAGE_PREVENTION_RESULT_VERSION_FIELD not in data:
+        return None
+    version = data[DAMAGE_PREVENTION_RESULT_VERSION_FIELD]
+    if type(version) is not int or version != 1:
+        raise ValueError("Unsupported damage prevention result version")
+    return version
+
+
 _EXILE_ZONE = "".join(("ex", "ile"))
 REPRESENTED_DAMAGE_SOURCE_ZONES = (
     "battlefield",

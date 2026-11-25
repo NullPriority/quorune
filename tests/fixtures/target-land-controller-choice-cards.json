@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "synthetic_rules_tests",
+  "cards": [
+    {
+      "cmc": 2.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "name": "Generic Land Bargain",
+      "oracle_id": "4d286a3b-4676-40ce-82e4-96e3846a7150",
+      "type_line": "Sorcery",
+      "mana_cost": "{1}{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "oracle_text": "Destroy target nonbasic land unless its controller has this spell deal 4 damage to them."
+    },
+    {
+      "cmc": 2.0,
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "power": null,
+      "toughness": null,
+      "produced_mana": [],
+      "released_at": "2026-01-01",
+      "name": "Generic Land Removal",
+      "oracle_id": "7cf6f2d3-e204-4c98-84aa-490ecd5891dc",
+      "type_line": "Instant",
+      "mana_cost": "{1}{G}",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "oracle_text": "Destroy target land."
+    }
+  ],
+  "rulings": []
+}

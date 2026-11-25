@@ -39,7 +39,11 @@ class TransformingSagaFixture:
         basics = Path(cls.temporary.name)/'basics.json'
         basics.write_text(json.dumps(base, ensure_ascii=False), encoding='utf-8', newline='\n')
         db_path = Path(cls.temporary.name)/'transforming-sagas.sqlite3'
-        build_fixture_database([basics, ROOT/'tests/fixtures/transforming-saga-return-cards.json'], db_path)
+        build_fixture_database([
+            basics,
+            ROOT/'tests/fixtures/transforming-saga-return-cards.json',
+            ROOT/'tests/fixtures/untargeted-untap-cards.json',
+        ], db_path)
         cls.db = CardDatabase(db_path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Transforming Saga', [DeckEntry('Sliver Hivelord', 1, 'commander'),
@@ -182,6 +186,96 @@ class TransformingSagaNativeTests(TransformingSagaFixture, InheritedNativeFixtur
 
     def test_actual_borrowed_saga_proliferates_returns_back_and_attacks_with_haste_and_vigilance(self):
         self.witness(986_100)
+
+    def test_actual_azusa_chapters_and_blocked_back_face_untap(self):
+        game = self.session(986_405)
+        name = "Azusa's Many Journeys // Likeness of the Seeker"
+        source = self.add(game.engine, name, zone='hand')
+        plans = [
+            self.add(game.engine, 'Contentious Plan', zone='hand', ref=f'azusa-plan-{index}')
+            for index in range(2)
+        ]
+        self.add(game.engine, 'Fervor')
+        own_lands = [self.add(game.engine, 'Forest', ref=f'azusa-land-{index}') for index in range(2)]
+        held_lands = [
+            self.add(game.engine, 'Forest', zone='hand', ref=f'azusa-held-land-{index}')
+            for index in range(3)
+        ]
+        opposing_land = self.add(game.engine, 'Forest', seat='B', ref='azusa-opposing-land')
+        opposing_land.tapped = True
+        blocker = self.add(game.engine, 'Grizzly Bears', seat='B')
+        self.assert_closed(game, source)
+        self.prepare(game, mana={'C': 3, 'G': 1, 'U': 2})
+        self.checkpoint(game)
+
+        starting_life = game.state.players['A'].life
+        self.cast(game, 'A', source)
+        self.assertIsNone(self.resolve(game))
+        front = game.state.cards[source.object_id]
+        self.assertEqual('battlefield', front.zone)
+        self.assertEqual(1, front.counters['lore'])
+        original_identity = front.logical_object_id
+        self.priority(game, 'A')
+        for land in held_lands[:2]:
+            result = game.act('pilot:A', {'action_id': 'play-land:' + land.ref})
+            self.assertTrue(result.ok, result.summary)
+        actions = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        third = 'play-land:' + held_lands[2].ref
+        self.assertNotIn(third, [action['id'] for action in actions])
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act('pilot:A', {'action_id': third}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+        for plan in plans:
+            self.cast(game, 'A', plan)
+            self.assertEqual('semantic.choice', self.resolve(game).kind)
+            result = game.act('pilot:A', {'action_id': 'choose', 'objects': [source.ref], 'plan': 'PROLIFERATE'})
+            self.assertTrue(result.ok, result.summary)
+            self.assertIsNone(self.resolve(game))
+            self.assertEqual(starting_life + 3, game.state.players['A'].life)
+        returned = game.state.cards[source.object_id]
+        self.assertEqual('battlefield', returned.zone)
+        self.assertEqual('A', returned.controller)
+        self.assertEqual('Likeness of the Seeker', returned.active_face)
+        self.assertNotEqual(original_identity, returned.logical_object_id)
+        self.assertEqual({}, returned.counters)
+
+        lands = own_lands + held_lands[:2]
+        self.priority(game, 'A')
+        for land in lands:
+            current = game.state.cards[land.object_id]
+            decision = game.packet('pilot:A', full=True)['decision']
+            action, = (row for row in decision['ctx']['legal']['actions']
+                       if row['id'].startswith('activate:' + current.ref + ':'))
+            result = game.act('pilot:A', {'action_id': action['id']})
+            self.assertTrue(result.ok, result.summary)
+            self.assertTrue(game.state.cards[land.object_id].tapped)
+        self.attack(game, [(returned, 'B')])
+        self.until(
+            game,
+            lambda session: session.state.pending_decision.kind == 'combat.blockers'
+            and 'B' in session.state.pending_decision.actors,
+        )
+        result = game.act('pilot:B', {'action_id': 'block', 'blocks': {blocker.ref: returned.ref}})
+        self.assertTrue(result.ok, result.summary)
+        decision = self.resolve(game)
+        self.assertEqual('semantic.choice', decision.kind)
+        self.assertEqual(['A'], decision.actors)
+        refs = [game.state.cards[land.object_id].ref for land in lands]
+        before = authoritative_state_hash(game.state)
+        for seat, selected in (('B', refs[:3]), ('A', refs), ('A', [opposing_land.ref])):
+            result = game.act('pilot:' + seat, {'action_id': 'choose', 'objects': selected})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        result = game.act('pilot:A', {'action_id': 'choose','objects': refs[:3]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(
+            [False, False, False, True],
+            [game.state.cards[land.object_id].tapped for land in lands],
+        )
+        self.assertTrue(game.state.cards[opposing_land.object_id].tapped)
+        self.replay(game, load=True)
 
     def test_actual_pending_terminal_does_not_chase_a_blinked_new_source_incarnation(self):
         session,source,blink,private = self.begin_terminal(986_200)

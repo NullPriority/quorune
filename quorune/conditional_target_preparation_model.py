@@ -4,6 +4,32 @@ from dataclasses import dataclass
 from .continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
 from .replacement.immutable import thaw_value
 
+RESOLUTION_TARGET_COLOR_FIELD = "resolution_target_color"
+RESOLUTION_TARGET_COLOR_MECHANIC = "fixed-resolution-target-color"
+RESOLUTION_TARGET_COLOR_CAPABILITY = "resolution.effect.fixed_current_target_color"
+_RESOLUTION_TARGET_COLOR_OPERANDS = {"counter_stack_target": "stack", "destroy": "card"}
+
+
+def resolution_target_color_primitive(effect):
+    """Decode one current-color guard over a primitive and its single target."""
+    if not isinstance(effect, Mapping):
+        raise ValueError("The color check requires a closed effect")
+    operation = effect.get("op")
+    field = _RESOLUTION_TARGET_COLOR_OPERANDS.get(operation)
+    if (field is None or set(effect) != {"op", field, RESOLUTION_TARGET_COLOR_FIELD}
+            or effect[field] != "$target.0"):
+        raise ValueError("The color check requires one primitive with its original target slot")
+    return field, fixed_resolution_target_color(effect[RESOLUTION_TARGET_COLOR_FIELD])
+
+
+def fixed_resolution_target_color(value):
+    if (not isinstance(value, Mapping) or set(value) != {"schema_version", "color"}
+            or type(value["schema_version"]) is not int or value["schema_version"] != 1
+            or type(value["color"]) is not str or value["color"] not in {"W", "U", "B", "R", "G"}):
+        raise ValueError("A resolved target color requires one canonical color and version")
+    return value["color"]
+
+
 CONDITIONAL_PREPARATION_VERSION = 16
 CONDITIONAL_PREPARATION_MECHANIC = 'conditional-target-power-preparation'
 CONDITIONAL_PREPARATION_CAPABILITY = 'resolution.effect_program.conditional_target_preparation'

@@ -207,6 +207,8 @@ class MutateResolutionOwnerTests(unittest.TestCase):
             killed(SpellOwnerTargetingTests('test_shared_matcher_uses_spell_owner_across_target_controllers'))
 
     def test_shared_revalidation_keeps_mutate_creature_fallback_and_generic_fizzle_distinct(self):
+        from types import MethodType
+
         spec=MutateSpec('{2}{G}');option=spec.cast_cost_options()[0]
         group=target_plan(option['target_schema']).groups[0].group_id
         for mutate in (False,True):
@@ -220,6 +222,9 @@ class MutateResolutionOwnerTests(unittest.TestCase):
                     _increment_optimization=lambda *args:None,_log=lambda *args,**kwargs:logs.append(args[1]),
                     _counter_stack_item=lambda *args,**kwargs:countered.append(args[0]),
                     _grant_priority=priority.append)
+                host._invalidate_changed_target_pair = MethodType(
+                    TargetSelectionOwnerMixin._invalidate_changed_target_pair, host,
+                )
                 context={'target_groups':{group:['O1']},'target_snapshots':{'O1':{}}}
                 if mutate:context.update({'mutate_payment':spec.to_dict(),'cost_option':option['id'],
                     'target_schema_override':option['target_schema'],'cast_option_effects':option['effects']})

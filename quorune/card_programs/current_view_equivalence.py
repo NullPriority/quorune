@@ -13,14 +13,48 @@ from ..compiler.activated_costs import activated_ability_cost
 from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
 
 
-def _same_current_source(record,current,old):
+def _same_current_source(record,current,old,*,compare_targets=True):
     return (current.oracle_id==old.oracle_id==record.oracle_id and current.trust_level==old.trust_level=='trusted'
         and current.capability_closure and current.capability_closure.get('trusted') is True
         and not str(old.provenance.get('authored_by','')).startswith('oracle-ir-v')
         and all(current.provenance.get(key) and current.provenance[key]==old.provenance.get(key)
             for key in ('source_oracle_hash','source_rulings_hash'))
+        and (not compare_targets or current.target_schema == old.target_schema)
         and all(getattr(current,key)==getattr(old,key) for key in
-            ('event','active_zone','target_schema','destination','requires_arbiter')))
+            ('event','active_zone','destination','requires_arbiter')))
+
+
+def shadowed_reviewed_reanimation_life_loss_keys(record, generated_programs, reviewed_programs):
+    """Match the reviewed graveyard-only sequence to its exact typed replacement."""
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    reviewed = {p.key: p for p in reviewed_programs}
+    if not reviewed:
+        return set()
+    reviewed_schema = {"zones": ["graveyard"], "categories": ["card"], "creature": True, "count": 1}
+    compiled_schema = {"zones": ["graveyard"], "categories": ["card"], "types_any": ["creature"],
+                       "owner_relation": "any", "count": 1}
+    move = {"op": "reanimate", "card": "$target.0", "controller": "$controller"}
+    loss = {"op": "lose_life_equal_mana_value", "player": "$controller", "card": "$target.0"}
+    quantity = ScalarEffectAmountSpec(
+        ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, characteristic="mana_value", schema_version=15,
+    )
+    compiled_effects = ({**move, "tapped": False},
+                        {"op": "lose_life", "player": "$controller", "amount": quantity.to_dict()})
+    required = {"zone.reanimate.fixed_target", "quantity_expression.graveyard_target_mana_value",
+                "resolution.effect_sequence.fixed_clauses", "life.change.effect"}
+    return {
+        old.key for current in generated_programs if (old := reviewed.get(current.key)) is not None
+        and _same_current_source(record, current, old, compare_targets=False)
+        and (current.event, current.active_zone) == ("resolve", "stack")
+        and current.ability_id == old.ability_id and current.ability_id.startswith("spell:")
+        and current.event_condition is None and old.event_condition is None
+        and current.cost_schema is None and old.cost_schema is None and not current.handlers and not old.handlers
+        and thaw_value(current.target_schema) == compiled_schema and thaw_value(old.target_schema) == reviewed_schema
+        and tuple(thaw_value(current.effects)) == compiled_effects
+        and tuple(thaw_value(old.effects)) == (move, loss)
+        and required.issubset(current.capability_dependencies)
+    }
 
 
 def _catalog_preserves_cost(current,old):

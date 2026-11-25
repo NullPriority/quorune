@@ -224,8 +224,9 @@ class DeadCreatureControllerNativeTests(InheritedNativeFixture, unittest.TestCas
         record = self.db.lookup('Edric, Spymaster of Trest')
         parent = compile_best_available_card_program(self.db, record, semantic_registry=s.engine.semantics,
             capability_registry=self.registry, capability_profile='commander_review')
-        self.assertFalse(bind_card_program_runtime(parent, capability_registry=self.registry,
-            profile='commander_review')['strict_capability_ready'])
+        binding = bind_card_program_runtime(parent, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        self.assertEqual('capability_closed', binding['trust_basis'])
 
     def test_actual_printed_cast_foreign_creature_death_private_drawer_choice_reload_and_exact_replay(self):
         s, private, source, victim, kill = self.world(733001)

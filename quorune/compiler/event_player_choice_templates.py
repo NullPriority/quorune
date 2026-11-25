@@ -78,7 +78,30 @@ def _compiled_sacrifice(match, player):
                                  EVENT_PLAYER_CHOICE_MECHANIC))))
 
 
+def _entry_player_counter_payment_result(binding, body):
+    if binding.variant not in {"putting_player_forest", "putting_player_swamp"}:
+        return None
+    if re.fullmatch(
+        r"This enchantment deals 3 damage to that player unless "
+        r"(?:the player puts|they put) a -1/-1 counter on a creature they control\.",
+        body, re.I,
+    ) is None:
+        return (None, (), None, ()), False
+    from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC
+    from ..rules.entry_player_counter_payment import (
+        ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC, entry_player_counter_payment_effect,
+    )
+
+    return (
+        "entry-player-counter-payment-or-damage-v1", (entry_player_counter_payment_effect(),), None,
+        (FIXED_EFFECT_PAYMENT_MECHANIC, ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC),
+    ), True
+
+
 def fixed_event_player_choice_result(binding, body):
+    entry_payment = _entry_player_counter_payment_result(binding, body)
+    if entry_payment is not None:
+        return entry_payment
     caster_choice = _spell_caster_land_return_result(binding, body) or _spell_caster_sacrifice_payment_result(binding, body)
     if caster_choice is not None:
         return caster_choice, False

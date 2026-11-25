@@ -1,0 +1,431 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W/U}{W/U}",
+      "name": "Mirrorweave",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "oracle_text": "Each other creature becomes a copy of target nonlegendary creature until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-06-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Inkmoth Nexus",
+      "oracle_id": "675281ff-b81f-4e5e-9f85-9f8cd202b50b",
+      "oracle_text": "{T}: Add {C}.\n{1}: This land becomes a 1/1 Phyrexian Blinkmoth artifact creature with flying and infect until end of turn. It's still a land. (It deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2011-02-04",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Mirage Mirror",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "oracle_text": "{2}: This artifact becomes a copy of target artifact, creature, enchantment, or land until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}{G}",
+          "name": "Augmenter Pugilist",
+          "oracle_text": "Trample\nAs long as you control eight or more lands, this creature gets +5/+5.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Creature — Troll Druid"
+        },
+        {
+          "colors": [
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{U}{U}",
+          "name": "Echoing Equation",
+          "oracle_text": "Choose target creature you control. Each other creature you control becomes a copy of it until end of turn, except those creatures aren't legendary.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{G} // {3}{U}{U}",
+      "name": "Augmenter Pugilist // Echoing Equation",
+      "oracle_id": "9110339d-72ba-4132-801f-cd2fd738b71d",
+      "oracle_text": "Augmenter Pugilist: Trample\nAs long as you control eight or more lands, this creature gets +5/+5.\n//\nEchoing Equation: Choose target creature you control. Each other creature you control becomes a copy of it until end of turn, except those creatures aren't legendary.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Creature — Troll Druid // Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Nanogene Conversion",
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "oracle_text": "Choose target creature you control. Each other creature becomes a copy of that creature until end of turn, except it isn't legendary.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-10-13",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "As the turn ends, the other creatures revert to what they were before. If two Mirrorweaves are cast on the same turn, they’ll both wear off at the same time.",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each other creature copies the printed values of the targeted creature, plus any copy effects that have been applied to that creature. They won’t copy other effects that have changed the targeted creature’s power, toughness, types, color, or so on. They also won’t copy counters on the targeted creature (they’ll each just retain the counters they already have).",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted creature is a token, each other creature copies the original characteristics of that token as stated by the effect that put it onto the battlefield. Those creatures don’t become tokens.",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the targeted creature is itself copying a creature, each other creature will become whatever it’s copying, as modified by that copy effect. For example, if you target a Cemetery Puca that’s copying a Grizzly Bears (a 2/2 creature with no abilities), each other creature will become a Grizzly Bears with the Cemetery Puca ability.",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Noncopy effects that have already applied to the other creatures will continue to apply to them. For example, if Giant Growth had given one of them +3/+3 earlier in the turn, then Mirrorweave made it a copy of Grizzly Bears, it will be a 5/5 Grizzly Bears.",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This effect can cause each other creature to stop being a creature. For example, if you target an animated Mutavault (a land with an activated ability that turns it into a creature), only the printed wording will be copied — the “becomes a creature” effect won’t. Each other creature will become an unanimated Mutavault.",
+      "oracle_id": "026b7221-0caf-4c8b-8c1b-e7de836797b7",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Inkmoth Nexus entered this turn and it's not a creature, it can be tapped for mana. If it becomes a creature that turn, it can't attack or be tapped for mana.",
+      "oracle_id": "675281ff-b81f-4e5e-9f85-9f8cd202b50b",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you've controlled Inkmoth Nexus continuously since your most recent turn began and it becomes a creature, it can attack or be tapped for mana.",
+      "oracle_id": "675281ff-b81f-4e5e-9f85-9f8cd202b50b",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Mirage Mirror becomes a copy of a legendary permanent you control, you'll put one of them into your graveyard.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Mirage Mirror becomes a copy of an Aura, it's put into its owner's graveyard unless it's somehow attached to an appropriate object or player already. If it becomes a copy of an Equipment and is attached to a creature, it'll become unattached when it becomes a non-Equipment artifact again.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Mirage Mirror becomes a creature the same turn it enters the battlefield, you can't attack with it or use any of its {T} abilities (if it gains any) unless it has haste.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Mirage Mirror copies a permanent that's copying something else, it will become whatever the target is copying.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect begins to apply to Mirage Mirror before it becomes a copy of another permanent, that effect will continue to apply. For example, if Mirage Mirror is activated twice in response to itself targeting first Rampaging Hippo then Frilled Sandwalla, the ability it has while it's a copy of Frilled Sandwalla can be activated and its effect will continue to apply while Mirage Mirror is a copy of Rampaging Hippo.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you activate Mirage Mirror's ability multiple times in a turn in response to itself, then each time one of those abilities resolves, it will overwrite whatever Mirage Mirror is copying. Mirage Mirror will wind up as a copy of the permanent targeted by the last ability to resolve. When the turn ends, all instances of the ability will wear off at the same time.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mirage Mirror copies the printed values of the target permanent, plus any copy effects that have been applied to it. It won't copy counters on that permanent or effects that have changed its power, toughness, types, color, or so on. Notably, it won't copy effects that made the target permanent become a creature.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Mirage Mirror's ability resolves, it no longer has that ability.",
+      "oracle_id": "6a84eda1-7e72-4b5a-849f-b6e177565aeb",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Because damage remains marked on creatures until the damage is removed as the turn ends, nonlethal damage dealt to Augmenter Pugilist may become lethal if the number of lands you control falls below eight.",
+      "oracle_id": "9110339d-72ba-4132-801f-cd2fd738b71d",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Echoing Equation affects only creatures you control at the time it resolves. Creatures that come under your control later in the turn won’t be copies of the chosen creature.",
+      "oracle_id": "9110339d-72ba-4132-801f-cd2fd738b71d",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Echoing Equation copies the printed values of the target creature. It won’t copy any counters on that creature or any effects that have changed its power, toughness, types, color, and so on, and a creature becoming a copy doesn’t remove any such counters or effects that are already applying to it. Notably, Echoing Equation won’t copy any type-changing effects that are currently making the target a creature. For example, if you choose a land that’s become a creature, all your other creatures will become noncreature lands until end of turn.",
+      "oracle_id": "9110339d-72ba-4132-801f-cd2fd738b71d",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen creature is copying something else, other creatures you control become copies of whatever the chosen creature is copying.",
+      "oracle_id": "9110339d-72ba-4132-801f-cd2fd738b71d",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is a token, other creatures you control will copy the original characteristics of that token as stated by the effect that created the token. Any of those creatures that aren’t tokens won’t become tokens in this case. Similarly, if the target creature is a nontoken creature, creature tokens you control won’t stop being tokens.",
+      "oracle_id": "9110339d-72ba-4132-801f-cd2fd738b71d",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "As the turn ends, the other creatures revert to what they were before. If two Nanogene Conversions are cast on the same turn, they'll both wear off at the same time."
+    },
+    {
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Each other creature copies the printed values of the targeted creature, except that they aren't legendary. They won't copy other effects that have changed the targeted creature's power, toughness, types, color, or so on. They also won't copy counters on the targeted creature (they'll each just retain the counters they already have)."
+    },
+    {
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If the targeted creature is a token, each other creature copies the original characteristics of that token as stated by the effect that created the token. Those creatures don't become tokens."
+    },
+    {
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If the targeted creature is itself copying a creature, each other creature will become whatever it's copying, as modified by that copy effect."
+    },
+    {
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Non-copy effects that have already applied to the other creatures will continue to apply to them. For example, if Giant Growth had given one of them +3/+3 earlier in the turn, then Nanogene Conversion made it a copy of Bear Cub, it will be a 5/5 Bear Cub."
+    },
+    {
+      "oracle_id": "c06d1127-a269-453f-9c06-e9c424998eb7",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "This effect can cause each other creature to stop being a creature. For example, if you target an animated Vehicle, only the printed wording will be copied—the crew effect that is making it a creature until end of turn won't be copied. Each other creature will become an unanimated copy of that Vehicle."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC rulings for closed temporary creature copying"
+}

@@ -21,13 +21,18 @@ from .model import (
     ReplacementTreeChoice,
 )
 from .immutable import thaw_value
+from ..entry_designations import entry_card_name_operation
 from .operations import (
     AmplifyEntryOperation,
     DevourEntryOperation,
     ENTRY_OBJECT_SELECTION_OPERATIONS,
+    GraveyardCopyEntryOperation,
+    LinkedGraveyardEntryOperation,
     PreventUsingShield,
 )
+from .counted_entry_counters import TransferEntryCounters
 from .entry_reservations import share_entry_reservations
+from .entry_counter_types import project_entry_time_counter_types
 
 
 class ReplacementChoiceRequired(ReplacementEffectError):
@@ -84,7 +89,7 @@ def _replace_event_at_path(
     replacement: ReplaceableEvent,
 ) -> ReplaceableEvent:
     if not path:
-        return replacement
+        return project_entry_time_counter_types(replacement)
     index = path[0]
     if index < 0 or index >= len(event.children):
         raise ReplacementEffectError(
@@ -94,7 +99,7 @@ def _replace_event_at_path(
     children[index] = _replace_event_at_path(
         children[index], path[1:], replacement
     )
-    return ReplaceableEvent(
+    return project_entry_time_counter_types(ReplaceableEvent(
         event_id=event.event_id,
         kind=event.kind,
         affected_player=event.affected_player,
@@ -103,7 +108,7 @@ def _replace_event_at_path(
         applied_effects=event.applied_effects,
         children=tuple(children),
         entry_scope=event.entry_scope,
-    )
+    ))
 
 
 def apply_tree_replacement(
@@ -111,7 +116,7 @@ def apply_tree_replacement(
     effects: Iterable[ReplacementEffect],
     pending: ReplacementTreeChoice,
     selected_effect_id: str | None,
-    *,objects: tuple[str,...] | None = None,
+    *, objects: tuple[str,...] | None = None, card_name: str | None = None,
 ) -> ReplaceableEvent:
     all_effects = canonical_effects(effects)
     current = replacement_tree_choice(event, all_effects)
@@ -121,8 +126,18 @@ def apply_tree_replacement(
         )
     from .entry_counter_ordering import entry_counter_order_effects
     adapted=entry_counter_order_effects(pending.choice.event, all_effects)
-    changed=apply_replacement(pending.choice,adapted,selected_effect_id,objects=objects)
+    changed=apply_replacement(pending.choice,adapted,selected_effect_id,objects=objects,card_name=card_name)
     return _replace_event_at_path(event, pending.path, changed)
+
+
+def _available_entry_counter_transfers(batch, effects):
+    if not batch.journal:
+        return effects
+    transfers = {effect.effect_id for effect in effects
+                 if any(isinstance(operation, TransferEntryCounters) for operation in effect.operations)}
+    if not transfers.intersection(selection.effect_id for selection in batch.journal):
+        return effects
+    return tuple(effect for effect in effects if effect.effect_id not in transfers)
 
 
 def next_batch_replacement_choice(
@@ -146,7 +161,7 @@ def next_batch_replacement_choice(
     }
     available_effects = tuple(
         effect
-        for effect in all_effects
+        for effect in _available_entry_counter_transfers(batch, all_effects)
         if effect.effect_id not in consumed_shields
     )
     order = {seat: index for index, seat in enumerate(batch.apnap_order)}
@@ -204,10 +219,14 @@ def next_batch_replacement_choice(
             if shared_one_shot.intersection(candidate[3].choice.options)
         )
     )
-    by_id={effect.effect_id:effect for effect in all_effects}
-    devour_events=[value for value in same_chooser if any(isinstance(op,DevourEntryOperation)
-        for effect_id in value[3].choice.options for op in by_id[effect_id].operations)]
-    if len(devour_events)>1:event_order_options=tuple(sorted({value[1] for value in same_chooser}))
+    by_id = {effect.effect_id: effect for effect in all_effects}
+    shared_entry_order = any(
+        sum(any(isinstance(operation, operation_type) for effect_id in value[3].choice.options
+                for operation in by_id[effect_id].operations) for value in same_chooser) > 1
+        for operation_type in (DevourEntryOperation, TransferEntryCounters)
+    )
+    if shared_entry_order:
+        event_order_options = tuple(sorted({value[1] for value in same_chooser}))
     result = _batch_choice_for_event(
         batch,
         all_effects=all_effects,
@@ -217,8 +236,10 @@ def next_batch_replacement_choice(
         pending=pending,
         event_order_options=event_order_options,
     )
-    if len(devour_events)>1:
-        result=replace(result,event_choices=tuple((value[1],value[3].choice) for value in same_chooser if value[1] in event_order_options))
+    if shared_entry_order:
+        result = replace(result, event_choices=tuple(
+            (value[1], value[3].choice) for value in same_chooser if value[1] in event_order_options
+        ))
     return result
 
 
@@ -319,9 +340,9 @@ def _batch_choice_for_event(
 
 def _selection_parts(
     selected: str | None | Mapping[str, Any],
-) -> tuple[str | None, Mapping[str, Any] | None, str | None, tuple[str,...] | None]:
+) -> tuple[str | None, Mapping[str, Any] | None, str | None, tuple[str,...] | None, str | None]:
     if selected is None or isinstance(selected, str):
-        return selected, None, None, None
+        return selected, None, None, None, None
     if not isinstance(selected, Mapping):
         raise ReplacementEffectError(
             "Replacement selections must be strings or typed objects"
@@ -333,6 +354,8 @@ def _selection_parts(
         {"effect_id", "allocation", "event_id"},
         {'effect_id','objects'},
         {'effect_id','objects','event_id'},
+        {"effect_id", "card_name"},
+        {"effect_id", "card_name", "event_id"},
     )
     if actual not in allowed_shapes:
         raise ReplacementEffectError(
@@ -359,7 +382,10 @@ def _selection_parts(
         raise ReplacementEffectError(
             "Typed replacement event identity must be a nonempty string"
         )
-    return effect_id, allocation, event_id, tuple(objects) if objects is not None else None
+    name = selected.get("card_name")
+    if "card_name" in selected and (type(name) is not str or not name or name != name.strip()):
+        raise ReplacementEffectError("A replacement card name must be canonical")
+    return effect_id, allocation, event_id, tuple(objects) if objects is not None else None, name
 
 
 def _validated_allocation(
@@ -493,7 +519,7 @@ def apply_batch_replacement(
         raise ReplacementEffectError(
             "Replacement batch choice is stale or violates APNAP order"
         )
-    selected_value, supplied_allocation, selected_event_id, supplied_objects = _selection_parts(
+    selected_value, supplied_allocation, selected_event_id, supplied_objects, card_name = _selection_parts(
         selected_effect_id
     )
     if (
@@ -534,7 +560,7 @@ def apply_batch_replacement(
         }
         available_effects = tuple(
             effect
-            for effect in all_effects
+            for effect in _available_entry_counter_transfers(batch, all_effects)
             if effect.effect_id not in consumed
         )
         tree_choice = replacement_tree_choice(
@@ -565,6 +591,9 @@ def apply_batch_replacement(
     )
     effect=next((e for e in all_effects if e.effect_id==canonical_selection),None)
     object_choice=effect is not None and any(isinstance(op,ENTRY_OBJECT_SELECTION_OPERATIONS) for op in effect.operations)
+    name_choice = effect is not None and entry_card_name_operation(effect) is not None
+    if name_choice != (card_name is not None):
+        raise ReplacementEffectError("The selected replacement and card name must agree")
     if supplied_objects and not object_choice:raise ReplacementEffectError('This replacement does not accept selected objects')
     journal_objects=(supplied_objects or ()) if object_choice else None
     allocation_choice = next(
@@ -589,10 +618,11 @@ def apply_batch_replacement(
     events = list(batch.events)
     events[pending.event_index] = apply_tree_replacement(
         events[pending.event_index],
-        all_effects,
+        _available_entry_counter_transfers(batch, all_effects),
         pending.tree_choice,
         canonical_selection,
         objects=supplied_objects,
+        card_name=card_name,
     )
     return ReplacementEventBatch(
         batch_id=batch.batch_id,
@@ -606,6 +636,7 @@ def apply_batch_replacement(
                 chooser=pending.choice.chooser,
                 effect_id=canonical_selection,
                 objects=journal_objects,
+                card_name=card_name,
             ),
         ),
     )
@@ -640,6 +671,12 @@ def resolve_replacement_batch(
             raise ReplacementEffectError(
                 "Replacement replay selection path or chooser diverged"
             )
+        if selection.card_name is not None:
+            named = {"effect_id": selection.effect_id, "card_name": selection.card_name}
+            if pending.event_order_options:
+                named["event_id"] = selection.event_id
+            current = apply_batch_replacement(current, all_effects, pending, named)
+            continue
         current = apply_batch_replacement(
             current,
             all_effects,
@@ -684,6 +721,7 @@ def advance_replacement_batch(
     selections: Iterable[str | None | Mapping[str, Any]] = (),
     require_all_selections: bool = True,
     allow_bound_single_event: bool = False,
+    stop_for_graveyard_copy: bool = False,
 ) -> ReplacementBatchProgress:
     all_effects = canonical_effects(effects)
     supplied = iter(selections)
@@ -700,6 +738,8 @@ def advance_replacement_batch(
             and not pending.choice.optional_options
             and not allocation_required
             and not pending.event_order_options
+            and not any(effect.effect_id == pending.choice.options[0] and entry_card_name_operation(effect)
+                        for effect in all_effects)
         ):
             selected: str | None | Mapping[str, Any] = (
                 pending.choice.options[0]
@@ -718,6 +758,13 @@ def advance_replacement_batch(
             current, all_effects, pending, selected,
             allow_bound_single_event=allow_bound_single_event,
         )
+        if stop_for_graveyard_copy:
+            from ..rules.graveyard_entry_copy import unprepared_graveyard_copy_occurrences
+            from ..rules.linked_graveyard_entry import unprepared_linked_graveyard_entry_choices
+
+            if any(unprepared_graveyard_copy_occurrences(event) or unprepared_linked_graveyard_entry_choices(event)
+                   for event in current.events):
+                return ReplacementBatchProgress(batch=current,pending=None,consumed_selections=consumed)
     if not require_all_selections:
         return ReplacementBatchProgress(
             batch=current,
@@ -765,6 +812,17 @@ def _entry_object_choice_payload(choices, effects_by_id):
             if len(operations) != 1:
                 raise ReplacementEffectError("One replacement choice requires one object selector")
             operation = operations[0]
+            if isinstance(operation, GraveyardCopyEntryOperation):
+                refs = [card.ref for card in operation.eligible_cards(choice.event)]
+                object_choices[effect_id] = {"legal_refs":refs,"minimum":2,"maximum":2}
+                labels.add("Choose the creature to copy first, then the creature whose power supplies counters")
+                continue
+            if isinstance(operation, LinkedGraveyardEntryOperation):
+                refs = [card.ref for card in operation.eligible_cards(choice.event)]
+                object_choices[effect_id] = {"legal_refs": refs, "minimum": 1,
+                                             "maximum": min(operation.maximum, len(refs))}
+                labels.add("Choose creature cards from your graveyard")
+                continue
             if isinstance(operation, AmplifyEntryOperation):
                 refs = [card.ref for card in operation.eligible_cards(choice.event)]
                 labels.add("Cards to reveal for Amplify")
@@ -852,6 +910,12 @@ def replacement_choice_payload(
             "required": False,
             "label": "Divide prevention (only when required)",
         }
+    name_choices = {
+        value: {"nonland": operation.nonland}
+        for value in legal_values if (operation := entry_card_name_operation(by_id[value.removeprefix("decline:")]))
+    }
+    if name_choices:
+        choice_schema["card_name"] = {"value_type": "card_name", "required": False, "nonempty": True}
     object_choices, object_schema = _entry_object_choice_payload(choices, by_id)
     if object_choices:
         choice_schema["replacement_objects"] = object_schema
@@ -859,6 +923,7 @@ def replacement_choice_payload(
         "chooser": pending.choice.chooser,
         "prompt": "Choose the next replacement or prevention effect.",
         "options": options,
+        **({"card_name_choices": name_choices} if name_choices else {}),
         **({'object_choices':object_choices} if object_choices else {}),
         **({'event_effect_options':{event_id:list(choice.legal_selections) for event_id,choice in pending.event_choices}} if pending.event_choices else {}),
         **(

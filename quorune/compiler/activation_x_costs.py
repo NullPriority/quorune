@@ -11,6 +11,10 @@ from .declared_effect_amounts import declared_effect_amount_template
 
 
 def announced_x_activation_cost(ability):
+    if "Reveal X " in ability.cost_text:
+        from .variable_colored_reveal_price import specialize_variable_colored_reveal_price
+
+        return specialize_variable_colored_reveal_price(ability)
     if ability.announced_x_symbols is not None:
         return ability
     symbols = activation_x_symbols(ability.cost_text, allow_source_sacrifice=True, allow_fixed_discard=True,
@@ -34,7 +38,13 @@ def announced_x_activation_cost(ability):
 
 
 def announced_x_activation_effect(ability, *, source_name, compile_fixed, text):
-    if ability.announced_x_symbols is None:
+    if not ability.chooses_activation_x:
         return None
+    if ability.variable_colored_reveal_price is not None:
+        from .counter_templates import targeted_controller_payment_template
+
+        payment = targeted_controller_payment_template(text, cast_x_available=True, source_name=source_name)
+        if payment is not None and payment.payment.uses_cast_x:
+            return payment.compiled()
     return declared_effect_amount_template(text, source_name=source_name,
         compile_fixed=compile_fixed, cast_x_available=True, forbid_public_x=True)

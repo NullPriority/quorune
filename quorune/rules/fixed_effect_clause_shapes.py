@@ -138,6 +138,8 @@ from .node_capability_shapes import (
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
 from .graveyard_self_return import graveyard_self_return_node_capabilities
 from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
+from ..replacement.face_status_copy import source_refacing_component_capabilities
+from .color_retaining_copy import retained_color_copy_component_capabilities
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
     FIXED_OPTIONAL_EFFECT_MECHANIC,
@@ -210,6 +212,8 @@ _COMPONENT_RESOLVERS = (
     ring_temptation_node_capabilities,
     event_player_sacrifice_node_capabilities,
     source_transform_node_capabilities,
+    source_refacing_component_capabilities,
+    retained_color_copy_component_capabilities,
     subtype_transform_node_capabilities,
     fixed_library_selection_node_capabilities,
     fixed_hand_inspection_node_capabilities,
@@ -354,9 +358,13 @@ def fixed_optional_mana_payment_node_capabilities(
     if any(effect.get('schema_version') == 5 and effect.get('op') == OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
         from .commander_learn_shapes import commander_learn_node_capabilities
         return commander_learn_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    from ..fixed_effect_payment import MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION
     from ..spell_caster_sacrifice_payment import SPELL_CASTER_SACRIFICE_PAYMENT_VERSION
 
-    fixed_payment_versions = (2, 3, 4, 6, 7, 8, 9, 10, 11, SPELL_CASTER_SACRIFICE_PAYMENT_VERSION)
+    fixed_payment_versions = (
+        2, 3, 4, 6, 7, 8, 9, 10, 11, SPELL_CASTER_SACRIFICE_PAYMENT_VERSION,
+        MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION,
+    )
     if any(
         effect.get("schema_version") in fixed_payment_versions
         and effect.get("op") == OPTIONAL_MANA_PAYMENT_OPERATION
@@ -411,6 +419,18 @@ def fixed_optional_mana_payment_node_capabilities(
     )
 
 
+def is_closed_optional_composed_effect_program(program):
+    from .as_unblocked_effect import is_closed_optional_as_unblocked_program
+    from ..replacement.face_status_copy import is_closed_upkeep_refacing_program
+    from .color_retaining_copy import is_closed_retained_color_upkeep_program
+    from .persistent_self_copy_trigger import is_closed_persistent_self_copy_trigger
+    from .player_life_exchange import is_closed_optional_player_life_exchange_program
+
+    return (is_closed_optional_as_unblocked_program(program) or is_closed_upkeep_refacing_program(program)
+            or is_closed_retained_color_upkeep_program(program) or is_closed_persistent_self_copy_trigger(program)
+            or is_closed_optional_player_life_exchange_program(program))
+
+
 def fixed_optional_effect_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -423,6 +443,19 @@ def fixed_optional_effect_node_capabilities(
     if FIXED_OPTIONAL_EFFECT_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     wrapper = effects[0]
+    if "schema_version" in wrapper:
+        from .fixed_homogeneous_target_set_capability_shapes import (
+            validate_optional_graveyard_target_return,
+        )
+
+        try:
+            validate_optional_graveyard_target_return(wrapper, player="$controller")
+        except (TypeError, ValueError):
+            return ()
+        if (not isinstance(target_schema, Mapping) or type(target_schema.get("up_to")) is not int
+                or target_schema["up_to"] != 1):
+            return ()
+        wrapper = {key: value for key, value in wrapper.items() if key != "schema_version"}
     if (
         set(wrapper) != {"op", "player", "effects"}
         or wrapper.get("op") != OPTIONAL_EFFECT_OPERATION
@@ -454,6 +487,10 @@ def fixed_optional_effect_node_capabilities(
         or nested[0].get("op") == OPTIONAL_EFFECT_OPERATION
     ):
         return ()
+    from ..named_search_model import LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION
+    if (nested[0].get("op") == "search"
+            and nested[0].get("schema_version") == LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION):
+        return ()
     from .attachment_actions import is_targeted_equipment_attachment
 
     references_target = _contains_target_reference(nested[0]) or is_targeted_equipment_attachment(nested[0])
@@ -469,6 +506,44 @@ def fixed_optional_effect_node_capabilities(
     return tuple(
         sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY, *dependencies})
     )
+
+
+def _shared_damage_attack_dependencies(effects, target_schema, mechanics):
+    from .temporary_attack_requirements import temporary_attack_requirement_node_capabilities
+    from ..temporary_attack_requirement_model import TemporaryAttackRequirementSpec
+
+    if FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC not in mechanics:
+        return ()
+    damage, requirement = effects
+    if (set(damage) != {"op", "source", "target", "amount"}
+            or damage["op"] != "damage" or damage["source"] != "$source" or damage["target"] != "$target.0"
+            or type(damage["amount"]) is not int or damage["amount"] <= 0
+            or requirement.get("restriction") != TemporaryAttackRequirementSpec().to_dict()):
+        return ()
+    dealt = fixed_damage_node_capabilities(effects=(damage,), target_schema=target_schema, mechanic_ids=mechanics)
+    attack = temporary_attack_requirement_node_capabilities(
+        effects=(requirement,), target_schema=target_schema, mechanic_ids=mechanics,
+    )
+    if not dealt or not attack:
+        return ()
+    return tuple(sorted({FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY, *dealt, *attack}))
+
+
+def shared_damage_attack_runtime_dependencies(program):
+    from ..compiler.fixed_effect_clause_sequences import DAMAGE_ATTACK_REQUIREMENT_TEMPLATE
+
+    effects = program.effects
+    template = program.provenance.get("template_id")
+    if template != DAMAGE_ATTACK_REQUIREMENT_TEMPLATE:
+        if len(effects) == 2 and _shared_damage_attack_dependencies(effects, program.target_schema, program.coverage):
+            raise ValueError("Shared damage and attack requirement needs its exact sequence template")
+        return ()
+    if len(effects) != 2 or (program.event, program.active_zone) != ("activate", "battlefield"):
+        raise ValueError("Shared damage and attack requirement needs its original activated source")
+    required = _shared_damage_attack_dependencies(program.effects, program.target_schema, program.coverage)
+    if not required:
+        raise ValueError("Shared damage and attack requirement lost its exact ordered creature target")
+    return required
 
 
 def fixed_effect_clause_sequence_node_capabilities(
@@ -493,6 +568,8 @@ def fixed_effect_clause_sequence_node_capabilities(
     if target_schema is None:
         if target_components:
             return ()
+    elif target_components == (0, 1):
+        return _shared_damage_attack_dependencies(effects, target_schema, mechanics)
     elif len(target_components) != 1:
         return ()
 
@@ -515,6 +592,25 @@ def fixed_effect_clause_sequence_node_capabilities(
             return ()
         dependencies.update(component)
     return tuple(sorted(dependencies))
+
+
+def is_closed_fixed_effect_clause_sequence_program(program) -> bool:
+    """Recognize an exact program of two independently closed printed clauses."""
+    from ..compiler.fixed_effect_clause_sequences import DAMAGE_ATTACK_REQUIREMENT_TEMPLATE, SOURCE_CHARACTERISTIC_TAP_TEMPLATE
+
+    template = program.provenance.get("template_id")
+    if template == DAMAGE_ATTACK_REQUIREMENT_TEMPLATE:
+        try:
+            required = shared_damage_attack_runtime_dependencies(program)
+        except (TypeError, ValueError):
+            return False
+    elif template in {"fixed-effect-clause-sequence-v1", SOURCE_CHARACTERISTIC_TAP_TEMPLATE}:
+        required = fixed_effect_clause_sequence_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+    else:
+        return False
+    return bool(required) and set(required).issubset(program.capability_dependencies)
 
 
 def source_characteristic_tap_runtime_dependencies(program):

@@ -14,6 +14,7 @@ from ..compiler.affected_player_discard_templates import (
     FIXED_CONTROLLER_DISCARD_MECHANIC,
     FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY,
     FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC,
+    EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC,
 )
 from ..compiler.affected_player_sacrifice_templates import (
     FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
@@ -26,6 +27,9 @@ from .hand_inspection_capability_shapes import (
 )
 
 
+from .hand_inspection import DEFENDING_HAND_OBSERVATION_CAPABILITY, DEFENDING_HAND_OBSERVATION_MECHANIC
+
+
 def affected_player_choice_covered_mechanics(supplied: set[str]) -> set[str]:
     covered: set[str] = set()
     for capability, mechanics in (
@@ -34,10 +38,11 @@ def affected_player_choice_covered_mechanics(supplied: set[str]) -> set[str]:
         (FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY, {FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, 'cr-402-hand'}),
         (AFFECTED_HAND_TOP_CAPABILITY, {AFFECTED_HAND_TOP_MECHANIC, 'cr-402-hand'}),
         (FIXED_CONTROLLER_DISCARD_CAPABILITY, {FIXED_CONTROLLER_DISCARD_MECHANIC}),
-        (FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY, {FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC}),
+        (FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY, {FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC, EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC}),
         ('zone.discard.whole_hand', {'whole-hand-discard', 'cr-402-hand'}),
         ('zone.discard.fixed_random', {'fixed-random-discard', 'cr-402-hand'}),
         (FIXED_HAND_INSPECTION_CAPABILITY, {FIXED_HAND_INSPECTION_MECHANIC, 'cr-402-hand'}),
+        (DEFENDING_HAND_OBSERVATION_CAPABILITY, {DEFENDING_HAND_OBSERVATION_MECHANIC, 'cr-402-hand'}),
         (FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, {FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, MOST_LANDS_ATTACK_SACRIFICE_MECHANIC, 'sacrifice'}),
         (SOURCE_EXCLUDED_SACRIFICE_CAPABILITY, {SOURCE_EXCLUDED_SACRIFICE_MECHANIC}),
     ):

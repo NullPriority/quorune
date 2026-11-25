@@ -28,6 +28,13 @@ for an Oracle ID and records face identity, source hashes, provenance, typed
 nodes, material residuals, capability dependencies, trust basis, and a single
 artifact fingerprint. The versioned JSON schema is the serialization authority.
 
+Trusted-only Commander setup accepts ordinary front-face type eligibility or a
+current, source-bound CardProgram declaration for a printed planeswalker
+permission. The setup owner checks the declaration's face, canonical program
+membership, and capability closure before assigning one physical command-zone
+identity. Deck-format legality and two-commander pairing retain their existing
+authorities.
+
 ## Ownership and flow
 
 `quorune/card_programs/` owns validation, deterministic

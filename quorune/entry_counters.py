@@ -82,6 +82,11 @@ def dynamic_entry_counter_amount(
         if was_cast and card.zone=='stack' and fact is None:
             raise EntryCounterError('Paid-color entry requires actual mana-unit payment provenance')
         value=fact.count_for(card,amount_spec.mana_color) if fact is not None else 0
+    elif source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL:
+        player = host.state.players.get(destination_controller)
+        if player is None or type(player.life) is not int:
+            raise EntryCounterError("The entering controller's life total is unavailable")
+        value = max(0, player.life)
     elif source is DynamicEntryCounterValueSource.CAST_FROM_HAND:
         value = int(
             was_cast and item.context.get("cast_origin") == "hand"
@@ -229,22 +234,20 @@ def intrinsic_entry_counter_effects(
         if counter.amount == 0:
             continue
         source_ref = f"rule:{counter.rule_id}:{object_ref}"
+        identity = f"{object_ref}:{counter.counter_name}:{counter.rule_id}"
+        conditions = {"destination": {"eq": "battlefield"}, "object_ref": {"eq": object_ref}}
+        if counter.required_type is None:
+            source_ref += f":{sequence}"
+            identity += f":{sequence}"
+        else:
+            conditions["object_types"] = {"contains": counter.required_type}
         effects.append(
             ReplacementEffect(
-                effect_id=(
-                    "replacement.intrinsic-entry-counter:"
-                    f"{object_ref}:{counter.counter_name}:{counter.rule_id}"
-                ),
+                effect_id=f"replacement.intrinsic-entry-counter:{identity}",
                 source_id=source_ref,
                 event_kind="zone.change",
                 replacement_class=ReplacementClass.SELF_REPLACEMENT,
-                conditions={
-                    "destination": {"eq": "battlefield"},
-                    "object_ref": {"eq": object_ref},
-                    "object_types": {
-                        "contains": counter.required_type,
-                    },
-                },
+                conditions=conditions,
                 operations=(
                     CreateAffectedObjectCounter(
                         counter_name=counter.counter_name,

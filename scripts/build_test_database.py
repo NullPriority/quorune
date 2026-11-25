@@ -177,10 +177,8 @@ def export_fixture(
     }
 
 
-def build_fixture_database(
-    fixtures: Path | list[Path], output: Path
-) -> dict:
-    fixture_paths = [fixtures] if isinstance(fixtures, Path) else fixtures
+def _collect_fixture_records(fixture_paths):
+    """Read one canonical set for validation and SQLite generation."""
     cards_by_oracle: dict[str, dict] = {}
     oracle_by_name: dict[str, str] = {}
     ruling_counts: Counter[str] = Counter()
@@ -215,6 +213,14 @@ def build_fixture_database(
             snapshot_counts[identity] += 1
         ruling_counts |= snapshot_counts
     ruling_rows = [ruling_values[identity] for identity, count in ruling_counts.items() for _ in range(count)]
+    return cards_by_oracle, ruling_rows
+
+
+def build_fixture_database(
+    fixtures: Path | list[Path], output: Path
+) -> dict:
+    fixture_paths = [fixtures] if isinstance(fixtures, Path) else fixtures
+    cards_by_oracle, ruling_rows = _collect_fixture_records(fixture_paths)
     with tempfile.TemporaryDirectory() as temporary:
         work = Path(temporary)
         oracle_path = work / "oracle-cards.jsonl"
@@ -307,6 +313,7 @@ def main() -> int:
         )
     elif args.command == "validate-ci":
         result = validate_compact_ci_consumers()
+        _collect_fixture_records(compact_ci_fixture_paths())
     else:
         if args.verify_artifact is not None:
             result = verify_dependency_artifact(artifact_dir=args.verify_artifact, root=ROOT)

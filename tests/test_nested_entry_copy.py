@@ -175,8 +175,8 @@ class NestedEntryCopyRuntimeTests(unittest.TestCase):
         from unittest.mock import patch
         import quorune.semantic_runtime.entry_copy as owner
         original=owner._copy_programs
-        def omit_acquired(host,source,subject):
-            return () if source.annotations.get('copy_overrides') else original(host,source,subject)
+        def omit_acquired(host,source,*,controller):
+            return () if source.annotations.get('copy_overrides') else original(host,source,controller=controller)
         method='test_chosen_vizier_copy_acquires_second_copy_before_only_final_entry_draw'
         with patch.object(owner,'_copy_programs',side_effect=omit_acquired),self.assertRaises(AssertionError):
             getattr(type(self)(method),method)()

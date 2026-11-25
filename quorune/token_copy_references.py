@@ -5,7 +5,13 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping, Sequence
 
-from .token_copy_recipes import TokenCopyRecipeError, TokenCopyRecipeSpec, copy_recipes
+from .token_copy_recipes import GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, TokenCopyRecipeError, TokenCopyRecipeSpec, copy_recipes
+from .token_copy_recipient_model import has_occurrence_copy_recipient
+from .rules.token_copy_recipients import represents_occurrence_controller_copy
+from .rules.cast_target_copy import (
+    CAST_TARGET_COPY_ORIGIN, controlled_cast_copy_target, represents_cast_target_copy,
+    validate_cast_target_copy_reference,
+)
 
 
 COPY_REFERENCE_CONTEXT = "token_copy_references_v1"
@@ -26,6 +32,27 @@ def copy_source_context(host: Any, source: Any, effects: Sequence[Mapping[str, A
     if not any(recipe.origin == "source" for recipe in copy_recipes(effects)):
         return {}
     return {COPY_REFERENCE_CONTEXT: {"source": _snapshot(host, source)}}
+
+
+def triggered_copy_reference_context(host, program, event, context):
+    from .rules.event_spell_copy import event_spell_copy_trigger_context
+    from .rules.temporary_occurrence_copy import represents_temporary_occurrence_copy
+
+    retained = event_spell_copy_trigger_context(host, program, event, context)
+    if any(represents_cast_target_copy(effect) for effect in program.effects):
+        card = controlled_cast_copy_target(host, context, controller=context.get("controller"))
+        if event != "spell.cast" or card is None:
+            raise TokenCopyRecipeError("Cast target copy lost its matching original target")
+        return {COPY_REFERENCE_CONTEXT: {"event_object": _snapshot(host, card)}}
+    if not (represents_temporary_occurrence_copy(program.effects) or represents_occurrence_controller_copy(program.effects)):
+        return retained
+    logical_id = context.get("card_object_identity")
+    object_id = logical_id.rpartition("@")[0] if type(logical_id) is str else ""
+    card = host.state.cards.get(object_id)
+    if (event != "creature.enter" or card is None or card.ref != context.get("card")
+            or card.logical_object_id != logical_id or card.zone != "battlefield"):
+        raise TokenCopyRecipeError("Occurrence copy lost its original entering incarnation")
+    return {**retained, COPY_REFERENCE_CONTEXT: {"event_object": _snapshot(host, card)}}
 
 
 def _attachment_identity(host: Any, item: Any) -> tuple[str, str, str] | None:
@@ -56,14 +83,41 @@ def _attachment_identity(host: Any, item: Any) -> tuple[str, str, str] | None:
             if identity is not None else None)
 
 
+def _copy_reference_key(origin, target_index):
+    if origin == CAST_TARGET_COPY_ORIGIN:
+        return "event_object"
+    return origin if target_index is None else f"target:{target_index}"
+
+
+def _current_graveyard_copy_target_identity(host, item, *, target_index):
+    if target_index is not None or len(item.targets) != 1:
+        raise TokenCopyRecipeError("A graveyard copy requires its one original target slot")
+    ref = item.targets[0]
+    selected = item.context.get("target_snapshots", {}).get(ref)
+    if not isinstance(selected, Mapping) or selected.get("zone") != "graveyard":
+        return None
+    card = host.state.cards.get(selected.get("object_id"))
+    if (card is None or card.ref != ref or card.zone != "graveyard" or card.owner != item.controller
+            or card.zone_change_counter != selected.get("zone_change_counter") or not card.is_card_object):
+        return None
+    data = host._effective_card_data(card)
+    if "creature" not in host._type_parts(str(data.get("type_line") or ""))[0]:
+        return None
+    return card.object_id, card.logical_object_id, "graveyard"
+
+
 def _identity(host: Any, item: Any, origin: str, *, target_index=None) -> tuple[str, str, str] | None:
+    if origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN:
+        return _current_graveyard_copy_target_identity(host, item, target_index=target_index)
     if target_index is not None and (origin!='target' or type(target_index) is not int or not 0<=target_index<len(item.targets)):
         raise TokenCopyRecipeError('Copy target index is invalid')
     if origin == "source_attachment":
         return _attachment_identity(host, item)
     context = item.context.get(COPY_REFERENCE_CONTEXT)
-    key=origin if target_index is None else f'target:{target_index}'
+    key = _copy_reference_key(origin, target_index)
     cached = context.get(key) if isinstance(context, Mapping) else None
+    if origin == CAST_TARGET_COPY_ORIGIN:
+        validate_cast_target_copy_reference(item, cached)
     if isinstance(cached,Mapping) and target_index is not None:
         ref=item.targets[target_index]
         target=item.context.get('target_snapshots',{}).get(ref)
@@ -129,22 +183,24 @@ def _cast_spell_token_reference(host, trigger):
                         "annotations":{"copied_from":spell.card_object_id,"copy_overrides":values}}}
 
 
-def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *, target_index=None) -> Mapping[str, Any] | None:
+def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *, target_index=None,
+                            use_phased_lki=False) -> Mapping[str, Any] | None:
     if recipe.origin == "event_spell":
         if target_index is not None:
             raise TokenCopyRecipeError("The original cast spell is not a selected target")
         return _cast_spell_token_reference(host,item)
     identity = _identity(host, item, recipe.origin,target_index=target_index)
-    if identity is None and recipe.origin == "source_attachment":
+    if identity is None and recipe.origin in {"source_attachment", GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN}:
         return None
     if identity is None:
         raise TokenCopyRecipeError("Copy reference identity is unavailable")
     object_id, logical_object_id, zone = identity
     card = host.state.cards.get(object_id)
-    if card is not None and card.logical_object_id == logical_object_id and card.zone == zone:
+    if (card is not None and card.logical_object_id == logical_object_id and card.zone == zone
+            and not ((use_phased_lki or recipe.origin == CAST_TARGET_COPY_ORIGIN) and card.phased_out)):
         value = _snapshot(host, card)
     else:
-        key=recipe.origin if target_index is None else f'target:{target_index}'
+        key = _copy_reference_key(recipe.origin, target_index)
         value = item.context.get(COPY_REFERENCE_CONTEXT, {}).get(key)
         if recipe.origin == "source_attachment" and isinstance(value, Mapping):
             if (value.get("object_id"), value.get("logical_object_id"), value.get("zone")) != identity:
@@ -160,13 +216,66 @@ def copy_reference_snapshot(host: Any, item: Any, recipe: TokenCopyRecipeSpec, *
     return deepcopy(dict(value))
 
 
-def pin_copy_characteristic_departures(host: Any, cards: Sequence[Any], *, error_type=TokenCopyRecipeError) -> None:
+def _pin_original_occurrence_copy_departures(host, departing):
+    from .rules.temporary_occurrence_copy import represents_temporary_occurrence_copy
+    from .trigger_batches import PendingTriggerBatch
+    from .trigger_processing import replace_pending_trigger_batch
+
+    frames = [(item.ref, item.semantic_key, item.context) for item in host.state.stack]
+    frames.extend((item.ref, item.payload.get("semantic_key"), item.payload.get("context", {}))
+                  for batch in host.state.pending_trigger_batches for item in batch.items)
+    updates, snapshots = {}, {}
+    for ref, semantic_key, context in frames:
+        references = context.get(COPY_REFERENCE_CONTEXT)
+        saved = references.get("event_object") if isinstance(references, Mapping) else None
+        if not isinstance(saved, Mapping):
+            continue
+        card = departing.get(saved.get("object_id"))
+        if card is None or card.phased_out or card.logical_object_id != saved.get("logical_object_id"):
+            continue
+        program = host.semantics.get(semantic_key) if semantic_key else None
+        if program is None or not (
+            represents_temporary_occurrence_copy(program.effects)
+            or represents_occurrence_controller_copy(program.effects)
+            or any(represents_cast_target_copy(effect) for effect in program.effects)
+        ):
+            continue
+        if card.ref != saved.get("ref") or saved.get("zone") != "battlefield":
+            raise TokenCopyRecipeError("Occurrence copy reference changed its original incarnation")
+        if card.object_id not in snapshots:
+            snapshots[card.object_id] = _snapshot(host, card)
+        updates[ref] = snapshots[card.object_id]
+    if not updates:
+        return
+    for item in host.state.stack:
+        if item.ref in updates:
+            item.context[COPY_REFERENCE_CONTEXT]["event_object"] = deepcopy(updates[item.ref])
+    for index, batch in enumerate(host.state.pending_trigger_batches):
+        data = batch.to_dict()
+        changed = False
+        for group in data["groups"]:
+            for item in group["items"]:
+                if item["ref"] in updates:
+                    item["context"][COPY_REFERENCE_CONTEXT]["event_object"] = deepcopy(updates[item["ref"]])
+                    changed = True
+        if changed:
+            replace_pending_trigger_batch(host, index, PendingTriggerBatch.from_dict(data))
+
+
+def pin_copy_characteristic_departures(host: Any, cards: Sequence[Any], *, error_type=TokenCopyRecipeError,
+                                       phase_out=False) -> None:
     """Only evaluate references belonging to this committed departure group."""
     departing = {card.object_id: card for card in cards if card.zone == "battlefield"}
     if not departing:
         return
     updates = []
     try:
+        _pin_original_occurrence_copy_departures(host, departing)
+        if phase_out:
+            from .target_controller_information import pin_occurrence_controller_departures
+
+            pin_occurrence_controller_departures(host, tuple(departing.values()), phase_out=True)
+            return
         for item in host.state.stack:
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
             if program is None:
@@ -178,6 +287,8 @@ def pin_copy_characteristic_departures(host: Any, cards: Sequence[Any], *, error
                 effects=mode_effects(schema,item.modes,target_groups=item.context.get('target_groups') or item.context.get('target_groups_current') or {})
             from .token_copy_recipes import executable_copy_effects
             for effect in executable_copy_effects(effects):
+                if has_occurrence_copy_recipient(effect) or represents_cast_target_copy(effect):
+                    continue
                 recipe=TokenCopyRecipeSpec.from_dict(effect['copy_spec'])
                 target=effect.get('_copy_target');index=target['index'] if isinstance(target,Mapping) else None
                 identity = _identity(host, item, recipe.origin,target_index=index)

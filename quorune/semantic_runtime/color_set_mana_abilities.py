@@ -6,6 +6,8 @@ from typing import Any, Mapping
 
 from ..color_set_mana_abilities import (
     COLOR_SET_MANA_HANDLER_ID,
+    COMMANDER_IDENTITY_MANA_HANDLER_ID,
+    COMMANDER_IDENTITY_MANA_CAPABILITY,
     ColorSetActivatedManaAbilitySpec,
     ColorSetManaAbilityError,
 )
@@ -56,7 +58,10 @@ class ColorSetActivatedManaAbilityHandler:
                 "Color-set activated mana ability must be an object"
             )
         try:
-            return ColorSetActivatedManaAbilitySpec.from_dict(ability)
+            spec = ColorSetActivatedManaAbilitySpec.from_dict(ability)
+            if spec.uses_commander_identity != (self.handler_id == COMMANDER_IDENTITY_MANA_HANDLER_ID):
+                raise ColorSetManaAbilityError("Mana output source does not match its registered authority")
+            return spec
         except (ColorSetManaAbilityError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
 
@@ -78,7 +83,15 @@ class ColorSetManaAbilityRegistry(
 @lru_cache(maxsize=1)
 def default_color_set_mana_ability_registry() -> ColorSetManaAbilityRegistry:
     registry = ColorSetManaAbilityRegistry(
-        (ColorSetActivatedManaAbilityHandler(),)
+        (
+            ColorSetActivatedManaAbilityHandler(),
+            ColorSetActivatedManaAbilityHandler(
+                handler_id=COMMANDER_IDENTITY_MANA_HANDLER_ID,
+                family="ability.activated.mana.commander-identity",
+                rule_references=("106.1", "605.1a", "605.3b", "903.4a", "903.4f"),
+                capability_dependencies=("mana.activated.color_set", COMMANDER_IDENTITY_MANA_CAPABILITY),
+            ),
+        )
     )
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()

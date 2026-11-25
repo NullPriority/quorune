@@ -127,6 +127,20 @@ def validate_program_trigger_limit(program: Any) -> None:
         raise ValueError("Trigger limits require their usage capability dependency")
 
 
+def event_source_incarnation_context(source: Any, program: Any) -> dict[str, str]:
+    """Bind the physical source for triggers that resolve against its current incarnation."""
+    from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
+    from .color_retaining_copy import is_closed_retained_color_upkeep_program
+    from .persistent_self_copy_trigger import is_closed_persistent_self_copy_trigger
+
+    if ("source_entry_cast_intervening" in program.coverage
+            or DECLARED_ATTACK_POWER_COVERAGE in program.coverage
+            or is_closed_retained_color_upkeep_program(program)
+            or is_closed_persistent_self_copy_trigger(program)):
+        return {"source_logical_object_id": source.logical_object_id}
+    return {}
+
+
 def event_source_usage_context(source: Any, program: Any, turn_sequence: int) -> dict[str,Any]:
     if program.trigger_limit is None or TriggerLimitSpec.from_dict(program.trigger_limit).schema_version == 1:
         return {}

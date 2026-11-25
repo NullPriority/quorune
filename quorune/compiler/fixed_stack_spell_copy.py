@@ -3,10 +3,16 @@ from __future__ import annotations
 """A closed leaf for one explicitly retargetable instant/sorcery spell copy."""
 
 from . import regex_working_set as re
-from ..stack_spell_copy_model import FixedStackSpellCopySpec
+from ..stack_spell_copy_model import FixedStackSpellCopySpec, PermanentSpellCopySpec
 
 
 def fixed_stack_spell_copy_template(text):
+    if re.fullmatch(
+        r"Copy target creature spell you control, except it isn't legendary if the spell is legendary\."
+        r"(?: \(A copy of a creature spell becomes a token\.\))?", text.strip(), re.I,
+    ):
+        spec = PermanentSpellCopySpec("nonlegendary")
+        return "copy-nonlegendary-creature-spell-v1", spec.effects, spec.target_schema, ("cr-115-targets",)
     qualified = fixed_qualified_stack_copy_template(text)
     if qualified is not None:
         return qualified
@@ -22,7 +28,12 @@ def fixed_stack_spell_copy_template(text):
 def fixed_qualified_stack_copy_template(text):
     from ..stack_spell_copy_model import FixedQualifiedStackCopySpec
 
-    if re.fullmatch(r'Copy target permanent spell you control\.', text.strip(), re.I):
+    if re.fullmatch(
+        r'Copy target permanent spell you control three times\.(?: \(The copies become tokens\.\))?',
+        text.strip(), re.I,
+    ):
+        spec = FixedQualifiedStackCopySpec('permanent_spell', schema_version=2, copy_count=3)
+    elif re.fullmatch(r'Copy target permanent spell you control\.', text.strip(), re.I):
         spec = FixedQualifiedStackCopySpec('permanent_spell')
     else:
         match = re.fullmatch(r'Copy target (?P<kind>activated or triggered ability|triggered ability) you control'
@@ -40,6 +51,14 @@ def fixed_qualified_stack_copy_template(text):
 def cast_event_spell_copy_template(binding,text):
     from ..event_spell_copy_model import EVENT_SPELL_COPY_MECHANIC,event_spell_copy_effect
     if binding.event.value!='spell.cast':return None
+    from ..stack_spell_copy_model import beast_or_bird_creature_cast_condition
+
+    if binding.event_condition == beast_or_bird_creature_cast_condition() and re.fullmatch(
+        r"Copy it, except the copy is an artifact in addition to its other types\."
+        r"(?: \(The copy becomes a token\.\))?", text.strip(), re.I,
+    ):
+        spec = PermanentSpellCopySpec("artifact")
+        return ("copy-artifact-creature-cast-v1", spec.effects, None, (EVENT_SPELL_COPY_MECHANIC,)), False
     match=re.fullmatch(r'Copy (?:that spell|it)\.(?P<retarget> You may choose new targets for the copy\.)?',text.strip(),re.I)
     if match is None:return None
     return ('cast-event-spell-copy-v1',(event_spell_copy_effect(retain_targets_only=not bool(match['retarget'])),),None,(EVENT_SPELL_COPY_MECHANIC,)),False

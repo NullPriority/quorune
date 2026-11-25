@@ -62,7 +62,8 @@ class FixedKeywordActivationCompilerTests(unittest.TestCase):
         ir=self.compile('Equipment you control have equip {1}.')
         self.assertEqual('exact',ir.status,ir.material_residuals)
         outer,child=ir.faces[0].nodes
-        ability,=_typed_granted_abilities({'ability_fragments':outer.handlers[0]['modifier']['add_ability_fragments']})
+        ability,=_typed_granted_abilities(SimpleNamespace(),
+            {'ability_fragments':outer.handlers[0]['modifier']['add_ability_fragments']})
         program=SimpleNamespace(provenance={'granted_only':True},event=child.event,
             active_zone=child.active_zone,handlers=child.handlers,cost_schema=child.cost,
             target_schema=child.target_schema,effects=child.effects)

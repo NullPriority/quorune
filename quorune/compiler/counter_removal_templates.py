@@ -169,6 +169,15 @@ def fixed_counter_removal_effect_template(
     )
 
 
+def all_permanent_counters_then_token_exile_template(text):
+    if " ".join(text.split()).casefold() != "remove all counters from all permanents and exile all tokens.":
+        return None
+    from ..counter_removal import all_permanent_counters_then_token_exile_effect
+
+    return ("all-permanent-counters-then-token-exile-v1", (all_permanent_counters_then_token_exile_effect(),),
+            None, ("cr-122-counters", "fixed-public-zone-move", "fixed-public-zone-move-set"))
+
+
 def all_counter_removal_effect_template(
     text: str,
 ) -> AllCounterRemovalTemplate | TargetAllCounterTemplate | None:

@@ -129,3 +129,170 @@ class ModalEventNativeTests(actions.InheritedNativeFixture,unittest.TestCase):
                 if mode=='mode_1':
                     self.assertIsNotNone(decision);self.assertIsNone(session.packet('pilot:B',full=True)['decision']);result=session.act('pilot:A',{'action_id':'choose','card':land.ref});self.assertTrue(result.ok,result.summary)
                 session=self.replay(session,load=True);self.settle(session);self.assertEqual('battlefield',session.state.cards[land.object_id].zone);self.assertTrue(session.state.cards[land.object_id].tapped);self.assertEqual(plays,session.state.players['A'].land_plays_remaining);self.assertEqual('graveyard',session.state.cards[wrong.object_id].zone);self.replay(session,load=True)
+
+    def test_concord_modes_use_closed_branch_authority(self):
+        from quorune.rules import capabilities
+        from quorune.rules.special_node_shapes import special_node_capabilities
+
+        original = self.db.lookup("Concord with the Kami", fuzzy=False)
+        registry = self.registry
+        ir = compile_oracle_card(original, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(("step.begin", "battlefield"), (node.event, node.active_zone))
+        self.assertLessEqual(
+            {
+                MODAL, "trigger.effect.fixed_event", "trigger.placement.apnap",
+                "counter.producer.fixed_effect", "state_query.permanent.any_counter",
+                "resolution.effect.public_condition", "zone.draw.library_to_hand",
+                "token.creation.fixed_definition",
+            },
+            set(node.capability_dependencies),
+        )
+        broken = deepcopy(node.target_schema)
+        broken["modes"]["mode_2"]["effects"] = [{"op": "unknown"}]
+        for effects, schema in ((node.effects, broken), (({"op": "draw", "count": 1},), node.target_schema)):
+            with self.subTest(effects=effects, schema=schema is broken):
+                self.assertEqual((), capabilities.capability_dependencies_for_node(
+                    effects=effects, target_schema=schema, mechanic_ids=node.mechanics,
+                ))
+
+        resolve = capabilities.capability_dependencies_for_node
+        def condition_first(*, effects, target_schema, mechanic_ids, cost_schema=None):
+            owned = special_node_capabilities(
+                effects=effects, target_schema=target_schema, mechanics=set(mechanic_ids), cost_schema=cost_schema,
+            )
+            if owned is not None:
+                return owned
+            return resolve(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema)
+
+        with patch("quorune.compiler.dependency_gate.capability_dependencies_for_node", side_effect=condition_first):
+            mutated = compile_oracle_card(original, capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", mutated.status)
+
+    def _concord_tokens(self, session):
+        return [card for card in session.state.cards.values()
+                if card.is_token and card.printed_name == "Spirit Token" and card.zone == "battlefield"]
+
+    def _await_end_step_modal_choice(self, session):
+        self.until(session, lambda s: s.state.pending_decision is not None
+                   and s.state.pending_decision.kind == "semantic.target")
+        self.assertEqual("end_step", session.state.step)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+
+    def test_actual_concord_checks_attachment_conditions_only_when_resolving(self):
+        cases = (("Alexi's Cloak", ("Island", "Generic Bound Plains"), 1, 0),
+                 ("Magnetic Theft", ("Mountain",), 0, 1))
+        for i, (response, lands, draws, tokens) in enumerate(cases):
+            with self.subTest(response=response):
+                session = self.session(9360110 + i)
+                concord = self.add(session.engine, "Concord with the Kami")
+                creature = self.add(session.engine, "Grizzly Bears")
+                equipment = self.add(session.engine, "Bonesplitter")
+                spell = self.add(session.engine, response, zone="hand")
+                private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand", ref="concord-secret")
+                for index, name in enumerate(lands):
+                    self.add(session.engine, name, ref=f"concord-response-land-{index}")
+                for original in (concord, spell):
+                    self.assert_closed(session, original)
+                self.prepare(session)
+                self.checkpoint(session)
+                self._await_end_step_modal_choice(session)
+                before = authoritative_state_hash(session.state)
+                command = {"action_id": "choose", "modes": ["mode_2", "mode_3"], "targets": []}
+                self.assertFalse(session.act("pilot:B", command).ok)
+                rejected = session.act("pilot:A", {"action_id": "choose", "modes": ["mode_1"], "targets": [creature.ref]})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                selected = session.act("pilot:A", command)
+                self.assertTrue(selected.ok, selected.summary)
+                if response == "Alexi's Cloak":
+                    self.cast(session, "A", spell, [creature.ref])
+                else:
+                    offered = self.action(session, "A", spell)
+                    sent = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto",
+                        "targets": {"target_0": [equipment.ref], "target_1": [creature.ref]}})
+                    self.assertTrue(sent.ok, sent.summary)
+                self.resolve_top(session)
+                hand = len(session.state.players["A"].zones["hand"])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(hand + draws, len(session.state.players["A"].zones["hand"]))
+                created = self._concord_tokens(session)
+                self.assertEqual(tokens, len(created))
+                self.assertTrue(all(card.controller == "A" for card in created))
+                for viewer in "ABC":
+                    self.assertNotIn(private.ref, json.dumps(session.packet("pilot:" + viewer, full=True)))
+                self.replay(session, load=True)
+
+    def test_actual_concord_uses_the_single_selected_target_for_the_whole_trigger(self):
+        from quorune.attachments import attach_objects
+
+        for stale in (False, True):
+            with self.subTest(stale=stale):
+                session = self.session(9360120 + stale)
+                concord = self.add(session.engine, "Concord with the Kami")
+                target = self.add(session.engine, "Grizzly Bears", seat="C", ref="concord-counters")
+                target.counters["charge"] = 1
+                bearer = self.add(session.engine, "Grizzly Bears", ref="concord-bearer")
+                equipment = self.add(session.engine, "Bonesplitter")
+                cloak = self.add(session.engine, "Alexi's Cloak")
+                bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+                self.add(session.engine, "Island", seat="B")
+                for attachment in (equipment, cloak):
+                    attach_objects(session.state.cards, attachment, bearer,
+                                   source_timestamp=attachment.zone_timestamp, players=session.state.players)
+                self.assert_closed(session, concord)
+                self.prepare(session)
+                self.checkpoint(session)
+                self._await_end_step_modal_choice(session)
+                result = session.act("pilot:A", {"action_id": "choose", "modes": ["mode_1", "mode_2", "mode_3"],
+                                                "targets": [target.ref]})
+                self.assertTrue(result.ok, result.summary)
+                if stale:
+                    self.cast(session, "B", bounce, [target.ref])
+                    self.resolve_top(session)
+                    self.assertEqual("hand", session.state.cards[target.object_id].zone)
+                session = self.replay(session, load=True)
+                hand = len(session.state.players["A"].zones["hand"])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(hand + (0 if stale else 1), len(session.state.players["A"].zones["hand"]))
+                self.assertEqual(0 if stale else 1, len(self._concord_tokens(session)))
+                self.assertEqual(0 if stale else 1, session.state.cards[target.object_id].counters.get("+1/+1", 0))
+                self.replay(session, load=True)
+
+    def test_actual_sylvan_scavenging_uses_power_at_resolution(self):
+        for response in (False, True):
+            with self.subTest(response=response):
+                session = self.session(9360130 + response)
+                scavenging = self.add(session.engine, "Sylvan Scavenging")
+                bear = self.add(session.engine, "Grizzly Bears")
+                growth = self.add(session.engine, "Giant Growth", zone="hand")
+                self.add(session.engine, "Forest")
+                self.assert_closed(session, scavenging)
+                self.prepare(session)
+                self.checkpoint(session)
+                self._await_end_step_modal_choice(session)
+                self.assertEqual(2, session.engine._numeric_stat(bear.object_id, "power"))
+                before = authoritative_state_hash(session.state)
+                rejected = session.act("pilot:A", {"action_id": "choose",
+                    "modes": ["mode_1", "mode_2"], "targets": [bear.ref]})
+                self.assertFalse(rejected.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act("pilot:A", {"action_id": "choose", "modes": ["mode_2"], "targets": []})
+                self.assertTrue(accepted.ok, accepted.summary)
+                if response:
+                    self.cast(session, "A", growth, [bear.ref])
+                    self.resolve_top(session)
+                    self.assertEqual(5, session.engine._numeric_stat(bear.object_id, "power"))
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                tokens = [card for card in session.state.cards.values()
+                    if card.zone == "battlefield" and card.is_token and card.printed_name == "Raccoon Token"]
+                self.assertEqual(int(response), len(tokens))
+                for token in tokens:
+                    self.assertEqual("A", token.controller)
+                    self.assertEqual((3, 3), tuple(session.engine._numeric_stat(token.object_id, field)
+                                                  for field in ("power", "toughness")))
+                self.replay(session, load=True)

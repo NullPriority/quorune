@@ -35,6 +35,8 @@ from quorune.semantic_runtime.action_permissions import (
     ACTION_PERMISSION_EVENT,
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
     ADDITIONAL_LAND_PLAY_HANDLER_ID,
+    SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY,
+    SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID,
     LIBRARY_TOP_ACTION_HANDLER_ID,
     LIBRARY_TOP_HISTORY_CAPABILITY,
     LIBRARY_TOP_MANA_VALUE_CAPABILITY,
@@ -104,6 +106,30 @@ class StaticActionPermissionCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
             trust_level=trust_level,
         )
+
+    def test_shared_static_land_allowance_is_a_distinct_closed_permission(self):
+        clause = "Each player may play an additional land on each of their turns."
+        record = _permanent(clause, suffix=116_300_073)
+        program = self.compile(record)
+        self.assertEqual((), program.residuals)
+        ability, = [a for a in program.abilities if a.event == ACTION_PERMISSION_EVENT]
+        descriptor, = ability.handlers
+        self.assertEqual(SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID, descriptor["handler_id"])
+        self.assertEqual(1, descriptor["amount"])
+        self.assertIn(SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY, ability.capability_dependencies)
+        ordinary = static_action_permission_handler(
+            "You may play an additional land on each of your turns."
+        )
+        self.assertEqual(ADDITIONAL_LAND_PLAY_HANDLER_ID, ordinary[1]["handler_id"])
+        for changed in (
+            clause.replace("an additional land", "any number of lands"),
+            clause.replace("each of their turns", "your turn"),
+            clause.replace("Each player", "Each opponent"),
+        ):
+            self.assertIsNone(static_action_permission_handler(changed))
+        with mock.patch("quorune.compiler.action_permission_templates._SHARED_ADDITIONAL_LAND_PLAYS") as removed:
+            removed.fullmatch.return_value = None
+            self.assertTrue(self.compile(record, trust_level="provisional").residuals)
 
     def test_closed_permission_sentences_compile_face_pinned_typed_programs(
         self,
@@ -1079,6 +1105,76 @@ class PublicLibraryActionPermissionRuntimeTests(unittest.TestCase):
             session.save(record_dir)
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
+
+    def test_shared_static_land_allowance_is_independent_per_turn_and_replays(self):
+        for index, (actor, allowance) in enumerate((("A", 3), ("C", 2))):
+            with self.subTest(actor=actor):
+                session = self.session(116_313_057 + index)
+                engine = session.engine
+                self.add_card(
+                    session, seat="B", name="Generic Shared Land Allowance",
+                    ref="shared-land-permission", zone="battlefield",
+                )
+                self.add_card(
+                    session, seat="A", name="Generic Additional Land Permission",
+                    ref="personal-land-permission", zone="battlefield",
+                )
+                lands = [
+                    self.add_card(
+                        session, seat=actor, name="Generic Library-Top Land",
+                        ref=f"shared-land-{slot}", zone="hand",
+                    )
+                    for slot in range(allowance + 1)
+                ]
+                self.prepare_main(session, actor)
+                session.initial_checkpoint = checkpoint_envelope(session.state)
+                session.commands.clear()
+                session.decisions.clear()
+                self.assertEqual(allowance, len(land_play_permission_options(engine, actor)))
+                principal = "pilot:" + actor
+                for index, land in enumerate(lands[:-1]):
+                    packet = session.packet(principal, full=True)
+                    action = next(
+                        row for row in packet["decision"]["ctx"]["legal"]["actions"]
+                        if row.get("kind") == "play_land" and row.get("card") == land.ref
+                    )
+                    command = {"action_id": action["id"]}
+                    if index == 0:
+                        before = authoritative_state_hash(session.state)
+                        self.assertFalse(session.act("pilot:B", command).ok)
+                        self.assertEqual(before, authoritative_state_hash(session.state))
+                    accepted = session.act(principal, command)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual((), land_play_permission_options(engine, actor))
+                self.assertEqual("hand", lands[-1].zone)
+                self.assertEqual(2, len(land_play_permission_options(engine, "D")))
+                with tempfile.TemporaryDirectory() as temporary:
+                    record_dir = Path(temporary) / "shared-static-land-replay"
+                    session.save(record_dir)
+                    replay = replay_record(record_dir, self.db, verify=True)
+                self.assertTrue(replay["ok"], replay)
+
+    def test_shared_static_land_allowance_tracks_effective_provider_presence(self):
+        session = self.session(116_313_059)
+        engine = session.engine
+        source = self.add_card(
+            session, seat="A", name="Generic Shared Land Allowance",
+            ref="shared-land-source", zone="battlefield",
+        )
+        land = self.add_card(
+            session, seat="B", name="Generic Library-Top Land",
+            ref="shared-land-consumed", zone="hand",
+        )
+        self.prepare_main(session, "B")
+        engine._play_land("B", {"card": land.ref, "from": "hand"})
+        self.assertEqual((1, 1), land_play_accounting(engine, "B"))
+        engine.change_control(source.object_id, "C", reason="shared land authority witness")
+        self.assertEqual(1, len(land_play_permission_options(engine, "B")))
+        self.assertEqual(2, len(land_play_permission_options(engine, "D")))
+        engine.move_card(source.object_id, "graveyard", log=False)
+        self.assertEqual((), land_play_permission_options(engine, "B"))
+        self.assertEqual(1, len(land_play_permission_options(engine, "D")))
+        self.assertEqual((1, 1), land_play_accounting(engine, "B"))
 
     def test_additional_land_quota_counts_plays_not_source_slots(self):
         def fixture(seed: int, *, source_count: int = 1):

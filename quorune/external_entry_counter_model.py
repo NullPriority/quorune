@@ -7,6 +7,11 @@ from typing import Mapping
 
 EXTERNAL_ENTRY_COUNTER_CAPABILITY='counter.producer.external_additional_entry'
 EXTERNAL_ENTRY_COUNTER_HANDLER='replacement.zone.external-entry-counter.v1'
+EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER = "replacement.zone.external-chosen-subtype-entry-counter.v2"
+EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY = "counter.producer.external_chosen_creature_type_entry"
+EXTERNAL_ENTRY_COUNTER_HANDLER_IDS = frozenset({
+    EXTERNAL_ENTRY_COUNTER_HANDLER, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
+})
 
 
 @dataclass(frozen=True,slots=True)
@@ -52,10 +57,17 @@ class ExternalEntryCounterSourceSnapshot:
     logical_object_id: str
     controller: str
     amount: int
+    chosen_creature_type: str | None = None
 
     def __post_init__(self):
         if any(type(v) is not str or not v for v in (self.object_id,self.logical_object_id,self.controller)) or type(self.amount) is not int:
             raise ValueError('External entry counters require a sealed source identity and integer quantity')
+        if self.chosen_creature_type is not None:
+            from .creature_subtypes import canonical_creature_subtype
+
+            if (type(self.chosen_creature_type) is not str
+                    or canonical_creature_subtype(self.chosen_creature_type) != self.chosen_creature_type):
+                raise ValueError("External entry counters require a canonical retained creature subtype")
 
     @property
     def nonnegative_amount(self):return max(0,self.amount)

@@ -28,6 +28,8 @@ class BlockTransitionError(ValueError):
     """A declaration-time block transition is malformed or stale."""
 
 
+
+
 def _identity(value: Any, *, field: str) -> str:
     if type(value) is not str or not value:
         raise BlockTransitionError(f"{field} must be a nonempty string")
@@ -246,9 +248,10 @@ def _transition_payload(
     active_player: str,
     participants: Sequence[BlockTransitionParticipant],
     assignments: Sequence[BlockTransitionAssignment],
+    schema_version: int = 1,
 ) -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": schema_version,
         "turn_sequence": turn_sequence,
         "priority_epoch": priority_epoch,
         "active_player": active_player,
@@ -275,7 +278,7 @@ class BlockTransitionEvent:
 
     def __post_init__(self) -> None:
         _identity(self.transition_id, field="Block transition identity")
-        if self.schema_version != 1 or type(self.schema_version) is not int:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2):
             raise BlockTransitionError(
                 "Unsupported block-transition schema version"
             )
@@ -284,7 +287,7 @@ class BlockTransitionEvent:
         _identity(self.active_player, field="Block transition active player")
         participants = tuple(self.participants)
         assignments = tuple(self.assignments)
-        if not participants or not assignments:
+        if not participants or (self.schema_version == 1 and not assignments):
             raise BlockTransitionError(
                 "A block transition requires participants and assignments"
             )
@@ -300,6 +303,12 @@ class BlockTransitionEvent:
             )
         object.__setattr__(self, "participants", participants)
         object.__setattr__(self, "assignments", assignments)
+
+        if self.schema_version == 2:
+            if len(participants) != 1 or assignments or participants[0].controller != self.active_player:
+                raise BlockTransitionError("A status-only block transition requires its one current attacker")
+            self._validate_identity()
+            return
 
         physical_ids = [value.object_id for value in participants]
         logical_ids = [value.logical_object_id for value in participants]
@@ -368,12 +377,22 @@ class BlockTransitionEvent:
             raise BlockTransitionError(
                 "Every attacker must be controlled by the active player"
             )
+        self._validate_identity()
+
+    @property
+    def blocked_attacker_ids(self) -> frozenset[str]:
+        if self.schema_version == 2:
+            return frozenset(participant.object_id for participant in self.participants)
+        return frozenset(assignment.attacker_object_id for assignment in self.assignments)
+
+    def _validate_identity(self) -> None:
         payload = _transition_payload(
             turn_sequence=self.turn_sequence,
             priority_epoch=self.priority_epoch,
             active_player=self.active_player,
-            participants=participants,
-            assignments=assignments,
+            participants=self.participants,
+            assignments=self.assignments,
+            schema_version=self.schema_version,
         )
         if self.transition_id != _transition_id(payload):
             raise BlockTransitionError(
@@ -388,6 +407,7 @@ class BlockTransitionEvent:
                 active_player=self.active_player,
                 participants=self.participants,
                 assignments=self.assignments,
+                schema_version=self.schema_version,
             ),
             "transition_id": self.transition_id,
         }
@@ -401,6 +421,7 @@ class BlockTransitionEvent:
         active_player: str,
         participants: Sequence[BlockTransitionParticipant],
         assignments: Sequence[BlockTransitionAssignment],
+        schema_version: int = 1,
     ) -> "BlockTransitionEvent":
         participant_values = tuple(participants)
         assignment_values = tuple(assignments)
@@ -410,6 +431,7 @@ class BlockTransitionEvent:
             active_player=active_player,
             participants=participant_values,
             assignments=assignment_values,
+            schema_version=schema_version,
         )
         return cls(
             transition_id=_transition_id(payload),
@@ -418,6 +440,7 @@ class BlockTransitionEvent:
             active_player=active_player,
             participants=participant_values,
             assignments=assignment_values,
+            schema_version=schema_version,
         )
 
     @classmethod
@@ -592,7 +615,10 @@ class BlockKeywordTriggerOccurrence:
             raise BlockTransitionError(
                 "Unsupported block-trigger occurrence schema version"
             )
-        if self.kind not in {CombatKeywordTriggerKind.FLANKING, CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.RAMPAGE}:
+        if self.kind not in {
+            CombatKeywordTriggerKind.FLANKING, CombatKeywordTriggerKind.BUSHIDO,
+            CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT, CombatKeywordTriggerKind.RAMPAGE,
+        }:
             raise BlockTransitionError("Unsupported block-trigger kind")
         _identity(self.controller, field="Block trigger controller")
         if not isinstance(self.source, BlockObjectIdentity) or not isinstance(
@@ -608,8 +634,11 @@ class BlockKeywordTriggerOccurrence:
         )
         if self.kind is CombatKeywordTriggerKind.FLANKING and self.amount != 1:
             raise BlockTransitionError("Each Flanking occurrence has amount 1")
+        if self.kind is CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT and self.amount != 1:
+            raise BlockTransitionError("Current-attacker Bushido uses one unit per creature")
         if (
-            self.kind in {CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.RAMPAGE}
+            self.kind in {CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT,
+                          CombatKeywordTriggerKind.RAMPAGE}
             and self.source != self.affected
         ):
             raise BlockTransitionError("Bushido modifies its own source object")
@@ -648,6 +677,8 @@ class BlockKeywordTriggerOccurrence:
     def label(self) -> str:
         if self.kind is CombatKeywordTriggerKind.FLANKING:
             return f"{self.source.reference} — Flanking"
+        if self.kind is CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT:
+            return f"{self.source.reference} — Bushido X"
         return f"{self.source.reference} — {self.kind.value.title()} {self.amount}"
 
     def to_dict(self) -> dict[str, Any]:
@@ -758,13 +789,11 @@ def derive_block_keyword_trigger_occurrences(
             int,
         ]
     ] = []
-    blocked_attackers: set[str] = set()
+    blocked_attackers = event.blocked_attacker_ids - already_blocked
     blocking_creatures: set[str] = set()
     for assignment in event.assignments:
         attacker = participants[assignment.attacker_object_id]
         blocker = participants[assignment.blocker_object_id]
-        if attacker.object_id not in already_blocked:
-            blocked_attackers.add(attacker.object_id)
         if not put_blocking:
             blocking_creatures.add(blocker.object_id)
         blocker_has_flanking = any(
@@ -787,7 +816,8 @@ def derive_block_keyword_trigger_occurrences(
         for index, spec in enumerate(
             value
             for value in source.trigger_specs
-            if value.kind is CombatKeywordTriggerKind.BUSHIDO
+            if value.kind in {CombatKeywordTriggerKind.BUSHIDO,
+                              CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT}
         ):
             drafts.append((spec.kind, source, source, spec.amount, index))
 
@@ -870,6 +900,18 @@ class BlockKeywordResolutionHost(Protocol):
     def _log(self, *args: Any, **kwargs: Any) -> None: ...
 
 
+def _current_attacking_creature_count(host: BlockKeywordResolutionHost) -> int:
+    combat = host.state.combat
+    if combat is None:
+        return 0
+    return sum(
+        1 for object_id in combat.attackers
+        if (card := host.state.cards.get(object_id)) is not None
+        and card.zone == "battlefield" and not card.phased_out and card.attacking is not None
+        and "creature" in host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))[0]
+    )
+
+
 def resolve_block_keyword_trigger(
     host: BlockKeywordResolutionHost,
     occurrence: BlockKeywordTriggerOccurrence,
@@ -890,7 +932,15 @@ def resolve_block_keyword_trigger(
         and card.logical_object_id == occurrence.affected.logical_object_id
     )
     from .rampage import rampage_resolution_bonus
-    delta = rampage_resolution_bonus(host, occurrence) if occurrence.kind is CombatKeywordTriggerKind.RAMPAGE else occurrence.power_delta
+
+    current_attackers = occurrence.kind is CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT
+    if current_attackers:
+        still_present = still_present and not card.phased_out
+        delta = _current_attacking_creature_count(host) if still_present else 0
+    elif occurrence.kind is CombatKeywordTriggerKind.RAMPAGE:
+        delta = rampage_resolution_bonus(host, occurrence)
+    else:
+        delta = occurrence.power_delta
     if still_present and delta:
         effect = create_resolution_continuous_effect(
             host,
@@ -929,7 +979,7 @@ def resolve_block_keyword_trigger(
             "kind": occurrence.kind.value,
             "source": occurrence.source.reference,
             "affected": occurrence.affected.reference,
-            "amount": occurrence.amount,
+            "amount": delta if current_attackers else occurrence.amount,
             "applied": still_present,
         },
         importance=2,

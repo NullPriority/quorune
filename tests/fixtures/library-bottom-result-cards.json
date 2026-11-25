@@ -1,0 +1,119 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Cellar Door",
+      "oracle_id": "a2f79037-86c0-430c-ba91-62ac807a44ce",
+      "oracle_text": "{3}, {T}: Target player puts the bottom card of their library into their graveyard. If it's a creature card, you create a 2/2 black Zombie creature token.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{B}{R}",
+      "name": "Grenzo, Dungeon Warden",
+      "oracle_id": "a374f99e-6443-486c-8026-8eba4c7e6ad7",
+      "oracle_text": "Grenzo enters with X +1/+1 counters on it.\n{2}: Put the bottom card of your library into your graveyard. If it's a creature card with power less than or equal to Grenzo's power, put it onto the battlefield.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-03-16",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Goblin Rogue"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a replacement effect (such as that of Leyline of the Void) causes the card to be put from your library directly into exile, you'll put it onto the battlefield from exile if it's a creature card with appropriate power.",
+      "oracle_id": "a374f99e-6443-486c-8026-8eba4c7e6ad7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Compare Grenzo's power when the ability resolves with the power of the creature card in your graveyard to determine if you put it onto the battlefield. If Grenzo isn't on the battlefield at this time, use its last known power from when it was on the battlefield.",
+      "oracle_id": "a374f99e-6443-486c-8026-8eba4c7e6ad7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the card is a creature card with power less than or equal to Grenzo's power, it's put onto the battlefield from your graveyard, not from your library. Players can't attempt to exile it from your graveyard in response.",
+      "oracle_id": "a374f99e-6443-486c-8026-8eba4c7e6ad7",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC rulings for bottom-card movement and committed creature results"
+}

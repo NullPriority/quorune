@@ -22,6 +22,7 @@ from .affected_permanents import (
     select_affected_permanents,
 )
 from .fixed_damage_set_model import (
+    DefendingCreatureDamageGroup,
     FixedDamageGroup,
     FixedDamageSetError,
     FixedDamageSetSpec,
@@ -190,15 +191,21 @@ def snapshot_fixed_damage_set(
                 )
             continue
         try:
-            selected = select_affected_permanents(
-                rows,
-                AffectedPermanentSetSpec(
+            if isinstance(group, DefendingCreatureDamageGroup):
+                if group.player not in active:
+                    continue
+                affected_set = group.affected_set()
+            else:
+                affected_set = AffectedPermanentSetSpec(
                     query=group.query,
                     controller_relation=group.controller_relation,
                     target_controller=group.target_controller,
                     exclude_source=group.exclude_source and (source_logical_object_id is None or any(
                         row.ref == source_ref and row.logical_object_id == source_logical_object_id for row in rows)),
-                ),
+                )
+            selected = select_affected_permanents(
+                rows,
+                affected_set,
                 actor=actor,
                 active_seats=active,
                 apnap_order=order,

@@ -14,7 +14,7 @@ from .replacement.immutable import FrozenMap, freeze_value, thaw_value
 from .replacement.model import ReplacementClass, ReplacementEffect
 from .replacement.operations import SetField
 from .trigger_processing import schedule_delayed_trigger
-from .util import mana_cost_to_vector
+from .util import ORDINARY_FIXED_MANA_PATTERN, mana_cost_to_vector
 from .zone_object_keyword_grants import commit_zone_object_keyword_grant
 from .zone_object_keyword_model import normalized_zone_object_keyword
 from .zone_object_state import mark_card_unearthed
@@ -26,9 +26,8 @@ UNEARTH_EFFECT_HANDLER_ID = "generic.unearth.v1"
 UNEARTH_EFFECT_OPERATION = "unearth"
 UNEARTH_MECHANIC_ID = "unearth"
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
-_ORDINARY_COST = r"(?:\{(?:0|[1-9]\d*|[WUBRGC])\})+"
 _ORDINARY_UNEARTH = re.compile(
-    rf"^Unearth\s+(?P<cost>{_ORDINARY_COST})\.?$",
+    rf"^Unearth\s+(?P<cost>{ORDINARY_FIXED_MANA_PATTERN})\.?$",
     re.IGNORECASE,
 )
 _MANA_FIELDS = ("GENERIC", "W", "U", "B", "R", "G", "C")
@@ -112,7 +111,7 @@ class OrdinaryUnearthAbilitySpec:
             raise UnearthError("Unearth line index must be nonnegative")
         if type(self.oracle_line) is not str or not self.oracle_line:
             raise UnearthError("Unearth Oracle line is required")
-        if re.fullmatch(_ORDINARY_COST, self.cost_text) is None:
+        if re.fullmatch(ORDINARY_FIXED_MANA_PATTERN, self.cost_text) is None:
             raise UnearthError("Unearth cost must use fixed ordinary mana")
         if not isinstance(self.mana_cost, FrozenMap):
             if not isinstance(self.mana_cost, Mapping):
@@ -287,6 +286,7 @@ def _resolve_unearth_return(
         card.object_id,
         "battlefield",
         controller=intent.actor,
+        putting_player=intent.actor,
         reason="Unearth resolved",
         semantic_events=True,
         replacement_selections=intent.replacement_selections,

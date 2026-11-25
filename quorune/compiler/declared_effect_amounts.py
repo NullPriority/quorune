@@ -13,9 +13,11 @@ from ..query_effect_amount_model import (
     CAST_X_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_KIND,
     CastXAmountSpec, PublicQueryAmountError, PublicQueryAmountSpec,
     DECLARED_AMOUNT_CAPABILITY, scope_declared_amount_bindings,
+    ATTACK_SHARED_TYPE_AMOUNT_VERSION, public_query_amount_runtime_dependencies,
 )
 from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
+from ..resolution_characteristic_model import CHOSEN_CREATURE_TYPE_MODIFIER_FIELD
 from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
 from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION
 from ..impulse_access_model import IMPULSE_ACCESS_DECLARED_COUNT_VERSION
@@ -68,6 +70,10 @@ def _result_slot(operation: str, path: tuple[str, ...], *, cast_event_counter_ta
     ) or (
         operation == "destroy_all" and path == ("set", "mana_value_filter", "value")
     ) or (
+        operation == "move_public_zone_set" and path == ("set", "announced_mana_value_max")
+    ) or (
+        operation == "choose_creature_type" and path == (CHOSEN_CREATURE_TYPE_MODIFIER_FIELD, "amount")
+    ) or (
         cast_event_counter_targets and operation == "place_counters_on_targets" and path == ("amount",)
     )
 
@@ -87,6 +93,37 @@ def _fixed_x_projection(body: str, value: int) -> str:
     return _X.sub(str(value), scaled)
 
 
+def _announced_graveyard_set_template(text, compile_fixed):
+    normalized = " ".join(text.strip().split())
+    if re.fullmatch(
+        r"return all creature and planeswalker cards with mana value X or less from your graveyard to the battlefield\.?",
+        normalized, flags=re.I,
+    ) is None:
+        return None
+    from ..public_zone_moves import (
+        ANNOUNCED_GRAVEYARD_RETURN_VERSION, ANNOUNCED_MANA_VALUE_MAX_FIELD, PublicZoneMoveSetSpec,
+    )
+
+    old = compile_fixed(_fixed_x_projection(normalized, 2))
+    if old[0] is None or old[2] is not None or len(old[1]) != 1:
+        return None
+    effect = old[1][0]
+    if set(effect) != {"op", "source", "set"} or effect.get("op") != "move_public_zone_set":
+        return None
+    raw = effect["set"]
+    query = dict(raw["query"])
+    if query.pop("mana_value_max", None) != 2:
+        return None
+    try:
+        projected = PublicZoneMoveSetSpec.from_dict({**raw, "query": query,
+            "schema_version": ANNOUNCED_GRAVEYARD_RETURN_VERSION, ANNOUNCED_MANA_VALUE_MAX_FIELD: 2})
+    except (TypeError, ValueError):
+        return None
+    symbolic = {**projected.to_dict(), ANNOUNCED_MANA_VALUE_MAX_FIELD: CastXAmountSpec().to_dict()}
+    return ("announced-owned-graveyard-return-v1", ({**effect, "set": symbolic},), None,
+            tuple(dict.fromkeys((DECLARED_EFFECT_AMOUNT_MECHANIC, *old[3]))))
+
+
 def declared_effect_amount_template(
     text: str, *, source_name: str, compile_fixed: EffectCompiler,
     cast_x_available: bool = False, forbid_public_x: bool = False, cast_event_counter_targets: bool = False,
@@ -100,6 +137,9 @@ def declared_effect_amount_template(
         target_set = announced_target_set_effect_template(normalized)
         if target_set is not None:
             return target_set
+        graveyard_return = _announced_graveyard_set_template(normalized, compile_fixed)
+        if graveyard_return is not None:
+            return graveyard_return
     mill = re.fullmatch(r'(?P<head>(?:(?:you|target player|target opponent|each player|each opponent) )?mills?) '
         r'cards equal to (?P<quantity>[^.]+?)\.?', normalized, re.I)
     if mill is not None:
@@ -238,6 +278,9 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         forbid_public_x=available,
         kicked_self_replacement_available=bool(is_spell and not record.faces),
         bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
+    if is_spell and not record.faces and symbols.count("X") == 1:
+        from .announced_mana_value_target import announced_target_spell_compiler
+        selected = announced_target_spell_compiler(selected)
     from .spell_self_exile import terminal_spell_move_effect_compiler
     matched_face = any(face.get('name') == face_name and re.search(r'\b(?:Instant|Sorcery)\b',str(face.get('type_line',''))) for face in record.faces)
     terminal = terminal_spell_move_effect_compiler(selected,source_name=face_name or record.name,oracle_text=oracle_text,
@@ -288,12 +331,21 @@ def declared_amount_dependencies(
     from ..rules.impulse_access_capability_shapes import declared_impulse_access_dependencies
     for effect in effects:
         dependencies.update(declared_impulse_access_dependencies(effect))
+        power = effect.get("power")
+        if (isinstance(power, Mapping) and power.get("kind") == PUBLIC_QUERY_AMOUNT_KIND
+                and power.get("schema_version") == ATTACK_SHARED_TYPE_AMOUNT_VERSION):
+            dependencies.update(public_query_amount_runtime_dependencies(power))
     return dependencies
 
 
 def is_closed_declared_amount_program(program: Any, *, required_dependencies: Sequence[str],
                                      is_fixed_program: Callable[[Any], bool]) -> bool:
     """Project only validated scalar slots before existing result admission."""
+    from ..zone_devour import is_closed_devour_entry_result_program
+
+    if is_closed_devour_entry_result_program(program):
+        return True
+
     from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
     from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
 
@@ -341,6 +393,8 @@ def declared_amount_shape_context(
                 spec = PublicQueryAmountSpec.from_dict(value)
                 if spec.schema_version != 2:
                     raise PublicQueryAmountError("Declared instruction requires its binding identity")
+            if operation == "move_public_zone_set" and spec != CastXAmountSpec():
+                raise PublicQueryAmountError("The graveyard return ceiling requires the spell's announced X")
             count += 1
             result = 2 * spec.coefficient
             return str(result) if path in {("characteristics","power"),("characteristics","toughness")} else result

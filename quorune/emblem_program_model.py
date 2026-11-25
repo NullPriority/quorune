@@ -5,6 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from .received_damage_model import FIXED_DAMAGE_REMAINDER_CAPABILITY, is_command_fixed_damage_remainder
+from .rules.turn_cast_grant_model import (
+    COMMAND_GRAVEYARD_CAST_CAPABILITY, COMMAND_GRAVEYARD_CAST_HANDLER, TURN_CAST_GRANT_EVENT,
+)
+
 EMBLEM_PROGRAM_CAPABILITY = 'object.emblem.compiled_abilities'
 EMBLEM_CHILD_COVERAGE = 'compiled-emblem-child'
 EMBLEM_PROGRAM_ANNOTATION = 'compiled_emblem_v1'
@@ -22,13 +27,19 @@ class EmblemAbilityProgram:
         if any(type(value) is not str or not value.strip() or value != value.strip()
                for value in (self.semantic_key, self.event, self.text)):
             raise ValueError('An emblem ability requires canonical program, event and display text')
-        if (self.kind not in {'static', 'triggered'}
-                or (self.kind == 'static') != (self.event == 'characteristics.evaluate')):
-            raise ValueError('The emblem ability source owner is unsupported')
         if (not isinstance(self.capabilities, tuple) or not self.capabilities
                 or any(type(value) is not str or not value for value in self.capabilities)
                 or tuple(sorted(set(self.capabilities))) != self.capabilities):
             raise ValueError('Emblem ability capabilities must be canonical and nonempty')
+        if self.event == TURN_CAST_GRANT_EVENT:
+            if self.kind != 'static' or COMMAND_GRAVEYARD_CAST_CAPABILITY not in self.capabilities:
+                raise ValueError('An emblem cast child requires exact static command authority')
+        elif self.event == 'damage':
+            if self.kind != 'static' or FIXED_DAMAGE_REMAINDER_CAPABILITY not in self.capabilities:
+                raise ValueError('An emblem damage child requires exact command prevention authority')
+        elif (self.kind not in {'static', 'triggered'}
+              or (self.kind == 'static') != (self.event == 'characteristics.evaluate')):
+            raise ValueError('The emblem ability source owner is unsupported')
 
     def to_dict(self):
         return {'semantic_key': self.semantic_key, 'kind': self.kind, 'event': self.event,
@@ -95,9 +106,20 @@ def compiled_emblem_runtime_dependencies(program):
             for child in value:
                 visit(child)
     visit(program.effects)
+    command_cast = program.active_zone == 'command' and program.event == TURN_CAST_GRANT_EVENT
+    if command_cast:
+        if not program.handlers or any(h.get('handler_id') != COMMAND_GRAVEYARD_CAST_HANDLER for h in program.handlers):
+            raise ValueError('A command cast child must carry the closed graveyard grant handler')
+        required.add(COMMAND_GRAVEYARD_CAST_CAPABILITY)
     command_static = (program.active_zone == 'command' and program.provenance.get('granted_only') is True
                       and program.event == 'characteristics.evaluate')
-    if EMBLEM_CHILD_COVERAGE in program.coverage or command_static:
+    command_prevention = program.active_zone == 'command' and program.event == 'damage'
+    if command_prevention:
+        if (len(program.handlers) != 1 or program.effects or program.target_schema is not None
+                or not is_command_fixed_damage_remainder(program.handlers[0])):
+            raise ValueError('A command damage child requires the fixed controller-and-planeswalker component')
+        required.add(FIXED_DAMAGE_REMAINDER_CAPABILITY)
+    if EMBLEM_CHILD_COVERAGE in program.coverage or command_static or command_cast or command_prevention:
         if (program.active_zone != 'command' or program.provenance.get('granted_only') is not True
                 or program.cost_schema is not None or EMBLEM_CHILD_COVERAGE not in program.coverage):
             raise ValueError('An emblem child must be a command-zone-only ability')

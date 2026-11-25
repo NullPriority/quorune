@@ -1,7 +1,9 @@
 from __future__ import annotations
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
+from ..stack_spell_copy_model import PermanentSpellCopySpec
 
 from ..fractional_quantity_model import HalfQuantitySpec
+from ..query_effect_amount_model import OpponentHandMillCount
 from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
@@ -22,6 +24,11 @@ from .graveyard_recycling import GraveyardRecyclingIntent
 from ..target_land_type_model import TargetLandTypeSettingIntent
 from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..draw_redirect_model import TemporaryDrawRedirectIntent
+from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
+from ..extra_combat_model import ScheduleExtraCombatIntent
+from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
+from ..rules.token_mill_repeat import TokenMillRepeatIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
@@ -49,7 +56,7 @@ from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DrawCardsIntent
 from ..announced_damage import AllocatedDamageRecipient
-from ..fixed_damage_set_model import FixedDamageSetSpec
+from ..fixed_damage_set_model import FixedDamageSetSpec, dealt_life_gain_group_is_closed
 from ..damage_death_exile_model import DamageDeathExileScope
 from ..impulse_access_model import ImpulseAccessDuration, impulse_access_count_is_legal
 from ..creature_subtypes import canonical_creature_subtype
@@ -60,17 +67,15 @@ from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottom
 from ..rules.library_surveillance import SurveilArrangement
 from ..rules.hand_inspection import InspectHandIntent
 from .colored_hand_reveal import RevealColoredHandCardsIntent
-from ..zone_object_keyword_model import (
-    ZoneObjectKeywordGrantError,
-    normalized_zone_object_keyword,
-)
 from ..zone_trigger_events import ZoneTransitionKind
+from ..discard_effect_origin import DiscardEffectOrigin
 from .composition_intent import CompositionIntent,ResumeCompositionOrderIntent
 from .context import SemanticSourceContext
 from .madness_intent import MadnessChoiceIntent
 from .miracle_intent import MiracleCastChoiceIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
 from ..targeted_graveyard_cast_model import GraveyardCastIntent
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent
 
@@ -83,7 +88,7 @@ _REASON_FIELD = "reason"
 class MillCardsIntent:
     actor: str
     player: str
-    count: int | HalfQuantitySpec
+    count: int | HalfQuantitySpec | OpponentHandMillCount
     reason: str
     batch_players: tuple[str, ...] = ()
 
@@ -95,8 +100,9 @@ class MillCardsIntent:
             raise ValueError(
                 "Mill intents require an actor, player, and reason"
             )
-        if not isinstance(self.count, HalfQuantitySpec) and (type(self.count) is not int or self.count < 0):
-            raise ValueError("Mill intents require a nonnegative fixed count or a closed half quantity")
+        if not isinstance(self.count, (HalfQuantitySpec, OpponentHandMillCount)) and (
+                type(self.count) is not int or self.count < 0):
+            raise ValueError("Mill intents require a nonnegative count or a closed quantity")
         if not isinstance(self.batch_players, (list, tuple)):
             raise ValueError("Mill batch recipients require a typed sequence")
         players = tuple(self.batch_players)
@@ -106,6 +112,8 @@ class MillCardsIntent:
             or players and self.player != self.actor
         ):
             raise ValueError("Mill batch recipients must be distinct typed players")
+        if isinstance(self.count, OpponentHandMillCount) and (not players or self.actor in players):
+            raise ValueError("Hand-count Mill intents require an opponent batch")
         object.__setattr__(self, "batch_players", players)
 
 
@@ -156,6 +164,7 @@ class ProhibitNextUntapIntent:
     actor: str
     reason: str
     logical_object_id: str | None = None
+    step_count: int = 1
 
 
 @dataclass(frozen=True, slots=True)
@@ -395,6 +404,7 @@ class DealFixedDamageSetIntent:
     source_snapshot: FrozenMap | None = None
     death_exile_scope: DamageDeathExileScope | None = None
     allocated_recipients: tuple[AllocatedDamageRecipient, ...] | None = None
+    gain_life_from_dealt: bool = False
 
     def __post_init__(self) -> None:
         if any(
@@ -419,6 +429,11 @@ class DealFixedDamageSetIntent:
                     or len({recipient.ref for recipient in recipients}) != len(recipients)
                     or sum(recipient.amount for recipient in recipients) > self.amount):
                 raise ValueError("Announced damage intents require distinct recipients and bounded shares")
+        if type(self.gain_life_from_dealt) is not bool or self.gain_life_from_dealt and (
+            not dealt_life_gain_group_is_closed(self.spec) or self.allocated_recipients is not None
+            or self.death_exile_scope is not None or self.amount <= 0
+        ):
+            raise ValueError("Dealt damage life gain requires one exact fixed player group")
         if self.death_exile_scope is not None and self.death_exile_scope is not DamageDeathExileScope.DEALT_CREATURES:
             raise ValueError('Fixed damage-set death exile follows actual damaged creatures')
         object.__setattr__(
@@ -622,6 +637,7 @@ class MoveObjectsSimultaneouslyIntent:
     battlefield_controller: PublicBattlefieldController | None = None
     battlefield_tapped: bool = False
     library_order: LibraryArrivalOrder | None = None
+    discard_effect_origin: DiscardEffectOrigin | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -650,6 +666,12 @@ class MoveObjectsSimultaneouslyIntent:
             or self.battlefield_controller is None and self.battlefield_tapped
         ):
             raise ValueError("Simultaneous object-move intent is malformed")
+        if self.discard_effect_origin is not None and (
+            not isinstance(self.discard_effect_origin, DiscardEffectOrigin)
+            or self.transition_kind is not ZoneTransitionKind.DISCARD
+            or tuple(self.expected_zones) != ("hand",) or self.destination != "graveyard"
+        ):
+            raise ValueError("A resolving discard origin belongs only to a requested hand discard")
         if self.library_order is not None and (
             not isinstance(self.library_order, LibraryArrivalOrder)
             or not isinstance(self.library_order, (DepartedLibraryArrivalOrder, HandLibraryArrivalOrder)) and self.library_order.chooser != self.actor
@@ -1084,6 +1106,7 @@ class PlaceCountersOnSetIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    paired_loyalty_source: tuple[str, str] | None = None
 
     def __post_init__(self) -> None:
         normalized = (
@@ -1116,6 +1139,13 @@ class PlaceCountersOnSetIntent:
             raise ValueError(
                 "Source-excluding counter sets require a source"
             )
+        identity = self.paired_loyalty_source
+        if identity is not None and (
+            not isinstance(identity, tuple) or len(identity) != 2
+            or any(type(value) is not str or not value for value in identity)
+            or self.source_ref is None or normalized != "+1/+1" or type(self.amount) is not int or self.amount != 1
+        ):
+            raise ValueError("Paired loyalty requires its original source and one fixed +1/+1 placement")
         object.__setattr__(self, "counter_name", normalized)
         object.__setattr__(
             self,
@@ -1282,8 +1312,11 @@ class CopyStackItemIntent:
     reason: str
     target_snapshots: FrozenMap | None = None
     copy_source: FrozenMap | None = None
+    permanent_copy: PermanentSpellCopySpec | None = None
 
     def __post_init__(self) -> None:
+        if self.permanent_copy is not None and not isinstance(self.permanent_copy, PermanentSpellCopySpec):
+            raise ValueError("A permanent spell copy requires a typed exception")
         if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
         if self.target_snapshots is not None and not isinstance(self.target_snapshots, FrozenMap):
             object.__setattr__(self, "target_snapshots", FrozenMap(self.target_snapshots))
@@ -1369,32 +1402,22 @@ class AddSubtypeIntent:
 @dataclass(frozen=True, slots=True)
 class GrantZoneObjectKeywordIntent:
     actor: str
-    object_ref: str
+    object_ref: str | None
     keyword: str
     source: SemanticSourceContext
     reason: str
+    controlled_creature_set: bool = False
 
     def __post_init__(self) -> None:
-        if any(
-            type(value) is not str or not value
-            for value in (
-                self.actor,
-                self.object_ref,
-                self.keyword,
-                self.reason,
-            )
-        ):
-            raise ValueError(
-                "Zone-object keyword intents require actor, object, keyword, and reason"
-            )
+        from ..zone_object_keyword_model import zone_object_intent_keyword
+
+        if any(type(value) is not str or not value for value in (self.actor, self.keyword, self.reason)):
+            raise ValueError("Zone-object keyword intents require actor, keyword, and reason")
         if not isinstance(self.source, SemanticSourceContext):
-            raise TypeError(
-                "Zone-object keyword intents require typed source context"
-            )
-        try:
-            keyword = normalized_zone_object_keyword(self.keyword)
-        except ZoneObjectKeywordGrantError as exc:
-            raise ValueError(str(exc)) from exc
+            raise TypeError("Zone-object keyword intents require typed source context")
+        keyword = zone_object_intent_keyword(
+            self.object_ref, self.keyword, controlled_creature_set=self.controlled_creature_set,
+        )
         object.__setattr__(self, "keyword", keyword)
 
 
@@ -1544,6 +1567,7 @@ SemanticIntent: TypeAlias = (
     | MiracleCastChoiceIntent
     | DiscoverCastIntent
     | ResolvingExileLandPlayIntent
+    | ResolvingSharedTypeLibraryPlayIntent
     | RevealCapturedDrawsIntent
     | ResolveCapturedDrawCastIntent
     | ResolveBoundedHandCastIntent
@@ -1596,8 +1620,12 @@ SemanticIntent: TypeAlias = (
     | GraveyardRecyclingIntent
     | TargetLandTypeSettingIntent
     | FixedSourceSacrificeIntent
-    | TemporaryCastRestrictionIntent
+    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent
+    | TemporaryProtectedAttackPaymentIntent
     | ScheduleTurnSkipIntent
+    | ScheduleExtraCombatIntent
+    | ScheduleAdditionalBeginningIntent
+    | TokenMillRepeatIntent
     | EarthbendIntent
     | FinishEarthbendIntent
     | ReturnEarthbentObjectsIntent

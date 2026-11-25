@@ -11,6 +11,12 @@ def stack_resolution_authority_version(value):
     return value
 
 
+def ward_mana_offer_version(value):
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported Ward mana offer version")
+    return value
+
+
 def ward_discard_order_version(value):
     if value is not None and (type(value) is not int or value != 1):
         raise ValueError("Unsupported Ward discard option order version")

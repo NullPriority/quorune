@@ -1,0 +1,460 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}{W}",
+      "name": "Axis of Mortality",
+      "oracle_id": "158cb888-a115-4d50-a82f-746622f0578e",
+      "oracle_text": "At the beginning of your upkeep, you may have two target players exchange life totals.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Boon Reflection",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Giant Cindermaw",
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)\nPlayers can't gain life.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "3",
+      "type_line": "Creature — Dinosaur Beast"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Magus of the Mirror",
+      "oracle_id": "f587676e-d45f-4b1d-be2c-b404d8f55fb3",
+      "oracle_text": "{T}, Sacrifice this creature: Exchange life totals with target opponent. Activate only during your upkeep.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "2",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}",
+      "name": "Mirror Universe",
+      "oracle_id": "8d231d2f-5274-4b55-8262-9eb95654d183",
+      "oracle_text": "{T}, Sacrifice this artifact: Exchange life totals with target opponent. Activate only during your upkeep.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-09-10",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}",
+      "name": "Soul Conduit",
+      "oracle_id": "b48befc5-a9f2-4a64-a16d-c883b034ea9c",
+      "oracle_text": "{6}, {T}: Two target players exchange life totals.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-05-13",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a player can’t gain life, that player can’t exchange life totals with a player with a higher life total. If a player can’t lose life, that player can’t exchange life totals with a player with a lower life total. In either of these cases, neither player’s life total will change.",
+      "oracle_id": "158cb888-a115-4d50-a82f-746622f0578e",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the targeted players is an illegal target when the triggered ability of Axis of Mortality tries to resolve, the exchange won’t happen. Neither player’s life total will change.",
+      "oracle_id": "158cb888-a115-4d50-a82f-746622f0578e",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, each player is considered to have the same life total as their team. If the two targeted players are on different teams, those players gain or lose the appropriate amount of life so that the teams end up exchanging life totals. If the two targeted players are teammates, they can’t exchange life totals.",
+      "oracle_id": "158cb888-a115-4d50-a82f-746622f0578e",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the life totals are exchanged, each player gains or loses the amount of life necessary to equal the other player’s previous life total. For example, if player A has 5 life and player B has 3 life before the exchange, player A will lose 2 life and player B will gain 2 life. Replacement effects may modify these gains and losses, and triggered abilities may trigger on them.",
+      "oracle_id": "158cb888-a115-4d50-a82f-746622f0578e",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the life totals are exchanged, each player gains or loses the amount of life necessary to equal the other player’s previous life total. For example, if player A has 5 life and player B has 3 life before the exchange, player A will lose 2 life and player B will gain 2 life. Replacement effects may modify these gains and losses, and triggered abilities may trigger on them.",
+      "oracle_id": "8d231d2f-5274-4b55-8262-9eb95654d183",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says that a player can’t lose life, that player can’t exchange life totals with a player who has a lower life total; in that case, the exchange won’t happen.",
+      "oracle_id": "8d231d2f-5274-4b55-8262-9eb95654d183",
+      "published_at": "2011-01-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a player can’t gain life, that player can’t exchange life totals with a player with a higher life total. If a player can’t lose life, that player can’t exchange life totals with a player with a lower life total. In either of these cases, neither player’s life total will change.",
+      "oracle_id": "b48befc5-a9f2-4a64-a16d-c883b034ea9c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the targeted players is an illegal target when the activated ability tries to resolve, the exchange won’t happen. Neither player’s life total will change.",
+      "oracle_id": "b48befc5-a9f2-4a64-a16d-c883b034ea9c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, each player is considered to have the same life total as their team. If the two targeted players are on different teams, the teams will end up exchanging life totals. If the two targeted players are teammates, nothing will happen.",
+      "oracle_id": "b48befc5-a9f2-4a64-a16d-c883b034ea9c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the life totals are exchanged, each player gains or loses the amount of life necessary to equal the other player’s previous life total. For example, if Player A has 5 life and Player B has 3 life before the exchange, Player A will lose 2 life and Player B will gain 2 life. Replacement effects may modify these gains and losses, and triggered abilities may trigger on them.",
+      "oracle_id": "b48befc5-a9f2-4a64-a16d-c883b034ea9c",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total “becomes 10,” your life total will actually become 17.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, only Boon Reflection's controller is affected by it. If that player's teammate gains life, Boon Reflection will have no effect, even when that life gain is applied to the shared team life total.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of multiple Boon Reflections are cumulative. For example, if you control two Boon Reflections, you'll gain four times the original amount of life. If you control three Boon Reflections, you'll gain eight times the original amount, and so on.",
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says to set a player's life total to a number that's higher than the player's current life total while Giant Cindermaw is on the battlefield, the player's life total doesn't change.",
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Spells and abilities that cause players to gain life still resolve while Giant Cindermaw is on the battlefield. No player will gain life, but any other effects of that spell or ability will happen.",
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "When the life totals are exchanged, each player gains or loses the amount of life necessary to equal the other player’s previous life total. For example, if player A has 5 life and player B has 3 life before the exchange, player A will lose 2 life and player B will gain 2 life. Replacement effects may modify these gains and losses, and triggered abilities may trigger on them.",
+      "oracle_id": "f587676e-d45f-4b1d-be2c-b404d8f55fb3",
+      "published_at": "2006-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says that a player can’t lose life, that player can’t exchange life totals with a player who has a lower life total; in that case, the exchange won’t happen.",
+      "oracle_id": "f587676e-d45f-4b1d-be2c-b404d8f55fb3",
+      "published_at": "2011-01-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

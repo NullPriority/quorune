@@ -113,20 +113,47 @@ def pin_event_spell_copy_departure(host,target):
     for index,batch in replacements:replace_pending_trigger_batch(host,index,batch)
 
 
+def cast_copy_runtime_dependencies(program):
+    from .cast_target_copy import cast_target_copy_runtime_dependencies
+
+    return (*event_spell_copy_runtime_dependencies(program), *cast_target_copy_runtime_dependencies(program))
+
+
 def event_spell_copy_runtime_dependencies(program):
     from ..event_spell_copy_model import cast_spell_token_condition
     from ..replacement.immutable import FrozenMap
+    from .other_spell_history_shapes import other_spell_self_cast_runtime_dependencies
+    from ..stack_spell_copy_model import (
+        PERMANENT_SPELL_COPY_CAPABILITY, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec,
+        beast_or_bird_creature_cast_condition,
+    )
     from .token_creation_capability_shapes import cast_spell_token_copy_payload_dependencies
 
+    from .cast_creature_set_spell_copy import CAST_CREATURE_SET_COPY_FIELD, cast_creature_set_copy_program_dependencies
+    from .cast_source_spell_copy import SOURCE_CAST_COPY_FIELD, source_cast_copy_program_dependencies
+
+    other_spell = other_spell_self_cast_runtime_dependencies(program)
     marked = EVENT_SPELL_COPY_MECHANIC in program.coverage
     stack_copy = False
     direct_token = False
+    artifact_copy = False
+    fixed_source_target = False
+    creature_set = False
 
     def visit(value):
-        nonlocal stack_copy, direct_token
+        nonlocal stack_copy, direct_token, artifact_copy, fixed_source_target, creature_set
         if isinstance(value, Mapping):
-            if value.get("op") == "copy_stack_item" and "copy_source" in value:
-                if not any(dict(value) == event_spell_copy_effect(retain_targets_only=retain) for retain in (False,True)):
+            if CAST_CREATURE_SET_COPY_FIELD in value:
+                creature_set = True
+            elif SOURCE_CAST_COPY_FIELD in value:
+                fixed_source_target = True
+            elif value.get("op") == "copy_stack_item" and "copy_source" in value:
+                if PERMANENT_SPELL_COPY_FIELD in value:
+                    spec = PermanentSpellCopySpec.from_dict(value[PERMANENT_SPELL_COPY_FIELD])
+                    if spec.kind != "artifact" or dict(value) != spec.effects[0]:
+                        raise ValueError("Artifact copy must retain the exact original creature spell")
+                    artifact_copy = True
+                elif not any(dict(value) == event_spell_copy_effect(retain_targets_only=retain) for retain in (False,True)):
                     raise ValueError("Event spell-copy instruction has a closed source reference")
                 stack_copy = True
             elif value.get("op") == "create_token" and cast_spell_token_copy_payload_dependencies(value):
@@ -139,6 +166,10 @@ def event_spell_copy_runtime_dependencies(program):
                 visit(child)
 
     visit(program.effects)
+    if creature_set:
+        return cast_creature_set_copy_program_dependencies(program)
+    if fixed_source_target:
+        return source_cast_copy_program_dependencies(program)
     if not stack_copy and not direct_token:
         if marked:
             raise ValueError("Event spell-copy marker lacks a represented instruction")
@@ -155,7 +186,15 @@ def event_spell_copy_runtime_dependencies(program):
             raise ValueError("Direct cast spell copy must be the complete trigger result")
         return (*required, "trigger.event.normalized_spell_cast", "trigger.effect.fixed_event",
                 "trigger.placement.apnap")
-    return (EVENT_SPELL_COPY_CAPABILITY,)
+    if artifact_copy:
+        payment = program.effects[0]
+        if (len(program.effects) != 1 or payment.get("op") != "offer_optional_effect"
+                or tuple(payment.get("effects", ())) != PermanentSpellCopySpec("artifact").effects
+                or program.active_zone != "battlefield" or program.target_schema is not None
+                or FrozenMap(program.event_condition or {}) != FrozenMap(beast_or_bird_creature_cast_condition())):
+            raise ValueError("Artifact copy requires the original optional Beast or Bird creature cast")
+        return (EVENT_SPELL_COPY_CAPABILITY, PERMANENT_SPELL_COPY_CAPABILITY)
+    return (EVENT_SPELL_COPY_CAPABILITY, *other_spell)
 
 
 def next_cast_copy_node_capabilities(*, effects, target_schema, mechanic_ids):

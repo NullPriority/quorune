@@ -232,6 +232,64 @@ class QueryPowerToughnessDefinitionCompilerTests(unittest.TestCase):
                     for descriptor in ability.handlers
                 ))
 
+
+    def test_combat_land_definition_has_one_closed_scope_and_pair_of_stats(self):
+        from dataclasses import replace
+
+        from quorune.characteristic_fragments import (
+            COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY, CharacteristicFragmentError,
+            PowerToughnessCalculation, QueryCharacteristicModifierSpec,
+            characteristic_quantity_capabilities,
+        )
+
+        line = (
+            "As long as this creature isn't attacking, its power and toughness are each equal "
+            "to the number of Swamps you control. As long as this creature is attacking, its "
+            "power and toughness are each equal to the number of Swamps the defending player controls."
+        )
+        name = "Harbor Marsh Surveyor"
+        _, descriptor, _ = query_power_toughness_definition_handler(line, source_name=name)
+        definition, = fragments_from_descriptors((descriptor,))
+        quantity = definition.quantity
+        self.assertTrue(definition.define_power and definition.define_toughness)
+        self.assertEqual(quantity.scope, CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE)
+        self.assertEqual(
+            quantity.query,
+            ObjectQuerySpec(zones=("battlefield",), types_all=("land",), subtypes_any=("swamp",)),
+        )
+        self.assertEqual(
+            (COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY,),
+            characteristic_quantity_capabilities(descriptor),
+        )
+        self.assertEqual(
+            definition, ability_fragment_from_dict(ability_fragment_to_dict(definition)),
+        )
+        for query in (
+            replace(quantity.query, controller="B"),
+            replace(quantity.query, include_phased_out=True),
+            replace(quantity.query, subtypes_any=("swamp", "forest")),
+            replace(quantity.query, subtypes_any=("vehicle",)),
+            replace(quantity.query, zones=("graveyard",)),
+        ):
+            with self.subTest(query=query), self.assertRaises(CharacteristicFragmentError):
+                replace(quantity, query=query)
+        with self.assertRaises(CharacteristicFragmentError):
+            replace(definition, define_toughness=False)
+        with self.assertRaises(CharacteristicFragmentError):
+            QueryCharacteristicModifierSpec(
+                quantity=quantity, calculation=PowerToughnessCalculation.PER_MATCHING_OBJECT,
+                power=1, toughness=0,
+            )
+        for changed in (
+            line.split(". As long", 1)[0] + ".",
+            line.replace("Swamps the defending", "Forests the defending"),
+            line.replace("this creature is attacking", "another creature is attacking"),
+            line.replace("the defending player", "each opponent"),
+            line + " Draw a card.",
+        ):
+            with self.subTest(changed=changed):
+                self.assertIsNone(query_power_toughness_definition_handler(changed, source_name=name))
+
     def test_query_power_toughness_definition_descriptors_fail_closed(self):
         valid = definition_fragment(
             scope=CharacteristicQuantityScope.CONTROLLER_ZONE,

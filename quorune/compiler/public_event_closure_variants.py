@@ -4,6 +4,7 @@ from .designation_event_bindings import DESIGNATION_EVENT_VARIANTS
 from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_VARIANTS
 from ..dungeon_progress import DUNGEON_COMPLETION_TRIGGER_VARIANT
+from ..token_copy_recipient_model import OTHER_NONTOKEN_CREATURE_ENTRY
 
 """Finite public event variants admitted by the shared result composer."""
 
@@ -30,6 +31,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         'singular_qualified_attack',
         'controlled_token_enters',
         "another_controlled_colorless_creature_enters",
+        OTHER_NONTOKEN_CREATURE_ENTRY,
         "another_controlled_creature_power_at_most",
         "controlled_enchantment_graveyard",
         "controller_cycles_another",

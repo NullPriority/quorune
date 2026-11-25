@@ -7,7 +7,14 @@ from . import regex_working_set as re
 
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
     ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY,
-    ENTRY_COPY_TAPPED_HANDLER, ENTRY_COPY_TAPPED_CAPABILITIES)
+    ENTRY_COPY_TAPPED_HANDLER, ENTRY_COPY_TAPPED_CAPABILITIES,
+    CONTROLLED_COPY_SHIELD_HANDLER, CONTROLLED_COPY_SHIELD_CAPABILITIES,
+    ANNOUNCED_X_COPY_COUNTER_HANDLER, ANNOUNCED_X_COPY_COUNTER_CAPABILITIES,
+    TYPE_DIRECTED_COPY_COUNTER_HANDLER, TYPE_DIRECTED_COPY_COUNTER_CAPABILITIES,
+    LEGENDARY_SNOW_COPY_HANDLER, LEGENDARY_SNOW_COPY_CAPABILITIES, LEGENDARY_SNOW_EXCEPTION,
+    CONDITIONAL_VANISHING_COPY_HANDLER, CONDITIONAL_VANISHING_COPY_CAPABILITIES,
+    FACE_UP_OR_ENTRY_COPY_HANDLER, FACE_UP_OR_ENTRY_COPY_CAPABILITIES,
+    GRAVEYARD_PAIR_COPY_HANDLER, GRAVEYARD_PAIR_COPY_CAPABILITIES, GRAVEYARD_PAIR_COPY_QUERY)
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
@@ -95,6 +102,13 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
         query = replace(query, excluded_controllers=('$controller',))
     conditional=None
     exception_text=match['exception'] or ''
+    if exception_text.casefold() == 'it enters with a shield counter on it if you control that creature':
+        if match['tapped'] or predicate is not None:
+            return None
+        try:
+            return EntryCopySpec(query, schema_version=7, controlled_shield=True)
+        except ValueError:
+            return None
     if exception_text.casefold()=="if this creature was embalmed, the token has no mana cost, it's white, and it's a zombie in addition to its other types":
         from ..token_copy_recipes import TokenCopyExceptionSpec
         exception=TokenCopyExceptionSpec(schema_version=2,remove_mana_cost=True,colors=('W',),add_subtypes=('zombie',));conditional=ConditionalCopyException()
@@ -120,11 +134,89 @@ def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
             return None
 
 
+def _announced_x_copy_entry_spec(text, *, source_name):
+    if 'x additional' not in text.casefold():
+        return None
+    match = re.fullmatch(r'(?P<copy>.+), except it enters with X additional \+1/\+1 counters on it\.?',
+                         ' '.join(text.split()), re.I)
+    if match is None:
+        return None
+    base = entry_copy_spec(match['copy'] + '.', source_name=source_name)
+    if base is None or base.schema_version != 1:
+        return None
+    try:
+        return replace(base, schema_version=8, announced_x_counter=True)
+    except ValueError:
+        return None
+
+
+def _type_directed_copy_entry_spec(text, *, source_name):
+    if 'additional loyalty counter' not in text.casefold():
+        return None
+    match = re.fullmatch(
+        r"(?P<copy>.+), except it enters with an additional \+1/\+1 counter on it if it['’]s a creature, "
+        r"it enters with an additional loyalty counter on it if it['’]s a planeswalker, and it isn['’]t legendary\.?",
+        ' '.join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    from ..token_copy_recipes import TokenCopyExceptionSpec
+
+    base = entry_copy_spec(match['copy'] + '.', source_name=source_name)
+    if base is None or base.schema_version != 1:
+        return None
+    try:
+        return replace(base, schema_version=9, type_directed_counters=True,
+                       exception=TokenCopyExceptionSpec(remove_legendary=True))
+    except ValueError:
+        return None
+
+
+def _legendary_snow_copy_entry_spec(text, *, source_name):
+    if 'legendary and snow' not in text.casefold():
+        return None
+    match = re.fullmatch(
+        r"(?P<copy>.+), except it['’]s legendary and snow in addition to its other types and, "
+        r"if it['’]s a creature, it enters with two additional \+1/\+1 counters on it and has changeling\.?",
+        ' '.join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    base = entry_copy_spec(match['copy'] + '.', source_name=source_name)
+    if base is None or base.schema_version != 1:
+        return None
+    try:
+        return replace(base, schema_version=10, exception=LEGENDARY_SNOW_EXCEPTION)
+    except ValueError:
+        return None
+
+
+def _graveyard_pair_copy_spec(text, *, source_name):
+    if 'exile two creature cards' not in text.casefold():
+        return None
+    match = re.fullmatch(
+        r"As (?P<source>[^,]+) enters, you may exile two creature cards from graveyards\. "
+        r"If you do, it enters as a copy of one of those cards with a number of additional "
+        r"\+1/\+1 counters on it equal to the power of the other card\.?",
+        " ".join(text.split()), re.I,
+    )
+    if not match or not (SourceReferenceSpec(source_name).matches(match["source"])
+                         or source_self_permanent_type(match["source"])=="creature"):
+        return None
+    return EntryCopySpec(GRAVEYARD_PAIR_COPY_QUERY,schema_version=13)
+
+
 def entry_copy_node(*, node_id, line, material_line, span, source_name,
-        capability_registry, capability_profile, residuals):
+        capability_registry, capability_profile, residuals, announced_x_available=False, spec=None):
     from .static_runtime_nodes import runtime_handler_node
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-    spec = entry_copy_spec(material_line, source_name=source_name)
+    from ..rules.color_retaining_copy import RETAINED_COLOR_COPY_CAPABILITY, RETAINED_COLOR_ENTRY_HANDLER
+    if spec is None and announced_x_available:
+        spec = _announced_x_copy_entry_spec(material_line, source_name=source_name)
+    spec = (spec or _type_directed_copy_entry_spec(material_line, source_name=source_name)
+            or _legendary_snow_copy_entry_spec(material_line, source_name=source_name)
+            or _graveyard_pair_copy_spec(material_line, source_name=source_name)
+            or entry_copy_spec(material_line, source_name=source_name))
     if spec is None:
         return None
     handler, capabilities = {
@@ -134,6 +226,14 @@ def entry_copy_node(*, node_id, line, material_line, span, source_name,
         4: (ENTRY_COPY_PREDICATE_HANDLER, (ENTRY_COPY_CAPABILITY, ENTRY_COPY_PREDICATE_CAPABILITY)),
         5: (CONDITIONAL_COPY_HANDLER, (ENTRY_COPY_CAPABILITY, CONDITIONAL_COPY_CAPABILITY)),
         6: (ENTRY_COPY_TAPPED_HANDLER, ENTRY_COPY_TAPPED_CAPABILITIES),
+        7: (CONTROLLED_COPY_SHIELD_HANDLER, CONTROLLED_COPY_SHIELD_CAPABILITIES),
+        8: (ANNOUNCED_X_COPY_COUNTER_HANDLER, ANNOUNCED_X_COPY_COUNTER_CAPABILITIES),
+        9: (TYPE_DIRECTED_COPY_COUNTER_HANDLER, TYPE_DIRECTED_COPY_COUNTER_CAPABILITIES),
+        10: (LEGENDARY_SNOW_COPY_HANDLER, LEGENDARY_SNOW_COPY_CAPABILITIES),
+        11: (CONDITIONAL_VANISHING_COPY_HANDLER, CONDITIONAL_VANISHING_COPY_CAPABILITIES),
+        12: (FACE_UP_OR_ENTRY_COPY_HANDLER, FACE_UP_OR_ENTRY_COPY_CAPABILITIES),
+        13: (GRAVEYARD_PAIR_COPY_HANDLER, GRAVEYARD_PAIR_COPY_CAPABILITIES),
+        14: (RETAINED_COLOR_ENTRY_HANDLER, (ENTRY_COPY_CAPABILITY, RETAINED_COLOR_COPY_CAPABILITY)),
     }[spec.schema_version]
     return runtime_handler_node(node_id=node_id, line=line, span=span,
         compiled=(f'intrinsic-entry-copy-v{spec.schema_version}',

@@ -72,7 +72,7 @@ def _pool_after_step(pool, source, mode, payment, allows, departed):
     next_pool = PlanningManaPool.capture(pool)
     if mode.price is not None:
         spend_mana(next_pool, payment, snow_payment=None, restriction_allows=allows, spend_context=mode.price.spend_context)
-    add_mana(next_pool, mode.bundle, snow=source.snow, restriction=mode.restriction or None)
+    add_mana(next_pool, mode.production_output(departed), snow=source.snow, restriction=mode.restriction or None)
     for output in mode.triggered_mana:
         if output.survives(departed):
             add_mana(next_pool, output.bundle.bundle, snow=output.snow)
@@ -97,7 +97,10 @@ def ordered_mana_selection(
     """Find a legal funding order, with one committed mode per source."""
     contexts = {mode.price.spend_context for source in sources for mode in source.modes if mode.price}
     triggered = any(mode.triggered_mana for source in sources for mode in source.modes)
-    if not contexts and not triggered:
+    sacrificed_sources = {source.object_id for source in sources if any(mode.sacrifices_source for mode in source.modes)}
+    order_matters = triggered or any(provider in sacrificed_sources for source in sources for mode in source.modes
+                                    for provider, _ in mode.tap_mana_multipliers)
+    if not contexts and not order_matters:
         return None
     allows = funding.restriction_allows
     groups = tuple((source, tuple(mode for mode in source.modes
@@ -112,7 +115,7 @@ def ordered_mana_selection(
         )
         for context in contexts
     }
-    if not triggered and not any(mode.price and _can_fund(mode.price, seeds[mode.price.spend_context])
+    if not order_matters and not any(mode.price and _can_fund(mode.price, seeds[mode.price.spend_context])
                for _source, modes in groups for mode in modes):
         return None
     capacities = tuple(_output_capacity(modes) for _source, modes in groups)

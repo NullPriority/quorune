@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702141",
+      "name": "Trial Oath Sentinel",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5,
+      "type_line": "Creature — Human Warrior",
+      "power": "3",
+      "toughness": "4",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Ward"
+      ],
+      "oracle_text": "Ward—Sacrifice a creature.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702142",
+      "name": "Trial Astral Guard",
+      "mana_cost": "{6}",
+      "cmc": 6,
+      "type_line": "Creature — Construct",
+      "power": "5",
+      "toughness": "6",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Ward"
+      ],
+      "oracle_text": "Ward—Sacrifice a permanent with mana value 1 or greater.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702143",
+      "name": "Trial Small Witness",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature — Beast",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "oracle_text": "",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702144",
+      "name": "Trial Copper Seal",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "oracle_text": "",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702145",
+      "name": "Trial Empty Vessel",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact Creature — Construct",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "oracle_text": "",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702146",
+      "name": "Trial Ward Mark",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702147",
+      "name": "Trial Ward Interruption",
+      "mana_cost": "{U}{U}",
+      "cmc": 2,
+      "type_line": "Instant",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "oracle_text": "Counter target spell.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline fixtures for fixed Ward sacrifice and targeting."
+}

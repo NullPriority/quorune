@@ -1,0 +1,133 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Arcane Adaptation",
+      "oracle_id": "2188c03f-11b6-4651-914a-b4fdd59127e3",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nCreatures you control are the chosen type in addition to their other types. The same is true for creature spells you control and creature cards you own that aren't on the battlefield.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-09-29",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}",
+      "name": "Xenograft",
+      "oracle_id": "76642e7a-3c8f-45b8-9cd7-dac8086bea87",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nEach creature you control is the chosen type in addition to its other types.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-05-13",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Replacement effects that modify creatures of a certain type as they enter the battlefield will apply after you apply Arcane Adaptation’s effect. This is a change from previous rules. If you control Arcane Adaptation and the Aether Revolt card Metallic Mimic, with the same creature type chosen for both, then any creature you control will enter the battlefield with an additional +1/+1 counter on it.",
+      "oracle_id": "2188c03f-11b6-4651-914a-b4fdd59127e3",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "To choose a creature type, you must choose an existing creature type, such as Vampire or Knight. You can’t choose multiple creature types, such as “Vampire Knight.” Card types such as artifact can’t be chosen, nor can subtypes that aren’t creature types, such as Jace, Vehicle, or Treasure.",
+      "oracle_id": "2188c03f-11b6-4651-914a-b4fdd59127e3",
+      "published_at": "2018-01-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creature cards not on the battlefield and creature spells are not affected.",
+      "oracle_id": "76642e7a-3c8f-45b8-9cd7-dac8086bea87",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must choose an existing _Magic_ creature type.",
+      "oracle_id": "76642e7a-3c8f-45b8-9cd7-dac8086bea87",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Replacement effects that modify creatures of a certain type as they enter the battlefield will apply (or not apply) after you apply this effect. For example, if Warrior is the chosen creature type and you control Bramblewood Paragon, a Runeclaw Bear would enter the battlefield with an additional +1/+1 counter.",
+      "oracle_id": "76642e7a-3c8f-45b8-9cd7-dac8086bea87",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

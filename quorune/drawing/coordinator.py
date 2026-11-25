@@ -38,6 +38,7 @@ from .model import (
 )
 from .transaction import (
     DrawCommitHost,
+    DrawCommitResult,
     commit_prepared_draw,
     commit_prepared_draw_result,
 )
@@ -329,6 +330,28 @@ def _prepare_runtime_draw_event(
         selections.append(options[0])
 
 
+def _arrange_draw_result(
+    host: DrawCoordinatorHost,
+    result: DrawCommitResult,
+    unconsumed: QueuedDraw,
+    resume: DrawResume,
+) -> tuple[int, DrawResume] | None:
+    """Place replacement actions ahead of the rest of the current draw."""
+    if result.discard_followup is not None:
+        from .discard_coordination import begin_discard_replacement
+
+        after = (
+            DrawResume(kind="draw_remainder", draws=(unconsumed,), after=resume)
+            if unconsumed.count else resume
+        )
+        if begin_discard_replacement(host, result.discard_followup, after):
+            return None
+    if result.result_draws:
+        tail = _draw_batch_resume((unconsumed,) if unconsumed.count else (), after=resume)
+        return 0, _draw_batch_resume(result.result_draws, after=tail)
+    return unconsumed.count, resume
+
+
 def _continue_draw_sequence(
     host: DrawCoordinatorHost,
     seat: str,
@@ -402,27 +425,15 @@ def _continue_draw_sequence(
                 return
             result = commit_prepared_draw_result(host, prepared)
             remaining -= 1
-            if result.result_draws:
-                tail = _draw_batch_resume(
-                    (
-                        QueuedDraw(
-                            player=seat,
-                            count=remaining,
-                            reason=reason,
-                            private=private,
-                            excluded_effect_ids=excluded_effect_ids,
-                            post_draw_actions=post_draw_actions,
-                        ),
-                    )
-                    if remaining
-                    else (),
-                    after=resume,
+            if result.discard_followup is not None or result.result_draws:
+                arranged = _arrange_draw_result(
+                    host, result,
+                    QueuedDraw(seat, remaining, reason, private, excluded_effect_ids, post_draw_actions),
+                    resume,
                 )
-                resume = _draw_batch_resume(
-                    result.result_draws,
-                    after=tail,
-                )
-                remaining = 0
+                if arranged is None:
+                    return
+                remaining, resume = arranged
 
         if resume.kind != "draw_batch":
             resume_after_draw(host, resume)
@@ -593,26 +604,18 @@ def complete_draw_replacement(
     result = commit_prepared_draw_result(host, prepared)
     remaining = continuation.remaining_draws - 1
     resume = continuation.after
-    if result.result_draws:
-        tail = _draw_batch_resume(
-            (
-                QueuedDraw(
-                    player=seat,
-                    count=remaining,
-                    reason=continuation.reason,
-                    private=continuation.private,
-                    excluded_effect_ids=(
-                        continuation.excluded_effect_ids
-                    ),
-                    post_draw_actions=continuation.post_draw_actions,
-                ),
-            )
-            if remaining
-            else (),
-            after=resume,
+    if result.discard_followup is not None or result.result_draws:
+        arranged = _arrange_draw_result(
+            host, result,
+            QueuedDraw(
+                seat, remaining, continuation.reason, continuation.private,
+                continuation.excluded_effect_ids, continuation.post_draw_actions,
+            ),
+            resume,
         )
-        resume = _draw_batch_resume(result.result_draws, after=tail)
-        remaining = 0
+        if arranged is None:
+            return
+        remaining, resume = arranged
     _continue_draw_sequence(
         host,
         seat,
@@ -633,6 +636,11 @@ def complete_draw_decision(
 
     if decision.kind == "draw.replacement":
         complete_draw_replacement(host, decision)
+        return
+    if decision.kind == "draw.discard":
+        from .discard_coordination import complete_draw_discard_choice
+
+        complete_draw_discard_choice(host, decision)
         return
     if decision.kind == "draw.reveal":
         complete_draw_reveal(host, decision)
@@ -781,6 +789,14 @@ def resume_after_draw(
             destination=resume.destination,
             note=resume.note,
             instruction_pointer=resume.instruction_pointer,
+        )
+        return
+    if resume.kind == "draw_remainder":
+        draw, = resume.draws
+        _continue_draw_sequence(
+            host, draw.player, draw.count, reason=draw.reason, private=draw.private,
+            resume=resume.after or DrawResume.none(),
+            excluded_effect_ids=draw.excluded_effect_ids, post_draw_actions=draw.post_draw_actions,
         )
         return
     if resume.kind == "draw_batch":

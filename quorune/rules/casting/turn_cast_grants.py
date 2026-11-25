@@ -12,17 +12,14 @@ from ...card_programs.admission import program_has_complete_card_program_admissi
 from ...object_query import object_matches_query, object_query_result
 from ...util import stable_json
 from ..turn_cast_grant_model import (
-    TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_FIELD, TURN_CAST_GRANT_HANDLER,
-    TURN_CAST_GRANT_HANDLERS,
-    TurnCastGrantSpec, validate_turn_cast_grant_use,
+    COMMAND_GRAVEYARD_CAST_HANDLER, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_FIELD,
+    TURN_CAST_GRANT_HANDLERS, TurnCastGrantScope, TurnCastGrantSpec, validate_turn_cast_grant_use,
 )
 
 
-def current_turn_cast_grants(host, seat, card, *, cast_type_line=None, for_land=False):
-    if host.state.active_player != seat or card.owner != seat or card.object_kind != 'card':
+def _battlefield_turn_cast_sources(host, seat):
+    if host.state.active_player != seat:
         return ()
-    from ...semantic_runtime.cast_costs import default_cast_cost_component_registry
-    registry = default_cast_cost_component_registry()
     candidates = []
     for source in host._semantic_event_sources(zones={'battlefield'}):
         if source.zone != 'battlefield' or source.phased_out or source.controller != seat:
@@ -30,44 +27,93 @@ def current_turn_cast_grants(host, seat, card, *, cast_type_line=None, for_land=
         record = host.card_record(source)
         if record is None:
             continue
-        for program in host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,
-                active_zone='battlefield', event=TURN_CAST_GRANT_EVENT):
+        for program in host.semantics.runtime_handler_programs_for_oracle(
+            record.oracle_id, active_zone='battlefield', event=TURN_CAST_GRANT_EVENT,
+        ):
             if not any(d.get('handler_id') in TURN_CAST_GRANT_HANDLERS for d in program.handlers):
                 continue
-            if (host.semantic_program_is_current_trusted(program) and program_has_complete_card_program_admission(program)
-                    and program_matches_face(record, program, source)
-                    and cast_grant_usage_available(source, ability_id=program.key, turn_sequence=host.state.turn_sequence)):
+            if (
+                host.semantic_program_is_current_trusted(program)
+                and program_has_complete_card_program_admission(program)
+                and program_matches_face(record, program, source)
+                and cast_grant_usage_available(source, ability_id=program.key, turn_sequence=host.state.turn_sequence)
+            ):
                 candidates.append((source, program))
-    if not candidates:
+    return tuple(candidates)
+
+
+def _command_graveyard_cast_sources(host, seat):
+    from ...emblem_programs import command_emblem_programs
+
+    player = host.state.players.get(seat)
+    if player is None or not player.in_game:
         return ()
-    current = host._effective_static_component_key_map()
+    candidates = []
+    for object_id in player.zones['command']:
+        source = host.state.cards.get(object_id)
+        if (
+            source is None or source.zone != 'command' or source.object_kind != 'emblem'
+            or source.owner != seat or source.controller != seat or source.phased_out
+        ):
+            continue
+        for program in command_emblem_programs(
+            host.semantics, source, program_is_trusted=host.semantic_program_is_current_trusted,
+        ):
+            if (
+                program.event == TURN_CAST_GRANT_EVENT
+                and any(d.get('handler_id') == COMMAND_GRAVEYARD_CAST_HANDLER for d in program.handlers)
+                and program_has_complete_card_program_admission(program)
+            ):
+                candidates.append((source, program))
+    return tuple(candidates)
+
+
+def current_turn_cast_grants(host, seat, card, *, cast_type_line=None, for_land=False):
+    if card.owner != seat or card.object_kind != 'card':
+        return ()
+    battlefield = _battlefield_turn_cast_sources(host, seat)
+    command = _command_graveyard_cast_sources(host, seat) if card.zone == 'graveyard' and not for_land else ()
+    if not battlefield and not command:
+        return ()
+    from ...semantic_runtime.cast_costs import default_cast_cost_component_registry
+
+    registry = default_cast_cost_component_registry()
+    current = host._effective_static_component_key_map() if battlefield else {}
     effective = dict(host._effective_card_data(card))
     if cast_type_line is not None:
         effective['type_line'] = cast_type_line
     row = object_query_result(card, effective, type_parts=host._type_parts(str(effective.get('type_line') or '')),
         known_to_actor=True, attached_to_ref=None)
     result = []
-    for source, program in candidates:
-        if CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage or program.key not in current.get(source.object_id, ()):
+    for source, program in (*battlefield, *command):
+        emblem = source.zone == 'command'
+        if not emblem and (
+            CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+            or program.key not in current.get(source.object_id, ())
+        ):
             continue
         for descriptor in program.handlers:
-            if descriptor.get('handler_id') not in TURN_CAST_GRANT_HANDLERS:
+            handler = descriptor.get('handler_id')
+            if handler not in TURN_CAST_GRANT_HANDLERS or (handler == COMMAND_GRAVEYARD_CAST_HANDLER) != emblem:
                 continue
             for spec in registry.lower(descriptor, None):
                 from ...turn_history import current_graveyard_incarnation_qualifies
+
                 if (for_land and not spec.allow_land_play) or not current_graveyard_incarnation_qualifies(
-                        host.state.turn_history,turn_sequence=host.state.turn_sequence,card=card,qualification=spec.qualification):
+                        host.state.turn_history, turn_sequence=host.state.turn_sequence,
+                        card=card, qualification=spec.qualification):
                     continue
-                origins = set(spec.origins)
                 if card.zone == 'library':
                     library = host.state.players[seat].zones['library']
-                    eligible_origin = 'library_top' in origins and bool(library) and library[-1] == card.object_id
+                    eligible_origin = 'library_top' in spec.origins and bool(library) and library[-1] == card.object_id
                 else:
-                    eligible_origin = card.zone in origins
+                    eligible_origin = card.zone in spec.origins
                 if eligible_origin and (for_land or any(object_matches_query(row, predicate) for predicate in spec.predicates_any)):
-                    result.append({'source': source.object_id, 'logical': source.logical_object_id, 'program': program.key,
+                    result.append({
+                        'source': source.object_id, 'logical': source.logical_object_id, 'program': program.key,
                         'source_ref': source.ref, 'source_label': source.printed_name, 'turn': host.state.turn_sequence,
-                        'grant': spec.to_dict(), 'original_cost_id': 'normal'})
+                        'grant': spec.to_dict(), 'original_cost_id': 'normal',
+                    })
     return tuple(sorted(result, key=lambda r: (r['source'], r['program'])))
 
 
@@ -149,12 +195,13 @@ def finalize_turn_cast_grant_option(option):
     if life is not None:
         optional_life_cost_amount(option)
     use['original_cost_id'] = life['base_option'] if life is not None else option['id']
-    validate_turn_cast_grant_use(use)
+    spec = validate_turn_cast_grant_use(use)
     option['id'] = _price_id(use)
     if life is not None:
         life['base_option'] = option['id']
         option['id'] += '+life-reduction:' + hashlib.sha256(stable_json(life).encode('utf-8')).hexdigest()[:24]
-    option['label'] = 'Use ' + use['source_label'] + ' once: ' + str(option.get('label') or 'Cast')
+    usage = ' once' if spec.source_scope is TurnCastGrantScope.ONCE_ON_OWN_TURN else ''
+    option['label'] = f"Use {use['source_label']}{usage}: {option.get('label') or 'Cast'}"
     option['permission_source'] = use['source_ref']
 
 
@@ -188,7 +235,8 @@ def commit_turn_cast_grant_use(host, option, *, spell=None, caster=None):
     if use['turn'] != host.state.turn_sequence:
         raise ValueError('Turn casting permission epoch changed')
     source = host.state.cards.get(use['source'])
-    if source is not None and source.logical_object_id == use['logical']:
+    if (spec.source_scope is TurnCastGrantScope.ONCE_ON_OWN_TURN
+        and source is not None and source.logical_object_id == use['logical']):
         commit_cast_grant_usage(source, ability_id=use['program'], turn_sequence=use['turn'])
     if spec.cast_rider != 'none':
         from ...zone_object_state import mark_cast_grant_rider

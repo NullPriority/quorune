@@ -55,7 +55,7 @@ class LifeEffectHost(LifeChangeHost, LifeReplacementHost, Protocol):
     ) -> LifeEffectCardRecord | None: ...
 
 
-def _commit(
+def prepare_life_effect_changes(
     host: LifeEffectHost,
     changes: Sequence[LifeChange],
     *,
@@ -117,12 +117,31 @@ def _commit(
             effects=prepared.effects,
             pending=prepared.pending,
         )
+    return prepared
+
+
+def commit_prepared_life_effect_changes(
+    host: LifeEffectHost, prepared: PreparedLifeChangeBatch,
+) -> PreparedLifeChangeBatch:
     try:
         commit_life_change_batch(host, prepared)
     except LifeChangeError as exc:
         raise GameRuleError(str(exc)) from exc
     dispatch_life_gain_records(host, prepared.records)
     return prepared
+
+
+def _commit(
+    host: LifeEffectHost,
+    changes: Sequence[LifeChange],
+    *,
+    effect: Mapping[str, Any],
+    actor: str,
+    reason: str,
+) -> PreparedLifeChangeBatch:
+    return commit_prepared_life_effect_changes(host, prepare_life_effect_changes(
+        host, changes, effect=effect, actor=actor, reason=reason,
+    ))
 
 
 def _result(prepared: PreparedLifeChangeBatch) -> LifeBatchResult:
@@ -468,12 +487,16 @@ def _apply_drain_each_opponent(
     return amount
 
 
+from .characteristic_life_exchange import CHARACTERISTIC_LIFE_EXCHANGE_OPERATION, apply_characteristic_life_exchange
 from .fractional_life import apply_life_loss
 from .life_total_setting import apply_set_life_total
+from .player_life_exchange import PLAYER_LIFE_EXCHANGE_OPERATION, apply_player_life_exchange
 
 
 HANDLERS = {
     'set_life_total': apply_set_life_total,
+    CHARACTERISTIC_LIFE_EXCHANGE_OPERATION: apply_characteristic_life_exchange,
+    PLAYER_LIFE_EXCHANGE_OPERATION: apply_player_life_exchange,
     "drain_each_opponent": _apply_drain_each_opponent,
     "drain_opponent": _apply_drain_opponent,
     _LIFE_OPERATION: _apply_life,

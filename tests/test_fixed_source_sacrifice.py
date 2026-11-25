@@ -188,8 +188,10 @@ class FixedSourceSacrificeCompilerTests(_SourceSacrificeFixture, unittest.TestCa
                 self.assertEqual('capability_closed', binding['trust_basis'], binding['blockers'])
                 self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
         for name in ('Hesitation', 'Lunar Force'):
-            self.assertNotEqual('exact', compile_oracle_card(self.db.lookup(name),
-                capability_registry=self.registry, capability_profile='commander_review').status)
+            with self.subTest(name=name):
+                result = compile_oracle_card(self.db.lookup(name), capability_registry=self.registry,
+                                             capability_profile='commander_review')
+                self.assertEqual('exact', result.status, result.material_residuals)
 
     def test_missing_source_owner_dependency_cannot_be_hidden_by_removing_coverage(self):
         card = self.db.lookup('Skittering Horror')

@@ -245,10 +245,12 @@ def record_source_transition(
         end_pairs_containing(host, (card.object_id,), reason='paired object changed control or phased out')
 
 
-def _current_duration_source(state: Any, source: ResolutionEffectSource | ContinuousObjectIdentity) -> Any | None:
+def _current_duration_source(
+    state: Any, source: ResolutionEffectSource | ContinuousObjectIdentity, *, include_phased: bool = False,
+) -> Any | None:
     card = state.cards.get(source.object_id)
     if (card is None or card.logical_object_id != source.logical_object_id
-            or card.zone != "battlefield" or card.phased_out):
+            or card.zone != "battlefield" or (card.phased_out and not include_phased)):
         return None
     return card
 
@@ -303,7 +305,13 @@ def prepare_source_presence_duration(state, source):
     return source_continuity_snapshot(card) if card is not None else None
 
 
+def source_battlefield_exit_pending(state: Any, source: ContinuousObjectIdentity) -> bool:
+    return _current_duration_source(state, source, include_phased=True) is not None
+
+
 def characteristic_source_duration_is_current(state, source, snapshot, duration):
+    if duration is ContinuousEffectDuration.UNTIL_SOURCE_BATTLEFIELD_EXIT:
+        return source_battlefield_exit_pending(state, source)
     card = _current_duration_source(state, source)
     return card is not None and _duration_condition(card, duration, card.controller, snapshot)
 
@@ -444,6 +452,23 @@ def gain_control_of_assignments(
             temporary.pop("control_previous", None)
     synchronize_control_effects(host, reason=reason)
     return tuple(card.ref for card in cards)
+
+
+def execute_permanent_control_exchange(host: ControlEffectHost, intent: Any) -> tuple[str, ...]:
+    """Lock both current controllers before committing the two layer-two grants."""
+    try:
+        left, right = (
+            host._resolve_object(intent.actor, ref, zones={"battlefield"}) for ref in intent.references
+        )
+    except GameRuleError:
+        return ()
+    if (left.phased_out or right.phased_out or left.controller == right.controller
+            or left.controller not in host.active_seats or right.controller not in host.active_seats):
+        return ()
+    return gain_control_of_assignments(
+        host, actor=intent.actor, assignments=((left.ref, right.controller), (right.ref, left.controller)),
+        duration=ContinuousEffectDuration.ZONE_OBJECT, source=intent.source, reason=intent.reason,
+    )
 
 
 def execute_owner_control_restoration(host: Any,intent: Any) -> tuple[str,...]:
@@ -642,6 +667,43 @@ def control_set_query_is_closed(query: ObjectQuerySpec, *, actor: str) -> bool:
     return fixed_resolution_characteristic_set_is_closed(query)
 
 
+def _execute_two_controller_creature_transfer(host, intent):
+    from .continuous_effect_state import (
+        matching_battlefield_objects, ResolutionContinuousComponent,
+        create_resolution_continuous_effect_components,
+    )
+    from .tap_state import untap_permanent, dispatch_tap_state_group
+
+    if intent.actor not in host.active_seats or intent.opponent not in host.active_seats:
+        raise ControlEffectError("Two-controller creature transfer requires both legal participants")
+    counterpart = {intent.actor: intent.opponent, intent.opponent: intent.actor}
+
+    def current_groups():
+        return tuple(card for card in matching_battlefield_objects(host, intent.predicate)
+                     if card.controller in counterpart)
+
+    changed = tuple(card for card in current_groups()
+                    if untap_permanent(host, card, actor=intent.actor, reason=intent.reason))
+    dispatch_tap_state_group(host, changed, tapped=False, reason=intent.reason)
+    # Untapping a source can end a control effect. The next instruction reads
+    # the newly current controllers before either participant gains control.
+    cards = current_groups()
+    if not cards:
+        return ()
+    assignments = tuple((card.ref, counterpart[card.controller]) for card in cards)
+    refs = gain_control_of_assignments(
+        host, actor=intent.actor, assignments=assignments, duration=intent.duration,
+        source=intent.source, reason=intent.reason,
+    )
+    create_resolution_continuous_effect_components(
+        host, source=intent.source, targets=cards,
+        components=(ResolutionContinuousComponent(
+            Layer.ABILITY, "6", (ContinuousOperation("add_ability", "Haste"),),
+        ),), duration=intent.duration,
+    )
+    return refs
+
+
 def execute_control_set(host: Any, intent: Any) -> tuple[str, ...]:
     """Retain this instruction's complete set across its printed substeps."""
     from .continuous_effect_state import (
@@ -652,6 +714,8 @@ def execute_control_set(host: Any, intent: Any) -> tuple[str, ...]:
     from .semantic_runtime.control_intents import GainControlSetIntent
     if not isinstance(intent, GainControlSetIntent):
         raise ControlEffectError("Control-set execution requires a typed retained intent")
+    if intent.opponent is not None:
+        return _execute_two_controller_creature_transfer(host, intent)
     if not control_set_query_is_closed(intent.predicate, actor=intent.actor):
         raise ControlEffectError("Control-set query is outside the public closed family")
     cards = matching_battlefield_objects(host, intent.predicate)

@@ -10,7 +10,10 @@ from quorune.replacement.immutable import FrozenMap
 from quorune.rules.casting_additional_costs import FixedZoneChangeAdditionalCost
 from quorune.rules.casting_additional_cost_groups import FixedLifePaymentAdditionalCost
 from quorune.rules.fixed_payment_groups import fixed_life_zone_costs, fixed_life_zone_dependencies
-from quorune.rules.graveyard_cast_costs import PaidGraveyardCastSpec, PAID_GRAVEYARD_CONTEXT
+from quorune.rules.graveyard_cast_costs import (
+    GRAVEYARD_SURCHARGE_CAPABILITY, GRAVEYARD_SURCHARGE_FIELD, PAID_GRAVEYARD_CONTEXT,
+    PaidGraveyardCastSpec, compiled_paid_graveyard_specs, validate_paid_graveyard_option,
+)
 from quorune.rules.self_graveyard_discard import SelfGraveyardDiscardSpec
 from common import ROOT
 from pathlib import Path
@@ -55,6 +58,45 @@ class PaidGraveyardModelTests(unittest.TestCase):
         self.assertEqual('zone_cast', self.prices()[2].cost_option(printed)['kind'])
         self.assertEqual(2, self.prices()[0].cost_option(printed)['requirements']['GENERIC'])
         self.assertEqual(0, self.prices()[1].cost_option(printed)['requirements']['GENERIC'])
+
+    def test_creature_count_price_requires_closed_positive_generic_rate(self):
+        from quorune.compiler.paid_graveyard_templates import paid_graveyard_spec
+
+        clause = (
+            "You may cast this card from your graveyard if you pay {2} more "
+            "to cast it for each other creature card in your graveyard."
+        )
+        spec = paid_graveyard_spec(clause)
+        self.assertIsNotNone(spec)
+        self.assertIn(GRAVEYARD_SURCHARGE_CAPABILITY, spec.capabilities())
+        raw = spec.to_dict()
+        self.assertEqual(2, raw["schema_version"])
+        self.assertEqual(2, raw["generic_per_other_creature_card"])
+        self.assertEqual(spec, PaidGraveyardCastSpec.from_dict(raw))
+        printed = {"id": "normal", "requirements": {"GENERIC": 2, "B": 1}}
+        offered = spec.cost_option(printed, surcharge=4)
+        self.assertEqual({"GENERIC": 6, "B": 1}, offered["requirements"])
+        self.assertEqual(4, offered[GRAVEYARD_SURCHARGE_FIELD])
+        self.assertEqual({"GENERIC": 2, "B": 1}, printed["requirements"])
+        for fields in (
+            {"generic_per_other_creature_card": False},
+            {"generic_per_other_creature_card": 0},
+            {"mana_cost": "{B}"},
+            {"schema_version": 1},
+            {"other_scope": "opponent"},
+        ):
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                PaidGraveyardCastSpec.from_dict({**raw, **fields})
+        with self.assertRaises(ValueError):
+            spec.cost_option(printed)
+        for altered in (
+            clause.replace("{2}", "{X}"), clause.replace("{2}", "{B}"),
+            clause.replace("other creature card", "other card"),
+            clause.replace("in your graveyard.", "in any graveyard."),
+            clause + " Exile it when it resolves.",
+        ):
+            with self.subTest(altered=altered):
+                self.assertIsNone(paid_graveyard_spec(altered))
 
     def test_life_zone_composition_keeps_only_its_actual_resource_owner(self):
         for spec in self.prices()[2:4]:
@@ -319,13 +361,94 @@ class PaidGraveyardRuntimeTests(unittest.TestCase):
 
     def test_unrepresented_entry_surcharge_and_foreign_graveyard_sources_stay_closed(self):
         s = self.session(784060)
-        cards = [self.add(s.engine, name, zone='graveyard') for name in ('Worldheart Phoenix', 'Risen Executioner')]
+        card = self.add(s.engine, 'Worldheart Phoenix', zone='graveyard')
         foreign = self.add(s.engine, 'Demonic Embrace', seat='C', zone='graveyard')
         self.prepare(s, mana={c: 8 for c in 'WUBRGC'}); self.checkpoint(s)
-        for card in cards:
-            self.assertFalse(self.binding(s, card)['strict_capability_ready'])
+        self.assertFalse(self.binding(s, card)['strict_capability_ready'])
         self.assertFalse(any(a['id'] == 'cast:'+foreign.ref for a in self.actions(s)))
         self.reject(s, {'action_id': 'cast:'+foreign.ref, 'pay': 'auto'}); self.replay(s)
+
+    def test_creature_count_surcharge_tracks_graveyard_changes_and_replays(self):
+        s = self.session(784061)
+        source = self.add(s.engine, 'Risen Executioner', zone='graveyard')
+        first = self.add(s.engine, 'Grizzly Bears', zone='graveyard', ref='surcharge-own-grave')
+        self.add(s.engine, 'Memnite', zone='graveyard')
+        self.add(s.engine, 'Naturalize', zone='graveyard')
+        self.add(s.engine, 'Grizzly Bears', seat='B', zone='graveyard', ref='surcharge-other-grave')
+        self.add(s.engine, 'Grizzly Bears', seat='C', zone='battlefield', ref='surcharge-other-battlefield')
+        private = self.add(s.engine, 'Generic Bound Growth', seat='C', zone='hand')
+        removal = self.add(s.engine, 'Cremate', zone='hand')
+        self.prepare(s, mana={'C': 4, 'B': 3})
+        self.checkpoint(s)
+        self.assertTrue(self.binding(s, source)['strict_capability_ready'])
+
+        initial_action = self.action(s, source)
+        initial_option, = initial_action['cost_options']
+        self.assertEqual(4, initial_option['requirements']['GENERIC'])
+        self.assertEqual(2, initial_option['requirements']['B'])
+        self.assertEqual(4, self.db.lookup('Risen Executioner').mana_value)
+        spec, = compiled_paid_graveyard_specs(s.engine, 'A', source)
+        sealed_option = spec.cost_option(
+            {'id': 'normal', 'requirements': {'GENERIC': 2, 'B': 2}}, surcharge=2
+        )
+        validate_paid_graveyard_option(s.engine, 'A', source, sealed_option, origin='graveyard')
+
+        removed = s.act('pilot:A', {
+            'action_id': 'cast:' + removal.ref, 'targets': [first.ref], 'pay': 'auto',
+        })
+        self.assertTrue(removed.ok, removed.summary)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('exile', s.state.cards[first.object_id].zone)
+        with self.assertRaisesRegex(ValueError, 'creature count changed'):
+            validate_paid_graveyard_option(s.engine, 'A', source, sealed_option, origin='graveyard')
+        current_action = self.action(s, source)
+        current_option, = current_action['cost_options']
+        self.assertEqual(3, current_option['requirements']['GENERIC'])
+        self.assertEqual(2, current_option['requirements']['B'])
+        command = {'action_id': current_action['id'], 'cost_option': current_option['id'], 'pay': 'auto'}
+        self.reject(s, command, 'pilot:C')
+        self.reject(s, {**command, 'cost_option': 'normal'})
+        cast = s.act('pilot:A', command)
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual('stack', s.state.cards[source.object_id].zone)
+        self.assertEqual(1, s.state.players['A'].mana_pool['C'])
+        self.assertEqual(0, s.state.players['A'].mana_pool['B'])
+        loaded = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(loaded))
+        self.assertEqual('battlefield', loaded.state.cards[source.object_id].zone)
+        self.private_replay(loaded, private)
+
+    def test_creature_count_surcharge_combines_with_alternative_mana_only_in_graveyard(self):
+        for seed, origin, expected in ((784062, 'graveyard', 1), (784063, 'hand', 0)):
+            with self.subTest(origin=origin):
+                s = self.session(seed)
+                source = self.add(s.engine, 'Risen Executioner', zone=origin)
+                self.add(s.engine, 'Memnite', zone='graveyard')
+                self.add(s.engine, 'Fist of Suns')
+                self.prepare(s, mana={**{color: 1 for color in 'WUBRG'}, 'C': 1})
+                self.checkpoint(s)
+                option, = self.action(s, source)['cost_options']
+                self.assertIn('battlefield-alternative:', option['id'])
+                self.assertEqual(origin == 'graveyard', 'graveyard-fixed-payment:' in option['id'])
+                self.assertEqual(expected, option['requirements']['GENERIC'])
+                cast = s.act('pilot:A', {
+                    'action_id': 'cast:' + source.ref, 'cost_option': option['id'], 'pay': 'auto',
+                })
+                self.assertTrue(cast.ok, cast.summary)
+                self.assertEqual(1 - expected, s.state.players['A'].mana_pool['C'])
+                self.assertEqual('stack', s.state.cards[source.object_id].zone)
+                self.replay(s)
+
+    def test_creature_count_surcharge_dispatch_omission_fails_closed(self):
+        from quorune.oracle_ir import compile_oracle_card
+
+        source = self.db.lookup('Risen Executioner')
+        baseline = compile_oracle_card(source, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertEqual('exact', baseline.status, baseline.material_residuals)
+        with patch('quorune.compiler.paid_graveyard_nodes.paid_graveyard_template', return_value=None):
+            ir = compile_oracle_card(source, capability_registry=self.registry, capability_profile='commander_review')
+        self.assertNotEqual('exact', ir.status)
+        self.assertTrue(ir.material_residuals)
 
     def test_all_five_normal_hand_casts_keep_printed_mana_and_no_graveyard_resource_price(self):
         prices = {"Raffine's Guidance": {'W': 1}, 'Scourge of Nel Toth': {'C': 5, 'B': 2},

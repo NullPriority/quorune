@@ -17,6 +17,9 @@ from ..keyword_abilities import (
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 from ..replacement.immutable import thaw_value
 from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, split_next_turn_effect
+from .same_name_creature_modifiers import (
+    SAME_NAME_STAT_VERSION_FIELD, same_name_creature_stat_node_capabilities, same_name_creature_stat_runtime_dependencies,
+)
 from ..resolution_characteristic_model import (CHARACTERISTIC_OPERATION, TARGET_CARD_TYPE_ADDITION_VERSION,
     TARGET_CARD_TYPE_ADDITION_CAPABILITY, TARGET_CARD_TYPE_ADDITION_MECHANIC)
 
@@ -91,11 +94,27 @@ def fixed_resolution_characteristic_set_node_capabilities(
 ) -> tuple[str, ...]:
     """Own one fixed or chosen resolution-locked public characteristic result."""
 
+    if len(effects) == 1 and SAME_NAME_STAT_VERSION_FIELD in effects[0]:
+        return same_name_creature_stat_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if len(effects)==1 and isinstance(effects[0],Mapping) and 'event_player_set_version' in effects[0]:
         from .event_player_modifiers import event_player_modifier_node_capabilities
         return event_player_modifier_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 
     if len(effects) == 1 and isinstance(effects[0], Mapping) and effects[0].get("op") == "choose_creature_type":
+        from ..resolution_characteristic_model import (
+            CHOSEN_CREATURE_TYPE_MODIFIER_FIELD, CHOSEN_CREATURE_TYPE_RESULT_FIELD,
+            chosen_creature_type_result_dependencies,
+        )
+
+        if {CHOSEN_CREATURE_TYPE_RESULT_FIELD, CHOSEN_CREATURE_TYPE_MODIFIER_FIELD} & effects[0].keys():
+            if target_schema is not None:
+                return ()
+            try:
+                return chosen_creature_type_result_dependencies(effects[0])
+            except (TypeError, ValueError):
+                return ()
         from .resolution_characteristic_shapes import temporary_creature_type_node_capabilities
 
         return temporary_creature_type_node_capabilities(
@@ -207,8 +226,40 @@ def _runtime_stat_amount(value):
     return 2 * spec.coefficient, required
 
 
+def _chosen_type_temporary_modifier_runtime_dependencies(program):
+    from ..resolution_characteristic_model import CHOSEN_CREATURE_TYPE_MODIFIER_FIELD, ChosenCreatureTypeModifier
+    from ..query_effect_amount_model import CastXAmountSpec
+    from .effect_shape_walkers import nested_effects
+
+    effects = (*program.effects, *program.handlers)
+    if not any(CHOSEN_CREATURE_TYPE_MODIFIER_FIELD in child for child in nested_effects(effects)):
+        return ()
+    if (len(program.effects) != 1 or CHOSEN_CREATURE_TYPE_MODIFIER_FIELD not in program.effects[0]
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers):
+        raise ValueError("A chosen-type modifier requires its single nontargeted resolution")
+    result = ChosenCreatureTypeModifier.from_effect(program.effects[0])
+    event = (program.event, program.active_zone)
+    if event == ("resolve", "stack") and program.event_condition is None:
+        return result.capability_dependencies
+    if (event == ("permanent.turned_face_up", "battlefield") and not isinstance(result.amount, CastXAmountSpec)
+            and program.event_condition == {"field": "card", "op": "eq", "value": "$source.ref"}):
+        return result.capability_dependencies
+    raise ValueError("A chosen-type modifier requires its spell or fixed source face-up authority")
+
+
 def fixed_resolution_characteristics_runtime_dependencies(program):
     """Bind canonical public-set and attachment descriptors independently of declared owners."""
+    from .creature_subtype_set_results import creature_subtype_set_runtime_dependencies
+    from .source_block_defender import source_block_defender_runtime_dependencies
+
+    if source_block := source_block_defender_runtime_dependencies(program):
+        return source_block
+    if subtype_set := creature_subtype_set_runtime_dependencies(program):
+        return subtype_set
+    if chosen_type := _chosen_type_temporary_modifier_runtime_dependencies(program):
+        return chosen_type
+    if same_name := same_name_creature_stat_runtime_dependencies(program):
+        return same_name
     from .event_player_modifiers import event_player_modifier_program_dependencies
     event_player=event_player_modifier_program_dependencies(program)
     if event_player:return event_player
@@ -217,7 +268,8 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         return required
     from .effect_shape_walkers import nested_effects
     from ..target_land_type_model import (
-        FIXED_TARGET_LAND_TYPE_VERSION, FIXED_TARGET_LAND_TYPE_MECHANIC, SOURCE_PRESENT_LAND_TYPE_CAPABILITY,
+        FIXED_TARGET_LAND_TYPE_VERSION, FIXED_TARGET_LAND_TYPE_MECHANIC,
+        SOURCE_PRESENT_LAND_TYPE_CAPABILITY, SOURCE_EXIT_LAND_TYPE_CAPABILITY,
     )
 
     if any(effect.get("op") == CHARACTERISTIC_OPERATION
@@ -231,8 +283,11 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         )
         if not required:
             raise ValueError("Basic land type setting requires a closed single target and duration")
-        if SOURCE_PRESENT_LAND_TYPE_CAPABILITY in required and program.active_zone != "battlefield":
-            raise ValueError("Source-presence land setting requires a battlefield source")
+        if (
+            program.active_zone != "battlefield"
+            and {SOURCE_PRESENT_LAND_TYPE_CAPABILITY, SOURCE_EXIT_LAND_TYPE_CAPABILITY}.intersection(required)
+        ):
+            raise ValueError("Source-duration land setting requires a battlefield source")
         return required
     from ..compiler.program_composition import composed_spell_family_runtime_dependencies
     families=[]

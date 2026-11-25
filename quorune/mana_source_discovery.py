@@ -72,7 +72,11 @@ def _unrestricted_when_payable(
 
 
 def _mana_plan_cost_is_supported(host, seat, card, ability: ActivatedAbility) -> bool:
-    """Admit a closed hybrid filter or a source with a currently zero price."""
+    """Admit an existing closed priced mode or a currently free source."""
+    from .public_quantity_mana_runtime import chosen_subtype_mana_output
+
+    if chosen_subtype_mana_output(ability) is not None:
+        return True
     if ability.mana_cost_options:
         return supports_hybrid_filter_price(ability, ability.mana_cost_options, ability.fixed_mana_outputs)
     from .rules.activation.x_costs import activation_requirements

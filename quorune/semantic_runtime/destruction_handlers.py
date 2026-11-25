@@ -4,11 +4,14 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..affected_permanents import (
-    AffectedPermanentSetError,
     AffectedPermanentSetSpec,
     PermanentControllerRelation,
 )
 from ..rules.destruction_result_model import DestructionFollowup
+from ..rules.qualified_destruction import (
+    SOURCE_INCARNATION_EXCLUSION_FIELD, is_relative_power_destruction_set,
+    relative_power_destruction_instruction, source_incarnation_excluding_destruction,
+)
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -27,6 +30,7 @@ _SET_FIELDS = frozenset(
         "set",
         "followup",
         "regeneration_prohibited",
+        SOURCE_INCARNATION_EXCLUSION_FIELD,
         _REASON_FIELD,
         "_replacement_selections",
     }
@@ -121,13 +125,23 @@ class DestroyPermanentSetHandler:
             )
         if effect.get("op") != self.operation:
             raise SemanticNodeError("Destroy-set operation is unsupported")
+        bound_source = SOURCE_INCARNATION_EXCLUSION_FIELD in effect
         try:
-            spec = AffectedPermanentSetSpec.from_dict(effect.get("set"))
-        except (AffectedPermanentSetError, TypeError) as exc:
+            if bound_source:
+                spec = source_incarnation_excluding_destruction(effect, resolved=True)
+            elif is_relative_power_destruction_set(effect.get("set")):
+                spec = relative_power_destruction_instruction(effect, resolved=True)
+            else:
+                spec = AffectedPermanentSetSpec.from_dict(effect.get("set"))
+        except (ValueError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
         if spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER:
             context.query.require_active_seat(str(spec.target_controller or ""))
         source_ref = effect.get("source")
+        if bound_source and (context.source is None or (
+            source_ref is not None and source_ref != context.source.card_ref
+        )):
+            raise SemanticNodeError("Source-incarnation destruction must use its resolving source")
         if source_ref is not None and (
             type(source_ref) is not str or not source_ref
         ):
@@ -166,7 +180,7 @@ class DestroyPermanentSetHandler:
                 source_ref=source_ref,
                 regeneration_prohibited=regeneration_prohibited,
                 replacement_selections=tuple(raw_selections),
-                followup=DestructionFollowup.from_dict(effect["followup"]) if "followup" in effect else None,
+                followup=DestructionFollowup.from_destruction_effect(effect) if "followup" in effect else None,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

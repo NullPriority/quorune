@@ -6,7 +6,8 @@ from dataclasses import replace
 from . import regex_working_set as re
 
 from ..continuous_conditions import (
-    FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+    GREATEST_CREATURE_POWER_FACTS, FixedPublicStateConditionKind, FixedPublicStateConditionSpec,
+    FixedPublicStateFact, greatest_creature_power_condition_dependencies,
 )
 from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
 from ..controller_creature_keyword_absence import (
@@ -16,17 +17,21 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..death_keyword_absence import DeathKeywordAbsence
 from ..object_predicate import ObjectQuerySpec
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_participant_schedule
+from ..rules.attached_greatest_power_condition import (
+    ATTACHED_GREATEST_POWER_CAPABILITIES, AttachedGreatestPowerCondition,
+)
 from ..scheduled_player import UPKEEP_HAND_COUNT_CAPABILITY, UpkeepParticipantHandCondition
 from .fixed_public_event_trigger_bindings import creature_graveyard_owner_spec
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .public_state_queries import fixed_public_state_condition
+from .public_state_fact_queries import greatest_creature_power_control_condition
 from .trigger_event_vocabulary import FixedCounterTriggerEvent
 
 
 FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY = 'trigger.condition.fixed_public_state'
 PublicTriggerCondition = (
     FixedPublicStateConditionSpec | UpkeepParticipantHandCondition
-    | ControllerCreatureKeywordAbsence | DeathKeywordAbsence
+    | ControllerCreatureKeywordAbsence | DeathKeywordAbsence | AttachedGreatestPowerCondition
 )
 PUBLIC_INTERVENING_IF_TRIGGER = re.compile(
     r'^(?P<prefix>.+?), if (?P<condition>[^,]+), (?P<body>.+)$', re.I,
@@ -134,7 +139,123 @@ def _zero_mana_cast_damage_binding(match, *, card_name, compile_binding):
     return _zero_mana_cast_binding(match, card_name=card_name, compile_binding=compile_binding)
 
 
+def _attached_greatest_power_trigger_condition(match) -> AttachedGreatestPowerCondition | None:
+    if (
+        match["prefix"].casefold() == "when this aura enters"
+        and match["condition"].casefold()
+        == "enchanted permanent is a creature with the greatest power among creatures on the battlefield"
+        and match["body"].casefold() == "draw a card."
+    ):
+        return AttachedGreatestPowerCondition()
+    return None
+
+
+def _other_spell_self_cast_binding(match, *, card_name, compile_binding):
+    if (match["prefix"].casefold() != "when you cast this spell"
+            or match["condition"].casefold().replace("’", "'") != "you've cast another spell this turn"
+            or match["body"].casefold() != "copy this spell."):
+        return None
+    base = compile_binding(f"{match['prefix']}, copy it.", card_name=card_name)
+    if base is None or base.spell_subject is None or not base.spell_subject.source_spell:
+        return None
+    subject = replace(base.spell_subject, caster_spell_number_minimum=2)
+    return replace(base, variant=subject.variant, spell_subject=subject)
+
+
+def _combat_damage_entry_binding(match, *, card_name, compile_binding):
+    from ..rules.combat_damage_entry_history import COMBAT_DAMAGE_ENTRY_CAPABILITIES, combat_damage_entry_condition
+
+    if (match["prefix"].casefold() != "whenever a creature you control deals combat damage to a player"
+            or match["condition"].casefold() != "that creature entered this turn"
+            or match["body"].casefold() != "draw a card."):
+        return None
+    base = compile_binding(f"{match['prefix']}, {match['body']}", card_name=card_name)
+    if base is None or base.event.value != "damage.dealt" or base.active_zone != "battlefield":
+        return None
+    condition = combat_damage_entry_condition(base.event_condition)
+    if condition is None:
+        return None
+    required = tuple(dict.fromkeys((*base.public_capabilities, *COMBAT_DAMAGE_ENTRY_CAPABILITIES)))
+    return replace(base, public_condition=condition, public_capabilities=required)
+
+
+def _opponent_damage_untapped_draw_binding(match):
+    if (
+        match["prefix"].casefold() != "whenever a source an opponent controls deals damage to you"
+        or match["condition"].casefold() != "this artifact is untapped"
+        or match["body"].casefold() != "you may draw a card."
+    ):
+        return None
+    from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
+    from ..rules.optional_counter_capability_shapes import opponent_damage_to_controller_condition
+    from ..rules.trigger_source_information import (
+        UNTAPPED_DAMAGE_DRAW_TEMPLATE, UNTAPPED_DAMAGE_DRAW_VARIANT, untapped_damage_source_condition,
+    )
+
+    return FixedCounterTriggerBinding(
+        event=FixedCounterTriggerEvent.PUBLIC_DEALS_DAMAGE, variant=UNTAPPED_DAMAGE_DRAW_VARIANT,
+        body=match["body"], public_active_zone="battlefield",
+        public_mechanic="trigger-event-normalized-damage", public_template_id=UNTAPPED_DAMAGE_DRAW_TEMPLATE,
+        public_condition=opponent_damage_to_controller_condition(), public_state_condition=untapped_damage_source_condition(),
+    )
+
+
+def _source_counter_upkeep_draw_binding(match, *, card_name, compile_binding):
+    if (
+        match["prefix"].casefold() != "at the beginning of your upkeep"
+        or match["condition"].casefold() != "this creature has one or more +1/+1 counters on it"
+        or match["body"].casefold() != "you may remove a +1/+1 counter from it. if you do, draw a card."
+    ):
+        return None
+    from ..rules.fixed_effect_payment_shapes import source_counter_upkeep_draw_condition
+
+    body = "You may remove a +1/+1 counter from this creature. If you do, draw a card."
+    base = compile_binding(f"{match['prefix']}, {body}", card_name=card_name)
+    if base is None or base.event is not FixedCounterTriggerEvent.STEP_BEGIN or base.active_zone != "battlefield":
+        return None
+    return replace(base, public_state_condition=source_counter_upkeep_draw_condition())
+
+
+def _opponent_death_toughness_binding(match, *, card_name, compile_binding):
+    if tuple(match[field].casefold() for field in ("prefix", "condition", "body")) != (
+        "whenever a creature an opponent controls dies", "its toughness was less than 1", "draw a card.",
+    ):
+        return None
+    base = compile_binding(f"{match['prefix']}, {match['body']}", card_name=card_name)
+    opponent = {"field": "controller", "op": "ne", "value": "$source.controller"}
+    if base is None or base.event.value != "creature.dies" or base.active_zone != "battlefield" or base.event_condition != opponent:
+        return None
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+    from .qualified_zone_event_bindings import public_binding_from_spec
+
+    # The intervening clause reads the same sealed toughness at both checks.
+    spec = FixedPublicEventBindingSpec(
+        event=base.event.value, variant="opponent_creature_death_low_toughness", body=base.body,
+        template_id="fixed-counter-opponent-creature-death-low-toughness-v1",
+        mechanic="trigger-event-normalized-zone-change",
+        condition={"all": [opponent, {"field": "toughness", "op": "lt", "value": 1}]},
+    )
+    return public_binding_from_spec(spec, binding_type=type(base), event_type=type(base.event))
+
+
 def bind_public_intervening_trigger(match, *, card_name, compile_binding, compile_source_binding):
+    if death := _opponent_death_toughness_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return death
+    if counter_draw := _source_counter_upkeep_draw_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return counter_draw
+    if untapped_draw := _opponent_damage_untapped_draw_binding(match):
+        return untapped_draw
+    if combat_entry := _combat_damage_entry_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return combat_entry
+    if other_spell := _other_spell_self_cast_binding(match, card_name=card_name, compile_binding=compile_binding):
+        return other_spell
+    attached_maximum = _attached_greatest_power_trigger_condition(match)
+    if attached_maximum is not None:
+        text = f"{match['prefix']}, {match['body']}"
+        base = compile_binding(text, card_name=card_name) or compile_source_binding(text, card_name=card_name)
+        if base is None or base.event.value != "permanent.enter.self" or base.active_zone != "battlefield":
+            return None
+        return replace(base, public_state_condition=attached_maximum)
     if match["condition"].casefold() == "no mana was spent to cast it":
         return _zero_mana_cast_counter_binding(match, card_name=card_name, compile_binding=compile_binding)
     if match["condition"].casefold() == "no mana was spent to cast that spell":
@@ -150,6 +271,7 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
     death_absence = _death_keyword_absence(match['prefix'], match['condition'])
     condition = (
         upkeep_hand_condition(match['condition']) or token_absence or keyword_absence or death_absence
+        or greatest_creature_power_control_condition(match['condition'])
         or fixed_public_state_condition(match['condition'], source_name=card_name or 'This source')
     )
     if condition is None:
@@ -177,6 +299,10 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
     base = compile_binding(text, card_name=card_name) or compile_source_binding(text, card_name=card_name)
     if base is None or base.public_state_condition is not None:
         return None
+    if isinstance(condition, FixedPublicStateConditionSpec) and (
+        condition.fact in GREATEST_CREATURE_POWER_FACTS and base.active_zone != 'battlefield'
+    ):
+        return None
     if token_absence is not None and (base.active_zone != 'battlefield' or base.event is not FixedCounterTriggerEvent.STEP_BEGIN):
         return None
     if isinstance(condition, UpkeepParticipantHandCondition) and (
@@ -202,8 +328,13 @@ def public_trigger_condition_capabilities(condition: PublicTriggerCondition | No
         return ()
     if isinstance(condition, UpkeepParticipantHandCondition):
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, SCHEDULED_PLAYER_CAPABILITY, UPKEEP_HAND_COUNT_CAPABILITY)
+    if isinstance(condition, AttachedGreatestPowerCondition):
+        return ATTACHED_GREATEST_POWER_CAPABILITIES
     if isinstance(condition, (ControllerCreatureKeywordAbsence, DeathKeywordAbsence)):
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,)
+    if condition.fact in GREATEST_CREATURE_POWER_FACTS:
+        return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,
+                *greatest_creature_power_condition_dependencies(condition.to_dict()))
     if condition.fact is FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM:
         from ..player_maximum_model import PLAYER_MAXIMUM_CAPABILITY
         return (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,PLAYER_MAXIMUM_CAPABILITY)

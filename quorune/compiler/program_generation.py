@@ -3,6 +3,7 @@ from .reconfigure_nodes import is_closed_reconfigure_program
 from .fixed_instruction_program_closure import is_closed_fixed_instruction_program
 from ..rules.control_capability_shapes import resolution_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
+from ..rules.additional_beginning import is_closed_additional_beginning_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_affected_player_hand_exile_program
 from ..rules.alternative_discard_shapes import is_closed_alternative_discard_program
@@ -128,9 +129,7 @@ from ..rules.fixed_controller_effect_shapes import (
     fixed_controller_effect_sequence_node_capabilities,
     fixed_life_node_capabilities,
 )
-from ..rules.fixed_effect_clause_shapes import (
-    fixed_effect_clause_sequence_node_capabilities,
-)
+from ..rules.fixed_effect_clause_shapes import is_closed_fixed_effect_clause_sequence_program
 from ..rules.closed_effect_program_shapes import (
     closed_effect_program_node_capabilities,
 )
@@ -138,7 +137,7 @@ from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
 from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
 from ..rules.whole_hand_discard_shapes import is_closed_whole_hand_discard_program
 from ..transmute import is_closed_transmute_program
-from ..rules.as_unblocked_effect import is_closed_optional_as_unblocked_program
+from ..rules.fixed_effect_clause_shapes import is_closed_optional_composed_effect_program
 from ..semantics import SemanticProgram, SemanticRegistry
 from ..util import stable_json
 from ..semantic_runtime.activated_abilities import (
@@ -301,10 +300,12 @@ def _independently_exact_protection_handler(node: Any) -> bool:
 
 
 def _generated_static_declaration(node: Any) -> bool:
+    from ..commander_pairing import PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
     from ..triggered_mana_model import CHOSEN_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
 
     return bool(
         PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage
+        or node.template_id == PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
         or node.handlers
         or (node.kind == "triggered_ability" and node.event == FIXED_TRIGGERED_MANA_EVENT
             and tuple(node.capability_dependencies) in ((FIXED_TRIGGERED_MANA_CAPABILITY,), (CHOSEN_TRIGGERED_MANA_CAPABILITY,)))
@@ -518,33 +519,12 @@ def _is_closed_fixed_token_creation_program(
     )
 
 
-def _is_closed_fixed_effect_clause_sequence_program(
-    program: SemanticProgram,
-) -> bool:
-    """Recognize two independently closed effects in printed order."""
-
-    if program.provenance.get("template_id") not in {
-        "fixed-effect-clause-sequence-v1", 'fixed-source-characteristic-tap-sequence-v1',
-    }:
-        return False
-    required = set(
-        fixed_effect_clause_sequence_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=program.coverage,
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
-
-
 def _is_closed_composed_effect_program(
     program: SemanticProgram,
 ) -> bool:
     """Recognize a bounded program of independently closed components."""
 
-    if is_closed_optional_as_unblocked_program(program):return True
+    if is_closed_optional_composed_effect_program(program):return True
     if program.provenance.get("template_id") != "closed-effect-program-v1" and "closed-effect-program" not in program.coverage:
         return False
     required = set(
@@ -645,7 +625,7 @@ def _is_closed_targeted_tap_state_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"tap-and-untap", "cr-115-targets"}
+                if value in {"tap-and-untap", "cr-115-targets", "cr-615-prevention-effects"}
             ),
         )
     )
@@ -729,7 +709,7 @@ def _is_closed_fixed_counter_removal_program(
 def _is_closed_all_counter_removal_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize only the reviewed direct all-counter removal family."""
+    """Recognize reviewed all-counter removal and its exact global token result."""
 
     required = set(
         all_counter_removal_node_capabilities(
@@ -738,7 +718,7 @@ def _is_closed_all_counter_removal_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"cr-122-counters", "cr-115-targets"}
+                if value in {"cr-122-counters", "cr-115-targets", "fixed-public-zone-move", "fixed-public-zone-move-set"}
             ),
         )
     )
@@ -1215,11 +1195,18 @@ def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     from ..preparation import is_closed_activated_preparation_program
+    from ..rules.chosen_color_target_shapes import is_closed_chosen_color_target_program
+    from ..rules.post_exchange_token import is_closed_post_exchange_token_program
+    from ..rules.chosen_type_target_shapes import is_closed_chosen_creature_type_target_program
+    from ..rules.temporary_self_copy import is_closed_temporary_creature_copy_set_program, is_closed_versioned_copy_program
+    from ..rules.temporary_copy_subject import is_closed_temporary_copy_subject_program
     from ..rules.stack_counter_followup import is_closed_stack_counter_followup_program
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
     from ..rules.revealed_library_top import is_closed_reveal_top_program
+    from ..rules.token_mill_repeat import is_closed_token_mill_repeat_program
+    from ..rules.library_bottom_results import is_closed_library_bottom_result_program
     from ..rules.per_player_target_sets import is_closed_per_player_target_program
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
@@ -1232,12 +1219,21 @@ def _closed_effect_recognizers():
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     from ..rules.next_cast_counter_protection import is_closed_next_cast_protection_program
+    from ..rules.land_play_permissions import is_closed_turn_land_plays_program
     return (
         is_closed_activated_preparation_program,
+        is_closed_chosen_creature_type_target_program,
+        is_closed_post_exchange_token_program,
+        is_closed_chosen_color_target_program,
+        is_closed_versioned_copy_program,
+        is_closed_temporary_creature_copy_set_program,
+        is_closed_temporary_copy_subject_program,
         is_closed_target_player_sequence_program,
         is_closed_target_set_result_sequence_program,
         is_closed_reanimation_entry_counter_program,
         is_closed_reveal_top_program,
+        is_closed_token_mill_repeat_program,
+        is_closed_library_bottom_result_program,
         is_closed_per_player_target_program,
         is_closed_compiled_emblem_program,
         is_closed_fixed_land_untap_choice_program,
@@ -1253,6 +1249,7 @@ def _closed_effect_recognizers():
         is_closed_next_cast_protection_program,
         is_closed_next_cast_copy_program,
         is_closed_temporary_cast_timing_program,
+        is_closed_turn_land_plays_program,
         is_closed_announced_target_set_program,
         is_closed_transmute_program,
         _is_closed_fixed_owner_zone_move_program,
@@ -1263,6 +1260,7 @@ def _closed_effect_recognizers():
         is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,
         is_closed_fixed_modal_program,
+        is_closed_additional_beginning_program,
         is_closed_fixed_effect_payment_program,
         is_closed_stack_controller_payment_program,
         is_closed_stack_counter_followup_program,
@@ -1285,7 +1283,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,
         is_closed_fixed_prevention_program,
-        _is_closed_fixed_effect_clause_sequence_program,
+        is_closed_fixed_effect_clause_sequence_program,
         _is_closed_composed_effect_program,
         _is_closed_fixed_controller_effect_sequence_program,
         _is_closed_fixed_counter_controller_effect_sequence_program,

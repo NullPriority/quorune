@@ -6,6 +6,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import replace
 from typing import Any
 
+from .affected_permanents import AffectedPermanentSetSpec, select_affected_permanents
 from .damage import (
     DamageError,
     damage_proposal,
@@ -13,6 +14,7 @@ from .damage import (
     source_snapshot,
 )
 from .damage_source import DamageSourceSnapshot, represented_toxic_value
+from .object_predicate import ObjectQuerySpec
 from .object_query import exact_numeric_characteristic
 from .creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_CAPABILITY,
@@ -21,7 +23,9 @@ from .creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_OPERATION,
     OCCURRENCE_POWER_DAMAGE_CONTEXT,
     OCCURRENCE_POWER_DAMAGE_VERSION,
+    is_creature_self_damage_set,
     occurrence_power_damage_in,
+    validate_creature_self_damage_set,
 )
 
 
@@ -340,6 +344,46 @@ def _instruction(
     return kind, source_ref, target_ref, must_be_creature, multiplier
 
 
+_BATTLEFIELD_CREATURES = AffectedPermanentSetSpec(
+    query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+)
+
+
+def _creature_self_damage_proposals(host, effect, *, actor, reason):
+    try:
+        validate_creature_self_damage_set(effect, resolved=True)
+        creatures = select_affected_permanents(
+            host.affected_permanent_object_rows(actor), _BATTLEFIELD_CREATURES, actor=actor,
+            active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
+        )
+        return _self_damage_for_creatures(host, creatures, actor=actor, reason=reason)
+    except (DamageError, TypeError, ValueError) as exc:
+        raise CreaturePowerDamageError(str(exc)) from exc
+
+
+def _self_damage_for_creatures(host, creatures, *, actor, reason):
+    proposals = []
+    batch_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:self-set"
+    for row in creatures:
+        power = row.effective_power
+        if type(power) is not int:
+            raise CreaturePowerDamageError("A selected creature has no exact current power")
+        if power <= 0:
+            continue
+        card = host.state.cards.get(row.object_id)
+        if card is None or card.logical_object_id != row.logical_object_id or card.ref != row.ref:
+            raise CreaturePowerDamageError("A selected creature changed before damage preparation")
+        source = source_snapshot(host, row.ref, controller=row.controller, source_card=card)
+        if card.face_down:
+            source = replace(source, oracle_id=None)
+        proposals.append(damage_proposal(
+            host, proposal_id=f"{batch_id}:{len(proposals)}", actor=actor,
+            source_ref=row.ref, target=row.ref, amount=power, combat=False,
+            reason=reason, source_override=source,
+        ))
+    return proposals
+
+
 def resolve_creature_power_damage(
     host: Any,
     effect: Mapping[str, Any],
@@ -347,8 +391,11 @@ def resolve_creature_power_damage(
     actor: str,
     reason: str,
 ) -> tuple[int, ...]:
-    """Resolve one Fight or bite through the canonical damage batch."""
+    """Resolve one creature-power instruction through the canonical damage batch."""
 
+    if is_creature_self_damage_set(effect):
+        proposals = _creature_self_damage_proposals(host, effect, actor=actor, reason=reason)
+        return _resolve_power_damage_batch(host, effect, proposals)
     kind, source_ref, target_ref, must_be_creature, multiplier = _instruction(effect)
     if source_ref is None or target_ref is None:
         return ()
@@ -458,6 +505,10 @@ def resolve_creature_power_damage(
                     source_override=source_damage,
                 )
             )
+    return _resolve_power_damage_batch(host, effect, proposals)
+
+
+def _resolve_power_damage_batch(host, effect, proposals):
     if not proposals:
         return ()
     replacement_ids = effect.get("_replacement_event_ids", ())

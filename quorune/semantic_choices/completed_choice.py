@@ -25,7 +25,7 @@ def _intent_types():
     return {cls.__name__:cls for cls in (
         GraveyardCastIntent, GraveyardLibraryCostBatchIntent, GraveyardExileLifeResultIntent,
         ExileGraveyardCopiesIntent,
-        ResolveRippleCastIntent,RippleBottomIntent,
+        ResolveRippleCastIntent,RippleBottomIntent,typed.ResolvingSharedTypeLibraryPlayIntent,
         LifeGainCostBatchIntent, typed.LifeChangeIntent, typed.ZoneMoveIntent, typed.MoveObjectsSimultaneouslyIntent,
         typed.DestroyPermanentIntent, typed.ExilePermanentIntent, typed.ReturnPermanentToOwnerHandIntent,
         typed.ReturnGraveyardCardToOwnerHandIntent,
@@ -167,6 +167,11 @@ def decode_remaining_completion(value):
         if cls is typed.ResolveRippleCastIntent:
             if not isinstance(values['response'],Mapping):raise SemanticChoiceError('Ripple cast response is malformed')
             values['response']=FrozenMap(values['response'])
+        if cls is typed.ResolvingSharedTypeLibraryPlayIntent:
+            if not isinstance(values["effect"], Mapping) or not isinstance(values["response"], Mapping):
+                raise SemanticChoiceError("Revealed library play proof is malformed")
+            values["effect"] = FrozenMap(values["effect"])
+            values["response"] = FrozenMap(values["response"])
         intent=cls(**values)
         if _intent_data(intent) != _data(encoded['fields']):
             raise SemanticChoiceError('Completed choice intent data are not canonical')

@@ -4,6 +4,12 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..rules.event_optional_draw_shapes import (
+    CAST_OPPONENT_DRAW_VERSION,
+    DEFENDING_CONTROLLER_DRAW_VERSION,
+    EVENT_OPTIONAL_DRAW_FIELD,
+    validate_event_optional_draw_payload,
+)
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -38,6 +44,82 @@ def _private(value: Any) -> bool:
     return value
 
 
+def _cast_opponents(query: SemanticChoiceQuery, participant: str) -> tuple[str, ...]:
+    if participant not in query.seats:
+        raise SemanticChoiceError("Optional cast opponent draws require a known original caster")
+    return tuple(seat for seat in query.apnap_order if seat != participant)
+
+
+def _cast_opponent_draw_stage(effect, query):
+    try:
+        validate_event_optional_draw_payload(effect, materialized=True)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    order = _cast_opponents(query, effect["cast_participant"])
+    if "player" not in effect:
+        return order, ()
+    recorded_order = effect["cast_draw_order"]
+    choices = effect["cast_draw_choices"]
+    if (not isinstance(recorded_order, (tuple, list)) or tuple(recorded_order) != order
+            or not isinstance(choices, (tuple, list)) or len(choices) >= len(order)
+            or any(type(choice) is not str or choice not in ("draw", "decline", "unavailable") for choice in choices)
+            or effect["player"] != order[len(choices)]):
+        raise SemanticChoiceError("Optional cast opponent draw continuation changed its ordered choices")
+    return order, tuple(choices)
+
+
+def _advance_cast_opponent_draw(effect, order, choices):
+    if len(choices) < len(order):
+        return (FrozenMap({**effect, "player": order[len(choices)], "cast_draw_order": order,
+                           "cast_draw_choices": choices}),)
+    players = tuple(seat for seat, answer in zip(order, choices) if answer == "draw")
+    if not players:
+        return ()
+    return (FrozenMap({"op": "draw_each_player", "players": players, "count": 1, "private": True}),)
+
+
+def _prepare_cast_opponent_draw(effect, context):
+    order, choices = _cast_opponent_draw_stage(effect, context.query)
+    continuation = FrozenMap(effect)
+    if "player" not in effect:
+        return SemanticChoicePreparation(request=None, continuation_effect=continuation,
+            auto_continue=AutoContinue("Order the opponents' choices", _advance_cast_opponent_draw(effect, order, choices)))
+    if context.actor != effect["player"]:
+        raise SemanticChoiceError("Optional cast opponent draw requires its next chooser")
+    if not context.query.draw_permission(context.actor).allows_complete_draw(1):
+        return SemanticChoicePreparation(request=None, continuation_effect=continuation,
+            auto_continue=AutoContinue("The prospective drawer cannot legally draw",
+                _advance_cast_opponent_draw(effect, order, (*choices, "unavailable"))))
+    previous = tuple({"player": seat, "choice": answer}
+                     for seat, answer in zip(order, choices) if answer != "unavailable")
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt="Draw 1 card?",
+            choice=ScalarChoice(field_name="choice", legal_values=("draw", "decline")),
+            public_context=FrozenMap({"stack": context.stack_ref, "operation": "offer_draw",
+                "drawer": context.actor, "count": 1, "previous_choices": previous}),
+        ),
+        continuation_effect=continuation,
+    )
+
+
+def _complete_cast_opponent_draw(effect, response, query):
+    order, choices = _cast_opponent_draw_stage(effect, query)
+    actor = effect.get("player")
+    choice = response.get("choice")
+    if actor is None or type(choice) is not str or choice not in ("draw", "decline"):
+        raise SemanticChoiceError("Choose draw or decline for the current cast opponent")
+    if choice == "draw" and not query.draw_permission(actor).allows_complete_draw(1):
+        raise SemanticChoiceError("The prospective drawer can no longer legally draw")
+    return SemanticChoiceCompletion(prepend_effects=_advance_cast_opponent_draw(effect, order, (*choices, choice)))
+
+
+def _defending_controller_draw_after_effects():
+    from ..combat_removal import COMBAT_REMOVAL_OPERATION
+
+    return (FrozenMap({"op": COMBAT_REMOVAL_OPERATION, "card": "$source.zone_object", "untap": "before"}),)
+
+
 @dataclass(frozen=True, slots=True)
 class OptionalDrawHandler:
     """CR 121.2b/121.3 choice legality for the prospective drawer."""
@@ -59,11 +141,15 @@ class OptionalDrawHandler:
         "count",
         "private",
         "event_optional_draw_version",
+        "cast_participant",
+        "cast_draw_order",
+        "cast_draw_choices",
     )
     private_data: tuple[str, ...] = ("drawn card",)
     projected_fields: tuple[str, ...] = (
         "prompt",
         "legal_actions.choice_schema.legal_values",
+        "previous_choices",
     )
     mutation_path: tuple[str, ...] = (
         "drawing.DrawPermission",
@@ -83,7 +169,6 @@ class OptionalDrawHandler:
     ) -> tuple[str, str, int, bool]:
         allowed = {"op", "player", "drawer", "count", "private"}
         if 'event_optional_draw_version' in effect:
-            from ..rules.event_optional_draw_shapes import validate_event_optional_draw_payload
             try:validate_event_optional_draw_payload(effect, materialized=True)
             except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
             allowed.add('event_optional_draw_version')
@@ -114,6 +199,31 @@ class OptionalDrawHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..rules.event_optional_draw_shapes import DAMAGE_DEALER_DRAW_VERSION
+
+        if effect.get(EVENT_OPTIONAL_DRAW_FIELD) == CAST_OPPONENT_DRAW_VERSION:
+            return _prepare_cast_opponent_draw(effect, context)
+        if effect.get(EVENT_OPTIONAL_DRAW_FIELD) == DEFENDING_CONTROLLER_DRAW_VERSION:
+            try:
+                validate_event_optional_draw_payload(effect, materialized=True)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if (effect["player"] != context.actor or context.actor not in context.query.seats
+                    or effect["drawer"] != context.stack_controller):
+                raise SemanticChoiceError("The defender chooses for the original attack trigger controller")
+            if context.actor not in context.query.active_seats:
+                return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                    auto_continue=AutoContinue("The original defending player has left the game"))
+        if effect.get("event_optional_draw_version") == DAMAGE_DEALER_DRAW_VERSION:
+            try:
+                validate_event_optional_draw_payload(effect, materialized=True)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if effect["player"] != context.actor or context.actor not in context.query.seats:
+                raise SemanticChoiceError("Damage dealer draw requires a known prospective controller")
+            if context.actor not in context.query.active_seats:
+                return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                    auto_continue=AutoContinue("The creature's prospective drawer has left the game"))
         if effect.get('event_optional_draw_version') == 2:
             from ..rules.event_creature_controller_results import death_controller_draw_is_unavailable
             try:
@@ -182,6 +292,8 @@ class OptionalDrawHandler:
             allowed = {'choice', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema', 'label'}
             if set(response) - allowed:
                 raise SemanticChoiceError('The event draw response cannot change its participant or instruction')
+        if continuation.effect.get(EVENT_OPTIONAL_DRAW_FIELD) == CAST_OPPONENT_DRAW_VERSION:
+            return _complete_cast_opponent_draw(continuation.effect, response, query)
         actor = continuation.effect.get("player")
         if type(actor) is not str:
             raise SemanticChoiceError(
@@ -192,6 +304,9 @@ class OptionalDrawHandler:
             actor=actor,
             active_seats=query.active_seats,
         )
+        defending_controller_draw = continuation.effect.get(EVENT_OPTIONAL_DRAW_FIELD) == DEFENDING_CONTROLLER_DRAW_VERSION
+        if defending_controller_draw and drawer != continuation.semantic_frame.controller:
+            raise SemanticChoiceError("The defender's draw requires the original attack trigger controller")
         choice = response.get("choice")
         if type(choice) is not str or choice not in {"draw", "decline"}:
             raise SemanticChoiceError("Choose draw or decline")
@@ -211,6 +326,7 @@ class OptionalDrawHandler:
                         "private": private,
                     }
                 ),
+                *(_defending_controller_draw_after_effects() if defending_controller_draw else ()),
             )
         )
 

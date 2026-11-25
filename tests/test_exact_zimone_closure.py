@@ -14,6 +14,7 @@ from common import (
 from quorune.model import CombatState, StackItem
 from quorune.preflight import card_semantic_status
 from quorune.projection import StateProjector
+from quorune.semantic_runtime.player_target_protection import current_player_target_keywords
 from quorune.targets import TargetGroup
 
 
@@ -1020,14 +1021,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
         blue_source = self.card(engine, "A", "Emry, Lurker of the Loch")
         protected = self.card(engine, "B", "Birds of Paradise")
         engine.move_card(protected.object_id, "battlefield", controller="B")
-        engine._log(
-            "A",
-            "stack.cast",
-            "A cast a blue spell.",
-            {
-                "object": blue_source.ref,
-                "colors": ["U"],
-            },
+        engine._record_turn_history(
+            "spell_cast", actor="A", object_incarnation=blue_source.logical_object_id,
+            types=("artifact", "creature"), spell_colors=("U",),
         )
         before_hand = len(engine.state.players["B"].zones["hand"])
         engine._remove_from_zone(veil)
@@ -1091,11 +1087,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
             log=False,
             semantic_events=False,
         )
-        engine._log(
-            "A",
-            "stack.cast",
-            "A cast a blue spell.",
-            {"object": blue_source.ref, "colors": ["U"]},
+        engine._record_turn_history(
+            "spell_cast", actor="A", object_incarnation=blue_source.logical_object_id,
+            types=("artifact", "creature"), spell_colors=("U",),
         )
         engine._remove_from_zone(veil)
         veil.zone = "stack"
@@ -1137,11 +1131,9 @@ class ExactZimoneClosureTests(unittest.TestCase):
                 "spells_cant_be_countered_until_end"
             ]
         )
-        self.assertEqual(
-            ["U", "B"],
-            engine.state.players["B"].stats[
-                "hexproof_from_colors_until_end"
-            ],
+        self.assertLessEqual(
+            {"hexproof from blue", "hexproof from black"},
+            current_player_target_keywords(engine, "B"),
         )
 
     def test_veil_without_matching_opponent_cast_skips_only_the_draw(self):

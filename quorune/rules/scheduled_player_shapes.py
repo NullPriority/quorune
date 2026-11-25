@@ -15,6 +15,10 @@ SCHEDULED_PLAYER_DEPARTURE_COVERAGE = 'scheduled_player_departure_v1'
 
 
 def scheduled_player_subject_instruction(effect: Mapping[str, Any]) -> bool:
+    from .scheduled_life_return import is_scheduled_life_return
+
+    if is_scheduled_life_return(effect):
+        return effect.get("player") == "$context.player"
     operation = effect.get('op')
     if operation == 'hand_library_redraw':
         from ..hand_library_redraw_model import decode_hand_library_redraw, HandLibraryScope
@@ -30,6 +34,12 @@ def scheduled_player_subject_instruction(effect: Mapping[str, Any]) -> bool:
 
 def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,mechanic_ids:Iterable[str]):
     if SCHEDULED_PLAYER_MECHANIC not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
+    from .scheduled_life_return import is_scheduled_life_return, scheduled_life_return_node_dependencies
+    if any(is_scheduled_life_return(effect) for effect in effects):
+        return scheduled_life_return_node_dependencies(effects[0], target_schema, mechanic_ids) if len(effects) == 1 else ()
+    from .event_player_choice_shapes import UPKEEP_CREATURE_RETURN_MECHANIC, upkeep_creature_return_node_capabilities
+    if UPKEEP_CREATURE_RETURN_MECHANIC in mechanic_ids:
+        return upkeep_creature_return_node_capabilities(effects, target_schema, mechanic_ids)
     if not any(scheduled_player_subject_instruction(effect) for effect in effects):return ()
     capabilities={SCHEDULED_PLAYER_CAPABILITY}
     for effect in effects:

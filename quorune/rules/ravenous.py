@@ -9,7 +9,9 @@ _RESOLVING=ContextVar('resolving_ravenous_entry_x',default=None)
 
 def ravenous_reader_present(host):
     from ..entry_x_amount_model import entry_x_amount_dependencies
+    from .entry_x_graveyard_target import has_entry_x_target_limit
     return any((isinstance(program.event_condition,Mapping) and program.event_condition.get('field')==ENTRY_X_CONDITION
+        or has_entry_x_target_limit(program.target_schema)
         or entry_x_amount_dependencies(program.effects)) and host.semantic_program_is_current_trusted(program)
         for program in host.semantics.programs_for_event('permanent.enter.self'))
 

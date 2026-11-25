@@ -8,6 +8,7 @@ from .counter_placement_capability_shapes import fixed_counter_placement_node_ca
 
 from .casting_additional_costs import (
     AdditionalCostError, announced_zone_cost_capabilities,
+    DAMAGE_QUALIFIED_SACRIFICE_VERSION,
     FixedCounterPlacementAdditionalCost,
     FixedSacrificeAdditionalCost,
     FixedZoneChangeAdditionalCost,
@@ -115,7 +116,10 @@ def fixed_zone_change_additional_cost_node_capabilities(
         cost = FixedZoneChangeAdditionalCost.from_descriptor(raw_costs[0])
     except (AdditionalCostError, TypeError):
         return ()
-    return (fixed_zone_change_additional_cost_capability(cost), *announced_zone_cost_capabilities(cost))
+    capability = fixed_zone_change_additional_cost_capability(cost)
+    if cost.schema_version == DAMAGE_QUALIFIED_SACRIFICE_VERSION:
+        return (capability, "casting.additional_cost.fixed_sacrifice")
+    return (capability, *announced_zone_cost_capabilities(cost))
 
 
 _DRAW_TARGET_SCHEMAS: tuple[Mapping[str, Any], ...] = (
@@ -594,9 +598,21 @@ def targeted_exile_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return ownership for closed direct or versioned attached exile."""
+    """Return ownership for the closed battlefield exile shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from ..relative_power_target import GREATEST_CREATURE_POWER_PREDICATE
+
+    if (
+        isinstance(target_schema, Mapping) and target_schema.get("predicate") == GREATEST_CREATURE_POWER_PREDICATE
+        and {_EXILE_MECHANIC, "cr-115-targets"} <= mechanics
+        and len(effects) == 1 and effects[0].get("op") == "exile_permanent"
+    ):
+        from .greatest_power_target_shapes import greatest_power_target_node_capabilities
+
+        return greatest_power_target_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanics=mechanics,
+        )
     if (target_schema is None and _EXILE_MECHANIC in mechanics
             and 'cr-115-targets' not in mechanics and len(effects) == 1
             and set(effects[0]) == {'op', 'card'} and effects[0].get('op') == 'exile_permanent'):
@@ -672,16 +688,24 @@ def targeted_counter_node_capabilities(
             return CURRENT_TARGET_COUNTER_CAPABILITIES if effects[0] == CURRENT_TARGET_COUNTER else ()
     except (TypeError, ValueError):
         return ()
+    from ..stack_counter import other_controller_ability_counter_capabilities
+    if qualified := other_controller_ability_counter_capabilities(effects[0], target_schema):
+        return qualified
     if not fixed_stack_counter_target_schema_is_closed(target_schema):
         return ()
     from ..zone_trigger_events import COUNTER_DESTINATION_FIELD, counter_destination_payload_dependencies
 
     effect = effects[0]
     from ..stack_counter import (
-        ANNOUNCED_X_COUNTER_FIELD, NO_MANA_SPENT_COUNTER_FIELD,
-        announced_x_counter_capabilities, no_mana_spent_counter_capabilities,
+        ANNOUNCED_X_COUNTER_FIELD, CREATURE_COUNT_COUNTER_FIELD, NO_MANA_SPENT_COUNTER_FIELD,
+        announced_x_counter_capabilities, no_mana_spent_counter_capabilities, resolve_creature_count_counter_capabilities,
     )
 
+    if CREATURE_COUNT_COUNTER_FIELD in effect:
+        try:
+            return resolve_creature_count_counter_capabilities(effect, target_schema)
+        except (ValueError, TypeError):
+            return ()
     if ANNOUNCED_X_COUNTER_FIELD in effect:
         try:
             return announced_x_counter_capabilities(effect, target_schema)
@@ -1108,9 +1132,12 @@ def fixed_source_characteristics_node_capabilities(
            and effect.get('schema_version') in {FIXED_TARGET_COLOR_VERSION,22,23} for effect in effects):
         from .resolution_characteristic_shapes import fixed_target_color_node_capabilities
         return fixed_target_color_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
-    if any(effect.get('op') == CHARACTERISTIC_OPERATION
-           and type(effect.get('schema_version')) is int
-           and effect['schema_version'] in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS for effect in effects):
+    from .creature_subtype_set_results import is_creature_subtype_set_result
+
+    if any(is_creature_subtype_set_result(effect) or (
+            effect.get('op') == CHARACTERISTIC_OPERATION and type(effect.get('schema_version')) is int
+            and effect['schema_version'] in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
+    ) for effect in effects):
         from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
         return fixed_resolution_characteristic_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 
@@ -1230,6 +1257,13 @@ def temporary_declaration_restriction_node_capabilities(
         return (*dependencies, NEXT_TURN_EFFECT_CAPABILITY) if dependencies else ()
     kind = effect.get("restriction")
     if isinstance(kind, Mapping):
+        from .source_optional_unblockable import (
+            SOURCE_OPTIONAL_UNBLOCKABLE_KIND, source_optional_unblockable_node_capabilities,
+        )
+        if kind.get("kind") == SOURCE_OPTIONAL_UNBLOCKABLE_KIND:
+            return source_optional_unblockable_node_capabilities(
+                effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+            )
         from ..temporary_attack_requirement_model import TEMPORARY_ATTACK_REQUIREMENT_KIND
         if kind.get('kind') == TEMPORARY_ATTACK_REQUIREMENT_KIND:
             from .temporary_attack_requirements import temporary_attack_requirement_node_capabilities

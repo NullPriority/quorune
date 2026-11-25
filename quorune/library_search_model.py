@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from .creature_subtypes import CREATURE_SUBTYPES
+from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap, thaw_value
 from .continuous_effect_model import ContinuousEffectDuration,ContinuousEffectError
@@ -15,6 +15,10 @@ FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.fixed_counted"
 DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID = "disjunctive-counted-library-search"
 DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.counted_disjunction"
 QUERY_BOUND_SEARCH_VERSION = 8
+TARGET_NAME_LIBRARY_SEARCH_VERSION = 10
+RECRUITING_LIBRARY_SEARCH_VERSION = 12
+TARGET_NAME_SEARCH_SNAPSHOT = "_target_name_search_snapshot"
+TARGET_NAME_PERMANENT_TYPES = ("artifact", "battle", "creature", "enchantment", "land", "planeswalker")
 QUERY_BOUND_SEARCH_CAPABILITY = "library.search.public_query_bound"
 QUERY_BOUND_SEARCH_MECHANIC = "public-query-bounded-library-search"
 QUERY_BOUND_SEARCH_RESOLVED = "_resolved_query_bound"
@@ -172,9 +176,106 @@ def counted_search_mana_value_slot(path: tuple[str, ...]) -> bool:
     return len(path) == 3 and path[:2] == ("selector", "mana_value") and path[2] in _MANA_VALUE_BOUNDS
 
 
+@dataclass(frozen=True, slots=True)
+class TargetNameLibrarySearchSpec:
+    permanent_to_battlefield: bool
+
+    def __post_init__(self):
+        if type(self.permanent_to_battlefield) is not bool:
+            raise ValueError("Target-name search result kind must be boolean")
+
+    def target_schema(self):
+        return {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+                "types_any": ["creature"], **({"token": False} if self.permanent_to_battlefield else {})}
+
+    def effect(self):
+        permanent = self.permanent_to_battlefield
+        return {
+            "op": "search", "schema_version": TARGET_NAME_LIBRARY_SEARCH_VERSION, "zone": "library",
+            "name_target": "$target.0", "selector": {"types_any": list(TARGET_NAME_PERMANENT_TYPES)} if permanent else {},
+            "count": {"minimum": 0, "maximum": 1 if permanent else 3},
+            "destination": "battlefield" if permanent else "hand", "reveal": not permanent,
+            "shuffle_after": True, "shuffle_before_placement": False,
+        }
+
+    def compiled(self):
+        return ("target-creature-name-library-search-v1", (self.effect(),), self.target_schema(),
+                (FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID, "cr-115-targets"))
+
+    def capabilities(self):
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, "target.revalidate_resolution")
+
+    @classmethod
+    def from_effect(cls, effect, *, materialized=False):
+        if not isinstance(effect, Mapping):
+            raise ValueError("Target-name search requires its typed instruction")
+        spec = cls(effect.get("destination") == "battlefield")
+        expected = spec.effect()
+        values = dict(effect)
+        if materialized:
+            target = values.get("name_target")
+            if type(target) is not str or not target or target != target.strip() or target.startswith("$"):
+                raise ValueError("Target-name search requires its materialized creature")
+            expected["name_target"] = target
+            if TARGET_NAME_SEARCH_SNAPSHOT in values:
+                snapshot = values.pop(TARGET_NAME_SEARCH_SNAPSHOT)
+                if (not isinstance(snapshot, Mapping)
+                        or set(snapshot) != {"reference", "logical_object_id", "names"}
+                        or snapshot["reference"] != target
+                        or type(snapshot["logical_object_id"]) is not str or not snapshot["logical_object_id"]
+                        or not isinstance(snapshot["names"], (list, tuple))
+                        or any(type(name) is not str or not name or name != name.strip() for name in snapshot["names"])
+                        or len(set(snapshot["names"])) != len(snapshot["names"])):
+                    raise ValueError("Target-name search snapshot is malformed")
+        if (FrozenMap(values) != FrozenMap(expected) or type(effect["schema_version"]) is not int
+                or type(effect["reveal"]) is not bool or type(effect["shuffle_after"]) is not bool
+                or type(effect["shuffle_before_placement"]) is not bool
+                or any(type(value) is not int for value in effect["count"].values())):
+            raise ValueError("Target-name search requires its exact source and result shape")
+        return spec
+
+
+@dataclass(frozen=True, slots=True)
+class RecruitingLibrarySearchSpec:
+    subtype: str
+
+    def __post_init__(self):
+        if type(self.subtype) is not str or canonical_creature_subtype(self.subtype) != self.subtype:
+            raise ValueError("Recruiting search needs one canonical creature subtype")
+
+    def effect(self):
+        return {
+            "op": "search", "schema_version": RECRUITING_LIBRARY_SEARCH_VERSION, "zone": "library",
+            "selector": {"types_any": ["creature", "kindred"], "subtypes_any": [self.subtype]},
+            "count": {"minimum": 0, "maximum": "all_eligible"},
+            "destination": "library_top", "reveal": True,
+            "shuffle_before_placement": True, "shuffle_after": False,
+        }
+
+    @classmethod
+    def from_effect(cls, effect):
+        if not isinstance(effect, Mapping):
+            raise ValueError("Recruiting search requires its typed instruction")
+        selector = effect.get("selector")
+        subtypes = selector.get("subtypes_any") if isinstance(selector, Mapping) else None
+        if not isinstance(subtypes, (list, tuple)) or len(subtypes) != 1:
+            raise ValueError("Recruiting search needs one canonical creature subtype")
+        spec = cls(subtypes[0])
+        if (FrozenMap(effect) != FrozenMap(spec.effect()) or type(effect["schema_version"]) is not int
+                or type(effect["count"]["minimum"]) is not int or effect["reveal"] is not True
+                or effect["shuffle_before_placement"] is not True or effect["shuffle_after"] is not False):
+            raise ValueError("Recruiting search needs its exact reveal, shuffle and ordered top result")
+        return spec
+
+
 def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
+    from .named_search_model import LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION
+
     selector = effect.get("selector")
-    return effect.get("schema_version") in (2, 3, 4, 5, QUERY_BOUND_SEARCH_VERSION) or (
+    return effect.get("schema_version") in (
+        2, 3, 4, 5, QUERY_BOUND_SEARCH_VERSION, TARGET_NAME_LIBRARY_SEARCH_VERSION,
+        LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
+    ) or (
         isinstance(selector, Mapping) and SEARCH_ALTERNATIVES in selector
     )
 
@@ -183,6 +284,20 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     """Validate disjunctions and persisted X bounds before search opens."""
     if effect.get("op") != "search":
         return ()
+    if effect.get("schema_version") == TARGET_NAME_LIBRARY_SEARCH_VERSION:
+        return TargetNameLibrarySearchSpec.from_effect(effect).capabilities()
+    from .named_search_model import (
+        LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, decode_literal_library_search,
+    )
+
+    if effect.get("schema_version") in (LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION):
+        decode_literal_library_search(effect)
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,)
+    if effect.get("schema_version") == RECRUITING_LIBRARY_SEARCH_VERSION:
+        RecruitingLibrarySearchSpec.from_effect(effect)
+        from .library_order_model import TOP_ORDER_CAPABILITY
+
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, TOP_ORDER_CAPABILITY)
     if effect.get('schema_version') == QUERY_BOUND_SEARCH_VERSION:
         return QueryBoundLibrarySearchSpec.from_effect(effect).capabilities()
     if effect.get('schema_version') == 7:

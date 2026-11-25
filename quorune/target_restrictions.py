@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
-from .target_source import TargetingSource
+from .target_source import (
+    TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW, TargetingSource, current_turn_spell_source_protection_colors,
+    spell_source_is_prohibited_by_color,
+)
 
 TARGET_RESTRICTION_CAPABILITY='target.prohibition.fixed_source_quality'
 TARGET_RESTRICTION_HANDLER='ability.static.target-prohibition.v1'
@@ -94,6 +97,12 @@ def current_target_prohibition(host,*,row,acting_controller,acting_source,prohib
     from .model import CardInstance
     target=row.get('card')
     if not isinstance(target,CardInstance):return False
+    if row.get("zone") == "battlefield" and "creature" in row.get("types", ()):
+        player = host.state.players.get(target.controller)
+        if player is not None and TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW in player.stats:
+            colors = current_turn_spell_source_protection_colors(player.stats, host.state.turn_sequence)
+            if spell_source_is_prohibited_by_color(acting_source, colors):
+                return True
     snapshots=current_target_prohibitions(host) if prohibitions is None else prohibitions
     return any(_affected_target_matches(host,value.specification,value,target,row) and value.specification.blocks(
         acting_source,acting_controller=acting_controller,observer_controller=value.controller) for value in snapshots)

@@ -4,19 +4,25 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
+ABILITY_SOURCE_INFORMATION_VERSION = 2
 ABILITY_SOURCE_INFORMATION_CAPABILITY = 'target.ability_source.current_or_lki'
 QUALIFIED_COPY_SOURCE_FILTERS = frozenset({'artifact_ability_source', 'colorless_ability_source'})
 ABILITY_SOURCE_FILTERS = frozenset({'activated_artifact_source','noncreature_ability_source', *QUALIFIED_COPY_SOURCE_FILTERS})
 
 
 def ability_source_information_version(value):
-    if value is not None and (type(value) is not int or value != 1):
+    if value is not None and (type(value) is not int or value not in {1, ABILITY_SOURCE_INFORMATION_VERSION}):
         raise ValueError('Unsupported ability-source information version')
     return value
 
 
 def complete_ability_source_information(state):
     return ability_source_information_version(getattr(state,'ability_source_information_version',None)) is not None
+
+
+def retains_original_source_tap_status(state):
+    version = ability_source_information_version(getattr(state, "ability_source_information_version", None))
+    return version == ABILITY_SOURCE_INFORMATION_VERSION
 
 
 def ability_source_filter_dependencies(value):

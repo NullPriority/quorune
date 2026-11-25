@@ -8,14 +8,17 @@ from .attachments import attached_object_identity
 from .continuous_effect_model import Layer
 from .enchant_public_state_model import OTHER_AURA_ATTACHED_PREDICATE
 from .model import CardInstance, StackItem
+from .public_characteristic_aggregates import reduce_public_characteristic_values
 from .relative_power_target import (
     CREATURE_POWER_PREDICATE,
+    GREATEST_CREATURE_POWER_PREDICATE,
     RELATIVE_POWER_TARGET_PREDICATES,
     RelativePowerTargetError,
     bound_relative_power_condition,
     current_effective_creature_power,
 )
-from .targets import TargetGroup
+from .targets import CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE, TargetGroup
+from .entry_designations import CHOSEN_COLOR_TARGET_PREDICATE, CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
 from .stack_spell_targeting import STACK_SPELL_TARGET_PREDICATES, StackSpellTargetPredicate
 
 
@@ -170,6 +173,86 @@ def _spell_targets_matching_subject(
     )
 
 
+def materialize_greatest_power_target_rows(host: TargetPredicateHost, controller: str, group: TargetGroup, rows):
+    if group.predicate != GREATEST_CREATURE_POWER_PREDICATE:
+        return rows
+    if (group.zones != ("battlefield",) or group.categories != ("permanent",)
+            or group.types_any != ("creature",) or group.controller_relation not in {"any", "you"}
+            or group.min_targets != 1 or group.max_targets != 1):
+        raise TargetPredicateError("Greatest-power targeting requires one public creature domain")
+    ranked = []
+    try:
+        for row in rows:
+            card = row.get("card")
+            if (not isinstance(card, CardInstance) or card.phased_out
+                    or "creature" not in row.get("types", ())
+                    or group.controller_relation == "you" and card.controller != controller):
+                continue
+            power = current_effective_creature_power(host, card)
+            if power is not None:
+                ranked.append((row, power))
+    except RelativePowerTargetError as exc:
+        raise TargetPredicateError(str(exc)) from exc
+    if not ranked:
+        return []
+    maximum = reduce_public_characteristic_values(tuple(power for _, power in ranked), "maximum")
+    # Protection and other target legality checks follow this public ranking.
+    # A higher untargetable creature must still exclude a lower creature.
+    return [{**row, GREATEST_CREATURE_POWER_PREDICATE: True}
+            for row, power in ranked if power == maximum]
+
+
+def _designation_target_matches(predicate, row, types, colors, chosen_type, chosen_color):
+    if predicate == CHOSEN_COLOR_TARGET_PREDICATE:
+        return row.get("category") == "permanent" and chosen_color in colors
+    return chosen_type is not None and "creature" in types and chosen_type in row.get("subtypes", ())
+
+
+def _ability_source_target_matches(predicate: str, row: Mapping[str, Any]) -> bool:
+    item=row.get('stack_item');source_types=row.get('ability_source_types')
+    if (row.get('zone')!='stack' or row.get('category')!='ability'
+            or not isinstance(item,StackItem) or source_types is None):
+        return False
+    if predicate=='activated_artifact_source':
+        return item.kind=='activated_ability' and 'artifact' in source_types
+    if predicate == 'artifact_ability_source':
+        return item.kind in {'activated_ability','triggered_ability'} and 'artifact' in source_types
+    if predicate == 'colorless_ability_source':
+        source_colors = row.get('ability_source_colors')
+        return item.kind in {'activated_ability','triggered_ability'} and source_colors is not None and not source_colors
+    return item.kind in {'activated_ability','triggered_ability'} and 'creature' not in source_types
+
+
+def _controlled_island_count(host: TargetPredicateHost, controller: str) -> int:
+    player = host.state.players.get(controller)
+    if player is None:
+        return 0
+    count = 0
+    for object_id in player.zones["battlefield"]:
+        land = host.state.cards.get(object_id)
+        if land is None or land.zone != "battlefield" or land.phased_out or land.controller != controller:
+            continue
+        current = host._effective_card_data(land)
+        types, subtypes, _ = host._type_parts(str(current.get("type_line") or ""))
+        if "land" in types and "island" in subtypes:
+            count += 1
+    return count
+
+
+def _island_qualified_target_matches(host, predicate, row, types, controller):
+    card = row.get("card")
+    if not isinstance(card, CardInstance) or row.get("category") != "permanent" or row.get("zone") != "battlefield" or "creature" not in types:
+        return False
+    if predicate == CONTROLLER_ISLAND_TARGET_PREDICATE:
+        return _controlled_island_count(host, card.controller) > 0
+    if controller not in host.state.players:
+        return False
+    from .object_query import exact_numeric_characteristic
+
+    power = exact_numeric_characteristic(card, host._effective_card_data(card), "power")
+    return power is not None and power <= _controlled_island_count(host, controller)
+
+
 def target_predicate_matches(
     host: TargetPredicateHost,
     group: TargetGroup,
@@ -182,12 +265,27 @@ def target_predicate_matches(
     source_ref: str | None = None,
     controller: str | None = None,
     source_incarnation: str | None = None,
+    source_chosen_creature_type: str | None = None,
+    source_chosen_color: str | None = None,
 ) -> bool:
     """Evaluate the closed predicate vocabulary for one normalized target row."""
 
     predicate = group.predicate
     if not predicate:
         return True
+    from .linked_ability_exile_model import LINKED_EXILE_COPY_TARGET_PREDICATE
+
+    if predicate == LINKED_EXILE_COPY_TARGET_PREDICATE:
+        from .rules.linked_exile_copy import linked_exile_copy_target_matches
+
+        return linked_exile_copy_target_matches(
+            row.get("card"), source_incarnation=source_incarnation,
+            ability_pair=group.resolution_condition["ability_pair"],
+        )
+    if predicate == GREATEST_CREATURE_POWER_PREDICATE:
+        return row.get(GREATEST_CREATURE_POWER_PREDICATE) is True
+    if predicate in (CHOSEN_COLOR_TARGET_PREDICATE, CHOSEN_CREATURE_TYPE_TARGET_PREDICATE):
+        return _designation_target_matches(predicate, row, types, colors, source_chosen_creature_type, source_chosen_color)
     if predicate in STACK_SPELL_TARGET_PREDICATES:
         return _spell_targets_matching_subject(
             host, StackSpellTargetPredicate(predicate), row, types=types,
@@ -199,6 +297,8 @@ def target_predicate_matches(
         item = row.get("stack_item")
         return row.get("zone") == "stack" and isinstance(item, StackItem) and matches_single_announced_stack_target(item)
     card = row.get("card")
+    if predicate in {CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE}:
+        return _island_qualified_target_matches(host, predicate, row, types, controller)
     if predicate == OTHER_AURA_ATTACHED_PREDICATE:
         return bool(
             source_ref and isinstance(card, CardInstance)
@@ -207,18 +307,7 @@ def target_predicate_matches(
         )
     from .ability_source_information import ABILITY_SOURCE_FILTERS
     if predicate in ABILITY_SOURCE_FILTERS:
-        item=row.get('stack_item');source_types=row.get('ability_source_types')
-        if (row.get('zone')!='stack' or row.get('category')!='ability'
-                or not isinstance(item,StackItem) or source_types is None):
-            return False
-        if predicate=='activated_artifact_source':
-            return item.kind=='activated_ability' and 'artifact' in source_types
-        if predicate == 'artifact_ability_source':
-            return item.kind in {'activated_ability','triggered_ability'} and 'artifact' in source_types
-        if predicate == 'colorless_ability_source':
-            source_colors = row.get('ability_source_colors')
-            return item.kind in {'activated_ability','triggered_ability'} and source_colors is not None and not source_colors
-        return item.kind in {'activated_ability','triggered_ability'} and 'creature' not in source_types
+        return _ability_source_target_matches(predicate, row)
     if predicate == 'activated_or_triggered_ability':
         item = row.get('stack_item')
         return row.get('zone') == 'stack' and isinstance(item, StackItem) and item.kind in {'activated_ability','triggered_ability'}

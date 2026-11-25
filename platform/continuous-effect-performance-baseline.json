@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "source_sha256": "916f26b3917ecb4704fa1e0f386443f0c686a094bc13735967ddb8d80e2d3b3e",
+  "source_sha256": "6723736c514ce77e72957625b8367c7958ba422b0c56c0efc15d6f9bf3153a22",
   "latency_policy": "Latency is recorded for observation only. CI gates deterministic work counters, semantic assertions, and source freshness.",
   "scenarios": [
     {

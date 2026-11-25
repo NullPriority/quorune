@@ -74,6 +74,20 @@ def _next_turn_effect_template(
     return f"{template_id}-next-turn", ({**effects[0], NEXT_TURN_EFFECT_FIELD: True},), schema, mechanics
 
 
+def _damage_life_result(body, card_name, source_context, compile_fixed):
+    from .damage_templates import fixed_damage_dealt_life_template, targeted_dealt_life_gain_template
+
+    permanent = source_context.get("source_is_permanent") is True
+    fixed = fixed_damage_dealt_life_template(body, source_name=card_name, source_is_permanent=permanent)
+    if fixed is not None or permanent:
+        return fixed
+    query_damage = partial(
+        public_query_effect_amount_template, source_name=card_name,
+        compile_fixed=partial(compile_fixed, card_name=card_name, **source_context),
+    )
+    return targeted_dealt_life_gain_template(body, compile_damage=query_damage)
+
+
 def reviewed_contextual_effect_template(
     text: str, *, card_name: str,
     compile_atomic: Callable[..., CompiledEffectTemplate],
@@ -86,6 +100,8 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        if dealt_life := _damage_life_result(body, card_name, source_context, compile_fixed):
+            return dealt_life
         from .mana_value_destruction import mana_value_destruction_template
         mana_value=mana_value_destruction_template(body,source_name=card_name,cast_x_available=cast_x_available)
         if mana_value is not None:return mana_value
@@ -194,8 +210,11 @@ def reviewed_contextual_effect_template(
     if reflexive is not None:
         return reflexive
     payment_context = {"compile_effect": payment_body, "source_is_permanent": source_context.get("source_is_permanent")}
-    fixed_payment = fixed_effect_payment_template(text, **payment_context) or fixed_effect_payment_with_mandatory_prefix(
-        text, **payment_context,
+    from .targeted_life_decline import targeted_life_decline_template
+    fixed_payment = (
+        targeted_life_decline_template(text)
+        or fixed_effect_payment_template(text, **payment_context)
+        or fixed_effect_payment_with_mandatory_prefix(text, **payment_context)
     )
     if fixed_payment is not None:
         return fixed_payment
@@ -209,9 +228,13 @@ def reviewed_contextual_effect_template(
 
     if source_context.get("source_is_permanent") is False:
         from .token_creation_reflexive_templates import token_creation_reflexive_template
-        reflexive_creation = token_creation_reflexive_template(text, compile_effect=payment_body)
-        if reflexive_creation is not None:
-            return reflexive_creation
+        from .resolution_condition_templates import other_spell_draw_template
+        spell_only = (
+            other_spell_draw_template(text, compile_component=atomic_with_characteristics)
+            or token_creation_reflexive_template(text, compile_effect=payment_body)
+        )
+        if spell_only is not None:
+            return spell_only
     compiled = compose(text, card_name=card_name)
     if compiled[0] is None and source_context.get("source_is_permanent") is True:
         from .source_self_effect_templates import source_declaration_sequence
@@ -320,6 +343,7 @@ def _reviewed_effect_template_composition(
     if "destroyed this way" in folded or "exiled this way" in folded:
         from .destruction_followup_templates import destruction_followup_template
         from .public_exile_followup_templates import public_exile_followup_template
+        from .targeted_exile_token_templates import targeted_exile_token_template
 
         compile_literal = partial(
             reviewed_effect_template_composition, source_name=source_name,
@@ -329,6 +353,7 @@ def _reviewed_effect_template_composition(
         committed_followup = (
             destruction_followup_template(text, compile_literal=compile_literal)
             or public_exile_followup_template(text, compile_literal=compile_literal)
+            or targeted_exile_token_template(text, compile_literal=compile_literal, cast_x_available=cast_x_available)
         )
         if committed_followup is not None:
             return committed_followup

@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..resolution_conditions import (
+    GREATEST_POWER_TARGET_DISCARD_VERSION,
     CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION,
     RESOLUTION_ALTERNATIVE_SCHEMA_VERSION,
     RESOLUTION_CONDITION_CAPABILITY,
@@ -12,12 +13,23 @@ from ..resolution_conditions import (
     RESOLUTION_CONDITION_OPERATION,
     validate_resolution_condition_instruction,
 )
-from ..continuous_conditions import FixedPublicStateConditionKind
+from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateFact
+from ..ability_resolution_ordinal import is_second_ability_draw, is_third_ability_result
+from ..other_spell_history_model import is_other_spell_draw
+from .other_spell_history_shapes import other_spell_draw_node_capabilities, other_spell_draw_runtime_dependencies
+from .ability_resolution_ordinal_shapes import (
+    second_ability_draw_node_capabilities, second_ability_draw_runtime_dependencies,
+    third_ability_result_node_capabilities, third_ability_result_runtime_dependencies,
+)
+from ..replacement.immutable import thaw_value
 from ..paid_sacrifice_conditions import (
     PAID_SACRIFICE_CONDITION_CAPABILITY, PAID_SACRIFICE_CONDITION_MECHANIC, PAID_SACRIFICE_CONDITION_VERSION,
+    ACTIVATION_PAID_LEGENDARY_AMASS_CAPABILITY, ACTIVATION_PAID_SUBTYPE_CAPABILITY, ACTIVATION_PAID_THRULL_COUNTERS_CAPABILITY,
+    is_activation_paid_creature_reference, activation_paid_legendary_amass_result_is_closed,
+    ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY, PAID_SUSPECTED_CONDITION_KIND, activation_paid_suspected_draw_is_closed,
+    activation_paid_subtype_result_is_closed, activation_paid_thrull_counters_result_is_closed,
 )
 from .closed_effect_program_shapes import _contains_target_reference
-from .casting_additional_costs import fixed_sacrifice_price_matches_subject
 
 
 def _same_target_result_closed(effects):
@@ -31,10 +43,31 @@ def _same_target_result_closed(effects):
         and all(effect.get('card')=='$target.0' for effect in effects))
 
 
+def _plain_target_copy_token():
+    from ..token_copy_recipes import TokenCopyRecipeSpec
+
+    return {
+        "op": "create_token", "controller": "$controller", "quantity": 1,
+        "copy_spec": TokenCopyRecipeSpec("target").to_dict(),
+    }
+
+
+def _same_target_copy_count_closed(conditional, otherwise):
+    if len(conditional) != 1 or len(otherwise) != 1:
+        return False
+
+    normal = _plain_target_copy_token()
+    kicked_count = conditional[0].get("quantity")
+    return (
+        type(kicked_count) is int and 2 <= kicked_count <= 5
+        and thaw_value(otherwise[0]) == normal
+        and thaw_value(conditional[0]) == {**normal, "quantity": kicked_count}
+    )
+
+
 def _same_target_condition_branches_closed(wrapper, conditional, otherwise, target_schema):
     if wrapper.get("schema_version") == 8:
         from ..public_replacement_model import public_replacement_target_closed
-        from ..replacement.immutable import thaw_value
 
         return thaw_value(wrapper["target_binding"]) == thaw_value(target_schema) and all(
             public_replacement_target_closed(branch, target_schema) for branch in (conditional, otherwise)
@@ -44,6 +77,8 @@ def _same_target_condition_branches_closed(wrapper, conditional, otherwise, targ
         from ..compiler.direct_target import DirectPermanentTargetSpec
 
         schema = DirectPermanentTargetSpec(types_any=("creature",)).to_target_schema()
+        if thaw_value(target_schema) == schema and _same_target_copy_count_closed(conditional, otherwise):
+            return True
         ordered = {BOUND_EFFECT_PROGRAM_MECHANIC, CLOSED_EFFECT_PROGRAM_MECHANIC}
         scoped = all(ordered <= set(wrapper[field]) for field in ("mechanic_ids", "otherwise_mechanic_ids"))
         if target_schema == schema and scoped and all(
@@ -55,6 +90,65 @@ def _same_target_condition_branches_closed(wrapper, conditional, otherwise, targ
     return _same_target_result_closed(conditional) and _same_target_result_closed(otherwise)
 
 
+def _greatest_power_otherwise_counter(branch, condition, conditional, target_schema, prefix):
+    from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
+
+    if (condition.fact is not FixedPublicStateFact.CONTROLS_A_GREATEST_POWER_CREATURE
+            or target_schema is not None or prefix or len(branch) != 1
+            or tuple(conditional) != ({"op": "draw", "player": "$controller", "count": 1, "private": True},)):
+        return ()
+    try:
+        return controlled_creature_counter_choice_dependencies(branch[0])
+    except (TypeError, ValueError):
+        return ()
+
+
+def _ordinary_targeted_branches(wrapper, prefix, branches):
+    target_copy_prefix = (
+        wrapper.get("schema_version") is None and len(prefix) == 1
+        and prefix[0].get("op") == "create_token" and thaw_value(prefix[0]) == _plain_target_copy_token()
+    )
+    return tuple(
+        branch for branch, _ids in branches
+        if _contains_target_reference(branch) or (branch is prefix and target_copy_prefix)
+    )
+
+
+def _paid_sacrifice_instruction_scope_is_closed(cost_schema, condition, reference, prefix, children, otherwise, target_schema):
+    if reference == condition.reference():
+        from .casting_additional_costs import fixed_sacrifice_price_matches_subject
+
+        return fixed_sacrifice_price_matches_subject(cost_schema, condition.subject)
+    from .activation.paid_characteristic_price import activation_paid_creature_choice, activation_paid_suspected_choice
+
+    if condition.kind == PAID_SUSPECTED_CONDITION_KIND:
+        return (activation_paid_suspected_choice(cost_schema) is not None
+                and activation_paid_suspected_draw_is_closed(condition, reference, prefix, children, otherwise, target_schema))
+
+    legendary = condition.trait == "legendary"
+    if activation_paid_creature_choice(cost_schema, legendary=legendary) is None:
+        return False
+    if legendary:
+        return activation_paid_legendary_amass_result_is_closed(condition, reference, prefix, children, target_schema)
+    return target_schema is None and (
+        activation_paid_subtype_result_is_closed(condition, reference, prefix, children)
+        or cost_schema.get("activation_limit") == "once_per_turn"
+        and activation_paid_thrull_counters_result_is_closed(condition, reference, prefix, children)
+    )
+
+
+def _paid_sacrifice_capability(condition, reference, prefix, children):
+    if not is_activation_paid_creature_reference(reference):
+        return PAID_SACRIFICE_CONDITION_CAPABILITY
+    if condition.kind == PAID_SUSPECTED_CONDITION_KIND:
+        return ACTIVATION_PAID_SUSPECTED_DRAW_CAPABILITY
+    if condition.trait == "legendary":
+        return ACTIVATION_PAID_LEGENDARY_AMASS_CAPABILITY
+    if activation_paid_thrull_counters_result_is_closed(condition, reference, prefix, children):
+        return ACTIVATION_PAID_THRULL_COUNTERS_CAPABILITY
+    return ACTIVATION_PAID_SUBTYPE_CAPABILITY
+
+
 def resolution_condition_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
@@ -63,6 +157,12 @@ def resolution_condition_node_capabilities(
 ) -> tuple[str, ...]:
     from .capabilities import capability_dependencies_for_node
 
+    if any(is_other_spell_draw(effect) for effect in effects):
+        return other_spell_draw_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if any(is_third_ability_result(effect) for effect in effects):
+        return third_ability_result_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if any(is_second_ability_draw(effect) for effect in effects):
+        return second_ability_draw_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if effects and effects[-1].get('op')==RESOLUTION_CONDITION_OPERATION and effects[-1].get('schema_version')==18:
         from .paid_alternative_cast_facts import paid_alternative_result_capabilities
         return paid_alternative_result_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
@@ -107,8 +207,10 @@ def resolution_condition_node_capabilities(
     paid_mana=wrapper.get('schema_version') in {6,7}
     paid_sacrifice = wrapper.get("schema_version") == PAID_SACRIFICE_CONDITION_VERSION
     if paid_sacrifice and (
-        PAID_SACRIFICE_CONDITION_MECHANIC not in mechanics or wrapper["cast_fact"] != _condition.reference()
-        or not fixed_sacrifice_price_matches_subject(cost_schema, _condition.subject)
+        PAID_SACRIFICE_CONDITION_MECHANIC not in mechanics
+        or not _paid_sacrifice_instruction_scope_is_closed(
+            cost_schema, _condition, wrapper["cast_fact"], prefix, conditional, otherwise, target_schema,
+        )
         or len(prefix) != (0 if otherwise else 1)
     ):
         return ()
@@ -116,6 +218,16 @@ def resolution_condition_node_capabilities(
         if (prefix or target_schema is None or type(target_schema.get('count')) is not int
                 or target_schema['count']!=1
                 or not _same_target_condition_branches_closed(wrapper, conditional, otherwise, target_schema)):
+            return ()
+    elif wrapper.get("schema_version") == GREATEST_POWER_TARGET_DISCARD_VERSION:
+        from ..compiler.affected_player_discard_templates import (
+            AffectedPlayerDiscardSubject, FixedAffectedPlayerDiscardTemplate,
+        )
+
+        discard = FixedAffectedPlayerDiscardTemplate(AffectedPlayerDiscardSubject.TARGET_OPPONENT, 1)
+        if (prefix or target_schema is None or type(target_schema.get("count")) is not int
+                or thaw_value(target_schema) != discard.target_schema
+                or tuple(wrapper["mechanic_ids"]) != discard.mechanics):
             return ()
     elif _contains_target_reference(conditional) or _contains_target_reference(otherwise):
         return ()
@@ -127,7 +239,7 @@ def resolution_condition_node_capabilities(
         (conditional,wrapper['mechanic_ids']),(otherwise,wrapper.get('otherwise_mechanic_ids',()))) if branch)
     if bool(prefix) != bool(wrapper["prefix_mechanic_ids"]) or not set((*wrapper["prefix_mechanic_ids"], *wrapper["mechanic_ids"],*wrapper.get('otherwise_mechanic_ids',()))) <= mechanics:
         return ()
-    targeted = tuple(branch for branch,_ids in branches if _contains_target_reference(branch))
+    targeted = (conditional, otherwise) if same_target else _ordinary_targeted_branches(wrapper, prefix, branches)
     if len(targeted) > (2 if same_target else 1) or (target_schema is not None) != bool(targeted):
         return ()
     from ..public_history_query_model import public_history_query_dependencies
@@ -139,7 +251,7 @@ def resolution_condition_node_capabilities(
         *public_zone_condition_capabilities(wrapper["condition"]),
     }
     if paid_sacrifice:
-        dependencies.add(PAID_SACRIFICE_CONDITION_CAPABILITY)
+        dependencies.add(_paid_sacrifice_capability(_condition, wrapper["cast_fact"], prefix, conditional))
     from ..land_entry_condition_model import land_entry_condition_capabilities
     dependencies.update(land_entry_condition_capabilities(_condition.to_dict()))
     if same_target:
@@ -175,13 +287,20 @@ def resolution_condition_node_capabilities(
         *wrapper["mechanic_ids"],
         *wrapper.get('otherwise_mechanic_ids',()),
     }
+    from ..counter_placement_targets import CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD
+
     for branch,branch_mechanics in branches:
-        child = capability_dependencies_for_node(
-            effects=branch,
-            target_schema=target_schema if branch in targeted else None,
-            mechanic_ids=(*branch_mechanics, *ambient_mechanics),
-            cost_schema=cost_schema,
-        )
+        if any(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD in child for child in branch):
+            if branch is not otherwise or "cr-122-counters" not in branch_mechanics:
+                return ()
+            child = _greatest_power_otherwise_counter(branch, _condition, conditional, target_schema, prefix)
+        else:
+            child = capability_dependencies_for_node(
+                effects=branch,
+                target_schema=target_schema if branch in targeted else None,
+                mechanic_ids=(*branch_mechanics, *ambient_mechanics),
+                cost_schema=cost_schema,
+            )
         if not child:
             return ()
         dependencies.update(child)
@@ -189,6 +308,14 @@ def resolution_condition_node_capabilities(
 
 
 def bound_resolution_condition_runtime_dependencies(program):
+    from .activation.paid_characteristic_results import activation_paid_characteristic_runtime_dependencies
+
+    if activation_characteristic := activation_paid_characteristic_runtime_dependencies(program):
+        return activation_characteristic
+    ordinal = (other_spell_draw_runtime_dependencies(program) or second_ability_draw_runtime_dependencies(program)
+               or third_ability_result_runtime_dependencies(program))
+    if ordinal:
+        return ordinal
     from .paid_alternative_cast_facts import paid_alternative_program_dependencies
     paid_alternative=paid_alternative_program_dependencies(program)
     if paid_alternative:return paid_alternative
@@ -225,7 +352,8 @@ def bound_resolution_condition_runtime_dependencies(program):
             mechanic_ids=mechanics, cost_schema=program.cost_schema)
         if not dependencies:raise ValueError('Public self-replacement requires complete branches and controller binding')
         return tuple(sorted({*intrinsic_dependencies, *dependencies}))
-    bound_versions = {5, 8, 9, 10, 11, 17, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION}
+    bound_versions = {5, 8, 9, 10, 11, 17, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION,
+                      GREATEST_POWER_TARGET_DISCARD_VERSION}
     if not any(effect.get("op") == RESOLUTION_CONDITION_OPERATION and effect.get("schema_version") in bound_versions
                for effect in program.effects):
         return ()

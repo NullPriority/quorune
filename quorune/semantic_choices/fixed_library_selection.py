@@ -7,7 +7,11 @@ from typing import Any
 from ..library_battlefield_model import LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, RevealedCreatureEntryFollowup
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query
-from ..replacement.immutable import FrozenMap
+from ..rules.library_selection_capability_shapes import (
+    CHOSEN_TYPE_LIBRARY_SELECTION_VERSION, CHOSEN_TYPE_TOP_SELECTION_VERSION,
+    validate_chosen_type_library_selection, validate_chosen_type_top_selection,
+)
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_partition import LibraryPartitionError, partition_refs
 from ..rules.library_selection import (
     LibrarySelectionArrangement,
@@ -23,6 +27,7 @@ from .model import (
     AutoContinue,
     LibraryPartitionChoice,
     ObjectChoice,
+    ScalarChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
     SemanticChoiceError,
@@ -123,6 +128,91 @@ def _arrangement(effect, looked, selected, remainder):
     )
 
 
+def _top_choice_options(effect, actor, row):
+    try:
+        predicate = validate_chosen_type_top_selection(effect, actor=actor)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    options = []
+    if row is not None and predicate is not None and object_matches_query(row, predicate):
+        options.append("reveal_and_take")
+    if effect["remainder_destination"] == "optional_graveyard":
+        options.append("put_into_graveyard")
+    return (*options, "keep")
+
+
+def _current_library_top(query, actor):
+    refs = query.library_refs(actor, top_first=True)
+    if not refs:
+        return None
+    row = query.object(refs[0], zones=("library",))
+    if row is None or row.owner != actor:
+        raise SemanticChoiceError("The actor's private top card is unavailable")
+    return row
+
+
+def _prepare_chosen_type_top(effect, context):
+    actor = context.actor
+    if actor != context.stack_controller:
+        raise SemanticChoiceError("The private top choice belongs to its resolving controller")
+    row = _current_library_top(context.query, actor)
+    choices = _top_choice_options(effect, actor, row)
+    if row is None:
+        return SemanticChoicePreparation(None, FrozenMap(effect),
+            auto_continue=AutoContinue(reason="The library is empty"))
+    continuation = FrozenMap({
+        **dict(effect), "_choice_actor": actor, "_stack_label": context.stack_label,
+        "_looked_objects": [_identity(row).to_dict()],
+    })
+    request = SemanticChoiceRequest(
+        prompt="Choose what to do with the top card.",
+        choice=ScalarChoice(field_name="choice", legal_values=choices),
+        public_context=FrozenMap({
+            "stack": context.stack_ref, "operation": "fixed_library_selection",
+            "objects": [{"id": row.ref, "name": row.printed_name}],
+        }),
+    )
+    return SemanticChoicePreparation(request, continuation, preparation_intents=(
+        RevealLibraryCardsIntent(actor, actor, actor, (row.ref,), context.stack_label, public=False),
+    ))
+
+
+def _complete_chosen_type_top(continuation, response, query):
+    effect = thaw_value(continuation.effect)
+    actor = continuation.semantic_frame.controller
+    if effect.pop("_choice_actor", None) != actor or actor not in query.active_seats:
+        raise SemanticChoiceError("The private top choice is bound to its resolving controller")
+    reason = effect.pop("_stack_label", None)
+    looked = effect.pop("_looked_objects", ())
+    row = _current_library_top(query, actor)
+    if (type(reason) is not str or not reason or not isinstance(looked, list)
+            or len(looked) != 1 or row is None):
+        raise SemanticChoiceError("The private top choice requires a saved library incarnation")
+    try:
+        identity = LibrarySelectionObjectIdentity.from_dict(looked[0])
+    except (LibrarySelectionError, TypeError, ValueError) as exc:
+        raise SemanticChoiceError("The looked-at top identity is malformed") from exc
+    if identity != _identity(row):
+        raise SemanticChoiceError("The looked-at top card no longer matches its saved incarnation")
+    choice = response.get("choice")
+    if choice not in _top_choice_options(effect, actor, row):
+        raise SemanticChoiceError("The chosen action is unavailable for the looked-at card")
+    if choice == "keep":
+        return SemanticChoiceCompletion()
+    reveal = choice == "reveal_and_take"
+    arrangement = LibrarySelectionArrangement(
+        looked=(identity,),
+        selected_refs=(row.ref,) if reveal else (),
+        remainder_refs=() if reveal else (row.ref,),
+        remainder_destination="library_bottom" if reveal else "graveyard",
+        remainder_order="chosen",
+    )
+    return SemanticChoiceCompletion(intents=(LibrarySelectionIntent(
+        actor=actor, player=actor, arrangement=arrangement, reason=reason,
+        source_stack_ref=continuation.stack_ref, looked_are_public=False, selected_are_public=reveal,
+    ),))
+
+
 @dataclass(frozen=True, slots=True)
 class FixedLibrarySelectionChoiceHandler:
     operation: str = "fixed_library_selection"
@@ -184,6 +274,14 @@ class FixedLibrarySelectionChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> tuple[tuple[ObjectQuerySpec, ...], ...]:
+        if effect.get("schema_version") == CHOSEN_TYPE_LIBRARY_SELECTION_VERSION:
+            if context.stack_controller != context.actor:
+                raise SemanticChoiceError("Chosen-type library selection requires its resolving controller")
+            try:
+                query = validate_chosen_type_library_selection(effect, actor=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return ((query,),) if query is not None else ((),)
         version_two=type(effect.get('schema_version')) is int and effect.get('schema_version')==2
         if type(effect.get('schema_version')) is int and effect.get('schema_version') in (3, LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION):
             from ..library_battlefield_model import validate_library_battlefield_effect,fixed_selection_without_entry_fields
@@ -252,6 +350,8 @@ class FixedLibrarySelectionChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if effect.get("schema_version") == CHOSEN_TYPE_TOP_SELECTION_VERSION:
+            return _prepare_chosen_type_top(effect, context)
         groups = self._validated_effect(effect, context)
         refs = context.query.library_refs(context.actor, top_first=True)[
             : int(effect["look_count"])
@@ -317,7 +417,8 @@ class FixedLibrarySelectionChoiceHandler:
         ) if refs else ()
 
         deterministic = (policy == "all_matching" or not refs
-                         or effect.get("schema_version") == LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION and not legal_refs)
+                         or effect.get("schema_version") in {LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION,
+                                                             CHOSEN_TYPE_LIBRARY_SELECTION_VERSION} and not legal_refs)
         needs_remainder_order = (
             effect["remainder_order"] == "chosen"
             and len(refs) - effective_minimum > 1
@@ -462,8 +563,9 @@ class FixedLibrarySelectionChoiceHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
-        del query
         effect = continuation.effect
+        if effect.get("schema_version") == CHOSEN_TYPE_TOP_SELECTION_VERSION:
+            return _complete_chosen_type_top(continuation, response, query)
         try:
             looked = tuple(
                 LibrarySelectionObjectIdentity.from_dict(value)

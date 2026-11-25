@@ -126,12 +126,17 @@ def complete_splice_cast(host, decision):
     selected_option = response.get("cost_option") or draft["cost_option"]
     if selected_option is None and len(options) == 1:
         selected_option = options[0]["id"]
-    if selected_option not in {option["id"] for option in options}:
+    selected_price = next((option for option in options if option["id"] == selected_option), None)
+    if selected_price is None:
         raise GameRuleError("Select a current casting price for the Splice declaration")
+    announced_x = draft["x"]
+    if (announced_x is None and selected_price.get("target_schema", {}).get("x_bound_group")
+            and "x" in selected_price.get("choice_schema", {})):
+        announced_x = response.get("x")
     for key in ("action", "cost_options", "proposal_fingerprint", "expiry_revision"):
         response.pop(key, None)
     response.update(card=card.ref, face=draft["face"], cast_method=draft["method"],
-        modes=draft["modes"], x=draft["x"], cost_option=selected_option)
+        modes=draft["modes"], x=announced_x, cost_option=selected_option)
     response["from"] = draft["zone"]
     execute_mana_choice_capable_priority_action(host, seat=seat, action="cast", response=response,
         payment_id=decision.decision_id, splice_sources=tuple(draft["selected"]))

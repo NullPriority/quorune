@@ -8,7 +8,8 @@ from ...ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ...activation_cost_modifiers import (ACTIVATION_GENERIC_COST_EVENT, ACTIVATION_GENERIC_COST_HANDLER,
     TARGETED_ACTIVATION_COST_HANDLER, PUBLIC_QUANTITY_ACTIVATION_COST_HANDLER, ActivationCostModifierSource,
     ConditionalActivationReduction, OpponentControlledActivationReduction,
-    AbilityLocalPublicManaAdjustment, ActivationManaReduction, FixedActivationCostModifierSpec)
+    AbilityLocalPublicManaAdjustment, ActivationManaReduction, FixedActivationCostModifierSpec,
+    OTHER_EQUIPMENT_ACTIVATION_SUBJECT)
 from ...card_program_faces import program_matches_face
 from ...object_query import object_matches_query
 from ...public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
@@ -107,6 +108,8 @@ def current_activation_cost_modifiers(host, seat, source, ability):
                 same_controller = subject_controller == permanent.controller
                 if (spec.controller_relation == 'source_controller' and not same_controller
                         or spec.controller_relation == 'source_opponents' and same_controller):
+                    continue
+                if spec.subject_relation == OTHER_EQUIPMENT_ACTIVATION_SUBJECT and source.object_id == permanent.object_id:
                     continue
                 if spec.subject_relation != 'any':
                     if source.zone != 'battlefield':

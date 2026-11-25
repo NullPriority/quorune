@@ -9,7 +9,10 @@ from .affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
     select_affected_permanents,
+    target_unspent_mana_tap_spec,
 )
+from .mana_provenance import lose_all_unspent_mana
+from .mana_undo import clear_mana_undo_stack
 from .object_query import ObjectQueryResult
 from .continuous_effect_model import ContinuousObjectIdentity
 from .source_untap_rule_model import PendingSourceUntapRestraint
@@ -29,6 +32,7 @@ class SetPublicPermanentsTappedIntent:
     reason: str
     source_ref: str | None = None
     untap_restraint: PendingSourceUntapRestraint | None = None
+    lose_unspent_mana: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -45,6 +49,11 @@ class SetPublicPermanentsTappedIntent:
             or (self.spec.exclude_source and self.source_ref is None and self.untap_restraint is None)
             or self.untap_restraint is not None and (
                 not self.tapped or not isinstance(self.untap_restraint, PendingSourceUntapRestraint)
+            )
+            or type(self.lose_unspent_mana) is not bool
+            or self.lose_unspent_mana and (
+                not self.tapped or self.untap_restraint is not None or self.spec.target_controller is None
+                or self.spec != target_unspent_mana_tap_spec(self.spec.target_controller)
             )
         ):
             raise ValueError("Public-set tap-state intent is malformed")
@@ -91,6 +100,7 @@ def resolve_public_tap_state_set(
     reason: str,
     source_ref: str | None = None,
     untap_restraint: PendingSourceUntapRestraint | None = None,
+    lose_unspent_mana: bool = False,
 ) -> tuple[str, ...]:
     if type(actor) is not str or not actor or type(reason) is not str or not reason:
         raise PublicTapStateSetError(
@@ -181,6 +191,15 @@ def resolve_public_tap_state_set(
         changed_objects=tuple(value.object_id for value in snapshot),
         changed_players=tuple(sorted({value.controller for value in snapshot})),
     )
+    if lose_unspent_mana:
+        player = host.state.players[spec.target_controller]
+        clear_mana_undo_stack(player.stats)
+        lost = lose_all_unspent_mana(player)
+        if lost:
+            host._log(
+                spec.target_controller, "mana.empty", f"{spec.target_controller} lost their unspent mana.",
+                {"lost": lost, "reason": reason}, importance=1, changed_players=[spec.target_controller],
+            )
     return results
 
 

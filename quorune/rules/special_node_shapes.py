@@ -1,6 +1,8 @@
 from __future__ import annotations
 from collections.abc import Mapping as MappingABC
 
+from ..entry_designations import CHOSEN_COLOR_TARGET_PREDICATE, CHOSEN_CREATURE_TYPE_TARGET_PREDICATE
+
 
 def special_trigger_envelope_capabilities(dependencies, mechanics):
     """Preserve ordinary event authority after a nonempty special-body proof."""
@@ -80,6 +82,7 @@ def _owned_special_result_capabilities(**context):
     from .per_player_query_life import per_player_query_life_node_capabilities
     from .per_player_query_damage import per_player_query_damage_node_capabilities
     from .per_player_life_damage import per_player_life_damage_node_capabilities
+    from .post_exchange_token import post_exchange_token_node_capabilities
     from .target_player_query_amounts import target_player_query_node_capabilities
     from .attachment_source_return import attachment_source_return_node_capabilities
     from .graveyard_card_results import graveyard_card_counter_life_node_capabilities
@@ -89,18 +92,129 @@ def _owned_special_result_capabilities(**context):
     for resolver in (gravestorm_node_capabilities,demonstrate_node_capabilities,recover_node_capabilities,ripple_node_capabilities,current_life_node_capabilities,turn_life_loss_node_capabilities,per_player_query_life_node_capabilities,per_player_query_damage_node_capabilities,per_player_life_damage_node_capabilities,target_player_query_node_capabilities,
                      attachment_source_return_node_capabilities, graveyard_card_counter_life_node_capabilities,
                      graveyard_exile_branch_node_capabilities, graveyard_exile_token_node_capabilities,
+                     post_exchange_token_node_capabilities,
                      graveyard_exile_type_outcome_node_capabilities):
         required=resolver(**context)
         if required:return required
     return ()
 
 
-def _shared_and_source_entry_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
-    """Keep closed library and source-entry envelopes ahead of leaf composition."""
+def _shared_and_source_result_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
+    """Resolve exact source, target, library, and entry shapes before leaf composition."""
+    from ..conditional_target_preparation_model import RESOLUTION_TARGET_COLOR_FIELD, RESOLUTION_TARGET_COLOR_MECHANIC
+    if RESOLUTION_TARGET_COLOR_MECHANIC in mechanics or any(RESOLUTION_TARGET_COLOR_FIELD in effect for effect in effects):
+        from .conditional_target_preparation import resolution_target_color_node_capabilities
+        return resolution_target_color_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    from ..protected_attack_payment_model import MECHANIC as PROTECTED_ATTACK_PAYMENT_MECHANIC
+    if PROTECTED_ATTACK_PAYMENT_MECHANIC in mechanics:
+        from .protected_attack_payments import protected_attack_payment_node_capabilities
+        return protected_attack_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    from .optional_source_damage import OPTIONAL_SOURCE_DAMAGE_FIELD, optional_source_damage_node_capabilities
+    from .collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD, collective_source_damage_node_capabilities
+    if any(isinstance(effect, MappingABC) and COLLECTIVE_SOURCE_DAMAGE_FIELD in effect for effect in effects):
+        return collective_source_damage_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+    if any(isinstance(effect, MappingABC) and OPTIONAL_SOURCE_DAMAGE_FIELD in effect for effect in effects):
+        return optional_source_damage_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+    from .attack_counter_unblockable import (
+        ATTACK_COUNTER_UNBLOCKABLE_MECHANIC, attack_counter_unblockable_node_capabilities,
+    )
+
+    if ATTACK_COUNTER_UNBLOCKABLE_MECHANIC in mechanics:
+        if cost_schema is not None:
+            return ()
+        return attack_counter_unblockable_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+
+    from .target_creature_power_results import target_creature_power_node_capabilities
+    from .target_recipient_results import target_sacrifice_power_node_capabilities
+    from .prevention_component_shapes import targeted_prevention_result_node_capabilities
+
+    if prevention := targeted_prevention_result_node_capabilities(
+        effects=effects, target_schema=target_schema, cost_schema=cost_schema,
+    ):
+        return prevention
+    if sacrifice := target_sacrifice_power_node_capabilities(effects=effects, target_schema=target_schema, cost_schema=cost_schema):
+        return sacrifice
+
+    if power := target_creature_power_node_capabilities(
+        effects=effects, target_schema=target_schema, cost_schema=cost_schema,
+    ):
+        return power
+    predicate = target_schema.get("predicate") if isinstance(target_schema, MappingABC) else None
+    if predicate in (CHOSEN_CREATURE_TYPE_TARGET_PREDICATE, CHOSEN_COLOR_TARGET_PREDICATE):
+        from .chosen_color_target_shapes import chosen_color_target_node_capabilities
+        from .chosen_type_target_shapes import chosen_creature_type_target_node_capabilities
+
+        judge = (chosen_color_target_node_capabilities if predicate == CHOSEN_COLOR_TARGET_PREDICATE
+                 else chosen_creature_type_target_node_capabilities)
+        return judge(
+            effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+        )
+    from .optional_draw_discard import is_source_shared_type_draw_discard, source_shared_type_draw_discard_dependencies
+    if any(is_source_shared_type_draw_discard(effect) for effect in effects):
+        if len(effects) != 1 or target_schema is not None:
+            return ()
+        try:
+            return source_shared_type_draw_discard_dependencies(effects[0])
+        except (TypeError, ValueError):
+            return ()
+    from .entry_x_graveyard_target import entry_x_graveyard_target_node_capabilities, has_entry_x_target_limit
+    if has_entry_x_target_limit(target_schema):
+        return entry_x_graveyard_target_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+        )
+    from .announced_mana_value_target import announced_mana_value_node_capabilities, has_announced_mana_value_limit
+    if has_announced_mana_value_limit(target_schema):
+        return announced_mana_value_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+        )
+    from .destruction_result_model import (
+        NEXT_END_STEP_DESTRUCTION_DEPENDENCIES, NEXT_END_STEP_DESTRUCTION_FIELD,
+        validate_next_end_step_destruction,
+    )
+    if any(NEXT_END_STEP_DESTRUCTION_FIELD in effect for effect in effects):
+        if target_schema is not None or len(effects) != 1:
+            return ()
+        try:
+            validate_next_end_step_destruction(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return NEXT_END_STEP_DESTRUCTION_DEPENDENCIES
+    from ..event_card_return import (
+        DEATH_LAND_EXILE_MECHANIC, death_exile_then_return_node_capabilities,
+        death_land_exile_node_capabilities, has_death_source_exile,
+    )
+    if DEATH_LAND_EXILE_MECHANIC in mechanics:
+        return death_land_exile_node_capabilities(effects, target_schema)
+    if effects and has_death_source_exile(effects[0]):
+        return death_exile_then_return_node_capabilities(effects, target_schema)
     if any(e.get("op") == "look_top_shared_type_reveal" for e in effects):
         from .shared_type_library import shared_type_library_node_capabilities
         return shared_type_library_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
+    from .opponent_greatest_power_destruction import (
+        GREATEST_POWER_DESTRUCTION_FIELD, greatest_power_destruction_node_capabilities,
+    )
+    if any(GREATEST_POWER_DESTRUCTION_FIELD in effect for effect in effects):
+        return greatest_power_destruction_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+    from .opponent_greatest_power_exile import GREATEST_POWER_EXILE_FIELD, greatest_power_exile_node_capabilities
+    if any(GREATEST_POWER_EXILE_FIELD in effect for effect in effects):
+        return greatest_power_exile_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+    from ..relative_power_target import GREATEST_CREATURE_POWER_PREDICATE
+    if isinstance(target_schema, MappingABC) and target_schema.get("predicate") == GREATEST_CREATURE_POWER_PREDICATE:
+        from .greatest_power_target_shapes import greatest_power_target_node_capabilities
+        return greatest_power_target_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+        )
     query_result=_owned_special_result_capabilities(
         effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)
     if query_result:return query_result
@@ -115,12 +229,12 @@ def _shared_and_source_entry_capabilities(*,effects,target_schema,mechanics,cost
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
-    from ..event_card_return import DEATH_LAND_EXILE_MECHANIC, death_land_exile_node_capabilities
-    if DEATH_LAND_EXILE_MECHANIC in mechanics:
-        return death_land_exile_node_capabilities(effects, target_schema)
-    owned=_shared_and_source_entry_capabilities(
+    owned=_shared_and_source_result_capabilities(
         effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
     if owned is not None:return owned
+    if 'opponent-life-loss-result' in mechanics:
+        from .event_outcome_shapes import opponent_life_loss_node_capabilities
+        return opponent_life_loss_node_capabilities(effects=effects, target_schema=target_schema)
     if any('event_optional_draw_version' in effect for effect in effects):
         from .event_optional_draw_shapes import event_optional_draw_node_capabilities
         return event_optional_draw_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
@@ -193,7 +307,7 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     from ..phasing_model import PHASE_OUT_OPERATION
     from .occurrence_object_results import phase_out_node_capabilities
     if any(effect.get("op") == PHASE_OUT_OPERATION for effect in effects):
-        return phase_out_node_capabilities(effects, target_schema)
+        return phase_out_node_capabilities(effects, target_schema, cost_schema=cost_schema)
     from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC,FACE_UP_EFFECT_OPERATION,face_up_node_capabilities
     if FACE_UP_EFFECT_MECHANIC in mechanics or any(effect.get('op')==FACE_UP_EFFECT_OPERATION for effect in effects):
         return face_up_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics)
@@ -266,15 +380,35 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
 
 def special_node_covered_mechanics(supplied):
     """Keep special capability coverage with its typed shape routing."""
+    from .attack_counter_unblockable import (
+        ATTACK_COUNTER_UNBLOCKABLE_CAPABILITY, ATTACK_COUNTER_UNBLOCKABLE_MECHANIC,
+    )
     from ..phasing_model import PHASE_OUT_CAPABILITY, PHASE_OUT_MECHANIC
+    from ..conditional_target_preparation_model import RESOLUTION_TARGET_COLOR_CAPABILITY, RESOLUTION_TARGET_COLOR_MECHANIC
+    from .destruction_result_model import DESTRUCTION_CONTROLLER_TOKEN_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
+    from .targeted_exile_token_results import TARGET_EXILE_TOKEN_CAPABILITY, TARGET_EXILE_TOKEN_MECHANIC
+    from ..creature_power_damage_model import CREATURE_POWER_DAMAGE_MECHANIC, CREATURE_SELF_DAMAGE_SET_CAPABILITY
+    from ..library_bottom_result_model import LIBRARY_BOTTOM_RESULT_CAPABILITY, LIBRARY_BOTTOM_RESULT_MECHANIC
+    from .temporary_occurrence_copy import TEMPORARY_OCCURRENCE_COPY_CAPABILITY, TEMPORARY_OCCURRENCE_COPY_MECHANIC
 
     mapping = {
+        ATTACK_COUNTER_UNBLOCKABLE_CAPABILITY: ATTACK_COUNTER_UNBLOCKABLE_MECHANIC,
+        LIBRARY_BOTTOM_RESULT_CAPABILITY: LIBRARY_BOTTOM_RESULT_MECHANIC,
+        TEMPORARY_OCCURRENCE_COPY_CAPABILITY: TEMPORARY_OCCURRENCE_COPY_MECHANIC,
         PHASE_OUT_CAPABILITY: PHASE_OUT_MECHANIC,
+        RESOLUTION_TARGET_COLOR_CAPABILITY: RESOLUTION_TARGET_COLOR_MECHANIC,
+        DESTRUCTION_CONTROLLER_TOKEN_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
+        TARGET_EXILE_TOKEN_CAPABILITY: TARGET_EXILE_TOKEN_MECHANIC,
+        CREATURE_SELF_DAMAGE_SET_CAPABILITY: CREATURE_POWER_DAMAGE_MECHANIC,
         "continuous.resolution.target_basic_land_type_choice": "target-basic-land-type-choice",
         "resolution.effect_program.optional_target_result": "fixed-optional-target-characteristic-result",
         "counter.removal.chosen_kind": "chosen-counter-removal",
         "resolution.event_player.optional_draw": "fixed-event-player-optional-draw",
         'library.top.shared_type_optional_reveal': 'private-top-shared-type-reveal',
+        'library.top.revealed_shared_type.resolving_play': 'private-top-shared-type-play',
+        'resolution.choice.optional_source_damage': 'optional-source-damage-alternate',
+        'resolution.choice.collective_optional_source_damage': 'collective-optional-source-damage',
+        'combat.attack.payment.temporary_protected_defender': 'next-turn-protected-attack-payment',
         'choice.affected_player.graveyard_exile': 'target-player-graveyard-exile-choice',
         'quantity_expression.resolution_paid_creature_stat': 'optional-sacrifice-creature-stat-result',
         'life.loss.third_current_player': 'third-current-player-life-loss',
@@ -290,4 +424,14 @@ def special_node_covered_mechanics(supplied):
         'casting.resolution.graveyard_copies': 'resolving-graveyard-copy-cast',
         'casting.resolution.fixed_bounded_hand': 'fixed-bounded-hand-free-cast',
     }
-    return {mechanic for capability, mechanic in mapping.items() if capability in supplied}
+    covered = {mechanic for capability, mechanic in mapping.items() if capability in supplied}
+    from ..source_block_defender_model import SOURCE_BLOCK_DEFENDER_CAPABILITY, SOURCE_BLOCK_DEFENDER_MECHANIC
+
+    if SOURCE_BLOCK_DEFENDER_CAPABILITY in supplied:
+        covered.update({SOURCE_BLOCK_DEFENDER_MECHANIC, "cr-611-continuous-effects"})
+    if {"cost.counter.source_fixed_resolution", "effect.choice.optional_fixed_mana_payment"} <= supplied:
+        from ..fixed_effect_payment import MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC
+        covered.add(MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC)
+    if "trigger.event.normalized_life_loss" in supplied:
+        covered.update({"trigger-event-normalized-life-loss", "opponent-life-loss-result"})
+    return covered

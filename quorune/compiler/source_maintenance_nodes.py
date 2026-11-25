@@ -27,6 +27,7 @@ _STEP = re.compile(r"At the beginning of (?P<step>your upkeep|your end step|each
 _ENTRY = re.compile(r"When (?P<subject>.+?) enters, (?P<body>.+)", re.I)
 _CONDITIONAL_BODY = re.compile(r"if (?P<condition>[^,]+), (?P<body>sacrifice .+)", re.I)
 _BODY = re.compile(r"sacrifice (?P<subject>.+?)(?: unless you (?P<payment>.+?))?\.?$", re.I)
+_UPKEEP_TAP = re.compile(r"tap this creature unless you (?P<payment>pay [1-9][0-9]* life)\.?$", re.I)
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,6 +50,13 @@ def source_maintenance_template(text: str, *, card_name: str) -> SourceMaintenan
     if entry is not None and not is_source(entry["subject"]):
         return None
     body_text = match["body"]
+    tap = _UPKEEP_TAP.fullmatch(body_text) if step is not None and step["step"].casefold() == "your upkeep" else None
+    if tap is not None:
+        price = fixed_effect_payment_spec(tap["payment"])
+        if price is not None:
+            return SourceMaintenanceTemplate(
+                SourceMaintenanceSpec(price, decline="tap"), "step.begin", _maintenance_step_condition("your upkeep"),
+            )
     guarded = _CONDITIONAL_BODY.fullmatch(body_text) if step is not None else None
     history_condition = None
     if guarded is not None:
@@ -65,7 +73,12 @@ def source_maintenance_template(text: str, *, card_name: str) -> SourceMaintenan
     spec = SourceMaintenanceSpec(payment)
     if entry is not None:
         return SourceMaintenanceTemplate(spec, "permanent.enter.self", None)
-    variant = step["step"].casefold()
+    return SourceMaintenanceTemplate(spec, "step.begin", _maintenance_step_condition(
+        step["step"].casefold(), history_condition,
+    ), history_condition)
+
+
+def _maintenance_step_condition(variant, history_condition=None):
     conditions = [{"field": "step", "op": "eq", "value": "upkeep" if "upkeep" in variant else "end_step"}]
     if variant.startswith("your"):
         conditions.insert(0, {"field": "player", "op": "eq", "value": "$source.controller"})
@@ -74,7 +87,7 @@ def source_maintenance_template(text: str, *, card_name: str) -> SourceMaintenan
             "field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
             "op": "truthy", "value": True, "condition": history_condition.to_dict(),
         })
-    return SourceMaintenanceTemplate(spec, "step.begin", {"all": conditions}, history_condition)
+    return {"all": conditions}
 
 
 def source_maintenance_node(*, node_id: str, line: str, material_line: str,
@@ -94,7 +107,7 @@ def source_maintenance_node(*, node_id: str, line: str, material_line: str,
     residual_ids = ()
     if gate.blockers:
         residual_ids = (append_residual(residuals, kind="dependency_contract", text=line,
-            span=span, reason="source maintenance requires verified fixed payment and sacrifice owners", blockers=gate.blockers),)
+            span=span, reason="source maintenance requires verified fixed payment and default-result owners", blockers=gate.blockers),)
     closure = gate.closure
     return OracleNode(node_id=node_id, kind="triggered_ability", text=line, span=span,
         active_zone="battlefield", event=template.event, event_condition=template.condition,

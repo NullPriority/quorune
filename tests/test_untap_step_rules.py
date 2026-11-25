@@ -45,6 +45,93 @@ class UntapStepRuleTests(unittest.TestCase):
             consume_next_untap_prohibition(card)
         self.assertEqual(before, card.annotations)
 
+    def test_land_type_expiry_follows_current_controller_and_skips_missing_untaps(self):
+        from quorune.continuous_effect_model import (
+            ContinuousEffect, ContinuousEffectDuration, ContinuousEffectError,
+        )
+        from quorune.continuous_effect_state import apply_fixed_resolution_characteristics
+        from quorune.target_land_type_model import FixedTargetLandTypeSpec
+        from quorune.turn_skip_model import TurnBoundary, TurnSkipSpec
+
+        session = self.make_session(357011, players=4)
+        engine = session.engine
+        land = self.token(engine, "A", "Timed land witness", type_line="Token Land — Plains", tapped=True)
+        other = self.token(engine, "B", "Other land witness", type_line="Token Land — Mountain")
+        duration = ContinuousEffectDuration.UNTIL_RECIPIENT_CONTROLLER_UNTAP
+        spec = FixedTargetLandTypeSpec("island", "any", duration.value, False)
+        refs = apply_fixed_resolution_characteristics(
+            engine, {**spec.to_effect(), "card": land.ref}, actor="A", reason="Timed land type witness",
+        )
+        self.assertEqual([land.ref], refs)
+        settings = [effect for effect in engine.state.continuous_effects if effect.duration is duration]
+        effect, = settings
+        saved_effect = effect.to_dict()
+        self.assertEqual(effect, ContinuousEffect.from_dict(saved_effect))
+        with self.assertRaisesRegex(ContinuousEffectError, "one locked battlefield land-type"):
+            ContinuousEffect.from_dict({**saved_effect, "locked_objects": [
+                *saved_effect["locked_objects"],
+                {"object_id": other.object_id, "logical_object_id": other.logical_object_id},
+            ]})
+        self.assertEqual({"island"}, engine._effective_type_parts(land)[1])
+        self.assertEqual({"mountain"}, engine._effective_type_parts(other)[1])
+        engine.change_control(land.object_id, "B", reason="Timed land type control transfer")
+        engine.turn_steps.schedule_skip("B", TurnSkipSpec(TurnBoundary.UNTAP))
+
+        returning = self.card(session, "A", "Mountain")
+        engine.move_card(returning.object_id, "battlefield", controller="A", reason="Second duration recipient")
+        original_identity = returning.logical_object_id
+        refs = apply_fixed_resolution_characteristics(
+            engine, {**spec.to_effect(), "card": returning.ref}, actor="A", reason="Departure witness",
+        )
+        self.assertEqual([returning.ref], refs)
+        self.assertEqual({"island"}, engine._effective_type_parts(returning)[1])
+        engine.move_card(returning.object_id, "hand", reason="Departure witness")
+        engine.move_card(returning.object_id, "battlefield", controller="A", reason="Returned land witness")
+        self.assertNotEqual(original_identity, returning.logical_object_id)
+        self.assertEqual({"mountain"}, engine._effective_type_parts(returning)[1])
+        self.assertEqual(settings, [row for row in engine.state.continuous_effects if row.duration is duration])
+
+        def enter(player):
+            engine.permissions.invalidate_current()
+            engine.state.pending_decision = None
+            engine.state.active_player = player
+            engine.state.priority_player = None
+            engine.state.priority_passes = []
+            self.enter_untap(session)
+
+        enter("A")
+        self.assertEqual({"island"}, engine._effective_type_parts(land)[1])
+        enter("B")
+        self.assertEqual({"island"}, engine._effective_type_parts(land)[1])
+        self.assertTrue(land.tapped)
+        self.assertEqual([], engine.state.scheduled_turn_skips)
+
+        engine.turn_steps.schedule_extra_turn("B")
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.phase_index = TURN_STEPS.index(("ending", "end_step"))
+        engine._enter_step()
+        engine.pump()
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        turn = engine.state.turn_sequence
+        for _ in engine.active_seats:
+            principal, = session.pending_principals()
+            result = session.act(principal, {"a": "pass", "reason": "Reach the next actual untap"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual((turn + 1, "B", "upkeep"), (
+            engine.state.turn_sequence, engine.state.active_player, engine.state.step,
+        ))
+        self.assertEqual({"plains"}, engine._effective_type_parts(land)[1])
+        self.assertFalse(land.tapped)
+        self.assertNotIn(effect, engine.state.continuous_effects)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            record_dir = Path(temporary) / "land-type-expiry"
+            session.save(record_dir, include_review=False)
+            replay = replay_record(record_dir, self.db, verify=True)
+            self.assertTrue(replay["ok"], replay)
+            self.assertEqual(4, replay["commands"])
+
     def test_next_untap_producer_omission_mutant_is_killed(self):
         from quorune import tap_state
         def witness():

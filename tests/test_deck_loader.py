@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
+from quorune.carddb import CardDatabase
 from quorune.deck import (
     DeckDefinition,
     DeckEntry,
@@ -15,9 +17,36 @@ from quorune.deck import (
     parse_deck_text,
     parse_moxfield_json,
 )
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
+from scripts.build_test_database import build_fixture_database
 from quorune.deck_copy_limits import DECK_COPY_LIMIT_CAPABILITY, DECK_COPY_LIMIT_EVENT
 from quorune.record import authoritative_state_hash, replay_record
+
+
+class CardAliasResolutionTests(unittest.TestCase):
+    def test_deck_front_face_alias_prefers_game_card_over_art_series(self):
+        front = "Boundary Gate"
+        game_name = f"{front} // Boundary Guide"
+        art_name = f"{front} // {front}"
+        game_id = "00000000-0000-4891-8060-00000000da01"
+        art_id = "00000000-0000-4891-8060-00000000da02"
+        with tempfile.TemporaryDirectory() as directory:
+            db_path = Path(directory) / "cards.sqlite3"
+            build_fixture_database(ROOT / "tests/fixtures/deck-alias-collision-cards.json", db_path)
+
+            with CardDatabase(db_path) as db:
+                loader = DeckLoader(db)
+                deck = DeckDefinition("Front-face alias", [DeckEntry(front.casefold(), 1)], [])
+                loader.resolve_names(deck)
+                self.assertEqual(game_name, deck.entries[0].name)
+                self.assertEqual([], loader.commander_legality_issues(deck))
+                self.assertEqual(game_id, db.lookup("Boundary Gate // Boundary Guide", fuzzy=False).oracle_id)
+                self.assertEqual(game_id, db.lookup("Boundary Guide", fuzzy=False).oracle_id)
+                self.assertEqual(art_id, db.lookup("Boundary Gate // Boundary Gate", fuzzy=False).oracle_id)
+                explicit_art = DeckDefinition("Art entry", [DeckEntry(art_name, 1)], [])
+                loader.resolve_names(explicit_art)
+                issue, = loader.commander_legality_issues(explicit_art)
+                self.assertEqual("commander_illegal", issue["code"])
 
 
 class DeckLoaderTests(unittest.TestCase):

@@ -13,6 +13,7 @@ from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
+from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
 from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..dungeon_progress import VentureProgressIntent
 from ..initiative_model import TakeInitiativeIntent
@@ -25,7 +26,7 @@ from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import (
     GainControlIntent, GainControlSetIntent, GainSpellControlIntent,
-    GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+    ExchangePermanentControlIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
 )
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
@@ -41,6 +42,12 @@ from ..target_land_type_model import TargetLandTypeSettingIntent
 from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..draw_redirect_model import TemporaryDrawRedirectIntent
+from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
+from ..extra_combat_model import ScheduleExtraCombatIntent
+from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
+from ..rules.token_mill_repeat import TokenMillRepeatIntent, execute_token_mill_repeat
+from ..rules.library_bottom_results import LibraryBottomResultIntent, commit_library_bottom_creature_result
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
@@ -78,6 +85,7 @@ from ..combat_entry_activations import (
     resolve_ninjutsu_entry,
 )
 from ..self_zone_move import resolve_self_zone_move, SelfZoneMoveIntent
+from ..counter_removal import AllPermanentCountersThenTokenExileIntent
 from ..public_tap_state_sets import (
     PublicTapStateSetError,
     SetPublicPermanentsTappedIntent,
@@ -207,7 +215,9 @@ class SemanticIntentSink(
     def move_objects_simultaneously_intent(
         self,
         intent: MoveObjectsSimultaneouslyIntent,
-    ) -> tuple[str, ...] | CommittedQuantityFollowup: ...
+        *,
+        prepared_composition: Any = None,
+    ) -> tuple[str, ...] | CommittedQuantityFollowup | int: ...
 
     def madness_choice_intent(self, intent: MadnessChoiceIntent) -> None: ...
 
@@ -275,7 +285,8 @@ class SemanticIntentSink(
 
     def gain_control_intent(self, intent: GainControlIntent | GiveControlIntent | GainSpellControlIntent) -> object: ...
 
-    def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent) -> object: ...
+    def gain_control_set_intent(self, intent: GainControlSetIntent | GiveControlSetIntent | RestoreOwnerControlIntent
+                                | ExchangePermanentControlIntent) -> object: ...
 
     def place_counters_intent(
         self,
@@ -309,7 +320,7 @@ class SemanticIntentSink(
 
     def remove_all_counters_intent(
         self,
-        intent: RemoveAllCountersIntent,
+        intent: RemoveAllCountersIntent | AllPermanentCountersThenTokenExileIntent,
     ) -> Any: ...
 
     def counter_stack_intent(self, intent: CounterStackIntent) -> None: ...
@@ -335,7 +346,7 @@ class SemanticIntentSink(
     def grant_zone_object_keyword_intent(
         self,
         intent: GrantZoneObjectKeywordIntent,
-    ) -> str: ...
+    ) -> str | tuple[str, ...]: ...
 
     def proliferate_intent(self, intent: ProliferateIntent) -> None: ...
 
@@ -423,7 +434,7 @@ def prepare_draw_resolution(
 PermanentObjectIntent = (
     SelectMutateMergeIntent |
     ResumeCompositionOrderIntent |
-    PairSoulbondIntent | GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | CreateRegenerationShieldIntent
+    PairSoulbondIntent | GainControlIntent | GainSpellControlIntent | GainControlSetIntent | GiveControlIntent | GiveControlSetIntent | RestoreOwnerControlIntent | ExchangePermanentControlIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
     | PrepareSourceIntent
@@ -444,7 +455,8 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     PrepareSourceIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
-    GainControlIntent, GainSpellControlIntent, GainControlSetIntent, GiveControlIntent, GiveControlSetIntent, RestoreOwnerControlIntent,
+    GainControlIntent, GainSpellControlIntent, GainControlSetIntent, GiveControlIntent, GiveControlSetIntent,
+    RestoreOwnerControlIntent, ExchangePermanentControlIntent,
     CreateRegenerationShieldIntent,
     DestroyPermanentIntent,
     DestroyPermanentSetIntent,
@@ -488,7 +500,7 @@ def _execute_permanent_object_intent(
         return 'pair', pair.pair_id
     if isinstance(intent, (GainControlIntent, GiveControlIntent, GainSpellControlIntent)):
         return intent.object_ref, sink.gain_control_intent(intent)
-    if isinstance(intent, (GainControlSetIntent,GiveControlSetIntent,RestoreOwnerControlIntent)):
+    if isinstance(intent, (GainControlSetIntent, GiveControlSetIntent, RestoreOwnerControlIntent, ExchangePermanentControlIntent)):
         return intent.actor, sink.gain_control_set_intent(intent)
     if isinstance(intent, CreateRegenerationShieldIntent):
         return (
@@ -554,6 +566,12 @@ def _execute_permanent_object_intent(
 
         return intent.object_ref, commit_graveyard_exile_type_outcomes(sink, intent)
     if isinstance(intent, ExilePublicGraveyardCardIntent):
+        if intent.linked_source is not None:
+            from ..linked_ability_exile_state import exile_graveyard_card_for_linked_ability
+            return intent.object_ref, exile_graveyard_card_for_linked_ability(
+                sink, object_ref=intent.object_ref, source=intent.linked_source, ability_pair=intent.linked_pair,
+                actor=intent.actor, reason=intent.reason, replacement_selections=intent.replacement_selections,
+            )
         return (
             intent.object_ref,
             public_zone_moves.exile_public_graveyard_card(
@@ -695,6 +713,12 @@ def _execute_counter_placement_intent(
     if isinstance(intent, PlaceCounterBatchIntent):
         return _COUNTER_RESULT_KEY, sink.place_counter_batch_intent(intent)
     if isinstance(intent, PlaceCountersIntent):
+        from .source_counter_reflexive_intent import PlaceSourceCounterReflexiveIntent
+
+        if isinstance(intent, PlaceSourceCounterReflexiveIntent):
+            from ..rules.source_counter_reflexive import commit_source_counter_reflexive
+
+            return _COUNTER_RESULT_KEY, commit_source_counter_reflexive(sink, intent)
         return _COUNTER_RESULT_KEY, sink.place_counters_intent(intent)
     if isinstance(intent, PlaceCountersOnSetIntent):
         return _COUNTER_RESULT_KEY, sink.place_counters_on_set_intent(intent)
@@ -707,21 +731,25 @@ PlayerIntent = (
     BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
     | DiscardWholeHandsResultIntent | HandLibraryRedrawIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
     | GraveyardRecyclingIntent | FixedSourceSacrificeIntent
-    | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
-    | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent
+    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent | ScheduleExtraCombatIntent
+    | ScheduleAdditionalBeginningIntent
+    | TemporaryProtectedAttackPaymentIntent
+    | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent | TokenMillRepeatIntent | LibraryBottomResultIntent
     | VentureProgressIntent | TakeInitiativeIntent
 )
 PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
     DiscardWholeHandsResultIntent, HandLibraryRedrawIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
     GraveyardRecyclingIntent, TargetLandTypeSettingIntent, FixedSourceSacrificeIntent,
-    TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
-    EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent,
+    TemporaryCastRestrictionIntent, TemporaryDrawRedirectIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent, ScheduleExtraCombatIntent, ScheduleAdditionalBeginningIntent,
+    TemporaryProtectedAttackPaymentIntent,
+    EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent, TokenMillRepeatIntent, LibraryBottomResultIntent,
     VentureProgressIntent, TakeInitiativeIntent,
 )
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
+    | tap_state.ProhibitAttackingCreaturesNextUntapIntent
     | ProhibitNextPlayerUntapIntent
     | SetPermanentsTappedIntent
     | SetPublicPermanentsTappedIntent
@@ -729,6 +757,7 @@ TapStateIntent = (
 TAP_STATE_INTENT_TYPES = (
     SetPermanentTappedIntent,
     ProhibitNextUntapIntent,
+    tap_state.ProhibitAttackingCreaturesNextUntapIntent,
     ProhibitNextPlayerUntapIntent,
     SetPermanentsTappedIntent,
     SetPublicPermanentsTappedIntent,
@@ -768,6 +797,17 @@ def _execute_player_intent(
     if isinstance(intent, ReturnEarthbentObjectsIntent):
         from ..earthbend import return_earthbent_objects
         return intent.actor, return_earthbent_objects(sink, intent)
+    if isinstance(intent, TokenMillRepeatIntent):
+        return intent.actor, execute_token_mill_repeat(sink, intent)
+    if isinstance(intent, LibraryBottomResultIntent):
+        return intent.actor, commit_library_bottom_creature_result(sink, intent)
+    if isinstance(intent, ScheduleExtraCombatIntent):
+        from .extra_combat import execute_extra_combat_intent
+
+        return intent.actor, execute_extra_combat_intent(sink, intent)
+    if isinstance(intent, ScheduleAdditionalBeginningIntent):
+        sink.turn_steps.schedule_additional_beginning(intent.player, source=intent.source_ref)
+        return intent.actor, None
     if isinstance(intent, ScheduleTurnSkipIntent):
         return intent.actor, tuple(sink.turn_steps.schedule_skip(seat, intent.spec) for seat in intent.players)
     if isinstance(intent,ProhibitLibrarySearchIntent):return intent.actor,apply_library_search_prohibition(sink,actor=intent.actor,source_id=intent.source_id)
@@ -775,6 +815,13 @@ def _execute_player_intent(
         return intent.actor, execute_random_discard(sink, intent)
     if isinstance(intent, RandomGraveyardReturnIntent):
         return intent.actor, execute_random_graveyard_return(sink,intent)
+    if isinstance(intent, TemporaryProtectedAttackPaymentIntent):
+        from ..rules.protected_attack_payments import apply_protected_attack_payment
+        return intent.actor, apply_protected_attack_payment(sink, intent)
+    if isinstance(intent, TemporaryDrawRedirectIntent):
+        from .temporary_draw_redirect import apply_temporary_draw_redirect
+
+        return intent.actor, apply_temporary_draw_redirect(sink, intent)
     if isinstance(intent, TemporaryCastRestrictionIntent):
         return intent.actor,apply_temporary_cast_restriction(sink,actor=intent.actor,restriction=intent.restriction,
             target_player=intent.target_player,source_id=intent.source_id)
@@ -832,11 +879,14 @@ def _execute_tap_state_intent(
     sink: SemanticIntentSink,
     intent: TapStateIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, tap_state.ProhibitAttackingCreaturesNextUntapIntent):
+        return intent.actor, tap_state.prohibit_attacking_creatures_next_untap(sink, intent)
     if isinstance(intent, ProhibitNextPlayerUntapIntent):
         return intent.restriction.player, tap_state.schedule_next_player_untap(sink, intent)
     if isinstance(intent, ProhibitNextUntapIntent):
         return intent.object_ref, tap_state.prohibit_next_untap(sink, intent.object_ref,
-            actor=intent.actor, reason=intent.reason, logical_object_id=intent.logical_object_id)
+            actor=intent.actor, reason=intent.reason, logical_object_id=intent.logical_object_id,
+            step_count=intent.step_count)
     if isinstance(intent, SetPermanentTappedIntent):
         result = tap_state.set_permanent_tapped(
             sink,
@@ -858,6 +908,7 @@ def _execute_tap_state_intent(
                 reason=intent.reason,
                 source_ref=intent.source_ref,
                 untap_restraint=intent.untap_restraint,
+                lose_unspent_mana=intent.lose_unspent_mana,
             )
         except PublicTapStateSetError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -905,6 +956,9 @@ def _execute_resolving_cast_choice(sink, intent):
     if isinstance(intent, ResolveCapturedDrawCastIntent):
         from ..drawing.captured_hand_casting import execute_captured_draw_cast
         return intent.actor, execute_captured_draw_cast(sink, intent)
+    if isinstance(intent, ResolvingSharedTypeLibraryPlayIntent):
+        from ..rules.shared_type_library_play import execute_shared_type_library_play
+        return intent.actor, execute_shared_type_library_play(sink, intent)
     if isinstance(intent, ResolvingExileLandPlayIntent):
         sink._play_land(intent.actor, {}, resolving=intent)
         return intent.actor, None
@@ -965,7 +1019,26 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
     from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
     from ..rules.entry_return_payment import ENTRY_RETURN_PAYMENT_VERSION_FIELD, bind_checked_entry_return_payment
     from ..scheduled_player import scheduled_player_instruction_is_impossible
+    from ..rules.event_outcome_shapes import cast_event_token_recipient_has_left_game
+    from ..end_combat_counterpart_model import END_COMBAT_COUNTERPART_FIELD
 
+    from ..rules.post_exchange_token import POST_EXCHANGE_TOKEN_VERSION_FIELD, bind_post_exchange_token
+
+    if POST_EXCHANGE_TOKEN_VERSION_FIELD in raw_effect:
+        try:
+            return bind_post_exchange_token(host, item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    if END_COMBAT_COUNTERPART_FIELD in raw_effect:
+        from ..end_combat_counterpart_runtime import bind_end_combat_counterpart_result
+
+        try:
+            return bind_end_combat_counterpart_result(host, item, raw_effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    if cast_event_token_recipient_has_left_game(host, item, raw_effect):
+        return None
     if 'optional_target_result' in raw_effect:
         from ..rules.optional_target_results import bind_optional_target_result
         try:
@@ -985,10 +1058,11 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         return None
 
     from ..rules.event_player_result_shapes import bind_spell_cast_count_life_effect
-
+    from ..rules.other_spell_history_shapes import bind_other_spell_draw
     try:
         scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
         raw_effect = bind_spell_cast_count_life_effect(host.state, scoped_item, raw_effect)
+        raw_effect = bind_other_spell_draw(host.state, scoped_item, raw_effect)
     except ValueError as exc:
         raise SemanticNodeError(str(exc)) from exc
     if raw_effect is None:
@@ -1003,13 +1077,27 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
                 return None
         except (ValueError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-    from ..stack_counter import bind_announced_x_counter, bind_no_mana_spent_counter
+    from ..stack_counter import bind_conditional_stack_counter
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
-    effect = bind_no_mana_spent_counter(host.state, raw_effect, effect)
+    from ..rules.affected_player_discard_capability_shapes import bind_equipped_damage_discard_player
+    from ..rules.conditional_target_preparation import bind_resolution_target_color
+
+    try:
+        effect = bind_equipped_damage_discard_player(host.state, raw_effect, effect)
+        if effect is not None:
+            effect = bind_resolution_target_color(host, scoped_item, raw_effect, effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
     if effect is None:
         return None
-    effect = bind_announced_x_counter(host, scoped_item, raw_effect, effect)
+    from ..rules.temporary_occurrence_copy import TEMPORARY_OCCURRENCE_COPY_OPERATION, bind_temporary_occurrence_copy
+    if effect.get("op") == TEMPORARY_OCCURRENCE_COPY_OPERATION:
+        try:
+            return bind_temporary_occurrence_copy(host, scoped_item, raw_effect, effect)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+    effect = bind_conditional_stack_counter(host, scoped_item, raw_effect, effect)
     if effect is None:
         return None
     if ENTRY_RETURN_PAYMENT_VERSION_FIELD in raw_effect:
@@ -1076,7 +1164,21 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
             importance=1,
         )
         return None
+    from ..discard_effect_origin import bind_discard_effect_origin
+    try:
+        effect = bind_discard_effect_origin(host.state, scoped_item, effect)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
     return prepare_event_library_order(host, effect)
+
+
+def execute_prepared_composition_movement(sink: SemanticIntentSink, plan: IntentPlan, prepared) -> object:
+    if len(plan.intents) != 1 or not isinstance(plan.intents[0], MoveObjectsSimultaneouslyIntent):
+        raise SemanticNodeError("Prepared physical departures require their one movement intent")
+    intent, = plan.intents
+    result = sink.move_objects_simultaneously_intent(intent, prepared_composition=prepared)
+    _synchronize_instruction_observers(sink)
+    return {intent.actor: result} if plan.result_shape == "by_player" else result
 
 
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
@@ -1163,7 +1265,7 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent,
                                GraveyardCastIntent,ExileGraveyardCopiesIntent,ResolvingExileLandPlayIntent,
                                RevealCapturedDrawsIntent,ResolveCapturedDrawCastIntent,ResolveBoundedHandCastIntent,
-                               ResolveRippleCastIntent,RippleBottomIntent)):
+                               ResolveRippleCastIntent,RippleBottomIntent,ResolvingSharedTypeLibraryPlayIntent)):
             results.append(_execute_resolving_cast_choice(sink,intent))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):
@@ -1187,7 +1289,7 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             from ..rules.counter_movement import execute_counter_movement
             results.append((_COUNTER_RESULT_KEY, execute_counter_movement(sink, intent)))
             continue
-        if isinstance(intent, RemoveAllCountersIntent):
+        if isinstance(intent, (RemoveAllCountersIntent, AllPermanentCountersThenTokenExileIntent)):
             result = sink.remove_all_counters_intent(intent)
             results.append((_COUNTER_RESULT_KEY, result))
             continue
@@ -1209,7 +1311,7 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             continue
         if isinstance(intent, GrantZoneObjectKeywordIntent):
             result = sink.grant_zone_object_keyword_intent(intent)
-            results.append((intent.object_ref, result))
+            results.append((intent.object_ref or intent.actor, result))
             continue
         if isinstance(intent, ProliferateIntent):
             sink.proliferate_intent(intent)

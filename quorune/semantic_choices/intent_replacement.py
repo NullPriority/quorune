@@ -7,6 +7,9 @@ from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
 from ..fixed_top_exile import ResolvingExileLandPlayIntent, validate_resolving_land_play_identity
+from ..rules.shared_type_library_play_model import (
+    ResolvingSharedTypeLibraryPlayIntent, validate_shared_type_play_identity,
+)
 from ..drawing.captured_hand import ResolveCapturedDrawCastIntent, validate_captured_draw_cast_identity
 from ..targeted_graveyard_cast_model import GraveyardCastIntent, decode_graveyard_cast_identity
 from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode_exile_graveyard_copies_identity
@@ -17,6 +20,9 @@ from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decod
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
 from ..semantic_runtime.graveyard_exile_result_intent import (
     GraveyardExileLifeResultIntent, validate_graveyard_exile_life_result_identity,
+)
+from ..semantic_runtime.targeted_power_sacrifice_life_intent import (
+    TargetedPowerSacrificeLifeIntent, validate_targeted_power_sacrifice_life_identity,
 )
 from ..semantic_runtime.champion_intent import (
     CHAMPION_INTENT_TYPES, ChampionExileIntent, ReturnLinkedAbilityExileIntent,
@@ -348,6 +354,8 @@ def _simultaneous_move_intent_identity(
         identity["transition_kind"] = intent.transition_kind.value
     if intent.library_order is not None:
         identity["library_order"] = intent.library_order.to_dict()
+    if intent.discard_effect_origin is not None:
+        identity["discard_effect_origin"] = intent.discard_effect_origin.to_dict()
     return "move_objects_simultaneously", identity
 
 
@@ -387,6 +395,8 @@ def _resolving_cast_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] |
     if isinstance(intent, ResolveBoundedHandCastIntent):return "resolving_bounded_hand_cast", intent.identity()
     if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
     if isinstance(intent, ResolvingExileLandPlayIntent):return 'resolving_exile_land_play', intent.identity()
+    if isinstance(intent, ResolvingSharedTypeLibraryPlayIntent):
+        return 'resolving_shared_type_library_play', intent.identity()
     if isinstance(intent, ResolveCapturedDrawCastIntent):return 'resolving_captured_draw_cast', intent.identity()
     if isinstance(intent,GraveyardCastIntent):return 'targeted_graveyard_cast',intent.identity()
     return None
@@ -425,6 +435,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     if isinstance(intent, HandLibraryRedrawIntent):return 'hand_library_redraw', intent.identity()
     if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
     if isinstance(intent,GraveyardExileLifeResultIntent):return 'graveyard_exile_life_result',intent.identity()
+    if isinstance(intent, TargetedPowerSacrificeLifeIntent):
+        return "targeted_power_sacrifice_life", intent.identity()
     if isinstance(intent, CHAMPION_INTENT_TYPES):return champion_intent_identity(intent)
     if isinstance(intent, DESTRUCTION_INTENT_TYPES):
         return destruction_intent_identity(intent)
@@ -822,6 +834,11 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind == "targeted_power_sacrifice_life":
+        try:
+            return validate_targeted_power_sacrifice_life_identity(value)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind == 'graveyard_exile_life_result':
         try:return validate_graveyard_exile_life_result_identity(value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -831,6 +848,9 @@ def validate_semantic_intent_identity(
     if kind == 'exile_graveyard_copies':
         try:return decode_exile_graveyard_copies_identity(value)
         except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'resolving_shared_type_library_play':
+        try: return validate_shared_type_play_identity(value)
+        except (TypeError, ValueError) as exc: raise SemanticChoiceError(str(exc)) from exc
     if kind == 'resolving_exile_land_play':
         try:return validate_resolving_land_play_identity(value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1042,7 +1062,9 @@ def _validate_simultaneous_move_intent_identity(
         from ..semantic_runtime.graveyard_library_cost_intent import GraveyardLibraryCostBatchIntent
         try:return GraveyardLibraryCostBatchIntent.from_identity(value).identity()
         except (TypeError, ValueError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
-    if not isinstance(value, Mapping) or set(value) - {"library_order"} not in {
+    from ..discard_effect_origin import DiscardEffectOrigin
+
+    if not isinstance(value, Mapping) or set(value) - {"library_order", "discard_effect_origin"} not in {
         frozenset(_SIMULTANEOUS_MOVE_FIELDS),
         frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
     }:
@@ -1062,6 +1084,7 @@ def _validate_simultaneous_move_intent_identity(
                 value.get("transition_kind", ZoneTransitionKind.ORDINARY.value)
             ),
             library_order=LibraryArrivalOrder.from_dict(value["library_order"]) if "library_order" in value else None,
+            discard_effect_origin=DiscardEffectOrigin.from_dict(value["discard_effect_origin"]) if "discard_effect_origin" in value else None,
         )
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(
@@ -1324,6 +1347,7 @@ def with_replacement_selections(
 ) -> (
     DiscoverCastIntent
     | ResolvingExileLandPlayIntent
+    | ResolvingSharedTypeLibraryPlayIntent
     | ResolveCapturedDrawCastIntent
     | ResolveBoundedHandCastIntent
     | ResolveRippleCastIntent
@@ -1354,6 +1378,7 @@ def with_replacement_selections(
             *CHAMPION_INTENT_TYPES,
             DiscoverCastIntent,
             ResolvingExileLandPlayIntent,
+            ResolvingSharedTypeLibraryPlayIntent,
             ResolveCapturedDrawCastIntent,
             ResolveBoundedHandCastIntent,
             ResolveRippleCastIntent,

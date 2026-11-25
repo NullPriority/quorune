@@ -20,6 +20,7 @@ from ..compiler.affected_player_discard_templates import (
     FIXED_CONTROLLER_DISCARD_CAPABILITY,
     FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC,
     FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY,
+    EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC,
 )
 
 
@@ -161,6 +162,15 @@ def fixed_hand_top_apnap_payload_dependencies(effect: Mapping[str, Any]) -> tupl
 
 def fixed_hand_exile_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
     """Infer a typed hand-exile minimum even without a coverage annotation."""
+    from ..linked_exile_return_model import LINKED_FADING_HAND_BINDING
+
+    if LINKED_FADING_HAND_BINDING in effect:
+        from .linked_exile_return_shapes import linked_fading_hand_payload_dependencies
+
+        required = linked_fading_hand_payload_dependencies(effect)
+        if not required:
+            raise ValueError("Linked hand exile lacks its closed affected-opponent choice")
+        return required
     target_schema = (
         {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
         if effect.get("target") == "$target.0" else None
@@ -187,8 +197,85 @@ def fixed_controller_discard_node_capabilities(*, effects, target_schema, mechan
     return tuple(sorted({*required, FIXED_CONTROLLER_DISCARD_CAPABILITY})) if required else ()
 
 
+EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD = "equipped_damage_discard_player_version"
+
+
+def bind_equipped_damage_discard_player(state, raw_effect, effect):
+    if EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD not in raw_effect:
+        return effect
+    version = raw_effect[EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD]
+    players = effect.get("players")
+    if (type(version) is not int or version != 1 or effect.get("op") != "choose_cards_apnap"
+            or tuple(raw_effect.get("players", ())) != ("$context.target",)
+            or not isinstance(players, (list, tuple)) or len(players) != 1
+            or type(players[0]) is not str or players[0] not in state.players):
+        raise ValueError("Equipped combat discard requires the exact damaged player")
+    if players[0] not in state.active_seats():
+        return None
+    return {key: value for key, value in effect.items() if key != EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD}
+
+
+def _equipped_damage_discard_untap_node_capabilities(effects, target_schema, mechanics):
+    from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
+    from ..object_predicate import ObjectQuerySpec
+    from ..replacement.immutable import FrozenMap
+    from .public_zone_move_capability_shapes import fixed_public_tap_state_set_node_capabilities
+
+    if len(effects) != 2 or target_schema is not None:
+        return ()
+    discard, untap = effects
+    version = discard.get(EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD)
+    if (discard.get("players") != ["$context.target"] or discard.get("count") != 1
+            or untap.get("tapped") is not False or type(version) is not int or version != 1):
+        return ()
+    expected = {"op": "set_public_tap_state", "source": "$source", "tapped": False,
+                "set": AffectedPermanentSetSpec(
+                    query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+                    controller_relation=PermanentControllerRelation.ACTOR,
+                ).to_dict()}
+    if FrozenMap(untap) != FrozenMap(expected):
+        return ()
+    first = fixed_context_player_discard_node_capabilities(
+        effects=({key: value for key, value in discard.items() if key != EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD},),
+        target_schema=None, mechanic_ids=mechanics - {EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC},
+    )
+    last = fixed_public_tap_state_set_node_capabilities(
+        effects=(untap,), target_schema=None, mechanic_ids=mechanics,
+    )
+    return tuple(sorted({*first, *last})) if first and last else ()
+
+
+def equipped_damage_discard_untap_runtime_dependencies(program):
+    from ..replacement.immutable import FrozenMap
+    from .effect_shape_walkers import nested_effects
+
+    mechanics = set(program.coverage)
+    marked = EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC in mechanics
+    uses_player = any(EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD in effect
+                      for effect in nested_effects((program.effects, program.handlers)))
+    if not marked and not uses_player:
+        return ()
+    if not marked:
+        raise ValueError("Equipped combat discard requires its complete two-result scope")
+    expected_condition = {"all": [
+        {"field": "source_attachment_target_ref", "op": "eq", "value": "$context.source"},
+        {"field": "target_kind", "op": "eq", "value": "player"},
+        {"field": "combat", "op": "truthy", "value": True},
+    ]}
+    required = _equipped_damage_discard_untap_node_capabilities(program.effects, program.target_schema, mechanics)
+    if (not required or (program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or FrozenMap(program.event_condition or {}) != FrozenMap(expected_condition)
+            or program.cost_schema is not None or program.handlers):
+        raise ValueError("The two results require the exact original equipped combat-damage occurrence")
+    return (*required, "attachment.reference.current_or_lki", "trigger.event.normalized_damage",
+            "trigger.effect.fixed_event", "trigger.placement.apnap")
+
+
 def fixed_context_player_discard_node_capabilities(*, effects, target_schema, mechanic_ids):
-    if FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC not in set(mechanic_ids) or len(effects) != 1 or target_schema is not None:
+    mechanics = set(mechanic_ids)
+    if EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC in mechanics:
+        return _equipped_damage_discard_untap_node_capabilities(effects, target_schema, mechanics)
+    if FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC not in mechanics or len(effects) != 1 or target_schema is not None:
         return ()
     effect = effects[0]
     if effect.get("players") not in (["$context.player"], ["$context.target"],["$context.defending_player"]) or type(effect.get("count")) is not int or effect.get("count") not in {1, 2, 3}:
@@ -196,13 +283,19 @@ def fixed_context_player_discard_node_capabilities(*, effects, target_schema, me
     restored = {**effect, "players": ["$controller"]}
     required = fixed_affected_player_discard_node_capabilities(
         effects=(restored,), target_schema=None,
-        mechanic_ids=mechanic_ids, allow_controller=True,
+        mechanic_ids=mechanics, allow_controller=True,
     )
     return tuple(sorted({*required, FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY})) if required else ()
 
 
 def is_closed_fixed_bound_discard_program(program):
     """Admit only a closed producer whose occurrence defines its player slot."""
+    if EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC in program.coverage:
+        try:
+            equipped = equipped_damage_discard_untap_runtime_dependencies(program)
+        except (TypeError, ValueError):
+            return False
+        return bool(equipped) and set(equipped).issubset(program.capability_dependencies)
     arguments = dict(effects=program.effects, target_schema=program.target_schema,
         mechanic_ids=program.coverage)
     required = fixed_controller_discard_node_capabilities(**arguments)

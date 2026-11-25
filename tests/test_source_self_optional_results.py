@@ -100,7 +100,8 @@ class SourceSelfOptionalCompilerTests(unittest.TestCase):
             FixedEventSubscription('creature.becomes_blocked_by', {'field': 'card', 'op': 'eq', 'value': '$source.ref'}),
         ))
         program = SimpleNamespace(event='creature.blocks', active_zone='battlefield',
-            event_condition=condition, target_schema=None, coverage=template.mechanics,
+            event_condition=condition, target_schema=None, cost_schema=None,
+            coverage=template.mechanics, handlers=(), provenance={},
             effects=({**template.effects[0], 'card': '$event.block_counterpart'},))
         self.assertIn('trigger.event.block_pair_counterpart', occurrence_object_runtime_dependencies(program))
         for change in ({'event': 'step.begin'}, {'active_zone': 'hand'},
@@ -601,7 +602,7 @@ class SourceSelfOptionalRuntimeTests(unittest.TestCase):
         from quorune.oracle_ir import register_generated_programs
         from quorune.semantics import SemanticRegistry
         semantics = SemanticRegistry()
-        for name in ('Deem Worthy', 'Solar Blast', 'Slice and Dice', 'Gempalm Incinerator'):
+        for name in ('Deem Worthy', 'Solar Blast', 'Slice and Dice'):
             with self.subTest(name=name):
                 source = self.db.lookup(name)
                 register_generated_programs(self.db, semantics, (source,), trust_level='provisional',
@@ -611,7 +612,18 @@ class SourceSelfOptionalRuntimeTests(unittest.TestCase):
                 program = compile_best_available_card_program(self.db, source, semantic_registry=semantics,
                     capability_registry=self.registry, capability_profile='commander_review')
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                self.assertEqual(name != 'Gempalm Incinerator', binding['strict_capability_ready'], binding['blockers'])
+                self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
+        from dataclasses import replace
+
+        original = self.db.lookup('Gempalm Incinerator')
+        unsupported = replace(original, oracle_text=original.oracle_text.replace(
+            'the number of Goblins on the battlefield', 'the number of Goblins that attacked this game',
+        ))
+        self.assertNotEqual(original.oracle_text, unsupported.oracle_text)
+        ir = compile_oracle_card(unsupported, capability_registry=self.registry,
+                                 capability_profile='commander_review')
+        self.assertTrue(ir.material_residuals)
 
     def test_original_witherscale_whole_card_composes_pair_grant_and_named_counter_removal(self):
         session = self.session(402080)

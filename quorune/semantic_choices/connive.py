@@ -142,6 +142,7 @@ class FixedConniveChoiceHandler:
             discards[current.logical_object_id] = retained['nonland']
         return SemanticChoiceCompletion(
             intents=(MoveObjectsSimultaneouslyIntent(actor=conniver.controller, object_refs=selected, expected_zones=('hand',),
-                      destination='graveyard', reason=effect['_stack_label'], transition_kind=ZoneTransitionKind.DISCARD, owned_only=True),),
+                      destination='graveyard', reason=effect['_stack_label'], transition_kind=ZoneTransitionKind.DISCARD, owned_only=True,
+                      discard_effect_origin=getattr(query, "discard_effect_origin", None)),),
             prepend_effects=(_phase(effect, 'counter', _discards=discards),),
         )

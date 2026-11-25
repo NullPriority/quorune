@@ -81,16 +81,16 @@ class TargetAllCounterModelTests(unittest.TestCase):
         for text, capability in (('Remove all -1/-1 counters from target creature.', NAMED),
                                  ('Remove all counters from up to one target creature.', OPTIONAL)):
             _, effects, schema, _ = all_counter_removal_effect_template(text).compiled()
-            program = SimpleNamespace(effects=effects, target_schema=schema, coverage=())
+            program = SimpleNamespace(effects=effects, target_schema=schema, coverage=(), handlers=())
             self.assertIn(capability, target_all_counter_variant_runtime_dependencies(program))
             with self.assertRaises(ValueError):
                 target_all_counter_variant_runtime_dependencies(SimpleNamespace(effects=effects,
-                    target_schema={**schema, 'count': 2}, coverage=()))
+                    target_schema={**schema, 'count': 2}, coverage=(), handlers=()))
             if capability == NAMED:
                 for version in (True, 1, 2, '3'):
                     with self.assertRaises(ValueError):
                         target_all_counter_variant_runtime_dependencies(SimpleNamespace(
-                            effects=({**effects[0], 'schema_version': version},), target_schema=schema, coverage=()))
+                            effects=({**effects[0], 'schema_version': version},), target_schema=schema, coverage=(), handlers=()))
 
 
 class TargetAllCounterCompilerTests(unittest.TestCase):

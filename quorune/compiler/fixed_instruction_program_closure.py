@@ -24,6 +24,11 @@ from ..drawing.captured_hand import is_closed_captured_draw_cast_program
 from ..bounded_hand_cast_model import is_closed_bounded_hand_cast_program
 from ..dungeon_progress import is_closed_venture_program
 from ..initiative_model import is_closed_initiative_program
+from ..rules.monarch_capability_shapes import is_closed_fixed_monarch_program
+from ..rules.linked_exile_return_shapes import is_closed_linked_fading_activation_program
+from ..rules.next_spell_payment import (
+    is_closed_turn_color_spell_protection_program, is_closed_turn_spell_source_color_protection_program,
+)
 
 
 def is_closed_fixed_instruction_program(program):
@@ -52,6 +57,10 @@ def is_closed_fixed_instruction_program(program):
     from ..rules.graveyard_recycling import is_closed_graveyard_recycling_program
     from ..rules.target_library_inspection import is_closed_target_library_inspection_program
     from ..rules.fixed_damage_roles import is_closed_fixed_damage_role_program
+    from ..rules.optional_source_damage import is_closed_optional_source_damage_program
+    from ..rules.collective_source_damage import is_closed_collective_source_damage_program
+    from ..rules.protected_attack_payments import is_closed_protected_attack_payment_program
+    from ..rules.opponent_discard_results import is_closed_opponent_discard_program
     return any(recognizer(program) for recognizer in (
         is_closed_event_optional_draw_program,
         is_closed_fixed_source_sacrifice_program,
@@ -62,6 +71,10 @@ def is_closed_fixed_instruction_program(program):
         is_closed_graveyard_recycling_program,
         is_closed_target_library_inspection_program,
         is_closed_fixed_damage_role_program,
+        is_closed_optional_source_damage_program,
+        is_closed_collective_source_damage_program,
+        is_closed_protected_attack_payment_program,
+        is_closed_opponent_discard_program,
         is_closed_created_token_counter_program,
         is_closed_token_creation_reflexive_program,
         is_closed_distinct_sacrifice_program,
@@ -69,6 +82,10 @@ def is_closed_fixed_instruction_program(program):
         is_closed_bounded_hand_cast_program,
         is_closed_venture_program,
         is_closed_initiative_program,
+        is_closed_fixed_monarch_program,
+        is_closed_linked_fading_activation_program,
+        is_closed_turn_color_spell_protection_program,
+        is_closed_turn_spell_source_color_protection_program,
         is_closed_incubate_program,
         is_closed_fixed_endure_program,
         is_closed_fixed_blight_program,

@@ -73,6 +73,7 @@ class DrawCommitResult:
     moved_object_ids: tuple[str, ...] = ()
     drawn_object_id: str | None = None
     result_draws: tuple[QueuedDraw, ...] = ()
+    discard_followup: QueuedDraw | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in {
@@ -81,6 +82,7 @@ class DrawCommitResult:
             "prevented",
             "prohibited",
             "result_draws",
+            "discard_or_mill",
             _DREDGE_KIND,
         }:
             raise DrawError(f"Unsupported committed draw result {self.kind!r}")
@@ -104,6 +106,15 @@ class DrawCommitResult:
                 raise DrawError("A result-draw outcome requires queued draws")
         elif self.result_draws:
             raise DrawError("Only a result-draw outcome carries queued draws")
+        if self.kind == "discard_or_mill":
+            if (
+                not isinstance(self.discard_followup, QueuedDraw)
+                or self.discard_followup.player != self.player
+                or self.discard_followup.count != 1
+            ):
+                raise DrawError("A discard replacement requires one sealed follow-up draw")
+        elif self.discard_followup is not None:
+            raise DrawError("Only a discard replacement seals a follow-up draw")
 
 
 def _require_current_request(
@@ -143,6 +154,7 @@ def _record_draw(
     )
     if in_own_draw_step:
         draw_step_tracker[turn_key] = before_draw_step_count + 1
+        host.state.record_additional_beginning_draw()
     player.draw_history.append(
         {
             "turn_sequence": host.state.turn_sequence,
@@ -535,6 +547,12 @@ def commit_prepared_draw_result(
             kind="result_draws",
             player=resolution.player,
             result_draws=resolution.result_draws,
+        )
+    if resolution.kind == "discard_or_mill":
+        return DrawCommitResult(
+            kind="discard_or_mill",
+            player=resolution.player,
+            discard_followup=resolution.discard_followup,
         )
     if resolution.kind == _DREDGE_KIND:
         return _commit_dredge(host, prepared)

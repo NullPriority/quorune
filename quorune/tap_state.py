@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Iterable, Mapping, Protocol
 
 from .counter_removal import (
@@ -18,6 +19,29 @@ STUN_COUNTER_NAME = "stun"
 REASON_FIELD = "reason"
 NEXT_UNTAP_PROHIBITION_ANNOTATION = "does_not_untap_next"
 TAP_TARGET_SET_UNTAP_FIELD = "prohibit_next_untap"
+ATTACKING_CREATURES_NEXT_UNTAP_FIELD = "attacking_creatures_next_untap_version"
+CONTROLLER_UNTAP_STEP_COUNT = "controller_untap_step_count"
+
+
+def two_controller_untaps_effect():
+    return {"op": "prohibit_next_untap", "card": "$target.0",
+            "schema_version": 2, CONTROLLER_UNTAP_STEP_COUNT: 2}
+
+
+def attacking_creatures_next_untap_effect():
+    return {"op": "prohibit_next_untap", ATTACKING_CREATURES_NEXT_UNTAP_FIELD: 1}
+
+
+def validate_attacking_creatures_next_untap(effect):
+    if (effect != attacking_creatures_next_untap_effect()
+            or type(effect[ATTACKING_CREATURES_NEXT_UNTAP_FIELD]) is not int):
+        raise TapStateError("Attacking-creature untap restriction requires the exact untargeted result")
+
+
+@dataclass(frozen=True, slots=True)
+class ProhibitAttackingCreaturesNextUntapIntent:
+    actor: str
+    reason: str
 
 
 def _exert_players(card: Any) -> list[str]:
@@ -74,15 +98,43 @@ class TapStateError(ValueError):
 
 
 def prohibit_next_untap(host: Any, object_ref: str, *, actor: str, reason: str,
-                       logical_object_id: str | None = None) -> str:
-    """Retain one next-controller-untap restriction on the original permanent."""
+                       logical_object_id: str | None = None, step_count: int = 1) -> str:
+    """Retain an untap duration on the original permanent through control changes."""
+    if type(step_count) is not int or step_count not in (1, 2):
+        raise TapStateError("A controller untap restriction requires one or two steps")
     card = host._resolve_object(actor, object_ref, zones={'battlefield'})
     if logical_object_id is not None and card.logical_object_id != logical_object_id:
         return card.ref
-    card.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION] = True
-    host._log(actor, 'permanent.next_untap.prohibited', 'Permanent will skip its next controller untap step.',
-              {'object': card.ref, REASON_FIELD: reason}, changed_objects=[card.object_id])
+    pending = max(step_count, _remaining_controller_untaps(card))
+    card.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION] = 2 if pending == 2 else True
+    details = {'object': card.ref, REASON_FIELD: reason}
+    message = 'Permanent will skip its next controller untap step.'
+    if step_count == 2:
+        details['steps'] = 2
+        message = 'Permanent will skip its next two controller untap steps.'
+    host._log(actor, 'permanent.next_untap.prohibited', message, details, changed_objects=[card.object_id])
     return card.ref
+
+
+def prohibit_attacking_creatures_next_untap(host: Any, intent: ProhibitAttackingCreaturesNextUntapIntent):
+    from .affected_permanents import AffectedPermanentSetSpec, select_affected_permanents
+    from .object_predicate import ObjectQuerySpec
+
+    spec = AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+    )
+    attacking = frozenset(host.state.combat.attackers)
+    rows = (row for row in host.affected_permanent_object_rows(intent.actor) if row.object_id in attacking)
+    snapshot = select_affected_permanents(
+        rows,
+        spec,
+        actor=intent.actor,
+        active_seats=host.affected_permanent_active_seats(),
+        apnap_order=host.affected_permanent_apnap_order(),
+    )
+    return tuple(prohibit_next_untap(host, row.ref, actor=intent.actor, reason=intent.reason,
+                                     logical_object_id=row.logical_object_id)
+                 for row in snapshot)
 
 
 def schedule_next_player_untap(host: Any, intent: ProhibitNextPlayerUntapIntent) -> None:
@@ -105,19 +157,26 @@ def expire_next_player_untap(host: Any, player: str) -> None:
         host.state.next_player_untap_restrictions = tuple(row for row in pending if row.player != player)
 
 
-def consume_next_untap_prohibition(card: Any) -> bool:
-    """Expire one object-local prohibition at its next physical untap step."""
-
+def _remaining_controller_untaps(card: Any) -> int:
     annotations = card.annotations
     if not isinstance(annotations, dict):
         raise TapStateError("Permanent annotations must be a mapping")
     value = annotations.get(NEXT_UNTAP_PROHIBITION_ANNOTATION, False)
-    if type(value) is not bool:
-        raise TapStateError(
-            "Next-untap prohibition state must be boolean"
-        )
-    annotations.pop(NEXT_UNTAP_PROHIBITION_ANNOTATION, None)
-    return value
+    if type(value) is bool:
+        return int(value)
+    if type(value) is int and value == 2:
+        return value
+    raise TapStateError("Next-untap prohibition state requires a Boolean or exactly two steps")
+
+
+def consume_next_untap_prohibition(card: Any) -> bool:
+    """Consume one object-local step when its current controller untaps."""
+    remaining = _remaining_controller_untaps(card)
+    if remaining == 2:
+        card.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION] = True
+    else:
+        card.annotations.pop(NEXT_UNTAP_PROHIBITION_ANNOTATION, None)
+    return remaining > 0
 
 
 class TapStateHost(Protocol):

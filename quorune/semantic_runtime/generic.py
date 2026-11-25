@@ -9,6 +9,7 @@ from ..drawing.model import (
     drawn_card_action_from_dict,
 )
 from ..fractional_quantity_model import HalfQuantitySpec
+from ..query_effect_amount_model import OPPONENT_HAND_MILL_KIND, OpponentHandMillCount
 from ..target_cardinality import ordered_selected_players
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import (
@@ -116,13 +117,19 @@ class MillHandler:
             if "scope" in effect or "player" in effect:
                 raise SemanticNodeError("Mill has conflicting recipient scopes")
             recipients = _selected_players(effect, context)
-        if ("players" in effect or effect.get("scope") == "controller_opponents") and not recipients:
-            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(), result_shape="by_player")
         raw_count = effect.get("count", 1)
+        live_count = isinstance(raw_count, Mapping) and raw_count.get("kind") == OPPONENT_HAND_MILL_KIND
         try:
-            count = HalfQuantitySpec.from_dict(raw_count) if isinstance(raw_count, Mapping) else _count(effect)
+            if live_count:
+                count = OpponentHandMillCount.from_dict(raw_count, scope=effect.get("scope"))
+            elif isinstance(raw_count, Mapping):
+                count = HalfQuantitySpec.from_dict(raw_count)
+            else:
+                count = _count(effect)
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+        if ("players" in effect or effect.get("scope") == "controller_opponents") and not recipients:
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(), result_shape="by_player")
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)
         )

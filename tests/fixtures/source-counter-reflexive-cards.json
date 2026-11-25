@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120331",
+      "name": "Trial Reflexive Trail Watcher",
+      "type_line": "Creature — Scout",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "oracle_text": "Vigilance\nAt the beginning of combat on your turn, if you've cast a noncreature spell this turn, put a +1/+1 counter on this creature. When you do, this creature and up to one other target creature you control can't be blocked this turn.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120332",
+      "name": "Trial Refuge Creature",
+      "type_line": "Creature — Beast",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "oracle_text": "",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120333",
+      "name": "Trial Reflexive Remedy",
+      "type_line": "Instant",
+      "mana_cost": "{W}",
+      "cmc": 1,
+      "oracle_text": "You gain 1 life.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120334",
+      "name": "Trial Counter Impasse",
+      "type_line": "Enchantment",
+      "mana_cost": "{2}{W}",
+      "cmc": 3,
+      "oracle_text": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120335",
+      "name": "Trial Counter Amplifier",
+      "type_line": "Enchantment",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for counters and reflexive declaration."
+}

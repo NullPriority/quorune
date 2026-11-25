@@ -39,6 +39,8 @@ def separate_custom_display_text(
         or card.annotations.get("copy_overrides")
         or {}
     )
+    from .rules.copied_flip_faces import current_flip_copy_values
+    custom = current_flip_copy_values(card, custom)
     from .entry_copy import COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD
     for field in (COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD):
         if field in custom:
@@ -78,8 +80,10 @@ def custom_copyable_characteristics(card: CardInstance) -> dict[str, Any]:
 def copiable_card_characteristics(card, record, base):
     """Capture copiable values while keeping a derived original value separate."""
     from .card_program_faces import selected_face_id
+    from .rules.copied_flip_faces import current_flip_copy_values
     result = dict(base)
-    result.update(copy.deepcopy(dict(card.annotations.get('copy_overrides') or {})))
+    overrides = current_flip_copy_values(card, card.annotations.get("copy_overrides") or {})
+    result.update(copy.deepcopy(dict(overrides)))
     if DEFINED_TOKEN_FACES_FIELD in result or DEFINED_TOKEN_IDENTITY_FIELD in card.annotations:
         result = defined_token_copiable_characteristics(card, result)
     if record is not None and record.faces:
@@ -174,6 +178,11 @@ def public_revealed_library_rules_names(card: CardInstance, record: CardRecord |
     """Read typed outside-stack names only for an already authorized library reveal."""
     if card.zone != 'library' or record is None:
         raise ValueError('Revealed library names require the original library card and record')
+    return library_card_rules_names(record)
+
+
+def library_card_rules_names(record: CardRecord) -> tuple[str, ...]:
+    """Read an outside-stack library card's typed rules names inside its owner."""
     if record.faces:
         if record.layout == 'split':return tuple(face['name'] for face in record.faces)
         return (record.faces[0]['name'],)

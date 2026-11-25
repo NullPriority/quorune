@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original conditional Vanishing copy fixtures.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956301",
+      "name": "Trial Perishable Echo",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{U}{U}",
+      "cmc": 2,
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it has vanishing 3 if that creature doesn't have vanishing.",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "power": "0",
+      "toughness": "0",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956302",
+      "name": "Trial Clockless Scout",
+      "type_line": "Creature — Dwarf Scout",
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "oracle_text": "Vigilance",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "power": "2",
+      "toughness": "3",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [
+        "Vigilance"
+      ],
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

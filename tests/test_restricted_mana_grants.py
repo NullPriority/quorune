@@ -234,7 +234,8 @@ class RestrictedManaGrantNativeTests(unittest.TestCase):
     def test_restriction_omission_mutant_is_killed_by_actual_forbidden_spending(self):
         import quorune.rules.activation.query as owner
         original=owner._typed_granted_abilities
-        def mutant(data):return tuple(replace(ability,mana_spend_restriction=None) for ability in original(data))
+        def mutant(host, data):
+            return tuple(replace(ability, mana_spend_restriction=None) for ability in original(host, data))
         with patch.object(owner,'_typed_granted_abilities',side_effect=mutant),self.assertRaises(AssertionError):
             self.test_actual_galazeth_retains_restricted_units_after_source_departure()
 

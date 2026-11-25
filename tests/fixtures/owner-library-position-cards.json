@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [],
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120361",
+      "name": "Trial Ordered Return",
+      "type_line": "Instant",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "oracle_text": "Target creature's owner puts it on their choice of the top or bottom of their library.",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000120362",
+      "name": "Trial Ordered Insight",
+      "type_line": "Instant",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "oracle_text": "Target nonland permanent's owner puts it on their choice of the top or bottom of their library. Surveil 1.",
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "source": "Original offline witness for a targeted library-position choice."
+}

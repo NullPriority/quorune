@@ -7,6 +7,7 @@ from ..random_discard import (
     RANDOM_DISCARD_OPERATION, RANDOM_DISCARD_CAPABILITY, RandomDiscardIntent, resolve_random_discard,
 )
 from .context import SemanticNodeError
+from ..discard_effect_origin import BOUND_DISCARD_EFFECT_ORIGIN, read_bound_discard_origin
 from .intents import IntentPlan, MoveObjectsSimultaneouslyIntent
 from ..zone_trigger_events import ZoneTransitionKind
 
@@ -21,7 +22,7 @@ class RandomDiscardHandler:
     capability_dependencies: tuple[str, ...] = (RANDOM_DISCARD_CAPABILITY,)
 
     def lower(self, effect, context):
-        if (set(effect) - {"op", "actor", "players", "count", "reason", "_replacement_selections"}
+        if (set(effect) - {"op", "actor", "players", "count", "reason", "_replacement_selections", BOUND_DISCARD_EFFECT_ORIGIN}
                 or not {"op", "actor", "players", "count"} <= set(effect)
                 or effect["op"] != self.operation or effect["actor"] != context.actor):
             raise SemanticNodeError("Random discard fields or actor are invalid")
@@ -42,6 +43,9 @@ class RandomDiscardHandler:
                 randomization_key=f"{context.source.stack_ref}|{context.source.instruction_pointer}",
                 reason=str(effect.get("reason") or context.default_reason),
                 replacement_selections=effect.get("_replacement_selections", ()),
+                effect_origin=read_bound_discard_origin(
+                    effect, stack_ref=context.source.stack_ref, controller=context.actor,
+                ),
             )
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -54,5 +58,6 @@ def execute_random_discard(sink, intent):
             actor=intent.actor, object_refs=refs, expected_zones=("hand",),
             destination="graveyard", reason=intent.reason, transition_kind=ZoneTransitionKind.DISCARD,
             replacement_selections=intent.replacement_selections,
+            discard_effect_origin=intent.effect_origin,
         ))
     return resolve_random_discard(sink, intent, commit_batch=commit)

@@ -6,6 +6,15 @@ from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from ..compiler.optional_effect_templates import OPTIONAL_EFFECT_OPERATION
+from ..rules.fixed_homogeneous_target_set_capability_shapes import (
+    OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION, validate_optional_graveyard_target_return,
+)
+from ..rules.hand_inspection import (
+    DEFENDING_HAND_OBSERVATION_VERSION_FIELD, is_defending_hand_observation,
+)
+from ..rules.optional_draw_discard import (
+    is_source_shared_type_draw_discard, validate_source_shared_type_draw_discard,
+)
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..linked_exile_return_model import validate_linked_instruction
 from ..library_search_model import FixedCountedLibrarySearchTemplate, is_counted_library_search
@@ -69,6 +78,13 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    if DEFENDING_HAND_OBSERVATION_VERSION_FIELD in effect:
+        defender = effect.get("target")
+        if defender not in query.seats or not is_defending_hand_observation(
+            effect, actor=actor, defender=defender,
+        ):
+            raise SemanticChoiceError("Optional hand observation requires its bound defending player")
+        return
     if operation == "move_if_in_zone":
         from ..event_card_return import is_event_library_move, validate_event_library_move
 
@@ -118,6 +134,17 @@ def _represented_effect(
         try:QualifiedLibrarySearchSpec.from_effect(effect)
         except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError("Optional qualified search is malformed") from exc
         return
+    if operation == "search":
+        from ..named_search_model import (
+            LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, decode_literal_library_search,
+        )
+
+        if effect.get("schema_version") in (LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION):
+            try:
+                decode_literal_library_search(effect)
+            except ValueError as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return
     if operation == "search" and is_counted_library_search(effect):
         try:
             FixedCountedLibrarySearchTemplate.from_effect(effect)
@@ -165,11 +192,14 @@ def _validated_effects(
     actor: str,
     query: SemanticChoiceQuery,
 ) -> tuple[str, tuple[FrozenMap, ...]]:
-    if not isinstance(effect, Mapping) or set(effect) != {
-        "op",
-        "player",
-        "effects",
-    }:
+    shared_source = is_source_shared_type_draw_discard(effect)
+    expected = {"op", "player", "effects"}
+    graveyard_return = (
+        isinstance(effect, Mapping) and effect.get("schema_version") == OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION
+    )
+    if shared_source or graveyard_return:
+        expected.add("schema_version")
+    if not isinstance(effect, Mapping) or set(effect) != expected:
         raise SemanticChoiceError("Optional effect fields are malformed")
     if effect.get("op") != OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effect operation is invalid")
@@ -183,6 +213,17 @@ def _validated_effects(
             "Optional effect must be issued to its active controller"
         )
     values = effect.get("effects")
+    if graveyard_return:
+        try:
+            validate_optional_graveyard_target_return(effect, player=player, resolved=True)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+    if shared_source:
+        try:
+            validate_source_shared_type_draw_discard(effect, actor=player)
+        except (ValueError, TypeError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return player, tuple(FrozenMap(value) for value in values)
     linked_pair = (
         isinstance(values, Sequence) and not isinstance(values, (str, bytes))
         and len(values) == 2 and all(isinstance(value, Mapping) for value in values)
@@ -220,6 +261,11 @@ def _validated_effects(
     return player, tuple(frozen)
 
 
+def _unavailable_defending_hand(effects, query):
+    return (len(effects) == 1 and DEFENDING_HAND_OBSERVATION_VERSION_FIELD in effects[0]
+            and effects[0]["target"] not in query.active_seats)
+
+
 @dataclass(frozen=True, slots=True)
 class OptionalEffectHandler:
     """Offer one choice before resuming ordinary typed effect resolution."""
@@ -236,7 +282,7 @@ class OptionalEffectHandler:
     capability_dependencies: tuple[str, ...] = (
         "effect.choice.optional_fixed",
     )
-    continuation_fields: tuple[str, ...] = ("player", "effects")
+    continuation_fields: tuple[str, ...] = ("player", "effects", "schema_version")
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
         "prompt",
@@ -261,6 +307,22 @@ class OptionalEffectHandler:
             actor=context.actor,
             query=context.query,
         )
+        shared_source = is_source_shared_type_draw_discard(effect)
+        if shared_source and not context.query.draw_permission(player).allows_complete_draw(effects[0]["count"]):
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("The player cannot legally choose that draw"),
+            )
+        if effect.get("schema_version") == OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION and not effects[0]["cards"]:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("The optional return has no announced card"),
+            )
+        if _unavailable_defending_hand(effects, context.query):
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("The defending player is no longer in the game"),
+            )
         if _prohibited_optional_library_search(effects,player,context.query):
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue(reason='The optional library search cannot be chosen'))
@@ -283,6 +345,7 @@ class OptionalEffectHandler:
                     "op": self.operation,
                     "player": player,
                     "effects": effects,
+                    **({"schema_version": effect["schema_version"]} if "schema_version" in effect else {}),
                 }
             ),
         )
@@ -306,7 +369,15 @@ class OptionalEffectHandler:
         choice = response.get("choice")
         if type(choice) is not str or choice not in {"apply", "decline"}:
             raise SemanticChoiceError("Choose apply or decline")
+        if choice == "apply" and _unavailable_defending_hand(effects, query):
+            raise SemanticChoiceError("The defending player is no longer in the game")
         if choice=='apply' and _prohibited_optional_library_search(effects,actor,query):raise SemanticChoiceError('The optional library search cannot be chosen')
+        if choice == "apply" and is_source_shared_type_draw_discard(continuation.effect):
+            count = effects[0]["count"]
+            if not query.draw_permission(actor).allows_complete_draw(count):
+                raise SemanticChoiceError("The player can no longer legally choose that draw")
+            if count == 0:
+                effects = effects[1:]
         return SemanticChoiceCompletion(
             prepend_effects=effects if choice == "apply" else ()
         )

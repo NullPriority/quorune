@@ -22,6 +22,21 @@ _PREFIXED_TOKEN = re.compile(
 )
 
 
+_CONTROLLER_TOKEN = re.compile(
+    r"For each (?P<subject>permanent|creature) destroyed this way, its controller creates "
+    r"(?P<token>a [^.]+? creature token(?: with [^.]+)?)\.$", re.I,
+)
+
+
+def _controller_token_followup(destruction, token, *, subject, target_schema):
+    if target_schema is not None:
+        raise ValueError("Controller token results require an untargeted mass destruction")
+    scope = AffectedPermanentSetSpec.from_dict(destruction["set"])
+    if (subject == "creature") != (scope.query.types_all == ("creature",)):
+        raise ValueError("Controller tokens require the same destroyed object kind")
+    return DestructionFollowup(scope, token, schema_version=2)
+
+
 def _literal_followup(text):
     if match := _TERMINAL_COUNT.search(text):
         return match, match["effect"] + "."
@@ -37,7 +52,8 @@ def destruction_followup_template(text, *, compile_literal):
     if not text.lstrip().casefold().startswith("destroy ") or "destroyed this way" not in text.casefold():
         return None
     normalized = text.strip()
-    literal = _literal_followup(normalized)
+    distributed = _CONTROLLER_TOKEN.search(normalized)
+    literal = (distributed, "Create " + distributed["token"] + ".") if distributed else _literal_followup(normalized)
     if literal is None:
         return None
     match, replacement = literal
@@ -50,16 +66,21 @@ def destruction_followup_template(text, *, compile_literal):
     card_type = subject.removeprefix("nontoken ").removesuffix(" you controlled that was")
     controller = PermanentControllerRelation.ACTOR if "you controlled" in subject else PermanentControllerRelation.ANY
     try:
-        followup = DestructionFollowup(
-            AffectedPermanentSetSpec(
-                ObjectQuerySpec(
-                    zones=("battlefield",), types_all=() if card_type == "permanent" else (card_type,),
-                    token=False if subject.startswith("nontoken ") else None,
+        if distributed:
+            followup = _controller_token_followup(
+                effects[0], effects[1], subject=subject, target_schema=target_schema,
+            )
+        else:
+            followup = DestructionFollowup(
+                AffectedPermanentSetSpec(
+                    ObjectQuerySpec(
+                        zones=("battlefield",), types_all=() if card_type == "permanent" else (card_type,),
+                        token=False if subject.startswith("nontoken ") else None,
+                    ),
+                    controller_relation=controller,
                 ),
-                controller_relation=controller,
-            ),
-            effects[1],
-        )
+                effects[1],
+            )
     except (TypeError, ValueError):
         return None
     markers = tuple(
@@ -67,7 +88,7 @@ def destruction_followup_template(text, *, compile_literal):
         if mechanic not in {"fixed-effect-clause-sequence", CLOSED_EFFECT_PROGRAM_MECHANIC, "bound-effect-program"}
     )
     return (
-        "destroy-fixed-set-result-v1",
+        f"destroy-fixed-set-result-v{followup.schema_version}",
         ({**effects[0], "followup": followup.to_dict()},),
         target_schema,
         (*markers, DESTRUCTION_RESULT_MECHANIC),

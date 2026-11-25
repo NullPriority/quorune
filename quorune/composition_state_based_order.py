@@ -7,32 +7,11 @@ from .composition_batch_order_model import CompositionStateBasedOrderContinuatio
 from .composition_departure_batch import prepare_composition_departure_batch
 from .errors import GameRuleError
 from .replacement.immutable import FrozenMap
-from .semantic_choices.model import OrderingChoice
+from .semantic_choices.physical_ordering import physical_order_payload as _payload, physical_order_response
 from .zone_trigger_events import ZoneTransitionKind
 
 _ORDERS=ContextVar('state_based_composition_orders',default=None)
 _PREPARED=ContextVar('prepared_state_based_composition_batch',default=None)
-
-
-def _schema(refs):
-    return OrderingChoice('cards',refs,visibility='actor_private',
-        schema_extras=FrozenMap({'type':'object_ref_array','shape':'ref_array','order':'bottom_to_top'})).choice_schema()
-
-
-def _payload(frame):
-    choice=frame.current_choice
-    if choice is None:raise GameRuleError('Physical departure ordering is already complete')
-    (actor,destination,_position),refs=choice
-    states={state['ref']:state for subject in frame.request.subjects for state in subject.physical_states}
-    def name(ref):
-        state=states[ref]
-        return ('Face-down component' if destination=='library' and state['face_down']
-            and actor not in (*state['known_to'],*state['revealed_to']) else state['printed_name'])
-    previous=[{'player':group[0],'destination':group[1],'cards':list(order)}
-        for (group,_refs),order in zip(frame.request.choices,frame.orders) if group[1]!='library']
-    return {'prompt':'Order the departing physical cards from bottom to top.',
-        'cards':[{'id':ref,'name':name(ref)} for ref in refs],'previous_orders':previous,
-        'legal_actions':[{'id':'order','action':'order','label':'Confirm physical order','choice_schema':_schema(refs)}]}
 
 
 def _issue(host,frame):
@@ -104,19 +83,8 @@ def _complete_state_based_composition_order(host,decision,frame):
     if (frame.state_based_frame!=FrozenMap(state_based_replacement_frame(host))
             or frame.request.apnap_order!=tuple(host.apnap_order())):
         raise GameRuleError('State-based physical inputs changed before completion')
-    choice=frame.current_choice
-    if choice is None:raise GameRuleError('Physical ordering is already complete')
-    (actor,_destination,_position),refs=choice
-    if (decision.kind!='permanent.composition_order' or decision.role!='pilot' or decision.actors!=[actor]
-            or actor not in host.active_seats or set(decision.responses)!={actor}
-            or FrozenMap(decision.payload_by_actor)!=FrozenMap({actor:_payload(frame)})):
-        raise GameRuleError('Physical ordering principal or issued payload changed')
-    response=decision.responses[actor]
-    if (set(response)-{'action','cards','choice_schema','label'} or response.get('action')!='order'
-            or 'label' in response and response['label']!='Confirm physical order'
-            or 'choice_schema' in response and FrozenMap(response['choice_schema'])!=FrozenMap(_schema(refs))):
-        raise GameRuleError('Physical order response differs from its issued schema')
-    try:updated=frame.with_order(response.get('cards'))
+    refs = physical_order_response(host, decision, frame)
+    try:updated=frame.with_order(refs)
     except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
     if updated.current_choice is not None:
         _issue(host,updated);return

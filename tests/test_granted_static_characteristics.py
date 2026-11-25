@@ -25,9 +25,23 @@ from quorune.oracle_ir import compile_oracle_card, register_generated_programs
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed, granted_characteristic_occurrences
+from quorune.semantics import SemanticRegistry
 from quorune.semantic_runtime.continuous_components import FixedQueryAbilityGrantHandler
 from quorune.static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY as CAPABILITY
-from scripts.build_test_database import build_fixture_database
+from scripts.build_test_database import _card_payload, build_fixture_database
+
+
+_CHOSEN_SUBTYPE_TEXT = (
+    "Creatures you control are the chosen type in addition to their other types. "
+    "The same is true for creature spells you control and creature cards you own that aren't on the battlefield."
+)
+
+
+def chosen_subtype_record():
+    return replace(query_record("As this enchantment enters, choose a creature type.\n" + _CHOSEN_SUBTYPE_TEXT),
+                   oracle_id="fixture:chosen-subtype-survey", name="Generic Subtype Survey",
+                   type_line="Enchantment", mana_cost="{U}", colors=("U",), color_identity=("U",),
+                   power=None, toughness=None)
 
 
 class GrantedStaticCharacteristicModelTests(unittest.TestCase):
@@ -62,7 +76,7 @@ class GrantedStaticCharacteristicModelTests(unittest.TestCase):
         self.assertEqual(('a-grant-first',), by_id[second.effect_id].depends_on)
         self.assertEqual((), by_id[printed.effect_id].depends_on)
         child = SimpleNamespace(key='child', provenance={'granted_only':True}, ability_id='static:granted:front:n4',
-            active_zone='battlefield', event='characteristics.evaluate', effects=(),
+            active_zone='battlefield', event='characteristics.evaluate', event_condition=None, effects=(),
             handlers=(attached_fixed_characteristics_handler('Equipped creature has flying.')[1],))
         semantics = SimpleNamespace(get=lambda key:child if key=='child' else None)
         source = CardInstance(object_id='equipment', ref='EQUIPMENT', oracle_id='fixture:equipment',
@@ -96,6 +110,67 @@ def replace_namespace(value, **changes):
 
 
 class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
+    def test_chosen_cross_zone_subtypes_require_exact_scope_and_source_designation(self):
+        from quorune.compiler.cross_zone_type_addition_templates import cross_zone_type_addition_handler
+        from quorune.rules.cross_zone_characteristics import prospective_cross_zone_spell_type_line
+        from quorune.characteristic_evaluation import type_parts
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.cross_zone_type_additions import CrossZoneChosenCreatureTypeHandler
+
+        _, descriptor, _ = cross_zone_type_addition_handler(_CHOSEN_SUBTYPE_TEXT)
+        handler = CrossZoneChosenCreatureTypeHandler()
+        context = SimpleNamespace(source_object_id="source", component_id="static", source_timestamp=1,
+                                  source_controller="A", source_designations={})
+        self.assertEqual((), handler.lower(descriptor, context))
+        for changed in ({"designation": "elf"}, {"requires_complete_card_program": False}, {"schema_version": True}):
+            with self.subTest(changed=changed), self.assertRaises(SemanticNodeError):
+                handler.validate({**descriptor, **changed})
+        with self.assertRaises(SemanticNodeError):
+            handler.lower(descriptor, replace_namespace(context, source_designations={"chosen_creature_type": "Elf"}))
+        for unsupported in (_CHOSEN_SUBTYPE_TEXT.replace("creature spells", "spells"),
+                            _CHOSEN_SUBTYPE_TEXT.replace("you own", "opponents own"),
+                            _CHOSEN_SUBTYPE_TEXT.replace(" in addition to their other types", "")):
+            self.assertIsNone(cross_zone_type_addition_handler(unsupported))
+
+        effects = handler.lower(descriptor, replace_namespace(context, source_designations={"chosen_creature_type": "time lord"}))
+        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace(), semantics=SemanticRegistry())
+        physical = CardInstance(object_id="body", ref="body", oracle_id="fixture:body", printed_name="Test Body",
+                                owner="A", controller="B", zone="stack")
+        copy = replace(physical, object_kind="spell_copy")
+        with patch("quorune.rules.cross_zone_characteristics._scoped_type_addition_effects", return_value=effects):
+            def chosen_subtypes(card, controller):
+                line = prospective_cross_zone_spell_type_line(host, card, controller, "Creature — Bear")
+                return type_parts(line)[1]
+
+            self.assertEqual({"bear", "time lord"}, chosen_subtypes(physical, "B"))
+            self.assertEqual({"bear"}, chosen_subtypes(copy, "B"))
+            self.assertEqual({"bear", "time lord"}, chosen_subtypes(copy, "A"))
+
+    def test_chosen_cross_zone_subtype_withdrawal_prevents_exact_binding(self):
+        from quorune.compiler import cross_zone_type_addition_templates
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.semantic_runtime.cross_zone_type_additions import CROSS_ZONE_CHOSEN_CREATURE_TYPE_CAPABILITY
+
+        source = chosen_subtype_record()
+        settings = {"capability_profile": "commander_review"}
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(source, capability_registry=registry, **settings)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = (node for node in ir.faces[0].nodes if CROSS_ZONE_CHOSEN_CREATURE_TYPE_CAPABILITY in node.capability_dependencies)
+        self.assertEqual(_CHOSEN_SUBTYPE_TEXT, source.oracle_text[node.span.start:node.span.end])
+        for disabled in (CROSS_ZONE_CHOSEN_CREATURE_TYPE_CAPABILITY, "continuous.characteristics.cross_zone_type_addition",
+                         "zone.entry.public_designation"):
+            with self.subTest(disabled=disabled):
+                registry_data = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+                row = next(row for row in registry_data["capabilities"] if row["id"] == disabled)
+                row.update(status="blocked", blockers=["dependency withdrawal witness"])
+                result = compile_oracle_card(source, capability_registry=CapabilityRegistry(registry_data), **settings)
+                self.assertNotEqual("exact", result.status)
+
+        with patch.object(cross_zone_type_addition_templates, "cross_zone_type_addition_handler", return_value=None):
+            result = compile_oracle_card(source, capability_registry=registry, **settings)
+        self.assertTrue(result.material_residuals)
+
     def test_cross_zone_type_addition_keeps_spell_and_owned_card_predicates_distinct(self):
         from quorune.compiler.cross_zone_type_addition_templates import cross_zone_type_addition_handler
         from quorune.semantic_runtime.context import SemanticNodeError
@@ -137,11 +212,11 @@ class GrantedStaticCharacteristicCompilerTests(unittest.TestCase):
         effects = handler.lower(descriptor, SimpleNamespace(
             source_object_id="cross-zone-source", component_id="static", source_timestamp=1, source_controller="A",
         ))
-        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace())
+        host = SimpleNamespace(_type_parts=type_parts, state=SimpleNamespace(), semantics=SemanticRegistry())
         physical = CardInstance(object_id="creature", ref="creature", oracle_id="test:creature",
             printed_name="Test Creature", owner="A", controller="B", zone="stack")
         copied = replace(physical, object_kind="spell_copy")
-        with patch("quorune.rules.cross_zone_characteristics._cross_zone_type_effects", return_value=effects):
+        with patch("quorune.rules.cross_zone_characteristics._scoped_type_addition_effects", return_value=effects):
             def spell_types(card, controller):
                 text = prospective_cross_zone_spell_type_line(host, card, controller, "Creature — Bear")
                 return type_parts(text)[0]
@@ -265,8 +340,12 @@ class GrantedStaticCharacteristicNativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'static-characteristic-grants.sqlite3'
+        composition = Path(cls.temporary.name) / "chosen-subtype-cards.json"
+        composition.write_text(json.dumps({"schema_version": 1, "rulings": [],
+            "cards": [_card_payload(chosen_subtype_record())]}), encoding="utf-8")
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/granted-static-characteristic-cards.json'],path)
+            ROOT/'tests/fixtures/granted-static-characteristic-cards.json',
+            ROOT/'tests/fixtures/recipient-control-cards.json', composition], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Granted static characteristics',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
@@ -317,6 +396,68 @@ class GrantedStaticCharacteristicNativeTests(unittest.TestCase):
     def card_types(self, session, card):
         current = session.state.cards[card.object_id]
         return session.engine._type_parts(session.engine._effective_card_data(current)["type_line"])[0]
+
+    def test_chosen_cross_zone_subtypes_follow_control_and_replay_without_revealing_hands(self):
+        from quorune.rules.cross_zone_characteristics import prospective_cross_zone_spell_type_line
+
+        session = self.session(613_611_961)
+        source = self.add(session.engine, "Generic Subtype Survey", zone="hand")
+        own = self.add(session.engine, "Grizzly Bears", zone="hand", ref="subtype-private-a")
+        other = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand", ref="subtype-private-b")
+        library = self.add(session.engine, "Grizzly Bears", zone="library", ref="subtype-library")
+        land = self.add(session.engine, "Generic Bound Plains", zone="hand", ref="subtype-land")
+        donate = self.add(session.engine, "Donate", zone="hand")
+        remove = self.add(session.engine, "Naturalize", zone="hand")
+        for card in (source, donate, remove):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 5, "U": 2, "G": 2})
+        self.checkpoint(session)
+
+        def subtypes(card):
+            current = session.state.cards[card.object_id]
+            data = session.engine._effective_card_data(current)
+            return session.engine._type_parts(data["type_line"])[1]
+
+        self.assertEqual({"bear"}, subtypes(own))
+        self.cast_for(session, "A", source)
+        self.assertEqual("replacement.order", self.resolve(session).kind)
+        chooser = session.packet("pilot:A", full=True)["decision"]
+        option = next(row["id"] for row in chooser["ctx"]["options"] if row["id"].endswith(":elf"))
+        command = {"action_id": "choose", "choices": {"replacement": option}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        chosen = session.act("pilot:A", command)
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"bear", "elf"}, subtypes(own))
+        self.assertEqual({"bear", "elf"}, subtypes(library))
+        self.assertEqual({"bear"}, subtypes(other))
+        self.assertEqual({"plains"}, subtypes(land))
+        for viewer, secret in (("B", own), ("A", other), ("C", own), ("D", other)):
+            self.assertNotIn(secret.ref, json.dumps(session.packet("pilot:" + viewer, full=True)))
+
+        prospective = prospective_cross_zone_spell_type_line(session.engine, other, "A", "Creature — Bear")
+        self.assertEqual({"bear", "elf"}, session.engine._type_parts(prospective)[1])
+        self.cast_for(session, "A", own)
+        self.assertEqual("stack", session.state.cards[own.object_id].zone)
+        self.assertEqual({"bear", "elf"}, subtypes(own))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[own.object_id].zone)
+        self.assertEqual({"bear", "elf"}, subtypes(own))
+
+        self.cast_for(session, "A", donate, ["B", session.state.cards[source.object_id].ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("B", session.state.cards[source.object_id].controller)
+        self.assertEqual("elf", session.state.cards[source.object_id].annotations["chosen_creature_type"])
+        self.assertEqual({"bear"}, subtypes(own))
+        self.assertEqual({"bear"}, subtypes(library))
+        self.assertEqual({"bear", "elf"}, subtypes(other))
+        self.cast_for(session, "A", remove, [session.state.cards[source.object_id].ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({"bear"}, subtypes(other))
+        self.replay(session, load=True)
 
     def test_original_biotransference_changes_stack_target_and_cast_event_without_revealing_hand(self):
         session = self.session(613_611_951)

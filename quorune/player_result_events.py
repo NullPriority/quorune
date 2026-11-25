@@ -3,7 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol, Sequence
 
-from .life_change import FIRST_LIFE_GAIN_EVENT, LifeChangeRecord, first_life_gain_runtime_dependencies
+from .life_change import (
+    FIRST_LIFE_GAIN_EVENT, LIFE_LOSS_CAPABILITY, LIFE_LOSS_EVENT, LifeChangeRecord,
+    first_life_gain_runtime_dependencies,
+)
 from .model import StackItem
 from .replacement.immutable import FrozenMap
 from .trigger_processing import enqueue_trigger_batch
@@ -32,6 +35,12 @@ class PlayerResultEventHost(Protocol):
         importance: int = 1,
         changed_players: Sequence[str] = (),
     ) -> None: ...
+
+
+class LifeLossResult(Protocol):
+    player: str | None
+    direction: str | None
+    amount: int
 
 
 class LifelinkGainResult(Protocol):
@@ -129,6 +138,62 @@ class LifeGainEvent:
 
     def semantic_context(self) -> FrozenMap:
         return FrozenMap({"player": self.player, "amount": self.amount})
+
+
+@dataclass(frozen=True, slots=True)
+class LifeLossEvent:
+    """Public fields of one positive committed loss before netting gains."""
+
+    player: str
+    amount: int
+
+    def __post_init__(self) -> None:
+        if type(self.player) is not str or not self.player or self.player != self.player.strip():
+            raise PlayerResultEventError("Life-loss events require their original player")
+        if type(self.amount) is not int or self.amount <= 0:
+            raise PlayerResultEventError("Life-loss events require a positive committed loss")
+
+    def semantic_context(self) -> FrozenMap:
+        return FrozenMap({"player": self.player, "amount": self.amount})
+
+
+def dispatch_life_loss_events(
+    host: PlayerResultEventHost,
+    events: Sequence[LifeLossEvent],
+    *,
+    trigger_batch: list[StackItem] | None = None,
+    sources: Sequence[Any] | None = None,
+    source_zones: Mapping[str, str] | None = None,
+) -> None:
+    if not events:
+        return
+    indexed_programs = getattr(getattr(host, "semantics", None), "programs_for_event", None)
+    if not callable(indexed_programs) or not any(
+        LIFE_LOSS_CAPABILITY in program.capability_dependencies
+        for program in indexed_programs(LIFE_LOSS_EVENT)
+    ):
+        return
+    owns_batch = trigger_batch is None
+    pending = [] if owns_batch else trigger_batch
+    for event in events:
+        host._dispatch_semantic_event(LIFE_LOSS_EVENT, event.semantic_context(),
+            sources=sources, source_zones=source_zones, trigger_batch=pending)
+    if owns_batch:
+        enqueue_trigger_batch(host, pending)
+
+
+def dispatch_life_loss_records(
+    host: PlayerResultEventHost,
+    records: Sequence[LifeLossResult],
+    *,
+    trigger_batch: list[StackItem] | None = None,
+    sources: Sequence[Any] | None = None,
+    source_zones: Mapping[str, str] | None = None,
+) -> None:
+    events = tuple(LifeLossEvent(record.player, record.amount) for record in records
+                   if record.direction == "loss" and record.amount > 0 and record.player is not None)
+    dispatch_life_loss_events(host, events, trigger_batch=trigger_batch,
+        sources=sources, source_zones=source_zones)
 
 
 def player_result_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:

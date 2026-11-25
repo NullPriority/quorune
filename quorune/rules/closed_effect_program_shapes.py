@@ -187,6 +187,10 @@ def _ordered_body_runtime_dependencies(program, schema):
 
 def closed_effect_program_runtime_dependencies(program):
     """Keep the persisted ordered-program kind bound to its mutation owner."""
+    from .prepared_creature_power_damage_shapes import untapped_controller_damage_runtime_dependencies
+
+    if prepared_damage := untapped_controller_damage_runtime_dependencies(program):
+        return prepared_damage
     if any('optional_target_result' in effect for effect in program.effects):
         from .optional_target_results import optional_target_result_runtime_dependencies
         return optional_target_result_runtime_dependencies(program)
@@ -224,7 +228,20 @@ def closed_effect_program_runtime_dependencies(program):
             required.update(owned)
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
         return tuple(sorted({*required,*modal_owned}))
-    if any(has_target_controller_recipient(effect) for effect in program.effects):
+    from ..public_zone_moves import OWNER_LIBRARY_POSITION_OPERATION
+
+    if any(effect.get("op") != OWNER_LIBRARY_POSITION_OPERATION
+           and has_target_controller_recipient(effect) for effect in program.effects):
+        from .optional_source_damage import OPTIONAL_SOURCE_DAMAGE_FIELD, optional_source_damage_runtime_dependencies
+
+        if (
+            len(program.effects) == 1
+            and OPTIONAL_SOURCE_DAMAGE_FIELD in program.effects[0]
+            and CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage
+            and program.provenance.get("template_id") != CLOSED_EFFECT_PROGRAM_TEMPLATE_ID
+        ):
+            return optional_source_damage_runtime_dependencies(program)
+
         from ..compiler.public_query_effect_amounts import public_query_amount_shape_context
 
         projected = public_query_amount_shape_context(program.effects, set(program.coverage), target_schema=schema)

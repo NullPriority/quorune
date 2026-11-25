@@ -18,8 +18,22 @@ from ..ability_fragments import (
     ability_fragment_to_dict,
 )
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .dependency_gate import dependency_gate, explicit_capability_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
+
+
+def has_printed_commander_permission(text: str, *, source_name: str) -> bool:
+    """Recognize a complete pregame permission for the printed source."""
+    normalized = " ".join(text.split()).casefold()
+    subject, separator, trailing = normalized.rpartition(" can be your commander.")
+    if not separator or trailing:
+        return False
+    return (
+        subject == "this card"
+        or source_self_permanent_type(subject) == "planeswalker"
+        or SourceReferenceSpec(source_name).matches(subject)
+    )
 
 
 def commander_pairing_keyword_node(

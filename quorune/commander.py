@@ -250,7 +250,8 @@ def initial_commander_state(
     for seat in all_seats:
         deck = decks[seat]
         commander_remaining = validated_commander_counts(
-            card_db, semantics, deck
+            card_db, semantics, deck,
+            strict_profile=config.review_profile if config.semantic_policy == "trusted_only" else None,
         )
         commander_ordinal = 0
         serial = 0
@@ -327,7 +328,8 @@ def initial_commander_state(
             graveyard_type_history_version=1,spell_mana_history_version=1,crime_history_version=1,
             committed_occurrence_history_version=1, damage_life_history_version=1,
             permanent_death_history_version=1, death_name_history_version=1, public_movement_history_version=1,
-            first_life_gain_history_version=1, venture_history_version=1),
+            first_life_gain_history_version=1, venture_history_version=1,
+            plus_one_counter_placement_history_version=1),
         active_player=None,
         phase="setup",
         step="mulligan",

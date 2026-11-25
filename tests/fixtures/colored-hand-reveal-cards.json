@@ -1476,7 +1476,9 @@
       "released_at": "2011-09-30",
       "toughness": null,
       "type_line": "Artifact"
-    }
+    },
+    {"oracle_id":"00000000-0000-4000-8000-001221001111","name":"Generic Red Assayer","mana_cost":"{2}{R}","cmc":3.0,"colors":["R"],"color_identity":["R"],"oracle_text":"{2}{R}, {T}: Reveal any number of red cards in your hand. This creature deals X damage to any target, where X is the number of cards revealed this way.","type_line":"Creature — Scout","power":"2","toughness":"3","keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"00000000-0000-4000-8000-001221001112","name":"Generic Green Assayer","mana_cost":"{2}{G}","cmc":3.0,"colors":["G"],"color_identity":["G"],"oracle_text":"{2}{G}, {T}: Reveal any number of green cards in your hand. Target creature gets +X/+X until end of turn, where X is the number of cards revealed this way.","type_line":"Creature — Scout","power":"2","toughness":"3","keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [

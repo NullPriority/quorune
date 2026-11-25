@@ -16,6 +16,55 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("A fixed target requirement can be satisfied in either selected role", () => {
+  const groups = [
+    { id: "first", min: 1, max: 1, legal_refs: ["flag", "A"] },
+    { id: "second", min: 1, max: 1, legal_refs: ["flag", "B"] },
+  ];
+  const requirement = { kind: "flagbearer", legal_refs: ["flag"] };
+  const selectors = [
+    { groups, target_choice_requirement: requirement },
+    { min_modes: 1, max_modes: 1, legal_modes: ["required"], mode_schemas: {
+      required: { groups, target_choice_requirement: requirement },
+    } },
+  ];
+  for (const schema of selectors) {
+    const action = form([{ name: "targets", control: "targets", schema }]);
+    const modes = schema.mode_schemas ? ["required"] : [];
+    assert.deepEqual(validateChoices(action, { modes, targets: { first: ["A"], second: ["flag"] } }), []);
+    assert.match(validateChoices(action, {
+      modes, targets: { first: ["A"], second: ["B"], unused: ["flag"] },
+    }).join(), /Choose at least one Flagbearer/);
+  }
+});
+
+test("A target requirement uses the chosen count and the complete set of modes", () => {
+  const targets = (id: string, min: number, max: number) => ({ id, min, max, legal_refs: ["flag", "A", "B"] });
+  const requirement = { kind: "flagbearer", legal_refs: ["flag"], when_target_counts: [{ first: [1, 2] }] };
+  const direct = form([{ name: "targets", control: "targets", schema: {
+    groups: [targets("first", 0, 2)], target_choice_requirement: requirement,
+  } }]);
+  assert.deepEqual(validateChoices(direct, { targets: { first: [] } }), []);
+  assert.deepEqual(validateChoices(direct, { targets: { first: ["flag", "B"] } }), []);
+  assert.match(validateChoices(direct, { targets: { first: ["A", "B"] } }).join(), /Choose at least one Flagbearer/);
+
+  const modal = form([{ name: "targets", control: "targets", schema: {
+    min_modes: 2, max_modes: 2, legal_modes: ["one", "two", "three"],
+    mode_schemas: {
+      one: { groups: [targets("first", 0, 2)] },
+      two: { groups: [targets("second", 1, 1)] },
+      three: { groups: [targets("third", 1, 1)] },
+    },
+    combined_target_choice_requirements: [{ ...requirement, modes: ["one", "two"] }],
+  } }]);
+  assert.deepEqual(validateChoices(modal, { modes: ["two", "one"], targets: { first: [], second: ["A"] } }), []);
+  assert.deepEqual(validateChoices(modal, { modes: ["two", "one"], targets: { first: ["A"], second: ["flag"] } }), []);
+  assert.deepEqual(validateChoices(modal, { modes: ["one", "three"], targets: { first: ["A"], third: ["B"] } }), []);
+  assert.match(validateChoices(modal, {
+    modes: ["one", "two"], targets: { first: ["A"], second: ["B"], third: ["flag"] },
+  }).join(), /Choose at least one Flagbearer/);
+});
+
 test("Exact pool payment submits only bounded quantities from offered mana classes", () => {
   const payment = form([{
     name: "mana_pool_payment", control: "mana_pool_payment", required: false,
@@ -126,6 +175,22 @@ test("Declared X updates exact and up-to target groups without limiting paid X",
     const target = activeFields(choices, { x: 9, targets: [] })[1];
     assert.equal((target.schema as { groups: { max: number }[] }).groups[0].max, 9);
   }
+});
+
+test("Declared X uses the server's minimum and maximum for each target", () => {
+  const choices = form([
+    { name: "x", control: "integer", minimum: 0, maximum: 4 },
+    { name: "targets", control: "targets", schema: {
+      groups: [{ id: "target", min: 1, max: 1, legal_refs: ["LOW", "HIGH"] }],
+      x_bounds_by_ref: { LOW: { minimum: 0, maximum: 2 }, HIGH: { minimum: 3, maximum: 4 } },
+    } },
+  ]);
+  assert.deepEqual(validateChoices(choices, { x: 0, targets: { target: ["LOW"] } }), []);
+  assert.deepEqual(validateChoices(choices, { x: 3, targets: { target: ["HIGH"] } }), []);
+  assert.ok(validateChoices(choices, { x: 1, targets: { target: ["HIGH"] } }).length);
+  assert.ok(validateChoices(choices, { x: 3, targets: { target: ["LOW"] } }).length);
+  const schema = activeFields(choices, { x: 3 })[1].schema as { groups: { legal_refs: string[] }[] };
+  assert.deepEqual(schema.groups[0].legal_refs, ["HIGH"]);
 });
 
 test("Declared X updates the exact graveyard payment count", () => {

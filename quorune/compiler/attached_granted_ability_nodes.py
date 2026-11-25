@@ -522,8 +522,16 @@ def compile_fixed_query_granted_ability_nodes(
     trigger_effect_template: Any,
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, OracleNode] | None:
-    """Compile a typed quoted ability granted to one closed live query."""
+    """Compile a typed ability granted to one closed live query."""
 
+    from .graveyard_unearth_grants import compile_graveyard_unearth_nodes
+    graveyard = compile_graveyard_unearth_nodes(
+        record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line,
+        span=span, capability_registry=capability_registry, capability_profile=capability_profile,
+        residuals=residuals,
+    )
+    if graveyard is not None:
+        return graveyard
     from .granted_keyword_activation_nodes import compile_granted_keyword_activation_nodes
     activation_grant = compile_granted_keyword_activation_nodes(record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
@@ -662,12 +670,22 @@ def compile_early_material_nodes(
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
     from .deck_copy_limits import DECK_COPY_LIMIT_PREFIX, printed_deck_copy_limit_node
-    from .commander_cast_copy_nodes import cast_source_copy_node
-    cast_copy = cast_source_copy_node(node_id=node_id,line=line,material_line=material_line,
-        printed_card_types=printed_card_types,span=span,capability_registry=capability_registry,
-        capability_profile=capability_profile,residuals=residuals)
-    if cast_copy is not None:
-        return (cast_copy,)
+    from .cycle_or_discard_bindings import cycle_and_death_trigger_nodes
+
+    cycle_death = cycle_and_death_trigger_nodes(
+        node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        printed_card_types=printed_card_types, effect_template=effect_template, trigger_node=trigger_node,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile,
+    )
+    if cycle_death is not None:
+        return cycle_death
+    from .persistent_self_copy_trigger import copy_trigger_node
+    copy_trigger = copy_trigger_node(node_id=node_id, line=line, material_line=material_line,
+        printed_card_types=printed_card_types, source_name=source_name, span=span,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if copy_trigger is not None:
+        return (copy_trigger,)
     if material_line.casefold().startswith(DECK_COPY_LIMIT_PREFIX):
         deck_limit = printed_deck_copy_limit_node(record=record, node_id=node_id, line=line,
             material_line=material_line, span=span, capability_registry=capability_registry,

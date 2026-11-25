@@ -96,10 +96,15 @@ class FixedPublicStateConditionKind(StrEnum):
 class FixedPublicStateFact(StrEnum):
     OPPONENT_HAS_GREATER_METRIC = 'opponent_has_greater_metric'
     UNIQUE_PLAYER_MAXIMUM = 'unique_player_maximum'
+    CONTROLS_A_GREATEST_POWER_CREATURE = "controls_a_greatest_power_creature"
+    CONTROLS_EACH_GREATEST_POWER_CREATURE = "controls_each_greatest_power_creature"
+    CURRENT_COMBAT_AFTER_BLOCKERS = "current_combat_after_blockers"
+    CURRENT_DECLARE_BLOCKERS_STEP = "current_declare_blockers_step"
     CONTROLLER_COMPLETED_A_DUNGEON = "controller_completed_a_dungeon"
     CONTROLLER_HAS_NOT_COMPLETED_NAMED_DUNGEON = "controller_has_not_completed_named_dungeon"
     CONTROLLER_HAS_THE_INITIATIVE = "controller_has_the_initiative"
     SOURCE_RENOWNED = 'source_renowned'
+    SOURCE_PAID_IMPENDING_WITH_TIME_COUNTER = "source_paid_impending_with_time_counter"
     CONTROLLER_LANDS_ENTERED_THIS_TURN='controller_lands_entered_this_turn'
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
     OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
@@ -151,6 +156,39 @@ class FixedPublicStateFact(StrEnum):
     )
     SOURCE_ATTACKED_THIS_TURN = "source_attacked_this_turn"
     SOURCE_ATTACKED_BATTLE_THIS_TURN = "source_attacked_battle_this_turn"
+
+
+BLOCK_DECLARATION_TIMING_FACTS = frozenset({
+    FixedPublicStateFact.CURRENT_COMBAT_AFTER_BLOCKERS,
+    FixedPublicStateFact.CURRENT_DECLARE_BLOCKERS_STEP,
+})
+
+
+def block_declaration_timing_condition(*, declare_blockers_only: bool) -> "FixedPublicStateConditionSpec":
+    fact = (FixedPublicStateFact.CURRENT_DECLARE_BLOCKERS_STEP if declare_blockers_only
+            else FixedPublicStateFact.CURRENT_COMBAT_AFTER_BLOCKERS)
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=1, fact=fact, schema_version=4,
+    )
+
+
+GREATEST_CREATURE_POWER_FACTS = frozenset({
+    FixedPublicStateFact.CONTROLS_A_GREATEST_POWER_CREATURE,
+    FixedPublicStateFact.CONTROLS_EACH_GREATEST_POWER_CREATURE,
+})
+
+
+def greatest_creature_power_condition_dependencies(value: Any) -> tuple[str, ...]:
+    if not isinstance(value, Mapping) or not isinstance(value.get("fact"), str):
+        return ()
+    if value["fact"] not in GREATEST_CREATURE_POWER_FACTS:
+        return ()
+    FixedPublicStateConditionSpec.from_dict(value)
+    from .public_characteristic_aggregate_model import (
+        PUBLIC_POWER_THRESHOLD_CAPABILITY, PUBLIC_STAT_AGGREGATE_CAPABILITY,
+    )
+
+    return (PUBLIC_POWER_THRESHOLD_CAPABILITY, PUBLIC_STAT_AGGREGATE_CAPABILITY)
 
 
 @dataclass(frozen=True, slots=True)
@@ -302,6 +340,14 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
+    if fact in BLOCK_DECLARATION_TIMING_FACTS:
+        if schema_version != 4 or amount != 1 or parameter is not None:
+            raise FixedPublicStateConditionError("Block declaration timing requires its exact boolean window")
+        return
+    if fact in GREATEST_CREATURE_POWER_FACTS:
+        if schema_version != 4 or amount != 1 or parameter is not None:
+            raise FixedPublicStateConditionError("Greatest creature power requires one closed controller comparison")
+        return
     if fact in {FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM,FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC}:
         from .player_maximum_model import validate_player_maximum_fact
         validate_player_maximum_fact(schema_version=schema_version,amount=amount,parameter=parameter)
@@ -323,6 +369,9 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
+    if fact is FixedPublicStateFact.SOURCE_PAID_IMPENDING_WITH_TIME_COUNTER and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError("Impending requires one current source payment and time-counter fact")
     if fact is FixedPublicStateFact.CONTROLLER_TOKENS_CREATED_THIS_TURN and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError("Token creation requires one current-turn boolean")

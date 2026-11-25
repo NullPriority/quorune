@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 """Closed capability shapes for destruction and regeneration effects."""
 
 from typing import Any, Iterable, Mapping, Sequence
@@ -8,6 +7,9 @@ from typing import Any, Iterable, Mapping, Sequence
 from ..affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
+    KICKED_ENTRY_DESTRUCTION_CAPABILITIES,
+    KICKED_ENTRY_DESTRUCTION_FIELD,
+    KickedEntryDestructionSpec,
     PermanentControllerRelation as AffectedControllerRelation,
 )
 from ..attachment_references import (
@@ -39,7 +41,15 @@ def targeted_destruction_node_capabilities(
 ) -> tuple[str, ...]:
     """Return capabilities only for the closed direct destruction grammar."""
 
+    from .aura_attachment_targets import aura_attachment_destruction_dependencies
+
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    try:
+        attached = aura_attachment_destruction_dependencies(effects, target_schema)
+    except ValueError:
+        return ()
+    if attached:
+        return attached if {"destroy", "cr-115-targets"}.issubset(mechanics) and "regeneration-prohibition" not in mechanics else ()
     if target_schema is None and len(effects)==1 and set(effects[0])=={'op','card'} and effects[0].get('op')=='destroy' and 'destroy' in mechanics and 'cr-115-targets' not in mechanics and isinstance(effects[0].get('card'),Mapping):
         try:AttachmentReferenceSpec.from_dict(effects[0]['card'])
         except (TypeError,ValueError):return ()
@@ -134,6 +144,38 @@ def self_regeneration_node_capabilities(
     )
 
 
+def kicked_entry_destruction_runtime_dependencies(program) -> tuple[str, ...]:
+    from .effect_shape_walkers import nested_effects
+
+    values = (*program.effects, *getattr(program, "handlers", ()))
+    if not any(KICKED_ENTRY_DESTRUCTION_FIELD in effect for effect in nested_effects(values)):
+        return ()
+    if ((program.event, program.active_zone) != ("permanent.enter.self", "battlefield")
+            or program.event_condition is not None or program.target_schema is not None
+            or len(program.effects) != 1 or getattr(program, "handlers", ())):
+        raise ValueError("Kicked entry destruction requires one complete unconditional self-entry trigger")
+    KickedEntryDestructionSpec.from_effect(program.effects[0])
+    return KICKED_ENTRY_DESTRUCTION_CAPABILITIES
+
+
+def _relative_power_destruction_capabilities(effect, target_schema, mechanics):
+    from .qualified_destruction import (
+        TARGET_RELATIVE_POWER_DESTRUCTION_DEPENDENCIES, relative_power_destruction_instruction,
+    )
+    from ..replacement.immutable import thaw_value
+
+    if "cr-115-targets" not in mechanics:
+        return ()
+    try:
+        spec = relative_power_destruction_instruction(effect)
+    except (TypeError, ValueError):
+        return ()
+    target = thaw_value(target_schema)
+    if target != spec.target_schema() or type(target["count"]) is not int:
+        return ()
+    return TARGET_RELATIVE_POWER_DESTRUCTION_DEPENDENCIES
+
+
 def mass_destruction_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -149,14 +191,48 @@ def mass_destruction_node_capabilities(
     ):
         return ()
     effect = effects[0]
-    from .destruction_result_model import DESTRUCTION_RESULT_MECHANIC, DestructionFollowup
+    if KICKED_ENTRY_DESTRUCTION_FIELD in effect:
+        if target_schema is not None or "fixed-kicked-entry-trigger" not in mechanics:
+            return ()
+        try:
+            KickedEntryDestructionSpec.from_effect(effect)
+        except (ValueError, TypeError):
+            return ()
+        return KICKED_ENTRY_DESTRUCTION_CAPABILITIES
+    from .qualified_destruction import (
+        SOURCE_INCARNATION_EXCLUSION_FIELD, is_relative_power_destruction_set, source_incarnation_excluding_destruction,
+    )
+    if is_relative_power_destruction_set(effect.get("set")):
+        return _relative_power_destruction_capabilities(effect, target_schema, mechanics)
+    if SOURCE_INCARNATION_EXCLUSION_FIELD in effect:
+        if target_schema is not None or "cr-115-targets" in mechanics:
+            return ()
+        try:
+            source_incarnation_excluding_destruction(effect)
+        except (TypeError, ValueError):
+            return ()
+        return ("permanent.destroy.fixed_set",)
+
+    from .destruction_result_model import (
+        CREATURE_TYPE_DESTRUCTION_DEPENDENCIES, CREATURE_TYPE_DESTRUCTION_FIELD,
+        ChosenCreatureTypeDestruction, DESTRUCTION_RESULT_MECHANIC, DestructionFollowup,
+    )
+
+    if CREATURE_TYPE_DESTRUCTION_FIELD in effect:
+        if target_schema is not None or mechanics.intersection({"cr-115-targets", "regeneration-prohibition"}):
+            return ()
+        try:
+            ChosenCreatureTypeDestruction.from_effect(effect)
+        except (TypeError, ValueError):
+            return ()
+        return CREATURE_TYPE_DESTRUCTION_DEPENDENCIES
 
     has_followup = "followup" in effect
     if has_followup != (DESTRUCTION_RESULT_MECHANIC in mechanics):
         return ()
     try:
         result_caps = (
-            DestructionFollowup.from_dict(effect["followup"]).capability_dependencies if has_followup else ()
+            DestructionFollowup.from_destruction_effect(effect).capability_dependencies if has_followup else ()
         )
     except (TypeError, ValueError):
         return ()

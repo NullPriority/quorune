@@ -15,6 +15,8 @@ def source_modifier_quantity(text):
     text=' '.join(text.strip().rstrip('.').split())
     if text.casefold()=='your life total':
         return CharacteristicQuantitySpec(Scope.CONTROLLER_LIFE_TOTAL,schema_version=4)
+    if text.casefold() == "opponent whose life total is less than half their starting life total":
+        return CharacteristicQuantitySpec(Scope.OPPONENTS_BELOW_HALF_STARTING_LIFE, schema_version=4)
     if re.fullmatch(r'poison counters? your opponents have',text,re.I):
         return CharacteristicQuantitySpec(Scope.OPPONENT_POISON_COUNTERS,schema_version=4)
     if re.fullmatch(r'Auras? and Equipment attached to (?:it|this creature)',text,re.I):

@@ -139,6 +139,21 @@ class TriggerProcessingOwner:
         ):
             trigger.active = False
             return False
+        from .rules.extra_turn_shapes import SCHEDULED_EXTRA_TURN_END_STEP_LOSS, extra_turn_end_step_loss_trigger_turn
+
+        if SCHEDULED_EXTRA_TURN_END_STEP_LOSS in trigger.condition:
+            try:
+                turn_id = extra_turn_end_step_loss_trigger_turn(trigger)
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            current = self.state.current_turn
+            if current is None or current.turn_id != turn_id:
+                if not any(entry.turn_id == turn_id for entry in self.state.extra_turns):
+                    trigger.active = False
+                return False
+            return (current.extra and current.player == trigger.controller
+                    and (context.get("phase"), context.get("step"), context.get("player"))
+                    == ("ending", "end_step", trigger.controller))
         if event_kind == "spell.cast":
             from .event_spell_copy_model import NEXT_CAST_COPY_FIELD
             from .rules.event_spell_copy import next_cast_copy_matches
@@ -416,6 +431,39 @@ def replace_pending_trigger_batch(host, index: int, batch: PendingTriggerBatch) 
     host.state.pending_trigger_batches[index] = batch
 
 
+
+def pin_trigger_context_entry(host, field, capture):
+    """Save one typed observation on committed and pending trigger occurrences."""
+    stack_updates = []
+    for item in host.state.stack:
+        if field in item.context:
+            value = capture(item.context)
+            if value is not None:
+                stack_updates.append((item, value))
+
+    pending_updates = []
+    for index, batch in enumerate(host.state.pending_trigger_batches):
+        if not any(field in item.event_facts for item in batch.items):
+            continue
+        payload = batch.to_dict()
+        changed = False
+        for group in payload["groups"]:
+            for item in group["items"]:
+                context = item["context"]
+                if field in context:
+                    value = capture(context)
+                    if value is not None:
+                        context[field] = value
+                        changed = True
+        if changed:
+            pending_updates.append((index, PendingTriggerBatch.from_dict(payload)))
+
+    for item, value in stack_updates:
+        item.context[field] = value
+    for index, batch in pending_updates:
+        replace_pending_trigger_batch(host, index, batch)
+
+
 def pin_upkeep_hand_at_departure(host, departing: Sequence[str]) -> None:
     """Seal public hand counts on the affected upkeep occurrences before zone cleanup."""
     from .scheduled_player import UPKEEP_HAND_COUNT_CAPABILITY, upkeep_hand_departure_context
@@ -456,10 +504,27 @@ def pin_upkeep_hand_at_departure(host, departing: Sequence[str]) -> None:
         replace_pending_trigger_batch(host, index, batch)
 
 
+
+def pin_zone_departure_trigger_facts(host, cards: Sequence[CardInstance], *, error_type=StateInvariantError):
+    """Retain the observed public trigger facts before their subjects leave."""
+    from .rules.event_counter_threshold import pin_event_counter_threshold_departures
+    from .rules.evolve_entrant import pin_evolve_entrant_departures
+    from .rules.trigger_source_information import pin_untapped_damage_source_departures
+
+    pin_event_counter_threshold_departures(host, cards, error_type=error_type)
+    pin_evolve_entrant_departures(host, cards, error_type=error_type)
+    pin_untapped_damage_source_departures(host, cards, error_type=error_type)
+
+
 def pin_player_departure_trigger_facts(host, departing: Sequence[str]) -> None:
     from .rules.event_counter_threshold import pin_event_counter_threshold_departures
 
+    from .rules.trigger_source_information import pin_untapped_damage_source_departures
+
     pin_upkeep_hand_at_departure(host, departing)
+    pin_untapped_damage_source_departures(host, (
+        card for card in host.state.cards.values() if card.owner in departing
+    ), error_type=StateInvariantError)
     pin_event_counter_threshold_departures(host, (
         card for card in host.state.cards.values()
         if card.owner in departing and card.zone == "battlefield" and card.face_down

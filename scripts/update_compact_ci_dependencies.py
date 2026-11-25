@@ -12,6 +12,7 @@ from quorune.util import stable_json
 from scripts.compact_ci_report import (
     COMPACT_CI_REPORT_PATH,
     build_dependency_report,
+    dependency_report_json,
     report_markdown,
 )
 
@@ -28,7 +29,7 @@ def render() -> dict[Path, str]:
             "scripts/build_test_database.py validate-ci-dependencies for details"
         )
     return {
-        JSON_OUTPUT: stable_json(report) + "\n",
+        JSON_OUTPUT: dependency_report_json(report),
         MARKDOWN_OUTPUT: report_markdown(report),
     }
 

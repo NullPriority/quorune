@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original fixtures for legendary snow copy entries.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956201",
+      "name": "Trial Frost Echo",
+      "type_line": "Legendary Snow Creature — Shapeshifter",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "oracle_text": "Changeling\nYou may have this creature enter as a copy of a permanent you control, except it's legendary and snow in addition to its other types and, if it's a creature, it enters with two additional +1/+1 counters on it and has changeling.",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [
+        "Changeling"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "0",
+      "toughness": "0"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956202",
+      "name": "Trial Vale Surveyor",
+      "type_line": "Creature — Human Scout",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "oracle_text": "Vigilance",
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [
+        "Vigilance"
+      ],
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "3"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956203",
+      "name": "Trial Snow Meadow",
+      "type_line": "Basic Snow Land — Forest",
+      "mana_cost": "",
+      "cmc": 0,
+      "oracle_text": "",
+      "color_identity": [],
+      "colors": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000956204",
+      "name": "Trial Second Echo",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "0",
+      "toughness": "0"
+    }
+  ],
+  "rulings": []
+}

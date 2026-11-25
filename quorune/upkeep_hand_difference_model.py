@@ -1,4 +1,4 @@
-"""Two fixed public hand-size differences, owned by the scalar result boundary."""
+"""Closed public upkeep hand-size quantities for the scalar result boundary."""
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
@@ -19,12 +19,16 @@ class UpkeepHandDifferenceSpec:
     schema_version: int=1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version!=1
-                or not isinstance(self.direction,HandDifferenceDirection) or type(self.constant) is not int
-                or (self.direction,self.constant) not in {
-                    (HandDifferenceDirection.HAND_MINUS_CONSTANT,4),
-                    (HandDifferenceDirection.CONSTANT_MINUS_HAND,3)}):
-            raise ValueError('Upkeep hand difference requires one closed version-one subtraction')
+        if (type(self.schema_version) is not int or not isinstance(self.direction, HandDifferenceDirection)
+                or type(self.constant) is not int):
+            raise ValueError("Upkeep hand amount requires its typed arithmetic and version")
+        allowed = {
+            1: {(HandDifferenceDirection.HAND_MINUS_CONSTANT, 4),
+                (HandDifferenceDirection.CONSTANT_MINUS_HAND, 3)},
+            2: {(HandDifferenceDirection.HAND_MINUS_CONSTANT, 0)},
+        }
+        if (self.direction, self.constant) not in allowed.get(self.schema_version, ()):
+            raise ValueError("Upkeep hand amount is outside its closed subtraction or direct-count version")
 
     def to_dict(self):
         return {'schema_version':self.schema_version,'direction':self.direction.value,'constant':self.constant}

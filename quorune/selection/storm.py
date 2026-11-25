@@ -98,6 +98,7 @@ class StormTargetChoiceOwnerMixin:
             self, item.controller, target_schema, list(template.get("modes") or []),
             list(template.get("targets") or []), dict(template.get("target_groups") or {}),
             item.ref, acting_source=spell_copy_targeting_source(self,template),
+            original_snapshots=template.get("target_snapshots"),
         )
         copies = [
             {

@@ -42,6 +42,39 @@ _NEXT_PLAYER_UNTAP = re.compile(
 )
 
 
+COMBAT_PREVENTION_ATTACKERS_UNTAP_TEMPLATE = "combat-prevention-current-attackers-next-untap-v1"
+_COMBAT_PREVENTION_CLAUSE = "Prevent all combat damage that would be dealt this turn."
+_ATTACKERS_UNTAP_CLAUSE = "Each attacking creature doesn't untap during its controller's next untap step."
+
+
+def fixed_combat_prevention_attackers_untap_template(text: str):
+    normalized = " ".join(text.replace("’", "'").split()).casefold()
+    if normalized != f"{_COMBAT_PREVENTION_CLAUSE} {_ATTACKERS_UNTAP_CLAUSE}".casefold():
+        return None
+    from .prevention_templates import fixed_prevention_effect_template
+    from ..tap_state import attacking_creatures_next_untap_effect
+
+    _, fog, _, mechanics = fixed_prevention_effect_template(_COMBAT_PREVENTION_CLAUSE)
+    return (COMBAT_PREVENTION_ATTACKERS_UNTAP_TEMPLATE,
+            (*fog, attacking_creatures_next_untap_effect()), None, (*mechanics, "tap-and-untap"))
+
+
+def target_combat_prevention_two_untaps_template(text: str):
+    normalized = " ".join(text.replace("’", "'").split()).casefold()
+    if normalized != (
+        "tap target creature. prevent all combat damage that would be dealt by that creature this turn. "
+        "it doesn't untap during its controller's next two untap steps."
+    ):
+        return None
+    from ..rules.prevention_component_shapes import targeted_outgoing_combat_shield
+    from ..tap_state import two_controller_untaps_effect
+
+    target_schema = direct_permanent_target_spec("target creature").to_target_schema()
+    return ("target-combat-prevention-two-untaps-v1",
+            ({"op": "tap", "card": "$target.0"}, targeted_outgoing_combat_shield(), two_controller_untaps_effect()),
+            target_schema, ("cr-615-prevention-effects", "cr-115-targets", "tap-and-untap"))
+
+
 def next_player_untap_effect_template(text: str):
     match = _NEXT_PLAYER_UNTAP.fullmatch(" ".join(text.strip().split()))
     if match is None:

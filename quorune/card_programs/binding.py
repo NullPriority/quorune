@@ -10,6 +10,7 @@ from ..semantic_runtime import (
 )
 from ..util import stable_json
 from .runtime_requirements import program_dynamic_runtime_requirements
+from ..semantic_runtime.effect_handlers import effect_descriptor_capability_dependencies
 from ..semantic_runtime.activated_abilities import (
     is_structural_activated_ability_catalog_program,
     activated_abilities_from_descriptors,
@@ -18,6 +19,34 @@ from ..semantic_runtime.activated_abilities import (
 
 def _hash(value: Any) -> str:
     return hashlib.sha256(stable_json(value).encode("utf-8")).hexdigest()
+
+
+def _semantic_program_requirements(program):
+    from ..rules.announced_mana_value_target import (
+        announced_mana_value_capability, has_announced_mana_value_limit, project_announced_target_program,
+    )
+
+    from ..rules.entry_x_graveyard_target import (
+        ENTRY_X_GRAVEYARD_REQUIREMENTS, has_entry_x_target_limit, project_entry_x_graveyard_target_program,
+    )
+
+    if has_entry_x_target_limit(program.target_schema):
+        capabilities = ENTRY_X_GRAVEYARD_REQUIREMENTS
+        project = project_entry_x_graveyard_target_program
+        label = "entry_x_mana_value_target"
+    elif has_announced_mana_value_limit(program.target_schema):
+        capabilities = (announced_mana_value_capability(program.target_schema),)
+        project = project_announced_target_program
+        label = "announced_mana_value_target"
+    else:
+        return program_dynamic_runtime_requirements(program)
+    try:
+        projected = project(program)
+    except (TypeError, ValueError, KeyError) as exc:
+        return set(capabilities), {f"runtime_{label}:invalid:{exc}"}
+    required, blockers = program_dynamic_runtime_requirements(projected)
+    required.update(capabilities)
+    return required, blockers
 
 
 def bind_semantic_program_runtime(
@@ -34,10 +63,15 @@ def bind_semantic_program_runtime(
     }
     semantic_identities: list[dict[str, Any]] = []
     component_identities: list[dict[str, Any]] = []
-    required,blockers=program_dynamic_runtime_requirements(program)
+    required,blockers=_semantic_program_requirements(program)
     from ..activation_x import source_discard_activation_x_program_dependencies
     try:required.update(source_discard_activation_x_program_dependencies(program))
     except (TypeError,ValueError) as exc:blockers.add(f'runtime_hand_activation_x:invalid:{exc}')
+    from ..colored_hand_reveal_model import variable_colored_reveal_program_dependencies
+    try:
+        required.update(variable_colored_reveal_program_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f"runtime_variable_colored_reveal:invalid:{exc}")
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
         from ..rules.trigger_limits import validate_program_trigger_limit,trigger_limit_capabilities
@@ -75,7 +109,7 @@ def bind_semantic_program_runtime(
             unregistered_operations.add(operation)
             continue
         semantic_identities.append(descriptor)
-        required.update(descriptor["capability_dependencies"])
+        required.update(effect_descriptor_capability_dependencies(effect, descriptor))
     for descriptor in program.handlers:
         handler_id = str(descriptor.get("handler_id") or "")
         registered = component_handlers.get(handler_id)

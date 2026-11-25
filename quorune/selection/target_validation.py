@@ -7,7 +7,8 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
 from ..replacement.immutable import FrozenMap
-from ..targets import TargetPlan
+from ..target_forms import SharedPermanentTypeScope
+from ..targets import TargetGroup, TargetPlan
 
 
 def _cost_representatives(host, plan, candidates, eligible_sets, required, extra_targets):
@@ -17,11 +18,13 @@ def _cost_representatives(host, plan, candidates, eligible_sets, required, extra
     controller_matters = bool(plan.same_player_groups) or any(group.distinct_controllers for group in plan.groups)
     signatures = {}
     for ref in dict.fromkeys(ref for refs in candidates.values() for ref in refs):
-        snapshot = host._target_snapshot(ref) if owner_matters or controller_matters else {}
+        pair = plan.shared_permanent_type_pair
+        snapshot = host._target_snapshot(ref) if owner_matters or controller_matters or pair is not None else {}
         signatures[ref] = (tuple(ref in values for values in eligible_sets),
             tuple(ref in candidates[group.group_id] for group in plan.groups),
             snapshot.get('owner') if owner_matters else None,
-            snapshot.get('controller') if controller_matters else None)
+            snapshot.get('controller') if controller_matters else None,
+            _permanent_type_profile(snapshot, pair.scope) if pair is not None else None)
     result = {}
     for group in plan.groups:
         buckets = {}
@@ -37,7 +40,7 @@ def _cost_representatives(host, plan, candidates, eligible_sets, required, extra
 def target_assignment_witnesses(host, plan, candidates, *, required=None,
                                 extra_targets=0, eligible_sets=None):
     """Canonical cardinality/relation witnesses shared by target-aware prices."""
-    from itertools import combinations, combinations_with_replacement, product
+    from itertools import combinations, combinations_with_replacement
     if eligible_sets is not None:
         candidates = _cost_representatives(host, plan, candidates, eligible_sets, required, extra_targets)
     choices = []
@@ -47,15 +50,161 @@ def target_assignment_witnesses(host, plan, candidates, *, required=None,
         minimum = max(group.min_targets, 1 if required is not None and required[0] == group.group_id else 0)
         maximum = min(group.max_targets, len(refs) if choose is combinations else group.max_targets,
                       minimum + extra_targets)
-        choices.append(tuple(value for count in range(minimum, maximum + 1) for value in choose(refs, count)
-            if required is None or required[0] != group.group_id or required[1] in value))
-    for values in product(*choices):
+        required_ref = required[1] if required is not None and required[0] == group.group_id else None
+        choices.append((choose, refs, range(minimum, maximum + 1), required_ref))
+
+    def assignments(index):
+        if index == len(choices):
+            yield ()
+            return
+        choose, refs, counts, required_ref = choices[index]
+        for count in counts:
+            for current in choose(refs, count):
+                if required_ref is not None and required_ref not in current:
+                    continue
+                for rest in assignments(index + 1):
+                    yield (current, *rest)
+
+    for values in assignments(0):
         grouped = {group.group_id: list(refs) for group, refs in zip(plan.groups, values)}
         try:
             targets = validate_grouped_target_assignment(host, plan, grouped, candidates)
         except (ValueError, GameRuleError):
             continue
         yield tuple(targets), grouped
+
+
+def target_assignment_can_include(
+    host: TargetSnapshotQuery,
+    plan: TargetPlan,
+    candidates: Mapping[str, Sequence[str]],
+    counts: Mapping[str, int],
+    eligible: frozenset[str],
+) -> bool:
+    """Test membership in a complete legal tuple of the announced cardinalities."""
+    if set(counts) != {group.group_id for group in plan.groups} or any(
+        type(counts[group.group_id]) is not int
+        or not group.min_targets <= counts[group.group_id] <= group.max_targets
+        for group in plan.groups
+    ):
+        raise ValueError("Target requirements need the chosen count for each group")
+    if not eligible or not any(counts.values()):
+        return False
+    exact_plan = replace(plan, groups=tuple(
+        replace(group, min_targets=counts[group.group_id], max_targets=counts[group.group_id])
+        for group in plan.groups
+    ))
+    for group in exact_plan.groups:
+        if group.min_targets == 0:
+            continue
+        refs = candidates[group.group_id]
+        for ref in refs:
+            if ref not in eligible:
+                continue
+            prioritized = {**candidates, group.group_id: (ref, *(other for other in refs if other != ref))}
+            witness = next(target_assignment_witnesses(
+                host, exact_plan, prioritized, required=(group.group_id, ref),
+                eligible_sets=(eligible,),
+            ), None)
+            if witness is not None:
+                return True
+    return False
+
+
+def target_assignment_meets_requirement(
+    host: TargetSnapshotQuery,
+    plan: TargetPlan,
+    candidates: Mapping[str, Sequence[str]],
+    grouped: Mapping[str, Sequence[str]],
+    required_refs: frozenset[str],
+) -> bool:
+    """Apply one must-choose-if-able requirement to a legal announced tuple."""
+    if not required_refs or any(required_refs.intersection(refs) for refs in grouped.values()):
+        return True
+    return not target_assignment_can_include(
+        host, plan, candidates, {group: len(refs) for group, refs in grouped.items()}, required_refs,
+    )
+
+
+def single_choice_required_target_candidates(
+    plan: TargetPlan, candidates: Mapping[str, Sequence[str]], required_refs: frozenset[str],
+) -> Mapping[str, Sequence[str]]:
+    """Filter an offer whose entire target selection contains at most one object."""
+    if not required_refs or len(plan.groups) != 1:
+        return candidates
+    group, = plan.groups
+    if group.max_targets != 1 or plan.same_player_groups or plan.shared_permanent_type_pair is not None:
+        return candidates
+    required = [ref for ref in candidates[group.group_id] if ref in required_refs]
+    return {group.group_id: required} if required else candidates
+
+
+def _offered_group_maximum(group: TargetGroup, refs: Sequence[str]) -> int:
+    if not refs:
+        return 0
+    if group.distinct and not group.allow_reuse:
+        return min(group.max_targets, len(refs))
+    return group.max_targets
+
+
+def _independent_requirement_counts(host, plan, candidates, required_refs):
+    """Project one range per group without expanding independent count choices."""
+    conditions = []
+    for group in plan.groups:
+        group_id = group.group_id
+        refs = candidates[group_id]
+        if required_refs.isdisjoint(refs):
+            continue
+        minimum = max(1, group.min_targets)
+        maximum = _offered_group_maximum(group, refs)
+        if group.same_owner or group.distinct_controllers:
+            # A legal tuple that includes the required object witnesses each
+            # smaller positive count by keeping that object.
+            local_plan = replace(plan, groups=(group,))
+            low, high = minimum, maximum
+            while low <= high:
+                count = (low + high) // 2
+                if target_assignment_can_include(host, local_plan, {group_id: refs}, {group_id: count}, required_refs):
+                    low = count + 1
+                else:
+                    high = count - 1
+            maximum = high
+        if maximum >= minimum:
+            conditions.append({group_id: [minimum, maximum]})
+    return conditions
+
+
+def target_choice_requirement(
+    host: TargetSnapshotQuery, plan: TargetPlan, candidates: Mapping[str, Sequence[str]],
+    required_refs: frozenset[str],
+) -> dict[str, Any] | None:
+    """Project the requirement using the selected target plan and legal candidate pool."""
+    if not required_refs:
+        return None
+    refs = required_refs.intersection(ref for row in candidates.values() for ref in row)
+    if not refs:
+        return None
+    requirement = {"kind": "flagbearer", "legal_refs": sorted(refs)}
+    variable = tuple(group for group in plan.groups if group.min_targets != group.max_targets)
+    fixed_counts = {group.group_id: group.min_targets for group in plan.groups if group not in variable}
+    if not variable:
+        return requirement if target_assignment_can_include(host, plan, candidates, fixed_counts, refs) else None
+    coupled = (plan.globally_distinct and len(plan.groups) > 1 or plan.same_player_groups
+               or plan.shared_permanent_type_pair is not None
+               or any(group.different_from_groups for group in plan.groups))
+    if not coupled:
+        conditions = _independent_requirement_counts(host, plan, candidates, refs)
+    else:
+        from itertools import product
+
+        ranges = [range(group.min_targets, _offered_group_maximum(group, candidates[group.group_id]) + 1)
+                  for group in variable]
+        conditions = []
+        for selected in product(*ranges):
+            counts = dict(zip((group.group_id for group in variable), selected, strict=True))
+            if target_assignment_can_include(host, plan, candidates, {**fixed_counts, **counts}, refs):
+                conditions.append({group: [count, count] for group, count in counts.items()})
+    return {**requirement, "when_target_counts": conditions} if conditions else None
 
 
 def public_target_schema_for_witnesses(schema, witnesses):
@@ -70,6 +219,11 @@ def public_target_schema_for_witnesses(schema, witnesses):
             group['legal_refs'] = [ref for ref in group['legal_refs'] if ref in allowed.get(group['id'], ())]
         if 'legal_refs' in value:
             value['legal_refs'] = [ref for ref in value['legal_refs'] if any(ref in refs for refs in allowed.values())]
+        requirement = value.get("target_choice_requirement")
+        if requirement is not None:
+            requirement["legal_refs"] = [
+                ref for ref in requirement["legal_refs"] if any(ref in refs for refs in allowed.values())
+            ]
     if 'mode_schemas' in result:
         for mode, value in result['mode_schemas'].items():
             filter_groups(value, [w for w in witnesses if mode in w['modes']])
@@ -137,6 +291,73 @@ class CopyTargetValidation:
         return replace(plan, groups=tuple(groups))
 
 
+def _permanent_type_profile(snapshot, scope):
+    from ..characteristic_evaluation import type_parts
+
+    type_line = snapshot.get("type_line")
+    if snapshot.get("category") != "permanent" or type(type_line) is not str:
+        return frozenset()
+    return scope.types.intersection(type_parts(type_line)[0])
+
+
+def shared_permanent_type_pair_matches(host, pair, left, right):
+    left_types = _permanent_type_profile(host._target_snapshot(left), pair.scope)
+    right_types = _permanent_type_profile(host._target_snapshot(right), pair.scope)
+    return bool(left_types & right_types)
+
+
+def shared_type_pair_candidates(host, pair, candidates):
+    """Expose only references with a distinct, type-compatible partner."""
+    left, right = candidates[pair.left], candidates[pair.right]
+    profiles = {ref: _permanent_type_profile(host._target_snapshot(ref), pair.scope)
+                for ref in dict.fromkeys((*left, *right))}
+    matched_left, matched_right = set(), set()
+    for left_ref in left:
+        for right_ref in right:
+            if left_ref != right_ref and profiles[left_ref] & profiles[right_ref]:
+                matched_left.add(left_ref)
+                matched_right.add(right_ref)
+    return {
+        pair.left: [ref for ref in left if ref in matched_left],
+        pair.right: [ref for ref in right if ref in matched_right],
+    }
+
+
+def shared_type_pair_resolution_rejections(host, pair, grouped):
+    if pair is None:
+        return ()
+    left = next(iter(grouped.get(pair.left, ())), None)
+    right = next(iter(grouped.get(pair.right, ())), None)
+    if right is None:
+        return ()
+    if pair.scope is SharedPermanentTypeScope.ARTIFACT_OR_CREATURE:
+        if left is None or not shared_permanent_type_pair_matches(host, pair, left, right):
+            return ((pair.right, right),)
+    elif left is not None and not shared_permanent_type_pair_matches(host, pair, left, right):
+        return ((pair.left, left), (pair.right, right))
+    return ()
+
+
+def _validate_shared_type_pair_assignment(host, pair, grouped, copy_targets):
+    if pair is None:
+        return
+    left, = grouped[pair.left]
+    right, = grouped[pair.right]
+    selected = ((pair.left, left), (pair.right, right))
+    if copy_targets is not None:
+        from .target_query import target_identity_matches_snapshot
+
+        retained = tuple((group, ref) for group, ref in selected
+                         if ref in copy_targets.retained_groups.get(group, ()))
+        if len(retained) == len(selected):
+            return
+        for _group, ref in retained:
+            if not target_identity_matches_snapshot(host, ref, copy_targets.retained_snapshots[ref]):
+                raise GameRuleError("A retained permanent's current shared type is unavailable")
+    if not shared_permanent_type_pair_matches(host, pair, left, right):
+        raise GameRuleError("Selected permanents must share a required card type")
+
+
 def validate_grouped_target_assignment(
     host: TargetSnapshotQuery,
     plan: TargetPlan,
@@ -202,4 +423,5 @@ def validate_grouped_target_assignment(
         if any(controller(left_ref) != controller(right_ref)
                for left_ref in left for right_ref in right):
             raise GameRuleError("Related targets must belong to the same player")
+    _validate_shared_type_pair_assignment(host, plan.shared_permanent_type_pair, grouped, copy_targets)
     return [ref for group in plan.groups for ref in grouped[group.group_id]]

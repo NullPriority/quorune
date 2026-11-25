@@ -277,6 +277,7 @@ class OneShotExileCastChoiceOwnerMixin:
                     item.controller,
                     target_specification,
                     acting_source=spell_targeting_source(self,prospective_cast_card(self,card,transformed_face)), source_ref=card.ref,
+                    announcing_targets=True,
                 )
                 if public_target_schema is None:
                     continue
@@ -432,6 +433,7 @@ class OneShotExileCastChoiceOwnerMixin:
                         actor,
                         target_specification,
                         acting_source=spell_targeting_source(self,prospective_cast_card(self,card,face_name)), source_ref=card.ref,
+                        announcing_targets=True,
                     )
                     if public_target_schema is None:
                         continue

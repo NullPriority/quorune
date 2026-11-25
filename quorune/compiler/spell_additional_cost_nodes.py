@@ -13,6 +13,7 @@ from .ir_model import (
     append_residual,
 )
 from .spell_additional_cost_templates import (
+    FixedZoneChangeAdditionalCostTemplate,
     fixed_alternative_additional_cost_template, announced_x_additional_cost_template,
     fixed_counter_additional_cost_template,
     fixed_tap_additional_cost_template,
@@ -23,6 +24,8 @@ from .spell_additional_cost_templates import (
 from ..rules.capabilities import CapabilityRegistry
 from .paid_sacrifice_amount_templates import paid_sacrifice_amount_template
 from .paid_sacrifice_condition_templates import paid_sacrifice_condition_template
+from .colored_hand_credit_template import colored_hand_credit_template
+from .mandatory_selected_zone_costs import fixed_discard_sacrifice_template
 from .waterbend_costs import fixed_waterbend_additional_cost_template
 from .random_discard_spell_costs import fixed_random_discard_spell_cost_template
 
@@ -274,6 +277,19 @@ def _additional_cost_result_node(
     )
 
 
+def _damage_qualified_sacrifice_spell_cost(text: str) -> FixedZoneChangeAdditionalCostTemplate | None:
+    from ..rules.casting_additional_costs import (
+        DAMAGE_QUALIFIED_SACRIFICE_VERSION, SACRIFICE_ONE_COST, damage_qualified_sacrifice_predicate,
+    )
+
+    normalized = " ".join(text.split()).casefold()
+    if normalized != "as an additional cost to cast this spell, sacrifice a creature that dealt damage this turn.":
+        return None
+    return FixedZoneChangeAdditionalCostTemplate(
+        SACRIFICE_ONE_COST, damage_qualified_sacrifice_predicate(), schema_version=DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+    )
+
+
 def typed_additional_cost_spell_node(
     *,
     node_id: str,
@@ -285,12 +301,17 @@ def typed_additional_cost_spell_node(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
-    """Compile or fail closed one represented mandatory additional cost."""
+    """Compile or fail closed one represented additional cost."""
 
     if not rows:
         return None
     first_clause = rows[0][1].strip()
-    cost = fixed_random_discard_spell_cost_template(first_clause) or announced_x_additional_cost_template(first_clause) or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
+    cost = (
+        _damage_qualified_sacrifice_spell_cost(first_clause)
+        or colored_hand_credit_template(first_clause) or fixed_discard_sacrifice_template(first_clause)
+        or fixed_random_discard_spell_cost_template(first_clause) or announced_x_additional_cost_template(first_clause)
+        or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
+    )
     cost_mechanics = ()
     if cost is None:
         cost=fixed_counter_additional_cost_template(first_clause)

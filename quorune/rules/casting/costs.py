@@ -23,6 +23,7 @@ from ...compiled_cast_costs import (
     compiled_delve_specs,
     compiled_evoke_specs,
     compiled_improvise_specs,
+    compiled_impending_specs,
 )
 from ...compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
@@ -35,6 +36,7 @@ from .replicate_costs import with_replicate_cost_schema
 from .base_cost_options import _flashback_base_options, _zone_cast_base_options
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
 from .disturb_costs import disturb_back_cast_permission,disturb_base_options
+from ...impending_model import IMPENDING_CAST_OPTION, IMPENDING_MECHANIC, IMPENDING_PRICE_FIELD
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
 from .mutate_costs import with_mutate_cost_schema
 from ...convoke import (
@@ -75,6 +77,8 @@ from .static_modifiers import (
     fixed_generic_reduction as _static_generic_reduction,
 )
 from .targeted_costs import target_cost_for_x_preview
+from .affordable_x import _maximum_affordable_x_with_mechanics
+from .colored_hand_credit import (HAND_CREDIT_AMOUNT, bind_hand_credit, bind_hand_credit_choice, hand_credit_reserved_ids)
 
 
 class CastCostHost(Protocol):
@@ -312,6 +316,21 @@ def _with_evoke_cost(
     return result
 
 
+def _with_impending_cost(host, record, program, schema, *, suppress_source_costs):
+    alternate_costs = list(schema.get("alternate_costs", ()))
+    if any(
+        option.get("id") == IMPENDING_CAST_OPTION or IMPENDING_PRICE_FIELD in option
+        for option in alternate_costs
+    ):
+        return None
+    if suppress_source_costs or IMPENDING_MECHANIC not in {value.casefold() for value in record.keywords}:
+        return schema
+    specs = compiled_impending_specs(host, record.oracle_id, spell_program=program)
+    if len(specs) != 1:
+        return None
+    return {**schema, "alternate_costs": [*alternate_costs, specs[0].cast_cost_option()]}
+
+
 def _cast_schema_and_mechanics(
     host: CastCostHost,
     seat: str,
@@ -361,6 +380,11 @@ def _cast_schema_and_mechanics(
         card,
         schema,
         suppress_source_costs=suppress_source_costs,
+    )
+    if schema is None:
+        return None
+    schema = _with_impending_cost(
+        host, record, program, schema, suppress_source_costs=suppress_source_costs,
     )
     if schema is None:
         return None
@@ -528,7 +552,7 @@ def _initial_options(
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
     from .option_expansion import expand_optional_resource_costs
     expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
-        mechanics=mechanics, mandatory=mandatory, cast_type_line=cast_type_line)
+        mechanics=mechanics, mandatory=mandatory, cast_type_line=cast_type_line, declared_schema=program.cost_schema if program else None)
     from .aftermath import with_aftermath_stack_context
     from .assist_costs import ASSIST_OPTION_FIELD
     if schema.get("compiled_assist") is True:
@@ -559,7 +583,7 @@ def _apply_static_reductions(
             card,
             cast_type_line=cast_type_line,
             face_down_method=face_down_method,
-        ),
+        ) + option.get(HAND_CREDIT_AMOUNT, 0),
         cast_type_line=cast_type_line,
         face_down_method=face_down_method,
     )
@@ -1088,69 +1112,6 @@ def _apply_payment_mechanics(
     return choice_schema, selected_cards
 
 
-def _maximum_affordable_x_with_mechanics(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    program: Any,
-    mechanics: Sequence[Mapping[str, Any]],
-    *,
-    spend_context: Any,
-    minimum: int = 0,
-    limit: int = 100,
-    reserved_cards: Sequence[Any] = (),
-    targeted_cost: Mapping[str, Any] | None = None,
-) -> int:
-    maximum = -1
-    for value in range(minimum, limit + 1):
-        printed, _ = host._compiled_printed_cost_options(
-            seat,
-            card,
-            x_value=value,
-            hint=False,
-        )
-        value_payable = False
-        for raw_option in printed:
-            option = copy.deepcopy(raw_option)
-            option["requirements"] = host._mana_vector(option["requirements"])
-            if targeted_cost is not None:
-                option['targeted_cost'] = targeted_cost
-                from .targeted_costs import apply_target_cost_increase
-                apply_target_cost_increase(option)
-            _apply_static_reductions(
-                host,
-                seat,
-                card,
-                option,
-                program=program,
-            )
-            payment = _apply_payment_mechanics(
-                host,
-                seat,
-                option,
-                mechanics,
-                {},
-                hint=True,
-                spend_context=spend_context,
-                reserved_cards=reserved_cards,
-            )
-            if payment is None:
-                continue
-            _, selected = payment
-            if host._cost_is_affordable(
-                seat,
-                option["requirements"],
-                exclude_sources={source.object_id for source in selected},
-                spend_context=spend_context,
-                **cast_snow_payment_kwargs(option),
-            ):
-                value_payable = True
-                break
-        if not value_payable:
-            break
-        maximum = value
-    return maximum
-
 
 
 def _apply_additional_costs(
@@ -1334,6 +1295,8 @@ def _finalize_option(
     option["base_requirements"] = host._mana_vector(option["requirements"])
     from .targeted_costs import apply_target_cost_increase
     apply_target_cost_increase(option)
+    if not bind_hand_credit(host, seat, card, option, getattr(program, 'cost_schema', None), response, hint=hint):
+        return None
     _apply_static_reductions(
         host,
         seat,
@@ -1371,13 +1334,14 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     if payment is None:
         return None
     choice_schema, selected_cards = payment
+    bind_hand_credit_choice(choice_schema, option)
     if tap_choice_schema is not None:choice_schema.update(tap_choice_schema)
     from .conspire_costs import conspire_payment_cards
     selected_cards = conspire_payment_cards(host, seat, card, option, selected_cards)
     if selected_cards is None:
         return None
     from .assist_costs import ASSIST_OPTION_FIELD, select_assist_cost
-    excluded = {payment_card.object_id for payment_card in selected_cards}
+    excluded = {payment_card.object_id for payment_card in selected_cards} | hand_credit_reserved_ids(option)
     if option.get(ASSIST_OPTION_FIELD) == 1:
         if not select_assist_cost(host, seat, option, response, hint=hint, choice_schema=choice_schema,
                                   spend_context=spend_context, exclude_sources=excluded):
@@ -1397,6 +1361,8 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         return None
     elif has_x and x_value_policy is None:
         minimum_x = option.get('library_top_minimum_x', 0)
+        from .affordable_x import quoted_printed_x_price
+        quoted_price = quoted_printed_x_price(host, card, option, response) if hint else None
         maximum = _maximum_affordable_x_with_mechanics(
             host,
             seat,
@@ -1406,7 +1372,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             spend_context=spend_context,
             minimum=minimum_x,
             reserved_cards=reserved_cards,
-            targeted_cost=target_cost_for_x_preview(option),
+            targeted_cost=target_cost_for_x_preview(option), generic_credit=option.get(HAND_CREDIT_AMOUNT, 0),
+            reserved_credit_sources=hand_credit_reserved_ids(option),
+            quoted_price=quoted_price,
         )
         from .target_cardinality import target_count_preview_maximum
         maximum = target_count_preview_maximum(option, maximum)
@@ -1464,7 +1432,9 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
         minimum_library_x, source_grant_only=None, ignore_timing=False):
     from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
 
-    cast_type_line = prospective_cross_zone_spell_type_line(host, card, seat, cast_type_line) or cast_type_line
+    cast_type_line = prospective_cross_zone_spell_type_line(
+        host, card, seat, cast_type_line, include_self_characteristics=not suppress_source_costs,
+    ) or cast_type_line
     initial = _initial_options(
         host,
         seat,
@@ -1495,9 +1465,13 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
     target_mana_x = has_x
     target_schema = getattr(program, "target_schema", None)
     from ...announced_damage import bind_cast_allocation_option, variable_damage_allocation
+    from ..announced_mana_value_target import has_announced_mana_value_limit
+    from .announced_mana_value_targets import bind_announced_target_cost_option, quote_announced_mana_value_target
     allocation = variable_damage_allocation(target_schema)
+    announced_mana_value = has_announced_mana_value_limit(target_schema)
     if not has_x and isinstance(target_schema, Mapping) and (
-            "count_parameter" in target_schema or allocation is not None and allocation.quantity is None):
+            "count_parameter" in target_schema or announced_mana_value
+            or allocation is not None and allocation.quantity is None):
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
@@ -1514,6 +1488,12 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
             target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
         if option is None:
             continue
+        if announced_mana_value:
+            option = bind_announced_target_cost_option(
+                target_schema, option, submission, hint=hint, has_mana_x=target_mana_x,
+            )
+            if option is None:
+                continue
         option = bind_cast_allocation_option(host, seat, card, target_schema, option, submission,
                                              hint=hint, has_x=target_mana_x or declared_cost_x)
         if option is None:
@@ -1524,7 +1504,9 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
             else cast_type_line
         )
         if option.get("cast_type_line"):
-            projected = prospective_cross_zone_spell_type_line(host, card, seat, option_cast_type_line)
+            projected = prospective_cross_zone_spell_type_line(
+                host, card, seat, option_cast_type_line, include_self_characteristics=not suppress_source_costs,
+            )
             if projected is not None:
                 option["cast_type_line"] = option_cast_type_line = projected
         from ..splice import SPLICE_INTERNAL_SELECTION, SPLICE_SELECTION
@@ -1563,6 +1545,8 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
                 has_x=has_x,
                 cast_type_line=option_cast_type_line,
             )
+            if hint and announced_mana_value and finalized is not None:
+                finalized = quote_announced_mana_value_target(host, finalized, target_schema, declared_x=submission.get("x"))
             if finalized is not None:
                 result.append(finalized)
     from .targeted_costs import consolidate_target_cost_options

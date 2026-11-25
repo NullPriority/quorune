@@ -7,10 +7,14 @@ from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 from ..attachments import attached_object_identity,current_attached_player_seat
 from ..ability_fragments import static_component_keys
 from ..characteristic_query_boundary_model import characteristic_query_boundary_version
+from ..entry_designations import LINKED_PLAYER_PROTECTION_HANDLER_ID
+from ..rules.linked_entry_opponent import bound_linked_entry_player
 from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
     FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+    BLOCK_DECLARATION_TIMING_FACTS,
+    GREATEST_CREATURE_POWER_FACTS,
     FixedPublicStateConditionKind,
     FixedPublicStateFact,
     FixedPublicStateConditionSpec,
@@ -44,6 +48,10 @@ class ContinuousRuntimeState(Protocol):
     players: Mapping[str, Any]
     cards: Mapping[str, Any]
     characteristic_query_boundary_version: int | None
+    phase: str
+    step: str
+    combat: Any
+    unblocked_attacker_event_version: int | None
 
 
 @dataclass(slots=True)
@@ -131,6 +139,27 @@ class _FixedPublicStateSnapshotResolver:
             return None
         return int(value >= condition.amount)
 
+    def _greatest_creature_power_result(
+        self, source: Any, condition: FixedPublicStateConditionSpec,
+    ) -> int | None:
+        from ..public_characteristic_aggregates import current_creature_power_control
+
+        if self.public_object_resolver is None:
+            return None
+        rows = []
+        for card in self.state.cards.values():
+            if card.zone != "battlefield" or card.phased_out:
+                continue
+            row = self._public_object(card)
+            if row is None:
+                return None
+            rows.append(row)
+        result = current_creature_power_control(
+            rows, source.controller,
+            require_all=condition.fact is FixedPublicStateFact.CONTROLS_EACH_GREATEST_POWER_CREATURE,
+        )
+        return int(result) if result is not None else None
+
     def _condition_quantity(
         self,
         source: Any,
@@ -146,6 +175,8 @@ class _FixedPublicStateSnapshotResolver:
             from ..player_maximum_model import PlayerMaximumSpec
             try:return int(opponent_has_greater_metric(self.state,source.controller,PlayerMaximumSpec(condition.fact_parameter),public_object_resolver=self._public_object))
             except ValueError:return None
+        if condition.fact in GREATEST_CREATURE_POWER_FACTS:
+            return self._greatest_creature_power_result(source, condition)
         if condition.aggregate is not None:
             return self._power_aggregate_result(source, condition)
         if condition.history_query is not None:
@@ -186,6 +217,14 @@ class _FixedPublicStateSnapshotResolver:
         fact = condition.fact
         if not isinstance(fact, FixedPublicStateFact):
             return None
+        if fact in BLOCK_DECLARATION_TIMING_FACTS:
+            from ..unblocked_attacker_model import CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
+
+            if (self.state.unblocked_attacker_event_version != CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
+                    or self.state.phase != "combat" or not self.state.combat.blockers_declared):
+                return 0
+            return int(fact is FixedPublicStateFact.CURRENT_COMBAT_AFTER_BLOCKERS
+                       or self.state.step == "declare_blockers")
         if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
             return self._most_common_color_quantity(condition)
         if source is None:
@@ -207,6 +246,10 @@ class _FixedPublicStateSnapshotResolver:
             return committed_token_count(self.state, source.controller)
         if fact is FixedPublicStateFact.SOURCE_RENOWNED:
             return int(source.zone == 'battlefield' and not source.phased_out and source.renowned)
+        if fact is FixedPublicStateFact.SOURCE_PAID_IMPENDING_WITH_TIME_COUNTER:
+            from ..rules.impending import has_paid_impending_time_counter
+
+            return int(has_paid_impending_time_counter(source))
         if fact in {
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,
@@ -773,7 +816,15 @@ def _component_public_state_snapshot(
         raw_condition = descriptor.get('source_condition')
         return (False, None if raw_condition is None else setting_state_resolver.snapshot(
             source, FixedPublicStateConditionSpec.from_dict(raw_condition)))
+    from ..semantic_runtime.fixed_characteristic_settings import (
+        AURA_COUNT_SETTING_HANDLER_ID, CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID,
+    )
+
+    if (handler_id == CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID
+            and maximum_layer is not None and maximum_layer < Layer.ABILITY):
+        return True, None
     is_conditional = handler_id in (
+        AURA_COUNT_SETTING_HANDLER_ID,
         FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
         FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
         CONDITIONAL_DEFENDER_PERMISSION_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER,
@@ -815,7 +866,18 @@ def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,ma
 
 
 def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
+    from ..semantic_runtime.fixed_characteristic_settings import CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID
     from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
+
+    if descriptor.get("handler_id") == CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID:
+        if resolver.public_object_resolver is None:
+            raise SemanticNodeError("Controlled Aura settings need cycle-safe public attachment facts")
+        participants = set()
+        for card in state.cards.values():
+            identity = attached_object_identity(state.cards, card)
+            if identity is not None:
+                participants.update((card.object_id, identity.object_id))
+        return tuple(resolver._public_object(state.cards[object_id]) for object_id in sorted(participants))
     if descriptor.get('handler_id')!=SHARED_TYPE_ANTHEM_HANDLER:
         return None
     if descriptor.get('relation')=='source_attached_to_object' and not getattr(source,'attached_to',None):
@@ -872,12 +934,61 @@ def _granted_characteristic_timestamp_order(effects, grant_order):
     return tuple(replacements.get(effect.effect_id, effect) for effect in effects)
 
 
+def _current_block_counterpart_identities(state, source, descriptor):
+    from ..semantic_runtime.combat_metadata import LIVE_COMBAT_COUNTERPART_LIFELINK_HANDLER
+
+    if (descriptor.get("handler_id") != LIVE_COMBAT_COUNTERPART_LIFELINK_HANDLER
+            or source.zone != "battlefield" or source.phased_out):
+        return ()
+    from ..combat import current_block_counterpart_ids
+    from ..continuous_effect_model import ContinuousObjectIdentity
+
+    combat = state.combat
+    live_attackers = combat.attackers if combat.detached_blocker_ids is not None else None
+    cards = state.cards
+    return tuple(ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+                 for object_id in current_block_counterpart_ids(
+                     combat.blockers, source.object_id, live_attackers=live_attackers,
+                 )
+                 if (card := cards.get(object_id)) is not None
+                 and card.zone == "battlefield" and not card.phased_out)
+
+
+def _counter_placement_recipient_identities(state, source, descriptor):
+    """Use historical identity while leaving current control and type to layers."""
+    from ..semantic_runtime.counter_placement_keyword_grants import COUNTER_PLACEMENT_KEYWORD_GRANT_HANDLER
+
+    if descriptor.get("handler_id") != COUNTER_PLACEMENT_KEYWORD_GRANT_HANDLER:
+        return ()
+    from ..continuous_effect_model import ContinuousObjectIdentity
+    from ..public_history_query_model import (
+        current_plus_one_counter_placement_query, matching_public_history_events,
+    )
+
+    events = matching_public_history_events(state, source.controller, current_plus_one_counter_placement_query())
+    if not events:
+        return ()
+    incarnations = {event.object_incarnation for event in events}
+    return tuple(
+        ContinuousObjectIdentity(card.object_id, card.logical_object_id)
+        for card in state.cards.values()
+        if card.zone == "battlefield" and card.logical_object_id in incarnations
+    )
+
+
+def _linked_protection_player(semantics, program_is_trusted, source, descriptor):
+    if descriptor.get("handler_id") == LINKED_PLAYER_PROTECTION_HANDLER_ID:
+        return bound_linked_entry_player(semantics, program_is_trusted, source)
+    return None
+
+
 def _continuous_component_source_context(
     state: ContinuousRuntimeState, source: Any, program: "SemanticProgram",
     descriptor: Mapping[str, Any], *, descriptor_index: int,
     grant_timestamp: int | None, occurrence: int | str | None,
     public_state: Any, resolved_quantity: Any,
     public_state_resolver: _FixedPublicStateSnapshotResolver,
+    linked_player: str | None,
 ) -> ContinuousEffectSourceContext:
     """Prepare the typed current-source facts used by one registered component."""
     from ..soulbond_model import SOULBOND_GRANT_HANDLER
@@ -909,6 +1020,9 @@ def _continuous_component_source_context(
         public_state=public_state,
         resolved_quantity=resolved_quantity,
         paired_object=paired_object,
+        linked_player=linked_player,
+        current_block_counterparts=_current_block_counterpart_identities(state, source, descriptor),
+        counter_placement_recipients=_counter_placement_recipient_identities(state, source, descriptor),
         public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
                                                            resolver=public_state_resolver),
         attached_object=(
@@ -1017,7 +1131,8 @@ def collect_card_program_continuous_effects(
                     context = _continuous_component_source_context(state,source,program,descriptor,
                         descriptor_index=descriptor_index,grant_timestamp=grant_timestamp,occurrence=occurrence,
                         public_state=public_state,resolved_quantity=resolved_quantity,
-                        public_state_resolver=public_state_resolver)
+                        public_state_resolver=public_state_resolver,
+                        linked_player=_linked_protection_player(semantics, program_is_trusted, source, descriptor))
                     lowered = registry.lower(descriptor, context)
                     if maximum_layer is not None:
                         lowered = tuple(

@@ -6,11 +6,15 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping
 
+from ..event_player_modifier_model import DEFENDING_PLAYER_REFERENCE
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query
 
 
 FIXED_HAND_INSPECTION_OPERATION = "fixed_hand_inspection"
+DEFENDING_HAND_OBSERVATION_CAPABILITY = "choice.defending_hand.private_observation"
+DEFENDING_HAND_OBSERVATION_MECHANIC = "fixed-defending-hand-observation"
+DEFENDING_HAND_OBSERVATION_VERSION_FIELD = "defending_hand_observation_version"
 
 
 class HandInspectionMode(str, Enum):
@@ -23,6 +27,28 @@ class HandInspectionAction(str, Enum):
     DISCARD = "discard"
     EXILE = "exile"
     DISCARD_ALL = "discard_all"
+
+
+def defending_hand_observation_effect(
+    *, actor: str = "$controller", defender: str = DEFENDING_PLAYER_REFERENCE,
+) -> dict[str, Any]:
+    """One versioned, untargeted look at the retained defender's current hand."""
+    return {
+        "op": FIXED_HAND_INSPECTION_OPERATION,
+        "player": actor,
+        "target": defender,
+        "inspection": HandInspectionMode.LOOK.value,
+        "action": HandInspectionAction.OBSERVE.value,
+        "predicate": None,
+        DEFENDING_HAND_OBSERVATION_VERSION_FIELD: 1,
+    }
+
+
+def is_defending_hand_observation(
+    effect: Mapping[str, Any], *, actor: str = "$controller", defender: str = DEFENDING_PLAYER_REFERENCE,
+) -> bool:
+    return (type(effect.get(DEFENDING_HAND_OBSERVATION_VERSION_FIELD)) is int
+            and effect == defending_hand_observation_effect(actor=actor, defender=defender))
 
 
 class HandInspectionError(ValueError):

@@ -917,7 +917,7 @@ class ScalarEffectAmountValueTests(unittest.TestCase):
             resolve_scalar_effect_amount(host,spec.to_dict(),item)
 
     def test_reentered_current_object_mutation_is_killed(self):
-        def read_new_object(host,item,spec):
+        def read_new_object(host,item,spec,*,use_phased_source_lki=False):
             from quorune.scalar_effect_amounts import _snapshot
             return _snapshot(host,host.state.cards[item.source_object_id])
         case = ScalarEffectAmountValueTests("test_current_then_immediate_departure_lki_never_reads_new_incarnation")

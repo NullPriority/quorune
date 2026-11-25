@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "cbd36993069d57ca7579f4df027e498d9a26e4255964706b4e858c286cde79ed"
+verified: "3b0e2ba968debd8cd21122296bad4e57f92ea207d06c5017f590f3e47a6127fa"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 125
-- Deterministic escapes: 115
+- Escapes: 128
+- Deterministic escapes: 118
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -154,6 +154,9 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261112-pr561-copy-provenance-rejection-stage` | [43174128758](https://github.com/NullPriority/quorune/actions/runs/43174128758) | `missing_affected_test` | `not_applicable` | Retain the fresh native copied-permanent journey, assert that the copy reaches the omitted physical-source hook, and require the specific current malformed-resolved-provenance rejection. Preserve the unchanged positive copy and historical no-runtime controls; retain the already-present resolution-provenance route to the paid-color entry consumer. No runtime validation is relaxed. |
 | `ci-20261112-pr561-runtime-trust-manifest-schema` | [43174128758](https://github.com/NullPriority/quorune/actions/runs/43174128758) | `source_correctness` | `added` | Admit the two known declared structural versions with an integer-only closed enumeration. Add a fast current-producer/schema contract proving that declared historical identity still fails exact replay validation, absent runtime trust retains its historical path, and booleans, unknown versions, missing fingerprints and extra fields reject. Route the manifest schema through the existing command-resolution provenance consumer edge. Runtime replay validation remains unchanged. |
 | `ci-20261112-nightly-fuse-private-reference-token-collision` | [43174408319](https://github.com/NullPriority/quorune/actions/runs/43174408319) | `flaky_test` | `added` | Use one shared nonmutating full-packet normalizer that excludes only decision.cap from reference substring assertions. Fuse scans and the runtime replay helper preserve raw authorization presence and nonacting-principal exclusion checks, all semantic fields, owner visibility and private-reference exclusion. Deterministic collision and injected semantic-leak controls establish the boundary. Production projection and gameplay remain unchanged. |
+| `ci-20261124-pr575-azusa-promoted-saga-admission` | [45428512009](https://github.com/NullPriority/quorune/actions/runs/45428512009) | `source_correctness` | `not_applicable` | Verify the original in the existing admission sentinel and native replay. Keep the two residual boundaries on the variant that returns under its owner's control. The other negative compositions still run in their existing suite. |
+| `ci-20261124-pr575-functional-10-cast-wire-and-promoted-carriers` | [45428512009](https://github.com/NullPriority/quorune/actions/runs/45428512009) | `source_correctness` | `not_applicable` | Read the same required facts from the recorded cast version and retain rejection of unsupported versions. Keep exact supported cost and copy shapes in positive checks and use nearby open cost clauses for the negative checks. Exercise the original copy in the existing native recopy and replay witness. Supply the current contract fields to the two test doubles and use the actual linked-name replacement before checking undefined names. |
+| `ci-20261124-pr575-functional-08-fixture-owners-and-promoted-carriers` | [45428512009](https://github.com/NullPriority/quorune/actions/runs/45428512009) | `source_correctness` | `added` | Exercise the same current composition, targeting, counter, activation and prevention owners with complete fixtures. Preserve native supported cases and reject nearby open counter, Ward and search variants. Route Blood Hound, literal named search and sacrifice Ward owners to their older retention suites. The normalized cast-value repair also passes the two native failures in this shard. |
 
 ## Measurement limitations
 

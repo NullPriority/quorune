@@ -4,10 +4,41 @@ from . import regex_working_set as re
 
 from ..conditional_target_preparation import PreparationCondition, CONDITIONAL_PREPARATION_MECHANIC
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionKind
+from ..conditional_target_preparation_model import RESOLUTION_TARGET_COLOR_FIELD, RESOLUTION_TARGET_COLOR_MECHANIC
 from ..object_predicate import ObjectQuerySpec
 from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
 from .creature_power_damage_templates import fixed_creature_power_damage_effect_template, _REMINDER
 from .public_state_queries import fixed_public_state_condition
+
+
+_TARGET_COLOR_RESULT = re.compile(
+    r"(?P<result>Counter target spell|Destroy target permanent) if it(?:['’]s| is) "
+    r"(?P<color>white|blue|black|red|green)\.?",
+    re.IGNORECASE,
+)
+
+
+def fixed_target_color_result_template(text):
+    """Lower the direct target and retain the separate current-color condition."""
+    from ..qualified_hexproof import HEXPROOF_COLORS
+    from .counter_templates import targeted_counter_effect_template
+    from .destruction_templates import targeted_destruction_effect_template
+
+    match = _TARGET_COLOR_RESULT.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    result = match["result"]
+    compile_result = (targeted_counter_effect_template if result.casefold().startswith("counter ")
+                      else targeted_destruction_effect_template)
+    primitive = compile_result(result + ".")
+    opcode, = primitive.effects
+    condition = {"schema_version": 1, "color": HEXPROOF_COLORS[match["color"].casefold()]}
+    return (
+        f"{primitive.template_id}-current-color-v1",
+        ({**opcode, RESOLUTION_TARGET_COLOR_FIELD: condition},),
+        primitive.target_schema,
+        (RESOLUTION_TARGET_COLOR_MECHANIC, *primitive.mechanics),
+    )
 
 
 def preparation_predicate(text):

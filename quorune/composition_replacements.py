@@ -7,7 +7,8 @@ from .counter_permission import CounterPermissionSnapshot
 from .errors import GameRuleError
 from .replacement import AffectedObject
 from .replacement.immutable import FrozenMap,thaw_value
-from .replacement.operations import operation_to_dict
+from .replacement.operations import SetField, operation_to_dict
+from .self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_RESULT, RevealForOwnerLibraryShuffle
 
 
 def capture_composed_card_zone_components(card):
@@ -69,6 +70,10 @@ def validate_composition_replacements(prepared):
             value=operation_to_dict(operation)
             if value.get('op')=='set' and value.get('field')=='destination':continue
             if value.get('op')=='create_affected_object_counter':continue
+            if (isinstance(operation, RevealForOwnerLibraryShuffle)
+                    and effect.operations == (SetField("destination", "library"), operation)
+                    and thaw_value(event.payload.get(SELF_GRAVEYARD_SHUFFLE_RESULT)) == value):
+                continue
             raise GameRuleError('Composition replacement operation is unrepresented')
     if tuple(event.children)!=tuple(prepared.counter_events):
         raise GameRuleError('Composition replacement children must be fixed counter leaves')

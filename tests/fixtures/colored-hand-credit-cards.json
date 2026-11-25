@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed hand-price, tax and optional-resource witnesses.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4891-8060-000000006021",
+      "name": "Coalglass Petition",
+      "mana_cost": "{X}{B}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, you may exile any number of black cards from your hand. This spell costs {2} less to cast for each card exiled this way.\nCoalglass Petition deals X damage to target creature and you gain X life.",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-000000006022",
+      "name": "Soot Ledger",
+      "mana_cost": "{B}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Target player loses 1 life.",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-000000006023",
+      "name": "Cinder Customs",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

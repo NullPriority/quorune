@@ -284,6 +284,13 @@ class EntryEquipmentAttachmentTests(InheritedNativeFixture, unittest.TestCase):
         self.cast_for(session, "A", entrant)
         self.assertIsNone(self.resolve(session))
         self.assertEqual(entrant.object_id, session.state.cards[equipment.object_id].attached_to)
+        self.assertEqual(4, session.engine._numeric_stat(entrant.object_id, "power"))
+        self.assertEqual(3, session.engine._numeric_stat(entrant.object_id, "toughness"))
+        programs = session.engine.semantics.programs_for_oracle(equipment.oracle_id)
+        self.assertLessEqual(
+            {"attachment.action.entry_equipment", "continuous.attached.fixed_characteristics"},
+            {capability for program in programs for capability in program.capability_dependencies},
+        )
         self.replay(session)
 
     def test_entry_attachment_does_not_follow_an_entrant_that_returns(self):

@@ -6,6 +6,7 @@ import hashlib
 from typing import Any, Iterable, Mapping
 
 from .event_player_modifier_model import DEFENDING_PLAYER_REFERENCE
+from .replacement.immutable import FrozenMap
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import ObjectQueryResult, query_objects
 from .util import stable_json
@@ -24,6 +25,7 @@ class PermanentControllerRelation(str, Enum):
 
 
 DEFENDING_PLAYER_UNTAP_SET_FIELD = "defending_player_untap_set_version"
+TARGET_UNSPENT_MANA_FIELD = "target_unspent_mana_version"
 
 
 _SET_FIELDS = frozenset(
@@ -141,6 +143,59 @@ class AffectedPermanentSetSpec:
         ).hexdigest()
 
 
+KICKED_ENTRY_DESTRUCTION_FIELD = "kicked_entry_destruction"
+KICKED_ENTRY_DESTRUCTION_CAPABILITIES = ("trigger.entry.fixed_kicked_result", "permanent.destroy.fixed_set")
+
+
+class KickedEntryDestructionScope(str, Enum):
+    LANDS = "lands"
+    OTHER_CREATURES = "other creatures"
+
+
+@dataclass(frozen=True, slots=True)
+class KickedEntryDestructionSpec:
+    scope: KickedEntryDestructionScope
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.scope, KickedEntryDestructionScope):
+            raise AffectedPermanentSetError("Kicked entry requires its closed destruction subject")
+
+    def effect(self) -> dict[str, Any]:
+        source = "$source.zone_object"
+        return {
+            "op": "destroy_all",
+            "source": source,
+            "set": self.affected_set(kicked=False, source_ref=source).to_dict(),
+            KICKED_ENTRY_DESTRUCTION_FIELD: 1,
+        }
+
+    @classmethod
+    def from_effect(cls, effect: Mapping[str, Any]) -> "KickedEntryDestructionSpec":
+        from .replacement.immutable import thaw_value
+
+        if not isinstance(effect, Mapping):
+            raise AffectedPermanentSetError("Kicked entry destruction requires a typed effect")
+        version = effect.get(KICKED_ENTRY_DESTRUCTION_FIELD)
+        if type(version) is not int or version != 1:
+            raise AffectedPermanentSetError("Kicked entry destruction requires its exact descriptor version")
+        baseline = AffectedPermanentSetSpec.from_dict(effect.get("set"))
+        if not isinstance(baseline, AffectedPermanentSetSpec):
+            raise AffectedPermanentSetError("Kicked entry destruction requires its own battlefield set")
+        scope = KickedEntryDestructionScope.OTHER_CREATURES if baseline.exclude_source else KickedEntryDestructionScope.LANDS
+        spec = cls(scope)
+        if thaw_value(effect) != spec.effect():
+            raise AffectedPermanentSetError("Kicked entry destruction requires its exact ordinary set and entering source")
+        return spec
+
+    def affected_set(self, *, kicked: bool, source_ref: str | None) -> AffectedPermanentSetSpec:
+        other_creatures = self.scope is KickedEntryDestructionScope.OTHER_CREATURES
+        return AffectedPermanentSetSpec(
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature" if other_creatures else "land",)),
+            controller_relation=PermanentControllerRelation.ANY if kicked else PermanentControllerRelation.ACTOR,
+            exclude_source=other_creatures and source_ref is not None,
+        )
+
+
 def defending_player_creature_untap_effect(
     player: str = DEFENDING_PLAYER_REFERENCE, source: str | None = "$source",
 ) -> dict[str, Any]:
@@ -172,6 +227,37 @@ def decode_defending_player_creature_untap(effect: Mapping[str, Any], *, resolve
             or effect != defending_player_creature_untap_effect(player, source)):
         raise AffectedPermanentSetError("Defending-player untap requires the complete current creature set")
     return AffectedPermanentSetSpec.from_dict(subject)
+
+
+def target_unspent_mana_target_schema() -> dict[str, Any]:
+    return {"zones": ["player"], "categories": ["player"], "count": 1, "player_relation": "any"}
+
+
+def target_unspent_mana_tap_spec(player: str) -> AffectedPermanentSetSpec:
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+        controller_relation=PermanentControllerRelation.TARGET_PLAYER,
+        target_controller=player,
+    )
+
+
+def decode_target_unspent_mana_tap(effect: Mapping[str, Any], *, resolved: bool = False) -> AffectedPermanentSetSpec:
+    raw_set = effect.get("set")
+    player = raw_set.get("target_controller") if isinstance(raw_set, Mapping) else None
+    source = effect.get("source")
+    if resolved:
+        if (type(player) is not str or not player or player.startswith("$")
+                or source is not None and (type(source) is not str or not source or source.startswith("$"))):
+            raise AffectedPermanentSetError("Land tap and unspent mana loss require the resolved player target")
+    elif player != "$target.0" or source != "$source":
+        raise AffectedPermanentSetError("Land tap and unspent mana loss require the original player target")
+    spec = target_unspent_mana_tap_spec(player)
+    expected = {"op": "set_public_tap_state", "source": source, "set": spec.to_dict(),
+                "tapped": True, TARGET_UNSPENT_MANA_FIELD: 1}
+    if (FrozenMap(effect) != FrozenMap(expected) or type(effect[TARGET_UNSPENT_MANA_FIELD]) is not int
+            or effect["tapped"] is not True):
+        raise AffectedPermanentSetError("The target loses unspent mana only with its exact current land tap")
+    return spec
 
 
 def select_affected_permanents(

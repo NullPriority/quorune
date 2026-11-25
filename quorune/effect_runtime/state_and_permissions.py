@@ -270,6 +270,77 @@ def _apply_veil_of_summer(
     )
 
 
+def _apply_turn_spell_source_color_protection(host, effect, *, actor, operation, reason):
+    from ..continuous_effect_state import resolution_effect_source
+    from ..target_source import (
+        TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW, granted_turn_spell_source_colors, turn_spell_source_color_grant,
+    )
+
+    instruction = {key: value for key, value in effect.items() if key != "_runtime_source"}
+    try:
+        colors = turn_spell_source_color_grant(instruction, player=actor)
+        source = resolution_effect_source(host, effect)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    item = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
+    if (item is None or item.kind not in {"spell", "spell_copy"} or item.controller != actor
+            or item.context.get("currently_resolving") is not True):
+        raise GameRuleError("Turn-long spell-source protection requires its original resolving spell")
+    host._require_seat(actor, in_game=True)
+    stats = host.state.players[actor].stats
+    stats[TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW] = granted_turn_spell_source_colors(
+        stats, host.state.turn_sequence, colors,
+    )
+    host._log(
+        actor, "effect.temporary_spell_source_color_protection",
+        f"{actor} gained turn-long protection from spells of the specified colors.",
+        {"player": actor, "colors": list(colors), _REASON_FIELD: reason},
+        importance=2, changed_players=[actor],
+    )
+    return True
+
+
+def _apply_scoped_turn_color_spell_protection(host, effect, *, actor, reason):
+    from ..continuous_effect_model import ContinuousOperation, Layer
+    from ..continuous_effect_state import (
+        create_resolution_continuous_effect, matching_battlefield_objects, resolution_effect_source,
+    )
+    from ..object_predicate import ObjectQuerySpec
+    from ..qualified_hexproof import (
+        HEXPROOF_COLORS, TURN_PLAYER_COLOR_HEXPROOF, color_hexproof_keywords, turn_color_spell_protection_colors,
+    )
+
+    instruction = {key: value for key, value in effect.items() if key != "_runtime_source"}
+    try:
+        colors = turn_color_spell_protection_colors(instruction, player=actor)
+        source = resolution_effect_source(host, effect)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    item = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
+    if (item is None or item.kind not in {"spell", "spell_copy"} or item.controller != actor
+            or item.context.get("currently_resolving") is not True or host.state.continuous_effects is None):
+        raise GameRuleError("Turn-long spell and color protection requires its original resolving spell")
+    host._require_seat(actor, in_game=True)
+    targets = matching_battlefield_objects(host, ObjectQuerySpec(zones=("battlefield",), controller=actor))
+    if targets:
+        create_resolution_continuous_effect(
+            host, source=source, targets=targets, layer=Layer.ABILITY, sublayer="6",
+            operations=tuple(ContinuousOperation("add_ability", keyword) for keyword in color_hexproof_keywords(colors)),
+        )
+
+    stats = host.state.players[actor].stats
+    granted = set(stats.get(TURN_PLAYER_COLOR_HEXPROOF, ())).union(colors)
+    stats[TURN_PLAYER_COLOR_HEXPROOF] = [color for color in HEXPROOF_COLORS.values() if color in granted]
+    stats["spells_cant_be_countered_until_end"] = True
+    host._log(
+        actor, "effect.temporary_spell_and_hexproof_permissions",
+        f"{actor}'s spells gain counter protection and the affected player and permanents gain color hexproof.",
+        {"player": actor, "colors": list(colors), _REASON_FIELD: reason},
+        importance=2, changed_players=[actor], changed_objects=[card.object_id for card in targets],
+    )
+    return True
+
+
 def _apply_grant_uncounterable_hexproof_from_colors_until_end(
     host: Any,
     effect: Mapping[str, Any],
@@ -280,6 +351,8 @@ def _apply_grant_uncounterable_hexproof_from_colors_until_end(
     legacy_label: str | None = None,
     drew: bool | None = None,
 ) -> Any:
+    if "schema_version" in effect:
+        return _apply_scoped_turn_color_spell_protection(host, effect, actor=actor, reason=reason)
     seat = str(effect.get("player") or actor)
     host._require_seat(seat, in_game=True)
     raw_colors = effect.get("colors")
@@ -515,6 +588,7 @@ HANDLERS = {
     'goad': _apply_goad,
     'gain_class_level': _apply_gain_class_level,
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
+    'grant_turn_spell_source_color_protection': _apply_turn_spell_source_color_protection,
     'mana': _apply_mana,
     'grant_next_spell_payment': _apply_next_spell_payment,
     'grant_cast_cascade': _apply_cast_cascade_grant,

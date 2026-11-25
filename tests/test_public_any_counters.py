@@ -97,6 +97,37 @@ class PublicAnyCounterModelTests(unittest.TestCase):
                 reduction=CharacteristicQuantityReduction.TOTAL_COUNTERS,query=query)
 
 
+    def test_named_counter_total_round_trips_one_closed_public_collection(self):
+        from quorune.characteristic_fragments import (
+            CharacteristicQuantityReduction, CharacteristicQuantitySpec,
+            NAMED_COUNTER_TOTAL_CAPABILITY, characteristic_quantity_capabilities,
+        )
+        from quorune.compiler.query_characteristic_templates import query_characteristic_quantity
+
+        for printed, card_type, excludes_source in (
+            ("+1/+1 counters on lands you control", "land", False),
+            ("+1/+1 counter on other creatures you control", "creature", True),
+        ):
+            with self.subTest(printed=printed):
+                quantity = query_characteristic_quantity(printed, source_name="Fixture")
+                self.assertIsNotNone(quantity)
+                self.assertIs(CharacteristicQuantityReduction.NAMED_COUNTER_TOTAL, quantity.reduction)
+                self.assertEqual((card_type,), quantity.query.types_all)
+                self.assertIs(excludes_source, quantity.exclude_source)
+                saved = quantity.to_dict()
+                self.assertEqual(quantity, CharacteristicQuantitySpec.from_dict(saved))
+                self.assertIn(NAMED_COUNTER_TOTAL_CAPABILITY, characteristic_quantity_capabilities(saved))
+                with self.assertRaisesRegex(ValueError, "closed controlled creature or land"):
+                    CharacteristicQuantitySpec.from_dict({**saved, "counter_name": "charge"})
+        for unsupported in (
+            "+1/+1 counters on creatures your opponents control",
+            "charge counters on lands you control",
+            "+1/+1 counters on artifacts you control",
+        ):
+            with self.subTest(unsupported=unsupported):
+                self.assertIsNone(query_characteristic_quantity(unsupported, source_name="Fixture"))
+
+
 class PublicAnyCounterRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
     session=controls.ScalarMillWordingRuntimeTests.session
@@ -130,6 +161,78 @@ class PublicAnyCounterRuntimeTests(unittest.TestCase):
         self.until(session,lambda s:s.state.active_player=='A' and s.state.pending_decision is not None
             and s.state.pending_decision.kind=='combat.attackers')
         return {r['id'] for r in session.packet('pilot:A',full=True)['decision']['ctx']['candidates']}
+
+    def test_named_counter_total_uses_live_control_and_exact_counter_kind(self):
+        from quorune.compiler.query_characteristic_templates import query_characteristic_quantity
+        from quorune.dynamic_characteristics import query_characteristic_count
+
+        session = self.session(72102016)
+        engine = session.engine
+        source = self.add(engine, "Generic Bound Body")
+        other = self.add(engine, "Generic Bound Body", ref="named-counter-other")
+        land = self.add(engine, "Generic Bound Plains")
+        foreign = self.add(engine, "Generic Bound Body", seat="B")
+        source.counters["+1/+1"] = 2
+        other.counters.update({"+1/+1": 3, "charge": 7})
+        land.counters["+1/+1"] = 4
+        foreign.counters["+1/+1"] = 5
+        creatures = query_characteristic_quantity(
+            "+1/+1 counters on other creatures you control", source_name="Fixture",
+        )
+        lands = query_characteristic_quantity(
+            "+1/+1 counters on lands you control", source_name="Fixture",
+        )
+        self.assertEqual(3, query_characteristic_count(engine, source, creatures))
+        self.assertEqual(4, query_characteristic_count(engine, source, lands))
+        engine.change_control(other.object_id, "B", reason="Counter collection control transfer")
+        self.assertEqual(0, query_characteristic_count(engine, source, creatures))
+        self.assertEqual(4, query_characteristic_count(engine, source, lands))
+
+    def test_named_counter_sources_cast_and_replay_with_normal_trust(self):
+        session = self.session(72102017)
+        engine = session.engine
+        formation = self.add(engine, "Generic Counter Formation", zone="hand")
+        surveyor = self.add(engine, "Generic Counter Surveyor", zone="hand")
+        creature = self.add(engine, "Generic Bound Body", ref="named-counter-native-creature")
+        foreign = self.add(engine, "Generic Bound Body", seat="B", ref="named-counter-native-foreign")
+        land = self.add(engine, "Generic Bound Plains", ref="named-counter-native-land")
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="named-counter-native-private")
+        creature.counters.update({"+1/+1": 3, "charge": 7})
+        land.counters.update({"+1/+1": 4, "charge": 2})
+        foreign.counters["+1/+1"] = 6
+        self.prepare(session, mana={"C": 4})
+        self.checkpoint(session)
+        for source in (formation, surveyor):
+            self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+            self.cast(session, "A", source)
+            self.assertIsNone(self.resolve(session))
+        self.assertEqual(5, engine._numeric_stat(formation.object_id, "power"))
+        self.assertEqual(4, engine._numeric_stat(surveyor.object_id, "power"))
+        replay = self.private_replay(session, private)
+        self.assertEqual(5, replay.engine._numeric_stat(formation.object_id, "power"))
+        self.assertEqual(4, replay.engine._numeric_stat(surveyor.object_id, "power"))
+
+    def test_named_counter_withdrawal_and_lowering_omission_reject_complete_sources(self):
+        from quorune.characteristic_fragments import NAMED_COUNTER_TOTAL_CAPABILITY
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        owner = next(row for row in raw["capabilities"] if row["id"] == NAMED_COUNTER_TOTAL_CAPABILITY)
+        owner.update(status="blocked", blockers=["Test withdrawal of the current named counter collection owner"])
+        withdrawn = CapabilityRegistry(raw)
+        profile = "commander_review"
+        for name in ("Generic Counter Formation", "Generic Counter Surveyor"):
+            with self.subTest(source=name):
+                source = self.db.lookup(name)
+                exact = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+                self.assertEqual("exact", exact.status)
+                blocked = compile_oracle_card(source, capability_registry=withdrawn, capability_profile=profile)
+                self.assertNotEqual("exact", blocked.status)
+                self.assertTrue(any(NAMED_COUNTER_TOTAL_CAPABILITY in blocker
+                    for residual in blocked.material_residuals for blocker in residual.blockers))
+                with patch("quorune.compiler.query_characteristic_templates.collection_quantity", return_value=None):
+                    omitted = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+                self.assertNotEqual("exact", omitted.status)
+                self.assertTrue(omitted.material_residuals)
 
     def test_original_demon_wall_attacks_with_a_charge_counter_and_keeps_defender(self):
         session=self.session(72102001);source=self.add(session.engine,'Demon Wall')

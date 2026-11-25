@@ -5,6 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..counter_removal import (
+    ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD, AllPermanentCountersThenTokenExileIntent,
+    validate_all_permanent_counters_then_token_exile,
+)
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -108,6 +112,15 @@ class AllCounterRemovalHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD in effect:
+            try:
+                source = validate_all_permanent_counters_then_token_exile(effect, resolved=True)
+                if context.source is None or source != (context.source.card_ref or context.source.stack_ref):
+                    raise ValueError("Global counter removal requires the original spell source")
+                intent = AllPermanentCountersThenTokenExileIntent(context.actor, source, context.default_reason)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(intent,))
         named = 'schema_version' in effect or 'counter' in effect
         unavailable = named and effect.get('card', '') is None
         counter_name = None

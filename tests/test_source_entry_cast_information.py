@@ -101,11 +101,13 @@ class EntryCastCaptureTests(unittest.TestCase):
 class ResolvedEntryCastInformationTests(unittest.TestCase):
     def host(self):
         from types import SimpleNamespace
+        from quorune.semantics import SemanticProgram
         from quorune.source_entry_cast_information import source_entry_cast_condition
         host,card=EntryCastCaptureTests().host()
-        program=SimpleNamespace(event_condition=source_entry_cast_condition(),
+        program=SemanticProgram(key='fixture:source-entry-cast',label='Fixture Source Entry Cast',
+            event_condition=source_entry_cast_condition(),
             event='permanent.enter.self',active_zone='battlefield',
-            coverage=('intervening_condition','source_entry_cast_intervening'))
+            coverage=['intervening_condition','source_entry_cast_intervening'])
         host.semantics=SimpleNamespace(programs_for_event=lambda event:(program,))
         host.semantic_program_is_current_trusted=lambda program:True
         return host,card,program

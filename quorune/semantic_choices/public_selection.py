@@ -4,8 +4,21 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..counter_placement_targets import (
+    CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD, CONTROLLED_CREATURE_COUNTER_SNAPSHOTS,
+    OPPONENT_CREATURE_COUNTER_CHOICE_VERSION,
+    controlled_creature_counter_choice_dependencies,
+)
 from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
 from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
+from ..rules.opponent_greatest_power_destruction import GREATEST_POWER_DESTRUCTION_FIELD
+from ..rules.opponent_greatest_power_exile import GREATEST_POWER_EXILE_FIELD
+from .opponent_greatest_power_exile import (
+    GREATEST_POWER_EXILE_CHOICES, complete_greatest_power_exile, prepare_greatest_power_exile,
+)
+from .opponent_greatest_power_destruction import (
+    GREATEST_POWER_DESTRUCTION_OFFER, GREATEST_POWER_DESTRUCTION_SELECTIONS,
+)
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
 from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD
 from ..rules.ripple import RIPPLE_FIELD
@@ -34,6 +47,38 @@ from .model import (
 )
 
 
+def _controlled_counter_choice_snapshot(effect, rows, *, resolved_player=None):
+    if CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD not in effect:
+        return {}
+    try:
+        controlled_creature_counter_choice_dependencies(effect, resolved_player=resolved_player)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return {CONTROLLED_CREATURE_COUNTER_SNAPSHOTS: {
+        row.ref: row.logical_object_id for row in rows
+    }}
+
+
+def _validate_opponent_counter_actor(query, stack_ref, player):
+    stack = query.stack_object(stack_ref)
+    if (stack is None or type(player) is not str or player not in query.active_seats
+            or player == stack.controller or tuple(stack.targets) != (player,)):
+        raise SemanticChoiceError("The counter recipient choice belongs to the announced opponent")
+
+
+def _check_controlled_counter_choice(effect, rows, actor):
+    if CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD not in effect:
+        return
+    snapshots = effect.get(CONTROLLED_CREATURE_COUNTER_SNAPSHOTS)
+    if len(rows) != 1 or not isinstance(snapshots, Mapping):
+        raise SemanticChoiceError("The selected creature's original incarnation is unavailable")
+    row = rows[0]
+    if (row is None or row.zone != "battlefield" or row.phased_out or row.controller != actor
+            or "creature" not in row.types or not row.logical_object_id
+            or row.logical_object_id != snapshots.get(row.ref)):
+        raise SemanticChoiceError("The selected creature is no longer controlled and present")
+
+
 @dataclass(frozen=True, slots=True)
 class PublicObjectChoiceHandler:
     operation: str = "choose_objects"
@@ -53,6 +98,13 @@ class PublicObjectChoiceHandler:
         "_maximum",
         "_stack_label",
         CONTROLLED_RETURN_FIELD,
+        CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
+        CONTROLLED_CREATURE_COUNTER_SNAPSHOTS,
+        GREATEST_POWER_DESTRUCTION_FIELD,
+        GREATEST_POWER_DESTRUCTION_OFFER,
+        GREATEST_POWER_DESTRUCTION_SELECTIONS,
+        GREATEST_POWER_EXILE_FIELD,
+        GREATEST_POWER_EXILE_CHOICES,
         BOUNDED_HAND_CAST_FIELD,
         RIPPLE_FIELD,
         "cast_snapshot",
@@ -104,6 +156,11 @@ class PublicObjectChoiceHandler:
         if CAPTURED_DRAW_CAST_FIELD in effect:
             from .captured_draw_cast import prepare_captured_draw_cast
             return prepare_captured_draw_cast(effect, context)
+        if GREATEST_POWER_EXILE_FIELD in effect:
+            return prepare_greatest_power_exile(effect, context)
+        if GREATEST_POWER_DESTRUCTION_FIELD in effect:
+            from .opponent_greatest_power_destruction import prepare_greatest_power_destruction
+            return prepare_greatest_power_destruction(effect, context)
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import prepare_distinct_sacrifices
             return prepare_distinct_sacrifices(effect, context)
@@ -111,7 +168,15 @@ class PublicObjectChoiceHandler:
             from .controlled_return import prepare_controlled_return
             return prepare_controlled_return(effect, context)
         refs = context.query.choice_candidate_refs()
+        opponent = effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION
+        if opponent:
+            _validate_opponent_counter_actor(context.query, context.stack_ref, effect.get("player"))
+            if effect.get("player") != context.actor:
+                raise SemanticChoiceError("The opponent counter choice actor changed")
+            refs = tuple(ref for ref in refs if context.query.counter_placement_allowed(ref, "deathtouch", 1))
+        resolved_player = context.actor if opponent else None
         if not refs:
+            _controlled_counter_choice_snapshot(effect, (), resolved_player=resolved_player)
             return SemanticChoicePreparation(
                 request=None,
                 continuation_effect=FrozenMap(effect),
@@ -167,6 +232,7 @@ class PublicObjectChoiceHandler:
             continuation_effect=FrozenMap(
                 {
                     **dict(effect),
+                    **_controlled_counter_choice_snapshot(effect, rows, resolved_player=resolved_player),
                     "_choice_actor": context.actor,
                     "_legal_refs": refs,
                     "_minimum": minimum,
@@ -197,6 +263,11 @@ class PublicObjectChoiceHandler:
         if CAPTURED_DRAW_CAST_FIELD in effect:
             from .captured_draw_cast import complete_captured_draw_cast
             return complete_captured_draw_cast(continuation, response, query)
+        if GREATEST_POWER_EXILE_FIELD in effect:
+            return complete_greatest_power_exile(continuation, response, query)
+        if GREATEST_POWER_DESTRUCTION_FIELD in effect:
+            from .opponent_greatest_power_destruction import complete_greatest_power_destruction
+            return complete_greatest_power_destruction(continuation, response, query)
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import complete_distinct_sacrifices
             return complete_distinct_sacrifices(continuation, response, query)
@@ -222,6 +293,20 @@ class PublicObjectChoiceHandler:
         if any(row is None for row in rows):
             raise SemanticChoiceError("A selected public object is unavailable")
         actor = str(effect["_choice_actor"])
+        _check_controlled_counter_choice(effect, rows, actor)
+        if effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION:
+            _validate_opponent_counter_actor(query, continuation.stack_ref, actor)
+            fields = {"_choice_actor", "_legal_refs", "_minimum", "_maximum", "_stack_label",
+                      CONTROLLED_CREATURE_COUNTER_SNAPSHOTS}
+            try:
+                controlled_creature_counter_choice_dependencies(
+                    FrozenMap({key: val for key, val in effect.items() if key not in fields}),
+                    resolved_player=actor,
+                )
+            except (ValueError, TypeError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            if not query.counter_placement_allowed(selected[0], "deathtouch", 1):
+                raise SemanticChoiceError("The selected creature can no longer receive its counter")
         label = str(effect["_stack_label"])
         intents: list[Any] = []
         for raw in effect.get("then", ()):

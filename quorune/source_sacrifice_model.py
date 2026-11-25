@@ -9,6 +9,9 @@ SOURCE_SACRIFICE_CAPABILITY = 'permanent.sacrifice.fixed_source'
 SOURCE_SACRIFICE_MECHANIC = 'fixed-source-sacrifice'
 SELF_MOVE_CAPABILITY = 'zone.self_move.activated'
 FORMER_ATTACHMENT_SACRIFICE_VERSION = 2
+CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION = 3
+CAST_PARTICIPANT_FIELD = 'cast_participant'
+CAST_PARTICIPANT_BINDING = '$context.player'
 UNATTACHMENT_EVENT = 'attachment.unattached'
 UNATTACHMENT_TRIGGER_CAPABILITY = 'trigger.event.normalized_public_action'
 UNATTACHMENT_SNAPSHOT = 'unattachment_snapshot'
@@ -26,6 +29,16 @@ def former_attachment_sacrifice_effect():
         UNATTACHMENT_SNAPSHOT: '$context.' + UNATTACHMENT_SNAPSHOT}
 
 
+def cast_participant_sacrifice_draw_effect():
+    return {**fixed_source_sacrifice_effect(),
+        SOURCE_SACRIFICE_FIELD: CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION,
+        CAST_PARTICIPANT_FIELD: CAST_PARTICIPANT_BINDING}
+
+
+def _materialized_identity(value):
+    return type(value) is str and bool(value) and value == value.strip() and not value.startswith('$')
+
+
 def fixed_source_sacrifice_dependencies(effect, *, resolved=False):
     if not isinstance(effect, Mapping):
         return ()
@@ -34,8 +47,21 @@ def fixed_source_sacrifice_dependencies(effect, *, resolved=False):
                 'self_zone_move', 'battlefield', 'graveyard'):
             raise ValueError('Battlefield source sacrifice lost its explicit instruction version')
         return ()
-    from_unattachment = effect[SOURCE_SACRIFICE_FIELD] == FORMER_ATTACHMENT_SACRIFICE_VERSION
-    expected = former_attachment_sacrifice_effect() if from_unattachment else fixed_source_sacrifice_effect()
+    version = effect[SOURCE_SACRIFICE_FIELD]
+    from_unattachment = version == FORMER_ATTACHMENT_SACRIFICE_VERSION
+    draw_after_cast = version == CAST_PARTICIPANT_SACRIFICE_DRAW_VERSION
+    expected = fixed_source_sacrifice_effect()
+    if from_unattachment:
+        expected = former_attachment_sacrifice_effect()
+    elif draw_after_cast:
+        if not resolved and '_replacement_selections' in effect:
+            raise ValueError('Source sacrifice draw cannot preselect a replacement')
+        expected = cast_participant_sacrifice_draw_effect()
+        if resolved:
+            participant = effect.get(CAST_PARTICIPANT_FIELD)
+            if not _materialized_identity(participant):
+                raise ValueError('Source sacrifice draw needs its materialized cast participant')
+            expected[CAST_PARTICIPANT_FIELD] = participant
     if from_unattachment and resolved:
         snapshot = effect.get(UNATTACHMENT_SNAPSHOT)
         if not isinstance(snapshot, Mapping):
@@ -50,7 +76,8 @@ def fixed_source_sacrifice_dependencies(effect, *, resolved=False):
     if not isinstance(selections, (list, tuple)):
         raise ValueError('Source sacrifice replacement selections must be an array')
     return (SOURCE_SACRIFICE_CAPABILITY, SELF_MOVE_CAPABILITY,
-        *((UNATTACHMENT_TRIGGER_CAPABILITY, 'trigger.placement.apnap') if from_unattachment else ()))
+        *((UNATTACHMENT_TRIGGER_CAPABILITY, 'trigger.placement.apnap') if from_unattachment else ()),
+        *(('trigger.event.normalized_spell_cast', 'zone.draw.library_to_hand') if draw_after_cast else ()))
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,12 +89,14 @@ class FixedSourceSacrificeIntent:
     card_ref: str
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    cast_participant: str | None = None
 
     def __post_init__(self):
-        if any(type(value) is not str or not value or value != value.strip()
-               or value.startswith('$') for value in (self.actor, self.source_stack_ref,
-                   self.object_id, self.logical_object_id, self.card_ref, self.reason)):
+        if not all(map(_materialized_identity, (self.actor, self.source_stack_ref,
+                self.object_id, self.logical_object_id, self.card_ref, self.reason))):
             raise ValueError('Source sacrifice requires complete materialized source identities')
+        if self.cast_participant is not None and not _materialized_identity(self.cast_participant):
+            raise ValueError('Source sacrifice draw needs its materialized cast participant')
         if not isinstance(self.replacement_selections, (list, tuple)):
             raise ValueError('Source sacrifice replacement selections must be an array')
         frozen = tuple(freeze_value(value) for value in self.replacement_selections)

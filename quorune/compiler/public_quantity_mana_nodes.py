@@ -6,24 +6,25 @@ from ..public_quantity_mana_abilities import (
     compile_public_quantity_activated_mana_ability,
     public_quantity_mana_handler_descriptor,
 )
-from ..public_quantity_mana_model import PUBLIC_QUANTITY_MANA_CAPABILITY
 from ..characteristic_fragments import characteristic_quantity_capabilities
 from ..object_predicate import object_query_capabilities
-from .public_quantity_mana import public_quantity_mana_template
+from .public_quantity_mana import chosen_subtype_mana_template, public_quantity_mana_template
 from .activated_costs import activated_ability_cost, activated_ability_cost_capabilities
 from .dependency_gate import explicit_capabilities_gate
 from .ir_model import OracleNode, append_residual
 
 
 def public_quantity_activated_mana_node(ability,node_id,line,span,capability_registry,capability_profile,residuals,*,source_name):
-    output=public_quantity_mana_template(ability.effect_text,source_name=source_name)
+    output = chosen_subtype_mana_template(ability.effect_text) or public_quantity_mana_template(
+        ability.effect_text, source_name=source_name,
+    )
     if output is None:
         from .chosen_color_mana_nodes import chosen_color_activated_mana_node
         return chosen_color_activated_mana_node(ability, node_id, line, span, capability_registry, capability_profile, residuals)
     spec=compile_public_quantity_activated_mana_ability(ability,output)
     if spec is None:
         return ability,None
-    capabilities=(PUBLIC_QUANTITY_MANA_CAPABILITY,*activated_ability_cost_capabilities(ability),
+    capabilities=(*output.capability_dependencies,*activated_ability_cost_capabilities(ability),
         *characteristic_quantity_capabilities(output.amount.to_dict()),
         *object_query_capabilities(output.amount.to_dict()))
     gate=explicit_capabilities_gate(capabilities,capability_registry=capability_registry,capability_profile=capability_profile)

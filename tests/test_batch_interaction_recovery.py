@@ -206,10 +206,15 @@ class BatchInteractionRecoveryTests(unittest.TestCase):
 
     def test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission(self):
         data = json.loads((ROOT / 'tests/fixtures/batch-interaction-recovery-cards.json').read_text(encoding='utf-8'))
+        promoted_boundaries = {
+            'Roadside Assistance': ('fixture:roadside-variable-pilot-power', '2 greater.',
+                                    'X greater, where X is the number of Vehicles you control.'),
+            "Crater's Claws": ('fixture:changed-subject-in-x-damage', 'instead', 'to each opponent instead'),
+        }
         for witness in data['admission_boundaries']:
             with self.subTest(card=witness['name']):
                 card = self.db.by_oracle_id(witness['oracle_id'])
-                if card.name == 'Roadside Assistance':
+                if card.name in promoted_boundaries:
                     printed = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
                     original = compile_best_available_card_program(
                         self.db, card, semantic_registry=SemanticRegistry(),
@@ -219,11 +224,10 @@ class BatchInteractionRecoveryTests(unittest.TestCase):
                     self.assertTrue(bind_card_program_runtime(
                         original, capability_registry=self.registry, profile='commander_review',
                     )['strict_capability_ready'])
-                    variable = card.oracle_text.replace(
-                        '2 greater.', 'X greater, where X is the number of Vehicles you control.',
-                    )
+                    fixture_id, original_text, unsupported_text = promoted_boundaries[card.name]
+                    variable = card.oracle_text.replace(original_text, unsupported_text)
                     self.assertNotEqual(card.oracle_text, variable)
-                    card = replace(card, oracle_id='fixture:roadside-variable-pilot-power', oracle_text=variable)
+                    card = replace(card, oracle_id=fixture_id, oracle_text=variable)
                 ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry, capability_profile='commander_review')

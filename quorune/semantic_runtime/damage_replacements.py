@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..entry_copy import copiable_oracle_id
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -12,16 +12,30 @@ from ..replacement_effects import (
     ReplacementEffect,
 )
 from ..damage_modifier_state import DamageModifierError, DamagePreventionScope
+from ..entry_designations import (
+    LINKED_PLAYER_DAMAGE_CAPABILITIES, LINKED_PLAYER_DAMAGE_HANDLER_ID, linked_player_damage_descriptor,
+)
 from ..rules.capabilities import load_default_capability_registry
 from ..damage_prevention_permission import StaticUnpreventableDamageSpec
+from ..received_damage_model import (
+    FIXED_DAMAGE_REMAINDER_CAPABILITY, FIXED_DAMAGE_REMAINDER_HANDLER, FixedDamageRemainderScope,
+)
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .counter_prevention import FixedCounterPreventionHandler, COUNTER_PREVENTION_HANDLER
 
 
+from ..rules.damage_capability_shapes import (
+    NONCOMBAT_PREVENTION_LIFE_GAIN_CAPABILITY,
+    NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER,
+    noncombat_prevention_life_gain_descriptor,
+)
+
+
 _QUANTITY_HANDLER_ID = "replacement.damage.quantity.v1"
 _QUANTITY_V2_HANDLER_ID = "replacement.damage.quantity.v2"
 _FIXED_PREVENTION_HANDLER_ID = "prevention.damage.fixed.v1"
+_UNTAPPED_PREVENTION_HANDLER_ID = "prevention.damage.fixed.untapped.v3"
 _ALL_PREVENTION_HANDLER_ID = "prevention.damage.all.v1"
 _STATIC_REDIRECTION_HANDLER_ID = "replacement.damage.redirect-to-source.v1"
 _RELATIONS = {"any", "source_controller", "opponent"}
@@ -79,6 +93,8 @@ class AllDamagePreventionScopeNode:
 @dataclass(frozen=True, slots=True)
 class AllDamagePreventionNode:
     scopes: tuple[AllDamagePreventionScopeNode, ...]
+    damage_remaining: int | None = None
+    gain_for_controller: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -95,6 +111,8 @@ class DamageReplacementSourceContext:
     attached_ref: str | None = None
     active_player: str | None = None
     source_identity: tuple[str, str, int] | None = None
+    source_tapped: bool | None = None
+    linked_player: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source_ref or not self.source_controller:
@@ -421,6 +439,34 @@ class DamageQuantityReplacementHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class LinkedPlayerDamageQuantityHandler(DamageQuantityReplacementHandler):
+    handler_id: str = LINKED_PLAYER_DAMAGE_HANDLER_ID
+    schema_version: int = 3
+    rule_references: tuple[str, ...] = ("120.4b", "607.2d", "614.1", "616.1")
+    capability_dependencies: tuple[str, ...] = LINKED_PLAYER_DAMAGE_CAPABILITIES
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DamageQuantityReplacementNode:
+        if (
+            type(descriptor.get("schema_version")) is not int or dict(descriptor) != linked_player_damage_descriptor()
+            or type(descriptor["modification"]["multiplier"]) is not int
+            or type(descriptor["modification"]["additional"]) is not int
+        ):
+            raise SemanticNodeError("Linked player damage requires one exact chosen recipient scope and doubling")
+        return DamageQuantityReplacementNode(DamageReplacementCondition(
+            source_controller_relation="any", target_controller_relation="any", target_kinds=("player", "permanent"),
+            source_types_all=(), target_types_all=(), combat=None,
+        ), multiplier=2, additional=0)
+
+    def replacement_effect(self, descriptor, context) -> ReplacementEffect:
+        if type(context.linked_player) is not str or not context.linked_player:
+            raise SemanticNodeError("Linked damage requires its original current chosen player")
+        effect = DamageQuantityReplacementHandler.replacement_effect(self, descriptor, context)
+        return replace(effect, conditions={
+            **effect.conditions, "target_controller": {"eq": context.linked_player}, "amount": {"not_in": [0]},
+        })
+
+
+@dataclass(frozen=True, slots=True)
 class DamageQuantityReplacementV2Handler(DamageQuantityReplacementHandler):
     """Fixed additive damage with typed color, OR-type, and self exclusions."""
 
@@ -485,7 +531,7 @@ class FixedDamagePreventionHandler:
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> FixedDamagePreventionNode:
-        _validate_envelope(descriptor, handler_id=self.handler_id)
+        _validate_envelope(descriptor, handler_id=self.handler_id, schema_version=self.schema_version)
         modification = descriptor["modification"]
         if not isinstance(modification, Mapping):
             raise SemanticNodeError(
@@ -547,6 +593,38 @@ class FixedDamagePreventionV2Handler(FixedDamagePreventionHandler):
         amount=modification['amount']
         if type(amount) is not int or amount<1:raise SemanticNodeError('Fixed prevention amount must be a positive integer')
         return FixedDamagePreventionNode(condition=_condition_v2(descriptor['condition']),amount=amount)
+
+
+@dataclass(frozen=True, slots=True)
+class FixedUntappedDamagePreventionHandler(FixedDamagePreventionHandler):
+    """Apply fixed combat prevention only while its current source is untapped."""
+
+    handler_id: str = _UNTAPPED_PREVENTION_HANDLER_ID
+    schema_version: int = 3
+
+    def validate(self, descriptor: Mapping[str, Any]) -> FixedDamagePreventionNode:
+        node = FixedDamagePreventionHandler.validate(self, descriptor)
+        if node.condition != DamageReplacementCondition(
+            source_controller_relation="any",
+            target_controller_relation="source_controller",
+            target_kinds=("player",),
+            source_types_all=("creature",),
+            target_types_all=(),
+            combat=True,
+        ):
+            raise SemanticNodeError("Untapped prevention requires creature combat damage to its controller")
+        return node
+
+    def replacement_effect(self, descriptor, context) -> ReplacementEffect:
+        if context.source_tapped is not False:
+            raise SemanticNodeError("Fixed untapped prevention needs an untapped current source")
+        return FixedDamagePreventionHandler.replacement_effect(self, descriptor, context)
+
+    def lower(self, descriptor, context) -> tuple[ReplacementEffect, ...]:
+        if context.source_tapped is True:
+            self.validate(descriptor)
+            return ()
+        return (self.replacement_effect(descriptor, context),)
 
 
 @dataclass(frozen=True, slots=True)
@@ -649,6 +727,8 @@ class AllDamagePreventionHandler:
                 scope = DamagePreventionScope.from_dict(raw_scope)
             except DamageModifierError as exc:
                 raise SemanticNodeError(str(exc)) from exc
+            if scope.source_power_max is not None or scope.excluded_source_logical_object_id is not None:
+                raise SemanticNodeError("This source restriction requires a temporary combat shield")
             scopes.append(
                 AllDamagePreventionScopeNode(
                     damage_kind=damage_kind,
@@ -707,6 +787,12 @@ class AllDamagePreventionHandler:
         context: DamageReplacementSourceContext,
     ) -> tuple[ReplacementEffect, ...]:
         node = self.validate(descriptor)
+        operation = PreventAmount()
+        if node.damage_remaining is not None:
+            operation = PreventAmount(schema_version=2, damage_remaining=node.damage_remaining)
+        if node.gain_for_controller:
+            operation = PreventAmount(schema_version=3, life_gain_player=context.source_controller)
+        result = "prevent all but one damage" if node.damage_remaining is not None else "prevent all damage"
         effects: list[ReplacementEffect] = []
         for index, entry in enumerate(node.scopes):
             if (
@@ -742,12 +828,61 @@ class AllDamagePreventionHandler:
                     event_kind=self.event,
                     replacement_class=ReplacementClass.OTHER,
                     conditions=conditions,
-                    operations=(PreventAmount(),),
-                    label=f"{context.source_ref}: prevent all damage",
+                    operations=(operation,),
+                    label=f"{context.source_ref}: {result}",
                     application_group_id=application_group_id,
                 )
             )
         return tuple(effects)
+
+
+@dataclass(frozen=True, slots=True)
+class NoncombatPreventionLifeGainHandler(AllDamagePreventionHandler):
+    handler_id: str = NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER
+    rule_references: tuple[str, ...] = ("109.5", "120.4c", "615.5", "615.12", "616.1")
+    capability_dependencies: tuple[str, ...] = (NONCOMBAT_PREVENTION_LIFE_GAIN_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> AllDamagePreventionNode:
+        if (
+            type(descriptor.get("schema_version")) is not int
+            or dict(descriptor) != noncombat_prevention_life_gain_descriptor()
+        ):
+            raise SemanticNodeError("Intrinsic prevention life gain requires its complete noncombat controller scope")
+        scope = DamagePreventionScope(
+            target_controller_relation="source_controller",
+            target_kinds=("player",),
+        )
+        return AllDamagePreventionNode(
+            scopes=(AllDamagePreventionScopeNode("noncombat", False, scope),),
+            gain_for_controller=True,
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class FixedDamageRemainderHandler(AllDamagePreventionHandler):
+    """Compile live recipient filters and one event-local prevention operation."""
+
+    handler_id: str = FIXED_DAMAGE_REMAINDER_HANDLER
+    family: str = "prevention.damage.fixed"
+    capability_dependencies: tuple[str, ...] = (FIXED_DAMAGE_REMAINDER_CAPABILITY,)
+
+    def validate(self, descriptor):
+        try:
+            scope = FixedDamageRemainderScope.from_descriptor(descriptor)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        other = scope.kind == "other_controlled_subtype"
+        permanent = DamagePreventionScope(
+            target_controller_relation="source_controller", target_kinds=("permanent",),
+            target_characteristics_all=(scope.subtype or "planeswalker",),
+            excluded_target_ref="$source" if other else None,
+        )
+        player = DamagePreventionScope(target_controller_relation="source_controller", target_kinds=("player",))
+        targets = (permanent,) if other else (player, permanent)
+        return AllDamagePreventionNode(
+            tuple(AllDamagePreventionScopeNode("any", False, target) for target in targets),
+            damage_remaining=1,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -859,9 +994,13 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
         (
             DamageQuantityReplacementHandler(),
             DamageQuantityReplacementV2Handler(),
+            LinkedPlayerDamageQuantityHandler(),
             FixedDamagePreventionHandler(),
             FixedDamagePreventionV2Handler(),
+            FixedUntappedDamagePreventionHandler(),
             AllDamagePreventionHandler(),
+            NoncombatPreventionLifeGainHandler(),
+            FixedDamageRemainderHandler(),
             StaticDamageRedirectionHandler(),
             FixedCounterPreventionHandler(),
             StaticUnpreventableDamageHandler(),
@@ -871,6 +1010,20 @@ def default_damage_replacement_registry() -> DamageReplacementRegistry:
         load_default_capability_registry()
     )
     return registry.freeze()
+
+
+def _damage_replacement_programs_for_current_source(host, source, zone):
+    if zone == "battlefield":
+        return host.semantics.runtime_handler_programs_for_oracle(
+            copiable_oracle_id(source), active_zone=zone, event="damage",
+        )
+    if zone != "command" or source.object_kind != "emblem":
+        return ()
+    from ..emblem_programs import command_emblem_programs
+
+    return tuple(program for program in command_emblem_programs(
+        host.semantics, source, program_is_trusted=host.semantic_program_is_current_trusted,
+    ) if program.event == "damage")
 
 
 def collect_damage_replacement_effects(
@@ -884,7 +1037,7 @@ def collect_damage_replacement_effects(
     candidates = (
         list(sources)
         if sources is not None
-        else host._semantic_event_sources(zones={"battlefield"})
+        else host._semantic_event_sources(zones={"battlefield", "command"})
     )
     registry = default_damage_replacement_registry()
     effects: list[ReplacementEffect] = []
@@ -898,28 +1051,31 @@ def collect_damage_replacement_effects(
             else source.zone
         )
         if (
-            active_zone != "battlefield"
+            active_zone not in {"battlefield", "command"}
             or source.phased_out
             or source.controller not in host.active_seats
         ):
             continue
-        programs = host.semantics.runtime_handler_programs_for_oracle(
-            copiable_oracle_id(source),
-            active_zone="battlefield",
-            event="damage",
-        )
+        programs = _damage_replacement_programs_for_current_source(host, source, active_zone)
         for program in programs:
             if not host.semantic_program_is_current_trusted(program):
                 continue
-            if (
+            requires_current_ability = (
                 CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
-                and not program_has_current_ability_fragments(
-                    program,
-                    host._effective_card_data(source),
-                )
+                or any(handler.get("handler_id") == _UNTAPPED_PREVENTION_HANDLER_ID for handler in program.handlers)
+            )
+            if active_zone == "battlefield" and requires_current_ability and not program_has_current_ability_fragments(
+                program, host._effective_card_data(source),
             ):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                linked_player = None
+                if descriptor.get("handler_id") == LINKED_PLAYER_DAMAGE_HANDLER_ID:
+                    from ..rules.linked_entry_opponent import current_linked_entry_player
+
+                    linked_player = current_linked_entry_player(host, source)
+                    if linked_player is None:
+                        continue
                 source_destination = None
                 if (
                     descriptor.get("handler_id")
@@ -973,6 +1129,8 @@ def collect_damage_replacement_effects(
                                 else None
                             ),
                             active_player=host.state.active_player,
+                            source_tapped=getattr(source, "tapped", None),
+                            linked_player=linked_player,
                             source_identity=(source.object_id, source.logical_object_id,
                                 source.counters.get('+1/+1', 0))
                                 if descriptor.get('handler_id') == COUNTER_PREVENTION_HANDLER else None,

@@ -85,6 +85,7 @@ class ManaMode:
     intermediate_only: bool = False
     triggered_mana: tuple[TriggeredManaOutput, ...] = ()
     base_fundable: bool = True
+    tap_mana_multipliers: tuple[tuple[str, int], ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.tap_source) is not bool:
@@ -98,12 +99,18 @@ class ManaMode:
     def sacrifices_source(self) -> bool:
         return any(effect.get("op") == "sacrifice_source" for effect in self.side_effects)
 
+    def production_output(self, departed: frozenset[str] = frozenset()) -> dict[str, int]:
+        from math import prod
+
+        factor = prod(value for provider, value in self.tap_mana_multipliers if provider not in departed)
+        return {color: amount * factor for color, amount in self.bundle.items()} if factor != 1 else self.bundle
+
     def funding_output(self, *, base_snow: bool = False, departed: frozenset[str] = frozenset(),
                        base_fundable: bool | None = None) -> tuple[dict[str, int], dict[str, int]]:
         base_fundable = self.base_fundable if base_fundable is None else base_fundable
-        if base_fundable and not self.triggered_mana:
+        if base_fundable and not (self.triggered_mana or self.tap_mana_multipliers):
             return self.bundle, self.bundle if base_snow else {}
-        pool = normalize_mana_bundle(self.bundle if base_fundable else None)
+        pool = normalize_mana_bundle(self.production_output(departed) if base_fundable else None)
         snow = dict(pool) if base_snow else normalize_mana_bundle(None)
         for output in self.triggered_mana:
             if not output.survives(departed):

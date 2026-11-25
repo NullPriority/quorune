@@ -153,7 +153,7 @@ class EventPlayerModifierRuntimeContractTests(unittest.TestCase):
         self.assertIn(EVENT_PLAYER_SET_CAPABILITY,required)
         b=qualified_attack_binding_spec('Whenever a Dragon you control attacks, creatures defending player controls get -1/-1 until end of turn.')
         program=Row(event='creature.attacks',event_condition=b.condition,active_zone='battlefield',cost_schema=None,target_schema=None,
-            effects=(effect,),coverage=(),capability_dependencies=())
+            effects=(effect,),coverage=(),capability_dependencies=(),handlers=())
         self.assertIn(EVENT_PLAYER_SET_CAPABILITY,fixed_resolution_characteristics_runtime_dependencies(program))
         self.assertFalse(fixed_resolution_characteristic_set_node_capabilities(effects=(effect,),target_schema=None,mechanic_ids=('cr-611-continuous-effects',)))
         old=spec.bound_effect('B');old['predicate']['controller']='$controller'

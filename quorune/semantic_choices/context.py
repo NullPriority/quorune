@@ -10,6 +10,7 @@ from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
 from ..life_gain_permission import ALLOW_ALL_LIFE_GAIN,LifeGainPermissionSnapshot
 from ..semantic_runtime.context import SemanticSourceContext
+from ..discard_effect_origin import DiscardEffectOrigin
 from ..explore_action_model import explore_action_version
 from ..dungeon_progress import DungeonJourney
 
@@ -27,6 +28,7 @@ class ChoiceStackView:
     target_groups: FrozenMap = field(default_factory=FrozenMap)
     target_snapshots: FrozenMap = field(default_factory=FrozenMap)
     copy_source: FrozenMap | None = None
+    upkeep_player: str | None = None
 
     def __post_init__(self) -> None:
         if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
@@ -214,6 +216,7 @@ class SnapshotSemanticChoiceQuery:
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
     ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
     resolution_source: SemanticSourceContext | None = None
+    discard_effect_origin: DiscardEffectOrigin | None = None
     explore_action_version: int | None = None
     explore_source_types: tuple[str, ...] | None = None
     shared_type_library_source: Any = None

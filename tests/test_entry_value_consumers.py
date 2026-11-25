@@ -12,7 +12,7 @@ from scripts.build_test_database import build_fixture_database
 import test_public_zone_quantities as controls
 from quorune.rules.evidence_storage import read_evidence_document
 
-NAMES=('Realm Seekers','Inferno Project','Hulk, Strongest There Is','Big Bertha')
+NAMES = ("Realm Seekers", "Inferno Project", "Hulk, Strongest There Is", "Big Bertha", "Boss's Chauffeur")
 FIXED='counter.producer.fixed_self_entry'
 DYNAMIC='counter.producer.dynamic_self_entry'
 SIZE='quantity_expression.zone_cardinality'
@@ -98,12 +98,39 @@ class EntryValueConsumerTests(unittest.TestCase):
             for amount in (
                 "a +1/+1 counter on it for each creature you control",
                 "a number of +1/+1 counters on it equal to the number of creatures you control",
+                "a number of +1/+1 counters on it equal to one plus the number of other creatures you control",
                 "a +1/+1 counter on it plus an additional +1/+1 counter on it for each creature you control",
             ):
                 with self.subTest(amount=amount):
                     self.assertIsNone(dynamic_self_entry_counter_handler(
                         f"Generic Source enters with {amount}.", source_name="Generic Source",
                     ))
+
+    def test_real_chauffeur_adds_one_to_the_current_controlled_creature_count(self):
+        for other_count in (0, 2):
+            with self.subTest(other_count=other_count):
+                session = self.session(810060 + other_count)
+                self.clear_hands(session)
+                chauffeur = self.add(session.engine, "Boss's Chauffeur", zone="hand")
+                later_creature = self.add(session.engine, "Generic Bound Body", zone="hand", ref="later")
+                self.add(session.engine, "Generic Bound Plains", ref="land")
+                self.add(session.engine, "Generic Bound Body", seat="B", ref="opponent-creature")
+                private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+                for index in range(other_count):
+                    self.add(session.engine, "Generic Bound Body", ref=f"other-creature-{index}")
+                self.assertTrue(self.binding(session, chauffeur)["strict_capability_ready"])
+                self.prepare(session, mana={"C": 4, "W": 2})
+                self.checkpoint(session)
+                self.normal(session, chauffeur, {"C": 4, "W": 1})
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.settle(session))
+                self.assertEqual("battlefield", session.state.cards[chauffeur.object_id].zone)
+                self.assertEqual(1 + other_count, session.state.cards[chauffeur.object_id].counters["+1/+1"])
+
+                self.normal(session, later_creature, {"W": 1})
+                self.assertIsNone(self.settle(session))
+                self.assertEqual(2 + other_count, session.state.cards[chauffeur.object_id].counters["+1/+1"])
+                self.private_replay(session, private)
 
     def test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter(self):
         s=self.session(810010);self.clear_hands(s);spell=self.add(s.engine,'Realm Seekers',zone='hand')

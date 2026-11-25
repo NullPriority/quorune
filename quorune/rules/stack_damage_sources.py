@@ -31,8 +31,44 @@ def _public_source_snapshot(host, source, *, characteristics=None):
     return replace(snapshot, oracle_id=None) if getattr(source, 'face_down', False) else snapshot
 
 
+def linked_receiving_player_context(host, source, program, event):
+    from ..entry_designations import LINKED_PLAYER_RECEIVED_DAMAGE_PROGRAM_TEMPLATE, LINKED_RECEIVED_DAMAGE_PLAYER_FIELD
+
+    if event != "damage.received" or program.provenance.get("template_id") != LINKED_PLAYER_RECEIVED_DAMAGE_PROGRAM_TEMPLATE:
+        return {}
+    from .linked_entry_opponent import current_linked_entry_player
+
+    return {LINKED_RECEIVED_DAMAGE_PLAYER_FIELD: current_linked_entry_player(host, source)}
+
+
+def bind_source_relative_damage(host, effect, item, *, resolve):
+    from ..entry_designations import LINKED_RECEIVED_DAMAGE_PLAYER_FIELD
+    from .damage_capability_shapes import SOURCE_RELATIVE_DAMAGE_VERSION_FIELD, source_relative_damage_role
+
+    role = source_relative_damage_role(effect)
+    if role == "linked_player":
+        seat = item.context.get(LINKED_RECEIVED_DAMAGE_PLAYER_FIELD)
+        target = seat if type(seat) is str and seat in host.active_seats else None
+    else:
+        target = resolve("$source.zone_object")
+        if target is not None:
+            current = host.state.cards.get(item.source_object_id)
+            characteristics = host._effective_card_data(current)
+            types, _, _ = host._type_parts(str(characteristics.get("type_line") or ""))
+            if not {"creature", "planeswalker", "battle"}.intersection(types):
+                target = None
+    return {
+        **{key: value for key, value in effect.items() if key != SOURCE_RELATIVE_DAMAGE_VERSION_FIELD},
+        "target": target, "amount": effect["amount"] if target is not None else 0,
+    }
+
+
 def needs_stack_damage_source(value):
     if isinstance(value, Mapping):
+        if value.get("op") == "choose_option":
+            from .collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD
+            if COLLECTIVE_SOURCE_DAMAGE_FIELD in value:
+                return True
         return (value.get('op') in _OPERATIONS and value.get('source') == '$source') or any(
             needs_stack_damage_source(child) for child in value.values())
     return isinstance(value, (list, tuple)) and any(needs_stack_damage_source(child) for child in value)

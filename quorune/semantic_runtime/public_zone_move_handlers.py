@@ -8,6 +8,10 @@ from ..public_zone_moves import (
     PublicZoneMoveSetSpec,
     PublicZoneSeatRelation,
 )
+from ..rules.linked_clue_copy import (
+    LINKED_CLUE_COPY_VERSION, has_linked_clue_copy_version, linked_clue_copy_source_identity,
+    require_linked_clue_copy_version, validate_linked_clue_pair,
+)
 from ..rules.public_exile_result_model import PublicExileFollowup
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
@@ -43,6 +47,15 @@ class ExilePublicGraveyardCardHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        linked_source = None
+        linked_pair = None
+        if has_linked_clue_copy_version(effect):
+            try:
+                require_linked_clue_copy_version(effect)
+                linked_source = linked_clue_copy_source_identity(context.source)
+                linked_pair = validate_linked_clue_pair(effect.get("ability_pair"))
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
         fields = validate_direct_target_effect(
             effect,
             context,
@@ -50,6 +63,7 @@ class ExilePublicGraveyardCardHandler:
             reference_field="card",
             family_label="Public-graveyard exile",
             allow_replacement_selections=True,
+            additional_allowed_fields=(LINKED_CLUE_COPY_VERSION, "ability_pair") if linked_source is not None else (),
         )
         return IntentPlan(
             operation=self.operation,
@@ -60,6 +74,8 @@ class ExilePublicGraveyardCardHandler:
                     object_ref=fields.object_ref,
                     reason=fields.reason,
                     replacement_selections=fields.replacement_selections,
+                    linked_source=linked_source,
+                    linked_pair=linked_pair,
                 ),
             ),
         )

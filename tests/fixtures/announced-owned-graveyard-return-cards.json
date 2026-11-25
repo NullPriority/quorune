@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed simultaneous owned graveyard return and arbitrary paid-X witnesses.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f910",
+      "name": "Warproot Return",
+      "mana_cost": "{X}{W}{W}{W}",
+      "cmc": 3,
+      "type_line": "Sorcery",
+      "oracle_text": "Return all creature and planeswalker cards with mana value X or less from your graveyard to the battlefield. Exile Warproot Return.",
+      "keywords": [],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f911",
+      "name": "Ash Seed",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f912",
+      "name": "Ash Runner",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f913",
+      "name": "Ash Keeper",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "type_line": "Planeswalker - Keeper",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": "3"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f914",
+      "name": "Ash Tower",
+      "mana_cost": "{21}",
+      "cmc": 21,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f915",
+      "name": "Ash Citadel",
+      "mana_cost": "{24}",
+      "cmc": 24,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f916",
+      "name": "Ash Loop",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

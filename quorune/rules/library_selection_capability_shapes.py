@@ -31,6 +31,124 @@ _POLICIES = {
 }
 
 
+CHOSEN_TYPE_LIBRARY_SELECTION_VERSION = 5
+CHOSEN_TYPE_LIBRARY_SELECTION_CAPABILITY = "library.select.source_chosen_creature_type"
+CHOSEN_TYPE_TOP_SELECTION_VERSION = 6
+CHOSEN_TYPE_TOP_SELECTION_CAPABILITY = "library.top.source_chosen_creature_type"
+
+
+def chosen_type_library_selection_effect() -> dict:
+    from ..designation_prevention import DESIGNATION_LIBRARY_FILTER_KIND
+
+    return {
+        "op": "fixed_library_selection",
+        "schema_version": CHOSEN_TYPE_LIBRARY_SELECTION_VERSION,
+        "player": "$controller",
+        "look_count": 3,
+        "public_reveal": False,
+        "selected_reveal": True,
+        "selection_policy": "up_to_matching",
+        "minimum": 0,
+        "maximum": 1,
+        "predicate_groups": [[{
+            "kind": DESIGNATION_LIBRARY_FILTER_KIND, "schema_version": 1, "designation": "creature_type",
+        }]],
+        "remainder_destination": "library_bottom",
+        "remainder_order": "random",
+    }
+
+
+def validate_chosen_type_library_selection(effect, *, actor: str | None = None) -> ObjectQuerySpec | None:
+    from ..designation_prevention import chosen_type_library_predicate, unavailable_designation
+    from ..replacement.immutable import thaw_value
+
+    actual = thaw_value(effect)
+    expected = chosen_type_library_selection_effect()
+    if (
+        not isinstance(actual, Mapping)
+        or any(type(actual.get(field)) is not int for field in ("schema_version", "look_count", "minimum", "maximum"))
+        or actual.get("public_reveal") is not False
+        or actual.get("selected_reveal") is not True
+    ):
+        raise ValueError("Chosen-type library selection requires its exact typed top-three outcome")
+
+    if actor is None:
+        if actual != expected:
+            raise ValueError("Chosen-type library selection requires its exact source designation")
+        return None
+
+    actual = dict(actual)
+    groups = actual.pop("predicate_groups", None)
+    expected.pop("predicate_groups")
+    expected["player"] = actor
+    if (actual != expected or not isinstance(groups, list) or len(groups) != 1
+            or not isinstance(groups[0], list) or len(groups[0]) != 1):
+        raise ValueError("Chosen-type library selection requires its exact actor and one filter")
+    value = groups[0][0]
+    if unavailable_designation(value):
+        return None
+    query = ObjectQuerySpec.from_dict(value)
+    if len(query.subtypes_all) != 1 or query != chosen_type_library_predicate(query.subtypes_all[0]):
+        raise ValueError("Chosen-type library selection requires the bound creature subtype")
+    return query
+
+
+def chosen_type_top_selection_effect(*, may_put_in_graveyard: bool) -> dict:
+    from ..designation_prevention import DESIGNATION_LIBRARY_FILTER_KIND
+
+    return {
+        "op": "fixed_library_selection",
+        "schema_version": CHOSEN_TYPE_TOP_SELECTION_VERSION,
+        "player": "$controller",
+        "look_count": 1,
+        "public_reveal": False,
+        "selected_reveal": True,
+        "selection_policy": "up_to_matching",
+        "minimum": 0,
+        "maximum": 1,
+        "predicate_groups": [[{
+            "kind": DESIGNATION_LIBRARY_FILTER_KIND, "schema_version": 2, "designation": "creature_type",
+            "creatures_only": not may_put_in_graveyard,
+        }]],
+        "remainder_destination": "optional_graveyard" if may_put_in_graveyard else "keep_top",
+        "remainder_order": "chosen",
+    }
+
+
+def validate_chosen_type_top_selection(effect, *, actor: str | None = None) -> ObjectQuerySpec | None:
+    from ..designation_prevention import chosen_type_library_predicate, unavailable_designation
+    from ..replacement.immutable import thaw_value
+
+    actual = thaw_value(effect)
+    if (not isinstance(actual, Mapping)
+            or any(type(actual.get(field)) is not int for field in ("schema_version", "look_count", "minimum", "maximum"))
+            or actual.get("public_reveal") is not False or actual.get("selected_reveal") is not True):
+        raise ValueError("Chosen-type top selection requires a private singleton and one optional revealed take")
+    may_put_in_graveyard = actual.get("remainder_destination") == "optional_graveyard"
+    expected = chosen_type_top_selection_effect(may_put_in_graveyard=may_put_in_graveyard)
+    if actor is None:
+        if actual != expected:
+            raise ValueError("Chosen-type top selection requires its exact source filter and alternatives")
+        return None
+
+    actual = dict(actual)
+    groups = actual.pop("predicate_groups", None)
+    expected.pop("predicate_groups")
+    expected["player"] = actor
+    if (actual != expected or not isinstance(groups, list) or len(groups) != 1
+            or not isinstance(groups[0], list) or len(groups[0]) != 1):
+        raise ValueError("Chosen-type top selection requires its exact actor and filter")
+    value = groups[0][0]
+    if unavailable_designation(value):
+        return None
+    query = ObjectQuerySpec.from_dict(value)
+    if len(query.subtypes_all) != 1 or query != chosen_type_library_predicate(
+        query.subtypes_all[0], creatures_only=not may_put_in_graveyard,
+    ):
+        raise ValueError("Chosen-type top selection requires its bound subtype and creature scope")
+    return query
+
+
 def _characteristic_predicate(value: object) -> bool:
     if not isinstance(value, Mapping):
         return False
@@ -87,6 +205,18 @@ def fixed_library_selection_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    if effect.get("schema_version") == CHOSEN_TYPE_LIBRARY_SELECTION_VERSION:
+        try:
+            validate_chosen_type_library_selection(effect)
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY, CHOSEN_TYPE_LIBRARY_SELECTION_CAPABILITY)
+    if effect.get("schema_version") == CHOSEN_TYPE_TOP_SELECTION_VERSION:
+        try:
+            validate_chosen_type_top_selection(effect)
+        except (TypeError, ValueError):
+            return ()
+        return (FIXED_LIBRARY_SELECTION_CAPABILITY, CHOSEN_TYPE_TOP_SELECTION_CAPABILITY)
     from ..library_battlefield_model import LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION, library_battlefield_payload_dependencies
     if type(effect.get('schema_version')) is int and effect['schema_version'] in (3,LIBRARY_REVEALED_ENTRY_FOLLOWUP_VERSION):
         try:required=library_battlefield_payload_dependencies(effect)

@@ -13,9 +13,31 @@ from ..fixed_token_production import (
     fixed_token_effect_shape_is_closed,
 )
 from ..replacement.immutable import FrozenMap
+from ..rules.committed_quantity_followups import COMMITTED_TOKEN_CREATOR_COUNTS_FIELD
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import IntentPlan
 from .token_creation_intent import DistributedTokenCreationIntent
+
+
+def _distributed_creators(raw, actor, apnap):
+    if COMMITTED_TOKEN_CREATOR_COUNTS_FIELD in raw:
+        counts = raw[COMMITTED_TOKEN_CREATOR_COUNTS_FIELD]
+        fields = {"op", "controller", "token", COMMITTED_TOKEN_CREATOR_COUNTS_FIELD}
+        if (set(raw) != fields or raw["op"] != FIXED_DISTRIBUTED_TOKEN_OPERATION
+                or raw["token"]["quantity"] != 1 or not isinstance(counts, Mapping)
+                or not counts or any(seat not in apnap or type(count) is not int or count <= 0
+                                    for seat, count in counts.items())):
+            raise ValueError("Committed token counts require current creators and positive quantities")
+        creators = tuple(seat for seat in apnap if seat in counts)
+        return creators, tuple(counts[seat] for seat in creators)
+
+    scope = fixed_token_creator_scope(raw)
+    if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT:
+        target = raw["target"]
+        if type(target) is not str or target == actor or target not in apnap:
+            raise ValueError("Distributed token target must be a current opponent")
+        return tuple(seat for seat in apnap if seat in {actor, target}), ()
+    return tuple(seat for seat in apnap if scope is FixedTokenCreatorScope.EACH_PLAYER or seat != actor), ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,26 +57,18 @@ class DistributedTokenCreationHandler:
         raw = dict(effect)
         selections = raw.pop("_replacement_selections", ())
         try:
-            scope = fixed_token_creator_scope(raw)
             token = raw["token"]
             if raw["controller"] != actor or token.get("controller") not in {actor, "$controller"}:
                 raise ValueError("Distributed token creation controller changed")
             if not fixed_token_effect_shape_is_closed({**token, "controller": "$controller"}):
                 raise ValueError("Distributed token creation requires one closed token definition")
-            apnap = context.query.apnap_order
-            if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT:
-                target = raw["target"]
-                if type(target) is not str or target == actor or target not in apnap:
-                    raise ValueError("Distributed token target must be a current opponent")
-                creators = tuple(seat for seat in apnap if seat in {actor, target})
-            else:
-                creators = tuple(seat for seat in apnap
-                                 if scope is FixedTokenCreatorScope.EACH_PLAYER or seat != actor)
+            creators, quantities = _distributed_creators(raw, actor, context.query.apnap_order)
             if not isinstance(selections, (list, tuple)):
                 raise ValueError("Distributed token replacement choices must be ordered")
             intent = DistributedTokenCreationIntent(
                 actor, creators, FrozenMap(token), source.stack_ref,
                 source.instruction_pointer, context.default_reason, tuple(selections),
+                creator_quantities=quantities,
             )
         except (ValueError, TypeError, KeyError) as exc:
             raise SemanticNodeError(str(exc)) from exc

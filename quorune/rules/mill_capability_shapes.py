@@ -3,7 +3,16 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping, Sequence
 
 from ..fractional_quantity_model import HALF_MILL_CAPABILITY, HALF_MILL_MECHANIC, HALF_QUANTITY_KIND, HalfQuantitySpec
-from ..compiler.mill_templates import MILL_CAPABILITY_ID, MILL_MECHANIC_ID,EVENT_MILL_RECIPIENT_CAPABILITY,EVENT_MILL_RECIPIENT_MECHANIC
+from ..query_effect_amount_model import (
+    OPPONENT_HAND_MILL_CAPABILITY, OPPONENT_HAND_MILL_KIND, OPPONENT_HAND_MILL_MECHANIC, OpponentHandMillCount,
+)
+from ..compiler.mill_templates import (
+    ATTACKER_CONTROLLER_MILL_MECHANIC, EVENT_MILL_RECIPIENT_CAPABILITY, EVENT_MILL_RECIPIENT_MECHANIC,
+    MILL_CAPABILITY_ID, MILL_MECHANIC_ID, EQUIPPED_WOLF_MILL_MECHANIC,
+)
+from ..target_controller_information import (
+    TARGET_CONTROLLER_INFORMATION_CAPABILITY, is_occurrence_controller_reference,
+)
 
 
 def _player_target_schema_is_closed(
@@ -31,6 +40,49 @@ def _player_target_schema_is_closed(
     }
 
 
+def _equipped_wolf_mill_node_capabilities(effects, target_schema, mechanics):
+    from ..replacement.immutable import FrozenMap
+    from .token_creation_capability_shapes import token_definition_payload_dependencies
+
+    if target_schema is not None or len(effects) != 2:
+        return ()
+    token, mill = effects
+    expected_token = {"op": "create_token", "controller": "$controller", "name": "Wolf Token", "quantity": 1,
+                      "characteristics": {"type_line": "Token Creature — Wolf", "literal_token_name_version": 1,
+                                          "colors": ["G"], "power": "2", "toughness": "2"}}
+    expected_mill = {"op": "mill", "player": "$context.target", "count": 10}
+    if (FrozenMap(token) != FrozenMap(expected_token) or type(token.get("quantity")) is not int
+            or FrozenMap(mill) != FrozenMap(expected_mill) or type(mill.get("count")) is not int):
+        return ()
+    if type(token["characteristics"]["literal_token_name_version"]) is not int:
+        return ()
+    first = token_definition_payload_dependencies(token, mechanics)
+    last = fixed_mill_node_capabilities(
+        effects=(mill,), target_schema=None, mechanic_ids=mechanics - {EQUIPPED_WOLF_MILL_MECHANIC},
+    )
+    return tuple(sorted({*first, *last})) if first and last else ()
+
+
+def equipped_wolf_mill_runtime_dependencies(program):
+    from ..replacement.immutable import FrozenMap
+
+    mechanics = set(getattr(program, "coverage", ()))
+    if EQUIPPED_WOLF_MILL_MECHANIC not in mechanics:
+        return ()
+    expected_condition = {"all": [
+        {"field": "source_attachment_target_ref", "op": "eq", "value": "$context.source"},
+        {"field": "target_kind", "op": "eq", "value": "player"},
+        {"field": "combat", "op": "truthy", "value": True},
+    ]}
+    required = _equipped_wolf_mill_node_capabilities(program.effects, program.target_schema, mechanics)
+    if (not required or (program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or FrozenMap(program.event_condition or {}) != FrozenMap(expected_condition)
+            or program.cost_schema is not None or program.handlers):
+        raise ValueError("Wolf and Mill requires the exact original equipped combat-damage occurrence and both results")
+    return (*required, "attachment.reference.current_or_lki", "trigger.event.normalized_damage",
+            "trigger.effect.fixed_event", "trigger.placement.apnap")
+
+
 def fixed_mill_node_capabilities(
     *,
     effects: Sequence[Mapping[str, object]],
@@ -39,6 +91,8 @@ def fixed_mill_node_capabilities(
 ) -> tuple[str, ...]:
     """Own one mandatory Mill with a closed count and recipient."""
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if EQUIPPED_WOLF_MILL_MECHANIC in mechanics:
+        return _equipped_wolf_mill_node_capabilities(effects, target_schema, mechanics)
     if MILL_MECHANIC_ID not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
@@ -46,6 +100,13 @@ def fixed_mill_node_capabilities(
         return ()
     count = effect.get("count")
     caps = (MILL_CAPABILITY_ID,)
+    if isinstance(count, Mapping) and count.get("kind") == OPPONENT_HAND_MILL_KIND:
+        if target_schema is not None or OPPONENT_HAND_MILL_MECHANIC not in mechanics:
+            return ()
+        try:
+            return opponent_hand_mill_payload_dependencies(effect)
+        except (TypeError, ValueError):
+            return ()
     if HALF_MILL_MECHANIC in mechanics and isinstance(count, Mapping):
         try:
             HalfQuantitySpec.from_dict(count)
@@ -61,7 +122,12 @@ def fixed_mill_node_capabilities(
     if set(effect) != {"op", "player", "count"}:
         return ()
     player = effect.get("player")
-    if target_schema is None and EVENT_MILL_RECIPIENT_MECHANIC in mechanics and player in {
+    if ATTACKER_CONTROLLER_MILL_MECHANIC in mechanics:
+        if (target_schema is None and EVENT_MILL_RECIPIENT_MECHANIC in mechanics
+                and type(count) is int and is_occurrence_controller_reference(player)):
+            return (*caps, EVENT_MILL_RECIPIENT_CAPABILITY, TARGET_CONTROLLER_INFORMATION_CAPABILITY)
+        return ()
+    if target_schema is None and EVENT_MILL_RECIPIENT_MECHANIC in mechanics and isinstance(player, str) and player in {
             "$context.target", "$context.player", "$context.defending_player"}:
         return (*caps, EVENT_MILL_RECIPIENT_CAPABILITY)
     if target_schema is None and player == "$controller":
@@ -69,6 +135,16 @@ def fixed_mill_node_capabilities(
     if "cr-115-targets" in mechanics and player == "$target.0" and _player_target_schema_is_closed(target_schema):
         return (*caps, "target.revalidate_resolution")
     return ()
+
+
+def opponent_hand_mill_payload_dependencies(effect):
+    count = effect.get("count")
+    if effect.get("op") != "mill" or not isinstance(count, Mapping) or count.get("kind") != OPPONENT_HAND_MILL_KIND:
+        return ()
+    if set(effect) != {"op", "scope", "count"}:
+        raise ValueError("Hand-count Mill cannot name or target individual players")
+    OpponentHandMillCount.from_dict(count, scope=effect["scope"])
+    return (MILL_CAPABILITY_ID, OPPONENT_HAND_MILL_CAPABILITY)
 
 
 def half_mill_payload_dependencies(effect):
@@ -104,10 +180,36 @@ def validate_half_mill_program_scope(program):
             pending.extend(value)
 
 
+def attacker_controller_mill_program_dependencies(program):
+    if equipped := equipped_wolf_mill_runtime_dependencies(program):
+        return equipped
+    from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY, defended_player_or_planeswalker_condition
+    from ..replacement.immutable import thaw_value
+
+    if ATTACKER_CONTROLLER_MILL_MECHANIC not in getattr(program, "coverage", ()):
+        return ()
+    owned = fixed_mill_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if (
+        not owned or (program.event, program.active_zone) != ("creature.attacks", "battlefield")
+        or program.cost_schema is not None or program.handlers or "one_or_more_event_batch" in program.coverage
+        or thaw_value(program.event_condition) != defended_player_or_planeswalker_condition()
+    ):
+        raise ValueError("Attacker-controller mill requires its exact declared defender and original occurrence")
+    return (*owned, QUALIFIED_ATTACK_CAPABILITY, "trigger.event.normalized_public_action")
+
+
 def mill_covered_mechanics(supplied):
-    return {mechanic for cap,mechanic in ((MILL_CAPABILITY_ID,MILL_MECHANIC_ID),
+    covered = {mechanic for cap,mechanic in ((MILL_CAPABILITY_ID,MILL_MECHANIC_ID),
         (EVENT_MILL_RECIPIENT_CAPABILITY,EVENT_MILL_RECIPIENT_MECHANIC),
-        (HALF_MILL_CAPABILITY,HALF_MILL_MECHANIC)) if cap in supplied}
+        (HALF_MILL_CAPABILITY,HALF_MILL_MECHANIC),
+        (OPPONENT_HAND_MILL_CAPABILITY,OPPONENT_HAND_MILL_MECHANIC)) if cap in supplied}
+    if EVENT_MILL_RECIPIENT_CAPABILITY in supplied and MILL_CAPABILITY_ID in supplied:
+        covered.add(EQUIPPED_WOLF_MILL_MECHANIC)
+    if EVENT_MILL_RECIPIENT_CAPABILITY in supplied and TARGET_CONTROLLER_INFORMATION_CAPABILITY in supplied:
+        covered.add(ATTACKER_CONTROLLER_MILL_MECHANIC)
+    return covered
 
 
 __all__ = ["fixed_mill_node_capabilities","mill_covered_mechanics"]

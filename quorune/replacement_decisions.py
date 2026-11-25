@@ -3,7 +3,11 @@ from __future__ import annotations
 import copy
 from typing import Any, Mapping, Protocol, Sequence
 from .counter_doubling import named_counter_input_snapshot
-from .copied_token_aura_entry import COPIED_AURA_TOKEN_SELECTIONS, copied_aura_token_selections
+from .damage_source import DAMAGE_PREVENTION_RESULT_VERSION_FIELD
+from .damage_transaction import damage_proposal_continuation_fields
+from .copied_token_aura_entry import (
+    COPIED_AURA_TOKEN_SELECTIONS, copied_aura_token_selections, copied_token_instruction,
+)
 from .errors import GameRuleError
 
 from .aura import AuraEntryChoiceRequired, issue_aura_entry_choice
@@ -119,6 +123,11 @@ def issue_replacement_order_choice(
         if history:
             context["prompt"] = f"{history} {context['prompt']}"
     sealed_effect = copy.deepcopy(dict(effect))
+    from .rules.library_bottom_results import library_bottom_input_snapshot
+
+    bottom_input = library_bottom_input_snapshot(host, effect, actor=item.controller)
+    if bottom_input is not None:
+        sealed_effect["_library_bottom_input"] = bottom_input
     from .whole_hand_discard import whole_hand_input_snapshot
     hand_inputs=whole_hand_input_snapshot(host,effect,actor=item.controller)
     if hand_inputs is not None:
@@ -139,6 +148,7 @@ def issue_replacement_order_choice(
         continuation={
             "stack_ref": item.ref,
             "effect": sealed_effect,
+            **damage_proposal_continuation_fields(required),
             "remaining": [copy.deepcopy(dict(value)) for value in remaining],
             "destination": destination,
             "note": note,
@@ -189,6 +199,7 @@ def issue_combat_damage_replacement_choice(
         payload_by_actor={seat: context},
         continuation={
             "replacement_resume_kind": "combat_damage",
+            **damage_proposal_continuation_fields(required),
             "combat_assignments": [
                 copy.deepcopy(dict(value)) for value in assignments
             ],
@@ -223,7 +234,9 @@ def _priority_action_cost_event_id(batch: ReplacementEventBatch) -> str:
             "Priority-action cost continuation must identify one event"
         )
     event = batch.events[0]
-    if event.kind not in {"counter.place", "zone.change"} or not event.event_id:
+    from .replacement.face_status_copy import FACE_UP_COPY_EVENT
+
+    if event.kind not in {"counter.place", "zone.change", FACE_UP_COPY_EVENT} or not event.event_id:
         raise ReplacementEffectError(
             "Priority-action cost continuation has an unsupported event"
         )
@@ -250,17 +263,32 @@ def _validate_mana_payment_frame(
 
 
 def _quantity_followup_plan(plan: IntentPlan) -> bool:
+    from .fixed_damage_set_model import DEALT_LIFE_GAIN_FIELD, TARGETED_DEALT_LIFE_GAIN_VERSION
+    from .semantic_runtime.domain_intent import DomainEffectIntent
     from .semantic_runtime.earthbend_intents import EarthbendIntent
+    from .rules.token_mill_repeat import TokenMillRepeatIntent
+    from .source_sacrifice_model import FixedSourceSacrificeIntent
+    from .rules.library_bottom_results import LibraryBottomResultIntent
     from .semantic_runtime.graveyard_card_result_intent import GraveyardCardCounterLifeIntent
     from .semantic_runtime.graveyard_exile_branch_intent import GraveyardExileBranchIntent
     from .semantic_runtime.graveyard_exile_token_intent import GraveyardExileTokenIntent
     from .semantic_runtime.graveyard_exile_type_outcome_intent import GraveyardExileTypeOutcomeIntent
     from .semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
-    from .semantic_runtime.intents import DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent
+    from .semantic_runtime.targeted_exile_token_intent import CommittedTargetExileIntent
+    from .semantic_runtime.intents import (
+        DealFixedDamageSetIntent, DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent,
+    )
 
     return any(
-        isinstance(intent, (EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
-            GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent))
+        isinstance(intent, (TokenMillRepeatIntent, LibraryBottomResultIntent, EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
+            GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent, CommittedTargetExileIntent))
+        or isinstance(intent, FixedSourceSacrificeIntent) and intent.cast_participant is not None
+        or isinstance(intent, DealFixedDamageSetIntent) and intent.gain_life_from_dealt
+        or (
+            isinstance(intent, DomainEffectIntent)
+            and intent.operation == "damage"
+            and intent.effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
+        )
         or (
             isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
             and intent.followup is not None
@@ -295,7 +323,7 @@ def apply_effect_with_replacement_choice(
 
     remaining, destination, note, instruction_pointer = continuation
     if COPIED_AURA_TOKEN_SELECTIONS in item.context:
-        if effect.get("op") != "create_token" or "copy_spec" not in effect:
+        if not copied_token_instruction(effect):
             raise GameRuleError("Copied Aura token selections require their resolving copy recipe")
         copied_aura_token_selections(item, instruction_pointer=instruction_pointer)
     from .composition_order_model import CompositionOrderChoiceRequired
@@ -442,6 +470,25 @@ def _replacement_selection(
     )
 
 
+def _bind_entry_card_name_choice(host, effects, response, selection, *, error_type):
+    from .entry_designations import entry_card_name_operation, resolve_entry_card_name
+
+    selected = selection if isinstance(selection, str) else selection["effect_id"]
+    effect = next((effect for effect in effects if effect.effect_id == selected), None)
+    operation = entry_card_name_operation(effect) if effect is not None else None
+    submitted = response.get("card_name")
+    if operation is None:
+        if submitted is not None:
+            raise error_type("This replacement does not accept a card name")
+        return selection
+    try:
+        name = resolve_entry_card_name(host.card_db, submitted, nonland=operation.nonland)
+    except (TypeError, ValueError) as exc:
+        raise error_type(str(exc)) from exc
+    raw = {"effect_id": selection} if isinstance(selection, str) else dict(selection)
+    return {**raw, "card_name": name}
+
+
 def _resume_combat_replacement(
     host: ReplacementDecisionHost,
     restored: ReplacementContinuation,
@@ -453,7 +500,7 @@ def _resume_combat_replacement(
             *restored.replacement_selections,
             selection,
         ],
-        replacement_event_ids=[
+        replacement_event_ids=restored.damage_proposal_ids or [
             event.event_id
             for event in restored.batch.events
             if event.kind == "damage"
@@ -470,11 +517,20 @@ def _resume_mana_replacement(
     *,
     error_type: type[Exception],
 ) -> None:
+    from .rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, WholeZoneCostFrame
+
     try:
         _validate_mana_payment_frame(host, restored.thaw_priority_frame())
         response = restored.thaw_priority_response()
+        if WHOLE_ZONE_COST_FRAME_FIELD in response:
+            frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
+            response[WHOLE_ZONE_COST_FRAME_FIELD] = frame.append_selection(selection).to_dict()
+            resume_mana_choice_capable_priority_action(
+                host, seat=restored.priority_seat, action=restored.priority_action, response=response,
+            )
+            return
         event_id = (
-            _mana_damage_event_id(restored.batch)
+            (restored.damage_proposal_ids or (_mana_damage_event_id(restored.batch),))[0]
             if restored.resume_kind == "mana_payment"
             else _priority_action_cost_event_id(restored.batch)
             if len(restored.batch.events) == 1
@@ -580,6 +636,11 @@ def _resume_semantic_replacement(
     except CounterPlacementError as exc:
         raise error_type(str(exc)) from exc
     current_effect = restored.thaw_effect()
+    from .rules.library_bottom_results import library_bottom_input_snapshot
+
+    bottom_input = current_effect.pop("_library_bottom_input", None)
+    if library_bottom_input_snapshot(host, current_effect, actor=item.controller) != bottom_input:
+        raise error_type("The bottom card changed before replacement resume")
     from .whole_hand_discard import whole_hand_input_snapshot
     hand_snapshot=current_effect.pop('_whole_hand_input_snapshot',None)
     hand_current=whole_hand_input_snapshot(host,current_effect,actor=item.controller)
@@ -598,7 +659,7 @@ def _resume_semantic_replacement(
         *list(current_effect.get("_replacement_selections") or []),
         selection,
     ]
-    damage_event_ids = [
+    damage_event_ids = list(restored.damage_proposal_ids) or [
         event.event_id
         for event in restored.batch.events
         if event.kind == "damage"
@@ -649,6 +710,8 @@ def complete_replacement_order_choice(
         restored = ReplacementContinuation.from_dict(continuation)
     except ReplacementEffectError as exc:
         raise error_type(str(exc)) from exc
+    if restored.damage_proposal_ids and getattr(host.state, DAMAGE_PREVENTION_RESULT_VERSION_FIELD, None) != 1:
+        raise error_type("The damage replacement record is missing its execution version")
     batch = restored.batch
     effects = restored.effects
     pending = next_batch_replacement_choice(batch, effects)
@@ -661,17 +724,31 @@ def complete_replacement_order_choice(
             raise error_type("The payment recovery choice is unavailable")
         _resume_land_entry_replacement(host, restored, SKIP_UNAVAILABLE_LAND_ENTRY_PAYMENT, error_type=error_type)
         return
+    from .entry_designations import implicit_entry_card_name_selection
+
+    response = implicit_entry_card_name_selection(response, pending, effects)
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
+    selection = _bind_entry_card_name_choice(host, effects, response, selection, error_type=error_type)
     selection = _scope_replayed_event_choice(host, restored, pending, selection)
     from .zone_devour import validate_devour_resume
     from .entry_results import validate_pending_amplify_reveals
+    from .rules.graveyard_entry_copy import validate_graveyard_copy_resume
     validate_devour_resume(host,batch,effects,selection,error_type=error_type)
+    validate_graveyard_copy_resume(host,batch,effects,selection,error_type=error_type)
+    from .rules.linked_graveyard_entry import validate_linked_graveyard_resume
+
+    validate_linked_graveyard_resume(host, batch, effects, selection, error_type=error_type)
     validate_pending_amplify_reveals(host, batch, effects, selection, error_type=error_type)
     if restored.resume_kind=='opening_hand_entry':
         from .opening_hand import resume_opening_hand_replacement
         resume_opening_hand_replacement(host,restored,selection)
+        return
+    if restored.resume_kind == "draw_discard_or_mill":
+        from .drawing.discard_coordination import resume_draw_discard_replacement
+
+        resume_draw_discard_replacement(host, restored, selection, error_type=error_type)
         return
     if restored.resume_kind == 'conditional_return':
         from .conditional_exile_return import resume_conditional_return
@@ -684,7 +761,7 @@ def complete_replacement_order_choice(
     if restored.resume_kind == "combat_damage":
         _resume_combat_replacement(host, restored, selection)
         return
-    if restored.resume_kind in {"mana_payment", "priority_action_cost"}:
+    if restored.resume_kind in {"mana_payment", "priority_action_cost", "face_up_copy"}:
         _resume_mana_replacement(
             host, restored, selection, error_type=error_type
         )

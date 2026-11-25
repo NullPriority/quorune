@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Iterable, Sequence
 
+from ..errors import GameRuleError
 from ..library_order_model import LibraryArrivalOrder
 
 if TYPE_CHECKING:
@@ -98,6 +99,53 @@ def commit_ordered_library_partition(
     library[:] = [*bottom, *untouched, *reversed(top)]
 
 
+def publish_library_search_reveal(host, seat, cards, *, announce):
+    shown = sorted(cards, key=lambda card: card.ref) if announce else cards
+    public_details = {"objects": [card.ref for card in shown]}
+    summary = f"{seat} revealed search results."
+    if announce:
+        names = [card.printed_name for card in shown]
+        public_details["names"] = names
+        summary = f"{seat} revealed {', '.join(names)}."
+    host._log(
+        seat, "library.search.reveal", summary, public_details, importance=3 if announce else 1,
+        changed_objects=[card.object_id for card in shown], changed_players=[seat],
+    )
+
+
+def place_revealed_library_search_results_on_top(host, owner, seat, top_first, *, reason):
+    """Reveal the set in public and retain the proposed permutation privately."""
+    owner.reveal_library_search_results(seat, top_first, public=True, announce_public_results=True)
+    owner.shuffle_library(seat, reason=reason, excluded_object_ids=top_first)
+    library = host.state.players[seat].zones["library"]
+    commit_ordered_library_partition(library, top_top_first=top_first)
+    if len(top_first) > 1:
+        for object_id in top_first:
+            card = host.state.cards[object_id]
+            card.known_to = [seat]
+            card.revealed_to = [seat]
+
+
+def validate_ordered_library_destination(host, cards_by_id, changes, order: LibraryArrivalOrder) -> str:
+    if not isinstance(order, LibraryArrivalOrder) or (
+        len(changes) != len(order.members) or set(changes) != {(member, "library") for member in order.members}
+    ):
+        raise GameRuleError("Library order must describe the whole requested batch")
+    host._require_seat(order.chooser, in_game=True)
+    cards = tuple(cards_by_id.get(member) for member in order.members)
+    if any(card is None or card.zone not in order.origin_zones or card.permanent_composition is not None for card in cards):
+        raise GameRuleError("Ordered library movements require the original public-zone cards")
+    owners = {card.owner for card in cards}
+    if len(owners) != 1:
+        raise GameRuleError("Ordered library movements require a single library")
+    owner, = owners
+    from ..library_order_model import DepartedLibraryArrivalOrder
+
+    if isinstance(order, DepartedLibraryArrivalOrder) and order.chooser != owner:
+        raise GameRuleError("The library owner must order a departed card group")
+    return owner
+
+
 def commit_ordered_library_arrivals(
     library: list[str], order: LibraryArrivalOrder, committed: Iterable[CardInstance],
 ) -> None:
@@ -128,4 +176,5 @@ __all__ = [
     "commit_ordered_library_arrivals",
     "commit_ordered_library_partition",
     "partition_refs",
+    "validate_ordered_library_destination",
 ]

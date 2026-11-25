@@ -35,6 +35,12 @@ def bound_source_fixed_damage(binding, body):
 
 
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
+    if (event_phrase == "dies"
+        and body.strip().casefold() == "destroy all permanents at the beginning of the next end step."):
+        from ..rules.destruction_result_model import next_end_step_destruction_effect
+
+        return ("fixed-destruction-next-end-step-v1", (next_end_step_destruction_effect(),),
+                None, ("destroy", "destroy-fixed-set"), None)
     from .scalar_effect_amounts import source_scalar_effect_amount_template
     from ..source_entry_cast_information import (source_entry_cast_condition,SOURCE_ENTRY_CAST_MECHANIC,
         SOURCE_ENTRY_CAST_HAND_MECHANIC)
@@ -42,8 +48,28 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
     if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
     if event_phrase == 'enters':
+        from .discard_result_templates import selected_land_discard_result_template
+        if condition is None and (land_discard := selected_land_discard_result_template(body)) is not None:
+            return (*land_discard, None)
         from .manifest_templates import manifest_equipment_entry_template
+        from .target_opponent_counter_choice import target_opponent_counter_choice_result
+        from .keep_three_sacrifice_templates import keep_three_land_entry_template
+        from .collective_source_damage_templates import collective_source_damage_entry_template
+        from .protected_attack_payment_templates import next_turn_attack_payment_template
+        from .library_search_templates import (
+            optional_literal_name_any_number_search_template, recruiting_library_search_template,
+        )
 
+        if condition is None:
+            library_search = (optional_literal_name_any_number_search_template(body)
+                              or recruiting_library_search_template(body))
+            if library_search is not None:
+                return (*library_search, None)
+            entry_result = (target_opponent_counter_choice_result(body) or keep_three_land_entry_template(body)
+                            or collective_source_damage_entry_template(body, card_name=card_name)
+                            or next_turn_attack_payment_template(body, card_name=card_name))
+            if entry_result is not None:
+                return (*entry_result, None)
         if condition is None and (attachment := manifest_equipment_entry_template(body)) is not None:
             return (*attachment, None)
         from .suspect_templates import normalize_entering_source_suspect
@@ -211,19 +237,43 @@ def _source_self_counter_payment(text, *, card_name, compile_effect):
     return compiled if compiled[0] is not None else None
 
 
+def _cycled_goblin_damage_amount(body):
+    if not re.fullmatch(
+        r"you may have it deal X damage to target creature, where X is the number of Goblins on the battlefield[.]?",
+        body, re.I,
+    ):
+        return None
+    from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from ..object_predicate import ObjectQuerySpec
+    from ..query_effect_amount_model import PublicQueryAmountSpec
+
+    quantity = CharacteristicQuantitySpec(
+        CharacteristicQuantityScope.ALL_ZONES,
+        ObjectQuerySpec(zones=("battlefield",), subtypes_all=("goblin",)),
+    )
+    return PublicQueryAmountSpec(quantity)
+
+
 def source_cycled_optional_damage_result(binding, body):
-    """The fixed damage source is the card discarded to pay its own cycling."""
+    """The damage source is the card discarded to pay for its own cycling."""
     if (binding.event.value != 'card.cycled.self' or binding.variant != 'source_cycles'
             or binding.active_zone != 'hand'):
         return None
     match = re.fullmatch(r'you may have it deal (?P<damage>[1-9][0-9]* damage to .+)', body, re.I)
-    if match is None:
+    amount = _cycled_goblin_damage_amount(body) if match is None else None
+    if match is None and amount is None:
         return None
-    leaf = source_pronoun_damage_effect_template('It deals ' + match['damage'])
+    damage_body = match["damage"] if match is not None else "1 damage to target creature."
+    leaf = source_pronoun_damage_effect_template("It deals " + damage_body)
     if leaf is None:
         return None
     from .optional_effect_templates import FixedOptionalEffectTemplate, FIXED_OPTIONAL_EFFECT_MECHANIC
     template, effects, target_schema, mechanics = leaf.compiled()
+    if amount is not None:
+        from .public_query_effect_amounts import PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC
+
+        effects = ({**effects[0], "amount": amount.to_dict()},)
+        mechanics = (*mechanics, PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC)
     return FixedOptionalEffectTemplate(component_template_id=template,
         _component_effects=effects, _target_schema=target_schema,
         mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, CYCLED_SOURCE_DAMAGE_COVERAGE, *mechanics)).compiled()

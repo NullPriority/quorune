@@ -100,6 +100,21 @@ opponent rosters produce no intent; short libraries contribute only available
 cards. The historical `all_active_players` scope retains its recipient contract.
 No pre-mill hidden card identities enter the descriptor or public projection.
 
+Forest and Swamp entry payment uses the immutable putting player in the
+normalized land arrival. That player can put one -1/-1 counter on a creature
+they control. An unpaid cost resolves the printed source damage against the
+same player. The pending choice seals the original arrival, the eligible
+creature incarnations, and the damage source needed for replay.
+An automatic return from a source-departure effect has no putting player.
+A resolving triggered return instruction uses the player who follows it.
+
+A sole cast target copy counts distinct announced references and checks that
+the one original target is a battlefield artifact or creature controlled by
+the caster when the cast occurs. The untargeted trigger retains that
+permanent's incarnation if the original spell changes targets. The copy owner
+uses its current copiable values or the values saved at departure or phasing
+out, then removes legendary from the token's copiable supertypes.
+
 Event-addressed mill requests `zone.mill.event_recipient` through the dedicated
 `fixed-event-recipient-mill` mechanic. A damage binding must guarantee a player
 recipient before using `$context.target`; source attacks use the sealed
@@ -393,6 +408,156 @@ restrictions retain the canonical mana provenance. Targeted or loyalty mana
 abilities, linked sacrificed-object counts, unknown conditional tails, variable
 allocation spell continuations, and unsupported sibling abilities remain
 residual.
+
+The versioned targeted public tap result first taps all current lands
+controlled by the original legal player target. It then removes that player's
+unspent mana and its provenance. Mana retained across combat steps is still
+unspent. An illegal player target prevents both results. Historical public
+tap results retain their original payload and resolution.
+
+An intrinsic own-turn cast restriction uses the existing shared offer and
+command check. A conditional extra turn reads the current turn's sealed
+opponent spell colors at resolution. It counts opposing spells cast in
+response or later countered. Spell copies that were never cast supply no
+cast fact. A copy of the conditional extra-turn spell uses its own resolving
+controller. Historical extra-turn and intrinsic cast payloads keep their
+earlier formats.
+
+Two intrinsic cast restrictions use the shared proposal timing check for
+the current opponent's upkeep and the rest of that turn after its first
+actual upkeep finishes. The turn owner supplies the completed-step fact,
+including when an upkeep is skipped. The spell bodies keep the ordinary
+attack prohibition and controller-land untap owners.
+
+The untargeted combat-prevention pair creates the ordinary turn-long Fog
+shield and records the current attacking creature incarnations for their
+next controller untap. The untap owner consumes the restriction on the
+original permanent. A later attacker can still be protected by the shield,
+and a creature returning from another zone has a fresh incarnation.
+
+The targeted combat-prevention spell taps one creature, establishes the
+ordinary outgoing-combat shield for that incarnation, and keeps it from
+untapping in its next two controller untap steps. The untap owner consumes
+the countdown across changes of controller. A two-step annotation becomes
+the historical one-step flag after its first step. Overlapping restraints
+leave the longest remaining duration in effect.
+
+A second exact targeted spell pairs the same outgoing-combat shield with
+a toughness increase equal to the original creature's mana value. The
+scalar owner reads that value once during resolution and the layer-seven
+owner applies it to the original object through cleanup. Zero mana value
+leaves the toughness unchanged and the combat shield still applies.
+
+The ordered untapped-target spell shares one announcement and resolution
+check. It taps the original creature, then reads its current power and
+controller through the ordinary damage and information owners. A Conspire
+copy has its own targets and legality check. If it keeps the original
+target, its tap can invalidate the original spell when that spell resolves.
+
+The versioned two-controller creature result untaps the resolving
+controller's and legal target opponent's current creatures simultaneously.
+It then reads both current groups again, since untapping can end a control
+effect. The two temporary layer-two assignments commit in one batch, and
+the affected objects gain Haste until end of turn through layer six. Either
+group can be empty.
+
+The global counter-and-token result removes every kind of counter from
+phased-in permanents in one batch. It then exiles the current phased-in
+tokens in a separate simultaneous zone batch. Player counters, cards in
+other zones, and phased-out objects are outside both scopes. State-based
+actions run after the ordered spell result finishes.
+
+A mandatory intrinsic entry replacement captures all counters on current
+phased-in permanents. Its selected entry retains the counter inventory and
+creates the ordinary entry counter child. Simultaneous candidates share one
+inventory and the affected player can choose which event uses it. Each
+offered event names its original incarnation so a resumed choice does not
+depend on the current revision or journal sequence. The zone or token owner
+commits the captured removals before entry and preserves
+ordinary entry counter replacements, trigger ordering and replay.
+
+The exact damage-dealer responses observe committed damage to their
+controller. The normalized event supplies the original public permanent
+incarnation and distinguishes all damage from combat damage. The
+untargeted move affects that incarnation if it is still present. The
+ordered token result remains independent of the attempted destruction.
+
+An optional source counter trigger checks the committed dealer's controller
+for a permanent or spell and its owner in other zones. Each qualifying
+damage occurrence to the trigger's controller retains its own amount.
+Resolution uses the ordinary optional counter choice and the original source
+incarnation. A departed original cannot place counters on a returned card.
+A separate any-dealer scope uses the same optional counter result for
+damage to its controller, including damage from its own sources. Each
+scope retains its own exact condition and current source ability.
+
+An optional draw can require an untapped source when an opponent's damage
+is dealt and when its trigger resolves. The queued ability retains the
+original source identity. If that object leaves, its tap status is captured
+before departure. Each qualifying damage occurrence can offer its locked
+controller one private draw.
+
+An intrinsic graveyard-from-anywhere shuffle observes the original object's
+current graveyard ability after a committed move. It seals the arrival and
+owner before trigger ordering. The same owner shuffles even if that
+incarnation leaves or a copied token ceases to exist before resolution.
+A separate battlefield death ability still uses its own prior controller.
+
+A printed cycling-and-death trigger lowers into two separate source
+abilities with the same whole optional result. The cycling branch uses
+the cycler and the card's committed post-discard source facts. The death
+branch uses the original creature and its last battlefield controller.
+Target selection and the optional result run independently of the cycling
+ability's draw and preserve their own ordering and replay.
+
+A characteristic-defining ability can set both base statistics to one
+signed life total. It reads the current controller on the battlefield or
+stack and the owner in other zones. Copies carry the defining ability
+and reevaluate the current player's life when the statistics are read.
+The rounded half-maximum definition uses opponents of the same player
+who remain in the game. It rounds the signed maximum upward after halving.
+
+The targeted upkeep life trigger announces one opponent through ordinary
+trigger placement. Its controller gains life from that player's current
+hand size at resolution. Target revalidation and the life transaction use
+the same owners as other targeted effects and expose only hand size.
+
+The fixed upkeep damage result selects the trigger controller's current
+other creatures and submits one damage batch. The original source's
+incarnation determines exclusion, so a permanent returned as a new object
+can receive damage from the previous source's last known information.
+
+A directed temporary attack requirement locks the current creature
+incarnation and the ability controller as the defending player. The
+ordinary solver scores that precise option alongside other requirements.
+Existing restrictions, attack taxes and turn expiry govern applicability.
+
+The typed block transition captures each printed Bushido instance once
+when its source blocks or becomes blocked. The attacking-creature variant
+counts the current combat roster on resolution and applies the resulting
+bonus to the same original incarnation through the ordinary layer-7c owner.
+
+A selected self-graveyard replacement retains its original incarnation and
+owner. The zone owner reveals the physical card after replacement choices,
+commits the movement, and shuffles that owner's library. Separate
+simultaneous replacement effects retain separate shuffle occurrences.
+Revealed cards shuffled in a library receive fresh incarnations, and an
+applied shuffle still happens if a commander changes its final destination.
+A merged departure applies one replacement to its physical components and
+shuffles each associated library once for that effect.
+
+Tap-for-mana replacement effects multiply the actual qualifying activated
+mana bundle after costs are paid. The base mode still determines the
+player's color choice. Automatic funding predicts the same product and
+drops modifiers whose sources depart during the plan. The committed units
+retain the original source, snow status, and spending restrictions.
+Separately triggered mana remains its own production event.
+
+The activated source-and-graveyard result resolves its life gain first. It
+then moves the controller's current graveyard and the original source, if
+that incarnation remains phased in on the battlefield, into their owners'
+libraries. The resolving controller shuffles each indicated library once.
+An absent source leaves the complete controller graveyard result in place.
 
 `replacement.zone.entry-designation.v1` represents a mandatory intrinsic
 one-color or creature-type choice before battlefield entry. The existing
@@ -1544,6 +1709,23 @@ owners. Before collection starts, `selection/fractional_counts.py` seals each
 player's candidate domain and required rounded count. Every issued and accepted
 choice revalidates those values; zero domains skip automatically. The shared
 APNAP contract validator is extracted without changing ordinary fixed counts.
+The controller-upkeep sacrifice choice seals one eligible creature and its
+incarnation. The movement intent reads that creature's effective toughness
+immediately before its committed sacrifice, including when the destination
+changes or physical components need ordering. The resulting life gain goes
+to the trigger controller. An empty selection yields no life result. The
+new continuation uses version two and the affected-player power result keeps
+its version-one encoding.
+A source-entry choice can exclude the original entering incarnation while
+allowing the mandatory and optional forms of the same sacrifice. Its
+version-three result reads the committed creature's power once, gains life
+for the trigger controller, then draws the same number of cards privately.
+Declining or lacking an eligible creature supplies no result.
+The attack form uses the same movement and choice authority. Its version-four
+result reads both signed statistics before departure, draws privately from
+power, then loses life from toughness. Each result has its own zero floor.
+A separate current-ability modifier reads gross life loss from the source
+controller's current turn history. Life gains leave that total unchanged.
 No client count override or runtime Oracle parsing supplies the quantity.
 
 ### Half amounts on represented event-player results
@@ -1575,3 +1757,31 @@ incarnation. The new query requires that seal when completing a saved choice;
 historical unversioned query continuations keep their prior compatibility.
 Executable query metadata independently requires
 `zone.move.private_hand_permanent_subtype`, including without coverage.
+
+## Linked chosen-player graveyard definition
+
+An exact any-player entry can supply both an all-zone power and toughness
+definition and a battlefield cast trigger. The definition counts actual
+cards in the chosen player's graveyard and becomes zero when the choice
+is unavailable. Each actual spell cast by that player queues one ordinary
+mill for the sealed caster. A waiting mill skips a caster who has left the
+game.
+
+## Graveyard creature transition damage
+
+A fixed battlefield trigger can subscribe to another creature dying, a
+creature card arriving in a graveyard from outside the battlefield, and a
+creature card leaving its controller's graveyard. Each matching occurrence
+queues one damage instruction for all current opponents. The arrival
+inspects the arriving card. The departure uses a version-one lookback
+subscription and the canonical pre-move source snapshot. Existing
+graveyard-departure subscriptions retain their recorded timing.
+
+## Graveyard Unearth grants
+
+A current battlefield ability can add a fixed-cost Unearth activation to matching cards
+in its controller's graveyard. The graveyard read applies the grant in layer 6 over the
+current type and subtype values. Each grant binds the source incarnation to the offer,
+so printed Unearth and concurrent grants retain separate activation choices. The
+compiled child fixes the price and the existing Unearth result. Once paid, the stack
+ability retains the graveyard card's identity if the granting source leaves.

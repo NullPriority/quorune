@@ -17,13 +17,72 @@ from .fixed_entry_return_requirements import (
 from .endure_templates import binding_endure_trigger_result
 
 
-def _bound_source_combat_result(binding, body):
-    """Lower fixed results from the original source attack or blocked occurrence."""
+_EXTRA_COMBAT_AFTER_DAMAGE = re.compile(
+    r"Untap (?P<selection>it|each creature you control)\. "
+    r"After this phase, there is an additional combat phase\.",
+    re.IGNORECASE,
+)
+
+
+def _extra_combat_after_source_damage_result(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("damage.dealt.self", "source_combat_damage_player", "battlefield")
+        or body != binding.body
+    ):
+        return None
+    match = _EXTRA_COMBAT_AFTER_DAMAGE.fullmatch(body)
+    if match is None:
+        return None
+
+    from ..extra_combat_model import ExtraCombatUntap, extra_combat_effect
+
+    untap = (
+        ExtraCombatUntap.SOURCE if match["selection"].casefold() == "it"
+        else ExtraCombatUntap.CONTROLLED_CREATURES
+    )
+    return "fixed-source-damage-untap-extra-combat-v1", (extra_combat_effect(untap),), None, ()
+
+
+def _equipment_source_excluding_destruction_result(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ('damage.dealt', 'equipped_creature_combat_damage_a_player', 'battlefield')
+        or body != binding.body
+        or body.casefold() != 'destroy all permanents other than this equipment.'
+    ):
+        return None
+    from ..rules.qualified_destruction import (
+        SOURCE_INCARNATION_EXCLUSION_FIELD, SOURCE_INCARNATION_EXCLUDING_SET,
+    )
+
+    effect = {
+        'op': 'destroy_all',
+        'source': '$source.zone_object',
+        'set': SOURCE_INCARNATION_EXCLUDING_SET.to_dict(),
+        SOURCE_INCARNATION_EXCLUSION_FIELD: 1,
+    }
+    return 'destroy-all-except-original-equipment-v1', (effect,), None, ('destroy', 'destroy-fixed-set')
+
+
+def _bound_source_combat_result(binding, body, *, allow_optional):
+    """Lower fixed results from an original source combat occurrence."""
+    source_excluding = _equipment_source_excluding_destruction_result(binding, body)
+    if source_excluding is not None:
+        return source_excluding
+    extra_combat = _extra_combat_after_source_damage_result(binding, body)
+    if extra_combat is not None:
+        return extra_combat
     if (
         (binding.event.value, binding.variant, binding.active_zone)
         == ("creature.becomes_blocked", "this_creature_becomes_blocked", "battlefield")
         and body == binding.body
     ):
+        if allow_optional:
+            from .hand_inspection_templates import blocked_defender_hand_observation_result
+
+            if observation := blocked_defender_hand_observation_result(body):
+                return observation
         if re.fullmatch(r"Regenerate it[.]?", body, re.I):
             from .regeneration_templates import self_regeneration_effect_template
 
@@ -45,7 +104,40 @@ def _bound_source_combat_result(binding, body):
             or most_lands_attack_sacrifice_result(binding, body))
 
 
+def _equipped_life_and_optional_graveyard_return(binding, body, *, compile_effect):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("damage.dealt", "equipped_creature_combat_damage_a_player", "battlefield")
+        or body != binding.body
+        or body.casefold() != (
+            "you gain 3 life and you may return up to one target creature card "
+            "from your graveyard to your hand."
+        )
+    ):
+        return None
+
+    from ..rules.fixed_homogeneous_target_set_capability_shapes import (
+        OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION,
+    )
+
+    template, effects, targets, mechanics = compile_effect(
+        "You gain 3 life. You may return up to one target creature card from your graveyard to your hand."
+    )
+    if template is None:
+        return None
+    life, returning = effects
+    return template, (
+        life, {**returning, "schema_version": OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION},
+    ), targets, mechanics
+
+
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    if _allow_optional:
+        equipped_return = _equipped_life_and_optional_graveyard_return(
+            binding, body, compile_effect=lambda text: effect_template(text, card_name=card_name),
+        )
+        if equipped_return is not None:
+            return equipped_return, False
     from .shared_type_library_templates import shared_type_library_result_template
     shared = shared_type_library_result_template(binding, body,
         compile_result=lambda clause: effect_template(clause, card_name=card_name))
@@ -83,7 +175,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     from .combat_prevention_source_results import bound_source_combat_prevention
     source_prevention=bound_source_combat_prevention(binding,body)
     if source_prevention is not None:return source_prevention,False
-    source_combat = _bound_source_combat_result(binding, body)
+    from .discard_result_templates import event_player_discard_result_template
+
+    if discard_result := event_player_discard_result_template(binding, body):
+        return discard_result, False
+    source_combat = _bound_source_combat_result(binding, body, allow_optional=_allow_optional)
     if source_combat is not None:
         return source_combat, False
     from .source_self_effect_templates import bound_source_fixed_damage
@@ -190,7 +286,53 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     ) or result
 
 
-def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+def _temporary_occurrence_copy_result(binding, body):
+    from ..rules.temporary_occurrence_copy import (
+        TEMPORARY_OCCURRENCE_COPY_MECHANIC, temporary_occurrence_copy_condition_matches,
+        temporary_occurrence_copy_effect,
+    )
+
+    if (binding.event.value != "creature.enter" or binding.active_zone != "battlefield"
+            or body != binding.body or not temporary_occurrence_copy_condition_matches(binding.event_condition)
+            or " ".join(body.split()).casefold() !=
+            "you may have this creature become a copy of that creature until end of turn."):
+        return None
+    return ("temporary-occurrence-copy-v1", (temporary_occurrence_copy_effect(),), None,
+            (TEMPORARY_OCCURRENCE_COPY_MECHANIC,)), False
+
+
+def _source_bound_optional_trigger_result(binding, body):
+    from .optional_effect_templates import optional_shared_source_type_trigger_result
+
+    return _temporary_occurrence_copy_result(binding, body) or optional_shared_source_type_trigger_result(binding, body)
+
+
+def _bound_source_specific_result(binding, body, *, card_name, effect_template):
+    from .source_block_defender import source_block_defender_result
+
+    if block_change := source_block_defender_result(binding, body):
+        return block_change
+    from .attack_counter_unblockable import attack_counter_unblockable_result
+    from .source_optional_creature_unblockable import clue_sacrifice_source_optional_unblockable
+    from .source_counter_reflexive import source_counter_reflexive_result
+    from .third_resolved_source_trigger import third_resolved_source_trigger_result
+
+    from .affected_player_sacrifice_templates import attack_sacrifice_stat_result, entry_sacrifice_power_draw_result
+    from .fixed_public_multi_event_bindings import graveyard_creature_transition_result
+    from .fixed_public_event_trigger_bindings import linked_player_cast_mill_result
+    from .received_damage_bindings import linked_player_receiving_result
+
+    if result := (graveyard_creature_transition_result(binding, body)
+                  or linked_player_receiving_result(binding, body) or linked_player_cast_mill_result(binding, body)):
+        return result
+    if sacrifice := (entry_sacrifice_power_draw_result(binding, body) or attack_sacrifice_stat_result(binding, body)):
+        return sacrifice
+    result = (clue_sacrifice_source_optional_unblockable(binding, body, card_name=card_name)
+              or source_counter_reflexive_result(binding, body, card_name=card_name)
+              or attack_counter_unblockable_result(binding, body, card_name=card_name)
+              or third_resolved_source_trigger_result(binding, body, card_name=card_name))
+    if result is not None:
+        return result, False
     from .graveyard_self_return import graveyard_self_return_result
     returned=graveyard_self_return_result(binding,body,card_name=card_name)
     if returned is not None:return returned
@@ -200,6 +342,13 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .source_counter_quantity_sequences import source_bound_sequence_result
     source_sequence=source_bound_sequence_result(binding,body,card_name=card_name,effect_template=effect_template)
     if source_sequence is not None:return source_sequence
+    return None
+
+
+def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    source_result = _bound_source_specific_result(binding, body, card_name=card_name, effect_template=effect_template)
+    if source_result is not None:
+        return source_result
     from .source_self_effect_templates import source_cycled_optional_damage_result
     cycled_damage = source_cycled_optional_damage_result(binding, body) if _allow_optional and _allow_payment else None
     if cycled_damage is not None:
@@ -216,7 +365,7 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
                 return source_removal, False
     if _allow_optional:
         from .binding_optional_results import binding_aware_optional_result
-        optional = binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
+        optional = _source_bound_optional_trigger_result(binding, body) or binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
         if optional is not None:return optional
     from ..expend_model import EXPEND_CAPABILITY
     if EXPEND_CAPABILITY in binding.explicit_capabilities:
@@ -279,15 +428,21 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
                                                 allow_source_pronoun=True)
         if connive is not None:return connive, False
     if _allow_payment:
-        from .optional_payment_templates import binding_aware_optional_mana_payment_template
+        from .optional_payment_templates import (
+            binding_aware_mandatory_source_counter_followup, binding_aware_optional_mana_payment_template,
+        )
+        def compile_payment_result(text):
+            return binding_effect_template(
+                binding, text, card_name=card_name, effect_template=effect_template,
+                _allow_payment=False, source_counter_variants=source_counter_variants,
+            )
+        required = binding_aware_mandatory_source_counter_followup(binding, body, compile_result=compile_payment_result)
+        if required is not None:
+            return required
         payment = binding_aware_optional_mana_payment_template(
             body,
             source_is_permanent=binding.active_zone == "battlefield",
-            compile_result=lambda text: binding_effect_template(
-                binding, text, card_name=card_name,
-                effect_template=effect_template, _allow_payment=False,
-                source_counter_variants=source_counter_variants,
-            ),
+            compile_result=compile_payment_result,
         )
         if payment is not None:
             return payment
@@ -331,7 +486,8 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     )
     if scalar is not None:
         return scalar, False
-    copy_recipe = token_copy_recipe_template(body, source_name=card_name, source_is_permanent=True, event=binding.event.value)
+    copy_recipe = token_copy_recipe_template(body, source_name=card_name, source_is_permanent=True,
+                                             event=binding.event.value, event_variant=binding.variant)
     if copy_recipe is not None:
         return copy_recipe.compiled(), False
     if binding.variant == 'fixed_entry_return_requirement':

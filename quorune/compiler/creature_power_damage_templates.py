@@ -12,6 +12,7 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
+    creature_self_damage_set_effect,
 )
 from ..rules.source_references import SourceReferenceSpec
 
@@ -90,7 +91,7 @@ _OPTIONAL_EFFECT_OPERATION = "offer_optional_effect"
 class FixedCreaturePowerDamageTemplate:
     template_id: str
     effects: tuple[Mapping[str, Any], ...]
-    target_schema: Mapping[str, Any]
+    target_schema: Mapping[str, Any] | None
     mechanics: tuple[str, ...]
 
     def compiled(self):
@@ -594,6 +595,15 @@ def _counter_prepared_fight(
     )
 
 
+def _creature_self_damage_set_template(text: str) -> FixedCreaturePowerDamageTemplate | None:
+    if " ".join(text.casefold().split()) != "each creature deals damage to itself equal to its power.":
+        return None
+    return FixedCreaturePowerDamageTemplate(
+        "simultaneous-creature-self-damage-v1", (creature_self_damage_set_effect(),), None,
+        (CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage"),
+    )
+
+
 def fixed_creature_power_damage_effect_template(
     text: str,
     *,
@@ -603,6 +613,8 @@ def fixed_creature_power_damage_effect_template(
 ) -> FixedCreaturePowerDamageTemplate | None:
     """Lower one closed Fight or creature-power damage instruction."""
 
+    if self_damage := _creature_self_damage_set_template(text):
+        return self_damage
     from .reciprocal_power_damage import reciprocal_power_damage_template
     reciprocal = reciprocal_power_damage_template(text, card_name=card_name, allow_source_pronoun=allow_source_pronoun)
     if reciprocal is not None:

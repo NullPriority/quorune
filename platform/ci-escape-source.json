@@ -2259,6 +2259,84 @@
       ],
       "impact_edge_status": "added",
       "resolution": "Use one shared nonmutating full-packet normalizer that excludes only decision.cap from reference substring assertions. Fuse scans and the runtime replay helper preserve raw authorization presence and nonacting-principal exclusion checks, all semantic fields, owner visibility and private-reference exclusion. Deterministic collision and injected semantic-leak controls establish the boundary. Production projection and gameplay remain unchanged."
+    },
+    {
+      "id": "ci-20261124-pr575-azusa-promoted-saga-admission",
+      "run_id": 45428512009,
+      "head_sha": "1bd3c1c1222bde2c00dde0d8b0666a0ecdab8576",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "The generated validation jobs on Ubuntu and Windows found the same stale residual expectation. Azusa's original Saga is now exact across its chapters and transformed face.",
+      "failed_surfaces": [
+        "PR / Generated and architecture",
+        "PR / Windows / generated-validation"
+      ],
+      "regressions": [
+        "test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+        "test_high_risk_interaction_assurance.HighRiskPromotionSentinelTests.test_current_residual_boundaries_and_promoted_original_admission",
+        "test_transforming_saga_returns.TransformingSagaNativeTests.test_actual_azusa_chapters_and_blocked_back_face_untap"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Verify the original in the existing admission sentinel and native replay. Keep the two residual boundaries on the variant that returns under its owner's control. The other negative compositions still run in their existing suite."
+    },
+    {
+      "id": "ci-20261124-pr575-functional-10-cast-wire-and-promoted-carriers",
+      "run_id": 45428512009,
+      "head_sha": "1bd3c1c1222bde2c00dde0d8b0666a0ecdab8576",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Functional shard 10 rejected normalized cast-event version eight during a native Spirit and Arcane trigger. The same shard found stale cost and copy promotion expectations, missing fixture fields, and an entry setup that did not submit the now-supported linked name choice.",
+      "failed_surfaces": [
+        "PR / Python / functional-10",
+        "PR / Windows / functional-10"
+      ],
+      "regressions": [
+        "test_ability_kind_cost_modifiers.AbilityKindCostModifierTests.test_kind_scope_model_and_whole_sentence_grammar_are_closed",
+        "test_activation_restrictions.StaticActivationRestrictionRuntimeTests.test_chosen_name_restriction_is_global_typed_and_mana_exempt",
+        "test_activation_restrictions.StaticActivationRestrictionRuntimeTests.test_raw_oracle_text_without_typed_restriction_fails_closed",
+        "test_copiable_entry_ability_grants.CopiableEntryAbilityRuntimeTests.test_original_copiable_grant_carriers_require_normal_registration_and_child_closure",
+        "test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_public_cast_cost_closure_excludes_open_metrics",
+        "test_fixed_spell_cost_reductions.FixedSpellCostReductionCompilerTests.test_unsupported_spell_reduction_grammar_remains_residual",
+        "test_linked_abilities.LinkedAbilityRuleTests.test_undefined_chosen_name_has_no_effect",
+        "test_optional_player_results.OptionalPlayerResultNativeTests.test_actual_spirit_and_arcane_casts_use_the_cast_spell_mana_value_and_ignore_an_unrelated_creature",
+        "test_retained_color_copy.RetainedColorCopyTests.test_entry_retains_its_color_and_upkeep_targeting_precedes_the_copy_decision",
+        "test_scalar_effect_amounts.ScalarEffectAmountValueTests.test_reentered_current_object_mutation_is_killed",
+        "test_source_self_optional_results.SourceSelfOptionalCompilerTests.test_counterpart_runtime_admission_infers_owner_and_rejects_widened_subscriptions"
+      ],
+      "impact_edge_status": "not_applicable",
+      "resolution": "Read the same required facts from the recorded cast version and retain rejection of unsupported versions. Keep exact supported cost and copy shapes in positive checks and use nearby open cost clauses for the negative checks. Exercise the original copy in the existing native recopy and replay witness. Supply the current contract fields to the two test doubles and use the actual linked-name replacement before checking undefined names."
+    },
+    {
+      "id": "ci-20261124-pr575-functional-08-fixture-owners-and-promoted-carriers",
+      "run_id": 45428512009,
+      "head_sha": "1bd3c1c1222bde2c00dde0d8b0666a0ecdab8576",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Functional shard 08 exposed old fixture contracts and obsolete exclusions for supported card behavior. Two native cast-value failures matched the version-eight mismatch reported in functional shard 10.",
+      "failed_surfaces": [
+        "PR / Python / functional-08"
+      ],
+      "regressions": [
+        "test_damage_source_identity.DamageSourceIdentityOwnerTests.test_intervening_recheck_keeps_the_already_captured_event_source_identity",
+        "test_entry_keyword_counter_choices.EntryKeywordCounterChoiceRuntimeTests.test_unrepresented_counter_halving_source_stays_outside_complete_admission",
+        "test_fixed_counter_removal_effects.FixedSourceCounterRemovalActionTests.test_original_named_removal_carriers_preserve_unsupported_sibling_boundaries",
+        "test_fixed_library_searches.FixedLibrarySearchCompilerTests.test_named_linked_attachment_compound_and_open_searches_remain_residual",
+        "test_fixed_target_reanimation.FixedTargetReanimationSetCompilerTests.test_entry_policy_reaches_the_shared_zone_owner_without_inference",
+        "test_graveyard_self_return_triggers.GraveyardSelfReturnModelTests.test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust",
+        "test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_explicit_later_mana_grant_survives_without_recreating_intrinsic",
+        "test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_repeated_ability_removal_never_revives_intrinsic_mana",
+        "test_intrinsic_mana_ability_loss.IntrinsicManaLayerBoundaryTests.test_type_changes_precede_intrinsic_mana_and_later_ability_loss",
+        "test_leveler_bands.LevelerBandModelAndCompilerTests.test_leveler_parser_rejects_malformed_ranges_and_open_children",
+        "test_mutate_cast_metadata.MutateResolutionOwnerTests.test_cost_owner_target_owner_and_fallback_omission_mutants_are_killed",
+        "test_mutate_cast_metadata.MutateResolutionOwnerTests.test_shared_revalidation_keeps_mutate_creature_fallback_and_generic_fizzle_distinct",
+        "test_optional_spell_copy_followups.OptionalResultFollowupTests.test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
+        "test_permanent_composition.CompositionOrderChoiceTests.test_saved_parent_effect_cannot_substitute_another_trusted_instruction",
+        "test_state_trigger_predicates.StateTriggerPredicateTests.test_actual_endrek_counts_all_thrulls_and_triggers_above_seven",
+        "test_target_all_counter_variants.TargetAllCounterModelTests.test_payload_and_optional_target_drive_runtime_minima_without_coverage",
+        "test_target_controller_prevention.TargetControllerPreventionNativeTests.test_actual_other_controller_blocker_kills_the_attacker_when_source_predicate_is_omitted"
+      ],
+      "impact_edge_status": "added",
+      "resolution": "Exercise the same current composition, targeting, counter, activation and prevention owners with complete fixtures. Preserve native supported cases and reject nearby open counter, Ward and search variants. Route Blood Hound, literal named search and sacrifice Ward owners to their older retention suites. The normalized cast-value repair also passes the two native failures in this shard."
     }
   ],
   "recent_pull_requests": [

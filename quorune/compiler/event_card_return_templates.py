@@ -6,7 +6,8 @@ from . import regex_working_set as re
 
 from ..event_card_return import (EVENT_CARD_RETURN_MECHANIC, event_card_return_effect,
     EVENT_BATTLEFIELD_RETURN_MECHANIC, event_battlefield_return_effect,
-    EVENT_LIBRARY_MOVE_CAPABILITY,
+    EVENT_LIBRARY_MOVE_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_EVENT,
+    GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE, graveyard_source_arrival_condition,
     event_library_departure_condition, event_library_move_effect)
 from ..public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
 from ..rules.source_references import SourceReferenceSpec
@@ -18,6 +19,10 @@ _DEPARTURE_LIBRARY_TRIGGER = re.compile(
     r"(?P<body>.+)", re.I,
 )
 _LIBRARY_ORDINALS = {"second": 2, "third": 3, "fourth": 4, "fifth": 5}
+_ARRIVAL_LIBRARY_TRIGGER = re.compile(
+    r"When (?P<source>.+?) is put into a graveyard from anywhere, "
+    r"(?P<body>shuffle it into its owner['’]s library\.)", re.I,
+)
 
 
 def _departure_library_instruction(body, *, card_name, scope):
@@ -50,6 +55,14 @@ def _departure_library_instruction(body, *, card_name, scope):
 def source_departure_library_binding(material_line: str, *, card_name: str | None):
     from .fixed_public_event_trigger_bindings import _source_subject, _spec
 
+    arrival = _ARRIVAL_LIBRARY_TRIGGER.fullmatch(material_line)
+    if arrival is not None and card_name and _source_subject(arrival["source"], card_name=card_name):
+        return _spec(
+            GRAVEYARD_SOURCE_ARRIVAL_EVENT, "source_graveyard_arrival_shuffle", arrival["body"],
+            GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE, "trigger-event-normalized-zone-change",
+            condition=graveyard_source_arrival_condition(), active_zone="graveyard",
+            capabilities=(EVENT_LIBRARY_MOVE_CAPABILITY, GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY),
+        )
     match = _DEPARTURE_LIBRARY_TRIGGER.fullmatch(material_line)
     if match is None or not card_name or not _source_subject(match["source"], card_name=card_name):
         return None
@@ -109,13 +122,34 @@ def _source_death_land_exile_result(body):
             schema, (*mechanics, DEATH_LAND_EXILE_MECHANIC))
 
 
+def _source_death_exile_then_owned_return(body):
+    from ..event_card_return import death_source_exile_effect
+    from .return_to_hand_templates import targeted_own_graveyard_return_to_hand_effect_template
+
+    match = re.fullmatch(
+        r"Exile it, then (return another target creature card from your graveyard to your hand\.)", body.strip(), re.I,
+    )
+    if match is None:
+        return None
+    result = targeted_own_graveyard_return_to_hand_effect_template(match[1])
+    if result is None:
+        return None
+    return ("fixed-death-source-exile-then-owned-return-v1", (death_source_exile_effect(), *result.effects),
+            result.target_schema, (*result.mechanics, "exile"))
+
+
 def source_death_land_exile_binding(material_line, *, card_name=None):
     from .fixed_public_event_trigger_bindings import _source_subject, _spec
     from ..event_card_return import death_land_exile_condition
 
     match = re.fullmatch(r"(?:When|Whenever) (?P<source>.+?) dies, (?P<body>.+)", material_line, re.I)
-    if (match is None or not _source_subject(match["source"], card_name=card_name)
-            or _source_death_land_exile_result(match["body"]) is None):
+    if match is None or not _source_subject(match["source"], card_name=card_name):
+        return None
+    if _source_death_exile_then_owned_return(match["body"]) is not None:
+        return _spec("creature.dies", "source_death_exile_then_owned_return", match["body"],
+                     "fixed-counter-source-death-exile-then-owned-return-v1", "trigger-event-normalized-zone-change",
+                     condition=death_land_exile_condition())
+    if _source_death_land_exile_result(match["body"]) is None:
         return None
     return _spec("creature.dies", "source_death_land_exile", match["body"],
                  "fixed-counter-source-death-land-exile-v1", "trigger-event-normalized-zone-change",
@@ -140,6 +174,11 @@ def self_death_return_binding(material_line: str, *, card_name: str | None = Non
 
 
 def event_card_return_template(binding, body: str, *, card_name: str, effect_template):
+    if binding.variant == "source_graveyard_arrival_shuffle" and body == binding.body:
+        return (binding.template_id, (event_library_move_effect(position="top", shuffle=True, version=1),),
+                None, (FIXED_OWNER_ZONE_MOVE_MECHANIC,))
+    if binding.variant == "source_death_exile_then_owned_return":
+        return _source_death_exile_then_owned_return(body) if body == binding.body else None
     if binding.variant == "source_death_land_exile":
         return _source_death_land_exile_result(body) if body == binding.body else None
     if binding.variant == 'enchanted_creature_dies' and body == binding.body:

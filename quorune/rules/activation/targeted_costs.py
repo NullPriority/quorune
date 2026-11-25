@@ -8,7 +8,8 @@ from itertools import combinations
 from ...activation_cost_modifiers import ActivationCostModifierSource
 from ...activation_x import bind_activation_target_cardinality
 from ...replacement.immutable import FrozenMap, thaw_value
-from ...selection.target_validation import target_assignment_witnesses
+from ...selection.target_validation import target_assignment_meets_requirement, target_assignment_witnesses
+from ...semantic_runtime.target_requirements import current_flagbearer_target_refs
 from ...target_source import ability_targeting_source
 from ...targets import available_modes, target_plan
 
@@ -89,6 +90,10 @@ def activation_modifier_witnesses(host, seat, source, ability, modifiers, *,
         yield ActivationTargetCostWitness(_selected_modifiers(modifiers, ()))
         return
     seen = set()
+    required_refs = current_flagbearer_target_refs(host, seat)
+    eligible_sets = tuple(frozenset(value.eligible_refs) for value in bound)
+    if required_refs:
+        eligible_sets = (*eligible_sets, required_refs)
     for modes in _mode_sets(schema, response):
         plan = target_plan(schema, modes, require_modes=bool(available_modes(schema)))
         candidates = host._target_candidate_map(seat, plan,
@@ -100,7 +105,9 @@ def activation_modifier_witnesses(host, seat, source, ability, modifiers, *,
         for needed in required:
             for selected, grouped in target_assignment_witnesses(host, plan, candidates,
                     required=needed, extra_targets=len(bound),
-                    eligible_sets=tuple(frozenset(value.eligible_refs) for value in bound)):
+                    eligible_sets=eligible_sets):
+                if not target_assignment_meets_requirement(host, plan, candidates, grouped, required_refs):
+                    continue
                 applied = tuple(index for index, value in enumerate(modifiers)
                     if not isinstance(value, ActivationCostModifierSource) or value.applies(selected))
                 key = (modes, needed, applied)

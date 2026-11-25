@@ -72,8 +72,11 @@ def target_protection_verdict_for_row(
     bound_source = getattr(acting_source, "protection_source", None)
     verdict = ProtectionVerdict.ALLOWED
     if isinstance(card, CardInstance):
-        verdict = (protection_verdict(characteristics, bound_source) if bound_source is not None
-                   else protection_verdict_for_ref(host, characteristics, source_ref))
+        verdict = (
+            protection_verdict(characteristics, bound_source, source_player=acting_controller)
+            if bound_source is not None
+            else protection_verdict_for_ref(host, characteristics, source_ref, source_player=acting_controller)
+        )
     snapshot = TargetProtectionSnapshot(
         acting_controller=acting_controller,
         protected_controller=protected_controller,

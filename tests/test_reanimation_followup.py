@@ -138,6 +138,37 @@ class ReanimationFollowupNativeTests(unittest.TestCase):
     def has_haste(session, card):
         return "haste" in session.engine._combat_keywords(session.state.cards[card.object_id])
 
+    def test_linked_reanimation_revalidates_the_original_graveyard_target(self):
+        session = self.session(6030711)
+        first = self.add(session.engine, "Goryo's Vengeance", zone="hand", ref="first-return")
+        response = self.add(session.engine, "Goryo's Vengeance", zone="hand", ref="response-return")
+        target = self.add(session.engine, "Generic Bound Commander", zone="graveyard", ref="disputed-return")
+        self.assert_closed(session, first)
+        program, = [item for item in session.engine.semantics.programs_for_oracle(first.oracle_id)
+                    if item.event == "resolve"]
+        self.assertLessEqual(
+            {"target.revalidate_resolution", REANIMATION_FOLLOWUP_CAPABILITY},
+            set(program.capability_dependencies),
+        )
+        self.prepare(session, mana={"B": 2, "C": 2})
+        self.checkpoint(session)
+
+        self.cast(session, "A", first, [target.ref])
+        first_ref = next(item.ref for item in session.state.stack if item.card_object_id == first.object_id)
+        self.cast(session, "A", response, [target.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertTrue(self.has_haste(session, target))
+        departure, = [trigger for trigger in session.state.delayed_triggers if trigger.active]
+        self.assertEqual(response.object_id, departure.source_object_id)
+        counter, = [event for event in session.state.events if event.code == "stack.counter"
+                    and event.details["stack"] == first_ref]
+        self.assertEqual("rules", counter.details["counter_kind"])
+        self.assertEqual("all targets illegal on resolution", counter.details["reason"])
+        self.replay(session, load=True)
+
     def test_goryos_vengeance_captures_one_incarnation_through_delayed_trigger_reload(self):
         session = self.session(6030701)
         engine = session.engine

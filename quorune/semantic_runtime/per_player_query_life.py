@@ -2,7 +2,7 @@
 from ..life_state import LifeChange
 from ..per_player_query_life_model import (
     PerPlayerQueryLifeLossSpec,BoundPerPlayerLifeLoss,PlayerLifeLossRelation,
-    BOUND_PER_PLAYER_QUERY_LIFE_KIND,
+    BOUND_PER_PLAYER_QUERY_LIFE_KIND,PoisonCounterThresholdLifeLoss,
 )
 from .context import ReadOnlyRulesQuery
 from .query_effect_amounts import resolve_public_query_amount
@@ -19,7 +19,10 @@ def resolve_per_player_query_life(host,value,item):
     changes=[]
     for player in order:
         if spec.relation is PlayerLifeLossRelation.OPPONENTS and player==item.controller:continue
-        quantity = resolve_public_query_amount(host, spec.amount.to_dict(), item, query_player=player)
+        if isinstance(spec.amount, PoisonCounterThresholdLifeLoss):
+            quantity = host.state.players[player].poison
+        else:
+            quantity = resolve_public_query_amount(host, spec.amount.to_dict(), item, query_player=player)
         loss = spec.life_loss_for_quantity(quantity)
         if loss:
             changes.append(LifeChange(player, -loss))

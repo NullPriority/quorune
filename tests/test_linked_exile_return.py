@@ -65,7 +65,7 @@ class LinkedExileReturnCompilerTests(unittest.TestCase):
         self.assertEqual(3, returning["spec"]["schema_version"])
         for node in (entry, departure):
             program = dict(effects=node.effects, target_schema=node.target_schema, active_zone=node.active_zone,
-                           event=node.event, event_condition=None)
+                           event=node.event, event_condition=None, handlers=(), cost_schema=None)
             required = linked_ability_exile_runtime_dependencies(SimpleNamespace(**program))
             self.assertIn("zone.exile.linked_ability_pair", required)
             self.assertIn("zone.linked_exile_return.fixed", required)

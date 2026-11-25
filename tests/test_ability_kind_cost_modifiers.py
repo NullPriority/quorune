@@ -147,8 +147,16 @@ class AbilityKindCostModifierTests(unittest.TestCase):
             spec=FixedActivationCostModifierHandler().validate(compiled[1]);self.assertEqual((kind,amount),(spec.ability_scope,spec.generic_adjustment))
             self.assertEqual(spec,FixedActivationCostModifierSpec.from_dict(spec.to_dict()))
             with self.assertRaises(ValueError):replace(spec,ability_scope='keyword_named_by_player')
+        other_equipment = static_activation_cost_modifier_handler(
+            'Equip abilities you activate of other Equipment cost {1} less to activate.'
+        )
+        self.assertIsNotNone(other_equipment)
+        spec = FixedActivationCostModifierHandler().validate(other_equipment[1])
+        self.assertEqual(('equip', -1, 'other_equipment'),
+                         (spec.ability_scope, spec.generic_adjustment, spec.subject_relation))
         for text in ('Cycling abilities you activate cost {U} less to activate.','Equip abilities you activate that target this creature cost {1} less to activate.',
-                'Equip abilities you activate of other Equipment cost {1} less to activate.','Cycling abilities you activate cost {2} less to activate. Draw a card.'):
+                'Equip abilities you activate of other Equipment attached to a creature cost {1} less to activate.',
+                'Cycling abilities you activate cost {2} less to activate. Draw a card.'):
             self.assertIsNone(static_activation_cost_modifier_handler(text),text)
 
     def test_cycling_kind_requires_exact_trusted_descriptor_not_similar_hand_activation(self):

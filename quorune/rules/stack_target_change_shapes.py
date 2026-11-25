@@ -20,6 +20,10 @@ from ..stack_target_change_model import (
 )
 from .effect_shape_walkers import nested_effects
 from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
+from .source_directed_redirect_shapes import (
+    source_directed_redirect_node_capabilities, source_directed_redirect_program_is_closed,
+    source_directed_redirect_runtime_dependencies,
+)
 
 
 def _stack_spell_control_capabilities(effects, target_schema):
@@ -73,10 +77,13 @@ def single_stack_target_change_capabilities(*, effects, target_schema, mechanic_
 STACK_TARGET_EFFECT_RESOLVERS = (
     fixed_stack_spell_copy_node_capabilities,
     single_stack_target_change_capabilities,
+    source_directed_redirect_node_capabilities,
 )
 
 
 def single_stack_target_change_runtime_dependencies(program):
+    if source_redirect := source_directed_redirect_runtime_dependencies(program):
+        return source_redirect
     schema = program.target_schema
     effects = (*program.effects, *getattr(program, "handlers", ()))
     marked = any(STACK_SPELL_CONTROL_FIELD in effect or STACK_TARGET_CHANGE_FIELDS.intersection(effect)
@@ -98,6 +105,8 @@ def single_stack_target_change_runtime_dependencies(program):
 
 
 def single_stack_target_change_program_is_closed(program):
+    if source_directed_redirect_program_is_closed(program):
+        return True
     from ..card_programs.admission import program_has_declared_complete_source_admission
 
     if not program_has_declared_complete_source_admission(program):

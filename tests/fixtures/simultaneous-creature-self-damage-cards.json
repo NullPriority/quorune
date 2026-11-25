@@ -1,0 +1,172 @@
+{
+  "cards": [
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Protection"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Burrenton Forge-Tender",
+      "oracle_id": "70bb275b-3458-4690-a50f-b231fbf0bccb",
+      "oracle_text": "Protection from red\nSacrifice this creature: Prevent all damage a red source of your choice would deal this turn.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2017-11-17",
+      "toughness": "1",
+      "type_line": "Creature — Kithkin Wizard"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{W}",
+      "name": "Solar Blaze",
+      "oracle_id": "424f3d53-47e7-4212-8267-53279ea8900a",
+      "oracle_text": "Each creature deals damage to itself equal to its power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Wave of Reckoning",
+      "oracle_id": "24f7143c-d43a-4120-baa0-0235b15d8186",
+      "oracle_text": "Each creature deals damage to itself equal to its power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "The last ability of Burrenton Forge-Tender doesn’t target anything. You choose a source of damage as the ability resolves, if able. You can activate it even if there is no source to choose.",
+      "oracle_id": "70bb275b-3458-4690-a50f-b231fbf0bccb",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent spell is chosen as the source of damage, Burrenton Forge-Tender’s prevention effect continues to apply for the rest of the turn to the permanent that spell becomes once it has entered the battlefield.",
+      "oracle_id": "70bb275b-3458-4690-a50f-b231fbf0bccb",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the red source you chose changes colors before it deals damage, the damage-prevention effect doesn’t apply.",
+      "oracle_id": "70bb275b-3458-4690-a50f-b231fbf0bccb",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

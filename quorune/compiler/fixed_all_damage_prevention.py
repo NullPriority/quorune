@@ -33,8 +33,11 @@ class FixedDamageObjectScope:
     selected_target: DirectPermanentTargetSpec | None = None
     exclude_source_identity: bool = False
     combat_pair: bool = False
+    power_max: int | None = None
 
     def __post_init__(self) -> None:
+        if self.power_max is not None and (type(self.power_max) is not int or self.power_max < 0):
+            raise ValueError("Combat source power maximum must be a nonnegative integer")
         if type(self.combat_pair) is not bool:raise ValueError('Damage scope combat pair must be Boolean')
         if self.controller_relation not in _CONTROLLER_RELATIONS:
             raise ValueError("Damage scope controller relation is unsupported")
@@ -91,6 +94,10 @@ class FixedAllDamagePreventionSpec:
             self.recipient, FixedDamageObjectScope
         ):
             raise ValueError("All-damage prevention requires typed scopes")
+        if self.recipient.power_max is not None or (
+            self.source.power_max is not None and (self.damage_kind, self.duration) != ("combat", "until_end_of_turn")
+        ):
+            raise ValueError("Power maximum requires the temporary combat source scope")
         if type(self.source_controller_turn_only) is not bool:
             raise ValueError("All-damage prevention turn scope must be boolean")
         if self.application_group is not None and (
@@ -425,13 +432,22 @@ def fixed_all_damage_prevention_specs(
 ) -> tuple[FixedAllDamagePreventionSpec, ...] | None:
     """Parse one complete fixed all-damage prevention instruction.
 
-    The grammar deliberately rejects choices, targets, conditions, linked
-    results, quantities, combat-role relations, attachments, and compound
-    instructions.  Callers decide whether the inferred static or turn-bound
-    lifetime is valid for the containing Oracle ability kind.
+    Public source scopes include the fixed combat power maximum for this turn.
+    Callers choose the static or turn-bound scopes valid for the containing
+    Oracle ability.
     """
 
     normalized = " ".join(text.strip().rstrip(".").split())
+    power_ceiling = re.fullmatch(
+        r"prevent all combat damage that would be dealt this turn by creatures with power "
+        r"(?P<power>0|[1-9][0-9]*) or less", normalized, re.I,
+    )
+    if power_ceiling is not None:
+        return (FixedAllDamagePreventionSpec(
+            damage_kind="combat", duration="until_end_of_turn",
+            source=FixedDamageObjectScope(characteristics_all=("creature",), power_max=int(power_ceiling["power"])),
+            recipient=_ANY_SCOPE,
+        ),)
     ability_word = re.match(
         r"^[A-Za-z][A-Za-z ']+\s+[—-]\s+(?P<body>.+)$", normalized
     )
@@ -547,6 +563,7 @@ def fixed_all_damage_prevention_scope_descriptor(
     source_ref, excluded_source_ref = _scope_ref(spec.source)
     target_ref, excluded_target_ref = _scope_ref(spec.recipient)
     return {
+        **({"source_power_max": spec.source.power_max} if spec.source.power_max is not None else {}),
         **({'combat_pair':True} if spec.source.combat_pair else {}),
         **({'shared_color':True} if spec.shared_color else {}),
         **({'target_colors_any':list(spec.recipient.colors_any)} if spec.recipient.colors_any else {}),

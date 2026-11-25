@@ -29,7 +29,10 @@ def decode_temporary_block_capacity(effect, *, allow_resolved_absence=False):
         raise ValueError('Temporary blocking capacity requires one object reference')
     if type(effect['power']) is not int or type(effect['toughness']) is not int:
         raise ValueError('Temporary blocking modifiers require fixed integers')
-    return BlockCapacitySpec.from_dict(effect['capacity'])
+    capacity = BlockCapacitySpec.from_dict(effect['capacity'])
+    if capacity.schema_version != 1:
+        raise ValueError('Temporary blocking capacity requires a fixed value')
+    return capacity
 
 
 def temporary_block_capacity_capabilities(*, effects, target_schema, mechanic_ids):

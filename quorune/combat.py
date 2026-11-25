@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Mapping
+from collections.abc import Collection, Iterable, Mapping
 
 
 FIRST_STRIKE = "first strike"
@@ -8,6 +8,22 @@ DOUBLE_STRIKE = "double strike"
 DEATHTOUCH = "deathtouch"
 TRAMPLE = "trample"
 LIFELINK = "lifelink"
+
+
+def current_block_counterpart_ids(
+    blockers: Mapping[str, Iterable[str]], source_object_id: str, *,
+    live_attackers: Collection[str] | None,
+) -> tuple[str, ...]:
+    """Return current block relations while leaving former attackers' rows intact."""
+    if live_attackers is None:
+        live_attackers = blockers
+    related = set(blockers.get(source_object_id, ())) if source_object_id in live_attackers else set()
+    related.update(
+        attacker for attacker, assigned in blockers.items()
+        if attacker in live_attackers and source_object_id in assigned
+    )
+    related.discard(source_object_id)
+    return tuple(sorted(related))
 
 
 def normalized_keywords(values: Iterable[object]) -> frozenset[str]:

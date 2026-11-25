@@ -21,6 +21,28 @@ ZONE_OBJECT_KEYWORDS = frozenset(
 )
 
 
+def controlled_creature_indestructible_effect():
+    return {"op": "grant_zone_object_keyword", "schema_version": 2,
+            "scope": "controlled_creature_set", "keyword": "indestructible"}
+
+
+def validate_controlled_creature_indestructible(effect):
+    if dict(effect) != controlled_creature_indestructible_effect() or type(effect["schema_version"]) is not int:
+        raise ZoneObjectKeywordGrantError("Indefinite Indestructible requires the exact controlled creature set")
+
+
+def zone_object_intent_keyword(object_ref, keyword, *, controlled_creature_set):
+    if type(controlled_creature_set) is not bool:
+        raise ZoneObjectKeywordGrantError("Zone-object keyword intent scope must be a boolean")
+    if controlled_creature_set:
+        if object_ref is not None or keyword != "indestructible":
+            raise ZoneObjectKeywordGrantError("Controlled creature Indestructible has no chosen object")
+        return keyword
+    if type(object_ref) is not str or not object_ref:
+        raise ZoneObjectKeywordGrantError("A zone-object keyword intent requires its object")
+    return normalized_zone_object_keyword(keyword)
+
+
 def normalized_zone_object_keyword(value: object) -> str:
     """Return one closed executable keyword or fail before mutation."""
 

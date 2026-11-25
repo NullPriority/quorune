@@ -8,8 +8,10 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
 from ..replacement.immutable import FrozenMap
+from ..target_forms import SHARED_PERMANENT_TYPE_PAIR_FIELD
 from ..targets import target_plan
-from .target_validation import CopyTargetValidation
+from .target_query import target_identity_matches_snapshot
+from .target_validation import CopyTargetValidation, shared_type_pair_candidates
 
 
 class CopyTargetHost(Protocol):
@@ -46,19 +48,43 @@ def original_copy_groups(host: CopyTargetHost, schema: Mapping[str, Any], modes:
 
 def copy_target_public_schema(host: CopyTargetHost, actor: str, schema: Mapping[str, Any],
                               modes: Sequence[str], targets: Sequence[str],
-                              groups: Mapping[str, Sequence[str]], source_ref: str | None, *, acting_source=None) -> dict[str, Any]:
+                              groups: Mapping[str, Sequence[str]], source_ref: str | None, *,
+                              acting_source=None, original_snapshots=None) -> dict[str, Any]:
     plan = target_plan(schema, modes, require_modes=bool(schema.get("modes")))
     original = original_copy_groups(host, schema, modes, targets, groups)
     candidates = host._target_candidate_map(actor, plan, source_ref=source_ref, acting_source=acting_source)
-    return {"groups": [{**group.public_dict(candidates[group.group_id]),
-                        "min": len(original[group.group_id]), "max": len(original[group.group_id])}
-                       for group in plan.groups]}
+    pair = plan.shared_permanent_type_pair
+    if pair is not None:
+        candidates = _shared_type_copy_candidates(host, pair, candidates, original, original_snapshots or {})
+    public = {"groups": [{**group.public_dict(candidates[group.group_id]),
+                          "min": len(original[group.group_id]), "max": len(original[group.group_id])}
+                         for group in plan.groups]}
+    if pair is not None:
+        public[SHARED_PERMANENT_TYPE_PAIR_FIELD] = pair.to_dict()
+        public["globally_distinct"] = True
+    return public
+
+
+def _shared_type_copy_candidates(host, pair, candidates, original, snapshots):
+    """Retained live targets may support a changed partner under CR 115.7d."""
+    eligible = {group: list(refs) for group, refs in candidates.items()}
+    for group, refs in original.items():
+        for ref in refs:
+            snapshot = snapshots.get(ref)
+            if (ref not in eligible[group] and isinstance(snapshot, Mapping)
+                    and type(snapshot.get("object_id")) is str
+                    and type(snapshot.get("zone_change_counter")) is int
+                    and target_identity_matches_snapshot(host, ref, snapshot)):
+                eligible[group].append(ref)
+    filtered = shared_type_pair_candidates(host, pair, eligible)
+    return {group: [ref for ref in refs if ref in filtered[group]] for group, refs in candidates.items()}
 
 
 def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[str, Any] | None,
                          modes: Sequence[str], source_ref: str | None,
                          original_targets: Sequence[str], original_groups: Mapping[str, Sequence[str]],
-                         original_snapshots: Mapping[str, Any], submitted: Any, acting_source=None) -> PreparedCopyTargets:
+                         original_snapshots: Mapping[str, Any], submitted: Any, acting_source=None,
+                         record_optimization: bool = True) -> PreparedCopyTargets:
     """Retain pinned identities; explicit grouped refs select current objects."""
     defaults = list(original_targets)
     if schema is None:
@@ -132,6 +158,7 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
     targets, groups = host._validate_semantic_targets(
         actor, None, selected, modes=modes, source_ref=source_ref,
         target_schema=schema, copy_targets=proof, acting_source=acting_source,
+        record_optimization=record_optimization,
     )
     for ref in changed_refs:
         snapshots[ref] = dict(host._target_snapshot(ref))
@@ -209,7 +236,7 @@ def materialize_optional_stack_target_change(host, effect, response):
     original_groups = dict(item.context.get("target_groups") or {})
     public = copy_target_public_schema(
         host, actor, schema, item.modes, item.targets, original_groups, source_ref,
-        acting_source=acting_source,
+        acting_source=acting_source, original_snapshots=item.context.get("target_snapshots"),
     )
     for group in public["groups"]:
         group["legal_refs"] = [ref for ref in group["legal_refs"] if group["max"] and ref != item.ref]

@@ -51,6 +51,60 @@ Quorune uses one server-side target predicate for offer generation, submitted
 command validation, and resolution-time revalidation. A client receives only
 the legal public references in its current action schema and cannot substitute
 an authoritative object identifier or bypass the same predicate at commit.
+
+An active opposing Flagbearer ability constrains the complete set of targets
+chosen for a spell or activated ability. The engine first checks ordinary
+target legality, including protection. It uses the chosen modes and number of
+targets to determine whether a complete assignment can include a Flagbearer.
+Any legal battlefield Flagbearer can satisfy the requirement. The target-cost
+owners preserve feasible Flagbearer assignments when they compress equivalent
+prices. The browser applies requirements for the selected modes and target
+counts. A player who chooses zero optional targets can still cast the spell.
+
+A spell with one printed X can use it as the mana-value maximum for a
+mandatory battlefield target. The casting offer gives each target an X range
+using its current mana value and payable price. Target-specific taxes, selected
+Splice costs, and hand-exile credit all feed the existing price owner. Casting
+pins the chosen X into the ordinary target schema, and a copy retains that
+bound when choosing a new target. Resolution checks the current target's mana
+value against the pinned limit, even when a permanent stays in place and turns
+face up.
+
+The own-graveyard version applies the announced mana-value maximum to one
+creature card the caster owns. The spell preserves that ownership predicate
+when it announces targets and when a copy selects a replacement target.
+Resolution runs the ordinary reanimation instruction after revalidating the
+target. An announced X of zero remains a legal ceiling.
+
+An X-cost permanent's self-entry trigger can limit one owned artifact or
+creature card to its sealed entry X. Trigger creation binds the ceiling
+before target selection. Entry without a resolving spell supplies zero.
+The ordinary public target selector checks ownership and current mana value,
+and the trigger retains its original bound if its source leaves.
+
+An announced-X owned graveyard return uses an untargeted versioned
+public set for creatures and planeswalkers. Its declared limit is separate
+from the fixed query's mana-value field, so the resolved X can exceed the
+literal query grammar's range. The set resolves through the ordinary
+simultaneous battlefield entry owner. Copies use their own controller's
+graveyard and the copied X.
+
+The spell that phases out up to X target creatures uses the ordinary
+announced cardinality. The caster can choose fewer than X targets. If Splice
+adds spell text, the offer keeps the selected base price and applies the
+cardinality only to the original phasing group. A copy retains the paid X and
+the number of targets originally chosen. Resolution uses currently legal
+targets and phases them out together, including their indirect attachments.
+The next untap step of each recorded controller uses the ordinary phase-in
+plan.
+
+Any-number phasing uses that same simultaneous status change. An instant or
+sorcery can choose controlled nonland permanents. The defined self-entry
+trigger chooses other creatures its controller controls and excludes the
+entering source. Both scopes reuse ordinary target announcement and
+resolution-time revalidation. The set limit records the originally chosen
+count so later illegal targets can drop out without adding replacements.
+
 The shared compiler grammar accepts the control qualifier before or after one
 supported `with`/`without` keyword qualifier. Both orders lower to the same typed
 conjunction. Offers, submitted targets and resolution revalidation require both
@@ -152,6 +206,12 @@ nested forms and branch-local qualifiers remain residual. Offers, submitted
 commands and resolution use current effective characteristics. Losing one
 branch leaves a target legal if it still satisfies another; losing all branches
 makes it illegal under the ordinary revalidation owner.
+The direct nonartifact, nonblack creature shape requires creature type,
+absence of artifact type, and absence of black among the target's colors.
+The offered and submitted target use the same predicate. Resolution checks
+both exclusions again, including after a type-changing response. Paid casting
+costs remain separate from the result's target revalidation.
+
 Fixed layer-7c P/T queries can select creatures without a represented current
 keyword. The shared public predicate retains controller and source-exclusion
 scope, and reads completed layer-6 grants and keyword counters. Within continuous
@@ -190,6 +250,11 @@ phases out. Hexproof permits that player's own targeted spells and abilities;
 shroud prohibits them as well. Offers, accepted commands and resolution
 revalidation use the same snapshot, while untargeted instructions retain their
 ordinary recipients. The query introduces no stored player keyword state.
+
+The paired controller-turn clause grants Hexproof to the player and source
+during the source's current controller's turn. Both typed branches carry the
+same controller-turn condition. Target legality follows a control change in the
+middle of a turn, and independent printed abilities keep their normal timing.
 
 Direct permanent schemas may also carry one typed public-state predicate.
 `PermanentStatePredicateSpec` is shared with affected-set queries and evaluates
@@ -400,6 +465,14 @@ receive ordinary protection. The exception does not permit a new attachment
 or ignore the Aura's Enchant restriction. All-Aura and already-attached
 exceptions remain outside this production.
 
+Schema v4 represents protection from a publicly chosen player. The linked entry
+component binds the choice to the current source incarnation and copy form. A
+current battlefield ability materializes the choice in layer 6. Targeting uses
+the controller of the spell or ability. Damage, blocking and attachment use
+the controller of the relevant object, or its owner when it has no controller.
+These checks share the typed protection verdict and attachment legality is
+rechecked after control changes.
+
 The fixed-card-type compiler production admits protection from enchantments,
 optionally alongside a signed power/toughness modifier. Its separate capability
 also participates in the runtime minimum for the existing attached handler.
@@ -492,6 +565,13 @@ carry these closed values through the same target-revalidation path. Fixed
 player keywords use their separate components described above. Unrepresented
 chosen qualities, compound type lists, targeting exceptions and rules-text
 equivalents remain material residuals. Runtime code consumes compiled values.
+
+A compound Hexproof clause can cover the current source controller alongside
+controlled Humans, or alongside controlled planeswalkers and other controlled
+creatures. The compiler joins the existing player and permanent grants in one
+static program. The source exclusion belongs to the creature query. The
+planeswalker and Human queries can include the source if its effective types
+qualify. Offers, commands, and resolution use current target legality.
 
 ## Replay, privacy, rollback, and performance
 

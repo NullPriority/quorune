@@ -1228,5 +1228,133 @@ class PublicAlternativeNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.replay(empty_at_resolution, load=True)
 
 
+
+    def test_exact_fated_copy_prefix_closes_both_independent_results(self):
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        from test_controller_creature_keyword_absence import register_card
+
+        original = self.db.lookup("Fated Infatuation", fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, "Fated Infatuation")
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        self.assertEqual("capability_closed", report["trust_basis"])
+        program, = semantics.programs_for_oracle(original.oracle_id)
+        self.assertEqual(
+            {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+             "types_any": ["creature"], "controller_relation": "you"},
+            program.target_schema,
+        )
+        copy_token, condition = program.effects
+        self.assertEqual(TokenCopyRecipeSpec("target").to_dict(), copy_token["copy_spec"])
+        self.assertEqual(1, copy_token["quantity"])
+        self.assertEqual("controller_turn", condition["condition"]["kind"])
+        self.assertEqual([{"op": "scry", "player": "$controller", "count": 2}], condition["effects"])
+        self.assertTrue({"token.creation.fixed_copy", "library.scry.fixed_controller",
+                         RESOLUTION_CONDITION_CAPABILITY, "target.revalidate_resolution"}
+                        <= set(program.capability_dependencies))
+        for prefix in (
+            {**copy_token, "copy_spec": TokenCopyRecipeSpec("source").to_dict()},
+            {**copy_token, "quantity": True},
+            {**copy_token, "quantity": 2},
+        ):
+            with self.subTest(prefix=prefix):
+                self.assertFalse(capability_dependencies_for_node(
+                    effects=(prefix, condition), target_schema=program.target_schema, mechanic_ids=program.coverage,
+                ))
+        with patch("quorune.rules.resolution_condition_shapes._plain_target_copy_token", return_value={}):
+            omitted, _ = register_card(self.db, self.registry, "Fated Infatuation")
+            self.assertFalse(omitted["strict_capability_ready"], omitted)
+
+    def test_actual_fated_creates_once_before_its_private_scry_and_replays(self):
+        game = self.session(7012201)
+        spell = self.add(game.engine, "Fated Infatuation", zone="hand")
+        model = self.add(game.engine, "Grizzly Bears", ref="fated-own-model")
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"U": 3})
+        self.checkpoint(game)
+        library = game.state.players["A"].zones["library"]
+        looked = tuple(game.state.cards[oid].ref for oid in reversed(library[-2:]))
+        self.cast(game, "A", spell, [model.ref])
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        created, = [event for event in game.state.events if event.code == "token.create"]
+        token, = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual((1, [token.ref]), (created.details["base_quantity"], created.details["objects"]))
+        self.assertEqual(("A", "Grizzly Bears"), (token.controller, game.engine._effective_card_data(token)["name"]))
+        self.assertFalse(any(event.code == "library.scry" for event in game.state.events))
+        self.assertTrue(all(ref in json.dumps(game.packet("pilot:A", full=True)["decision"]) for ref in looked))
+        for seat in "BCD":
+            packet = game.packet(f"pilot:{seat}", full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertTrue(all(ref not in json.dumps(packet) for ref in looked))
+        game = self.replay(game, load=True)
+        before = authoritative_state_hash(game.state)
+        choose = {"action_id": "choose", "cards": {"top": [looked[1]], "bottom": [looked[0]]}}
+        for seat, response in (("B", choose), ("A", {"action_id": "choose", "cards": {"top": [looked[0]], "bottom": []}})):
+            self.assertFalse(game.act(f"pilot:{seat}", response).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", choose)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        library = game.state.players["A"].zones["library"]
+        self.assertEqual((looked[0], looked[1]), (game.state.cards[library[0]].ref, game.state.cards[library[-1]].ref))
+        self.assertEqual(["token.create", "library.scry"], [
+            event.code for event in game.state.events if event.code in {"token.create", "library.scry"}
+        ])
+        self.replay(game, load=True)
+
+    def test_actual_fated_other_turn_still_creates_the_copy_without_scry(self):
+        game = self.session(7012202)
+        spell = self.add(game.engine, "Fated Infatuation", zone="hand")
+        model = self.add(game.engine, "Grizzly Bears", ref="fated-off-turn-model")
+        game.state.config.semantic_policy = "trusted_only"
+        self.assert_closed(game, spell)
+        self.prepare(game, actor="A", active="B", mana={"U": 3})
+        self.checkpoint(game)
+        library = tuple(game.state.players["A"].zones["library"])
+        self.cast(game, "A", spell, [model.ref])
+        self.assertIsNone(self.resolve(game))
+        token, = [card for card in game.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(("A", "A"), (token.owner, token.controller))
+        self.assertEqual("Grizzly Bears", game.engine._effective_card_data(token)["name"])
+        self.assertEqual(library, tuple(game.state.players["A"].zones["library"]))
+        self.assertFalse(any(event.code == "library.scry" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_fated_offer_and_resolution_require_its_own_still_legal_creature(self):
+        for own_model in (False, True):
+            with self.subTest(own_model=own_model):
+                game = self.session(7012203 + int(own_model))
+                spell = self.add(game.engine, "Fated Infatuation", zone="hand")
+                foreign = self.add(game.engine, "Grizzly Bears", seat="B", ref="fated-foreign-creature")
+                game.state.config.semantic_policy = "trusted_only"
+                self.assert_closed(game, spell)
+                if own_model:
+                    model = self.add(game.engine, "Young Wolf", ref="fated-lost-creature")
+                    bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+                    self.assert_closed(game, bounce)
+                    game.state.players["B"].mana_pool.update({"U": 1})
+                self.prepare(game, mana={"U": 3})
+                self.checkpoint(game)
+                actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offers = [row for row in actions if row["id"] == f"cast:{spell.ref}"]
+                if not own_model:
+                    self.assertEqual([], offers)
+                    continue
+                action, = offers
+                before = authoritative_state_hash(game.state)
+                invalid = game.act("pilot:A", {"action_id": action["id"], "targets": [foreign.ref], "pay": "auto"})
+                self.assertFalse(invalid.ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                self.cast(game, "A", spell, [model.ref])
+                self.cast(game, "B", bounce, [model.ref])
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("hand", game.state.cards[model.object_id].zone)
+                self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+                self.assertFalse(any(event.code in {"token.create", "library.scry"} for event in game.state.events))
+                self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+                self.replay(game, load=True)
+
+
 if __name__ == "__main__":
     unittest.main()

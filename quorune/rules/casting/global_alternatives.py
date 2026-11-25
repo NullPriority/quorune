@@ -71,5 +71,8 @@ def battlefield_alternative_base_options(host,seat,card,*,cast_type_line,enabled
                     **({'x_value_policy':'zero'} if has_mana_x else {}),
                     'battlefield_alternative_cost':identity}
                 if ordinary_zone:result.append(option)
-                result.extend(spec.cost_option(option) for spec in paid_zone)
+                result.extend(
+                    paid_spec.cost_option(option, surcharge=paid_spec.current_surcharge(host, seat, card))
+                    for paid_spec in paid_zone
+                )
     return result

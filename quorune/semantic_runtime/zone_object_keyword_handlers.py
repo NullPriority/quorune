@@ -8,6 +8,7 @@ from typing import Any, Mapping
 from ..zone_object_keyword_model import (
     ZoneObjectKeywordGrantError,
     normalized_zone_object_keyword,
+    validate_controlled_creature_indestructible,
 )
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
@@ -35,6 +36,17 @@ class GrantZoneObjectKeywordHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if "scope" in effect or "schema_version" in effect:
+            try:
+                validate_controlled_creature_indestructible(effect)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            if context.source is None:
+                raise SemanticNodeError("Zone-object keyword grants require resolving source context")
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id,
+                intents=(GrantZoneObjectKeywordIntent(actor=context.actor, object_ref=None,
+                    keyword="indestructible", source=context.source, reason=context.default_reason,
+                    controlled_creature_set=True),))
         fields = validate_direct_target_effect(
             effect,
             context,

@@ -5,7 +5,14 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping, Sequence
 
-from ..token_copy_recipes import TokenCopyRecipeSpec
+from ..source_entry_cast_information import SOURCE_ENTRY_CAST_HAND_MECHANIC, SOURCE_ENTRY_CAST_MECHANIC
+from ..token_copy_recipient_model import (
+    OCCURRENCE_COPY_RECIPIENT_CAPABILITY, OCCURRENCE_COPY_RECIPIENT_MECHANIC, has_occurrence_copy_recipient,
+)
+from ..token_copy_recipes import (
+    TOKEN_COPY_BATCH_CAPABILITY, TOKEN_COPY_BATCH_FIELD, TOKEN_COPY_BATCH_MECHANIC,
+    TokenCopyBatchSpec, TokenCopyRecipeError, TokenCopyRecipeSpec,
+)
 
 from ..ability_fragment_primitives import CrewPowerBonusSpec
 from ..ability_fragments import (
@@ -130,7 +137,10 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
         return fixed_token_choice_payload_dependencies(value,mechanics)
     if isinstance(value, Mapping) and value.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
         return distributed_token_creation_payload_dependencies(value)
-    cast_copy = cast_spell_token_copy_payload_dependencies(value)
+    if isinstance(value, Mapping) and TOKEN_COPY_BATCH_FIELD in value:
+        return TokenCopyBatchSpec.from_effect(value).capability_dependencies
+    from .cast_target_copy import cast_target_copy_payload_dependencies
+    cast_copy = cast_spell_token_copy_payload_dependencies(value) or cast_target_copy_payload_dependencies(value)
     if cast_copy:
         return cast_copy
     if (isinstance(value,Mapping) and value.get('op')=='create_token'
@@ -144,6 +154,11 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
         and "target" in value
     )
     target_dependencies = ("target.revalidate_resolution",) if targeted else ()
+    from .fixed_basic_land_token import fixed_basic_land_token_payload_dependencies
+
+    land = fixed_basic_land_token_payload_dependencies(value)
+    if land:
+        return land
     if (isinstance(value, Mapping) and value.get('op') == 'create_token'
             and isinstance(value.get('characteristics'), Mapping)
             and re.fullmatch(r'Token (?:Legendary )?Artifact — (?:Book )?Equipment',
@@ -264,6 +279,8 @@ _AUXILIARY_MECHANICS = frozenset(
     {
         'fixed-kicked-entry-trigger',
         'declared-cast-cost-fact',
+        SOURCE_ENTRY_CAST_MECHANIC,
+        SOURCE_ENTRY_CAST_HAND_MECHANIC,
         "activated_ability",
         "granted_activated_ability",
         "granted_triggered_ability",
@@ -495,6 +512,8 @@ def _fixed_creature_effect_closure(
                 )
             ):
                 return None
+            if isinstance(fragment, GrantedActivatedAbilitySpec) and fragment.capability_id is not None:
+                capabilities.add(fragment.capability_id)
             typed_ability_fragment = True
         else:
             return None
@@ -522,7 +541,9 @@ def _fixed_token_effect_closure(
     equipment = fixed_equipment_token_closure(effect)
     if equipment is not None:
         return equipment
-    return _fixed_creature_effect_closure(effect)
+    from .fixed_basic_land_token import fixed_basic_land_token_closure
+
+    return fixed_basic_land_token_closure(effect) or _fixed_creature_effect_closure(effect)
 
 
 def _fixed_copy_token_capabilities(
@@ -564,11 +585,41 @@ def _fixed_copy_token_capabilities(
     )
 
 
+def graveyard_target_token_copy_runtime_dependencies(program):
+    from ..token_copy_recipes import GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, GRAVEYARD_TARGET_TOKEN_COPY_VERSION
+    from .effect_shape_walkers import nested_effects
+
+    def uses_graveyard_recipe(node):
+        recipe = node.get("copy_spec")
+        return isinstance(recipe, Mapping) and (
+            recipe.get("schema_version") == GRAVEYARD_TARGET_TOKEN_COPY_VERSION
+            or recipe.get("origin") == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN
+        )
+
+    if not any(uses_graveyard_recipe(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("activate", "battlefield")
+            or program.event_condition is not None or program.cost_schema is None
+            or len(program.effects) != 1 or not uses_graveyard_recipe(program.effects[0])
+            or any(handler.get("handler_id") != "activation.catalog.pinned.v1" for handler in program.handlers)):
+        raise ValueError("Graveyard token copy needs one complete battlefield activation")
+    required = _copy_recipe_capabilities(program.effects[0], program.target_schema, set(program.coverage))
+    if not required:
+        raise ValueError("Graveyard token copy needs its exact current own-creature target and full lifecycle")
+    return required
+
+
 def _copy_recipe_capabilities(effect, target_schema, mechanics):
+    if has_occurrence_copy_recipient(effect):
+        from .token_copy_recipients import occurrence_copy_recipient_node_dependencies
+
+        return occurrence_copy_recipient_node_dependencies(effect, target_schema, mechanics)
     if 'copy_recipient_binding' in effect:
         from .token_copy_recipients import target_copy_recipient_node_dependencies
         return target_copy_recipient_node_dependencies(effect, target_schema, mechanics)
-    from ..token_copy_recipes import TokenCopyRecipeSpec
+    from ..token_copy_recipes import (
+        GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, TokenCopyRecipeSpec, graveyard_target_token_copy_schema,
+    )
     from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
     from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities
     fields = {"op", "controller", "quantity", "copy_spec"}
@@ -583,6 +634,12 @@ def _copy_recipe_capabilities(effect, target_schema, mechanics):
     if recipe.origin == "target":
         if not direct_permanent_target_schema_is_closed(target_schema) or target_schema.get("count") != 1:
             return ()
+    elif recipe.origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN:
+        from ..replacement.immutable import thaw_value
+
+        if (not isinstance(target_schema, Mapping) or thaw_value(target_schema) != graveyard_target_token_copy_schema()
+                or type(target_schema.get("count")) is not int or set(effect) != fields or effect["quantity"] != 1):
+            return ()
     elif target_schema is not None:
         return ()
     required = {_TOKEN_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-707-copying-objects"}
@@ -591,14 +648,17 @@ def _copy_recipe_capabilities(effect, target_schema, mechanics):
     if set(recipe.temporary_keywords) - {"Haste"}:
         return ()
     dependencies = {FIXED_TOKEN_COPY_CAPABILITY_ID}
-    if recipe.origin == "event_spell":
+    if recipe.origin in {"event_spell", "cast_target"}:
+        from .cast_target_copy import cast_target_copy_payload_dependencies
         try:
-            dependencies.update(cast_spell_token_copy_payload_dependencies(effect))
+            dependencies.update(cast_spell_token_copy_payload_dependencies(effect) or cast_target_copy_payload_dependencies(effect))
         except (TypeError, ValueError):
             return ()
     if recipe.origin == "source_attachment":
         dependencies.update({"token.creation.enchanted_source_copy", "object.reference.source_attachment_information"})
     if recipe.creation_origin=='embalm':dependencies.add('activation.graveyard_copy_keyword.fixed_mana')
+    if recipe.origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN:
+        dependencies.add("target.revalidate_resolution")
     if recipe.origin == "target":
         dependencies.add("target.revalidate_resolution")
         dependencies.update(direct_target_predicate_capabilities(target_schema))
@@ -618,6 +678,8 @@ def _copy_recipe_capabilities(effect, target_schema, mechanics):
                 return ()
             if ":token:" not in fragment.ability_id or not fragment.semantic_key.endswith(f":{fragment.ability_id}"):
                 return ()
+            if isinstance(fragment, GrantedActivatedAbilitySpec) and fragment.capability_id is not None:
+                dependencies.add(fragment.capability_id)
         dependencies.add(TYPED_TOKEN_ABILITY_CAPABILITY_ID)
     return tuple(sorted(dependencies))
 
@@ -788,6 +850,24 @@ def _fixed_token_definition_node_capabilities(
     return ()
 
 
+def _copy_batch_capabilities(effect, target_schema, mechanics):
+    from ..replacement.immutable import thaw_value
+
+    required = {_TOKEN_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy",
+                "cr-707-copying-objects", TOKEN_COPY_BATCH_MECHANIC}
+    try:
+        spec = TokenCopyBatchSpec.from_effect(effect)
+    except TokenCopyRecipeError:
+        return ()
+    if spec.targets_player:
+        required.add("cr-115-targets")
+        if not isinstance(target_schema, Mapping) or type(target_schema.get("count")) is not int:
+            return ()
+    if not required <= mechanics or spec.target_schema != thaw_value(target_schema):
+        return ()
+    return spec.capability_dependencies
+
+
 def fixed_token_creation_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -817,6 +897,8 @@ def fixed_token_creation_node_capabilities(
         return ()
     effect = effects[0]
     mechanics = set(mechanic_ids)
+    if TOKEN_COPY_BATCH_FIELD in effect:
+        return _copy_batch_capabilities(effect, target_schema, mechanics)
     if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
         required = {INVESTIGATE_MECHANIC_ID, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, _TOKEN_MECHANIC}
         if target_schema is not None or not required.issubset(mechanics):
@@ -899,7 +981,15 @@ def fixed_token_creation_covered_mechanics(
 ) -> tuple[str, ...]:
     """Return mechanics owned by the closed token-production capabilities."""
 
+    from .token_mill_repeat import TOKEN_MILL_REPEAT_CAPABILITY, TOKEN_MILL_REPEAT_MECHANIC
+
     covered: set[str] = set()
+    if TOKEN_MILL_REPEAT_CAPABILITY in capability_ids:
+        covered.add(TOKEN_MILL_REPEAT_MECHANIC)
+    from .fixed_basic_land_token import FIXED_BASIC_LAND_TOKEN_CAPABILITY, FIXED_BASIC_LAND_TOKEN_MECHANIC
+
+    if FIXED_BASIC_LAND_TOKEN_CAPABILITY in capability_ids:
+        covered.add(FIXED_BASIC_LAND_TOKEN_MECHANIC)
     if 'token.creation.fixed_definition_choice' in capability_ids:
         covered.add('fixed-token-definition-choice')
     if 'token.creation.defined_transforming' in capability_ids:
@@ -937,6 +1027,10 @@ def fixed_token_creation_covered_mechanics(
                 "cr-603-handling-triggered-abilities",
             }
         )
+    if OCCURRENCE_COPY_RECIPIENT_CAPABILITY in capability_ids:
+        covered.add(OCCURRENCE_COPY_RECIPIENT_MECHANIC)
+    if TOKEN_COPY_BATCH_CAPABILITY in capability_ids:
+        covered.add(TOKEN_COPY_BATCH_MECHANIC)
     if FIXED_TOKEN_COPY_CAPABILITY_ID in capability_ids:
         covered.update(
             {

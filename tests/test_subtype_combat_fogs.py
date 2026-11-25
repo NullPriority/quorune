@@ -125,9 +125,12 @@ class SubtypeCombatFogRuntimeTests(unittest.TestCase):
         promoted=self.add(s.engine,'Arachnogenesis',zone='hand')
         self.assertTrue(self.binding(s,promoted)['strict_capability_ready'])
         self.assertEqual('capability_closed',self.binding(s,promoted)['trust_basis'])
-        # A selected target exception still has no represented source predicate.
         neighbor=self.add(s.engine,'Terrifying Presence',zone='hand')
-        self.assertFalse(self.binding(s,neighbor)['strict_capability_ready'])
+        self.assertTrue(self.binding(s,neighbor)['strict_capability_ready'])
+        record=self.db.lookup('Terrifying Presence')
+        widened=replace(record,oracle_text=record.oracle_text.replace('target creature','up to two target creatures'))
+        self.assertNotEqual('exact',compile_oracle_card(widened,capability_registry=self.registry,
+            capability_profile='commander_review').status)
         control=self.add(s.engine,'Frontline Strategist',zone='hand')
         self.assertTrue(self.binding(s,control)['strict_capability_ready'])
     def test_actual_zero_attacker_ambush_cast_creates_no_tokens_but_keeps_live_shield(self):

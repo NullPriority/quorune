@@ -9,6 +9,7 @@ from ..query_effect_amount_model import (
     PUBLIC_QUERY_AMOUNT_KIND,
     PublicQueryAmountError,
     PublicQueryAmountSpec,
+    ATTACK_SHARED_TYPE_AMOUNT_VERSION,
 )
 from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from ..characteristic_fragments import CharacteristicQuantitySpec
@@ -622,7 +623,12 @@ def _fixed_shape_effects(
                 continue
             try:
                 spec = PublicQueryAmountSpec.from_dict(value)
-                attack_relative = (spec.schema_version == 3
+                if spec.schema_version == ATTACK_SHARED_TYPE_AMOUNT_VERSION:
+                    from ..rules.attack_event_results import is_exact_attack_shared_type_power
+
+                    if not is_exact_attack_shared_type_power(effect, field):
+                        return None
+                attack_relative = (spec.schema_version in {3, ATTACK_SHARED_TYPE_AMOUNT_VERSION}
                     and operation == "apply_source_characteristics_until_end_of_turn"
                     and effect.get("card") == "$event.permanent_object")
                 if spec.schema_version != 1 and not attack_relative:
@@ -663,6 +669,26 @@ def _composed_query_shape_context(effects, mechanics):
 
 def public_query_amount_program_is_closed(program: Any, *, required_dependencies) -> bool:
     """Keep scalar admission with its existing fixed shape and target owners."""
+    from ..rules.target_creature_power_results import target_creature_power_node_capabilities
+    from ..rules.target_recipient_results import target_sacrifice_power_node_capabilities
+    from ..rules.prevention_component_shapes import targeted_prevention_result_node_capabilities
+
+    prevention = targeted_prevention_result_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
+    )
+    if prevention:
+        return set(prevention) <= set(program.capability_dependencies)
+
+    sacrifice = target_sacrifice_power_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
+    )
+    if sacrifice:
+        return set(sacrifice) <= set(program.capability_dependencies)
+    power_dependencies = target_creature_power_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
+    )
+    if power_dependencies:
+        return set(power_dependencies) <= set(program.capability_dependencies)
     from ..rules.node_capability_shapes import (
         fixed_damage_node_capabilities, fixed_draw_node_capabilities,
         fixed_scry_node_capabilities,

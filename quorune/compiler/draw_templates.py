@@ -4,6 +4,14 @@ from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
+from ..drawing.step_exemption import (
+    DRAW_STEP_EXEMPT_DISCARD_CAPABILITY,
+    DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+    DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY,
+    DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
+    DRAW_STEP_EXEMPT_REDIRECT_CAPABILITY,
+    DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+)
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -323,15 +331,57 @@ def static_draw_instruction_handler(
 
 def static_draw_result_handler(
     text: str,
-) -> tuple[str, Mapping[str, Any], str] | None:
-    """Lower draw-doubling wording to an individual result replacement."""
+) -> tuple[str, Mapping[str, Any], str | tuple[str, ...]] | None:
+    """Recognize the represented individual draw-result replacements."""
 
-    if _DRAW_DOUBLE.fullmatch(text) is None:
+    if re.fullmatch(
+        r"If a player would draw a card except the first one they draw in each of their draw steps, "
+        r"that player discards a card instead\. If the player discards a card this way, they draw a card\. "
+        r"If the player doesn't discard a card this way, they mill a card\.",
+        text,
+        re.IGNORECASE,
+    ) is not None:
+        return (
+            "draw-result-discard-or-mill-after-first-in-own-step-v1",
+            {
+                "handler_id": DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
+                "schema_version": 1,
+                "event": "draw",
+                "condition": {"affected_player_relation": "any"},
+                "modification": {"operation": "discard_instead_of_draw"},
+            },
+            (DRAW_STEP_EXEMPT_DISCARD_CAPABILITY, "zone.draw.result_generated_ordering",
+             "zone.discard.typed_cause", "zone.mill.fixed"),
+        )
+
+    if re.fullmatch(
+        r"If an opponent would draw a card except the first one they draw in each of their draw steps, "
+        r"instead that player skips that draw and you draw a card\.",
+        text,
+        re.IGNORECASE,
+    ) is not None:
+        return (
+            "draw-result-redirect-opponent-after-first-in-own-step-v1",
+            {
+                "handler_id": DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+                "schema_version": 1,
+                "event": "draw",
+                "condition": {"affected_player_relation": "opponent"},
+                "modification": {"recipient": "source_controller"},
+            },
+            (DRAW_STEP_EXEMPT_REDIRECT_CAPABILITY, "zone.draw.result_generated_ordering"),
+        )
+
+    exempt = re.fullmatch(
+        r"If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead\.",
+        text, re.IGNORECASE,
+    ) is not None
+    if not exempt and _DRAW_DOUBLE.fullmatch(text) is None:
         return None
     return (
-        "draw-result-double-controller-static-v1",
+        "draw-result-double-after-first-in-own-step-v1" if exempt else "draw-result-double-controller-static-v1",
         {
-            "handler_id": "replacement.draw.result.multiply.v1",
+            "handler_id": DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID if exempt else "replacement.draw.result.multiply.v1",
             "schema_version": 1,
             "event": "draw",
             "condition": {
@@ -339,7 +389,8 @@ def static_draw_result_handler(
             },
             "modification": {"factor": 2},
         },
-        "zone.draw.result_generated_ordering",
+        (DRAW_STEP_EXEMPT_MULTIPLIER_CAPABILITY, "zone.draw.result_generated_ordering")
+        if exempt else "zone.draw.result_generated_ordering",
     )
 
 

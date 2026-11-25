@@ -1,0 +1,177 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike",
+        "Protection"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Black Knight",
+      "oracle_id": "9456c5b6-946d-403a-8ed0-dff9f921d98c",
+      "oracle_text": "First strike (This creature deals combat damage before creatures without first strike.)\nProtection from white (This creature can't be blocked, targeted, dealt damage, or enchanted by anything white.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2011-01-10",
+      "toughness": "2",
+      "type_line": "Creature — Human Knight"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Fell the Mighty",
+      "oracle_id": "1fbb2a7c-8093-4729-b8fe-cf032d99470f",
+      "oracle_text": "Destroy all creatures with power greater than target creature's power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-02-09",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}",
+      "name": "Mandate of Abaddon",
+      "oracle_id": "20582c7b-edd3-4189-98ec-8fabd39034b0",
+      "oracle_text": "Choose target creature you control. Destroy all creatures with power less than that creature's power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-10-07",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Use the power of the target creature as Fell the Mighty resolves to determine which creatures are destroyed. Fell the Mighty doesn't target any of those creatures, so a creature with hexproof or protection from white will be destroyed if its power is high enough.",
+      "oracle_id": "1fbb2a7c-8093-4729-b8fe-cf032d99470f",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Fell the Mighty won't destroy the target creature.",
+      "oracle_id": "1fbb2a7c-8093-4729-b8fe-cf032d99470f",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the target creature is an illegal target when Fell the Mighty tries to resolve, Fell the Mighty won't resolve and none of its effects will happen. No creatures will be destroyed.",
+      "oracle_id": "1fbb2a7c-8093-4729-b8fe-cf032d99470f",
+      "published_at": "2014-11-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the chosen creature is an illegal target as Mandate of Abaddon tries to resolve, it will be removed from the stack and no creatures will be destroyed.",
+      "oracle_id": "20582c7b-edd3-4189-98ec-8fabd39034b0",
+      "published_at": "2022-10-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

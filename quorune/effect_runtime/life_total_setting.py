@@ -1,7 +1,10 @@
 """Resolve setting life through the existing replacement-capable life batch."""
 from collections.abc import Mapping
 from ..errors import GameRuleError
-from ..life_total_setting_model import LifeTotalValueSpec,plan_life_total_setting
+from ..life_total_setting_model import (
+    CONTROLLED_TOUGHNESS_LIFE_KIND, COUNTED_LIFE_TOTAL_KINDS,
+    LifeTotalValueSpec, plan_life_total_setting,
+)
 from ..life_state import LifeChange
 
 
@@ -17,8 +20,16 @@ def _counts(host,kind,players):
         if any(type(card.phased_out) is not bool for card in cards):
             raise GameRuleError('Life-total count snapshot requires known phasing status')
         cards=tuple(card for card in cards if not card.phased_out)
-        result[player]=(len(cards) if kind=='permanents' else sum('creature' in
-            host._type_parts(str(host._effective_card_data(card).get('type_line') or ''))[0] for card in cards))
+        if kind == "permanents":
+            result[player] = len(cards)
+            continue
+        creatures = [card for card in cards if "creature" in host._type_parts(
+            str(host._effective_card_data(card).get("type_line") or "")
+        )[0]]
+        result[player] = (
+            sum(host._numeric_stat(card.object_id, "toughness") for card in creatures)
+            if kind == CONTROLLED_TOUGHNESS_LIFE_KIND else len(creatures)
+        )
     return result
 
 
@@ -48,8 +59,10 @@ def apply_set_life_total(host,effect,*,actor,operation,reason):
         if type(effect['player']) is not str or effect['player'] not in host.active_seats:
             raise GameRuleError('Life-total setting requires a surviving affected player')
         players=(effect['player'],)
+    if value.kind == CONTROLLED_TOUGHNESS_LIFE_KIND and effect.get("player") != actor:
+        raise GameRuleError("Total toughness can set the resolving controller's life only")
     lives={seat:host.state.players[seat].life for seat in host.active_seats}
-    counts=_counts(host,value.kind,players) if value.kind in {'creatures','permanents','library'} else None
+    counts=_counts(host,value.kind,players) if value.kind in COUNTED_LIFE_TOTAL_KINDS else None
     try:transitions=plan_life_total_setting(value,players,lives,starting_life=host.state.config.starting_life,counts=counts)
     except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
     prepared=_commit(host,tuple(LifeChange(item.player,item.delta) for item in transitions),

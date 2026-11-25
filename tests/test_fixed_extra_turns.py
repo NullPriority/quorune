@@ -70,7 +70,7 @@ class FixedExtraTurnCompilerTests(unittest.TestCase):
             "Take X extra turns after this one.",
             "Take an extra turn after the next turn.",
             "Take an extra turn after this one if you control a Wizard.",
-            "Take an extra turn after this one. At the beginning of that turn's end step, you lose the game.",
+            "Take an extra turn after this one. At the beginning of the next end step, you lose the game.",
             "Each player takes an extra turn after this one.",
             "Take one extra turns after this one.",
         ):

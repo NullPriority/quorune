@@ -5,6 +5,8 @@ from __future__ import annotations
 from typing import Any,Mapping,Sequence
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..keyword_counters import keyword_counter_mechanic
+from ..replacement.immutable import FrozenMap, thaw_value
+from ..target_forms import TargetCharacteristicForm
 from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, next_turn_effect_dependencies, split_next_turn_effect
 from ..source_tap_effect import SOURCE_TAP_EFFECT_FIELD, source_tap_effect_dependencies, split_source_tap_effect
 from .power_toughness_switch import (
@@ -21,6 +23,30 @@ RESOLUTION_STAT_MECHANIC_CAPABILITIES = {
     SWITCH_MECHANIC: (SWITCH_CAPABILITY,),
     STAT_MULTIPLIER_MECHANIC: (STAT_MULTIPLIER_CAPABILITY,),
 }
+
+
+_OPTIONAL_CREATURE_VEHICLE_FORMS = (
+    TargetCharacteristicForm(types_all=("creature",)),
+    TargetCharacteristicForm(subtypes_any=("vehicle",)),
+)
+_FIXED_CREATURE_VEHICLE_KEYWORDS = {
+    "op": OPERATION, "schema_version": 6, "cards": "$targets", "maximum_targets": 1,
+    "power": 0, "toughness": 0, "keywords": ["Trample", "Indestructible"],
+}
+
+
+def exact_optional_creature_vehicle_keyword_grant(effect, target_schema):
+    if (not isinstance(target_schema, Mapping) or type(target_schema.get("up_to")) is not int
+            or not isinstance(effect, Mapping)
+            or any(type(effect.get(field)) is not int for field in
+                   ("schema_version", "maximum_targets", "power", "toughness"))):
+        return False
+    expected = {
+        "zones": ["battlefield"], "categories": ["permanent"], "up_to": 1,
+        "characteristic_forms_any": [form.to_dict() for form in _OPTIONAL_CREATURE_VEHICLE_FORMS],
+    }
+    return (thaw_value(FrozenMap(target_schema)) == expected
+            and thaw_value(FrozenMap(effect)) == _FIXED_CREATURE_VEHICLE_KEYWORDS)
 
 
 def decode_target_characteristics(effect,*,allow_zero_result=False):
@@ -67,7 +93,10 @@ def target_characteristic_set_capabilities(*,effects:Sequence[Mapping[str,Any]],
     requires_creature = singular.get('types_any') == ['creature'] or (
         SOURCE_TAP_EFFECT_FIELD in effect and 'creature' in singular.get('types_all', ())
     )
-    if not requires_creature or not direct_permanent_target_schema_is_closed(singular):return ()
+    if not requires_creature and not exact_optional_creature_vehicle_keyword_grant(effect, target_schema):
+        return ()
+    if not direct_permanent_target_schema_is_closed(singular):
+        return ()
     if not {keyword_counter_mechanic(k) or k.casefold() for k in keywords}<=mechanics:return ()
     return tuple(sorted({TARGET_CHARACTERISTIC_SET_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn','target.revalidate_resolution',
         *next_turn_effect_dependencies(effect), *source_tap_effect_dependencies(effect), *direct_target_predicate_capabilities(singular),

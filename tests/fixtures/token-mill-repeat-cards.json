@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed repeat, kindred-result and source-departure scenes.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4871-8017-000000000701",
+      "name": "Willow, Thread Keeper",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Legendary Planeswalker — Willow",
+      "oracle_text": "As long as Willow isn't on the battlefield, it's a 3/2 Insect creature in addition to its other types.\n+1: Create a 2/2 green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Willow and repeat this process.",
+      "loyalty": "3",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4871-8017-000000000702",
+      "name": "Hollow Colony Echo",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Kindred Instant — Insect",
+      "oracle_text": "Draw a card.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4871-8017-000000000703",
+      "name": "Mistfield Recall",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

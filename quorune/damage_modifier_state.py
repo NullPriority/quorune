@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping, TypeAlias
 
+from .damage_prevention_scope import DamageModifierError, DamagePreventionScope, _exact_fields, _strings
 from .damage_source import DamageError, DamageSourceSnapshot
 from .object_predicate import (
     ObjectQueryError,
@@ -14,10 +15,6 @@ from .prevention_triggers import (
     PreventionTriggeredAbility,
     PreventionTriggerError,
 )
-
-
-class DamageModifierError(ValueError):
-    """A durable prevention or redirection value is malformed or stale."""
 
 
 SHIELD_COUNTER_DAMAGE_VERSION_FIELD = "shield_counter_damage_version"
@@ -52,33 +49,6 @@ class PreventionDamageKind(str, Enum):
 class PreventionRecipientKind(str, Enum):
     ANY = "any"
     PLAYER = "player"
-
-
-def _exact_fields(
-    value: Mapping[str, Any], expected: set[str], *, label: str
-) -> None:
-    actual = set(value)
-    if actual == expected:
-        return
-    missing = sorted(expected - actual)
-    unknown = sorted(actual - expected)
-    details: list[str] = []
-    if missing:
-        details.append("missing " + ", ".join(missing))
-    if unknown:
-        details.append("unknown " + ", ".join(unknown))
-    raise DamageModifierError(f"{label} fields: {'; '.join(details)}")
-
-
-def _strings(value: Any, *, label: str) -> tuple[str, ...]:
-    if not isinstance(value, (list, tuple)):
-        raise DamageModifierError(f"{label} must be an array")
-    result = tuple(sorted({str(item) for item in value if str(item)}))
-    if len(result) != len(value):
-        raise DamageModifierError(
-            f"{label} must contain unique nonempty strings"
-        )
-    return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -971,276 +941,6 @@ def prevention_aftermath_from_dict(
 
 
 @dataclass(frozen=True, slots=True)
-class DamagePreventionScope:
-    """Public applicability shared by static and durable prevention."""
-
-    source_controller_relation: str = "any"
-    target_controller_relation: str = "any"
-    target_kinds: tuple[str, ...] = ()
-    source_characteristics_all: tuple[str, ...] = ()
-    source_characteristics_any: tuple[str, ...] = ()
-    source_characteristics_none: tuple[str, ...] = ()
-    source_colors_any: tuple[str, ...] = ()
-    source_colors_none: tuple[str, ...] = ()
-    target_characteristics_all: tuple[str, ...] = ()
-    target_characteristics_any: tuple[str, ...] = ()
-    target_characteristics_none: tuple[str, ...] = ()
-    source_ref: str | None = None
-    target_ref: str | None = None
-    excluded_source_ref: str | None = None
-    excluded_target_ref: str | None = None
-    combat_pair: bool = False
-    target_colors_any: tuple[str,...] = ()
-    shared_color: bool = False
-    source_controller: str | None = None
-
-    def __post_init__(self) -> None:
-        if type(self.shared_color) is not bool:raise DamageModifierError('Prevention shared color must be a boolean')
-        if (not isinstance(self.target_colors_any,(list,tuple)) or any(type(c) is not str or c not in 'WUBRG' for c in self.target_colors_any)):
-            raise DamageModifierError('Prevention target colors must be represented colors')
-        object.__setattr__(self,'target_colors_any',tuple(sorted(set(self.target_colors_any))))
-        if type(self.combat_pair) is not bool:
-            raise DamageModifierError('Prevention combat pair must be a boolean')
-        relations = {"any", "source_controller", "opponent"}
-        if self.source_controller is not None and (
-            type(self.source_controller)is not str or not self.source_controller or self.source_controller_relation!='any'):
-            raise DamageModifierError('A bound prevention source controller must be one unambiguous player')
-        if (
-            self.source_controller_relation not in relations
-            or self.target_controller_relation not in relations
-        ):
-            raise DamageModifierError(
-                "Prevention scope controller relation is unsupported"
-            )
-        for field in (
-            "target_kinds",
-            "source_characteristics_all",
-            "source_characteristics_any",
-            "source_characteristics_none",
-            "source_colors_any",
-            "source_colors_none",
-            "target_characteristics_all",
-            "target_characteristics_any",
-            "target_characteristics_none",
-        ):
-            values = tuple(getattr(self, field))
-            if any(type(value) is not str or not value for value in values):
-                raise DamageModifierError(
-                    f"Prevention scope {field} must contain strings"
-                )
-            normalized = tuple(sorted(set(values)))
-            if values != normalized:
-                raise DamageModifierError(
-                    f"Prevention scope {field} must be canonical"
-                )
-        if set(self.target_kinds) - {"player", "permanent"}:
-            raise DamageModifierError(
-                "Prevention scope target kind is unsupported"
-            )
-        if set(self.source_colors_any).union(self.source_colors_none) - set(
-            "WUBRG"
-        ):
-            raise DamageModifierError(
-                "Prevention scope source color is unsupported"
-            )
-        for field in (
-            "source_ref",
-            "target_ref",
-            "excluded_source_ref",
-            "excluded_target_ref",
-        ):
-            value = getattr(self, field)
-            if value is not None and (type(value) is not str or not value):
-                raise DamageModifierError(
-                    f"Prevention scope {field} must be a nonempty reference"
-                )
-        if self.source_ref is not None and self.excluded_source_ref is not None:
-            raise DamageModifierError(
-                "Prevention scope source identity predicates conflict"
-            )
-        if self.target_ref is not None and self.excluded_target_ref is not None:
-            raise DamageModifierError(
-                "Prevention scope target identity predicates conflict"
-            )
-
-    @staticmethod
-    def _relation(
-        relation: str,
-        controller: str,
-    ) -> Mapping[str, Any] | None:
-        if relation == "any":
-            return None
-        if relation == "source_controller":
-            return {"eq": controller}
-        return {"not_in": [controller, None]}
-
-    @staticmethod
-    def _collection_conditions(
-        *,
-        all_values: tuple[str, ...],
-        any_values: tuple[str, ...],
-        none_values: tuple[str, ...],
-    ) -> dict[str, Any]:
-        result: dict[str, Any] = {}
-        if all_values:
-            result["contains_all"] = list(all_values)
-        if any_values:
-            result["contains_any"] = list(any_values)
-        if none_values:
-            result["contains_none"] = list(none_values)
-        return result
-
-    def event_conditions(self, *, controller: str) -> dict[str, Any]:
-        if type(controller) is not str or not controller:
-            raise DamageModifierError(
-                "Prevention scope requires an active controller"
-            )
-        result: dict[str, Any] = {}
-        if self.combat_pair:result['source_and_target_block_pair']={'eq':True}
-        if self.target_colors_any:result['target_colors']={'contains_any':list(self.target_colors_any)}
-        if self.shared_color:
-            result['source_and_target_share_color']={'eq':True}
-            result['source_and_target_distinct']={'eq':True}
-        source_controller = self._relation(
-            self.source_controller_relation, controller
-        )
-        if source_controller is not None:
-            result["source_controller"] = source_controller
-        if self.source_controller is not None:result['source_controller']={'eq':self.source_controller}
-        target_controller = self._relation(
-            self.target_controller_relation, controller
-        )
-        if target_controller is not None:
-            result["target_controller"] = target_controller
-        if self.target_kinds:
-            result["target_kind"] = {"in": list(self.target_kinds)}
-        source_characteristics = self._collection_conditions(
-            all_values=self.source_characteristics_all,
-            any_values=self.source_characteristics_any,
-            none_values=self.source_characteristics_none,
-        )
-        if source_characteristics:
-            result["source_characteristics"] = source_characteristics
-        source_colors = self._collection_conditions(
-            all_values=(),
-            any_values=self.source_colors_any,
-            none_values=self.source_colors_none,
-        )
-        if source_colors:
-            result["source_colors"] = source_colors
-        target_characteristics = self._collection_conditions(
-            all_values=self.target_characteristics_all,
-            any_values=self.target_characteristics_any,
-            none_values=self.target_characteristics_none,
-        )
-        if target_characteristics:
-            result["target_characteristics"] = target_characteristics
-        if self.source_ref is not None:
-            result["source"] = {"eq": self.source_ref}
-        elif self.excluded_source_ref is not None:
-            result["source"] = {"not_in": [self.excluded_source_ref]}
-        if self.target_ref is not None:
-            result["target"] = {"eq": self.target_ref}
-        elif self.excluded_target_ref is not None:
-            result["target"] = {"not_in": [self.excluded_target_ref]}
-        return result
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            **({'combat_pair':True} if self.combat_pair else {}),
-            **({'target_colors_any':list(self.target_colors_any)} if self.target_colors_any else {}),
-            **({'shared_color':True} if self.shared_color else {}),
-            **({'source_controller':self.source_controller} if self.source_controller is not None else {}),
-            "source_controller_relation": self.source_controller_relation,
-            "target_controller_relation": self.target_controller_relation,
-            "target_kinds": list(self.target_kinds),
-            "source_characteristics_all": list(self.source_characteristics_all),
-            "source_characteristics_any": list(self.source_characteristics_any),
-            "source_characteristics_none": list(self.source_characteristics_none),
-            "source_colors_any": list(self.source_colors_any),
-            "source_colors_none": list(self.source_colors_none),
-            "target_characteristics_all": list(self.target_characteristics_all),
-            "target_characteristics_any": list(self.target_characteristics_any),
-            "target_characteristics_none": list(self.target_characteristics_none),
-            "source_ref": self.source_ref,
-            "target_ref": self.target_ref,
-            "excluded_source_ref": self.excluded_source_ref,
-            "excluded_target_ref": self.excluded_target_ref,
-        }
-
-    @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "DamagePreventionScope":
-        combat_pair=value.get('combat_pair',False)
-        target_colors=value.get('target_colors_any',())
-        shared_color=value.get('shared_color',False)
-        source_controller=value.get('source_controller')
-        if 'source_controller' in value and (type(source_controller)is not str or not source_controller):
-            raise DamageModifierError('A stored prevention source controller cannot be null or empty')
-        value={key:val for key,val in value.items() if key not in {'combat_pair','target_colors_any','shared_color','source_controller'}}
-        expected = set(cls().to_dict())
-        _exact_fields(value, expected, label="Damage prevention scope")
-        return cls(
-            combat_pair=combat_pair,
-            target_colors_any=target_colors,
-            shared_color=shared_color,
-            source_controller=source_controller,
-            source_controller_relation=str(value["source_controller_relation"]),
-            target_controller_relation=str(value["target_controller_relation"]),
-            target_kinds=_strings(value["target_kinds"], label="scope target kinds"),
-            source_characteristics_all=_strings(
-                value["source_characteristics_all"],
-                label="scope source all characteristics",
-            ),
-            source_characteristics_any=_strings(
-                value["source_characteristics_any"],
-                label="scope source any characteristics",
-            ),
-            source_characteristics_none=_strings(
-                value["source_characteristics_none"],
-                label="scope source excluded characteristics",
-            ),
-            source_colors_any=_strings(
-                value["source_colors_any"], label="scope source any colors"
-            ),
-            source_colors_none=_strings(
-                value["source_colors_none"], label="scope source excluded colors"
-            ),
-            target_characteristics_all=_strings(
-                value["target_characteristics_all"],
-                label="scope target all characteristics",
-            ),
-            target_characteristics_any=_strings(
-                value["target_characteristics_any"],
-                label="scope target any characteristics",
-            ),
-            target_characteristics_none=_strings(
-                value["target_characteristics_none"],
-                label="scope target excluded characteristics",
-            ),
-            source_ref=(
-                str(value["source_ref"])
-                if value["source_ref"] is not None
-                else None
-            ),
-            target_ref=(
-                str(value["target_ref"])
-                if value["target_ref"] is not None
-                else None
-            ),
-            excluded_source_ref=(
-                str(value["excluded_source_ref"])
-                if value["excluded_source_ref"] is not None
-                else None
-            ),
-            excluded_target_ref=(
-                str(value["excluded_target_ref"])
-                if value["excluded_target_ref"] is not None
-                else None
-            ),
-        )
-
-
-@dataclass(frozen=True, slots=True)
 class DamagePreventionShield:
     shield_id: str
     source_id: str
@@ -1282,6 +982,14 @@ class DamagePreventionShield:
             raise DamageModifierError(
                 "A prevention shield scope must be typed"
             )
+        if (self.scope.source_power_max is not None or self.scope.excluded_source_logical_object_id is not None) and (
+            self.subject.kind != "any" or self.mode != PreventionMode.ALL
+            or self.duration != DamageModifierDuration.UNTIL_END_OF_TURN
+            or self.damage_kind != PreventionDamageKind.COMBAT or self.recipient_kind != PreventionRecipientKind.ANY
+            or self.chosen_source is not None or self.application_group_id is not None
+            or self.aftermath or self.triggered_ability is not None
+        ):
+            raise DamageModifierError("The source restriction requires a temporary global combat shield")
         if self.mode == PreventionMode.AMOUNT:
             if type(self.remaining) is not int or self.remaining < 1:
                 raise DamageModifierError(

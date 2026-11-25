@@ -8,15 +8,19 @@ from typing import Any, Mapping
 from ..library_order_model import HAND_TOP_APNAP_EVENT
 from ..replacement.immutable import FrozenMap
 from ..apnap_object_payment import DECLINED_LIFE_LOSS
+from ..power_sacrifice_model import GREATEST_POWER_SACRIFICE_LIFE_RESULT, GreatestPowerSacrificeLifeResult
+from ..semantic_runtime.targeted_power_sacrifice_life_intent import TargetedPowerSacrificeLifeIntent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.intents import (
     MoveObjectsSimultaneouslyIntent,
     RecordChoiceIntent,
 )
 from ..zone_trigger_events import ZoneTransitionKind
+from ..discard_effect_origin import DiscardEffectOrigin
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
+    IntentResultAmount,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
     SemanticChoiceError,
@@ -39,8 +43,23 @@ _FIELDS = {
 _LOSS_FIELDS = {DECLINED_LIFE_LOSS, 'declining_players'}
 
 
-def _intents(effect: Mapping[str, Any], *, source_ref: str | None = None) -> tuple[Any, ...]:
-    if not isinstance(effect, Mapping) or set(effect) not in (_FIELDS, _FIELDS | _LOSS_FIELDS):
+def _sacrifice_power_move(effect, *, actor, refs, zones, destination, reason, event_code):
+    if event_code != "choice.sacrifice":
+        raise SemanticChoiceError("The selected life result requires a creature sacrifice")
+    try:
+        result = GreatestPowerSacrificeLifeResult.from_dict(effect[GREATEST_POWER_SACRIFICE_LIFE_RESULT])
+        return TargetedPowerSacrificeLifeIntent(
+            actor=actor, object_refs=refs, expected_zones=zones, destination=destination,
+            reason=reason, transition_kind=ZoneTransitionKind.SACRIFICE, result=result,
+        )
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+
+
+def _intents(
+    effect: Mapping[str, Any], *, source_ref: str | None = None, discard_effect_origin: DiscardEffectOrigin | None = None,
+) -> tuple[Any, ...]:
+    if not isinstance(effect, Mapping) or set(effect) not in (_FIELDS, _FIELDS | _LOSS_FIELDS, _FIELDS | {GREATEST_POWER_SACRIFICE_LIFE_RESULT}):
         raise SemanticChoiceError("APNAP object commit fields are malformed")
     if effect["op"] != APNAP_OBJECT_COMMIT_OPERATION:
         raise SemanticChoiceError("APNAP object commit operation changed")
@@ -95,11 +114,15 @@ def _intents(effect: Mapping[str, Any], *, source_ref: str | None = None) -> tup
                     if event_code == "choice.sacrifice"
                     else ZoneTransitionKind.ORDINARY
                 ),
+                discard_effect_origin=discard_effect_origin,
             ),
         )
         if refs
         else ()
     )
+    if GREATEST_POWER_SACRIFICE_LIFE_RESULT in effect:
+        move = (_sacrifice_power_move(effect, actor=actor, refs=refs, zones=zones,
+                                      destination=destination, reason=reason, event_code=event_code),)
     if hand_top:
         return move
     loss = ()
@@ -145,7 +168,7 @@ class ApnapObjectCommitHandler:
     capability_dependencies: tuple[str, ...] = (
         "zone.change.destination_replacement",
     )
-    continuation_fields: tuple[str, ...] = tuple(sorted(_FIELDS | _LOSS_FIELDS))
+    continuation_fields: tuple[str, ...] = tuple(sorted(_FIELDS | _LOSS_FIELDS | {GREATEST_POWER_SACRIFICE_LIFE_RESULT}))
     private_data: tuple[str, ...] = ("object_refs",)
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -165,14 +188,28 @@ class ApnapObjectCommitHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
-        intents = _intents(effect, source_ref=context.source_ref)
+        intents = _intents(effect, source_ref=context.source_ref,
+            discard_effect_origin=getattr(context.query, "discard_effect_origin", None))
         if effect.get("actor") != context.stack_controller:
             raise SemanticChoiceError("APNAP commit controller changed")
+        continuation = AutoContinue(reason="APNAP choices are complete")
+        if GREATEST_POWER_SACRIFICE_LIFE_RESULT in effect and intents[0].result.draw_then_lose_life:
+            continuation = AutoContinue(
+                reason="Use the committed sacrifice's power and toughness.",
+                committed_effects_from_result=0,
+            )
+        elif GREATEST_POWER_SACRIFICE_LIFE_RESULT in effect:
+            continuation = AutoContinue(
+                reason="Gain life from the committed creature sacrifice.",
+                prepend_effects=(FrozenMap({"op": "life", "player": context.actor, "delta": 1}),),
+                amount_from_result=IntentResultAmount(0, 0, "delta"),
+                draw_after_life_from_result=intents[0].result.draw_after_life,
+            )
         return SemanticChoicePreparation(
             request=None,
             continuation_effect=FrozenMap(effect),
             preparation_intents=intents,
-            auto_continue=AutoContinue(reason="APNAP choices are complete"),
+            auto_continue=continuation,
         )
 
     def complete(

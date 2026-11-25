@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for optional per-opponent source-duration exile",
+  "cards": [
+    {
+      "oracle_id": "1b26a54f-6c27-4940-b77e-2a66175c5eff",
+      "name": "Grasp of Fate",
+      "mana_cost": "{1}{W}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, for each opponent, exile up to one target nonland permanent that player controls until this enchantment leaves the battlefield. (Those permanents return under their owners' control.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "cmc": 3.0,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "1b26a54f-6c27-4940-b77e-2a66175c5eff",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The exiled cards return to the battlefield immediately after Grasp of Fate leaves the battlefield. Nothing happens between the two events, including state-based actions."
+    },
+    {
+      "oracle_id": "1b26a54f-6c27-4940-b77e-2a66175c5eff",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Auras attached to exiled nonland permanents will be put into their owners' graveyards. Equipment attached to exiled creatures will become unattached and remain on the battlefield. Any counters on exiled nonland permanents will cease to exist."
+    },
+    {
+      "oracle_id": "1b26a54f-6c27-4940-b77e-2a66175c5eff",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if Grasp of Fate's owner leaves the game, the exiled cards will return to the battlefield. Because the one-shot effect that returns the cards isn't an ability that goes on the stack, it won't cease to exist along with the leaving player's spells and abilities on the stack."
+    },
+    {
+      "oracle_id": "1b26a54f-6c27-4940-b77e-2a66175c5eff",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If a token is exiled, it ceases to exist. It won't be returned to the battlefield."
+    },
+    {
+      "oracle_id": "1b26a54f-6c27-4940-b77e-2a66175c5eff",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If Grasp of Fate leaves the battlefield before its triggered ability resolves, no nonland permanents will be exiled."
+    }
+  ]
+}

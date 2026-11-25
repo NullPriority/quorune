@@ -54,9 +54,10 @@ from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from ..trigger_participation_query_model import DUNGEON_ROOM_MULTIPLIER_COMPONENT
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
-from .player_target_protection import PlayerTargetProtectionHandler
+from .player_target_protection import ControllerTurnPlayerHexproofHandler, PlayerTargetProtectionHandler
 from .venture_limit import VentureLimitHandler
 from .target_restrictions import TargetRestrictionHandler
+from .target_requirements import FlagbearerTargetRequirementHandler
 from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
 from .city_blessing import AscendStaticHandler
@@ -93,6 +94,7 @@ WARD_FRAGMENT_HANDLER_ID = "ability.trigger.ward.v1"
 WARD_NONMANA_FRAGMENT_HANDLER_ID = (
     "ability.trigger.ward.fixed-nonmana.v1"
 )
+WARD_SACRIFICE_FRAGMENT_HANDLER_ID = "ability.trigger.ward.fixed-sacrifice.v1"
 TOXIC_FRAGMENT_HANDLER_ID = "ability.static.toxic.v1"
 COUNTER_MAXIMUM_FRAGMENT_HANDLER_ID = "ability.static.counter-maximum.v1"
 CONDITIONAL_KEYWORD_FRAGMENT_HANDLER_ID = (
@@ -660,7 +662,9 @@ class BushidoAbilityFragmentHandler:
             event=self.event,
             expected_type=CombatKeywordTriggerSpec,
         )
-        if fragment.kind is not CombatKeywordTriggerKind.BUSHIDO:
+        if fragment.kind not in {
+            CombatKeywordTriggerKind.BUSHIDO, CombatKeywordTriggerKind.BUSHIDO_ATTACKING_CREATURE_COUNT,
+        }:
             raise SemanticNodeError(
                 "The Bushido runtime handler requires a Bushido fragment"
             )
@@ -1139,9 +1143,9 @@ class WardNonmanaAbilityFragmentHandler:
             event=self.event,
             expected_type=WardSpec,
         )
-        if spec.generic_cost is not None:
+        if spec.generic_cost is not None or spec.sacrifice_scope is not None:
             raise SemanticNodeError(
-                "Fixed-nonmana Ward handler received a mana cost"
+                "Fixed-nonmana Ward handler requires its life or discard cost"
             )
         return spec
 
@@ -1152,6 +1156,21 @@ class WardNonmanaAbilityFragmentHandler:
     ) -> tuple[StaticAbilityFragment, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class WardSacrificeAbilityFragmentHandler(WardNonmanaAbilityFragmentHandler):
+    handler_id: str = WARD_SACRIFICE_FRAGMENT_HANDLER_ID
+    rule_references: tuple[str, ...] = ("118.4", "118.5", "603.3", "701.21a", "702.21a")
+    capability_dependencies: tuple[str, ...] = ("trigger.keyword.ward.fixed_sacrifice",)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> WardSpec:
+        spec = _fragment(
+            descriptor, handler_id=self.handler_id, event=self.event, expected_type=WardSpec,
+        )
+        if spec.sacrifice_scope is None:
+            raise SemanticNodeError("Fixed-sacrifice Ward requires its typed battlefield cost")
+        return spec
 
 
 @dataclass(frozen=True, slots=True)
@@ -1485,6 +1504,7 @@ class AbilityFragmentRegistry(
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
     from .all_colors import AllColorsDefinitionHandler
+    from .off_battlefield_creatures import OffBattlefieldSelfCreatureHandler
     from .combat_metadata import AttachedGoadFragmentHandler
     from .deck_copy_limits import DeckCopyLimitFragmentHandler
     from .rampage_fragment import RampageFragmentHandler
@@ -1532,6 +1552,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ConditionalKeywordAbilityFragmentHandler(),
             ColorlessCharacteristicDefinitionAbilityFragmentHandler(),
             AllColorsDefinitionHandler(),
+            OffBattlefieldSelfCreatureHandler(),
             DethroneAbilityFragmentHandler(),
             DynamicPowerToughnessAbilityFragmentHandler(),
             QueryCharacteristicModifierAbilityFragmentHandler(),
@@ -1545,8 +1566,10 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             MentorAbilityFragmentHandler(),
             ProtectionAbilityFragmentHandler(),
             PlayerTargetProtectionHandler(),
+            ControllerTurnPlayerHexproofHandler(),
             VentureLimitHandler(),
             TargetRestrictionHandler(),
+            FlagbearerTargetRequirementHandler(),
             GraveyardCopyKeywordHandler(),
             StartEnginesHandler(),
             AscendStaticHandler(),
@@ -1566,6 +1589,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ToxicAbilityFragmentHandler(),
             WardAbilityFragmentHandler(),
             WardNonmanaAbilityFragmentHandler(),
+            WardSacrificeAbilityFragmentHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -1619,6 +1643,7 @@ __all__ = [
     "TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID",
     "WARD_FRAGMENT_HANDLER_ID",
     "WARD_NONMANA_FRAGMENT_HANDLER_ID",
+    "WARD_SACRIFICE_FRAGMENT_HANDLER_ID",
     "TOXIC_FRAGMENT_HANDLER_ID",
     "EnchantAbilityFragmentHandler",
     "TypedEnchantAbilityFragmentHandler",
@@ -1652,6 +1677,7 @@ __all__ = [
     "ToxicAbilityFragmentHandler",
     "WardAbilityFragmentHandler",
     "WardNonmanaAbilityFragmentHandler",
+    "WardSacrificeAbilityFragmentHandler",
     "ProtectionAbilityFragmentHandler",
     "PARTNER_WITH_FRAGMENT_HANDLER_ID",
     "PartnerWithAbilityFragmentHandler",

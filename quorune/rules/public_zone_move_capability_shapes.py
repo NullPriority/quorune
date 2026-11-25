@@ -20,14 +20,21 @@ from ..attachment_references import (
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 from ..public_zone_moves import (
-    PUBLIC_AURA_ENTRY_VERSION,
+    ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY, ANNOUNCED_GRAVEYARD_RETURN_VERSION,
+    ANNOUNCED_MANA_VALUE_MAX_FIELD, PUBLIC_AURA_ENTRY_VERSIONS,
+    OWN_GRAVEYARD_TYPE_CHOICE_FIELD,
+    own_graveyard_type_return_dependencies,
+    PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY,
+    PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     FIXED_OWNER_ZONE_MOVE_MECHANIC,
+    OWNER_LIBRARY_POSITION_CAPABILITY, OWNER_LIBRARY_POSITION_MECHANIC, OWNER_LIBRARY_POSITION_OPERATION,
     GRAVEYARD_LIBRARY_TARGET_CAPABILITY,
     GRAVEYARD_LIBRARY_TARGET_FIELD,
     PublicZoneMoveError,
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
+    PublicZoneOrigin,
     PublicZoneSeatRelation,
     stack_spell_exile_node_capabilities,
 )
@@ -145,6 +152,8 @@ def fixed_owner_zone_move_covered_mechanics(
     covered: set[str] = set()
     if LINKED_EXILE_RETURN_CAPABILITY in supplied:
         covered.update((LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"))
+    if OWNER_LIBRARY_POSITION_CAPABILITY in supplied:
+        covered.add(OWNER_LIBRARY_POSITION_MECHANIC)
     if FIXED_OWNER_ZONE_MOVE_CAPABILITY in supplied:
         covered.update(
             {
@@ -253,6 +262,12 @@ def fixed_owner_zone_move_node_capabilities(
 ) -> tuple[str, ...]:
     """Recognize the closed owner-destination single-object move family."""
 
+    if len(effects) == 1 and effects[0].get("op") == OWNER_LIBRARY_POSITION_OPERATION:
+        from .owner_library_position_shapes import owner_library_position_node_capabilities
+
+        return owner_library_position_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     mechanics = {str(value).casefold() for value in mechanic_ids}
     linked = linked_exile_return_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if linked:
@@ -305,7 +320,11 @@ def fixed_owner_zone_move_node_capabilities(
         return ()
 
     if operation == "shuffle_into_library":
-        if set(effect) != {"op", "card"} or not attached:
+        from .target_recipient_results import target_recipient_prefix_is_closed
+
+        if set(effect) != {"op", "card"} or not (
+            attached or targeted and target_recipient_prefix_is_closed(effect, target_schema, "owner")
+        ):
             return ()
     else:
         expected = {"op", "card", "destination"}
@@ -411,20 +430,79 @@ def triggered_source_exile_runtime_dependencies(program):
 
 
 def public_zone_move_set_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
-    """Keep public-set Aura entry owned even if source annotations are absent."""
+    """Require the explicit owners of the versioned public zone sets."""
     spec = PublicZoneMoveSetSpec.from_dict(value["set"])
     return (
         "zone.move.fixed_public_set",
         *object_query_capabilities(spec.query),
-        *(("attachment.aura.typed_restriction",) if spec.schema_version == PUBLIC_AURA_ENTRY_VERSION
+        *((PUBLIC_GRAVEYARD_POWER_RETURN_CAPABILITY,)
+          if spec.schema_version == PUBLIC_GRAVEYARD_POWER_RETURN_VERSION else ()),
+        *(("attachment.aura.typed_restriction",) if spec.schema_version in PUBLIC_AURA_ENTRY_VERSIONS
             and spec.destination is PublicZoneDestination.BATTLEFIELD else ()),
+        *((ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY,) if spec.schema_version == ANNOUNCED_GRAVEYARD_RETURN_VERSION else ()),
     )
 
 
 def public_zone_move_set_runtime_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Do not retroactively add payload dependencies to historical set versions."""
-    spec = PublicZoneMoveSetSpec.from_dict(value["set"])
-    return public_zone_move_set_payload_dependencies(value) if spec.schema_version == PUBLIC_AURA_ENTRY_VERSION else ()
+    raw = value["set"]
+    if isinstance(raw, Mapping) and raw.get("schema_version") == ANNOUNCED_GRAVEYARD_RETURN_VERSION:
+        from ..query_effect_amount_model import CastXAmountSpec, DECLARED_AMOUNT_CAPABILITY
+
+        if (set(value) != {"op", "source", "set"} or value.get("source") != "$source"
+                or CastXAmountSpec.from_dict(raw.get(ANNOUNCED_MANA_VALUE_MAX_FIELD)) != CastXAmountSpec()):
+            raise ValueError("A graveyard return requires the spell's announced X")
+        projected = {**value, "set": {**raw, ANNOUNCED_MANA_VALUE_MAX_FIELD: 2}}
+        return (*public_zone_move_set_payload_dependencies(projected), DECLARED_AMOUNT_CAPABILITY)
+    spec = PublicZoneMoveSetSpec.from_dict(raw)
+    return public_zone_move_set_payload_dependencies(value) if spec.schema_version in {
+        *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
+    } else ()
+
+
+CHOSEN_COLOR_PERMANENT_RETURN_TEMPLATE = "chosen-color-permanent-return-v1"
+
+
+def chosen_color_permanent_return_effect() -> dict[str, Any]:
+    from ..compiler.source_protection_choices import COLORS
+
+    branches = {}
+    for symbol, _ in COLORS:
+        spec = PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(zones=("battlefield",), colors_any=(symbol,)),
+            origin=PublicZoneOrigin.BATTLEFIELD, destination=PublicZoneDestination.OWNER_HAND,
+        )
+        branches[symbol] = [{"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict()}]
+    return {
+        "op": "choose_option", "player": "$controller", "prompt": "Choose a color.",
+        "options": [{"id": symbol, "label": label} for symbol, label in COLORS],
+        "then_by_choice": branches,
+    }
+
+
+def chosen_color_permanent_return_capabilities(effect, target_schema, mechanics):
+    expected = chosen_color_permanent_return_effect()
+    if (target_schema is not None or "cr-115-targets" in mechanics
+            or stable_json(effect) != stable_json(expected)):
+        return ()
+    return tuple(sorted({
+        capability
+        for branch in expected["then_by_choice"].values()
+        for capability in public_zone_move_set_payload_dependencies(branch[0])
+    }))
+
+
+def chosen_color_permanent_return_runtime_dependencies(program):
+    if program.provenance.get("template_id") != CHOSEN_COLOR_PERMANENT_RETURN_TEMPLATE:
+        return ()
+    if ((program.event, program.active_zone) != ("resolve", "stack")
+            or len(program.effects) != 1 or program.target_schema is not None
+            or program.cost_schema is not None or program.handlers):
+        raise ValueError("A chosen-color return requires one ordinary nontargeted spell effect")
+    required = chosen_color_permanent_return_capabilities(program.effects[0], program.target_schema, program.coverage)
+    if not required:
+        raise ValueError("A chosen-color return requires one exact public return set for each of the five colors")
+    return required
 
 
 def fixed_public_zone_move_set_node_capabilities(
@@ -466,6 +544,25 @@ def fixed_public_zone_move_set_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    if effect.get("op") == "choose_option":
+        color_return = chosen_color_permanent_return_capabilities(effect, target_schema, mechanics)
+        if color_return:
+            return color_return
+    from ..public_zone_moves import PUBLIC_SAME_NAME_MOVE_TARGET_FIELD
+    raw_set = effect.get("set")
+    if isinstance(raw_set, Mapping) and PUBLIC_SAME_NAME_MOVE_TARGET_FIELD in raw_set:
+        from .same_name_zone_moves import same_name_zone_move_node_capabilities
+
+        return same_name_zone_move_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
+    if OWN_GRAVEYARD_TYPE_CHOICE_FIELD in effect:
+        if target_schema is not None or "cr-115-targets" in mechanics:
+            return ()
+        try:
+            return own_graveyard_type_return_dependencies(effect)
+        except (TypeError, ValueError):
+            return ()
     from .public_exile_result_model import PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
 
     has_followup = "followup" in effect
@@ -569,6 +666,21 @@ def fixed_public_tap_state_set_node_capabilities(
             return ()
         return ("permanent.tap_state.fixed_set", "trigger.event.normalized_self_attack",
             *object_query_capabilities(group.query))
+
+    from ..affected_permanents import (
+        TARGET_UNSPENT_MANA_FIELD, decode_target_unspent_mana_tap, target_unspent_mana_target_schema,
+    )
+
+    if TARGET_UNSPENT_MANA_FIELD in effects[0]:
+        if ("cr-115-targets" not in mechanics or type((target_schema or {}).get("count")) is not int
+                or target_schema != target_unspent_mana_target_schema()):
+            return ()
+        try:
+            spec = decode_target_unspent_mana_tap(effects[0])
+        except (TypeError, AffectedPermanentSetError):
+            return ()
+        return ("permanent.tap_state.fixed_set", "target.revalidate_resolution",
+                *object_query_capabilities(spec.query))
 
     from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
     try:

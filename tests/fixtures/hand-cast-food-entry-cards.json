@@ -1,0 +1,96 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Food",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}{G}{G}",
+      "name": "Feasting Troll King",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "oracle_text": "Vigilance, trample\nWhen this creature enters, if you cast it from your hand, create three Food tokens. (They're artifacts with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nSacrifice three Foods: Return this card from your graveyard to the battlefield. Activate only during your turn.",
+      "power": "7",
+      "produced_mana": [],
+      "released_at": "2019-10-04",
+      "toughness": "6",
+      "type_line": "Creature — Troll Noble"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If you cast a creature spell that enters the battlefield as a copy of Feasting Troll King, such as Clone, the enters-the-battlefield ability will trigger.",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put Feasting Troll King onto the battlefield from your hand without casting it, its enters-the-battlefield ability won't trigger.",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type.",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Tough Cookie (an Artifact Creature — Food Golem) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost).",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whatever you do, don't eat the delicious cards.",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability.",
+      "oracle_id": "6f0c6876-dcae-46e5-8c62-6929733c3525",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

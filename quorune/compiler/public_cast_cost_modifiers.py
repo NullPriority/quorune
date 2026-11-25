@@ -283,7 +283,11 @@ def public_cast_cost_modifier_template(
     match = _ADJUSTMENT.fullmatch(normalized)
     if match is None:
         return None
-    subject = _subject_spec(match.group("subject"))
+    subject_text = match.group("subject")
+    if (match.group("direction").casefold() == "more"
+            and subject_text.casefold() == "spells your opponents cast during your turn"):
+        subject_text = "During your turn, spells your opponents cast"
+    subject = _subject_spec(subject_text)
     if subject is None:
         return None
     (

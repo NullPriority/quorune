@@ -126,6 +126,16 @@ def selected_player_result_node_capabilities(*, effects, target_schema, mechanic
 
 
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from .temporary_copy_subject import TEMPORARY_COPY_SUBJECT_OPERATION, temporary_copy_subject_node_capabilities
+
+    if len(effects) == 1 and effects[0].get("op") == TEMPORARY_COPY_SUBJECT_OPERATION:
+        return temporary_copy_subject_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    from ..phasing_model import PHASE_OUT_OPERATION
+    if len(effects) == 1 and effects[0].get("op") == PHASE_OUT_OPERATION and effects[0].get("schema_version") == 3:
+        from .occurrence_object_results import phase_out_node_capabilities
+        return phase_out_node_capabilities(effects, target_schema)
     from ..public_zone_moves import STACK_SPELL_EXILE_FIELD, stack_spell_exile_node_capabilities
 
     if any(STACK_SPELL_EXILE_FIELD in effect for effect in effects):

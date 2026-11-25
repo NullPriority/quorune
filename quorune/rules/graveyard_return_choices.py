@@ -1,8 +1,9 @@
-"""Closed optional selection from the resolving controller's graveyard."""
+"""Closed selections from the resolving controller's graveyard."""
 from collections.abc import Mapping
 from dataclasses import dataclass
 
-from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import canonical_creature_subtype
+from ..object_query import ObjectQuerySpec, object_matches_query
 from ..public_zone_moves import (
     PublicZoneMoveSetSpec, PublicZoneOrigin, PublicZoneDestination,
     PublicZoneRelationAxis, PublicZoneSeatRelation, snapshot_public_zone_move_set,
@@ -12,6 +13,9 @@ from .graveyard_card_targets import GraveyardCardTargetKind
 OPERATION = 'choose_own_graveyard_return'
 MECHANIC = 'own-graveyard-return-choice'
 CAPABILITY = 'zone.return.own_graveyard_choice'
+GREATEST_POWER_CAPABILITY = 'quantity_expression.public_characteristic_aggregate'
+QUALIFIED_CHOICE_CAPABILITY = 'zone.return.own_graveyard_subtype_qualified_choice'
+_QUALIFIED_TYPES = ('creature', 'planeswalker')
 _PUBLIC_FIELDS = frozenset({'op', 'player', 'selection'})
 _CHOICE_FIELDS = frozenset({'_choice_actor', '_legal_refs', '_legal_logical_ids', '_stack_label'})
 _TYPES = frozenset({GraveyardCardTargetKind.CREATURE_CARD.types_any,
@@ -22,27 +26,56 @@ _TYPES = frozenset({GraveyardCardTargetKind.CREATURE_CARD.types_any,
 @dataclass(frozen=True, slots=True)
 class GraveyardReturnSelection:
     types_any: tuple[str, ...]
+    schema_version: int = 1
+    excluded_creature_subtype: str | None = None
 
     def __post_init__(self):
-        if (type(self.types_any) is not tuple or any(type(value) is not str for value in self.types_any)
-                or self.types_any not in _TYPES):
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+            raise ValueError('Graveyard return requires a supported selection version')
+        if type(self.types_any) is not tuple or any(type(value) is not str for value in self.types_any):
+            raise ValueError('Graveyard return needs one closed card-type predicate')
+        if self.schema_version == 3:
+            subtype = self.excluded_creature_subtype
+            if (self.types_any != _QUALIFIED_TYPES or type(subtype) is not str
+                    or canonical_creature_subtype(subtype) != subtype):
+                raise ValueError('Qualified return needs an excluded creature subtype and a planeswalker branch')
+        elif self.types_any not in _TYPES or self.excluded_creature_subtype is not None:
             raise ValueError('Graveyard return needs one closed positive card-type predicate')
+        if self.greatest_power and self.types_any != ('creature',):
+            raise ValueError('Greatest-power return selects only creature cards')
+
+    @property
+    def greatest_power(self) -> bool:
+        return self.schema_version == 2
 
     def to_dict(self):
-        return {'schema_version': 1, 'types_any': list(self.types_any)}
+        value = {'schema_version': self.schema_version, 'types_any': list(self.types_any)}
+        if self.excluded_creature_subtype is not None:
+            value['excluded_creature_subtype'] = self.excluded_creature_subtype
+        return value
 
     @classmethod
     def from_dict(cls, value):
-        if (not isinstance(value, Mapping) or set(value) != {'schema_version', 'types_any'}
-                or type(value['schema_version']) is not int or value['schema_version'] != 1
-                or not isinstance(value['types_any'], (list, tuple))
-                or any(type(term) is not str for term in value['types_any'])):
+        if not isinstance(value, Mapping):
             raise ValueError('Graveyard return selection fields are closed')
-        return cls(tuple(value['types_any']))
+        fields = {'schema_version', 'types_any'}
+        if value.get('schema_version') == 3:
+            fields.add('excluded_creature_subtype')
+        if set(value) != fields or not isinstance(value['types_any'], (list, tuple)):
+            raise ValueError('Graveyard return selection fields are closed')
+        return cls(tuple(value['types_any']), schema_version=value['schema_version'],
+                   excluded_creature_subtype=value.get('excluded_creature_subtype'))
 
     @property
     def query(self):
         return ObjectQuerySpec(zones=('graveyard',), types_any=self.types_any)
+
+    def matches(self, row) -> bool:
+        return object_matches_query(row, self.query) and (
+            self.excluded_creature_subtype is None
+            or 'planeswalker' in row.types
+            or self.excluded_creature_subtype not in row.subtypes
+        )
 
     def public_set(self):
         return PublicZoneMoveSetSpec(self.query, PublicZoneOrigin.GRAVEYARD,
@@ -62,7 +95,12 @@ def validate_return_choice(effect, *, actor=None, continuation=False):
 
 def graveyard_return_candidates(host, actor, effect):
     selection = validate_return_choice(effect, actor=actor, continuation='_choice_actor' in effect)
-    snapshot = snapshot_public_zone_move_set(host, actor=actor, spec=selection.public_set())
+    rows = None
+    if selection.excluded_creature_subtype is not None:
+        rows = tuple(row for row in host.public_zone_move_object_rows(actor) if selection.matches(row))
+    snapshot = snapshot_public_zone_move_set(
+        host, actor=actor, spec=selection.public_set(), object_rows=rows,
+    )
     return tuple(value.ref for value in snapshot.objects
         if host.state.cards[value.object_id].is_card_object)
 
@@ -71,9 +109,13 @@ def graveyard_return_choice_node_capabilities(*, effects, target_schema, mechani
     if MECHANIC not in mechanic_ids or target_schema is not None or len(effects) != 1:
         return ()
     try:
-        validate_return_choice(effects[0])
+        selection = validate_return_choice(effects[0])
     except (TypeError, ValueError):
         return ()
+    if selection.greatest_power:
+        return (CAPABILITY, GREATEST_POWER_CAPABILITY)
+    if selection.excluded_creature_subtype is not None:
+        return (CAPABILITY, QUALIFIED_CHOICE_CAPABILITY)
     return (CAPABILITY,)
 
 

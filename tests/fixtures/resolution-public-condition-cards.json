@@ -466,6 +466,50 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "name": "Fated Infatuation",
+      "mana_cost": "{U}{U}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Create a token that's a copy of target creature you control. If it's your turn, scry 2.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -540,6 +584,60 @@
       "published_at": "2008-08-01",
       "source": "wotc",
       "comment": "You can activate the ability whether or not you have any cards in your hand. However, you’ll draw a card only if your hand is empty when the ability resolves. (This card works differently than the _Tempest_(TM) card Fool’s Tome.)"
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "When you scry, you may put all the cards you look at back on top of your library, you may put all of those cards on the bottom of your library, or you may put some of those cards on top and the rest of them on the bottom."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Scry appears on some spells and abilities with one or more targets. If all of the spell or ability’s targets are illegal when it tries to resolve, it won’t resolve and none of its effects will happen. You won’t scry."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "You choose how to order cards returned to your library after scrying no matter where you put them."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "You perform the actions stated on a card in sequence. For some spells and abilities, that means you’ll scry last. For others, that means you’ll scry and then perform other actions."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, the token created by Fated Infatuation copies the original characteristics of that token as stated by the effect that put the token onto the battlefield."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be zero."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "The token copies exactly what was printed on the original creature and nothing else (unless that permanent is copying something else or is a token; see below). It doesn’t copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "ae771e78-1d29-4b8c-8511-9da196a78dcf",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is a Clone), then the token enters the battlefield as whatever that creature copied."
     }
   ]
 }

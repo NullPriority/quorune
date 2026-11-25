@@ -66,6 +66,9 @@ def parse_mana_symbols(cost: str | None) -> list[str]:
     return [symbol.upper() for symbol in MANA_SYMBOL_RE.findall(cost)]
 
 
+ORDINARY_FIXED_MANA_PATTERN = r"(?:\{(?:0|[1-9]\d*|[WUBRGC])\})+"
+
+
 def mana_cost_to_vector(cost: str | None) -> tuple[dict[str, int], list[str]]:
     """
     Parse an ordinary printed mana cost into a conservative payment vector.

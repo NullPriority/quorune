@@ -1,6 +1,6 @@
 from __future__ import annotations
-from .compiler.entry_x_results import entry_x_trigger_node_compiler
-from .compiler.linked_exile_return_templates import linked_ability_trigger_compiler
+from .compiler.entry_x_results import entry_x_typed_event_compiler
+from .compiler.linked_exile_return_templates import linked_face_ability_compilers
 from .source_entry_cast_information import source_entry_cast_runtime_coverage
 
 import hashlib
@@ -180,10 +180,10 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v1228"
+ORACLE_COMPILER_VERSION = "oracle-ir-v1230"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
-    r"^(when|whenever|at the beginning of)\b",
+    r"^(when|whenever|at the beginning of|at end of combat)\b",
     re.IGNORECASE,
 )
 _ABILITY_WORD = re.compile(
@@ -1170,16 +1170,9 @@ def _typed_whole_spell_face(
         trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates,compile_keyword=_keyword_nodes)
 
 
-def _face_trigger_compiler(record, material_rows, effect_template, face_name, permanent):
-    fallback = entry_x_trigger_node_compiler(
-        record, trigger_node=_trigger_node, ordinary_effect=effect_template, match_source=_source_self_zone_trigger_match,
-    )
-    return linked_ability_trigger_compiler(fallback, trigger_node=_trigger_node, material_rows=material_rows,
-        card_name=face_name or record.name, match_source=_source_self_zone_trigger_match, permanent=permanent)
-
-
-def _prepare_face_source(record, face_id, type_line, oracle_text):
+def _prepare_face_source(record, face_id, type_line, oracle_text, *, check_bestow):
     """Prepare source rows and the per-face ability parser before node lowering."""
+    from .compiler.bestow_nodes import face_has_fixed_bestow
     from .compiler.room_bindings import ROOM_REMINDER, printed_room_form, room_source_material
 
     rows, leveler_context = _leveler_source_context(
@@ -1191,7 +1184,11 @@ def _prepare_face_source(record, face_id, type_line, oracle_text):
                      for line, material, span in rows if line != ROOM_REMINDER)
         compile_inner = partial(compile_inner, room_door_face=face_id)
     rows, station_context, cipher_context = spell_lifecycle_context_owner.contextual_source_rows(record, rows)
-    return rows, leveler_context, station_context, cipher_context, compile_inner
+    compile_inner = entry_x_typed_event_compiler(record, compile_inner)
+    bestow_grant_context = check_bestow and face_has_fixed_bestow(rows)
+    class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=rows)
+    return (rows, leveler_context, station_context, cipher_context, compile_inner,
+            bestow_grant_context, class_context, _read_ahead_face_context(type_line, rows))
 
 
 def _compile_face(
@@ -1212,13 +1209,10 @@ def _compile_face(
      source_attachment_relation) = _face_type_context(type_line)
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation, record=record, face_name=face_name)
-    material_rows, leveler_context, station_context, cipher_context, compile_inner = _prepare_face_source(
-        record, face_id, type_line, oracle_text,
+    (material_rows, leveler_context, station_context, cipher_context, compile_inner,
+     bestow_grant_context, class_context, (printed_subtypes, saga_chapters)) = _prepare_face_source(
+        record, face_id, type_line, oracle_text, check_bestow=source_attachment_relation is None
     )
-    from .compiler.bestow_nodes import face_has_fixed_bestow
-    bestow_grant_context=source_attachment_relation is None and face_has_fixed_bestow(material_rows)
-    class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
-    printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
 
     if spell:
         from .compiler.public_replacement_rows import public_replacement_material_rows
@@ -1237,7 +1231,10 @@ def _compile_face(
         card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,
         activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node)
-    contextual_trigger_node = _face_trigger_compiler(record, material_rows, contextual_trigger_effect_template, face_name, permanent)
+    compile_inner, contextual_trigger_node = linked_face_ability_compilers(
+        record, material_rows, contextual_trigger_effect_template, compile_inner,
+        card_name=face_name or record.name, card_types=card_types, permanent=permanent,
+        trigger_node=_trigger_node, match_source=_source_self_zone_trigger_match)
     for index, row in (_class_context.class_compilation_rows(class_context, material_rows) if class_context is not None else _leveler_compilation_rows(leveler_context, material_rows)):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue

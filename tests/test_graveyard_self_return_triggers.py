@@ -78,8 +78,9 @@ class GraveyardSelfReturnModelTests(unittest.TestCase):
             coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),handlers=())
         class Registry:
             def runtime_handler_programs_for_oracle(self,*args,**kwargs):return ()
-            def programs_for_oracle(self,*args,active_zone):return (program,) if active_zone=='graveyard' else ()
-        card=SimpleNamespace(zone='graveyard',annotations={},active_face=None)
+            def programs_for_oracle(self,*args,active_zone=None):
+                return (program,) if active_zone in (None,'graveyard') else ()
+        card=SimpleNamespace(zone='graveyard',annotations={},active_face=None,face_down=False)
         record=SimpleNamespace(oracle_id='fixture:source',faces=())
         host=SimpleNamespace(semantics=Registry(),card_record=lambda c:record,semantic_program_is_current_trusted=lambda p:True)
         self.assertIn(StaticComponentSpec(program.key),compiled_static_ability_fragments(host,card))

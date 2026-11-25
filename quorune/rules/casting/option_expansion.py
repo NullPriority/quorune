@@ -47,8 +47,14 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
 
 
 def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_source_costs, mechanics, mandatory,
-                                   cast_type_line=None):
+                                   cast_type_line=None, declared_schema=None):
     """Existing price owners retain their own selection and composition guards."""
+    from .additional_zone_costs import expand_discard_sacrifice_orders
+    if not suppress_source_costs:
+        try:
+            expanded = expand_discard_sacrifice_orders(expanded, declared_schema)
+        except ValueError:
+            return []
     from ...semantic_runtime.spell_payment_grants import (
         SPELL_PAYMENT_GRANT_EVENT, SPELL_PAYMENT_GRANT_FIELD, active_spell_payment_grants, granted_payment_mechanics,
         matching_spell_payment_kinds,

@@ -169,7 +169,7 @@ def _place(host,entry,selections=()):
     try:
         with host.transaction():
             ZoneTransitionOwner(host).move_card(subject.object_id,'battlefield',controller=subject.player,
-                aura_target_ref=entry['aura_target'],reason='opening-hand battlefield action',semantic_events=True,
+                putting_player=subject.player, aura_target_ref=entry['aura_target'],reason='opening-hand battlefield action',semantic_events=True,
                 replacement_selections=selections)
     except ReplacementChoiceRequired as required:
         host.permissions.issue(kind='replacement.order',role='pilot',actors=[required.pending.choice.chooser],

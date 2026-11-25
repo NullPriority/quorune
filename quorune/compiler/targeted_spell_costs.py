@@ -13,6 +13,9 @@ from .direct_target import direct_permanent_target_spec,stack_target_schema
 
 def _self_reduction_target_schema(subject):
     subject=' '.join(subject.casefold().split())
+    if subject == 'attacking or tapped creature':
+        creature = direct_permanent_target_spec('target creature')
+        return {**creature.to_target_schema(), 'combat_state': 'attacking_or_tapped'}
     direct=direct_permanent_target_spec('target '+subject)
     if direct is not None:return direct.to_target_schema()
     graveyard=re.fullmatch(r'creature card with mana value [0-9]+ or less',subject,re.I)

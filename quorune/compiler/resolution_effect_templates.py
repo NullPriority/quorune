@@ -7,7 +7,10 @@ from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
-from .tap_state_templates import next_player_untap_effect_template
+from .tap_state_templates import (
+    fixed_combat_prevention_attackers_untap_template, next_player_untap_effect_template,
+    target_combat_prevention_two_untaps_template,
+)
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
 from .day_night_nodes import fixed_day_night_designation_template
@@ -42,7 +45,10 @@ from .fixed_attachment_templates import (
     fixed_source_attachment_effect_template,
     targeted_equipment_attachment_template,
 )
-from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
+from .fixed_control_templates import (
+    fixed_control_effect_template, fixed_control_set_effect_template, permanent_control_exchange_template,
+    fixed_two_controller_creature_transfer_template,
+)
 from .recipient_control_templates import recipient_control_effect_template
 from .owner_control_templates import owner_control_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
@@ -54,11 +60,12 @@ from .counter_placement_templates import (
     support_counter_placement_effect_template,
 )
 from .counter_removal_templates import (
-    all_counter_removal_effect_template,
+    all_counter_removal_effect_template, all_permanent_counters_then_token_exile_template,
     fixed_counter_removal_effect_template,
 )
 from .counter_templates import (
-    spell_targeting_counter_effect_template, targeted_counter_effect_template, targeted_controller_payment_template,
+    other_controller_ability_counter_effect_template, spell_targeting_counter_effect_template,
+    targeted_counter_effect_template, targeted_controller_payment_template,
 )
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
@@ -75,6 +82,8 @@ from .fixed_target_effect_sequences import (
 from .fixed_homogeneous_target_sets import (
     fixed_homogeneous_target_set_effect_template,
 )
+from .owner_library_position_templates import owner_library_position_template
+from .keep_three_sacrifice_templates import keep_three_permanents_spell_template
 from .fixed_owner_zone_move_templates import (
     fixed_owner_zone_move_effect_template,
 )
@@ -85,7 +94,7 @@ from .fixed_counter_controller_effect_sequences import (
     fixed_counter_controller_effect_sequence_template,
 )
 from .proliferate_templates import single_proliferate_effect_template
-from .reanimation_templates import fixed_target_reanimation_effect_template
+from .reanimation_templates import fixed_target_reanimation_effect_template, fixed_target_reanimation_mana_value_loss_template
 from .reanimation_entry_counter_templates import fixed_reanimation_entry_counter_template
 from .reanimation_followup_templates import fixed_reanimation_followup_template
 from .public_zone_move_templates import public_zone_move_effect_template
@@ -161,17 +170,21 @@ def _attachment_or_zone_result(
     return template.compiled() if template is not None else None
 
 
+from .creature_subtype_set_templates import creature_subtype_set_template
+
+
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
     fixed_draw_hand_putback_template,
     hand_library_redraw_template,
     fixed_reanimation_followup_template,
     fixed_reanimation_entry_counter_template,
-    fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
+    fixed_target_reanimation_mana_value_loss_template, fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
     destruction_effect_template,
     targeted_exile_effect_template,
     targeted_return_to_hand_effect_template,
     targeted_own_graveyard_return_to_hand_effect_template,
     targeted_public_graveyard_return_to_hand_effect_template,
+    other_controller_ability_counter_effect_template,
     targeted_counter_effect_template,
     spell_targeting_counter_effect_template,
     targeted_controller_payment_template,
@@ -246,10 +259,27 @@ def _stack_target_change_payment_template(text, *, source_is_permanent):
             SingleStackTargetChangeSpec(False).target_schema, ("cr-115-targets",))
 
 
+def _forced_block_status_template(text: str) -> CompiledEffectTemplate | None:
+    from . import regex_working_set as re
+    from ..delayed_object_model import forced_block_status_effect, forced_block_status_target_schema
+
+    if re.fullmatch(
+        r"Target unblocked attacking creature becomes blocked[.]?"
+        r"(?: \(This (?:spell|ability) works on creatures that can['’]t be blocked\.\))?",
+        " ".join(text.strip().split()), re.I,
+    ) is None:
+        return None
+    return ("fixed-attacker-becomes-blocked-v1", (forced_block_status_effect(),),
+            forced_block_status_target_schema(), ("cr-115-targets",))
+
+
 def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    forced = _forced_block_status_template(text)
+    if forced is not None:
+        return forced
     stack_change = (
         _single_stack_target_change_template(text, source_is_permanent=source_is_permanent)
         or _optional_stack_target_change_template(text, source_is_permanent=source_is_permanent)
@@ -325,6 +355,13 @@ def _source_context_resolution_template(
         return mana
     recipient=owner_control_effect_template(text) or recipient_control_effect_template(text,card_name=card_name,source_is_permanent=source_is_permanent)
     if recipient is not None:return recipient
+    exchange = permanent_control_exchange_template(
+        text, source_is_permanent=source_is_permanent, source_card_types=tuple(source_card_types),
+    )
+    if exchange is not None:
+        return exchange
+    if transfer := fixed_two_controller_creature_transfer_template(text):
+        return transfer
     control = fixed_control_effect_template(
         text, card_name=card_name, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types),
@@ -338,6 +375,27 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .player_life_exchange import player_life_exchange_template
+    from .post_exchange_token import post_exchange_token_spell_template
+
+    if closed := (creature_subtype_set_template(text)
+                  or post_exchange_token_spell_template(text)
+                  or player_life_exchange_template(text)
+                  or all_permanent_counters_then_token_exile_template(text)
+                  or fixed_combat_prevention_attackers_untap_template(text)
+                  or target_combat_prevention_two_untaps_template(text)):
+        return closed
+    from .temporary_self_copy_templates import temporary_copy_subject_template, temporary_creature_copy_set_template
+    from .persistent_public_copy import persistent_public_copy_template
+
+    if copy := (temporary_creature_copy_set_template(text) or temporary_copy_subject_template(text)
+                or persistent_public_copy_template(text)):
+        return copy
+    if greatest_power := _greatest_power_target_template(text):
+        return greatest_power
+    from .entry_designation_templates import source_linked_designation_target_template
+    if linked_target := source_linked_designation_target_template(text):
+        return linked_target
     from .bounded_hand_cast_templates import bounded_hand_cast_template
     hand_cast = bounded_hand_cast_template(text)
     if hand_cast is not None:return hand_cast.compiled()
@@ -363,6 +421,10 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     from .targeted_graveyard_cast_templates import targeted_graveyard_cast_template
     from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
 
+    from .conditional_target_preparation import fixed_target_color_result_template
+
+    if (target_color_result := fixed_target_color_result_template(text)) is not None:
+        return target_color_result
     if (conditional_return := conditional_reanimation_entry_counter_template(text)) is not None:
         return conditional_return
     if (copy_cast := graveyard_copy_cast_template(text)) is not None:
@@ -406,9 +468,37 @@ def _distinct_sacrifice_template(text: str) -> CompiledEffectTemplate | None:
     return "distinct-permanent-sacrifices-v1", (effect,), None, mechanics
 
 
+def _opponent_greatest_power_destruction_template(text: str) -> CompiledEffectTemplate | None:
+    printed = (
+        "for each opponent, choose a creature with the greatest power among creatures "
+        "that player controls. destroy those creatures."
+    )
+    if " ".join(text.casefold().split()) != printed:
+        return None
+    from ..rules.opponent_greatest_power_destruction import greatest_power_destruction_effect
+
+    return "opponent-greatest-power-destruction-v1", (greatest_power_destruction_effect(),), None, ("destroy",)
+
+
+def _opponent_greatest_power_exile_template(text: str) -> CompiledEffectTemplate | None:
+    printed = "exile a creature with the greatest power among creatures target opponent controls."
+    if " ".join(text.casefold().split()) != printed:
+        return None
+    from ..rules.opponent_greatest_power_exile import greatest_power_exile_effect, greatest_power_exile_target_schema
+
+    return (
+        "opponent-greatest-power-exile-v1", (greatest_power_exile_effect(),),
+        greatest_power_exile_target_schema(), ("exile", "cr-115-targets"),
+    )
+
+
 def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+    if greatest_power_exile := _opponent_greatest_power_exile_template(text):
+        return greatest_power_exile
     if distinct := _distinct_sacrifice_template(text):
         return distinct
+    if destruction := _opponent_greatest_power_destruction_template(text):
+        return destruction
     if 'life unless' in text.casefold():
         from .apnap_object_payment_templates import apnap_object_payment_template
 
@@ -470,7 +560,10 @@ def _fixed_phase_out_template(text, *, card_name, source_is_permanent):
     if match is None:
         return None
     subject = match["subject"]
-    if subject.casefold() in ("target creature", "target creature you control", "target artifact, creature, or land"):
+    if subject.casefold().replace("’", "'") in (
+        "target creature", "target creature you control", "target creature you don't control", "target artifact, creature, or land",
+    ):
+        subject = subject.replace("’", "'")
         target = direct_permanent_target_spec(subject)
         return ("fixed-target-phase-out-v1", (phase_out_effect(targeted=True),),
                 target.to_target_schema(), (PHASE_OUT_MECHANIC, "cr-115-targets"))
@@ -479,6 +572,52 @@ def _fixed_phase_out_template(text, *, card_name, source_is_permanent):
     ):
         return ("fixed-source-phase-out-v1", (phase_out_effect(),), None, (PHASE_OUT_MECHANIC,))
     return None
+
+
+def _greatest_power_target_template(text: str) -> CompiledEffectTemplate | None:
+    from ..relative_power_target import GREATEST_CREATURE_POWER_PREDICATE
+
+    printed = " ".join(text.casefold().split())
+    bare_exile = "exile target creature with the greatest power among creatures on the battlefield."
+    ties = " (if two or more creatures are tied for greatest power, target any one of them.)"
+    alternatives = {
+        bare_exile: "Exile target creature.",
+        bare_exile + ties: "Exile target creature.",
+        "put a +1/+1 counter on target creature you control with the greatest power.":
+            "Put a +1/+1 counter on target creature you control.",
+        "target creature you control with the greatest power gains flying, first strike, and lifelink until end of turn.":
+            "Target creature you control gains flying, first strike, and lifelink until end of turn.",
+    }
+    underlying = alternatives.get(printed)
+    if underlying is None:
+        return None
+    compiled = typed_resolution_effect_template(underlying, card_name="This source")
+    if compiled is None:
+        return None
+    template, effects, target_schema, mechanics = compiled
+    if target_schema is None:
+        return None
+    return (f"greatest-power-{template}", effects,
+            {**target_schema, "predicate": GREATEST_CREATURE_POWER_PREDICATE}, mechanics)
+
+
+def _source_reference_resolution_template(text, *, card_name, source_is_permanent, attachment):
+    from .referenced_damage_templates import attachment_fixed_damage_template
+    from .optional_source_damage_templates import optional_source_damage_template
+    from .collective_source_damage_templates import collective_source_damage_spell_template
+    from .source_directed_redirect import source_directed_redirect_template
+
+    redirect = source_directed_redirect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
+    if redirect is not None:
+        return redirect
+    return (
+        optional_source_damage_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+        or collective_source_damage_spell_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
+        or keep_three_permanents_spell_template(text, source_is_permanent=source_is_permanent)
+        or attachment_fixed_damage_template(
+            text, card_name=card_name, source_is_permanent=source_is_permanent, relation=attachment,
+        )
+    )
 
 
 def typed_resolution_effect_template(
@@ -490,10 +629,10 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
-    from .referenced_damage_templates import attachment_fixed_damage_template
-    referenced=attachment_fixed_damage_template(text,card_name=card_name,
-        source_is_permanent=source_is_permanent,relation=source_attachment_relation)
-    if referenced is not None:return referenced
+    referenced = owner_library_position_template(text) or _source_reference_resolution_template(
+        text, card_name=card_name, source_is_permanent=source_is_permanent, attachment=source_attachment_relation)
+    if referenced is not None:
+        return referenced
     from .scoped_target_colors import scoped_target_color_template
     color=scoped_target_color_template(text,compile_leaf=lambda clause:typed_resolution_effect_template(clause,
         card_name=card_name,source_is_permanent=source_is_permanent,source_card_types=source_card_types,
@@ -602,7 +741,7 @@ def typed_resolution_effect_template(
         temporary_declaration_restriction_effect_template(
             text,
             card_name=card_name,
-            allow_source=source_is_permanent is True,
+            allow_source=source_is_permanent is True, source_attachment_relation=source_attachment_relation,
         )
     )
     if temporary_declaration_restriction is not None:

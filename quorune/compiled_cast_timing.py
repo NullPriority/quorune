@@ -7,6 +7,7 @@ from .cast_timing import (
     CAST_PERMISSION_ACTIVE_ZONE,
     CAST_PERMISSION_EVENT,
     CastTimingPermission,
+    OpponentUpkeepCastWindow,
     canonical_cast_timing_permissions,
 )
 from .semantic_runtime.cast_permissions import (
@@ -110,6 +111,10 @@ def compiled_self_cast_restriction_reason(host, actor, card, *, face_name=None):
             if actor not in host.state.players:
                 raise SemanticNodeError('Intrinsic cast restriction requires the authenticated caster')
             condition, = default_cast_permission_registry().lower(descriptor, None)
+            if isinstance(condition, OpponentUpkeepCastWindow):
+                if not condition.permits(host.state, actor):
+                    return "self_cast_condition"
+                continue
             if not host._fixed_public_state_condition_holds(
                     replace(card, controller=actor), condition, require_available=True):
                 return 'self_cast_condition'

@@ -283,6 +283,15 @@ destination handler and nested counter operation. Different owners, origins,
 object kinds, optional wording, counter-free moves, and alternate destinations
 remain residual rather than being inferred at runtime.
 
+## Player-selected creature recipients
+
+A source-entry ability can target one opponent and give that player the
+mandatory choice of one eligible creature they currently control. The player
+target is announced with the trigger. The creature selection occurs during
+resolution and uses the ordinary counter placement owner. The continuation
+retains the selected creature's original incarnation. If no legal recipient
+can take the counter, resolution finishes without issuing an object choice.
+
 ## Ownership and dependencies
 
 `counter_placement.py` depends on immutable replacement values and narrow host
@@ -704,6 +713,15 @@ changes do not increase the number removed from the source. Declining remains
 legal, and pending choices retain the original identities across save/load.
 Variable and unsupported keyword values, unrepresented sibling abilities,
 Oracle-equivalent prose, and unrepresented counter prohibitions remain residual.
+
+Fixed ordinary-mana Impending binds the selected alternate price to the
+resolving spell and copies of that spell. The paid entrant uses the existing
+entry-counter transaction to place its printed number of time counters.
+Later entry checks use the layer-four type that follows the current counter
+result. A prevented or fully reduced placement leaves the entrant a creature
+for those checks. A live paid permanent with time counters has the creature
+type removed. Its controller's end-step trigger checks the same paid
+incarnation and removes one time counter when the condition still holds.
 
 Generic fixed prose self-entry counters use that same all-zone owner. The
 compiler accepts only one complete source sentence in which this object or its
@@ -1138,3 +1156,10 @@ one canonical counter name and no amount. The existing all-counter transaction
 validates the full counter map, snapshots and revalidates the selected kind,
 and commits only that kind. No matching counters is a no-op. The original
 all-kinds descriptor omits the selector and retains its interpretation.
+
+Evolve checks the entrant's live power and toughness while the original
+incarnation remains on the battlefield. The zone transition owner seals its
+public characteristics immediately before departure and attaches them to the
+original pending or stacked trigger. A returned object has a new incarnation.
+Game Records written before the Evolve entrant observation version replay with
+their original condition behavior.

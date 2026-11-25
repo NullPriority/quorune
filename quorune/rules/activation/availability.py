@@ -187,7 +187,10 @@ def _loyalty_availability(
     if host._loyalty_cost_modifier_present():
         return "unresolved", "unresolved_loyalty_cost_modification"
     if not _main_phase_timing(host, seat):
-        return "unavailable", "loyalty_timing"
+        from ...semantic_runtime.action_permissions import source_has_instant_loyalty_permission
+
+        if not source_has_instant_loyalty_permission(host, seat, card):
+            return "unavailable", "loyalty_timing"
     if card.annotations.get("loyalty_activated_turn_sequence") == host.state.turn_sequence:
         return "unavailable", "loyalty_already_activated"
     if ability.loyalty_delta > 0:

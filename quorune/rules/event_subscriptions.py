@@ -6,6 +6,7 @@ import copy
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
+from ..cast_event_type_model import PHYSICAL_CARD_EVENT_FIELD
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
@@ -25,6 +26,7 @@ from ..face_up_effect_model import (
     TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT,
 )
 from ..replacement.immutable import FrozenMap, freeze_value, thaw_value
+from ..util import stable_json
 from ..scheduled_player import (
     UPKEEP_HAND_COUNT_CAPABILITY, UpkeepParticipantHandCondition,
     is_upkeep_hand_condition, upkeep_hand_condition_holds,
@@ -34,10 +36,67 @@ from .scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_part
 
 EVENT_SUBSCRIPTIONS_FIELD = "event_subscriptions"
 LAND_PLAY_EVENT = "land.played"
+PHYSICAL_CARD_PLAY_TEMPLATE = "fixed-physical-card-play-trigger-v1"
+COMBAT_PARTICIPANT_DAMAGE_VARIANT = "creature_attacks_or_blocks_damage"
+COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE = "fixed-counter-combat-participant-damage-v1"
+COMBAT_PARTICIPANT_DAMAGE_PROGRAM_TEMPLATE = COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE.replace(
+    "fixed-counter-", "fixed-typed-effect-", 1,
+)
+COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES = (
+    "trigger.event.normalized_public_action", "trigger.subscription.fixed_multi_event",
+)
+GRAVEYARD_DEPARTURE_LOOKBACK_EVENT = "card.leave_graveyard.lookback.v1"
+GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE = "fixed-counter-graveyard-creature-transitions-v1"
+GRAVEYARD_CREATURE_TRANSITIONS_VARIANT = "graveyard_creature_transitions_damage"
+GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY = "trigger.event.normalized_zone_change"
+_GRAVEYARD_CREATURE_TRANSITION_CAPABILITIES = (
+    GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY, "trigger.subscription.fixed_multi_event",
+    "trigger.placement.apnap", "trigger.effect.fixed_event",
+)
 
 
 class EventSubscriptionError(ValueError):
     """A serialized fixed multi-event subscription is malformed."""
+
+
+def physical_card_play_event_condition() -> dict[str, Any]:
+    physical = {"field": PHYSICAL_CARD_EVENT_FIELD, "op": "eq", "value": True}
+    subscriptions = tuple(
+        FixedEventSubscription(event, {"all": [
+            {"field": actor, "op": "eq", "value": "$source.controller"},
+            physical,
+        ]})
+        for event, actor in ((LAND_PLAY_EVENT, "player"), ("spell.cast", "controller"))
+    )
+    return fixed_event_subscription_condition(subscriptions)
+
+
+def _contains_physical_card_fact(value: Any) -> bool:
+    if isinstance(value, Mapping):
+        return value.get("field") == PHYSICAL_CARD_EVENT_FIELD or any(
+            _contains_physical_card_fact(child) for child in value.values()
+        )
+    if isinstance(value, (list, tuple)):
+        return any(_contains_physical_card_fact(child) for child in value)
+    return False
+
+
+def physical_card_play_runtime_dependencies(program) -> tuple[str, ...]:
+    if program.provenance.get("template_id") != PHYSICAL_CARD_PLAY_TEMPLATE:
+        if _contains_physical_card_fact(program.event_condition):
+            raise EventSubscriptionError("The physical-card fact requires the closed card-play production")
+        return ()
+    if (
+        (program.event, program.active_zone) != (LAND_PLAY_EVENT, "battlefield")
+        or program.target_schema is not None
+        or program.cost_schema is not None
+        or stable_json(program.event_condition) != stable_json(physical_card_play_event_condition())
+        or stable_json(program.effects) != stable_json(({"op": "draw", "player": "$controller", "count": 1, "private": True},))
+        or program.handlers
+    ):
+        raise EventSubscriptionError("Card-play draw requires both exact physical-card subscriptions and its fixed private result")
+    return ("trigger.event.normalized_public_action", "trigger.event.normalized_spell_cast",
+            "trigger.subscription.fixed_multi_event")
 
 
 def _public_state_leaves(value: Any):
@@ -208,6 +267,53 @@ def fixed_event_subscription_condition(
     return FixedEventSubscriptionSet(tuple(subscriptions)).to_condition()
 
 
+def combat_participant_damage_condition() -> dict[str, Any]:
+    return fixed_event_subscription_condition((
+        FixedEventSubscription("creature.attacks"),
+        FixedEventSubscription("creature.blocks"),
+    ))
+
+
+def graveyard_creature_transition_condition() -> dict[str, Any]:
+    creature = {"field": "types", "op": "contains_any", "value": ["creature"]}
+    return fixed_event_subscription_condition((
+        FixedEventSubscription(GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, {"all": [
+            {"field": "owner", "op": "eq", "value": "$source.controller"}, creature,
+        ]}),
+        FixedEventSubscription("creature.dies", {"field": "card", "op": "ne", "value": "$source.ref"}),
+        FixedEventSubscription("card.enter_graveyard", {"all": [
+            {"field": "from", "op": "ne", "value": "battlefield"}, creature,
+        ]}),
+    ))
+
+
+def graveyard_creature_transition_damage_effect() -> dict[str, Any]:
+    from ..fixed_damage_set_model import FixedDamageSetSpec, PlayerDamageGroup, PlayerDamageRelation
+
+    group = FixedDamageSetSpec((PlayerDamageGroup(PlayerDamageRelation.OPPONENTS),))
+    return {"op": "damage_fixed_set", "source": "$source", "amount": 1, **group.to_dict()}
+
+
+def graveyard_creature_transition_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    template = GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    marked = template in str(program.provenance.get("template_id") or "").split("+")
+    if not (marked or program.event == GRAVEYARD_DEPARTURE_LOOKBACK_EVENT or (
+        subscriptions is not None and subscriptions.subscription_for(GRAVEYARD_DEPARTURE_LOOKBACK_EVENT) is not None
+    )):
+        return ()
+    if (
+        (program.event, program.active_zone) != (GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or not {CURRENT_ABILITY_FRAGMENT_COVERAGE, "fixed_multi_event_subscription"} <= set(program.coverage)
+        or stable_json(program.event_condition) != stable_json(graveyard_creature_transition_condition())
+        or stable_json(program.effects) != stable_json((graveyard_creature_transition_damage_effect(),))
+    ):
+        raise EventSubscriptionError("Graveyard creature transition damage requires all three exact current-source subscriptions")
+    return _GRAVEYARD_CREATURE_TRANSITION_CAPABILITIES
+
+
 def dungeon_completion_dependencies(program, subscriptions: FixedEventSubscriptionSet | None) -> tuple[str, ...]:
     if subscriptions is not None and subscriptions.subscription_for(DUNGEON_COMPLETED_EVENT) is not None:
         raise EventSubscriptionError("Dungeon completion requires a single event subscription")
@@ -375,6 +481,12 @@ def public_state_intervening_actual(
             "Public-state intervening conditions require a typed descriptor"
         )
     try:
+        from .attached_greatest_power_condition import (
+            AttachedGreatestPowerCondition, current_attached_greatest_power_holds, is_attached_greatest_power,
+        )
+        if is_attached_greatest_power(raw_condition):
+            AttachedGreatestPowerCondition.from_dict(raw_condition)
+            return current_attached_greatest_power_holds(host, source)
         if is_upkeep_hand_condition(raw_condition):
             hand_condition = UpkeepParticipantHandCondition.from_dict(raw_condition)
             return upkeep_hand_condition_holds(host.state, context, hand_condition)
@@ -459,6 +571,29 @@ def intervening_recheck_condition(program, *, context, controller):
 
 def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
     """Recheck a condition whose source occurrence carries the relevant facts."""
+    from ..other_spell_history_model import OTHER_SPELL_CAST_MECHANIC
+    from .attached_greatest_power_condition import attached_greatest_power_event_condition, recheck_attached_greatest_power
+    from .combat_damage_entry_history import COMBAT_DAMAGE_ENTRY_COVERAGE, recheck_combat_damage_entry
+    from .other_spell_history_shapes import recheck_other_spell_self_cast
+    from .trigger_source_information import recheck_untapped_damage_source, uses_original_untapped_source
+
+    try:
+        if uses_original_untapped_source(host.state, program):
+            return recheck_untapped_damage_source(
+                host, context, event=program.event, controller=controller, source_object_id=source_object_id,
+            )
+        if COMBAT_DAMAGE_ENTRY_COVERAGE in program.coverage:
+            return recheck_combat_damage_entry(host.state, context)
+        if OTHER_SPELL_CAST_MECHANIC in program.coverage:
+            return recheck_other_spell_self_cast(
+                host.state, context, controller=controller, source_object_id=source_object_id,
+            )
+        if attached_greatest_power_event_condition(program.event_condition) is not None:
+            return recheck_attached_greatest_power(
+                host, context, controller=controller, source_object_id=source_object_id,
+            )
+    except (ValueError, TypeError) as exc:
+        raise GameRuleError(str(exc)) from exc
     from .event_outcome_shapes import uses_zero_mana_cast_condition, zero_mana_cast_result_recheck
 
     if uses_zero_mana_cast_condition(program.event_condition):

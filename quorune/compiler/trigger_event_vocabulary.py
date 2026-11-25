@@ -3,8 +3,8 @@ from enum import Enum
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
-from ..rules.event_subscriptions import LAND_PLAY_EVENT
-from ..life_change import FIRST_LIFE_GAIN_EVENT
+from ..rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, LAND_PLAY_EVENT
+from ..life_change import FIRST_LIFE_GAIN_EVENT, LIFE_LOSS_EVENT
 from ..shared_type_doors import DOOR_UNLOCKED_EVENT
 from ..source_sacrifice_model import UNATTACHMENT_EVENT
 
@@ -30,6 +30,7 @@ class FixedCounterTriggerEvent(str, Enum):
     DIRECT_PLAYER_ATTACK = DIRECT_PLAYER_ATTACK_EVENT
     ATTACKER_UNBLOCKED = 'creature.unblocked'
     CONTROLLER_LIFE_GAIN = "life.gained"
+    OPPONENT_LIFE_LOSS = LIFE_LOSS_EVENT
     CONTROLLER_FIRST_LIFE_GAIN = FIRST_LIFE_GAIN_EVENT
     CONTROLLER_CARD_DRAW = "card.drawn"
     CONTROLLER_SECOND_DRAW = "card.second_draw"
@@ -56,7 +57,9 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_CYCLED = "card.cycled"
     SOURCE_CYCLED = "card.cycled.self"
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
+    CARD_LEAVE_GRAVEYARD_LOOKBACK = GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
     CARD_ENTER_GRAVEYARD = 'card.enter_graveyard'
+    GRAVEYARD_SOURCE_ARRIVAL = 'object.enter_graveyard'
     CARD_DISCARDED = "card.discarded"
     TARGET_ANNOUNCED = 'object.became_target'
     PERMANENT_LEAVE = "permanent.leave"

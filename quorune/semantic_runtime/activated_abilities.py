@@ -109,7 +109,7 @@ class ActivatedAbilityCatalogHandler:
             )
         try:
             compiled = ActivatedAbility.from_dict(ability)
-            if compiled.announced_x_symbols is not None and not required:
+            if compiled.chooses_activation_x and not required:
                 raise ValueError('Announced activation X requires complete-card admission')
             if compiled.ability_local_mana_reduction is not None and not required:
                 raise ValueError('Ability-local mana reduction requires complete-card admission')
@@ -148,7 +148,7 @@ def activated_ability_catalog_descriptor(
     ability: ActivatedAbility,
     *, requires_complete_card_program: bool = False,
 ) -> dict[str, Any]:
-    requires_complete_card_program = (requires_complete_card_program or ability.announced_x_symbols is not None
+    requires_complete_card_program = (requires_complete_card_program or ability.chooses_activation_x
         or ability.ability_local_mana_reduction is not None
         or ability.reconfigure or ability.saddle_threshold is not None)
     return {

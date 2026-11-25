@@ -20,6 +20,7 @@ FIXED_CONTROLLER_DISCARD_MECHANIC = "fixed-controller-card-discard"
 FIXED_CONTROLLER_DISCARD_CAPABILITY = "choice.affected_player.fixed_controller_discard"
 FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC = "fixed-context-player-discard"
 FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY = "trigger.result.fixed_context_player_discard"
+EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC = "equipped-combat-player-discard-untap"
 FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC = "fixed-affected-player-hand-exile"
 FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY = "choice.affected_player.fixed_hand_exile"
 _HAND_MECHANIC = "cr-402-hand"
@@ -271,6 +272,25 @@ def standalone_controller_discard_effect_template(text: str):
 
 def damage_player_discard_result(binding, body: str):
     """Bind an untargeted discard to a normalized damaged-player occurrence."""
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        == ("damage.dealt", "equipped_creature_combat_damage_a_player", "battlefield")
+        and body == binding.body
+        and body.casefold() == "that player discards a card and you untap all lands you control."
+    ):
+        from .public_tap_state_set_templates import fixed_public_tap_state_set_effect_template
+        from ..rules.affected_player_discard_capability_shapes import EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD
+
+        discard = damage_player_discard_result(binding, "That player discards a card.")
+        untap = fixed_public_tap_state_set_effect_template("Untap all lands you control.")
+        if discard is None or untap is None:
+            return None
+        _, (effect,), _, mechanics = discard[0]
+        return (
+            "equipped-damage-discard-untap-v1",
+            ({**effect, EQUIPPED_DAMAGE_DISCARD_PLAYER_FIELD: 1}, *untap.effects), None,
+            (*mechanics, *untap.mechanics, EQUIPPED_DAMAGE_DISCARD_UNTAP_MECHANIC),
+        ), False
     if binding.event.value not in {"damage.dealt", "damage.dealt.self"}:
         return None
 

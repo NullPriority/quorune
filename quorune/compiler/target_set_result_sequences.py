@@ -70,7 +70,48 @@ def _characteristic_prefix_sequence(text, *, compile_independent):
     return None
 
 
+_OPTIONAL_COUNTER_KEYWORDS = re.compile(
+    r"(?P<counter>Put two \+1/\+1 counters on up to one target creature or Vehicle\.) "
+    r"It gains (?P<keywords>trample and indestructible until end of turn\.)",
+    re.I,
+)
+
+
+_OPTIONAL_COUNTER_FIRST_STRIKE = re.compile(
+    r"(?P<counter>Put a \+1/\+1 counter on up to one target creature\.) "
+    r"It gains (?P<keywords>first strike until end of turn\.)",
+    re.I,
+)
+
+
+def _optional_counter_keyword_sequence(text):
+    material = " ".join(text.split())
+    match = _OPTIONAL_COUNTER_KEYWORDS.fullmatch(material)
+    subject = "creature or Vehicle"
+    if match is None:
+        match = _OPTIONAL_COUNTER_FIRST_STRIKE.fullmatch(material)
+        subject = "creature"
+    if match is None:
+        return None
+    counter = quantified_counter_target_template(match["counter"])
+    keywords = target_characteristic_set_template(
+        f"Up to one target {subject} gains " + match["keywords"],
+    )
+    if counter is None or keywords is None or counter[2] != keywords[2]:
+        return None
+    from ..rules.target_set_result_sequences import target_set_result_sequence_capabilities
+
+    effects = (*counter[1], *keywords[1])
+    schema = counter[2]
+    mechanics = tuple(dict.fromkeys((TARGET_SET_SEQUENCE_MECHANIC, *counter[3], *keywords[3])))
+    if not target_set_result_sequence_capabilities(effects=effects, target_schema=schema, mechanic_ids=mechanics):
+        return None
+    return "shared-target-set-result-sequence-v1", effects, schema, mechanics
+
+
 def target_set_result_sequence_template(text,*,compile_independent):
+    if optional := _optional_counter_keyword_sequence(text):
+        return optional
     characteristic=_characteristic_prefix_sequence(text,compile_independent=compile_independent)
     if characteristic is not None:
         return characteristic

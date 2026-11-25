@@ -51,8 +51,13 @@ def _generate(database: Path) -> dict[str, dict[str, Any]]:
         commander_ids = {record.oracle_id for record in db.iter_cards(commander_legal_only=True)}
         for record in db.iter_cards():
             scopes = (False, True) if record.oracle_id in commander_ids else (False,)
-            ir = compile_oracle_card(record, capability_registry=capabilities,
-                                     capability_profile="commander_review")
+            try:
+                ir = compile_oracle_card(
+                    record, capability_registry=capabilities, capability_profile="commander_review",
+                )
+            except Exception as error:
+                error.add_note(f"Compiler corpus Oracle ID: {record.oracle_id}")
+                raise
             for scope in scopes:
                 oracle[scope].observe(record, ir)
             try:

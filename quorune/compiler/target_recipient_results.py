@@ -25,7 +25,74 @@ class TargetRecipientResultTemplate(BoundEffectProgramTemplate):
     def template_id(self): return TARGET_RECIPIENT_RESULT_TEMPLATE
 
 
+def _target_sacrifice_power_token_template(text, *, compile_component):
+    match = re.fullmatch(
+        r"Target creature['’]s controller sacrifices it, then creates X (?P<definition>[^.,]+) creature tokens, "
+        r"where X is that creature['’]s power[.]?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.target_recipient_results import bind_fixed_recipient_result, target_sacrifice_power_effect
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    token_id, token_effects, token_schema, token_mechanics = compile_component(
+        "Create a " + match["definition"] + " creature token.",
+    )
+    if token_id is None or token_schema is not None or len(token_effects) != 1:
+        return None
+    recipient = target_controller_reference()
+    bound = bind_fixed_recipient_result(token_effects[0], None, recipient)
+    if bound is None or bound.get("op") != "create_token":
+        return None
+    bound["quantity"] = ScalarEffectAmountSpec(ScalarAmountOrigin.TARGET, characteristic="power").to_dict()
+    schema = direct_permanent_target_spec("target creature").to_target_schema()
+    components = (
+        ("fixed-target-sacrifice-power-v1", (target_sacrifice_power_effect(),), schema, ("cr-115-targets",)),
+        (token_id, (bound,), None, (*token_mechanics, TARGET_CONTROLLER_INFORMATION_MECHANIC,
+                                   TARGET_RECIPIENT_RESULT_MECHANIC, SCALAR_AMOUNT_MECHANIC)),
+    )
+    program = _program(components, schema=schema)
+    if program is None:
+        return None
+    return TargetRecipientResultTemplate(program.component_template_ids, program.component_effect_counts,
+        program._effects, program._target_schema, program.mechanic_ids)
+
+
+def _target_owner_shuffle_draw_template(text, *, compile_component):
+    if not re.fullmatch(
+        r"The owner of target nonland permanent shuffles it into their library, then draws two cards\.",
+        " ".join(text.split()), re.I,
+    ):
+        return None
+
+    from .fixed_owner_zone_move_templates import FixedOwnerZoneMoveReference, FixedOwnerZoneMoveTemplate
+    from ..rules.target_recipient_results import bind_fixed_recipient_result, target_owner_shuffle_schema
+
+    schema = target_owner_shuffle_schema()
+    prefix = FixedOwnerZoneMoveTemplate(FixedOwnerZoneMoveReference.TARGET, "library",
+        "nonland-permanent", target_schema=schema, shuffle=True).compiled()
+    template, effects, targets, mechanics = compile_component("You draw two cards.")
+    if template is None or len(effects) != 1:
+        return None
+    draw = bind_fixed_recipient_result(effects[0], targets, target_owner_reference())
+    if draw is None:
+        return None
+    tail = (template, (draw,), None,
+            (*mechanics, TARGET_OWNER_INFORMATION_MECHANIC, TARGET_RECIPIENT_RESULT_MECHANIC))
+    program = _program((prefix, tail), schema=schema)
+    if program is None:
+        return None
+    return TargetRecipientResultTemplate(program.component_template_ids, program.component_effect_counts,
+        program._effects, program._target_schema, program.mechanic_ids)
+
+
 def target_recipient_result_template(text, *, compile_component):
+    if shuffle := _target_owner_shuffle_draw_template(text, compile_component=compile_component):
+        return shuffle
+    if sacrifice := _target_sacrifice_power_token_template(text, compile_component=compile_component):
+        return sacrifice
     clauses = _sentence_partition(text)
     if clauses is None or len(clauses) not in {2,3}: return None
     tail = _TAIL.fullmatch(clauses[-1])

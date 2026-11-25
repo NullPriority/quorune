@@ -1,0 +1,350 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash",
+        "Deathtouch"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Ambush Viper",
+      "oracle_id": "8957f7c2-040c-4048-9f21-efa7c97682b7",
+      "oracle_text": "Flash\nDeathtouch",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": "1",
+      "type_line": "Creature — Snake"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Bramble Sovereign",
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "oracle_text": "Whenever another nontoken creature enters, you may pay {1}{G}. If you do, that creature's controller creates a token that's a copy of that creature.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "4",
+      "type_line": "Creature — Dryad"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}",
+      "name": "Doubling Season",
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.\nIf an effect would put one or more counters on a permanent you control, it puts twice that many of those counters on that permanent instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Renegade Doppelganger",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "oracle_text": "Whenever another creature you control enters, you may have this creature become a copy of that creature until end of turn. (If it does, it loses this ability for the rest of the turn.)",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2010-04-23",
+      "toughness": "1",
+      "type_line": "Creature — Shapeshifter"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Battles will enter with double the normal number of defense counters."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Doubling Season affects permanents that enter with counters."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Doubling Season's replacement effect. For example, if an effect tells you to create a token \"tapped and attacking,\" the additional tokens will also be tapped and attacking."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If there are two Doubling Seasons on the battlefield, then the number of tokens or counters is four times the original number. If there are three on the battlefield, then the number of tokens or counters is eight times the original number, and so on."
+    },
+    {
+      "oracle_id": "01546b7d-a233-4176-8843-d732074dc5b6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Planeswalkers will enter with double the normal number of loyalty counters. However, if you activate an ability whose cost has you put loyalty counters on a planeswalker, the number you put on isn't doubled. This is because those counters are put on as a cost, not as an effect."
+    },
+    {
+      "comment": "During the cleanup step, Renegade Doppelganger's copy effect wears off. It will go back to being a 0/1 blue creature named Renegade Doppelganger, and will have its original ability again. Note that this happens at the same time that damage marked on the Renegade Doppelganger is removed. If it was dealt damage earlier in the turn, this damage will not cause Renegade Doppelganger to be destroyed when its copy effect wears off.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger and another creature enter under your control at the same time, Renegade Doppelganger's ability will trigger. When the ability resolves, Renegade Doppelganger can become a copy of that creature.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger becomes a copy of a creature that is itself copying something else (for example, if the creature that entered is a Clone), then Renegade Doppelganger becomes a copy of whatever that creature is copying.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger becomes a copy of a creature with an ability that causes you to make a choice (such as naming a card or choosing a color) as it enters, and another ability that refers to that choice, those abilities of the Doppelganger won't do anything. You won't have the chance to make a choice since the Doppelganger is already on the battlefield, so the value of that choice is undefined.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger becomes a copy of a token, Renegade Doppelganger copies the original characteristics of that token as stated by the effect that put it onto the battlefield. Renegade Doppelganger doesn't become a token.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger becomes a copy of another creature, it copies exactly what was printed on that card and nothing more (unless that card is copying something else or it's a token; see below). It doesn't copy whether the original creature is tapped or untapped, whether it has any counters on it or Auras attached to it, or whether it's been affected by any noncopy effects that changed its power, toughness, types, color, or so on.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger becomes a copy of another creature, that doesn't count as having a creature enter. Renegade Doppelganger was already on the battlefield; it only changed its characteristics. If Renegade Doppelganger gains any \"enters\" triggered abilities, they won't do anything. The same is true of any \"as [this creature] enters\" or \"[this creature] enters with\" abilities.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature enters under your control and Renegade Doppelganger's ability triggers, it can become a copy of that creature when the ability resolves even if that creature has left the battlefield by then. If it has, its last existence on the battlefield is checked to see what it was (specifically, if it was itself or if it was copying something else).",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures enter under your control at the same time, Renegade Doppelganger's ability will trigger once for each of them. You choose the order that those abilities will resolve. It's possible to have Renegade Doppelganger become a copy of something, activate an activated ability of that creature, then have it become a copy of something else under this scenario. The last ability that resolves that you choose to use determines what it ends up a copy of.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature Renegade Doppelganger copies has an ability that triggers at the beginning of the end step, that ability will trigger and resolve before Renegade Doppelganger's copy effect wears off.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Noncopy effects that have already applied to Renegade Doppelganger will continue to apply to it after it becomes a copy of something else. For example, if Giant Growth had given it +3/+3 earlier in the turn, then it becomes a copy of Runeclaw Bear (a 2/2 creature), it will be a 5/5 Runeclaw Bear.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Renegade Doppelganger's ability isn't targeted. It can copy a creature with shroud or protection.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a creature enters under your control, you can choose not to copy it. In that case, Renegade Doppelganger remains 0/1 and still has its triggered ability.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Renegade Doppelganger becomes a copy of a legendary creature, you will have to put one of them into the graveyard as a state-based action.",
+      "oracle_id": "08528c5e-9a01-42a4-a00b-c1ec5eaae64d",
+      "published_at": "2013-07-01",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any “As [this creature] enters the battlefield” or “[This creature] enters the battlefield with” abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else, the token enters the battlefield as whatever that creature is copying."
+    },
+    {
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "If the entering creature leaves the battlefield before Bramble Sovereign's ability resolves, use that creature's last known existence on the battlefield to determine the token's characteristics."
+    },
+    {
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The token copies exactly what is printed on the creature and nothing else (unless that creature is copying something else; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and/or Equipment attached to it, or any non-copy effects that changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "5e26a688-67d7-48a5-8862-653851bf3784",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "While resolving the triggered ability of Bramble Sovereign, you can't pay {1}{G} multiple times to have a player create more tokens."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC rulings for temporary copying of a creature entry occurrence"
+}

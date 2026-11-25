@@ -42,11 +42,41 @@ def _placement_capabilities(base, *, effects, target_schema, mechanic_ids):
 
 
 def fixed_counter_placement_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..reflexive_trigger_model import SOURCE_COUNTER_REFLEXIVE_FIELD, THIRD_SOURCE_TRIGGER_FIELD
+    from .target_opponent_counter_choice import (
+        is_opponent_counter_choice, target_opponent_counter_choice_node_capabilities,
+    )
+
+    if len(effects) == 1 and is_opponent_counter_choice(effects[0]):
+        return target_opponent_counter_choice_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    if len(effects) == 1 and THIRD_SOURCE_TRIGGER_FIELD in effects[0]:
+        from .third_resolved_source_trigger import third_source_trigger_node_capabilities
+
+        return third_source_trigger_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    if len(effects) == 1 and SOURCE_COUNTER_REFLEXIVE_FIELD in effects[0]:
+        from .source_counter_reflexive import source_counter_reflexive_node_capabilities
+
+        return source_counter_reflexive_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     return _placement_capabilities(_base_fixed_counter_placement_node_capabilities,
         effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 
 
 def fixed_counter_placement_set_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..counter_placement_sets import PAIRED_PLANESWALKER_LOYALTY_FIELD, paired_planeswalker_loyalty_dependencies
+
+    if len(effects) == 1 and PAIRED_PLANESWALKER_LOYALTY_FIELD in effects[0]:
+        if target_schema is not None or "cr-122-counters" not in mechanic_ids:
+            return ()
+        try:
+            return paired_planeswalker_loyalty_dependencies(effects[0])
+        except (TypeError, ValueError):
+            return ()
     return _placement_capabilities(_base_fixed_counter_placement_set_node_capabilities,
         effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 

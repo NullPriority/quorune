@@ -1,0 +1,440 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Vedalken Plotter",
+      "oracle_id": "3f85b92d-7212-4fc7-a5e8-6350e1acfdd3",
+      "oracle_text": "When this creature enters, exchange control of target land you control and target land an opponent controls.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2011-06-17",
+      "toughness": "1",
+      "type_line": "Creature — Vedalken Wizard"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}",
+      "name": "Switcheroo",
+      "oracle_id": "68227969-39cf-42cf-b3b8-cf8a04647d7e",
+      "oracle_text": "Exchange control of two target creatures.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}{R}",
+      "name": "Role Reversal",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "oracle_text": "Exchange control of two target permanents that share a permanent type.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-05-03",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Splice"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Shifting Borders",
+      "oracle_id": "b377f717-d0c2-4db5-aba2-fa4bfa35de0f",
+      "oracle_text": "Exchange control of two target lands.\nSplice onto Arcane {3}{U} (As you cast an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-06-03",
+      "toughness": null,
+      "type_line": "Instant — Arcane"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Avarice Totem",
+      "oracle_id": "c4698dcc-baa0-44c5-a283-22f9dfe150f5",
+      "oracle_text": "{5}: Exchange control of this artifact and target nonland permanent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2004-06-04",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}{U}",
+      "name": "Cultural Exchange",
+      "oracle_id": "c85ba59f-2851-4c75-86db-da798334850c",
+      "oracle_text": "Choose any number of creatures target player controls. Choose the same number of creatures another target player controls. Those players exchange control of those creatures. (This effect lasts indefinitely.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2001-10-01",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Political Trickery",
+      "oracle_id": "e0eaa43f-1c46-4299-9ecd-5f4a32d292cd",
+      "oracle_text": "Exchange control of target land you control and target land an opponent controls. (This effect lasts indefinitely.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If either land becomes an illegal target (or leaves the battlefield) before the ability resolves, the exchange won't happen. There's no way for you to gain a land without losing another one in the process.",
+      "oracle_id": "3f85b92d-7212-4fc7-a5e8-6350e1acfdd3",
+      "published_at": "2006-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn’t cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "68227969-39cf-42cf-b3b8-cf8a04647d7e",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the target creatures is an illegal target when Switcheroo resolves, the exchange won’t happen.",
+      "oracle_id": "68227969-39cf-42cf-b3b8-cf8a04647d7e",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the same player controls both creatures when Switcheroo resolves, nothing happens.",
+      "oracle_id": "68227969-39cf-42cf-b3b8-cf8a04647d7e",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don’t have to control either target.",
+      "oracle_id": "68227969-39cf-42cf-b3b8-cf8a04647d7e",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a permanent doesn’t cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the target permanents is an illegal target when Role Reversal resolves, the exchange won’t happen.",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the same player controls both permanents when Role Reversal resolves, nothing happens.",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Role Reversal’s effect lasts indefinitely. It doesn’t wear off during the cleanup step, and it doesn’t expire if the permanents stop sharing a permanent type after Role Reversal has resolved.",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "The permanent types are artifact, creature, enchantment, land, and planeswalker. Supertypes, like legendary, aren’t permanent types. For example, you can’t exchange control of a legendary creature with a legendary planeswalker.",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don’t have to control either target permanent.",
+      "oracle_id": "8be783b2-7394-411a-8ab5-a8fffe8d714c",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "If one of the targeted lands isn’t a legal target as Shifting Borders resolves (say, because it has left the battlefield or become untargetable), the exchange doesn’t occur.",
+      "oracle_id": "b377f717-d0c2-4db5-aba2-fa4bfa35de0f",
+      "published_at": "2005-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card with a splice ability can’t be spliced onto itself because the spell is on the stack (and not in your hand) when you reveal the cards you want to splice onto it.",
+      "oracle_id": "b377f717-d0c2-4db5-aba2-fa4bfa35de0f",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If all of the spell’s targets are illegal when the spell tries to resolve, it won’t resolve and none of its effects will happen.",
+      "oracle_id": "b377f717-d0c2-4db5-aba2-fa4bfa35de0f",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose all targets for the spell after revealing cards you want to splice, including any targets required by the text of any of those cards. You may choose a different target for each instance of the word “target” on the resulting spell.",
+      "oracle_id": "b377f717-d0c2-4db5-aba2-fa4bfa35de0f",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You reveal all cards you intend to splice at the same time. Each individual card can be spliced only once onto any one spell.",
+      "oracle_id": "b377f717-d0c2-4db5-aba2-fa4bfa35de0f",
+      "published_at": "2013-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "It is possible to activate this ability in response to itself and generate some odd combinations. For example, if you control this card and another permanent, you can use this card’s ability and target the permanent you control. You can then use this card’s ability again and target a permanent your opponent controls. The second usage resolves first and you get your opponent’s permanent in exchange for this one. The first usage then resolves and swaps your other permanent for the Totem so you get it back. The net effect is that you can swap any non-land permanent you have for any of theirs if you can activate this ability twice. Note that your opponent does get the chance to use the Totem in between the resolutions of your two usages if they have the mana.",
+      "oracle_id": "c4698dcc-baa0-44c5-a283-22f9dfe150f5",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC rules for fixed public permanent control exchange"
+}

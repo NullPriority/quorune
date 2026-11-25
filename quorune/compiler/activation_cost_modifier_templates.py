@@ -8,6 +8,7 @@ from dataclasses import replace
 from ..activation_cost_modifiers import (
     ACTIVATION_GENERIC_COST_CAPABILITY, ACTIVATION_GENERIC_COST_EVENT,
     ACTIVATION_GENERIC_COST_HANDLER, FixedActivationCostModifierSpec,
+    OTHER_EQUIPMENT_ACTIVATION_PREDICATE, OTHER_EQUIPMENT_ACTIVATION_SUBJECT,
 )
 from ..object_predicate import ObjectQuerySpec
 from .public_state_queries import fixed_battlefield_query_subject
@@ -21,6 +22,8 @@ _COST = re.compile(r"(?P<head>.+?) costs? \{(?P<amount>[1-9][0-9]*)\} "
 
 def _modifier_subject(head):
     lowered = head.casefold()
+    if lowered == 'equip abilities you activate of other equipment':
+        return OTHER_EQUIPMENT_ACTIVATION_SUBJECT, 'source_controller', 'equip', OTHER_EQUIPMENT_ACTIVATION_PREDICATE
     if lowered in {'equip abilities you activate','cycling abilities you activate'}:
         return 'any','source_controller',lowered.split()[0],ObjectQuerySpec()
     if lowered == 'activated abilities':

@@ -44,9 +44,15 @@ def _qualified_attack_defender(event,condition,variant):
 
 def _occurrence_player(event,condition,variant,subject):
     if subject=='you':return '$controller'
+    if event == 'creature.attacks' and subject == 'that player':
+        from ..qualified_attack_model import OPPOSING_PLAYER_ATTACK_VARIANT, opposing_player_attack_condition
+        if variant == OPPOSING_PLAYER_ATTACK_VARIANT and condition == opposing_player_attack_condition():
+            return '$context.defending_player'
     if event == 'creature.attacks' and subject in {'its controller', "that creature's controller", "that creature’s controller"}:
-        from ..rules.qualified_attacks import qualified_player_defense_is_closed
-        if qualified_player_defense_is_closed(condition):
+        from ..rules.qualified_attacks import declared_defender_scope_is_closed, qualified_player_defense_is_closed
+        if qualified_player_defense_is_closed(condition) or (
+            variant == 'public_attack_a_creature' and declared_defender_scope_is_closed(condition)
+        ):
             return occurrence_controller_reference()
     if subject == 'its controller' and condition == {
         'field': 'source_attachment_target_ref', 'op': 'eq', 'value': '$context.card',
@@ -138,6 +144,19 @@ def _spell_cast_count_life_result(binding, body):
 
 
 def fixed_event_player_result(binding,body,*,effect_template,card_name):
+    from ..rules.recipient_control_shapes import DAMAGE_DEALER_CONTROL_VARIANT, damage_dealer_control_condition
+
+    if binding.variant == DAMAGE_DEALER_CONTROL_VARIANT:
+        if (binding.event.value != "damage.dealt" or binding.active_zone != "battlefield"
+                or binding.event_condition != damage_dealer_control_condition()
+                or re.fullmatch(r"that creature[\'’]s controller gains control of this land\.?", body.strip(), re.I) is None):
+            return None
+        from ..recipient_control_model import RECIPIENT_CONTROL_MECHANIC, recipient_control_effect
+        from ..target_controller_information import damage_dealer_controller_reference
+
+        control = recipient_control_effect(card="$source.zone_object", controller=damage_dealer_controller_reference())
+        return ("damage-dealer-controls-source-land-v1", (control,), None,
+                (RECIPIENT_CONTROL_MECHANIC, "cr-611-continuous-effects")), False
     spell_count = _spell_cast_count_life_result(binding, body)
     if spell_count is not None:
         return spell_count
@@ -188,7 +207,34 @@ def _zone_damage_controller(binding, kind):
     return occurrence_controller_reference() if event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS else '$context.previous_controller'
 
 
+_DEFENDING_CREATURE_DAMAGE = re.compile(
+    r"(?:(?:it|this creature) deals|(?P<optional>you may have it deal)) "
+    r"(?P<amount>[1-9][0-9]*) damage to each creature defending player controls\.", re.I,
+)
+
+
+def defending_creature_damage_result(binding, body):
+    if binding.variant != "source_attacks" or binding.event.value != "creature.attacks":
+        return None
+    match = _DEFENDING_CREATURE_DAMAGE.fullmatch(body.strip())
+    if match is None:
+        return None
+    from ..rules.defending_creature_damage import defending_creature_damage_effect
+
+    template = "fixed-defending-player-creature-damage-v1"
+    effects = (defending_creature_damage_effect(int(match["amount"])),)
+    mechanics = ("cr-120-damage",)
+    if match["optional"] is not None:
+        from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+        return FixedOptionalEffectTemplate(template, effects, None,
+            (FIXED_OPTIONAL_EFFECT_MECHANIC, *mechanics)).compiled(), False
+    return (template, effects, None, mechanics), False
+
+
 def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
+    if creatures := defending_creature_damage_result(binding, body):
+        return creatures
     match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|them|defending player|that "
                        r"(?P<kind>artifact|creature|enchantment|land|permanent)['’]s controller)\.?",body,re.I)
     if match is None:return None

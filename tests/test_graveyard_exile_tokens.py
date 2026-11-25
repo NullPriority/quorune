@@ -217,7 +217,7 @@ class GraveyardExileTokenContractTests(unittest.TestCase):
         from quorune.graveyard_exile_token_model import GRAVEYARD_EXILE_TOKEN_BASE_DEPENDENCIES, GRAVEYARD_EXILE_TOKEN_CAPABILITY
 
         _, effects, target, mechanics = graveyard_exile_token_template(SOLDIER)
-        options = dict(effects=effects, mechanics=mechanics, trusted_mechanics=frozenset(),
+        options = dict(effects=effects, mechanics=mechanics, trusted_mechanics=frozenset(), active_zone='battlefield', cost_schema=None,
             capability_registry=load_default_capability_registry(), capability_profile='commander_review')
         gate = _activated_effect_dependency_gate(target_schema=target, **options)
         self.assertEqual({*GRAVEYARD_EXILE_TOKEN_BASE_DEPENDENCIES, 'token.creation.fixed_definition'}, set(gate.capabilities))

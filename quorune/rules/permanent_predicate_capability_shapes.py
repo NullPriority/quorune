@@ -39,6 +39,46 @@ def direct_permanent_target_schema_is_closed(
 fixed_counter_target_schema_is_closed = direct_permanent_target_schema_is_closed
 
 
+def nonartifact_nonblack_target_runtime_dependencies(program) -> tuple[str, ...]:
+    template = getattr(program, "provenance", {}).get("template_id")
+    if type(template) is not str or "creature-non-artifact-non-b" not in template:
+        return ()
+    spec = DirectPermanentTargetSpec(types_any=("creature",), types_none=("artifact",), colors_none=("B",))
+    owned_templates = {
+        f"destroy-target-{spec.slug}-v2",
+        f"destroy-target-{spec.slug}-regeneration-prohibited-v1",
+        f"fixed-control-zone_object-{spec.slug}-v1",
+    }
+    if not owned_templates.intersection(template.split("+")):
+        return ()
+    from ..util import stable_json
+
+    if stable_json(program.target_schema) != stable_json(spec.to_target_schema()):
+        raise ValueError("The qualified creature target requires both exact type and color exclusions")
+    return (*direct_target_predicate_capabilities(program.target_schema), "target.revalidate_resolution")
+
+
+def controller_island_target_runtime_dependencies(program) -> tuple[str, ...]:
+    template = getattr(program, "provenance", {}).get("template_id")
+    if type(template) is not str:
+        return ()
+    from ..targets import CONTROLLER_ISLAND_TARGET_PREDICATE, ISLAND_COUNT_POWER_TARGET_PREDICATE
+    expected = next((predicate for marker, predicate in (
+        ("-controller-controls-island-", CONTROLLER_ISLAND_TARGET_PREDICATE),
+        ("-power-at-most-controlled-islands-", ISLAND_COUNT_POWER_TARGET_PREDICATE),
+    ) if marker in template), None)
+    if expected is None:
+        return ()
+    schema = getattr(program, "target_schema", None)
+    try:
+        spec = DirectPermanentTargetSpec.from_target_schema(schema)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Controller-Island target requires its exact public creature role") from exc
+    if spec.to_target_schema().get("predicate") != expected:
+        raise ValueError("Island-qualified target must retain its exact live public predicate")
+    return ("target.revalidate_resolution",)
+
+
 def direct_target_predicate_capabilities(
     target_schema: Mapping[str, Any],
     *, allow_commander: bool = False,
@@ -47,6 +87,7 @@ def direct_target_predicate_capabilities(
 
     target_spec = DirectPermanentTargetSpec.from_target_schema(target_schema, allow_commander=allow_commander)
     return (
+        *(("target.revalidate_resolution",) if (target_spec.controller_controls_island or target_spec.power_at_most_controlled_islands) else ()),
         *(("state_query.commander.permanent_designation",) if target_spec.commander else ()),
         *object_query_capabilities(target_spec.state_predicate),
         *(

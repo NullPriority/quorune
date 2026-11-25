@@ -268,6 +268,25 @@ def _target_controller_fixed_result_program(
     return _program((first, bound_result, *following), schema=schema)
 
 
+def _returned_creature_copy_tail(first, clause, compile_component):
+    """Retain the established target's copiable values across the ordinary return."""
+    from ..token_copy_recipes import TokenCopyRecipeSpec
+
+    schema = {"zones": ["battlefield"], "categories": ["permanent"], "count": 1, "types_any": ["creature"]}
+    if (first[2] != schema or tuple(first[1]) != ({"op": "bounce", "card": "$target.0"},)
+            or clause.replace("\u2019", "'").casefold() != "you create a token that's a copy of that creature."):
+        return None
+    component = _bound_object_followup(clause, schema, compile_component)
+    if component is None:
+        return None
+    template, effects, rebound_schema, mechanics = component
+    legacy = {"op": "create_token", "controller": "$controller", "quantity": 1, "copy_of": "$target.0"}
+    if rebound_schema != schema or tuple(effects) != (legacy,):
+        return None
+    return template, ({"op": "create_token", "controller": "$controller", "quantity": 1,
+                       "copy_spec": TokenCopyRecipeSpec("target").to_dict()},), rebound_schema, mechanics
+
+
 def _single_target_reference(text: str, compile_component: ComponentCompiler, *, conditional_tail=None):
     for clauses in _candidate_partitions(text):
         first = compile_component(clauses[0])
@@ -288,7 +307,8 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler, *,
                 if not conditions or not all(condition.guarantees_creature for condition in conditions):
                     continue
         if len(clauses) == 2:
-            tail = _target_controller_damage_tail(first, clauses[1], compile_component)
+            tail = (_returned_creature_copy_tail(first, clauses[1], compile_component)
+                    or _target_controller_damage_tail(first, clauses[1], compile_component))
             if tail is not None:
                 return _program((first, tail), schema=schema)
         compiled = [first]

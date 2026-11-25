@@ -212,10 +212,10 @@ class GrantedSourceCounterCostTests(InheritedNativeFixture, unittest.TestCase):
         self.replay(game, load=True)
 
     def test_omitting_counter_price_projection_breaks_actual_offer_availability(self):
-        def unpriced(data):
+        def unpriced(host, data):
             return tuple(replace(ability, source_counter_removal_cost=None)
                 if ability.source_counter_removal_cost == SPORE_PAYMENT else ability
-                for ability in _typed_granted_abilities(data))
+                for ability in _typed_granted_abilities(host, data))
 
         game = self.session(70718312)
         donor = self.add(game.engine, ANCIENT)

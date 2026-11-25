@@ -14,6 +14,7 @@ from .continuous_templates import (
     fixed_query_quoted_ability_handler, fixed_query_quoted_ability_text,
 )
 from .keyword_event_effect_nodes import fixed_keyword_event_effect_node, fixed_keyword_event_effect_spec
+from .oracle_source_text import without_ability_word_label
 
 
 GRANTED_KEYWORD_EVENT_CAPABILITY = 'continuous.ability.fixed_keyword_event_grant'
@@ -21,7 +22,28 @@ _KEYWORD = re.compile(r'\b(?:Afflict|Annihilator|Firebending|Mobilize|Soulshift)
                       r'|\b(?:Ingest|Exploit|Provoke|Persist|Undying)\b', re.I)
 
 
+def _evolve_grant_shell(material_line):
+    if not material_line.casefold().rstrip(".").endswith("have evolve"):
+        return None
+    text = without_ability_word_label(material_line)
+    if text is None or not re.fullmatch(
+        r"(?:Other creatures|Creature tokens) you control have evolve\.?", text, re.I,
+    ):
+        return None
+    quoted = text.rstrip(".")[:-len("evolve")] + '"Evolve".'
+    if fixed_query_quoted_ability_text(quoted) != "Evolve":
+        return None
+
+    def compile_shell(fragment, capabilities):
+        return fixed_query_quoted_ability_handler(quoted, fragment=fragment, fragment_capabilities=capabilities)
+
+    return "Evolve", "evolve", compile_shell
+
+
 def _grant_shell(material_line, source_name):
+    evolve = _evolve_grant_shell(material_line)
+    if evolve is not None:
+        return evolve
     if '"' in material_line:
         return None
     matches = tuple(_KEYWORD.finditer(material_line))
@@ -51,6 +73,16 @@ def _grant_shell(material_line, source_name):
 
 
 def _keyword_inner_node(spec, **values):
+    if spec == "evolve":
+        from .dependency_gate import explicit_capabilities_gate
+        from .keyword_nodes import evolve_keyword_node
+
+        gate = explicit_capabilities_gate(("counter.producer.evolve", "counter.producer.fixed_effect"),
+            capability_registry=values["capability_registry"], capability_profile=values["capability_profile"])
+        return evolve_keyword_node(
+            node_id=values["node_id"], line=values["line"], material_line=values["material_line"],
+            span=values["span"], mechanics=("evolve",), gate=gate, residual_ids=(),
+        )
     if isinstance(spec, DeathReturnSpec):
         from .dependency_gate import explicit_capabilities_gate
         from .keyword_nodes import death_return_keyword_node

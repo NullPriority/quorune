@@ -10,6 +10,8 @@ from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import canonical_creature_subtype
 from ..public_zone_moves import (
     PUBLIC_AURA_ENTRY_VERSION,
+    public_graveyard_power_return_spec,
+    own_graveyard_type_return_choice_effect,
     PublicBattlefieldController,
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
@@ -21,6 +23,7 @@ from ..rules.graveyard_card_targets import (
     PublicGraveyardCardTargetKind,
     PublicGraveyardCardTargetSpec,
 )
+from ..rules.same_name_zone_moves import SameNameZoneMoveScope
 from .destruction_templates import fixed_affected_permanent_query
 from .direct_target import compiled_direct_target, direct_target_effect
 from ..graveyard_card_result_model import GraveyardCardCounterLifeSpec
@@ -105,7 +108,7 @@ class PublicZoneMoveSetTemplate:
         if not isinstance(self.spec, PublicZoneMoveSetSpec):
             raise ValueError("Public zone move requires a typed affected set")
         schema = dict(self.target_schema) if self.target_schema is not None else None
-        targeted = self.spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
+        targeted = self.spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER or self.spec.same_name_target is not None
         if targeted is not (schema is not None):
             raise ValueError(
                 "Public zone-move target schema contradicts its affected set"
@@ -262,6 +265,9 @@ def _graveyard_set_template(text: str) -> PublicZoneMoveSetTemplate | None:
     elif normalized == "exile all creature cards from target player's graveyard":
         relation = PublicZoneSeatRelation.TARGET_PLAYER
         target_schema = _player_target_schema()
+        query = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
+    elif normalized == "exile all creature cards from all graveyards":
+        relation = PublicZoneSeatRelation.ANY
         query = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
     if relation is None:
         return None
@@ -423,6 +429,17 @@ def _graveyard_card_query(
     return ObjectQuerySpec(**fields)
 
 
+def _graveyard_power_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    match = re.fullmatch(
+        r"Return all creature cards with power (?P<maximum>0|[1-9]\d*) or less "
+        r"from your graveyard to your hand\.",
+        " ".join(text.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return PublicZoneMoveSetTemplate(spec=public_graveyard_power_return_spec(int(match["maximum"])))
+
+
 def _graveyard_public_move_template(
     text: str,
 ) -> PublicZoneMoveSetTemplate | None:
@@ -519,17 +536,79 @@ def _graveyard_public_move_template(
     )
 
 
+@dataclass(frozen=True, slots=True)
+class OwnGraveyardTypeReturnTemplate:
+    def compiled(self):
+        return (
+            "own-graveyard-permanent-type-return-v1", (own_graveyard_type_return_choice_effect(),), None,
+            ("return-to-owner-hand", "fixed-public-zone-move", "fixed-public-zone-move-set"),
+        )
+
+
+def _own_graveyard_type_return_template(text: str) -> OwnGraveyardTypeReturnTemplate | None:
+    normalized = " ".join(text.casefold().split())
+    if normalized == (
+        "choose a permanent type. return all cards of the chosen type from your graveyard to your hand."
+    ):
+        return OwnGraveyardTypeReturnTemplate()
+    return None
+
+
+_SAME_NAME_ZONE_GRAMMAR = {
+    "return target nonland permanent and all other permanents with the same name as that permanent to their owners' hands.":
+        SameNameZoneMoveScope.RETURN_BATTLEFIELD_PERMANENTS,
+    "exile target creature and all other creatures with the same name as that creature.":
+        SameNameZoneMoveScope.EXILE_BATTLEFIELD_CREATURES,
+    "return target creature card and all other cards with the same name as that card from your graveyard to your hand.":
+        SameNameZoneMoveScope.RETURN_OWN_GRAVEYARD_CARDS,
+}
+
+
+def _same_name_zone_move_template(text):
+    scope = _SAME_NAME_ZONE_GRAMMAR.get(" ".join(text.casefold().strip().split()))
+    if scope is None:
+        return None
+    return PublicZoneMoveSetTemplate(scope.spec(), target_schema=scope.target_schema())
+
+
+class ChosenColorPermanentReturnTemplate:
+    """One fixed color choice over the existing public return sets."""
+
+    def compiled(self):
+        from ..rules.public_zone_move_capability_shapes import (
+            CHOSEN_COLOR_PERMANENT_RETURN_TEMPLATE, chosen_color_permanent_return_effect,
+        )
+
+        return (
+            CHOSEN_COLOR_PERMANENT_RETURN_TEMPLATE, (chosen_color_permanent_return_effect(),), None,
+            ("return-to-owner-hand", "fixed-public-zone-move", "fixed-public-zone-move-set"),
+        )
+
+
+def chosen_color_permanent_return_template(text: str) -> ChosenColorPermanentReturnTemplate | None:
+    if re.fullmatch(r"Return all permanents of the color of your choice to their owners['’] hands[.]?",
+                    text.strip(), re.IGNORECASE) is None:
+        return None
+    return ChosenColorPermanentReturnTemplate()
+
+
 def public_zone_move_effect_template(
     text: str,
 ) -> (
     PublicGraveyardCardExileTemplate
     | PublicZoneMoveSetTemplate
+    | OwnGraveyardTypeReturnTemplate
     | FixedPublicTapStateSetTemplate
+    | ChosenColorPermanentReturnTemplate
     | None
 ):
     return (
-        public_graveyard_card_exile_template(text)
+        chosen_color_permanent_return_template(text)
+        or _same_name_zone_move_template(text)
+        or _own_graveyard_type_return_template(text)
+        or public_graveyard_card_exile_template(text)
         or _graveyard_set_template(text)
+        or _graveyard_power_return_template(text)
         or _graveyard_public_move_template(text)
         or _battlefield_exile_template(text)
         or _battlefield_return_template(text)

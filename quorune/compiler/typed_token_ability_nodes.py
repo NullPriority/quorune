@@ -414,6 +414,7 @@ def _token_fragments_and_children(
     literal_source_name: str | None = None,
 ) -> tuple[list[Mapping[str, Any]], list[OracleNode], list[str]] | None:
     from .attached_granted_ability_nodes import attached_granted_ability_plan
+    from .granted_static_costs import bind_granted_plan_dependencies
 
     token_type_line = str(characteristics.get("type_line") or "")
     if not token_type_line.startswith("Token "):
@@ -475,6 +476,9 @@ def _token_fragments_and_children(
             display_text=quoted,
         )
         if plan is None:
+            return None
+        inner = bind_granted_plan_dependencies(inner, plan, capability_registry, capability_profile)
+        if inner is None:
             return None
         fragments.append(plan.fragment)
         children.append(

@@ -13,6 +13,7 @@ BOUND_PER_PLAYER_QUERY_LIFE_KIND='bound_per_player_public_query_life_loss_amount
 PER_PLAYER_QUERY_LIFE_CAPABILITY='life.loss.per_player_public_quantity'
 PER_PLAYER_QUERY_LIFE_MECHANIC='per-player-public-query-life-loss'
 OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION=2
+OPPONENT_POISON_THRESHOLD_LIFE_VERSION=3
 
 
 class PlayerLifeLossRelation(str,Enum):
@@ -20,17 +21,44 @@ class PlayerLifeLossRelation(str,Enum):
     OPPONENTS='controller_opponents'
 
 
+@dataclass(frozen=True, slots=True)
+class PoisonCounterThresholdLifeLoss:
+    minimum_counters: int
+    life_loss: int
+
+    def __post_init__(self):
+        if (type(self.minimum_counters) is not int or self.minimum_counters < 1
+                or type(self.life_loss) is not int or self.life_loss < 1):
+            raise PublicQueryAmountError('Poison-qualified life loss requires positive fixed integers')
+
+    def to_dict(self):
+        return {'minimum_counters': self.minimum_counters, 'life_loss': self.life_loss}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {'minimum_counters', 'life_loss'}:
+            raise PublicQueryAmountError('Poison-qualified life loss has closed threshold and loss fields')
+        return cls(value['minimum_counters'], value['life_loss'])
+
+
 @dataclass(frozen=True,slots=True)
 class PerPlayerQueryLifeLossSpec:
-    amount: PublicQueryAmountSpec
+    amount: PublicQueryAmountSpec | PoisonCounterThresholdLifeLoss
     relation: PlayerLifeLossRelation
     schema_version: int=1
 
     def __post_init__(self):
-        if (type(self.schema_version) is not int or self.schema_version not in (1, OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION)
-                or not isinstance(self.relation,PlayerLifeLossRelation)
-                or not isinstance(self.amount,PublicQueryAmountSpec)):
-            raise PublicQueryAmountError('Per-player life loss requires explicit version, relation and public amount')
+        if (type(self.schema_version) is not int or self.schema_version not in (
+                1, OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION, OPPONENT_POISON_THRESHOLD_LIFE_VERSION)
+                or not isinstance(self.relation,PlayerLifeLossRelation)):
+            raise PublicQueryAmountError('Per-player life loss requires an explicit version and relation')
+        if self.schema_version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION:
+            if (self.relation is not PlayerLifeLossRelation.OPPONENTS
+                    or not isinstance(self.amount, PoisonCounterThresholdLifeLoss)):
+                raise PublicQueryAmountError('Poison-qualified life loss applies independently to opponents')
+            return
+        if not isinstance(self.amount, PublicQueryAmountSpec):
+            raise PublicQueryAmountError('Per-player life loss requires a public object count')
         quantity=self.amount.quantity
         if (self.amount.schema_version!=1 or self.amount.binding_id is not None or self.amount.coefficient<=0
                 or not isinstance(quantity,CharacteristicQuantitySpec) or quantity.schema_version!=1
@@ -53,6 +81,10 @@ class PerPlayerQueryLifeLossSpec:
     def life_loss_for_quantity(self, quantity: int) -> int:
         if self.schema_version == OPPONENT_SUBTYPE_ABSENCE_LIFE_VERSION:
             return int(quantity == 0)
+        if isinstance(self.amount, PoisonCounterThresholdLifeLoss):
+            if type(quantity) is not int or quantity < 0:
+                raise PublicQueryAmountError('Poison-qualified life loss requires an actual poison count')
+            return self.amount.life_loss if quantity >= self.amount.minimum_counters else 0
         return quantity
 
     def to_dict(self):
@@ -64,7 +96,10 @@ class PerPlayerQueryLifeLossSpec:
         if (not isinstance(value,Mapping) or set(value)!={'kind','schema_version','relation','amount'}
                 or value['kind']!=PER_PLAYER_QUERY_LIFE_KIND):
             raise PublicQueryAmountError('Per-player life-loss producer fields are closed')
-        return cls(PublicQueryAmountSpec.from_dict(value['amount']),PlayerLifeLossRelation(value['relation']),value['schema_version'])
+        version = value['schema_version']
+        amount_type = (PoisonCounterThresholdLifeLoss if version == OPPONENT_POISON_THRESHOLD_LIFE_VERSION
+                       else PublicQueryAmountSpec)
+        return cls(amount_type.from_dict(value['amount']), PlayerLifeLossRelation(value['relation']), version)
 
 
 @dataclass(frozen=True,slots=True)

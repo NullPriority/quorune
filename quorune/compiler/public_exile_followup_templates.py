@@ -6,11 +6,13 @@ from . import regex_working_set as re
 from ..object_predicate import ObjectQuerySpec
 from ..public_zone_moves import PublicZoneMoveSetSpec
 from ..rules.public_exile_result_model import PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
+from ..rules.opponent_exile_draw_results import OPPONENT_EXILE_DRAW_FIELD
+from .per_player_target_sets import per_player_target_set_template
 from .closed_effect_programs import CLOSED_EFFECT_PROGRAM_MECHANIC
 from .targeted_graveyard_outcome_templates import targeted_graveyard_exile_outcome_template
 
 _TERMINAL_COUNT = re.compile(
-    r"(?P<effect>(?:Then )?(?:You gain 1 life|Put a \+1/\+1 counter on this creature|create a [^.]+? token)) "
+    r"(?P<effect>(?:Then )?(?:You gain (?:1|3) life|Put a \+1/\+1 counter on this creature|create a [^.]+? token)) "
     r"for each (?P<subject>creature card|card) exiled this way\.$", re.I,
 )
 _PLURAL_COUNTER = re.compile(
@@ -34,7 +36,33 @@ def _literal_followup(text: str):
     return None
 
 
+_OPPONENT_EXILE_DRAW = re.compile(
+    r"(?P<body>For each opponent, exile up to one target permanent that player controls[^.]*\.) "
+    r"For each permanent exiled this way, its controller draws a card\.",
+    re.IGNORECASE,
+)
+
+
+def _opponent_exile_draw_template(text: str):
+    match = _OPPONENT_EXILE_DRAW.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    compiled = per_player_target_set_template(match["body"])
+    if compiled is None:
+        return None
+    template, effects, schema, mechanics = compiled
+    effect, = effects
+    return (
+        template + "-draw-result-v1",
+        ({**effect, OPPONENT_EXILE_DRAW_FIELD: 1},),
+        schema,
+        (*mechanics, "cr-121-drawing-a-card"),
+    )
+
+
 def public_exile_followup_template(text: str, *, compile_literal):
+    if opponent_draw := _opponent_exile_draw_template(text):
+        return opponent_draw
     normalized = text.strip()
     if not normalized.casefold().startswith("exile "):
         return None

@@ -142,6 +142,11 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
 def tap_state_bound_result(binding, body: str, *, effect_template, card_name: str):
     if binding.variant not in TAP_STATE_EVENT_VARIANTS:
         return None
+    from .per_player_query_life import source_tap_opponent_poison_threshold_life_result
+
+    qualified = source_tap_opponent_poison_threshold_life_result(binding, body)
+    if qualified is not None:
+        return qualified, False
     value = tap_state_event_player_effect_template(
         body, compile_effect=effect_template, card_name=card_name,
     )

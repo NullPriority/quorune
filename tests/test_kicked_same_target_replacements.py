@@ -236,6 +236,196 @@ class SameTargetKickedRuntimeTests(unittest.TestCase):
         self.assertEqual(0,sum(session.state.players['B'].mana_pool.values()))
         self.private_replay(session,private)
 
+
+
+    def test_original_copy_replacement_has_two_closed_counts_and_one_target(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.token_copy_recipes import TokenCopyRecipeSpec
+        from test_controller_creature_keyword_absence import register_card
+
+        original = self.db.lookup("Rite of Replication", fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, original.name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        self.assertEqual("capability_closed", report["trust_basis"])
+        program = next(p for p in semantics.programs_for_oracle(original.oracle_id) if p.effects)
+        self.assertEqual(
+            {"zones": ["battlefield"], "categories": ["permanent"], "count": 1, "types_any": ["creature"]},
+            program.target_schema,
+        )
+        condition, = program.effects
+        self.assertEqual(5, condition["schema_version"])
+        self.assertEqual("$context.kicked", condition["cast_fact"])
+        ordinary, = condition["otherwise_effects"]
+        kicked, = condition["effects"]
+        recipe = TokenCopyRecipeSpec("target").to_dict()
+        self.assertEqual({"op": "create_token", "controller": "$controller", "quantity": 1, "copy_spec": recipe}, ordinary)
+        self.assertEqual({**ordinary, "quantity": 5}, kicked)
+        self.assertTrue({CAP, "resolution.effect.fixed_cast_fact", "target.revalidate_resolution",
+                         "token.creation.fixed_copy"} <= set(program.capability_dependencies))
+
+        for invalid in (
+            {**kicked, "quantity": True},
+            {**kicked, "quantity": 6},
+            {**kicked, "copy_spec": TokenCopyRecipeSpec("source").to_dict()},
+            {**kicked, "tapped": True},
+            {**kicked, "controller": "$target.0"},
+        ):
+            with self.subTest(invalid=invalid):
+                changed = replace(program, effects=({**condition, "effects": [invalid]},))
+                bound = bind_semantic_program_runtime(
+                    changed, capability_registry=self.registry, profile="commander_review",
+                )
+                self.assertFalse(bound["strict"], bound)
+
+    def test_kicked_copy_scope_keeps_unrepresented_text_and_omission_residual(self):
+        from test_controller_creature_keyword_absence import register_card
+
+        original = self.db.lookup("Rite of Replication", fuzzy=False)
+        for changed in (
+            original.oracle_text.replace("five of those tokens", "six of those tokens"),
+            original.oracle_text.replace("five of those tokens", "X of those tokens"),
+            original.oracle_text.replace("five of those tokens", "five tokens that are copies of target creature"),
+            original.oracle_text.replace("copy of target creature.", "copy of target artifact."),
+            original.oracle_text.replace("copy of target creature.", "copy of target creature, except it has flying."),
+        ):
+            with self.subTest(oracle=changed):
+                ir = compile_oracle_card(replace(original, oracle_text=changed), capability_registry=self.registry,
+                                         capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status, changed)
+        with patch("quorune.compiler.kicked_self_replacement_templates._kicked_target_copy_count", return_value=None):
+            report, _ = register_card(self.db, self.registry, original.name)
+            self.assertFalse(report["strict_capability_ready"], report)
+
+    def test_real_kicker_selects_one_creation_batch_and_uses_copiable_values(self):
+        for kicked, quantity, remaining in ((False, 1, 5), (True, 5, 0)):
+            with self.subTest(kicked=kicked):
+                session = self.session(729850 + int(kicked))
+                spell = self.add(session.engine, "Rite of Replication", zone="hand")
+                target = self.add(session.engine, "Grizzly Bears", seat="B", ref="rite-model")
+                private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand", ref="rite-private")
+                target.counters["+1/+1"] = 2
+                target.tapped = True
+                session.state.config.semantic_policy = "trusted_only"
+                self.prepare(session, mana={"U": 2, "C": 7})
+                self.checkpoint(session)
+                binding = self.binding(session, spell)
+                self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+                action = self.action(session, spell)
+                result = session.act("pilot:A", {
+                    "action_id": action["id"], "targets": [target.ref],
+                    "cost_option": "kicked" if kicked else "normal", "pay": "auto",
+                })
+                self.assertTrue(result.ok, result.summary)
+                self.assertIs(kicked, session.state.stack[-1].context["kicked"])
+                self.assertEqual(remaining, sum(session.state.players["A"].mana_pool.values()))
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                self.assertEqual(quantity, len(tokens))
+                for token in tokens:
+                    self.assertEqual(("A", "A"), (token.owner, token.controller))
+                    self.assertEqual("Grizzly Bears", session.engine._effective_card_data(token)["name"])
+                    self.assertEqual({}, token.counters)
+                    self.assertFalse(token.tapped)
+                event, = (event for event in session.state.events if event.code == "token.create")
+                self.assertEqual(quantity, event.details["base_quantity"])
+                self.assertCountEqual([token.ref for token in tokens], event.details["objects"])
+                self.assertEqual(2, session.state.cards[target.object_id].counters["+1/+1"])
+                self.private_replay(session, private)
+
+    def test_actual_spell_copy_keeps_kicker_and_uses_the_copied_spells_own_target(self):
+        session = self.session(729852)
+        spell = self.add(session.engine, "Rite of Replication", zone="hand")
+        first = self.add(session.engine, "Grizzly Bears", seat="C", ref="rite-original-model")
+        second = self.add(session.engine, "Young Wolf", seat="D", ref="rite-copy-model")
+        copier = self.add(session.engine, "Reverberate", seat="B", zone="hand")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand", ref="ritual-private")
+        session.state.config.semantic_policy = "trusted_only"
+        session.state.players["B"].mana_pool.update({"R": 2})
+        self.prepare(session, mana={"U": 2, "C": 7})
+        self.checkpoint(session)
+        for source in (spell, copier):
+            binding = self.binding(session, source)
+            self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        accepted = session.act("pilot:A", {
+            "action_id": self.action(session, spell)["id"], "targets": [first.ref],
+            "cost_option": "kicked", "pay": "auto",
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        original_ref = session.state.stack[-1].ref
+        self.cast(session, "B", copier, [original_ref])
+        pending = self.resolve(session)
+        self.assertEqual(("semantic.choice", ["B"]), (pending.kind, pending.actors))
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", {"action_id": "choose", "targets": [second.ref]})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        chosen = session.act("pilot:B", {"action_id": "choose", "targets": [second.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        copy, = (item for item in session.state.stack if item.kind == "spell_copy")
+        original = next(item for item in session.state.stack if item.ref == original_ref)
+        self.assertIs(True, copy.context["kicked"])
+        self.assertEqual(("B", [second.ref], [first.ref]), (copy.controller, copy.targets, original.targets))
+        self.assertIsNone(self.resolve(session))
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        actual = [(card.owner, card.controller, session.engine._effective_card_data(card)["name"]) for card in tokens]
+        self.assertCountEqual([("A", "A", "Grizzly Bears")] * 5 + [("B", "B", "Young Wolf")] * 5, actual)
+        self.assertEqual(2, len(session.engine._current_turn_history("spell_cast")))
+        for seat in "AB":
+            self.assertEqual(0, sum(session.state.players[seat].mana_pool.values()))
+        self.private_replay(session, private)
+
+    def test_paid_copy_target_loss_skips_the_whole_batch_without_refund(self):
+        session = self.session(729853)
+        spell = self.add(session.engine, "Rite of Replication", zone="hand")
+        model = self.add(session.engine, "Grizzly Bears", seat="B", ref="rite-departing-model")
+        bounce = self.add(session.engine, "Unsummon", seat="B", zone="hand")
+        session.state.config.semantic_policy = "trusted_only"
+        session.state.players["B"].mana_pool.update({"U": 1})
+        self.prepare(session, mana={"U": 2, "C": 7})
+        self.checkpoint(session)
+        binding = self.binding(session, spell)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        command = {"action_id": self.action(session, spell)["id"], "cost_option": "kicked", "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", {**command, "targets": [model.ref, model.ref]})
+        self.assertFalse(denied.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {**command, "targets": [model.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.cast(session, "B", bounce, [model.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[model.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertFalse(any(event.code == "token.create" for event in session.state.events))
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.replay(session, load=True)
+
+    def test_verified_fixed_copy_withdrawal_preserves_other_kicked_target_results(self):
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_controller_creature_keyword_absence import register_card
+
+        capability = "token.creation.fixed_copy"
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        next(row for row in raw["capabilities"] if row["id"] == capability).update(
+            status="blocked", blockers=["Scoped fixed copy withdrawal"],
+        )
+        registry = CapabilityRegistry(raw)
+        index = build_index(registry_value=raw, declaration_source=declarations,
+                            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        closure = registry.closure((capability,), profile="commander_review")
+        self.assertIn("status:" + capability + ":blocked", closure.blockers)
+        self.assertFalse(any("unverified" in blocker for blocker in closure.blockers))
+        report, _ = register_card(self.db, registry, "Rite of Replication")
+        self.assertFalse(report["strict_capability_ready"], report)
+        control, _ = register_card(self.db, registry, "Might of Murasa")
+        self.assertTrue(control["strict_capability_ready"], control["blockers"])
+
     def test_fresh_original_modifier_kills_same_target_producer_omission(self):
         method='test_original_stat_replacements_keep_one_creature_and_exact_selected_keywords'
         with patch('quorune.compiler.kicked_same_target_replacements.same_target_kicked_replacement',return_value=None):

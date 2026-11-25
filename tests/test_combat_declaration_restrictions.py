@@ -661,6 +661,54 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
         ]["domains"]
         self.assertEqual([small.ref], domains[blocker.ref])
 
+    def test_current_controlled_power_limits_blockers_and_preserves_menace_and_replay(self):
+        text = "Each creature you control with power 5 or greater can't be blocked by more than one creature."
+        self.assertIsNone(fixed_static_declaration_grant_handler(text.replace("or greater", "or less")))
+        self.assertIsNone(fixed_static_declaration_grant_handler(text.replace("you control", "an opponent controls")))
+        for offset, (controller, bonus, menace, expected) in enumerate((
+            ("A", False, False, 2), ("A", True, False, 1),
+            ("A", True, True, 0), ("B", True, False, 2),
+        )):
+            with self.subTest(controller=controller, bonus=bonus, menace=menace):
+                session = self.make_combat_session(509011141 + offset, players=2)
+                engine = session.engine
+                engine.state.active_player = "A"
+                self.compiled_static_grant_source(engine, seat=controller, name="Limit Giver", text=text)
+                attacker = self.creature(engine, "A", "Attack Subject",
+                    keywords=("Menace",) if menace else (), power="4")
+                if bonus:
+                    attacker.counters["+1/+1"] = 1
+                blockers = [self.creature(engine, "B", f"Blocker {index}") for index in range(2)]
+                self.set_block_step(engine, [(attacker, "B")])
+                engine._issue_next_blocker()
+                session.initial_checkpoint = checkpoint_envelope(session.state)
+                session.commands.clear()
+                session.decisions.clear()
+
+                if expected < 2:
+                    before = authoritative_state_hash(session.state)
+                    failed = session.act("pilot:B", {"a": "block", "blocks": {
+                        card.ref: attacker.ref for card in blockers
+                    }})
+                    self.assertFalse(failed.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    if menace:
+                        failed = session.act("pilot:B", {"a": "block", "blocks": {
+                            blockers[0].ref: attacker.ref
+                        }})
+                        self.assertFalse(failed.ok)
+                        self.assertEqual(before, authoritative_state_hash(session.state))
+                legal = session.act("pilot:B", {"a": "block", "blocks": {
+                    card.ref: attacker.ref for card in blockers[:expected]
+                }})
+                self.assertTrue(legal.ok, legal.summary)
+                if expected == 1:
+                    with tempfile.TemporaryDirectory() as directory:
+                        record = Path(directory) / "power-limited-block-replay"
+                        session.save(record)
+                        replay = replay_record(record, self.db, verify=True)
+                    self.assertTrue(replay["ok"], replay)
+
     def test_unblockable_and_blocker_stat_evasion_filter_domains(self):
         session = self.make_combat_session(509010905, players=2)
         engine = session.engine

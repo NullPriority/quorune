@@ -456,7 +456,8 @@ def _special_fields(
     if decision_kind == "choice.apnap" and action_name == "choose":
         refs = list(context.get("options") or [])
         count = int(context.get("count") or 0)
-        minimum = 0 if context.get('declined_life_loss') is not None else count
+        can_decline = context.get("minimum") == 0 or context.get("declined_life_loss") is not None
+        minimum = 0 if can_decline else count
         from .library_order_model import HAND_TOP_FIRST
 
         return [_ref_field("cards", refs, context, minimum=minimum, maximum=count,

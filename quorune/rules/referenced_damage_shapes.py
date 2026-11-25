@@ -6,6 +6,11 @@ from collections.abc import Mapping
 from ..attachment_references import AttachmentReferenceSpec,AttachmentReferenceKind,ATTACHMENT_INFORMATION_CAPABILITY
 from ..event_counter_reference import EVENT_ENTRY_OBJECT
 from ..compiler.referenced_damage_templates import REFERENCED_DAMAGE_CAPABILITY
+from ..util import stable_json
+from .event_subscriptions import (
+    COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES, COMBAT_PARTICIPANT_DAMAGE_PROGRAM_TEMPLATE,
+    combat_participant_damage_condition,
+)
 
 
 def referenced_damage_kind(value):
@@ -44,7 +49,23 @@ def referenced_damage_node_capabilities(*,effects,target_schema,mechanic_ids):
     except (TypeError,ValueError):return ()
 
 
+def _combat_participant_damage_dependencies(program):
+    if (
+        (program.event, program.active_zone) != ("creature.attacks", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or stable_json(program.event_condition) != stable_json(combat_participant_damage_condition())
+        or len(program.effects) != 1 or program.effects[0].get("target") != "$event.permanent_object"
+    ):
+        raise ValueError("Combat occurrence damage requires both exact subscriptions and their original participant")
+    required = referenced_damage_dependencies(program.effects[0])
+    if not required:
+        raise ValueError("Combat occurrence damage requires its fixed damage effect")
+    return (*required, *COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES)
+
+
 def referenced_damage_runtime_dependencies(program):
+    if getattr(program, "provenance", {}).get("template_id") == COMBAT_PARTICIPANT_DAMAGE_PROGRAM_TEMPLATE:
+        return _combat_participant_damage_dependencies(program)
     required=set()
     def visit(value):
         if isinstance(value,Mapping):

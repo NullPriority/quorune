@@ -349,6 +349,7 @@ class DrawEventResolution:
     prohibition_ids: tuple[str, ...] = ()
     result_draws: tuple[QueuedDraw, ...] = ()
     post_draw_actions: tuple[DrawnCardAction, ...] = ()
+    discard_followup: QueuedDraw | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in {
@@ -356,6 +357,7 @@ class DrawEventResolution:
             "prevented",
             "prohibited",
             "result_draws",
+            "discard_or_mill",
             _DREDGE_KIND,
         }:
             raise DrawError(f"Unsupported draw result {self.kind!r}")
@@ -404,6 +406,15 @@ class DrawEventResolution:
             raise DrawError(
                 "Only a result-draw replacement may carry queued draws"
             )
+        if self.kind == "discard_or_mill":
+            if (
+                not isinstance(self.discard_followup, QueuedDraw)
+                or self.discard_followup.player != self.player
+                or self.discard_followup.count != 1
+            ):
+                raise DrawError("Discard replacement requires one sealed follow-up draw")
+        elif self.discard_followup is not None:
+            raise DrawError("Only a discard replacement can seal its follow-up draw")
         object.__setattr__(
             self,
             "post_draw_actions",
@@ -606,6 +617,7 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         "prevented",
         "prohibited",
         "result_draws",
+        "discard_or_mill",
         _DREDGE_KIND,
     } and is_draw is not False:
         raise DrawError("A replaced draw must clear its draw flag")
@@ -614,7 +626,7 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         for child in event.children:
             if (
                 child.kind != "draw.result_instruction"
-                or child.affected_player != event.affected_player
+                or child.affected_player is None
                 or child.affected_object is not None
                 or child.applied_effects
                 or child.children
@@ -629,7 +641,10 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
                 "private",
                 "excluded_effect_ids",
             }
-            if set(child_payload) != expected:
+            if (
+                set(child_payload) != expected
+                or child_payload["player"] != child.affected_player
+            ):
                 raise DrawError("Resolved result draw fields are invalid")
             result_draws.append(
                 QueuedDraw.from_dict(child_payload)
@@ -638,6 +653,12 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
             raise DrawError("Resolved result draw is missing its instruction")
     elif event.children:
         raise DrawError("Resolved draw carries unsupported nested events")
+    discard_followup = None
+    if kind == "discard_or_mill":
+        discard_followup = QueuedDraw.from_dict({
+            "player": player, "count": 1, "reason": reason, "private": private,
+            "excluded_effect_ids": payload.get("excluded_effect_ids", ()),
+        })
     prohibition_ids = payload.get("prohibition_ids", ())
     if not isinstance(prohibition_ids, (list, tuple)):
         raise DrawError("Resolved draw prohibition IDs must be a list")
@@ -659,6 +680,7 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         dredge_mill_count=payload.get("dredge_mill_count"),
         prohibition_ids=tuple(prohibition_ids),
         result_draws=tuple(result_draws),
+        discard_followup=discard_followup,
         post_draw_actions=tuple(
             drawn_card_action_from_dict(action)
             for action in post_action_values

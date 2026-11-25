@@ -15,6 +15,37 @@ EVENT_LIBRARY_MOVE_CAPABILITY = "zone.return.fixed_event_library"
 EVENT_LIBRARY_COMPOSITION_CAPABILITY = "zone.return.fixed_event_library_components"
 EVENT_LIBRARY_MOVE_VERSION = "event_library_move_version"
 EVENT_LIBRARY_COMPONENTS = "event_library_components"
+GRAVEYARD_SOURCE_ARRIVAL_EVENT = "object.enter_graveyard"
+GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY = "trigger.event.normalized_anywhere_graveyard"
+GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE = "fixed-counter-source-graveyard-arrival-shuffle-v1"
+
+
+def graveyard_source_arrival_condition():
+    return {"all": [
+        {"field": "card", "op": "eq", "value": "$source.ref"},
+        {"field": "card_object_identity", "op": "eq", "value": "$source.logical_object_id"},
+        {"field": "owner", "op": "eq", "value": "$source.owner"},
+    ]}
+
+
+def dispatch_graveyard_source_arrival(host, occurrence, card, *, trigger_batch):
+    """Observe only the newly arrived source, before state-based token removal."""
+    if (
+        occurrence.destination != "graveyard" or occurrence.origin == "graveyard"
+        or occurrence.composition is not None and not occurrence.composition.physical_arrival
+    ):
+        return
+    from .rules.event_subscriptions import event_has_capability_subscriber
+
+    if not event_has_capability_subscriber(host, GRAVEYARD_SOURCE_ARRIVAL_EVENT, GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY):
+        return
+    host._dispatch_semantic_event(GRAVEYARD_SOURCE_ARRIVAL_EVENT, {
+        "card": occurrence.card_ref,
+        "card_object_identity": occurrence.current_logical_object_id,
+        "card_zone_change_counter": occurrence.zone_change_counter,
+        "owner": occurrence.owner,
+        "to": occurrence.destination,
+    }, sources=(card,), trigger_batch=trigger_batch)
 
 
 def event_library_departure_condition(scope: str) -> dict[str, Any]:
@@ -189,7 +220,32 @@ def unavailable_optional_event_library_move(host, raw_effect, effect) -> bool:
     )
 
 
+def _graveyard_source_shuffle_dependencies(program):
+    from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .public_zone_moves import FIXED_OWNER_ZONE_MOVE_MECHANIC
+    from .replacement.immutable import FrozenMap
+
+    expected = event_library_move_effect(position="top", shuffle=True, version=1)
+    if (
+        (program.event, program.active_zone) != (GRAVEYARD_SOURCE_ARRIVAL_EVENT, "graveyard")
+        or program.target_schema is not None or program.cost_schema is not None or program.handlers
+        or not {CURRENT_ABILITY_FRAGMENT_COVERAGE, FIXED_OWNER_ZONE_MOVE_MECHANIC} <= set(program.coverage)
+        or "one_or_more_event_batch" in program.coverage
+        or not isinstance(program.event_condition, Mapping)
+        or FrozenMap(program.event_condition) != FrozenMap(graveyard_source_arrival_condition())
+        or len(program.effects) != 1 or dict(program.effects[0]) != expected
+    ):
+        raise ValueError("An arrival shuffle requires the current graveyard source and its sealed owner")
+    validate_event_library_move(program.effects[0])
+    return (*event_library_move_capabilities(expected), GRAVEYARD_SOURCE_ARRIVAL_CAPABILITY)
+
+
 def event_library_move_runtime_dependencies(program) -> tuple[str, ...]:
+    arrival_template = GRAVEYARD_SOURCE_SHUFFLE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    if (program.event == GRAVEYARD_SOURCE_ARRIVAL_EVENT
+            or arrival_template in str(program.provenance.get("template_id") or "").split("+")):
+        return _graveyard_source_shuffle_dependencies(program)
+
     def uses_move(value):
         if isinstance(value, Mapping):
             return is_event_library_move(value) or any(uses_move(child) for child in value.values())
@@ -293,6 +349,8 @@ def event_card_return_intent(effect: Mapping[str, Any], *, actor: str, reason: s
 
 DEATH_LAND_EXILE_CAPABILITY = "zone.move.fixed_death_source_exile_after_land_type"
 DEATH_LAND_EXILE_MECHANIC = "fixed-death-land-type-and-exile"
+DEATH_EXILE_THEN_RETURN_CAPABILITY = "zone.move.fixed_death_source_exile_before_graveyard_return"
+DEATH_EXILE_ARRIVAL_CAPABILITIES = frozenset({DEATH_LAND_EXILE_CAPABILITY, DEATH_EXILE_THEN_RETURN_CAPABILITY})
 DEATH_EXILE_ARRIVALS = "death_exile_arrivals"
 DEATH_EXILE_VERSION = "death_exile_version"
 _DEATH_EXILE_PUBLIC_ZONES = ("graveyard", "exile", "command")
@@ -317,7 +375,8 @@ def has_death_source_exile(effect):
 def death_source_exile_context(host, context, occurrence, parts):
     from .rules.event_subscriptions import event_has_capability_subscriber
 
-    if not event_has_capability_subscriber(host, "creature.dies", DEATH_LAND_EXILE_CAPABILITY):
+    if not any(event_has_capability_subscriber(host, "creature.dies", capability)
+               for capability in sorted(DEATH_EXILE_ARRIVAL_CAPABILITIES)):
         return context
     if occurrence.composition is None:
         arrivals = (occurrence,)
@@ -361,6 +420,21 @@ def death_land_exile_node_capabilities(effects, target_schema):
     return (*required, DEATH_LAND_EXILE_CAPABILITY) if required else ()
 
 
+def death_exile_then_return_node_capabilities(effects, target_schema):
+    from .replacement.immutable import thaw_value
+    from .rules.source_excluding_graveyard_returns import source_excluding_graveyard_return_node_capabilities
+
+    schema = thaw_value(target_schema)
+    if (len(effects) != 2 or type(effects[0].get(DEATH_EXILE_VERSION)) is not int
+            or effects[0] != death_source_exile_effect()
+            or not isinstance(schema, Mapping) or schema.get("types_any") != ["creature"]):
+        return ()
+    base = source_excluding_graveyard_return_node_capabilities(
+        effects=effects[1:], target_schema=schema, mechanic_ids=("return-to-owner-hand", "cr-115-targets"),
+    )
+    return (*base, "card.exile.public_graveyard", DEATH_EXILE_THEN_RETURN_CAPABILITY) if base else ()
+
+
 def death_land_exile_runtime_dependencies(program):
     from .replacement.immutable import FrozenMap
     from .rules.effect_shape_walkers import nested_effects
@@ -370,9 +444,10 @@ def death_land_exile_runtime_dependencies(program):
     if (program.event != "creature.dies" or program.active_zone != "battlefield"
             or FrozenMap(program.event_condition or {}) != FrozenMap(death_land_exile_condition())):
         raise ValueError("Death-source exile needs its exact intrinsic dies occurrence")
-    required = death_land_exile_node_capabilities(program.effects, program.target_schema)
+    required = (death_land_exile_node_capabilities(program.effects, program.target_schema)
+                or death_exile_then_return_node_capabilities(program.effects, program.target_schema))
     if not required:
-        raise ValueError("Death-source exile must follow one complete target land setting")
+        raise ValueError("Death-source exile requires its exact ordered target land setting or owned return")
     return required
 
 

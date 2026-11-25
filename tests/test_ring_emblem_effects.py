@@ -387,6 +387,7 @@ class RingEmblemEngineAdapterTests(unittest.TestCase):
     def test_skipped_end_combat_and_source_lki_do_not_erase_waiting_delay(self):
         from quorune.ring_delays import resolve_ring_blocker_sacrifice,schedule_ring_blocker_sacrifice
         from quorune.delayed_triggers import materialize_delayed_trigger
+        from quorune.model import TurnEntry
         from quorune.target_source import stack_targeting_source
         from quorune.trigger_processing import TriggerProcessingOwner
         engine=self.engine(70154006)
@@ -403,7 +404,8 @@ class RingEmblemEngineAdapterTests(unittest.TestCase):
         delayed=schedule_ring_blocker_sacrifice(engine,controller='B',emblem=source,
             emblem_owner='A',blocker=identity,reason='source left before copied ability resolved')
         self.assertIsNone(delayed.expires_turn_sequence)
-        engine.state.turn_sequence+=1
+        engine._begin_turn(TurnEntry(turn_id=engine._next_ref('N'), player='B',
+            created_sequence=engine.state.turn_sequence))
         owner=TriggerProcessingOwner(engine)
         self.assertFalse(owner.trigger_matches(delayed,'step.begin',{'phase':'ending','step':'end_step'}))
         self.assertTrue(owner.trigger_matches(delayed,'step.begin',{'phase':'combat','step':'end_combat'}))

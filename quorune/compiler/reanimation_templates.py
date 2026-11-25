@@ -196,6 +196,36 @@ class FixedTargetReanimationTemplate:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class FixedTargetReanimationManaValueLossTemplate:
+    movement: FixedTargetReanimationTemplate
+
+    def compiled(self):
+        from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, ScalarAmountOrigin, ScalarEffectAmountSpec
+        from .fixed_effect_clause_sequences import FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+        from .life_templates import LIFE_MECHANIC
+
+        _name, movement, schema, mechanics = self.movement.compiled()
+        amount = ScalarEffectAmountSpec(
+            ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, characteristic="mana_value", schema_version=15,
+        )
+        loss = {"op": "lose_life", "player": "$controller", "amount": amount.to_dict()}
+        return ("reanimate-then-lose-graveyard-mana-value-v1", (*movement, loss), schema,
+                (*mechanics, LIFE_MECHANIC, SCALAR_AMOUNT_MECHANIC, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC))
+
+
+def fixed_target_reanimation_mana_value_loss_template(text: str) -> FixedTargetReanimationManaValueLossTemplate | None:
+    match = re.fullmatch(
+        r"(?P<move>(?:Put|Return) target creature card from (?:a|any) graveyard (?:onto|to) "
+        r"the battlefield under your control\.) You lose life equal to that card['’]s mana value\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    movement = fixed_target_reanimation_effect_template(match["move"])
+    return FixedTargetReanimationManaValueLossTemplate(movement) if movement is not None else None
+
+
 def fixed_target_reanimation_effect_template(
     text: str,
 ) -> FixedTargetReanimationTemplate | None:

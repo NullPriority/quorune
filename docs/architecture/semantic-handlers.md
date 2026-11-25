@@ -68,7 +68,10 @@ instructions of their own.
 
 Optional graveyard returns use an actor-scoped non-target choice. Candidates
 come from the current owned graveyard through the shared public-zone query,
-with a closed card-type predicate. The choice seals incarnations and rechecks
+with a closed card-type predicate. A subtype-qualified selection may exclude
+one creature subtype while allowing all planeswalkers. It uses current
+graveyard characteristics, including characteristic-defining abilities.
+The choice seals incarnations and rechecks
 the current candidate set before emitting the existing identity-bound return
 intent. In a mill/return sequence, milling and its replacements finish before
 the optional choice; previously present cards remain eligible. Declining the
@@ -87,6 +90,67 @@ vocabulary and closed counter/controller sequence owner. Source growth followed
 by a temporary declaration rule composes the existing leaves, each pinned to
 the source incarnation. Losing a source prevents its counter or modifier while
 independent controller instructions continue in their printed order.
+
+An all-or-none creature-subtype result changes layer 4 while preserving
+the object’s card types, other subtypes and abilities. Any associated
+flying, base statistics or modifiers use their own layers with one
+resolution timestamp. The result locks its affected objects through the
+end of the turn.
+
+A two-player life exchange snapshots the two valid participants and their
+current totals. The life owner checks whether both requests can proceed,
+then prepares their replacements and commits the pair in one transaction.
+For an optional upkeep trigger, targets are chosen when it is put on the
+stack and the controller chooses whether to exchange on resolution.
+
+A paired exchange can precede token creation within one resolving spell.
+The token instruction reads the two legal players’ current totals after
+the exchange and its replacement choices. It can create a zero-size token
+and lets normal state-based actions handle the result. A token replacement
+choice resumes that instruction while retaining the completed exchange.
+
+The draw-step exception reads the existing count of completed draws.
+Only the first completed draw in the affected player’s own draw step is
+exempt. A replaced draw leaves that count unchanged. Other draws use the
+same generated-draw pipeline and lifetime for consumed replacements.
+
+A characteristic and life-total exchange captures both original values at
+resolution. The life owner prepares replacements before either value changes.
+The resolved life change and the new layer-7b base value commit together.
+The affected player keeps control of life replacement choices, and the
+characteristic setting applies to the original battlefield incarnation.
+
+The chosen-color destruction activation uses the source’s linked entry
+designation and its retained copy form to offer targets. Its stack frame
+keeps the original choice through source departure or replay. A newly
+copied pair can use only a choice made for that pair. Resolution checks
+the target’s current colors before applying ordinary destruction.
+
+A targeted upkeep trigger can copy its own permanent from another creature.
+The copy lasts for the receiving incarnation and includes the resolving
+trigger as an added ability. Separate instances still trigger separately
+when the copied creature has the same ability. The existing copy owner
+preserves the receiver's counters and status.
+
+An attachment-qualified destruction effect targets the Aura itself.
+The shared target matcher also checks the type and, when specified,
+controller of its current attached permanent. Both must match at
+announcement and when the ability resolves.
+
+A fixed-receiver spell-copy trigger observes a cast with one distinct
+creature target other than its source. The optional copy uses the retained
+spell's modes, paid choices, and ordered target groups. The copy validator
+checks the original source incarnation against every target slot before
+offering the choice and again when the player accepts. A legal Aura spell
+copy enters as a token attached to that receiver.
+
+The creature-set spell-copy trigger observes an instant or sorcery cast
+whose only distinct target is its original source. The ability controller
+or the player who cast that spell receives a copy for every other creature
+they control that can legally occupy all slots. Checks use the original spell
+and the resulting copy's targeting facts. The copying player orders fixed
+receivers when multiple copies are created. The continuation records their
+battlefield incarnations and checks the same set before committing the copies.
 
 Chosen-color cast triggers compare canonical event-time spell colors with the
 source incarnation's existing public color designation. Current controller
@@ -470,6 +534,26 @@ from historical record replay: records with incompatible runtime trust provenanc
 are rejected explicitly before loading, rather than recompiled under current
 semantics.
 
+A fixed life alternative for one targeted player uses the resolving stack
+object to authorize the payer and the source controller. Payment uses the
+canonical life cost. Decline passes the same player's hand to the whole-hand
+discard owner. The choice packet carries the fixed price and affordability,
+while the canonical discard owner reads hand membership on resolution.
+
+An opponent-caused discard trigger observes the actual face-up card in
+the public zone it reached. The committed occurrence pins the discarding
+player, the resolving effect's controller and the discarded incarnation.
+The original controller owns the trigger. Its return result checks that the
+same incarnation still occupies the committed destination, and its life and
+token results use the established action owners. A compound life and delayed
+return result grants life as the discard trigger resolves. The next end step
+can return the original incarnation from its owner's graveyard. A token
+result with an intervening Plains condition queries the original trigger
+controller's current lands at trigger creation and resolution. A delayed
+battlefield return with a fixed counter uses the same incarnation check.
+The entry transaction places the counter and applies replacements before
+publishing the battlefield entry.
+
 The same payment registration accepts a closed v3 source-maintenance payload.
 Its fixed cost uses the shared v2 cost preparation and completion helpers.
 Decline sacrifices only the original source incarnation while the trigger's
@@ -479,6 +563,41 @@ auto-continues without a payment decision. Optional payment remains available
 when the source has left, returned or changed controller, because the printed
 unless instruction has no intervening source-presence condition. A successful
 cost payment suppresses the default even when a replacement redirects its cards.
+
+An explicit source-tap default uses the same source-maintenance choice for a
+positive fixed life price at its controller's upkeep. The trigger's controller
+keeps the choice after a change of control. Decline taps the original source
+incarnation through the ordinary tap owner. A returned source has its own
+incarnation and stays outside the original default result.
+
+Each-player upkeep life alternatives keep the original upkeep participant in
+the sealed step occurrence. That participant may pay the fixed price. Decline
+opens the ordinary controlled-permanent choice, and its selected object moves
+to its owner's hand. A departed upkeep participant's result is skipped by the
+scheduled-player owner.
+
+Chance for Glory first applies one layer-six Indestructible grant to the
+resolving controller's current creature set. The grant retains the original
+battlefield incarnations across control changes and ordinary turn boundaries.
+A creature entering later starts outside that set. The same resolution then
+schedules the existing turn-specific delayed loss.
+
+An extra-turn instruction with a version-one end-step loss creates one ordinary
+extra turn. Its delayed trigger retains the scheduled turn ID, original source,
+and resolving controller. An earlier extra turn for that player leaves the trigger
+pending. At the bound end step, normal trigger placement gives players priority
+to respond before the loss can resolve. The next step boundary retires a loss
+whose turn was skipped or otherwise removed from the turn queue. Historical
+unmarked extra-turn instructions replay through their stored scheduling path.
+
+Normalized opponent life-loss triggers use positive committed loss records
+from ordinary life effects, life payments, and the damage transaction. Damage
+retains loss and lifelink as separate results even when their effect on the
+same life total cancels out. The sealed occurrence supplies its original
+player and amount to the existing gain-life or mill owner. These additional
+occurrences enter trigger placement only when the registry contains the
+reviewed loss subscription. Earlier records retain their existing action
+and trigger behavior.
 
 A resolving life effect ignores a known recipient who has left the game and
 continues independent instructions. Such a recipient creates no life-change
@@ -620,6 +739,15 @@ members, and destination replacements retain the sealed choice before the
 remaining instructions resume. Sacrifice uses its own transition cause and
 does not consume destruction or regeneration effects.
 
+Keep-three instructions use the public affected-player choice. The ability
+limits the original battlefield set to the lands each player controls. The
+sorcery uses all their permanents. Players with more than three eligible
+permanents choose in active-player-first turn order and see prior public
+choices. Smaller and exact-size sets automatically keep all their members.
+The continuation checks the saved permanent identities, then submits the
+unselected permanents in one simultaneous sacrifice. Replacement ordering
+and replay use the ordinary sacrifice owner.
+
 Alternative-quality hand discards use a typed `alternative_discard_count`
 inside the same APNAP instruction. The affected player can discard one card
 matching the closed quality predicates or the available fallback subset.
@@ -741,6 +869,25 @@ The canonical tap owner seals object incarnation, controller, characteristics,
 and attack-declaration cause. Explicit simultaneous instructions and costs
 commit their complete group before discovery; the ordinary APNAP owner places
 the resulting abilities. Untap-step triggers remain held until upkeep priority.
+Fixed controller land phasing checks the source controller's upkeep at
+trigger discovery. Resolution selects the retained controller's current
+land set through the public battlefield query and submits the incarnations
+together to the ordinary phasing owner. Indirect attachment phasing and
+the next untap phase-in use the same status transaction.
+
+Delayed controlled-attacker phasing records the declared attacker's
+incarnation in the existing delayed-object action. The end-of-combat
+trigger phases out that incarnation after combat damage and state-based
+actions. An earlier combat removal can leave the original permanent
+eligible. Phasing changes its status and carries its incarnation to the
+ordinary phase-in boundary.
+
+Targeted combat removal uses the same attacker query for offers, commands,
+and resolution. The opposing-attacker instruction first untaps the legal
+target, then removes that same incarnation from combat. The attack declaration
+remains in turn history. Spires of Orazca uses this instruction on its land
+face after the existing transformation.
+
 The next-controller-untap instruction emits a typed prohibition intent through
 the canonical tap-state owner. It pins the resolved incarnation and stores one
 object-local marker consumed at its current controller's next represented
@@ -749,6 +896,8 @@ instruction's tap-state coverage independently. Repeated markers expire
 together; the skipped untap does not remove a stun counter. Fixed-player timing,
 Exert, multiple future steps,
 and unsupported phasing or skipped-step compositions remain residual.
+
+A source tap can queue an untargeted life-loss trigger. The resolving trigger checks each opponent's current poison count and prepares one canonical life batch for the qualifying seats. Mana from the tap resolves through the separate mana owner.
 
 No-op changes, entering in a tap state, stun-replaced untaps, and rollback do not
 trigger. A real untap cost is distinct from rollback. Fixed event-controller
@@ -830,6 +979,19 @@ its own grammar and capability owner. Their runtime handlers likewise share
 strict operation, reference, reason, and immutable replacement-selection field
 validation. This shared code does not choose a target, infer a card family, or
 create a generic move operation.
+
+A fixed token result on a creature exile uses the controllers of the targeted
+creatures immediately before movement. The simultaneous zone owner reports the
+objects that reached exile, and the token owner uses those results to compute
+each creator's quantity. It then applies token replacements and commits one
+simultaneous token batch. Revalidation excludes stale targets, and a movement
+redirected away from exile contributes no tokens.
+
+The commander identity mana component reads the activating player's designated
+commanders through the existing identity query. It offers one mana of a color
+in their combined identity. A colorless or absent commander produces an empty
+mana result. The ordinary color-set component retains its public object query
+for represented battlefield and graveyard cases.
 
 The fixed homogeneous target-set handlers receive only the already selected
 and resolution-revalidated public references. Destruction delegates the whole
@@ -941,3 +1103,9 @@ ordinary movement receipt. The current or last-known public types govern
 the two independent token clauses. A land creature supplies both tokens in
 printed order. The remaining type combination supplies the ordinary life
 effect.
+
+A resolved protected-defender payment enters the duration journal with
+the resolving player as its expiry anchor. The ordinary declaration
+solver collects that fixed mana requirement for each chosen attack
+against the player or a planeswalker they control. The source can leave
+while the payment remains active. The player's next turn ends the rule.

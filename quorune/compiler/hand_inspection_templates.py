@@ -8,10 +8,12 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..rules.hand_inspection import (
+    DEFENDING_HAND_OBSERVATION_MECHANIC,
     FIXED_HAND_INSPECTION_OPERATION,
     HandCardPredicateSpec,
     HandInspectionAction,
     HandInspectionMode,
+    defending_hand_observation_effect,
 )
 from ..object_predicate import ObjectQuerySpec
 from .life_templates import fixed_life_effect_template
@@ -303,6 +305,18 @@ def _choice_template(
             trailing_mechanics=(compiled_tail[1] if compiled_tail else ()),
         )
     return None
+
+
+def blocked_defender_hand_observation_result(body):
+    """Lower the optional private look in the source's own blocked trigger."""
+    if not re.fullmatch(r"You may look at defending player['’]s hand\.", body, re.I):
+        return None
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+    return FixedOptionalEffectTemplate(
+        "defending-hand-observation-v1", (defending_hand_observation_effect(),), None,
+        (FIXED_OPTIONAL_EFFECT_MECHANIC, DEFENDING_HAND_OBSERVATION_MECHANIC, "cr-402-hand"),
+    ).compiled()
 
 
 def fixed_hand_inspection_effect_template(

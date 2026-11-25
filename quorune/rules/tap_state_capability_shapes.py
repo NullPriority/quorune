@@ -12,7 +12,10 @@ from ..compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
 from ..damage_recipient_model import DAMAGE_PERMANENT_CAPABILITY, DAMAGE_PERMANENT_OBJECT
 from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
 from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
-from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
+from ..tap_state import (
+    ATTACKING_CREATURES_NEXT_UNTAP_FIELD, CONTROLLER_UNTAP_STEP_COUNT, TAP_TARGET_SET_UNTAP_FIELD,
+    two_controller_untaps_effect, validate_attacking_creatures_next_untap,
+)
 from ..next_player_untap_model import (
     decode_next_player_untap_instruction, is_next_player_untap_instruction,
     next_player_untap_target_schema,
@@ -72,8 +75,79 @@ def _next_player_untap_capabilities(effect, target_schema, mechanics):
     return ("untap.step.prohibit_next_controller", "target.revalidate_resolution")
 
 
+def _combat_prevention_attackers_untap_capabilities(effects, target_schema, mechanics):
+    if (target_schema is not None or len(effects) != 2
+            or not {"tap-and-untap", "cr-615-prevention-effects"} <= mechanics):
+        return ()
+    try:
+        validate_attacking_creatures_next_untap(effects[1])
+    except (TypeError, ValueError):
+        return ()
+    if effects[0] != {
+        "op": "create_damage_prevention_shield", "source": "$source", "subject": "*",
+        "mode": "all", "duration": "until_end_of_turn", "damage_kind": "combat",
+    }:
+        return ()
+    return ("damage.prevention.persistent_amount", "untap.step.prohibit_next_controller")
+
+
+def _target_combat_prevention_two_untaps_capabilities(effects, target_schema, mechanics):
+    from ..compiler.direct_target import direct_permanent_target_spec
+
+    expected_target = direct_permanent_target_spec("target creature").to_target_schema()
+    if (len(effects) != 3 or target_schema != expected_target or type(target_schema["count"]) is not int
+            or not {"tap-and-untap", "cr-115-targets", "cr-615-prevention-effects"} <= mechanics):
+        return ()
+    from ..replacement.immutable import thaw_value
+    from .prevention_component_shapes import targeted_outgoing_combat_shield
+
+    tap, prevention, restriction = effects
+    if (tap != {"op": "tap", "card": "$target.0"}
+            or thaw_value(prevention) != targeted_outgoing_combat_shield()
+            or restriction != two_controller_untaps_effect()
+            or type(restriction["schema_version"]) is not int
+            or type(restriction[CONTROLLER_UNTAP_STEP_COUNT]) is not int):
+        return ()
+    return ("permanent.tap.effect", "damage.prevention.persistent_amount",
+            "untap.step.prohibit_next_controller", "target.revalidate_resolution")
+
+
 def untap_runtime_dependencies(program):
+    from ..affected_permanents import TARGET_UNSPENT_MANA_FIELD
+
     required = target_set_next_untap_dependencies(program.effects)
+    if any(CONTROLLER_UNTAP_STEP_COUNT in effect for effect in nested_effects((program.effects, program.handlers))):
+        result = _target_combat_prevention_two_untaps_capabilities(
+            program.effects, program.target_schema, set(program.coverage),
+        )
+        if (not result or (program.event, program.active_zone) != ("resolve", "stack") or program.handlers
+                or program.cost_schema is not None or program.event_condition is not None):
+            raise ValueError("Two controller untaps require the complete original targeted spell")
+        return result
+    if any(ATTACKING_CREATURES_NEXT_UNTAP_FIELD in effect
+           for effect in nested_effects((program.effects, program.handlers))):
+        if ((program.event, program.active_zone) != ("resolve", "stack") or program.handlers
+                or program.cost_schema is not None or program.event_condition is not None):
+            raise ValueError("Attacking-creature untap restriction requires the original resolving spell")
+        attacker_result = _combat_prevention_attackers_untap_capabilities(
+            program.effects, program.target_schema, set(program.coverage),
+        )
+        if not attacker_result:
+            raise ValueError("Attacking-creature untap requires the ordered combat prevention and current attacking set")
+        return attacker_result
+    if any(TARGET_UNSPENT_MANA_FIELD in effect for effect in nested_effects((program.effects, program.handlers))):
+        from .public_zone_move_capability_shapes import fixed_public_tap_state_set_node_capabilities
+
+        if ((program.event, program.active_zone) != ("resolve", "stack") or program.handlers
+                or program.cost_schema is not None or program.event_condition is not None
+                or len(program.effects) != 1 or TARGET_UNSPENT_MANA_FIELD not in program.effects[0]):
+            raise ValueError("Land tap and unspent mana loss require a single exact resolving spell")
+        mana_result = fixed_public_tap_state_set_node_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if not mana_result:
+            raise ValueError("Land tap and unspent mana loss require the original player target and complete result")
+        return mana_result
     if not any(is_next_player_untap_instruction(effect) for effect in nested_effects(program.effects)):
         return required
     next_step = (targeted_tap_state_node_capabilities(effects=program.effects,
@@ -93,7 +167,11 @@ def targeted_tap_state_node_capabilities(
     """Return ownership only for closed single-object tap-state shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if len(effects) == 3:
+        return _target_combat_prevention_two_untaps_capabilities(effects, target_schema, mechanics)
     if target_schema is None and len(effects) == 2:
+        if isinstance(effects[1], Mapping) and ATTACKING_CREATURES_NEXT_UNTAP_FIELD in effects[1]:
+            return _combat_prevention_attackers_untap_capabilities(effects, target_schema, mechanics)
         return event_next_untap_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if 'tap-and-untap' in mechanics and len(effects) == 2 and target_schema is not None:
         if (list(effects) != [{'op': 'tap', 'card': '$target.0'}, {'op': 'prohibit_next_untap', 'card': '$target.0'}]

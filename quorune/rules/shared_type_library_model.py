@@ -43,6 +43,10 @@ class SharedCreatureTypeComparison:
 SHARED_TYPE_LIBRARY_OPERATION = "look_top_shared_type_reveal"
 SHARED_TYPE_LIBRARY_CAPABILITY = "library.top.shared_type_optional_reveal"
 SHARED_TYPE_LIBRARY_MECHANIC = "private-top-shared-type-reveal"
+SHARED_TYPE_PLAY_OPERATION = "play_revealed_shared_type_library_card"
+SHARED_TYPE_PLAY_CAPABILITY = "library.top.revealed_shared_type.resolving_play"
+SHARED_TYPE_PLAY_MECHANIC = "private-top-shared-type-play"
+
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +68,11 @@ class SharedTypeLibraryResult:
         allowed = {"damage", "damage_fixed_set", "place_counters", "modify_all_matching_permanents_until_end_of_turn",
                    "apply_source_characteristics_until_end_of_turn", "choose_cards_apnap",
                    "discard_hand", "discard_whole_hands", "draw", "draw_each_player", "create_token", "life", "lose_life", "lose_life_each_opponent", "mill"}
+        if (len(frozen) == 1 and frozen[0] == {"op": SHARED_TYPE_PLAY_OPERATION}
+                and tuple(self.mechanics) == (SHARED_TYPE_PLAY_MECHANIC,)):
+            object.__setattr__(self, "effects", frozen)
+            object.__setattr__(self, "mechanics", (SHARED_TYPE_PLAY_MECHANIC,))
+            return
         if any(e.get("op") not in allowed for e in frozen):
             raise ValueError("Shared-type library result contains an unrepresented instruction")
         for e in frozen:
@@ -107,6 +116,8 @@ def shared_type_result_capabilities(effect, mechanics):
     from .token_creation_capability_shapes import fixed_token_creation_node_capabilities, token_creation_component_mechanics
     literal = thaw_value(effect)
     flags = set(mechanics)
+    if literal == {"op": SHARED_TYPE_PLAY_OPERATION} and flags == {SHARED_TYPE_PLAY_MECHANIC}:
+        return (SHARED_TYPE_PLAY_CAPABILITY,)
     for resolver in (fixed_draw_node_capabilities, fixed_source_characteristics_node_capabilities,
             fixed_damage_node_capabilities, fixed_life_node_capabilities,
             fixed_resolution_characteristic_set_node_capabilities):

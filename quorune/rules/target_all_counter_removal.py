@@ -45,6 +45,19 @@ def target_all_counter_variant_capabilities(*, effects, target_schema, mechanic_
 
 
 def target_all_counter_variant_runtime_dependencies(program):
+    from ..counter_removal import ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD
+    from .counter_removal_capabilities import all_permanent_counters_then_token_exile_dependencies
+    from .effect_shape_walkers import nested_effects
+
+    if any(ALL_PERMANENT_COUNTERS_THEN_TOKEN_EXILE_FIELD in effect
+           for effect in nested_effects((program.effects, program.handlers))):
+        needed = all_permanent_counters_then_token_exile_dependencies(
+            program.effects, program.target_schema, program.coverage,
+        )
+        if (not needed or (program.event, program.active_zone) != ("resolve", "stack")
+                or program.event_condition is not None or program.cost_schema is not None or program.handlers):
+            raise ValueError("The global counter and token result requires the exact untargeted resolving spell")
+        return needed
     required = set()
     def visit(value):
         if isinstance(value, Mapping):

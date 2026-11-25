@@ -28,6 +28,9 @@ from .activated_mana_nodes import _activated_effect_material
 from .activation_x_costs import announced_x_activation_cost, announced_x_activation_effect
 from ..activation_x import activation_x_capabilities, activation_x_symbols
 from ..activation_x_discard import activation_x_discard_count, validate_activation_x_discard
+from ..colored_hand_reveal_model import (
+    VARIABLE_COLORED_REVEAL_CAPABILITY, VariableColoredRevealPrice, validate_variable_colored_reveal_cost,
+)
 from .fixed_counter_trigger_nodes import (
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS,
     FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS,
@@ -568,6 +571,9 @@ def grammar_source_fingerprint() -> str:
         activation_x_symbols,
         activation_x_capabilities,
         activation_x_discard_count, validate_activation_x_discard,
+        VariableColoredRevealPrice.from_dict,
+        VariableColoredRevealPrice.matches_mana,
+        validate_variable_colored_reveal_cost,
         _required_capabilities,
         _composing_event_capabilities,
         _direct_player_attack_composition_capabilities,
@@ -778,14 +784,27 @@ def _compiled_source_template(body, *, record, node, face_index, face_name):
     if len(abilities) != 1:
         return compiled, ()
     ability = announced_x_activation_cost(abilities[0])
-    if ability.announced_x_symbols is None:
+    if not ability.chooses_activation_x:
         return compiled, ()
     declared = announced_x_activation_effect(ability, source_name=face_name or record.name,
         text=body, compile_fixed=lambda text: _compiled_template(text, card_name=face_name or record.name)
         or (None, (), None, ()))
-    return declared or compiled, activation_x_capabilities(symbols=ability.announced_x_symbols,
+    cost_capabilities = activation_x_capabilities(symbols=ability.announced_x_symbols,
         sacrifice_source=ability.sacrifice_source, discard_cards=bool(ability.choices),
-            discard_source=ability.discard_source)
+        discard_source=ability.discard_source)
+    if ability.variable_colored_reveal_price is not None:
+        try:
+            price = validate_variable_colored_reveal_cost(node.cost or {}, event=node.event, active_zone=node.active_zone)
+        except ValueError as exc:
+            raise TargetEffectAssuranceError(
+                f"promoted target-effect changed the closed colored reveal cost: {record.oracle_id}:{node.node_id}"
+            ) from exc
+        if price != ability.variable_colored_reveal_price:
+            raise TargetEffectAssuranceError(
+                f"promoted target-effect lost its printed colored reveal price: {record.oracle_id}:{node.node_id}"
+            )
+        cost_capabilities = (*cost_capabilities, VARIABLE_COLORED_REVEAL_CAPABILITY)
+    return declared or compiled, cost_capabilities
 
 
 def _clause_count(body: str, template_id: str) -> int:

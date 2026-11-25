@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for single-target same-name public zone moves",
+  "cards": [
+    {
+      "oracle_id": "591fe685-767e-4e6e-905e-cc8b423caa19",
+      "name": "Echoing Return",
+      "mana_cost": "{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature card and all other cards with the same name as that card from your graveyard to your hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "cmc": 1.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "name": "Sever the Bloodline",
+      "mana_cost": "{3}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile target creature and all other creatures with the same name as that creature.\nFlashback {5}{B}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "cmc": 4.0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ef100544-3e6d-4661-a1d1-8b02e58c059c",
+      "name": "Echoing Truth",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Return target nonland permanent and all other permanents with the same name as that permanent to their owners' hands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "cmc": 2.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "591fe685-767e-4e6e-905e-cc8b423caa19",
+      "published_at": "2021-06-18",
+      "source": "wotc",
+      "comment": "If the target is illegal as Echoing Return tries to resolve (most likely because it is no longer in your graveyard), it will be removed from the stack and do nothing, even if there are cards with the same name in your graveyard."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "A double-faced creature only has the name of the face that's up. For example, if Village Ironsmith is targeted by Sever the Bloodline, Ironfang wouldn't be exiled."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "Only creatures on the battlefield will be exiled. In other zones, they're \"creature cards,\" not \"creatures.\""
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "If the targeted creature is an illegal target by the time Sever the Bloodline resolves, it won't resolve and none of its effects will happen. No creatures will be exiled."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Unless a token is a copy of another permanent or was explicitly given a name by the effect that created it, its name is the subtypes it was given when it was created plus the word \"Token.\" For example, if an effect creates a 1/1 Soldier creature token, that token is named \"Soldier Token.\""
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Sever the Bloodline has only one target. Other creatures with the same name will be exiled even if they have hexproof or protection."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If the target creature is an illegal target by the time Sever the Bloodline tries to resolve, the spell won’t resolve. You won’t exile any creatures at all."
+    },
+    {
+      "oracle_id": "b9019332-2f02-48d9-be0a-a2b41b79e136",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Unless a token is a copy of another permanent or was explicitly given a name by the effect that created it, its name is the subtypes it was given when it was created plus the word “Token.” For example, if an effect creates a 1/1 Soldier creature token, that token is named “Soldier Token.”"
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}{W}",
+      "name": "From the Rubble",
+      "oracle_id": "76d07c99-8c6b-4c2c-a0f6-47541999015b",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nAt the beginning of your end step, return target creature card of the chosen type from your graveyard to the battlefield with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Kindred Boon",
+      "oracle_id": "f04441b0-755c-4e7b-a9e4-4e03b8175ab6",
+      "oracle_text": "As this enchantment enters, choose a creature type.\n{1}{W}: Put a divinity counter on target creature you control of the chosen type.\nEach creature you control with a divinity counter on it has indestructible.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Finality counters aren't keyword counters, and a finality counter doesn't give any abilities to the permanent it's on. If that permanent loses its abilities and then would go to a graveyard, it will still be exiled instead.",
+      "oracle_id": "76d07c99-8c6b-4c2c-a0f6-47541999015b",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Finality counters don't stop permanents from going to zones other than the graveyard from the battlefield. For example, if a permanent with a finality counter on it would be put into its owner's hand from the battlefield, it does so normally.",
+      "oracle_id": "76d07c99-8c6b-4c2c-a0f6-47541999015b",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Finality counters work on any permanent, not only creatures. If a permanent with a finality counter on it would be put into a graveyard from the battlefield, exile it instead.",
+      "oracle_id": "76d07c99-8c6b-4c2c-a0f6-47541999015b",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "Multiple finality counters on a single permanent are redundant.",
+      "oracle_id": "76d07c99-8c6b-4c2c-a0f6-47541999015b",
+      "published_at": "2023-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature has been dealt damage, that damage remains marked on it until the cleanup step. If a creature with a divinity counter on it has been dealt lethal damage, and later in the turn Kindred Boon leaves the battlefield or the counter is removed from that creature, that creature will be destroyed.",
+      "oracle_id": "f04441b0-755c-4e7b-a9e4-4e03b8175ab6",
+      "published_at": "2017-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature that isn't of the chosen type somehow gets a divinity counter on it, that creature will have indestructible.",
+      "oracle_id": "f04441b0-755c-4e7b-a9e4-4e03b8175ab6",
+      "published_at": "2017-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you somehow control a Kindred Boon with no chosen creature type, its activated ability can't be activated.",
+      "oracle_id": "f04441b0-755c-4e7b-a9e4-4e03b8175ab6",
+      "published_at": "2017-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't choose multiple creature types, such as \"Cat Warrior.\" A Cat Warrior is both a Cat and a Warrior. It's affected by anything that affects either type and unaffected by things that affect non-Cat or non-Warrior creatures.",
+      "oracle_id": "f04441b0-755c-4e7b-a9e4-4e03b8175ab6",
+      "published_at": "2017-08-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must choose an existing creature type, such as Vampire or Cat. Card types such as \"artifact\" can't be chosen.",
+      "oracle_id": "f04441b0-755c-4e7b-a9e4-4e03b8175ab6",
+      "published_at": "2017-08-25",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

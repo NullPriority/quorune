@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed source-specific off-battlefield characteristics and native cast interaction fixtures.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-9a13-000000613481",
+      "name": "Cedar, Peak Wanderer",
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "type_line": "Legendary Planeswalker — Cedar",
+      "oracle_text": "As long as Cedar isn't on the battlefield, it's a 2/3 Elk creature in addition to its other types.",
+      "loyalty": "3",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-9a13-000000613482",
+      "name": "Highland Training Ring",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact",
+      "oracle_text": "Creature spells you cast cost {1} less to cast.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-9a13-000000613483",
+      "name": "Cliffside Denial",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Counter target creature spell.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

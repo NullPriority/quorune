@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .discard_effect_origin import DiscardEffectOrigin
+
 from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
@@ -102,6 +104,7 @@ def validate_zone_transition_request(
 def normalized_transition_kind_map(
     changes: Sequence[tuple[str, str]],
     values: Mapping[str, ZoneTransitionKind] | None,
+    *, discard_effect_origin: DiscardEffectOrigin | None = None,
 ) -> dict[str, ZoneTransitionKind]:
     """Validate closed per-object transition causes for one move batch."""
 
@@ -114,6 +117,12 @@ def normalized_transition_kind_map(
         raise GameRuleError(
             "Simultaneous transition kinds must be typed and name changed objects"
         )
+    if discard_effect_origin is not None and (
+        not isinstance(discard_effect_origin, DiscardEffectOrigin) or not changes
+        or any(result.get(object_id) is not ZoneTransitionKind.DISCARD or dest != "graveyard"
+               for object_id, dest in changes)
+    ):
+        raise GameRuleError("Discard effect provenance requires one committed discard batch")
     return result
 
 
@@ -220,6 +229,8 @@ class ZoneChangeOccurrence:
     source_entry_x_information: Mapping[str,Any] | None = None
     composition: CompositionZoneFact | Mapping[str,Any] | None = None
     paid_alternative_entry_information: Mapping[str,Any] | None = None
+    discard_effect_origin: DiscardEffectOrigin | None = None
+    putting_player: str | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -249,6 +260,17 @@ class ZoneChangeOccurrence:
             raise ZoneTriggerEventError(
                 "zone_occurrence.transition_kind must be a supported typed value"
             )
+        if self.putting_player is not None:
+            _string(self.putting_player, field="zone_occurrence.putting_player")
+            if self.origin == "battlefield" or self.destination != "battlefield":
+                raise ZoneTriggerEventError("Putting-player authority requires a committed battlefield entry")
+        if self.discard_effect_origin is not None and (
+            not isinstance(self.discard_effect_origin, DiscardEffectOrigin)
+            or self.transition_kind is not ZoneTransitionKind.DISCARD or self.origin != "hand"
+            or not self.card_object or self.token
+            or self.previous_logical_object_id == self.current_logical_object_id
+        ):
+            raise ZoneTriggerEventError("A discard effect origin must describe one committed hand discard")
         if self.composition is not None:
             fact=CompositionZoneFact.from_dict(self.composition) if isinstance(self.composition,Mapping) else self.composition
             if not isinstance(fact,CompositionZoneFact):raise ZoneTriggerEventError('Composition event facts must be typed')
@@ -379,6 +401,10 @@ class ZoneChangeOccurrence:
         if self.current_copy_snapshot is not None:
             result["current_copy_snapshot"] = thaw_value(self.current_copy_snapshot)
         if self.composition is not None:result['composition']=self.composition.to_dict()
+        if self.discard_effect_origin is not None:
+            result["discard_effect_origin"] = self.discard_effect_origin.to_dict()
+        if self.putting_player is not None:
+            result["putting_player"] = self.putting_player
         return result
 
     @property
@@ -553,6 +579,45 @@ def _state_timed_zone_events(occurrence,events):
     return tuple(result)
 
 
+def _committed_discard_context(occurrence, event_context):
+    if occurrence.discard_effect_origin is None:
+        return event_context
+    return {**event_context, "discard_effect_origin": occurrence.discard_effect_origin.to_dict()}
+
+
+def _normalized_battlefield_entry_events(occurrence, common):
+    result = []
+    current_facts = sealed_public_characteristic_facts(
+        occurrence.current_characteristics
+    )
+    current_types = set(current_facts["types"])
+    entered = {
+        **common,
+        "controller": occurrence.current_controller,
+        **current_facts,
+        **({"counter_names": sorted(name for name, count in occurrence.current_counters.items() if count > 0)}
+           if occurrence.current_counters is not None else {}),
+        "mana_value": float(
+            occurrence.current_characteristics.get("mana_value", 0) or 0
+        ),
+        "tapped": occurrence.tapped,
+        "card_object_identity": occurrence.current_logical_object_id,
+        **({"putting_player": occurrence.putting_player} if occurrence.putting_player is not None else {}),
+        **({"copiable_snapshot": dict(occurrence.current_copy_snapshot)} if occurrence.current_copy_snapshot is not None else {}),
+    }
+    result.append(
+        NormalizedZoneTriggerEvent(
+            "permanent.enter", "after", FrozenMap(entered)
+        )
+    )
+    for card_type in ("artifact", "creature", "land", "enchantment"):
+        if card_type in current_types:
+            result.append(NormalizedZoneTriggerEvent(
+                f"{card_type}.enter", "after", FrozenMap(entered),
+            ))
+    return result
+
+
 def normalized_zone_trigger_events(
     occurrence: ZoneChangeOccurrence,
 ) -> tuple[NormalizedZoneTriggerEvent, ...]:
@@ -654,39 +719,11 @@ def normalized_zone_trigger_events(
     if occurrence.transition_kind is ZoneTransitionKind.DISCARD:
         result.append(
             NormalizedZoneTriggerEvent(
-                "card.discarded", "after", FrozenMap(common)
+                "card.discarded", "after", FrozenMap(_committed_discard_context(occurrence, common))
             )
         )
     if occurrence.destination == "battlefield" and occurrence.origin != "battlefield":
-        current_facts = sealed_public_characteristic_facts(
-            occurrence.current_characteristics
-        )
-        current_types = set(current_facts["types"])
-        entered = {
-            **common,
-            "controller": occurrence.current_controller,
-            **current_facts,
-            **({"counter_names": sorted(name for name, count in occurrence.current_counters.items() if count > 0)}
-               if occurrence.current_counters is not None else {}),
-            "mana_value": float(
-                occurrence.current_characteristics.get("mana_value", 0) or 0
-            ),
-            "tapped": occurrence.tapped,
-            "card_object_identity": occurrence.current_logical_object_id,
-            **({"copiable_snapshot": dict(occurrence.current_copy_snapshot)} if occurrence.current_copy_snapshot is not None else {}),
-        }
-        result.append(
-            NormalizedZoneTriggerEvent(
-                "permanent.enter", "after", FrozenMap(entered)
-            )
-        )
-        for card_type in ("artifact", "creature", "land", "enchantment"):
-            if card_type in current_types:
-                result.append(
-                    NormalizedZoneTriggerEvent(
-                        f"{card_type}.enter", "after", FrozenMap(entered)
-                    )
-                )
+        result.extend(_normalized_battlefield_entry_events(occurrence, common))
     if (physical and occurrence.card_object and not occurrence.token
             and occurrence.destination == 'graveyard' and occurrence.origin != 'graveyard'):
         entered_graveyard = {

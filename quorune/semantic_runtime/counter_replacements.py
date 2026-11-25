@@ -15,6 +15,7 @@ from ..replacement_effects import (
     ReplacementSelection,
     advance_replacement_batch,
 )
+from ..replacement.operations import HalveCounterPlacementAmount
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
     RuntimeComponentRegistry,
@@ -26,6 +27,7 @@ from .context import SemanticNodeError
 
 _QUANTITY_HANDLER_ID = "replacement.counter.quantity.v1"
 _QUANTITY_V2_HANDLER_ID = "replacement.counter.quantity.v2"
+OPPONENT_COUNTER_HALVING_HANDLER_ID = "replacement.counter.opponent-halving.v1"
 _RELATIONS = {"any", "source_controller", "opponent"}
 _EFFECT_SCOPES = {"any", "effect_only"}
 _TARGET_KINDS = {"permanent", "player"}
@@ -693,6 +695,43 @@ class CounterQuantityReplacementV2Handler:
         return (self.replacement_effect(descriptor, context),)
 
 
+@dataclass(frozen=True, slots=True)
+class OpponentCounterHalvingHandler:
+    """One rounded-down replacement on an opponent's actual counter placement."""
+
+    handler_id: str = OPPONENT_COUNTER_HALVING_HANDLER_ID
+    schema_version: int = 1
+    family: str = "replacement.counter.quantity"
+    event: str = "counter.place"
+    rule_references: tuple[str, ...] = ("118.11", "122.6", "614.5", "614.6", "616.1")
+    capability_dependencies: tuple[str, ...] = ("counter.placement.quantity_replacement",)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="Opponent counter halving")
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version):
+            raise SemanticNodeError("Opponent counter halving requires its exact typed event")
+
+    def replacement_effect(self, descriptor, context):
+        self.validate(descriptor)
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{context.source_ref}:{context.component_id or 'half'}",
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "target_kind": {"in": ["permanent", "player"]},
+                "placing_player": CounterQuantityReplacementHandler._relation_condition("opponent", context.source_controller),
+                "amount": {"gte": 1},
+            },
+            operations=(HalveCounterPlacementAmount(),),
+            label=f"{context.source_ref}: halve counters, rounded down",
+        )
+
+    def lower(self, descriptor, context):
+        return (self.replacement_effect(descriptor, context),)
+
+
 class CounterPlacementReplacementRegistry(
     RuntimeComponentRegistry[
         CounterReplacementSourceContext,
@@ -721,6 +760,7 @@ def default_counter_placement_replacement_registry(
         (
             CounterQuantityReplacementHandler(),
             CounterQuantityReplacementV2Handler(),
+            OpponentCounterHalvingHandler(),
         )
     )
     registry.require_registered_capabilities(

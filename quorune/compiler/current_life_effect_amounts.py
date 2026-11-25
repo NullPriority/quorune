@@ -17,6 +17,19 @@ def current_life_effect_amount_template(text, *, source_name, compile_fixed):
     if len(_DEFINITION.findall(normalized)) != 1:
         return None
     body = _DEFINITION.sub('', normalized)
+    binding = 'life:' + hashlib.sha256(normalized.encode('utf-8')).hexdigest()[:24]
+    if re.fullmatch(r"This creature gets \+X/\+X until end of turn\.?", body, re.I):
+        template, effects, schema, mechanics = compile_fixed(body.replace("+X", "+1").replace("+x", "+1"))
+        if template is None or schema is not None or len(effects) != 1:
+            return None
+        effect, = effects
+        if (effect.get("op") != "apply_source_characteristics_until_end_of_turn"
+                or effect.get("card") != "$source.zone_object"
+                or effect.get("power") != 1 or effect.get("toughness") != 1):
+            return None
+        value = CurrentLifeEffectAmountSpec(binding).to_dict()
+        return (template, ({**effect, "power": value, "toughness": value},), schema,
+                (*mechanics, CURRENT_LIFE_AMOUNT_MECHANIC))
     # The fixed one-target owner already binds this exact keyword follow-up.
     rider = re.fullmatch(r'Put X [^.]+ counters on target creature\. That creature gains [^.]+ until end of turn\.', body, re.I)
     if rider is not None:
@@ -25,7 +38,6 @@ def current_life_effect_amount_template(text, *, source_name, compile_fixed):
         compile_fixed=compile_fixed, cast_x_available=True)
     if compiled is None:
         return None
-    binding = 'life:' + hashlib.sha256(normalized.encode('utf-8')).hexdigest()[:24]
     replaced = 0
 
     def project(value, operation='', path=()):

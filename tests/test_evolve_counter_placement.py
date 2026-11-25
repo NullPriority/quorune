@@ -11,6 +11,9 @@ from common import ROOT, keep_all, make_session
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckLoader
 from quorune.evolve import (
+    EVOLVE_ENTRANT_CONTEXT,
+    EVOLVE_ENTRANT_LKI_VERSION_FIELD,
+    EvolveEntrantObservation,
     EvolveCharacteristics,
     EvolveError,
     evolve_condition_holds,
@@ -524,6 +527,7 @@ class EvolveRuntimeTests(unittest.TestCase):
 
         session = self.session(70210202)
         engine = session.engine
+        engine.state.evolve_entrant_lki_version = None
         source = self.add_card(
             engine,
             seat="A",
@@ -571,6 +575,68 @@ class EvolveRuntimeTests(unittest.TestCase):
         self.resolve_top(engine)
 
         self.assertNotIn("+1/+1", source.counters)
+
+    def test_departure_seals_last_live_stats_before_placement_or_resolution(self):
+        for place_before_departure in (False, True):
+            with self.subTest(place_before_departure=place_before_departure):
+                session = self.session(70210601)
+                engine = session.engine
+                source = self.add_card(
+                    engine, seat="A", name="Cloudfin Raptor",
+                    ref="lki-source", zone="battlefield",
+                )
+                entrant = self.add_card(
+                    engine, seat="A", name="Evolve Test Beast",
+                    ref="lki-entrant", zone="hand",
+                )
+                self.register_evolve(engine, source)
+                engine.move_card(entrant.object_id, "battlefield", controller="A", semantic_events=True)
+                original_incarnation = entrant.zone_change_counter
+                self.assertTrue(engine.state.pending_trigger_batches)
+                if place_before_departure:
+                    self.assertFalse(engine._stabilize())
+                    self.assertEqual(1, len(engine.state.stack))
+                source.counters["+1/+1"] = 4
+                entrant.counters["+1/+1"] = 4
+                expected = EvolveCharacteristics(
+                    True, engine._numeric_stat(entrant.object_id, "power"),
+                    engine._numeric_stat(entrant.object_id, "toughness"),
+                )
+                engine.move_card(entrant.object_id, "exile", log=False)
+                engine.move_card(entrant.object_id, "battlefield", controller="A", log=False)
+                self.assertNotEqual(original_incarnation, entrant.zone_change_counter)
+                self.assertFalse(engine._stabilize())
+                trigger, = (item for item in engine.state.stack
+                            if item.context["card_zone_change_counter"] == original_incarnation)
+                observation = EvolveEntrantObservation.from_dict(trigger.context[EVOLVE_ENTRANT_CONTEXT])
+                self.assertEqual(original_incarnation, observation.zone_change_counter)
+                self.assertEqual(expected, observation.last_known)
+                self.assertFalse(observation.identifies(entrant))
+                self.assertNotIn("last_known", json.dumps(session.packet("pilot:B", full=True)))
+                while engine.state.stack:
+                    self.resolve_top(engine)
+                self.assertEqual(5, source.counters["+1/+1"])
+
+    def test_evolve_departure_version_is_bound_to_the_replay_checkpoint(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        state = self.session(70210602).state
+        current = state.to_dict()
+        self.assertEqual(1, current[EVOLVE_ENTRANT_LKI_VERSION_FIELD])
+        modern = format_state_versions(state)
+        validate_state_versions({"format": modern}, GameState.from_dict(current))
+        old = GameState.from_dict({key: value for key, value in current.items()
+                                   if key != EVOLVE_ENTRANT_LKI_VERSION_FIELD})
+        old_format = format_state_versions(old)
+        self.assertNotIn(EVOLVE_ENTRANT_LKI_VERSION_FIELD, old.to_dict())
+        self.assertNotIn(EVOLVE_ENTRANT_LKI_VERSION_FIELD, old_format)
+        validate_state_versions({"format": old_format}, old)
+        with self.assertRaisesRegex(ValueError, "Evolve entrant LKI provenance"):
+            validate_state_versions({"format": modern}, old)
+        for malformed in (True, 2, "1"):
+            with self.subTest(malformed=malformed), self.assertRaises(EvolveError):
+                GameState.from_dict({**current, EVOLVE_ENTRANT_LKI_VERSION_FIELD: malformed})
 
     def test_quantity_replacement_and_control_change_use_trigger_controller(self):
         session = self.session(70210301)

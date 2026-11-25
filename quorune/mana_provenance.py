@@ -545,6 +545,14 @@ def clear_mana_provenance(stats: MutableMapping[str, Any]) -> None:
     stats.pop(_RESTRICTED_MANA_KEY, None)
 
 
+def lose_all_unspent_mana(player: Any) -> dict[str, int]:
+    """Remove the current pool and its provenance as an explicit effect."""
+    pool = normalize_mana_bundle(player.mana_pool)
+    player.mana_pool = normalize_mana_bundle(None)
+    clear_mana_provenance(player.stats)
+    return {color: amount for color, amount in pool.items() if amount}
+
+
 def clear_step_mana(
     player: Any,
     *,

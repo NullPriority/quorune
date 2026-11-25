@@ -162,4 +162,9 @@ def paid_sacrifice_amount_template(text, *, cost_schema, source_name, compile_fi
     )
     if value is not None or sacrifice_cost.predicate.types_any != ('creature',):
         return value
-    return _paid_sacrifice_stat_template(source, source_name=source_name, compile_fixed=compile_fixed)
+    from .damage_templates import targeted_dealt_life_gain_template
+
+    def compile_stat(body):
+        return _paid_sacrifice_stat_template(body, source_name=source_name, compile_fixed=compile_fixed)
+
+    return targeted_dealt_life_gain_template(source, compile_damage=compile_stat) or compile_stat(source)

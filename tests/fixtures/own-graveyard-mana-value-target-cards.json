@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed owned graveyard X and current target witnesses.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f900",
+      "name": "Ember Recall",
+      "mana_cost": "{X}{B}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature card with mana value X or less from your graveyard to the battlefield.",
+      "keywords": [],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f901",
+      "name": "Rill Courier",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f902",
+      "name": "Rill Lurker",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f903",
+      "name": "Rill Keeper",
+      "mana_cost": "{5}",
+      "cmc": 5,
+      "type_line": "Creature - Elemental",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "2",
+      "toughness": "2"
+    },
+    {
+      "oracle_id": "00000000-0000-4891-8060-00000000f904",
+      "name": "Borrowed Hook",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "keywords": [],
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

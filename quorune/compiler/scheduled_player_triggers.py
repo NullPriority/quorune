@@ -5,7 +5,22 @@ from __future__ import annotations
 from copy import deepcopy
 from . import regex_working_set as re
 
+from ..additional_beginning_model import (
+    ADDITIONAL_BEGINNING_CAPABILITY,
+    ADDITIONAL_BEGINNING_CONTROLLER_VARIANT,
+    ADDITIONAL_BEGINNING_ENCHANTED_VARIANT,
+    ADDITIONAL_BEGINNING_VARIANTS,
+    additional_beginning_condition,
+    additional_beginning_effect,
+)
+from ..entry_designations import (
+    ENTRY_DESIGNATION_CAPABILITY, LINKED_OPPONENT_UPKEEP_TEMPLATE, LINKED_OPPONENT_UPKEEP_VARIANT,
+    linked_opponent_upkeep_condition,
+)
+from ..power_sacrifice_model import CONTROLLER_SACRIFICE_LIFE_TEMPLATE, controller_sacrifice_toughness_life_effect
+from ..rules.affected_player_sacrifice_capability_shapes import upkeep_sacrifice_life_condition
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_MECHANIC
+from .affected_player_sacrifice_templates import FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from .fixed_controller_effect_sequences import _clauses
 from .event_result_value_templates import scheduled_fractional_life_instruction
@@ -18,7 +33,51 @@ SCHEDULED_PLAYER_VARIANTS = frozenset({'each_player_upkeep','each_opponent_upkee
                                      'each_player_draw','each_opponent_draw','each_other_player_draw'})
 
 
+_UPKEEP_SACRIFICE_LIFE_VARIANT = "controller_upkeep_selected_sacrifice_life"
+_UPKEEP_SACRIFICE_LIFE = re.compile(
+    r"At the beginning of your upkeep, (?P<body>sacrifice a creature\. You gain life equal to that creature['’]s toughness\.)",
+    re.I,
+)
+
+
+_ADDITIONAL_BEGINNING = re.compile(
+    r"At the beginning of (?:(?P<own>your postcombat main phase|each of your postcombat main phases)|"
+    r"enchanted player['’]s postcombat main phase|each of enchanted player['’]s postcombat main phases), "
+    r"(?P<body>there is an additional beginning phase after this phase[.]?)",
+    re.I,
+)
+
+
 def scheduled_player_binding_spec(text, *, card_name=None):
+    if extra := _ADDITIONAL_BEGINNING.fullmatch(text):
+        enchanted = extra["own"] is None
+        return FixedPublicEventBindingSpec(
+            event="step.begin",
+            variant=ADDITIONAL_BEGINNING_ENCHANTED_VARIANT if enchanted else ADDITIONAL_BEGINNING_CONTROLLER_VARIANT,
+            body=extra["body"],
+            template_id="postcombat-additional-beginning-trigger-v1",
+            mechanic="cr-603-handling-triggered-abilities",
+            condition=additional_beginning_condition(enchanted=enchanted),
+            capabilities=(ADDITIONAL_BEGINNING_CAPABILITY, "trigger.placement.apnap"),
+        )
+    from .target_hand_amount_templates import upkeep_target_hand_life_binding_spec
+
+    if hand_life := upkeep_target_hand_life_binding_spec(text):
+        return hand_life
+    if sacrifice := _UPKEEP_SACRIFICE_LIFE.fullmatch(text):
+        return FixedPublicEventBindingSpec(
+            event="step.begin", variant=_UPKEEP_SACRIFICE_LIFE_VARIANT, body=sacrifice["body"],
+            template_id=CONTROLLER_SACRIFICE_LIFE_TEMPLATE, mechanic="cr-603-handling-triggered-abilities",
+            condition=upkeep_sacrifice_life_condition(),
+        )
+    linked = re.fullmatch(r"At the beginning of the chosen player['’]s upkeep, (?P<body>.+)", text, re.I)
+    if linked is not None:
+        return FixedPublicEventBindingSpec(
+            event="step.begin", variant=LINKED_OPPONENT_UPKEEP_VARIANT,
+            body=linked["body"], template_id=LINKED_OPPONENT_UPKEEP_TEMPLATE,
+            mechanic="cr-603-handling-triggered-abilities", condition=linked_opponent_upkeep_condition(),
+            capabilities=(SCHEDULED_PLAYER_CAPABILITY, ENTRY_DESIGNATION_CAPABILITY),
+        )
     match=re.fullmatch(r"At the beginning of each (?P<who>player|opponent|other player)['’]s (?P<step>upkeep|draw step), (?P<body>.+)",text,re.I)
     attached=re.fullmatch(r"At the beginning of the upkeep of enchanted (?P<type>creature|permanent|artifact|enchantment|land)['’]s controller, (?P<body>.+)",text,re.I)
     if match is None and attached is None:return None
@@ -37,8 +96,46 @@ def scheduled_player_binding_spec(text, *, card_name=None):
         condition={'all':conditions},capabilities=(SCHEDULED_PLAYER_CAPABILITY,))
 
 
+def _scheduled_creature_return_result(binding, body):
+    if (binding.variant != "each_player_upkeep" or body != binding.body
+            or re.fullmatch(r"That player returns a creature they control to its owner['’]s hand[.]?", body, re.I) is None):
+        return None
+    from ..rules.event_player_choice_shapes import UPKEEP_CREATURE_RETURN_MECHANIC, upkeep_creature_return_effect
+
+    return (
+        ("scheduled-player-fixed-creature-return-v1", (upkeep_creature_return_effect(),), None,
+         (UPKEEP_CREATURE_RETURN_MECHANIC, SCHEDULED_PLAYER_MECHANIC)),
+        True,
+    )
+
+
 def scheduled_player_result(binding, body, *, effect_template, card_name):
+    if binding.variant in ADDITIONAL_BEGINNING_VARIANTS and body == binding.body:
+        return ("postcombat-additional-beginning-v1", (additional_beginning_effect(),), None, ()), True
+    if binding.variant == _UPKEEP_SACRIFICE_LIFE_VARIANT and body == binding.body:
+        return (
+            (CONTROLLER_SACRIFICE_LIFE_TEMPLATE, (controller_sacrifice_toughness_life_effect(),), None,
+             (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", "cr-119-life")),
+            True,
+        )
+    if binding.event.value == "step.begin" and binding.variant == "your upkeep" and body == binding.body:
+        from .damage_templates import upkeep_other_controlled_creatures_damage_template
+
+        if damage := upkeep_other_controlled_creatures_damage_template(body):
+            return damage, True
+    from .target_hand_amount_templates import upkeep_target_hand_life_result
+
+    if hand_life := upkeep_target_hand_life_result(binding, body):
+        return hand_life
+    if binding.variant == LINKED_OPPONENT_UPKEEP_VARIANT:
+        from .upkeep_hand_difference_templates import upkeep_hand_difference_result
+        return upkeep_hand_difference_result(binding, body, effect_template=effect_template, card_name=card_name)
     if binding.variant not in SCHEDULED_PLAYER_VARIANTS:return None
+    if creature_return := _scheduled_creature_return_result(binding, body):
+        return creature_return
+    from .scheduled_life_return import scheduled_life_return_result
+    if life_return := scheduled_life_return_result(binding, body):
+        return life_return
     if binding.variant in {'each_player_upkeep', 'each_opponent_upkeep'}:
         from .event_player_choice_templates import _sacrifice_clause
         from .affected_player_sacrifice_templates import fixed_affected_player_sacrifice_effect_template

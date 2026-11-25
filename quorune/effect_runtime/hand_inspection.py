@@ -148,7 +148,9 @@ def _stack_cost_reveal_rows(item):
     return tuple(raw['reveals'])
 
 
-def begin_stack_cost_hand_reveal(host,selection,*,item,source_ref):
+def begin_stack_cost_hand_reveal(
+    host, selection, *, item, source_ref, summary="A card was revealed to pay a casting cost.",
+):
     """CR701.20a: a revealed casting-cost card stays visible until stack departure."""
     card=validate_entry_hand_reveal(host,selection);prior=list(card.revealed_to)
     for pending in host.state.stack:
@@ -158,7 +160,7 @@ def begin_stack_cost_hand_reveal(host,selection,*,item,source_ref):
                 prior=list(row['previous_revealed_to'])
                 break
     rows=list(_stack_cost_reveal_rows(item));rows.append({'selection':dict(selection),'previous_revealed_to':prior,'stack_ref':item.ref})
-    commit_selected_hand_reveal(host,selection,source_ref=source_ref,summary='A card was revealed to pay a casting cost.')
+    commit_selected_hand_reveal(host, selection, source_ref=source_ref, summary=summary)
     card.revealed_to=sorted(set(card.revealed_to).union(host.seats))
     item.context['casting_hand_reveals']={'schema_version':1,'reveals':rows}
 

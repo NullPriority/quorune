@@ -16,6 +16,7 @@ def prepared_from_zone_event(
     effects: tuple[ReplacementEffect, ...],
     journal: tuple[ReplacementSelection, ...],
     devour_sacrifices: tuple[PreparedZoneChange,...] = (),
+    graveyard_copy_exiles: tuple[PreparedZoneChange,...] = (),
 ) -> PreparedZoneChange:
     counter_events: list[ReplaceableEvent] = []
 
@@ -87,10 +88,12 @@ def prepared_from_zone_event(
         read_ahead_chapter=read_ahead_chapter,
         entry_chosen_color=event.payload.get("entry_chosen_color"),
         entry_chosen_creature_type=event.payload.get("entry_chosen_creature_type"),
+        entry_chosen_card_name=event.payload.get("entry_chosen_card_name"),
         event=event,
         effects=effects,
         counter_events=tuple(counter_events),
         keyword_grants=tuple(sorted(keyword_grants)),
         journal=journal,
         devour_sacrifices=devour_sacrifices,
+        graveyard_copy_exiles=graveyard_copy_exiles,
     )

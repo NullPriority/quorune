@@ -9,8 +9,9 @@ def move_allocated_search_results(host, context, selected_cards, replacement_sel
     object_ids = tuple(card.object_id for card in selected_cards)
     changes = tuple(zip(object_ids, spec.destinations(selected_cards), strict=True))
     owner.reveal_library_search_results(seat, object_ids, public=spec.search.reveal)
+    entrants = {oid: seat for oid, dest in changes if dest == 'battlefield'}
     moved = owner.move_cards_simultaneously(changes, reason=f'{context.item.label} search', log=False,
-        destination_controllers={oid: seat for oid, dest in changes if dest == 'battlefield'},
+        destination_controllers=entrants, putting_players=entrants,
         tapped_by_object={oid: spec.first_tapped for oid, dest in changes if dest == 'battlefield'},
         replacement_selections=replacement_selections)
     if spec.search.reveal:

@@ -62,7 +62,8 @@ class PredefinedRoleCompilerTests(unittest.TestCase):
             self.assertIsNone(role_creation_parts(text))
         from quorune.compiled_ability_fragments import compiled_static_ability_fragments
         from types import SimpleNamespace
-        program = SimpleNamespace(key='fixture:static:front:n1:role:1', provenance={'granted_only': True})
+        program = SimpleNamespace(key='fixture:static:front:n1:role:1', active_zone='battlefield',
+                                  provenance={'granted_only': True})
         registry = SimpleNamespace(runtime_handler_programs_for_oracle=lambda *_args, **_kwargs: (),
             programs_for_oracle=lambda *_args, **_kwargs: (program,))
         host = SimpleNamespace(semantics=registry, card_record=lambda _card: role_creator('Draw a card.'),

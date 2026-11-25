@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000115701",
+      "name": "Trial Slot Meddler",
+      "mana_cost": "{2}{U}",
+      "cmc": 3,
+      "type_line": "Creature — Wizard",
+      "power": "1",
+      "toughness": "4",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "oracle_text": "Flash\nWhen this creature enters, you may change a target of target spell or ability to this creature.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000115702",
+      "name": "Trial Redirect Golem",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact Creature — Golem",
+      "power": "0",
+      "toughness": "4",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "oracle_text": "{U/P}: Change a target of target spell or ability to this creature.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000115703",
+      "name": "Trial Needle Mage",
+      "mana_cost": "{2}{R}",
+      "cmc": 3,
+      "type_line": "Creature — Human Wizard",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "oracle_text": "{T}: This creature deals 1 damage to any target.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for source-directed target changes."
+}

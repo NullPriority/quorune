@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
+from .turn_history_model import PLUS_ONE_COUNTERS_PLACED_EVENT, TurnHistoryEvent
 
 from .counter_placement_event_model import counter_quantity_provenance_version
 from .counter_state import (
@@ -235,9 +236,38 @@ class CounterPlacementCommitPlan:
     prepared: PreparedCounterPlacements
     rows: tuple[CounterPlacementCommitRow, ...]
     state_plan: CounterStatePlan
+    placement_history_turn: int | None = None
+    placement_history: tuple[TurnHistoryEvent, ...] = ()
 
 
-def _event_spec(
+def _plus_one_history_for_commit(host, rows):
+    history = getattr(host.state, "turn_history", None)
+    if getattr(history, "plus_one_counter_placement_history_version", None) != 1:
+        return None, ()
+    turn = host.state.turn_sequence
+    if history.turn_sequence != turn:
+        raise CounterPlacementError("Counter placement requires the current turn journal")
+    facts = []
+    for row in rows:
+        payload = row.event.payload
+        if (row.counter_name != "+1/+1" or row.amount <= 0 or row.subject_kind != "permanent"
+                or payload.get("target_zone") != "battlefield"):
+            continue
+        try:
+            types = payload.get("target_types")
+            if not isinstance(types, (list, tuple)):
+                raise ValueError("Counter placement history lost the recipient's typed characteristics")
+            facts.append(TurnHistoryEvent(
+                PLUS_ONE_COUNTERS_PLACED_EVENT, actor=payload.get("placing_player"),
+                object_incarnation=host.state.cards[row.subject_id].logical_object_id,
+                types=tuple(types), amount=row.amount,
+            ))
+        except (TypeError, ValueError) as exc:
+            raise CounterPlacementError(str(exc)) from exc
+    return (turn, tuple(facts)) if facts else (None, ())
+
+
+def counter_placement_event_spec(
     host: CounterPlacementHost,
     request: CounterPlacementRequest,
     *,
@@ -340,7 +370,7 @@ def prepare_counter_placements(
             )
         return PreparedCounterPlacements(events=(), effects=(), journal=())
     specs = tuple(
-        _event_spec(
+        counter_placement_event_spec(
             host,
             request,
             event_id=(
@@ -625,10 +655,13 @@ def plan_prepared_counter_placement_commit(
         )
     except CounterStateError as exc:
         raise CounterPlacementError(str(exc)) from exc
+    history_turn, history = _plus_one_history_for_commit(host, validated)
     return CounterPlacementCommitPlan(
         prepared=prepared,
         rows=tuple(validated),
         state_plan=state_plan,
+        placement_history_turn=history_turn,
+        placement_history=history,
     )
 
 
@@ -674,6 +707,12 @@ def validate_counter_placement_commit(
         raise CounterPlacementError(
             "Counter placement validation requires a typed commit plan"
         )
+    if plan.placement_history:
+        history = getattr(host.state, "turn_history", None)
+        if (history is None or history.plus_one_counter_placement_history_version != 1
+                or history.turn_sequence != plan.placement_history_turn
+                or history.turn_sequence != host.state.turn_sequence):
+            raise CounterPlacementError("Counter placement history changed before commit")
     try:
         validate_counter_changes(host, plan.state_plan)
     except CounterStateError as exc:
@@ -712,6 +751,8 @@ def finish_counter_placement_commit(
     dispatch_sagas: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
     """Publish placement results after the canonical counter plan was committed."""
+    if plan.placement_history:
+        host.state.turn_history.events.extend(plan.placement_history)
     results: list[CounterPlacementResult] = []
     for row, transition in zip(
         plan.rows, transitions, strict=True

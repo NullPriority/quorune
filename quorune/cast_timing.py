@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Any, Mapping, Protocol, Sequence
 
 
@@ -20,6 +21,41 @@ PRINTED_FLASH_MECHANIC = PRINTED_FLASH_CAPABILITY.rsplit(".", 1)[1].removeprefix
 
 class CastTimingPermissionError(ValueError):
     """A compiled cast-timing permission is malformed or unsupported."""
+
+
+class OpponentUpkeepWindow(StrEnum):
+    DURING = "during_upkeep"
+    AFTER = "after_upkeep"
+
+
+@dataclass(frozen=True, slots=True)
+class OpponentUpkeepCastWindow:
+    window: OpponentUpkeepWindow
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if (not isinstance(self.window, OpponentUpkeepWindow)
+                or type(self.schema_version) is not int or self.schema_version != 1):
+            raise CastTimingPermissionError("Opponent upkeep casting requires an exact version-one window")
+
+    def to_dict(self):
+        return {"kind": "opponent_upkeep_window", "window": self.window.value, "schema_version": self.schema_version}
+
+    @classmethod
+    def from_dict(cls, value):
+        if (not isinstance(value, Mapping) or set(value) != {"kind", "window", "schema_version"}
+                or value["kind"] != "opponent_upkeep_window" or type(value["window"]) is not str):
+            raise CastTimingPermissionError("Opponent upkeep cast window fields are closed")
+        return cls(OpponentUpkeepWindow(value["window"]), value["schema_version"])
+
+    def permits(self, state, actor: str) -> bool:
+        active = state.active_player
+        if (active == actor or active not in state.players or actor not in state.players
+                or not state.players[active].in_game or not state.players[actor].in_game):
+            return False
+        if self.window is OpponentUpkeepWindow.DURING:
+            return (state.phase, state.step) == ("beginning", "upkeep")
+        return state.upkeep_completed is True
 
 
 @dataclass(frozen=True, slots=True)

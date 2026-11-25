@@ -97,6 +97,8 @@ FIXED_TARGET_LAND_TYPE_VERSION = 24
 FIXED_TARGET_LAND_TYPE_CAPABILITY = "continuous.resolution.fixed_target_basic_land_type"
 FIXED_TARGET_LAND_TYPE_MECHANIC = "fixed-target-basic-land-type"
 SOURCE_PRESENT_LAND_TYPE_CAPABILITY = "continuous.resolution.fixed_target_basic_land_type_source_presence"
+NEXT_UNTAP_LAND_TYPE_CAPABILITY = "continuous.resolution.fixed_target_basic_land_type_until_untap"
+SOURCE_EXIT_LAND_TYPE_CAPABILITY = "continuous.resolution.fixed_target_basic_land_type_source_exit"
 
 
 @dataclass(frozen=True, slots=True)
@@ -111,12 +113,19 @@ class FixedTargetLandTypeSpec:
             raise ValueError("Choose one canonical basic land type")
         if type(self.controller_relation) is not str or self.controller_relation not in ("any", "you", "opponent"):
             raise ValueError("Basic type setting has a closed target relationship")
-        if type(self.duration) is not str or self.duration not in ("until_end_of_turn", "zone_object", "until_source_leaves"):
+        if type(self.duration) is not str or self.duration not in (
+            "until_end_of_turn", "zone_object", "until_source_leaves", "until_recipient_controller_untap",
+            "until_source_battlefield_exit",
+        ):
             raise ValueError("Basic type setting requires a represented duration")
         if type(self.retain_other_land_types) is not bool:
             raise ValueError("Basic type setting requires an explicit treatment of existing land types")
-        if self.duration == "until_source_leaves" and self.retain_other_land_types:
-            raise ValueError("A source-presence land type result requires exact basic type setting")
+        if self.duration in {"until_source_leaves", "until_source_battlefield_exit"} and self.retain_other_land_types:
+            raise ValueError("A source-duration land type result requires exact basic type setting")
+        if self.duration == "until_recipient_controller_untap" and (
+            self.controller_relation != "any" or self.retain_other_land_types
+        ):
+            raise ValueError("Recipient untap duration requires an unqualified land-type setting")
 
     def target_schema(self):
         schema = target_land_type_schema()

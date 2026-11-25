@@ -43,6 +43,14 @@ def _announced_characteristic_targets(text):
 def announced_target_set_effect_template(text: str) -> Any:
     """Lower cardinality only; the caller must establish mana-announced X."""
 
+    normalized = " ".join(text.strip().split())
+    if re.fullmatch(r"up to X target creatures phase out\.?", normalized, re.IGNORECASE):
+        from ..phasing_model import PHASE_OUT_MECHANIC, announced_phase_out_effect
+
+        schema = {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["creature"],
+                  "count_parameter": AnnouncedTargetCardinality(selection="up_to").to_dict()}
+        return ("announced-creature-set-phase-out-v1", (announced_phase_out_effect(),), schema,
+                (PHASE_OUT_MECHANIC, ANNOUNCED_TARGET_SET_MECHANIC, "cr-115-targets"))
     characteristic = _announced_characteristic_targets(text)
     if characteristic is not None:
         return characteristic

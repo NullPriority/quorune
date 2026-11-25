@@ -12,6 +12,9 @@ from ..affected_permanents import (
 from ..mana import BASIC_LAND_MANA
 from ..creature_subtypes import canonical_creature_subtype_surface
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
+from ..rules.aura_attachment_targets import AuraAttachmentTargetSpec
+from ..rules.destruction_result_model import ChosenCreatureTypeDestruction
+from ..rules.qualified_destruction import RelativePowerDestructionScope, RelativePowerDestructionSetSpec
 from .direct_target import (
     DirectPermanentTargetSpec,
     compiled_direct_target,
@@ -24,11 +27,11 @@ from .direct_target import (
 class TargetedDestructionEffectTemplate:
     """Closed lowering for one mandatory direct-target destruction."""
 
-    target_spec: DirectPermanentTargetSpec
+    target_spec: DirectPermanentTargetSpec | AuraAttachmentTargetSpec
     regeneration_prohibited: bool = False
 
     def __post_init__(self) -> None:
-        if not isinstance(self.target_spec, DirectPermanentTargetSpec):
+        if not isinstance(self.target_spec, (DirectPermanentTargetSpec, AuraAttachmentTargetSpec)):
             raise ValueError("Destruction target predicate is unsupported")
         if type(self.regeneration_prohibited) is not bool:
             raise ValueError(
@@ -190,7 +193,7 @@ _BASIC_LAND_SUBTYPES = {
 }
 _REGENERATION_PROHIBITION = re.compile(
     r"(?P<destruction>destroy .+?\.)\s+"
-    r"(?P<subject>it|they|those creatures|a creature destroyed this way|"
+    r"(?P<subject>it|they|that creature|those creatures|a creature destroyed this way|"
     r"creatures destroyed this way) can(?:not|'t) be regenerated"
     r"(?: this turn)?\.?",
     re.IGNORECASE,
@@ -431,15 +434,82 @@ def mass_destruction_effect_template(
     )
 
 
+@dataclass(frozen=True, slots=True)
+class ChosenCreatureTypeDestructionTemplate:
+    scope: ChosenCreatureTypeDestruction
+
+    def compiled(self):
+        return (
+            f"destroy-chosen-creature-type-{self.scope.value}-v1",
+            (self.scope.choice_effect(),),
+            None,
+            ("destroy", "destroy-fixed-set"),
+        )
+
+
+def _chosen_creature_type_destruction_template(text: str) -> ChosenCreatureTypeDestructionTemplate | None:
+    normalized = text.strip().casefold().replace("’", "'")
+    if normalized == "destroy all creatures of the creature type of your choice.":
+        return ChosenCreatureTypeDestructionTemplate(ChosenCreatureTypeDestruction.MATCHING)
+    if normalized == "choose a creature type. destroy all creatures that aren't of the chosen type.":
+        return ChosenCreatureTypeDestructionTemplate(ChosenCreatureTypeDestruction.NONMATCHING)
+    return None
+
+
+@dataclass(frozen=True, slots=True)
+class RelativePowerDestructionEffectTemplate:
+    spec: RelativePowerDestructionSetSpec
+
+    def compiled(self):
+        return (
+            f"destroy-relative-power-{self.spec.scope.value}-v1",
+            ({"op": "destroy_all", "source": "$source", "set": self.spec.to_dict()},),
+            self.spec.target_schema(),
+            ("destroy", "destroy-fixed-set", "cr-115-targets"),
+        )
+
+
+def _relative_power_destruction_template(text: str) -> RelativePowerDestructionEffectTemplate | None:
+    normalized = " ".join(text.casefold().replace("’", "'").split())
+    if normalized == "destroy all creatures with power greater than target creature's power.":
+        scope = RelativePowerDestructionScope.GREATER
+    elif normalized == "choose target creature you control. destroy all creatures with power less than that creature's power.":
+        scope = RelativePowerDestructionScope.LESS_THAN_CONTROLLED
+    else:
+        return None
+    return RelativePowerDestructionEffectTemplate(RelativePowerDestructionSetSpec(scope, "$target.0"))
+
+
 def destruction_effect_template(
     text: str,
-) -> MassDestructionEffectTemplate | AttachedDestructionEffectTemplate | TargetedDestructionEffectTemplate | None:
-    """Lower the closed targeted or fixed-set destruction grammar."""
+) -> (
+    MassDestructionEffectTemplate | AttachedDestructionEffectTemplate | TargetedDestructionEffectTemplate
+    | ChosenCreatureTypeDestructionTemplate | RelativePowerDestructionEffectTemplate | None
+):
+    """Lower the closed targeted, fixed-set, or chosen creature-type destruction grammar."""
 
     return (
-        mass_destruction_effect_template(text)
+        _relative_power_destruction_template(text)
+        or _chosen_creature_type_destruction_template(text)
+        or mass_destruction_effect_template(text)
+        or _attached_aura_destruction_template(text)
         or targeted_destruction_effect_template(text)
     )
+
+
+def _attached_aura_destruction_template(text):
+    match = re.fullmatch(
+        r"Destroy target Aura attached to a (?P<type>creature|land)(?P<controlled> you control)?\.",
+        text.strip(), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    attached_type = match["type"].casefold()
+    if attached_type == "land" and match["controlled"]:
+        return None
+    return TargetedDestructionEffectTemplate(AuraAttachmentTargetSpec(
+        attached_type, "you" if match["controlled"] else "any",
+    ))
 
 
 def targeted_destruction_effect_template(
@@ -452,6 +522,7 @@ def targeted_destruction_effect_template(
     if prohibition_subject not in {
         None,
         "it",
+        "that creature",
         "a creature destroyed this way",
     }:
         return None
@@ -465,7 +536,7 @@ def targeted_destruction_effect_template(
     target_spec = direct_permanent_target_spec(match.group("subject"))
     if target_spec is None:
         return None
-    if prohibition_subject == "a creature destroyed this way" and not (
+    if prohibition_subject in {"that creature", "a creature destroyed this way"} and not (
         target_spec.subtypes_any
         or target_spec.types_any == ("creature",)
         or "creature" in target_spec.types_all

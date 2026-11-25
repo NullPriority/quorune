@@ -3,13 +3,31 @@ from __future__ import annotations
 """Whole ordinary external entry-counter clauses, without runtime source text."""
 
 from . import regex_working_set as re
-from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_CAPABILITY,EXTERNAL_ENTRY_COUNTER_HANDLER,ExternalEntryCounterSpec
+from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY
+from ..external_entry_counter_model import (
+    EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
+    EXTERNAL_ENTRY_COUNTER_CAPABILITY, EXTERNAL_ENTRY_COUNTER_HANDLER, ExternalEntryCounterSpec,
+)
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
 
 
+def _chosen_subtype_external_counter_handler(material):
+    if material.casefold() != (
+        "each other creature you control of the chosen type enters with an additional +1/+1 counter on it"
+    ):
+        return None
+    return "external-chosen-subtype-entry-counter-v2", {
+        "handler_id": EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
+        "schema_version": 2, "event": "zone.change", "entry_counter": ExternalEntryCounterSpec().to_dict(),
+    }, (EXTERNAL_ENTRY_COUNTER_CAPABILITY, "counter.placement.quantity_replacement",
+        ENTRY_DESIGNATION_CAPABILITY, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY)
+
+
 def external_entry_counter_handler(text,*,source_name):
     material=' '.join(text.strip().split()).rstrip('.')
+    if chosen := _chosen_subtype_external_counter_handler(material):
+        return chosen
     source=SourceReferenceSpec(source_name).regex_pattern
     fixed=re.fullmatch(r'Each other (?P<kind>non-[A-Za-z-]+ |[A-Za-z-]+ )?creature you control enters with an additional \+1/\+1 counter on it',material,re.I)
     if fixed is not None:

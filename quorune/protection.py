@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 from math import isfinite
-from typing import Any, Iterable, Mapping, Protocol
+from typing import TYPE_CHECKING, Any, Iterable, Mapping, Protocol
 
 from .ability_fragments import (
     AbilityFragmentError,
@@ -14,6 +14,9 @@ from .ability_fragments import (
     protection_specs,
 )
 from .characteristic_evaluation import type_parts
+
+if TYPE_CHECKING:
+    from .damage_source import DamageSourceSnapshot
 
 
 class ProtectionVerdict(str, Enum):
@@ -74,14 +77,9 @@ class ProtectionQueryHost(Protocol):
     def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
 
 
-def source_characteristics_for_ref(
-    host: ProtectionQueryHost,
-    source_ref: str | None,
-) -> Mapping[str, Any] | None:
-    """Resolve current typed source characteristics from a public reference."""
-
+def _source_card_and_player(host, source_ref):
     if not source_ref:
-        return None
+        return None, None
     card = next(
         (
             candidate
@@ -105,6 +103,20 @@ def source_characteristics_for_ref(
                 or stack_item.source_object_id
             )
             card = host.state.cards.get(source_id) if source_id else None
+            return card, stack_item.controller
+    if card is None:
+        return None, None
+    player = card.controller if card.zone in {"battlefield", "stack"} else card.owner
+    return card, player
+
+
+def source_characteristics_for_ref(
+    host: ProtectionQueryHost,
+    source_ref: str | None,
+) -> Mapping[str, Any] | None:
+    """Resolve current typed source characteristics from a public reference."""
+
+    card, _ = _source_card_and_player(host, source_ref)
     return host._effective_card_data(card) if card is not None else None
 
 
@@ -163,7 +175,7 @@ def _protection_predicate_verdict(
 def protection_verdict(
     protected_characteristics: Mapping[str, Any],
     source: ProtectionSource | None,
-    *, retaining_aura: str | None = None,
+    *, retaining_aura: str | None = None, source_player: str | None = None,
 ) -> ProtectionVerdict:
     """Evaluate represented DEBT protection qualities without Oracle text.
 
@@ -192,10 +204,16 @@ def protection_verdict(
         for spec in specs
     ):
         return ProtectionVerdict.BLOCKED
-    if source is None:
-        return ProtectionVerdict.UNRESOLVED
     unresolved = False
     for spec in specs:
+        if spec.quality_kind is ProtectionQualityKind.PLAYER:
+            if source_player == spec.quality:
+                return ProtectionVerdict.BLOCKED
+            unresolved = unresolved or source_player is None
+            continue
+        if source is None:
+            unresolved = True
+            continue
         if spec.quality_kind is ProtectionQualityKind.PREDICATE:
             assert spec.source_predicate is not None
             verdict = _protection_predicate_verdict(
@@ -228,20 +246,35 @@ def protection_verdict(
     )
 
 
+def protection_verdict_for_damage(
+    protected_characteristics: Mapping[str, Any], source: DamageSourceSnapshot,
+) -> ProtectionVerdict:
+    return protection_verdict(
+        protected_characteristics,
+        ProtectionSource(
+            colors=frozenset(source.colors),
+            card_types=frozenset(source.types),
+            subtypes=frozenset(source.subtypes),
+            supertypes=frozenset(source.supertypes),
+            mana_value=source.mana_value,
+        ),
+        source_player=source.controller or source.owner,
+    )
+
+
 def protection_verdict_for_ref(
     host: ProtectionQueryHost,
     protected_characteristics: Mapping[str, Any],
     source_ref: str | None,
+    *, source_player: str | None = None,
 ) -> ProtectionVerdict:
     """Apply typed protection using one canonical source-reference query."""
 
-    source_data = source_characteristics_for_ref(host, source_ref)
-    source = (
-        ProtectionSource.from_characteristics(source_data)
-        if source_data is not None
-        else None
+    card, object_player = _source_card_and_player(host, source_ref)
+    source = ProtectionSource.from_characteristics(host._effective_card_data(card)) if card is not None else None
+    return protection_verdict(
+        protected_characteristics, source, source_player=source_player if source_player is not None else object_player,
     )
-    return protection_verdict(protected_characteristics, source)
 
 
 def protection_fragments_to_dicts(

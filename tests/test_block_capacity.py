@@ -35,7 +35,7 @@ class BlockCapacityCompilerTests(unittest.TestCase):
 
     def test_open_capacity_boolean_and_missing_capability_fail_closed(self):
         registry=load_default_capability_registry()
-        for text in ('This creature can block an additional creature each combat for each Equipment attached to this creature.',
+        for text in ('This creature can block an additional creature each combat for each Aura attached to this creature.',
                      'This creature can block an additional X creatures each combat.',
                      'This creature can block an additional creature each combat until end of turn.'):
             self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=registry).status,text)
@@ -45,6 +45,35 @@ class BlockCapacityCompilerTests(unittest.TestCase):
         next(c for c in data['capabilities'] if c['id']=='combat.block.capacity').update(status='blocked',blockers=['missing multi-block owner'])
         registry=CapabilityRegistry(data);registry.mark_evidence_verified('0'*64)
         self.assertNotEqual('exact',compile_oracle_card(query_record('This creature can block an additional creature each combat.'),capability_registry=registry).status)
+
+    def test_equipment_capacity_is_a_closed_static_version(self):
+        from quorune.compiler.block_capacity_templates import static_block_capacity_handler
+        from quorune.rules.block_capacity_effect import decode_temporary_block_capacity
+
+        raw = {"schema_version": 2, "additional_per_equipment": 1}
+        value = BlockCapacitySpec.from_dict(raw)
+        self.assertEqual(raw, value.to_dict())
+        self.assertEqual({"schema_version": 1, "additional": 1, "unlimited": False},
+            BlockCapacitySpec(additional=1).to_dict())
+        for malformed in (
+            {**raw, "additional_per_equipment": 2},
+            {**raw, "additional_per_equipment": True},
+            {**raw, "unlimited": False},
+            {"schema_version": 2, "additional": 1, "unlimited": False},
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                BlockCapacitySpec.from_dict(malformed)
+        compiled = static_block_capacity_handler(
+            "This creature can block an additional creature each combat "
+            "for each Equipment attached to this creature.", source_name="Generic Gear Guard",
+        )
+        self.assertIsNotNone(compiled)
+        self.assertIn("combat.block.capacity.attached_equipment", compiled[2])
+        with self.assertRaisesRegex(ValueError, "requires a fixed value"):
+            decode_temporary_block_capacity({
+                "op": "apply_source_characteristics_until_end_of_turn", "schema_version": 10,
+                "card": "$source.zone_object", "capacity": raw, "power": 0, "toughness": 0,
+            })
 
     def test_set_declaration_requirements_restrictions_costs_and_capacity_share_solver(self):
         requirements=(DeclarationRequirement('one','choose_option',variable='blocker',option='a'),DeclarationRequirement('two','choose_option',variable='blocker',option='b'))
@@ -103,6 +132,66 @@ class BlockCapacityRuntimeTests(unittest.TestCase):
         e.state.combat=CombatState(attackers_declared=True,attackers={card.object_id:'B' for card in attackers},defending_players=['B'])
         e._begin_blocker_decisions()
         self.assertEqual('combat.blockers',e.state.pending_decision.kind)
+
+    def test_equipment_capacity_offer_acceptance_and_replay_share_one_current_attachment_count(self):
+        from quorune.attachments import attach_objects
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        session = self.session(323014)
+        engine = session.engine
+        blocker = self.add(engine, "Generic Gear Guard", seat="B")
+        live = self.add(engine, "Generic Practice Gear", seat="C", ref="live-capacity-gear")
+        phased = self.add(engine, "Generic Practice Gear", seat="B", ref="phased-capacity-gear")
+        self.add(engine, "Generic Practice Gear", seat="B", ref="unattached-capacity-gear")
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="capacity-private")
+        for equipment in (live, phased):
+            attach_objects(engine.state.cards, equipment, blocker, source_timestamp=engine._next_zone_timestamp())
+        phased.phased_out = True
+        program = compile_best_available_card_program(self.db, self.db.lookup(blocker.printed_name),
+            semantic_registry=engine.semantics, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
+            profile="commander_review")["strict_capability_ready"])
+
+        attackers = [self.add(engine, "Generic Bound Body", ref=f"capacity-attacker-{index}") for index in range(3)]
+        self.prepare_blocks(session, attackers)
+        self.checkpoint(session)
+        view = session.packet("pilot:B", full=True)["decision"]["ctx"]["declaration_constraints"]
+        self.assertEqual(2, view["capacities"][blocker.ref])
+        before = authoritative_state_hash(engine.state)
+        rejected = session.act("pilot:B", {"action_id": "block",
+            "blocks": {blocker.ref: [card.ref for card in attackers]}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+        accepted = session.act("pilot:B", {"action_id": "block",
+            "blocks": {blocker.ref: [card.ref for card in attackers[:2]]}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        for card in attackers[:2]:
+            self.assertEqual([blocker.object_id], engine.state.combat.blockers[card.object_id])
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:B", full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet("pilot:C", full=True)))
+        self.replay(session, load=True)
+        engine.move_card(live.object_id, "graveyard", log=False)
+        self.assertEqual(1, current_block_capacity(engine, blocker, eligible_attackers=3))
+        for card in attackers[:2]:
+            self.assertEqual([blocker.object_id], engine.state.combat.blockers[card.object_id])
+
+    def test_equipment_capacity_withdrawal_and_compiler_omission_reject_admission(self):
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        owner = "combat.block.capacity.attached_equipment"
+        next(row for row in raw["capabilities"] if row["id"] == owner).update(
+            status="blocked", blockers=["Test withdrawal of the current attached Equipment capacity"])
+        source = self.db.lookup("Generic Gear Guard")
+        profile = "commander_review"
+        normal = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertEqual("exact", normal.status)
+        blocked = compile_oracle_card(source, capability_registry=CapabilityRegistry(raw), capability_profile=profile)
+        self.assertNotEqual("exact", blocked.status)
+        self.assertTrue(any(owner in item for residual in blocked.material_residuals for item in residual.blockers))
+        with patch("quorune.compiler.closed_static_nodes.static_block_capacity_handler", return_value=None):
+            omitted = compile_oracle_card(source, capability_registry=self.registry, capability_profile=profile)
+        self.assertNotEqual("exact", omitted.status)
+        self.assertTrue(omitted.material_residuals)
 
     def test_actual_trueheart_blocks_two_distinct_attackers_and_replays(self):
         s=self.session(323001);e=s.engine

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
-from typing import Any, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 
 from .counter_placement import (
     CounterPlacementError,
@@ -15,6 +15,69 @@ from .counter_placement import (
 )
 from .object_query import ObjectQueryResult
 from .util import stable_json
+
+
+CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD = "controlled_creature_counter_choice"
+CONTROLLED_CREATURE_COUNTER_SNAPSHOTS = "_controlled_creature_counter_incarnations"
+OPPONENT_CREATURE_COUNTER_CHOICE_VERSION = 2
+OPPONENT_CREATURE_COUNTER_CHOICE_CAPABILITY = "counter.choice.target_opponent_creature"
+
+
+def controlled_creature_counter_choice_effect() -> dict[str, Any]:
+    return {
+        "op": "choose_objects",
+        "selector": {
+            "zones": ["battlefield"],
+            "categories": ["permanent"],
+            "types_all": ["creature"],
+            "controller_relation": "you",
+        },
+        "minimum": 1,
+        "maximum": 1,
+        "prompt": "Choose a creature you control for a +1/+1 counter.",
+        "then": [{"op": "add_counter_selected", "counter": "+1/+1", "amount": 1}],
+        CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD: 1,
+    }
+
+
+def opponent_creature_counter_choice_effect(player: str = "$target.0") -> dict[str, Any]:
+    return {
+        **controlled_creature_counter_choice_effect(),
+        "player": player,
+        "prompt": "Choose a creature you control for a deathtouch counter.",
+        "then": [{"op": "add_counter_selected", "counter": "deathtouch", "amount": 1}],
+        CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD: OPPONENT_CREATURE_COUNTER_CHOICE_VERSION,
+    }
+
+
+def controlled_creature_counter_choice_dependencies(
+    value: Mapping[str, Any], *, resolved_player: str | None = None,
+) -> tuple[str, ...]:
+    if CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD not in value:
+        return ()
+    from .replacement.immutable import thaw_value
+
+    data = thaw_value(value)
+    if data.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION:
+        expected = opponent_creature_counter_choice_effect(
+            resolved_player if resolved_player is not None else "$target.0",
+        )
+        if (data != expected or type(data[CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD]) is not int
+                or type(data["minimum"]) is not int or type(data["maximum"]) is not int
+                or type(data["then"][0]["amount"]) is not int):
+            raise ValueError("The opponent counter choice requires one exact deathtouch instruction")
+        return (
+            OPPONENT_CREATURE_COUNTER_CHOICE_CAPABILITY, "counter.producer.fixed_effect",
+            "counter.characteristic.keyword", "combat.damage.assignment.deathtouch",
+            "damage.result.deathtouch", "target.revalidate_resolution",
+        )
+    if (data != controlled_creature_counter_choice_effect()
+            or any(type(data[key]) is not int for key in (
+                "minimum", "maximum", CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
+            ))
+            or type(data["then"][0]["amount"]) is not int):
+        raise ValueError("A controlled creature counter choice requires its exact untargeted instruction")
+    return ("counter.producer.fixed_effect",)
 
 
 class CounterPlacementTargetSetError(ValueError):

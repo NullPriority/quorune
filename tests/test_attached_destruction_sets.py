@@ -153,9 +153,11 @@ class AttachmentDestructionRegistrationTests(unittest.TestCase):
     def test_four_complete_originals_close_normally_and_unrepresented_choice_neighbors_do_not(self):
         registry=load_default_capability_registry();semantics=SemanticRegistry()
         with tempfile.TemporaryDirectory() as directory:
-            path=Path(directory)/'originals.sqlite3';build_fixture_database([FIXTURE],path)
+            path=Path(directory)/'originals.sqlite3';build_fixture_database([
+                FIXTURE, ROOT/'tests/fixtures/chosen-creature-type-destruction-cards.json',
+            ],path)
             with CardDatabase(path) as db:
-                for name in (*CANDIDATES,'Worldslayer','Extinction'):
+                for name in (*CANDIDATES,'Harsh Mercy'):
                     with self.subTest(name=name):
                         card=db.lookup(name,fuzzy=False)
                         register_generated_programs(db,semantics,(card,),trust_level='provisional',capability_registry=registry,

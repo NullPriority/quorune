@@ -1,0 +1,106 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{U}",
+      "name": "Cytoshape",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "oracle_text": "Choose a nonlegendary creature on the battlefield. Target creature becomes a copy of that creature until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2006-05-05",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "This effect can cause the target to stop being a creature. For example, if it becomes a copy of an animated Blinkmoth Nexus, the printed wording will be copied and it will become an unanimated Blinkmoth Nexus.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature copies a creature that’s copying a creature, it will become whatever the chosen creature is copying.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the creature becomes a copy of a face-down creature, it will become a 2/2 creature with no name, creature type, abilities, mana cost, or color. It will not become face-down and thus can’t be turned face up.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Only the creature that’s becoming a copy is targeted. The creature that it will copy isn’t chosen until Cytoshape resolves.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature may become a copy of itself this way. This generally won’t have any visible effect.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature copies the printed values of the chosen creature, plus any copy effects that have been applied to it. It won’t copy counters on that creature. It won’t copy effects that have changed the creature’s power, toughness, types, color, or so on.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "At the end of the turn, the creature reverts to what it was before. If two Cytoshapes affect the same creature on the same turn, they’ll both wear off at the same time.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Effects that have already applied to the target creature will continue to apply to it. For example, if Giant Growth had given it +3/+3 earlier in the turn, then Cytoshape makes it a copy of Grizzly Bears, it will be a 5/5 Grizzly Bears.",
+      "oracle_id": "14221c18-7801-49c9-a2c8-53b8c5181d63",
+      "published_at": "2006-05-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and WotC rulings for a resolving untargeted copy subject"
+}

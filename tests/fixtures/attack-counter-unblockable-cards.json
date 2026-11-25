@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "keywords": [],
+      "oracle_id": "00000000-0000-4f40-8f56-000000120341",
+      "name": "Trial Tunneling Scout",
+      "type_line": "Creature — Scout",
+      "mana_cost": "{1}{G}{U}",
+      "cmc": 3,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "Tunnel Survey — Whenever this creature attacks, put a +1/+1 counter on this creature and a +1/+1 counter on up to one other target attacking creature. That creature can't be blocked this turn."
+    },
+    {
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "keywords": [],
+      "oracle_id": "00000000-0000-4f40-8f56-000000120342",
+      "name": "Trial Survey Island",
+      "type_line": "Basic Land — Island",
+      "mana_cost": "",
+      "cmc": 0,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "produced_mana": [
+        "U"
+      ],
+      "oracle_text": "({T}: Add {U}.)"
+    }
+  ],
+  "rulings": [],
+  "source": "Original offline witnesses for a simultaneous attack counter group and optional target."
+}

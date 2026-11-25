@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Immutable affected-set selection for fixed permanent counter effects."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 import hashlib
 from typing import Any, Protocol, Sequence
@@ -9,6 +10,7 @@ from typing import Any, Protocol, Sequence
 from .affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
+    PermanentControllerRelation,
     select_affected_permanents,
 )
 from .counter_placement import (
@@ -19,7 +21,31 @@ from .counter_placement import (
     place_counters,
 )
 from .object_query import ObjectQueryResult
+from .object_predicate import ObjectQuerySpec
 from .util import stable_json
+
+
+PAIRED_PLANESWALKER_LOYALTY_FIELD = "paired_other_planeswalker_loyalty_version"
+PAIRED_PLANESWALKER_LOYALTY_CAPABILITY = "counter.producer.paired_creature_and_planeswalker"
+
+
+def controlled_counter_subjects(card_type, *, exclude_source=False):
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=(card_type,)),
+        controller_relation=PermanentControllerRelation.ACTOR, exclude_source=exclude_source,
+    )
+
+
+def paired_planeswalker_loyalty_dependencies(effect, *, source_ref="$source"):
+    if (not isinstance(effect, Mapping) or set(effect) != {
+            "op", "source", "set", "counter", "amount", PAIRED_PLANESWALKER_LOYALTY_FIELD,
+        } or effect["op"] != "place_counters_on_set" or effect["source"] != source_ref
+        or effect["counter"] != "+1/+1" or type(effect["amount"]) is not int or effect["amount"] != 1
+        or type(effect[PAIRED_PLANESWALKER_LOYALTY_FIELD]) is not int
+        or effect[PAIRED_PLANESWALKER_LOYALTY_FIELD] != 1
+        or AffectedPermanentSetSpec.from_dict(effect["set"]) != controlled_counter_subjects("creature")):
+        raise CounterPlacementSetError("Paired loyalty requires both fixed controlled sets and the original source")
+    return ("counter.producer.fixed_permanent_set_effect", PAIRED_PLANESWALKER_LOYALTY_CAPABILITY)
 
 
 class CounterPlacementSetError(ValueError):
@@ -150,6 +176,25 @@ def snapshot_counter_placement_set(
     )
 
 
+def _set_counter_requests(snapshot, *, actor, counter_name, amount, source_ref):
+    return tuple(CounterPlacementRequest(
+        subject_kind="permanent", subject_id=current.object_id,
+        counter_name=counter_name, amount=amount, placing_player=actor, source_ref=source_ref,
+    ) for current in snapshot.permanents)
+
+
+def _paired_planeswalker_requests(host, actor, source_ref, identity):
+    object_id, original_incarnation = identity
+    source = host.state.cards.get(object_id)
+    source_is_current = (source is not None and source.zone == "battlefield"
+                         and source.logical_object_id == original_incarnation)
+    walkers = snapshot_counter_placement_set(
+        host, actor=actor, source_ref=source_ref,
+        spec=controlled_counter_subjects("planeswalker", exclude_source=source_is_current),
+    )
+    return _set_counter_requests(walkers, actor=actor, counter_name="loyalty", amount=1, source_ref=source_ref)
+
+
 def resolve_counter_placement_set(
     host: CounterPlacementSetHost,
     *,
@@ -160,6 +205,7 @@ def resolve_counter_placement_set(
     reason: str,
     source_ref: str | None = None,
     replacement_selections: Sequence[str | dict[str, Any]] = (),
+    paired_loyalty_source: tuple[str, str] | None = None,
 ) -> tuple[CounterPlacementResult, ...]:
     """Resolve one fixed affected set through the canonical counter owner."""
 
@@ -185,23 +231,13 @@ def resolve_counter_placement_set(
         spec=spec,
         source_ref=source_ref,
     )
+    requests = _set_counter_requests(
+        snapshot, actor=actor, counter_name=normalized_counter, amount=amount, source_ref=source_ref,
+    )
+    if paired_loyalty_source is not None:
+        requests += _paired_planeswalker_requests(host, actor, source_ref, paired_loyalty_source)
     try:
-        return place_counters(
-            host,
-            tuple(
-                CounterPlacementRequest(
-                    subject_kind="permanent",
-                    subject_id=value.object_id,
-                    counter_name=normalized_counter,
-                    amount=amount,
-                    placing_player=actor,
-                    source_ref=source_ref,
-                )
-                for value in snapshot.permanents
-            ),
-            selections=replacement_selections,
-            reason=reason,
-        )
+        return place_counters(host, requests, selections=replacement_selections, reason=reason)
     except CounterPlacementError as exc:
         raise CounterPlacementSetError(str(exc)) from exc
 

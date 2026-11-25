@@ -6,7 +6,7 @@ from typing import Any, Protocol
 from .errors import GameRuleError
 from .mana_spend_rules import paid_mana_protects_cast
 from .model import StackItem
-from .replacement.immutable import thaw_value
+from .replacement.immutable import FrozenMap, thaw_value
 from .spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY, SpellManaSpentCounts
 from .rules.next_cast_counter_protection import announced_cast_is_protected
 from .semantic_runtime.static_cast_rules import static_stack_item_uncounterable
@@ -23,12 +23,52 @@ INTRINSIC_COUNTER_PROHIBITION_CAPABILITY = (
 
 NO_MANA_SPENT_COUNTER_FIELD = "counter_if_no_mana_spent_version"
 ANNOUNCED_X_COUNTER_FIELD = "counter_if_mana_value_equals_announced_x"
+CREATURE_COUNT_COUNTER_FIELD = "counter_if_controller_creature_count_greater_version"
+_CREATURE_COUNT_COUNTER = {
+    "op": "counter_stack_target", "stack": "$target.0", CREATURE_COUNT_COUNTER_FIELD: 1,
+}
 _NO_MANA_SPENT_COUNTER = {
     "op": "counter_stack_target", "stack": "$target.0", NO_MANA_SPENT_COUNTER_FIELD: 1,
 }
 _ORDINARY_SPELL_TARGET = {
     "zones": ["stack"], "categories": ["spell"], "source_exclusion": True, "count": 1,
 }
+
+
+_OTHER_CONTROLLER_ABILITY_COUNTER = {"op": "counter_stack_target", "stack": "$target.0"}
+_OTHER_CONTROLLER_ABILITY_CAPABILITIES = ("stack.counter.effect", "target.revalidate_resolution")
+_OTHER_CONTROLLER_COUNTER_OPERATIONS = {
+    "counter_stack_target", "counter_unless_pay", "resolve_stack_counter_followup",
+}
+
+
+def other_controller_ability_counter_schema():
+    return {
+        "zones": ["stack"], "categories": ["ability"], "count": 1, "source_exclusion": True,
+        "predicate": "activated_or_triggered_ability", "controller_relation": "opponent",
+    }
+
+
+def other_controller_ability_counter_capabilities(effect, target_schema):
+    if (not isinstance(target_schema, Mapping) or target_schema.get("controller_relation") != "opponent"
+            or type(target_schema.get("count")) is not int or target_schema.get("source_exclusion") is not True
+            or thaw_value(FrozenMap(target_schema)) != other_controller_ability_counter_schema()
+            or not isinstance(effect, Mapping) or dict(effect) != _OTHER_CONTROLLER_ABILITY_COUNTER):
+        return ()
+    return _OTHER_CONTROLLER_ABILITY_CAPABILITIES
+
+
+def other_controller_ability_counter_runtime_dependencies(program):
+    schema = program.target_schema
+    if (not isinstance(schema, Mapping) or schema.get("predicate") != "activated_or_triggered_ability"
+            or "controller_relation" not in schema
+            or not any(effect.get("op") in _OTHER_CONTROLLER_COUNTER_OPERATIONS for effect in program.effects)):
+        return ()
+    if len(program.effects) == 1:
+        required = other_controller_ability_counter_capabilities(program.effects[0], schema)
+        if required:
+            return required
+    raise ValueError("The other-controller ability counter requires one exact target and mandatory result")
 
 
 def _validate_no_mana_spent_counter(effect):
@@ -147,6 +187,65 @@ def bind_announced_x_counter(host, item, raw_effect, effect):
     return {field: value for field, value in effect.items() if field != ANNOUNCED_X_COUNTER_FIELD}
 
 
+def resolve_creature_count_counter_capabilities(effect, target_schema):
+    _validate_creature_count_counter(effect)
+    if (not isinstance(target_schema, Mapping) or thaw_value(target_schema) != _ORDINARY_SPELL_TARGET
+            or type(target_schema.get("count")) is not int or target_schema.get("source_exclusion") is not True):
+        raise ValueError("Creature-count counter requires the ordinary any-spell target")
+    from .live_battlefield_quantity_model import LIVE_BATTLEFIELD_QUANTITY_CAPABILITY
+
+    return LIVE_BATTLEFIELD_QUANTITY_CAPABILITY, "stack.counter.effect", "target.revalidate_resolution"
+
+
+def _validate_creature_count_counter(effect):
+    if (not isinstance(effect, Mapping) or effect != _CREATURE_COUNT_COUNTER
+            or type(effect.get(CREATURE_COUNT_COUNTER_FIELD)) is not int):
+        raise ValueError("Creature-count counter requires one exact original spell target and version")
+
+
+def creature_count_counter_runtime_dependencies(program):
+    from .rules.effect_shape_walkers import nested_effects
+
+    effects = (*program.effects, *getattr(program, "handlers", ()))
+    if not any(CREATURE_COUNT_COUNTER_FIELD in effect for effect in nested_effects(effects)):
+        return ()
+    if ((program.event, program.active_zone) != ("resolve", "stack")
+            or not program.ability_id.startswith("spell:") or len(program.effects) != 1
+            or program.handlers or program.cost_schema is not None):
+        raise ValueError("Creature-count counter requires its complete spell resolution")
+    return resolve_creature_count_counter_capabilities(program.effects[0], program.target_schema)
+
+
+def bind_creature_count_counter(host, item, raw_effect, effect):
+    if CREATURE_COUNT_COUNTER_FIELD not in raw_effect:
+        return effect
+    try:
+        _validate_creature_count_counter(raw_effect)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    target = next((candidate for candidate in host.state.stack if candidate.ref == effect.get("stack")), None)
+    if target is None or target.kind not in {"spell", "spell_copy"} or target.controller == item.controller:
+        return None
+
+    from .live_battlefield_quantities import current_live_battlefield_count
+    from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
+    from .object_predicate import ObjectQuerySpec
+
+    quantity = LiveBattlefieldQuantitySpec("source_controller", ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)))
+    caster_count = current_live_battlefield_count(host, item.controller, quantity)
+    target_controller_count = current_live_battlefield_count(host, target.controller, quantity)
+    if caster_count <= target_controller_count:
+        return None
+    return {field: value for field, value in effect.items() if field != CREATURE_COUNT_COUNTER_FIELD}
+
+
+def bind_conditional_stack_counter(host, item, raw_effect, effect):
+    effect = bind_no_mana_spent_counter(host.state, raw_effect, effect)
+    if effect is not None:
+        effect = bind_announced_x_counter(host, item, raw_effect, effect)
+    return bind_creature_count_counter(host, item, raw_effect, effect) if effect is not None else None
+
+
 class StackCounterHost(Protocol):
     state: Any
     semantics: Any
@@ -197,13 +296,38 @@ def current_intrinsic_counter_prohibitions(
             yield program
 
 
+def _countered_by_restricted_spell(host, item):
+    from .target_source import (
+        TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW, current_turn_spell_source_protection_colors,
+        spell_source_is_prohibited_by_color, stack_targeting_source,
+    )
+
+    if item.kind not in {"spell", "spell_copy"}:
+        return False
+    stats = host.state.players[item.controller].stats
+    if TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW not in stats:
+        return False
+    colors = current_turn_spell_source_protection_colors(stats, host.state.turn_sequence)
+    if not colors:
+        return False
+    resolving = tuple(source for source in host.state.stack if source.context.get("currently_resolving") is True)
+    if not resolving:
+        return False
+    if len(resolving) != 1:
+        raise GameRuleError("A counter attempt requires one current resolving source")
+    source, = resolving
+    if source.kind not in {"spell", "spell_copy"}:
+        return False
+    return spell_source_is_prohibited_by_color(stack_targeting_source(host, source), colors)
+
+
 def stack_item_can_be_countered(
     host: StackCounterHost,
     item: StackItem,
 ) -> bool:
     if item.context.get("cant_be_countered") or announced_cast_is_protected(item) or paid_mana_protects_cast(item):
         return False
-    if static_stack_item_uncounterable(host, item):
+    if static_stack_item_uncounterable(host, item) or _countered_by_restricted_spell(host, item):
         return False
     if item.kind in {"spell", "spell_copy"} and host.state.players[
         item.controller

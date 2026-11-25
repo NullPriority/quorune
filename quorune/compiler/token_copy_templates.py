@@ -8,7 +8,11 @@ from . import regex_working_set as re
 from ..creature_subtypes import canonical_creature_subtype
 from ..fixed_token_production import FIXED_TOKEN_PRODUCTION_MECHANIC_ID, FixedTokenCreationTemplate
 from ..rules.source_references import SourceReferenceSpec
-from ..token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
+from ..token_copy_recipes import (
+    GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN, GRAVEYARD_TARGET_TOKEN_COPY_VERSION,
+    TokenCopyExceptionSpec, TokenCopyRecipeSpec, graveyard_target_token_copy_schema,
+)
+from ..token_copy_recipient_model import OTHER_NONTOKEN_CREATURE_ENTRY
 from .direct_target import direct_permanent_target_spec
 from .fixed_numbers import fixed_number
 
@@ -74,11 +78,72 @@ def _fixed_exception(text: str) -> TokenCopyExceptionSpec | None:
         creature_subtypes=(subtype,) if subtype is not None else None)
 
 
+def _token_copy_batch_template(text: str) -> FixedTokenCreationTemplate | None:
+    from ..token_copy_recipes import TOKEN_COPY_BATCH_MECHANIC, TokenCopyBatchKind, TokenCopyBatchSpec
+
+    kinds = {
+        "for each creature target player controls, create a token that's a copy of that creature.":
+            TokenCopyBatchKind.TARGET_PLAYER_CREATURES,
+        "for each token you control, create a token that's a copy of that permanent.":
+            TokenCopyBatchKind.CONTROLLER_TOKENS,
+        "for each nontoken creature you control, create a token that's a copy of that creature, except it isn't legendary.":
+            TokenCopyBatchKind.CONTROLLER_NONTOKEN_CREATURES,
+        ("choose each artifact creature you control. for each creature chosen this way, "
+         "create a token that's a copy of it."):
+            TokenCopyBatchKind.CONTROLLER_ARTIFACT_CREATURES,
+        "for each opponent, you create a token that's a copy of up to one target creature that player controls.":
+            TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES,
+    }
+    kind = kinds.get(text.casefold())
+    if kind is None:
+        return None
+    spec = TokenCopyBatchSpec(kind, schema_version=2 if kind is TokenCopyBatchKind.ANNOUNCED_OPPONENT_CREATURES else 1)
+    mechanics = (TOKEN_COPY_BATCH_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy",
+                 "cr-111-tokens", "cr-707-copying-objects")
+    if spec.uses_announced_models:
+        from .any_number_target_sets import ANY_NUMBER_TARGET_MECHANIC
+        from .per_player_target_sets import PER_PLAYER_TARGET_MECHANIC
+
+        mechanics = (*mechanics, "cr-115-targets", ANY_NUMBER_TARGET_MECHANIC, PER_PLAYER_TARGET_MECHANIC)
+    elif spec.targets_player:
+        mechanics = (*mechanics, "cr-115-targets")
+    return FixedTokenCreationTemplate(
+        template_id="create-current-battlefield-copy-batch-v1", effect=spec.to_effect(),
+        mechanics=mechanics, target_schema=spec.target_schema,
+    )
+
+
+def _occurrence_controller_copy_template(text: str) -> FixedTokenCreationTemplate | None:
+    if text.casefold() != "that creature's controller creates a token that's a copy of that creature.":
+        return None
+    from ..token_copy_recipient_model import OCCURRENCE_COPY_RECIPIENT_MECHANIC
+    from ..rules.token_copy_recipients import occurrence_controller_copy_effect
+
+    return FixedTokenCreationTemplate(
+        template_id="create-occurrence-controller-copy-v1", effect=occurrence_controller_copy_effect(),
+        mechanics=(OCCURRENCE_COPY_RECIPIENT_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+                   "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects"),
+    )
+
+
 def token_copy_recipe_template(text: str, *, source_name: str,
                                source_is_permanent: bool | None = None,
                                event: str | None = None,
+                               event_variant: str | None = None,
                                source_attachment_relation=None) -> FixedTokenCreationTemplate | None:
     normalized = " ".join(text.strip().split())
+    if normalized.casefold() == (
+        "choose target artifact creature you control. for each creature chosen this way, "
+        "create a token that's a copy of it."
+    ):
+        normalized = "Create a token that's a copy of target artifact creature you control."
+    if event == "creature.enter" and event_variant == OTHER_NONTOKEN_CREATURE_ENTRY:
+        occurrence = _occurrence_controller_copy_template(normalized)
+        if occurrence is not None:
+            return occurrence
+    batch = _token_copy_batch_template(normalized)
+    if batch is not None:
+        return batch
     recipient = _target_player_copy_template(normalized, source_name=source_name)
     if recipient is not None:return recipient
     if normalized.casefold().rstrip(".") == "populate":
@@ -107,7 +172,15 @@ def token_copy_recipe_template(text: str, *, source_name: str,
     if exception is None:
         return None
     schema = None
-    if subject.casefold().startswith(("target ", "another target ")):
+    if subject.casefold() == "target creature card in your graveyard":
+        if (fixed_number(match["count"]) != 1 or match["tapped"]
+                or exception != TokenCopyExceptionSpec(add_card_types=("artifact",))
+                or cleanup != "sacrifice_next_end_step" or temporary_keywords != ("Haste",)
+                or keyword_duration != "zone_object"):
+            return None
+        schema = graveyard_target_token_copy_schema()
+        origin = GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN
+    elif subject.casefold().startswith(("target ", "another target ")):
         target = direct_permanent_target_spec(subject)
         if target is None:
             return None
@@ -134,7 +207,9 @@ def token_copy_recipe_template(text: str, *, source_name: str,
     recipe = TokenCopyRecipeSpec(origin=origin, exception=exception, cleanup=cleanup,
                                  temporary_keywords=temporary_keywords, keyword_duration=keyword_duration,
                                  **({"schema_version":3, "attachment_kind":"enchanted"}
-                                    if origin == "source_attachment" else {}))
+                                    if origin == "source_attachment"
+                                    else {"schema_version": GRAVEYARD_TARGET_TOKEN_COPY_VERSION}
+                                    if origin == GRAVEYARD_TARGET_TOKEN_COPY_ORIGIN else {}))
     mechanics = {FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-111-tokens", "cr-707-copying-objects"}
     if schema is not None:
         mechanics.add("cr-115-targets")

@@ -2,6 +2,17 @@
 from dataclasses import dataclass,fields
 from collections.abc import Mapping
 
+BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD = "battlefield_entry_player_version"
+
+
+def read_battlefield_entry_player_version(data: Mapping[str, object]) -> int | None:
+    if BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD not in data:
+        return None
+    version = data[BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD]
+    if type(version) is not int or version != 1:
+        raise ValueError("Unsupported battlefield entry player version")
+    return version
+
 PERMANENT_EVENT_STATE_KEY='public_permanent_event_state'
 PERMANENT_EVENT_STATE_PREFIX='permanent_state_'
 ZONE_EVENT_NUMERICS_KEY = 'public_zone_event_numerics'

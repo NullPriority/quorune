@@ -26,7 +26,7 @@ def execute_creation_intent(sink,intent):
         return intent.actor, create_distributed_tokens(
             sink, intent.creators, token=thaw_value(intent.token),
             stack_ref=f"{intent.stack_ref}:{intent.instruction_pointer}",
-            reason=intent.reason,
+            reason=intent.reason, creator_quantities=intent.creator_quantities,
             replacement_selections=thaw_value(intent.replacement_selections),
         )
     return execute_command_object_intent(sink,intent)

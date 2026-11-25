@@ -356,7 +356,7 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
         )
 
     def test_source_library_move_binds_the_departure_and_rejects_unversioned_roles(self):
-        from types import SimpleNamespace
+        from quorune.semantics import SemanticProgram
         from quorune.event_card_return import (
             EVENT_LIBRARY_COMPOSITION_CAPABILITY, EVENT_LIBRARY_MOVE_CAPABILITY, EVENT_LIBRARY_MOVE_VERSION,
             event_library_move_runtime_dependencies,
@@ -373,7 +373,8 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
         self.assertEqual("permanent.leave", node.event)
         self.assertEqual(3, movement["position"])
         self.assertIsNone(node.target_schema)
-        program = SimpleNamespace(
+        program = SemanticProgram(
+            key="fixture:source-library-move", label="Fixture source library move",
             effects=node.effects, event=node.event, event_condition=node.event_condition,
             active_zone=node.active_zone, target_schema=node.target_schema, coverage=node.mechanics,
         )
@@ -840,7 +841,7 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
             "Exile all creatures with mana value 3 or less.",
             "Exile all creatures. Return them at the next end step.",
             "Return all creatures except legendary creatures to their owners' hands.",
-            "Return all permanents of the color of your choice to their owners' hands.",
+            "Return all permanents of two colors of your choice to their owners' hands.",
             "Return all creatures from your graveyard to the battlefield.",
         )
         for text in unsupported:

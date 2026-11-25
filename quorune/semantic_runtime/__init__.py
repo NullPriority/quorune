@@ -368,6 +368,8 @@ from .whole_hand_discard import WholeHandDiscardHandler
 from .random_discard import RandomDiscardHandler
 from .random_graveyard_returns import RandomGraveyardReturnHandler
 from .temporary_cast_restrictions import TemporaryCastRestrictionHandler
+from .temporary_draw_redirect import TemporaryDrawRedirectHandler
+from .protected_attack_payments import ProtectedAttackPaymentHandler
 from .library_search_rules import ProhibitLibrarySearchHandler
 from .station_handlers import STATION_HANDLERS, StationCounterPlacementHandler
 from .zone_object_keyword_handlers import (
@@ -404,10 +406,13 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .graveyard_recycling import GraveyardRecyclingHandler
     from .private_hand_collections import SelectedHandEntryHandler
     from .distributed_token_creation import DistributedTokenCreationHandler
+    from .token_mill_repeat import TokenMillRepeatHandler
+    from .library_bottom_results import LibraryBottomResultHandler
     from .earthbend_handlers import EARTHBEND_HANDLERS
     from .emblem_creation import CreateCompiledEmblemHandler
     from .revealed_library_top import RevealEachLibraryTopHandler
     from .scheduled_turn_skip import ScheduledTurnSkipHandler
+    from .additional_beginning import ScheduledAdditionalBeginningHandler
     from .suspect_handler import SuspectHandler
     from .combat_removal_handler import CombatRemovalHandler
     registry = SemanticHandlerRegistry(
@@ -416,8 +421,11 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             SelectedHandEntryHandler(),
             CreateCompiledEmblemHandler(),
             DistributedTokenCreationHandler(),
+            TokenMillRepeatHandler(),
+            LibraryBottomResultHandler(),
             RevealEachLibraryTopHandler(),
             ScheduledTurnSkipHandler(),
+            ScheduledAdditionalBeginningHandler(),
             SuspectHandler(),
             CombatRemovalHandler(),
             *EARTHBEND_HANDLERS,
@@ -427,7 +435,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             WholeHandDiscardHandler(),
             RandomDiscardHandler(),
             RandomGraveyardReturnHandler(),
-            TemporaryCastRestrictionHandler(),
+            TemporaryCastRestrictionHandler(), TemporaryDrawRedirectHandler(), ProtectedAttackPaymentHandler(),
             ProhibitLibrarySearchHandler(),
             *TAP_STATE_HANDLERS,
             *DESTRUCTION_HANDLERS,

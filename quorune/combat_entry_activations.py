@@ -415,6 +415,7 @@ def resolve_ninjutsu_entry(
         source.object_id,
         "battlefield",
         controller=intent.actor,
+        putting_player=intent.actor,
         tapped=True,
         reason="Ninjutsu resolved",
         semantic_events=True,

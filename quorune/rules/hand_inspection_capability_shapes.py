@@ -10,11 +10,14 @@ from ..compiler.hand_inspection_templates import (
     FIXED_HAND_INSPECTION_MECHANIC,
 )
 from .hand_inspection import (
+    DEFENDING_HAND_OBSERVATION_CAPABILITY,
+    DEFENDING_HAND_OBSERVATION_MECHANIC,
     FIXED_HAND_INSPECTION_OPERATION,
     HandCardPredicateSpec,
     HandInspectionAction,
     HandInspectionError,
     HandInspectionMode,
+    is_defending_hand_observation,
 )
 from .fixed_controller_effect_shapes import fixed_life_node_capabilities
 from .node_capability_shapes import fixed_scry_node_capabilities
@@ -29,6 +32,11 @@ def fixed_hand_inspection_node_capabilities(
     """Recognize one inspected target hand with an optional fixed tail."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if DEFENDING_HAND_OBSERVATION_MECHANIC in mechanics:
+        if (target_schema is None and "cr-402-hand" in mechanics and len(effects) == 1
+                and is_defending_hand_observation(effects[0])):
+            return (DEFENDING_HAND_OBSERVATION_CAPABILITY,)
+        return ()
     if (
         not {
             FIXED_HAND_INSPECTION_MECHANIC,

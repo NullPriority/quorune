@@ -4,6 +4,7 @@ from collections.abc import Mapping
 TARGET_CONTROLLER_INFORMATION_KIND='target_controller_information'
 TARGET_CONTROLLER_INFORMATION_CAPABILITY='resolution.target_controller_information'
 TARGET_CONTROLLER_INFORMATION_MECHANIC='fixed-target-controller-information'
+DAMAGE_DEALER_CONTROLLER_INFORMATION_KIND = "damage_dealer_controller_information"
 
 
 def target_controller_reference(index=0):
@@ -16,3 +17,12 @@ def controller_reference_index(value):
             or value['schema_version']!=1 or type(value['index']) is not int or value['index']<0):
         raise ValueError('Target controller information requires one closed target index')
     return value['index']
+
+
+def damage_dealer_controller_reference():
+    return {"kind": DAMAGE_DEALER_CONTROLLER_INFORMATION_KIND, "schema_version": 1}
+
+
+def is_damage_dealer_controller_reference(value):
+    return (isinstance(value, Mapping) and type(value.get("schema_version")) is int
+            and value == damage_dealer_controller_reference())

@@ -42,7 +42,25 @@ def public_target_count_schema(schema: Mapping[str, Any], option: Mapping[str, A
     raw = option.get("target_count_parameter")
     if raw is None:
         return result
-    return link_announced_public_bounds(result, raw)
+    result = link_announced_public_bounds(result, raw)
+    group_id = _spliced_announced_phase_group(option)
+    if group_id is not None:
+        result["x_bound_group"] = group_id
+        for group in result["groups"]:
+            if group["id"] != group_id:
+                group.pop("maximum_from", None)
+                group.pop("count_from", None)
+    return result
+
+
+def _spliced_announced_phase_group(option):
+    from ...phasing_model import has_announced_phase_out_targets
+    from .spell_text import CAST_TEXT_FRAMES
+
+    if CAST_TEXT_FRAMES not in option or not has_announced_phase_out_targets(option.get("effects", ())):
+        return None
+    group_id, = option[CAST_TEXT_FRAMES][0]["groups"].values()
+    return group_id
 
 
 def target_count_cost_preview(host, seat, card, program, option):
@@ -56,22 +74,29 @@ def target_count_cost_preview(host, seat, card, program, option):
     if "target_count_parameter" not in option or option.get("x_value_policy") == "zero":
         return option
     from ...target_source import spell_targeting_source
+    group_id = _spliced_announced_phase_group(option)
     schema = dict(option["target_schema"])
+    group = schema
+    if group_id is not None:
+        schema = deepcopy(schema)
+        group = next(group for group in schema["groups"] if group["id"] == group_id)
     spec = AnnouncedTargetCardinality.from_dict(option["target_count_parameter"])
     for field in ("count", "up_to", "min", "max"):
-        schema.pop(field, None)
+        group.pop(field, None)
     bound_field = "max" if spec.selection == "one_or_more" else "up_to"
     if spec.selection == "one_or_more":
-        schema["min"] = 1
-    schema[bound_field] = len(host.state.cards)
+        group["min"] = 1
+    group[bound_field] = len(host.state.cards)
     public = host._public_target_schema(seat, schema,
-        acting_source=spell_targeting_source(host, card), source_ref=card.ref)
+        acting_source=spell_targeting_source(host, card), source_ref=card.ref, announcing_targets=True)
     if public is None:
         return option
-    schema[bound_field] = len(public.get("legal_refs", ()))
+    view = next(group for group in public["groups"] if group["id"] == group_id) if group_id is not None else public
+    maximum = len(view.get("legal_refs", ()))
+    group[bound_field] = maximum
     from .targeted_costs import targeted_spell_cost_sources
     return {**option, **({"target_schema": schema} if targeted_spell_cost_sources(host, seat,card=card,spell_program=program) else {}),
-        "target_count_preview_limit": len(public.get("legal_refs", ()))}
+        "target_count_preview_limit": maximum}
 
 
 def target_count_preview_maximum(option, maximum):

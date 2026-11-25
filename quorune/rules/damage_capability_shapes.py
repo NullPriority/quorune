@@ -19,7 +19,7 @@ from ..damage_prevention_permission import (
     validate_temporary_damage_prevention_prohibition,
 )
 from ..life_gain_permission import LIFE_GAIN_PROHIBITION_CAPABILITY, validate_temporary_life_gain_effect
-from ..replacement.immutable import thaw_value
+from ..replacement.immutable import FrozenMap, thaw_value
 from ..damage_death_exile_model import (
     DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_FIELD, DAMAGE_DEATH_EXILE_MECHANIC,
     DamageDeathExileScope, damage_death_exile_scope,
@@ -29,12 +29,168 @@ from ..fixed_damage_set_model import (
     FixedDamageSetSpec,
     PermanentControllerRelation,
     PermanentDamageGroup,
-    PlayerDamageGroup,
+    PlayerDamageGroup, DEALT_LIFE_GAIN_FIELD, DEALT_LIFE_GAIN_CAPABILITY,
+    TARGETED_DEALT_LIFE_GAIN_VERSION, dealt_life_gain_group_is_closed,
 )
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
 )
+
+
+NONCOMBAT_PREVENTION_LIFE_GAIN_CAPABILITY = "damage.prevention.static_noncombat_life_gain"
+NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER = "prevention.damage.noncombat_life_gain.v1"
+NONCOMBAT_PREVENTION_LIFE_GAIN_TEMPLATE = "noncombat-prevention-controller-life-gain-v1"
+
+
+def noncombat_prevention_life_gain_descriptor() -> dict[str, Any]:
+    return {
+        "handler_id": NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER,
+        "schema_version": 1,
+        "event": "damage",
+        "condition": {"damage_kind": "noncombat", "recipient": "controller"},
+        "modification": {"amount": "all", "life_gain": "prevented_amount"},
+    }
+
+
+def noncombat_prevention_life_runtime_dependencies(program):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    handlers = program.handlers
+    if not (
+        NONCOMBAT_PREVENTION_LIFE_GAIN_TEMPLATE in str(program.provenance.get("template_id") or "").split("+")
+        or any(handler.get("handler_id") == NONCOMBAT_PREVENTION_LIFE_GAIN_HANDLER for handler in handlers)
+    ):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("damage", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None
+        or program.event_condition is not None or program.effects
+        or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+        or len(handlers) != 1 or dict(handlers[0]) != noncombat_prevention_life_gain_descriptor()
+    ):
+        raise ValueError("Intrinsic prevention life gain requires a current battlefield ability and its complete result")
+    return (NONCOMBAT_PREVENTION_LIFE_GAIN_CAPABILITY,)
+
+
+CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER = "replacement.damage.result.controller_life_floor.v2"
+CONTROLLER_DAMAGE_LIFE_FLOOR_TEMPLATE = "damage-result-controller-life-floor-v2"
+DAMAGE_RESULT_REPLACEMENT_CAPABILITY = "damage.result.replacement_order"
+
+
+def controller_damage_result_life_floor_descriptor() -> dict[str, Any]:
+    return {
+        "handler_id": CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER, "schema_version": 2,
+        "event": "damage.results",
+        "condition": {"affected_player_relation": "source_controller", "requires_controlled_creature": False},
+        "modification": {"minimum_life": 1},
+    }
+
+
+def controller_damage_result_life_floor_runtime_dependencies(program):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    handlers = program.handlers
+    if not (
+        CONTROLLER_DAMAGE_LIFE_FLOOR_TEMPLATE in str(program.provenance.get("template_id") or "").split("+")
+        or any(handler.get("handler_id") == CONTROLLER_DAMAGE_LIFE_FLOOR_HANDLER for handler in handlers)
+    ):
+        return ()
+    if (
+        (program.event, program.active_zone) != ("damage.results", "battlefield")
+        or program.target_schema is not None or program.cost_schema is not None
+        or program.event_condition is not None or program.effects
+        or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+        or len(handlers) != 1 or dict(handlers[0]) != controller_damage_result_life_floor_descriptor()
+    ):
+        raise ValueError("Controller life floor requires its exact current battlefield damage-result ability")
+    return (DAMAGE_RESULT_REPLACEMENT_CAPABILITY,)
+
+
+SOURCE_RELATIVE_DAMAGE_VERSION_FIELD = "source_relative_damage_version"
+SOURCE_SELF_DAMAGE_TEMPLATE = "damage-source-self-one-v1"
+
+
+def source_self_damage_effect() -> dict[str, Any]:
+    return {"op": "damage", "source": "$source", "target": "$source.zone_object",
+            "amount": 1, SOURCE_RELATIVE_DAMAGE_VERSION_FIELD: 1}
+
+
+def linked_player_received_damage_effect() -> dict[str, Any]:
+    from ..entry_designations import LINKED_RECEIVED_DAMAGE_PLAYER_FIELD
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    return {
+        "op": "damage", "source": "$source", "target": "$context." + LINKED_RECEIVED_DAMAGE_PLAYER_FIELD,
+        "amount": ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT).to_dict(),
+        SOURCE_RELATIVE_DAMAGE_VERSION_FIELD: 1,
+    }
+
+
+def linked_player_received_damage_condition() -> dict[str, str]:
+    return {"field": "target", "op": "eq", "value": "$source.ref"}
+
+
+def source_relative_damage_role(effect) -> str:
+    from ..entry_designations import LINKED_RECEIVED_DAMAGE_PLAYER_FIELD
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    if type(effect.get(SOURCE_RELATIVE_DAMAGE_VERSION_FIELD)) is not int:
+        raise ValueError("Source-relative damage requires an explicit operation version")
+    if effect.get("target") == "$source.zone_object" and type(effect.get("amount")) is int:
+        if thaw_value(FrozenMap(effect)) == source_self_damage_effect():
+            return "source"
+    if effect.get("target") == "$context." + LINKED_RECEIVED_DAMAGE_PLAYER_FIELD:
+        amount = effect.get("amount")
+        if (isinstance(amount, Mapping)
+                and ScalarEffectAmountSpec.from_dict(amount) == ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT)
+                and thaw_value(FrozenMap(effect)) == linked_player_received_damage_effect()):
+            return "linked_player"
+    raise ValueError("Source-relative damage requires its complete positive amount and recipient")
+
+
+def _source_relative_damage_dependencies(role):
+    common = ("damage.amount.positive", "damage.source.stack_current_or_lki")
+    if role == "source":
+        return (*common, "damage.result.multitype_permanent")
+    from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY
+    from ..received_damage_model import RECEIVED_DAMAGE_CAPABILITY
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY
+
+    return (*common, "damage.result.player_life", ENTRY_DESIGNATION_CAPABILITY, RECEIVED_DAMAGE_CAPABILITY, SCALAR_AMOUNT_CAPABILITY)
+
+
+def source_relative_damage_runtime_dependencies(program):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..entry_designations import LINKED_PLAYER_RECEIVED_DAMAGE_PROGRAM_TEMPLATE
+    from .effect_shape_walkers import contains_nested_key
+
+    template = str(program.provenance.get("template_id") or "")
+    marked = {SOURCE_SELF_DAMAGE_TEMPLATE, LINKED_PLAYER_RECEIVED_DAMAGE_PROGRAM_TEMPLATE}.intersection(template.split("+"))
+    if not marked and not contains_nested_key((program.effects, program.handlers), SOURCE_RELATIVE_DAMAGE_VERSION_FIELD):
+        return ()
+    if program.active_zone != "battlefield" or program.target_schema is not None or len(program.effects) != 1:
+        raise ValueError("Source-relative damage requires one untargeted battlefield program")
+    role = source_relative_damage_role(program.effects[0])
+    if role == "source":
+        from ..semantic_runtime.activated_abilities import ACTIVATED_ABILITY_CATALOG_HANDLER_ID
+
+        if (
+            program.event != "activate" or program.event_condition is not None
+            or not isinstance(program.cost_schema, Mapping) or program.cost_schema.get("tap_source") is not True
+            or len(program.handlers) != 1 or program.handlers[0].get("handler_id") != ACTIVATED_ABILITY_CATALOG_HANDLER_ID
+        ):
+            raise ValueError("One source self-damage requires its ordinary battlefield tap activation")
+    elif (
+        program.event != "damage.received" or program.cost_schema is not None or program.handlers
+        or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage
+        or thaw_value(program.event_condition) != linked_player_received_damage_condition()
+    ):
+        raise ValueError("Linked player damage requires the current original receiving occurrence")
+    return _source_relative_damage_dependencies(role)
+
+
+TARGETED_DEALT_LIFE_GAIN_CAPABILITY = "damage.target.dealt_life_gain"
 
 
 _FIXED_DAMAGE_TARGET_SCHEMAS: dict[str, Mapping[str, Any]] = {
@@ -110,6 +266,22 @@ def _fixed_set_damage_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> tuple[str, ...] | None:
+    from .defending_creature_damage import defending_creature_damage_capabilities, is_defending_creature_damage
+
+    if DEALT_LIFE_GAIN_FIELD in effect:
+        if (target_schema is not None or type(effect[DEALT_LIFE_GAIN_FIELD]) is not int
+                or effect[DEALT_LIFE_GAIN_FIELD] != 1):
+            return ()
+        try:
+            if not dealt_life_gain_group_is_closed(FixedDamageSetSpec.from_dict({"groups": effect.get("groups")})):
+                return ()
+        except FixedDamageSetError:
+            return ()
+        plain = {key: value for key, value in effect.items() if key != DEALT_LIFE_GAIN_FIELD}
+        base = _fixed_set_damage_capabilities(plain, target_schema, mechanics)
+        return (*base, DEALT_LIFE_GAIN_CAPABILITY, "life.change.effect") if base else ()
+    if is_defending_creature_damage(effect):
+        return defending_creature_damage_capabilities(effect, target_schema)
     if not (
         set(effect) == {"op", "source", "amount", "groups"}
         and effect.get("op") == "damage_fixed_set"
@@ -225,6 +397,115 @@ def _fixed_direct_damage_capabilities(
     return tuple(sorted(dependencies))
 
 
+def _targeted_dealt_life_gain_effect(effect):
+    return (
+        set(effect) == {"op", "source", "target", "amount", DEALT_LIFE_GAIN_FIELD}
+        and effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
+        and type(effect[DEALT_LIFE_GAIN_FIELD]) is int
+        and effect.get("op") == "damage"
+        and effect.get("source") == "$source"
+        and effect.get("target") == "$target.0"
+    )
+
+
+def targeted_dealt_life_gain_amount(effect, target_schema):
+    """Identify the two typed damage amounts admitted by the targeted result."""
+    if not _targeted_dealt_life_gain_effect(effect):
+        return None
+    from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from ..landwalk_vocabulary import BASIC_LAND_TYPES
+    from ..object_predicate import ObjectQuerySpec
+    from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND, PublicQueryAmountSpec
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    schema = thaw_value(target_schema)
+    amount = effect["amount"]
+    if not isinstance(amount, Mapping):
+        return None
+    if schema == _FIXED_DAMAGE_TARGET_SCHEMAS["player_or_planeswalker"]:
+        try:
+            paid = ScalarEffectAmountSpec.from_dict(thaw_value(amount))
+        except ValueError:
+            return None
+        power = ScalarEffectAmountSpec(
+            ScalarAmountOrigin.PAID_SACRIFICE_CREATURE,
+            characteristic="power", schema_version=9,
+        )
+        return paid if paid == power else None
+    if schema != _FIXED_DAMAGE_TARGET_SCHEMAS["any_target"]:
+        return None
+    if amount.get("kind") != PUBLIC_QUERY_AMOUNT_KIND:
+        return None
+    try:
+        count = PublicQueryAmountSpec.from_dict(thaw_value(amount))
+    except ValueError:
+        return None
+    quantity = count.quantity
+    if not isinstance(quantity, CharacteristicQuantitySpec) or quantity.query is None:
+        return None
+    subtypes = quantity.query.subtypes_all
+    if len(subtypes) != 1 or subtypes[0] not in BASIC_LAND_TYPES:
+        return None
+    expected = PublicQueryAmountSpec(CharacteristicQuantitySpec(
+        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",), subtypes_all=subtypes),
+    ))
+    return count if count == expected else None
+
+
+def _targeted_dealt_life_gain_capabilities(effect, target_schema, mechanics):
+    if not _targeted_dealt_life_gain_effect(effect) or target_schema not in (
+        _FIXED_DAMAGE_TARGET_SCHEMAS["any_target"],
+        _FIXED_DAMAGE_TARGET_SCHEMAS["player_or_planeswalker"],
+    ):
+        return ()
+    body = {key: value for key, value in effect.items() if key != DEALT_LIFE_GAIN_FIELD}
+    base = _fixed_direct_damage_capabilities(body, target_schema, mechanics)
+    return (*base, TARGETED_DEALT_LIFE_GAIN_CAPABILITY, "life.change.effect") if base else ()
+
+
+def _targeted_dealt_life_gain_runtime_dependencies(program):
+    from .casting_additional_costs import fixed_creature_sacrifice_price
+    from ..query_effect_amount_model import PublicQueryAmountSpec
+    from ..scalar_effect_amount_model import ScalarEffectAmountSpec
+
+    effect = program.effects[0]
+    schema = thaw_value(program.target_schema)
+    amount = targeted_dealt_life_gain_amount(effect, schema)
+    if (
+        (program.event, program.active_zone) != ("resolve", "stack")
+        or program.handlers
+        or not (
+            isinstance(amount, PublicQueryAmountSpec) and program.cost_schema is None
+            or isinstance(amount, ScalarEffectAmountSpec) and fixed_creature_sacrifice_price(program.cost_schema)
+        )
+    ):
+        raise ValueError("Targeted dealt-damage life gain requires its exact spell price, target and amount")
+    return _targeted_dealt_life_gain_capabilities(
+        {**effect, "amount": 1}, schema, {"cr-115-targets"},
+    )
+
+
+def dealt_damage_life_gain_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(DEALT_LIFE_GAIN_FIELD in effect for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if len(program.effects) == 1 and program.effects[0].get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION:
+        return _targeted_dealt_life_gain_runtime_dependencies(program)
+    own_upkeep = {"all": [{"field": "player", "op": "eq", "value": "$source.controller"},
+                          {"field": "step", "op": "eq", "value": "upkeep"}]}
+    carrier = (program.event, program.active_zone)
+    if (len(program.effects) != 1 or program.cost_schema is not None or program.handlers
+            or carrier != ("resolve", "stack")
+            and (carrier != ("step.begin", "battlefield") or program.event_condition != own_upkeep)):
+        raise ValueError("Dealt damage life gain requires its exact ordinary spell or source upkeep")
+    required = _fixed_set_damage_capabilities(program.effects[0], program.target_schema, {"cr-120-damage"})
+    if not required or DEALT_LIFE_GAIN_CAPABILITY not in required:
+        raise ValueError("Dealt damage life gain requires one complete fixed player batch")
+    return required
+
+
 def damage_death_exile_scope_is_closed(effect, target_schema) -> bool:
     try:
         scope = damage_death_exile_scope(effect)
@@ -317,6 +598,10 @@ def _turn_damage_prevention_capabilities(effects, target_schema):
 
 def turn_damage_prevention_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effects
+    from .prevention_component_shapes import targeted_prevention_result_runtime_dependencies
+
+    if targeted := targeted_prevention_result_runtime_dependencies(program):
+        return targeted
 
     handlers = tuple(getattr(program, "handlers", ()))
     effects = (*program.effects, *handlers)
@@ -353,6 +638,13 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if SOURCE_RELATIVE_DAMAGE_VERSION_FIELD in effect:
+        if target_schema is not None:
+            return ()
+        try:
+            return _source_relative_damage_dependencies(source_relative_damage_role(effect))
+        except (TypeError, ValueError):
+            return ()
     if 'fixed_target_role_damage' in effect:
         from .fixed_damage_roles import fixed_damage_role_node_capabilities
         return fixed_damage_role_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
@@ -381,6 +673,8 @@ def fixed_damage_node_capabilities(
                 or set(effect)!={'op','source','target','amount'} or effect['op']!='damage'
                 or effect['source']!='$source' or not _positive_int(effect['amount'])):return ()
         return (TARGET_CONTROLLER_INFORMATION_CAPABILITY,'damage.amount.positive','damage.result.player_life','damage.source.stack_current_or_lki')
+    if effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION:
+        return _targeted_dealt_life_gain_capabilities(effect, target_schema, mechanics)
     fixed_set = _fixed_set_damage_capabilities(
         effect, target_schema, mechanics
     )

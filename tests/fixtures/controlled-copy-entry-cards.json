@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Original shield copy fixture.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4f40-8f50-000000949001",
+      "name": "Trial Shield Mimic",
+      "type_line": "Creature — Shapeshifter",
+      "mana_cost": "{3}{U}",
+      "cmc": 4,
+      "power": "0",
+      "toughness": "0",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it enters with a shield counter on it if you control that creature.",
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "keywords": [],
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

@@ -7,10 +7,12 @@ from dataclasses import replace
 
 from typing import Any, Mapping, Protocol, Sequence
 
+from .additional_beginning_model import AdditionalBeginningPhases
 from .errors import GameRuleError, StateInvariantError
 from .continuous_effect_state import (
     expire_end_of_turn_continuous_effects,
     expire_next_turn_continuous_effects,
+    expire_recipient_controller_untap_effects,
     next_turn_expiry_players,
 )
 from .control_effects import synchronize_control_effects
@@ -22,7 +24,6 @@ from .rules.land_play_permissions import (
 )
 from .rules.next_spell_payment import expire_temporary_cast_ability_grants
 from .model import (
-    CombatState,
     GameState,
     StackItem,
     TurnEntry,
@@ -53,6 +54,7 @@ TURN_STEPS: tuple[tuple[str, str], ...] = (
     ("ending", "cleanup"),
 )
 
+_COMBAT_START_INDEX = TURN_STEPS.index(("combat", "beginning_combat"))
 _COMBAT_END_INDEX = TURN_STEPS.index(("postcombat_main", "main"))
 
 
@@ -194,6 +196,62 @@ class TurnStepOwner:
             changed_players=[seat],
         )
         return entry
+
+    def require_current_combat(self) -> None:
+        if self.state.phase != "combat" or self.state.current_turn is None:
+            raise GameRuleError("An extra combat requires a current combat phase")
+
+    def schedule_extra_combat(self, actor: str, *, source: str) -> None:
+        self._host._require_seat(actor, in_game=True)
+        self.require_current_combat()
+        self.state.extra_combat_phases += 1
+        self._host._log(
+            actor,
+            "combat.extra.scheduled",
+            "An additional combat phase will follow this phase.",
+            {"source": source, "active_player": self.state.active_player,
+             "queued_phases": self.state.extra_combat_phases},
+            importance=2,
+        )
+
+    def schedule_additional_beginning(self, player: str, *, source: str) -> None:
+        if (
+            self.state.active_player != player
+            or (self.state.phase, self.state.step) != ("postcombat_main", "main")
+            or type(source) is not str or not source
+        ):
+            raise GameRuleError("An additional beginning phase must follow the current postcombat main")
+        self.state.additional_beginning_phases = (
+            self.state.additional_beginning_phases.queue_one()
+            if self.state.additional_beginning_phases is not None else AdditionalBeginningPhases(1)
+        )
+        self._host._log(
+            player, "phase.additional_beginning",
+            f"{player} will take an additional beginning phase.",
+            {"source": source, "queued_phases": self.state.additional_beginning_phases.pending},
+            importance=1,
+        )
+
+    def _next_start_or_end_index(self, phase: str, step: str) -> int:
+        extra = self.state.additional_beginning_phases
+        if extra is not None and (
+            (phase, step) == ("postcombat_main", "main")
+            or (extra.active and (phase, step) == ("beginning", "draw"))
+        ):
+            if extra.pending:
+                self.state.additional_beginning_phases = extra.begin_next()
+                return TURN_STEPS.index(("beginning", "untap"))
+            self.state.additional_beginning_phases = None
+            return TURN_STEPS.index(("ending", "end_step"))
+        return self.state.phase_index + 1
+
+    def _phase_index_after_combat(self) -> int:
+        if self.state.extra_combat_phases == 0:
+            return _COMBAT_END_INDEX
+        # All queued phases are the same ordinary combat. The new occurrence
+        # receives its own identity from the existing start-of-combat owner.
+        self.state.extra_combat_phases -= 1
+        return _COMBAT_START_INDEX
 
     def schedule_skip(self, seat: str, spec: TurnSkipSpec) -> ScheduledTurnSkip | None:
         self._host._require_seat(seat, in_game=True)
@@ -347,6 +405,7 @@ class TurnStepOwner:
         self._advance_normal_rotation(entry)
         self.state.current_turn = entry
         self.state.active_player = entry.player
+        self.state.reset_upkeep_completion()
         expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
         expire_next_cast_copy_triggers(self._host)
@@ -384,7 +443,9 @@ class TurnStepOwner:
                 "yields_invalidated_by_phase",
             )
         player.yield_policy = YieldPolicy()
-        self.state.combat = CombatState()
+        self.state.combat = self.state.combat.fresh()
+        self.state.extra_combat_phases = 0
+        self.state.additional_beginning_phases = None
         self.state.phase_index = 0
         self.state.priority_player = None
         self.state.priority_passes = []
@@ -435,7 +496,7 @@ class TurnStepOwner:
                 break
             boundary_replacement = None
             self.state.phase_index = (
-                _COMBAT_END_INDEX if step == "beginning_combat" else self.state.phase_index + 1
+                self._phase_index_after_combat() if step == "beginning_combat" else self._next_start_or_end_index(phase, step)
             )
             phase, step = TURN_STEPS[self.state.phase_index]
 
@@ -446,7 +507,9 @@ class TurnStepOwner:
 
         self.state.phase = phase
         self.state.step = step
-        if step == "end_step":
+        if step == "untap":
+            expire_recipient_controller_untap_effects(self.state, active)
+        elif step == "end_step":
             expire_next_end_step_play_permissions(self.state, active_player=active)
         from .forecast import synchronize_forecast_reveals
         synchronize_forecast_reveals(self._host)
@@ -461,7 +524,7 @@ class TurnStepOwner:
         if step == "beginning_combat":
             # CR 802.2 uses attack-multiple-players in the supported profile.
             # Unsupported CR 507.1 variants fail during game setup.
-            self.state.combat = CombatState(
+            self.state.combat = self.state.combat.fresh(
                 damage_sequence_id=self._host._next_ref("CD"),
                 defending_players=[
                     seat
@@ -489,7 +552,8 @@ class TurnStepOwner:
             )
             self._host._complete_draw_step_entry(active)
             return
-        first_turn = self.state.turn_sequence == 1
+        extra = self.state.additional_beginning_phases
+        first_turn = self.state.turn_sequence == 1 and not (extra is not None and extra.active)
         should_draw = (
             not first_turn
             or self.state.config.effective_first_player_draws(
@@ -519,11 +583,16 @@ class TurnStepOwner:
         held_triggers: Sequence[StackItem] = (),
     ) -> None:
         self._host._clear_mana(reason="step or phase ended")
+        if (self.state.phase, self.state.step) == ("beginning", "upkeep"):
+            self.state.complete_upkeep()
         if (self.state.phase, self.state.step) == (
             "combat",
             "end_combat",
         ):
             self._host._finish_combat_phase()
+            self.state.phase_index = self._phase_index_after_combat()
+            self.enter_step(held_triggers=held_triggers)
+            return
         if (
             (self.state.phase, self.state.step)
             == ("combat", "declare_attackers")
@@ -546,7 +615,7 @@ class TurnStepOwner:
             self.state.combat.damage_step_index = 1
             self.enter_step(held_triggers=held_triggers)
             return
-        self.state.phase_index += 1
+        self.state.phase_index = self._next_start_or_end_index(self.state.phase, self.state.step)
         if self.state.phase_index >= len(TURN_STEPS):
             if (self.state.phase, self.state.step) == (
                 "ending",
@@ -623,6 +692,9 @@ class TurnStepOwner:
             self.state,
             active_player=active,
         )
+        from .entry_results import expire_copy_scope
+        from .replacement.face_status_copy import CopyExpiry
+
         for card in self.state.cards.values():
             card.marked_damage = 0
             card.deathtouch_damage = False
@@ -633,14 +705,7 @@ class TurnStepOwner:
             until_end = dict(
                 card.annotations.get("until_end_of_turn") or {}
             )
-            if "copy_overrides_previous" in until_end:
-                previous = until_end["copy_overrides_previous"]
-                if previous is None:
-                    card.annotations.pop("copy_overrides", None)
-                else:
-                    card.annotations["copy_overrides"] = copy.deepcopy(
-                        previous
-                    )
+            expire_copy_scope(card, CopyExpiry.END_OF_TURN)
             previous_controller = until_end.get("control_previous")
             if (
                 previous_controller in self.state.players
@@ -653,8 +718,11 @@ class TurnStepOwner:
                     reason="temporary control effect ended",
                 )
             card.annotations.pop("until_end_of_turn", None)
+        from .qualified_hexproof import TURN_PLAYER_COLOR_HEXPROOF
+
         for player in self.state.players.values():
             expire_temporary_cast_ability_grants(player.stats)
+            player.stats.pop(TURN_PLAYER_COLOR_HEXPROOF, None)
             player.stats.pop("next_spell_uncounterable", None)
             player.stats.pop(
                 "spells_cant_be_countered_until_end",
@@ -754,7 +822,9 @@ class TurnStepOwner:
         self._host.permissions.invalidate_current()
         self.state.priority_player = None
         self.state.priority_passes = []
-        self.state.combat = CombatState()
+        self.state.combat = self.state.combat.fresh()
+        self.state.extra_combat_phases = 0
+        self.state.additional_beginning_phases = None
         self._host._log(
             actor,
             "turn.ended",

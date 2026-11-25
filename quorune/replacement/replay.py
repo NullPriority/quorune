@@ -164,6 +164,7 @@ class ReplacementContinuation:
     opening_hand_entry: FrozenMap | None = None
     state_based_destruction_selections: tuple[str | FrozenMap, ...] = ()
     completed_choice: FrozenMap | None = None
+    damage_proposal_ids: tuple[str, ...] = ()
 
     @classmethod
     def from_dict(
@@ -180,7 +181,7 @@ class ReplacementContinuation:
             return decode_opening_hand_entry(cls,value,batch,effects)
         if resume_kind == "combat_damage":
             return _decode_combat_continuation(cls, value, batch, effects)
-        if resume_kind in {"mana_payment", "priority_action_cost"}:
+        if resume_kind in {"mana_payment", "priority_action_cost", "face_up_copy"}:
             return _decode_mana_continuation(
                 cls,
                 value,
@@ -216,6 +217,10 @@ class ReplacementContinuation:
         if resume_kind in {"state_based_destruction", "state_based_zone_change"}:
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
+        if resume_kind == "draw_discard_or_mill":
+            from ..drawing.discard_coordination import decode_draw_discard_replacement
+
+            return decode_draw_discard_replacement(cls, value, batch, effects)
         if resume_kind == 'conditional_return':
             from ..conditional_exile_return import decode_conditional_return
             return decode_conditional_return(cls,value,batch,effects)
@@ -299,6 +304,7 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
         "combat_damage": (_COMBAT_FIELDS, "combat continuation"),
         "semantic": (_SEMANTIC_FIELDS, "semantic continuation"),
         "mana_payment": (_MANA_FIELDS, "mana-payment continuation"),
+        "face_up_copy": (_MANA_FIELDS, "face-up copy continuation"),
         "priority_action_cost": (
             _PRIORITY_ACTION_COST_FIELDS,
             "priority-action cost continuation",
@@ -328,6 +334,9 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
         "state_based_zone_change": (_STATE_BASED_DESTRUCTION_FIELDS | {'state_based_destruction_selections'}, "state-based zone continuation"),
         'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
+        "draw_discard_or_mill": ({"replacement_resume_kind", "draw_discard", "selected_card",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "draw discard or mill continuation"),
     }
     shape = shapes.get(resume_kind)
     if shape is None:
@@ -335,6 +344,8 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             "Unknown replacement continuation resume kind"
         )
     fields, field_name = shape
+    if resume_kind in {"semantic", "combat_damage", "mana_payment"} and "damage_proposal_ids" in value:
+        fields = fields | {"damage_proposal_ids"}
     if resume_kind=='semantic_intent_completion' and 'completed_choice' in value:
         fields=fields|{'completed_choice'}
     exact_fields(value, fields, field_name=field_name)
@@ -552,6 +563,21 @@ def _decode_combat_selections(
     return tuple(parsed)
 
 
+def _decode_damage_proposal_ids(value, batch) -> tuple[str, ...]:
+    if "damage_proposal_ids" not in value:
+        return ()
+    ids = value["damage_proposal_ids"]
+    if (
+        not isinstance(ids, (list, tuple)) or not ids
+        or any(type(item) is not str or not item or item != item.strip() for item in ids)
+        or len(ids) != len(set(ids))
+        or not batch.events
+        or any(event.kind not in {"damage", "damage.results"} for event in batch.events)
+    ):
+        raise ReplacementEffectError("Damage replacement lost its original proposal identities")
+    return tuple(ids)
+
+
 def _decode_combat_continuation(
     continuation_type: type[ReplacementContinuation],
     value: Mapping[str, Any],
@@ -570,6 +596,7 @@ def _decode_combat_continuation(
             )
         ),
         replacement_selections=_decode_combat_selections(value),
+        damage_proposal_ids=_decode_damage_proposal_ids(value, batch),
     )
 
 
@@ -826,6 +853,14 @@ def _priority_action_cost_event_ids(
     response: Mapping[str, Any],
     seat: str,
 ) -> set[str]:
+    from ..rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, WholeZoneCostFrame
+
+    if WHOLE_ZONE_COST_FRAME_FIELD in response:
+        if action != "cast":
+            raise ReplacementEffectError("Only a cast can carry an automatic zone cost")
+        frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
+        frame.validate_response(response)
+        return frame.replacement_event_ids(batch, seat=seat)
     if action == 'activate' and len(batch.events) > 1:
         refs=_activation_batch_cost_refs(response)
         if (
@@ -954,15 +989,8 @@ def _priority_action_cost_event_ids(
     return {event.event_id}
 
 
-def _prior_casting_zone_cost_event_ids(batch, response, *, seat):
-    """Retain prior selected-object choices across a rolled-back counted cast."""
-    journal=response.get('_mana_replacement_selections')
-    if not isinstance(journal,Mapping) or len(batch.events)!=1 or batch.events[0].kind!='zone.change':return set()
-    event=batch.events[0];origin=event.payload.get('origin');destination=event.payload.get('destination')
-    fields={field for start,end,field in FIXED_ZONE_CHANGE_COST_CONTRACTS.values() if start==origin and end==destination}
-    refs=next((response[field] for field in sorted(fields) if response.get(field) is not None),None)
-    if not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10 or any(type(ref) is not str or not ref for ref in refs) or len(set(refs))!=len(refs):return set()
-    if not _casting_zone_cost_event_is_valid(event,response,seat=seat):return set()
+def _selected_zone_cost_journal_ids(journal, event, refs):
+    """Keep only the current payment and valid earlier journal entries."""
     current=event.event_id[:-len(':'+event.payload['object_ref'])].split(':')
     if len(current)!=3 or any(not n.isdecimal() for n in current[1:]):raise ReplacementEffectError('Current counted casting event identity is malformed')
     boundary=tuple(map(int,current[1:]))
@@ -979,6 +1007,28 @@ def _prior_casting_zone_cost_event_ids(batch, response, *, seat):
             raise ReplacementEffectError('Counted casting replacement journal is not prior to the pending object')
         seen.add(ref);ids.add(event_id)
     return ids
+
+
+def _prior_casting_zone_cost_event_ids(batch, response, *, seat):
+    """Retain selected-object choices across a rolled-back multi-cost cast."""
+    from ..rules.casting.ordered_zone_cost_frame import ORDERED_ZONE_COST_FRAME_FIELD, OrderedZoneCostFrame
+
+    journal = response.get("_mana_replacement_selections")
+    if ORDERED_ZONE_COST_FRAME_FIELD in response:
+        frame = OrderedZoneCostFrame.from_dict(response[ORDERED_ZONE_COST_FRAME_FIELD])
+        frame.validate_response(response)
+        if len(batch.events) != 1 or not _casting_zone_cost_event_is_valid(batch.events[0], response, seat=seat):
+            raise ReplacementEffectError("The replacement no longer belongs to the ordered cast")
+        event = batch.events[0]
+        refs = frame.through_pending_payment(event)
+        return _selected_zone_cost_journal_ids(journal, event, refs) if isinstance(journal, Mapping) else set()
+    if not isinstance(journal,Mapping) or len(batch.events)!=1 or batch.events[0].kind!='zone.change':return set()
+    event=batch.events[0];origin=event.payload.get('origin');destination=event.payload.get('destination')
+    fields={field for start,end,field in FIXED_ZONE_CHANGE_COST_CONTRACTS.values() if start==origin and end==destination}
+    refs=next((response[field] for field in sorted(fields) if response.get(field) is not None),None)
+    if not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10 or any(type(ref) is not str or not ref for ref in refs) or len(set(refs))!=len(refs):return set()
+    if not _casting_zone_cost_event_is_valid(event,response,seat=seat):return set()
+    return _selected_zone_cost_journal_ids(journal, event, refs)
 
 
 def _counted_activation_cost_event_is_valid(
@@ -1038,7 +1088,17 @@ def _decode_mana_continuation(
         )
     _validate_mana_frame(frame, seat)
     _validate_priority_response(action, response)
-    if resume_kind == "priority_action_cost":
+    prior_mana_event_ids = set()
+    damage_proposal_ids = _decode_damage_proposal_ids(value, batch)
+    if resume_kind == "face_up_copy":
+        from .face_status_copy import face_up_copy_payment_scope
+
+        try:
+            event_ids, prior_mana_event_ids = face_up_copy_payment_scope(
+                batch, effects, action=action, seat=seat, response=response)
+        except ValueError as exc:
+            raise ReplacementEffectError(str(exc)) from exc
+    elif resume_kind == "priority_action_cost":
         event_ids = _priority_action_cost_event_ids(
             batch,
             effects,
@@ -1074,6 +1134,10 @@ def _decode_mana_continuation(
                         )
                     )
                 )
+    elif damage_proposal_ids:
+        if len(damage_proposal_ids) != 1:
+            raise ReplacementEffectError("A mana damage choice requires one original proposal")
+        event_ids = set(damage_proposal_ids)
     else:
         event_ids = {
             event.event_id for event in batch.events if event.kind == "damage"
@@ -1082,7 +1146,6 @@ def _decode_mana_continuation(
             raise ReplacementEffectError(
                 "Mana-payment continuation event batch is malformed"
             )
-    prior_mana_event_ids = set()
     if action == "activate":
         from ..rules.selected_counter_costs import blight_prior_mana_replacement_event_ids
 
@@ -1105,6 +1168,7 @@ def _decode_mana_continuation(
         priority_action=action,
         priority_response=FrozenMap(response),
         priority_frame=FrozenMap(frame),
+        damage_proposal_ids=damage_proposal_ids,
     )
 
 
@@ -1254,6 +1318,7 @@ def _decode_semantic_intent_continuation(
             "resolving_captured_draw_cast",
             "resolving_bounded_hand_cast",
             "resolving_exile_land_play",
+            "resolving_shared_type_library_play",
             "targeted_graveyard_cast",
             "exile_graveyard_copies",
             "life_change",
@@ -1263,6 +1328,7 @@ def _decode_semantic_intent_continuation(
             "library_selection",
             "move_objects_simultaneously",
             "move_counters",
+            "targeted_power_sacrifice_life",
             "exploit_sacrifice",
             "place_counter_batch",
             "place_counters",
@@ -1355,6 +1421,7 @@ def _decode_semantic_continuation(
         note=value["note"],
         instruction_pointer=instruction_pointer,
         semantic_frame=FrozenMap(semantic_frame),
+        damage_proposal_ids=_decode_damage_proposal_ids(value, batch),
     )
 
 

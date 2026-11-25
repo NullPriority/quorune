@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [],
+  "cards": [
+    {
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "00000000-0000-4f40-8f56-000000120371",
+      "name": "Trial Bitter Envoy",
+      "type_line": "Creature — Scout",
+      "mana_cost": "{1}{B}{B}",
+      "cmc": 3,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "power": "3",
+      "toughness": "3",
+      "oracle_text": "Menace\nWhen this creature enters, target opponent puts a deathtouch counter on a creature they control."
+    },
+    {
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "oracle_id": "00000000-0000-4f40-8f56-000000120372",
+      "name": "Trial Veiled Creature",
+      "type_line": "Creature — Scout",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Shroud"
+      ],
+      "power": "1",
+      "toughness": "2",
+      "oracle_text": "Shroud"
+    }
+  ],
+  "source": "Original offline witnesses for the targeted opponent's untargeted counter choice."
+}

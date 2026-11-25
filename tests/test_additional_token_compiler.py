@@ -49,6 +49,18 @@ def additional_token_record(
     )
 
 
+class AdditionalTokenDescriptorContractTests(unittest.TestCase):
+    def test_predefined_replacement_preserves_the_executable_token_profile(self):
+        compiled = static_additional_token_replacement_handler(
+            "If you would create one or more artifact tokens, instead "
+            "create those tokens plus a Food token."
+        )
+        self.assertIsNotNone(compiled)
+        token = GenericAdditionalTokenReplacementHandler().validate(compiled[1]).token
+        self.assertEqual("two_tap_sac_gain_three_life_v1", token.ability_profile)
+        self.assertEqual(1, len(token.characteristics()["activated_abilities"]))
+
+
 class AdditionalTokenCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

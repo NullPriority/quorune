@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from enum import StrEnum
+import re
 from typing import TYPE_CHECKING, Any, Iterable, Mapping
 from .ability_fragment_primitives import AbilityFragmentError
 from .replacement.immutable import FrozenMap, thaw_value
+from .util import ORDINARY_FIXED_MANA_PATTERN, mana_cost_to_vector
 
 if TYPE_CHECKING:
     from .continuous_effect_model import ContinuousObjectIdentity
@@ -118,6 +120,10 @@ def _nonempty_string(value: Any, *, field: str) -> str:
     return value.strip()
 
 
+GRANTED_UNEARTH_VERSION = 8
+GRAVEYARD_UNEARTH_GRANT_CAPABILITY = "continuous.ability.graveyard_unearth_grant"
+
+
 @dataclass(frozen=True, slots=True)
 class GrantedActivatedAbilitySpec:
     """A closed executable activated ability granted in layer 6."""
@@ -140,9 +146,11 @@ class GrantedActivatedAbilitySpec:
     crew_threshold: int | None = None
     granting_attachment_payment: GrantingAttachmentPayment | None = None
     source_counter_removal_cost: Mapping[str, Any] | None = None
+    announced_x_symbols: int | None = None
+    grant_incarnation: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, GRANTED_UNEARTH_VERSION}:
             raise AbilityFragmentError(
                 "Unsupported granted activated-ability schema version"
             )
@@ -232,9 +240,54 @@ class GrantedActivatedAbilitySpec:
             object.__setattr__(self, "source_counter_removal_cost", GRANTED_SPORE_COUNTER_COST)
         elif price is not None:
             raise AbilityFragmentError("Granted source-counter costs require schema version 6")
+        if self.schema_version == 7:
+            if (type(self.announced_x_symbols) is not int or self.announced_x_symbols != 1
+                    or self.cost_text != "{X}"
+                    or any((self.mana, self.tap_source, self.untap_source, self.sacrifice_source,
+                            self.life_payment, self.choices, self.mana_ability, self.sorcery_speed,
+                            self.mana_spend_restriction, self.fixed_mana_outputs))):
+                raise AbilityFragmentError("Announced-X grants require one ordinary X price")
+        elif self.announced_x_symbols is not None:
+            raise AbilityFragmentError("Announced-X grants require schema version 7")
+
+        if self.schema_version == GRANTED_UNEARTH_VERSION:
+            self._validate_unearth_grant()
+        elif self.grant_incarnation is not None:
+            raise AbilityFragmentError("A source incarnation requires a versioned Unearth grant")
+
+    def _validate_unearth_grant(self) -> None:
+        if (
+            not self.sorcery_speed
+            or any((self.tap_source, self.untap_source, self.sacrifice_source, self.life_payment,
+                    self.choices, self.mana_ability, self.mana_spend_restriction,
+                    self.fixed_mana_outputs, self.crew_threshold))
+            or not self.ability_id.startswith("ability:granted:")
+            or not self.semantic_key.endswith(":" + self.ability_id)
+        ):
+            raise AbilityFragmentError("Granted Unearth requires a fixed sorcery-speed activation")
+        if self.grant_incarnation is not None:
+            value = self.grant_incarnation
+            if type(value) is not str:
+                raise AbilityFragmentError("Unearth grant incarnation must be text")
+            object_id, separator, incarnation = value.rpartition("@")
+            if not object_id or not separator or not incarnation.isascii() or not incarnation.isdecimal():
+                raise AbilityFragmentError("Unearth grant requires a source incarnation")
+        if re.fullmatch(ORDINARY_FIXED_MANA_PATTERN, self.cost_text) is None:
+            raise AbilityFragmentError("Unearth grant requires a fixed ordinary mana cost")
+        expected, complex_symbols = mana_cost_to_vector(self.cost_text)
+        if complex_symbols or {key: amount for key, amount in expected.items() if amount} != self.mana_bundle:
+            raise AbilityFragmentError("Unearth grant mana vector must match its cost")
+
+    @property
+    def activation_zones(self) -> tuple[str, ...]:
+        return ("graveyard",) if self.schema_version == GRANTED_UNEARTH_VERSION else ("battlefield",)
 
     @property
     def capability_id(self) -> str | None:
+        if self.schema_version == GRANTED_UNEARTH_VERSION:
+            return GRAVEYARD_UNEARTH_GRANT_CAPABILITY
+        if self.schema_version == 7:
+            return "activation.mana_cost.announced_x"
         if self.schema_version == 6:
             return GRANTED_SOURCE_COUNTER_CAPABILITY
         if self.schema_version == 5:
@@ -275,6 +328,10 @@ class GrantedActivatedAbilitySpec:
             result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
         if self.source_counter_removal_cost is not None:
             result["source_counter_removal_cost"] = thaw_value(self.source_counter_removal_cost)
+        if self.announced_x_symbols is not None:
+            result["announced_x_symbols"] = self.announced_x_symbols
+        if self.schema_version == GRANTED_UNEARTH_VERSION:
+            result["grant_incarnation"] = self.grant_incarnation
         return result
 
     @classmethod
@@ -304,16 +361,21 @@ class GrantedActivatedAbilitySpec:
         crew_extended={*extended,'crew_threshold'}
         attachment_extended = {*extended, GRANTING_ATTACHMENT_PAYMENT_FIELD}
         source_counter_fields = {*expected, "source_counter_removal_cost"}
+        announced_x_fields = {*expected, "announced_x_symbols"}
+        unearth_fields = {*expected, "grant_incarnation"}
         if (
             not isinstance(value, Mapping)
             or set(value) not in {frozenset(expected), frozenset(extended), frozenset(crew_extended),
-                                  frozenset(attachment_extended), frozenset(source_counter_fields)}
+                                  frozenset(attachment_extended), frozenset(source_counter_fields), frozenset(announced_x_fields),
+                                  frozenset(unearth_fields)}
             or (value.get("schema_version") == 1 and set(value) != expected)
             or (value.get("schema_version") == 2 and set(value) != extended)
             or (value.get("schema_version") == 3 and set(value) != crew_extended)
             or (value.get("schema_version") == 4 and set(value) != extended)
             or (value.get("schema_version") == 5 and set(value) != attachment_extended)
             or (value.get("schema_version") == 6 and set(value) != source_counter_fields)
+            or (value.get("schema_version") == 7 and set(value) != announced_x_fields)
+            or (value.get("schema_version") == GRANTED_UNEARTH_VERSION and set(value) != unearth_fields)
         ):
             raise AbilityFragmentError(
                 "Granted activated-ability fragments have a closed schema"
@@ -355,4 +417,6 @@ class GrantedActivatedAbilitySpec:
             granting_attachment_payment=(GrantingAttachmentPayment.from_dict(value[GRANTING_ATTACHMENT_PAYMENT_FIELD])
                                          if GRANTING_ATTACHMENT_PAYMENT_FIELD in value else None),
             source_counter_removal_cost=value.get("source_counter_removal_cost"),
+            announced_x_symbols=value.get("announced_x_symbols"),
+            grant_incarnation=value.get("grant_incarnation"),
         )

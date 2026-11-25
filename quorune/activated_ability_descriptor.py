@@ -49,7 +49,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", "source_counter_removal_cost", "waterbend"}
+    {ABILITY_LOCAL_MANA_REDUCTION_FIELD, "variable_colored_reveal_price", "announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (

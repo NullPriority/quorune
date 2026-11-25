@@ -6,6 +6,41 @@ from ..recipient_control_model import (RECIPIENT_CONTROL_CAPABILITY,RECIPIENT_CO
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed,direct_target_predicate_capabilities
 
 
+DAMAGE_DEALER_CONTROL_VARIANT = "combat_creature_damage_to_current_controller"
+DAMAGE_DEALER_CONTROL_CAPABILITY = "continuous.control.combat_damage_dealer_recipient"
+
+
+def damage_dealer_control_condition():
+    return {"all": [
+        {"field": "source_types", "op": "contains_any", "value": ["creature"]},
+        {"field": "target_kind", "op": "eq", "value": "player"},
+        {"field": "combat", "op": "truthy", "value": True},
+        {"field": "target", "op": "eq", "value": "$source.controller"},
+    ]}
+
+
+def _damage_dealer_control_dependencies(effect, target_schema):
+    validate_recipient_control_effect(effect)
+    if (effect["schema_version"] != 4 or effect["card"] != "$source.zone_object"
+            or effect["source"] != "$source" or target_schema is not None):
+        raise ValueError("Damage dealer control must keep its original source incarnation")
+    return (RECIPIENT_CONTROL_CAPABILITY, "continuous.control.fixed_resolution", DAMAGE_DEALER_CONTROL_CAPABILITY)
+
+
+def _damage_dealer_control_program_dependencies(program, effect):
+    from ..replacement.immutable import FrozenMap
+
+    if ((program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or program.cost_schema is not None or program.handlers
+            or "one_or_more_event_batch" in program.coverage or "intervening_condition" in program.coverage
+            or not isinstance(program.event_condition, Mapping)
+            or FrozenMap(program.event_condition) != FrozenMap(damage_dealer_control_condition())
+            or tuple(program.effects) != (effect,)):
+        raise ValueError("Damage dealer control requires one distinct committed creature combat-damage occurrence")
+    return (*_damage_dealer_control_dependencies(effect, program.target_schema),
+            "trigger.event.normalized_damage", "trigger.effect.fixed_event", "trigger.placement.apnap")
+
+
 def _player_schema(schema):
     return isinstance(schema,Mapping) and type(schema.get('count')) is int and any(schema=={'zones':['player'],'categories':['player'],'player_relation':relation,'count':1} for relation in ('any','opponent'))
 
@@ -32,6 +67,11 @@ def recipient_control_node_capabilities(*,effects,target_schema,mechanic_ids):
         return (RECIPIENT_CONTROL_CAPABILITY,'continuous.control.fixed_resolution')
     try:validate_recipient_control_effect(effect)
     except (ValueError,TypeError):return ()
+    if effect["schema_version"] == 4:
+        try:
+            return _damage_dealer_control_dependencies(effect, target_schema)
+        except (ValueError, TypeError):
+            return ()
     if effect['schema_version']==3:
         from ..player_maximum_model import PLAYER_MAXIMUM_CAPABILITY,PLAYER_MAXIMUM_MECHANIC
         if (effect['source']!='$source' or effect['card']!='$source.zone_object' or target_schema is not None
@@ -60,7 +100,9 @@ def recipient_control_runtime_dependencies(program):
             if 'target_schema' in value:schema=value['target_schema']
             if value.get('op')==GIVE_CONTROL_OPERATION:
                 validate_recipient_control_effect(value)
-                if value['schema_version']==3:
+                if value["schema_version"] == 4:
+                    required.update(_damage_dealer_control_program_dependencies(program, value))
+                elif value["schema_version"] == 3:
                     from .player_maximum_shapes import player_maximum_control_dependencies
                     if value['source']!='$source' or value['card']!='$source.zone_object':
                         raise ValueError('Unique maximum control lost its original source role')

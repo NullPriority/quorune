@@ -169,6 +169,45 @@ def reviewed_fixed_optional_mana_payment_trigger_template(
     return optional_payment.compiled() if optional_payment is not None else compiled
 
 
+def binding_aware_mandatory_source_counter_followup(binding, text: str, *, compile_result):
+    from ..fixed_effect_payment import (
+        FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC,
+        MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION, FixedEffectPaymentSpec,
+    )
+    from .damage_templates import source_pronoun_damage_effect_template
+
+    match = re.fullmatch(
+        r"Remove a \+1/\+1 counter from (?P<source>it|this creature)\. If you do, (?P<body>.+)",
+        text, re.IGNORECASE,
+    )
+    if match is None or binding.active_zone != "battlefield":
+        return None
+    if (binding.event.value, binding.variant) == ("creature.attacks", "source_attacks_or_blocks"):
+        damage = source_pronoun_damage_effect_template(match["body"])
+        if damage is None:
+            return None
+        compiled, current = damage.compiled(), False
+        operation = "damage"
+    elif (binding.event.value == "spell.cast" and binding.event_condition is None
+          and match["source"].casefold() == "this creature"):
+        compiled, current = compile_result(match["body"])
+        operation = "create_token"
+    else:
+        return None
+    template, effects, target_schema, mechanics = compiled
+    if template is None or len(effects) != 1 or effects[0].get("op") != operation:
+        return None
+    payment = FixedEffectPaymentSpec(
+        "remove_source_counter", schema_version=4, counter_name="+1/+1", source_ref="$source.zone_object",
+    )
+    wrapper = {
+        "op": OPTIONAL_MANA_PAYMENT_OPERATION, "schema_version": MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION,
+        "player": "$controller", "payment": payment.to_dict(), "effects": list(effects),
+    }
+    return ("fixed-mandatory-source-counter-followup-v1", (wrapper,), target_schema,
+            (*mechanics, FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_SOURCE_COUNTER_FOLLOWUP_MECHANIC)), current
+
+
 def binding_aware_optional_mana_payment_template(
     text: str,
     *,

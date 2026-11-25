@@ -41,13 +41,16 @@ class UnblockedAttackerOwnerTests(unittest.TestCase):
         from quorune.record_state_provenance import format_state_versions,validate_state_versions
         state=GameState(game_id='unblocked-version',config=GameConfig(),players={},cards={},deck_names={},
             commander_oracle_ids={},turn_order=[],current_turn=None,last_normal_turn_player=None)
-        raw=state.to_dict();self.assertEqual(1,raw['unblocked_attacker_event_version'])
+        raw=state.to_dict();self.assertEqual(2,raw['unblocked_attacker_event_version'])
         self.assertEqual(raw,GameState.from_dict(raw).to_dict())
+        old_version=GameState.from_dict({**raw,'unblocked_attacker_event_version':1})
+        self.assertEqual(1,old_version.to_dict()['unblocked_attacker_event_version'])
+        validate_state_versions({'format':format_state_versions(old_version)},old_version)
         old=deepcopy(raw);old.pop('unblocked_attacker_event_version');legacy=GameState.from_dict(old)
         self.assertIsNone(legacy.unblocked_attacker_event_version);self.assertEqual(old,legacy.to_dict())
         validate_state_versions({'format':format_state_versions(state)},state)
         with self.assertRaises(ValueError):validate_state_versions({'format':{**format_state_versions(state),'unblocked_attacker_event_version':0}},state)
-        for value in (True,0,2,'1'):
+        for value in (True,0,3,'1'):
             with self.assertRaises(ValueError):GameState.from_dict({**raw,'unblocked_attacker_event_version':value})
     def test_forgetting_historical_blocked_membership_is_killed(self):
         import quorune.rules.unblocked_attackers as owner
@@ -82,7 +85,7 @@ class UnblockedAttackerOwnerTests(unittest.TestCase):
         row=UnblockedAttackerOccurrence('source','source-id','source@0','A','C')
         self.assertEqual(('source','source@0','C'),tuple(row.semantic_context()[k] for k in ('card','card_object_identity','defending_player')))
         with self.assertRaises(ValueError):replace(row,logical_object_id='')
-        for value in (True,0,2,'1'):
+        for value in (True,0,3,'1'):
             with self.assertRaises(ValueError):unblocked_attacker_event_version(value)
 
     def test_later_empty_blocker_list_does_not_become_a_new_unblocked_occurrence(self):

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Immutable CR 502 untap-step participation values and planning."""
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import Enum
 from typing import Iterable
@@ -16,6 +17,31 @@ class UntapStepError(ValueError):
 
 CONDITIONAL_UNTAP_HANDLER_ID = "participation.untap-step.conditional.v1"
 CONDITIONAL_UNTAP_CAPABILITY = "untap.step.conditional_participation"
+SOURCE_QUEST_UNTAP_SCOPE = "source_quest_counter_threshold"
+SOURCE_QUEST_UNTAP_CAPABILITY = "untap.step.other_player_creatures_source_quest"
+
+
+def source_quest_untap_condition():
+    from .continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
+        amount=4, counter_name="quest",
+    )
+
+
+def conditional_untap_scope_dependencies(descriptor):
+    if descriptor.get("handler_id") != CONDITIONAL_UNTAP_HANDLER_ID:
+        return ()
+    condition = descriptor.get("public_condition")
+    if not isinstance(condition, Mapping):
+        return ()
+    scope = condition.get("scope")
+    if scope == "subject_controller_not_monarch":
+        return ("variant.monarch.designate",)
+    if scope == SOURCE_QUEST_UNTAP_SCOPE:
+        return (SOURCE_QUEST_UNTAP_CAPABILITY,)
+    return ()
 
 
 class UntapInstruction(str, Enum):

@@ -331,6 +331,7 @@ def resolve_self_zone_move(
         card.object_id,
         intent.destination,
         controller=intent.actor if intent.destination == "battlefield" else None,
+        putting_player=intent.actor if intent.destination == "battlefield" else None,
         tapped=intent.tapped if intent.destination == "battlefield" else None,
         reason="Activated self-zone movement resolved",
         semantic_events=True,

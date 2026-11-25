@@ -105,7 +105,7 @@ def validate_activation_x_ability(ability) -> None:
 
 
 def chosen_activation_x(ability, response) -> int | None:
-    if ability.announced_x_symbols is None:
+    if not ability.chooses_activation_x:
         return None
     value = response.get('x')
     if type(value) is not int or value < 0:
@@ -122,7 +122,7 @@ def bind_activation_target_cardinality(ability, schema, response, *, hint=False,
         if type(target_limit) is not int or target_limit < 0:
             raise ValueError('Any-number targets require the authoritative object bound')
         return bind_announced_target_schema(schema, target_limit)
-    if ability.announced_x_symbols is None:
+    if not ability.chooses_activation_x:
         raise ValueError('Variable target cardinality requires the typed activation-X cost')
     value = 0 if hint else chosen_activation_x(ability, response)
     return bind_announced_target_schema(schema, value)

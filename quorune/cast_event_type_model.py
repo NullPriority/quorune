@@ -1,10 +1,13 @@
-"""Versioned effective type facts for a committed spell-cast event."""
+"""Versioned effective cast and physical card-play facts."""
 
 from collections.abc import Mapping
 
 
 CAST_EVENT_TYPE_SNAPSHOT_VERSION_FIELD = "cast_event_type_snapshot_version"
 CURRENT_CAST_EVENT_TYPE_SNAPSHOT_VERSION = 1
+CARD_PLAY_EVENT_FACT_VERSION_FIELD = "card_play_event_fact_version"
+CURRENT_CARD_PLAY_EVENT_FACT_VERSION = 1
+PHYSICAL_CARD_EVENT_FIELD = "physical_card"
 
 
 def cast_event_type_snapshot_version(value: object) -> int | None:
@@ -39,3 +42,35 @@ def cast_event_type_line(
     if type(line) is not str or not line.strip():
         raise ValueError("A cast event requires its effective stack type line")
     return line
+
+
+def card_play_event_fact_version(value: object) -> int | None:
+    if value is None:
+        return None
+    if type(value) is not int or value != CURRENT_CARD_PLAY_EVENT_FACT_VERSION:
+        raise ValueError("Unsupported physical card-play event fact version")
+    return value
+
+
+def read_card_play_event_fact_version(data: Mapping[str, object]) -> int | None:
+    if CARD_PLAY_EVENT_FACT_VERSION_FIELD not in data:
+        return None
+    version = card_play_event_fact_version(data[CARD_PLAY_EVENT_FACT_VERSION_FIELD])
+    if version is None:
+        raise ValueError("Physical card-play event fact version cannot be null")
+    return version
+
+
+def card_play_event_fact_state_fields(version: int | None) -> dict[str, int]:
+    version = card_play_event_fact_version(version)
+    return {} if version is None else {CARD_PLAY_EVENT_FACT_VERSION_FIELD: version}
+
+
+def physical_card_event_context(state: object, card) -> dict[str, bool]:
+    version = card_play_event_fact_version(getattr(state, CARD_PLAY_EVENT_FACT_VERSION_FIELD, None))
+    if version is None:
+        return {}
+    physical_card = card.is_card_object
+    if type(physical_card) is not bool:
+        raise ValueError("Physical card-play event fact must be a boolean")
+    return {PHYSICAL_CARD_EVENT_FIELD: physical_card}

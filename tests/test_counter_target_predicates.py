@@ -30,6 +30,7 @@ from quorune.rules.capabilities import (
 )
 from quorune.semantics import SemanticProgram
 from quorune.targets import TargetGroup
+from quorune.turn_history import roll_turn_history
 from scripts.build_test_database import build_fixture_database
 
 
@@ -662,6 +663,11 @@ class CounterTargetPredicateRuntimeTests(unittest.TestCase):
         )
         engine.state.stack.append(item)
         engine.state.turn_sequence += 1
+        engine.state.turn_history = roll_turn_history(
+            engine.state.turn_history,
+            next_turn_sequence=engine.state.turn_sequence,
+            previous_active_player=engine.state.active_player,
+        )
         self.assertFalse(engine._revalidate_resolution_targets(item))
         self.assertNotIn(item, engine.state.stack)
         self.assertEqual({}, current.counters)

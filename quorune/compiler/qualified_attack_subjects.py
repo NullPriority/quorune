@@ -7,7 +7,8 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..qualified_attack_model import (
     ATTACK_FACT_EQUAL_POWER_TOUGHNESS, ATTACK_FACT_PREFIX, QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT,
-    qualified_player_defense_condition,
+    OPPOSING_PLAYER_ATTACK_TRIGGER_TEMPLATE, OPPOSING_PLAYER_ATTACK_VARIANT,
+    opposing_player_attack_condition, qualified_player_defense_condition,
 )
 from .public_event_query_conditions import public_event_query_conditions
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
@@ -23,6 +24,10 @@ _CONTROLLED_CREATURE_POWER = re.compile(
 )
 _DEFENDING_CREATURE_POWER = re.compile(
     r"(?:When|Whenever) a creature with power (?P<power>0|[1-9][0-9]{0,2}) or greater attacks you, (?P<body>.+)", re.I,
+)
+_OPPOSING_PLAYER_ATTACK = re.compile(
+    r"Whenever a creature(?P<counter> with a counter on it)? attacks one of your opponents, (?P<body>.+)",
+    re.I,
 )
 _ENCHANTED_OR_EQUIPPED = re.compile(
     r"(?P<article>a|another) creature you control that(?: is|['’]s) enchanted or equipped", re.I,
@@ -69,17 +74,28 @@ def _attack_subject_query(text):
         parsed = ('source_controller', query, other)
     else:
         parsed = fixed_characteristic_battlefield_query_subject(('Other ' if other else '') + subject)
-    if parsed is None or parsed[0] != 'source_controller': return None
+    if parsed is None or parsed[0] != 'source_controller' or parsed[1].any_of:
+        return None
     query = parsed[1]
-    query = replace(query, types_all=tuple(sorted(set(query.types_all) | {'creature'})))
-    try:validate_attack_characteristic_query(query)
-    except ValueError:return None
+    try:
+        query = replace(query, types_all=tuple(sorted(set(query.types_all) | {'creature'})))
+        validate_attack_characteristic_query(query)
+    except ValueError:
+        return None
     return query, parsed[2]
 
 
 def qualified_attack_binding_spec(text):
     from .fixed_public_event_trigger_bindings import _spec, _all_conditions
 
+    opposing = _OPPOSING_PLAYER_ATTACK.fullmatch(text)
+    if opposing is not None:
+        return _spec(
+            'creature.attacks', OPPOSING_PLAYER_ATTACK_VARIANT, opposing['body'],
+            OPPOSING_PLAYER_ATTACK_TRIGGER_TEMPLATE, 'trigger-event-normalized-public-action',
+            condition=opposing_player_attack_condition(with_counter=opposing['counter'] is not None),
+            capabilities=(QUALIFIED_ATTACK_CAPABILITY,),
+        )
     defense = _DEFENDING_CREATURE_POWER.fullmatch(text)
     if defense is not None:
         return _spec('creature.attacks', QUALIFIED_ATTACK_VARIANT, defense['body'],

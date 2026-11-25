@@ -107,6 +107,9 @@ def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
     from .composition_replacements import project_composition_counters
     from .counter_placement import commit_counter_events_from_resolution
     from .entry_results import commit_prepared_entry_results
+    from .zone_transition_journal import (
+        finish_self_graveyard_shuffles, journal_self_graveyard_reveals, prepare_self_graveyard_reveals,
+    )
     if not isinstance(batch,PreparedCompositionDepartureBatch):
         raise GameRuleError('Physical departure requires its typed prepared batch')
     order=batch.request.ordered_ids(batch.orders)
@@ -142,6 +145,12 @@ def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
                     aura_entry_plan=None,prospective_battle_protector=None,manifest_entry=False,
                     destination=group.subject.component_destinations.get(oid,group.plan.destination))
                     if group.storage is not None else group.plan)
+        reveals = prepare_self_graveyard_reveals(
+            owner.host, tuple(group.plan.prepared_replacement for group in batch.groups),
+        )
+        physical_reveals = {group.plan.card.object_id: tuple(cards.values())
+                            for group, cards, _before, _members in committed if group.storage is not None}
+        journal_self_graveyard_reveals(owner.host, reveals, physical_components=physical_reveals)
         owner.pin_characteristic_departures(tuple(group.plan.card for group in batch.groups))
         for group,_cards,_before,_members in committed:
             if group.storage is None:continue
@@ -155,6 +164,7 @@ def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
         for oid in order:
             owner._commit_move(plans[oid],departures[oid],controller=None,tapped=None,enter_face=None,
                 aura_target_ref=None,zone_timestamp=owner.next_timestamp(),reveal_to=(),already_detached=oid in composed)
+        finish_self_graveyard_shuffles(owner, reveals, physical_components=physical_reveals)
         counter_results=[]
         for group,cards,_before,members in committed:
             if group.storage is not None:
