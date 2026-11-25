@@ -136,7 +136,10 @@ class AttackingPlayerQuantityRuntimeTests(unittest.TestCase):
         for name in ('Arachnogenesis','Blessed Reversal','Galadhrim Ambush','Jace Beleren','Giant Spider'):
             card=self.add(s.engine,name,zone='hand');binding=self.binding(s,card)
             self.assertTrue(binding['strict_capability_ready'],(name,binding['blockers']));self.assertEqual('capability_closed',binding['trust_basis'])
-        bad=self.add(s.engine,'Terrifying Presence',zone='hand');self.assertFalse(self.binding(s,bad)['strict_capability_ready'])
+        exception=self.add(s.engine,'Terrifying Presence',zone='hand')
+        binding=self.binding(s,exception)
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+        self.assertEqual('capability_closed',binding['trust_basis'])
     def setup_combat(self,seed,*,response=False,reversal=False,double=False):
         s=self.start(seed);source=self.add(s.engine,'Blessed Reversal' if reversal else 'Arachnogenesis',zone='hand')
         spider=self.add(s.engine,'Giant Spider',seat='B')

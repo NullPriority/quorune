@@ -41,7 +41,7 @@ class ExploreEventOwnerTests(unittest.TestCase):
     def source_host(self):
         from quorune.target_source import TargetingSourceBinding, TARGETING_SOURCE_CONTEXT
         source = SimpleNamespace(object_id='object:P1',ref='P1',logical_object_id='new-incarnation',
-            zone='battlefield',controller='A',owner='A')
+            zone='battlefield',controller='A',owner='A',annotations={})
         binding = TargetingSourceBinding('object:P1','P1','old-incarnation','battlefield','B','Creature — Scout',('G',))
         item = SimpleNamespace(kind='triggered_ability',source_object_id=source.object_id,card_object_id=None,
             context={'source_logical_object_id':'old-incarnation', TARGETING_SOURCE_CONTEXT:binding.to_dict()})

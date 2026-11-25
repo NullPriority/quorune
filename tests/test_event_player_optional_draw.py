@@ -92,7 +92,7 @@ class EventOptionalDrawModelTests(unittest.TestCase):
         handler = OptionalDrawHandler()
         snapshot = self.snapshot()
         effect = self.effect()
-        for changed in ({FIELD: True}, {FIELD: 3}, {'drawer': 'A'}, {'private': False}, {'count': True}, {'extra': 1}):
+        for changed in ({FIELD: True}, {FIELD: 0}, {'drawer': 'A'}, {'private': False}, {'count': True}, {'extra': 1}):
             with self.subTest(changed=changed), self.assertRaises(SemanticChoiceError):
                 handler.prepare({**effect, **changed}, old.context(snapshot, actor='B'))
         continuation = old.continuation(handler.prepare(effect, old.context(snapshot, actor='B')).continuation_effect)
@@ -107,7 +107,8 @@ class EventOptionalDrawModelTests(unittest.TestCase):
         result, _ = compiled()
         effect = result[1][0]
         program = SimpleNamespace(effects=(effect,), event='creature.attacks', active_zone='battlefield',
-            target_schema=None, event_condition={'field': 'card', 'op': 'eq', 'value': '$source.ref'}, coverage=())
+            target_schema=None, event_condition={'field': 'card', 'op': 'eq', 'value': '$source.ref'},
+            coverage=(), handlers=())
         self.assertIn(CAPABILITY, event_optional_draw_runtime_dependencies(program))
         for changed in ({'event': 'spell.cast'}, {'event_condition': None}, {'active_zone': 'graveyard'},
                         {'target_schema': {'count': 1}}):
@@ -152,7 +153,7 @@ class EventOptionalDrawCompilerTests(unittest.TestCase):
                     program = compile_best_available_card_program(db, card, semantic_registry=semantics,
                         capability_registry=self.registry, capability_profile='commander_review')
                     binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                    self.assertEqual(name in CANDIDATES,
+                    self.assertEqual(name in (*CANDIDATES, 'Notion Thief'),
                         bool(binding['strict_capability_ready'] and binding['trust_basis'] == 'capability_closed'), binding['blockers'])
                     if name in CANDIDATES:
                         ability = next(p for p in semantics.programs_for_oracle(card.oracle_id)

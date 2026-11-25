@@ -98,7 +98,10 @@ class EventSpellCopyCompilerTests(unittest.TestCase):
         with self.assertRaises(ValueError):resolve_event_spell_copy_source(host,effect)
 
     def test_reference_capture_is_inferred_from_the_instruction_without_a_coverage_marker(self):
-        host,card,original=copy_host();program=SimpleNamespace(effects=(event_spell_copy_effect(),),coverage=(),event='spell.cast')
+        from quorune.semantics import SemanticProgram
+        host,card,original=copy_host()
+        program=SemanticProgram(key='fixture:event-spell-copy',label='Fixture Event Spell Copy',
+            effects=[event_spell_copy_effect()],event='spell.cast')
         context=event_spell_copy_trigger_context(host,program,'spell.cast',{'stack':original.ref,'logical_object_id':card.logical_object_id})
         self.assertEqual(original.ref,EventSpellCopySource.from_dict(context[KEY]).item().ref)
         with self.assertRaises(ValueError):event_spell_copy_trigger_context(host,program,'spell.cast',{'stack':original.ref,'logical_object_id':'different-incarnation'})
@@ -755,6 +758,7 @@ class DirectCastSpellTokenReferenceTests(unittest.TestCase):
         self.assertEqual(older,TokenCopyRecipeSpec.from_dict(older).to_dict())
 
     def test_exact_spell_adapts_current_then_departure_values_without_cast_choices(self):
+        from quorune.semantics import SemanticProgram
         from quorune.entry_copy import COPIABLE_ORACLE_FIELD
         from quorune.event_spell_copy_model import CAST_SPELL_TOKEN_ORACLE_CONTEXT, cast_spell_token_condition
         from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
@@ -772,7 +776,8 @@ class DirectCastSpellTokenReferenceTests(unittest.TestCase):
         captured=event_spell_copy_trigger_context(host,program,"spell.cast",occurrence)
         self.assertEqual(card.oracle_id,captured[CAST_SPELL_TOKEN_ORACLE_CONTEXT])
         self.assertNotIn(COPIABLE_ORACLE_FIELD,EventSpellCopySource.from_dict(captured[KEY]).characteristics)
-        legacy=SimpleNamespace(effects=(event_spell_copy_effect(),),coverage=(),event="spell.cast")
+        legacy=SemanticProgram(key='fixture:legacy-spell-copy',label='Fixture Legacy Spell Copy',
+            effects=[event_spell_copy_effect()],event='spell.cast')
         self.assertEqual({KEY},set(event_spell_copy_trigger_context(host,legacy,"spell.cast",occurrence)))
         trigger=StackItem("id:trigger","TRIGGER","triggered_ability","A","Create a copy token",
                           source_object_id=card.object_id,context={**captured,**occurrence})

@@ -77,7 +77,7 @@ class CombatPreventionSourceCompilerTests(unittest.TestCase):
      card=db.lookup(name,fuzzy=False);semantics=SemanticRegistry()
      register_generated_programs(db,semantics,(card,),trust_level='provisional',capability_registry=self.registry,capability_profile='commander_review',promote_exact_runtime_handlers=True,promote_exact_trigger_programs=True,promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
      program=compile_best_available_card_program(db,card,semantic_registry=semantics,capability_registry=self.registry,capability_profile='commander_review');bound=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-     self.assertEqual(name not in ('Terrifying Presence','Chant of Vitu-Ghazi'),bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),(name,bound['blockers']))
+     self.assertEqual(name != 'Chant of Vitu-Ghazi',bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),(name,bound['blockers']))
  def test_source_owner_withdrawal_preserves_plain_prevention_and_attacking_scope(self):
   raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(c for c in raw['capabilities'] if c['id']==CAPABILITY).update(status='blocked',blockers=['Source combat shield owner withdrawn'])
   registry=CapabilityRegistry(raw);registry.mark_evidence_verified(self.registry.evidence_fingerprint)

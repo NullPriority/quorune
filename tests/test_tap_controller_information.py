@@ -109,8 +109,8 @@ class TapControllerInformationTests(unittest.TestCase):
 
     def test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed(self):
         from quorune.rules.tap_state_event_capability_shapes import tap_state_event_player_node_capabilities
-        from types import SimpleNamespace
         from quorune.rules.occurrence_object_results import occurrence_object_runtime_dependencies
+        from quorune.semantics import SemanticProgram
         information={'kind':'occurrence_controller_information','schema_version':1}
         effect={'op':'mill','player':information,'count':3}
         arguments={'target_schema':None,'mechanic_ids':('tap-state-event-player-result','mill')}
@@ -121,8 +121,11 @@ class TapControllerInformationTests(unittest.TestCase):
         for reference in ({**information,'schema_version':True},{**information,'extra':1},'$context.owner'):
             self.assertEqual((),tap_state_event_player_node_capabilities(effects=({**effect,'player':reference},),**arguments))
         for event in ('card.drawn','creature.dies'):
-            with self.assertRaises(ValueError):occurrence_object_runtime_dependencies(SimpleNamespace(event=event,
-                effects=(effect,),target_schema=None,coverage=('tap-state-event-player-result',)))
+            program = SemanticProgram(key='fixture:tap-controller', label='Fixture Tap Controller',
+                                      event=event, active_zone='battlefield', effects=[effect],
+                                      coverage=['tap-state-event-player-result'])
+            with self.assertRaisesRegex(ValueError, 'Occurrence controller'):
+                occurrence_object_runtime_dependencies(program)
 
     def test_controller_information_owner_is_required_independently_at_runtime(self):
         from dataclasses import replace

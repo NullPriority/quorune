@@ -54,7 +54,7 @@ class OrderedQuantityCompilerTests(unittest.TestCase):
         from quorune.rules.capabilities import capability_dependencies_for_node
         mechanics={'closed-effect-program','scalar-effect-amount','public-query-effect-amount','cr-121-drawing-a-card','cr-119-life'}
         required=capability_dependencies_for_node(effects=effects,target_schema=None,mechanic_ids=mechanics)
-        program=SimpleNamespace(effects=effects,target_schema=None,coverage=list(mechanics),capability_dependencies=list(required))
+        program=SimpleNamespace(effects=effects,target_schema=None,cost_schema=None,coverage=list(mechanics),capability_dependencies=list(required))
         self.assertTrue(public_query_amount_program_is_closed(program,required_dependencies=required))
         program.capability_dependencies.remove('quantity_expression.public_query_effect_amount')
         self.assertFalse(public_query_amount_program_is_closed(program,required_dependencies=required))

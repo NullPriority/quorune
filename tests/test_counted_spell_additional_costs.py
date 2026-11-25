@@ -33,10 +33,17 @@ class CountedSpellCostCompilerTests(unittest.TestCase):
             self.assertEqual((0,len(text)),(node.span.start,node.span.end))
 
     def test_random_variable_and_mixed_prices_remain_material(self):
-        for price in ('discard two cards at random','exile X cards with different mana values from your graveyard','discard a card and sacrifice a creature',
+        supported='As an additional cost to cast this spell, discard a card and sacrifice a creature.\nDraw three cards.'
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(replace(query_record(supported),type_line='Sorcery'),capability_registry=registry)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIn('fixed-discard-sacrifice',ir.faces[0].nodes[0].template_id)
+        for price in ('discard two cards at random','exile X cards with different mana values from your graveyard',
+                      'discard a card and sacrifice a creature with the greatest power among creatures you control',
                       'sacrifice two creatures with different powers','you may sacrifice one or more creatures'):
-            text='As an additional cost to cast this spell, '+price+'.\nDraw three cards.'
-            self.assertNotEqual('exact',compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=load_default_capability_registry()).status)
+            with self.subTest(price=price):
+                text='As an additional cost to cast this spell, '+price+'.\nDraw three cards.'
+                self.assertNotEqual('exact',compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=registry).status)
 
     def test_counted_price_requires_its_cost_and_result_dependencies(self):
         text='As an additional cost to cast this spell, discard two cards.\nDraw three cards.'

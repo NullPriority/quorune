@@ -643,7 +643,11 @@ class PublicGraveyardReturnCompilerTests(unittest.TestCase):
                 self.assertEqual(kind.types_any, tuple(node.target_schema.get("types_any", ())))
                 self.assertEqual((public_graveyard_return_effect(),), tuple(node.effects))
                 self.assertIn(PUBLIC_GRAVEYARD_RETURN_CAPABILITY, node.capability_dependencies)
-                program = {"effects": node.effects, "target_schema": node.target_schema}
+                program = {
+                    "effects": node.effects,
+                    "target_schema": node.target_schema,
+                    "capability_dependencies": node.capability_dependencies,
+                }
                 self.assertIn(PUBLIC_GRAVEYARD_RETURN_CAPABILITY,
                               public_graveyard_return_runtime_dependencies(SimpleNamespace(**program)))
                 malformed = ({"effects": ({"op": node.effects[0]["op"], "card": "$target.0"},)},

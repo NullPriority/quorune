@@ -276,11 +276,12 @@ class OptionalSacrificeStatNativeTests(InheritedNativeFixture, unittest.TestCase
                 capability_closure=self.registry.closure(deps, profile='commander_review').to_dict())
             bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile='commander_review')
             self.assertFalse(bound['strict'], missing); self.assertIn('capability:undeclared_runtime_dependency:' + missing, bound['blockers'])
-        unsupported = self.db.lookup('Disciple of Bolas')
-        parent = compile_best_available_card_program(self.db, unsupported, semantic_registry=s.engine.semantics,
+        neighbor = self.db.lookup('Disciple of Bolas')
+        parent = compile_best_available_card_program(self.db, neighbor, semantic_registry=s.engine.semantics,
             capability_registry=self.registry, capability_profile='commander_review')
-        self.assertFalse(bind_card_program_runtime(parent, capability_registry=self.registry,
-            profile='commander_review')['strict_capability_ready'])
+        binding = bind_card_program_runtime(parent, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        self.assertEqual('capability_closed', binding['trust_basis'])
 
     def test_actual_printed_cast_end_step_sacrifice_creates_two_wolves_and_pending_choice_reloads(self):
         s, private, source, creature, foreign = self.world(732001)

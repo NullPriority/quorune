@@ -2503,10 +2503,11 @@ class TokenCopyRecipeModelTests(unittest.TestCase):
             zone="battlefield", phased_out=False)
         items = []
         for card in (source, other):
-            items.append(SimpleNamespace(source_object_id=card.object_id, card_object_id=None,
+            items.append(SimpleNamespace(ref=f"stack:{card.ref}", source_object_id=card.object_id, card_object_id=None,
                 semantic_key="recipe", context={"source_logical_object_id": card.logical_object_id}))
         effect = {"op": "create_token", "copy_spec": TokenCopyRecipeSpec(origin="source").to_dict()}
-        host = SimpleNamespace(state=SimpleNamespace(cards={c.object_id:c for c in (source, other)}, stack=items),
+        host = SimpleNamespace(state=SimpleNamespace(cards={c.object_id:c for c in (source, other)}, stack=items,
+                                                     pending_trigger_batches=[]),
             semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=(effect,))))
         with patch("quorune.token_copy_references._snapshot", side_effect=lambda h,c:{"logical_object_id":c.logical_object_id}) as read:
             pin_copy_characteristic_departures(host, [])
@@ -2547,8 +2548,9 @@ class TokenCopyRecipeModelTests(unittest.TestCase):
                 recipe = TokenCopyRecipeSpec(origin=origin)
                 context = {"source_logical_object_id":"object:1", "target_snapshots":{"OBJECT":{"zone_change_counter":0}},
                     "event_context":{"card":"OBJECT", "card_object_identity":"object:1"}}
-                item = SimpleNamespace(source_object_id="object", card_object_id=None, targets=["OBJECT"], context=context, semantic_key="recipe")
-                host = SimpleNamespace(state=SimpleNamespace(cards={"object":card}, stack=[item]),
+                item = SimpleNamespace(ref="stack:copy-reference", source_object_id="object", card_object_id=None,
+                                       targets=["OBJECT"], context=context, semantic_key="recipe")
+                host = SimpleNamespace(state=SimpleNamespace(cards={"object":card}, stack=[item], pending_trigger_batches=[]),
                     semantics=SimpleNamespace(get=lambda key:SimpleNamespace(effects=({"op":"create_token", "copy_spec":recipe.to_dict()},))))
                 def snapshot(h, c):
                     return {"object_id":c.object_id, "logical_object_id":c.logical_object_id, "ref":c.ref,
@@ -3617,7 +3619,7 @@ class EnchantedCopyReferenceTests(unittest.TestCase):
         cards={v.object_id:v for v in (source,first,second)}
         snapshot=capture_source_attachment_snapshot(cards,source,AttachmentReferenceKind.ENCHANTED)
         recipe=TokenCopyRecipeSpec(origin="source_attachment",schema_version=3,attachment_kind="enchanted")
-        item=SimpleNamespace(source_object_id=source.object_id,card_object_id=None,semantic_key="recipe",
+        item=SimpleNamespace(ref="stack:attachment-recipe",source_object_id=source.object_id,card_object_id=None,semantic_key="recipe",
             context={"source_logical_object_id":source.logical_object_id,
                 "source_attachment_snapshot":snapshot.to_dict(),"source_attachment_information_version":1})
         effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
@@ -4267,8 +4269,8 @@ class EventReferentCopyNativeTests(EventReferentCopyNativeFixture,unittest.TestC
         original = runtime.copy_reference_snapshot
         seen = []
 
-        def substitute(host, item, recipe, *, target_index=None):
-            bound = original(host, item, recipe, target_index=target_index)
+        def substitute(host, item, recipe, *, target_index=None, use_phased_lki=False):
+            bound = original(host, item, recipe, target_index=target_index, use_phased_lki=use_phased_lki)
             if recipe.origin != "event_object":
                 return bound
             current = host.state.cards[bound["object_id"]]

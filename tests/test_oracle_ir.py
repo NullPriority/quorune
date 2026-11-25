@@ -1075,6 +1075,19 @@ class OracleIRTests(unittest.TestCase):
 
     def test_divided_and_open_combat_prevention_remain_unresolved(self):
         base = self.db.lookup("Lightning Bolt")
+        exact = replace(
+            base,
+            oracle_id="fixture-exempt-source-prevention",
+            name="Fixture Exempt Source Prevention",
+            oracle_text=("Prevent all combat damage that would be dealt by creatures other "
+                         "than target creature this turn."),
+        )
+        supported = compile_oracle_card(exact, capability_registry=load_default_capability_registry(),
+                                        capability_profile="commander_review")
+        node, = supported.faces[0].nodes
+        self.assertEqual("exact", supported.status)
+        self.assertEqual("combat-prevention-exempt-original-target-v1", node.template_id)
+        self.assertEqual("$target.0", node.effects[0]["excluded_source_target"])
         for oracle_text in (
             (
                 "Prevent the next 4 damage that would be dealt this turn to any "
@@ -1082,7 +1095,7 @@ class OracleIRTests(unittest.TestCase):
             ),
             (
                 "Prevent all combat damage that would be dealt by creatures other "
-                "than target creature this turn."
+                "than up to two target creatures this turn."
             ),
             "Prevent all combat damage that would be dealt next turn.",
         ):

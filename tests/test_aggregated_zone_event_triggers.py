@@ -73,7 +73,7 @@ class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
         first = SimpleNamespace(zone_timestamp=1, object_id='b', logical_object_id='b@1')
         second = SimpleNamespace(zone_timestamp=2, object_id='a', logical_object_id='a@0')
         tie = SimpleNamespace(zone_timestamp=1, object_id='a', logical_object_id='a@1')
-        host = SimpleNamespace(_semantic_event_sources=lambda: [second, first, tie])
+        host = SimpleNamespace(state=SimpleNamespace(), _semantic_event_sources=lambda: [second, first, tie])
         expected = [tie, first, second]
         self.assertEqual(expected, _ordered_event_sources(host, None))
         for sources in ([second, first, tie], [first, tie, second], [tie, second, first]):

@@ -128,7 +128,7 @@ class HandExileEvokeCompilerTests(unittest.TestCase):
                     promote_exact_effect_programs=True,promote_exact_capability_declarations=True)
                 program=compile_best_available_card_program(self.db,card,semantic_registry=semantics,capability_registry=self.registry,capability_profile='commander_review')
                 bound=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-                self.assertEqual(name in (*CANDIDATES,'Mulldrifter'),bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),bound['blockers'])
+                self.assertEqual(name in (*CANDIDATES,*LEGACY),bool(bound['strict_capability_ready'] and bound['trust_basis']=='capability_closed'),bound['blockers'])
 
     def test_source_span_and_all_cost_authorities_are_required(self):
         from quorune.rules.capabilities import CapabilityRegistry

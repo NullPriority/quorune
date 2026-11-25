@@ -78,7 +78,7 @@ class _IterationHost:
         library = self.state.players[resolution.player].zones["library"]
         if resolution.kind == "draw" and library:
             library.pop()
-        return SimpleNamespace(result_draws=())
+        return SimpleNamespace(result_draws=(), discard_followup=None)
 
     def _complete_draw_step_entry(self, active: str) -> None:
         self.resumed.append(f"turn_draw:{active}")

@@ -49,20 +49,22 @@ class FixedEmblemEventModelTests(unittest.TestCase):
 
 class FixedEventOutcomeModelTests(unittest.TestCase):
     def test_result_dependencies_are_derived_without_handlers_or_coverage(self):
+        from dataclasses import replace
         from quorune.rules.event_outcome_shapes import event_outcome_runtime_dependencies
-        base=dict(target_schema=None, active_zone='command', coverage=(), event_condition=None)
-        counter=SimpleNamespace(**base, event='spell.cast', effects=({'op':'counter_stack_target','stack':'$context.stack'},))
+        from quorune.semantics import SemanticProgram
+        base=dict(key='fixture:emblem-result', label='Fixture Emblem Result', active_zone='command')
+        counter=SemanticProgram(**base, event='spell.cast', effects=[{'op':'counter_stack_target','stack':'$context.stack'}])
         self.assertIn('stack.counter.cast_event_spell', event_outcome_runtime_dependencies(counter))
-        loss=SimpleNamespace(**{**base,'event_condition':{'field':'target_kind','op':'eq','value':'player'}},
-            event='damage.dealt', effects=({'op':'lose_game','player':'$context.target'},))
+        loss=SemanticProgram(**base, event_condition={'field':'target_kind','op':'eq','value':'player'},
+            event='damage.dealt', effects=[{'op':'lose_game','player':'$context.target'}])
         self.assertIn('game.loss.effect', event_outcome_runtime_dependencies(loss))
         for program in (counter,loss):
             for changes in ({'event':'step.begin'}, {'active_zone':'hand'}, {'target_schema':{'count':1}},
                     {'effects':({**program.effects[0],'extra':True},)}):
                 with self.subTest(program=program,changes=changes),self.assertRaises(ValueError):
-                    event_outcome_runtime_dependencies(SimpleNamespace(**{**vars(program),**changes}))
+                    event_outcome_runtime_dependencies(replace(program, **changes))
         with self.assertRaises(ValueError):
-            event_outcome_runtime_dependencies(SimpleNamespace(**{**vars(loss),'event_condition':None}))
+            event_outcome_runtime_dependencies(replace(loss, event_condition=None))
 
     def test_game_loss_handler_uses_the_canonical_immutable_intent_and_rejects_unknown_fields(self):
         from quorune.semantic_runtime.player_outcomes import LoseGameEffectHandler

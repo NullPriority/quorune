@@ -83,6 +83,9 @@ class StackControllerPaymentCompilerTests(unittest.TestCase):
             template = targeted_controller_payment_template(
                 f"Counter target {target.value} unless its controller pays {{2}}."
             )
+            if target is CounterTarget.OTHER_CONTROLLER_ABILITY:
+                self.assertIsNone(template)
+                continue
             self.assertIsNotNone(template)
             name, effects, schema, mechanics = template.compiled()
             self.assertEqual(2, compiled_stack_controller_payment_cost(effects[0]).requirements["GENERIC"])
@@ -1287,11 +1290,19 @@ class TargetedCounterTemplateTests(unittest.TestCase):
             )
 
     def test_counter_whole_clause_parser_accepts_only_closed_direct_targets(self):
+        from quorune.compiler.counter_templates import other_controller_ability_counter_effect_template
+        from quorune.stack_counter import other_controller_ability_counter_schema
+
         for target in CounterTarget:
             with self.subTest(target=target):
-                template = targeted_counter_effect_template(
-                    f"Counter target {target.value}."
-                )
+                text = f"Counter target {target.value}."
+                template = targeted_counter_effect_template(text)
+                if target is CounterTarget.OTHER_CONTROLLER_ABILITY:
+                    self.assertIsNone(template)
+                    owned = other_controller_ability_counter_effect_template(text)
+                    self.assertIsNotNone(owned)
+                    self.assertEqual(other_controller_ability_counter_schema(), owned.target_schema)
+                    continue
                 self.assertIsNotNone(template)
                 assert template is not None
                 self.assertEqual(target, template.target)

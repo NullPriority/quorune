@@ -213,7 +213,7 @@ class GraveyardCardCounterLifeIntegrationTests(unittest.TestCase):
         self.assertEqual(set(GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES), set(capability_dependencies_for_node(
             effects=new.effects, target_schema=new.target_schema, mechanic_ids=new.mechanics)))
         gate = _activated_effect_dependency_gate(effects=new.effects, target_schema=new.target_schema,
-            mechanics=new.mechanics, trusted_mechanics=frozenset(),
+            mechanics=new.mechanics, trusted_mechanics=frozenset(), active_zone='battlefield', cost_schema=None,
             capability_registry=load_default_capability_registry(), capability_profile='commander_review')
         self.assertEqual((), gate.blockers); self.assertEqual(set(GRAVEYARD_CARD_COUNTER_LIFE_DEPENDENCIES), set(gate.capabilities))
         for change in ({'count': True}, {'types_all': ['creature']}, {'owner_relation': 'you'}):

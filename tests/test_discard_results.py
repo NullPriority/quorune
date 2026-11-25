@@ -63,7 +63,15 @@ class DiscardResultTests(unittest.TestCase):
         def witness(new_events):
             events = [old]
             host = SimpleNamespace(_current_turn_history=lambda kind: tuple(events))
-            with patch('quorune.rules.discard_results.whole_hand_input_snapshot', return_value=snapshot), patch('quorune.semantic_runtime.whole_hand_discard.execute_whole_hand_discard', side_effect=lambda *args: events.extend(new_events)):
+            def commit_discard(sink, discard, *, graveyard_orders, require_graveyard_order):
+                self.assertIs(sink, host)
+                self.assertEqual(intent.players, discard.players)
+                self.assertEqual(intent.graveyard_orders, graveyard_orders)
+                self.assertEqual(intent.require_graveyard_order, require_graveyard_order)
+                events.extend(new_events)
+            with (patch('quorune.rules.discard_results.whole_hand_input_snapshot', return_value=snapshot),
+                  patch('quorune.semantic_runtime.whole_hand_discard.execute_whole_hand_discard',
+                        side_effect=commit_discard)):
                 return execute_discard_result(host, intent)
         self.assertEqual((('B', 1),), witness([unrelated, committed]).counts)
         self.assertEqual((('B', 0),), witness([unrelated]).counts)

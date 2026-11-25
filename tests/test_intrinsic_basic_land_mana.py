@@ -20,6 +20,7 @@ from quorune.intrinsic_basic_land_mana import (
     expected_intrinsic_basic_land_mana_reminder,
     intrinsic_basic_land_mana_specs,
 )
+from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.activation import query as activation_query
 from quorune.rules.capabilities import (
@@ -85,6 +86,12 @@ class _IntrinsicQueryHost:
             "type_line": self.type_line,
             "activated_abilities": effective['activated_abilities'],
         }
+
+
+def _intrinsic_query_card():
+    return CardInstance(object_id="intrinsic-fixture-land", ref="intrinsic-fixture",
+                        oracle_id="00000000-0000-4000-8000-000000003056",
+                        printed_name="Typed Land", owner="A", controller="A", zone="battlefield")
 
 
 class IntrinsicBasicLandManaTests(unittest.TestCase):
@@ -287,7 +294,7 @@ class IntrinsicBasicLandManaTests(unittest.TestCase):
                 {
                     ability.ability_id
                     for ability in activation_query.activated_abilities(
-                        host, SimpleNamespace()
+                        host, _intrinsic_query_card()
                     )
                 },
             )
@@ -328,7 +335,7 @@ class IntrinsicBasicLandManaTests(unittest.TestCase):
                 ability.ability_id
                 for ability in activation_query.activated_abilities(
                     _IntrinsicQueryHost("Land — Forest", (printed,)),
-                    SimpleNamespace(),
+                    _intrinsic_query_card(),
                 )
             },
         )
@@ -338,7 +345,7 @@ class IntrinsicBasicLandManaTests(unittest.TestCase):
                     "Land — Forest",
                     (replace(printed, ability_id="intrinsic_forest"),),
                 ),
-                SimpleNamespace(),
+                _intrinsic_query_card(),
             )
 
 

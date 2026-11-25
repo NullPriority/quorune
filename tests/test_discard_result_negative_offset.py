@@ -48,7 +48,7 @@ class ReducedDiscardResultModelCompilerTests(unittest.TestCase):
 
     def test_choice_uses_sealed_committed_result_and_never_queries_followup_hand_size(self):
         hand={'B':[{'object_id':'b','logical_object_id':'b@1','ref':'private-b'}],'A':[]}
-        query=SimpleNamespace(apnap_order=('B','A'),active_seats=('A','B'),discard_hand_inputs=FrozenMap(hand))
+        query=SimpleNamespace(apnap_order=('B','A'),active_seats=('A','B'),seats=('A','B'),discard_hand_inputs=FrozenMap(hand))
         effect={**discard_result_draw_template(TEXT)[1][0],'actor':'A'}
         prepared=DiscardResultDrawHandler().prepare(effect,SimpleNamespace(actor='A',query=query,stack_label='Reduced discard'))
         self.assertIsNone(prepared.request);self.assertEqual(('B','A'),prepared.preparation_intents[0].players)

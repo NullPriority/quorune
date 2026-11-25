@@ -76,7 +76,7 @@ class GrantedStaticCharacteristicModelTests(unittest.TestCase):
         self.assertEqual(('a-grant-first',), by_id[second.effect_id].depends_on)
         self.assertEqual((), by_id[printed.effect_id].depends_on)
         child = SimpleNamespace(key='child', provenance={'granted_only':True}, ability_id='static:granted:front:n4',
-            active_zone='battlefield', event='characteristics.evaluate', effects=(),
+            active_zone='battlefield', event='characteristics.evaluate', event_condition=None, effects=(),
             handlers=(attached_fixed_characteristics_handler('Equipped creature has flying.')[1],))
         semantics = SimpleNamespace(get=lambda key:child if key=='child' else None)
         source = CardInstance(object_id='equipment', ref='EQUIPMENT', oracle_id='fixture:equipment',

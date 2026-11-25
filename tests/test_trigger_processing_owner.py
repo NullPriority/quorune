@@ -249,6 +249,13 @@ class TriggerParticipationCompilerTests(unittest.TestCase):
             WardSpec(discard_cards=1),
             ability_fragment_from_dict(discard.handlers[0]["fragment"]),
         )
+        from quorune.trigger_participation import WardSacrificeScope
+        sacrifice = lower_ability_keyword_fragments("Ward—Sacrifice a creature.", ("ward",))
+        self.assertIsNone(sacrifice.residual_kind)
+        self.assertEqual(
+            WardSpec(sacrifice_scope=WardSacrificeScope.CREATURE),
+            ability_fragment_from_dict(sacrifice.handlers[0]["fragment"]),
+        )
         self.assertIsNone(compound.residual_kind)
         self.assertEqual(1, len(compound.handlers))
         self.assertEqual(
@@ -259,7 +266,7 @@ class TriggerParticipationCompilerTests(unittest.TestCase):
         for source in (
             "Ward—Discard a card at random.",
             "Ward—Pay life equal to this creature's power.",
-            "Ward—Sacrifice a creature.",
+            "Ward—Sacrifice two creatures with different powers.",
             "Ward—{2}, Pay 2 life.",
         ):
             with self.subTest(source=source):

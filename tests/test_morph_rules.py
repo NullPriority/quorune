@@ -116,6 +116,7 @@ class FixedManaMorphModelTests(unittest.TestCase):
     def test_face_status_clock_advances_only_for_an_eligible_current_object(self):
         from dataclasses import replace
         from types import SimpleNamespace
+        from quorune.semantics import SemanticRegistry
         from quorune.zone_transitions import ZoneTransitionOwner
         from quorune.zone_object_state import ZoneObjectStateError
         state=self.face_timestamp_state();state.timestamp_sequence=9
@@ -126,7 +127,9 @@ class FixedManaMorphModelTests(unittest.TestCase):
         from quorune.zone_trigger_events import type_parts
         printed=replace(fixture_record('Morph {2}','Creature — Human'),oracle_id=card.oracle_id,name=card.printed_name)
         database=SimpleNamespace(by_oracle_id=lambda oracle_id: printed if oracle_id==printed.oracle_id else None)
-        state.cards[card.object_id]=card;owner=ZoneTransitionOwner(SimpleNamespace(state=state,card_db=database,_type_parts=type_parts))
+        state.cards[card.object_id]=card
+        owner=ZoneTransitionOwner(SimpleNamespace(state=state,card_db=database,_type_parts=type_parts,
+            card_record=lambda source: database.by_oracle_id(source.oracle_id),semantics=SemanticRegistry()))
         identity=card.logical_object_id
         owner.turn_face_up(card,viewers=('A','B'))
         self.assertEqual((10,10,False,identity,{'charge':2},1,True,3),

@@ -649,6 +649,7 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
         from quorune.conditional_exile_model import source_conditional_bindings, CONDITIONAL_EXILE_BINDINGS
         from quorune.zone_transitions import ZoneTransitionOwner
+        from quorune.zone_transition_model import capture_simultaneous_departure
         from quorune.errors import GameRuleError
         Actions.setUpClass()
         try:
@@ -666,7 +667,7 @@ class ConditionalExileZoneBoundaryTests(unittest.TestCase):
             source.phased_out=False
             snapshot=owner._capture_departure(source,semantic_events=True)
             self.assertEqual((binding,),snapshot.conditional_returns)
-            batch_snapshot=owner._simultaneous_departure(source,source_snapshot=snapshot.trigger_sources)[1]
+            _, batch_snapshot = capture_simultaneous_departure(engine, source, source_snapshot=snapshot.trigger_sources)
             self.assertEqual((binding,),batch_snapshot.conditional_returns)
             owner.move_card(source.object_id,'hand',reason='conditional binding departure storage boundary')
             self.assertNotIn(CONDITIONAL_EXILE_BINDINGS,source.annotations)

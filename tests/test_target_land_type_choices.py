@@ -1114,6 +1114,7 @@ class FixedTargetLandTypeCompilerTests(unittest.TestCase):
         from quorune.compiler.target_land_type_templates import fixed_target_land_type_template
         from quorune.resolution_characteristic_model import fixed_resolution_characteristic_instruction
         from quorune.rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+        from quorune.semantics import SemanticProgram
         from quorune.target_land_type_model import NEXT_UNTAP_LAND_TYPE_CAPABILITY
 
         parsed = fixed_target_land_type_template(
@@ -1124,7 +1125,10 @@ class FixedTargetLandTypeCompilerTests(unittest.TestCase):
         spec, reference = fixed_resolution_characteristic_instruction(effects[0])
         self.assertEqual(("until_recipient_controller_untap", "$target.0"), (spec.duration, reference))
         self.assertEqual(effects[0], spec.to_effect())
-        program = SimpleNamespace(effects=effects, handlers=(), target_schema=schema, coverage=())
+        program = SemanticProgram(
+            key="fixture:recipient-untap-land-type", label="Fixture recipient untap land type",
+            effects=effects, event="resolve", active_zone="stack", target_schema=schema,
+        )
         self.assertIn(NEXT_UNTAP_LAND_TYPE_CAPABILITY, fixed_resolution_characteristics_runtime_dependencies(program))
         program.target_schema = {**schema, "count": 2}
         with self.assertRaisesRegex(ValueError, "closed single target"):

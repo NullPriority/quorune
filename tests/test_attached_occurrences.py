@@ -146,13 +146,15 @@ class AttachedOccurrenceTests(unittest.TestCase):
         self.private_replay(session,private)
 
     def test_occurrence_destruction_shape_excludes_targets_other_events_and_siblings(self):
-        from types import SimpleNamespace
+        from dataclasses import replace
         from quorune.rules.occurrence_object_results import occurrence_object_runtime_dependencies
-        program=SimpleNamespace(event='permanent.tap',target_schema=None,effects=({'op':'destroy','card':'$event.permanent_object'},))
+        from quorune.semantics import SemanticProgram
+        program=SemanticProgram(key='fixture:occurrence-destruction',label='Fixture occurrence destruction',
+            event='permanent.tap',active_zone='battlefield',effects=[{'op':'destroy','card':'$event.permanent_object'}])
         self.assertEqual({'permanent.destroy.effect','resolution.event_object.fixed_result'},set(occurrence_object_runtime_dependencies(program)))
         for changes in ({'event':'card.drawn'},{'target_schema':{'count':1}},
                 {'effects':({'op':'destroy','card':'$event.permanent_object'},{'op':'life','delta':1})}):
-            with self.assertRaises(ValueError):occurrence_object_runtime_dependencies(SimpleNamespace(**{**vars(program),**changes}))
+            with self.assertRaises(ValueError):occurrence_object_runtime_dependencies(replace(program,**changes))
 
     def test_native_occurrence_compiler_and_result_omissions_are_killed(self):
         from unittest.mock import patch
@@ -336,13 +338,15 @@ class AttachedOccurrenceTests(unittest.TestCase):
                 'When any enchanted artifact is put into a graveyard, you gain 6 life.'):
             self.assertIsNone(_attachment_death_spec(text))
         self.assertIsNotNone(_attachment_death_spec('When enchanted artifact is put into a graveyard, you gain 6 life.'))
-        from types import SimpleNamespace
         from quorune.rules.occurrence_object_results import occurrence_object_runtime_dependencies
+        from quorune.semantics import SemanticProgram
         effect={'op':'place_player_counters','subjects':'target','counter':'poison','amount':1,'source':'$source',
             'target':{'kind':'occurrence_controller_information','schema_version':1}}
         for changed in ({**effect,'amount':True},{**effect,'counter':'energy'},
                 {**effect,'target':{'kind':'occurrence_controller_information','schema_version':True}}):
-            with self.assertRaises(ValueError):occurrence_object_runtime_dependencies(SimpleNamespace(effects=(changed,),event='permanent.tap',target_schema=None))
+            program=SemanticProgram(key='fixture:attachment-occurrence',label='Fixture attachment occurrence',
+                effects=[changed],event='permanent.tap',active_zone='battlefield')
+            with self.assertRaises(ValueError):occurrence_object_runtime_dependencies(program)
 
     def test_signed_counter_lki_and_attached_destruction_omissions_are_killed(self):
         from unittest.mock import patch
