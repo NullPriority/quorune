@@ -148,15 +148,13 @@ test("@browser-rules @modal modal clicks preserve targets and submit printed ord
 
     await host.getByTestId("choice-mode-mode_3").check();
     const modeThreeTarget = dialog
-      .locator(".target-group")
-      .filter({ hasText: "mode_3_target_1" })
+      .getByRole("group", { name: "Mode 3 · Targets", exact: true })
       .getByRole("checkbox", { name: "Seat B" });
     await modeThreeTarget.check();
     await host.getByTestId("choice-mode-mode_1").check();
     await expect(modeThreeTarget).toBeChecked();
     await dialog
-      .locator(".target-group")
-      .filter({ hasText: "mode_1_target_1" })
+      .getByRole("group", { name: "Mode 1 · Targets", exact: true })
       .getByRole("checkbox", { name: "Seat A" })
       .check();
     await submitOpenChoice(host);

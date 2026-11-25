@@ -82,7 +82,7 @@ actions. Use **Inspect** to open a full view.
 
 When your offered actions include a card in another zone, the hand area shows
 a shortcut marked with its source zone. Those shortcuts are visible to the
-acting player. Hover or focus a card to see the offered cost directly on it.
+acting player. Hover or focus a card to see its offered cost above its name.
 Select the card to choose an action or inspect its full text. The mana symbols
 are bundled with the browser. [Mana by Andrew Gioia](https://mana.andrewgioia.com/icons.html)
 
@@ -91,8 +91,9 @@ defender. Blockers work the same way. Multiple blockers on one attacker appear
 in one group. Remove an assignment or clear the draft before confirming.
 
 Mode checkboxes maintain the server-issued printed order regardless of click
-order. Adding or removing a mode preserves targets for every still-selected
-mode and drops only groups that are no longer legal.
+order. Each target group shows the mode that offers it. Adding or removing a
+mode preserves targets for every still-selected mode and drops only groups
+that are no longer legal.
 
 Target-dependent prices update from the server's quotes for the selected
 objects, players and modes. Distinct-target prices count a repeated selection
@@ -137,7 +138,7 @@ enabling Full control, refreshing the page, or reaching the next turn ends
 the yield. Each automatic pass uses its own current seat capability and is
 recorded with the current turn. The game menu can ignore specific activation
 stops for that turn. Each ignored ability stays available for manual activation.
-A change to an ignored ability’s offer restores its stop.
+The stop returns if the ability offers different costs, targets, or choices.
 
 Open **Combat** in the turn rail to select the steps where you want to hold
 priority. **Game menu → Combat priority stops** offers the same controls in a

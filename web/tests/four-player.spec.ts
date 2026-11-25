@@ -1143,7 +1143,9 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
     await host.getByTestId("choice-target-B").check();
     await submitOpenChoice(host);
 
-    await expect(host.getByTestId("player-B").getByLabel("38 life")).toBeVisible();
+    const damagedOpponent = host.getByTestId("player-B").getByLabel("38 life");
+    await passUntilProjection([host, opponent], () => damagedOpponent.isVisible(), testInfo, 90_000);
+    await expect(damagedOpponent).toBeVisible();
     await expect(host.getByTestId("own-battlefield")).toContainText("Orcish Bowmasters");
     await expect(host.getByTestId("own-battlefield")).toContainText("Army");
     await expect(host.getByTestId("game-status")).toHaveText("In progress");
@@ -1255,11 +1257,9 @@ test("@browser-rules @combat a duel declares an attacker in the browser and appl
     // The anchored hand intentionally remains above the board while expanded.
     // Use the same cast capability in the always-visible decision tray after
     // verifying the command-zone surface is server-authorized and draggable.
-    await host.getByTestId("decision-panel")
+    await completeCastGesture(host, () => host.getByTestId("decision-panel")
       .getByRole("button", { name: /Cast Zimone and Dina/ })
-      .click();
-    await expect(host.getByTestId("choice-dialog")).toContainText("Cast Zimone and Dina");
-    await submitOpenChoice(host);
+      .click());
     await expect(host.getByTestId("own-battlefield")).toContainText("Zimone and Dina");
 
     await playLand(opponent);
@@ -1452,11 +1452,9 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
           .locator(".command-zone .card-tile")
           .filter({ has: host.locator(".card-copy strong", { hasText: "Yargle and Multani" }) });
         await expect(commander).toHaveAttribute("draggable", "true");
-        await host.getByTestId("decision-panel")
+        await completeCastGesture(host, () => host.getByTestId("decision-panel")
           .getByRole("button", { name: /Cast Yargle and Multani/ })
-          .click();
-        await expect(host.getByTestId("choice-dialog")).toContainText("Cast Yargle and Multani");
-        await submitOpenChoice(host);
+          .click());
         // The accepted cast still crosses stack priority and durability writes
         // before the permanent appears in the projected battlefield.
         await passUntilProjection([host, opponent], async () => (

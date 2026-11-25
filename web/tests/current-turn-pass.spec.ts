@@ -23,6 +23,11 @@ test("@browser-rules @playtest-yield Pass turn records its scope and only skips 
     await openGameMenu(host);
     await host.getByText("Priority stops for this turn", { exact: true }).click();
     await host.getByRole("checkbox", { name: /Ignore stop for Viscera Seer/ }).check();
+    await host.getByText("Combat priority stops", { exact: true }).click();
+    const endOfCombat = host.getByRole("group", { name: "Combat priority stops" })
+      .getByRole("button", { name: "End of combat", exact: true });
+    await endOfCombat.click();
+    await expect(endOfCombat).toHaveAttribute("aria-pressed", "true");
     await host.getByTestId("open-game-menu").click();
     await expect(activation).toBeVisible();
 
@@ -34,7 +39,9 @@ test("@browser-rules @playtest-yield Pass turn records its scope and only skips 
     expect(response.request().postDataJSON().choices).toEqual({
       pass_turn_sequence: 1, ignored_activation_ids: [activationId],
     });
-    await expect(host.getByText("Combat started", { exact: true })).toBeVisible({ timeout: 30_000 });
+    await expect(host.getByText("Priority held · End of combat", { exact: true })).toBeVisible({ timeout: 60_000 });
+    await expect(host.getByTestId("exact-step-label")).toHaveText(/end of combat/i);
+    await expect(activation).toBeVisible();
     await host.getByRole("button", { name: "Cancel pass turn" }).click();
     await host.getByTestId("auto-pass-toggle").click();
     await expect(host.getByTestId("auto-pass-toggle")).toContainText("Full control");

@@ -4,6 +4,8 @@ type AutoPassAction = {
   mana_ability?: boolean;
   form?: unknown;
   cost_summary?: unknown;
+  expiry_revision?: number;
+  proposal_fingerprint?: string;
 };
 
 export type AutoPassWindow = {
@@ -15,9 +17,17 @@ export type AutoPassWindow = {
   ignoredActivations?: ReadonlyMap<string, string>;
 };
 
+export function activationStopSignature(action: AutoPassAction): string {
+  // The server renews these fields even when the offered activation is unchanged.
+  const offer = { ...action };
+  delete offer.expiry_revision;
+  delete offer.proposal_fingerprint;
+  return JSON.stringify(offer);
+}
+
 export function isIgnoredActivation(action: AutoPassAction, offers: ReadonlyMap<string, string> | undefined): boolean {
   return action.action === "activate" && action.mana_ability !== true && action.id !== undefined
-    && offers?.get(action.id) === JSON.stringify(action);
+    && offers?.get(action.id) === activationStopSignature(action);
 }
 
 export function findSafeAutoPass<T extends AutoPassAction>(

@@ -23,7 +23,7 @@ import {
 import type { DecisionPacket, JsonValue, LegalAction } from "./generated/protocol";
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
 import { ingestPacket, type ProjectedView } from "./protocol";
-import { activeCombatPriorityStop, findSafeAutoPass, isIgnoredActivation, turnYieldPause, type CombatPriorityStop, type TurnYieldBoundary } from "./tableAutomation";
+import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, isIgnoredActivation, turnYieldPause, type CombatPriorityStop, type TurnYieldBoundary } from "./tableAutomation";
 import { actionTitle, activationCostLabel, canMinimizeChoice, cardActionCost, choiceSubmitLabel, decisionDetail, decisionHeading, isRoutineCast, visibleActionLabel } from "./tablePresentation";
 import { AutomationControls, ManaHelp } from "./TableStatus";
 import { TableSettings } from "./TableSettings";
@@ -1258,7 +1258,7 @@ function GameView({ gameId, system, onExit, onRoom }: {
                 <input type="checkbox" checked={isIgnoredActivation(action, ignoredOffers)}
                   onChange={(event) => {
                     const offers = new Map(ignoredOffers);
-                    if (event.target.checked) offers.set(action.id, JSON.stringify(action));
+                    if (event.target.checked) offers.set(action.id, activationStopSignature(action));
                     else offers.delete(action.id);
                     setIgnoredStops({ turn: turnBoundary.turn, offers });
                   }} />

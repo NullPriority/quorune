@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { activeCombatPriorityStop, findSafeAutoPass, turnYieldPause } from "../src/tableAutomation.ts";
+import { activationStopSignature, activeCombatPriorityStop, findSafeAutoPass, turnYieldPause } from "../src/tableAutomation.ts";
 
 test("automatic passing accepts only pass, concede, and bare mana actions", () => {
   const pass = { action: "pass", id: "pass:1" };
@@ -84,9 +84,6 @@ test("a current-turn yield stops at its boundaries and requires a new arm for th
   assert.equal(turnYieldPause(armed, armed, "priority", false), "A response is available");
 });
 
-test("an ignored activation stops again when its offered targets change", () => {
-  const pass = { action: "pass" };
-
 test("combat stops hold only the selected timing window", () => {
   assert.equal(activeCombatPriorityStop("precombat_main", "main", false, ["combat"]), undefined);
   assert.equal(activeCombatPriorityStop("combat", "beginning_combat", false, ["declare_attackers"]), undefined);
@@ -95,10 +92,18 @@ test("combat stops hold only the selected timing window", () => {
   assert.equal(activeCombatPriorityStop("combat", "combat_damage", true, ["first_strike_damage"]), "After first-strike damage");
   assert.equal(activeCombatPriorityStop("combat", "end_combat", false, ["combat"]), "End of combat");
 });
-  const offered = { action: "activate", id: "activate:1", form: { legal_refs: ["B"] } };
-  const window = { ignoredActivations: new Map([[offered.id, JSON.stringify(offered)]]) };
+
+test("an ignored activation survives renewal and stops again when its choices change", () => {
+  const pass = { action: "pass" };
+  const offered = {
+    action: "activate", id: "activate:1", expiry_revision: 10, proposal_fingerprint: "first",
+    cost_summary: { life: 1 }, form: { legal_refs: ["B"] },
+  };
+  const window = { ignoredActivations: new Map([[offered.id, activationStopSignature(offered)]]) };
   assert.equal(findSafeAutoPass([pass, offered], window), pass);
-  const changed = { ...offered, form: { legal_refs: ["B", "C"] } };
-  assert.equal(findSafeAutoPass([pass, changed], window), null);
+  const renewed = { ...offered, expiry_revision: 12, proposal_fingerprint: "renewed" };
+  assert.equal(findSafeAutoPass([pass, renewed], window), pass);
+  assert.equal(findSafeAutoPass([pass, { ...renewed, form: { legal_refs: ["B", "C"] } }], window), null);
+  assert.equal(findSafeAutoPass([pass, { ...renewed, cost_summary: { life: 2 } }], window), null);
   assert.equal(findSafeAutoPass([pass, offered]), null);
 });

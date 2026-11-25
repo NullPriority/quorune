@@ -6837,6 +6837,7 @@
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
+    "tests/fixtures/browser-playtest-activation-cards.json",
     "tests/fixtures/bushido-current-attacking-creatures-cards.json",
     "tests/fixtures/captured-draw-cast-cards.json",
     "tests/fixtures/card-type-receiver-union-cards.json",

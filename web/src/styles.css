@@ -765,11 +765,11 @@ p { line-height: 1.65; }
 .stack-row > button { justify-self: start; min-height: 28px; }
 .target-highlight { outline: 3px solid #f3d688; outline-offset: -3px; }
 .game-shell .table-bottom-dock { position: static; max-height: 56dvh; flex: 0 0 auto; gap: .3rem; }
-.game-shell .hand-panel { height: clamp(90px, 15.5dvh, calc(var(--hand-panel-height, 310px) * .43)); min-height: 0; max-height: 22dvh; padding: .35rem .55rem; resize: vertical; }
+.game-shell .hand-panel { height: clamp(90px, 17dvh, calc(var(--hand-panel-height, 310px) * .43)); min-height: 0; max-height: 22dvh; padding: .35rem .55rem; resize: vertical; }
 .game-shell .hand-panel > header { margin-bottom: .28rem; }
 .game-shell .hand-panel > header .eyebrow { display: none; }
 .game-shell .hand-panel h2 { margin: 0; font-size: .8rem; }
-.game-shell .hand-scroll { overflow-x: auto; overflow-y: hidden; }
+.game-shell .hand-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: thin; }
 .game-shell .hand-cards > .card-tile {
   display: block;
   width: calc(98px * var(--card-scale, 1));
@@ -785,6 +785,7 @@ p { line-height: 1.65; }
 .game-shell .hand-cards > .card-tile .card-copy { position: absolute; padding: .22rem; inset: auto 0 0; min-height: 24px; background: #0a120e; }
 .game-shell .hand-cards > .card-tile .card-copy strong { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow-wrap: anywhere; }
 .game-shell .hand-cards > .card-tile .card-copy > span { display: none; }
+.game-shell .hand-cards .card-cost-overlay { padding-block: .16rem; }
 .game-shell .hand-cards > .card-tile img { height: 100%; object-fit: cover; object-position: center; }
 .game-shell .decision-panel { min-height: 60px; margin: 0; padding: .45rem .6rem; overflow: auto; }
 .game-shell .decision-panel:has(.contextual-decision) { display: block; }
@@ -803,7 +804,7 @@ p { line-height: 1.65; }
   .game-shell .turn-status .phase-rail { margin: 0; }
   .game-shell .contextual-fields { max-height: 25dvh; overflow: auto; }
   .game-shell .table-bottom-dock { max-height: 45dvh; }
-  .game-shell .hand-scroll { padding-block: .12rem 0; scrollbar-width: thin; }
+  .game-shell .hand-scroll { padding-block: .12rem 0; }
   .game-shell .hand-cards > .card-tile .card-copy { min-height: 0; padding: .1rem .15rem; }
   .game-shell .hand-cards > .card-tile .card-copy strong { white-space: nowrap; font-size: .74rem; line-height: 1; }
   .game-shell .hand-cards :is(.card-origin, .card-cost-overlay) { inset-block-start: .09rem; padding: .08rem .2rem; font-size: .56rem; }

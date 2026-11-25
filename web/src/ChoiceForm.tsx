@@ -372,6 +372,11 @@ function TargetControl({
   const modes = list(values.modes).map(String);
   const targets = record(values[name]);
   const legalModes = list(schema.legal_modes).map(String);
+  const modeLabels = record(schema.mode_labels);
+  const modeSchemas = record(schema.mode_schemas);
+  const targetModes = new Map(legalModes.flatMap((mode) =>
+    list(record(modeSchemas[mode]).groups).map((group) => [text(record(group).id), mode] as const),
+  ));
   const allocation = selectedDamageAllocation(field, values);
   function toggleMode(mode: string, checked: boolean) {
     const next = updateModalTargetSelection(
@@ -409,7 +414,7 @@ function TargetControl({
                 checked={modes.includes(mode)}
                 onChange={(event) => toggleMode(mode, event.target.checked)}
               />
-              <span>{optionLabel(record(schema.mode_labels)[mode], mode, labelFor)}</span>
+              <span>{optionLabel(modeLabels[mode], mode, labelFor)}</span>
             </label>
           ))}
         </div>
@@ -417,9 +422,12 @@ function TargetControl({
       {targetGroups(field, values).map((group) => {
         const id = text(group.id || "target");
         const selected = list(targets[id]).map(String);
+        const mode = targetModes.get(id);
+        const targetLabel = text(group.label || "Targets");
+        const label = mode ? `${optionLabel(modeLabels[mode], mode, labelFor)} · ${targetLabel}` : targetLabel;
         return (
-          <div key={id} className="target-group">
-            <strong>{text(group.label || "Targets")} ({text(group.min ?? 1)}–{text(group.max ?? 1)})</strong>
+          <div key={id} className="target-group" role="group" aria-label={label}>
+            <strong>{label} ({text(group.min ?? 1)}–{text(group.max ?? 1)})</strong>
             <div className="choice-options">
               {list(group.legal_refs).map((rawRef) => {
                 const ref = text(rawRef);
