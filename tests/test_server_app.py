@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from contextlib import closing
 import json
 from pathlib import Path
 import shutil
@@ -178,7 +179,7 @@ class ServerApplicationTests(unittest.TestCase):
         generated = SemanticProgram(key="swamp-generated", label="Generated fixture", oracle_id=oracle_id, ability_id="ability:generated",
             provenance={"template_id": "fixture template", "source_rulings_hash": "2" * 64})
 
-        def conflict(*_args):
+        def conflict(*_args, **_kwargs):
             return card_program_from_semantic_programs([reviewed, generated])
 
         with patch("server.deck_readiness.semantic_preflight", side_effect=conflict), patch(
@@ -207,6 +208,98 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertEqual(200, saved.status_code, saved.text)
         self.assertIn("Swamp", {entry["name"] for entry in saved.json()["deck"]["entries"]})
         self.assertEqual(409, self.client.post(f"{room_path}/start", headers=self.auth(host)).status_code)
+
+    def test_deck_review_compares_all_mismatches_and_pins_reviewed_match(self):
+        from unittest.mock import AsyncMock, patch
+
+        with CardDatabase(self.settings.card_db) as database:
+            earlier_hash = database_fingerprint(database)["metadata_hash"]
+            swat = database.lookup("Deflecting Swat", fuzzy=False).oracle_id
+            rollick = database.lookup("Deadly Rollick", fuzzy=False).oracle_id
+        reviewed_dir = self.settings.card_snapshot_dir / "reviewed"
+        reviewed_dir.mkdir(parents=True)
+        earlier = reviewed_dir / f"{earlier_hash}.sqlite3"
+        self.client.__exit__(None, None, None)
+        shutil.copy2(self.settings.card_db, earlier)
+        with closing(sqlite3.connect(self.settings.card_db)) as connection, connection:
+            connection.execute(
+                "INSERT INTO rulings(oracle_id, published_at, source, comment) VALUES (?, ?, ?, ?)",
+                (swat, "2026-11-20", "wotc", "A new ruling in the test snapshot."),
+            )
+            changed = connection.execute(
+                "UPDATE rulings SET comment = REPLACE(comment, ?, ?) WHERE oracle_id = ? AND INSTR(comment, ?) > 0",
+                ("’", "'", rollick, "’"),
+            ).rowcount
+            self.assertGreater(changed, 0)
+            connection.execute(
+                "INSERT OR REPLACE INTO metadata(key, value) VALUES (?, ?)",
+                ("scryfall_rulings_updated_at", "2026-11-20T12:00:00Z"),
+            )
+        self.client = TestClient(create_app(self.settings))
+        self.client.__enter__()
+
+        host, _ = self.guest("Host")
+        other, _ = self.guest("Guest")
+        created = self.client.post(
+            "/api/v1/rooms", headers=self.auth(host), json={"player_count": 2},
+        ).json()
+        room_path = f"/api/v1/rooms/{created['room']['room_id']}"
+        joined = self.client.post(
+            "/api/v1/rooms/join", headers=self.auth(other), json={"invite_code": created["invite_code"], "seat": "B"},
+        )
+        self.assertEqual(200, joined.status_code, joined.text)
+        with patch("server.app.CardImageCache.prefetch", new_callable=AsyncMock):
+            waiting = self.client.put(f"{room_path}/deck", headers=self.auth(host), json={
+                "name": "Source review", "commander": "Mishra, Eminent One",
+                "decklist": "1 Deflecting Swat\n1 Deadly Rollick\n49 Mountain\n48 Swamp",
+            })
+            ready = self.client.put(f"{room_path}/deck", headers=self.auth(other), json={
+                "name": "Other deck", "commander": "Yargle and Multani", "decklist": "99 Swamp",
+            })
+        self.assertEqual(200, waiting.status_code, waiting.text)
+        self.assertEqual(200, ready.status_code, ready.text)
+        blockers = {
+            item["card"]: item["comparison"]["changes"]
+            for item in waiting.json()["preflight"]["data_integrity_blockers"]
+        }
+        self.assertEqual({"Deadly Rollick", "Deflecting Swat"}, set(blockers))
+        self.assertEqual([{
+            "kind": "added",
+            "after": {"text": "A new ruling in the test snapshot.", "source": "wotc", "published_at": "2026-11-20"},
+        }], blockers["Deflecting Swat"])
+        self.assertEqual({"formatting"}, {change["kind"] for change in blockers["Deadly Rollick"]})
+        visible = self.client.get(room_path, headers=self.auth(other)).json()["room"]["seats"][0]
+        self.assertFalse(visible["ready"])
+        self.assertNotIn("preflight", visible["deck"])
+
+        path = f"{room_path}/start"
+        override = {"use_reviewed_card_data": True}
+        self.assertEqual(409, self.client.post(path, headers=self.auth(host)).status_code)
+        self.assertEqual(403, self.client.post(path, headers=self.auth(other), json=override).status_code)
+        unavailable = earlier.with_suffix(".unavailable")
+        self.client.__exit__(None, None, None)
+        earlier.rename(unavailable)
+        self.client = TestClient(create_app(self.settings))
+        self.client.__enter__()
+        missing = self.client.post(path, headers=self.auth(host), json=override)
+        self.assertEqual(409, missing.status_code, missing.text)
+        self.assertIn("No retained card data passed", missing.text)
+        unavailable.rename(earlier)
+        started = self.client.post(path, headers=self.auth(host), json=override)
+        self.assertEqual(200, started.status_code, started.text)
+        game_id = started.json()["game_id"]
+        record_dir = self.settings.game_root / game_id
+        manifest = json.loads((record_dir / "manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual(earlier_hash, manifest["scryfall"]["metadata_hash"])
+        with CardDatabase(self.settings.card_db) as active:
+            self.assertNotEqual(earlier_hash, database_fingerprint(active)["metadata_hash"])
+
+        self.restart_client()
+        resumed = self.client.get(f"/api/v1/games/{game_id}/state?full=true", headers=self.auth(other))
+        self.assertEqual(200, resumed.status_code, resumed.text)
+        self.assertEqual(game_id, resumed.json()["packet"]["state"]["game"]["id"])
+        with CardDatabase(earlier) as database:
+            self.assertTrue(replay_record(record_dir, database, verify=True)["ok"])
 
     def test_browser_tabs_keep_distinct_guests_in_one_cookie_jar(self):
         tab_a = "a" * 32

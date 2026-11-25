@@ -52,6 +52,13 @@ refresh never replaces the database underneath an active game. Records pin the
 snapshot metadata hash; referenced old databases remain in the ignored snapshot
 directory until no local record needs them.
 
+Deck review can compare the active database with retained snapshots. For a
+reviewed snapshot that the host maintains separately, store the unchanged
+SQLite file under `data/card-snapshots/reviewed/<metadata-hash>.sqlite3` or under
+`reviewed` in the configured `MTG_CARD_SNAPSHOT_DIR`. Use the snapshot's Game
+Record metadata hash for its filename. Keep that file available for games that
+use it. Managed refresh leaves this directory in place.
+
 A network failure falls back to a usable existing database with a warning. A
 first-run failure remains visible and can be retried. When Windows locks an
 activation target, stop other server processes and restart. If no current

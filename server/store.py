@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 from pathlib import Path
 import secrets
 import sqlite3
-from typing import Any, Iterator
+from typing import Any, Callable, Iterator
 import uuid
 
 from quorune import DeckDefinition
@@ -18,6 +19,14 @@ from .deck_readiness import compact_deck_preflight, has_integrity_blocker
 
 SEATS = ("A", "B", "C", "D")
 GAME_STATUSES = {"active", "paused", "complete", "aborted"}
+
+
+@dataclass(frozen=True, slots=True)
+class RoomStartSpec:
+    seed: int
+    profile: str
+    decks: dict[str, DeckDefinition]
+    deck_ids: tuple[str, ...]
 
 
 class StoreConflict(ValueError):
@@ -676,8 +685,8 @@ class ServerStore:
         return self.room(room_id, guest_id)
 
     def start_spec(
-        self, room_id: str, owner_guest_id: str
-    ) -> tuple[int, dict[str, DeckDefinition], str]:
+        self, room_id: str, owner_guest_id: str, *, use_reviewed_card_data: bool = False,
+    ) -> RoomStartSpec:
         with self._connection() as connection:
             room = connection.execute(
                 "SELECT * FROM rooms WHERE room_id = ?", (room_id,)
@@ -690,7 +699,8 @@ class ServerStore:
                 raise StoreConflict("Room has already started")
             rows = connection.execute(
                 """
-                SELECT s.seat, s.guest_id, s.ready, d.definition_json
+                SELECT s.seat, s.guest_id, s.ready, d.deck_id, d.definition_json,
+                       d.preflight_json
                 FROM room_seats s
                 LEFT JOIN decks d ON d.deck_id = s.deck_id
                 WHERE s.room_id = ? ORDER BY s.seat
@@ -699,21 +709,32 @@ class ServerStore:
             ).fetchall()
         seat_count = int(room["seat_count"])
         if len(rows) != seat_count or any(
-            row["guest_id"] is None
-            or not bool(row["ready"])
-            or row["definition_json"] is None
+            row["guest_id"] is None or row["definition_json"] is None
             for row in rows
         ):
             raise StoreConflict(f"All {seat_count} seats must be occupied and ready")
-        return int(room["seed"]), {
-            str(row["seat"]): DeckDefinition.from_dict(
-                json.loads(str(row["definition_json"]))
-            )
-            for row in rows
-        }, str(room["format_profile"])
+        waiting = [row for row in rows if not row["ready"]]
+        if use_reviewed_card_data:
+            if not waiting or not all(
+                has_integrity_blocker(json.loads(row["preflight_json"] or "{}"))
+                for row in waiting
+            ):
+                raise StoreConflict("Earlier card data is available only for decks waiting for a card data review")
+        elif waiting:
+            raise StoreConflict(f"All {seat_count} seats must be occupied and ready")
+        return RoomStartSpec(
+            seed=int(room["seed"]),
+            profile=str(room["format_profile"]),
+            decks={
+                str(row["seat"]): DeckDefinition.from_dict(json.loads(row["definition_json"]))
+                for row in rows
+            },
+            deck_ids=tuple(str(row["deck_id"]) for row in rows),
+        )
 
     def commit_started_game(
-        self, room_id: str, game_id: str, record_path: str, revision: int
+        self, room_id: str, game_id: str, record_path: str, revision: int, *,
+        expected_deck_ids: tuple[str, ...], save_record: Callable[[], object],
     ) -> None:
         now = utc_now()
         with self._connection(write=True) as connection:
@@ -724,6 +745,12 @@ class ServerStore:
                 raise StoreNotFound("Room not found")
             if room["status"] != "open":
                 raise StoreConflict("Room has already started")
+            deck_rows = connection.execute(
+                "SELECT deck_id FROM room_seats WHERE room_id = ? ORDER BY seat", (room_id,),
+            ).fetchall()
+            if tuple(row["deck_id"] for row in deck_rows) != expected_deck_ids:
+                raise StoreConflict("A deck changed while the game was starting. Review the table and try again.")
+            save_record()
             connection.execute(
                 """
                 INSERT INTO games(

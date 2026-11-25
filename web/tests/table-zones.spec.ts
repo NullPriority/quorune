@@ -80,9 +80,8 @@ async function expectLandPrinting(card: Locator, tapped: boolean, cid: string) {
   expect(layout.frame.bottom).toBeLessThanOrEqual(layout.lane.bottom);
   expect(layout.frame.right).toBeLessThanOrEqual(layout.lane.right);
   if (tapped) {
-    const tappedLabel = card.locator(".tapped-state");
-    await expect(tappedLabel).toHaveText("Tapped");
-    await expect(tappedLabel).toBeInViewport({ ratio: 1 });
+    await expect(card).toHaveAccessibleDescription(/Tapped/);
+    await expect(card.getByText("Tapped", { exact: true })).toBeHidden();
   }
 }
 

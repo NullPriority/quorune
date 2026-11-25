@@ -26,10 +26,15 @@ as a spectator.
 Players choose a saved deck, submit a public deck URL, or paste a Commander
 list. The editor reports Commander legality, card behavior, and match readiness
 separately. It shows affected cards only to the person who submitted the list.
-For a card data mismatch it saves the list as an editable draft and leaves
-that seat waiting for review. The deck owner can open the affected card’s data
-details to see the diagnostic ID and the two program sources. Use the Oracle
-and rulings snapshot for the running release before checking the list again.
+For card data mismatches it saves the list as an editable draft and shows every
+affected card. Open a card to see the changes in Oracle text or rulings when a
+retained snapshot matches the reviewed implementation. The details distinguish
+formatting edits from added, removed, or changed text. Technical details include
+the diagnostic ID and the program sources.
+Once every seat submits a deck, the host can choose **Use earlier card data**.
+The game starts with one retained snapshot if it matches the earlier
+implementations and every submitted deck passes its checks against it. The
+selected snapshot applies to the whole match and is pinned for replay.
 Every seat submits a list before the host can start. The owner can rotate the
 invite, remove a nonowner before start, or replace an unstarted room.
 
@@ -52,7 +57,8 @@ The table renders only the current projected state:
 - card inspection follows hover, keyboard focus, or an explicit compact-layout
   dialog and falls back to projected text when art is unavailable;
 - tapping, counters, attachments, combat assignments, and terminal results
-  update only after an authoritative packet;
+  update only after an authoritative packet. The printed face rotates when a
+  card is tapped, and the card’s accessibility description reports its state;
 - each attached battlefield card names the permanent or player it is on;
 - the complete public log is paginated from the durable record through
   spectator visibility filtering. It shows the acting seat and a readable

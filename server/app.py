@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import sqlite3
 import time
 from typing import Any, AsyncIterator, Literal
 from urllib.parse import urlsplit
@@ -60,7 +61,7 @@ from .store import (
     StoreNotFound,
 )
 from .data import CardImageCache, IMAGE_SIZES, ManagedScryfallData
-from .deck_readiness import assess_deck, compact_deck_preflight, has_integrity_blocker
+from .deck_readiness import assess_deck, compact_deck_preflight, has_integrity_blocker, reviewed_match_snapshot
 
 
 COOKIE_NAME = "commander_guest"
@@ -154,6 +155,10 @@ class GuestRequest(StrictModel):
 class RoomRequest(StrictModel):
     seed: int | None = Field(default=None, ge=0, le=2**63 - 1)
     player_count: Literal[2, 4] = 4
+
+
+class RoomStartRequest(StrictModel):
+    use_reviewed_card_data: bool = Field(default=False, strict=True)
 
 
 class JoinRoomRequest(StrictModel):
@@ -390,6 +395,9 @@ class ServerRuntime:
             raise ValueError(f"Persisted game manifest is unreadable: {exc}") from exc
         if not expected:
             raise ValueError("Persisted game does not pin a card-database fingerprint")
+        return self._retained_card_database(expected)
+
+    def _retained_card_database(self, expected: str) -> CardDatabase:
         existing = self._card_databases.get(expected)
         if existing is not None:
             return existing
@@ -397,19 +405,45 @@ class ServerRuntime:
             raise ValueError("Persisted game card-database fingerprint is invalid")
         path = self.settings.card_snapshot_dir / f"{expected}.sqlite3"
         if not path.is_file():
+            path = self.settings.card_snapshot_dir / "reviewed" / path.name
+        if not path.is_file():
             raise ValueError(
                 "The card-database snapshot required by this Game Record is unavailable"
             )
         database = CardDatabase(path)
-        actual = str(database_fingerprint(database)["metadata_hash"])
-        if actual != expected:
+        try:
+            if database_fingerprint(database)["metadata_hash"] != expected:
+                raise ValueError("Retained card-database snapshot fingerprint mismatch")
+        except (ValueError, sqlite3.DatabaseError):
             database.close()
-            raise ValueError("Retained card-database snapshot fingerprint mismatch")
+            raise
         self._card_databases[expected] = database
         return database
 
     def card_databases(self) -> tuple[CardDatabase, ...]:
         return tuple(self._card_databases.values())
+
+    def retained_card_databases(self) -> tuple[CardDatabase, ...]:
+        root = self.settings.card_snapshot_dir
+        fingerprints = {
+            path.stem
+            for directory in (root, root / "reviewed")
+            for path in directory.glob("*.sqlite3")
+            if re.fullmatch(r"[0-9a-f]{64}", path.stem)
+        }
+        snapshots = []
+        for fingerprint in sorted(fingerprints):
+            try:
+                candidate = self._retained_card_database(fingerprint)
+            except (OSError, ValueError, sqlite3.DatabaseError):
+                continue
+            if candidate is not self.card_db:
+                snapshots.append(candidate)
+        return tuple(sorted(
+            snapshots,
+            key=lambda database: database.metadata().get("scryfall_rulings_updated_at", ""),
+            reverse=True,
+        ))
 
     async def game_summary(
         self, game_id: str, guest_id: str
@@ -1012,7 +1046,7 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                     "confirmation_fingerprint": legality_confirmation,
                     "issues": legality_issues,
                 }
-            preflight = assess_deck(runtime.card_db, deck)
+            preflight = assess_deck(runtime.card_db, deck, retained_snapshots=runtime.retained_card_databases)
             saved = runtime.store.save_deck(
                 guest["guest_id"],
                 room_id,
@@ -1058,23 +1092,37 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
     )
     async def start_game(
         room_id: str,
+        body: RoomStartRequest | None = None,
         guest: dict[str, Any] = Depends(_guest),
         runtime: ServerRuntime = Depends(_runtime),
     ) -> dict[str, Any]:
         try:
-            seed, decks, profile = runtime.store.start_spec(
+            use_reviewed = body is not None and body.use_reviewed_card_data
+            start_spec = runtime.store.start_spec(
                 room_id,
                 guest["guest_id"],
+                use_reviewed_card_data=use_reviewed,
             )
+            profile = start_spec.profile
             if profile not in {"commander_duel", "commander_multiplayer"}:
                 raise StoreConflict("Room has an unsupported format profile")
+            card_db = runtime.card_db
+            if use_reviewed:
+                card_db = reviewed_match_snapshot(
+                    runtime.card_db, runtime.retained_card_databases(), start_spec.decks.values(),
+                )
+                if card_db is None:
+                    raise StoreConflict(
+                        "No retained card data passed the checks for every submitted deck. "
+                        "Have each player check their saved deck again."
+                    )
             with _capability_validation_snapshot():
                 session = CommanderSession.create(
-                    runtime.card_db,
-                    decks,
+                    card_db,
+                    start_spec.decks,
                     first_player="A",
                     config=GameConfig(
-                        seed=seed,
+                        seed=start_spec.seed,
                         profile=profile,
                         review_profile="commander_review",
                         semantic_policy="trusted_only",
@@ -1094,13 +1142,14 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                     session,
                     idempotency=runtime.idempotency,
                 )
-                runtime.records.save(service)
-            runtime.store.commit_started_game(
-                room_id,
-                session.state.game_id,
-                str(runtime.records.game_directory(session.state.game_id)),
-                session.state.revision,
-            )
+                runtime.store.commit_started_game(
+                    room_id,
+                    session.state.game_id,
+                    str(runtime.records.game_directory(session.state.game_id)),
+                    session.state.revision,
+                    expected_deck_ids=start_spec.deck_ids,
+                    save_record=lambda: runtime.records.save(service),
+                )
             await runtime.manager.add(service, persistence=runtime.persistence)
         except CardProgramSourceMismatch as exc:
             raise HTTPException(status_code=409, detail={

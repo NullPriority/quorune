@@ -91,13 +91,26 @@ export interface DeckPreflight {
   format_verification_pending?: boolean;
   affected_cards?: { name: string; reasons: string[] }[];
   affected_card_count?: number;
-  data_integrity_blockers?: {
-    diagnostic_id: string;
-    kind: string;
-    card: string;
-    oracle_id: string;
-    programs: { key: string; origin: string; oracle_hash: string | null; rulings_hash: string | null }[];
-  }[];
+  data_integrity_blockers?: CardDataMismatch[];
+}
+
+export interface CardSourceExcerpt {
+  text: string;
+  published_at?: string;
+  source?: string;
+}
+
+export interface CardDataMismatch {
+  diagnostic_id: string;
+  kind: string;
+  card: string;
+  oracle_id: string;
+  programs: { key: string; origin: string; oracle_hash: string | null; rulings_hash: string | null }[];
+  comparison?: {
+    reviewed_date: string | null;
+    current_date: string | null;
+    changes: { kind: "added" | "removed" | "changed" | "formatting"; before?: CardSourceExcerpt; after?: CardSourceExcerpt }[];
+  };
 }
 
 export interface Seat {
@@ -315,10 +328,10 @@ export const api = {
     request<{ room: Room }>(`/api/v1/rooms/${roomId}/deck`, {
       method: "DELETE",
     }),
-  start: (roomId: string) =>
+  start: (roomId: string, useReviewedCardData = false) =>
     request<{ game_id: string }>(`/api/v1/rooms/${roomId}/start`, {
       method: "POST",
-      body: JSON.stringify({}),
+      body: JSON.stringify(useReviewedCardData ? { use_reviewed_card_data: true } : {}),
     }),
   game: (gameId: string) =>
     request<{ game: GameLifecycle }>(`/api/v1/games/${gameId}`),

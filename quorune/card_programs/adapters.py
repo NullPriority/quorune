@@ -74,6 +74,33 @@ def _program_source_identity(program: SemanticProgram) -> dict[str, str | None]:
     }
 
 
+def _source_hashes(programs: Iterable[SemanticProgram], field: str) -> set[str]:
+    return {str(program.provenance.get(field) or "") for program in programs} - {""}
+
+
+def card_program_source_diagnostics(
+    record: CardRecord,
+    programs: Iterable[SemanticProgram],
+    *,
+    oracle_hash: str,
+    rulings_hash: str,
+) -> list[dict[str, Any]]:
+    values = tuple(programs)
+    diagnostics = []
+    sources = (
+        ("Oracle", "source_oracle_hash", oracle_hash),
+        ("rulings", "source_rulings_hash", rulings_hash),
+    )
+    for source, field, current in sources:
+        if len(_source_hashes(values, field)) > 1 or any(
+            program.trust_level == "trusted" and program.provenance.get(field) != current
+            for program in values
+        ):
+            mismatch = CardProgramSourceMismatch(source, record.oracle_id, values, record.name)
+            diagnostics.append(mismatch.diagnostic(record.name))
+    return diagnostics
+
+
 def _text_hash(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
@@ -513,14 +540,8 @@ def card_program_from_semantic_programs(
             "A semantic compatibility group requires one oracle_id"
         )
     oracle_id = str(next(iter(oracle_ids)))
-    oracle_hashes = {
-        str(program.provenance.get("source_oracle_hash") or "")
-        for program in values
-    } - {""}
-    rulings_hashes = {
-        str(program.provenance.get("source_rulings_hash") or "")
-        for program in values
-    } - {""}
+    oracle_hashes = _source_hashes(values, "source_oracle_hash")
+    rulings_hashes = _source_hashes(values, "source_rulings_hash")
     if len(oracle_hashes) > 1:
         raise CardProgramSourceMismatch("Oracle", oracle_id, values, card_name)
     if len(rulings_hashes) > 1:

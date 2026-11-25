@@ -11,6 +11,8 @@ from .abilities import parse_activated_abilities
 from .carddb import CardDatabase, CardRecord
 from .compiler.entry_state_templates import static_entry_state_handler
 from .compiler.preflight_keyword_coverage import static_lines_without_keyword_owners
+from .compiler.program_generation import rulings_source_hash
+from .card_programs.adapters import card_program_source_diagnostics
 from .card_programs.binding import bind_card_program_runtime
 from .card_programs.trust import compute_match_trust_closure
 from .cycling_abilities import PRINTED_CYCLING_KEYWORD_PATTERN
@@ -26,7 +28,7 @@ from .profiles import (
     deck_source_fingerprint,
 )
 from .semantics import SemanticRegistry
-from .util import mana_cost_to_vector, stable_json
+from .util import mana_cost_to_vector
 
 from .rules.capabilities import (
     CapabilityRegistry,
@@ -351,27 +353,8 @@ def _card_source_hashes(
     db: CardDatabase,
     record: CardRecord,
 ) -> tuple[str, str]:
-    oracle_hash = hashlib.sha256(
-        record.oracle_text.encode("utf-8")
-    ).hexdigest()
-    # Scryfall does not define an ordering among rulings that share a
-    # publication date. SQLite's insertion-order tie break therefore differs
-    # between a full bulk-data database and the compact CI fixture even when
-    # both contain the exact same ruling set. Provenance must describe content,
-    # not import order, so canonicalize every field before hashing.
-    ruling_rows = sorted(
-        (asdict(ruling) for ruling in db.rulings(record)),
-        key=lambda row: (
-            str(row["published_at"]),
-            str(row["source"]),
-            str(row["comment"]),
-            str(row["oracle_id"]),
-        ),
-    )
-    rulings_hash = hashlib.sha256(
-        stable_json(ruling_rows).encode("utf-8")
-    ).hexdigest()
-    return oracle_hash, rulings_hash
+    oracle_hash = hashlib.sha256(record.oracle_text.encode("utf-8")).hexdigest()
+    return oracle_hash, rulings_source_hash(db, record)
 
 
 def _material_effect_categories(record: CardRecord) -> list[str]:
@@ -862,6 +845,7 @@ def _deck_preflight_rows(
     registry: SemanticRegistry,
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    source_diagnostics: dict[str, dict[str, Any]] | None,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     cards: list[dict[str, Any]] = []
     card_programs: dict[str, Any] = {}
@@ -876,7 +860,20 @@ def _deck_preflight_rows(
             capability_registry=capability_registry,
             capability_profile=capability_profile,
         )
-        program = registry.card_program_for_oracle(record.oracle_id)
+        if source_diagnostics is not None:
+            diagnostics = card_program_source_diagnostics(
+                record, registry.programs_for_oracle(record.oracle_id),
+                oracle_hash=row["oracle_hash"], rulings_hash=row["rulings_hash"],
+            )
+            for diagnostic in diagnostics:
+                source_diagnostics[diagnostic["diagnostic_id"]] = diagnostic
+            if diagnostics:
+                row["source_hash_match"] = False
+        program = (
+            registry.card_program_for_oracle(record.oracle_id)
+            if source_diagnostics is None or row["source_hash_match"]
+            else None
+        )
         if program is not None:
             card_programs[record.oracle_id] = program
             binding = bind_card_program_runtime(
@@ -902,6 +899,18 @@ def _deck_preflight_rows(
     return cards, card_programs
 
 
+def _deck_binding_blockers(
+    cards: list[dict[str, Any]], match_blockers: list[str],
+) -> list[str]:
+    blockers = set(match_blockers)
+    for row in cards:
+        if row["card_program_fingerprint"] is None:
+            blockers.add(f"card_program:missing:{row['name']}")
+        if binding := row["card_program_runtime_binding"]:
+            blockers.update(f"card:{row['name']}:{issue}" for issue in binding["blockers"])
+    return sorted(blockers)
+
+
 @_capability_validation_snapshot()
 def semantic_preflight(
     db: CardDatabase,
@@ -911,6 +920,7 @@ def semantic_preflight(
     cache_dir: str | Path | None = None,
     force_refresh: bool = False,
     capability_profile: str = "commander_review",
+    collect_source_diagnostics: bool = False,
 ) -> dict[str, Any]:
     registry = registry or SemanticRegistry()
     capability_registry = load_default_capability_registry()
@@ -924,8 +934,9 @@ def semantic_preflight(
     generation = _register_deck_programs(
         db, deck, registry, capability_registry, capability_profile
     )
+    source_diagnostics: dict[str, dict[str, Any]] | None = {} if collect_source_diagnostics else None
     cards, card_programs = _deck_preflight_rows(
-        db, deck, registry, capability_registry, capability_profile
+        db, deck, registry, capability_registry, capability_profile, source_diagnostics,
     )
     quantities = Counter()
     for row in cards:
@@ -973,24 +984,7 @@ def semantic_preflight(
         registry=capability_registry,
         profile=capability_profile,
     )
-    missing_card_programs = sorted(
-        row["name"]
-        for row in cards
-        if row["card_program_fingerprint"] is None
-    )
-    strict_binding_blockers = list(match_trust_closure["blockers"])
-    strict_binding_blockers.extend(
-        f"card_program:missing:{name}" for name in missing_card_programs
-    )
-    for row in cards:
-        binding = row["card_program_runtime_binding"]
-        if binding is None:
-            continue
-        strict_binding_blockers.extend(
-            f"card:{row['name']}:{blocker}"
-            for blocker in binding["blockers"]
-        )
-    strict_binding_blockers = sorted(set(strict_binding_blockers))
+    strict_binding_blockers = _deck_binding_blockers(cards, match_trust_closure["blockers"])
     compatibility_ready = (
         not unresolved_cards
         and not partial_cards
@@ -1043,6 +1037,9 @@ def semantic_preflight(
         "strict_binding_blockers": strict_binding_blockers,
         "match_trust_closure": match_trust_closure,
         "source_hash_drift_cards": sorted(set(drifted_cards)),
+        **({"data_integrity_blockers": sorted(
+            source_diagnostics.values(), key=lambda issue: (issue["card"].casefold(), issue["kind"]),
+        )} if source_diagnostics is not None else {}),
         "intentionally_ignored_without_reason": sorted(
             set(ignored_without_reason)
         ),

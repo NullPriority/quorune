@@ -184,6 +184,20 @@ p { line-height: 1.65; }
 .deck-review-summary dt { color: var(--muted); font-size: .76rem; }
 .deck-review-summary dd { margin: .16rem 0 0; }
 .deck-review-result ul { margin: .35rem 0; }
+.deck-data-review { display: grid; gap: .5rem; }
+.deck-data-review h3 { margin: 0; font-size: .9rem; }
+.deck-data-mismatch { min-width: 0; border: 1px solid var(--line-strong); border-radius: .55rem; background: var(--surface); }
+.deck-data-mismatch > summary { padding: .55rem .65rem; cursor: pointer; }
+.deck-data-mismatch > summary::marker, .reviewed-rules-action > summary::marker { color: var(--warning); }
+.deck-data-mismatch > summary span { margin-inline-start: .45rem; color: var(--muted); font-size: .76rem; }
+.deck-data-comparison { display: grid; gap: .6rem; padding: .55rem .65rem .65rem; border-top: 1px solid var(--line); }
+.card-source-change { display: flex; flex-wrap: wrap; gap: .45rem; }
+.card-source-excerpt { flex: 1 1 17rem; min-width: 0; margin: 0; padding: .5rem .65rem; border-inline-start: 2px solid var(--line-strong); background: rgb(0 0 0 / 18%); }
+.card-source-excerpt figcaption { display: flex; flex-wrap: wrap; gap: .25rem .5rem; align-items: baseline; color: var(--muted); font-size: .7rem; }
+.card-source-excerpt figcaption strong { color: var(--accent); }
+.card-source-excerpt blockquote { margin: .3rem 0 0; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; font-size: .84rem; }
+.deck-data-diagnostic { color: var(--muted); font-size: .75rem; }
+.deck-data-diagnostic > summary { cursor: pointer; }
 .deck-data-diagnostic dl { display: grid; gap: .3rem; margin: .45rem 0; }
 .deck-data-diagnostic dd { margin: .12rem 0 0; overflow-wrap: anywhere; }
 .watch-room-card { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.15rem; border: 1px solid #536778; border-radius: var(--radius); background: linear-gradient(135deg, rgb(22 35 43 / 96%), rgb(13 22 27 / 96%)); }
@@ -205,6 +219,11 @@ p { line-height: 1.65; }
 .import-divider { margin: .35rem 0; border-bottom: 1px solid var(--line); color: var(--faint); line-height: .1em; text-align: center; }
 .import-divider span { padding: 0 .7rem; background: var(--surface); font: .62rem var(--mono); text-transform: uppercase; }
 .start-bar { position: sticky; bottom: 1rem; z-index: 5; display: grid; grid-template-columns: auto minmax(8rem, 1fr) auto; align-items: center; gap: 1rem; margin-top: 1.5rem; padding: 1rem 1.15rem; border: 1px solid var(--line-strong); border-radius: var(--radius); background: rgb(22 33 26 / 96%); box-shadow: var(--shadow); }
+.page-shell:has(.deck-data-review) .start-bar, .start-bar:has(.reviewed-rules-action[open]) { position: static; }
+.reviewed-rules-action { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: .6rem; }
+.reviewed-rules-action > summary { cursor: pointer; }
+.reviewed-rules-action > div { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-top: .5rem; }
+.reviewed-rules-action p { flex: 1 1 22rem; margin: 0; color: var(--muted); font-size: .78rem; }
 .readiness-copy { display: grid; gap: .2rem; }
 .readiness-copy span { color: var(--muted); font-size: .72rem; }
 
@@ -345,7 +364,6 @@ p { line-height: 1.65; }
 .card-tile.table-card:not(.battlefield-card).tapped { transform: rotate(90deg); }
 .card-tile.table-card:not(.battlefield-card):is(.inspectable, .actionable):is(:hover, :focus-visible) { transform: translateY(-3px) scale(1.04); }
 .card-tile.table-card:not(.battlefield-card).tapped:is(.inspectable, .actionable):is(:hover, :focus-visible) { transform: rotate(90deg) scale(1.04); }
-.tapped-state { position: absolute; left: .28rem; bottom: .28rem; z-index: 3; padding: .16rem .28rem; border: 1px solid #d0a45d; border-radius: 4px; color: #fff0c8; background: rgb(54 36 14 / 94%); font: 800 .45rem var(--mono); letter-spacing: .06em; }
 .card-action-hint { position: absolute; top: .23rem; left: .23rem; padding: .12rem .24rem; border-radius: 3px; color: #aef286; background: #112114; font: 700 .55rem var(--mono); pointer-events: none; }
 .card-tile.mana-source .card-action-hint { background: #f1c75d; }
 .card-tile.mana-source .card-action-hint { color: #211a09; }
@@ -975,7 +993,6 @@ p { line-height: 1.65; }
   font-size: clamp(.7rem, calc(var(--table-unit) * .79), .88rem);
   white-space: nowrap;
 }
-.battlefield-card .tapped-state { inset: .17rem auto auto .16rem; padding: .09rem .17rem; }
 .battlefield-row .card-stats { font-size: .76rem; }
 .player-board .zone-summary { grid-area: zones; align-items: center; margin: 0; padding: 0; gap: .13rem .4rem; font-size: .66rem; }
 .player-board .zone-summary button { padding: .13rem .24rem; }
@@ -1050,7 +1067,7 @@ p { line-height: 1.65; }
   }
   .battlefield-row .battlefield-card.table-card .card-copy { flex: 1 1 auto; padding: 0; }
   .battlefield-row .battlefield-card.table-card .card-copy strong { font-size: .68rem; line-height: 1.13; }
-  .battlefield-card .tapped-state, .battlefield-card .card-stats { position: static; flex: 0 0 auto; }
+  .battlefield-card .card-stats { position: static; flex: 0 0 auto; }
   .battlefield-row .card-stats { font-size: .64rem; }
   .battlefield-card .card-stats > * { padding: .06rem .17rem; }
   .battlefield-card .card-action-hint {
@@ -1203,7 +1220,6 @@ p { line-height: 1.65; }
 }
 @media (max-height: 415px) {
   .game-shell { gap: .25rem; padding: .35rem .45rem; }
-  .game-shell .priority-control-description { display: none; }
   .game-shell :is(.board-view-bar, .game-status-line) > .card-size-slider { display: none; }
   .game-shell .compact-table-size { display: block; }
   .game-shell .table-workspace { min-height: min(58px, 17dvh); }
@@ -1268,4 +1284,92 @@ p { line-height: 1.65; }
   .game-shell .decision-panel { align-items: start; }
   .game-shell .decision-copy h2 { font-size: .83rem; }
   .game-shell .action-tools { gap: .2rem; }
+}
+
+@media (max-height: 520px), (max-width: 700px) {
+  .game-shell {
+    --compact-control-size: 24px;
+    --compact-action-height: 30px;
+  }
+
+  .game-shell .game-topbar { padding-inline: .5rem; gap: .4rem; }
+  .game-shell .game-status-line { min-inline-size: 0; gap: .25rem .35rem; }
+  .game-shell .priority-control-description { display: none; }
+  .game-shell .game-status { padding-inline: .4rem; letter-spacing: normal; }
+
+  .game-shell :is(
+    .table-control-toggle, .game-menu > summary, .opponent-views > button,
+    .stack-panel > header > button, .hand-panel-controls > button, .hand-panel-collapsed > button
+  ) {
+    min-block-size: var(--compact-control-size);
+    min-inline-size: var(--compact-control-size);
+    padding: .15rem .4rem;
+    line-height: 1.25;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+
+  .game-shell :is(
+    .action-button, .mana-toggle, .game-over-actions > button,
+    .contextual-decision > button, .contextual-decision footer > button, .public-action-draft footer > button,
+    .draft-steps > button, .choice-dialog > header > button, .dialog-actions > button,
+    .choice-submit-row > button, .action-picker-options > button, .game-menu-panel button
+  ) {
+    min-block-size: var(--compact-action-height);
+    min-inline-size: var(--compact-control-size);
+    max-inline-size: 100%;
+    padding: .25rem .6rem;
+    line-height: 1.25;
+    letter-spacing: normal;
+    text-transform: none;
+    overflow-wrap: anywhere;
+  }
+
+  .game-shell .game-menu > summary { list-style-position: inside; }
+  .game-shell .decision-panel {
+    min-block-size: 40px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .25rem .5rem;
+    padding: .2rem .5rem;
+  }
+  .game-shell .decision-copy { min-inline-size: 0; flex: 0 1 auto; }
+  .game-shell .decision-panel .action-tools {
+    width: auto;
+    max-inline-size: 100%;
+    flex: 0 1 auto;
+    margin-inline-start: auto;
+    justify-content: flex-end;
+    gap: .3rem;
+  }
+  .game-shell .decision-panel .action-row {
+    width: auto;
+    min-inline-size: 0;
+    flex-wrap: wrap;
+    gap: .25rem .35rem;
+  }
+  .game-shell .decision-panel .action-button { flex: 0 1 auto; }
+
+  .game-shell .game-over-banner { padding: .4rem .55rem; gap: .3rem .5rem; }
+  .game-shell .game-over-actions { min-inline-size: 0; gap: .3rem; }
+  .game-shell .game-over-actions > button { flex: 0 1 auto; }
+
+  .game-shell .choice-overlay { padding: .55rem; }
+  .game-shell .choice-dialog { max-block-size: calc(100dvh - 1.1rem); padding: .65rem .75rem; gap: .55rem; }
+  .game-shell .choice-dialog > header { gap: .55rem; padding-bottom: .45rem; }
+  .game-shell .choice-submit-row { flex-direction: row; flex-wrap: wrap; justify-content: flex-end; gap: .35rem; }
+  .game-shell .dialog-actions { flex-wrap: wrap; gap: .35rem; }
+  .game-shell .dialog-actions > button { flex: 0 1 auto; }
+  .game-shell :is(.contextual-decision, .public-action-draft) footer { flex-wrap: wrap; gap: .35rem; }
+  .game-shell .contextual-decision:has(.scry-preview) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem .5rem;
+  }
+  .game-shell .contextual-decision:has(.scry-preview) > header {
+    min-inline-size: 0;
+    flex: 1 1 9rem;
+  }
+  .game-shell .contextual-decision:has(.scry-preview) > footer { margin-inline-start: auto; }
 }

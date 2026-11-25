@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 import difflib
 import hashlib
 import json
@@ -29,6 +30,56 @@ class Ruling:
     published_at: str
     source: str
     comment: str
+
+
+def _ruling_text(row: Ruling) -> dict[str, str]:
+    return {"text": row.comment, "published_at": row.published_at, "source": row.source}
+
+
+def _wording(text: str) -> str:
+    return " ".join(text.translate(str.maketrans("‘’“”", "''\"\"")).split())
+
+
+def _changed_rulings(earlier: list[Ruling], current: list[Ruling]) -> list[dict[str, Any]]:
+    def key(ruling: Ruling) -> tuple[str, str, str]:
+        return ruling.published_at, ruling.source, ruling.comment
+
+    earlier_counts, current_counts = Counter(earlier), Counter(current)
+    removed = sorted((earlier_counts - current_counts).elements(), key=key)
+    added = sorted((current_counts - earlier_counts).elements(), key=key)
+    changes: list[dict[str, Any]] = []
+    for before in removed:
+        after = next((row for row in added if (
+            before.source == row.source
+            and before.published_at == row.published_at
+            and _wording(before.comment) == _wording(row.comment)
+        )), None)
+        if after is None:
+            changes.append({"kind": "removed", "before": _ruling_text(before)})
+        else:
+            added.remove(after)
+            changes.append({"kind": "formatting", "before": _ruling_text(before), "after": _ruling_text(after)})
+    changes.extend({"kind": "added", "after": _ruling_text(row)} for row in added)
+    return changes
+
+
+def _changed_oracle_text(earlier: str, current: str) -> list[dict[str, Any]]:
+    before, after = earlier.split("\n"), current.split("\n")
+    changes: list[dict[str, Any]] = []
+    matcher = difflib.SequenceMatcher(None, before, after, autojunk=False)
+    for tag, old_start, old_end, new_start, new_end in matcher.get_opcodes():
+        if tag == "equal":
+            continue
+        removed, added = "\n".join(before[old_start:old_end]), "\n".join(after[new_start:new_end])
+        if tag == "insert":
+            changes.append({"kind": "added", "after": {"text": added}})
+        elif tag == "delete":
+            changes.append({"kind": "removed", "before": {"text": removed}})
+        else:
+            same_line_count = old_end - old_start == new_end - new_start
+            kind = "formatting" if same_line_count and _wording(removed) == _wording(added) else "changed"
+            changes.append({"kind": kind, "before": {"text": removed}, "after": {"text": added}})
+    return changes
 
 
 @dataclass(frozen=True, slots=True)
@@ -683,6 +734,16 @@ class CardDatabase:
                 "SELECT * FROM cards WHERE name LIKE ? LIMIT ?", (term, limit)
             ).fetchall()
         return [self._row_to_card(row) for row in rows]
+
+    def source_text_changes(
+        self, earlier: CardDatabase, oracle_id: str, *, rulings: bool,
+    ) -> list[dict[str, Any]]:
+        """Return changed source excerpts for card-data review."""
+        if rulings:
+            return _changed_rulings(earlier.rulings(oracle_id), self.rulings(oracle_id))
+        return _changed_oracle_text(
+            earlier.by_oracle_id(oracle_id).oracle_text, self.by_oracle_id(oracle_id).oracle_text,
+        )
 
     def rules_digest(
         self,

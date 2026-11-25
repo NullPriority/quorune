@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable, Iterable
 
 from quorune.card_programs.adapters import CardProgramSourceMismatch
 from quorune.carddb import CardDatabase
-from quorune.deck import DeckDefinition
-from quorune.preflight import semantic_preflight
+from quorune.deck import DeckDefinition, DeckLoader
+from quorune.preflight import _card_source_hashes, semantic_preflight
 
 
 _REASON_LABELS = {
@@ -17,20 +17,106 @@ _REASON_LABELS = {
 }
 
 
-def assess_deck(card_db: CardDatabase, deck: DeckDefinition) -> dict[str, Any]:
+def assess_deck(
+    card_db: CardDatabase,
+    deck: DeckDefinition,
+    *,
+    retained_snapshots: Callable[[], Iterable[CardDatabase]] | None = None,
+) -> dict[str, Any]:
     """Keep a format-checked list available for review when card data conflicts."""
     try:
-        report = semantic_preflight(card_db, deck)
+        report = semantic_preflight(card_db, deck, collect_source_diagnostics=True)
     except CardProgramSourceMismatch as exc:
         try:
             card = card_db.by_oracle_id(exc.oracle_id).name
         except KeyError:
             card = exc.card_name or "Card requiring a data review"
         report = {"trusted_only_ready": False, "data_integrity_blockers": [exc.diagnostic(card)]}
+    blockers = report.get("data_integrity_blockers") or []
+    if blockers and retained_snapshots is not None:
+        snapshots = tuple(retained_snapshots())
+        for blocker in blockers:
+            for earlier in snapshots:
+                if comparison := _compare_sources(card_db, earlier, blocker):
+                    blocker["comparison"] = comparison
+                    break
     report["format_legality"] = deck.metadata.get("format_legality", {
         "schema_version": 1, "profile": "commander", "status": "legal", "issues": [],
     })
     return report
+
+
+def _matches_reviewed_source(
+    current: CardDatabase, earlier: CardDatabase, blocker: dict[str, Any],
+) -> bool:
+    oracle_id = blocker["oracle_id"]
+    try:
+        active = current.by_oracle_id(oracle_id)
+        reviewed = earlier.by_oracle_id(oracle_id)
+    except KeyError:
+        return False
+    active_hashes = _card_source_hashes(current, active)
+    reviewed_hashes = _card_source_hashes(earlier, reviewed)
+    field = 1 if blocker["kind"] == "rulings_source_mismatch" else 0
+    if active_hashes[field] == reviewed_hashes[field]:
+        return False
+    return any(
+        (program["oracle_hash"], program["rulings_hash"]) == reviewed_hashes
+        for program in blocker["programs"]
+    )
+
+
+def _compare_sources(
+    current: CardDatabase, earlier: CardDatabase, blocker: dict[str, Any],
+) -> dict[str, Any] | None:
+    if not _matches_reviewed_source(current, earlier, blocker):
+        return None
+    rulings = blocker["kind"] == "rulings_source_mismatch"
+    metadata_key = "scryfall_rulings_updated_at" if rulings else "scryfall_oracle_updated_at"
+    return {
+        "reviewed_date": earlier.metadata().get(metadata_key),
+        "current_date": current.metadata().get(metadata_key),
+        "changes": current.source_text_changes(earlier, blocker["oracle_id"], rulings=rulings),
+    }
+
+
+def reviewed_match_snapshot(
+    current: CardDatabase,
+    snapshots: Iterable[CardDatabase],
+    decks: Iterable[DeckDefinition],
+) -> CardDatabase | None:
+    """Find one retained data source that passes the normal checks for the entire table."""
+    lists = tuple(decks)
+    if not all(_deck_format_matches(current, deck) for deck in lists):
+        return None
+    blockers = [
+        issue for deck in lists for issue in assess_deck(current, deck).get("data_integrity_blockers", [])
+    ]
+    if not blockers:
+        return None
+    for snapshot in snapshots:
+        if not all(_matches_reviewed_source(current, snapshot, issue) for issue in blockers):
+            continue
+        if all(
+            _deck_format_matches(snapshot, deck) and assess_deck(snapshot, deck).get("compatibility_ready")
+            for deck in lists
+        ):
+            return snapshot
+    return None
+
+
+def _deck_format_matches(snapshot: CardDatabase, deck: DeckDefinition) -> bool:
+    try:
+        # A name missing from the earlier snapshot must not resolve to a different card.
+        for entry in deck.entries:
+            snapshot.lookup(entry.name, fuzzy=False)
+        loader = DeckLoader(snapshot)
+        expected_issues = (deck.metadata.get("format_legality") or {}).get("issues", [])
+        if loader.validate_commander_deck(deck, check_legality=False):
+            return False
+        return loader.commander_legality_issues(deck) == expected_issues
+    except KeyError:
+        return False
 
 
 def has_integrity_blocker(report: dict[str, Any]) -> bool:
@@ -57,7 +143,11 @@ def _affected_card(row: dict[str, Any]) -> dict[str, Any] | None:
 def compact_deck_preflight(report: dict[str, Any]) -> dict[str, Any]:
     """Present a submitted deck's checks to the guest who owns it."""
     reasons_by_name: dict[str, list[str]] = {}
+    blockers = report.get("data_integrity_blockers") or []
+    mismatched = {issue["card"] for issue in blockers}
     for row in report.get("cards", []):
+        if row.get("name") in mismatched:
+            continue
         if result := _affected_card(row):
             reasons = reasons_by_name.setdefault(result["name"], [])
             reasons.extend(reason for reason in result["reasons"] if reason not in reasons)
@@ -70,7 +160,7 @@ def compact_deck_preflight(report: dict[str, Any]) -> dict[str, Any]:
         "unresolved_cards": report.get("unresolved_cards"),
         "oracle_residual_gate_pass": bool(report.get("oracle_residual_gate_pass")),
         "data_integrity_issue": has_integrity_blocker(report),
-        "data_integrity_blockers": report.get("data_integrity_blockers") or [],
+        "data_integrity_blockers": blockers,
         "card_behavior_ready": bool(report.get("oracle_residual_gate_pass"))
         and report.get("partial_cards") == 0 and report.get("unresolved_cards") == 0,
         "format_verification_pending": any(

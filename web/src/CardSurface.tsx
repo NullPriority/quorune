@@ -271,7 +271,7 @@ export function CardTile({
         {loyalty !== undefined && <strong id={loyaltyDescription} data-testid="card-current-loyalty">{loyalty} loyalty</strong>}
         {damage > 0 && <span data-testid="card-marked-damage" aria-label={`${damage} damage marked`}>{damage} dmg</span>}
       </div>}
-      {card.tap && table && <span className="tapped-state" id={tappedDescription}>Tapped</span>}
+      {card.tap && table && <span hidden id={tappedDescription}>Tapped</span>}
       {origin ? <span className="card-origin" title={origin}>{origin}</span> : actionHint && <span className="card-action-hint">{actionHint}</span>}
       {offerCost && <>
         <span id={costDescription} hidden>{spokenMana(offerCost)}</span>

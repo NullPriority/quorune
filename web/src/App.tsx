@@ -107,6 +107,7 @@ function RoomView({
   const owner = room.owner_guest_id === guest.guest_id;
   const readyCount = room.seats.filter((seat) => seat.ready).length;
   const reviewingDraft = !mine?.ready && Boolean(mine?.deck?.preflight?.data_integrity_issue);
+  const allDecksSubmitted = room.seats.every((seat) => seat.deck !== null);
 
   useEffect(() => {
     if (room.spectator) return;
@@ -354,10 +355,10 @@ function RoomView({
     }
   }
 
-  async function start() {
+  async function start(useReviewedCardData = false) {
     setBusy(true);
     try {
-      const result = await api.start(room.room_id);
+      const result = await api.start(room.room_id, useReviewedCardData);
       onGame(result.game_id);
     } catch (caught) {
       setMessageKind("error");
@@ -500,11 +501,22 @@ function RoomView({
       {owner && (
         <div className="start-bar">
           <div className="readiness-copy">
-            <strong>{readyCount} of {room.seat_count} decks submitted</strong>
-            <span>{readyCount === room.seat_count ? "You can start the game." : "Each player needs to submit a deck."}</span>
+            <strong>{readyCount} of {room.seat_count} decks ready</strong>
+            <span>{readyCount === room.seat_count ? "You can start the game."
+              : allDecksSubmitted ? "A submitted deck needs a card data review."
+              : "Each player needs to submit a deck."}</span>
           </div>
           <div className="readiness-meter" aria-hidden="true"><span style={{ width: `${readyCount / room.seat_count * 100}%` }} /></div>
-          <button data-testid="start-game" disabled={busy || !room.seats.every((seat) => seat.ready)} onClick={start}>{room.seat_count === 2 ? "Start duel" : "Start game"}</button>
+          <button data-testid="start-game" disabled={busy || readyCount !== room.seat_count} onClick={() => void start()}>{room.seat_count === 2 ? "Start duel" : "Start game"}</button>
+          {allDecksSubmitted && readyCount < room.seat_count && <details className="reviewed-rules-action">
+            <summary>Use earlier card data</summary>
+            <div>
+              <p>Start this match using one retained version of the card data for the whole table. Every submitted deck must pass its checks with that version.</p>
+              <button type="button" className="quiet-button" disabled={busy} onClick={() => void start(true)}>
+                {busy ? "Checking decks…" : "Start with earlier card data"}
+              </button>
+            </div>
+          </details>}
         </div>
       )}
       {message && <div className={`${messageKind}-banner`} role={messageKind === "error" ? "alert" : "status"}>{message}</div>}
@@ -1316,8 +1328,8 @@ function GameView({ gameId, system, onExit, onRoom }: {
           </GameMenu>
         </div>
       </header>
-      <TurnStatus value={turnPresentation} compact={tablePreferences.compactPhaseRail}
-        combatStops={combatStops} onCombatStop={isSpectator ? undefined : toggleCombatStop} holding={combatStop} />
+      {lifecycle?.status !== "complete" && <TurnStatus value={turnPresentation} compact={tablePreferences.compactPhaseRail}
+        combatStops={combatStops} onCombatStop={isSpectator ? undefined : toggleCombatStop} holding={combatStop} />}
       {connection !== "LIVE" && (
         <div className="connection-banner" role="status">
           <div><strong>{connection === "STOPPED" ? "Connection closed" : "Restoring your table"}</strong><span>{connection === "STOPPED" ? "Open the game again from Decks and games." : "Wait for the table to sync before sending a move."}</span></div>

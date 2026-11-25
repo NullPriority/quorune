@@ -276,7 +276,7 @@
       "method": "POST",
       "operation_id": "start_game_api_v1_rooms__room_id__start_post",
       "path": "/api/v1/rooms/{room_id}/start",
-      "request_schema": null,
+      "request_schema": "#/components/schemas/RoomStartRequest",
       "response_statuses": [
         "200",
         "422"
@@ -940,7 +940,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "eb290a8c79b95405bbe2b6f2464303c5e902b8850e678f01c2481ba7476fb07f",
+  "source_fingerprint": "0e52a5e7eb196adb2ff8d4e31b2054c7f7a9a9a3508e62351102c90e68959f54",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"

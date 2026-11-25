@@ -50,10 +50,15 @@ to a table. The host of a completed match can prepare a fresh room for the
 previously seated players. The original room membership continues to govern
 access to that match and its projections.
 
-If two programs for one card have different source hashes, the deck submission
-saves an editable draft. The seat remains unavailable for match admission. The
-owner's preflight includes a diagnostic ID, the card identity, and the affected
-program sources. Other seats see that a deck needs review.
+If the card programs disagree with one another or with the active card data,
+deck submission saves an editable draft. The owner's preflight includes every
+mismatch with the card identity, the program sources, and the source excerpts
+when available. Other seats see that a deck needs review.
+
+The room owner may set `use_reviewed_card_data` to `true` on the start request.
+The server verifies one retained snapshot against the current submitted decks
+and uses it for the whole match. The Game Record pins its fingerprint. The
+default start path uses the active card data.
 
 The intrinsic Miracle reveal decision exposes the prospective card and fixed
 cost only to its drawer. Acceptance publishes that card and queues its linked
