@@ -640,10 +640,12 @@ class TargetLibraryWithdrawalTests(TargetLibraryNativeFixture,unittest.TestCase)
 class HiddenLibraryExplanationTests(unittest.TestCase):
     def host(self,*,known=False):
         from types import SimpleNamespace
+        from quorune.model import PlayerState
         card=SimpleNamespace(object_id='hidden-top',ref='hidden-library-land',zone='library',owner='B',
             known_to=['B'] if known else [],revealed_to=[])
-        host=SimpleNamespace(state=SimpleNamespace(players={'B':SimpleNamespace(zones={'hand':[],
-            'graveyard':[],'exile':[],'library':[card.object_id]})},cards={card.object_id:card},active_player='A'),
+        player = PlayerState(seat="B", name="B")
+        player.zones["library"].append(card.object_id)
+        host=SimpleNamespace(state=SimpleNamespace(players={'B':player},cards={card.object_id:card},active_player='A'),
             card_record=lambda card:card,_land_play_faces=lambda record:['land'],
             _compiled_land_play_permission=lambda seat,card:False)
         return host,card
