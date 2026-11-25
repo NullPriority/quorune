@@ -27041,7 +27041,7 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 406882,
+      "logical_lines": 406899,
       "methods": {
         "dunder": 1227,
         "private": 1148,
@@ -27638,18 +27638,18 @@
           "physical_lines": 935
         },
         {
+          "file": "web/src/ChoiceForm.tsx",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 865,
+          "physical_lines": 889
+        },
+        {
           "file": "quorune/trigger_processing.py",
           "functions_and_methods": 50,
           "language": "python",
           "logical_lines": 861,
           "physical_lines": 971
-        },
-        {
-          "file": "web/src/ChoiceForm.tsx",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 857,
-          "physical_lines": 881
         },
         {
           "file": "quorune/selection/exile_cast.py",
@@ -27711,8 +27711,8 @@
           "file": "web/src/styles.css",
           "functions_and_methods": null,
           "language": "web",
-          "logical_lines": 828,
-          "physical_lines": 843
+          "logical_lines": 829,
+          "physical_lines": 844
         },
         {
           "file": "quorune/work_selection_bundles.py",
@@ -34764,6 +34764,13 @@
           "physical_lines": 96
         },
         {
+          "file": "web/src/tableAutomation.ts",
+          "functions_and_methods": null,
+          "language": "web",
+          "logical_lines": 82,
+          "physical_lines": 92
+        },
+        {
           "file": "quorune/compiler/modal_program_closure.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -35399,13 +35406,6 @@
           "language": "python",
           "logical_lines": 74,
           "physical_lines": 86
-        },
-        {
-          "file": "web/src/tableAutomation.ts",
-          "functions_and_methods": null,
-          "language": "web",
-          "logical_lines": 74,
-          "physical_lines": 82
         },
         {
           "file": "quorune/compiler/attached_untap_restraints.py",
@@ -44831,7 +44831,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 455389,
+      "physical_lines": 455408,
       "python_file_count": 2464,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -86029,7 +86029,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "54bc8132ef6db2bf131e0fdcdd3e0112775cc81cc1a2ca1718f5d37d855585e4",
+      "fingerprint": "803ad6a5955c33d8c1182e5541d3754e37011924b074b0f36b4a2fc2f17b206d",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
