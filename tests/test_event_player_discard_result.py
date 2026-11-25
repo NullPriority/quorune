@@ -119,6 +119,19 @@ class EventPlayerDiscardResultTests(InheritedNativeFixture, unittest.TestCase):
     def hand_members(self, game, seat):
         return tuple(game.state.players[seat].zones["hand"])
 
+    def assert_hand_references_private(self, game, owner, refs):
+        for viewer in ("pilot:A", "pilot:C", "pilot:D", "spectator"):
+            if viewer == f"pilot:{owner}":
+                continue
+            packet = game.packet(viewer, full=True)
+            decision = packet.get("decision")
+            if decision is not None:
+                # An opaque capability token can contain a card reference by chance.
+                packet = {**packet, "decision": {key: value for key, value in decision.items() if key != "cap"}}
+            serialized = json.dumps(packet)
+            for ref in refs:
+                self.assertNotIn(ref, serialized)
+
     def assert_player_redrew(self, game, before, player, destination="graveyard"):
         for seat, originals in before.items():
             hand = self.hand_members(game, seat)
@@ -129,12 +142,7 @@ class EventPlayerDiscardResultTests(InheritedNativeFixture, unittest.TestCase):
             self.assertFalse(set(originals).intersection(hand))
             for obj in originals:
                 self.assertEqual(destination, game.state.cards[obj].zone)
-            for viewer in ("pilot:A", "pilot:C", "pilot:D", "spectator"):
-                if viewer == f"pilot:{player}":
-                    continue
-                packet = json.dumps(game.packet(viewer, full=True))
-                for obj in hand:
-                    self.assertNotIn(game.state.cards[obj].ref, packet)
+            self.assert_hand_references_private(game, player, [game.state.cards[obj].ref for obj in hand])
 
     def pending_robber_fly(self, seed, *, replace_destination):
         game = self.session(seed)
@@ -173,11 +181,7 @@ class EventPlayerDiscardResultTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(set(refs), set(choose["choice_schema"]["legal_refs"]))
         self.assertEqual("bottom_to_top", choose["choice_schema"]["order"])
         self.assertEqual(before[owner], self.hand_members(game, owner))
-        for viewer in ("pilot:A", "pilot:C", "pilot:D", "spectator"):
-            if viewer == pilot:
-                continue
-            packet = json.dumps(game.packet(viewer, full=True))
-            self.assertTrue(all(ref not in packet for ref in refs))
+        self.assert_hand_references_private(game, owner, refs)
         game = self.replay(game, load=True)
         before_attempt = authoritative_state_hash(game.state)
         self.assertFalse(game.act("pilot:A", {"action_id": "choose", "cards": refs}).ok)
