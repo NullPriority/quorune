@@ -7883,6 +7883,50 @@
       "deck_files": [],
       "fixture_files": [],
       "rationale": "The restriction loop resolves Aven Mindcensor and Mindlock Orb through one variable card-name lookup."
+    },
+    {
+      "source": "tests/test_public_history_queries.py",
+      "symbol": "PublicHistoryQueryNativeTests.test_food_amount_requires_its_exact_history_capability_and_result",
+      "card_names": [
+        "Gyome, Master Chef"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The printed Food history test registers one exact source."
+    },
+    {
+      "source": "tests/test_creature_attacks_or_blocks_damage.py",
+      "symbol": "CreatureAttacksOrBlocksDamageTests.test_skitterspike_requires_all_three_exact_routes_and_its_grouped_damage_authority",
+      "card_names": [
+        "Giggling Skitterspike"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The three subscription routes share this one printed source."
+    },
+    {
+      "source": "tests/test_private_opponent_top_exile.py",
+      "symbol": "PrivateOpponentTopExileTests.test_private_top_spell_requires_the_exact_condition_and_capability",
+      "card_names": [
+        "Gandalf, Goblins' Bane // Flameshape"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The paired Adventure registration uses the exact two-face source."
+    },
+    {
+      "source": "tests/test_public_quantity_mana.py",
+      "symbol": "PublicQuantityManaRuntimeTests.test_threshold_mana_requires_the_exact_output_and_tap_price",
+      "card_names": [
+        "Leafkin Druid"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The threshold mana witness registers the printed original."
     }
   ],
   "fixture_kind": "compact_ci_card_database_inputs",
