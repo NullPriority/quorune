@@ -507,7 +507,8 @@ def restrict_temporary_interaction_context(
     nodes: list[OracleNode],
     residuals: list[OracleResidual],
 ) -> list[OracleNode]:
-    """Cost-X belongs only to a spell face whose mana cost actually binds X."""
+    """Require an independently represented X price for a temporary result."""
+    from ..rules.announced_subtype_sacrifice import is_announced_subtype_cost_schema
 
     mana_cost = record.mana_cost
     if record.faces:
@@ -519,7 +520,8 @@ def restrict_temporary_interaction_context(
     result = []
     for node in nodes:
         if TEMPORARY_TARGET_INTERACTION_MECHANIC in node.mechanics and _uses_cost_x(node.effects) and (
-            node.kind != "spell_ability" or "{X}" not in mana_cost.upper()
+            (node.kind != "spell_ability" or "{X}" not in mana_cost.upper())
+            and not (node.kind == "activated_ability" and is_announced_subtype_cost_schema(node.cost))
         ):
             residual = append_residual(
                 residuals, kind="quantity_expression", text=node.text,

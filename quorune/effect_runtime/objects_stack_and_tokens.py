@@ -1448,6 +1448,7 @@ def _apply_transform(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.paid_noncreature_counter_transform import THRESHOLD_FIELD, paid_cast_source_threshold_holds
     from ..rules.subtype_transform import SUBTYPE_TRANSFORM_VERSION, apply_subtype_transform
     if SUBTYPE_TRANSFORM_VERSION in effect:
         return apply_subtype_transform(host, effect, actor=actor, reason=reason)
@@ -1456,6 +1457,7 @@ def _apply_transform(
         "op",
         "card",
         "expected_transform_count",
+        THRESHOLD_FIELD,
         "reason",
         "_runtime_source",
     }
@@ -1483,6 +1485,12 @@ def _apply_transform(
         or runtime_source.get("logical_object_id") != card.logical_object_id
     ):
         return None
+    if THRESHOLD_FIELD in effect:
+        try:
+            if not paid_cast_source_threshold_holds(effect[THRESHOLD_FIELD], card):
+                return None
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
     results = commit_transform_batch(
         host,
         (card,),

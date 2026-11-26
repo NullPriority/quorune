@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Validate hidden search descriptions and their public-result disclosure."""
 
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from ..errors import GameRuleError
 from ..rules.targeted_library_exile import (
@@ -17,7 +17,9 @@ from ..library_search_model import (
     TARGET_NAME_LIBRARY_SEARCH_VERSION, TARGET_NAME_MULTIZONE_EXILE_VERSION,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
     PRIVATE_SEARCH_RANDOM_DISCARD_VERSION,
-    is_bargain_search_effect,
+    DRAGON_GRAVEYARD_COPY_SEARCH_VERSION,
+    SEARCH_ALTERNATIVES,
+    is_bargain_search_effect, is_up_to_two_forest_search,
     AnyNumberCreatureSubtypeSearch,
     CreatureSubsetManaValueSearch,
     FixedCountedLibrarySearchTemplate,
@@ -33,10 +35,21 @@ from ..named_search_model import (
     decode_literal_library_search,
 )
 from ..rules.bargain_search import bargain_search_limit
+from ..rules.shared_land_type_search import shared_land_type_search_choice
 
 
 _SEARCH_COMPLETION_FIELD = "_search_completion"
 _REPLACEMENT_SELECTIONS_FIELD = "_replacement_selections"
+
+
+def semantic_search_selector_is_restrictive(selector: Mapping[str, Any]) -> bool:
+    return any(
+        selector.get(key)
+        for key in (
+            "types", "types_any", "subtypes", "subtypes_any", "supertypes", "colors", "colors_any",
+            "names", "mana_value", "mana_value_total", "predicate", SEARCH_ALTERNATIVES,
+        )
+    )
 
 
 def semantic_search_actor(
@@ -52,6 +65,11 @@ def semantic_search_actor(
 
 
 def validate_semantic_search_response(effect: Mapping[str, Any], response: Mapping[str, Any]) -> None:
+    if effect.get("schema_version") == DRAGON_GRAVEYARD_COPY_SEARCH_VERSION and (
+        set(response) - {"action", "choice_schema", "search_cards"}
+        or ("search_cards" in response and response["search_cards"] is None)
+    ):
+        raise GameRuleError("The Dragon search accepts only its offered search_cards field")
     if effect.get("schema_version") == TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION and (
         set(response) - {"action", "choice_schema", "search_cards"}
         or ("search_cards" in response and response["search_cards"] is None)
@@ -79,11 +97,15 @@ def semantic_search_destination(effect: Mapping[str, Any]) -> tuple[str, str, st
 def _validate_linked_and_paid_search(effect):
     from ..rules.paid_artifact_library_search import is_paid_artifact_search, validate_paid_artifact_search_effect
 
-    if is_paid_artifact_search(effect):
+    from ..rules.paid_creature_library_search import is_paid_creature_search, validate_paid_creature_search
+
+    paid_validator = (validate_paid_artifact_search_effect if is_paid_artifact_search(effect) else
+                      validate_paid_creature_search if is_paid_creature_search(effect) else None)
+    if paid_validator is not None:
         retained = {key: value for key, value in effect.items()
                     if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}}
         try:
-            validate_paid_artifact_search_effect(retained, materialized=True)
+            paid_validator(retained, materialized=True)
         except (TypeError, ValueError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         return True
@@ -111,6 +133,10 @@ def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *
                 if key not in {_SEARCH_COMPLETION_FIELD, _REPLACEMENT_SELECTIONS_FIELD}} if moving else effect
     if is_paid_artifact_search(effect):
         return materialize_paid_artifact_search(host, item, retained, already_materialized=saved_options or moving)
+    from ..rules.paid_creature_library_search import is_paid_creature_search, materialize_paid_creature_search
+
+    if is_paid_creature_search(effect):
+        return materialize_paid_creature_search(host, item, retained, already_materialized=saved_options or moving)
     if effect.get("schema_version") == QUERY_BOUND_SEARCH_VERSION and not saved_options:
         from ..rules.query_bound_library_search import materialize_query_bound_search
 
@@ -120,6 +146,14 @@ def materialize_semantic_search_bound(host, item, effect, instruction_pointer, *
 
 def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
     if _validate_linked_and_paid_search(effect):
+        return
+    if effect.get("schema_version") == DRAGON_GRAVEYARD_COPY_SEARCH_VERSION:
+        from ..rules.dragon_graveyard_search_copy import validate_dragon_graveyard_copy_search
+
+        try:
+            validate_dragon_graveyard_copy_search(effect, player=effect.get("searching_player"), bound=True)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
         return
     if effect.get("schema_version") == TARGET_NAME_MULTIZONE_EXILE_VERSION:
         validate_bound_target_name_multizone_search(effect)
@@ -252,3 +286,63 @@ def validate_semantic_search_descriptor(effect: Mapping[str, Any]) -> None:
             FixedCountedLibrarySearchTemplate.from_effect(effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError("Counted library search instruction is malformed") from exc
+
+
+def semantic_search_choice_schema(
+    host,
+    *,
+    seat: str,
+    effect: Mapping[str, Any],
+    options: Sequence[Mapping[str, Any]],
+    minimum: int,
+    maximum: int,
+    rules_may_fail: bool,
+) -> dict[str, Any]:
+    combined_bound = effect.get(CREATURE_SUBSET_MANA_VALUE_FIELD)
+    entry_choice = combined_bound is None and any(
+        (
+            (record := host.card_record(
+                next(
+                    card.object_id
+                    for card in host.state.cards.values()
+                    if card.ref == option["id"]
+                )
+            ))
+            is not None
+            and host._land_entry_life_amount(record) > 0
+        )
+        for option in options
+    )
+    choice_schema: dict[str, Any] = {
+        "field": "search_cards",
+        "shape": "ref_array",
+        "element_type": "string",
+        "minimum": minimum,
+        "maximum": maximum,
+        "legal_refs": [option["id"] for option in options],
+        "rules_may_fail_to_find": rules_may_fail,
+        "example": {
+            "search_cards": (
+                [options[0]["id"]]
+                if options and maximum > 0
+                else []
+            ),
+        },
+    }
+    choice_schema.update(shared_land_type_search_choice(host, effect, seat, options))
+    if combined_bound is not None:
+        choice_schema[CREATURE_SUBSET_MANA_VALUE_FIELD] = combined_bound
+        choice_schema["label"] = f"Search cards (total mana value {combined_bound} or less)"
+    if effect.get('schema_version') == 5:
+        from ..search_allocation_model import SearchAllocationSpec
+        choice_schema.update(SearchAllocationSpec.from_effect(effect).choice_metadata())
+    if effect.get("schema_version") == RECRUITING_LIBRARY_SEARCH_VERSION:
+        choice_schema["order"] = "top_to_bottom"
+    from ..semantic_runtime.life_prohibitions import life_payment_prohibited
+
+    if (entry_choice and not is_up_to_two_forest_search(effect)
+            and (str(effect.get("destination")) == "battlefield" or effect.get('schema_version')==4)
+            and not life_payment_prohibited(self, seat)):
+        choice_schema["entry_pay_life"] = "boolean"
+        choice_schema["example"]["entry_pay_life"] = False
+    return choice_schema

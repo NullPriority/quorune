@@ -563,9 +563,13 @@ class GrantAffectedObjectKeyword:
         }
 
 
+MATCH_PENDING_TOKEN_QUANTITY = "match_pending_creation"
+MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v3"
+
+
 @dataclass(frozen=True, slots=True)
 class CreateAdditionalToken:
-    """Add one fixed token specification to a token-creation event.
+    """Add a fixed or event-matching token specification to a creation event.
 
     The operation is an immutable replacement-event transformation.  It does
     not create a permanent or inspect mutable game state; the authoritative
@@ -574,7 +578,7 @@ class CreateAdditionalToken:
     """
 
     name: str
-    quantity: int
+    quantity: int | str
     characteristics: FrozenMap
     card_types: tuple[str, ...]
     subtypes: tuple[str, ...]
@@ -590,7 +594,11 @@ class CreateAdditionalToken:
                     f"Additional tokens require nonempty {field_name}"
                 )
             object.__setattr__(self, field_name, value.strip())
-        _integer(self.quantity, field="additional token quantity", minimum=1)
+        matching = type(self.quantity) is str and self.quantity == MATCH_PENDING_TOKEN_QUANTITY
+        if matching != (self.handler_id == MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID):
+            raise ReplacementOperationError("Only the counted additional-token handler matches pending creation")
+        if not matching:
+            _integer(self.quantity, field="additional token quantity", minimum=1)
         if not isinstance(self.characteristics, Mapping):
             raise ReplacementOperationError(
                 "Additional token characteristics must be an object"
@@ -776,6 +784,16 @@ class ReplaceDrawWithScheduledResult:
 
 
 @dataclass(frozen=True, slots=True)
+class ReplaceDrawWithLibraryChoice:
+    """Replace one draw with its controller's public library category choice."""
+
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op": "replace_draw_with_library_choice"}
+
+
+@dataclass(frozen=True, slots=True)
 class PreventDraw:
     """Replace one card-draw event with no draw result."""
 
@@ -809,6 +827,23 @@ class CreateResultDraws:
         if self.recipient is not None:
             result["recipient"] = self.recipient
         return result
+
+
+EXILE_TURN_PLAY_DRAW_RESULT = "exile_top_for_turn_play"
+
+
+@dataclass(frozen=True, slots=True)
+class ExileTopForTurnPlayInsteadOfDraw:
+    """Replace one draw with the fixed top-two exile and play result."""
+
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != OPERATION_SCHEMA_VERSION:
+            raise ReplacementOperationError("Unsupported draw-to-exile result version")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op": EXILE_TURN_PLAY_DRAW_RESULT}
 
 
 @dataclass(frozen=True, slots=True)
@@ -910,7 +945,9 @@ ReplacementOperation: TypeAlias = (
     | CapResultLifeLoss
     | PreventDraw
     | ReplaceDrawWithScheduledResult
+    | ReplaceDrawWithLibraryChoice
     | CreateResultDraws
+    | ExileTopForTurnPlayInsteadOfDraw
     | DiscardInsteadOfDraw
     | DredgeDraw
 )
@@ -951,7 +988,9 @@ _TYPED_OPERATION_TYPES = (
     CapResultLifeLoss,
     PreventDraw,
     ReplaceDrawWithScheduledResult,
+    ReplaceDrawWithLibraryChoice,
     CreateResultDraws,
+    ExileTopForTurnPlayInsteadOfDraw,
     DiscardInsteadOfDraw,
     DredgeDraw,
 )
@@ -1087,11 +1126,7 @@ def _additional_token_from_dict(
         )
     return CreateAdditionalToken(
         name=value["name"],
-        quantity=_integer(
-            value["quantity"],
-            field="additional token quantity",
-            minimum=1,
-        ),
+        quantity=value["quantity"],
         characteristics=FrozenMap(characteristics),
         card_types=tuple(card_types),
         subtypes=tuple(subtypes),
@@ -1214,8 +1249,14 @@ def _draw_operation_from_dict(value: Mapping[str, Any], operation: str) -> Repla
     if op == "replace_draw_with_scheduled_result":
         _exact_fields(value, {"op", "grant_id"}, operation=op)
         return ReplaceDrawWithScheduledResult(value["grant_id"])
+    if op == "replace_draw_with_library_choice":
+        _exact_fields(value, {"op"}, operation=op)
+        return ReplaceDrawWithLibraryChoice()
     if op == "create_result_draws":
         return _result_draws_from_dict(value, operation=op)
+    if op == EXILE_TURN_PLAY_DRAW_RESULT:
+        _exact_fields(value, {"op"}, operation=op)
+        return ExileTopForTurnPlayInsteadOfDraw()
     if op == "discard_instead_of_draw":
         _exact_fields(value, {"op"}, operation=op)
         return DiscardInsteadOfDraw()

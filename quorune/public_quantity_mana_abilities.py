@@ -7,7 +7,7 @@ from typing import Any, Mapping
 from .fixed_mana_abilities import FixedActivatedManaAbilitySpec, compile_fixed_activated_mana_ability, FixedManaMode
 from .public_quantity_mana_model import (
     CHOSEN_DEVOTION_MANA_VERSION, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
-    CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION,
+    CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION, CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION,
     PAID_SACRIFICE_QUANTITY_MANA_VERSION, PublicQuantityManaOutput,
 )
 from .replacement.immutable import FrozenMap
@@ -23,7 +23,7 @@ def _generic_two_tap_mana_price(costs: FixedActivatedManaAbilitySpec) -> bool:
                      or costs.result is not None or costs.choices or costs.mana_cost_options))
 
 
-def _land_subtype_pair_mana_price(costs: FixedActivatedManaAbilitySpec) -> bool:
+def _ordinary_source_tap_mana_price(costs: FixedActivatedManaAbilitySpec) -> bool:
     return (
         costs.tap_source and not any(costs.mana_cost.values())
         and not (costs.sacrifice_source or costs.life_payment or costs.activation_limit is not None
@@ -71,8 +71,9 @@ class PublicQuantityActivatedManaAbilitySpec:
             raise ValueError("The chosen quantity requires the exact generic-two tap activation")
         if self.output.schema_version == PAID_SACRIFICE_QUANTITY_MANA_VERSION and not _paid_sacrifice_mana_price(self.costs):
             raise ValueError("Paid mana value requires a tap and one exact selected sacrifice")
-        if self.output.schema_version == CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION and not _land_subtype_pair_mana_price(self.costs):
-            raise ValueError("Land subtype pair mana requires only the ordinary source tap")
+        if self.output.schema_version in {CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION, CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION}:
+            if not _ordinary_source_tap_mana_price(self.costs):
+                raise ValueError("Conditional fixed mana requires only the ordinary source tap")
 
     def to_dict(self) -> dict[str,Any]:
         return {'costs':self.costs.to_dict(),'output':self.output.to_dict()}
@@ -99,7 +100,8 @@ def compile_public_quantity_activated_mana_ability(ability,output):
         return None
     if output.schema_version == PAID_SACRIFICE_QUANTITY_MANA_VERSION and not _paid_sacrifice_mana_price(costs):
         return None
-    if output.schema_version == CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION and not _land_subtype_pair_mana_price(costs):
+    if (output.schema_version in {CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION, CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION}
+            and not _ordinary_source_tap_mana_price(costs)):
         return None
     return PublicQuantityActivatedManaAbilitySpec(costs, output)
 

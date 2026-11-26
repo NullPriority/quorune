@@ -1130,6 +1130,41 @@ def fixed_token_creation_node_capabilities(
     )
 
 
+def entry_x_program_runtime_dependencies(program):
+    from ..entry_x_amount_model import (
+        ENTRY_X_AMOUNT_MECHANIC, entry_x_amount_runtime_dependencies,
+        project_entry_x_token_batch, uses_entry_x_token_batch,
+    )
+
+    required = entry_x_amount_runtime_dependencies(program)
+    if not required:
+        return ()
+    from .effect_shape_walkers import nested_effects
+
+    batches = tuple(effect for effect in nested_effects(program.effects) if uses_entry_x_token_batch(effect))
+    if not batches:
+        return required
+    if (
+        len(batches) != 1 or tuple(program.effects) != batches or program.target_schema is not None
+        or program.event_condition is not None or program.handlers or program.cost_schema is not None
+    ):
+        raise ValueError("An entry-X token batch requires its complete unqualified self-entry instruction")
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..compiler.declared_effect_amounts import DECLARED_EFFECT_AMOUNT_MECHANIC
+    from ..query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY
+
+    mechanics = set(program.coverage) - {
+        "generated_oracle_ir", "triggered_ability", CURRENT_ABILITY_FRAGMENT_COVERAGE,
+        DECLARED_EFFECT_AMOUNT_MECHANIC, ENTRY_X_AMOUNT_MECHANIC,
+    }
+    owned = fixed_token_creation_node_capabilities(
+        effects=(project_entry_x_token_batch(batches[0]),), target_schema=None, mechanic_ids=mechanics,
+    )
+    if "token.creation.fixed_definition" not in owned:
+        raise ValueError("Entry-X token batch requires both fixed token definitions")
+    return tuple(sorted({*required, *owned, DECLARED_AMOUNT_CAPABILITY}))
+
+
 def fixed_token_creation_covered_mechanics(
     capability_ids: set[str],
 ) -> tuple[str, ...]:

@@ -1143,7 +1143,7 @@ class WardNonmanaAbilityFragmentHandler:
             event=self.event,
             expected_type=WardSpec,
         )
-        if spec.generic_cost is not None or spec.sacrifice_scope is not None:
+        if spec.generic_cost is not None or spec.sacrifice_scope is not None or spec.blight_amount is not None:
             raise SemanticNodeError(
                 "Fixed-nonmana Ward handler requires its life or discard cost"
             )
@@ -1505,6 +1505,8 @@ class AbilityFragmentRegistry(
 
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
+    from .ward_blight_fragment import WardBlightAbilityFragmentHandler
+
     from .all_colors import AllColorsDefinitionHandler, AllNonbasicLandTypesDefinitionHandler
     from .off_battlefield_creatures import OffBattlefieldSelfCreatureHandler
     from .combat_metadata import AttachedGoadFragmentHandler
@@ -1595,6 +1597,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             WardAbilityFragmentHandler(),
             WardNonmanaAbilityFragmentHandler(),
             WardSacrificeAbilityFragmentHandler(),
+            WardBlightAbilityFragmentHandler(),
         )
     )
     registry.require_registered_capabilities(

@@ -31,9 +31,22 @@ from .controller_top_exile_activation import controller_top_exile_activation, co
 
 def compile_activation_result(ability, *, source_name, text, compile_fixed, public_timing=None):
     """Choose an owned activation quantity before the ordinary fixed result."""
+    from .source_mutation_damage import source_mutation_damage_activation
+
+    if mutation_damage := source_mutation_damage_activation(ability, text, public_timing=public_timing):
+        return mutation_damage
     from ..rules.chosen_color_draw_price import chosen_color_draw_text, draw_effect
     from ..rules.commander_lifelink import commander_lifelink_activation_matches, commander_lifelink_instruction
     from ..rules.temporary_ability_grant import TEMPORARY_QUOTED_GRANT_MECHANIC
+    from ..paid_activation_card_types import (
+        DEPENDENCY_MECHANICS, MECHANIC, RESULT_TEXT, TEMPLATE, exact_paid_type_price, paid_type_instruction,
+    )
+    from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC
+
+    if text.strip() == RESULT_TEXT and exact_paid_type_price(activated_ability_cost(ability, public_timing=public_timing)):
+        return TEMPLATE, (paid_type_instruction(),), None, (
+            MECHANIC, RESOLUTION_CONDITION_MECHANIC, *DEPENDENCY_MECHANICS,
+        )
 
     if public_timing is None and ability.zones == ("battlefield",) and not ability.mana_ability:
         from ..rules.next_personal_turn_protection import (
@@ -182,7 +195,7 @@ def activation_result_dependency_gate(**scope):
         return explicit_capabilities_gate(
             required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
         )
-    return (commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
+    return (paid_type_activation_gate(**scope) or commander_lifelink_gate(**scope) or noted_mana_charge_gate(**scope)
             or loot_transform_and_graveyard_cast_gate(**scope)
             or controller_top_exile_activation_gate(**scope)
             or draw_then_opponent_exile_activation_gate(**scope)
@@ -192,6 +205,21 @@ def activation_result_dependency_gate(**scope):
             or source_sacrifice_power_life_gate(**scope)
             or target_death_return_activation_gate(**scope) or controlled_arrival_proliferate_activation_gate(**scope)
             or void_counter_play_activation_gate(**scope) or artifact_sacrifice_return_activation_gate(**scope))
+
+
+def paid_type_activation_gate(*, effects, target_schema, mechanics, active_zone, cost_schema,
+                              capability_registry, capability_profile):
+    from ..paid_activation_card_types import CAPABILITY, MECHANIC, paid_type_capabilities, uses_paid_type_condition
+
+    if MECHANIC not in mechanics and not any(uses_paid_type_condition(effect) for effect in effects):
+        return None
+    required = paid_type_capabilities(effects=effects, target_schema=target_schema,
+                                     mechanic_ids=mechanics, cost_schema=cost_schema)
+    if not required or active_zone != "battlefield":
+        return DependencyGate(blockers=(f"capability:{CAPABILITY}",))
+    return explicit_capabilities_gate(
+        required, capability_registry=capability_registry, capability_profile=capability_profile,
+    )
 
 
 def commander_lifelink_gate(**scope):

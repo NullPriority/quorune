@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ...activation_usage import ActivationUsageError, activation_usage_verdict, commit_activation_usage
 from ...errors import GameRuleError
+from ...paid_activation_card_types import has_bounded_sacrifice
 
 
 def commit_activation_payments(host, proposal, source, ability, response, mana_option):
@@ -27,9 +28,15 @@ def commit_activation_payments(host, proposal, source, ability, response, mana_o
 
     reserved = source if ability.discard_source or ability.exile_source else None
     with capture_hand_mana_window(host, proposal.seat, reserved_source=reserved):
-        paid_objects, activations, spent, special_cost_context = _pay_object_and_mana_costs(
-            host, proposal, source, ability, response,
-        )
+        if has_bounded_sacrifice(ability):
+            from .bounded_type_sacrifice import pay_bounded_type_sacrifice
+            paid_objects, activations, spent, special_cost_context = pay_bounded_type_sacrifice(
+                host, proposal, source, ability, response,
+            )
+        else:
+            paid_objects, activations, spent, special_cost_context = _pay_object_and_mana_costs(
+                host, proposal, source, ability, response,
+            )
     _commit_activation_resource_costs(
         host,
         proposal,

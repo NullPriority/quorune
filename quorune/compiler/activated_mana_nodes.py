@@ -529,7 +529,21 @@ def _targeted_activation_result_gate(
     from ..linked_exile_return_model import LINKED_FADING_EXILE_CAPABILITY
     from ..rules.linked_exile_return_shapes import linked_fading_activation_capabilities, uses_linked_fading_exile
     from ..temporary_graveyard_escape import TEMPORARY_ESCAPE_CAPABILITY, TEMPORARY_ESCAPE_OPERATION, targeted_escape_requirements
+    from ..resolution_characteristic_model import NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY
+    from ..rules.resolution_characteristic_shapes import (
+        is_next_turn_target_land_animation, next_turn_land_animation_activation_capabilities,
+    )
 
+    if any(is_next_turn_target_land_animation(effect) for effect in effects):
+        required = next_turn_land_animation_activation_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+            active_zone=active_zone, cost_schema=cost_schema,
+        )
+        if not required:
+            return DependencyGate(blockers=(f"capability:{NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY}",))
+        return explicit_capabilities_gate(
+            required, capability_registry=capability_registry, capability_profile=capability_profile,
+        )
     if effects and effects[0].get("op") == TEMPORARY_ESCAPE_OPERATION:
         required = targeted_escape_requirements(effects, target_schema, mechanics)
         if not required or active_zone != "battlefield":
@@ -873,11 +887,13 @@ def _compiled_activated_effect(
     from .library_bottom_result_templates import library_bottom_creature_result_template
     from .fixed_damage_life_sequences import fixed_damage_life_sequence_template
     from .finite_damage_redirection_nodes import finite_damage_redirection_template
-    from .library_search_templates import target_player_basic_land_search_template
+    from .library_search_templates import dragon_graveyard_copy_search_template, target_player_basic_land_search_template
 
     from .temporary_self_copy_templates import temporary_self_copy_template
     from .fixed_effect_clause_sequences import fixed_proliferate_sequence_template
 
+    if dragon_search := dragon_graveyard_copy_search_template(text, source_name=card_name):
+        return dragon_search
     if player_search := target_player_basic_land_search_template(text):
         return player_search
     if proliferate := fixed_proliferate_sequence_template(text):
@@ -1007,12 +1023,12 @@ def activated_oracle_node(
     if color_set_mana is not None:
         return color_set_mana
     effect_material = _activated_effect_material(ability,source_name=card_name)
-    self_zone_move = compile_self_zone_move(ability)
+    self_zone_move = compile_self_zone_move(ability, source_is_land="land" in type_line.casefold().partition("—")[0].split())
     handlers: tuple[Mapping[str, Any], ...] = ()
     if self_zone_move is not None:
         ability = self_zone_move.ability
-        from ..self_zone_move_followups import compiled_self_entry
-        template, effects, mechanics = compiled_self_entry(self_zone_move)
+        from .revealed_hand_land_entry import compiled_activated_self_zone_move
+        template, effects, mechanics = compiled_activated_self_zone_move(self_zone_move)
         target_schema = None
         handlers = (self_zone_move_handler_descriptor(self_zone_move),)
     else:
@@ -1036,7 +1052,7 @@ def activated_oracle_node(
         template is not None or ability.mana_ability
     )
     cost = activated_ability_cost(ability, public_timing=public_timing)
-    from .activation_paid_sacrifice_results import activation_result_dependency_gate
+    from .revealed_hand_land_entry import activated_result_dependency_gate
 
     effect_scope = dict(
         effects=effects,
@@ -1047,7 +1063,7 @@ def activated_oracle_node(
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
-    gate = activation_result_dependency_gate(**effect_scope) or _activated_effect_dependency_gate(
+    gate = activated_result_dependency_gate(**effect_scope) or _activated_effect_dependency_gate(
         **effect_scope, trusted_mechanics=trusted_mechanics,
     )
     gate = _activated_cost_dependency_gate(

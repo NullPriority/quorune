@@ -9,13 +9,20 @@ from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
 import test_mutate_cast_native as mutate_actions
 from quorune.carddb import CardDatabase
+from quorune.card_programs.binding import bind_semantic_program_runtime
+from test_controller_creature_keyword_absence import register_card
 from quorune.deck import DeckDefinition, DeckEntry
+from quorune.rules.controller_private_top_exile_model import CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY
+from quorune.record import authoritative_state_hash
 from quorune.errors import GameRuleError
 from quorune.opponent_library_exile_model import PRIVATE_TOP_EXILE_CAPABILITY
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.private_opponent_top_exile import FIELD, current_private_top_exile_permission
 from scripts.build_test_database import build_fixture_database
+
+
+PRIVATE_ADVENTURE = "Gandalf, Goblins' Bane // Flameshape"
 
 
 class PrivateOpponentTopExileTests(InheritedNativeFixture, unittest.TestCase):
@@ -144,3 +151,120 @@ class PrivateOpponentTopExileTests(InheritedNativeFixture, unittest.TestCase):
         with patch("quorune.compiler.opponent_library_exile_templates.each_opponent_library_top_exile_result",return_value=None):
             with self.assertRaises(AssertionError):
                 self.test_original_requires_its_private_mutation_and_normal_play_clause()
+
+
+    def cast_face(self, game, card, face):
+        row, = (row for row in self.actions(game).values()
+                if row.get("card") == card.ref and row.get("face") == face)
+        command = {"action_id": row["id"], "face": face, "pay": "auto"}
+        if row.get("cost_options"):
+            command["cost_option"] = row["cost_options"][0]["id"]
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def assert_rejected_without_mutation(self, game, command):
+        before = authoritative_state_hash(game.state)
+        result = game.act("pilot:A", command)
+        self.assertFalse(result.ok, result.summary)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_two_face_spell_preserves_private_top_play_and_source_trigger(self):
+        game = self.session(40630013)
+        adventure = self.add(game.engine, PRIVATE_ADVENTURE, zone="hand")
+        spell = self.top(game, "Shock", "A", "private-own-top-spell")
+        land = self.top(game, "Mountain", "A", "private-own-top-land")
+        left = self.top(game, "Disenchant", "A", "private-own-next-card")
+        library = game.state.players["A"].zones["library"]
+        library[-3:] = [left.object_id, spell.object_id, land.object_id]
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(game, adventure)
+        self.prepare(game, mana={"C": 7, "R": 4})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+
+        self.cast_face(game, adventure, "Flameshape")
+        game = self.replay(game, load=True)
+        self.settle(game)
+        self.assert_private_batch(game, (land, spell))
+        self.assertEqual("library", game.state.cards[left.object_id].zone)
+        self.assertEqual(game.state.cards[land.object_id].zone_timestamp,
+                         game.state.cards[spell.object_id].zone_timestamp)
+        self.assertNotIn("play-land:" + land.ref, self.actions(game))
+        self.assertNotIn("cast:" + spell.ref, self.actions(game))
+        self.assert_rejected_without_mutation(game, {"action_id": "play-land:" + land.ref})
+
+        self.cast_face(game, adventure, "Gandalf, Goblins' Bane")
+        self.settle(game)
+        self.assertIn("play-land:" + land.ref, self.actions(game))
+        self.assertIn("cast:" + spell.ref, self.actions(game))
+        self.assert_rejected_without_mutation(game, {
+            "action_id": "cast:" + spell.ref, "targets": ["B"], "pay": "manual", "payment": {"C": 1},
+        })
+        life = {seat: game.state.players[seat].life for seat in "ABCD"}
+        self.cast(game, "A", spell, ["B"])
+        self.assertEqual(("spell", "triggered_ability"), tuple(item.kind for item in game.state.stack))
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual((3, 4), tuple(game.engine._numeric_stat(adventure.object_id, stat)
+                                      for stat in ("power", "toughness")))
+        self.assertEqual(life["A"], game.state.players["A"].life)
+        for seat in "BCD":
+            self.assertEqual(life[seat] - 1, game.state.players[seat].life)
+
+        self.cast(game, "B", bounce, [adventure.ref])
+        self.settle(game)
+        self.assertEqual("hand", game.state.cards[adventure.object_id].zone)
+        self.assertEqual(life["B"] - 3, game.state.players["B"].life)
+        self.assert_private_batch(game, (land,))
+        self.assertNotIn("play-land:" + land.ref, self.actions(game))
+        self.assert_rejected_without_mutation(game, {"action_id": "play-land:" + land.ref})
+        game = self.replay(game, load=True)
+
+        self.cast_face(game, adventure, "Gandalf, Goblins' Bane")
+        self.settle(game)
+        old_land_identity = game.state.cards[land.object_id].logical_object_id
+        self.assertIn("play-land:" + land.ref, self.actions(game))
+        result = game.act("pilot:A", {"action_id": "play-land:" + land.ref})
+        self.assertTrue(result.ok, result.summary)
+        played = game.state.cards[land.object_id]
+        self.assertEqual(("battlefield", False), (played.zone, played.face_down))
+        self.assertNotEqual(old_land_identity, played.logical_object_id)
+        self.replay(game, load=True)
+
+    def test_private_top_spell_requires_the_exact_condition_and_capability(self):
+        original = self.db.lookup(PRIVATE_ADVENTURE, fuzzy=False)
+
+        def compile_source(record):
+            return compile_oracle_card(record, capability_registry=self.registry,
+                                       capability_profile="commander_review")
+
+        compiled = compile_source(original)
+        self.assertEqual("exact", compiled.status, compiled.material_residuals)
+        front, adventure = compiled.faces
+        trigger, = front.nodes
+        self.assertEqual(("apply_source_characteristics_until_end_of_turn", "damage_each_opponent"),
+                         tuple(effect["op"] for effect in trigger.effects))
+        self.assertEqual("$source.zone_object", trigger.effects[0]["card"])
+        self.assertEqual("$source", trigger.effects[1]["source"])
+        effect, = adventure.nodes
+        self.assertIn(CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY, effect.capability_dependencies)
+        admission, semantics = register_card(self.db, self.registry, PRIVATE_ADVENTURE)
+        self.assertTrue(admission["strict_capability_ready"], admission["blockers"])
+        program, = (row for row in semantics.programs_for_oracle(original.oracle_id) if row.event == "resolve")
+        dependencies = tuple(value for value in program.capability_dependencies
+                             if value != CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY)
+        withdrawn = replace(program, capability_dependencies=dependencies,
+                            capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        wrong_event = replace(program, event="spell.cast")
+        for candidate in (withdrawn, wrong_event):
+            fact = bind_semantic_program_runtime(candidate, capability_registry=self.registry,
+                                                 profile="commander_review")
+            self.assertFalse(fact["strict"])
+        for before, after in (("face down", "face up"), ("may play", "may cast"),
+                              ("a Wizard", "a Wizard or a Shaman"), ("top two", "top three")):
+            faces = (original.faces[0], {**original.faces[1],
+                    "oracle_text": original.faces[1]["oracle_text"].replace(before, after)})
+            changed = replace(original, faces=faces, oracle_text=original.oracle_text.replace(before, after))
+            self.assertNotEqual("exact", compile_source(changed).status)
+        with patch("quorune.compiler.discover_templates.controller_private_top_play_template", return_value=None):
+            self.assertNotEqual("exact", compile_source(original).status)

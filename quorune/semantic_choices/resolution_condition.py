@@ -25,6 +25,23 @@ from .model import (
 )
 
 
+def _prepare_counter_recipient_control(effect, context):
+    from ..rules.counter_recipient_control import counter_recipient_control_effects
+
+    try:
+        effects = counter_recipient_control_effects(
+            effect, actor=context.actor, stack_controller=context.stack_controller,
+            active_seats=context.query.active_seats,
+        )
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue("Use the original creature's controller.",
+                                   prepend_effects=tuple(FrozenMap(result) for result in effects)),
+    )
+
+
 def _prepare_controlled_artifact_token_branch(effect, context):
     from ..rules.controlled_artifact_token_result import controlled_artifact_token_effects
 
@@ -48,7 +65,7 @@ class PublicResolutionConditionHandler:
     continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding','condition_target', 'resolution_ordinal',
         ENTRANT_POWER_BRANCH_FIELD, 'minimum', 'counter_count', 'power', 'entrant', 'source',
         'named_cast_win', 'win', 'card',
-        'point_game_loss', 'target', 'remove_from', 'count')
+        'point_game_loss', 'target', 'remove_from', 'count', 'counter_recipient_control_result', 'recipient')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -64,6 +81,9 @@ class PublicResolutionConditionHandler:
         from ..rules.controlled_artifact_token_result import uses_controlled_artifact_token_branch
         if uses_controlled_artifact_token_branch(effect):
             return _prepare_controlled_artifact_token_branch(effect, context)
+        from ..rules.counter_recipient_control import uses_counter_recipient_control
+        if uses_counter_recipient_control(effect):
+            return _prepare_counter_recipient_control(effect, context)
         if uses_entrant_power_branch(effect):
             try:
                 result = resolved_entrant_power_branch(effect, context.actor, context.stack_controller)

@@ -15,6 +15,8 @@ COUNTER_PLACEMENT_HISTORY_CAPABILITY = "condition.history.plus_one_counter_place
 COUNTER_PLACEMENT_HISTORY_QUERY_VERSION = 7
 SOURCE_COUNTER_RECEIPT_CAPABILITY = "condition.history.source_counter_receipt"
 SOURCE_COUNTER_RECEIPT_QUERY_VERSION = 8
+NONTOKEN_CREATURE_ENTRY_QUERY_VERSION = 9
+NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY = "condition.history.nontoken_creature_entries"
 OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY = "condition.history.opponent_life_loss_including_departed"
 COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
 TOKEN_CREATION_FACT = "controller_tokens_created_this_turn"
@@ -50,6 +52,7 @@ class PublicHistoryQuerySpec:
     def __post_init__(self):
         if type(self.schema_version) is not int or self.schema_version not in {
             1, 2, 3, 4, 5, 6, COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION,
+            NONTOKEN_CREATURE_ENTRY_QUERY_VERSION,
         }:
             raise ValueError("Unsupported public history query version")
         if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
@@ -93,6 +96,8 @@ class PublicHistoryQuerySpec:
                 raise ValueError("Death queries require a canonical creature subtype")
             if self.token is not None and type(self.token) is not bool:
                 raise ValueError("Death queries require a Boolean token predicate")
+        elif self.schema_version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION:
+            _validate_nontoken_creature_entry_query(self)
         elif self.creature_subtype is not None or self.token is not None:
             raise ValueError("Only permanent death queries can filter subtype or token status")
         if type(self.exclude_source) is not bool:
@@ -144,6 +149,7 @@ class PublicHistoryQuerySpec:
             'types_any':list(self.types_any),'excluded_types':list(self.excluded_types),'reduction':self.reduction,
             **({'origin':self.origin} if self.schema_version==2 else {}),
             **({"creature_subtype": self.creature_subtype, "token": self.token} if self.event == "permanent_died" else {}),
+            **({"token": self.token} if self.schema_version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION else {}),
             **({"exclude_source": True} if self.exclude_source else {}),
             **({"artifact_subtype": self.artifact_subtype} if self.artifact_subtype is not None else {}),
             **({'excluded_name':self.excluded_name,'excluded_subtype':self.excluded_subtype} if self.schema_version==5 else {}),
@@ -166,6 +172,8 @@ class PublicHistoryQuerySpec:
                 fields.update(("creature_subtype", "token", "exclude_source"))
         elif version == 5:
             fields.update(('creature_subtype','token','excluded_name','excluded_subtype'))
+        elif version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION:
+            fields.add("token")
         elif version in (COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION):
             fields.add("source_only")
         if not isinstance(value, Mapping) or set(value) != fields:
@@ -175,6 +183,7 @@ class PublicHistoryQuerySpec:
     @property
     def capability_dependencies(self):
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
+            *((NONTOKEN_CREATURE_ENTRY_HISTORY_CAPABILITY,) if self.schema_version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION else ()),
             *((COUNTER_PLACEMENT_HISTORY_CAPABILITY,) if self.event == PLUS_ONE_COUNTERS_PLACED_EVENT else ()),
             *((SOURCE_COUNTER_RECEIPT_CAPABILITY,) if self.event == PERMANENT_COUNTER_RECEIVED_EVENT else ()),
             *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
@@ -184,6 +193,28 @@ class PublicHistoryQuerySpec:
             *((PUBLIC_MOVEMENT_HISTORY_CAPABILITY,) if self.event in PUBLIC_MOVEMENT_HISTORY_KINDS or self.exclude_source else ()),
             *((SPELL_ORIGIN_HISTORY_CAPABILITY,) if self.event=='spell_cast' and self.origin is not None else ()),
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
+
+
+def _validate_nontoken_creature_entry_query(spec):
+    if (spec.event != "permanent_entered" or spec.relation != "controller" or spec.reduction != "count"
+            or spec.types_all != ("creature",) or spec.types_any or spec.excluded_types
+            or spec.token is not False or spec.creature_subtype is not None):
+        raise ValueError("The entry query requires the controller's committed nontoken creature arrivals")
+
+
+def current_nontoken_creature_entry_query():
+    return PublicHistoryQuerySpec(
+        event="permanent_entered", types_all=("creature",), token=False,
+        schema_version=NONTOKEN_CREATURE_ENTRY_QUERY_VERSION,
+    )
+
+
+def _entry_token_history_is_complete(history):
+    if getattr(history, "permanent_entry_token_history_version", None) != 1:
+        return False
+    entries = tuple(event for event in history.events if event.kind == "permanent_entered")
+    return (all(type(event.token) is bool for event in entries)
+            and len(entries) == len({event.object_incarnation for event in entries}))
 
 
 def current_plus_one_counter_placement_query(
@@ -215,6 +246,8 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     """Return sealed matching occurrences, or unavailable history."""
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
+    if spec.schema_version == NONTOKEN_CREATURE_ENTRY_QUERY_VERSION and not _entry_token_history_is_complete(history):
+        return None
     if spec.event == PERMANENT_COUNTER_RECEIVED_EVENT:
         if (history.permanent_counter_receipt_history_version != 1
                 or type(source_incarnation) is not str or not source_incarnation):

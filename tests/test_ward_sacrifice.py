@@ -43,6 +43,7 @@ class WardSacrificeTests(InheritedNativeFixture, unittest.TestCase):
         build_fixture_database([
             fixtures / "bound-effect-program-cards.json",
             fixtures / "ward-sacrifice-cards.json",
+            fixtures / "blight-cards.json",
         ], database)
         cls.db = CardDatabase(database)
         cls.registry = load_default_capability_registry()
@@ -79,6 +80,124 @@ class WardSacrificeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(expected, response.ok, response.summary)
         if not expected:
             self.assertEqual(before, authoritative_state_hash(game.state))
+
+    def test_auntie_ool_ward_blight_pays_from_the_targeter_and_replays_the_departed_creature(self):
+        game = self.session(702_210_68)
+        engine = game.engine
+        ward = self.add(engine, "Auntie Ool, Cursewretch", seat="B")
+        cost = self.add(engine, "Trial Empty Vessel", seat="C")
+        decoy = self.add(engine, self.creature, seat="D", ref="BLIGHT-PUBLIC-DECOY")
+        hidden = self.add(engine, self.creature, seat="D", zone="hand", ref="BLIGHT-HIDDEN-DECOY")
+        spell = self.add(engine, self.growth, zone="hand")
+        engine.change_control(cost.object_id, "A", reason="The targeter controls the Blight creature")
+        life = {seat: game.state.players[seat].life for seat in ("A", "B", "C")}
+        self._begin(game, ward, spell)
+        original_spell = self._target(game, ward, spell)
+        self.assertIsNotNone(self.resolve(game))
+        pending = game.state.pending_decision
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        payload = pending.payload_by_actor["A"]
+        self.assertEqual(("ward_counter_unless_pay", "blight"), (payload["operation"], payload["payment_kind"]))
+        offered, = (action for action in payload["legal_actions"] if action["id"] == "choose")
+        self.assertEqual([cost.ref], list(offered["choice_schema"]["legal_refs"]))
+        self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+        self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:A", full=True)))
+        self._choose(game, [cost.ref], actor="B", expected=False)
+        self._choose(game, [decoy.ref], expected=False)
+
+        declined = self.replay(game, load=True)
+        self._choose(declined, [])
+        self.assertNotIn(original_spell, [item.ref for item in declined.state.stack])
+        self.assertEqual("battlefield", declined.state.cards[cost.object_id].zone)
+        self.replay(declined)
+
+        game = self.replay(game, load=True)
+        self._choose(game, [cost.ref])
+        self.assertIn(original_spell, [item.ref for item in game.state.stack])
+        self.assertIn(cost.object_id, game.state.players["C"].zones["graveyard"])
+        trigger, = (item for item in game.state.stack if item.context.get("event") == "counter.put")
+        self.assertEqual((2, "-1/-1"), (trigger.context["amount"], trigger.context["counter"]))
+        self.assertEqual("A", trigger.context["occurrence_controller_information_lki"]["information"]["controller"])
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.assertEqual(life["A"] - 1, game.state.players["A"].life)
+        self.assertEqual(life["B"], game.state.players["B"].life)
+        self.assertEqual(life["C"], game.state.players["C"].life)
+        self.resolve_top(game)
+        self.replay(game)
+
+    def test_auntie_ool_counter_result_draws_once_for_its_current_controller(self):
+        game = self.session(122_101_68)
+        engine = game.engine
+        auntie = self.add(engine, "Auntie Ool, Cursewretch", ref="BLIGHT-DRAW-AUNTIE")
+        ward = self.add(engine, "Auntie Ool, Cursewretch", seat="B", ref="BLIGHT-OPPOSING-AUNTIE")
+        cost = self.add(engine, "Generic Bound Body")
+        spell = self.add(engine, self.growth, zone="hand")
+        life = game.state.players["A"].life
+        self._begin(game, auntie, ward, spell)
+        self._target(game, ward, spell)
+        self.assertIsNotNone(self.resolve(game))
+        self._choose(game, [cost.ref])
+        self.assertEqual(2, game.state.cards[cost.object_id].counters["-1/-1"])
+        triggers = [item for item in game.state.stack if item.context.get("event") == "counter.put"]
+        self.assertCountEqual(["A", "B"], [item.controller for item in triggers])
+        visible = len(game.state.players["A"].zones["hand"])
+        game = self.replay(game, load=True)
+        self.resolve_top(game)
+        self.resolve_top(game)
+        self.assertEqual(visible + 1, len(game.state.players["A"].zones["hand"]))
+        self.assertEqual(life - 1, game.state.players["A"].life)
+        self.resolve_top(game)
+        self.replay(game)
+
+    def test_auntie_ool_requires_typed_blight_and_the_complete_counter_recipient_result(self):
+        from quorune.compiler.ward_cost_templates import fixed_ward_spec
+        from quorune.rules.counter_recipient_control import (
+            COUNTER_RECIPIENT_CONTROL_MECHANICS, counter_recipient_control_node_capabilities,
+            counter_recipient_control_instructions,
+        )
+
+        spec = fixed_ward_spec("Ward—Blight 2.")
+        self.assertEqual({"schema_version": 4, "blight_amount": 2}, spec.to_dict())
+        self.assertEqual(spec, WardSpec.from_dict(spec.to_dict()))
+        for printed in ("Ward—Blight 0.", "Ward—Blight X.", "Ward—Blight 2 and pay 1 life."):
+            self.assertIsNone(fixed_ward_spec(printed))
+        for amount in (False, True, 0, -1, "2"):
+            with self.subTest(amount=amount), self.assertRaises(ValueError):
+                WardSpec.from_dict({"schema_version": 4, "blight_amount": amount})
+        effects = counter_recipient_control_instructions()
+        def capabilities(steps):
+            return counter_recipient_control_node_capabilities(
+                effects=steps, target_schema=None, mechanic_ids=COUNTER_RECIPIENT_CONTROL_MECHANICS,
+            )
+
+        self.assertTrue(capabilities(effects))
+        self.assertFalse(capabilities(effects[:1]))
+        self.assertFalse(capabilities((effects[0], {**effects[1], "recipient": "$controller"})))
+        original = self.db.lookup("Auntie Ool, Cursewretch")
+        self.assertEqual("exact", compile_oracle_card(original, capability_registry=self.registry).status)
+        for owner in ("quorune.compiler.event_counter_results.counter_recipient_control_result",
+                      "quorune.compiler.ability_keyword_fragments.fixed_ward_spec"):
+            with self.subTest(owner=owner), patch(owner, return_value=None):
+                self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=self.registry).status)
+
+    def test_auntie_ool_authority_withdrawal_keeps_both_printed_abilities_material(self):
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        authority = {"trigger.keyword.ward.fixed_blight", "trigger.counter_recipient.current_controller_branch"}
+        for row in raw["capabilities"]:
+            if row["id"] in authority:
+                row.update(status="blocked", blockers=["The isolated witness withdraws this typed authority."])
+        registry = CapabilityRegistry(raw)
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        evidence = build_index(registry_value=raw, declaration_source=declarations,
+                               discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+        original = self.db.lookup("Auntie Ool, Cursewretch")
+        ir = compile_oracle_card(original, capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+        residuals = " ".join(str(row) for row in ir.material_residuals)
+        self.assertIn("Blight 2", residuals)
+        self.assertIn("its controller loses 1 life", residuals)
 
     def test_ward_sacrifice_accepts_a_current_controlled_creature_and_preserves_the_spell(self):
         game = self.session(702_210_41)

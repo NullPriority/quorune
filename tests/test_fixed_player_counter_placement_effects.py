@@ -278,6 +278,7 @@ class FixedPlayerCounterPlacementCompilerTests(unittest.TestCase):
             {
                 "counter.producer.fixed_player_effect",
                 "target.revalidate_resolution",
+                "variant.rad.inherent_resolution",
             },
             set(
                 capability_dependencies_for_node(

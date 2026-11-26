@@ -6,7 +6,8 @@ from typing import Any, Mapping
 
 from ..attachment_references import ATTACHMENT_INFORMATION_CAPABILITY, AttachmentReferenceSpec
 from ..object_predicate import ObjectQuerySpec, object_query_capabilities
-from ..next_turn_effect import next_turn_effect_dependencies
+from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, next_turn_effect_dependencies
+from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..source_tap_effect import source_tap_effect_dependencies
 from ..basic_type_setting_model import BASIC_TYPE_SETTING_CAPABILITY
 from ..target_land_type_model import (
@@ -27,6 +28,9 @@ from ..resolution_characteristic_model import (
     fixed_resolution_characteristic_instruction, TargetPlayerCreatureOverwriteSpec,
     target_player_creature_overwrite_schema, TargetCreatureAbilityLossSpec,
     TARGET_CREATURE_ABILITY_LOSS_VERSION, target_creature_ability_loss_schema,
+    NEXT_TURN_TARGET_LAND_ANIMATION_VERSION, NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY,
+    NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC, NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS,
+    next_turn_target_land_animation_schema,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
 from .creature_subtype_set_results import (
@@ -47,6 +51,7 @@ _CONTINUOUS_EFFECT_MECHANIC_OWNERS = frozenset({
     FIXED_TARGET_COLOR_CAPABILITY,
     TARGET_CARD_TYPE_ADDITION_CAPABILITY,
     INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY,
+    NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY,
 })
 
 
@@ -60,6 +65,8 @@ def continuous_resolution_covered_mechanics(supplied: set[str]) -> set[str]:
         covered.add(TARGET_CARD_TYPE_ADDITION_MECHANIC)
     if INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY in supplied:
         covered.add(INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC)
+    if NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY in supplied:
+        covered.add(NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC)
     if {CREATURE_SUBTYPE_SET_RESULT_CAPABILITY, PAID_CONTROLLER_SUBTYPE_SET_CAPABILITY} & supplied:
         covered.update((CREATURE_SUBTYPE_SET_RESULT_MECHANIC, "cr-611-continuous-effects"))
     if FIXED_TARGET_LAND_TYPE_CAPABILITY in supplied:
@@ -174,8 +181,49 @@ def targeted_tap_then_ability_loss_capabilities(*, effects, target_schema, mecha
     return (*tap, PERMANENT_CHARACTERISTIC_CAPABILITY, "continuous.resolution.fixed_characteristics_until_end_of_turn") if tap else ()
 
 
+def is_next_turn_target_land_animation(effect):
+    return (isinstance(effect, Mapping) and effect.get("op") == CHARACTERISTIC_OPERATION
+            and effect.get("schema_version") == NEXT_TURN_TARGET_LAND_ANIMATION_VERSION)
+
+
+def targeted_untap_then_animate_land_capabilities(*, effects, target_schema, mechanic_ids):
+    from .tap_state_capability_shapes import targeted_tap_state_node_capabilities
+
+    if (len(effects) != 2 or effects[0] != {"op": "untap", "card": "$target.0"}
+            or not is_next_turn_target_land_animation(effects[1])
+            or target_schema != next_turn_target_land_animation_schema()
+            or type(target_schema.get("count")) is not int
+            or not set(NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS) <= set(mechanic_ids)):
+        return ()
+    try:
+        settings, _card = fixed_resolution_characteristic_instruction(effects[1])
+    except (TypeError, ValueError, KeyError):
+        return ()
+    tap = targeted_tap_state_node_capabilities(
+        effects=effects[:1], target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+    if not tap:
+        return ()
+    return (*tap, NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY, PERMANENT_CHARACTERISTIC_CAPABILITY,
+            "continuous.resolution.fixed_characteristics_until_end_of_turn", NEXT_TURN_EFFECT_CAPABILITY,
+            *(cap for keyword in settings.keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]))
+
+
+def next_turn_land_animation_activation_capabilities(*, effects, target_schema, mechanic_ids, active_zone, cost_schema):
+    loyalty = (cost_schema or {}).get("loyalty_delta")
+    if active_zone != "battlefield" or type(loyalty) is not int or loyalty != 1 or cost_schema.get("text") != "+1":
+        return ()
+    return targeted_untap_then_animate_land_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    )
+
+
 def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema: Any, mechanic_ids: Any) -> tuple[str, ...]:
     mechanics=set(mechanic_ids)
+    if any(is_next_turn_target_land_animation(effect) for effect in effects):
+        return targeted_untap_then_animate_land_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+        )
     if any(is_target_creature_ability_loss(effect) for effect in effects):
         return targeted_tap_then_ability_loss_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics,

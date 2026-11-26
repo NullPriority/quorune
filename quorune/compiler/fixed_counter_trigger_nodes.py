@@ -166,6 +166,8 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
         "battalion_source_and_two_others_attack",
     }
 )
+from ..rules.event_subscriptions import OWNED_ZONE_EXILE_VARIANT
+
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *TOKEN_CREATION_VARIANTS,
@@ -175,6 +177,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         CREATURE_EXPLORE_VARIANT,
         MUTATE_SOURCE_VARIANT,
         'player_expend',
+        OWNED_ZONE_EXILE_VARIANT,
         'ordinary_land_mana_tap',
         'opponent_land_enters_with_other_arrival',
         'public_waterbend',
@@ -256,6 +259,7 @@ _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         QUALIFIED_DAMAGE_BATCH_VARIANT,
         "one_or_more_qualified_attack",
+        OWNED_ZONE_EXILE_VARIANT,
         AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
@@ -1080,6 +1084,11 @@ def fixed_counter_trigger_binding(
     if normalized is not None:
         source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)
         if source_binding is not None:return source_binding
+    from .nonmana_activation_copy import nonmana_activation_copy_binding
+
+    if activation_copy := nonmana_activation_copy_binding(material_line):
+        return public_binding_from_spec(activation_copy, binding_type=FixedCounterTriggerBinding,
+                                        event_type=FixedCounterTriggerEvent)
     intervening = PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
         if (intervening['prefix'].casefold() == 'whenever this creature attacks a player'

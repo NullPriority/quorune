@@ -1943,3 +1943,14 @@ current type and subtype values. Each grant binds the source incarnation to the 
 so printed Unearth and concurrent grants retain separate activation choices. The
 compiled child fixes the price and the existing Unearth result. Once paid, the stack
 ability retains the graveyard card's identity if the granting source leaves.
+
+
+## Turn-retained mana from a source attack
+
+The complete self-attack clause resolves as a fixed red and green bundle for
+the ability's controller. The original declared attacker anchors the stack
+trigger, including after departure. Each mana lot follows the existing
+end-of-turn retention. Ordinary mana still empties at step and phase
+boundaries, and the remainder of this bundle empties at cleanup. A live
+source, a subsequent control change, and the chosen spending order do not
+extend that duration.

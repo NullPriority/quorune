@@ -1243,6 +1243,27 @@ def _complete_dash_or_warp_resolution(
     )
 
 
+def _validate_resolving_suspend_haste(item: StackItem, card: CardInstance, suspended: Mapping[str, Any]) -> None:
+    if "grants_suspend" in suspended:
+        from .rules.cast_spell_suspend import CastSuspendedExile
+
+        marker = CastSuspendedExile.from_dict(suspended)
+        if (not marker.grants_suspend or item.kind != "spell" or item.card_object_id != card.object_id
+                or item.controller != card.owner or not marker.logical_object_id.startswith(card.object_id + "@")
+                or marker.logical_object_id == card.logical_object_id):
+            raise FixedCastLifecycleError("Suspend Haste lost its original granted exile incarnation")
+        return
+    spec = FixedCastLifecycleSpec.from_dict(suspended)
+    if spec.kind is not FixedCastLifecycleKind.SUSPEND:
+        raise FixedCastLifecycleError("Suspend Haste context has the wrong lifecycle")
+
+
+def expire_granted_suspend_haste(item: StackItem) -> None:
+    suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
+    if isinstance(suspended, Mapping) and "grants_suspend" in suspended:
+        item.context.pop(SUSPEND_HASTE_CONTEXT_FIELD)
+
+
 def complete_fixed_cast_lifecycle_resolution(
     host: FixedCastLifecycleHost,
     *,
@@ -1255,11 +1276,7 @@ def complete_fixed_cast_lifecycle_resolution(
 
     suspended = item.context.get(SUSPEND_HASTE_CONTEXT_FIELD)
     if isinstance(suspended, Mapping):
-        spec = FixedCastLifecycleSpec.from_dict(suspended)
-        if spec.kind is not FixedCastLifecycleKind.SUSPEND:
-            raise FixedCastLifecycleError(
-                "Suspend Haste context has the wrong lifecycle"
-            )
+        _validate_resolving_suspend_haste(item, card, suspended)
         if card.zone == "battlefield" and card.object_kind == "card":
             _grant_lifecycle_haste(
                 host,

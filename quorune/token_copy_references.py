@@ -47,7 +47,10 @@ def triggered_copy_reference_context(host, program, event, context):
     from .rules.event_spell_copy import event_spell_copy_trigger_context
     from .rules.temporary_occurrence_copy import represents_temporary_occurrence_copy
 
+    from .rules.nonmana_activation_copy import retained_nonmana_activation_context
+
     retained = event_spell_copy_trigger_context(host, program, event, context)
+    retained.update(retained_nonmana_activation_context(host, program, event, context))
     if any(represents_cast_target_copy(effect) for effect in program.effects):
         card = controlled_cast_copy_target(host, context, controller=context.get("controller"))
         if event != "spell.cast" or card is None:

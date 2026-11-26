@@ -3,7 +3,7 @@ from __future__ import annotations
 """One public creature selection through the existing counter placement transaction."""
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from ..replacement.immutable import FrozenMap
 from ..rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_COUNTER, BLIGHT_FIELDS, BLIGHT_OPERATION, fixed_blight_amount
@@ -104,3 +104,31 @@ class FixedBlightChoiceHandler:
         return SemanticChoiceCompletion(intents=(blight_placement_intent(
             actor, ref, amount, label, effect_generated=True,
         ),))
+
+
+def _ward_blight_cost(payer, amount):
+    from ..fixed_effect_payment import FixedEffectPaymentSpec
+    from ..rules.blight_model import BLIGHT_PAYMENT_VERSION, blight_creature_predicate
+
+    return FixedEffectPaymentSpec(
+        "blight", amount=amount, predicate=blight_creature_predicate(payer),
+        schema_version=BLIGHT_PAYMENT_VERSION,
+    )
+
+
+def prepare_ward_blight(effect, context, amount):
+    from .fixed_effect_payment import prepare_fixed_payment_cost
+
+    prepared = prepare_fixed_payment_cost(_ward_blight_cost(context.actor, amount), effect, context)
+    request = prepared.request
+    return replace(prepared, request=replace(
+        request,
+        prompt=f"Choose a creature you control to receive {amount} -1/-1 counters, or decline Ward.",
+        public_context=FrozenMap({**dict(request.public_context), "target_stack": effect["stack"]}),
+    ))
+
+
+def complete_ward_blight(effect, response, query, amount, *, payer):
+    from .fixed_effect_payment import complete_fixed_payment_cost
+
+    return complete_fixed_payment_cost(_ward_blight_cost(payer, amount), effect, response, query)

@@ -24,6 +24,7 @@ from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_
 from .reflexive_payment_templates import reflexive_payment_template
 from .optional_payment_templates import fixed_optional_mana_payment_template
 from .counter_templates import targeted_controller_payment_followup_template, targeted_controller_payment_template
+from .whole_hand_counter_payment import targeted_whole_hand_counter_payment_template
 from .token_copy_templates import token_copy_recipe_template
 from .resolution_condition_templates import resolution_condition_template
 from .query_counter_sequences import ordered_quantity_sequence_template
@@ -93,13 +94,19 @@ def _damage_life_result(body, card_name, source_context, compile_fixed):
 
 def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_payment: EffectCompiler):
     from .exile_until_same_name_templates import exile_until_same_name_template
+    from .owned_commander_amount import owned_commander_amount_template
     from .resolution_condition_templates import other_spell_draw_template
+    from .targeted_discard_spell_copy import targeted_discard_spell_copy_template
     from .token_creation_reflexive_templates import token_creation_reflexive_template
+    from .targeted_turn_target_prohibition import targeted_turn_prohibition_template
 
     return (
         exile_until_same_name_template(text)
+        or targeted_turn_prohibition_template(text)
         or other_spell_draw_template(text, compile_component=compile_atomic)
+        or owned_commander_amount_template(text)
         or token_creation_reflexive_template(text, compile_effect=compile_payment)
+        or targeted_discard_spell_copy_template(text)
     )
 
 
@@ -255,7 +262,7 @@ def reviewed_contextual_effect_template(
         )
 
     if source_context.get("source_is_permanent") is False:
-        spell_only = _spell_only_result(text, atomic_with_characteristics, payment_body)
+        spell_only = targeted_whole_hand_counter_payment_template(text) or _spell_only_result(text, atomic_with_characteristics, payment_body)
         if spell_only is not None:
             return spell_only
     compiled = compose(text, card_name=card_name)
@@ -278,9 +285,12 @@ def reviewed_effect_template_composition(
 ) -> CompiledEffectTemplate:
     """Preserve owned linked instructions before generic clause composition."""
     from .permanent_resolution_choices import permanent_resolution_choice_template
+    from .mill_templates import committed_mill_card_template
 
     if chosen_permanent := permanent_resolution_choice_template(text):
         return chosen_permanent
+    if committed_mill := committed_mill_card_template(text):
+        return committed_mill
     if cast_x_available and text.casefold().startswith("each player mills x cards."):
         from .mill_templates import committed_milled_creature_token_template
         if milled := committed_milled_creature_token_template(text):

@@ -508,6 +508,7 @@ class CardProgramTrustTests(unittest.TestCase):
         self.assertEqual(
             {
                 "activation.cost.modifier.fixed_generic",
+                "zone.draw.replacement.controller_library_choice",
                 "ability.activated.catalog",
                 "ability.activated.class-level",
                 "ability.activated.mana.artifact-hand-reveal",
@@ -749,6 +750,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "replacement.draw.result_quantity",
                 "replacement.draw.result_recipient",
                 "replacement.draw.discard_result",
+                "replacement.draw.exile_turn_play_result",
                 "replacement.fixed_additional_token",
                 "replacement.token_quantity",
                 "replacement.token.creature_definition",

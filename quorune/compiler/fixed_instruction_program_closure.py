@@ -18,7 +18,9 @@ from ..rules.token_creation_reflexive import is_closed_token_creation_reflexive_
 from ..rules.incubate_capability_shapes import is_closed_incubate_program
 from ..rules.discover_capability_shapes import is_closed_discover_program
 from ..rules.milled_creature_tokens import is_closed_milled_creature_token_program
+from ..rules.committed_mill_cards import is_closed_committed_mill_card_program
 from ..rules.ordered_type_sacrifice import is_closed_ordered_type_sacrifice_program
+from ..rules.targeted_discard_spell_copy import is_closed_targeted_discard_copy_program
 from ..rules.variable_library_selection_shapes import is_closed_variable_library_selection_program
 from ..rules.reveal_until_library_selection_shapes import is_closed_reveal_until_library_selection_program
 from ..rules.detain import is_closed_permanent_action_prohibition_program
@@ -31,6 +33,7 @@ from ..rules.monarch_capability_shapes import is_closed_fixed_monarch_program
 from ..rules.library_result_capability_shapes import is_closed_mana_contribution_draw_program
 from ..rules.owner_library_position_shapes import is_closed_draw_source_owner_top_program
 from ..rules.loot_transform_graveyard import is_closed_loot_transform_or_graveyard_cast_program
+from ..rules.controller_private_top_exile_model import is_closed_controller_private_top_exile_program
 from ..rules.controller_top_exile_activation import is_closed_controller_top_exile_program
 from ..rules.opponent_library_exile_triggers import is_closed_draw_then_opponent_exile_program
 from ..rules.linked_exile_return_shapes import (
@@ -86,6 +89,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_mana_contribution_draw_program,
         is_closed_draw_source_owner_top_program,
         is_closed_controller_top_exile_program,
+        is_closed_controller_private_top_exile_program,
         is_closed_loot_transform_or_graveyard_cast_program,
         is_closed_draw_then_opponent_exile_program,
         is_closed_fixed_source_sacrifice_program,
@@ -107,6 +111,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_created_token_counter_program,
         is_closed_token_creation_reflexive_program,
         is_closed_distinct_sacrifice_program,
+        is_closed_targeted_discard_copy_program,
         is_closed_captured_draw_cast_program,
         is_closed_bounded_hand_cast_program,
         is_closed_venture_program,
@@ -122,6 +127,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_fixed_blight_program,
         is_closed_discover_program,
         is_closed_milled_creature_token_program,
+        is_closed_committed_mill_card_program,
         is_closed_ordered_type_sacrifice_program,
         is_closed_permanent_action_prohibition_program,
         is_closed_variable_library_selection_program,

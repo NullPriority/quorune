@@ -6,8 +6,37 @@ from typing import Mapping
 
 from ..temporary_all_blocker_model import (
     TEMPORARY_ALL_BLOCKER_CAPABILITY, TEMPORARY_ALL_BLOCKER_KIND, TemporaryAllBlockerSpec,
+    validate_blocker_protection_condition,
 )
+from ..replacement.immutable import thaw_value
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
+
+
+def blocker_protection_node_capabilities(effects, target_schema, mechanic_ids):
+    from ..resolution_conditions import RESOLUTION_CONDITION_CAPABILITY, RESOLUTION_CONDITION_MECHANIC
+    from .capabilities import capability_dependencies_for_node
+
+    if len(effects) != 2 or RESOLUTION_CONDITION_MECHANIC not in mechanic_ids:
+        return ()
+    restriction, wrapper = effects
+    schema = {"zones": ["battlefield"], "categories": ["permanent"], "count": 1, "types_any": ["creature"]}
+    if thaw_value(target_schema) != schema or type(target_schema.get("count")) is not int:
+        return ()
+    try:
+        _condition, children = validate_blocker_protection_condition(wrapper)
+    except (KeyError, TypeError, ValueError):
+        return ()
+    if restriction.get("card") != "$target.0" or wrapper["player"] != "$controller":
+        return ()
+    blocker = temporary_all_blocker_node_capabilities(
+        effects=(restriction,), target_schema=thaw_value(target_schema), mechanic_ids=wrapper["prefix_mechanic_ids"],
+    )
+    protection = capability_dependencies_for_node(
+        effects=children, target_schema=target_schema, mechanic_ids=wrapper["mechanic_ids"],
+    )
+    if not blocker or not protection:
+        return ()
+    return tuple(sorted({RESOLUTION_CONDITION_CAPABILITY, "condition.creature.fixed_numeric_exists", *blocker, *protection}))
 
 
 def temporary_all_blocker_node_capabilities(*, effects, target_schema, mechanic_ids):

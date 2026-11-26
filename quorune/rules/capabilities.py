@@ -60,6 +60,9 @@ from .reanimation_capability_shapes import fixed_target_reanimation_covered_mech
 from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
 from ..resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC
 from ..fixed_top_exile import FIXED_TOP_EXILE_MECHANIC_CAPABILITIES
+from .controller_private_top_exile_model import (
+    CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY, CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC,
+)
 from ..cast_lifecycles import FIXED_CAST_LIFECYCLE_MECHANICS as _FIXED_CAST_LIFECYCLE_MECHANICS
 from ..landwalk_vocabulary import BASIC_LANDWALK_TYPES
 _BASIC_LANDWALK_MECHANICS = tuple(keyword for keyword, _ in BASIC_LANDWALK_TYPES)
@@ -284,6 +287,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'mana-source-counter-depletion': ('mana.activated.counter_depletion_result',),
     'commander-learn': ('keyword_action.learn.commander',),
     'half-current-player-life-loss': ('life.loss.half_current_player',),
+    'half-target-library-draw': ('zone.draw.half_library',),
     'third-current-player-life-loss': ('life.loss.third_current_player',),
     'event-player-fixed-creature-stat-set': ('resolution.event_player.fixed_creature_stat_set',),
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
@@ -306,6 +310,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-awaken-paid-body': ('casting.alternative_cost.awaken_fixed_mana',),
     'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
     'cast-event-spell-copy': ('stack.copy.cast_event_spell',),
+    'second-cast-copy-and-suspend': ('stack.copy.second_cast_suspend_original',),
+    'controlled-subtype-opponents-damage-batch': ('trigger.event.controlled_subtype_damaged_opponents',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     ENTRY_PERMANENT_RESULT_MECHANIC: (ENTRY_PERMANENT_RESULT_CAPABILITY,),
     **RESOLUTION_STAT_MECHANIC_CAPABILITIES,
@@ -363,6 +369,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'exile-until-instant-or-sorcery-cast': ('library.exile_until_instant_or_sorcery.cast_and_return',),
     'stack-counter-different-name-exile-cast': ('stack.counter.different_name_exile_cast',),
     **FIXED_TOP_EXILE_MECHANIC_CAPABILITIES,
+    CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC: (CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY,),
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
     'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),
@@ -450,6 +457,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "wither": ("damage.result.wither",),
     "departure_counter_transfer": ("counter.producer.departure_snapshot_transfer",),
     "counter-recipient-opponent-blockers": ("combat.declaration.counter_recipient_opponent_blockers",),
+    "counter-recipient-current-controller-result": ("trigger.counter_recipient.current_controller_branch",),
+    "source-power-damage-each-opponent": ("damage.creature_power.source_opponents",),
     "trigger-event-normalized-zone-change": (
         "trigger.event.normalized_zone_change",
     ),
@@ -535,6 +544,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 _SHAPE_GATED_MECHANICS = frozenset(
     {
         'attachment-departure-source-return',
+        'attachment-death-return-and-transform',
         *SELF_ZONE_MOVE_SHAPE_GATED_MECHANICS,
         'fixed-bounded-hand-free-cast',
         'fixed-event-player-optional-draw',
@@ -569,6 +579,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'paid-entry-copy-offspring',
         'paid-entry-copy-squad',
         'half-current-player-life-loss',
+        'half-target-library-draw',
         'third-current-player-life-loss',
         'event-player-fixed-creature-stat-set',
         'half-affected-player-domain-choice',
@@ -1330,6 +1341,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'zone.return.fixed_event_card': 'fixed-event-card-return',
         'zone.return.fixed_event_battlefield': 'fixed-event-battlefield-return',
         'zone.return.attachment_departure_source': 'attachment-departure-source-return',
+        'zone.return.attachment_death_and_transform': 'attachment-death-return-and-transform',
         IMPULSE_ACCESS_CAPABILITY_ID: IMPULSE_ACCESS_MECHANIC_ID,
         "library.select.fixed_controller": FIXED_LIBRARY_SELECTION_MECHANIC,
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,

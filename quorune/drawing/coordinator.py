@@ -346,11 +346,16 @@ def _arrange_draw_result(
     resume: DrawResume,
 ) -> tuple[int, DrawResume] | None:
     """Place replacement actions ahead of the rest of the current draw."""
-    if result.discard_followup is not None or result.scheduled_result is not None:
+    if result.discard_followup is not None or result.scheduled_result is not None or result.library_choice is not None:
         after = (
             DrawResume(kind="draw_remainder", draws=(unconsumed,), after=resume)
             if unconsumed.count else resume
         )
+        if result.library_choice is not None:
+            from .library_choice_coordination import begin_library_choice_draw
+
+            begin_library_choice_draw(host, result.library_choice, after)
+            return None
         if result.discard_followup is not None:
             from .discard_coordination import begin_discard_replacement
 
@@ -442,7 +447,7 @@ def _continue_draw_sequence(
                 return
             result = commit_prepared_draw_result(host, prepared)
             remaining -= 1
-            if result.discard_followup is not None or result.result_draws or result.scheduled_result is not None:
+            if result.has_followup:
                 arranged = _arrange_draw_result(
                     host, result,
                     QueuedDraw(seat, remaining, reason, private, excluded_effect_ids, post_draw_actions),
@@ -621,7 +626,7 @@ def complete_draw_replacement(
     result = commit_prepared_draw_result(host, prepared)
     remaining = continuation.remaining_draws - 1
     resume = continuation.after
-    if result.discard_followup is not None or result.result_draws or result.scheduled_result is not None:
+    if result.has_followup:
         arranged = _arrange_draw_result(
             host, result,
             QueuedDraw(
@@ -665,6 +670,11 @@ def complete_draw_decision(
     if decision.kind == "draw.miracle_reveal":
         from .miracle_coordination import complete_miracle_reveal
         complete_miracle_reveal(host, decision)
+        return
+    if decision.kind in {"draw.library_kind", "draw.library_bottom"}:
+        from .library_choice_coordination import complete_library_choice_draw
+
+        complete_library_choice_draw(host, decision)
         return
     raise DrawError(f"Unsupported draw decision {decision.kind!r}")
 

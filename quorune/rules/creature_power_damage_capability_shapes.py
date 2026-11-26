@@ -257,6 +257,11 @@ def fixed_creature_power_damage_node_capabilities(
     """Recognize the compiler-owned Fight, bite, and self-damage set shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from .source_power_opponent_damage import (
+        uses_source_power_opponent_damage, source_power_opponent_damage_node_capabilities,
+    )
+    if any(uses_source_power_opponent_damage(effect) for effect in effects):
+        return source_power_opponent_damage_node_capabilities(effects, target_schema, mechanics)
     if any(is_creature_self_damage_set(effect) or is_creature_controller_damage_set(effect) for effect in effects):
         return _creature_self_damage_set_capabilities(effects, target_schema, mechanics)
     from ..reciprocal_power_damage import RECIPROCAL_POWER_MECHANIC, reciprocal_power_damage_capabilities

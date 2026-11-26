@@ -116,6 +116,10 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         return apply_attacking_entry_move(host, effect, actor=actor, reason=reason)
     if op == "exile" and STACK_SPELL_EXILE_FIELD in effect:
         return _apply_stack_spell_exile(host, effect, actor=actor, reason=reason)
+    if op == "exile" and "cast_spell_suspend_version" in effect:
+        from .cast_spell_suspend import apply_cast_spell_suspend
+
+        return apply_cast_spell_suspend(host, effect, actor=actor, reason=reason)
     from ..rules.opponent_spell_or_permanent_return import ENTRY_FIELD, FIELD as OPPONENT_RETURN_FIELD
 
     if op == "move" and (OPPONENT_RETURN_FIELD in effect or ENTRY_FIELD in effect):

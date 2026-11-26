@@ -36,6 +36,7 @@ from .revealed_creature_statistics import REVEALED_CREATURE_CAPABILITY, REVEALED
 
 # Projection of existing canonical capability identities, not another registry.
 LIBRARY_RESULT_MECHANICS = MappingProxyType({
+    'library.search.paid_creature_mana_value_bound': 'paid-creature-mana-value-library-search',
     'library.order.fixed_hand_putback':'fixed-draw-hand-putback',
     'library.search.named_library_graveyard': 'named-library-graveyard-search',
     'library.shuffle.target_permanent_then_reveal': 'target-permanent-shuffle-reveal',
@@ -104,10 +105,21 @@ def library_result_node_capabilities(*, effects, target_schema, mechanic_ids):
 
 
 def library_result_payload_dependencies(value):
+    from .paid_creature_library_search import (
+        CAPABILITY as PAID_CREATURE_SEARCH_CAPABILITY, is_paid_creature_search, validate_paid_creature_search,
+    )
+
+    if is_paid_creature_search(value):
+        validate_paid_creature_search(value)
+        return (PAID_CREATURE_SEARCH_CAPABILITY,)
+
+    from .dragon_graveyard_search_copy import dragon_graveyard_copy_search_payload_dependencies
     from .paid_artifact_library_search import (
         PAID_ARTIFACT_SEARCH_CAPABILITY, is_paid_artifact_search, validate_paid_artifact_search_effect,
     )
 
+    if dragon_search := dragon_graveyard_copy_search_payload_dependencies(value):
+        return dragon_search
     if is_paid_artifact_search(value):
         validate_paid_artifact_search_effect(value)
         return (PAID_ARTIFACT_SEARCH_CAPABILITY,)

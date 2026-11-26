@@ -167,6 +167,7 @@ class WardSpec:
     discard_cards: int = 0
     schema_version: int | None = None
     sacrifice_scope: WardSacrificeScope | None = None
+    blight_amount: int | None = None
 
     def __post_init__(self) -> None:
         kinds = sum(
@@ -175,6 +176,7 @@ class WardSpec:
                 self.life_payment is not None,
                 self.discard_cards != 0,
                 self.sacrifice_scope is not None,
+                self.blight_amount is not None,
             )
         )
         if kinds != 1:
@@ -183,17 +185,23 @@ class WardSpec:
             )
         schema_version = self.schema_version
         if schema_version is None:
-            if self.sacrifice_scope is not None:
+            if self.blight_amount is not None:
+                schema_version = 4
+            elif self.sacrifice_scope is not None:
                 schema_version = 3
             else:
                 schema_version = 1 if self.generic_cost is not None else 2
             object.__setattr__(self, "schema_version", schema_version)
-        if type(schema_version) is not int or schema_version not in {1, 2, 3}:
+        if type(schema_version) is not int or schema_version not in {1, 2, 3, 4}:
             raise TriggerParticipationError("Unsupported Ward schema version")
         if schema_version == 3 and not isinstance(self.sacrifice_scope, WardSacrificeScope):
             raise TriggerParticipationError("Ward schema version 3 requires a typed sacrifice scope")
         if schema_version != 3 and self.sacrifice_scope is not None:
             raise TriggerParticipationError("Ward sacrifice requires schema version 3")
+        if (schema_version == 4) != (self.blight_amount is not None) or (
+            self.blight_amount is not None and (type(self.blight_amount) is not int or self.blight_amount < 1)
+        ):
+            raise TriggerParticipationError("Ward Blight requires a positive count and schema version 4")
         if self.generic_cost is not None and (
             type(self.generic_cost) is not int or self.generic_cost < 0
         ):
@@ -228,6 +236,8 @@ class WardSpec:
 
     @property
     def payment_kind(self) -> str:
+        if self.blight_amount is not None:
+            return "blight"
         if self.sacrifice_scope is not None:
             return "sacrifice"
         if self.generic_cost is not None:
@@ -238,6 +248,8 @@ class WardSpec:
 
     @property
     def capability_id(self) -> str:
+        if self.blight_amount is not None:
+            return "trigger.keyword.ward.fixed_blight"
         if self.sacrifice_scope is WardSacrificeScope.TWO_PERMANENTS:
             return "trigger.keyword.ward.two_permanents"
         if self.sacrifice_scope is not None:
@@ -253,6 +265,8 @@ class WardSpec:
         return ("603.3", "702.21", "702.21a")
 
     def to_dict(self) -> dict[str, Any]:
+        if self.blight_amount is not None:
+            return {"schema_version": 4, "blight_amount": self.blight_amount}
         if self.sacrifice_scope is not None:
             return {"schema_version": 3, "sacrifice_scope": self.sacrifice_scope.value}
         if self.schema_version == 1:
@@ -299,6 +313,9 @@ class WardSpec:
             except (TypeError, ValueError) as exc:
                 raise TriggerParticipationError("Ward sacrifice scope is unsupported") from exc
             return cls(schema_version=3, sacrifice_scope=scope)
+        if (type(value.get("schema_version")) is int and value["schema_version"] == 4
+                and set(value) == {"schema_version", "blight_amount"}):
+            return cls(schema_version=4, blight_amount=value["blight_amount"])
         raise TriggerParticipationError(
             "Ward fragments have a closed schema"
         )

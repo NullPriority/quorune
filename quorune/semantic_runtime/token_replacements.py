@@ -6,7 +6,10 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..replacement import CreateAdditionalToken, MultiplyTokenCreation
 from ..replacement.immutable import thaw_value
-from ..replacement.operations import ReplaceCreatureTokenDefinition, ReplacePredefinedArtifactTokenSet
+from ..replacement.operations import (
+    MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID, MATCH_PENDING_TOKEN_QUANTITY,
+    ReplaceCreatureTokenDefinition, ReplacePredefinedArtifactTokenSet,
+)
 from ..creature_token_definition_replacement import (
     CREATURE_TOKEN_DEFINITION_CAPABILITY, CREATURE_TOKEN_DEFINITION_HANDLER,
     PREDEFINED_TOKEN_SET_CAPABILITY, PREDEFINED_TOKEN_SET_HANDLER, PREDEFINED_TOKEN_SET_SUBTYPES,
@@ -40,6 +43,7 @@ from ..standard_token_abilities import (
 
 _ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v1"
 _GENERIC_ADDITIONAL_TOKEN_HANDLER_ID = "replacement.token.additional.v2"
+MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY = "token.creation.additional_matching_pending_quantity"
 _TOKEN_QUANTITY_HANDLER_ID = "replacement.token.quantity.v1"
 
 
@@ -145,7 +149,7 @@ class AdditionalTokenReplacementNode:
     created_types_all: tuple[str, ...]
     created_subtypes_all: tuple[str, ...]
     event_controller: str
-    quantity: int
+    quantity: int | str
     token: TokenDefinition
 
 
@@ -157,6 +161,7 @@ class TokenCreationReplacementContext:
     created_types: tuple[str, ...]
     created_subtypes: tuple[str, ...] = ()
     component_id: str = ""
+    pending_quantity: int | None = None
 
     def __post_init__(self) -> None:
         if not self.source_ref:
@@ -165,6 +170,8 @@ class TokenCreationReplacementContext:
             raise SemanticNodeError(
                 "Token replacement controllers must be nonempty"
             )
+        if self.pending_quantity is not None and (type(self.pending_quantity) is not int or self.pending_quantity < 0):
+            raise SemanticNodeError("Pending token quantity must be a nonnegative integer")
         for field_name in ("created_types", "created_subtypes"):
             supplied = getattr(self, field_name)
             if not isinstance(supplied, (list, tuple)) or any(
@@ -464,7 +471,7 @@ class AdditionalTokenReplacementHandler:
 
 @dataclass(frozen=True, slots=True)
 class GenericAdditionalTokenReplacementHandler:
-    """Closed compiler-facing fixed additional-token replacement family."""
+    """Closed fixed and pending-quantity additional-token replacement family."""
 
     handler_id: str = _GENERIC_ADDITIONAL_TOKEN_HANDLER_ID
     schema_version: int = 2
@@ -500,7 +507,7 @@ class GenericAdditionalTokenReplacementHandler:
         )
         if descriptor["handler_id"] != self.handler_id:
             raise SemanticNodeError("Runtime handler ID does not match registry")
-        if descriptor["schema_version"] != self.schema_version:
+        if type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version:
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )
@@ -553,10 +560,11 @@ class GenericAdditionalTokenReplacementHandler:
                 "condition.created_subtypes_all values must be unique"
             )
         quantity = descriptor["quantity"]
-        if type(quantity) is not int or quantity < 1:
-            raise SemanticNodeError(
-                "additional token replacement quantity must be positive"
-            )
+        if self.schema_version == 3:
+            if type(quantity) is not str or quantity != MATCH_PENDING_TOKEN_QUANTITY or created_types or created_subtypes:
+                raise SemanticNodeError("Matching pending tokens requires the unfiltered current creation quantity")
+        elif type(quantity) is not int or quantity < 1:
+            raise SemanticNodeError("Additional token replacement quantity must be positive")
         token = descriptor["token"]
         if not isinstance(token, Mapping):
             raise SemanticNodeError("runtime handler token must be an object")
@@ -584,11 +592,16 @@ class GenericAdditionalTokenReplacementHandler:
             return ()
         if not set(node.created_subtypes_all).issubset(event_subtypes):
             return ()
+        quantity = context.pending_quantity if node.quantity == MATCH_PENDING_TOKEN_QUANTITY else node.quantity
+        if quantity is None:
+            raise SemanticNodeError("Matching pending tokens needs the current creation quantity")
+        if quantity == 0:
+            return ()
         return (
             AdditionalTokenIntent(
                 handler_id=self.handler_id,
                 source_ref=context.source_ref,
-                quantity=node.quantity,
+                quantity=quantity,
                 token=node.token,
             ),
         )
@@ -634,8 +647,9 @@ class GenericAdditionalTokenReplacementHandler:
                 source_ref=context.source_ref,
             ),),
             label=(
-                f"{context.source_ref}: create {node.quantity} additional "
-                f"{node.token.name} token"
+                f"{context.source_ref}: create one additional {node.token.name} token for each pending token"
+                if node.quantity == MATCH_PENDING_TOKEN_QUANTITY
+                else f"{context.source_ref}: create {node.quantity} additional {node.token.name} token"
                 + ("s" if node.quantity != 1 else "")
             ),
         )
@@ -865,6 +879,10 @@ def default_token_creation_replacement_registry(
         (
             AdditionalTokenReplacementHandler(),
             GenericAdditionalTokenReplacementHandler(),
+            GenericAdditionalTokenReplacementHandler(
+                handler_id=MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID, schema_version=3,
+                capability_dependencies=(MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY,),
+            ),
             TokenQuantityReplacementHandler(),
             CreatureTokenDefinitionReplacementHandler(),
             PredefinedArtifactTokenSetReplacementHandler(),

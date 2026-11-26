@@ -580,7 +580,7 @@ class ConvokeRuntimeTests(unittest.TestCase):
         session, chord, creatures = self.fixture(7025103)
         engine = session.engine
         with mock.patch(
-            "quorune.rules.casting.costs._static_generic_reduction",
+            "quorune.rules.casting.static_modifiers.fixed_generic_reduction",
             return_value=1,
         ):
             options = engine._cast_cost_options(

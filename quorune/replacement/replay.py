@@ -225,6 +225,10 @@ class ReplacementContinuation:
             from ..drawing.discard_coordination import decode_draw_discard_replacement
 
             return decode_draw_discard_replacement(cls, value, batch, effects)
+        if resume_kind == "draw_library_choice_move":
+            from ..drawing.library_choice_coordination import decode_library_choice_movement
+
+            return decode_library_choice_movement(cls, value, batch, effects)
         if resume_kind == 'conditional_return':
             from ..conditional_exile_return import decode_conditional_return
             return decode_conditional_return(cls,value,batch,effects)
@@ -344,6 +348,9 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
         "draw_discard_or_mill": ({"replacement_resume_kind", "draw_discard", "selected_card",
             "replacement_selections", "replacement_batch", "replacement_effects"},
             "draw discard or mill continuation"),
+        "draw_library_choice_move": ({"replacement_resume_kind", "draw_library_choice",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "draw library choice hand movement"),
     }
     shape = shapes.get(resume_kind)
     if shape is None:
@@ -844,6 +851,11 @@ def _activation_batch_cost_refs(response:Mapping[str,Any]) -> tuple[str,...] | N
         refs=response.get('cost_objects') or response.get('cost_cards')
         choices=summary.get('choose_cost')
         if not isinstance(choices,(list,tuple)) or len(choices)!=1 or not isinstance(choices[0],Mapping):return None
+        from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_KIND
+        if choices[0].get('k') == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+            from ..rules.activation_zone_change_costs import announced_subtype_replay_cost_refs
+            resolved = announced_subtype_replay_cost_refs(choices[0], response)
+            return resolved if resolved and len(resolved) > 1 else None
         count=choices[0].get('n');count_valid=type(count) is int
     if (not count_valid or not isinstance(refs,(list,tuple)) or not 2<=len(refs)<=10
             or count!=len(refs) or any(type(ref) is not str or not ref for ref in refs)
@@ -1057,9 +1069,14 @@ def _counted_activation_cost_event_is_valid(
     if 'random_discard' in summary:destination='graveyard'
     else:
         choices=summary['choose_cost']
-        contract=FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(choices[0].get('k') or ''))
-        if contract is None:return False
-        destination=contract[1]
+        from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_KIND
+        kind = choices[0].get('k')
+        if kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+            destination = 'graveyard'
+        else:
+            contract=FIXED_ZONE_CHANGE_COST_CONTRACTS.get(str(kind or ''))
+            if contract is None:return False
+            destination=contract[1]
     payload = {**dict(event.payload), 'destination': destination}
     original = ReplaceableEvent(
         event_id=event.event_id, kind=event.kind, affected_player=event.affected_player,

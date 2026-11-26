@@ -253,24 +253,10 @@ def _battlefield_owner_zone_target_schema(
         ]
         return schema
     if normalized == "nonland historic permanent":
+        from ..target_forms import HISTORIC_TARGET_FORMS
+
         schema["types_none"] = ["land"]
-        schema["characteristic_forms_any"] = [
-            {
-                "types_all": ["artifact"],
-                "subtypes_any": [],
-                "supertypes_any": [],
-            },
-            {
-                "types_all": [],
-                "subtypes_any": [],
-                "supertypes_any": ["legendary"],
-            },
-            {
-                "types_all": [],
-                "subtypes_any": ["saga"],
-                "supertypes_any": [],
-            },
-        ]
+        schema["characteristic_forms_any"] = [form.to_dict() for form in HISTORIC_TARGET_FORMS]
         return schema
     direct = direct_permanent_target_spec("target " + subject)
     return direct.to_target_schema() if direct is not None else None

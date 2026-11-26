@@ -77,9 +77,11 @@ def _record_creation(host: TokenCreationHost, creation: CommittedTokenCreation, 
         data = host._effective_card_data(card)
         types, _subtypes, _supertypes = host._type_parts(str(data.get("type_line") or ""))
         entry_occurrences.append((card.logical_object_id, tuple(sorted(types))))
+    history = getattr(host.state, "turn_history", None)
+    entry_token = True if getattr(history, "permanent_entry_token_history_version", None) == 1 else None
     for identity, types in entry_occurrences:
         host._record_turn_history(
-            "permanent_entered", actor=controller, object_incarnation=identity, types=types,
+            "permanent_entered", actor=controller, object_incarnation=identity, types=types, token=entry_token,
         )
     return previous_quantity
 

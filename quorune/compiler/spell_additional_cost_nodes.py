@@ -23,6 +23,7 @@ from .spell_additional_cost_templates import (
 )
 from ..rules.capabilities import CapabilityRegistry
 from .paid_sacrifice_amount_templates import paid_sacrifice_amount_template
+from .paid_creature_search_templates import paid_creature_search_template
 from .paid_revealed_creature_templates import (
     mandatory_creature_reveal_template, paid_revealed_creature_gate, paid_revealed_creature_template,
 )
@@ -198,7 +199,9 @@ def _additional_cost_result_node(
     def compile_fixed(body):
         return effect_template(body, card_name=card_name)
 
-    paid = paid_revealed_creature_template(
+    paid = paid_creature_search_template(
+        rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
+    ) or paid_revealed_creature_template(
         rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
     ) or paid_sacrifice_amount_template(
         rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
@@ -313,13 +316,17 @@ def typed_additional_cost_spell_node(
     if not rows:
         return None
     first_clause = rows[0][1].strip()
+    from .paid_sacrifice_copy_templates import paid_sacrifice_copy_cost_template
+    from ..rules.paid_sacrifice_copy import MECHANIC as PAID_SACRIFICE_COPY_MECHANIC
+
+    paid_copy = paid_sacrifice_copy_cost_template(first_clause)
     cost = (
-        _damage_qualified_sacrifice_spell_cost(first_clause)
+        paid_copy or _damage_qualified_sacrifice_spell_cost(first_clause)
         or colored_hand_credit_template(first_clause) or fixed_discard_sacrifice_template(first_clause)
         or fixed_random_discard_spell_cost_template(first_clause) or announced_x_additional_cost_template(first_clause)
         or fixed_waterbend_additional_cost_template(first_clause) or fixed_tap_additional_cost_template(first_clause)
     )
-    cost_mechanics = ()
+    cost_mechanics = (PAID_SACRIFICE_COPY_MECHANIC,) if paid_copy is not None else ()
     if cost is None:
         cost=fixed_counter_additional_cost_template(first_clause)
         cost_mechanics=("cr-122-counters",) if cost is not None else ()

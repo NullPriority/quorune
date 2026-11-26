@@ -118,7 +118,8 @@ def _spell_target_subject_matches(
     if isinstance(subject, str):
         return predicate is StackSpellTargetPredicate.PLAYER or (
             predicate in {StackSpellTargetPredicate.CONTROLLER,
-                          StackSpellTargetPredicate.CONTROLLER_OR_CONTROLLED_PERMANENT}
+                          StackSpellTargetPredicate.CONTROLLER_OR_CONTROLLED_PERMANENT,
+                          StackSpellTargetPredicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE}
             and subject == controller
         )
     if predicate is StackSpellTargetPredicate.SOURCE:
@@ -128,6 +129,7 @@ def _spell_target_subject_matches(
                      StackSpellTargetPredicate.INSTANT_OR_AURA_CONTROLLED_PERMANENT}:
         return subject.controller == controller
     if predicate in {StackSpellTargetPredicate.CONTROLLED_CREATURE,
+                     StackSpellTargetPredicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE,
                      StackSpellTargetPredicate.CONTROLLED_ARTIFACT_OR_CREATURE} and subject.controller != controller:
         return False
     required = _SPELL_SUBJECT_TYPES.get(predicate)
@@ -142,6 +144,7 @@ _SPELL_SUBJECT_TYPES = {
     StackSpellTargetPredicate.CREATURE: frozenset({"creature"}),
     StackSpellTargetPredicate.ENCHANTMENT: frozenset({"enchantment"}),
     StackSpellTargetPredicate.CONTROLLED_CREATURE: frozenset({"creature"}),
+    StackSpellTargetPredicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE: frozenset({"creature"}),
     StackSpellTargetPredicate.CONTROLLED_ARTIFACT_OR_CREATURE: frozenset({"artifact", "creature"}),
 }
 
@@ -158,8 +161,15 @@ def _spell_targets_matching_subject(
     from .selection.target_query import current_spell_target_subjects
 
     item = row.get("stack_item")
-    if (row.get("category") != "spell" or not isinstance(item, StackItem)
-            or item.kind not in {"spell", "spell_copy"}):
+    if not isinstance(item, StackItem):
+        return False
+    spell = row.get("category") == "spell" and item.kind in {"spell", "spell_copy"}
+    ability = (
+        predicate is StackSpellTargetPredicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE
+        and row.get("category") == "ability"
+        and item.kind in {"activated_ability", "triggered_ability"}
+    )
+    if not (spell or ability):
         return False
     if predicate is StackSpellTargetPredicate.INSTANT_OR_AURA_CONTROLLED_PERMANENT and (
         "instant" not in types and not ("enchantment" in types and "aura" in row.get("subtypes", ()))

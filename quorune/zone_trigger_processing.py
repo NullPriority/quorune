@@ -13,7 +13,8 @@ from .saga_progression import dispatch_saga_entry_chapters
 from .shared_creature_type_model import canonical_creature_types
 from .trigger_processing import enqueue_trigger_batch
 from .rules.event_subscriptions import (
-    GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY, GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, event_has_capability_subscriber,
+    GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY, GRAVEYARD_DEPARTURE_LOOKBACK_EVENT,
+    OWNED_ZONE_EXILE_CAPABILITY, OWNED_ZONE_EXILE_EVENT, event_has_capability_subscriber,
 )
 from .zone_trigger_events import (
     ZoneChangeOccurrence,
@@ -115,7 +116,7 @@ def capture_departure_trigger_sources(
     """Snapshot battlefield trigger sources and LKI before zone mutation."""
 
     if not semantic_events or (origin not in {"battlefield", "stack"} and not (
-        origin == "graveyard" and _has_graveyard_departure_lookback(host)
+        origin == "graveyard" and (_has_graveyard_departure_lookback(host) or _has_owned_zone_exile_subscriber(host))
     )):
         return DepartureTriggerSnapshot((), {}, {})
     source_zones = None
@@ -146,6 +147,10 @@ def _has_graveyard_departure_lookback(host):
     return event_has_capability_subscriber(
         host, GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, GRAVEYARD_DEPARTURE_LOOKBACK_CAPABILITY,
     )
+
+
+def _has_owned_zone_exile_subscriber(host):
+    return event_has_capability_subscriber(host, OWNED_ZONE_EXILE_EVENT, OWNED_ZONE_EXILE_CAPABILITY)
 
 
 def _dispatch_graveyard_departure_lookback(host, occurrence, context, departure, pending):
@@ -254,6 +259,8 @@ def dispatch_zone_change_occurrence(
     )
     dispatch_departure_unattachments(host, occurrence, departure, trigger_batch=pending)
     for event in events:
+        if event.kind == OWNED_ZONE_EXILE_EVENT and not _has_owned_zone_exile_subscriber(host):
+            continue
         context = event.context
         if event.kind == "card.leave_graveyard":
             _dispatch_graveyard_departure_lookback(host, occurrence, context, departure, pending)
@@ -417,6 +424,7 @@ def record_zone_change_history(
                 f"{occurrence.object_id}@{occurrence.zone_change_counter}"
             ),
             types=current_types,
+            token=occurrence.token if getattr(history, "permanent_entry_token_history_version", None) == 1 else None,
         )
     if (
         occurrence.origin == "battlefield"

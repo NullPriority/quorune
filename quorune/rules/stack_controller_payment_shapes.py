@@ -84,6 +84,12 @@ def stack_controller_payment_node_capabilities(
     if STACK_CONTROLLER_PAYMENT_MECHANIC not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .whole_hand_counter_payment import marks_whole_hand_counter, whole_hand_counter_dependencies
+    if marks_whole_hand_counter(effect):
+        try:
+            return whole_hand_counter_dependencies(effect, target_schema)
+        except ValueError:
+            return ()
     if isinstance(effect, Mapping) and effect.get("schema_version") == TARGET_ANNOUNCEMENT_PAYMENT_VERSION:
         if target_schema is not None or "trigger-event-normalized-target-announcement" not in mechanics:
             return ()
@@ -136,7 +142,10 @@ def is_closed_stack_controller_payment_program(program: Any) -> bool:
 def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]:
     """Revalidate the independent target roles of a composed payment clause."""
     from .effect_shape_walkers import nested_effects
+    from .whole_hand_counter_payment import whole_hand_counter_runtime_dependencies
 
+    if required := whole_hand_counter_runtime_dependencies(program):
+        return required
     if any(effect.get("op") == "counter_unless_pay"
             and effect.get("schema_version") == TARGET_ANNOUNCEMENT_PAYMENT_VERSION
             for effect in nested_effects(program.effects)):

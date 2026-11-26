@@ -150,7 +150,9 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
                 "capability"
             ),
         )
-    draw_result = static_draw_result_handler(text)
+    from .draw_exile_play_templates import draw_exile_play_replacement_template
+
+    draw_result = static_draw_result_handler(text) or draw_exile_play_replacement_template(text)
     if draw_result is None:
         return None
     from ..drawing.step_exemption import (
@@ -159,13 +161,18 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
         DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
     )
 
-    from ..semantic_runtime.draw_replacements import EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID
+    from ..semantic_runtime.draw_replacements import (
+        EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID, LIBRARY_CHOICE_DRAW_HANDLER_ID,
+    )
+    from ..semantic_runtime.draw_exile_play import HANDLER_ID as DRAW_EXILE_PLAY_HANDLER_ID
 
     current_draw_handlers = {
         DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
         DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
         DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
         EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
+        DRAW_EXILE_PLAY_HANDLER_ID,
+        LIBRARY_CHOICE_DRAW_HANDLER_ID,
     }
     return StaticRuntimeTemplate(
         compiled=draw_result,
@@ -930,10 +937,14 @@ def static_runtime_template(
             )
         additional_token = static_additional_token_replacement_handler(text)
         if additional_token is not None:
+            from ..semantic_runtime.token_replacements import MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID
+
             return StaticRuntimeTemplate(
                 compiled=additional_token,
                 kind="replacement_effect",
                 event="token.create",
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+                    if additional_token[1]["handler_id"] == MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID else (),
                 dependency_reason=(
                     "generic additional-token replacement depends on an "
                     "untrusted rules capability"

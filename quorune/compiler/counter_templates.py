@@ -346,10 +346,14 @@ class SpellTargetingCounterTemplate:
 
 def spell_targeting_counter_effect_template(text: str) -> SpellTargetingCounterTemplate | None:
     match = re.fullmatch(
-        r"Counter target (?P<kind>spell|instant or Aura spell) that targets (?P<subject>[^.\n]+)\.?",
+        r"Counter target (?P<kind>spell|spell or ability|instant or Aura spell) that targets (?P<subject>[^.\n]+)\.?",
         text.strip(), re.I,
     )
     if match is None:
+        return None
+    if match["kind"].casefold() == "spell or ability":
+        if match["subject"].casefold() == "you or a creature you control":
+            return SpellTargetingCounterTemplate(StackSpellTargetPredicate.STACK_CONTROLLER_OR_CONTROLLED_CREATURE)
         return None
     subject = _SPELL_TARGET_SUBJECTS.get(match["subject"].casefold())
     if match["kind"].casefold() == "instant or aura spell":

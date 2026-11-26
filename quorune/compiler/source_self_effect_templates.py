@@ -41,7 +41,18 @@ _RANDOM_OPPONENT_CREATURE_DAMAGE = re.compile(
 )
 
 
+def _optional_entry_phase_out(body):
+    if " ".join(body.split()).casefold() != "up to one target creature phases out.":
+        return None
+    from ..phasing_model import PHASE_OUT_MECHANIC, optional_entry_phase_out_effect, optional_entry_phase_out_schema
+
+    return ("optional-single-creature-entry-phase-out-v1", (optional_entry_phase_out_effect(),),
+            optional_entry_phase_out_schema(), (PHASE_OUT_MECHANIC, "cr-115-targets"), None)
+
+
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
+    if event_phrase == "enters" and (phasing := _optional_entry_phase_out(body)) is not None:
+        return phasing
     if event_phrase == "dies":
         from .library_search_templates import creature_subset_mana_value_search_template
 

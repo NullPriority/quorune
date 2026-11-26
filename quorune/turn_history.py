@@ -23,6 +23,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         spell_color_history_version=history.spell_color_history_version,
         plus_one_counter_placement_history_version=history.plus_one_counter_placement_history_version,
         permanent_counter_receipt_history_version=history.permanent_counter_receipt_history_version,
+        permanent_entry_token_history_version=history.permanent_entry_token_history_version,
         creature_spell_counter_history_version=history.creature_spell_counter_history_version,
         graveyard_type_history_version=history.graveyard_type_history_version,
         spell_mana_history_version=history.spell_mana_history_version,

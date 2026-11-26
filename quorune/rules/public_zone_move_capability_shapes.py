@@ -25,7 +25,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_c
 from ..public_zone_moves import (
     ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY, ANNOUNCED_GRAVEYARD_RETURN_VERSION,
     ANNOUNCED_MANA_VALUE_MAX_FIELD, PUBLIC_AURA_ENTRY_VERSIONS,
-    SAME_TURN_GRAVEYARD_RETURN_VERSIONS, TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION, PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION,
+    SAME_TURN_GRAVEYARD_RETURN_VERSIONS, TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION, PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS,
     same_turn_graveyard_return_history_query, targeted_same_turn_graveyard_return_schema,
     OWN_GRAVEYARD_TYPE_CHOICE_FIELD,
     own_graveyard_type_return_dependencies,
@@ -512,8 +512,8 @@ def public_zone_move_set_runtime_dependencies(value: Mapping[str, Any]) -> tuple
         projected = {**value, "set": {**raw, ANNOUNCED_MANA_VALUE_MAX_FIELD: 2}}
         return (*public_zone_move_set_payload_dependencies(projected), DECLARED_AMOUNT_CAPABILITY)
     spec = PublicZoneMoveSetSpec.from_dict(raw)
-    if spec.schema_version == PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION:
-        raise ValueError("Chosen creature return is generated only by its original public choice")
+    if spec.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
+        raise ValueError("Chosen graveyard return is generated only by its original public choice")
     return public_zone_move_set_payload_dependencies(value) if spec.schema_version in {
         *PUBLIC_AURA_ENTRY_VERSIONS, PUBLIC_GRAVEYARD_POWER_RETURN_VERSION,
     } else ()
@@ -760,7 +760,7 @@ def fixed_public_zone_move_set_node_capabilities(
             result_caps = followup.capability_dependencies
     except (KeyError, TypeError, ValueError):
         return ()
-    if spec.schema_version == PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION:
+    if spec.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
         return ()
     dependencies = (*public_zone_move_set_payload_dependencies(effect), *result_caps)
     if spec.schema_version == TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION:

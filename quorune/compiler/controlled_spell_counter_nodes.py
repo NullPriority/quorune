@@ -11,6 +11,7 @@ from .dependency_gate import dependency_gate
 from .fixed_counter_trigger_nodes import fixed_typed_event_effect_trigger_node
 from .ir_model import OracleNode, append_residual
 from .optional_effect_templates import fixed_optional_effect_template
+from .spell_history_transform_nodes import paid_noncreature_counter_transform_node
 
 
 _TRIGGER = re.compile(
@@ -53,4 +54,8 @@ def fixed_typed_or_controlled_spell_counter_trigger_node(*, material_line, bindi
     match = _TRIGGER.fullmatch(material_line) if binding is None else None
     if match is not None:
         return _controlled_spell_counter_node(match, **kwargs)
+    if binding is None:
+        paid_transform = paid_noncreature_counter_transform_node(material_line=material_line, **kwargs)
+        if paid_transform is not None:
+            return paid_transform
     return fixed_typed_event_effect_trigger_node(material_line=material_line, binding=binding, **kwargs)

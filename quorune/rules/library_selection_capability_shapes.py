@@ -366,15 +366,14 @@ def fixed_library_selection_node_capabilities(
     if uses_library_imprint_selection(effect):
         return library_imprint_node_capabilities(effects=effects, target_schema=target_schema)
     from .one_revealed_card_placement import (
-        OneRevealedCardPlacement, REVEAL_ONE_TOP_CAPABILITIES, REVEAL_ONE_TOP_OPERATION,
+        OneRevealedCardPlacement, REVEAL_ONE_TOP_OPERATION,
     )
 
     if effect.get("op") == REVEAL_ONE_TOP_OPERATION:
         try:
-            OneRevealedCardPlacement.from_effect(effect)
+            return OneRevealedCardPlacement.from_effect(effect).capabilities
         except (TypeError, ValueError):
             return ()
-        return REVEAL_ONE_TOP_CAPABILITIES
     if effect.get("schema_version") == PRIVATE_FIXED_TOP_TAKE_OR_GRAVEYARD_VERSION:
         try:
             validate_private_fixed_top_take_or_graveyard(effect)

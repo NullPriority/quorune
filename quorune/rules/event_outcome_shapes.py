@@ -298,12 +298,19 @@ def event_outcome_node_capabilities(*, effects, target_schema, mechanic_ids):
 
 def event_outcome_runtime_dependencies(program):
     from .faction_trigger_shapes import faction_trigger_runtime_dependencies
+    from .paid_creature_library_search import paid_creature_search_program_dependencies
+    if dependencies := paid_creature_search_program_dependencies(program):
+        return dependencies
     from .paid_artifact_library_search import paid_artifact_search_runtime_dependencies
 
     if dependencies := paid_artifact_search_runtime_dependencies(program):
         return dependencies
     if dependencies := faction_trigger_runtime_dependencies(program):
         return dependencies
+    from .controlled_subtype_damage_batch import controlled_subtype_damage_runtime_dependencies
+
+    if (grouped := controlled_subtype_damage_runtime_dependencies(program)) is not None:
+        return grouped
     from .bargain_search import bargain_search_program_dependencies
 
     if dependencies := bargain_search_program_dependencies(program):
@@ -334,6 +341,10 @@ def event_outcome_runtime_dependencies(program):
         return dependencies
     if dependencies := target_name_library_search_runtime_dependencies(program):
         return dependencies
+    from .dragon_graveyard_search_copy import dragon_graveyard_copy_search_runtime_dependencies
+
+    if dependencies := dragon_graveyard_copy_search_runtime_dependencies(program):
+        return dependencies
     if dependencies := opponent_color_extra_turn_runtime_dependencies(program):
         return dependencies
     if dependencies := fixed_extra_turn_end_step_loss_runtime_dependencies(program):
@@ -358,6 +369,10 @@ def event_outcome_runtime_dependencies(program):
     from .event_counter_threshold import source_depletion_counter_program_dependencies
 
     if required := source_depletion_counter_program_dependencies(program):
+        return required
+    from .paid_noncreature_counter_transform import paid_cast_transform_runtime_dependencies
+
+    if required := paid_cast_transform_runtime_dependencies(program):
         return required
     if uses_zero_mana_cast_condition(program.event_condition):
         _validate_zero_mana_cast_result(program)
@@ -385,6 +400,7 @@ def event_outcome_runtime_dependencies(program):
 def event_outcome_program_is_closed(program):
     from .faction_trigger_model import FACTION_DRAW_CAPABILITY
     from .event_counter_threshold import SOURCE_DEPLETION_THRESHOLD_CAPABILITY
+    from .paid_noncreature_counter_transform import CAPABILITY as PAID_CAST_TRANSFORM_CAPABILITY
 
     try: required = event_outcome_runtime_dependencies(program)
     except (TypeError,ValueError): return False
@@ -394,6 +410,7 @@ def event_outcome_program_is_closed(program):
              or CAST_TRIGGER_SACRIFICE_COUNTER_CAPABILITY in required
              or CAST_EVENT_COUNTER_BIRDS_CAPABILITY in required
              or SOURCE_DEPLETION_THRESHOLD_CAPABILITY in required
+             or PAID_CAST_TRANSFORM_CAPABILITY in required
              or FACTION_DRAW_CAPABILITY in required)
         and set(required).issubset(program.capability_dependencies)
     )

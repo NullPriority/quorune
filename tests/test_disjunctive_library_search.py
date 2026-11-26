@@ -1,5 +1,6 @@
 """Closed alternatives share one counted search and its private choice."""
 
+from dataclasses import replace
 import json
 from pathlib import Path
 import tempfile
@@ -197,3 +198,166 @@ class DisjunctiveLibrarySearchRuntimeTests(actions.InheritedNativeFixture, unitt
             self.assertEqual("hand", session.state.cards[card.object_id].zone)
         self.assertEqual(count + 1, self.shuffles(session))
         self.replay(session, load=True)
+
+
+
+class SharedLandTypeSearchRuntimeTests(actions.InheritedNativeFixture, unittest.TestCase):
+    def prepare(self, game, **kwargs):
+        game.state.config.semantic_policy = "trusted_only"
+        super().prepare(game, **kwargs)
+
+    shuffles = DisjunctiveLibrarySearchRuntimeTests.shuffles
+    choose = DisjunctiveLibrarySearchRuntimeTests.choose
+    legal_search_refs = DisjunctiveLibrarySearchRuntimeTests.legal_search_refs
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "shared-basic-land-search.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/library-search-rules-cards.json",
+            ROOT / "tests/fixtures/library-search-dispatch-cards.json",
+            ROOT / "tests/fixtures/fixed-basic-type-setting-cards.json",
+            ROOT / "tests/fixtures/fixed-qualified-stack-copy-cards.json",
+            ROOT / "tests/fixtures/shared-land-type-search-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Shared basic lands", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def activate_search(self, game, source):
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        activation, = (action for action in actions if action["id"] == f"activate:{source.ref}:ab3")
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", {"action_id": activation["id"], "pay": "auto"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", {"action_id": activation["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+
+    def selected_state(self, game, card):
+        current = game.state.cards[card.object_id]
+        return current.zone, current.tapped
+
+    def test_actual_landscape_places_same_subtype_basic_lands_tapped_from_a_private_choice(self):
+        game = self.session(70123021)
+        source = self.add(game.engine, "Myriad Landscape")
+        island = self.add(game.engine, "Island", zone="library", ref="shared-island")
+        snow = self.add(game.engine, "Snow-Covered Island", zone="library", ref="shared-snow-island")
+        mountain = self.add(game.engine, "Mountain", zone="library", ref="shared-mountain")
+        wastes = [self.add(game.engine, "Wastes", zone="library", ref=f"shared-wastes-{i}") for i in range(2)]
+        dual = self.add(game.engine, "Volcanic Island", zone="library", ref="shared-nonbasic")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 2})
+        baseline = self.shuffles(game)
+        self.checkpoint(game)
+        self.activate_search(game, source)
+        legal = self.legal_search_refs(game)
+        self.assertTrue({island.ref, snow.ref, mountain.ref, *(card.ref for card in wastes)} <= set(legal))
+        self.assertNotIn(dual.ref, legal)
+        decision = game.packet("pilot:A", full=True)["decision"]["legal_actions"][0]["choice_schema"]
+        members = decision["pair_constraint"]["land_types"]
+        self.assertEqual((0, 2), (decision["minimum"], decision["maximum"]))
+        self.assertEqual(["island"], members[island.ref])
+        self.assertEqual(["island"], members[snow.ref])
+        self.assertEqual([], members[wastes[0].ref])
+        for seat in "BCD":
+            packet = json.dumps(game.packet("pilot:" + seat, full=True))
+            self.assertNotIn(island.ref, packet)
+            self.assertNotIn(snow.ref, packet)
+        before = authoritative_state_hash(game.state)
+        for seat, refs in (
+            ("B", [island.ref, snow.ref]), ("A", [island.ref, mountain.ref]),
+            ("A", [card.ref for card in wastes]), ("A", [island.ref, dual.ref]),
+            ("A", [snow.ref, snow.ref]),
+        ):
+            result = game.act("pilot:" + seat, {"action_id": "choose", "search_cards": refs})
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        self.choose(game, search_cards=[snow.ref, island.ref])
+        self.settle(game)
+        for card in (island, snow):
+            self.assertEqual(("battlefield", True), self.selected_state(game, card))
+        for card in (mountain, *wastes, dual):
+            self.assertEqual("library", game.state.cards[card.object_id].zone)
+        self.assertEqual(baseline + 1, self.shuffles(game))
+        self.replay(game, load=True)
+
+    def test_actual_landscape_zero_or_one_and_prohibited_search_still_shuffle(self):
+        for mode in ("zero", "single", "prohibited"):
+            with self.subTest(mode=mode):
+                game = self.session(70123022 + ("zero", "single", "prohibited").index(mode))
+                source = self.add(game.engine, "Myriad Landscape")
+                wastes = self.add(game.engine, "Wastes", zone="library", ref="shared-one-wastes")
+                if mode == "prohibited":
+                    obstacle = self.add(game.engine, "Mindlock Orb", seat="B")
+                    self.assert_closed(game, obstacle)
+                self.prepare(game, mana={"C": 2})
+                baseline = self.shuffles(game)
+                self.checkpoint(game)
+                self.activate_search(game, source)
+                if mode != "prohibited":
+                    self.assertIn(wastes.ref, self.legal_search_refs(game))
+                    self.choose(game, search_cards=[wastes.ref] if mode == "single" else [])
+                else:
+                    self.assertIsNone(self.resolve(game))
+                self.settle(game)
+                self.assertEqual(baseline + 1, self.shuffles(game))
+                self.assertEqual(("battlefield", True) if mode == "single" else ("library", False),
+                                 self.selected_state(game, wastes))
+                self.replay(game, load=True)
+
+    def test_actual_landscape_keeps_tapped_entry_and_ordinary_colorless_mana(self):
+        game = self.session(70123025)
+        source = self.add(game.engine, "Myriad Landscape", zone="hand")
+        untap = self.add(game.engine, "Twiddle", seat="B", zone="hand")
+        self.assert_closed(game, source)
+        self.prepare(game)
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        play = game.act("pilot:A", {"action_id": "play-land:" + source.ref})
+        self.assertTrue(play.ok, play.summary)
+        self.assertEqual(("battlefield", True), self.selected_state(game, source))
+        self.cast(game, "B", untap, [source.ref])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        choice = game.act("pilot:B", {"action_id": "choose", "choice": "untap"})
+        self.assertTrue(choice.ok, choice.summary)
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn("activate:" + source.ref + ":ab2", [action["id"] for action in actions])
+        mana = game.act("pilot:A", {"action_id": "activate:" + source.ref + ":ab2"})
+        self.assertTrue(mana.ok, mana.summary)
+        self.assertEqual(1, game.state.players["A"].mana_pool["C"])
+        self.assertEqual(("battlefield", True), self.selected_state(game, source))
+        self.replay(game, load=True)
+
+    def test_shared_land_type_requires_its_exact_descriptor_and_independent_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.library_search_model import SHARED_LAND_TYPE_SEARCH_CAPABILITY as CAP, SHARED_LAND_TYPE_SEARCH_FIELD
+
+        game = self.session(70123026)
+        card = self.add(game.engine, "Myriad Landscape")
+        self.assert_closed(game, card)
+        (program,) = [value for value in game.engine.semantics.programs_for_oracle(card.oracle_id, event="activate")
+                      if any(effect.get("op") == "search" for effect in value.effects)]
+        (effect,) = program.effects
+        self.assertTrue(effect[SHARED_LAND_TYPE_SEARCH_FIELD])
+        for changed in (
+            {**effect, SHARED_LAND_TYPE_SEARCH_FIELD: False},
+            {**effect, "enters_tapped_override": False},
+            {**effect, "selector": {"types": ["land"]}},
+            {**effect, "count": {"minimum": 0, "maximum": 3}},
+        ):
+            with self.assertRaises(ValueError):
+                counted_search_bound_dependencies(changed)
+        deps = tuple(value for value in program.capability_dependencies if value != CAP)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertIn("capability:undeclared_runtime_dependency:" + CAP, bound["blockers"])

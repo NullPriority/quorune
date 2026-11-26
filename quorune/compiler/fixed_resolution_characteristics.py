@@ -23,6 +23,8 @@ from ..resolution_characteristic_model import (
     TargetPlayerCreatureOverwriteSpec, TARGET_PLAYER_CREATURE_OVERWRITE_VERSION,
     target_player_creature_overwrite_query, target_player_creature_overwrite_schema,
     TargetCreatureAbilityLossSpec, TARGET_CREATURE_ABILITY_LOSS_VERSION, target_creature_ability_loss_schema,
+    NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS, next_turn_target_land_animation_effects,
+    next_turn_target_land_animation_schema,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
@@ -166,6 +168,8 @@ def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
         if source_is_permanent is not True:return None
         if source is not None and source['kind'].casefold() != 'permanent' and source['kind'].casefold() not in source_card_types:return None
         return {"card":"$source.zone_object"},None
+    if normalized.casefold() == "all lands you control":
+        normalized = normalized[len("all "):]
     if normalized.casefold() == "creatures target player controls":
         return {"predicate":ObjectQuerySpec(zones=("battlefield",),controller="$target.0",types_all=("creature",)).to_dict()},dict(_PLAYER_SET_SCHEMA)
     parsed = fixed_characteristic_battlefield_query_subject(normalized)
@@ -302,6 +306,20 @@ def _targeted_tap_then_ability_loss_template(text):
             ("tap-and-untap", "cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC, "cr-115-targets"))
 
 
+def _untap_then_animate_land_template(text):
+    normalized = " ".join(text.casefold().replace("’", "'").split())
+    if normalized != (
+        "untap target land you control. until your next turn, "
+        "it becomes a 5/5 elemental creature with haste. it's still a land."
+    ):
+        return None
+    return (
+        "untap-retaining-land-animation-next-turn-v1", next_turn_target_land_animation_effects(),
+        next_turn_target_land_animation_schema(),
+        NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS,
+    )
+
+
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
@@ -309,7 +327,8 @@ def fixed_resolution_characteristics_effect_template(
     cast_x_available: bool = False,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
-    if fixed_form := _target_player_creature_overwrite_template(text) or _targeted_tap_then_ability_loss_template(text):
+    if fixed_form := (_target_player_creature_overwrite_template(text) or _targeted_tap_then_ability_loss_template(text)
+                      or _untap_then_animate_land_template(text)):
         return fixed_form
     other = re.fullmatch(
         r"All other creatures get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) until end of turn\.?",

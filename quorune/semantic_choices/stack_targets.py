@@ -7,6 +7,7 @@ from ..replacement.immutable import FrozenMap
 from ..rules.cast_creature_set_spell_copy import CAST_CREATURE_SET_COPY_FIELD
 from ..rules.cast_source_spell_copy import SOURCE_CAST_COPY_FIELD
 from ..rules.source_directed_redirect_model import is_source_directed_redirect
+from ..rules.targeted_discard_spell_copy import RESOLVING_COPY_FIELD, is_accepted_copy_instruction
 from ..stack_spell_copy_model import FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, PERMANENT_SPELL_COPY_FIELD, PermanentSpellCopySpec
 from ..stack_target_change_model import is_mandatory_single_stack_target_change, is_optional_stack_target_change
 from ..semantic_runtime.intents import (
@@ -50,6 +51,7 @@ class StackTargetChoiceHandler:
         FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD,
         "_redirect_slots",
         SOURCE_CAST_COPY_FIELD,
+        RESOLVING_COPY_FIELD,
         CAST_CREATURE_SET_COPY_FIELD,
         "player",
         "_copy_receiver_ids",
@@ -102,10 +104,12 @@ class StackTargetChoiceHandler:
         ):
             raise SemanticChoiceError("Three copies require the complete retained-target instruction")
         target_ref = str(effect.get("stack") or "")
-        target = context.query.stack_object(
-            target_ref,
-            exclude_ref=context.stack_ref,
-        )
+        resolving_copy = RESOLVING_COPY_FIELD in effect
+        if resolving_copy and not is_accepted_copy_instruction(effect, actor=context.actor, stack_ref=context.stack_ref):
+            raise SemanticChoiceError("Only an accepted affected-player choice may copy the resolving spell")
+        target = context.query.stack_object(target_ref, exclude_ref=None if resolving_copy else context.stack_ref)
+        if resolving_copy and (target is None or target.copy_source is None or target.targets != (context.actor,)):
+            raise SemanticChoiceError("The resolving spell copy lost the current affected player or spell")
         if target is None:
             return SemanticChoicePreparation(
                 request=None,
@@ -232,6 +236,13 @@ class StackTargetChoiceHandler:
             raise SemanticChoiceError(
                 "The stack object selected for the choice no longer exists"
             )
+        if RESOLVING_COPY_FIELD in effect:
+            if (target_ref != continuation.stack_ref or target.copy_source is None
+                    or type(effect[RESOLVING_COPY_FIELD]) is not int or effect[RESOLVING_COPY_FIELD] != 1
+                    or effect.get("_choice_actor") != effect.get("_validation_actor")
+                    or effect.get("player") not in query.active_seats
+                    or target.targets != (effect.get("player"),) or effect.get("player") != effect.get("_choice_actor")):
+                raise SemanticChoiceError("The resolving spell copy continuation changed its source or affected player")
         submitted = response.get("targets")
         mandatory = is_mandatory_single_stack_target_change(effect)
         optional_reselection = is_optional_stack_target_change(effect)

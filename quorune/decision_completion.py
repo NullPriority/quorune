@@ -57,5 +57,6 @@ def dispatch_completed_decision(host,decision):
     elif kind=='semantic.choice':host._complete_semantic_choice(decision)
     elif kind=='semantic.search':host._complete_semantic_search(decision)
     elif kind=='semantic.storm':host._complete_storm_choice(decision)
-    elif kind in {'draw.replacement','draw.reveal','draw.miracle_reveal','draw.discard'}:host._complete_draw_replacement(decision)
+    elif kind in {'draw.replacement','draw.reveal','draw.miracle_reveal','draw.discard',
+                  'draw.library_kind','draw.library_bottom'}:host._complete_draw_replacement(decision)
     else:raise GameRuleError(f'Unsupported completed decision {kind}')

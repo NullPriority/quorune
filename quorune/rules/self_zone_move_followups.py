@@ -18,6 +18,9 @@ def self_entry_followup_node_capabilities(*, effects, target_schema, mechanic_id
 
 
 def self_entry_followup_runtime_dependencies(program):
+    from .revealed_hand_zone_move import revealed_hand_entry_runtime_dependencies
+    if required := revealed_hand_entry_runtime_dependencies(program):
+        return required
     from ..self_zone_move import SELF_ZONE_MOVE_ABILITY_HANDLER_ID, SelfZoneMoveSpec
     from ..self_zone_move_followups import compiled_self_entry
     declared = []

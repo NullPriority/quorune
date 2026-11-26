@@ -169,6 +169,7 @@ def _mill_followup(effect, count, context):
         return None
     from ..rad_counter_model import RAD_EFFECT_FIELD
     from ..rad_counters import RadMillFollowup
+    from ..rules.committed_mill_cards import ADVENTURE_MILL_COUNT, MillAdventuresToHand, uses_committed_mill_result
     from ..rules.milled_creature_tokens import MilledCreatureTokens
 
     try:
@@ -179,6 +180,13 @@ def _mill_followup(effect, count, context):
                     or context.source.object_id is not None or type(count) is not int or count <= 0):
                 raise ValueError("Radiation Mill requires its original sourceless controller")
             return RadMillFollowup.from_dict(result)
+        if uses_committed_mill_result(effect):
+            if (
+                set(effect) - {"_replacement_selections", "reason"} != {"op", "player", "count", "followup"}
+                or effect["player"] != context.actor or type(count) is not int or count != ADVENTURE_MILL_COUNT
+            ):
+                raise ValueError("The committed Adventure result requires fixed controller Mill")
+            return MillAdventuresToHand.from_dict(result)
         if effect.get("scope") != "all_active_players" or type(count) is not int or "count" not in effect:
             raise ValueError("The committed creature result requires all-player Mill and its resolved count")
         return MilledCreatureTokens.from_dict(effect["followup"])

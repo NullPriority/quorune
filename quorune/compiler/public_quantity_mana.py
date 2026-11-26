@@ -21,11 +21,13 @@ from .query_characteristic_templates import (
 )
 from .scalar_effect_amounts import _HISTORY
 from .live_battlefield_quantities import resolution_quantity
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
 from ..public_quantity_mana_model import (
     CHOSEN_DEVOTION_MANA_VERSION, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
     CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION, ControlledLandSubtypePairManaAmount,
+    CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION, ControlledCreatureThresholdManaAmount,
     chosen_devotion_mana_count,
     PublicQuantityManaOutput as PublicQuantityManaTemplate,
     chosen_subtype_quantity_mana_count,
@@ -110,6 +112,21 @@ def controlled_land_subtype_pair_mana_template(text: str) -> PublicQuantityManaT
         "fixed", ("C",), ControlledLandSubtypePairManaAmount(types, match["enhanced"].count("{")),
         schema_version=CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION,
     )
+
+
+def controlled_creature_threshold_mana_template(text: str) -> PublicQuantityManaTemplate | None:
+    match = re.fullmatch(
+        rf"Add \{{(?P<color>[WUBRGC])\}}\. If you control (?P<minimum>{FIXED_COUNT_PATTERN}) or more "
+        r"creatures, add \{(?P=color)\}\{(?P=color)\} instead\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    minimum = fixed_number(match["minimum"])
+    if not 1 <= minimum <= 10:
+        return None
+    return PublicQuantityManaTemplate("fixed", (match["color"].upper(),), ControlledCreatureThresholdManaAmount(minimum),
+                                      schema_version=CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION)
 
 
 def public_quantity_mana_template(text: str, *, source_name: str) -> PublicQuantityManaTemplate | None:

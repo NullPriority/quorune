@@ -83,6 +83,13 @@ def terminal_spell_move_node_capabilities(*, effects, target_schema, mechanics, 
     move = terminal_spell_move(mechanics)
     if move is None or not effects:
         return ()
+    from .paid_creature_library_search import paid_creature_search_node_capabilities
+
+    paid_search = paid_creature_search_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+    )
+    if paid_search is not None:
+        return paid_search
     scope = _conditional_return_target_dependencies(move, target_schema)
     if scope is None or (move.condition is not None and cost_schema is not None):
         return ()

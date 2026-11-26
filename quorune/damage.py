@@ -1430,6 +1430,9 @@ def _collect_damage_result_triggers(
     trigger_batch: list[Any],
 ) -> None:
     from .counter_placement_events import dispatch_counter_placement_occurrences
+    from .rules.controlled_subtype_damage_batch import dispatch_controlled_subtype_damage_batches
+    dispatch_controlled_subtype_damage_batches(host, result, sources=trigger_sources,
+        source_zones=trigger_source_zones, trigger_batch=trigger_batch)
     trigger_batch.extend(result.ring_trigger_items)
     dispatch_counter_placement_occurrences(host,result.counter_occurrences,trigger_batch=trigger_batch)
     dispatch_lifelink_gain_events(

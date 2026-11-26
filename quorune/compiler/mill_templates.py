@@ -128,6 +128,18 @@ def committed_milled_creature_token_template(text):
             (MILL_MECHANIC_ID, DECLARED_EFFECT_AMOUNT_MECHANIC, *token.mechanics))
 
 
+def committed_mill_card_template(text):
+    if " ".join(text.split()).casefold() != (
+        "mill seven cards. then put all cards that have an adventure "
+        "from among the milled cards into your hand."
+    ):
+        return None
+    from ..rules.committed_mill_cards import MillAdventuresToHand
+
+    result = MillAdventuresToHand()
+    return "mill-committed-adventures-to-hand-v1", (result.effect(),), None, (MILL_MECHANIC_ID,)
+
+
 def fixed_mill_effect_template(text: str) -> FixedMillEffectTemplate | None:
     """Lower one mandatory Mill through a closed count and recipient shape."""
     if re.fullmatch(r"Each opponent mills cards equal to the number of cards in their hand\.?$",

@@ -855,6 +855,12 @@ Conspire uses this path to bind one complete printed tap-cost and copy-trigger
 declaration. The existing keyword entry points remain available; mutation
 witnesses patch the dispatch owner's actual lowerers.
 
+A fixed creature threshold selects between one mana and two mana of the same
+color from an ordinary tap ability. Its count uses the controller's current
+battlefield creatures. The live query includes creature tokens and excludes
+phased-out permanents. Ordinary activation and mana planning use that same
+typed output.
+
 Public-quantity mana keeps its existing typed source-excluding count producer
 before consulting the newer live resolution count fallback. Existing optional
 source counters on admitted sacrifice and discard subscriptions keep the
@@ -974,6 +980,11 @@ same closed public and declared-amount owners, preserving their distinct
 binding schemas. Previous-clause target references require the complete
 printed independent-target context. Linked Exert results retain their exact
 printed event key and mandatory amount, target and Exert dependencies.
+A battlefield tap activation can read the source's committed mutation count.
+Its quantity is zero on an unmerged permanent and follows later merges into
+the same incarnation. Departure retains the final count with the original
+source identity. The ordinary damage owner validates and commits the result.
+
 Fixed source damage uses the normal damage source and target owners. The
 version-two source prevention descriptor creates a combat-only shield for the
 original battlefield incarnation through end of turn.
@@ -1484,6 +1495,13 @@ moves, including copied characteristics. Only the committed object
 determines the output. Zero value still pays the selected cost. The
 automatic mana planner never selects a sacrifice on the player's behalf.
 
+A bounded sacrifice activation can offer zero to three controlled
+permanents. The payment owner captures the union of their effective
+battlefield card types before the simultaneous sacrifice. Destination
+replacements and ability copies retain that committed union. A union of
+at least three types applies the ordered opponent life loss, controller
+life gain and private draw through the existing effect owners.
+
 A two-mana tap activation can offer one ordinary color and count its
 current devotion after paying the cost. The choice carries a color,
 and the server computes the amount from the controlled battlefield.
@@ -1692,6 +1710,11 @@ stat changes keep their own runtime authority. Copied spells retain X; uncast
 entries use zero; later source departure does not change the queued value.
 Locally defined X and other event kinds retain their separate owners.
 
+The untargeted two-definition token form reads both quantities from the same
+sealed entry X and sends the definitions through one existing token-creation
+batch. The replacement owner sees both groups together. A zero from cast X
+or a noncast entry skips token creation.
+
 The self-zone effect compiler represents the exact self-entry “if you cast it”
 guard with `trigger.condition.source_entry_cast`. Its structural runtime minimum
 requires the complete entry/intervening contract. Trigger discovery checks the
@@ -1873,6 +1896,12 @@ library-to-graveyard cards to the canonical simultaneous zone-transition owner;
 runtime never reparses the printed instruction. Zero, dynamic, optional, cost,
 targeted, repeated, copied, granted, additional-look, linked-result, and
 unsupported Surveil-event trigger forms remain source-spanned residuals.
+
+A source-combat-damage trigger can resolve Surveil 1 before offering an
+untargeted land choice from the controller's graveyard. The offer is
+formed from the graveyard after the private partition resolves. It can
+include the land just put there. The selected graveyard incarnation moves
+through the public-zone owner with tapped entry.
 
 `compiler/fixed_library_selection_templates.py` owns complete fixed positive
 top-of-controller-library instructions that select cards into hand and send
@@ -2781,6 +2810,12 @@ Fixed attached-land animation retains the land's existing card types,
 supertypes, and subtypes. A reciprocal attachment selects the recipient.
 The printed creature subtypes, color, keywords, and base stats enter their
 ordinary layers, and existing stat modifiers still apply afterward.
+
+Fixed animation of all lands the resolving player controls uses the public
+resolution-time set. The chosen incarnations retain their land types and
+tapped state. For next-turn wording, the existing controller-relative
+journal expires the animation before that player's next untap. Later lands
+and returned incarnations have their ordinary characteristics.
 
 An attached death return reads the departed permanent and its exact
 graveyard incarnation from the committed occurrence. The land death
@@ -5810,6 +5845,13 @@ paying the mana cost through the existing one-shot exile-cast and casting
 owners. A creature cast this way receives an identity-pinned Haste effect that
 expires permanently on the first control change.
 
+A second-cast copy-and-suspend trigger uses the ordinary cast snapshot even if
+the original has left the stack. Its follow-up moves only the live original
+stack incarnation. The card that reaches exile receives the time counters and
+the linked Suspend grant when needed. The existing upkeep and one-shot cast
+owners handle that incarnation, and the counter-removal owner observes the
+actual last time counter even when a different effect removes it.
+
 Foretell and Plot add no-stack hand actions through the same priority and mana
 transaction. Foretell creates an owner-private, distinguishable face-down exile
 designation and a later-turn fixed alternative cost. Plot creates a public
@@ -7028,6 +7070,9 @@ a Ward-specific check. Printed fixed creature, positive-mana-value permanent,
 and Food artifact sacrifices use schema version 3. The current targeting
 player chooses one controlled eligible permanent or declines. The Food
 predicate reads the object's effective artifact type and Food subtype.
+Fixed positive Blight uses Ward schema version 4 and the established
+replacement-safe Blight cost. The targeting player selects one controlled
+creature and may decline.
 Other qualifiers, quantities, alternatives, dynamic prices and granted
 nonmana costs remain residual. See
 [ADR 0103](../adr/0103-typed-fixed-public-ward-payments.md).
@@ -7386,6 +7431,14 @@ fixed minimum. The declaration and price have separate capability minima, and
 the existing cast-copy owner handles the resulting trigger. See
 [ADR 0136](../adr/0136-power-qualified-casualty-costs.md) and the
 [Casualty contract](../../mechanics/contracts/casualty.json).
+
+An optional creature-group casting cost can produce a single cast-linked copy
+trigger. The cast proposal uses the existing controlled-creature payment owner.
+The trigger binds the number of distinct committed sacrifices and the ordinary
+cast snapshot. The common spell-copy owner creates one normal copy for each
+paid creature even if the original spell has since left the stack. Each copy
+dispatches its own normalized copy event and resolves the original ordered
+draw and life-loss body.
 
 Bargain declarations link an optional sacrifice union to a source-local casting
 instance. A complete printed declaration is required before the compiler owns

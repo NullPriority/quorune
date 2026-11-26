@@ -15,6 +15,15 @@ def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_
     result=[]
     for row in rows:
         material = row[1]
+        if result and material.casefold().startswith("ferocious — that creature gains indestructible"):
+            from .resolution_condition_templates import BLOCKER_PROTECTION_TEMPLATE
+
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            if compile_effect(combined, card_name=source_name)[0] == BLOCKER_PROTECTION_TEMPLATE:
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
         if result and material.casefold().startswith("exile ") and result[-1][1].casefold().endswith("phase out."):
             from ..rules.next_personal_turn_protection import NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE
             from ..rules.spell_self_exile import SELF_EXILE

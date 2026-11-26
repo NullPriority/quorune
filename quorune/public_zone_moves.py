@@ -252,10 +252,14 @@ ANNOUNCED_GRAVEYARD_RETURN_VERSION = 5
 SAME_TURN_GRAVEYARD_RETURN_VERSION = 7
 TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION = 8
 PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION = 9
+PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION = 10
+PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS = (
+    PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION, PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION,
+)
 SAME_TURN_GRAVEYARD_RETURN_VERSIONS = (SAME_TURN_GRAVEYARD_RETURN_VERSION, TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION)
 PUBLIC_AURA_ENTRY_VERSIONS = (
     PUBLIC_AURA_ENTRY_VERSION, ANNOUNCED_GRAVEYARD_RETURN_VERSION, *SAME_TURN_GRAVEYARD_RETURN_VERSIONS,
-    PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION,
+    *PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS,
 )
 ANNOUNCED_GRAVEYARD_RETURN_CAPABILITY = "zone.move.announced_owned_graveyard_return"
 ANNOUNCED_MANA_VALUE_MAX_FIELD = "announced_mana_value_max"
@@ -343,6 +347,7 @@ _SET_FIELDS_SAME_NAME = _SET_FIELDS_V1 | {PUBLIC_SAME_NAME_MOVE_TARGET_FIELD}
 _SET_FIELDS_TARGETED_SAME_TURN = _SET_FIELDS_V2 | {"target_refs"}
 _SET_FIELDS_CHOSEN_RETURN = _SET_FIELDS_V2 | {"chosen_cards"}
 _CHOSEN_CREATURE_CARD_QUERY = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
+_CHOSEN_LAND_CARD_QUERY = ObjectQuerySpec(zones=("graveyard",), types_all=("land",), token=False)
 
 
 def _nonempty(value: Any, *, field: str) -> str:
@@ -479,23 +484,29 @@ class PublicZoneMoveSetSpec:
             self._validate_same_turn_graveyard_return()
         elif self.target_refs is not None:
             raise PublicZoneMoveError("Original graveyard targets require the exact versioned return")
-        if self.schema_version == PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION:
+        if self.schema_version in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS:
             self._validate_chosen_graveyard_return()
         elif self.chosen_cards:
             raise PublicZoneMoveError("Chosen creature cards require the exact owner-return version")
 
     def _validate_chosen_graveyard_return(self):
         cards = self.chosen_cards
+        tapped_land = self.schema_version == PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION
+        query = _CHOSEN_LAND_CARD_QUERY if tapped_land else _CHOSEN_CREATURE_CARD_QUERY
+        relation = PublicZoneSeatRelation.ACTOR if tapped_land else PublicZoneSeatRelation.ANY
+        allowed_counts = (1,) if tapped_land else (1, 2)
         if (
             self.origin is not PublicZoneOrigin.GRAVEYARD or self.destination is not PublicZoneDestination.BATTLEFIELD
-            or self.relation_axis is not PublicZoneRelationAxis.OWNER or self.seat_relation is not PublicZoneSeatRelation.ANY
-            or self.battlefield_controller is not PublicBattlefieldController.OWNER or self.battlefield_tapped
-            or self.query != _CHOSEN_CREATURE_CARD_QUERY or not isinstance(cards, (tuple, list))
-            or len(cards) not in (1, 2) or any(not isinstance(card, PublicZoneMoveObject) for card in cards)
+            or self.relation_axis is not PublicZoneRelationAxis.OWNER or self.seat_relation is not relation
+            or self.battlefield_controller is not PublicBattlefieldController.OWNER or self.battlefield_tapped is not tapped_land
+            or self.query != query or not isinstance(cards, (tuple, list))
+            or len(cards) not in allowed_counts or any(not isinstance(card, PublicZoneMoveObject) for card in cards)
             or len({card.object_id for card in cards}) != len(cards)
             or len({card.owner for card in cards}) != len(cards)
         ):
-            raise PublicZoneMoveError("Chosen creature return requires one exact original card per graveyard owner")
+            message = ("Chosen land return requires one exact original land card in the actor's graveyard"
+                       if tapped_land else "Chosen creature return requires one exact original card per graveyard owner")
+            raise PublicZoneMoveError(message)
         object.__setattr__(self, "chosen_cards", tuple(cards))
 
     def _validate_same_turn_graveyard_return(self) -> None:
@@ -615,7 +626,7 @@ class PublicZoneMoveSetSpec:
             != (value["schema_version"] == TARGETED_SAME_TURN_GRAVEYARD_RETURN_VERSION)
         ) or (
             (frozenset(value) == _SET_FIELDS_CHOSEN_RETURN)
-            != (value["schema_version"] == PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION)
+            != (value["schema_version"] in PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSIONS)
         ):
             raise PublicZoneMoveError(
                 "Public zone-move set fields are incomplete or unknown"

@@ -154,10 +154,11 @@ class ExternalEntryTappedRuntimeTests(unittest.TestCase):
                 program=compile_best_available_card_program(self.db,self.db.lookup(row['name']),semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry,capability_profile='commander_review')
                 binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-                # Complete original siblings also use the entry-copy, public
-                # graveyard-entry and announced-X destruction owners.
+                # Complete siblings also use copy, graveyard entry, announced-X
+                # destruction, or draw and optional land entry.
                 expected_closed = row['name'] in CLOSED or row['name'] in {
-                    'Echoing Deeps','Vesuva','Open the Vaults','Dauntless Dismantler'}
+                    'Echoing Deeps', 'Vesuva', 'Open the Vaults',
+                    'Dauntless Dismantler', 'Spelunking'}
                 self.assertEqual(expected_closed,binding['strict_capability_ready'],binding['blockers'])
 
     def test_dauntless_dismantler_admits_external_entry_and_announced_destruction(self):

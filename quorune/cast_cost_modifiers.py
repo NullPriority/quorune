@@ -213,6 +213,11 @@ class PublicCastCostModifierSpec:
             raise CastCostModifierError(str(exc)) from exc
 
 
+ADVENTURE_PERMANENT_COST_CAPABILITY = "casting.cost.modifier.adventure_permanent"
+ADVENTURE_PERMANENT_SPELL = "adventure_permanent"
+ADVENTURE_PERMANENT_TYPES = ("artifact", "battle", "creature", "enchantment", "planeswalker")
+
+
 @dataclass(frozen=True, slots=True)
 class PublicCastCostModifierV2Spec:
     """One fixed or public-value modifier in the existing total-cost owner."""
@@ -228,6 +233,7 @@ class PublicCastCostModifierV2Spec:
     turn_relation: CastCostTurnRelation = CastCostTurnRelation.ANY
     ordinal: CastCostOrdinal = CastCostOrdinal.ANY
     schema_version: int = 2
+    spell_qualification: str | None = None
 
     @classmethod
     def from_fixed_modifier(cls, value: PublicCastCostModifierSpec) -> "PublicCastCostModifierV2Spec":
@@ -240,10 +246,11 @@ class PublicCastCostModifierV2Spec:
             turn_relation=value.turn_relation,ordinal=value.ordinal)
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 2:
+        if type(self.schema_version) is not int or self.schema_version not in {2, 3}:
             raise CastCostModifierError(
-                "Unsupported public cast-cost modifier v2 version"
+                "Unsupported public cast-cost modifier version"
             )
+        self._validate_spell_qualification()
         if not isinstance(self.affected_controller, CastCostAffectedController):
             raise CastCostModifierError(
                 "Public cast-cost modifier controller relation is unsupported"
@@ -348,8 +355,22 @@ class PublicCastCostModifierV2Spec:
     def generic_reduction(self) -> int:
         return max(0, -self.generic_adjustment)
 
+    def _validate_spell_qualification(self) -> None:
+        if self.schema_version == 2 and self.spell_qualification is None:
+            return
+        if (
+            self.schema_version != 3 or self.spell_qualification != ADVENTURE_PERMANENT_SPELL
+            or self.affected_controller is not CastCostAffectedController.SOURCE_CONTROLLER
+            or self.predicates_any != (ObjectQuerySpec(types_any=ADVENTURE_PERMANENT_TYPES),)
+            or self.mana_adjustment != (("GENERIC", -1),) or self.multiplier is not None
+            or self.minimum_mana_value is not None or self.maximum_mana_value is not None
+            or self.cast_origin_zones or self.excluded_cast_origin_zones
+            or self.turn_relation is not CastCostTurnRelation.ANY or self.ordinal is not CastCostOrdinal.ANY
+        ):
+            raise CastCostModifierError("Unsupported prospective Adventure spell modifier")
+
     def to_dict(self) -> dict[str, Any]:
-        return {
+        data = {
             "schema_version": self.schema_version,
             "affected_controller": self.affected_controller.value,
             "predicates_any": [value.to_dict() for value in self.predicates_any],
@@ -364,6 +385,9 @@ class PublicCastCostModifierV2Spec:
             "turn_relation": self.turn_relation.value,
             "ordinal": self.ordinal.value,
         }
+        if self.schema_version == 3:
+            data["spell_qualification"] = self.spell_qualification
+        return data
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "PublicCastCostModifierV2Spec":
@@ -380,6 +404,8 @@ class PublicCastCostModifierV2Spec:
             "turn_relation",
             "ordinal",
         }
+        if isinstance(value, Mapping) and value.get("schema_version") == 3:
+            expected.add("spell_qualification")
         if not isinstance(value, Mapping) or set(value) != expected:
             raise CastCostModifierError(
                 "Public cast-cost modifier v2 descriptors have a closed schema"
@@ -416,6 +442,7 @@ class PublicCastCostModifierV2Spec:
                 ),
                 turn_relation=CastCostTurnRelation(value["turn_relation"]),
                 ordinal=CastCostOrdinal(value["ordinal"]),
+                spell_qualification=value.get("spell_qualification"),
             )
         except (
             TypeError,

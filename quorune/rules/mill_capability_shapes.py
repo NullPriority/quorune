@@ -99,7 +99,11 @@ def fixed_mill_node_capabilities(
     if effect.get("op") != "mill":
         return ()
     if "followup" in effect:
+        from .committed_mill_cards import committed_mill_card_node_capabilities, uses_committed_mill_result
         from .milled_creature_tokens import milled_creature_token_node_capabilities
+
+        if uses_committed_mill_result(effect):
+            return committed_mill_card_node_capabilities(effects, target_schema)
         return milled_creature_token_node_capabilities(effects, target_schema)
     count = effect.get("count")
     caps = (MILL_CAPABILITY_ID,)
@@ -213,6 +217,16 @@ def mill_covered_mechanics(supplied):
     if EVENT_MILL_RECIPIENT_CAPABILITY in supplied and TARGET_CONTROLLER_INFORMATION_CAPABILITY in supplied:
         covered.add(ATTACKER_CONTROLLER_MILL_MECHANIC)
     return covered
+
+
+def committed_mill_followup_program_dependencies(program):
+    from .committed_mill_cards import committed_mill_card_program_dependencies
+    from .milled_creature_tokens import milled_creature_token_program_dependencies
+
+    return (
+        committed_mill_card_program_dependencies(program)
+        or milled_creature_token_program_dependencies(program)
+    )
 
 
 __all__ = ["fixed_mill_node_capabilities","mill_covered_mechanics"]

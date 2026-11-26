@@ -158,7 +158,16 @@ class AllBlockerRequirementNativeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'all-blockers.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/all-blocker-requirement-cards.json'],path)
+        fixtures = ROOT / "tests/fixtures"
+        cards = json.loads((fixtures / "creature-power-multiple-cards.json").read_bytes())
+        angels = [card for card in cards["cards"] if card["name"] == "Serra Angel"]
+        assert len(angels) == 1
+        angel = path.parent / "serra-angel.json"
+        angel.write_text(json.dumps({"schema_version": 1, "cards": angels}), encoding="utf-8")
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json", fixtures / "all-blocker-requirement-cards.json",
+            fixtures / "target-blocker-power-protection-cards.json", angel,
+        ], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Blocking requirements',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Isamaru, Hound of Konda'])
@@ -172,6 +181,65 @@ class AllBlockerRequirementNativeTests(unittest.TestCase):
         self.assertTrue(result.ok,result.summary)
         self.until(session,lambda s:s.state.pending_decision is not None and s.state.pending_decision.kind=='combat.blockers' and 'B' in s.state.pending_decision.actors)
         return session.state.pending_decision.payload_by_actor['B']['declaration_constraints']
+
+    def test_roar_retains_one_announced_target_and_the_ordered_original_body(self):
+        from dataclasses import replace
+        from quorune.rules.temporary_all_blockers import blocker_protection_node_capabilities
+        from quorune.temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
+
+        card = self.db.lookup("Roar of Challenge", fuzzy=False)
+        compile_card = lambda record: compile_oracle_card(
+            record, capability_registry=self.registry, capability_profile="commander_review",
+        )
+        ir = compile_card(card)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(1, node.target_schema["count"])
+        prefix, condition = node.effects
+        child, = condition["effects"]
+        self.assertEqual("$target.0", prefix["card"])
+        self.assertEqual(prefix["card"], child["card"])
+        self.assertEqual(BLOCKER_PROTECTION_CONDITION_VERSION, condition["schema_version"])
+        self.assertEqual(card.oracle_text, card.oracle_text[node.span.start:node.span.end])
+        self.assertTrue(blocker_protection_node_capabilities(node.effects, node.target_schema, node.mechanics))
+        malformed = {**condition, "effects": [{**child, "card": "$target.1"}]}
+        self.assertFalse(blocker_protection_node_capabilities((prefix, malformed), node.target_schema, node.mechanics))
+        self.assertNotEqual("exact", compile_card(replace(card, oracle_text=card.oracle_text.replace("power 4", "power 5"))).status)
+        with patch("quorune.compiler.resolution_condition_templates._blocker_protection_template", return_value=None):
+            self.assertNotEqual("exact", compile_card(card).status)
+
+    def test_actual_roar_grants_indestructible_only_for_current_controller_power_and_requires_the_blocks(self):
+        for owns_power in (True, False):
+            with self.subTest(owns_power=owns_power):
+                session = self.session(509612060 + int(owns_power))
+                original = self.add(session.engine, "Roar of Challenge", zone="hand")
+                attacker = self.add(session.engine, "Hill Giant")
+                self.add(session.engine, "Serra Angel", seat="A" if owns_power else "C")
+                first = self.add(session.engine, "Goblin Piker", seat="B", ref="roar-first-blocker")
+                second = self.add(session.engine, "Memnite", seat="B", ref="roar-second-blocker")
+                hidden = self.add(session.engine, "Twiddle", seat="D", zone="hand", ref="roar-private-control")
+                attacker.acquired_control_turn_count = -1
+                self.assert_closed(session, original)
+                self.prepare(session, mana={"C": 2, "G": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", original, [attacker.ref])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[attacker.object_id]
+                self.assertEqual(owns_power, "indestructible" in session.engine._combat_keywords(current))
+                self.assertEqual(1, self.requirement_count(session, attacker))
+                constraints = self.blockers(session, (current,))
+                self.assertEqual(2, constraints["maximum_requirements"])
+                before = authoritative_state_hash(session.state)
+                denied = session.act("pilot:B", {"action_id": "block", "blocks": {first.ref: current.ref}})
+                self.assertFalse(denied.ok, denied.summary)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:B", full=True)))
+                committed = session.act("pilot:B", {
+                    "action_id": "block", "blocks": {first.ref: current.ref, second.ref: current.ref},
+                })
+                self.assertTrue(committed.ok, committed.summary)
+                self.replay(session, load=True)
 
     def test_actual_lure_survives_recipient_ability_loss_and_requires_every_legal_blocker(self):
         session=self.session(509612001)

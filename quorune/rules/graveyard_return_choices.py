@@ -8,6 +8,7 @@ from ..public_zone_moves import (
     PublicZoneMoveSetSpec, PublicZoneOrigin, PublicZoneDestination,
     PublicZoneRelationAxis, PublicZoneSeatRelation, snapshot_public_zone_move_set,
     PublicBattlefieldController, PUBLIC_CHOSEN_GRAVEYARD_RETURN_VERSION,
+    PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION,
 )
 from .graveyard_card_targets import GraveyardCardTargetKind
 
@@ -16,6 +17,8 @@ MECHANIC = 'own-graveyard-return-choice'
 CAPABILITY = 'zone.return.own_graveyard_choice'
 BOUNDED_BATTLEFIELD_RETURN_CAPABILITY = 'zone.return.own_graveyard_bounded_battlefield_choice'
 BOUNDED_BATTLEFIELD_RETURN_VERSION = 4
+TAPPED_LAND_RETURN_VERSION = 6
+TAPPED_LAND_RETURN_CAPABILITY = 'zone.return.own_graveyard_tapped_land_choice'
 RETURN_PAIR_FIELD = "graveyard_return_pair"
 PAIRED_RETURN_CAPABILITIES = (CAPABILITY, "zone.move.fixed_public_set", "attachment.aura.typed_restriction")
 
@@ -39,6 +42,17 @@ def paired_graveyard_return_move(cards):
     return {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict()}
 
 
+def chosen_tapped_land_move(card):
+    spec = PublicZoneMoveSetSpec(
+        query=ObjectQuerySpec(zones=("graveyard",), types_all=("land",), token=False),
+        origin=PublicZoneOrigin.GRAVEYARD, destination=PublicZoneDestination.BATTLEFIELD,
+        relation_axis=PublicZoneRelationAxis.OWNER, seat_relation=PublicZoneSeatRelation.ACTOR,
+        battlefield_controller=PublicBattlefieldController.OWNER, battlefield_tapped=True,
+        schema_version=PUBLIC_CHOSEN_GRAVEYARD_TAPPED_LAND_VERSION, chosen_cards=(card,),
+    )
+    return {"op": "move_public_zone_set", "source": "$source", "set": spec.to_dict()}
+
+
 GREATEST_POWER_CAPABILITY = 'quantity_expression.public_characteristic_aggregate'
 QUALIFIED_CHOICE_CAPABILITY = 'zone.return.own_graveyard_subtype_qualified_choice'
 _CREATURE_OR_PLANESWALKER = ('creature', 'planeswalker')
@@ -48,6 +62,7 @@ _DISJOINT_RETURN_VERSIONS = frozenset({
     BOUNDED_BATTLEFIELD_RETURN_VERSION,
     _RETAINED_MANDATORY_CREATURE_OR_PLANESWALKER_VERSION,
     MANDATORY_CREATURE_OR_PLANESWALKER_VERSION,
+    TAPPED_LAND_RETURN_VERSION,
 })
 _PUBLIC_FIELDS = frozenset({'op', 'player', 'selection'})
 _CHOICE_FIELDS = frozenset({'_choice_actor', '_legal_refs', '_legal_logical_ids', '_stack_label'})
@@ -91,6 +106,18 @@ class GraveyardReturnSelection:
 
     @property
     def returns_to_battlefield(self) -> bool:
+        return self.bounded_battlefield_return or self.returns_tapped_land
+
+    @property
+    def returns_tapped_land(self) -> bool:
+        return (
+            self.schema_version == TAPPED_LAND_RETURN_VERSION
+            and self.types_any == ('land',)
+            and self.mana_value_max is None and self.excluded_creature_subtype is None
+        )
+
+    @property
+    def bounded_battlefield_return(self) -> bool:
         return (
             self.schema_version == BOUNDED_BATTLEFIELD_RETURN_VERSION
             and self.types_any == ('creature',)
@@ -119,7 +146,7 @@ class GraveyardReturnSelection:
         value = {'schema_version': self.schema_version, 'types_any': list(self.types_any)}
         if self.excluded_creature_subtype is not None:
             value['excluded_creature_subtype'] = self.excluded_creature_subtype
-        if self.returns_to_battlefield:
+        if self.bounded_battlefield_return:
             value['mana_value_max'] = self.mana_value_max
         return value
 
@@ -172,6 +199,11 @@ def mandatory_creature_or_planeswalker_return_effect():
     return {'op': OPERATION, 'player': '$controller', 'selection': selection.to_dict()}
 
 
+def optional_tapped_land_return_effect():
+    selection = GraveyardReturnSelection(('land',), schema_version=TAPPED_LAND_RETURN_VERSION)
+    return {'op': OPERATION, 'player': '$controller', 'selection': selection.to_dict()}
+
+
 def validate_return_choice(effect, *, actor=None, continuation=False):
     fields = _PUBLIC_FIELDS | _CHOICE_FIELDS if continuation else _PUBLIC_FIELDS
     if (not isinstance(effect, Mapping) or set(effect) != fields or effect.get('op') != OPERATION
@@ -207,7 +239,9 @@ def graveyard_return_choice_node_capabilities(*, effects, target_schema, mechani
         selection = validate_return_choice(effects[0])
     except (TypeError, ValueError):
         return ()
-    if selection.returns_to_battlefield:
+    if selection.returns_tapped_land:
+        return (CAPABILITY, TAPPED_LAND_RETURN_CAPABILITY, 'zone.move.fixed_public_set')
+    if selection.bounded_battlefield_return:
         return (CAPABILITY, BOUNDED_BATTLEFIELD_RETURN_CAPABILITY)
     if selection.greatest_power:
         return (CAPABILITY, GREATEST_POWER_CAPABILITY)
@@ -239,9 +273,24 @@ def graveyard_return_choice_runtime_dependencies(program):
                     BOUNDED_BATTLEFIELD_RETURN_CAPABILITY in required and program.target_schema is not None
                 ):
                     raise ValueError('Graveyard choice lacks a closed owned instruction')
+                if TAPPED_LAND_RETURN_CAPABILITY in required:
+                    _require_surveil_then_land_return(program)
                 return set(required)
             return {cap for child in value.values() for cap in walk(child)}
         if isinstance(value, (tuple, list)):
             return {cap for child in value for cap in walk(child)}
         return set()
     return tuple(sorted(walk((program.effects, program.handlers))))
+
+
+def _require_surveil_then_land_return(program):
+    from ..compiler.fixed_public_action_event_bindings import fixed_source_combat_damage_recipient_condition
+    from ..replacement.immutable import thaw_value
+
+    if ((program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or program.handlers or program.target_schema is not None
+            or thaw_value(program.event_condition) != fixed_source_combat_damage_recipient_condition("battle")
+            or thaw_value(program.effects) != [
+                {"op": "surveil", "player": "$controller", "count": 1}, optional_tapped_land_return_effect(),
+            ]):
+        raise ValueError("Tapped land return requires the original untargeted combat damage and Surveil sequence")

@@ -5,6 +5,7 @@ from typing import Any, Mapping, Sequence
 
 from .captured_hand import CaptureDrawnHandCard
 from ..rules.faction_trigger_model import CountFactionDraw, FACTION_AFTER_DRAW_ACTION
+from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT
 
 from ..replacement import (
     ReplaceableEvent,
@@ -344,6 +345,38 @@ class DrawEventRequest:
         )
 
 
+DRAW_LIBRARY_CHOICE_EVENT = "card.draw.replaced.library_choice"
+
+
+@dataclass(frozen=True, slots=True)
+class DrawLibraryChoiceOccurrence:
+    seat: str
+    draw_event_id: str
+    effect_id: str
+    library_size: int
+    journal_event_id: int
+
+    def __post_init__(self):
+        for value in (self.seat, self.draw_event_id, self.effect_id):
+            _stable_string(value, field="Library-choice draw identity")
+        if type(self.library_size) is not int or self.library_size < 0:
+            raise DrawError("Library-choice draw requires its original library size")
+        if type(self.journal_event_id) is not int or self.journal_event_id < 1:
+            raise DrawError("Library-choice draw requires its committed replacement event")
+
+    def to_dict(self):
+        return {"seat": self.seat, "draw_event_id": self.draw_event_id, "effect_id": self.effect_id,
+                "library_size": self.library_size, "journal_event_id": self.journal_event_id}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {
+            "seat", "draw_event_id", "effect_id", "library_size", "journal_event_id",
+        }:
+            raise DrawError("Malformed library-choice draw occurrence")
+        return cls(**value)
+
+
 @dataclass(frozen=True, slots=True)
 class DrawEventResolution:
     kind: str
@@ -359,15 +392,18 @@ class DrawEventResolution:
     post_draw_actions: tuple[DrawnCardAction, ...] = ()
     discard_followup: QueuedDraw | None = None
     scheduled_grant_id: str | None = None
+    library_choice_effect_id: str | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in {
             "draw",
+            EXILE_TURN_PLAY_DRAW_RESULT,
             "prevented",
             "prohibited",
             "result_draws",
             "discard_or_mill",
             "scheduled_result",
+            "library_choice",
             _DREDGE_KIND,
         }:
             raise DrawError(f"Unsupported draw result {self.kind!r}")
@@ -420,6 +456,10 @@ class DrawEventResolution:
             _stable_string(self.scheduled_grant_id, field="Scheduled draw result grant")
         elif self.scheduled_grant_id is not None:
             raise DrawError("Only a scheduled result may refer to a next-draw grant")
+        if self.kind == "library_choice":
+            _stable_string(self.library_choice_effect_id, field="Library-choice draw effect")
+        elif self.library_choice_effect_id is not None:
+            raise DrawError("Only a library-choice draw may carry its replacement effect identity")
         if self.kind == "discard_or_mill":
             if (
                 not isinstance(self.discard_followup, QueuedDraw)
@@ -628,11 +668,13 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
     if (kind == "draw") != (is_draw is True):
         raise DrawError("Resolved draw kind and draw flag disagree")
     if kind in {
+        EXILE_TURN_PLAY_DRAW_RESULT,
         "prevented",
         "prohibited",
         "result_draws",
         "discard_or_mill",
         "scheduled_result",
+        "library_choice",
         _DREDGE_KIND,
     } and is_draw is not False:
         raise DrawError("A replaced draw must clear its draw flag")
@@ -697,6 +739,7 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         result_draws=tuple(result_draws),
         discard_followup=discard_followup,
         scheduled_grant_id=payload.get("scheduled_grant_id"),
+        library_choice_effect_id=payload.get("library_choice_effect_id"),
         post_draw_actions=tuple(
             drawn_card_action_from_dict(action)
             for action in post_action_values

@@ -7,7 +7,8 @@ from ..block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
 from ..phasing_model import (
     PHASE_OUT_ANY_NUMBER_SET_CAPABILITY, PHASE_OUT_CAPABILITY, PHASE_OUT_OPERATION,
     PHASE_OUT_TARGET_SET_CAPABILITY, PHASE_OUT_TARGET_SET_SUBJECT, PHASING_CAPABILITY,
-    any_number_phase_out_schema, validate_phase_out_effect,
+    OPTIONAL_ENTRY_PHASE_OUT_CAPABILITY, OPTIONAL_ENTRY_PHASE_OUT_VERSION,
+    any_number_phase_out_schema, optional_entry_phase_out_schema, validate_phase_out_effect,
 )
 from ..replacement.immutable import FrozenMap
 from ..source_control_phase_in_model import (
@@ -100,6 +101,15 @@ def phase_out_node_capabilities(effects, target_schema, *, cost_schema=None):
     if subject == PHASE_OUT_TARGET_SET_SUBJECT:
         from .casting_additional_cost_groups import fixed_additional_cost_node_capabilities
 
+        if effect["schema_version"] == OPTIONAL_ENTRY_PHASE_OUT_VERSION:
+            from .permanent_predicate_capability_shapes import direct_target_predicate_capabilities
+
+            if (not isinstance(target_schema, Mapping) or type(target_schema.get("up_to")) is not int
+                    or FrozenMap(target_schema) != FrozenMap(optional_entry_phase_out_schema())
+                    or cost_schema is not None):
+                return ()
+            return (OPTIONAL_ENTRY_PHASE_OUT_CAPABILITY, PHASE_OUT_CAPABILITY, PHASING_CAPABILITY,
+                    "target.revalidate_resolution", *direct_target_predicate_capabilities(_PHASE_OUT_CREATURE))
         if effect["schema_version"] == 3:
             owned = _any_number_phase_out_capabilities(target_schema)
         else:
@@ -160,7 +170,10 @@ def phase_out_runtime_dependencies(program):
     if subject == PHASE_OUT_TARGET_SET_SUBJECT:
         effect = program.effects[0]
         entry_targets = effect["schema_version"] == 3 and program.target_schema.get("source_exclusion") is True
-        if entry_targets:
+        if effect["schema_version"] == OPTIONAL_ENTRY_PHASE_OUT_VERSION:
+            valid = ((program.event, program.active_zone) == ("permanent.enter.self", "battlefield")
+                     and program.cost_schema is None and not program.handlers)
+        elif entry_targets:
             valid = program.event == "permanent.enter.self" and program.active_zone == "battlefield"
         else:
             valid = program.event == "resolve" and program.active_zone == "stack" and program.ability_id.startswith("spell:")

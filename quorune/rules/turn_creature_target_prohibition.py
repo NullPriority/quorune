@@ -26,6 +26,10 @@ def turn_creature_target_prohibition_node_capabilities(*, effects, target_schema
 
 
 def turn_creature_target_prohibition_program_dependencies(program):
+    from .targeted_turn_target_prohibition import targeted_turn_prohibition_program_dependencies
+
+    if targeted := targeted_turn_prohibition_program_dependencies(program):
+        return targeted
     marked = tuple(effect for effect in nested_effects((program.effects, program.handlers, program.target_schema))
                    if uses_turn_creature_target_prohibition(effect))
     if not marked and TURN_CREATURE_TARGET_PROHIBITION_CAPABILITY not in program.capability_dependencies:

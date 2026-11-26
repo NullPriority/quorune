@@ -24,6 +24,9 @@ CHOSEN_DEVOTION_MANA_VERSION = 4
 CHOSEN_DEVOTION_MANA_CAPABILITY = "mana.production.chosen_color_devotion"
 CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION = 5
 CONTROLLED_LAND_SUBTYPE_PAIR_MANA_CAPABILITY = "mana.production.controlled_land_subtype_pair"
+CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION = 6
+CONTROLLED_CREATURE_THRESHOLD_MANA_CAPABILITY = "mana.production.controlled_creature_threshold"
+_CREATURE_THRESHOLD_MANA_KIND = "controlled_creature_threshold_mana"
 _LAND_SUBTYPE_PAIR_MANA_KIND = "controlled_land_subtype_pair_mana"
 _PAIRED_LAND_SUBTYPES = frozenset({"mine", "power-plant", "tower"})
 
@@ -84,12 +87,35 @@ class ControlledLandSubtypePairManaAmount:
 
 
 @dataclass(frozen=True, slots=True)
+class ControlledCreatureThresholdManaAmount:
+    minimum_creatures: int
+
+    def __post_init__(self) -> None:
+        if type(self.minimum_creatures) is not int or not 1 <= self.minimum_creatures <= 10:
+            raise ValueError("Creature threshold mana requires a fixed positive creature threshold")
+
+    @property
+    def query(self) -> CharacteristicQuantitySpec:
+        return chosen_subtype_quantity_mana_count()
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"kind": _CREATURE_THRESHOLD_MANA_KIND, "minimum_creatures": self.minimum_creatures}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> ControlledCreatureThresholdManaAmount:
+        if (not isinstance(value, Mapping) or set(value) != {"kind", "minimum_creatures"}
+                or value["kind"] != _CREATURE_THRESHOLD_MANA_KIND):
+            raise ValueError("Creature threshold mana fields are missing or unknown")
+        return cls(value["minimum_creatures"])
+
+
+@dataclass(frozen=True, slots=True)
 class PublicQuantityManaOutput:
     selection: str
     colors: tuple[str, ...]
     amount: (
         CharacteristicQuantitySpec | ScalarEffectAmountSpec | LiveBattlefieldQuantitySpec
-        | ControlledLandSubtypePairManaAmount
+        | ControlledLandSubtypePairManaAmount | ControlledCreatureThresholdManaAmount
     )
     restriction: str | None = None
     schema_version: int = 1
@@ -98,6 +124,7 @@ class PublicQuantityManaOutput:
         if type(self.schema_version) is not int or self.schema_version not in {
             1, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION, PAID_SACRIFICE_QUANTITY_MANA_VERSION,
             CHOSEN_DEVOTION_MANA_VERSION, CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION,
+            CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION,
         }:
             raise ValueError('Unsupported public quantity mana version')
         if type(self.selection) is not str or self.selection not in {'fixed','choose_one','combination'}:
@@ -111,7 +138,7 @@ class PublicQuantityManaOutput:
             raise ValueError('Any-color selection cannot include colorless')
         if not isinstance(self.amount, (
             CharacteristicQuantitySpec, ScalarEffectAmountSpec, LiveBattlefieldQuantitySpec,
-            ControlledLandSubtypePairManaAmount,
+            ControlledLandSubtypePairManaAmount, ControlledCreatureThresholdManaAmount,
         )):
             raise ValueError("Public quantity mana requires a typed producer")
         paired_subtypes = isinstance(self.amount, ControlledLandSubtypePairManaAmount)
@@ -119,6 +146,11 @@ class PublicQuantityManaOutput:
             raise ValueError("Land subtype pair mana requires its explicit output version")
         if paired_subtypes and (self.selection != "fixed" or colors != ("C",) or self.restriction is not None):
             raise ValueError("Land subtype pair mana has exactly one unrestricted colorless output")
+        creature_threshold = isinstance(self.amount, ControlledCreatureThresholdManaAmount)
+        if creature_threshold != (self.schema_version == CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION):
+            raise ValueError("Creature threshold mana requires its explicit output version")
+        if creature_threshold and (self.selection != "fixed" or self.restriction is not None):
+            raise ValueError("Creature threshold mana has exactly one unrestricted output color")
         if (isinstance(self.amount, CharacteristicQuantitySpec)
                 and self.amount.scope is not CharacteristicQuantityScope.SOURCE_COUNTER
                 and self.schema_version != CHOSEN_DEVOTION_MANA_VERSION):
@@ -150,6 +182,8 @@ class PublicQuantityManaOutput:
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == CONTROLLED_CREATURE_THRESHOLD_MANA_VERSION:
+            return (PUBLIC_QUANTITY_MANA_CAPABILITY, CONTROLLED_CREATURE_THRESHOLD_MANA_CAPABILITY)
         if self.schema_version == CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION:
             return (PUBLIC_QUANTITY_MANA_CAPABILITY, CONTROLLED_LAND_SUBTYPE_PAIR_MANA_CAPABILITY)
         if self.schema_version == PAID_SACRIFICE_QUANTITY_MANA_VERSION:
@@ -174,6 +208,7 @@ class PublicQuantityManaOutput:
             raise ValueError('Public quantity mana colors and amount are malformed')
         raw=value['amount']
         amount=(ControlledLandSubtypePairManaAmount.from_dict(raw) if raw.get("kind") == _LAND_SUBTYPE_PAIR_MANA_KIND
+            else ControlledCreatureThresholdManaAmount.from_dict(raw) if raw.get("kind") == _CREATURE_THRESHOLD_MANA_KIND
             else ScalarEffectAmountSpec.from_dict(raw) if raw.get('kind')==SCALAR_AMOUNT_KIND
             else LiveBattlefieldQuantitySpec.from_dict(raw) if raw.get('kind')==LIVE_BATTLEFIELD_QUANTITY_KIND
             else CharacteristicQuantitySpec.from_dict(raw))

@@ -520,6 +520,10 @@ class OptionalPaymentHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..rules.whole_hand_counter_payment import marks_whole_hand_counter
+        if self.mode == "counter" and marks_whole_hand_counter(effect):
+            from .whole_hand_counter_payment import prepare_whole_hand_counter_payment
+            return prepare_whole_hand_counter_payment(effect, context)
         if self.mode == "cumulative_life":
             return self._prepare_cumulative_life(effect, context)
         if self.mode == "cumulative":
@@ -693,6 +697,10 @@ class OptionalPaymentHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        from ..rules.whole_hand_counter_payment import marks_whole_hand_counter
+        if self.mode == "counter" and marks_whole_hand_counter(effect):
+            from .whole_hand_counter_payment import complete_whole_hand_counter_payment
+            return complete_whole_hand_counter_payment(continuation, response, query)
         actor = str(effect["_choice_actor"])
         if self.mode == "echo" and effect.get("schema_version") == DISCARD_ECHO_VERSION:
             return _complete_discard_echo(continuation, response, query)
@@ -975,6 +983,10 @@ class WardPaymentChoiceHandler:
                     reason="Ward target is no longer on the stack"
                 ),
             )
+        if spec.blight_amount is not None:
+            from .blight import prepare_ward_blight
+
+            return prepare_ward_blight(effect, context, spec.blight_amount)
         if spec.sacrifice_scope is not None:
             from .ward_sacrifice import prepare_ward_sacrifice
             return prepare_ward_sacrifice(effect, context, spec.sacrifice_scope)
@@ -1112,9 +1124,15 @@ class WardPaymentChoiceHandler:
         target = str(effect.get("stack") or "")
         if query.stack_object(target) is None:
             return SemanticChoiceCompletion()
-        if spec.sacrifice_scope is not None:
-            from .ward_sacrifice import complete_ward_sacrifice
-            paid = complete_ward_sacrifice(effect, response, query, spec.sacrifice_scope, payer=actor)
+        if spec.sacrifice_scope is not None or spec.blight_amount is not None:
+            if spec.blight_amount is not None:
+                from .blight import complete_ward_blight
+
+                paid = complete_ward_blight(effect, response, query, spec.blight_amount, payer=actor)
+            else:
+                from .ward_sacrifice import complete_ward_sacrifice
+
+                paid = complete_ward_sacrifice(effect, response, query, spec.sacrifice_scope, payer=actor)
             return paid if paid.intents else self._counter_completion(
                 effect, actor=actor, source_controller=continuation.semantic_frame.controller, query=query, label=label,
             )
@@ -1212,6 +1230,12 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
     """One registered owner preserves historical v1 and versioned fixed costs."""
 
     def prepare(self,effect:Mapping[str,Any],context:SemanticChoiceContext)->SemanticChoicePreparation:
+        from ..rules.nonmana_activation_copy import marks_activation_copy_payment
+
+        if marks_activation_copy_payment(effect):
+            from .nonmana_activation_copy import prepare_nonmana_activation_copy_payment
+
+            return prepare_nonmana_activation_copy_payment(effect, context)
         from ..rules.attached_copy_payment import uses_attached_copy_payment
         if uses_attached_copy_payment(effect):
             from .attached_copy_payment import prepare_attached_copy_payment
@@ -1275,6 +1299,12 @@ class FixedEffectOptionalPaymentHandler(OptionalPaymentHandler):
         return super().prepare(effect,context)
 
     def complete(self,continuation:SemanticChoiceContinuation,response:Mapping[str,Any],query:SemanticChoiceQuery)->SemanticChoiceCompletion:
+        from ..rules.nonmana_activation_copy import marks_activation_copy_payment
+
+        if marks_activation_copy_payment(continuation.effect):
+            from .nonmana_activation_copy import complete_nonmana_activation_copy_payment
+
+            return complete_nonmana_activation_copy_payment(continuation, response, query)
         from ..rules.attached_copy_payment import uses_attached_copy_payment
         if uses_attached_copy_payment(continuation.effect):
             from .attached_copy_payment import complete_attached_copy_payment
@@ -1383,6 +1413,7 @@ PAYMENT_CHOICE_HANDLERS = (
     ),
     OptionalPaymentHandler(
         operation="counter_unless_pay",
+        private_data=("actor payable mana", "actor private whole-hand payment snapshot"),
         handler_id="choice.payment.counter-unless.v1",
         mode="counter",
         prompt="Pay the stated cost to prevent the spell from being countered.",
@@ -1391,7 +1422,8 @@ PAYMENT_CHOICE_HANDLERS = (
         test_modules=("tests.test_targeted_counter_effect_clauses", "tests.test_stack_counter_rules", "tests.test_semantic_choice_characterization"),
         continuation_fields=("player", "cost", "source", "stack", "beneficiary", "stage",
             "_choice_actor", "_requirements", "_source_ref", "_source_logical_object_id", "_stack_label",
-            "schema_version", "_countering_controller", COUNTER_DESTINATION_FIELD, COUNTER_PAYMENT_FOLLOWUP_FIELD),
+            "schema_version", "_countering_controller", COUNTER_DESTINATION_FIELD, COUNTER_PAYMENT_FOLLOWUP_FIELD,
+            "discard_whole_hand", "_whole_hand_payment_snapshot"),
     ),
     OptionalPaymentHandler(
         operation="cumulative_upkeep",

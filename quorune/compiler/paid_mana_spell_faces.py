@@ -17,10 +17,12 @@ def compile_cast_fact_spell_face(*,record,face_id,face_name,oracle_text,material
     material=' '.join(row[1] for row in material_rows)
     source_name = face_name or record.name
     from .named_cast_win_templates import named_cast_win_template
+    from .player_capped_land_reveal import player_capped_land_reveal_template
 
-    compiled = named_cast_win_template(material, source_name=source_name) or cast_main_phase_replacement_template(
+    compiled = (player_capped_land_reveal_template(material, mana_cost=record.mana_cost)
+        or named_cast_win_template(material, source_name=source_name) or cast_main_phase_replacement_template(
         material, source_name=source_name, compile_component=lambda body: effect_template(body, card_name=source_name),
-    )
+    ))
     if compiled is None:
         if not re.search(r'If at least .+? mana was spent to cast this spell,',material):return None
         compiled = effect_template(material, card_name=source_name)

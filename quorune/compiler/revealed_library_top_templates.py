@@ -59,13 +59,18 @@ def one_revealed_card_placement_template(text):
 
     matched = re.fullmatch(
         r"Reveal the top card of your library\. "
-        r"If it['’]s a (?P<kind>creature|permanent) card, (?P<optional>you may )?put it onto the battlefield\. "
-        r"Otherwise, (?P<fallback>you may put (?:it|that card) on the bottom of your library|put it into your graveyard)\.",
+        r"If it['’]s a (?P<kind>creature|permanent|land) card, (?P<optional>you may )?put it onto the battlefield\. "
+        r"Otherwise, (?P<fallback>you may put (?:it|that card) on the bottom of your library|"
+        r"put it into your graveyard|put (?:it|that card) into your hand)\.",
         " ".join(text.strip().split()), re.IGNORECASE,
     )
     if matched is None:
         return None
-    fallback = "optional_bottom" if matched["fallback"].casefold().startswith("you may") else "graveyard"
+    result = matched["fallback"].casefold()
+    if result.endswith("your hand"):
+        fallback = "hand"
+    else:
+        fallback = "optional_bottom" if result.startswith("you may") else "graveyard"
     try:
         spec = OneRevealedCardPlacement(matched["kind"].casefold(), bool(matched["optional"]), fallback)
     except ValueError:

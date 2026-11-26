@@ -620,6 +620,18 @@ def _normalized_battlefield_entry_events(occurrence, common):
     return result
 
 
+def _owned_zone_exile_event(occurrence: ZoneChangeOccurrence, *, physical: bool):
+    from .rules.event_subscriptions import OWNED_ZONE_EXILE_EVENT
+
+    if (not physical or not occurrence.card_object or occurrence.token or occurrence.destination != "exile"
+            or occurrence.origin not in {"library", "graveyard"}):
+        return ()
+    timing = "before" if occurrence.origin == "graveyard" else "after"
+    # The trigger needs only the owner. In particular, a face-down arrival
+    # must never expose the card's identity or its old library position.
+    return (NormalizedZoneTriggerEvent(OWNED_ZONE_EXILE_EVENT, timing, FrozenMap({"owner": occurrence.owner})),)
+
+
 def normalized_zone_trigger_events(
     occurrence: ZoneChangeOccurrence,
 ) -> tuple[NormalizedZoneTriggerEvent, ...]:
@@ -742,6 +754,7 @@ def normalized_zone_trigger_events(
                 name for name, count in occurrence.current_counters.items() if count > 0
             )
         result.append(NormalizedZoneTriggerEvent('card.enter_graveyard', 'after', FrozenMap(entered_graveyard)))
+    result.extend(_owned_zone_exile_event(occurrence, physical=physical))
     return _state_timed_zone_events(occurrence,result)
 
 

@@ -87,11 +87,10 @@ def _library_placement_payload_dependencies(value: Mapping[str, Any]) -> tuple[s
     """Validate the closed fixed-library placement instruction family."""
     from ..rules.one_revealed_card_placement import (
         ENTER_REVEALED_TOP_OPERATION, OneRevealedCardPlacement, PLACE_REVEALED_TOP_OPERATION,
-        REVEAL_ONE_TOP_CAPABILITIES, REVEAL_ONE_TOP_OPERATION,
+        REVEAL_ONE_TOP_OPERATION,
     )
     if value.get("op") == REVEAL_ONE_TOP_OPERATION:
-        OneRevealedCardPlacement.from_effect(value)
-        return REVEAL_ONE_TOP_CAPABILITIES
+        return OneRevealedCardPlacement.from_effect(value).capabilities
     if value.get("op") in {PLACE_REVEALED_TOP_OPERATION, ENTER_REVEALED_TOP_OPERATION}:
         raise ValueError("Top-card placement requires the committed reveal result")
     if value.get('op') == 'fixed_library_selection':
@@ -361,6 +360,10 @@ def _affected_quantity_payload_dependencies(
     if is_affected_hand_top_choice(value):
         from ..rules.affected_player_discard_capability_shapes import fixed_hand_top_apnap_payload_dependencies
         return fixed_hand_top_apnap_payload_dependencies(value)
+    if value.get("op") == "draw" and isinstance(value.get("count"), Mapping):
+        from ..rules.fractional_player_result_shapes import half_library_draw_payload_dependencies
+
+        return half_library_draw_payload_dependencies(value) or None
     if value.get("op") == "mill" and isinstance(value.get("count"), Mapping):
         from ..rules.mill_capability_shapes import half_mill_payload_dependencies, opponent_hand_mill_payload_dependencies
         return opponent_hand_mill_payload_dependencies(value) or half_mill_payload_dependencies(value) or None

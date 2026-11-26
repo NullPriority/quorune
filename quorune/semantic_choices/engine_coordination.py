@@ -82,6 +82,14 @@ class SemanticChoiceCoordinationMixin:
             "battlefield", "graveyard", "exile", "command", "stack"
         }
         choice_effect = effect or {}
+        from ..rules.owned_commander_amount import OWNED_COMMANDER_AMOUNT_FIELD
+        if OWNED_COMMANDER_AMOUNT_FIELD in choice_effect:
+            from ..commander import current_commander_objects
+            from .owned_commander_amount import materialize_owned_commander_amount_rows
+
+            return materialize_owned_commander_amount_rows(
+                current_commander_objects(self.state, actor), self._effective_card_data, actor, choice_effect,
+            )
         from .revealed_creature_statistics import revealed_creature_top_id, revealed_top_effective_data
         revealed_top_id = revealed_creature_top_id(self, actor, choice_effect)
         from ..rules.target_library_inspection import scoped_target_library_inspection_refs
@@ -176,8 +184,16 @@ class SemanticChoiceCoordinationMixin:
         return tuple(rows)
 
     def _semantic_choice_stack_rows(self,effect=None) -> tuple[ChoiceStackView, ...]:
-        from ..rules.event_spell_copy import resolve_event_spell_copy_source
+        from ..rules.event_spell_copy import capture_event_spell_copy_source, resolve_event_spell_copy_source
+        from ..rules.targeted_discard_spell_copy import RESOLVING_COPY_FIELD, is_closed_targeted_discard_copy_program
         source=resolve_event_spell_copy_source(self,effect or {})
+        if source is None and RESOLVING_COPY_FIELD in (effect or {}):
+            item = next((value for value in self.state.stack if value.ref == effect.get("stack")), None)
+            program = self.semantics.get(item.semantic_key) if item is not None else None
+            if (item is None or item.context.get("currently_resolving") is not True or program is None
+                    or not is_closed_targeted_discard_copy_program(program)):
+                raise SemanticChoiceError("The optional copy requires the current trusted resolving spell")
+            source = capture_event_spell_copy_source(self, item)
         referenced=source.item() if source is not None else None
         items=tuple(i for i in self.state.stack if referenced is None or i.ref!=referenced.ref)+((referenced,) if referenced is not None else ())
         return tuple(
@@ -396,13 +412,15 @@ class SemanticChoiceCoordinationMixin:
         if not isinstance(raw_schema, Mapping) or not target_item.targets:
             return target_schemas, validated_targets
         public_schema: Mapping[str, Any] | None = None
-        from ..target_source import TargetingSource
-        copy_source_ref=None if bound_source is not None else self._stack_source_ref(target_item)
+        from ..target_source import TARGETING_SOURCE_CONTEXT, TargetingSource
+        bound_spell = bound_source is not None and bound_source.characteristics is not None
+        copy_source_ref = (None if bound_spell else
+            target_item.context.get(TARGETING_SOURCE_CONTEXT, {}).get('object_ref') if bound_source is not None
+            else self._stack_source_ref(target_item))
         if operation == "copy_stack_item":
             acting_copy_source = (
                 TargetingSource.from_characteristics('spell', bound_source.characteristics, controller=validation_actor)
-                if bound_source is not None
-                else stack_copy_targeting_source(self, target_item, controller=validation_actor)
+                if bound_spell else stack_copy_targeting_source(self, target_item, controller=validation_actor)
             )
             public_schema = copy_target_public_schema(
                 self, validation_actor, raw_schema, target_item.modes,
@@ -654,6 +672,7 @@ class SemanticChoiceCoordinationMixin:
         from ..other_spell_history_model import is_other_spell_draw
         from ..rules.entrant_power_branch import uses_entrant_power_branch
         from ..rules.controlled_artifact_token_result import uses_controlled_artifact_token_branch
+        from ..rules.counter_recipient_control import uses_counter_recipient_control
         from ..rules.named_cast_win import uses_named_cast_win
 
         condition_facts = {}
@@ -663,7 +682,7 @@ class SemanticChoiceCoordinationMixin:
             return condition_facts
         if (is_ability_resolution_ordinal(choice_effect) or is_other_spell_draw(choice_effect)
                 or uses_entrant_power_branch(choice_effect) or uses_controlled_artifact_token_branch(choice_effect)
-                or uses_named_cast_win(choice_effect)):
+                or uses_named_cast_win(choice_effect) or uses_counter_recipient_control(choice_effect)):
             return condition_facts
         if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12,18,PAID_SACRIFICE_CONDITION_VERSION,*CAST_REPLACEMENT_VERSIONS}:
             try:

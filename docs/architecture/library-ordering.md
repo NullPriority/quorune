@@ -174,6 +174,15 @@ play uses the current turn and land quota, including ordinary entry
 replacement choices. The offer, selected card, and originating trigger
 remain bound through save and replay.
 
+## Revealed top-card placement
+
+A mandatory reveal can place the resolving controller's exact top card on the
+battlefield when it is a land. The ordinary entry and replacement owners
+handle its arrival independently of the controller's land plays. The other
+result moves the revealed card directly to hand and keeps its identity public.
+An empty library ends the instruction immediately. Save and replay preserve
+the original reveal and the exact card through any pending entry replacement.
+
 ## Public top-card statistics after Scry
 
 A fixed Scry can continue by publicly revealing the resulting current top card.
@@ -551,6 +560,20 @@ colorless requirements and restrictions on spending each mana unit still apply.
 An independently active permission to spend mana as any type maintains its own
 scope and duration.
 
+## Private controller-library top exile
+
+An untargeted resolving spell can let its controller look at the current top
+two cards of their library and exile them face down together. The batch grants
+look access only to that controller and only to the objects that actually
+reach exile. That access stays in place for the original exile incarnation.
+
+The ordinary land-play and spell-cast permission uses current battlefield
+characteristics to check whether the original controller controls a permanent
+of the required subtype. Losing the last such permanent suspends the play
+permission and regaining one restores it. Land limits, timing, and spell
+costs still apply. A spell already cast continues to resolve if the
+controller later loses that permission.
+
 ## Discover
 
 `library.discover.controller` represents a nonnegative controller Discover
@@ -600,6 +623,13 @@ rest of the selector against the existing counted search shape. Resolution
 seals the limit before it offers private choices, and resumption validates the
 selection against the same limit. A stated quality still permits the player to
 search and find nothing.
+
+A counted creature search can bind its limit to the last battlefield mana value
+of the creature sacrificed to cast the spell, plus two. Its private offer and
+resumed validation use the same bound when a replacement redirects the paid
+creature. The search shuffles once whether a card is found, then the terminal
+instruction exiles the resolving physical spell. Copies retain the paid value
+and resolve the search for their controller.
 
 ## Searches with a public query maximum
 
@@ -863,3 +893,21 @@ The resolving player may fail to find a matching artifact. They still
 shuffle after a prohibited search or an unsuccessful battlefield entry.
 The result uses the ordinary entry replacement owner. Search publication
 uses the actual destinations of the selected cards.
+
+## Reveal until the announced number of lands
+
+The cast offer limits X to the players in the game. Once announced, X stays
+with the resolving spell or copy. The existing public prefix scan collects
+that many lands or reaches the end of the library. It puts the matched lands
+onto the battlefield tapped and randomizes the other revealed cards on the
+bottom. Choosing zero leaves the library untouched.
+
+## Basic land pair with a shared subtype
+
+This counted library search permits zero, one, or two basic land cards.
+Two choices must share a land subtype. A subtype-free basic land can be
+chosen alone. The actor's private search choice describes the pair constraint,
+and the canonical result owner checks it again on the current cards.
+The two entries share one tapped movement event, followed by the printed
+shuffle. The same forced shuffle runs when the search is prohibited or finds
+no cards.

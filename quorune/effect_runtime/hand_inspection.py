@@ -191,6 +191,14 @@ def begin_stack_cost_hand_reveal(
     item.context['casting_hand_reveals']={'schema_version':1,'reveals':rows}
 
 
+def has_current_stack_reveal(item, card):
+    return any(
+        row["stack_ref"] == item.ref and row["selection"]["object_id"] == card.object_id
+        and row["selection"]["logical_object_id"] == card.logical_object_id
+        for row in _stack_cost_reveal_rows(item)
+    )
+
+
 def cleanup_stack_cost_hand_reveals(host,item):
     """End only departing spell disclosures; overlapping spells keep their reveal."""
     rows=_stack_cost_reveal_rows(item)

@@ -19,7 +19,7 @@ from ..library_search_model import (
     ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION,
     BARGAIN_SEARCH_VERSION, is_bargain_search_effect,
     EXILED_TARGET_SEARCH_VERSION,
-    FETCH_ENTRY_PLACEMENT_VERSION, QUERY_BOUND_SEARCH_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, PAID_ARTIFACT_SEARCH_VERSION,
+    FETCH_ENTRY_PLACEMENT_VERSION, QUERY_BOUND_SEARCH_VERSION, FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION, PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
     COMMITTED_ATTACKING_EXILE_SEARCH_VERSION, LINKED_ARTIFACT_SEARCH_VERSION,
     CREATURE_SUBSET_MANA_VALUE_FIELD, CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
     RECRUITING_LIBRARY_SEARCH_VERSION,
@@ -39,7 +39,12 @@ from ..rules.targeted_library_exile import (
     prepare_target_name_multizone_exile, target_name_multizone_search_view, targeted_library_departed,
     targeted_library_owner, targeted_library_search_options,
 )
+from ..rules.dragon_graveyard_search_copy import (
+    bind_dragon_graveyard_copy_search, copy_public_dragon_search_result, is_dragon_graveyard_copy_search,
+    move_dragon_graveyard_copy_search_card,
+)
 from .different_name_search import validate_search_different_names
+from ..rules.shared_land_type_search import validate_shared_land_type_search
 from .fetch_search_entry import (
     FETCH_OPERATION_ID, finish_fetch_selection, is_fetch_search_entry_resume,
     requires_private_land_entry_choice, resume_fetch_search_entry,
@@ -54,9 +59,11 @@ from .mana_value_search import (
 from ..linked_ability_exile_state import retain_linked_artifact_search_result
 from ..rules.linked_library_imprint import require_linked_artifact_library_search
 from .search_descriptor_validation import (
+    semantic_search_choice_schema,
     materialize_semantic_search_bound,
     semantic_search_actor,
     semantic_search_destination,
+    semantic_search_selector_is_restrictive,
     validate_semantic_search_descriptor,
     validate_semantic_search_response,
 )
@@ -83,7 +90,7 @@ _REPLACEMENT_BATTLEFIELD_SEARCH_VERSIONS = (
     *SIMULTANEOUS_CREATURE_SEARCH_VERSIONS,
     COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
     TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
-    PAID_ARTIFACT_SEARCH_VERSION,
+    PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
 )
 
 
@@ -616,83 +623,7 @@ class HiddenSearchOwnerMixin:
             if self._search_candidate_matches(self.state.cards[object_id], selector)
         ]
 
-    @staticmethod
-    def _search_is_restrictive(selector: Mapping[str, Any]) -> bool:
-        return any(
-            selector.get(key)
-            for key in (
-                "types",
-                "types_any",
-                "subtypes",
-                "subtypes_any",
-                "supertypes",
-                "colors",
-                "colors_any",
-                "names",
-                "mana_value",
-                "mana_value_total",
-                "predicate",
-                SEARCH_ALTERNATIVES,
-            )
-        )
-
-    def _semantic_search_choice_schema(
-        self,
-        *,
-        seat: str,
-        effect: Mapping[str, Any],
-        options: Sequence[Mapping[str, Any]],
-        minimum: int,
-        maximum: int,
-        rules_may_fail: bool,
-    ) -> dict[str, Any]:
-        combined_bound = effect.get(CREATURE_SUBSET_MANA_VALUE_FIELD)
-        entry_choice = combined_bound is None and any(
-            (
-                (record := self.card_record(
-                    next(
-                        card.object_id
-                        for card in self.state.cards.values()
-                        if card.ref == option["id"]
-                    )
-                ))
-                is not None
-                and self._land_entry_life_amount(record) > 0
-            )
-            for option in options
-        )
-        choice_schema: dict[str, Any] = {
-            "field": "search_cards",
-            "shape": "ref_array",
-            "element_type": "string",
-            "minimum": minimum,
-            "maximum": maximum,
-            "legal_refs": [option["id"] for option in options],
-            "rules_may_fail_to_find": rules_may_fail,
-            "example": {
-                "search_cards": (
-                    [options[0]["id"]]
-                    if options and maximum > 0
-                    else []
-                ),
-            },
-        }
-        if combined_bound is not None:
-            choice_schema[CREATURE_SUBSET_MANA_VALUE_FIELD] = combined_bound
-            choice_schema["label"] = f"Search cards (total mana value {combined_bound} or less)"
-        if effect.get('schema_version') == 5:
-            from ..search_allocation_model import SearchAllocationSpec
-            choice_schema.update(SearchAllocationSpec.from_effect(effect).choice_metadata())
-        if effect.get("schema_version") == RECRUITING_LIBRARY_SEARCH_VERSION:
-            choice_schema["order"] = "top_to_bottom"
-        from ..semantic_runtime.life_prohibitions import life_payment_prohibited
-
-        if (entry_choice and not is_up_to_two_forest_search(effect)
-                and (str(effect.get("destination")) == "battlefield" or effect.get('schema_version')==4)
-                and not life_payment_prohibited(self, seat)):
-            choice_schema["entry_pay_life"] = "boolean"
-            choice_schema["example"]["entry_pay_life"] = False
-        return choice_schema
+    _search_is_restrictive = staticmethod(semantic_search_selector_is_restrictive)
 
     def _begin_semantic_search(
         self,
@@ -746,6 +677,8 @@ class HiddenSearchOwnerMixin:
                     destination=destination, note=note, instruction_pointer=instruction_pointer + 1)
                 return
             effect = bind_resolving_targeted_library_search(self, item, effect, actor=seat)
+        elif is_dragon_graveyard_copy_search(effect):
+            effect = bind_dragon_graveyard_copy_search(self, item, effect, seat)
         raw_zone=effect.get('zone','library')
         zones=[raw_zone] if isinstance(raw_zone,str) else list(raw_zone)
         if 'library' in zones and library_search_constraint(self,seat).prohibited:
@@ -776,8 +709,8 @@ class HiddenSearchOwnerMixin:
             from ..rules.named_searches import named_zone_search_minimum
             minimum_choice = named_zone_search_minimum(self, seat, effect, options)
             rules_may_fail = minimum_choice == 0
-        choice_schema = self._semantic_search_choice_schema(
-            seat=seat,
+        choice_schema = semantic_search_choice_schema(
+            self, seat=seat,
             effect=effect,
             options=options,
             minimum=minimum_choice,
@@ -1048,6 +981,8 @@ class HiddenSearchOwnerMixin:
         item = context.item
         if effect.get('schema_version') in _TARGETED_EXILE_SEARCH_VERSIONS:
             return move_targeted_library_exile(self, context, values, replacement_selections)
+        if is_dragon_graveyard_copy_search(effect):
+            return move_dragon_graveyard_copy_search_card(self, context, values, replacement_selections)
         materialize_semantic_search_bound(self, item, effect, context.frame.get('instruction_pointer'), moving=True)
         reveal = bool(effect.get("reveal", False))
         selected_cards: list[CardInstance] = []
@@ -1060,6 +995,7 @@ class HiddenSearchOwnerMixin:
             )
             selected_cards.append(card)
         validate_search_different_names(self, effect, selected_cards)
+        validate_shared_land_type_search(self, effect, selected_cards)
         owner = ZoneTransitionOwner(self)
         if is_bargain_search_effect(effect):
             from .bargain_search import move_bargain_search_result
@@ -1216,6 +1152,8 @@ class HiddenSearchOwnerMixin:
             changed_objects=[card.object_id for card in moved],
             changed_players=[seat],
         )
+        if is_dragon_graveyard_copy_search(effect):
+            copy_public_dragon_search_result(self, context, moved)
         if bool(effect.get("shuffle_after", True)):
             owner = targeted_library_owner(self, seat, effect) if effect.get('schema_version') in _TARGETED_EXILE_SEARCH_VERSIONS else seat
             self.shuffle_library(owner, reason=f"{item.label} resolved")
@@ -1341,6 +1279,7 @@ class HiddenSearchOwnerMixin:
         elif (resolved_destination != "hand"
                 and not (_battlefield_search_can_resume(base_effect)
                          and resolved_destination == "battlefield")
+                and not (is_dragon_graveyard_copy_search(base_effect) and resolved_destination == "graveyard")
                 and not (base_effect.get("schema_version") in _REPLACEMENT_EXILE_SEARCH_VERSIONS and resolved_destination == "exile")):
             raise GameRuleError(
                 "Replacement-resumed semantic search changed its supported destination"
@@ -1433,7 +1372,7 @@ class HiddenSearchOwnerMixin:
                 )
         except ReplacementChoiceRequired as required:
             if (
-                _ENTRY_LIFE_CHOICE in context.response
+                (_ENTRY_LIFE_CHOICE in context.response or is_dragon_graveyard_copy_search(context.effect))
                 and required.pending.choice.chooser != context.seat
             ) or (is_up_to_two_forest_search(context.effect)
                   and not forest_entry_replacement_is_private(required, seat=context.seat, selected_refs=values)):
@@ -1498,6 +1437,9 @@ class HiddenSearchOwnerMixin:
                 position=position,
             )
         except ReplacementChoiceRequired as required:
+            dragon_search = is_dragon_graveyard_copy_search(context.effect)
+            if dragon_search and required.pending.choice.chooser != context.seat:
+                raise
             library_entry = _single_library_battlefield_entry(
                 context.effect, values, destination
             )
@@ -1506,6 +1448,7 @@ class HiddenSearchOwnerMixin:
                     raise
             elif not (
                 (context.effect.get("schema_version") in _REPLACEMENT_EXILE_SEARCH_VERSIONS and destination == "exile")
+                or (dragon_search and destination == "graveyard")
                 or (
                     (destination == "hand" or (
                         destination == "battlefield"

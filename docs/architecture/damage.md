@@ -24,6 +24,12 @@ delegates all live removal to the canonical counter owner. `damage_results.py` o
 normalized CR 120.3 result materialization, commit planning, and authoritative
 result mutation.
 
+A controlled-subtype damage trigger can read one complete final batch. It
+retains the qualifying source-recipient rows and counts distinct opposing
+players when the trigger is placed. Combat steps and separately committed
+noncombat damage produce separate occurrences. Ordinary per-recipient
+triggers continue to receive each positive damage result.
+
 `rules/damage_snapshots.py` seals public source and recipient facts before
 replacement. Closed prevention facts include creature token status, attacking
 and unblocked roles, enchantment, absence of +1/+1 counters and logical combat
@@ -417,3 +423,14 @@ artifact's point count. A departed source supplies its final public point
 count. Meeting the threshold removes only its point counters and applies loss
 to the actual damaged player. The tapped mana ability uses the same ordinary
 counter replacement owner, with no threshold check.
+
+## Source power damage to opponents
+
+One battlefield trigger can subscribe to its source attacking, blocking, or
+becoming the target of a spell. All three subscriptions identify the same
+source, and the target occurrence accepts spells and spell copies. The
+resolving ability uses its original controller's active opponents. Each
+opponent receives the source's effective power in one noncombat damage batch.
+The damage owner keeps the source power and characteristics together when
+the original permanent leaves or phases out. Nonpositive power produces no
+damage.

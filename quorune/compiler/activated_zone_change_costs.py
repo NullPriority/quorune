@@ -114,6 +114,16 @@ def fixed_activated_zone_change_cost(
             except ValueError:
                 return ability
             return candidate
+    from ..paid_activation_card_types import COST_KIND, COST_TEXT
+    from ..rules.activation.bounded_type_sacrifice import validate_paid_type_ability
+
+    if not ability.choices and ability.uncompiled_costs and ability.cost_text == COST_TEXT:
+        candidate = replace(ability, choices=(CostChoice(kind=COST_KIND, count=3),), uncompiled_costs=())
+        try:
+            validate_paid_type_ability(candidate)
+        except ValueError:
+            return ability
+        return candidate
     legacy_choice = ability.choices[0] if ability.choices else None
     if legacy_choice is not None:
         if (

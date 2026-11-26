@@ -328,11 +328,26 @@ def _validate_color_return_cost(cost) -> None:
 
 DAMAGE_QUALIFIED_SACRIFICE_VERSION = 9
 DAMAGE_QUALIFIED_SACRIFICE_CAPABILITY = "casting.additional_cost.zone_change.damage_dealt_sacrifice"
+CAST_COPY_SACRIFICE_PRICE_VERSION = 10
 
 
 def damage_qualified_sacrifice_predicate() -> ObjectQuerySpec:
     return ObjectQuerySpec(zones=("battlefield",), controller="$actor", known_to_actor=True,
                            types_all=("creature",))
+
+
+def _validate_zone_change_cardinality(cost) -> None:
+    if cost.schema_version == 3:
+        _validate_announced_zone_cost(cost)
+        return
+    if cost.schema_version == CAST_COPY_SACRIFICE_PRICE_VERSION:
+        if (cost.operation != SACRIFICE_ONE_COST or cost.count_parameter is not None
+                or type(cost.count) is not int or cost.count < 1 or cost.unblocked_attacker is not False
+                or cost.predicate != damage_qualified_sacrifice_predicate()):
+            raise AdditionalCostError("Cast-linked copy prices need a positive number of controlled creatures")
+        return
+    if cost.count_parameter is not None or type(cost.count) is not int or not 1 <= cost.count <= 99:
+        raise AdditionalCostError("Fixed zone-change additional costs require 1-99 objects")
 
 
 def _validate_damage_qualified_sacrifice(cost) -> None:
@@ -369,7 +384,8 @@ class FixedZoneChangeAdditionalCost:
         if (
             type(self.schema_version) is not int
             or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION,
-                QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}
+                QUALIFIED_RETURN_COST_VERSION, KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+                CAST_COPY_SACRIFICE_PRICE_VERSION}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -382,10 +398,7 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional-cost operation is unsupported"
             )
-        if self.schema_version == 3:
-            _validate_announced_zone_cost(self)
-        elif self.count_parameter is not None or type(self.count) is not int or not 1 <= self.count <= 99:
-            raise AdditionalCostError('Fixed zone-change additional costs require 1-99 objects')
+        _validate_zone_change_cardinality(self)
         origin, _, expected_field = FIXED_ZONE_CHANGE_COST_CONTRACTS[
             self.operation
         ]
@@ -534,7 +547,8 @@ class FixedZoneChangeAdditionalCost:
             )
         try:
             if (value["schema_version"] in {COLOR_RETURN_SCHEMA_VERSION, QUALIFIED_RETURN_COST_VERSION,
-                    KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}
+                    KEYWORD_SACRIFICE_COST_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+                    CAST_COPY_SACRIFICE_PRICE_VERSION}
                     and set(value) != _FIXED_ZONE_CHANGE_FIELDS):
                 raise ValueError("Versioned fixed zone-change cost fields are closed")
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
@@ -744,7 +758,8 @@ def fixed_zone_change_cost_candidates(
 ) -> tuple[str, ...]:
     """Return operation-owned candidates through one immutable query path."""
 
-    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION}:
+    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION, DAMAGE_QUALIFIED_SACRIFICE_VERSION,
+                               CAST_COPY_SACRIFICE_PRICE_VERSION}:
         from .casting.source_placement import prospective_sacrifice_read_host
         host = prospective_sacrifice_read_host(host, actor, exclude_object_id)
 

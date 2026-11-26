@@ -27,7 +27,8 @@ class ScalarAmountHost(Protocol):
     def _type_parts(self, text: str) -> tuple[set[str], set[str], set[str]]: ...
 
 
-def _snapshot(host, card, *, characteristics=None, include_counters=False, requested_characteristic=None):
+def _snapshot(host, card, *, characteristics=None, include_counters=False, include_mutations=False,
+              requested_characteristic=None):
     data = dict(characteristics) if characteristics is not None else host._effective_card_data(card)
     values = {'power': None, 'toughness': None}
     if requested_characteristic != 'mana_value':
@@ -37,7 +38,17 @@ def _snapshot(host, card, *, characteristics=None, include_counters=False, reque
                   for field in ("power", "toughness")}
     values["mana_value"] = data.get("mana_value", data.get("cmc"))
     return {"object_id": card.object_id, "logical_object_id": card.logical_object_id,
-            "ref": card.ref, "zone": card.zone, **values, **({"counters":dict(card.counters)} if include_counters else {})}
+            "ref": card.ref, "zone": card.zone, **values,
+            **({"counters": dict(card.counters)} if include_counters else {}),
+            **({"mutation_count": _mutation_count(card)} if include_mutations else {})}
+
+
+def _mutation_count(card):
+    composition = card.permanent_composition
+    if composition is None:
+        return 0
+    composition.validate_carrier(card)
+    return composition.topology.mutation_count
 
 
 def _current_card(host, ref):
@@ -46,10 +57,12 @@ def _current_card(host, ref):
 
 def scalar_source_context(host, source, effects, *, characteristics=None):
     """Seed source identity/LKI before activation costs or departure discovery."""
-    if not any(spec.origin is ScalarAmountOrigin.SOURCE for spec in scalar_amount_specs(effects)):
+    specs = scalar_amount_specs(effects)
+    if not any(spec.origin is ScalarAmountOrigin.SOURCE for spec in specs):
         return {}
-    counters = any(spec.reads_source_counters for spec in scalar_amount_specs(effects))
-    return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics,include_counters=counters)}}
+    return {SCALAR_REFERENCE_CONTEXT: {"source": _snapshot(host, source, characteristics=characteristics,
+        include_counters=any(spec.reads_source_counters for spec in specs),
+        include_mutations=any(spec.reads_source_mutation_count for spec in specs))}}
 
 
 def _entry_mana_value_reference(spec, item):
@@ -71,7 +84,8 @@ def _reference(host, item, spec, *, use_phased_source_lki=False):
             card = host.state.cards.get(item.source_object_id or item.card_object_id or "")
             if card is None or card.logical_object_id != item.context.get("source_logical_object_id"):
                 raise PublicQueryAmountError("Scalar source identity is unavailable")
-            initial = _snapshot(host, card, include_counters=spec.reads_source_counters)
+            initial = _snapshot(host, card, include_counters=spec.reads_source_counters,
+                                include_mutations=spec.reads_source_mutation_count)
     elif spec.origin in {
         ScalarAmountOrigin.TARGET, ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER,
     }:
@@ -104,11 +118,17 @@ def _reference(host, item, spec, *, use_phased_source_lki=False):
                 "power": context.get("power"), "toughness": context.get("toughness"),
                 "mana_value": context.get("mana_value")}
     fields={"ref", "object_id", "logical_object_id", "zone", "power", "toughness", "mana_value"}
-    if not isinstance(initial, Mapping) or set(initial) not in (fields,fields|{'counters'}):
+    if spec.reads_source_mutation_count:
+        fields.add("mutation_count")
+    if not isinstance(initial, Mapping) or set(initial) not in (fields, fields | {"counters"}):
         raise PublicQueryAmountError("Scalar characteristic snapshot is malformed")
     if spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE and (
             len(item.targets) != 1 or initial['ref'] != item.targets[0] or initial['zone'] != 'graveyard'):
         raise PublicQueryAmountError('Scalar graveyard snapshot lost its target or expected public zone')
+    if spec.reads_source_mutation_count and (initial["zone"] != "battlefield"
+            or initial["object_id"] != item.source_object_id
+            or initial["logical_object_id"] != item.context.get("source_logical_object_id")):
+        raise PublicQueryAmountError("The mutation count lost its original battlefield source identity")
     snapshots[key] = dict(initial)
     card = host.state.cards.get(initial["object_id"])
     if card is not None and card.logical_object_id == initial["logical_object_id"] and card.zone == initial["zone"]:
@@ -116,7 +136,8 @@ def _reference(host, item, spec, *, use_phased_source_lki=False):
             if (use_phased_source_lki and spec.origin is ScalarAmountOrigin.SOURCE) or _entry_mana_value_reference(spec, item):
                 return initial
             raise PublicQueryAmountError("Scalar characteristic object is phased out")
-        return _snapshot(host, card, include_counters='counters' in initial or spec.reads_source_counters,
+        return _snapshot(host, card, include_counters="counters" in initial or spec.reads_source_counters,
+            include_mutations="mutation_count" in initial or spec.reads_source_mutation_count,
             requested_characteristic=spec.characteristic if _entry_mana_value_reference(spec, item)
             or spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else None)
     return initial
@@ -179,12 +200,13 @@ def pin_scalar_characteristic_departures(host, cards: Sequence[Any], *, error_ty
             program = host.semantics.get(item.semantic_key) if item.semantic_key else None
             if program is None:
                 continue
-            phased_source_lki = (library_bottom_uses_source_power(program.effects)
+            specs = scalar_amount_specs(program.effects)
+            phased_source_lki = (any(spec.reads_source_mutation_count for spec in specs)
+                or library_bottom_uses_source_power(program.effects)
                 or any(uses_source_counter_kind_draw(effect) for effect in program.effects)
                 or any(uses_source_power_combat_counter_set(effect) or uses_opponent_source_power_payment(effect)
                        or uses_counter_scaled_annihilator(effect)
                        for effect in program.effects))
-            specs = scalar_amount_specs(program.effects)
             selected = [spec for spec in specs if spec.origin in {
                 ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
                 ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER}]
@@ -370,6 +392,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
     elif spec.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT:
         from .commander_cast_counts import controller_commander_cast_count
         amount = controller_commander_cast_count(host.state, item.controller)
+    elif spec.reads_source_mutation_count:
+        amount = _reference(host, item, spec, use_phased_source_lki=True).get("mutation_count")
+        if type(amount) is not int or amount < 0:
+            raise PublicQueryAmountError("The original source mutation count is unavailable or malformed")
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     elif spec.origin is ScalarAmountOrigin.HISTORY_COUNT:

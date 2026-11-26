@@ -7,6 +7,7 @@ from ..attack_batch_model import DIRECT_PLAYER_ATTACK_VARIANTS
 from ..dungeon_progress import DUNGEON_COMPLETION_TRIGGER_VARIANT
 from ..token_copy_recipient_model import OTHER_NONTOKEN_CREATURE_ENTRY
 from ..rules.event_subscriptions import COMBAT_PARTICIPANT_DAMAGE_VARIANT, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT
+from ..rules.source_power_opponent_damage import SOURCE_POWER_OPPONENT_DAMAGE_VARIANT
 
 """Finite public event variants admitted by the shared result composer."""
 
@@ -89,6 +90,7 @@ MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "enchanted_creature_attacks_or_blocks",
         "enchanted_creature_blocks_or_becomes_blocked",
         COMBAT_PARTICIPANT_DAMAGE_VARIANT,
+        SOURCE_POWER_OPPONENT_DAMAGE_VARIANT,
         "source_attacks_or_blocks_with_controlled_dinosaur",
     }
 )

@@ -11,6 +11,15 @@ ADVENTURE_CAPABILITY='casting.lifecycle.adventure'
 ADVENTURE_COVERAGE='intrinsic_adventure_resolution_required'
 
 
+def has_adventure_card_face(record) -> bool:
+    """Recognize a physical card's Adventure, independently of the chosen face."""
+
+    return record is not None and record.layout == "adventure" and any(
+        "adventure" in type_parts(str(face.get("type_line") or ""))[1]
+        for face in record.faces
+    )
+
+
 def _context(value):
     if (not isinstance(value,Mapping) or set(value)!={'schema_version','adventure_face','normal_face'}
             or type(value['schema_version']) is not int or value['schema_version']!=1

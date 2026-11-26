@@ -69,15 +69,18 @@ def pay_counted_zone_change_activation_cost(
 
 
 def pay_fixed_zone_change_cost(host, *, actor, cost, refs, response, reason,
-        exclude_object_id=None):
+        exclude_object_id=None, expected_count=None):
     """Revalidate and pay a typed object cost through one canonical zone batch."""
     raw = refs
+    count = cost.count if cost is not None and expected_count is None else expected_count
     if (
-        cost is None or cost.count < 1 or not isinstance(raw, (list, tuple))
-        or len(raw) != cost.count or any(type(ref) is not str for ref in raw)
+        cost is None or type(count) is not int or count < 0 or not isinstance(raw, (list, tuple))
+        or len(raw) != count or any(type(ref) is not str for ref in raw)
         or len(set(raw)) != len(raw)
     ):
         raise GameRuleError('Activation requires its complete distinct selected cost')
+    if not raw:
+        return []
     legal = fixed_zone_change_cost_candidates(host, actor=actor, cost=cost,
         exclude_object_id=exclude_object_id)
     if any(ref not in legal for ref in raw):

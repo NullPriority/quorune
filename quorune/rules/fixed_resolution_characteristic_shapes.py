@@ -328,10 +328,27 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effects
     from ..resolution_characteristic_model import (
         FIXED_SUBTYPE_BASE_CAPABILITY, TARGET_PLAYER_CREATURE_OVERWRITE_VERSION, is_fixed_subtype_base_instruction,
+        NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS,
     )
     from .resolution_characteristic_shapes import (
         is_target_creature_ability_loss, targeted_tap_then_ability_loss_capabilities,
+        is_next_turn_target_land_animation, next_turn_land_animation_activation_capabilities,
     )
+
+    if any(is_next_turn_target_land_animation(effect) for effect in nested_effects((program.effects, program.handlers))):
+        from ..semantic_runtime.activated_abilities import ActivatedAbilityCatalogHandler
+
+        owners = next_turn_land_animation_activation_capabilities(
+            effects=program.effects, target_schema=program.target_schema,
+            mechanic_ids=NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS,
+            active_zone=program.active_zone, cost_schema=program.cost_schema,
+        )
+        if not owners or program.event != "activate" or len(program.handlers) != 1 or program.event_condition is not None:
+            raise ValueError("Untap and next-turn land animation require the original +1 loyalty ability")
+        ability = ActivatedAbilityCatalogHandler().validate(program.handlers[0])
+        if ability.mana_ability or ability.builtin_semantic_key != program.key or ability.loyalty_delta != 1:
+            raise ValueError("Land animation must share its own activation catalog")
+        return owners
 
     if any(is_target_creature_ability_loss(effect) for effect in nested_effects((program.effects, program.handlers))):
         owners = targeted_tap_then_ability_loss_capabilities(

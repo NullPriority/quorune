@@ -1,10 +1,18 @@
-"""Closed event-bound countering and player game-loss instructions."""
+"""Closed event-bound countering, damage and player outcomes."""
 from . import regex_working_set as re
 from .event_player_results import _event_player
 
 
 def fixed_event_outcome_template(binding, body, *, card_name, effect_template):
     del card_name, effect_template
+    from ..rules.source_power_opponent_damage import (
+        SOURCE_POWER_OPPONENT_DAMAGE_BODY, SOURCE_POWER_OPPONENT_DAMAGE_MECHANIC,
+        SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, SOURCE_POWER_OPPONENT_DAMAGE_VARIANT, source_power_opponent_damage_effect,
+    )
+    if (binding.variant == SOURCE_POWER_OPPONENT_DAMAGE_VARIANT and body == binding.body
+            and body.casefold() == SOURCE_POWER_OPPONENT_DAMAGE_BODY):
+        return (SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, (source_power_opponent_damage_effect(),), None,
+                (SOURCE_POWER_OPPONENT_DAMAGE_MECHANIC, "cr-120-damage")), True
     if (binding.event.value == "step.begin" and binding.active_zone == "battlefield"
             and re.fullmatch(r"all lands you control phase out\.?", body.strip(), re.I)):
         from ..phasing_model import (

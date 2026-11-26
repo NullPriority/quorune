@@ -4,6 +4,76 @@
   "source": "Pinned combined keyword-then-stat public set effects; source leads are not accepted gains.",
   "cards": [
     {
+      "oracle_id": "66b46257-b64c-4672-bf47-12bf0bcd6f8f",
+      "name": "Sylvan Awakening",
+      "mana_cost": "{2}{G}",
+      "type_line": "Sorcery",
+      "oracle_text": "Until your next turn, all lands you control become 2/2 Elemental creatures with reach, indestructible, and haste. They're still lands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Indestructible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-04-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "card_faces": [],
+      "rulings": [
+        {
+          "oracle_id": "66b46257-b64c-4672-bf47-12bf0bcd6f8f",
+          "published_at": "2018-04-27",
+          "source": "wotc",
+          "comment": "Sylvan Awakening affects only lands you control at the time it resolves. Lands you begin to control before your next turn won’t become creatures."
+        },
+        {
+          "oracle_id": "66b46257-b64c-4672-bf47-12bf0bcd6f8f",
+          "published_at": "2018-04-27",
+          "source": "wotc",
+          "comment": "Sylvan Awakening doesn’t untap any of the lands that become creatures."
+        },
+        {
+          "oracle_id": "66b46257-b64c-4672-bf47-12bf0bcd6f8f",
+          "published_at": "2018-04-27",
+          "source": "wotc",
+          "comment": "The lands affected by Sylvan Awakening stop being creatures as your next untap step begins, before you untap your permanents. If this causes any state-based actions to become applicable, or if any abilities trigger, those are handled during your upkeep."
+        }
+      ]
+    },
+    {
       "oracle_id": "8c52bd39-0586-48ca-b263-17210cf9feb6",
       "name": "Craterhoof Behemoth",
       "mana_cost": "{5}{G}{G}{G}",

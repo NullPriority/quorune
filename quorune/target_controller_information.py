@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from .counter_placement_event_model import COUNTER_PLACEMENT_EVENT, CounterPlacementOccurrence
 from .received_damage_model import RECEIVED_DAMAGE_EVENTS
 from .token_copy_recipient_model import has_occurrence_copy_recipient
 from .rules.token_copy_recipients import represents_occurrence_controller_copy
@@ -253,7 +254,7 @@ def occurrence_controller_context(host, program, event, context):
         if _uses_damage_dealer_controller(program.effects):
             return _damage_dealer_controller_context(host, context)
     combat_events = {'creature.attacks', 'creature.blocks'}
-    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | combat_events
+    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | combat_events | {COUNTER_PLACEMENT_EVENT}
             or not _uses_occurrence_controller(program.effects)):
         return {}
     if event == 'creature.attacks':
@@ -266,6 +267,12 @@ def occurrence_controller_context(host, program, event, context):
             raise ValueError('Damage controller information requires a committed creature receipt')
         identity = context.get('target_logical_object_id')
         object_id = context.get('target_object_id')
+    elif event == COUNTER_PLACEMENT_EVENT:
+        occurrence = CounterPlacementOccurrence(context).context
+        if occurrence["counter"] != "-1/-1" or "creature" not in occurrence.get("types", ()):
+            raise ValueError("Counter controller information requires an actual creature -1/-1 counter placement")
+        identity = occurrence["card_object_identity"]
+        object_id = identity.rpartition("@")[0]
     else:
         identity = context.get('card_object_identity')
         object_id = identity.rpartition('@')[0] if type(identity) is str else ''
@@ -286,7 +293,8 @@ def _occurrence_identity(item):
 def resolve_occurrence_controller_information(host, value, item, *, use_phased_lki=False):
     _occurrence_reference(value);object_id,identity=_occurrence_identity(item)
     use_phased_lki = (use_phased_lki or is_damage_dealer_controller_reference(value)
-                      or is_damage_dealer_controller_reference(value, version=2))
+                      or is_damage_dealer_controller_reference(value, version=2)
+                      or item.context.get("event") == COUNTER_PLACEMENT_EVENT)
     card=host.state.cards.get(object_id)
     if (card is not None and card.zone=='battlefield' and card.logical_object_id==identity
             and not (use_phased_lki and card.phased_out)):
@@ -307,7 +315,8 @@ def pin_occurrence_controller_departures(host, cards, *, phase_out=False):
         if phase_out:
             return (represents_occurrence_controller_copy(program.effects)
                     or _uses_damage_dealer_controller(program.effects)
-                    or _uses_damage_dealer_controller(program.effects, version=2))
+                    or _uses_damage_dealer_controller(program.effects, version=2)
+                    or program.event == COUNTER_PLACEMENT_EVENT and _uses_occurrence_controller(program.effects))
         return _uses_occurrence_controller(program.effects)
 
     departing={c.object_id:c for c in cards};updates=[]

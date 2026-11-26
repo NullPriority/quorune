@@ -3997,7 +3997,7 @@ class EnchantedCopyReferenceTests(unittest.TestCase):
             with patch("quorune.token_copy_references._snapshot",side_effect=self.snapshot):
                 self.assertEqual(second.logical_object_id,copy_reference_snapshot(host,item,recipe)["logical_object_id"])
         witness()
-        with patch("quorune.token_copy_references._attachment_identity",
+        with patch("quorune.token_copy_references.source_attachment_copy_identity",
                 return_value=(first.object_id,first.logical_object_id,"battlefield")):
             with self.assertRaises(AssertionError):witness()
 

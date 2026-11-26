@@ -52,3 +52,14 @@ def fixed_resolution_mana_effect_template(text: str):
         for color in 'WUBRGC' if counts[color]
     )
     return 'fixed-resolution-mana-bundle-v1', effects, None, (FIXED_RESOLUTION_MANA_MECHANIC,)
+
+
+def source_attack_turn_retained_mana_result(binding, body):
+    from ..replacement.immutable import thaw_value
+    from ..rules.turn_retained_resolution_mana import ATTACK_EVENT_CONDITION, ATTACK_PRINTED_EFFECT, attack_effects
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("creature.attacks", "source_attacks", "battlefield")
+            or thaw_value(binding.event_condition) != ATTACK_EVENT_CONDITION or body != binding.body
+            or " ".join(body.replace("’", "'").split()).casefold() != ATTACK_PRINTED_EFFECT):
+        return None
+    return ("fixed-source-attack-turn-retained-mana-v1", attack_effects(), None, (FIXED_RESOLUTION_MANA_MECHANIC,))

@@ -301,8 +301,30 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
 
 
+def _nontoken_creature_entry_food_template(text, binding, compile_fixed):
+    from ..controller_creature_keyword_absence import is_controller_end_step_schedule
+    from ..public_history_query_model import current_nontoken_creature_entry_query
+
+    if (binding.event.value != "step.begin" or binding.active_zone != "battlefield"
+            or not is_controller_end_step_schedule(binding.event_condition)
+            or re.fullmatch(
+                r"Create a number of Food tokens equal to the number of nontoken creatures "
+                r"you had enter the battlefield under your control this turn\.",
+                " ".join(text.split()), re.I) is None):
+        return None
+    base, effects, targets, mechanics = compile_fixed("Create a Food token.")
+    if base is None or targets is not None or len(effects) != 1 or effects[0].get("op") != "create_token":
+        return None
+    amount = ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY_COUNT, schema_version=10,
+                                    history_count=current_nontoken_creature_entry_query())
+    return ("fixed-food-from-nontoken-creature-entry-history-v1", ({**effects[0], "quantity": amount.to_dict()},),
+            None, (*mechanics, SCALAR_AMOUNT_MECHANIC))
+
+
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
+    if food := _nontoken_creature_entry_food_template(text, binding, compile_fixed):
+        return food
     from ..counter_placement_sets import (
         SOURCE_POWER_COMBAT_COUNTER_CONDITION, SOURCE_POWER_COMBAT_TARGET_COUNTER_MECHANIC,
         source_power_combat_counter_effect, source_power_combat_counter_target_schema,

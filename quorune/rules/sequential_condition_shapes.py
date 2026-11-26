@@ -24,6 +24,10 @@ def sequential_condition_node_capabilities(*,effects,target_schema,mechanic_ids)
 
 
 def sequential_condition_runtime_dependencies(program):
+    from .counter_recipient_control import counter_recipient_control_program_dependencies
+
+    if counter_controller := counter_recipient_control_program_dependencies(program):
+        return counter_controller
     effects=program.effects
     marked=getattr(program,'provenance',{}).get('template_id')==SEQUENTIAL_CONDITION_TEMPLATE
     if not marked and not (len(effects)>1 and all(e.get('op')==RESOLUTION_CONDITION_OPERATION for e in effects)):return ()

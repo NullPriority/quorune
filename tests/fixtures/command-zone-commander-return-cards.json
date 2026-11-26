@@ -133,6 +133,93 @@
       "released_at": "2026-01-01",
       "toughness": "2",
       "type_line": "Legendary Creature — Human"
+    },
+    {
+      "cmc": 5,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}",
+      "name": "Stinging Study",
+      "oracle_id": "115bc79e-a109-42d7-ac58-2ee8dc0a959f",
+      "oracle_text": "You draw X cards and you lose X life, where X is the mana value of a commander you own on the battlefield or in the command zone.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{3}",
+      "name": "Study Partner One",
+      "oracle_id": "fixture:study-partner-one",
+      "oracle_text": "Partner",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{5}",
+      "name": "Study Partner Two",
+      "oracle_id": "fixture:study-partner-two",
+      "oracle_text": "Partner",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human"
     }
   ],
   "rulings": [
@@ -170,6 +257,18 @@
       "comment": "If you cast a commander from your hand, the commander tax doesn't apply. Additionally, that casting won't add to commander tax if you later cast the commander from the command zone.",
       "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
       "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you own multiple commanders on the battlefield and/or in the command zone, you choose one of them as Stinging Study resolves to determine the value of X.",
+      "oracle_id": "115bc79e-a109-42d7-ac58-2ee8dc0a959f",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander is under the control of another player as Stinging Study resolves, it is still on the battlefield and will still be used to determine the value of X.",
+      "oracle_id": "115bc79e-a109-42d7-ac58-2ee8dc0a959f",
+      "published_at": "2021-04-16",
       "source": "wotc"
     }
   ],

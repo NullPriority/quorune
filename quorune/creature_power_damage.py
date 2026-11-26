@@ -388,6 +388,27 @@ def _damage_for_creature_set(host, creatures, *, actor, reason, to_controller=Fa
     return proposals
 
 
+def _source_power_opponent_proposals(host, effect, *, actor, reason):
+    from .creature_power_damage_model import validate_source_power_opponent_damage
+
+    try:
+        validate_source_power_opponent_damage(effect, resolved=True)
+    except (TypeError, ValueError) as exc:
+        raise CreaturePowerDamageError(str(exc)) from exc
+    source = _source_value(host, ref=effect["source"], lki=effect["source_lki"], public_only=True)
+    if source is None or source[0] <= 0:
+        return ()
+    amount, damage_source = source
+    proposal_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:opponent"
+    return tuple(
+        damage_proposal(
+            host, proposal_id=f"{proposal_id}:{seat}", actor=actor, source_ref=damage_source.ref,
+            target=seat, amount=amount, combat=False, reason=reason, source_override=damage_source,
+        )
+        for seat in host.active_seats if seat != actor
+    )
+
+
 def resolve_creature_power_damage(
     host: Any,
     effect: Mapping[str, Any],
@@ -396,7 +417,11 @@ def resolve_creature_power_damage(
     reason: str,
 ) -> tuple[int, ...]:
     """Resolve one creature-power instruction through the canonical damage batch."""
+    from .creature_power_damage_model import uses_source_power_opponent_damage
 
+    if uses_source_power_opponent_damage(effect):
+        proposals = _source_power_opponent_proposals(host, effect, actor=actor, reason=reason)
+        return _resolve_power_damage_batch(host, effect, proposals)
     if is_creature_self_damage_set(effect) or is_creature_controller_damage_set(effect):
         proposals = _creature_set_damage_proposals(host, effect, actor=actor, reason=reason)
         return _resolve_power_damage_batch(host, effect, proposals)

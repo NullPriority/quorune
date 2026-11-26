@@ -662,7 +662,7 @@
       "source": "tests/test_activation_paid_legendary_amass.py",
       "symbol": "ActivationPaidLegendaryAmassTests.program",
       "card_names": [
-        "Gr\u00edma Wormtongue"
+        "Gríma Wormtongue"
       ],
       "oracle_ids": [],
       "deck_files": [],
@@ -675,7 +675,7 @@
       "card_names": [
         "Falkenrath Aristocrat",
         "Falkenrath Torturer",
-        "Gr\u00edma Wormtongue"
+        "Gríma Wormtongue"
       ],
       "oracle_ids": [],
       "deck_files": [],
@@ -699,7 +699,7 @@
       "card_names": [
         "Agency Coroner",
         "Falkenrath Torturer",
-        "Gr\u00edma Wormtongue",
+        "Gríma Wormtongue",
         "Person of Interest"
       ],
       "oracle_ids": [],
@@ -724,7 +724,7 @@
       "card_names": [
         "Ebon Praetor",
         "Falkenrath Torturer",
-        "Gr\u00edma Wormtongue"
+        "Gríma Wormtongue"
       ],
       "oracle_ids": [],
       "deck_files": [],
@@ -1330,7 +1330,7 @@
       "deck_files": [],
       "fixture_files": [],
       "oracle_ids": [],
-      "rationale": "Recover each actual spell\u2019s missing result after taking out the exact recognizer.",
+      "rationale": "Recover each actual spell’s missing result after taking out the exact recognizer.",
       "source": "tests/test_chosen_creature_type_results.py",
       "symbol": "ChosenCreatureTypeResultTests.test_omitting_the_typed_result_recognizer_restores_each_whole_spell_residual"
     },
@@ -1530,7 +1530,7 @@
       "deck_files": [],
       "fixture_files": [],
       "oracle_ids": [],
-      "rationale": "Restore the actual original\u2019s sole activation residual without losing the prior components.",
+      "rationale": "Restore the actual original’s sole activation residual without losing the prior components.",
       "source": "tests/test_chosen_type_library_selection.py",
       "symbol": "ChosenTypeLibrarySelectionTests.test_omitting_the_exact_library_result_restores_only_the_material_activation"
     },
@@ -3351,7 +3351,7 @@
         "High Score",
         "Might Makes Right",
         "Primal Empathy",
-        "\u00c9omer of the Riddermark"
+        "Éomer of the Riddermark"
       ],
       "deck_files": [],
       "fixture_files": [],
@@ -3365,7 +3365,7 @@
         "High Score",
         "Might Makes Right",
         "Primal Empathy",
-        "\u00c9omer of the Riddermark"
+        "Éomer of the Riddermark"
       ],
       "deck_files": [],
       "fixture_files": [],
@@ -3379,7 +3379,7 @@
         "High Score",
         "Might Makes Right",
         "Primal Empathy",
-        "\u00c9omer of the Riddermark"
+        "Éomer of the Riddermark"
       ],
       "deck_files": [],
       "fixture_files": [],
@@ -7984,6 +7984,7 @@
     "tests/fixtures/attached-temporary-control-trigger-pair-cards.json",
     "tests/fixtures/attached-untap-restraint-cards.json",
     "tests/fixtures/attachment-damage-cards.json",
+    "tests/fixtures/attachment-death-transform-cards.json",
     "tests/fixtures/attachment-followup-cards.json",
     "tests/fixtures/attachment-source-return-cards.json",
     "tests/fixtures/attack-counter-unblockable-cards.json",
@@ -8031,6 +8032,7 @@
     "tests/fixtures/bounded-block-as-though-cards.json",
     "tests/fixtures/bounded-hand-cast-cards.json",
     "tests/fixtures/bounded-return-cards.json",
+    "tests/fixtures/bounded-sacrifice-card-types-cards.json",
     "tests/fixtures/bounty-board-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
@@ -8050,6 +8052,7 @@
     "tests/fixtures/cast-participant-optional-opponent-draw-cards.json",
     "tests/fixtures/cast-source-power-cards.json",
     "tests/fixtures/cast-spell-mana-value-cards.json",
+    "tests/fixtures/cast-spell-suspend-cards.json",
     "tests/fixtures/cast-target-copy-cards.json",
     "tests/fixtures/cast-trigger-life-payment-cards.json",
     "tests/fixtures/cast-trigger-source-sacrifice-and-counter-cards.json",
@@ -8091,6 +8094,7 @@
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/cloak-library-entry-cards.json",
     "tests/fixtures/closed-effect-program-cards.json",
+    "tests/fixtures/coiling-oracle-placement-cards.json",
     "tests/fixtures/collective-decline-destruction-cards.json",
     "tests/fixtures/collective-optional-source-damage-cards.json",
     "tests/fixtures/color-cast-land-entry-cards.json",
@@ -8112,6 +8116,7 @@
     "tests/fixtures/combat-prevention-source-scopes-cards.json",
     "tests/fixtures/combat-recipient-land-tap-untap-cards.json",
     "tests/fixtures/combat-removal-cards.json",
+    "tests/fixtures/combat-surveil-land-return-cards.json",
     "tests/fixtures/combat-untap-prevention-cards.json",
     "tests/fixtures/combined-tap-activation-costs.json",
     "tests/fixtures/command-graveyard-cast-grant-cards.json",
@@ -8184,6 +8189,7 @@
     "tests/fixtures/controlled-small-creature-delayed-return-cards.json",
     "tests/fixtures/controlled-source-untap-restraint-cards.json",
     "tests/fixtures/controlled-spell-counter-cards.json",
+    "tests/fixtures/controlled-subtype-damage-batch-cards.json",
     "tests/fixtures/controlled-token-arrival-cards.json",
     "tests/fixtures/controlled-transformed-permanent-static-count-cards.json",
     "tests/fixtures/controller-creature-color-keyword-grants-cards.json",
@@ -8320,7 +8326,9 @@
     "tests/fixtures/domain-after-land-search-cards.json",
     "tests/fixtures/domain-private-top-selection-cards.json",
     "tests/fixtures/double-faced-spell-copy-cards.json",
+    "tests/fixtures/dragon-graveyard-search-self-copy-cards.json",
     "tests/fixtures/draw-discard-replacement-cards.json",
+    "tests/fixtures/draw-exile-play-cards.json",
     "tests/fixtures/draw-player-source-damage-cards.json",
     "tests/fixtures/draw-rules-cards.json",
     "tests/fixtures/draw-step-exempt-multiplier-cards.json",
@@ -8640,6 +8648,7 @@
     "tests/fixtures/kicked-target-group-cards.json",
     "tests/fixtures/kicked-target-replacement-cards.json",
     "tests/fixtures/kindred-subtype-quantities.json",
+    "tests/fixtures/laelia-own-exile-occurrence-cards.json",
     "tests/fixtures/land-condition-quantity-cards.json",
     "tests/fixtures/land-entry-library-exile-cards.json",
     "tests/fixtures/land-entry-putting-player-cards.json",
@@ -8717,6 +8726,7 @@
     "tests/fixtures/material-sibling-admission-cards.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/mikaeus-unhallowed-cards.json",
+    "tests/fixtures/mill-committed-adventure-cards.json",
     "tests/fixtures/mill-library-activation-cost-cards.json",
     "tests/fixtures/miracle-cards.json",
     "tests/fixtures/mixed-counter-recipient-replacement-cards.json",
@@ -8738,6 +8748,7 @@
     "tests/fixtures/multikicker-result-cards.json",
     "tests/fixtures/multisentence-effect-cards.json",
     "tests/fixtures/mutate-casting-cards.json",
+    "tests/fixtures/mv-trigger-mana-transform-cards.json",
     "tests/fixtures/myrel-composition-cards.json",
     "tests/fixtures/myriad-composition-cards.json",
     "tests/fixtures/mystic-forge-compact-card.json",
@@ -8845,6 +8856,7 @@
     "tests/fixtures/own-graveyard-mana-value-target-cards.json",
     "tests/fixtures/own-graveyard-power-return-cards.json",
     "tests/fixtures/own-graveyard-type-return-cards.json",
+    "tests/fixtures/own-historic-graveyard-return-cards.json",
     "tests/fixtures/own-turn-opponent-color-extra-turn-cards.json",
     "tests/fixtures/owned-commander-setting-cards.json",
     "tests/fixtures/owned-graveyard-reanimation-life-cards.json",
@@ -8854,12 +8866,14 @@
     "tests/fixtures/paid-color-pair-entry-cards.json",
     "tests/fixtures/paid-commander-lifelink-cards.json",
     "tests/fixtures/paid-controller-subtype-set-cards.json",
+    "tests/fixtures/paid-creature-search-cards.json",
     "tests/fixtures/paid-entry-copy-cards.json",
     "tests/fixtures/paid-event-copy-cards.json",
     "tests/fixtures/paid-graveyard-cast-cards.json",
     "tests/fixtures/paid-mana-haste-cards.json",
     "tests/fixtures/paid-mana-resolution-cards.json",
     "tests/fixtures/paid-revealed-creature-cards.json",
+    "tests/fixtures/paid-sacrifice-copy-cards.json",
     "tests/fixtures/paid-sacrifice-creature-stat-cards.json",
     "tests/fixtures/paired-opponent-draw-cards.json",
     "tests/fixtures/paired-public-graveyard-return-cards.json",
@@ -9040,6 +9054,7 @@
     "tests/fixtures/same-name-recipient-anthem-cards.json",
     "tests/fixtures/same-name-zone-move-cards.json",
     "tests/fixtures/same-turn-graveyard-return-sets-cards.json",
+    "tests/fixtures/savage-ventmaw-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scalar-history-quantity-cards.json",
     "tests/fixtures/scalar-mill-wording-cards.json",
@@ -9081,6 +9096,7 @@
     "tests/fixtures/shared-attacker-type-quantity-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
     "tests/fixtures/shared-creature-type-cards.json",
+    "tests/fixtures/shared-land-type-search-cards.json",
     "tests/fixtures/shared-permanent-type-target-cards.json",
     "tests/fixtures/shared-type-library-cards.json",
     "tests/fixtures/simultaneous-creature-self-damage-cards.json",
@@ -9088,6 +9104,7 @@
     "tests/fixtures/singular-characteristic-set-cards.json",
     "tests/fixtures/singular-public-permanent-set-cards.json",
     "tests/fixtures/singular-token-entry-cards.json",
+    "tests/fixtures/siren-current-stack-target-cards.json",
     "tests/fixtures/slicer-hired-muscle-cards.json",
     "tests/fixtures/sliver-damage-results-cards.json",
     "tests/fixtures/soulbond-cards.json",
@@ -9203,6 +9220,7 @@
     "tests/fixtures/target-announcement-counter-payment-cards.json",
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-artifact-destruction-treasure-cards.json",
+    "tests/fixtures/target-blocker-power-protection-cards.json",
     "tests/fixtures/target-characteristic-sets.json",
     "tests/fixtures/target-combat-prevention-and-controller-untaps-cards.json",
     "tests/fixtures/target-combat-prevention-and-mana-value-toughness-cards.json",
@@ -9331,6 +9349,7 @@
     "tests/fixtures/unlocked-room-count-cards.json",
     "tests/fixtures/unpaid-creature-entry-group-cards.json",
     "tests/fixtures/unpreventable-damage-cards.json",
+    "tests/fixtures/untap-land-animation-next-turn-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
     "tests/fixtures/untapped-source-fixed-combat-prevention-cards.json",
     "tests/fixtures/untapped-target-tap-and-controller-power-damage-cards.json",

@@ -7,6 +7,8 @@ from ..counter_placement import CounterPlacementError, place_counters_on_refs
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
 from ..model import GoadDesignation
+from ..rules.controller_private_top_exile_model import CONTROLLER_PRIVATE_TOP_EXILE_OPERATION
+from ..rules.private_opponent_top_exile import apply_controller_private_top_exile
 from ..opponent_library_exile import apply_each_opponent_top_exile, apply_opponent_library_exile_play
 from ..rules.target_graveyard_escape import apply_target_graveyard_escape
 from ..opponent_library_exile_model import EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION
@@ -591,6 +593,7 @@ def _apply_set_day_night(host, effect, *, actor, operation, reason):
 
 
 HANDLERS = {
+    CONTROLLER_PRIVATE_TOP_EXILE_OPERATION: apply_controller_private_top_exile,
     EACH_OPPONENT_TOP_EXILE_OPERATION: apply_each_opponent_top_exile,
     OPPONENT_LIBRARY_EXILE_PLAY_OPERATION: apply_opponent_library_exile_play,
     'grant_next_spell_cost_reduction': apply_next_spell_cost_reduction,

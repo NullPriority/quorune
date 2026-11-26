@@ -1145,7 +1145,11 @@ def _prepare_available_optional_effect(host, item, raw_effect, effect):
         raise SemanticNodeError(str(exc)) from exc
 
 
-def _is_zero_counter_placement(effect, raw_effect, item):
+def _is_zero_declared_result(effect, raw_effect, item):
+    from ..entry_x_amount_model import is_zero_entry_x_token_batch
+
+    if is_zero_announced_x_player_round(raw_effect, effect) or is_zero_entry_x_token_batch(raw_effect, effect):
+        return True
     if type(effect.get("amount")) is not int or effect["amount"] != 0:
         return False
     if effect.get("op") in {"place_counters", "place_counters_on_set"}:
@@ -1170,6 +1174,7 @@ def _is_zero_counter_placement(effect, raw_effect, item):
 def _bind_event_resolution_results(host, item, raw_effect):
     from ..rules.casting.spell_text import scoped_cast_text_instruction
     from ..rules.event_player_result_shapes import bind_event_player_count_effect
+    from ..rules.fractional_player_result_shapes import bind_half_library_draw
     from ..rules.other_spell_history_shapes import bind_other_spell_draw
     from ..rules.scheduled_player_shapes import bind_upkeep_source_counter_draw
     from ..rules.owner_library_position_shapes import bind_draw_source_owner_top_move
@@ -1178,6 +1183,7 @@ def _bind_event_resolution_results(host, item, raw_effect):
     try:
         scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
         raw_effect = bind_draw_source_owner_top_move(scoped_item, raw_effect)
+        raw_effect = bind_half_library_draw(host.state, scoped_item, raw_effect)
         raw_effect = bind_event_player_count_effect(host.state, scoped_item, raw_effect)
         raw_effect = bind_upkeep_source_counter_draw(host, scoped_item, raw_effect)
         raw_effect = bind_upkeep_source_counter_sacrifice(host, scoped_item, raw_effect)
@@ -1368,7 +1374,7 @@ def prepare_stack_resolution_effect(
             from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
             if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
                 return None
-    if is_zero_announced_x_player_round(raw_effect, effect) or _is_zero_counter_placement(effect, raw_effect, scoped_item):
+    if _is_zero_declared_result(effect, raw_effect, scoped_item):
         return None
     if effect.get("op") == "place_player_counters":
         from ..rules.unblocked_attackers import unblocked_poison_recipient_has_left

@@ -270,7 +270,7 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
             "You may return target card from your graveyard to your hand.",
             "Return target card from a graveyard to its owner's hand.",
             "Return target card from an opponent's graveyard to your hand.",
-            "Return target historic card from your graveyard to your hand.",
+            "Return target historic or legendary card from your graveyard to your hand.",
             "Return target colorless creature card from your graveyard to your hand.",
             "Return target creature card with flying from your graveyard to your hand.",
             "Return target creature card with mana value 2 from your graveyard to your hand.",
@@ -466,7 +466,7 @@ class TargetedOwnGraveyardReturnCompilerTests(unittest.TestCase):
         for text in (
             "Return target artifact or creature card from a graveyard to its owner's hand.",
             "Return target card from an opponent's graveyard to your hand.",
-            "Return target historic card from your graveyard to your hand.",
+            "Return target historic or legendary card from your graveyard to your hand.",
             "Return target colorless creature card from your graveyard to your hand.",
             "Return target creature card with flying from your graveyard to your hand.",
             "Return target creature card with mana value 2 from your graveyard to your hand.",

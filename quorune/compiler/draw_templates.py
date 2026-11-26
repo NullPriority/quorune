@@ -360,6 +360,20 @@ def static_draw_result_handler(
 ) -> tuple[str, Mapping[str, Any], str | tuple[str, ...]] | None:
     """Recognize the represented individual draw-result replacements."""
 
+    if " ".join(text.casefold().split()) == (
+        "if you would draw a card, you may instead choose land or nonland and reveal cards "
+        "from the top of your library until you reveal a card of the chosen kind. "
+        "put that card into your hand and put all other cards revealed this way on the bottom "
+        "of your library in any order."
+    ):
+        from ..semantic_runtime.draw_replacements import LibraryChoiceDrawReplacementHandler, library_choice_draw_descriptor
+
+        return (
+            "draw-result-controller-library-choice-v1",
+            library_choice_draw_descriptor(),
+            LibraryChoiceDrawReplacementHandler().capability_dependencies,
+        )
+
     if re.fullmatch(
         r"If a player would draw a card except the first one they draw in each of their draw steps, "
         r"that player discards a card instead\. If the player discards a card this way, they draw a card\. "

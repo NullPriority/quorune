@@ -182,7 +182,7 @@ class ControlledChosenSubtypeAdditionTests(InheritedNativeFixture, unittest.Test
         self.replay(game, load=True)
 
     def test_actual_prospective_omission_loses_the_counter_and_retains_the_live_subtype(self):
-        with patch("quorune.rules.cross_zone_characteristics.controlled_chosen_subtype_entry_effects", return_value=()):
+        with patch("quorune.rules.cross_zone_characteristics.battlefield_entry_type_addition_effects", return_value=()):
             game, _xeno, _own, _foreign, entrant, _gift = self._paid_entry(61412072)
         self.assertNotIn("+1/+1", game.state.cards[entrant.object_id].counters)
         self.assertEqual({"bear", "warrior"}, self._types(game, entrant))

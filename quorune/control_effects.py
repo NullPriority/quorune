@@ -103,6 +103,9 @@ def _apply_stack_control_history(host, spell, history):
         raise ControlEffectError("The selected spell's physical card is unavailable")
     spell.context[STACK_SPELL_CONTROL_CONTEXT] = history.to_dict()
     if spell.controller != history.controller:
+        from .cast_lifecycles import expire_granted_suspend_haste
+
+        expire_granted_suspend_haste(spell)
         spell.controller = history.controller
         spell.context["targets_revalidated"] = False
         if card is not None:

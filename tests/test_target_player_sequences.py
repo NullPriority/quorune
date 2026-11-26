@@ -6,6 +6,10 @@ from quorune.rules.capabilities import load_default_capability_registry
 from test_qualified_zone_event_queries import query_record
 
 CAPABILITY='resolution.effect.fixed_target_player_sequence'
+HALF_LIBRARY_DRAW = (
+    "Target player draws cards equal to half the number of cards in their library "
+    "and loses half their life. Round up each time."
+)
 
 
 class TargetPlayerSequenceCompilerTests(unittest.TestCase):
@@ -114,6 +118,57 @@ class TargetPlayerSequenceCompilerTests(unittest.TestCase):
 
 
 class TargetPlayerSequenceModelTests(unittest.TestCase):
+    def test_half_library_draw_rejects_changed_scope_and_missing_authority(self):
+        from unittest.mock import patch
+
+        from quorune.card_programs import compile_card_program
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.compiler import target_player_sequences as compiler
+        from quorune.fractional_quantity_model import HALF_LIBRARY_DRAW_CAPABILITY
+        from test_public_query_effect_amounts import _NoRulingsDatabase, query_amount_record
+
+        card = query_amount_record(HALF_LIBRARY_DRAW, suffix=365211718, type_line="Sorcery")
+        registry = load_default_capability_registry()
+        profile = "commander_review"
+        ir = compile_oracle_card(card, capability_registry=registry, capability_profile=profile)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(("draw", "lose_life"), tuple(effect["op"] for effect in node.effects))
+        self.assertIn(HALF_LIBRARY_DRAW_CAPABILITY, node.capability_dependencies)
+
+        ability, = compile_card_program(
+            _NoRulingsDatabase(), card, capability_registry=registry,
+            capability_profile=profile, trust_level="trusted",
+        ).abilities
+        self.assertTrue(bind_semantic_program_runtime(ability, capability_registry=registry, profile=profile)["strict"])
+        draw, loss = ability.effects
+        for effects in (
+            ({**draw, "private": False}, loss),
+            ({**draw, "player": "$controller"}, loss),
+            ({**draw, "count": {**draw["count"], "rounding": "down"}}, loss),
+            ({**draw, "count": {**draw["count"], "schema_version": True}}, loss),
+            (draw, {**loss, "player": "$target.1"}),
+            (loss, draw),
+        ):
+            with self.subTest(effects=effects):
+                binding = bind_semantic_program_runtime(
+                    replace(ability, effects=effects), capability_registry=registry, profile=profile,
+                )
+                self.assertFalse(binding["strict"], binding)
+
+        dependencies = tuple(value for value in ability.capability_dependencies if value != HALF_LIBRARY_DRAW_CAPABILITY)
+        withdrawn = replace(
+            ability, capability_dependencies=dependencies,
+            capability_closure=registry.closure(dependencies, profile=profile).to_dict(),
+        )
+        binding = bind_semantic_program_runtime(withdrawn, capability_registry=registry, profile=profile)
+        self.assertFalse(binding["strict"], binding)
+        self.assertIn("capability:undeclared_runtime_dependency:" + HALF_LIBRARY_DRAW_CAPABILITY, binding["blockers"])
+
+        with patch.object(compiler, "_half_library_draw_life_sequence", return_value=None):
+            omitted = compile_oracle_card(card, capability_registry=registry, capability_profile=profile)
+        self.assertNotEqual("exact", omitted.status)
+
     def test_closed_child_shapes_reject_changed_targets_and_unknown_siblings(self):
         from quorune.compiler.target_player_sequences import fixed_target_player_sequence_template
         from quorune.rules.target_player_sequences import target_player_sequence_node_capabilities
@@ -158,9 +213,66 @@ class TargetPlayerSequenceNativeTests(InheritedNativeFixture,unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'target-player-sequence.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/target-player-sequence-cards.json'],path)
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/target-player-sequence-cards.json",
+            ROOT / "tests/fixtures/fractional-player-result-cards.json",
+            ROOT / "tests/fixtures/draw-player-source-damage-cards.json",
+        ], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Shared target sequences',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',20)],['Isamaru, Hound of Konda'])
+
+    def test_peer_into_the_abyss_redirects_five_draws_and_loses_four_life(self):
+        session = self.session(608200218)
+        spell = self.add(session.engine, "Peer into the Abyss", zone="hand")
+        thief = self.add(session.engine, "Notion Thief")
+        self.assert_closed(session, spell)
+        self.assert_closed(session, thief)
+        self.prepare(session, mana={"B": 3, "C": 4})
+        seat = session.state.players["B"]
+        for object_id in tuple(seat.zones["library"])[9:]:
+            session.engine.move_card(object_id, "graveyard", log=False)
+        self.assertEqual(9, len(seat.zones["library"]))
+        seat.life = 7
+        self.checkpoint(session)
+        self.cast(session, "A", spell, ["B"])
+        session = self.replay(session, load=True)
+
+        before = {player: set(session.state.players[player].zones["hand"]) for player in "ABCD"}
+        self.assertIsNone(self.resolve(session))
+        drawn = set(session.state.players["A"].zones["hand"]) - before["A"]
+        self.assertEqual(5, len(drawn))
+        self.assertEqual(3, session.state.players["B"].life)
+        self.assertEqual(40, session.state.players["A"].life)
+        self.assertEqual(9, len(session.state.players["B"].zones["library"]))
+        for player in "BCD":
+            self.assertEqual(before[player], set(session.state.players[player].zones["hand"]))
+            projection = json.dumps(session.packet("pilot:" + player, full=True))
+            for object_id in drawn:
+                self.assertNotIn(session.state.cards[object_id].ref, projection)
+        self.replay(session, load=True)
+
+    def test_peer_into_the_abyss_departed_target_skips_both_results_and_replays(self):
+        session = self.session(608200219)
+        spell = self.add(session.engine, "Peer into the Abyss", zone="hand")
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"B": 3, "C": 4})
+        self.checkpoint(session)
+        self.cast(session, "A", spell, ["B"])
+        self.priority(session, "B")
+        self.assertTrue(session.act("pilot:B", {"action_id": "concede", "confirm_concede": True}).ok)
+        session = self.replay(session, load=True)
+
+        state = session.state
+        before = {player: (state.players[player].life, tuple(state.players[player].zones["hand"])) for player in "ABCD"}
+        self.assertIsNone(self.resolve(session))
+        state = session.state
+        self.assertFalse(state.players["B"].in_game)
+        self.assertEqual("graveyard", state.cards[spell.object_id].zone)
+        self.assertEqual(before, {
+            player: (state.players[player].life, tuple(state.players[player].zones["hand"])) for player in "ABCD"
+        })
+        self.replay(session, load=True)
 
     def test_actual_discard_continuation_precedes_mill_and_life_and_replays(self):
         s=self.session(608200201);spell=self.add(s.engine,'Mind Drain',zone='hand')

@@ -975,6 +975,7 @@ def active_fixed_spell_cost_reductions(
 ) -> tuple[FixedSpellCostReductionSpec, ...]:
     """Collect applicable trusted reducers at the casting boundary."""
 
+    from ..adventure import has_adventure_card_face
     from ..cast_cost_modifiers import CHOSEN_TYPE_CAST_COST_HANDLER_ID
     from ..compiled_cast_timing import prospective_conditional_flash_spell_data
     from ..linked_card_type import COST_HANDLER as LINKED_CARD_TYPE_COST_HANDLER, bound_card_type
@@ -1011,6 +1012,11 @@ def active_fixed_spell_cost_reductions(
                 continue
             spec, = lowered
             assert isinstance(spec, FixedSpellCostReductionSpec)
+            if (
+                isinstance(spec, PublicCastCostModifierV2Spec) and spec.spell_qualification is not None
+                and (face_down_method is not None or not has_adventure_card_face(host.card_record(card)))
+            ):
+                continue
             spell_row = row
             if handler_id in chosen_handlers:
                 if chosen_row is None:

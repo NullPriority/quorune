@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+A token replacement that adds one token for each pending token uses the current
+creation recipes after earlier replacements. Added tokens retain the individual
+creation instructions for status and attack assignment and have their own token
+characteristics. An activation can bind X to an announced exact sacrifice of
+one permanent subtype. The shared selected-object payment commits the public
+group before the existing temporary characteristic result reads that X.
+
 Half-life Recover prices use a separate version-two Recover descriptor inside
 the existing version-twelve lifecycle instruction. The price quotes the locked
 payer's current signed life and rounds its nonnegative half upward through the
@@ -67,6 +74,11 @@ their dedicated owners. An omitted third-person player subject keeps its
 explicit first-clause player relation. Resolution order, later choices and
 target legality use the existing sequence and instruction owners.
 
+A whole-hand counter payment belongs to the targeted spell's current controller.
+The private choice seals every card in that hand and checks the same identities
+before moving the complete paid batch. An empty hand can pay the cost. Decline
+uses the ordinary spell counter and its existing restrictions.
+
 A targeted-player graveyard-exile instruction gives that player a required
 choice of one current card from their own graveyard. The card is not a target;
 the public-zone query filters physical cards and seals their incarnations.
@@ -88,6 +100,11 @@ the optional choice; previously present cards remain eligible. Declining the
 return leaves the preceding instructions committed. The resolving controller
 owns the choice even if control of its permanent source later changes.
 
+A fixed hand-source land activation uses the stack-scoped reveal ledger for
+its original physical card. The ordinary entry owner moves that card if its
+hand incarnation survives until resolution. An optional creature phase-out
+on entry uses the normal trigger target choice and phasing transaction.
+
 Explore completion uses the canonical reveal, counter and movement transaction.
 Its qualified creature event reads the same incarnation's current types or
 the existing ability-source LKI snapshot. A returned physical card cannot
@@ -96,6 +113,8 @@ completion and qualified creature completion join one ordinary APNAP batch;
 the type facts remain transient choice and intent data.
 
 Ordinary artifact departure can produce one counter batch for the original source and a current controlled subtype set. The query retains the trigger controller, and both contributions to an overlapping recipient are combined before replacements. A departed or newer source incarnation receives only independently applicable subtype counters.
+
+The fixed creature counter result reads the original recipient's current or departure controller at each written instruction. It consumes one confirmed grouped placement and delegates to the existing draw and life owners.
 
 A trigger that names an artifact an opponent controls reads its battlefield controller immediately before departure. Its fixed counter result queries the trigger controller's current creatures for either printed subtype. A creature with both subtypes receives one placement.
 
@@ -162,6 +181,11 @@ An attachment-qualified destruction effect targets the Aura itself.
 The shared target matcher also checks the type and, when specified,
 controller of its current attached permanent. Both must match at
 announcement and when the ability resolves.
+
+A paid nonmana activation copy observes the committed stack ability after its costs.
+The trigger controller may pay once, then use the ordinary stack-copy target choice.
+If the original departs, its recorded state preserves X, modes, target identities
+and source information without activating the copy or charging its costs again.
 
 A fixed-receiver spell-copy trigger observes a cast with one distinct
 creature target other than its source. The optional copy uses the retained
@@ -1195,3 +1219,8 @@ control owner applies the full set together, then untaps the creatures
 and gives them haste through cleanup. Each Fortune result keeps the
 ordinary private draw and public Treasure creation. An opponent who
 concedes on their choice leaves the remaining decisions intact.
+
+A resolving spell can offer its targeted discard recipient a separate choice to copy
+the spell. The ordinary private discard finishes first, even with an empty hand.
+The existing stack-copy owner retains the current spell's copiable values and
+gives the affected player control and the standard target assignment choice.

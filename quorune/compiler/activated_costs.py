@@ -118,6 +118,9 @@ def activated_ability_cost_capabilities(
         for choice in ability.choices
         if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES
     )
+    from ..rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY, announced_subtype_sacrifice_choice
+    if announced_subtype_sacrifice_choice(ability) is not None:
+        additional.append(ANNOUNCED_SUBTYPE_SACRIFICE_CAPABILITY)
     if ability.announced_x_symbols is not None:
         from ..activation_x import activation_x_capabilities
         additional.extend(activation_x_capabilities(symbols=ability.announced_x_symbols,

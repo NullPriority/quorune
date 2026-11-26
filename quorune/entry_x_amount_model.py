@@ -47,6 +47,43 @@ def entry_half_x_food_effect():
     return {**food_token_effect(2), "quantity": EntryXAmountSpec(schema_version=2).to_dict()}
 
 
+def uses_entry_x_token_batch(effect):
+    tokens = effect.get("tokens")
+    return effect.get("op") == "create_token_batch" and isinstance(tokens, (tuple, list)) and any(
+        isinstance(token, Mapping)
+        and isinstance(count := token.get("quantity"), Mapping)
+        and count.get("kind") == ENTRY_X_AMOUNT_KIND
+        for token in tokens
+    )
+
+
+def project_entry_x_token_batch(effect):
+    """Project both symbolic quantities onto the fixed token-definition owner."""
+    if (
+        set(effect) != {"op", "controller", "tokens"} or effect.get("op") != "create_token_batch"
+        or effect.get("controller") != "$controller"
+    ):
+        raise PublicQueryAmountError("Entry-X token batches require one controller and one shared count")
+    tokens = effect["tokens"]
+    if not isinstance(tokens, (list, tuple)) or len(tokens) != 2 or any(
+        not isinstance(token, Mapping)
+        or EntryXAmountSpec.from_dict(token.get("quantity")) != EntryXAmountSpec()
+        for token in tokens
+    ):
+        raise PublicQueryAmountError("Entry-X token batches require two definitions using the same unscaled entry X")
+    return {**effect, "tokens": [{**token, "quantity": 2} for token in tokens]}
+
+
+def is_zero_entry_x_token_batch(raw_effect, effect):
+    if not uses_entry_x_token_batch(raw_effect):
+        return False
+    tokens = effect.get("tokens")
+    return isinstance(tokens, (list, tuple)) and len(tokens) == 2 and all(
+        isinstance(token, Mapping) and type(token.get("quantity")) is int and token["quantity"] == 0
+        for token in tokens
+    )
+
+
 def entry_x_amount_runtime_dependencies(program):
     required=entry_x_amount_dependencies(program.effects)
     if required and (program.event!='permanent.enter.self' or program.active_zone!='battlefield'):

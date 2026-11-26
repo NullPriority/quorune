@@ -363,8 +363,13 @@ def _collect_activation_payment(host, actor, source, ability, response, targets)
         if payment is None:raise ActivationProposalError('Waterbend payment is not payable',status='unpayable',reason='waterbend_unpayable')
         requirements,_,waterbend,_=payment;waterbend_details['waterbend_payment']=waterbend.to_dict()
     from .variable_colored_reveal import variable_colored_reveal_proposal_details
+    from .announced_subtype_sacrifice import announced_subtype_sacrifice_proposal_details
 
-    details = {**waterbend_details, **variable_colored_reveal_proposal_details(host, actor, ability, announced_x, response)}
+    details = {
+        **waterbend_details,
+        **variable_colored_reveal_proposal_details(host, actor, ability, announced_x, response),
+        **announced_subtype_sacrifice_proposal_details(host, actor, source, ability, announced_x, response),
+    }
     return requirements, announced_x, mana_option, details
 
 
@@ -555,6 +560,10 @@ def _activation_intrinsic_choice_schema(
     if is_artifact_hand_mana(ability):
         from ..hand_artifact_mana import artifact_hand_mana_choice
         return {ARTIFACT_HAND_MANA_REVEAL_FIELD: artifact_hand_mana_choice(host, seat)}
+    from ...paid_activation_card_types import has_bounded_sacrifice
+    if has_bounded_sacrifice(ability):
+        from .bounded_type_sacrifice import bounded_sacrifice_choice
+        return bounded_sacrifice_choice(host, seat)
     from ..forage import forage_choice_schema, has_forage_cost
 
     forage = has_forage_cost(ability)
@@ -687,7 +696,8 @@ def build_activation_offer(
     if cost_hint is None:
         return ActivationProposalResult('unpayable', 'granting_equipment_payment_unpayable')
     hint, attachment_label = cost_hint
-    if selected.choices:
+    from ...paid_activation_card_types import has_bounded_sacrifice
+    if selected.choices and not has_bounded_sacrifice(selected):
         hint["choose_cost"] = [
             {
                 **choice.compact(),
@@ -756,12 +766,9 @@ def build_activation_offer(
         if selected.loyalty_x:
             x_choice["maximum"] = source.counters.get("loyalty", 0)
         choice_schema = {**(choice_schema or {}), "x": x_choice}
-    if selected.variable_colored_reveal_price is not None:
-        from .variable_colored_reveal import variable_colored_reveal_offer
+        from .announced_subtype_sacrifice import variable_object_activation_offer
 
-        choice_schema.update(variable_colored_reveal_offer(
-            host, seat, selected.variable_colored_reveal_price, choice_schema["x"],
-        ))
+        choice_schema.update(variable_object_activation_offer(host, seat, selected, hint, choice_schema["x"]))
     if not selected.mana_cost_options:
         from .pricing import activation_price_choice_schema
         price_choices=activation_price_choice_schema(host,seat,source,selected)

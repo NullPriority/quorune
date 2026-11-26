@@ -5,8 +5,28 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..rules.graveyard_card_targets import GraveyardCardTargetKind
 from ..rules.graveyard_return_choices import (
     BOUNDED_BATTLEFIELD_RETURN_VERSION, GraveyardReturnSelection, OPERATION, MECHANIC,
-    mandatory_creature_or_planeswalker_return_effect, paired_graveyard_return_effect,
+    mandatory_creature_or_planeswalker_return_effect, optional_tapped_land_return_effect, paired_graveyard_return_effect,
 )
+
+
+def combat_surveil_land_return_template(binding, body):
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        != ("damage.dealt", "source_combat_damage_player_or_battle", "battlefield")
+        or body != binding.body
+        or " ".join(body.split()).casefold()
+        != "surveil 1, then you may return a land card from your graveyard to the battlefield tapped."
+    ):
+        return None
+    from .fixed_effect_clause_sequences import FixedEffectClauseSequenceTemplate, FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC
+    from .surveil_templates import FixedSurveilEffectTemplate
+
+    first = FixedSurveilEffectTemplate(1).compiled()
+    return FixedEffectClauseSequenceTemplate(
+        component_template_ids=(first[0], "untargeted-tapped-land-graveyard-return-v6"),
+        _effects=(*first[1], optional_tapped_land_return_effect()), _target_schema=None,
+        mechanic_ids=(FIXED_EFFECT_CLAUSE_SEQUENCE_MECHANIC, *first[3], MECHANIC),
+    ).compiled()
 
 
 def _qualified_return_choice(text):

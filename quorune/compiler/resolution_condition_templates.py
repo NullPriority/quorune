@@ -39,6 +39,38 @@ _DRAW_TAPPED_LAND_REPEAT = re.compile(
 _ATTACK_HISTORY_DRAW_DISCARD = re.compile(
     r"(?P<draw>Draw (?:a card|two cards)\.) Then discard a card unless you attacked this turn\.", re.I,
 )
+BLOCKER_PROTECTION_TEMPLATE = "fixed-blocker-requirement-and-protection-v1"
+
+
+def _blocker_protection_template(text, *, source_name, compile_component):
+    match = re.fullmatch(
+        r"(?P<prefix>All creatures able to block target creature this turn do so\.) "
+        r"Ferocious — That creature gains indestructible until end of turn "
+        r"if (?P<condition>you control a creature with power 4 or greater)\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    from ..rules.temporary_all_blockers import blocker_protection_node_capabilities
+    from ..temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
+
+    prefix = compile_component(match["prefix"])
+    protection = compile_component("Target creature gains indestructible until end of turn.")
+    condition = fixed_public_state_condition(match["condition"], source_name=source_name)
+    if not prefix[0] or not protection[0] or prefix[2] != protection[2] or condition is None:
+        return None
+    wrapper = {
+        "op": RESOLUTION_CONDITION_OPERATION,
+        "schema_version": BLOCKER_PROTECTION_CONDITION_VERSION,
+        "player": "$controller", "condition": condition.to_dict(),
+        "effects": list(protection[1]), "mechanic_ids": list(protection[3]),
+        "prefix_mechanic_ids": list(prefix[3]),
+    }
+    effects = (*prefix[1], wrapper)
+    mechanics = tuple(dict.fromkeys((RESOLUTION_CONDITION_MECHANIC, *prefix[3], *protection[3])))
+    if not blocker_protection_node_capabilities(effects, prefix[2], mechanics):
+        return None
+    return BLOCKER_PROTECTION_TEMPLATE, effects, prefix[2], mechanics
 
 
 def _leading_condition_parts(text: str) -> tuple[tuple[str, str, str], ...]:
@@ -223,6 +255,8 @@ def resolution_condition_template(
     source_name: str,
     compile_component: Callable[[str], CompiledEffectTemplate],
 ) -> CompiledEffectTemplate | None:
+    if blocker := _blocker_protection_template(text, source_name=source_name, compile_component=compile_component):
+        return blocker
     normalized = re.sub(r"^[A-Z][A-Za-z' ]{0,80} — ", "", text.strip())
     if attack_discard := _ATTACK_HISTORY_DRAW_DISCARD.fullmatch(normalized):
         normalized = f"{attack_discard['draw']} If you haven't attacked this turn, discard a card."

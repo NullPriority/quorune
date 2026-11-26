@@ -200,10 +200,11 @@ def build_cast_cost_options(
     from .costs import _cast_cost_options_for_submission
     from .source_placement import casting_affordability_host
     from ...semantic_runtime.static_cast_rules import static_cast_maximum_x
+    from ..player_capped_land_reveal import source_limited_cast_x
 
     submission = dict(response or {})
     face = {"type_line": cast_type_line} if cast_type_line is not None else None
-    maximum = static_cast_maximum_x(host, seat, card, face=face)
+    maximum = source_limited_cast_x(host, program, static_cast_maximum_x(host, seat, card, face=face))
     if maximum is not None and int(submission.get("x") or 0) > maximum:
         return ()
     host = casting_affordability_host(host, card)

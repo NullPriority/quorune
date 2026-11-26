@@ -211,7 +211,7 @@
       "produced_mana": [],
       "released_at": "2020-07-17",
       "toughness": "2",
-      "type_line": "Legendary Creature — Dog"
+      "type_line": "Legendary Creature \u2014 Dog"
     },
     {
       "cmc": 0.0,
@@ -258,7 +258,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land — Island"
+      "type_line": "Basic Land \u2014 Island"
     },
     {
       "cmc": 0.0,
@@ -305,7 +305,7 @@
       ],
       "released_at": "2026-11-13",
       "toughness": null,
-      "type_line": "Basic Land — Plains"
+      "type_line": "Basic Land \u2014 Plains"
     },
     {
       "cmc": 1.0,
@@ -352,7 +352,7 @@
       "produced_mana": [],
       "released_at": "2017-03-31",
       "toughness": null,
-      "type_line": "Instant — Arcane"
+      "type_line": "Instant \u2014 Arcane"
     },
     {
       "cmc": 2.0,
@@ -400,6 +400,53 @@
       "released_at": "2024-04-19",
       "toughness": null,
       "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "eccc9a54-2b56-4a02-9926-258d5b2e25fb",
+      "name": "Abundance",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If you would draw a card, you may instead choose land or nonland and reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and put all other cards revealed this way on the bottom of your library in any order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "cmc": 4.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -429,25 +476,25 @@
       "source": "wotc"
     },
     {
-      "comment": "The effect is cumulative. If there are two of these on the battlefield, each of them will modify each draw (after the first one if during the draw step), and will cause the player to discard or to “mill” a card from their library. As they resolve in order, the player must discard if possible. Once the player fails to discard and instead “mills” a card, all further effects of additional Chains of Mephistopheles will not do anything. This is because the “mill” also replaces the draw effect and the player is no longer drawing a card. You handle them in order. Each one makes you discard first and then continue or else mill a card and lose the draw.",
+      "comment": "The effect is cumulative. If there are two of these on the battlefield, each of them will modify each draw (after the first one if during the draw step), and will cause the player to discard or to \u201cmill\u201d a card from their library. As they resolve in order, the player must discard if possible. Once the player fails to discard and instead \u201cmills\u201d a card, all further effects of additional Chains of Mephistopheles will not do anything. This is because the \u201cmill\u201d also replaces the draw effect and the player is no longer drawing a card. You handle them in order. Each one makes you discard first and then continue or else mill a card and lose the draw.",
       "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
       "published_at": "2004-10-04",
       "source": "wotc"
     },
     {
-      "comment": "A player’s normal card draw on their turn is exempt from this effect. All other draws will be affected.",
+      "comment": "A player\u2019s normal card draw on their turn is exempt from this effect. All other draws will be affected.",
       "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
       "published_at": "2007-09-16",
       "source": "wotc"
     },
     {
-      "comment": "Here’s what happens when Chains of Mephistopheles replaces a player’s draw: — If that player has at least one card in their hand, they discard a card and then draws a card. — If that player’s hand is empty, they put the top card of their library into their graveyard. The player doesn’t draw a card at all.",
+      "comment": "Here\u2019s what happens when Chains of Mephistopheles replaces a player\u2019s draw: \u2014 If that player has at least one card in their hand, they discard a card and then draws a card. \u2014 If that player\u2019s hand is empty, they put the top card of their library into their graveyard. The player doesn\u2019t draw a card at all.",
       "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
       "published_at": "2007-09-16",
       "source": "wotc"
     },
     {
-      "comment": "If a spell or ability would cause a player to draw multiple cards, this is treated as a number of individual “draw one card” actions. Apply the effect of Chains of Mephistopheles to each one.",
+      "comment": "If a spell or ability would cause a player to draw multiple cards, this is treated as a number of individual \u201cdraw one card\u201d actions. Apply the effect of Chains of Mephistopheles to each one.",
       "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
       "published_at": "2007-09-16",
       "source": "wotc"
@@ -505,6 +552,30 @@
       "oracle_id": "f07bd49d-8e71-4d56-be2a-638514011318",
       "published_at": "2022-12-08",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "eccc9a54-2b56-4a02-9926-258d5b2e25fb",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This replacement effect replaces the draw, so nothing that triggers on a draw will trigger."
+    },
+    {
+      "oracle_id": "eccc9a54-2b56-4a02-9926-258d5b2e25fb",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you use this on a multi-card draw, each replaced draw is handled separately. In other words, you reveal and then put on the bottom of the library for the first card, then do the same for the second, and so on. In a multi-card draw you do not have to choose how many of those draws will be replaced before you do any drawing or use of this card."
+    },
+    {
+      "oracle_id": "eccc9a54-2b56-4a02-9926-258d5b2e25fb",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If no card of the chosen type is found before your library empties, you don't get a card, but you do get to order all the cards in your library any way you choose."
+    },
+    {
+      "oracle_id": "eccc9a54-2b56-4a02-9926-258d5b2e25fb",
+      "published_at": "2007-07-15",
+      "source": "wotc",
+      "comment": "If your library is empty, Abundance can prevent you from losing the game for being unable to draw a card. If an effect or turn-based action would cause you to draw a card, you can replace that draw with Abundance's replacement effect. (It doesn't matter that you'd be unable to actually draw a card.) Since Abundance's effect has you put a card into your hand instead of drawing a card, you'll never be forced to draw a card with an empty library."
     }
   ],
   "schema_version": 1,

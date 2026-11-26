@@ -2400,6 +2400,10 @@ class CommanderEngine(
     ) -> Mapping[str, Any] | None:
         permission = current_temporary_play_permission(self.state, seat, card)
         opponent_library_permission = current_opponent_library_exile_play_permission(self.state, seat, card)
+        if opponent_library_permission is None:
+            from .rules.private_opponent_top_exile import controller_private_top_exile_play_permission
+
+            opponent_library_permission = controller_private_top_exile_play_permission(self, seat, card)
         if permission is None:
             return opponent_library_permission
         if opponent_library_permission is not None:

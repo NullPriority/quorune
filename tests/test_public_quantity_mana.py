@@ -22,6 +22,12 @@ from quorune.public_quantity_mana_model import PublicQuantityManaOutput
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, CapabilityRegistryError, load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
+from inherited_composition_fixture import InheritedNativeFixture
+from test_controller_creature_keyword_absence import register_card
+from quorune.public_quantity_mana_model import CONTROLLED_CREATURE_THRESHOLD_MANA_CAPABILITY
+
+
+THRESHOLD_MANA_CARD = "Leafkin Druid"
 from test_qualified_zone_event_queries import query_record
 import test_bound_effect_programs as witnesses
 
@@ -226,6 +232,10 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
     checkpoint=witnesses.BoundEffectProgramRuntimeTests.checkpoint
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
+    prepare = InheritedNativeFixture.prepare
+    priority = InheritedNativeFixture.priority
+    cast = InheritedNativeFixture.cast
+    assert_closed = InheritedNativeFixture.assert_closed
 
     def browser_errors(self, action, allocation):
         node = shutil.which('node')
@@ -728,6 +738,102 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
         source=session.state.cards[source.object_id]
         self.assertEqual('battlefield',source.zone);self.assertFalse(source.tapped)
         self.assertEqual(3,source.counters['petal'])
+
+    def test_actual_threshold_mana_counts_tokens_and_funds_an_ordinary_cast(self):
+        game = self.session(60500601)
+        source = self.add(game.engine, THRESHOLD_MANA_CARD)
+        source.acquired_control_turn_count = -1
+        self.add(game.engine, "Grizzly Bears", ref="threshold-owned-creature")
+        self.add(game.engine, "Grizzly Bears", seat="B", ref="threshold-foreign-creature")
+        raise_spell = self.add(game.engine, "Raise the Alarm", zone="hand")
+        priced = self.add(game.engine, "Grizzly Bears", zone="hand", ref="threshold-paid-creature")
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"C": 1, "W": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        result = game.act("pilot:A", {"action_id": "cast:" + raise_spell.ref,
+                                      "pay": "manual", "payment": {"C": 1, "W": 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.cards[source.object_id].tapped)
+        self.assertEqual(2, sum(card.is_token and card.controller == "A" and card.zone == "battlefield"
+                                for card in game.state.cards.values()))
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        self.priority(game, "A")
+        action = "cast:" + priced.ref
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(action, tuple(row["id"] for row in actions))
+        result = game.act("pilot:A", {"action_id": action, "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        item, = game.state.stack
+        self.assertEqual(priced.object_id, item.card_object_id)
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[priced.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_threshold_mana_falls_to_one_after_a_creature_phases_out(self):
+        game = self.session(60500602)
+        source = self.add(game.engine, THRESHOLD_MANA_CARD)
+        source.acquired_control_turn_count = -1
+        creatures = [self.add(game.engine, "Grizzly Bears", ref=f"threshold-counted-{index}") for index in range(3)]
+        self.add(game.engine, "Grizzly Bears", seat="B", ref="threshold-uncontrolled-creature")
+        answer = self.add(game.engine, "Reality Ripple", seat="B", zone="hand")
+        self.assert_closed(game, source)
+        self.assert_closed(game, answer)
+        self.prepare(game, actor="B", active="B", mana={"C": 1, "U": 1})
+        game.state.config.semantic_policy = "trusted_only"
+        self.checkpoint(game)
+        self.cast(game, "B", answer, [creatures[-1].ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertTrue(game.state.cards[creatures[-1].object_id].phased_out)
+        game = self.replay(game, load=True)
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer, = (row for row in actions if row["id"].startswith(f"activate:{source.ref}:"))
+        command = {"action_id": offer["id"]}
+        checkpoint = authoritative_state_hash(game.state)
+        for actor, candidate in (("B", command), ("A", {**command, "mana_output": {"G": 2}})):
+            result = game.act("pilot:" + actor, candidate)
+            self.assertFalse(result.ok, result.summary)
+            self.assertEqual(checkpoint, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        self.assertEqual(1, game.state.players["A"].mana_pool["G"])
+        self.assertFalse(game.state.stack)
+        self.replay(game, load=True)
+
+    def test_threshold_mana_requires_the_exact_output_and_tap_price(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.public_quantity_mana_abilities import (
+            PUBLIC_QUANTITY_MANA_HANDLER_ID, PublicQuantityActivatedManaAbilitySpec,
+        )
+
+        cap = CONTROLLED_CREATURE_THRESHOLD_MANA_CAPABILITY
+        report, semantics = register_card(self.db, self.registry, THRESHOLD_MANA_CARD)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        programs = semantics.programs_for_oracle(report["oracle_id"])
+        program, = (row for row in programs if cap in row.capability_dependencies)
+        handler, = (value for value in program.handlers if value["handler_id"] == PUBLIC_QUANTITY_MANA_HANDLER_ID)
+        spec = PublicQuantityActivatedManaAbilitySpec.from_dict(handler["ability"])
+        self.assertTrue(spec.costs.tap_source)
+        self.assertEqual((4, ("G",)), (spec.output.amount.minimum_creatures, spec.output.colors))
+        self.assertEqual(spec, PublicQuantityActivatedManaAbilitySpec.from_dict(spec.to_dict()))
+        deps = tuple(value for value in program.capability_dependencies if value != cap)
+        changed = replace(program, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(bound["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + cap, bound["blockers"])
+        source = self.db.lookup(THRESHOLD_MANA_CARD, fuzzy=False)
+        for old, new in (("{T}:", "{1}, {T}:"), ("four or more", "four or fewer"),
+                         ("more creatures", "more other creatures"), ("{G}{G} instead", "{G}{U} instead")):
+            candidate = replace(source, oracle_text=source.oracle_text.replace(old, new))
+            result = compile_oracle_card(candidate, capability_registry=self.registry, capability_profile="commander_review")
+            self.assertNotEqual("exact", result.status)
 
 
 if __name__=='__main__':

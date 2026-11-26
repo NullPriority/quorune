@@ -63,6 +63,13 @@ by the ordinary owner-hand zone transition, including when the spell is
 uncounterable. A moved spell copy ceases to exist through state-based
 actions. Invalid or departed targets follow ordinary target revalidation.
 
+A counter that protects its controller or their creature can choose a spell
+or ability with at least one matching current target. The stack target reader
+follows the announced battlefield incarnation and the player's current game
+membership. A creature that stays under the controller's control and gains
+hexproof still qualifies. A departed incarnation leaves the target set used
+by the counter predicate, and a returned card receives a fresh identity.
+
 Intrinsic Mutate cost metadata uses the existing ability-fragment registry and
 the shared fixed ordinary/hybrid mana expansion. Its copied fragment contains
 only the closed mana-cost value and version, not an Oracle line for runtime
@@ -123,6 +130,11 @@ through ordinary revalidation. An artifact land is a legal target. The
 resolved grant authorizes only casting the selected card this turn with
 ordinary timing and payment. Leaving and returning to the graveyard
 creates a new object outside that permission.
+
+An own-graveyard historic target can be an artifact, a legendary card, or a
+Saga. The mixed-characteristic target owner applies that disjunction to its
+one physical card, including a legendary land or a Saga land. Action offers
+and resolution both verify the same ownership and current incarnation.
 
 The spell that phases out up to X target creatures uses the ordinary
 announced cardinality. The caster can choose fewer than X targets. If Splice
@@ -664,3 +676,11 @@ A complete linked graveyard Aura face binds its cast and entry carriers to one
 linked Enchant descriptor. The original static Enchant and attached modifier
 retain their own source spans. Current registration checks both lifecycle
 carriers before superseding the historical reviewed pair.
+
+## Turn-long caster-relative restrictions
+
+A resolving spell can protect one targeted creature from the spell controller’s
+opponents until cleanup. The restriction uses that resolving controller and
+the target's current incarnation. The ordinary target owner applies it when
+offering new targets and revalidating pending instructions. A kicked copy
+retains the paid cast fact and applies both instructions to its own target.

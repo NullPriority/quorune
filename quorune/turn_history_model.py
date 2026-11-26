@@ -136,8 +136,18 @@ class TurnHistoryEvent:
                 ))
                 or type(self.amount) is not int or self.amount != 0):
                 raise ValueError("Permanent death history requires its sealed departure facts")
+        elif self.kind == "permanent_entered" and self.token is not None:
+            if (type(self.token) is not bool or self.creature_subtypes is not None
+                    or any(type(value) is not str or not value for value in (self.actor, self.object_incarnation))
+                    or not isinstance(self.types, tuple)
+                    or self.types != tuple(sorted(set(self.types)))
+                    or any(type(value) is not str or not value or value != value.casefold() for value in self.types)
+                    or any(value is not None for value in (
+                        self.target, self.target_kind, self.target_object_incarnation, self.origin,
+                    )) or type(self.amount) is not int or self.amount != 0):
+                raise ValueError("Permanent entry token history requires its sealed entry facts")
         elif self.creature_subtypes is not None or self.token is not None:
-            raise ValueError("Only permanent deaths carry subtype and token history")
+            raise ValueError("Only permanent death or entry can carry token history")
         if self.kind in (COMMITTED_OCCURRENCE_HISTORY_KINDS | {LAND_PLAY_HISTORY_EVENT, DRAWN_HAND_CARD_EVENT}) and (
             type(self.actor) is not str or not self.actor
             or type(self.object_incarnation) is not str or not self.object_incarnation
@@ -234,7 +244,8 @@ class TurnHistoryEvent:
             payload["creature_subtypes"] = list(self.creature_subtypes)
         else:
             payload.pop("creature_subtypes")
-            payload.pop("token")
+            if self.token is None:
+                payload.pop("token")
         if self.origin is None:payload.pop("origin")
         if self.spell_colors is None:
             payload.pop("spell_colors")
@@ -246,6 +257,9 @@ class TurnHistoryEvent:
     def from_dict(cls, data: dict[str, Any]) -> "TurnHistoryEvent":
         payload = dict(data)
         payload["rules_names"] = decode_event_rules_names(payload)
+        if payload.get("kind") == "permanent_entered" and "token" in payload:
+            if type(payload["token"]) is not bool or not isinstance(payload.get("types"), list):
+                raise ValueError("Permanent entry token history requires explicit token and type facts")
         if "spell_colors" in payload:
             if not isinstance(payload["spell_colors"], list):
                 raise ValueError("As-cast spell colors must be a recorded array")
@@ -302,6 +316,7 @@ class TurnHistory:
     plus_one_counter_placement_history_version: int | None = None
     land_play_history_version: int | None = None
     permanent_counter_receipt_history_version: int | None = None
+    permanent_entry_token_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -351,6 +366,13 @@ class TurnHistory:
         ):
             raise ValueError("Unsupported as-cast spell-color history version")
         _validate_plus_one_placement_history(self.plus_one_counter_placement_history_version, self.events)
+        token_entry_version = self.permanent_entry_token_history_version
+        if token_entry_version is not None and (type(token_entry_version) is not int or token_entry_version != 1):
+            raise ValueError("Unsupported permanent entry token history version")
+        if token_entry_version is None and any(
+            event.kind == "permanent_entered" and event.token is not None for event in self.events
+        ):
+            raise ValueError("Permanent entry token facts require their explicit history version")
         receipt_version = self.permanent_counter_receipt_history_version
         if receipt_version is not None and (type(receipt_version) is not int or receipt_version != 1):
             raise ValueError("Unsupported permanent counter receipt history version")
@@ -430,6 +452,8 @@ class TurnHistory:
                if self.plus_one_counter_placement_history_version is not None else {}),
             **({"permanent_counter_receipt_history_version": 1}
                if self.permanent_counter_receipt_history_version is not None else {}),
+            **({"permanent_entry_token_history_version": 1}
+               if self.permanent_entry_token_history_version is not None else {}),
             **({"creature_spell_counter_history_version": 1}
                if self.creature_spell_counter_history_version is not None else {}),
             **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
@@ -474,6 +498,8 @@ class TurnHistory:
             raise ValueError("Unsupported draw identity history version")
         if "plus_one_counter_placement_history_version" in data and data["plus_one_counter_placement_history_version"] is None:
             raise ValueError("Unsupported +1/+1 counter placement history version")
+        if "permanent_entry_token_history_version" in data and data["permanent_entry_token_history_version"] is None:
+            raise ValueError("Unsupported permanent entry token history version")
         if "permanent_counter_receipt_history_version" in data and data["permanent_counter_receipt_history_version"] is None:
             raise ValueError("Unsupported permanent counter receipt history version")
         if "spell_color_history_version" in data and data["spell_color_history_version"] is None:
@@ -499,6 +525,7 @@ class TurnHistory:
             spell_color_history_version=data.get("spell_color_history_version"),
             plus_one_counter_placement_history_version=data.get("plus_one_counter_placement_history_version"),
             permanent_counter_receipt_history_version=data.get("permanent_counter_receipt_history_version"),
+            permanent_entry_token_history_version=data.get("permanent_entry_token_history_version"),
             creature_spell_counter_history_version=data.get("creature_spell_counter_history_version"),
             graveyard_type_history_version=data.get("graveyard_type_history_version"),
             spell_mana_history_version=data.get("spell_mana_history_version"),

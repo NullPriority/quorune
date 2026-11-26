@@ -9,6 +9,7 @@ from .x_costs import activation_requirements
 from ...crew import CrewAbilityError, activation_power_tap_cost, available_crew_power
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...mana_restrictions import ability_mana_spend_context
+from ...paid_activation_card_types import has_bounded_sacrifice
 from ..chosen_color_draw_price import draw_spend_context
 from ...station import (
     StationAbilityError,
@@ -130,7 +131,7 @@ def activation_availability(
             return "unresolved", "unresolved_station_power"
         if not candidates:
             return "unpayable", "station_cost_object_unavailable"
-    elif ability.choices and not host._ability_choice_payable(
+    elif ability.choices and not has_bounded_sacrifice(ability) and not host._ability_choice_payable(
         seat, card, ability
     ):
         return "unpayable", "mandatory_cost_object_unavailable"

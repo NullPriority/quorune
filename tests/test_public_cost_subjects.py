@@ -20,6 +20,39 @@ import test_self_public_zone_casting as zone_actions
 
 
 class PublicCostSubjectCompilerTests(unittest.TestCase):
+    def test_creature_affinity_grant_closes_one_controller_spell_type_union(self):
+        from quorune.cast_cost_modifiers import CastCostAffectedController, PublicCastCostModifierV2Spec
+        from quorune.compiler.cast_cost_modifier_templates import static_fixed_spell_cost_reduction_handler
+        from quorune.self_cast_reductions import CastReductionMetric, CastReductionQueryScope
+
+        text = "Instant and sorcery spells you cast have affinity for creatures."
+        template, descriptor, _dependencies = static_fixed_spell_cost_reduction_handler(text)
+        self.assertEqual("public-fixed-spell-cost-modifier-v1", template)
+        modifier = PublicCastCostModifierV2Spec.from_dict(descriptor["modifier"])
+        self.assertEqual(CastCostAffectedController.SOURCE_CONTROLLER, modifier.affected_controller)
+        predicate, = modifier.predicates_any
+        self.assertEqual(("instant", "sorcery"), predicate.types_any)
+        self.assertEqual((("GENERIC", -1),), modifier.mana_adjustment)
+        query, = CastReductionMetric.from_dict(modifier.multiplier).queries
+        self.assertEqual(CastReductionQueryScope.CONTROLLER_ZONE, query.scope)
+        self.assertEqual(("battlefield",), query.query.zones)
+        self.assertEqual(("creature",), query.query.types_all)
+
+        for old in ("Artifact creature spells you cast have affinity for artifacts.",
+                    "Spells you cast have affinity for artifacts."):
+            _, descriptor, _dependencies = static_fixed_spell_cost_reduction_handler(old)
+            modifier = PublicCastCostModifierV2Spec.from_dict(descriptor["modifier"])
+            query, = CastReductionMetric.from_dict(modifier.multiplier).queries
+            self.assertEqual(("artifact",), query.query.types_all)
+        for unsupported in (
+            text.replace("you cast", "your opponents cast"),
+            text.replace("for creatures", "for artifacts"),
+            text.replace("Instant and sorcery spells", "Creature spells"),
+            text + " (Discard a card.)",
+        ):
+            with self.subTest(unsupported=unsupported):
+                self.assertIsNone(static_fixed_spell_cost_reduction_handler(unsupported))
+
     def test_unqualified_ordinals_and_type_disjunctions_keep_their_exact_predicates(self):
         registry = load_default_capability_registry()
         cases = (
@@ -76,8 +109,12 @@ class PublicCostSubjectRuntimeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name).resolve() / 'public-cost-subjects.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
-            ROOT / 'tests/fixtures/public-cost-subject-cards.json'], path)
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/public-cost-subject-cards.json',
+            ROOT / 'tests/fixtures/legend-rule-exemption-cards.json',
+            ROOT / 'tests/fixtures/cast-target-copy-cards.json',
+        ], path)
         cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Public cost subject witness', [DeckEntry('Generic Bound Commander', 1, 'commander'),
             DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
@@ -91,6 +128,58 @@ class PublicCostSubjectRuntimeTests(unittest.TestCase):
         action = next(row for row in session.packet('pilot:' + current.owner, full=True)['decision']['ctx']['legal']['actions']
             if row['id'] == 'cast:' + current.ref)
         return next(option['requirements'] for option in action['cost_options'] if option['id'] == 'normal')
+
+    def test_actual_witherbloom_grants_stack_and_follow_live_providers(self):
+        from quorune.rules.casting.static_modifiers import fixed_generic_reduction
+
+        game = self.session(399015)
+        first = self.add(game.engine, "Witherbloom, the Balancer", ref="affinity-provider-one")
+        second = self.add(game.engine, "Witherbloom, the Balancer", ref="affinity-provider-two")
+        gallery = self.add(game.engine, "Mirror Gallery")
+        self.add(game.engine, "Grizzly Bears", seat="B", ref="unrelated-opponent-creature")
+        sorcery = self.add(game.engine, "Generic Ordinal Sorcery", zone="hand", ref="affinity-discounted-spell")
+        later = self.add(game.engine, "Generic Ordinal Sorcery", zone="hand", ref="affinity-later-spell")
+        foreign = self.add(game.engine, "Generic Ordinal Sorcery", seat="B", zone="hand")
+        artifact = self.add(game.engine, "Generic Ordinal Colorless", zone="hand")
+        phase = self.add(game.engine, "Reality Ripple", zone="hand")
+        bounce = self.add(game.engine, "Unsummon", zone="hand")
+        private = self.add(game.engine, "Generic Bound Growth", seat="D", zone="hand")
+        for card in (first, second, gallery, sorcery, phase, bounce):
+            self.assert_closed(game, card)
+        self.prepare(game, mana={"U": 3})
+        self.checkpoint(game)
+
+        # Mirror Gallery keeps both legendary providers in play.
+        self.assertEqual(4, fixed_generic_reduction(game.engine, "A", sorcery))
+        self.assertEqual(0, fixed_generic_reduction(game.engine, "B", foreign))
+        self.assertEqual(0, fixed_generic_reduction(game.engine, "A", artifact))
+        self.assertEqual(4, fixed_generic_reduction(game.engine, "A", artifact, cast_type_line="Instant"))
+        self.assertEqual(0, fixed_generic_reduction(game.engine, "A", sorcery, cast_type_line="Creature"))
+        self.assertEqual(0, self.requirements(game, sorcery)["GENERIC"])
+        self.assertEqual(1, self.requirements(game, sorcery)["U"])
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "cast:" + sorcery.ref, "pay": "auto"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+
+        self.cast(game, "A", sorcery)
+        self.resolve(game)
+        self.assertEqual(2, game.state.players["A"].mana_pool["U"])
+        self.assertEqual(41, game.state.players["A"].life)
+        self.cast(game, "A", phase, [second.ref])
+        self.resolve(game)
+        self.assertTrue(game.state.cards[second.object_id].phased_out)
+        self.assertEqual(1, fixed_generic_reduction(game.engine, "A", later))
+        game = self.replay(game, load=True)
+        self.assertEqual(1, fixed_generic_reduction(game.engine, "A", later))
+
+        self.cast(game, "A", bounce, [first.ref])
+        self.resolve(game)
+        self.assertEqual("hand", game.state.cards[first.object_id].zone)
+        self.assertEqual(0, fixed_generic_reduction(game.engine, "A", later))
+        self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
 
     def test_actual_bell_ringer_counts_its_own_cast_and_only_discounts_the_second_spell(self):
         session = self.session(399001); engine = session.engine

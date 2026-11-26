@@ -197,9 +197,11 @@ def _departing_power_references(item, context, source_ids):
         yield OCCURRENCE_POWER_DAMAGE_CONTEXT, known
 
 
-def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError):
-    """Refresh ability-source and occurrence-source power before departure."""
+def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError, phase_out=False):
+    """Refresh represented damage-source power before losing the original public view."""
     from ..creature_power_damage import capture_creature_power_damage_source_lki, occurrence_creature_power_snapshot
+    from .effect_shape_walkers import nested_effects
+    from ..creature_power_damage_model import uses_source_power_opponent_damage
 
     try:
         departing = {(card.object_id, card.logical_object_id):card for card in cards}
@@ -209,6 +211,10 @@ def pin_creature_power_damage_departures(host, cards, *, error_type=DamageError)
             frames.extend(item for group in batch.to_dict()['groups'] for item in group['items'])
         snapshots = {}; updates = {}
         for item in frames:
+            if phase_out and not any(
+                uses_source_power_opponent_damage(effect) for effect in nested_effects(_frame_effects(host, item))
+            ):
+                continue
             context = item.get('context', {})
             for field, known in _departing_power_references(item, context, source_ids):
                 source = departing.get((known.object_id, known.logical_object_id))

@@ -34,6 +34,10 @@ def bound_trigger_effect_template(binding, body, *, card_name, effect_template, 
 
         if result := controlled_destruction_source_counter_template(body):
             return result, False
+    if binding.event is FixedCounterTriggerEvent.NONMANA_ACTIVATED:
+        from .nonmana_activation_copy import nonmana_activation_copy_result
+
+        return nonmana_activation_copy_result(binding, body), False
     if binding.event is FixedCounterTriggerEvent.NINJUTSU_ACTIVATED:
         from .fixed_public_action_event_bindings import fixed_ninjutsu_observer_effect
 
@@ -47,6 +51,17 @@ def bound_trigger_effect_template(binding, body, *, card_name, effect_template, 
         if counter_and_damage and SourceReferenceSpec(card_name).matches(counter_and_damage["source"]):
             body = f"Put a +1/+1 counter on {card_name}. {card_name} deals 1 damage to each opponent."
             binding = replace(binding, body=body)
+        else:
+            pump_and_damage = re.fullmatch(
+                r"(?P<source>.+?) gets (?P<stats>[+-][0-9]+/[+-][0-9]+) until end of turn "
+                r"and deals (?P<damage>[1-9][0-9]*) damage to each opponent\.",
+                body,
+                re.IGNORECASE,
+            )
+            if pump_and_damage and SourceReferenceSpec(card_name).matches(pump_and_damage["source"]):
+                body = (f"This permanent gets {pump_and_damage['stats']} until end of turn. "
+                        f"{card_name} deals {pump_and_damage['damage']} damage to each opponent.")
+                binding = replace(binding, body=body)
     from .cast_trigger_life_payment_templates import binding_with_cast_life_payment
 
     return binding_with_cast_life_payment(
@@ -121,9 +136,12 @@ def _bound_source_combat_result(binding, body, *, allow_optional):
     from ..replacement.immutable import FrozenMap
     from ..rules.combat_damage_library_access import COMBAT_DAMAGE_LIBRARY_CONDITION
     from .exiled_target_library_search_templates import equipped_exiled_target_search_result
+    from .graveyard_return_choice_templates import combat_surveil_land_return_template
     from .impulse_access_templates import IMPULSE_ACCESS_MECHANIC_ID
     from .public_tap_state_set_templates import combat_recipient_land_tap_untap_result
 
+    if surveil_return := combat_surveil_land_return_template(binding, body):
+        return surveil_return
     if ((binding.event.value, binding.variant, binding.active_zone)
             == ("damage.dealt.self", "source_combat_damage_player", "battlefield")
             and body == binding.body and FrozenMap(binding.event_condition or {}) == COMBAT_DAMAGE_LIBRARY_CONDITION
@@ -744,6 +762,10 @@ def _bound_source_specific_result(binding, body, *, card_name, effect_template):
     from .land_entry_library_exile import land_entry_top_exile_result
     if land_top := land_entry_top_exile_result(binding, body):
         return land_top, False
+    from .fixed_resolution_mana import source_attack_turn_retained_mana_result
+
+    if attack_mana := source_attack_turn_retained_mana_result(binding, body):
+        return attack_mana, False
     if defending_top := defending_player_top_exile_result(binding, body):
         return defending_top, True
     if each_opponent_exile := each_opponent_library_top_exile_result(binding, body):

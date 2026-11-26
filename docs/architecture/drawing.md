@@ -24,6 +24,12 @@ to-hand draws, prohibited and empty-library attempts, draw history/events, the
 represented Dredge mill-and-return result, and closed actions tied to the exact
 ordinarily drawn object.
 
+A mandatory controller replacement can turn one draw into the fixed top-two
+exile result. The impulse-access owner grants ordinary play to the cards that
+actually reach exile during the current turn. A short library contributes its
+remaining cards. The replaced occurrence emits no draw, including when the
+library is empty. The coordinator continues any remaining draws individually.
+
 `drawing/miracle_model.py` defines the staged fixed-mana declaration and
 distinct prospective-library and revealed-hand values. A committed draw
 changes the logical object identity. The drawer records draw provenance and
@@ -163,6 +169,11 @@ because that count appears first in the sentence. A replacement pause retains
 the remaining ordered recipients through save/load and replay. Source ownership
 does not select those recipients.
 
+A closed draw-and-life spell retains one revalidated player target for both
+instructions. The draw owner receives half the target's current library size,
+rounded up once before draw replacements. The subsequent life instruction
+reads the same target's current life total and rounds the loss up separately.
+
 The version-three source-sacrifice instruction used by Standstill retains the
 original caster from its unqualified normalized spell-cast occurrence.
 Starting the mandatory sacrifice cost permits the draw under CR 118.12,
@@ -233,6 +244,14 @@ The first completed draw in an opponent’s own draw step is exempt from
 the corresponding static redirect. A resolving target-player redirect
 stores its target and controller in the duration journal and expires in cleanup.
 When the controller leaves before cleanup, the target's draw is still skipped.
+
+A controller's optional library-category replacement applies to one draw at
+a time. After the controller chooses land or nonland, the draw owner reveals
+the prefix through the first match and moves the match to hand. The remaining
+revealed cards go to the bottom in the chosen order before the next draw.
+The current draw occurrence authorizes each choice during resolutions and turn
+draws. A no-match result can order the whole library. An empty library still
+permits the replacement and produces no draw attempt.
 
 Unsupported material or noncommutative choices fail closed.
 `replacement.draw.dredge.v1` is generated from `Dredge N`, is
@@ -325,3 +344,8 @@ Primary focused assurance lives in `test_draw_transaction_model.py`,
 `test_optional_draw_choices.py`,
 `test_activated_draw_abilities.py`,
 `test_semantic_handlers.py`, and `test_exact_zimone_closure.py`.
+
+An untargeted resolving spell that derives its draw count from the mana value
+of an owned commander uses a public object choice at resolution when more than
+one eligible commander is on the battlefield or in the command zone. The same
+selected value governs subsequent life loss, including when a draw is replaced.

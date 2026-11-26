@@ -535,6 +535,28 @@ def _combat_participant_damage_spec(material_line: str):
     )
 
 
+def _source_combat_or_spell_target_spec(material_line, *, card_name):
+    from ..rules.source_power_opponent_damage import (
+        SOURCE_POWER_OPPONENT_DAMAGE_BODY, SOURCE_POWER_OPPONENT_DAMAGE_DEPENDENCIES,
+        SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, SOURCE_POWER_OPPONENT_DAMAGE_VARIANT,
+        source_combat_or_spell_target_condition,
+    )
+
+    match = re.fullmatch(
+        r"(?:When|Whenever) (?P<source>.+?) attacks, blocks, or becomes the target of a spell, (?P<body>.+)",
+        " ".join(material_line.split()), re.I,
+    )
+    if (match is None or match["body"].casefold() != SOURCE_POWER_OPPONENT_DAMAGE_BODY
+            or (match["source"].casefold() != "this creature"
+                and not (card_name and SourceReferenceSpec(card_name).matches(match["source"])))):
+        return None
+    return _spec(
+        "creature.attacks", SOURCE_POWER_OPPONENT_DAMAGE_VARIANT, match["body"],
+        SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE, "trigger-event-normalized-public-action",
+        condition=source_combat_or_spell_target_condition(), capabilities=SOURCE_POWER_OPPONENT_DAMAGE_DEPENDENCIES,
+    )
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -547,7 +569,8 @@ def fixed_public_multi_event_binding_spec(
     paired = (_source_block_pair_spec(material_line)
               or _color_cast_or_land_entry_spec(material_line)
               or _entry_or_cast_origin_spec(material_line)
-              or _combat_participant_damage_spec(material_line))
+              or _combat_participant_damage_spec(material_line)
+              or _source_combat_or_spell_target_spec(material_line, card_name=card_name))
     if paired is not None:return paired
 
     cast_or_death = _opponent_cast_or_source_death_spec(material_line, card_name=card_name)

@@ -66,7 +66,12 @@ class MilledCreatureTokens:
 
 
 def uses_milled_creature_tokens(effect):
-    return isinstance(effect, Mapping) and effect.get("op") == "mill" and "followup" in effect
+    from .committed_mill_cards import uses_committed_mill_result
+
+    return (
+        isinstance(effect, Mapping) and effect.get("op") == "mill"
+        and "followup" in effect and not uses_committed_mill_result(effect)
+    )
 
 
 def milled_creature_token_node_capabilities(effects, target_schema):

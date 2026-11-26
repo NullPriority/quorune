@@ -749,6 +749,12 @@ requirements, with a zero floor. A face-down casting method suppresses printed
 self-reduction abilities while retaining independently applicable external
 modifiers through the existing cost owner.
 
+Battlefield Affinity grants to the controller's instant and sorcery spells use
+the public spell-cost modifier owner. The selected spell face determines
+eligibility, and each live provider independently counts the caster's current
+creatures. Each applicable grant reduces the total generic price through the
+ordinary offer and payment calculation.
+
 Shared public self-cost conditions use a read-only prospective spell view:
 the casting card leaves its former zone before the condition is counted and
 its casting controller supplies `you`, while ownership remains unchanged.
@@ -1723,6 +1729,11 @@ battlefield incarnation, survive ability removal and source departure, and
 expire at cleanup. Restrictions and optional blocking payments still govern
 which requirements can be satisfied. See
 [ADR 0124](../adr/0124-resolved-declaration-requirements.md).
+
+One fixed blocking spell can grant Indestructible to its same announced
+creature after the mandatory blocking rule settles. The condition reads
+current effective power among the resolving controller's creatures. Either
+result uses the existing turn-duration owners and the original target.
 
 `rules/block_prohibitions.py` owns the shared read-only block-prohibition
 verdict. It evaluates ordinary typed restrictions in their existing order, then
@@ -2796,6 +2807,14 @@ only inside the producer's canonical simultaneous batch, and public damage or
 zone predicates read sealed committed or last-known facts rather than live
 Oracle text.
 
+An owned-zone exile occurrence carries only the owner of a physical card
+that actually moves from library or graveyard to exile. Graveyard departures
+use the pre-event trigger-source snapshot. Other eligible moves use the
+committed battlefield. The matching trigger coalesces within a simultaneous
+movement batch and retains a separate occurrence for each successive move in
+cascade or discover. The event carries no identifying details for face-down
+exile.
+
 Grouped creature-card departures that create a fixed token and place counters
 look back to the battlefield observers and card characteristics immediately
 before the move. Casting an eligible card from the graveyard snapshots those
@@ -3256,6 +3275,14 @@ public results. Each identifiable nonland causes one life loss and one rad
 counter removal, settled together before life-loss triggers are dispatched.
 Earlier Game Record checkpoints retain their original counter behavior.
 
+A linked Mill instruction selects from the committed movements. The public
+result reader follows each physical card to its actual destination and
+requires the same face-up incarnation there. A controller's fixed Mill can
+then return all those cards with an Adventure to hand as one replacement-aware
+group. The suspended follow-up retains the exact identities without milling
+again. The Adventure reduction uses the same printed alternative-face fact
+and applies only to a prospective face-up permanent spell its controller casts.
+
 Combat declaration restrictions consume that same snapshot for fixed public
 conditions rather than maintaining a combat-local condition registry. Direct
 source-stat comparisons read current effective power or toughness at the
@@ -3356,3 +3383,30 @@ types on the revealed creature card and current controlled creatures,
 including Changeling. A declined or unavailable cast moves that same public
 card to the bottom. The earlier private look and optional reveal preserve
 their original cast, land-play, and decline behavior.
+
+
+### Paid noncreature cast and source transformation
+
+The trigger reads the normalized cast's actual payment and the spell's
+committed noncreature characteristics. Its intervening condition retains the
+original paid amount. Resolution places a counter through the ordinary counter
+owner, reads the current counter total on that incarnation, and transforms it
+through the ordinary transform owner using its captured transform count.
+
+### Untap and animate one land until the next turn
+
+The loyalty ability revalidates one land the activator controls, then untaps
+and animates that same incarnation. A land that is already untapped still
+becomes a 5/5 Elemental creature with haste and keeps its previous types and
+abilities. The animation lasts until the activator's next turn. It expires
+through the existing next-turn owner and cannot follow a card that moves.
+
+### Search for a Dragon and copy the selected card
+
+The resolving activator can find one Dragon permanent card in their library.
+The private choice carries the exact library incarnation through replacement
+ordering. The source can copy the resulting face-up public card, including
+when a replacement redirected it to exile. The copy affects only the
+source's original battlefield incarnation and is committed before the
+library shuffle. The shuffle still resolves after an empty search or
+the source's departure.

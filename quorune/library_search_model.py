@@ -14,6 +14,9 @@ FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID = "fixed-counted-library-search"
 FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.fixed_counted"
 DIFFERENT_NAME_CREATURE_SEARCH_CAPABILITY = "library.search.two_creatures_with_different_names"
 DIFFERENT_NAME_SEARCH_FIELD = "different_names"
+SHARED_LAND_TYPE_SEARCH_FIELD = "shared_land_type"
+SHARED_LAND_TYPE_SEARCH_CAPABILITY = "library.search.two_basic_lands_shared_type"
+_SHARED_LAND_TYPE_SEARCH_SELECTOR = FrozenMap({"types": ["land"], "supertypes": ["basic"]})
 DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID = "disjunctive-counted-library-search"
 DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.counted_disjunction"
 QUERY_BOUND_SEARCH_VERSION = 8
@@ -45,6 +48,8 @@ PRIVATE_SEARCH_RANDOM_DISCARD_CAPABILITY = "library.search.hand_random_discard_s
 PRIVATE_SEARCH_RANDOM_DISCARD_MECHANIC = "private-library-search-random-discard"
 BARGAIN_SEARCH_VERSION = 24
 PAID_ARTIFACT_SEARCH_VERSION = 25
+PAID_CREATURE_SEARCH_VERSION = 26
+DRAGON_GRAVEYARD_COPY_SEARCH_VERSION = 27
 FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_CAPABILITY = "library.search.fixed_creature_battlefield_group"
 TARGET_NAME_SEARCH_SNAPSHOT = "_target_name_search_snapshot"
 TARGET_NAME_PERMANENT_TYPES = ("artifact", "battle", "creature", "enchantment", "land", "planeswalker")
@@ -199,10 +204,12 @@ def project_semantic_search_result_publication(
             *SIMULTANEOUS_CREATURE_SEARCH_VERSIONS,
             COMMITTED_ATTACKING_EXILE_SEARCH_VERSION,
             TARGET_NAME_MULTIZONE_EXILE_VERSION,
+            DRAGON_GRAVEYARD_COPY_SEARCH_VERSION,
             TARGET_PLAYER_BASIC_LAND_SEARCH_VERSION,
             LINKED_ARTIFACT_SEARCH_VERSION,
             BARGAIN_SEARCH_VERSION,
             PAID_ARTIFACT_SEARCH_VERSION,
+            PAID_CREATURE_SEARCH_VERSION,
         }
     )
     public_cards = public_order
@@ -216,7 +223,9 @@ def project_semantic_search_result_publication(
         )
 
     restrict_public_results = nonrevealing_printed_cost_search or (
-        public_choice and (name_multizone or effect.get("schema_version") == PAID_ARTIFACT_SEARCH_VERSION)
+        public_choice and (name_multizone or effect.get("schema_version") in {
+            PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
+        })
     )
     public_count = len(moved)
     if restrict_public_results:
@@ -227,9 +236,10 @@ def project_semantic_search_result_publication(
         if len(public_cards) == 1:
             public_details["object"] = public_cards[0].ref
 
-    public_changed_objects = (
-        public_cards if restrict_public_results or (public_choice and is_bargain_search_effect(effect)) else public_order
-    )
+    public_changed_objects = public_cards if (
+        restrict_public_results or (public_choice and is_bargain_search_effect(effect))
+        or effect.get("schema_version") == DRAGON_GRAVEYARD_COPY_SEARCH_VERSION
+    ) else public_order
     private_details = {
         **public_details,
         **allocation_details,
@@ -673,7 +683,7 @@ def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
     from .named_search_model import LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION
 
     selector = effect.get("selector")
-    return effect.get("schema_version") in (
+    return SHARED_LAND_TYPE_SEARCH_FIELD in effect or effect.get("schema_version") in (
         2, 3, 4, 5, QUERY_BOUND_SEARCH_VERSION, TARGET_NAME_LIBRARY_SEARCH_VERSION,
         LITERAL_NAME_ANY_NUMBER_SEARCH_VERSION, LITERAL_NAME_BATTLEFIELD_SEARCH_VERSION, RECRUITING_LIBRARY_SEARCH_VERSION,
         ANY_NUMBER_CREATURE_SUBTYPE_BATTLEFIELD_VERSION, EXILED_TARGET_SEARCH_VERSION,
@@ -682,7 +692,7 @@ def is_counted_library_search(effect: Mapping[str, Any]) -> bool:
         CREATURE_SUBSET_MANA_VALUE_SEARCH_VERSION,
         PRIVATE_SEARCH_RANDOM_DISCARD_VERSION,
         BARGAIN_SEARCH_VERSION,
-        PAID_ARTIFACT_SEARCH_VERSION,
+        PAID_ARTIFACT_SEARCH_VERSION, PAID_CREATURE_SEARCH_VERSION,
     ) or (
         isinstance(selector, Mapping) and SEARCH_ALTERNATIVES in selector
     )
@@ -737,6 +747,9 @@ def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, .
     if effect.get('schema_version')==4:
         from .conditional_search_model import ConditionalSearchSpec
         return ConditionalSearchSpec.from_effect(effect).capabilities()
+    if SHARED_LAND_TYPE_SEARCH_FIELD in effect:
+        FixedCountedLibrarySearchTemplate.from_effect(effect)
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, SHARED_LAND_TYPE_SEARCH_CAPABILITY)
     if DIFFERENT_NAME_SEARCH_FIELD in effect:
         FixedCountedLibrarySearchTemplate.from_effect(effect)
         return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, DIFFERENT_NAME_CREATURE_SEARCH_CAPABILITY)
@@ -870,13 +883,14 @@ class FixedCountedLibrarySearchTemplate:
     reveal: bool
     enters_tapped: bool = False
     different_names: bool = False
+    shared_land_type: bool = False
 
     def __post_init__(self) -> None:
         if type(self.count) is not int or not 1 <= self.count <= 10:
             raise ValueError("Fixed search count must be between one and ten")
         if any(
             type(value) is not bool
-            for value in (self.optional_count, self.reveal, self.enters_tapped, self.different_names)
+            for value in (self.optional_count, self.reveal, self.enters_tapped, self.different_names, self.shared_land_type)
         ):
             raise ValueError("Fixed search flags must be booleans")
         if (
@@ -887,13 +901,16 @@ class FixedCountedLibrarySearchTemplate:
         if self.different_names and (self.count != 2 or not self.optional_count or self.destination != "hand"
                 or not self.reveal or self.enters_tapped or FrozenMap(self.selector) != FrozenMap({"types": ["creature"]})):
             raise ValueError("Different names require the complete up-to-two creature search and reveal")
+        if self.shared_land_type and (self.count != 2 or not self.optional_count or self.destination != "battlefield"
+                or self.reveal or not self.enters_tapped or FrozenMap(self.selector) != _SHARED_LAND_TYPE_SEARCH_SELECTOR):
+            raise ValueError("Shared land type requires the complete up-to-two basic-land search and tapped entry")
         if self.enters_tapped and self.destination != "battlefield":
             raise ValueError("Only battlefield search results may enter tapped")
         if not counted_search_selector_is_closed(self.selector, destination=self.destination):
             raise ValueError("Fixed search selector is outside the closed vocabulary")
         object.__setattr__(self, "selector", FrozenMap(self.selector))
         if (self.count > 1 and self.destination != "hand"
-                and not (self._tapped_land_batch() or self.up_to_two_forest_batch)):
+                and not (self._tapped_land_batch() or self.up_to_two_forest_batch or self.shared_land_type)):
             raise ValueError("Fixed search destination or cardinality is unsupported")
 
     @property
@@ -927,6 +944,8 @@ class FixedCountedLibrarySearchTemplate:
             value["enters_tapped_override"] = True
         if self.different_names:
             value[DIFFERENT_NAME_SEARCH_FIELD] = True
+        if self.shared_land_type:
+            value[SHARED_LAND_TYPE_SEARCH_FIELD] = True
         return value
 
     def compiled(self) -> tuple[str, tuple[dict[str, Any], ...], None, tuple[str, ...]]:
@@ -952,7 +971,8 @@ class FixedCountedLibrarySearchTemplate:
         }
         if (
             not isinstance(effect, Mapping)
-            or set(effect) not in (fields, fields | {"enters_tapped_override"}, fields | {DIFFERENT_NAME_SEARCH_FIELD})
+            or set(effect) not in (fields, fields | {"enters_tapped_override"}, fields | {DIFFERENT_NAME_SEARCH_FIELD},
+                                  fields | {"enters_tapped_override", SHARED_LAND_TYPE_SEARCH_FIELD})
             or type(effect.get("schema_version")) is not int
             or effect["schema_version"] not in (2, 3)
         ):
@@ -972,6 +992,7 @@ class FixedCountedLibrarySearchTemplate:
             reveal=effect["reveal"],
             enters_tapped=effect.get("enters_tapped_override", False),
             different_names=effect.get(DIFFERENT_NAME_SEARCH_FIELD, False),
+            shared_land_type=effect.get(SHARED_LAND_TYPE_SEARCH_FIELD, False),
         )
         if value.effect() != thaw_value(effect):
             raise ValueError("Counted search instruction contradicts its typed contract")

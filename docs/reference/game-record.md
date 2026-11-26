@@ -238,6 +238,13 @@ pins the mode from the initial checkpoint. Records that omit it retain the
 historical net life transitions from damage. The mode persists when the
 turn history resets.
 
+The optional `turn_history.permanent_entry_token_history_version` is `1` in
+new games. Each committed `permanent_entered` event then records a Boolean
+token fact with the controller, types, and incarnation observed at entry.
+The nontoken creature-entry count requires a complete current-turn journal.
+Records with an omitted version retain their original entry-event payloads
+through replay and through later turn resets.
+
 The optional `turn_history.permanent_death_history_version` is `1` in
 current games. Each committed battlefield-to-graveyard permanent departure
 records its previous controller, incarnation, card types, creature subtypes

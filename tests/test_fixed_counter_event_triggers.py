@@ -1756,7 +1756,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         )
 
         with patch(
-            "quorune.oracle_ir.fixed_typed_event_effect_trigger_node",
+            "quorune.compiler.controlled_spell_counter_nodes.fixed_typed_event_effect_trigger_node",
             return_value=None,
         ):
             mutated = self.compile(text)
@@ -3258,11 +3258,20 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual("exact", direct.status, direct.material_residuals)
         self.assertEqual("combat.player_attacked", direct.faces[0].nodes[0].event)
         self.assertIn("trigger.event.direct_player_attack", direct.faces[0].nodes[0].capability_dependencies)
+        food = self.compile(
+            "Whenever you sacrifice one or more Foods, draw a card.", type_line="Creature — Advisor",
+        )
+        self.assertEqual("exact", food.status, food.material_residuals)
+        self.assertEqual("permanent.sacrificed", food.faces[0].nodes[0].event)
+        self.assertIn(
+            "trigger.event.controller_food_sacrifice_group",
+            food.faces[0].nodes[0].capability_dependencies,
+        )
         cases = (
             "Whenever this creature becomes tapped for the first time each turn, draw a card.",
             "Whenever you cycle or discard a card for the first time each turn, draw a card.",
             "Whenever you discard a card for the first time each turn, draw a card.",
-            "Whenever you sacrifice one or more Foods, draw a card.",
+            "Whenever you sacrifice one or more Foods during combat, draw a card.",
             "Whenever one or more creature tokens you control deal combat "
             "damage to a player, draw a card.",
             "Whenever you attack a player with exactly two creatures, draw a card.",

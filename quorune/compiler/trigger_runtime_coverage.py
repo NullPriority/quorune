@@ -28,6 +28,8 @@ from ..spell_history_transform_model import SPELL_HISTORY_TRANSFORM_COVERAGE
 def fixed_typed_result_requires_current_ability(binding, template, required):
     from ..entry_designations import LINKED_PLAYER_CAST_MILL_TEMPLATE, LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE
     from ..rules.counter_placement_blocking import COUNTER_PLACEMENT_BLOCKING_TEMPLATE
+    from ..rules.counter_recipient_control import COUNTER_RECIPIENT_CONTROL_TEMPLATE
+    from ..rules.source_power_opponent_damage import SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE
     from ..power_sacrifice_model import (
         ATTACK_SACRIFICE_STAT_TEMPLATE, CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE,
     )
@@ -39,7 +41,8 @@ def fixed_typed_result_requires_current_ability(binding, template, required):
         template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
         or binding.variant == "fixed_entry_return_requirement"
         or template in {
-            LEGENDARY_WIZARD_HAND_CAST_TEMPLATE, COUNTER_PLACEMENT_BLOCKING_TEMPLATE,
+            LEGENDARY_WIZARD_HAND_CAST_TEMPLATE, COUNTER_PLACEMENT_BLOCKING_TEMPLATE, COUNTER_RECIPIENT_CONTROL_TEMPLATE,
+            SOURCE_POWER_OPPONENT_DAMAGE_TEMPLATE,
             "scheduled-player-hand-difference-v1", "linked-entry-opponent-upkeep-damage-v1",
             "fixed-counter-upkeep-target-hand-life-v1", "upkeep-fixed-other-controlled-creature-damage-v1",
             CONTROLLER_SACRIFICE_LIFE_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, ATTACK_SACRIFICE_STAT_TEMPLATE,

@@ -568,6 +568,10 @@ def _pay_object_and_mana_costs(
 
 
 def _pay_selected_object_costs(host, seat, source, ability, response):
+    from ..announced_subtype_sacrifice import announced_subtype_sacrifice_choice
+    if choice := announced_subtype_sacrifice_choice(ability):
+        from .announced_subtype_sacrifice import pay_announced_subtype_sacrifices
+        return pay_announced_subtype_sacrifices(host, seat, ability, choice, response)
     from ..selected_counter_costs import (
         DISTRIBUTED_PLUS_COUNTER_COST_KIND, SELECTED_PLUS_COUNTER_COST_KIND, pay_selected_counter_cost,
     )
@@ -913,6 +917,9 @@ def _dispatch_completed_activation_triggers(host, proposal, item, program, abili
     _dispatch_cycling_event(host, proposal, item, cycling_snapshot)
     _dispatch_ninjutsu_activation(host, proposal, item, program, ability)
     publish_creature_ability_activation(host, creature_activation)
+    from ..nonmana_activation_copy import publish_nonmana_activation_copy_occurrence
+
+    publish_nonmana_activation_copy_occurrence(host, item)
 
 
 def commit_activation(
@@ -932,6 +939,8 @@ def _publish_activation_stack_placement(host, proposal, source, ability, item, *
         host.state.stack.append(item)
     from .variable_colored_reveal import commit_activation_reveal_price
     commit_activation_reveal_price(host, proposal, source, ability, item)
+    from .revealed_hand_land_entry import reveal_activated_hand_land_entry_source
+    reveal_activated_hand_land_entry_source(host, proposal, source, item)
     if not targets_announced:
         dispatch_target_announcements(host, item)
     from ..crime import record_crime_for_stack_placement

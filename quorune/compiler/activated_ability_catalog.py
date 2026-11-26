@@ -452,8 +452,10 @@ def _catalog_provenance(
     carrier_provenance: Mapping[str, Any] | None,
 ) -> Mapping[str, Any]:
     from ..rules.forage import has_forage_cost
+    from ..paid_activation_card_types import has_bounded_sacrifice
 
-    if not has_forage_cost(ability) and not ability.chooses_activation_x and ability.ability_local_mana_reduction is None:
+    if (not has_forage_cost(ability) and not has_bounded_sacrifice(ability)
+            and not ability.chooses_activation_x and ability.ability_local_mana_reduction is None):
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}
@@ -492,10 +494,12 @@ def _append_catalog_carriers(
     from ..rules.attachment_actions import EQUIP_SEMANTIC_KEY
     from ..rules.commander_keyword_grants import commander_permanent_query_dependencies
     from ..rules.forage import has_forage_cost
+    from ..paid_activation_card_types import has_bounded_sacrifice
 
     for face_id, abilities in catalog.items():
         for ability in abilities:
-            if (has_forage_cost(ability) or ability.loyalty_x or ability.ability_local_mana_reduction is not None
+            if (has_forage_cost(ability) or has_bounded_sacrifice(ability)
+                    or ability.loyalty_x or ability.ability_local_mana_reduction is not None
                     or ability.variable_colored_reveal_price is not None
                     or ability.source_counter_placement_cost is not None):
                 continue  # The price requires its exact resolving program.

@@ -13,6 +13,10 @@ from ..fixed_top_exile import (
 )
 from ..impulse_access_model import ImpulseAccessDuration
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
+from ..rules.controller_private_top_exile_model import (
+    CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC, ControllerPrivateTopExile,
+)
+from ..creature_subtypes import canonical_creature_subtype
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
 
@@ -122,7 +126,27 @@ def cast_event_fixed_top_exile(binding, body):
     return None
 
 
+_CONTROLLER_PRIVATE_TOP_PLAY = re.compile(
+    r"Look at the top two cards of your library and exile them face down\. "
+    r"For as long as they remain exiled, you may play them if you control an? (?P<subtype>[A-Za-z'’-]+)\.",
+    re.I,
+)
+
+
+def controller_private_top_play_template(text):
+    match = _CONTROLLER_PRIVATE_TOP_PLAY.fullmatch(" ".join(text.split()))
+    subtype = canonical_creature_subtype(match["subtype"]) if match else None
+    if subtype is None:
+        return None
+    return ("controller-private-top-conditional-play-v1", (ControllerPrivateTopExile(subtype).instruction(),),
+            None, (CONTROLLER_PRIVATE_TOP_EXILE_MECHANIC,))
+
+
 def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid_public_x=False,**context):
+    if context.get("source_is_permanent") is False:
+        private_play = controller_private_top_play_template(text)
+        if private_play is not None:
+            return private_play
     total_mana = _total_mana_exile_template(text)
     if total_mana is not None:return total_mana
     fixed_top = _fixed_top_exile_template(text, source_name=source_name, event=context.get("event"))

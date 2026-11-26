@@ -3,6 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..rules.controller_private_top_exile_model import (
+    CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY, CONTROLLER_PRIVATE_TOP_EXILE_OPERATION,
+    CONTROLLER_PRIVATE_TOP_EXILE_RULES, ControllerPrivateTopExile,
+)
 from ..effect_contracts import EffectFamilyContract, effect_operation_contracts
 from ..opponent_library_exile_model import (
     EACH_OPPONENT_TOP_EXILE_CAPABILITY, EACH_OPPONENT_TOP_EXILE_OPERATION,
@@ -52,6 +56,23 @@ def _validate_linked_exile_return_instruction(effect: Mapping[str, Any], *, acto
         validate_linked_loyalty_exile_instruction(instruction, actor=actor)
 
 
+def _validate_library_exile_domain_effect(operation, effect, context):
+    material = {key: value for key, value in effect.items() if key != "reason"}
+    if operation == CONTROLLER_PRIVATE_TOP_EXILE_OPERATION:
+        validate = ControllerPrivateTopExile.from_instruction
+        message = "Private controller-library exile requires a resolving spell"
+    else:
+        validate = (validate_each_opponent_top_exile if operation == EACH_OPPONENT_TOP_EXILE_OPERATION
+                    else validate_opponent_library_exile_play)
+        message = "Opponent-library exile instructions require a resolving stack object"
+    try:
+        validate(material, actor=context.actor)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    if context.source is None or not context.source.stack_ref:
+        raise SemanticNodeError(message)
+
+
 @dataclass(frozen=True, slots=True)
 class DomainEffectHandler:
     operation: str
@@ -69,6 +90,8 @@ class DomainEffectHandler:
 
     @property
     def rule_references(self) -> tuple[str, ...]:
+        if self.operation == CONTROLLER_PRIVATE_TOP_EXILE_OPERATION:
+            return CONTROLLER_PRIVATE_TOP_EXILE_RULES
         if self.operation == EACH_OPPONENT_TOP_EXILE_OPERATION:
             return ("101.4", "400.7", "406.3", "608.2c", "609.3", "701.13a")
         if self.operation == OPPONENT_LIBRARY_EXILE_PLAY_OPERATION:
@@ -162,15 +185,9 @@ class DomainEffectHandler:
             raise SemanticNodeError(
                 "Semantic programs cannot supply authoritative runtime source context"
             )
-        if operation in {EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION}:
-            validate = (validate_each_opponent_top_exile if operation == EACH_OPPONENT_TOP_EXILE_OPERATION
-                        else validate_opponent_library_exile_play)
-            try:
-                validate({key: value for key, value in effect.items() if key != "reason"}, actor=context.actor)
-            except (TypeError, ValueError) as exc:
-                raise SemanticNodeError(str(exc)) from exc
-            if context.source is None or not context.source.stack_ref:
-                raise SemanticNodeError("Opponent-library exile instructions require a resolving stack object")
+        if operation in {CONTROLLER_PRIVATE_TOP_EXILE_OPERATION, EACH_OPPONENT_TOP_EXILE_OPERATION,
+                         OPPONENT_LIBRARY_EXILE_PLAY_OPERATION}:
+            _validate_library_exile_domain_effect(operation, effect, context)
         if operation == SADDLE_OPERATION:
             ref = effect.get("card")
             if set(effect) - {"op", "card", "reason"} or type(ref) is not str or not ref:
@@ -256,6 +273,8 @@ def effect_descriptor_capability_dependencies(effect, registered):
 
     if versioned_rad_player_counter_effect(effect):
         return (*registered["capability_dependencies"], RAD_CAPABILITY)
+    if registered["operation"] == CONTROLLER_PRIVATE_TOP_EXILE_OPERATION:
+        ControllerPrivateTopExile.from_instruction(effect)
     if registered["operation"] == EACH_OPPONENT_TOP_EXILE_OPERATION:
         from ..opponent_library_exile_model import DAMAGED_PLAYER_PRIVATE_TOP_CAPABILITY, DAMAGED_PLAYER_PRIVATE_TOP_VERSION
 
@@ -356,6 +375,8 @@ def effect_descriptor_capability_dependencies(effect, registered):
 
 
 def _domain_capabilities(operation):
+    if operation == CONTROLLER_PRIVATE_TOP_EXILE_OPERATION:
+        return (CONTROLLER_PRIVATE_TOP_EXILE_CAPABILITY,)
     if operation == EACH_OPPONENT_TOP_EXILE_OPERATION:
         return (EACH_OPPONENT_TOP_EXILE_CAPABILITY,)
     if operation == OPPONENT_LIBRARY_EXILE_PLAY_OPERATION:

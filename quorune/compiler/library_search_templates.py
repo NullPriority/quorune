@@ -94,6 +94,25 @@ _ALTERNATIVE_ARTICLE = re.compile(r"^an?\s+", re.I)
 _CARD_NOUN = re.compile(r"\s+cards?$", re.I)
 
 
+def dragon_graveyard_copy_search_template(text, *, source_name):
+    from ..rules.dragon_graveyard_search_copy import (
+        DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC, dragon_graveyard_copy_search_effect,
+    )
+    from ..rules.source_references import SourceReferenceSpec
+
+    match = re.fullmatch(
+        r"Search your library for a Dragon permanent card and put it into your graveyard\. "
+        r"If you do, (?P<source>.+?) becomes a copy of that card until end of turn\. Then shuffle\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None or not SourceReferenceSpec(source_name).matches(match["source"]):
+        return None
+    return (
+        "dragon-graveyard-search-and-self-copy-v1", (dragon_graveyard_copy_search_effect(),), None,
+        (DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC,),
+    )
+
+
 def _or_terms(value: str) -> tuple[str, ...]:
     return tuple(
         part.strip()
@@ -332,6 +351,12 @@ def fixed_counted_library_search_effect_template(
                                   "reveal them, put them into your hand, then shuffle."):
         return FixedCountedLibrarySearchTemplate(
             2, True, FrozenMap({"types": ["creature"]}), "hand", True, different_names=True,
+        )
+    if normalized.casefold() == ("search your library for up to two basic land cards that share a land type, "
+                                  "put them onto the battlefield tapped, then shuffle."):
+        return FixedCountedLibrarySearchTemplate(
+            2, True, FrozenMap({"types": ["land"], "supertypes": ["basic"]}), "battlefield", False,
+            enters_tapped=True, shared_land_type=True,
         )
     normalized = re.sub(r'^Search your library for any card(?=,)', 'Search your library for a card', normalized, flags=re.I)
     match = _COUNTED_MOVE.fullmatch(normalized) or _COUNTED_TOP.fullmatch(normalized)

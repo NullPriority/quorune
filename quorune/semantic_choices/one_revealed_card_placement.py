@@ -43,6 +43,8 @@ def _result_options(spec, row, *, after_entry, entry_possible):
     if spec.matches(row.types):
         # Declining the optional permanent entry may still take its printed bottom result.
         return ("put_onto_battlefield", "put_on_bottom", "keep") if spec.entry_optional else ("put_onto_battlefield",)
+    if spec.fallback == "hand":
+        return ("put_into_hand",)
     return ("put_on_bottom", "keep") if spec.fallback == "optional_bottom" else ("put_into_graveyard",)
 
 
@@ -50,16 +52,17 @@ def _movement(choice, actor, stack_ref, row, identity, reason):
     if choice == "keep":
         return ()
     bottom = choice == "put_on_bottom"
+    hand = choice == "put_into_hand"
     plan = LibrarySelectionArrangement(
         looked=(identity,),
-        selected_refs=(),
-        remainder_refs=(row.ref,),
-        remainder_destination="library_bottom" if bottom else "graveyard",
+        selected_refs=(row.ref,) if hand else (),
+        remainder_refs=() if hand else (row.ref,),
+        remainder_destination="library_bottom" if bottom or hand else "graveyard",
         remainder_order="chosen",
     )
     return (LibrarySelectionIntent(
         actor=actor, player=actor, arrangement=plan, reason=reason,
-        source_stack_ref=stack_ref, looked_are_public=bottom, selected_are_public=False,
+        source_stack_ref=stack_ref, looked_are_public=bottom, selected_are_public=hand,
     ),)
 
 
@@ -193,7 +196,7 @@ class RevealedCardPlacementHandler:
                 _entry_effect(actor, identity),
                 FrozenMap({**effect, "_after_entry": True}),
             ))
-        if choice == "put_into_graveyard":
+        if choice in {"put_into_graveyard", "put_into_hand"}:
             raise SemanticChoiceError("Mandatory placement cannot be submitted as a choice")
         return SemanticChoiceCompletion(intents=_movement(choice, actor, continuation.stack_ref, row, identity, reason))
 

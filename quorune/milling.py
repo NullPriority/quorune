@@ -266,6 +266,30 @@ def mill_cards(
     return commit_mill(host, prepare_mill(host, request), replacement_selections=replacement_selections)
 
 
+def current_public_milled_cards(
+    host: MillHost, result: MillResult,
+) -> tuple[CardInstance, ...]:
+    """Find the exact milled cards that still occupy their public destinations."""
+
+    if not isinstance(result, MillResult):
+        raise GameRuleError("A linked Mill instruction requires the committed result")
+    cards = []
+    for outcome in result.cards:
+        if outcome.destination not in PUBLIC_ZONES:
+            continue
+        card = host.state.cards.get(outcome.identity.object_id)
+        if (
+            card is not None
+            and card.zone == outcome.destination
+            and card.logical_object_id == outcome.destination_logical_object_id
+            and card.owner == result.player
+            and card.is_card_object
+            and not card.face_down
+        ):
+            cards.append(card)
+    return tuple(cards)
+
+
 def mill_player_batch(
     host: MillHost, requests: Sequence[MillRequest], *,
     replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
@@ -302,6 +326,7 @@ def mill_player_batch(
 
 __all__ = [
     "commit_mill",
+    "current_public_milled_cards",
     "MilledCardResult",
     "MillHost",
     "MillObjectIdentity",

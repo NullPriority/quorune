@@ -45,6 +45,13 @@ TARGET_CARD_TYPE_ADDITION_CAPABILITY = "continuous.resolution.fixed_target_card_
 INDEFINITE_TARGET_LAND_ANIMATION_VERSION = 21
 TARGET_PLAYER_CREATURE_OVERWRITE_VERSION = 31
 TARGET_CREATURE_ABILITY_LOSS_VERSION = 32
+NEXT_TURN_TARGET_LAND_ANIMATION_VERSION = 33
+NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC = "untap-retaining-land-animation-next-turn"
+NEXT_TURN_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.untap_land_animation_next_turn"
+NEXT_TURN_TARGET_LAND_ANIMATION_MECHANICS = (
+    "tap-and-untap", "cr-611-continuous-effects", "cr-115-targets",
+    NEXT_TURN_TARGET_LAND_ANIMATION_MECHANIC, "haste",
+)
 INDEFINITE_TARGET_LAND_ANIMATION_MECHANIC = "indefinite-target-land-animation"
 INDEFINITE_TARGET_LAND_ANIMATION_CAPABILITY = "continuous.resolution.indefinite_target_land_animation"
 INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS = frozenset({
@@ -57,6 +64,7 @@ FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, TARGET_CARD_TYPE_ADDITION_VERSION,
     INDEFINITE_TARGET_LAND_ANIMATION_VERSION, FIXED_TARGET_LAND_TYPE_VERSION,
     TARGET_PLAYER_CREATURE_OVERWRITE_VERSION, TARGET_CREATURE_ABILITY_LOSS_VERSION,
+    NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
     *INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS,
 })
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
@@ -275,6 +283,26 @@ class IndefiniteTargetLandAnimationSpec:
             *(cap for keyword in self.settings.keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
 
     def layer_operations(self):return self.settings.layer_operations()
+
+
+def next_turn_target_land_animation_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"], "count": 1,
+            "types_any": ["land"], "controller_relation": "you"}
+
+
+def next_turn_target_land_animation_settings():
+    return FixedResolutionCharacteristicsSpec(
+        card_types=("Creature",), creature_subtypes=("Elemental",), retain_types=True,
+        retain_creature_subtypes=True, keywords=("Haste",), base_power=5, base_toughness=5,
+    )
+
+
+def next_turn_target_land_animation_effects():
+    return (
+        {"op": "untap", "card": "$target.0"},
+        {"op": CHARACTERISTIC_OPERATION, "schema_version": NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+         "card": "$target.0", "characteristics": next_turn_target_land_animation_settings().to_dict()},
+    )
 
 
 class IndefiniteEnchantmentFormSpec:
@@ -702,6 +730,15 @@ def fixed_resolution_characteristic_instruction(
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value.get("schema_version")
+    if type(version) is int and version == NEXT_TURN_TARGET_LAND_ANIMATION_VERSION:
+        if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
+            raise ValueError("Next-turn land animation needs one exact result")
+        card = value["card"]
+        settings = FixedResolutionCharacteristicsSpec.from_dict(value["characteristics"])
+        if (type(card) is not str or not card or (card.startswith("$") if resolved else card != "$target.0")
+                or settings != next_turn_target_land_animation_settings()):
+            raise ValueError("Next-turn land animation requires the original target and retaining form")
+        return settings, card
     if type(version) is int and version == TARGET_CREATURE_ABILITY_LOSS_VERSION:
         if value.get("op") != CHARACTERISTIC_OPERATION or set(value) != expected | {"card"}:
             raise ValueError("Ability loss needs one exact target instruction")

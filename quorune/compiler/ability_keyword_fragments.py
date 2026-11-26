@@ -67,7 +67,9 @@ def _lower_fixed_public_ward(
         handlers=tuple(
             {
                 "handler_id": (
-                    "ability.trigger.ward.fixed-sacrifice.v1"
+                    "ability.trigger.ward.fixed-blight.v1"
+                    if spec.blight_amount is not None
+                    else "ability.trigger.ward.fixed-sacrifice.v1"
                     if spec.sacrifice_scope is not None
                     else "ability.trigger.ward.v1"
                     if spec.generic_cost is not None

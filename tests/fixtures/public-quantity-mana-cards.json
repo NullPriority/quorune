@@ -47,7 +47,7 @@
       ],
       "released_at": "2024-11-15",
       "toughness": null,
-      "type_line": "Land \u2014 Gate"
+      "type_line": "Land — Gate"
     },
     {
       "cmc": 0.0,
@@ -97,7 +97,7 @@
       ],
       "released_at": "2022-06-10",
       "toughness": null,
-      "type_line": "Legendary Land \u2014 Gate"
+      "type_line": "Legendary Land — Gate"
     },
     {
       "cmc": 2.0,
@@ -292,7 +292,7 @@
       ],
       "released_at": "2021-07-23",
       "toughness": "1",
-      "type_line": "Creature \u2014 Elf Druid"
+      "type_line": "Creature — Elf Druid"
     },
     {
       "cmc": 6.0,
@@ -334,14 +334,14 @@
       "mana_cost": "{6}",
       "name": "Cradle Clearcutter",
       "oracle_id": "225f53ef-da42-47a0-b773-d2aad3338c72",
-      "oracle_text": "Prototype {2}{G} \u2014 1/3 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\n{T}: Add an amount of {G} equal to this creature's power.",
+      "oracle_text": "Prototype {2}{G} — 1/3 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\n{T}: Add an amount of {G} equal to this creature's power.",
       "power": "3",
       "produced_mana": [
         "G"
       ],
       "released_at": "2022-11-18",
       "toughness": "6",
-      "type_line": "Artifact Creature \u2014 Golem"
+      "type_line": "Artifact Creature — Golem"
     },
     {
       "cmc": 4.0,
@@ -488,7 +488,7 @@
       ],
       "released_at": "2024-06-14",
       "toughness": "1",
-      "type_line": "Creature \u2014 Elf Druid"
+      "type_line": "Creature — Elf Druid"
     },
     {
       "cmc": 0.0,
@@ -537,7 +537,7 @@
       ],
       "released_at": "2024-11-15",
       "toughness": null,
-      "type_line": "Land \u2014 Gate"
+      "type_line": "Land — Gate"
     },
     {
       "cmc": 0.0,
@@ -682,7 +682,7 @@
       ],
       "released_at": "2003-10-02",
       "toughness": "2",
-      "type_line": "Creature \u2014 Elf Druid"
+      "type_line": "Creature — Elf Druid"
     },
     {
       "cmc": 2.0,
@@ -929,7 +929,7 @@
       ],
       "released_at": "2023-01-13",
       "toughness": "2",
-      "type_line": "Creature \u2014 Construct",
+      "type_line": "Creature — Construct",
       "mana_value": 0
     },
     {
@@ -979,7 +979,7 @@
       ],
       "released_at": "2023-01-13",
       "toughness": "3",
-      "type_line": "Creature \u2014 Construct"
+      "type_line": "Creature — Construct"
     },
     {
       "cmc": 0,
@@ -1085,7 +1085,7 @@
       "name": "Soldevi Adnate",
       "mana_cost": "{1}{B}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Human Cleric",
+      "type_line": "Creature — Human Cleric",
       "oracle_text": "{T}, Sacrifice a black or artifact creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
       "power": "1",
       "toughness": "2",
@@ -1134,8 +1134,8 @@
       "name": "Illuminor Szeras",
       "mana_cost": "{2}{B}",
       "cmc": 3.0,
-      "type_line": "Legendary Artifact Creature \u2014 Necron",
-      "oracle_text": "Secrets of the Soul \u2014 {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
+      "type_line": "Legendary Artifact Creature — Necron",
+      "oracle_text": "Secrets of the Soul — {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
       "power": "3",
       "toughness": "3",
       "loyalty": null,
@@ -1268,13 +1268,13 @@
       "produced_mana": [],
       "released_at": "2023-01-13",
       "toughness": "2",
-      "type_line": "Artifact Creature \u2014 Thopter"
+      "type_line": "Artifact Creature — Thopter"
     },
     {
       "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
       "name": "Clone",
       "mana_cost": "{3}{U}",
-      "type_line": "Creature \u2014 Shapeshifter",
+      "type_line": "Creature — Shapeshifter",
       "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
       "power": "0",
       "toughness": "0",
@@ -1323,7 +1323,7 @@
       "name": "Priest of Yawgmoth",
       "mana_cost": "{1}{B}",
       "cmc": 2.0,
-      "type_line": "Creature \u2014 Phyrexian Human Cleric",
+      "type_line": "Creature — Phyrexian Human Cleric",
       "oracle_text": "{T}, Sacrifice an artifact: Add an amount of {B} equal to the sacrificed artifact's mana value.",
       "power": "1",
       "toughness": "2",
@@ -1407,6 +1407,149 @@
         "pauper": "not_legal",
         "paupercommander": "not_legal",
         "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Raise the Alarm",
+      "oracle_id": "5b2364d7-a811-4595-a1b4-224c70555ffa",
+      "oracle_text": "Create two 1/1 white Soldier creature tokens.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Reality Ripple",
+      "oracle_id": "504d5c29-7c37-4c31-8549-2a49eeef74c8",
+      "oracle_text": "Target artifact, creature, or land phases out. (While it's phased out, it's treated as though it doesn't exist. It phases in before its controller untaps during their next untap step.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "55eb9310-f24b-410b-850b-a7d0d5117946",
+      "name": "Leafkin Druid",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Elemental Druid",
+      "oracle_text": "{T}: Add {G}. If you control four or more creatures, add {G}{G} instead.",
+      "power": "0",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "cmc": 2.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
         "pioneer": "legal",
         "predh": "not_legal",
         "premodern": "not_legal",

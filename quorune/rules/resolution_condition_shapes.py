@@ -251,6 +251,12 @@ def resolution_condition_node_capabilities(
     from .monarch_knight_entry_damage import monarch_knight_damage_capabilities, uses_monarch_knight_damage
     from .monarch_counter_distribution import monarch_counter_distribution_capabilities
     from ..monarch_counter_doubling_condition import is_monarch_counter_doubling
+    from ..paid_activation_card_types import paid_type_capabilities, uses_paid_type_condition
+
+    if any(uses_paid_type_condition(effect) for effect in effects):
+        return paid_type_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
+        )
 
     from .named_cast_win import named_cast_win_node_capabilities, uses_named_cast_win
 
@@ -265,6 +271,12 @@ def resolution_condition_node_capabilities(
             return ()
         return point_combat_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+    from .counter_recipient_control import counter_recipient_control_node_capabilities, uses_counter_recipient_control
+
+    if any(uses_counter_recipient_control(effect) for effect in effects):
+        return counter_recipient_control_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema,
         )
     if any(uses_controlled_artifact_token_branch(effect) for effect in effects):
         return controlled_artifact_token_node_capabilities(effects=effects, target_schema=target_schema, cost_schema=cost_schema)
@@ -335,11 +347,21 @@ def resolution_condition_node_capabilities(
 
 def _ordinary_resolution_condition_node_capabilities(effects, target_schema, mechanic_ids, cost_schema):
     from .capabilities import capability_dependencies_for_node
+    from .targeted_turn_target_prohibition import uses_targeted_turn_prohibition, targeted_turn_prohibition_node_capabilities
+
+    if uses_targeted_turn_prohibition(effects):
+        return targeted_turn_prohibition_node_capabilities(effects, target_schema, mechanic_ids)
+
+    from ..temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
 
     mechanics = set(mechanic_ids)
     if RESOLUTION_CONDITION_MECHANIC not in mechanics or not effects:
         return ()
     wrapper = effects[-1]
+    if wrapper.get("schema_version") == BLOCKER_PROTECTION_CONDITION_VERSION:
+        from .temporary_all_blockers import blocker_protection_node_capabilities
+
+        return blocker_protection_node_capabilities(effects, target_schema, mechanics) if cost_schema is None else ()
     try:
         _condition, conditional = validate_resolution_condition_instruction(wrapper)
         if wrapper.get('schema_version') == CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION:
@@ -463,6 +485,10 @@ def _ordinary_resolution_condition_node_capabilities(effects, target_schema, mec
 
 
 def bound_resolution_condition_runtime_dependencies(program):
+    from .activation.bounded_type_sacrifice import paid_type_runtime_dependencies
+
+    if paid_types := paid_type_runtime_dependencies(program):
+        return paid_types
     from .activation.paid_characteristic_results import activation_paid_characteristic_runtime_dependencies
     from .entrant_power_branch import entrant_power_branch_runtime_dependencies
     from .monarch_movement_replacements import monarch_movement_runtime_dependencies
@@ -545,11 +571,15 @@ def bound_resolution_condition_runtime_dependencies(program):
             mechanic_ids=mechanics, cost_schema=program.cost_schema)
         if not dependencies:raise ValueError('Public self-replacement requires complete branches and controller binding')
         return tuple(sorted({*intrinsic_dependencies, *dependencies}))
+    from ..temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
     bound_versions = {5, 8, 9, 10, 11, 17, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, PAID_SACRIFICE_CONDITION_VERSION,
-                      GREATEST_POWER_TARGET_DISCARD_VERSION}
+                      GREATEST_POWER_TARGET_DISCARD_VERSION, BLOCKER_PROTECTION_CONDITION_VERSION}
     if not any(effect.get("op") == RESOLUTION_CONDITION_OPERATION and effect.get("schema_version") in bound_versions
                for effect in program.effects):
         return ()
+    if (any(effect.get("schema_version") == BLOCKER_PROTECTION_CONDITION_VERSION for effect in program.effects)
+            and (program.event, program.active_zone) != ("resolve", "stack")):
+        raise ValueError("Blocking protection requires the complete resolving spell")
     dependencies=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)
     if not dependencies:

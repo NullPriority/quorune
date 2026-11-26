@@ -1067,6 +1067,12 @@ def _public_damage_spec(
     *,
     card_name: str | None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .controlled_subtype_damage_batch import controlled_subtype_damage_binding_parts
+    from ..rules.controlled_subtype_damage_batch import EVENT, MECHANIC, TEMPLATE, VARIANT
+
+    if grouped := controlled_subtype_damage_binding_parts(material_line):
+        body, condition = grouped
+        return _spec(EVENT, VARIANT, body, TEMPLATE, MECHANIC, condition=condition)
     from .subtype_damage_controller import subtype_damage_binding_parts
 
     if subtype := subtype_damage_binding_parts(material_line):

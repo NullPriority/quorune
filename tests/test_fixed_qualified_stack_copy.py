@@ -269,6 +269,140 @@ class QualifiedStackCopyNativeTests(InheritedNativeFixture, unittest.TestCase):
         command = {'action_id': 'choose', 'targets': list(refs)}; self.reject(s, 'B', command)
         result = s.act('pilot:A', command); self.assertTrue(result.ok, result.summary)
 
+    def test_rings_keeps_announced_x_and_allows_a_new_target_with_replay(self):
+        for retarget in (False, True):
+            with self.subTest(retarget=retarget):
+                game = self.session(878300 + retarget)
+                rings = self.add(game.engine, "Rings of Brighthearth")
+                source = self.add(game.engine, "Arashi, the Sky Asunder")
+                first = self.add(game.engine, "Vampire Nighthawk", seat="B", ref="rings-first-flying-target")
+                second = self.add(game.engine, "Vampire Nighthawk", seat="C", ref="rings-second-flying-target")
+                self.add(game.engine, "Fervor")
+                private = self.add(game.engine, "Counterspell", seat="C", zone="hand", ref="rings-private")
+                self.assert_closed(game, rings)
+                self.assert_closed(game, source)
+                self.prepare(game, mana={"C": 3, "G": 1})
+                self.checkpoint(game)
+                self.activate_target(game, source, first.ref, x=1, reserve={"C": 2})
+                original, trigger = game.state.stack
+                self.assertEqual(rings.object_id, trigger.source_object_id)
+                self.assertEqual("semantic.choice", self.resolve(game).kind)
+                self.assertEqual(["pilot:A"], game.pending_principals())
+                before = authoritative_state_hash(game.state)
+                self.assertFalse(game.act("pilot:B", {"action_id": "choose", "pay": True}).ok)
+                self.assertEqual(before, authoritative_state_hash(game.state))
+                game = self.replay(game, load=True)
+                paid = game.act("pilot:A", {"action_id": "choose", "pay": True})
+                self.assertTrue(paid.ok, paid.summary)
+                self.assertEqual(["pilot:A"], game.pending_principals())
+                for seat in "BCD":
+                    self.assertIsNone(game.packet("pilot:"+seat, full=True)["decision"])
+                game = self.replay(game, load=True)
+                choice = {"action_id": "choose"}
+                if retarget:
+                    choice["targets"] = [second.ref]
+                accepted = game.act("pilot:A", choice)
+                self.assertTrue(accepted.ok, accepted.summary)
+                still_original, copied = game.state.stack
+                self.assertEqual(original.ref, still_original.ref)
+                self.assertEqual((1, source.object_id, original.semantic_key),
+                                 (copied.x_value, copied.source_object_id, copied.semantic_key))
+                self.assertEqual([second.ref if retarget else first.ref], copied.targets)
+                self.assertEqual(0, sum(game.state.players["A"].mana_pool.values()))
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(1 + int(not retarget), game.state.cards[first.object_id].marked_damage)
+                self.assertEqual(int(retarget), game.state.cards[second.object_id].marked_damage)
+                self.finish(game, private)
+
+    def test_rings_copies_a_countered_activation_with_replay(self):
+        game = self.session(878310)
+        rings = self.add(game.engine, "Rings of Brighthearth")
+        dealer = self.add(game.engine, "Prodigal Sorcerer")
+        self.add(game.engine, "Fervor")
+        stifle = self.add(game.engine, "Stifle", seat="B", zone="hand")
+        private = self.add(game.engine, "Counterspell", seat="C", zone="hand", ref="countered-activation-private")
+        self.prepare(game, mana={"C": 2})
+        game.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.activate_target(game, dealer, "B")
+        activated, trigger = game.state.stack
+        self.cast_for(game, "B", stifle, [activated.ref])
+        self.resolve_top(game)
+        self.assertEqual([trigger.ref], [row.ref for row in game.state.stack])
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        game = self.replay(game, load=True)
+        paid = game.act("pilot:A", {"action_id": "choose", "pay": True})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertEqual("semantic.choice", game.state.pending_decision.kind)
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "targets": ["D"]})
+        self.assertTrue(result.ok, result.summary)
+        copied, = game.state.stack
+        self.assertEqual(dealer.object_id, copied.source_object_id)
+        self.assertEqual(["D"], copied.targets)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([40, 40, 40, 39], [game.state.players[seat].life for seat in "ABCD"])
+        self.finish(game, private)
+
+    def test_rings_observes_only_its_controllers_nonmana_activation_and_decline_replays(self):
+        game = self.session(878320)
+        self.add(game.engine, "Rings of Brighthearth")
+        mana = self.add(game.engine, "Llanowar Elves")
+        dealer = self.add(game.engine, "Prodigal Sorcerer")
+        opponent = self.add(game.engine, "Prodigal Sorcerer", seat="B", ref="rings-opposing-activation-source")
+        self.add(game.engine, "Fervor")
+        self.add(game.engine, "Fervor", seat="B", ref="rings-opposing-haste")
+        self.prepare(game, mana={"C": 2})
+        self.checkpoint(game)
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith("activate:" + mana.ref + ":"))
+        accepted = game.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertFalse(game.state.stack)
+        self.priority(game, "B")
+        actions = game.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith("activate:" + opponent.ref + ":"))
+        accepted = game.act("pilot:B", {"action_id": action["id"], "targets": ["D"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1, len(game.state.stack))
+        self.resolve_top(game)
+        self.activate_target(game, dealer, "B")
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        game = self.replay(game, load=True)
+        declined = game.act("pilot:A", {"action_id": "choose", "pay": False})
+        self.assertTrue(declined.ok, declined.summary)
+        self.assertEqual(1, len(game.state.stack))
+        self.assertEqual({"C": 2, "G": 1}, {color: count for color, count in game.state.players["A"].mana_pool.items() if count})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual([40, 39, 40, 39], [game.state.players[seat].life for seat in "ABCD"])
+        self.replay(game, load=True)
+
+    def test_rings_requires_its_exact_paid_nonmana_occurrence(self):
+        from quorune.rules.nonmana_activation_copy_model import ABILITY_ACTIVATION_COPY_CAPABILITY
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.nonmana_activation_copy import nonmana_activation_copy_payment
+
+        record = self.db.lookup("Rings of Brighthearth", fuzzy=False)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status)
+        semantics = self.session(878330).engine.semantics
+        register_generated_programs(self.db, semantics, [record], trust_level="provisional",
+            capability_registry=self.registry, capability_profile="commander_review", promote_exact_trigger_programs=True,
+            promote_exact_capability_declarations=True)
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        self.assertEqual((nonmana_activation_copy_payment(),), tuple(program.effects))
+        self.assertIn(ABILITY_ACTIVATION_COPY_CAPABILITY, program.capability_dependencies)
+        for changes in ({"event": "spell.cast"}, {"event_condition": None}, {"active_zone": "graveyard"},
+                        {"effects": ({**program.effects[0], "player": "$context.player"},)}):
+            with self.subTest(changes=changes):
+                broken = replace(program, **changes)
+                self.assertFalse(bind_semantic_program_runtime(broken, capability_registry=self.registry,
+                    profile="commander_review")["strict"])
+        with patch("quorune.compiler.nonmana_activation_copy.nonmana_activation_copy_binding", return_value=None):
+            unsupported = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", unsupported.status)
+
     def test_actual_lithoform_copies_activated_damage_without_repaying_or_activating_again(self):
         s = self.session(871001); copier = self.add(s.engine, 'Lithoform Engine'); dealer = self.add(s.engine, 'Prodigal Sorcerer')
         self.add(s.engine, 'Fervor'); private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='qualified-litho-private')

@@ -18,11 +18,13 @@ def fixed_resolution_mana_capabilities(*,effects,target_schema,mechanic_ids):
         except (TypeError,ValueError,KeyError):return ()
         if effects[0]['player']!='$controller' or effects[0]['source']!='$source':return ()
         return (FIXED_RESOLUTION_MANA_CAPABILITY,RESOLUTION_MANA_CHOICE_CAPABILITY)
-    from .turn_retained_resolution_mana import CAPABILITY, effect as retained_red_effect
+    from .turn_retained_resolution_mana import ATTACK_CAPABILITY, CAPABILITY, attack_effects, effect as retained_red_effect
     from ..replacement.immutable import thaw_value
 
     if thaw_value(effects) == [retained_red_effect()]:
         return (FIXED_RESOLUTION_MANA_CAPABILITY, CAPABILITY)
+    if thaw_value(effects) == list(attack_effects()):
+        return (FIXED_RESOLUTION_MANA_CAPABILITY, ATTACK_CAPABILITY)
     colors=[];total=0;restrictions=set()
     for effect in effects:
         if (set(effect)-{'spend_restriction'}!={'op','player','color','amount','source'} or effect['op']!='mana' or effect['player']!='$controller' or effect['source']!='$source'
@@ -53,15 +55,16 @@ def fixed_resolution_mana_runtime_dependencies(program):
     """Bind canonical fixed mana leaves even inside unannotated wrappers."""
     from collections.abc import Mapping
     from .entry_creature_type_mana import entry_shared_type_mana_runtime_dependencies
+    from .turn_retained_resolution_mana import ATTACK_CAPABILITY, program_dependencies
 
     required = set(entry_shared_type_mana_runtime_dependencies(program))
+    if ATTACK_CAPABILITY in getattr(program, "capability_dependencies", ()):
+        required.update(program_dependencies(program))
     def visit(value):
         if isinstance(value,Mapping):
             if (value.get('op')=='mana' and value.get('player')=='$controller'
                     and value.get('source')=='$source' and not isinstance(value.get('amount'),Mapping)):
                 if value.get("retain_until") == "end_of_turn":
-                    from .turn_retained_resolution_mana import program_dependencies
-
                     owned = program_dependencies(program)
                 elif 'retain_until' in value:
                     from ..compiler.keyword_event_effect_nodes import FixedKeywordEventEffectSpec

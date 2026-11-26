@@ -258,3 +258,148 @@ class CommandZoneReturnGameplayTests(unittest.TestCase):
         with patch("quorune.semantic_choices.commander_return._eligible_commanders", return_value=()):
             with self.assertRaisesRegex(AssertionError, "unexpectedly None"):
                 witness(6130147)
+
+
+STUDY = "Stinging Study"
+STUDY_PARTNERS = ("Study Partner One", "Study Partner Two")
+STUDY_TEXT = ("You draw X cards and you lose X life, where X is the mana value of "
+              "a commander you own on the battlefield or in the command zone.")
+
+
+class OwnedCommanderAmountGameplayTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    helper = CommandZoneReturnGameplayTests
+    session = helper.session
+    add = helper.add
+    prepare = helper.prepare
+    checkpoint = helper.checkpoint
+    actions = helper.actions
+    cast = helper.cast
+    resolve = helper.resolve
+    choose = helper.choose
+    replay = helper.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "owned-commander-amount.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "command-zone-commander-return-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Owned commander amount witness", [
+            *(DeckEntry(name, 1, "commander") for name in STUDY_PARTNERS),
+            DeckEntry("Generic Bound Plains", 30),
+        ], list(STUDY_PARTNERS))
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def scene(self, seed, *, move_first=None, move_second=None):
+        game = self.session(seed)
+        spell = self.add(game.engine, STUDY, zone="hand")
+        counter = self.add(game.engine, "Counterspell", seat="B", zone="hand")
+        partners = {game.state.cards[key].printed_name: game.state.cards[key]
+                    for key in game.state.players["A"].zones["command"]}
+        owned = tuple(partners[name] for name in STUDY_PARTNERS)
+        if move_first is not None:
+            controller = "B" if move_first == "battlefield" else None
+            game.engine.move_card(owned[0].object_id, move_first, controller=controller, log=False)
+        if move_second is not None:
+            game.engine.move_card(owned[1].object_id, move_second, log=False)
+        self.prepare(game, mana={"B": 1, "C": 4})
+        for zone in (move_first, move_second):
+            if zone in {"graveyard", "exile"}:
+                self.assertEqual("state.commander_zone", game.state.pending_decision.kind)
+                result = game.act("pilot:A", {"action_id": "remain"})
+                self.assertTrue(result.ok, result.summary)
+        self.checkpoint(game)
+        return game, spell, owned, counter
+
+    def test_owned_commander_amount_compiles_only_the_closed_spell(self):
+        from quorune.rules.owned_commander_amount import (
+            OWNED_COMMANDER_AMOUNT_CAPABILITY, owned_commander_amount_effect,
+        )
+        card = self.db.lookup(STUDY)
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile=PROFILE)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((owned_commander_amount_effect(),), node.effects)
+        self.assertIsNone(node.target_schema)
+        self.assertIn(OWNED_COMMANDER_AMOUNT_CAPABILITY, node.capability_dependencies)
+        for text in (
+            STUDY_TEXT.replace("you own", "you control"),
+            STUDY_TEXT.replace("on the battlefield", "in your graveyard"),
+            STUDY_TEXT.replace("you lose X life", "target player loses X life"),
+            STUDY_TEXT.replace("you lose X life", "you gain X life"),
+        ):
+            ir = compile_oracle_card(
+                replace(card, oracle_text=text), capability_registry=self.registry, capability_profile=PROFILE,
+            )
+            self.assertFalse(any(OWNED_COMMANDER_AMOUNT_CAPABILITY in row.capability_dependencies
+                                 for face in ir.faces for row in face.nodes), text)
+        game, spell, _, _ = self.scene(6132030)
+        program, = (entry for entry in game.engine.semantics.programs_for_oracle(spell.oracle_id)
+                    if OWNED_COMMANDER_AMOUNT_CAPABILITY in entry.capability_dependencies)
+        for changed in (
+            replace(program, effects=(owned_commander_amount_effect("$opponent"),)),
+            replace(program, effects=({**owned_commander_amount_effect(), "owned_commander_mana_value": True},)),
+            replace(program, target_schema={"zones": ["battlefield"], "count": 1}),
+            replace(program, effects=(owned_commander_amount_effect(), {"op": "draw", "count": 1})),
+        ):
+            binding = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile=PROFILE)
+            self.assertFalse(binding["strict"])
+
+    def test_owned_commander_amount_partner_choice_private_draw_and_replay(self):
+        game, spell, owned, counter = self.scene(6132031, move_first="battlefield")
+        self.assertEqual("B", game.state.cards[owned[0].object_id].controller)
+        self.assertEqual("A", game.state.cards[owned[0].object_id].owner)
+        self.cast(game, "A", spell)
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        choices = game.packet("pilot:A", full=True)["decision"]["ctx"]["objects"]
+        self.assertEqual({item.ref for item in owned}, {row["id"] for row in choices})
+        for seat in "BCD":
+            self.assertIsNone(game.packet("pilot:" + seat, full=True)["decision"])
+        self.assertNotIn(counter.ref, str(game.packet("pilot:A", full=True)))
+        rival = game.state.cards[game.state.players["B"].zones["command"][0]]
+        before_hash = authoritative_state_hash(game.state)
+        for seat, selection in (("B", [owned[0].ref]), ("A", [rival.ref]), ("A", [])):
+            rejected = game.act("pilot:" + seat, {"action_id": "choose", "objects": selection})
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(before_hash, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        life = game.state.players["A"].life
+        hand = set(game.state.players["A"].zones["hand"])
+        self.choose(game, objects=[owned[0].ref])
+        self.assertEqual(life - 3, game.state.players["A"].life)
+        drawn = set(game.state.players["A"].zones["hand"]) - hand
+        self.assertEqual(3, len(drawn))
+        for object_id in drawn:
+            ref = game.state.cards[object_id].ref
+            self.assertNotIn(ref, str(game.packet("pilot:B", full=True)))
+        self.replay(game)
+
+    def test_owned_commander_amount_zero_and_single_current_candidates(self):
+        for first_zone, second_zone, amount in (("exile", "graveyard", 0), ("exile", None, 5)):
+            with self.subTest(amount=amount):
+                game, spell, _, _ = self.scene(6132032 + amount, move_first=first_zone, move_second=second_zone)
+                self.cast(game, "A", spell)
+                before = game.state.players["A"].life
+                hand = len(game.state.players["A"].zones["hand"])
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual((before - amount, hand + amount),
+                                 (game.state.players["A"].life, len(game.state.players["A"].zones["hand"])))
+                self.replay(game)
+
+    def test_owned_commander_amount_draw_only_mutation_is_detected(self):
+        from quorune.semantic_choices.owned_commander_amount import _ordered_results
+        with patch("quorune.semantic_choices.owned_commander_amount._ordered_results",
+                   side_effect=lambda player, count: _ordered_results(player, count)[:1]):
+            with self.assertRaisesRegex(AssertionError, '37 != 40'):
+                self.test_owned_commander_amount_partner_choice_private_draw_and_replay()

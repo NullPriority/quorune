@@ -42,9 +42,12 @@ from .operations import (
     ApplyEntryCounterReplacement,
     GrantAffectedObjectSubtype,
     CreateAdditionalToken,
+    MATCH_PENDING_TOKEN_QUANTITY,
     CreateResultDraws,
     CreateNestedEvent,
     DiscardInsteadOfDraw,
+    EXILE_TURN_PLAY_DRAW_RESULT,
+    ExileTopForTurnPlayInsteadOfDraw,
     DredgeDraw,
     GrantAffectedObjectKeyword,
     MultiplyAmount,
@@ -55,6 +58,7 @@ from .operations import (
     PreventAmount,
     PreventDraw,
     ReplaceDrawWithScheduledResult,
+    ReplaceDrawWithLibraryChoice,
     PreventUsingShield,
     RedirectDamage,
     ReserveZoneChange,
@@ -494,6 +498,34 @@ def _shared_token_creation_status(tokens):
     return status
 
 
+def _additional_token_recipe(operation, quantity, status):
+    return {
+        **status,
+        "name": operation.name,
+        "quantity": quantity,
+        "characteristics": thaw_value(operation.characteristics),
+        "replacement_component": {
+            "handler_id": operation.handler_id,
+            "source": operation.source_ref,
+            "quantity": quantity,
+        },
+    }
+
+
+def _matching_additional_token_recipes(operation, tokens):
+    recipes = []
+    for token in tokens:
+        status = _shared_token_creation_status((token,))
+        quantity = token.get("quantity")
+        if type(quantity) is not int or quantity < 1:
+            raise ReplacementEffectError("Matching additional token count needs positive pending quantities")
+        attack = {field: token[field] for field in ("attacking", "_attacking_group") if token.get(field) is not None}
+        if len(attack) > 1 or any(type(value) is not str or not value for value in attack.values()):
+            raise ReplacementEffectError("Pending token attack assignments must be well formed")
+        recipes.append(_additional_token_recipe(operation, quantity, {**status, **attack}))
+    return recipes
+
+
 def _apply_additional_token(
     event: ReplaceableEvent,
     payload: dict[str, Any],
@@ -511,20 +543,12 @@ def _apply_additional_token(
             raise ReplacementEffectError(
                 f"Token creation {field_name} must be an array"
             )
-    payload["tokens"] = [
-        *list(payload.get("tokens", ())),
-        {
-            **_shared_token_creation_status(payload.get('tokens',())),
-            "name": operation.name,
-            "quantity": operation.quantity,
-            "characteristics": thaw_value(operation.characteristics),
-            "replacement_component": {
-                "handler_id": operation.handler_id,
-                "source": operation.source_ref,
-                "quantity": operation.quantity,
-            },
-        },
-    ]
+    tokens = list(payload.get("tokens", ()))
+    if operation.quantity == MATCH_PENDING_TOKEN_QUANTITY:
+        additions = _matching_additional_token_recipes(operation, tokens)
+    else:
+        additions = [_additional_token_recipe(operation, operation.quantity, _shared_token_creation_status(tokens))]
+    payload["tokens"] = [*tokens, *additions]
     payload["created_types"] = sorted(
         {
             *payload.get("created_types", ()),
@@ -677,10 +701,20 @@ def _apply_sequence_operation(event, payload, operation):
 def _apply_draw_operation(event, payload, children, operation, *, effect_id) -> None:
     """Apply the typed operations that replace one draw event."""
 
+    if isinstance(operation, ExileTopForTurnPlayInsteadOfDraw):
+        if event.kind != "draw" or payload.get("is_draw") is not True:
+            raise ReplacementEffectError("Exile play requires one unresolved draw")
+        payload.update(is_draw=False, result_kind=EXILE_TURN_PLAY_DRAW_RESULT)
+        return
     if isinstance(operation, ReplaceDrawWithScheduledResult):
         if event.kind != "draw" or payload.get("is_draw") is not True:
             raise ReplacementEffectError("A scheduled result requires an unresolved draw")
         payload.update(is_draw=False, result_kind="scheduled_result", scheduled_grant_id=operation.grant_id)
+        return
+    if isinstance(operation, ReplaceDrawWithLibraryChoice):
+        if event.kind != "draw" or payload.get("is_draw") is not True:
+            raise ReplacementEffectError("A library choice requires an unresolved draw")
+        payload.update(is_draw=False, result_kind="library_choice", library_choice_effect_id=effect_id)
         return
     if isinstance(operation, PreventDraw):
         if event.kind != "draw" or payload.get("is_draw") is not True:
@@ -889,7 +923,8 @@ def _apply_operation(
         _apply_result_life_floor(event, payload, children, operation)
         return entry_scope
     if isinstance(operation, (ReplaceDrawWithScheduledResult, PreventDraw, DiscardInsteadOfDraw,
-                              CreateResultDraws, DredgeDraw)):
+                              ReplaceDrawWithLibraryChoice, CreateResultDraws,
+                              ExileTopForTurnPlayInsteadOfDraw, DredgeDraw)):
         _apply_draw_operation(event, payload, children, operation, effect_id=effect_id)
         return entry_scope
     raise ReplacementEffectError("Unknown typed replacement operation")

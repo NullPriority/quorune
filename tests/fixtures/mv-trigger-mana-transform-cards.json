@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "name": "The Emperor of Palamecia // The Lord Master of Hell",
+      "mana_cost": "{U}{R} // ",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Noble Wizard // Legendary Creature — Demon Noble Wizard",
+      "oracle_text": "The Emperor of Palamecia: {T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell.\nWhenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on The Emperor of Palamecia. Then if it has three or more +1/+1 counters on it, transform it.\n//\nThe Lord Master of Hell: Starfall — Whenever The Lord Master of Hell attacks, it deals X damage to each opponent, where X is the number of noncreature, nonland cards in your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Starfall",
+        "Transform"
+      ],
+      "produced_mana": [
+        "R",
+        "U"
+      ],
+      "layout": "transform",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "R",
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{U}{R}",
+          "name": "The Emperor of Palamecia",
+          "oracle_text": "{T}: Add {U} or {R}. Spend this mana only to cast a noncreature spell.\nWhenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on The Emperor of Palamecia. Then if it has three or more +1/+1 counters on it, transform it.",
+          "power": "2",
+          "toughness": "2",
+          "type_line": "Legendary Creature — Human Noble Wizard"
+        },
+        {
+          "colors": [
+            "R",
+            "U"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "The Lord Master of Hell",
+          "oracle_text": "Starfall — Whenever The Lord Master of Hell attacks, it deals X damage to each opponent, where X is the number of noncreature, nonland cards in your graveyard.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Demon Noble Wizard"
+        }
+      ]
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The back face of a nonmodal double-faced card usually has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "A token that is created as a copy of a double-faced permanent or a double-faced card in another zone is a double-faced token. It will have both the front face and back face of whatever object it's copying. If it's copying a double-faced permanent whose back face is up, the token will enter with its back face up. It can transform if instructed to do so."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "A nonmodal double-faced card enters with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or allows you to cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Crystal Fragments, it will be exiled during the resolution of its second ability and remain in exile."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The mana value of a nonmodal double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Each face of a nonmodal double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a nonmodal double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The Emperor of Palamecia's last ability resolves before the spell that caused it to trigger. It resolves even if that spell is countered or otherwise leaves the stack."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "The value of X is calculated only once, as The Lord Master of Hell's ability resolves."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Each nonmodal double-faced card in this release is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "042c01ec-9f1f-432b-bea9-d64d822cd91e",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "In the Commander variant, a double-faced card's color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered. For example, Cecil, Dark Knight's color identity is black and white, since its front face is black and its back face has a white color indicator."
+    }
+  ]
+}

@@ -51,6 +51,9 @@ def fixed_qualified_stack_copy_template(text):
 def cast_event_spell_copy_template(binding,text):
     from ..event_spell_copy_model import EVENT_SPELL_COPY_MECHANIC,event_spell_copy_effect
     if binding.event.value!='spell.cast':return None
+    from .cast_spell_suspend_templates import cast_spell_suspend_template
+    if suspended_copy := cast_spell_suspend_template(binding, text):
+        return suspended_copy
     from ..stack_spell_copy_model import beast_or_bird_creature_cast_condition
 
     if binding.event_condition == beast_or_bird_creature_cast_condition() and re.fullmatch(

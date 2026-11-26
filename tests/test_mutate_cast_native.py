@@ -54,6 +54,118 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
                 self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=registry).status)
                 self.assertEqual('exact',compile_oracle_card(unrelated,capability_registry=registry).status)
 
+    def _activate_mutation_damage(self, game, source, target):
+        self.priority(game, "A")
+        actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith("activate:" + source.ref + ":"))
+        command = {"action_id": action["id"], "targets": [target], "pay": "auto"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:C", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        item = game.state.stack[-1]
+        self.assertEqual(source.object_id, item.source_object_id)
+        self.assertTrue(game.state.cards[source.object_id].tapped)
+        return item
+
+    def test_actual_porcuparrot_uses_current_mutations_or_departure_history_and_replays(self):
+        from quorune.scalar_effect_amount_model import SCALAR_REFERENCE_CONTEXT
+
+        for depart in (False, True):
+            with self.subTest(depart=depart):
+                game = self.session(7302100 + depart)
+                root = self.add(game.engine, "Grizzly Bears", ref="porcuparrot-carrier")
+                first = self.add(game.engine, "Porcuparrot", zone="hand")
+                second = self.add(game.engine, "Sea-Dasher Octopus", zone="hand")
+                blink = self.add(game.engine, "Cloudshift", zone="hand")
+                self.add(game.engine, "Fervor")
+                self.add(game.engine, "Counterspell", seat="C", zone="hand", ref="private-mutate-control-hand")
+                self.assert_closed(game, first)
+                self.assert_closed(game, second)
+                self.prepare(game, mana={"C": 5, "R": 1, "U": 1, "W": 1})
+                self.checkpoint(game)
+                self.mutate(game, first, root)
+                game = self.choose_merge(game, "bottom", load=True)
+                retained = game.state.cards[root.object_id]
+                incarnation = retained.logical_object_id
+                self.assertEqual(1, retained.permanent_composition.topology.mutation_count)
+                self.assertEqual("Grizzly Bears", game.engine._effective_card_data(retained)["name"])
+                ability = self._activate_mutation_damage(game, retained, "B")
+                self.assertEqual(1, ability.context[SCALAR_REFERENCE_CONTEXT]["source"]["mutation_count"])
+
+                self.mutate(game, second, retained)
+                game = self.choose_merge(game, "top")
+                retained = game.state.cards[root.object_id]
+                self.assertEqual(incarnation, retained.logical_object_id)
+                self.assertEqual(2, retained.permanent_composition.topology.mutation_count)
+                self.assertEqual([ability.ref], [row.ref for row in game.state.stack])
+                if depart:
+                    self.cast_for(game, "A", blink, [retained.ref])
+                    self.assertEqual("semantic.choice", self.resolve(game).kind)
+                    self.assertEqual(["pilot:A"], game.pending_principals())
+                    context = game.packet("pilot:A", full=True)["decision"]["ctx"]
+                    self.assertEqual("composition_departure_order", context["operation"])
+                    order = [root.ref, first.ref, second.ref]
+                    self.assertEqual(set(order), {row["id"] for row in context["objects"]})
+                    game = self.replay(game, load=True)
+                    ordered = game.act("pilot:A", {"action_id": "choose", "cards": order})
+                    self.assertTrue(ordered.ok, ordered.summary)
+                    returned = game.state.cards[root.object_id]
+                    self.assertNotEqual(incarnation, returned.logical_object_id)
+                    self.assertIsNone(returned.permanent_composition)
+                    saved = game.state.stack[-1].context[SCALAR_REFERENCE_CONTEXT]["source"]
+                    self.assertEqual((incarnation, 2), (saved["logical_object_id"], saved["mutation_count"]))
+                for seat in "ABD":
+                    self.assertNotIn("private-mutate-control-hand", json.dumps(game.packet("pilot:"+seat, full=True)))
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(38, game.state.players["B"].life)
+                self.replay(game, load=True)
+
+    def test_actual_porcuparrot_without_mutation_taps_and_deals_zero_with_replay(self):
+        game = self.session(7302110)
+        bird = self.add(game.engine, "Porcuparrot")
+        self.add(game.engine, "Fervor")
+        self.prepare(game)
+        self.checkpoint(game)
+        self._activate_mutation_damage(game, bird, "B")
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(40, game.state.players["B"].life)
+        self.assertTrue(game.state.cards[bird.object_id].tapped)
+        self.assertFalse(any(event.code == "effect.damage" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_porcuparrot_damage_requires_the_exact_scalar_tap_and_target_scope(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.source_mutation_damage import source_mutation_damage_effect
+        from quorune.scalar_effect_amount_model import SOURCE_MUTATION_COUNT_CAPABILITY
+
+        record = self.db.lookup("Porcuparrot", fuzzy=False)
+        game = self.session(7302120)
+        bird = self.add(game.engine, "Porcuparrot")
+        self.assert_closed(game, bird)
+        programs = game.engine.semantics.programs_for_oracle(record.oracle_id)
+        program, = (item for item in programs if SOURCE_MUTATION_COUNT_CAPABILITY in item.capability_dependencies)
+        self.assertEqual((source_mutation_damage_effect(),), tuple(program.effects))
+        self.assertTrue(any(item.event == "mutate.cast" or "casting.mutate.fixed_mana" in item.capability_dependencies
+                            for item in programs))
+        for changes in (
+            {"active_zone": "graveyard"},
+            {"cost_schema": {**program.cost_schema, "tap_source": 1}},
+            {"target_schema": {**program.target_schema, "count": 2}},
+            {"effects": ({**program.effects[0], "amount": {**program.effects[0]["amount"], "coefficient": 2}},)},
+        ):
+            with self.subTest(changes=changes):
+                binding = bind_semantic_program_runtime(replace(program, **changes), capability_registry=self.registry,
+                                                        profile="commander_review")
+                self.assertFalse(binding["strict"])
+        with patch("quorune.compiler.source_mutation_damage.source_mutation_damage_activation", return_value=None):
+            ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+
     def test_actual_composed_departure_ignores_counter_replacement_without_counter_event(self):
         session = self.session(73030002)
         body = self.add(session.engine, "Grizzly Bears", ref="departure-body")

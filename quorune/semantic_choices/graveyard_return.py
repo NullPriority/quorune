@@ -7,7 +7,7 @@ from ..public_characteristic_aggregates import reduce_public_characteristic_valu
 from ..replacement.immutable import FrozenMap
 from ..public_zone_moves import PublicZoneMoveObject
 from ..rules.graveyard_return_choices import (
-    OPERATION, CAPABILITY, RETURN_PAIR_FIELD, paired_graveyard_return_move, validate_return_choice,
+    OPERATION, CAPABILITY, RETURN_PAIR_FIELD, chosen_tapped_land_move, paired_graveyard_return_move, validate_return_choice,
 )
 from ..semantic_runtime.intents import RecordChoiceIntent, ReturnGraveyardCardToOwnerHandIntent
 from .model import (AutoContinue, ObjectChoice, SemanticChoicePreparation, SemanticChoiceRequest,
@@ -78,7 +78,9 @@ class GraveyardReturnChoiceHandler:
             _return_identity(row)
         refs = tuple(row.ref for row in rows)
         optional = not selection.required
-        if selection.returns_to_battlefield:
+        if selection.returns_tapped_land:
+            prompt = 'You may return a land card from your graveyard to the battlefield tapped.'
+        elif selection.returns_to_battlefield:
             prompt = 'You may return a creature card from your graveyard to the battlefield.'
         elif selection.greatest_power:
             prompt = 'Choose a tied greatest-power creature card to return to your hand.'
@@ -130,7 +132,8 @@ class GraveyardReturnChoiceHandler:
                 or not selection.matches(row)):
             raise SemanticChoiceError('The selected graveyard incarnation is no longer eligible')
         if selection.returns_to_battlefield:
-            effect = paired_graveyard_return_move((PublicZoneMoveObject.from_row(row),))
+            card = PublicZoneMoveObject.from_row(row)
+            effect = chosen_tapped_land_move(card) if selection.returns_tapped_land else paired_graveyard_return_move((card,))
             return SemanticChoiceCompletion(prepend_effects=(FrozenMap(effect),))
         return SemanticChoiceCompletion(intents=(_return_intent(row, actor=actor, reason=label),))
 

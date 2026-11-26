@@ -304,10 +304,14 @@ def matching_battlefield_objects(
 
 
 def _characteristic_effect_timing(host, effect, *, actor, source):
-    from .resolution_characteristic_model import INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS
+    from .resolution_characteristic_model import (
+        INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS, NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
+    )
 
     if effect.get("schema_version") in INDEFINITE_SOURCE_CHARACTERISTIC_VERSIONS:
         return ContinuousEffectDuration.ZONE_OBJECT, None, None
+    if effect.get("schema_version") == NEXT_TURN_TARGET_LAND_ANIMATION_VERSION:
+        return ContinuousEffectDuration.UNTIL_END_OF_TURN, actor, None
     if SOURCE_TAP_EFFECT_FIELD not in effect:
         expiry = actor if NEXT_TURN_EFFECT_FIELD in effect else None
         return ContinuousEffectDuration.UNTIL_END_OF_TURN, expiry, None
@@ -333,7 +337,7 @@ def apply_fixed_resolution_characteristics(
     """Commit a versioned fixed result through the existing multi-layer owner."""
     from .resolution_characteristic_model import (
         DerivedResolutionCharacteristicsSpec, RECIPIENT_MANA_VALUE, fixed_resolution_characteristic_instruction,
-        FixedResolutionCardTypeAdditionSpec, IndefiniteTargetLandAnimationSpec,
+        FixedResolutionCardTypeAdditionSpec, IndefiniteTargetLandAnimationSpec, NEXT_TURN_TARGET_LAND_ANIMATION_VERSION,
     )
     from .target_land_type_model import FixedTargetLandTypeSpec
     from .errors import GameRuleError
@@ -366,6 +370,10 @@ def apply_fixed_resolution_characteristics(
             if (land.phased_out or land.controller!=actor
                     or 'land' not in host._type_parts(str(host._effective_card_data(land).get('type_line') or ''))[0]):
                 raise GameRuleError('Indefinite target land animation requires a current controlled land')
+        if effect.get("schema_version") == NEXT_TURN_TARGET_LAND_ANIMATION_VERSION:
+            land, = affected
+            if land.phased_out or land.controller != actor or "land" not in host._effective_type_parts(land)[0]:
+                return []
         source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
         timing = ((spec.duration, None, None) if isinstance(spec, (FixedResolutionCardTypeAdditionSpec,IndefiniteTargetLandAnimationSpec))
                   else _characteristic_effect_timing(host, effect, actor=actor, source=source))

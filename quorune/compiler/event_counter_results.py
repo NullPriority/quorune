@@ -33,6 +33,25 @@ def counter_placement_blocking_result(binding, body):
             COUNTER_PLACEMENT_BLOCKING_MECHANICS), True
 
 
+def counter_recipient_control_result(binding, body):
+    from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT
+    from ..replacement.immutable import FrozenMap
+    from ..rules.counter_recipient_control import (
+        COUNTER_RECIPIENT_CONTROL_MECHANICS, COUNTER_RECIPIENT_CONTROL_TEMPLATE, counter_recipient_control_condition,
+        counter_recipient_control_instructions,
+    )
+
+    if ((binding.event.value, binding.active_zone, binding.variant)
+            != (COUNTER_PLACEMENT_EVENT, "battlefield", "counter_placement_one_or_more")
+            or FrozenMap(binding.event_condition or {}) != FrozenMap(counter_recipient_control_condition())
+            or " ".join(body.split()).casefold() != (
+                "draw a card if you control that creature. if you don't control it, its controller loses 1 life."
+            )):
+        return None
+    return (COUNTER_RECIPIENT_CONTROL_TEMPLATE, counter_recipient_control_instructions(),
+            None, COUNTER_RECIPIENT_CONTROL_MECHANICS), True
+
+
 def event_counter_threshold_result(binding, body, *, effect_template, card_name):
     if binding.variant != "enchanted_creature_attacks" or binding.event_condition != {
         "field": "source_attachment_target_ref", "op": "eq", "value": "$context.card",
@@ -58,6 +77,8 @@ def event_counter_threshold_result(binding, body, *, effect_template, card_name)
 
 
 def public_event_counter_set_result(binding,body,*,effect_template,card_name,accepted_variants=()):
+    if controller_result := counter_recipient_control_result(binding, body):
+        return controller_result
     if blocking := counter_placement_blocking_result(binding, body):
         return blocking
     if binding.variant == "one_or_more_qualified_attack" and re.fullmatch(

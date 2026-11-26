@@ -105,7 +105,13 @@ class SelfZoneMoveEffectHandler:
         if FIELD in effect:
             try:decode_self_entry_followup(effect)
             except (ValueError, TypeError, KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-        allowed = {"op", "origin", "destination", "tapped", "source_form", "_replacement_selections"}
+        from ..rules.revealed_hand_zone_move import FIELD as HAND_ENTRY_FIELD, revealed_hand_entry_payload_dependencies
+
+        try:
+            revealed_hand_entry_payload_dependencies(effect, runtime=True)
+        except ValueError as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        allowed = {"op", "origin", "destination", "tapped", "source_form", "_replacement_selections", HAND_ENTRY_FIELD}
         allowed.add(FIELD)
         from ..source_self_entry_counter_model import FIELD as COUNTER_FIELD, source_self_entry_counter_from_effect
         entry_counter = None

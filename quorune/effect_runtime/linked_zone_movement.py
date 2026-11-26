@@ -47,8 +47,11 @@ def commit_resolved_zone_movement(
 def apply_move_if_in_zone(
     host: Any, effect: Mapping[str, Any], *, actor: str, operation: str, reason: str,
 ) -> Any:
+    from ..rules.committed_mill_cards import MILL_MOVE_FIELD, move_committed_mill_cards_to_hand
     from ..rules.discarded_card_exile import discarded_card_exile_movement, uses_discarded_card_exile
 
+    if MILL_MOVE_FIELD in effect:
+        return move_committed_mill_cards_to_hand(host, effect, actor=actor, reason=reason)
     if uses_discarded_card_exile(effect):
         try:
             movement = discarded_card_exile_movement(effect, actor=actor)

@@ -11,7 +11,7 @@ from .errors import GameRuleError
 from .mana import ManaMode
 from .public_quantity_mana_model import (
     CHOSEN_DEVOTION_MANA_VERSION, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
-    ControlledLandSubtypePairManaAmount,
+    ControlledCreatureThresholdManaAmount, ControlledLandSubtypePairManaAmount,
     PAID_ACTIVATION_MANA_VALUE_CONTEXT, PAID_SACRIFICE_QUANTITY_MANA_VERSION,
     PUBLIC_QUANTITY_MANA_KIND, PublicQuantityManaOutput,
 )
@@ -87,6 +87,9 @@ def public_quantity_mana_amount(host, seat, source, output, *, source_informatio
             amount = output.amount.enhanced_amount if all(
                 query_characteristic_count(host, locked, query) for query in output.amount.queries
             ) else 1
+        elif isinstance(output.amount, ControlledCreatureThresholdManaAmount):
+            count = query_characteristic_count(host, locked, output.amount.query)
+            amount = 2 if count >= output.amount.minimum_creatures else 1
         elif isinstance(output.amount, LiveBattlefieldQuantitySpec):
             amount = current_live_battlefield_count(host, seat, output.amount, source_ref=locked.ref)
         elif isinstance(output.amount, CharacteristicQuantitySpec):

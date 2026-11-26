@@ -99,6 +99,10 @@ def current_target_prohibition(host,*,row,acting_controller,acting_source,prohib
     from .model import CardInstance
     target=row.get('card')
     if not isinstance(target,CardInstance):return False
+    from .rules.targeted_turn_target_prohibition import current_targeted_turn_prohibition
+
+    if row.get("zone") == "battlefield" and current_targeted_turn_prohibition(host, target, acting_controller, acting_source):
+        return True
     if row.get("zone") == "battlefield" and "creature" in row.get("types", ()):
         player = host.state.players.get(target.controller)
         if (player is not None and acting_controller != target.controller

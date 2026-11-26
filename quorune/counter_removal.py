@@ -490,6 +490,13 @@ def _commit_removal_counter_plan(
         raise CounterRemovalError(str(exc)) from exc
     events = capture_counter_removal_events(host, transitions)
     dispatch_counter_removal_events(host, events)
+    if any(value.counter_name == "time" and value.before > 0 and value.after == 0 for value in transitions):
+        from .suspend import suspend_last_counter_trigger_items
+        from .trigger_processing import enqueue_trigger_batch
+
+        triggers = suspend_last_counter_trigger_items(host, transitions, cast_suspended_only=True)
+        if triggers:
+            enqueue_trigger_batch(host, triggers)
     return transitions
 
 

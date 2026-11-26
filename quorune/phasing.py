@@ -181,6 +181,7 @@ def _commit_phasing(host, transitions):
     from .relative_power_target import pin_host_relative_power_source_departures
     from .target_source import pin_targeting_source_departures
     from .scalar_effect_amounts import pin_scalar_characteristic_departures
+    from .rules.stack_damage_sources import pin_creature_power_damage_departures
     from .token_copy_references import pin_copy_characteristic_departures
     from .rules.entry_type_return import pin_entry_type_return_departures
     from .rules.entry_creature_type_mana import pin_entry_creature_type_departures
@@ -197,6 +198,7 @@ def _commit_phasing(host, transitions):
     pin_host_relative_power_source_departures(host, outgoing, phase_out=True)
     pin_targeting_source_departures(host, outgoing, error_type=ValueError, phase_out=True)
     pin_scalar_characteristic_departures(host, outgoing, error_type=ValueError, phase_out=True)
+    pin_creature_power_damage_departures(host, outgoing, error_type=ValueError, phase_out=True)
     pin_copy_characteristic_departures(host, outgoing, error_type=ValueError, phase_out=True)
     # Commit the entire status batch before recalculating any live observers.
     for card, transition in affected:

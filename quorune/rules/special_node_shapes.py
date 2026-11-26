@@ -14,11 +14,25 @@ def special_or_modal_node_capabilities(
     *, effects, target_schema, mechanics, mechanic_values, cost_schema, modal_mechanics, modal_resolver,
 ):
     """Dispatch complete owned shapes, including a closed rejection for an invalid Saga grant."""
+    from .paid_sacrifice_copy import paid_sacrifice_copy_node_capabilities
+
+    paid_copy = paid_sacrifice_copy_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
+    )
+    if paid_copy is not None:
+        return paid_copy
     if SAGA_CHAPTER_GRANT_MECHANIC in mechanics:
         required = saga_chapter_grant_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanics, cost_schema=cost_schema,
         )
         return special_trigger_envelope_capabilities(required, mechanics)
+    from .controlled_subtype_damage_batch import controlled_subtype_damage_node_capabilities
+
+    grouped = controlled_subtype_damage_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanics=mechanics,
+    )
+    if grouped is not None:
+        return grouped
     if mechanics.intersection(modal_mechanics):
         from .spree_capability_shapes import modal_cost_capabilities
 
@@ -26,6 +40,13 @@ def special_or_modal_node_capabilities(
             effects=effects, target_schema=target_schema, mechanics=mechanic_values,
             cost_schema=cost_schema, modal_resolver=modal_resolver,
         )
+    from .cast_spell_suspend import cast_spell_suspend_node_capabilities
+
+    suspension = cast_spell_suspend_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanics=mechanics,
+    )
+    if suspension is not None:
+        return suspension
     required = special_node_capabilities(
         effects=effects, target_schema=target_schema, mechanics=mechanics, cost_schema=cost_schema,
     )
@@ -58,11 +79,11 @@ def special_result_trigger_runtime_dependencies(program):
     from ..fractional_quantity_model import HalfQuantitySpec,HALF_QUANTITY_KIND,HALF_LIFE_CAPABILITY
     validate_manifest_result_envelope(program)
     from .third_life_shapes import third_life_program_dependencies
-    from .event_subscriptions import controller_food_sacrifice_group_dependencies
+    from .event_subscriptions import grouped_zone_event_dependencies
 
     third=third_life_program_dependencies(program)
     required=set(third);manifest=False;half=bool(third)
-    required.update(controller_food_sacrifice_group_dependencies(program))
+    required.update(grouped_zone_event_dependencies(program))
     for effect in program.effects:
         if effect.get('op')=='manifest_card':
             if uses_target_recipient_manifest(effect):
@@ -133,6 +154,7 @@ def _owned_special_result_capabilities(**context):
     from .post_exchange_token import post_exchange_token_node_capabilities
     from .target_player_query_amounts import target_player_query_node_capabilities
     from .attachment_source_return import attachment_source_return_node_capabilities
+    from .targeted_discard_spell_copy import targeted_discard_copy_node_capabilities
     from .graveyard_card_results import graveyard_card_counter_life_node_capabilities
     from .graveyard_exile_branches import graveyard_exile_branch_node_capabilities
     from .graveyard_exile_tokens import graveyard_exile_token_node_capabilities
@@ -145,15 +167,17 @@ def _owned_special_result_capabilities(**context):
     from .source_upkeep_handoff import source_upkeep_handoff_node_capabilities
     from .subtype_damage_controller import subtype_damage_node_capabilities
     from .fame_fortune_choices import fame_fortune_node_capabilities
+    from .owned_commander_amount import owned_commander_amount_node_capabilities
     for resolver in (subtype_damage_node_capabilities,gravestorm_node_capabilities,demonstrate_node_capabilities,recover_node_capabilities,ripple_node_capabilities,current_life_node_capabilities,turn_life_loss_node_capabilities,per_player_query_life_node_capabilities,per_player_query_damage_node_capabilities,per_player_life_damage_node_capabilities,target_player_query_node_capabilities,
-                     attachment_source_return_node_capabilities, graveyard_card_counter_life_node_capabilities,
+                     attachment_source_return_node_capabilities, targeted_discard_copy_node_capabilities,
+                     graveyard_card_counter_life_node_capabilities,
                      graveyard_exile_branch_node_capabilities, graveyard_exile_token_node_capabilities,
                      post_exchange_token_node_capabilities, fixed_counter_movement_node_capabilities,
                      departure_counter_transfer_node_capabilities,
                      counter_placement_blocking_node_capabilities,
                      chosen_counter_placement_node_capabilities, captured_draw_keyword_grant_node_capabilities,
                      graveyard_exile_type_outcome_node_capabilities, source_upkeep_handoff_node_capabilities,
-                     fame_fortune_node_capabilities):
+                     fame_fortune_node_capabilities, owned_commander_amount_node_capabilities):
         required=resolver(**context)
         if required:return required
     return ()
@@ -521,19 +545,10 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if 'sequential-public-conditions' not in mechanics and (RESOLUTION_CONDITION_MECHANIC in mechanics or RESOLUTION_CONDITION_OPERATION in nested_effect_operations(effects)):
         from .resolution_condition_shapes import resolution_condition_node_capabilities
         return resolution_condition_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics,cost_schema=cost_schema)
-    from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC
-    if not mechanics.intersection({
-        'fixed-nonrepeating-modal', 'fixed-choose-one-modal-spell', CLOSED_EFFECT_PROGRAM_MECHANIC,
-    }):
-        from .fractional_player_result_shapes import half_life_node_capabilities, half_choice_node_capabilities
-        if 'third-current-player-life-loss' in mechanics:
-            from .third_life_shapes import third_life_node_capabilities
-            return third_life_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
-        if 'half-current-player-life-loss' in mechanics:
-            return half_life_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
-        if 'half-affected-player-domain-choice' in mechanics:
-            return half_choice_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
-    return None
+    from .fractional_player_result_shapes import standalone_fractional_result_capabilities
+
+    return standalone_fractional_result_capabilities(effects=effects, target_schema=target_schema, mechanics=mechanics)
+
 
 
 def special_node_covered_mechanics(supplied):
@@ -566,14 +581,18 @@ def special_node_covered_mechanics(supplied):
     from .discarded_card_exile import DISCARD_EXILE_CAPABILITY, DISCARD_EXILE_MECHANIC
     from .next_personal_turn_protection import CAST_ENTRY_PROTECTION_CAPABILITY, CAST_ENTRY_PROTECTION_MECHANIC
     from .die_roll_draw import CAPABILITY as DIE_DRAW_CAPABILITY, MECHANIC as DIE_DRAW_HAND_SIZE_MECHANIC
+    from .paid_sacrifice_copy import CAPABILITY as PAID_SACRIFICE_COPY_CAPABILITY, MECHANIC as PAID_SACRIFICE_COPY_MECHANIC
 
     from .opposing_owner_entry_life import OPPOSING_OWNER_ENTRY_LIFE_CAPABILITY, OPPOSING_OWNER_ENTRY_LIFE_MECHANIC
+    from .owned_commander_amount import OWNED_COMMANDER_AMOUNT_CAPABILITY, OWNED_COMMANDER_AMOUNT_MECHANIC
 
     mapping = {
         SAGA_CHAPTER_GRANT_CAPABILITY: SAGA_CHAPTER_GRANT_MECHANIC,
+        PAID_SACRIFICE_COPY_CAPABILITY: PAID_SACRIFICE_COPY_MECHANIC,
         PAID_WHITE_ENTRY_TARGET_CAPABILITY: PAID_WHITE_ENTRY_TARGET_MECHANIC,
         CAST_ENTRY_PROTECTION_CAPABILITY: CAST_ENTRY_PROTECTION_MECHANIC,
         OPPOSING_OWNER_ENTRY_LIFE_CAPABILITY: OPPOSING_OWNER_ENTRY_LIFE_MECHANIC,
+        OWNED_COMMANDER_AMOUNT_CAPABILITY: OWNED_COMMANDER_AMOUNT_MECHANIC,
         DRAW_STEP_SETTLEMENT_CAPABILITY: DRAW_STEP_SETTLEMENT_MECHANIC,
         DIE_DRAW_CAPABILITY: DIE_DRAW_HAND_SIZE_MECHANIC,
         COMBAT_PREVENTION_DRAW_CAPABILITY: TEMPORARY_QUOTED_GRANT_MECHANIC,
@@ -598,6 +617,7 @@ def special_node_covered_mechanics(supplied):
         "resolution.event_player.optional_draw": "fixed-event-player-optional-draw",
         'library.top.shared_type_optional_reveal': 'private-top-shared-type-reveal',
         'library.top.revealed_shared_type.resolving_play': 'private-top-shared-type-play',
+        'stack.copy.targeted_fixed_discard_resolution': 'targeted-discard-resolving-copy',
         'choice.opponents.public_fame_or_fortune': 'public-fame-or-fortune',
         'resolution.damage_dealer.subtype_controller_result': 'committed-subtype-damage-controller-result',
         'resolution.choice.optional_source_damage': 'optional-source-damage-alternate',
@@ -621,6 +641,8 @@ def special_node_covered_mechanics(supplied):
     covered = {mechanic for capability, mechanic in mapping.items() if capability in supplied}
     from ..source_block_defender_model import SOURCE_BLOCK_DEFENDER_CAPABILITY, SOURCE_BLOCK_DEFENDER_MECHANIC
 
+    if PAID_SACRIFICE_COPY_CAPABILITY in supplied:
+        covered.add("cr-601-casting-spells")
     if TEMPORARY_LAND_MANA_GRANT_CAPABILITY in supplied:
         covered.update({TEMPORARY_QUOTED_GRANT_MECHANIC, "cr-611-continuous-effects"})
     if SOURCE_BLOCK_DEFENDER_CAPABILITY in supplied:

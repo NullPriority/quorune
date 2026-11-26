@@ -102,7 +102,9 @@ from .library_search_capability_shapes import (
     fixed_type_to_hand_search_node_capabilities,
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
-from .fractional_player_result_shapes import half_choice_node_capabilities, half_life_node_capabilities
+from .fractional_player_result_shapes import (
+    half_choice_node_capabilities, half_library_draw_node_capabilities, half_life_node_capabilities,
+)
 from .third_life_shapes import third_life_node_capabilities
 from .public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
@@ -226,6 +228,7 @@ _COMPONENT_RESOLVERS = (
     fixed_affected_player_hand_exile_node_capabilities,
     fixed_affected_player_sacrifice_node_capabilities,
     half_choice_node_capabilities,
+    half_library_draw_node_capabilities,
     half_life_node_capabilities,
     third_life_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
@@ -387,6 +390,10 @@ def fixed_optional_mana_payment_node_capabilities(
     if any(effect.get('schema_version') == 5 and effect.get('op') == OPTIONAL_MANA_PAYMENT_OPERATION for effect in effects):
         from .commander_learn_shapes import commander_learn_node_capabilities
         return commander_learn_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    from .nonmana_activation_copy import marks_activation_copy_payment, nonmana_activation_copy_node_dependencies
+
+    if any(marks_activation_copy_payment(effect) for effect in effects):
+        return nonmana_activation_copy_node_dependencies(effects, target_schema)
     from ..fixed_effect_payment import MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION
     from ..spell_caster_sacrifice_payment import SPELL_CASTER_SACRIFICE_PAYMENT_VERSION
 

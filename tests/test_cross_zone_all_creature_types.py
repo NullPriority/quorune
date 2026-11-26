@@ -198,7 +198,7 @@ class CrossZoneAllCreatureTypesTests(InheritedNativeFixture, unittest.TestCase):
                 self.checkpoint(game)
                 self._cast(game, source, {"C": 4})
                 self.assertIsNone(self.resolve(game))
-                selected = (patch("quorune.rules.cross_zone_characteristics.controlled_chosen_subtype_entry_effects",
+                selected = (patch("quorune.rules.cross_zone_characteristics.battlefield_entry_type_addition_effects",
                                   return_value=()) if omit else nullcontext())
                 with selected:
                     self._cast(game, steel, {"C": 3})

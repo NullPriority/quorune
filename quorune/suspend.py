@@ -32,6 +32,7 @@ from .errors import GameRuleError, StateInvariantError
 from .mana_undo import clear_mana_undo_stack
 from .model import CardInstance, StackItem
 from .rules.action_proposals import ActionOffer, freeze_json
+from .rules.cast_spell_suspend import CastSuspendedExile, EXILE_MARKER, current_cast_suspended_exile
 from .rules.temporary_cast_timing import temporary_cast_timing_permissions
 from .semantic_runtime.static_cast_rules import static_cast_prohibition_reason
 from .stack_resolution import complete_stack_resolution
@@ -110,6 +111,22 @@ def _suspend_spec(
         if spec.kind is FixedCastLifecycleKind.SUSPEND
     )
     return values[0] if len(values) == 1 else None
+
+
+def record_cast_suspension(host: SuspendHost, card: CardInstance) -> None:
+    """Bind the linked Suspend grant to the card that actually reached exile."""
+    if card.zone != "exile" or card.object_kind != "card":
+        raise GameRuleError("A cast-suspension grant needs its physical exile incarnation")
+    marker = CastSuspendedExile(card.logical_object_id, grants_suspend=_suspend_spec(host, card) is None)
+    card.annotations[EXILE_MARKER] = marker.to_dict()
+
+
+def _exile_suspend_spec(host: SuspendHost, card: CardInstance):
+    spec = _suspend_spec(host, card)
+    if spec is not None:
+        return spec
+    marker = current_cast_suspended_exile(card)
+    return marker if marker is not None and marker.grants_suspend else None
 
 
 def _suspend_timing_is_legal(
@@ -324,7 +341,7 @@ def suspend_upkeep_trigger_items(
     result: list[StackItem] = []
     for object_id in tuple(host.state.players[active_player].zones["exile"]):
         card = host.state.cards[object_id]
-        spec = _suspend_spec(host, card)
+        spec = _exile_suspend_spec(host, card)
         if (
             spec is None
             or card.owner != active_player
@@ -355,10 +372,16 @@ def suspend_upkeep_trigger_items(
 def _current_trigger_card(
     host: SuspendHost,
     item: StackItem,
-) -> tuple[CardInstance | None, FixedCastLifecycleSpec | None]:
+) -> tuple[CardInstance | None, FixedCastLifecycleSpec | CastSuspendedExile | None]:
     card = host.state.cards.get(item.source_object_id or "")
     raw_spec = item.context.get("suspend_spec")
     try:
+        if isinstance(raw_spec, Mapping) and "grants_suspend" in raw_spec:
+            marker = CastSuspendedExile.from_dict(raw_spec)
+            if marker.grants_suspend and marker == current_cast_suspended_exile(card) and card.owner == item.controller:
+                if card.logical_object_id == item.context.get("source_logical_object_id"):
+                    return card, marker
+            return None, None
         spec = (
             FixedCastLifecycleSpec.from_dict(raw_spec)
             if isinstance(raw_spec, Mapping)
@@ -406,6 +429,8 @@ def _finish_intrinsic_trigger(
 def suspend_last_counter_trigger_items(
     host: SuspendHost,
     transitions: Sequence[Any],
+    *,
+    cast_suspended_only: bool = False,
 ) -> tuple[StackItem, ...]:
     result: list[StackItem] = []
     for transition in transitions:
@@ -419,7 +444,9 @@ def suspend_last_counter_trigger_items(
         card = host.state.cards.get(transition.subject_id)
         if card is None or card.zone != "exile":
             continue
-        spec = _suspend_spec(host, card)
+        if (current_cast_suspended_exile(card) is not None) != cast_suspended_only:
+            continue
+        spec = _exile_suspend_spec(host, card)
         if spec is None:
             continue
         ref = host._next_ref("S")

@@ -21,6 +21,7 @@ from ..resolution_characteristic_model import CHOSEN_CREATURE_TYPE_MODIFIER_FIEL
 from ..entry_x_amount_model import (
     ENTRY_HALF_X_FOOD_CAPABILITY, ENTRY_X_AMOUNT_CAPABILITY, ENTRY_X_AMOUNT_KIND, ENTRY_X_AMOUNT_MECHANIC,
     EntryXAmountSpec, entry_half_x_food_effect, entry_x_amount_dependencies,
+    project_entry_x_token_batch, uses_entry_x_token_batch,
 )
 from ..replacement.immutable import thaw_value
 from ..shared_type_doors import ROOM_DOOR_AMOUNT_KIND, RoomDoorQuantity
@@ -539,6 +540,12 @@ def declared_amount_shape_context(
             return deepcopy(value)
         return value
     def project_instruction(effect: Mapping[str, Any]) -> Mapping[str, Any]:
+        nonlocal count
+        if uses_entry_x_token_batch(effect):
+            if ENTRY_X_AMOUNT_MECHANIC not in mechanics or target_schema is not None:
+                raise PublicQueryAmountError("A token batch requires its untargeted entry-X owner")
+            count += 2
+            return project_entry_x_token_batch(effect)
         _room_token_amount(effect)
         if ANNOUNCED_TARGET_SET_MECHANIC in mechanics and effect.get("announced_target_count") is True:
             from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_set_node_capabilities

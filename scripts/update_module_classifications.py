@@ -93,7 +93,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative == 'quorune/graveyard_exile_result_model.py':return 'domain'
     if relative == 'quorune/enchant_public_state_model.py':return 'domain'
     if relative == 'quorune/targeted_graveyard_exile_model.py':return 'domain'
-    if relative == 'quorune/fractional_life_payment_model.py':return 'domain'
+    if relative in {'quorune/fractional_life_payment_model.py', 'quorune/paid_activation_card_types.py'}:return 'domain'
     if relative == 'quorune/optional_sacrifice_stat_model.py':return 'domain'
     if relative == 'quorune/per_player_life_damage_model.py':return 'rules'
     if relative == 'quorune/event_player_modifier_model.py':return 'domain'

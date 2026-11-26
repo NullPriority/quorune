@@ -26,6 +26,25 @@ def _entry_x_support_effect_compiler(ordinary):
     return compile_body
 
 
+def _entry_x_token_batch(body, *, ordinary, **kwargs):
+    if not re.match(r"^create X .+ and X ", body, re.IGNORECASE) or len(re.findall(r"\bX\b", body)) != 2:
+        return None
+    template, effects, schema, mechanics = ordinary(re.sub(r"\bX\b", "two", body), **kwargs)
+    if template is None or schema is not None or len(effects) != 1:
+        return None
+    effect, = effects
+    tokens = effect.get("tokens")
+    if (effect.get("op") != "create_token_batch" or not isinstance(tokens, (list, tuple))
+            or len(tokens) != 2 or any(token.get("quantity") != 2 for token in tokens)):
+        return None
+    amount = EntryXAmountSpec().to_dict()
+    batch = {**effect, "tokens": [{**token, "quantity": dict(amount)} for token in tokens]}
+    return (
+        "entry-x-token-definition-batch-v1", (batch,), None,
+        (*mechanics, DECLARED_EFFECT_AMOUNT_MECHANIC, ENTRY_X_AMOUNT_MECHANIC),
+    )
+
+
 def entry_x_trigger_effect_compiler(record,material_line,*,card_name,ordinary,match_source):
     if '{X}' not in record.mana_cost or record.faces or re.search(r'\bX\b',material_line) is None:return ordinary
     material = trigger_ability_word_material_line(material_line)
@@ -59,6 +78,10 @@ def entry_x_trigger_effect_compiler(record,material_line,*,card_name,ordinary,ma
         return value[0],tuple(bind(effect) for effect in value[1]),value[2],(*value[3],ENTRY_X_AMOUNT_MECHANIC)
 
     def compile_body(body, **kwargs):
+        if record.mana_cost.count("{X}") == 1:
+            batch = _entry_x_token_batch(body, ordinary=ordinary, **kwargs)
+            if batch is not None:
+                return batch
         if re.fullmatch(r"create half X Food tokens, rounded up\.", body, re.IGNORECASE):
             template, _effects, schema, mechanics = ordinary("Create two Food tokens.", **kwargs)
             if template is not None and schema is None:

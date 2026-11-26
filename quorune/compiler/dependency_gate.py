@@ -170,10 +170,13 @@ def _ward_dependency_gate(
             blockers=("mechanic:ward-unsupported-cost",),
             capabilities=("trigger.keyword.ward.fixed_generic",),
         )
+    from ..rules.blight_model import BLIGHT_CAPABILITY
+
+    ward_capabilities = tuple(spec.capability_id for spec in specs if spec is not None)
+    if any(spec is not None and spec.blight_amount is not None for spec in specs):
+        ward_capabilities = (*ward_capabilities, BLIGHT_CAPABILITY)
     ward_gate = explicit_capabilities_gate(
-        tuple(
-            spec.capability_id for spec in specs if spec is not None
-        ),
+        ward_capabilities,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )

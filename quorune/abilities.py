@@ -21,6 +21,7 @@ from .ability_line_normalization import strip_inline_reminder_and_granted_text a
 from .waterbend import FixedWaterbendCost
 from .activation_usage import ActivationLimit
 from .activation_cost_choice import CostChoice
+from .rules.announced_subtype_sacrifice import announced_subtype_sacrifice_choice, validate_announced_subtype_ability
 from .activation_mana_cost import ActivationManaCostOption
 from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .activation_condition_model import (
@@ -192,6 +193,7 @@ class ActivatedAbility:
             validate_bound_granting_attachment_payment(self)
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
+        validate_announced_subtype_ability(self)
         from .rules.linked_loyalty_exile_model import validate_loyalty_x_ability
         validate_loyalty_x_ability(self)
         price = self.variable_colored_reveal_price
@@ -237,7 +239,8 @@ class ActivatedAbility:
 
     @property
     def chooses_activation_x(self) -> bool:
-        return self.loyalty_x or self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
+        return (self.loyalty_x or self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
+                or announced_subtype_sacrifice_choice(self) is not None)
 
     def to_dict(self) -> dict[str, Any]:
         result = {

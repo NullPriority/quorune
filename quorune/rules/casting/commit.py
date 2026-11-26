@@ -43,10 +43,9 @@ from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from ...cascade import cascade_trigger_items
 from ...casting_payment_keywords import CastingPaymentKeywordError
 from ...compiled_cast_costs import compiled_evoke_specs
-from ...storm import prior_storm_spell_count, storm_trigger_items
+from ...storm import prior_storm_spell_count, sacrifice_cast_copy_trigger_items, storm_trigger_items
 from ...replicate import replicate_trigger_items
 from ...conspire import conspire_trigger_items
-from ...casualty import casualty_trigger_items
 from ...convoke import ConvokeError
 from ...counter_placement import (
     CounterPlacementError,
@@ -957,7 +956,7 @@ def _dispatch_cast_events(
     )]
     trigger_batch.extend(replicate_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(conspire_trigger_items(host, spell=item, card=card, program=program))
-    trigger_batch.extend(casualty_trigger_items(host, spell=item, card=card, program=program))
+    trigger_batch.extend(sacrifice_cast_copy_trigger_items(host, spell=item, card=card, program=program, committed_costs=costs))
     from ...commander_cast_copies import commander_cast_copy_trigger_items
     trigger_batch.extend(commander_cast_copy_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(

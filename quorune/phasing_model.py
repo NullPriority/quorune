@@ -88,6 +88,8 @@ PHASE_OUT_RULES = ("502.1", "506.4", "608.2b", "702.26b", "702.26d", "702.26g",
 PHASE_OUT_TARGET_SET_CAPABILITY = "permanent.phasing.announced_target_set"
 PHASE_OUT_ANY_NUMBER_SET_CAPABILITY = "permanent.phasing.any_number_target_set"
 PHASE_OUT_TARGET_SET_SUBJECT = "target_set"
+OPTIONAL_ENTRY_PHASE_OUT_VERSION = 8
+OPTIONAL_ENTRY_PHASE_OUT_CAPABILITY = "permanent.phasing.optional_single_creature_entry"
 PROLIFERATE_PHASE_OUT_SUBJECT = "proliferate_counter_recipients"
 PROLIFERATE_PHASE_OUT_VERSION = 7
 CONTROLLED_LAND_PHASE_OUT_SUBJECT = "controlled_land_set"
@@ -149,13 +151,31 @@ def any_number_phase_out_effect() -> dict:
             "maximum_targets": selected_target_count_descriptor()}
 
 
+def optional_entry_phase_out_schema():
+    return {"zones": ["battlefield"], "categories": ["permanent"],
+            "types_any": ["creature"], "up_to": 1}
+
+
+def optional_entry_phase_out_effect():
+    return {"op": PHASE_OUT_OPERATION, "schema_version": OPTIONAL_ENTRY_PHASE_OUT_VERSION,
+            "subject": PHASE_OUT_TARGET_SET_SUBJECT, "cards": "$targets",
+            "maximum_targets": 1}
+
+
 def _validate_phase_out_target_set(effect, *, runtime):
     version = effect["schema_version"]
-    expected = announced_phase_out_effect() if version == 2 else any_number_phase_out_effect()
+    if version == OPTIONAL_ENTRY_PHASE_OUT_VERSION:
+        expected = optional_entry_phase_out_effect()
+    else:
+        expected = announced_phase_out_effect() if version == 2 else any_number_phase_out_effect()
+    if version == OPTIONAL_ENTRY_PHASE_OUT_VERSION and (
+        type(effect.get("maximum_targets")) is not int or effect["maximum_targets"] != 1
+    ):
+        raise ValueError("Optional entry phase-out admits at most one creature")
     fields = set(expected)
     if runtime and "_runtime_source" in effect:
         fields.add("_runtime_source")
-    if set(effect) != fields or effect["announced_target_count"] is not True:
+    if set(effect) != fields or (version in (2, 3) and effect.get("announced_target_count") is not True):
         raise ValueError("Phase out requires its sealed announced target set")
     if not runtime:
         if dict(effect) != expected:
@@ -165,7 +185,7 @@ def _validate_phase_out_target_set(effect, *, runtime):
 
             if CastXAmountSpec.from_dict(effect["maximum_targets"]) != CastXAmountSpec():
                 raise ValueError("The phase-out limit must use the spell's X")
-        else:
+        elif version == 3:
             from .target_cardinality import validate_selected_target_count
 
             validate_selected_target_count(effect["maximum_targets"])
@@ -242,7 +262,7 @@ def validate_phase_out_effect(effect, *, runtime=False):
         if type(version) is not int or values != controlled_permanent_set_phase_out_effect():
             raise ValueError("Permanent phasing requires its versioned current-controller set")
         return subject
-    if type(version) is int and version in (2, 3) and subject == PHASE_OUT_TARGET_SET_SUBJECT:
+    if type(version) is int and version in (2, 3, OPTIONAL_ENTRY_PHASE_OUT_VERSION) and subject == PHASE_OUT_TARGET_SET_SUBJECT:
         _validate_phase_out_target_set(effect, runtime=runtime)
         return subject
     required = {"op", "schema_version", "subject"}

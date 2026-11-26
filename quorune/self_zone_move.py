@@ -11,6 +11,10 @@ from .activation_condition_model import activation_restriction_spec
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .replacement.immutable import FrozenMap, freeze_value
 from .entry_counter_model import EffectEntryCounter
+from .rules.revealed_hand_zone_move import (
+    SPEC_VERSION as HAND_ENTRY_SPEC_VERSION, BODY as HAND_ENTRY_BODY,
+    revealed_hand_entry_cost_is_closed, revealed_hand_entry_effect,
+)
 from .source_self_entry_counter_model import (
     FIELD as SELF_ENTRY_COUNTER_FIELD, FixedSelfEntryCounter, compile_source_self_entry_counter,
 )
@@ -28,6 +32,7 @@ _SUPPORTED_RESULTS = {
     ("graveyard", "battlefield", False, "card"),
     ("graveyard", "battlefield", True, "card"),
     ("battlefield", "hand", False, "aura"),
+    ("hand", "battlefield", False, "land"),
 }
 
 
@@ -48,7 +53,7 @@ class SelfZoneMoveSpec:
     entry_counter: FixedSelfEntryCounter | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, HAND_ENTRY_SPEC_VERSION}:
             raise SelfZoneMoveError("Unsupported self-zone-move schema version")
         if ((self.schema_version == 1 and self.followup is not None)
                 or (self.schema_version == 2 and not isinstance(self.followup, SelfEntryFollowup))
@@ -67,6 +72,12 @@ class SelfZoneMoveSpec:
         result = (self.origin, self.destination, self.tapped, self.source_form)
         if result not in _SUPPORTED_RESULTS:
             raise SelfZoneMoveError("Self-zone movement result is outside the closed family")
+        if (self.origin == "hand") != (self.schema_version == HAND_ENTRY_SPEC_VERSION):
+            raise SelfZoneMoveError("Revealed hand entry requires its distinct versioned pattern")
+        if self.schema_version == HAND_ENTRY_SPEC_VERSION and (
+            self.followup is not None or not revealed_hand_entry_cost_is_closed(self.ability)
+        ):
+            raise SelfZoneMoveError("Revealed hand land entry requires its complete ordinary hand price")
         if type(self.requires_complete_card_program) is not bool:
             raise SelfZoneMoveError("Self-zone complete-card policy must be boolean")
         if self.requires_complete_card_program is not (
@@ -143,6 +154,8 @@ class SelfZoneMoveSpec:
         }
 
     def effect(self) -> dict[str, Any]:
+        if self.schema_version == HAND_ENTRY_SPEC_VERSION:
+            return revealed_hand_entry_effect()
         return {
             "op": SELF_ZONE_MOVE_OPERATION,
             "origin": self.origin,
@@ -174,9 +187,15 @@ def _self_zone_effect_material(ability: ActivatedAbility) -> str:
 
 
 def compile_self_zone_move(
-    ability: ActivatedAbility,
+    ability: ActivatedAbility, *, source_is_land: bool = False,
 ) -> SelfZoneMoveSpec | None:
     effect = _self_zone_effect_material(ability)
+    if source_is_land and effect == HAND_ENTRY_BODY:
+        candidate = replace(ability, zones=("hand",))
+        if not revealed_hand_entry_cost_is_closed(candidate):
+            return None
+        return SelfZoneMoveSpec(candidate, "hand", "battlefield", False, "land", True,
+                                schema_version=HAND_ENTRY_SPEC_VERSION)
     counter_entry = compile_source_self_entry_counter(effect)
     if counter_entry is not None:
         tapped, entry_counter = counter_entry
@@ -317,6 +336,14 @@ def resolve_self_zone_move(
         or card.object_kind != "card"
     ):
         return None
+    if intent.source_form == "land":
+        from .effect_runtime.hand_inspection import has_current_stack_reveal
+
+        types, _subtypes, _supertypes = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
+        item = next((pending for pending in host.state.stack if pending.ref == intent.stack_ref), None)
+        if (card.owner != intent.actor or "land" not in types or item is None
+                or not has_current_stack_reveal(item, card)):
+            return None
     if intent.source_form == "aura":
         _types, subtypes, _supertypes = host._type_parts(
             str(host._effective_card_data(card).get("type_line") or "")

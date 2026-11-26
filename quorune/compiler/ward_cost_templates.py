@@ -23,6 +23,9 @@ _DISCARD_ONE_WARD = re.compile(
 )
 
 
+_FIXED_BLIGHT_WARD = re.compile(r"Ward[—-]Blight (?P<amount>[1-9]\d*)\.?", re.IGNORECASE)
+
+
 def fixed_ward_spec(text: str) -> WardSpec | None:
     """Parse one represented fixed Ward cost."""
 
@@ -36,6 +39,9 @@ def fixed_ward_spec(text: str) -> WardSpec | None:
         return WardSpec(life_payment=amount) if amount > 0 else None
     if _DISCARD_ONE_WARD.fullmatch(material) is not None:
         return WardSpec(discard_cards=1)
+    blight = _FIXED_BLIGHT_WARD.fullmatch(material)
+    if blight is not None:
+        return WardSpec(blight_amount=int(blight["amount"]))
     scope = ward_sacrifice_scope(material)
     return WardSpec(sacrifice_scope=scope) if scope is not None else None
 

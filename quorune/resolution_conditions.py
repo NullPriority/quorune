@@ -372,6 +372,12 @@ def validate_resolution_condition_instruction(
 ) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition | CastOriginCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    from .temporary_all_blocker_model import BLOCKER_PROTECTION_CONDITION_VERSION
+
+    if effect.get("schema_version") == BLOCKER_PROTECTION_CONDITION_VERSION:
+        from .temporary_all_blocker_model import validate_blocker_protection_condition
+
+        return validate_blocker_protection_condition(effect)
     if effect.get("schema_version") in {MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION, MONARCH_COUNTER_DOUBLING_VERSION}:
         validator = _validate_monarch_knight_damage if effect["schema_version"] == MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION else validate_monarch_counter_doubling
         return validator(effect)

@@ -232,11 +232,14 @@ def relative_target_reanimation_node_capabilities(*, effects, target_schema, mec
 
 def attached_event_battlefield_return_runtime_dependencies(program):
     from ..event_card_return import EVENT_BATTLEFIELD_RETURN_MECHANIC
+    from .attachment_source_return import ATTACHMENT_DEATH_TRANSFORM_MECHANIC, attachment_source_return_runtime_dependencies
     from .effect_shape_walkers import nested_effects
 
     if not any(effect.get('op') == REANIMATE_OPERATION and effect.get('schema_version') == 2
                and effect.get('controller') == '$controller' for effect in nested_effects(program.effects)):
         return ()
+    if ATTACHMENT_DEATH_TRANSFORM_MECHANIC in getattr(program, "coverage", ()):
+        return attachment_source_return_runtime_dependencies(program)
     required = fixed_target_reanimation_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=(EVENT_BATTLEFIELD_RETURN_MECHANIC,))
     if (not required or program.active_zone != 'battlefield' or program.event != 'creature.dies'

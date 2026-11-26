@@ -182,7 +182,7 @@ def opponent_library_exile_spend_context(state, seat, card, spend_context):
 
 def opponent_library_exile_cast_mode(
     state, seat, card, permission, *, force_without_mana_cost, alternative_base,
-    intrinsic_disturb, resolving_exile_authority, library_life_base,
+    intrinsic_disturb, resolving_exile_authority, library_life_base, ordinary_private_authority=False,
 ):
     """Resolve this bounded permission's free versus separately-payable cast mode."""
 
@@ -192,7 +192,7 @@ def opponent_library_exile_cast_mode(
     )
     separately_payable = (
         legacy_free and not force_without_mana_cost and alternative_base is None
-        and current_opponent_library_exile_play_permission(state, seat, card) is not None
+        and (ordinary_private_authority or current_opponent_library_exile_play_permission(state, seat, card) is not None)
     )
     return force_without_mana_cost or (legacy_free and not separately_payable), separately_payable
 

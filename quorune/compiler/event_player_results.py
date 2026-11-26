@@ -197,7 +197,11 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
             and _event_player(binding, "defending player") == "$context.defending_player"):
         return ("fixed-unblocked-defender-poison-v1", (unblocked_defender_poison_effect(),), None,
                 (UNBLOCKED_DEFENDER_POISON_MECHANIC, "cr-122-counters")), False
+    from .controlled_subtype_damage_batch import controlled_subtype_damage_result
     from .subtype_damage_controller import subtype_damage_result
+
+    if grouped := controlled_subtype_damage_result(binding, body):
+        return grouped
 
     if subtype := subtype_damage_result(binding, body):
         return subtype

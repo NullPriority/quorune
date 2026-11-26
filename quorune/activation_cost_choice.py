@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from .rules.announced_subtype_sacrifice import ANNOUNCED_SUBTYPE_SACRIFICE_KIND, validate_announced_subtype_choice
 from .replacement.immutable import FrozenMap, thaw_value
 
 
@@ -25,7 +26,11 @@ class CostChoice:
     def __post_init__(self) -> None:
         if not isinstance(self.kind, str) or not self.kind.strip():
             raise ValueError("cost choice kind must be a nonempty string")
-        if type(self.count) is not int or self.count < 1:
+        if self.kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+            if type(self.count) is not int:
+                raise ValueError("The announced subtype choice count must be an integer")
+            validate_announced_subtype_choice(self)
+        elif type(self.count) is not int or self.count < 1:
             raise ValueError("cost choice count must be a positive integer")
         if not isinstance(self.zone, str) or not self.zone.strip():
             raise ValueError("cost choice zone must be a nonempty string")
@@ -68,6 +73,12 @@ class CostChoice:
                 self.return_schema_version, self.sacrifice_schema_version, self.predicate_union))
         ):
             raise ValueError("Forage is one closed selected-cost choice")
+        if self.kind == "sacrifice_up_to_three" and (
+            self.count != 3 or self.zone != "battlefield" or self.card_type is not None or self.another
+            or any(value is not None for value in (self.predicate, self.tap_schema_version,
+                self.return_schema_version, self.sacrifice_schema_version, self.predicate_union))
+        ):
+            raise ValueError("Bounded sacrifice requires the closed up-to-three battlefield choice")
         from .rules.selected_counter_costs import SELECTED_COUNTER_COST_CAPABILITIES, validate_selected_counter_choice
         if self.kind in SELECTED_COUNTER_COST_CAPABILITIES:
             validate_selected_counter_choice(self)
@@ -101,6 +112,7 @@ class CostChoice:
         from .additional_cost_vocabulary import (
             FIXED_ZONE_CHANGE_COST_CONTRACTS,
             RETURN_ONE_TO_OWNER_HAND_COST,
+            SACRIFICE_ONE_COST,
             ZONE_CHANGE_COST_KIND,
         )
         from .rules.casting_additional_costs import (
@@ -116,6 +128,8 @@ class CostChoice:
             if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
             else self.kind
         )
+        if self.kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+            operation = SACRIFICE_ONE_COST
         contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
         if contract is None:
             return None
@@ -128,7 +142,7 @@ class CostChoice:
                 "schema_version": version,
                 "kind": ZONE_CHANGE_COST_KIND,
                 "operation": operation,
-                "count": self.count,
+                "count": 1 if self.kind == ANNOUNCED_SUBTYPE_SACRIFICE_KIND else self.count,
                 "choice_field": contract[2],
                 "predicate": thaw_value(self.predicate),
             }

@@ -611,6 +611,12 @@ def resolve_semantic_value(
 
     if isinstance(value, list):
         return [resolve_semantic_value(host, child, item) for child in value]
+    from ..paid_activation_card_types import REFERENCE_KIND as PAID_CARD_TYPES_REFERENCE, resolve_paid_type_condition
+    if isinstance(value, Mapping) and value.get("kind") == PAID_CARD_TYPES_REFERENCE:
+        try:
+            return resolve_paid_type_condition(value, item)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == PAID_SACRIFICE_CONDITION_VALUE:
         try:
             return resolve_paid_sacrifice_condition(value, item)

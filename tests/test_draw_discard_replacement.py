@@ -29,6 +29,55 @@ from quorune.replacement.operations import ReplacementOperationError
 
 
 class DrawDiscardReplacementModelTests(unittest.TestCase):
+    def test_library_choice_draw_requires_exact_optional_controller_definition(self):
+        from quorune.replacement import application
+        from quorune.replacement.operations import ReplaceDrawWithLibraryChoice
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.semantic_runtime.draw_replacements import (
+            DrawReplacementSourceContext, LibraryChoiceDrawReplacementHandler,
+        )
+
+        text = (
+            "If you would draw a card, you may instead choose land or nonland and reveal cards "
+            "from the top of your library until you reveal a card of the chosen kind. "
+            "Put that card into your hand and put all other cards revealed this way on the bottom "
+            "of your library in any order."
+        )
+        _, descriptor, _ = static_draw_result_handler(text)
+        handler = LibraryChoiceDrawReplacementHandler()
+        source = DrawReplacementSourceContext("A-abundance", "source-1", 1, "A", "A")
+        effect = handler.replacement_effect(descriptor, source)
+        self.assertTrue(effect.optional)
+        self.assertEqual((ReplaceDrawWithLibraryChoice(),), effect.operations)
+        self.assertEqual(effect, ReplacementEffect.from_dict(effect.to_dict()))
+        self.assertIsNone(static_draw_result_handler(text.replace("your library", "an opponent's library")))
+        with self.assertRaises(SemanticNodeError):
+            handler.validate({**descriptor, "condition": {"affected_player_relation": "any"}})
+        with self.assertRaises(ReplacementOperationError):
+            operation_from_dict({"op": "replace_draw_with_library_choice", "category": "land"})
+
+        def witness():
+            request = DrawEventRequest("draw:replacement-fixture", "A", 0, reason="fixture", private=True)
+            prepared = prepare_draw_event(
+                request, apnap_order=("A", "B"), effects=(effect,), selections=(effect.effect_id,),
+            )
+            self.assertEqual("library_choice", prepared.resolution.kind)
+            self.assertFalse(prepared.event.payload["is_draw"])
+            self.assertEqual(effect.effect_id, prepared.resolution.library_choice_effect_id)
+            validate_prepared_draw(prepared, apnap_order=("A", "B"))
+
+        witness()
+        original = application._apply_draw_operation
+
+        def drop_library_replacement(event, payload, children, operation, *, effect_id):
+            if isinstance(operation, ReplaceDrawWithLibraryChoice):
+                return
+            return original(event, payload, children, operation, effect_id=effect_id)
+
+        with patch.object(application, "_apply_draw_operation", side_effect=drop_library_replacement):
+            with self.assertRaises(AssertionError):
+                witness()
+
     def test_typed_discard_replacement_round_trips_as_one_closed_operation(self):
         operation = DiscardInsteadOfDraw()
         self.assertEqual({"op": "discard_instead_of_draw"}, operation_to_dict(operation))
@@ -102,6 +151,157 @@ class DrawDiscardReplacementNativeTests(InheritedNativeFixture, unittest.TestCas
         cls.deck = DeckDefinition("Draw discard test", [
             DeckEntry(commander, 1, "commander"), DeckEntry("Plains", 30),
         ], [commander])
+
+    def _library_prefix(self, game, names, *, seat="A"):
+        for object_id in tuple(game.state.players[seat].zones["library"]):
+            game.engine.move_card(object_id, "exile", semantic_events=False, reason="Fixture library")
+        return tuple(
+            self.add(game.engine, name, seat=seat, zone="library", ref=f"{seat}-public-prefix-{index}")
+            for index, name in enumerate(reversed(names))
+        )[::-1]
+
+    def _abundance_offer(self, game, seat="A"):
+        self.assertEqual("draw.replacement", game.state.pending_decision.kind)
+        options = game.packet("pilot:" + seat, full=True)["decision"]["ctx"]["options"]
+        choice, = [option["id"] for option in options if option["id"] != "draw"]
+        response = game.act("pilot:" + seat, {"action_id": "choose", "choice": choice})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual("draw.library_kind", game.state.pending_decision.kind)
+        self.assertEqual(["pilot:" + seat], game.pending_principals())
+
+    def test_abundance_reveals_one_prefix_and_orders_before_the_next_draw(self):
+        game = self.session(121072016)
+        source = self.add(game.engine, "Abundance")
+        spell = self.add(game.engine, "Divination", zone="hand")
+        first, second, match, tail = self._library_prefix(
+            game, ("Reach Through Mists", "Divination", "Island", "Plains"),
+        )
+        self.assert_closed(game, source)
+        self.assert_closed(game, spell)
+        self.prepare(game, mana={"C": 2, "U": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertIsNotNone(self.resolve(game))
+        self._abundance_offer(game)
+
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "category": "land"}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        self.assertNotIn(tail.ref, json.dumps(game.packet("pilot:A", full=True)["decision"]))
+        game = self.replay(game, load=True)
+        response = game.act("pilot:A", {"action_id": "choose", "category": "land"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual("draw.library_bottom", game.state.pending_decision.kind)
+        self.assertEqual(0, self._draws(game))
+        self.assertEqual("hand", game.state.cards[match.object_id].zone)
+        reveal = next(event for event in reversed(game.state.events) if event.code == "library.reveal")
+        self.assertEqual([first.ref, second.ref, match.ref], [row["ref"] for row in reveal.details["cards"]])
+
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:A", {"action_id": "order", "order": [tail.ref, first.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        response = game.act("pilot:A", {"action_id": "order", "order": [second.ref, first.ref]})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual([second.object_id, first.object_id], game.state.players["A"].zones["library"][:2])
+        self.assertEqual("draw.replacement", game.state.pending_decision.kind)
+        response = game.act("pilot:A", {"action_id": "choose", "choice": "draw"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual("hand", game.state.cards[tail.object_id].zone)
+        self.assertEqual(1, self._draws(game))
+        self.replay(game, load=True)
+
+    def test_abundance_can_order_every_card_and_replace_an_empty_turn_draw(self):
+        game = self.session(121072017)
+        source = self.add(game.engine, "Abundance")
+        spell = self.add(game.engine, "Reach Through Mists", zone="hand")
+        first, second = self._library_prefix(game, ("Island", "Plains"))
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"U": 1})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell)
+        self.assertIsNotNone(self.resolve(game))
+        self._abundance_offer(game)
+        response = game.act("pilot:A", {"action_id": "choose", "category": "nonland"})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual("draw.library_bottom", game.state.pending_decision.kind)
+        game = self.replay(game, load=True)
+        response = game.act("pilot:A", {"action_id": "order", "order": [first.ref, second.ref]})
+        self.assertTrue(response.ok, response.summary)
+        self.assertEqual([first.object_id, second.object_id], game.state.players["A"].zones["library"])
+        self.assertEqual(0, self._draws(game))
+        self.replay(game, load=True)
+
+        game = self.session(121072018)
+        source = self.add(game.engine, "Abundance")
+        self.assert_closed(game, source)
+        self._library_prefix(game, ())
+        self.prepare(game)
+        upkeep_witness.VanishingRuntimeTests.upkeep(self, game, seat="A")
+        self.checkpoint(game)
+        self.until(game, lambda s: s.state.pending_decision and s.state.pending_decision.kind == "draw.replacement")
+        self.assertFalse(game.state.stack)
+        self._abundance_offer(game)
+        game = self.replay(game, load=True)
+        result = game.act("pilot:A", {"action_id": "choose", "category": "land"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(game.state.players["A"].in_game)
+        self.assertEqual([], game.state.players["A"].zones["library"])
+        self.assertEqual(0, self._draws(game))
+        self.assertFalse(any(event.code == "library.reveal" for event in game.state.events))
+        self.replay(game, load=True)
+
+    def test_abundance_replays_one_redirected_hand_move_before_bottom_order(self):
+        from quorune.replacement.operations import SetField
+        from quorune.semantic_runtime import zone_replacements
+
+        game = self.session(121072019)
+        source = self.add(game.engine, "Abundance")
+        spell = self.add(game.engine, "Reach Through Mists", zone="hand")
+        first, second, match = self._library_prefix(game, ("Divination", "Reach Through Mists", "Island"))
+        self.assert_closed(game, source)
+        self.prepare(game, mana={"U": 1})
+        self.checkpoint(game)
+
+        collect = zone_replacements.collect_zone_change_replacement_effects
+        alternatives = tuple(
+            ReplacementEffect(
+                effect_id=f"fixture:library-choice-move-{zone}",
+                source_id="fixture:library-choice-move",
+                event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+                conditions={"origin": {"eq": "library"}, "destination": {"eq": "hand"}},
+                operations=(SetField("destination", zone),),
+            )
+            for zone in ("exile", "graveyard")
+        )
+
+        def with_redirects(host, **kwargs):
+            return (*collect(host, **kwargs), *alternatives)
+
+        with patch.object(zone_replacements, "collect_zone_change_replacement_effects", side_effect=with_redirects):
+            self.cast_for(game, "A", spell)
+            self.assertIsNotNone(self.resolve(game))
+            self._abundance_offer(game)
+            result = game.act("pilot:A", {"action_id": "choose", "category": "land"})
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual("replacement.order", game.state.pending_decision.kind)
+            self.assertEqual("library", game.state.cards[match.object_id].zone)
+            self.assertEqual(0, self._draws(game))
+            game = self.replay(game, load=True)
+            options = game.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            exile, = [row["id"] for row in options if "library-choice-move-exile" in row["id"]]
+            command = {"action_id": "choose", "replacement": exile}
+            before = authoritative_state_hash(game.state)
+            self.assertFalse(game.act("pilot:B", command).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+            self.assertTrue(game.act("pilot:A", command).ok)
+            self.assertEqual("exile", game.state.cards[match.object_id].zone)
+            self.assertEqual("draw.library_bottom", game.state.pending_decision.kind)
+            self.assertEqual(1, sum(event.code == "library.reveal" for event in game.state.events))
+            self.assertTrue(game.act("pilot:A", {"action_id": "order", "order": [second.ref, first.ref]}).ok)
+            self.assertEqual([second.object_id, first.object_id], game.state.players["A"].zones["library"])
+            self.assertEqual(0, self._draws(game))
+            self.replay(game, load=True)
 
     def _chain(self, session, seat="B", ref=None):
         card = self.add(session.engine, "Chains of Mephistopheles", seat=seat, ref=ref)

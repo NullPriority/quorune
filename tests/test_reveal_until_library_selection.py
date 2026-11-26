@@ -231,6 +231,120 @@ class RevealUntilSelectionNativeTests(unittest.TestCase):
         result = session.act('pilot:A',{'action_id':offer['id'],'pay':'auto'})
         self.assertTrue(result.ok,result.summary)
 
+    def _concede_during_ordinary_priority(self, game, seat):
+        principal = 'pilot:' + seat
+        for _ in range(len(game.engine.active_seats)):
+            actors = game.pending_principals()
+            if principal in actors:
+                result = game.act(principal, {'action_id': 'concede', 'choices': {'confirm_concede': True}})
+                self.assertTrue(result.ok, result.summary)
+                return
+            self.assertEqual('priority', game.state.pending_decision.kind)
+            result = game.act(actors[0], {'action_id': 'pass'})
+            self.assertTrue(result.ok, result.summary)
+        self.fail('Ordinary priority never reached the departing player')
+
+    def test_open_the_way_native_cast_cap_and_committed_x_survive_a_player_leaving(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from quorune.record import authoritative_state_hash
+
+        main_library = ["Generic Bound Growth", "Generic Bound Plains", "Generic Bound Body",
+                        "Generic Bound Plains", "Generic Bound Plains", "Generic Bound Growth", "Generic Bound Plains"]
+        for departure_before_cast in (False, True):
+            with self.subTest(departure_before_cast=departure_before_cast):
+                game, cards, source, offer = self.prepare("Open the Way", main_library, seed=648030 + departure_before_cast)
+                maximum = 4
+                if departure_before_cast:
+                    self._concede_during_ordinary_priority(game, "D")
+                    maximum -= 1
+                    actions = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    offer = next(row for row in actions if row.get("card") == source.ref)
+                self.assertEqual(maximum, offer["cost_options"][0]["choice_schema"]["x"]["maximum"])
+                before = authoritative_state_hash(game.state)
+                for seat, amount in (("A", maximum + 1), ("A", True), ("A", -1), ("B", maximum)):
+                    refused = game.act("pilot:"+seat, {"action_id": offer["id"], "x": amount, "pay": "auto"})
+                    self.assertFalse(refused.ok, refused.summary)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                accepted = game.act("pilot:A", {"action_id": offer["id"], "x": maximum, "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(maximum, game.state.stack[-1].x_value)
+                if not departure_before_cast:
+                    self._concede_during_ordinary_priority(game, "D")
+                self.assertEqual(["A", "B", "C"], game.engine.active_seats)
+                game = H.replay(self, game, load=True)
+                self.assertEqual(maximum, game.state.stack[-1].x_value)
+                shuffle_count = game.state.players["A"].stats.get("shuffle_count", 0)
+                event_count = len(game.state.events)
+                untouched_count = 3 if maximum == 3 else 1
+                visibility = {card.object_id: (list(card.known_to), list(card.revealed_to))
+                              for card in (game.state.cards[row.object_id] for row in cards[:untouched_count])}
+                self.assertIsNone(H.resolve(self, game))
+                looked, = (event for event in game.state.events[event_count:] if event.code == "library.look")
+                self.assertEqual(len(cards) - untouched_count, looked.details["count"])
+                self.assertEqual({card.object_id for card in cards[untouched_count:]}, set(looked.changed_objects))
+                for object_id, expected in visibility.items():
+                    live = game.state.cards[object_id]
+                    self.assertEqual(expected, (live.known_to, live.revealed_to))
+                selected = (3, 4, 6) if maximum == 3 else (1, 3, 4, 6)
+                lands = [game.state.cards[cards[i].object_id] for i in selected]
+                self.assertTrue(all(card.zone == "battlefield" and card.tapped for card in lands))
+                library = game.state.players["A"].zones["library"]
+                if maximum == 3:
+                    self.assertEqual([cards[i].object_id for i in (5, 0, 1, 2)], library)
+                else:
+                    self.assertEqual(cards[0].object_id, library[-1])
+                    self.assertEqual({cards[i].object_id for i in (2, 5)}, set(library[:2]))
+                for seat in "BC":
+                    public = game.packet("pilot:"+seat, full=True)["state"]["players"]["A"]
+                    self.assertFalse(public.get("known_top"))
+                self.assertEqual(shuffle_count, game.state.players["A"].stats.get("shuffle_count", 0))
+                H.replay(self, game, load=True)
+
+    def test_open_the_way_zero_and_short_library_use_the_native_partition_and_replay(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for amount in (0, 4):
+            with self.subTest(amount=amount):
+                game, cards, source, offer = self.prepare("Open the Way",
+                    ["Generic Bound Body", "Generic Bound Plains", "Generic Bound Growth"], seed=648040 + amount)
+                prior = list(game.state.players["A"].zones["library"])
+                accepted = game.act("pilot:A", {"action_id": offer["id"], "x": amount, "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                event_count = len(game.state.events)
+                self.assertIsNone(H.resolve(self, game))
+                library = game.state.players["A"].zones["library"]
+                if amount == 0:
+                    self.assertEqual(prior, library)
+                    self.assertFalse(any(event.code.startswith("library.") for event in game.state.events[event_count:]))
+                else:
+                    self.assertEqual({cards[0].object_id, cards[2].object_id}, set(library))
+                    land = game.state.cards[cards[1].object_id]
+                    self.assertEqual(("battlefield", True), (land.zone, land.tapped))
+                self.assertEqual("graveyard", game.state.cards[source.object_id].zone)
+                self.assertTrue(game.state.players["A"].in_game)
+                H.replay(self, game, load=True)
+
+    def test_open_the_way_requires_a_whole_spell_and_the_announced_x_tapped_land_partition(self):
+        from dataclasses import replace
+        from unittest.mock import patch
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.reveal_until_library_selection_model import player_capped_land_reveal_effect
+
+        game, _, source, _ = self.prepare("Open the Way", [], seed=648050)
+        program, = game.engine.semantics.programs_for_oracle(source.oracle_id)
+        self.assertEqual((player_capped_land_reveal_effect(),), tuple(program.effects))
+        for delta in ({"stop_count": 4}, {"stop_count": "$controller"}, {"entry_tapped": False},
+                      {"remainder_order": "chosen"}, {"schema_version": 3.0}):
+            changed = replace(program, effects=({**program.effects[0], **delta},))
+            self.assertFalse(bind_semantic_program_runtime(changed, capability_registry=self.registry,
+                                                          profile="commander_review")["strict"])
+        self.assertFalse(bind_semantic_program_runtime(replace(program, active_zone="battlefield", event="activate"),
+            capability_registry=self.registry, profile="commander_review")["strict"])
+        record = self.db.lookup("Open the Way", fuzzy=False)
+        with patch("quorune.compiler.player_capped_land_reveal.player_capped_land_reveal_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=self.registry).status)
+
     def test_original_treasure_hunt_stops_at_nonland_and_moves_whole_no_match_prefix(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
         for names,selected_count in ((['Generic Bound Growth','Generic Bound Body','Generic Bound Plains','Generic Bound Plains'],3),

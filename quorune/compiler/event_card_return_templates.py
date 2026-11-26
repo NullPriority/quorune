@@ -255,6 +255,14 @@ def event_card_return_template(binding, body: str, *, card_name: str, effect_tem
         return _source_death_land_exile_result(body) if body == binding.body else None
     if binding.variant == 'enchanted_creature_dies' and body == binding.body:
         from ..attachment_source_return_model import compile_attachment_source_return_body, MECHANIC
+        from ..rules.attachment_source_return import ATTACHMENT_DEATH_TRANSFORM_MECHANIC, attachment_death_transform_effects
+
+        if " ".join(body.split()).casefold() == (
+            "return it to the battlefield under your control, "
+            "then return this card to the battlefield transformed under your control."
+        ):
+            return ("attachment-death-return-and-transform-v1", attachment_death_transform_effects(), None,
+                    (EVENT_BATTLEFIELD_RETURN_MECHANIC, MECHANIC, ATTACHMENT_DEATH_TRANSFORM_MECHANIC))
         spec = compile_attachment_source_return_body(body)
         if spec is not None:
             return ('attachment-source-return-v1', (spec.effect(),), None, (MECHANIC,))

@@ -2,10 +2,11 @@
 from enum import Enum
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_EVENT
+from ..rules.nonmana_activation_copy_model import ABILITY_ACTIVATION_COPY_EVENT
 from ..day_night_model import DAY_TOGGLE_EVENT
 from ..rules.attacking_opponent_library_exile import ATTACKED_PLAYER_OR_WALKER_EVENT
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
-from ..rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, LAND_PLAY_EVENT
+from ..rules.event_subscriptions import GRAVEYARD_DEPARTURE_LOOKBACK_EVENT, LAND_PLAY_EVENT, OWNED_ZONE_EXILE_EVENT
 from ..rules.monarch_transition import MONARCH_BECAME_EVENT
 from ..life_change import FIRST_LIFE_GAIN_EVENT, LIFE_LOSS_EVENT
 from ..shared_type_doors import DOOR_UNLOCKED_EVENT
@@ -62,6 +63,7 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_RECEIVED_COMBAT_DAMAGE = "combat.damage.received"
     ARTIFACT_GRAVEYARD = "artifact.graveyard"
     PUBLIC_DEALS_DAMAGE = "damage.dealt"
+    CONTROLLED_SUBTYPE_DAMAGE_OPPONENTS = "damage.dealt.controlled_subtype_opponents"
     PUBLIC_ATTACKS = "creature.attacks"
     CREATURE_BLOCKS = "creature.blocks"
     CREATURE_BECOMES_BLOCKED = "creature.becomes_blocked"
@@ -69,7 +71,9 @@ class FixedCounterTriggerEvent(str, Enum):
     CARD_CYCLED = "card.cycled"
     NINJUTSU_ACTIVATED = "ability.ninjutsu.activated"
     CREATURE_ACTIVATED = CREATURE_ABILITY_ACTIVATED
+    NONMANA_ACTIVATED = ABILITY_ACTIVATION_COPY_EVENT
     SOURCE_CYCLED = "card.cycled.self"
+    OWNED_ZONE_EXILE = OWNED_ZONE_EXILE_EVENT
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
     CARD_LEAVE_GRAVEYARD_LOOKBACK = GRAVEYARD_DEPARTURE_LOOKBACK_EVENT
     CARD_ENTER_GRAVEYARD = 'card.enter_graveyard'

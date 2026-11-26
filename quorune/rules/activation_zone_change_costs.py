@@ -6,6 +6,30 @@ from typing import Any, Mapping
 from ..replacement.model import ReplacementEffectError
 
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
+from .announced_subtype_sacrifice import (
+    ANNOUNCED_SUBTYPE_SACRIFICE_KIND, announced_subtype_sacrifice_predicate,
+)
+from ..creature_subtypes import canonical_creature_subtype
+from ..object_predicate import ObjectQuerySpec
+
+
+def announced_subtype_replay_cost_refs(choice, response):
+    if (choice.get("k") != ANNOUNCED_SUBTYPE_SACRIFICE_KIND or choice.get("z") != "battlefield"
+            or type(choice.get("n")) is not int or choice["n"] != 0 or not isinstance(choice.get("q"), Mapping)):
+        return None
+    from .activation.announced_subtype_sacrifice import selected_subtype_sacrifice_refs
+
+    try:
+        refs = selected_subtype_sacrifice_refs(response, response.get("x"))
+        query = ObjectQuerySpec.from_dict(choice["q"])
+    except (TypeError, ValueError) as exc:
+        return None
+    legal = choice.get("legal_refs")
+    if (len(query.subtypes_all) != 1 or canonical_creature_subtype(query.subtypes_all[0]) is None
+            or query != announced_subtype_sacrifice_predicate(query.subtypes_all[0])
+            or not isinstance(legal, (list, tuple)) or any(ref not in legal for ref in refs)):
+        return None
+    return refs
 
 
 def activation_zone_change_cost_reference(
@@ -109,6 +133,9 @@ def activation_zone_change_cost_reference(
     ):
         return None
     choice = choices[0]
+    if choice.get("k") == ANNOUNCED_SUBTYPE_SACRIFICE_KIND:
+        refs = announced_subtype_replay_cost_refs(choice, response)
+        return object_ref if (origin, destination) == ("battlefield", "graveyard") and refs and object_ref in refs else None
     contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(
         str(choice.get("k") or "")
     )

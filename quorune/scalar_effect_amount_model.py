@@ -12,7 +12,7 @@ from .counter_names import normalized_counter_name
 from .creature_subtypes import canonical_creature_subtype
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .multikicker_model import FixedManaMultikickerSpec
-from .public_history_query_model import PublicHistoryQuerySpec
+from .public_history_query_model import NONTOKEN_CREATURE_ENTRY_QUERY_VERSION, PublicHistoryQuerySpec
 from .upkeep_hand_difference_model import UpkeepHandDifferenceSpec,UPKEEP_HAND_DIFFERENCE_CAPABILITY
 
 SCALAR_AMOUNT_KIND = "scalar_effect_amount"
@@ -35,6 +35,8 @@ PAID_REVEALED_CREATURE_CONTEXT = "paid_revealed_creature"
 PAID_REVEALED_CREATURE_VERSION = 17
 SOURCE_COUNTER_KIND_COUNT_VERSION = 18
 SOURCE_COUNTER_KIND_COUNT_CAPABILITY = "quantity_expression.source_counter_kind_count"
+SOURCE_MUTATION_COUNT_VERSION = 19
+SOURCE_MUTATION_COUNT_CAPABILITY = "quantity_expression.source_mutation_count"
 
 
 class ScalarAmountOrigin(StrEnum):
@@ -85,7 +87,7 @@ class ScalarEffectAmountSpec:
     hand_difference: UpkeepHandDifferenceSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in range(1, SOURCE_COUNTER_KIND_COUNT_VERSION + 1):
+        if type(self.schema_version) is not int or self.schema_version not in range(1, SOURCE_MUTATION_COUNT_VERSION + 1):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
         if (self.schema_version == 13) != (self.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE):
             raise PublicQueryAmountError('Paid activation stats require their explicit scalar version')
@@ -107,9 +109,10 @@ class ScalarEffectAmountSpec:
             raise PublicQueryAmountError("History counts require their explicit scalar version")
         if self.schema_version == 10:
             if (not isinstance(self.history_count, PublicHistoryQuerySpec)
-                or self.history_count.event not in {"creature_died", "permanent_died"}
+                or (self.history_count.event not in {"creature_died", "permanent_died"}
+                    and self.history_count.schema_version != NONTOKEN_CREATURE_ENTRY_QUERY_VERSION)
                 or self.history_count.reduction != "count"):
-                raise PublicQueryAmountError("Death amounts require a typed history count")
+                raise PublicQueryAmountError("The scalar result requires a typed history count")
         elif self.history_count is not None:
             raise PublicQueryAmountError("This scalar origin cannot carry a history count")
         if (self.schema_version == 9) != (self.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE):
@@ -156,6 +159,9 @@ class ScalarEffectAmountSpec:
                     or type(self.coefficient) is not int or self.coefficient != 1 or self.binding_id is not None):
                 raise PublicQueryAmountError("Distinct counter kinds require an unscaled source count")
             counter_origin = True
+        if self.reads_source_mutation_count:
+            _validate_source_mutation_count(self)
+            counter_origin = True
         if not isinstance(self.origin, ScalarAmountOrigin):
             raise PublicQueryAmountError("Scalar amount requires a typed origin")
         if type(self.coefficient) is not int or self.coefficient not in {-2, -1, 1, 2}:
@@ -201,6 +207,7 @@ class ScalarEffectAmountSpec:
         from .commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
         return tuple(sorted({*self.history_count_capabilities,
             *((SOURCE_COUNTER_KIND_COUNT_CAPABILITY,) if self.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION else ()),
+            *((SOURCE_MUTATION_COUNT_CAPABILITY,) if self.reads_source_mutation_count else ()),
             *((GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else ()),
             *((TARGET_CREATURE_POWER_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_CREATURE_POWER else ()),
             *((PAID_REVEALED_CREATURE_CAPABILITY,) if self.origin is ScalarAmountOrigin.PAID_REVEALED_CREATURE else ()),
@@ -216,6 +223,10 @@ class ScalarEffectAmountSpec:
     @property
     def reads_source_counters(self) -> bool:
         return self.counter_name is not None or self.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION
+
+    @property
+    def reads_source_mutation_count(self) -> bool:
+        return self.schema_version == SOURCE_MUTATION_COUNT_VERSION
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ScalarEffectAmountSpec":
@@ -253,6 +264,12 @@ class ScalarEffectAmountSpec:
         except (TypeError,ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
 
+
+
+def _validate_source_mutation_count(spec: ScalarEffectAmountSpec) -> None:
+    if (spec.origin is not ScalarAmountOrigin.SOURCE or spec.characteristic is not None
+            or type(spec.coefficient) is not int or spec.coefficient != 1 or spec.binding_id is not None):
+        raise PublicQueryAmountError("The mutation count requires an unscaled source composition reference")
 
 
 def _validate_graveyard_target_mana_value(spec: ScalarEffectAmountSpec) -> None:

@@ -7,10 +7,37 @@ from . import regex_working_set as re
 
 from ..activation_x import activation_x_symbols, activation_x_origin_is_supported
 from ..activation_x_discard import activation_x_discard_count, validate_activation_x_discard
+from ..rules.announced_subtype_sacrifice import (
+    ANNOUNCED_SUBTYPE_SACRIFICE_KIND, ANNOUNCED_SUBTYPE_STATS_TEXT, announced_subtype_sacrifice_choice,
+    announced_subtype_sacrifice_predicate, printed_announced_subtype_price,
+)
 from .declared_effect_amounts import declared_effect_amount_template
 
 
+def _announced_subtype_cost(ability):
+    if (" ".join(ability.effect_text.split()).casefold() != ANNOUNCED_SUBTYPE_STATS_TEXT
+            or len(ability.uncompiled_costs) != 1 or ability.choices):
+        return None
+    printed = printed_announced_subtype_price(ability.cost_text)
+    if printed is None:
+        return None
+    from ..activation_cost_choice import CostChoice
+    from ..replacement.immutable import FrozenMap
+
+    _mana, subtype = printed
+    choice = CostChoice(
+        ANNOUNCED_SUBTYPE_SACRIFICE_KIND, count=0,
+        predicate=FrozenMap(announced_subtype_sacrifice_predicate(subtype).to_dict()),
+    )
+    try:
+        return replace(ability, choices=(choice,), uncompiled_costs=())
+    except ValueError:
+        return None
+
+
 def announced_x_activation_cost(ability):
+    if subtype_choice := _announced_subtype_cost(ability):
+        return subtype_choice
     if "Reveal X " in ability.cost_text:
         from .variable_colored_reveal_price import specialize_variable_colored_reveal_price
 
@@ -40,6 +67,10 @@ def announced_x_activation_cost(ability):
 def announced_x_activation_effect(ability, *, source_name, compile_fixed, text):
     if not ability.chooses_activation_x:
         return None
+    if announced_subtype_sacrifice_choice(ability) is not None:
+        from .temporary_target_interactions import temporary_target_interaction_effect_template
+        interaction = temporary_target_interaction_effect_template(text)
+        return interaction.compiled() if interaction is not None else None
     if ability.variable_colored_reveal_price is not None:
         from .counter_templates import targeted_controller_payment_template
 

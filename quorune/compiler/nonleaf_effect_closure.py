@@ -35,15 +35,21 @@ def _is_closed_variable_library_selection_program(program):
 
 def direct_effect_program_is_closed(program):
     """Recognize direct effect owners before composing instructions."""
+    from ..rules.paid_sacrifice_copy import is_closed_paid_sacrifice_copy_program
+    if is_closed_paid_sacrifice_copy_program(program):
+        return True
     from ..rules.named_searches import is_closed_named_zone_search_program
     from ..rules.commander_return_choice import is_closed_commander_return_program
+    from ..rules.owned_commander_amount import is_closed_owned_commander_amount_program
     from ..rules.void_counter_play import is_closed_void_counter_play_program
     from ..rules.target_graveyard_escape import is_closed_target_graveyard_escape_program
     from ..rules.paid_artifact_library_search import is_closed_paid_artifact_search_program
-    if is_closed_paid_artifact_search_program(program):
+    from ..rules.paid_creature_library_search import is_closed_paid_creature_search_program
+    if is_closed_paid_artifact_search_program(program) or is_closed_paid_creature_search_program(program):
         return True
     if (is_closed_named_zone_search_program(program) or is_closed_commander_return_program(program)
-            or is_closed_void_counter_play_program(program) or is_closed_target_graveyard_escape_program(program)):
+            or is_closed_void_counter_play_program(program) or is_closed_target_graveyard_escape_program(program)
+            or is_closed_owned_commander_amount_program(program)):
         return True
     from ..rules.attachment_action_capability_shapes import (
         is_closed_fixed_source_equipment_activation_program, is_closed_targeted_equipment_attachment_program,
@@ -59,18 +65,25 @@ def direct_effect_program_is_closed(program):
 
 def effect_program_is_closed(program, *, recognizers, recursive_is_closed, composed_is_closed):
     """Apply the shared promotion policy to a complete effect program."""
+    from ..rules.cast_spell_suspend import is_closed_cast_spell_suspend_program
+    if is_closed_cast_spell_suspend_program(program):
+        return True
     from ..card_programs.runtime_requirements import is_closed_target_death_return_program
     from ..rules.fixed_counter_movement import is_closed_fixed_counter_movement_program
     from ..rules.departure_counter_transfer import is_closed_departure_counter_transfer_program
+    from ..rules.counter_recipient_control import is_closed_counter_recipient_control_program
     from ..rules.counter_placement_blocking import is_closed_counter_placement_blocking_program
     from ..rules.controlled_arrival_proliferate import is_closed_controlled_arrival_proliferate_program
     from ..rules.linked_color_cast_exile import is_closed_linked_color_cast_exile
+    from ..rules.source_power_opponent_damage import is_closed_source_power_opponent_damage_program
 
     if (is_closed_fixed_counter_movement_program(program) or is_closed_target_death_return_program(program)
             or is_closed_departure_counter_transfer_program(program)
             or is_closed_counter_placement_blocking_program(program)
+            or is_closed_counter_recipient_control_program(program)
             or is_closed_controlled_arrival_proliferate_program(program)
-            or is_closed_linked_color_cast_exile(program)):
+            or is_closed_linked_color_cast_exile(program)
+            or is_closed_source_power_opponent_damage_program(program)):
         return True
     from ..rules.colored_hand_credit import COLORED_HAND_CREDIT
     from .colored_hand_credit_template import closed_colored_hand_credit_spell

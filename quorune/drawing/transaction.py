@@ -11,11 +11,14 @@ from ..rules.faction_trigger_model import (
 from ..model import CardInstance, GameState
 from ..next_draw_replacement_model import ResolvedNextDrawReplacement
 from ..player_result_events import CardDrawEvent, dispatch_card_draw_event
+from ..replacement.operations import EXILE_TURN_PLAY_DRAW_RESULT
 from ..turn_history_model import DRAWN_HAND_CARD_EVENT
 from ..zone_trigger_events import ZoneTransitionKind
 from .captured_hand import CaptureDrawnHandCard
 from .model import (
+    DRAW_LIBRARY_CHOICE_EVENT,
     DiscardDrawnCardUnlessType,
+    DrawLibraryChoiceOccurrence,
     DrawError,
     PreparedDrawEvent,
     QueuedDraw,
@@ -83,16 +86,19 @@ class DrawCommitResult:
     result_draws: tuple[QueuedDraw, ...] = ()
     discard_followup: QueuedDraw | None = None
     scheduled_result: ResolvedNextDrawReplacement | None = None
+    library_choice: DrawLibraryChoiceOccurrence | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in {
             "draw",
+            EXILE_TURN_PLAY_DRAW_RESULT,
             "empty",
             "prevented",
             "prohibited",
             "result_draws",
             "discard_or_mill",
             "scheduled_result",
+            "library_choice",
             _DREDGE_KIND,
         }:
             raise DrawError(f"Unsupported committed draw result {self.kind!r}")
@@ -121,6 +127,11 @@ class DrawCommitResult:
                 raise DrawError("The draw replacement outcome requires its exact consumed grant")
         elif self.scheduled_result is not None:
             raise DrawError("Only a scheduled draw outcome may carry a consumed grant")
+        if self.kind == "library_choice":
+            if not isinstance(self.library_choice, DrawLibraryChoiceOccurrence) or self.library_choice.seat != self.player:
+                raise DrawError("Library-choice outcome requires its committed draw occurrence")
+        elif self.library_choice is not None:
+            raise DrawError("Only a library-choice outcome carries its draw occurrence")
         if self.kind == "discard_or_mill":
             if (
                 not isinstance(self.discard_followup, QueuedDraw)
@@ -130,6 +141,14 @@ class DrawCommitResult:
                 raise DrawError("A discard replacement requires one sealed follow-up draw")
         elif self.discard_followup is not None:
             raise DrawError("Only a discard replacement seals a follow-up draw")
+
+
+    @property
+    def has_followup(self) -> bool:
+        return (
+            bool(self.result_draws) or self.discard_followup is not None
+            or self.scheduled_result is not None or self.library_choice is not None
+        )
 
 
 def _require_current_request(
@@ -560,6 +579,29 @@ def _commit_dredge(
     )
 
 
+def _commit_library_choice_event(host, prepared, resolution):
+    from ..replacement.operations import ReplaceDrawWithLibraryChoice
+
+    request = prepared.request
+    effect_id = resolution.library_choice_effect_id
+    producers = tuple(effect for effect in prepared.effects if effect.effect_id == effect_id)
+    if (
+        len(producers) != 1 or producers[0].operations != (ReplaceDrawWithLibraryChoice(),)
+        or effect_id not in prepared.event.applied_effects
+    ):
+        raise DrawError("The library choice lost its selected draw replacement")
+    host._log(
+        resolution.player, DRAW_LIBRARY_CHOICE_EVENT,
+        "A library category choice replaced this draw.",
+        {"draw_event_id": request.event_id, "effect_id": effect_id, "library_size": request.library_size},
+        importance=1, changed_players=[resolution.player],
+    )
+    occurrence = DrawLibraryChoiceOccurrence(
+        resolution.player, request.event_id, effect_id, request.library_size, host.state.event_sequence,
+    )
+    return DrawCommitResult(kind="library_choice", player=resolution.player, library_choice=occurrence)
+
+
 def commit_prepared_draw_result(
     host: DrawCommitHost,
     prepared: PreparedDrawEvent,
@@ -581,6 +623,15 @@ def commit_prepared_draw_result(
             raise DrawError("Miracle reveal lost its complete current draw opportunity")
     if resolution.kind == "draw":
         return _commit_ordinary_draw(host, prepared, miracle=miracle)
+    if resolution.kind == EXILE_TURN_PLAY_DRAW_RESULT:
+        from ..impulse_access import ImpulseAccessRequest, resolve_fixed_impulse_access
+        from ..impulse_access_model import ImpulseAccessDuration
+
+        resolve_fixed_impulse_access(host, ImpulseAccessRequest(
+            actor=resolution.player, player=resolution.player, count=2,
+            duration=ImpulseAccessDuration.END_OF_TURN, reason=f"Draw replacement for {resolution.reason}",
+        ))
+        return DrawCommitResult(kind=EXILE_TURN_PLAY_DRAW_RESULT, player=resolution.player)
     if resolution.kind == "prevented":
         host._log(
             resolution.player,
@@ -627,6 +678,8 @@ def commit_prepared_draw_result(
             player=resolution.player,
             result_draws=resolution.result_draws,
         )
+    if resolution.kind == "library_choice":
+        return _commit_library_choice_event(host, prepared, resolution)
     if resolution.kind == "scheduled_result":
         from .scheduled_draw_coordination import SCHEDULED_DRAW_EVENT
         from .scheduled_draw_results import consume_scheduled_draw_result

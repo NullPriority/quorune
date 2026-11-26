@@ -36,6 +36,9 @@ from .scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_part
 
 CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY = "trigger.event.controller_food_sacrifice_group"
 CONTROLLER_FOOD_SACRIFICE_GROUP_VARIANT = "controller_sacrifices_food"
+OWNED_ZONE_EXILE_EVENT = "card.exiled_from_library_or_graveyard.v1"
+OWNED_ZONE_EXILE_VARIANT = "one_or_more_controller_cards_exiled_from_library_or_graveyard"
+OWNED_ZONE_EXILE_CAPABILITY = "trigger.event.owned_library_graveyard_exile_batch"
 
 
 def controller_food_sacrifice_group_condition():
@@ -54,6 +57,23 @@ def controller_food_sacrifice_group_dependencies(program):
             or "one_or_more_event_batch" not in program.coverage):
         raise ValueError("Grouped Food sacrifices require the controller's actual sacrifice batch and Food facts")
     return (CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY, "trigger.event.normalized_zone_change")
+
+
+def owned_zone_exile_condition():
+    return {"field": "owner", "op": "eq", "value": "$source.controller"}
+
+
+def grouped_zone_event_dependencies(program):
+    food = controller_food_sacrifice_group_dependencies(program)
+    if program.event != OWNED_ZONE_EXILE_EVENT and OWNED_ZONE_EXILE_CAPABILITY not in program.capability_dependencies:
+        return food
+    if ((program.event, program.active_zone) != (OWNED_ZONE_EXILE_EVENT, "battlefield")
+            or "one_or_more_event_batch" not in program.coverage
+            or thaw_value(program.event_condition) != owned_zone_exile_condition()
+            or program.target_schema is not None or program.cost_schema is not None
+            or program.handlers or program.trigger_limit is not None):
+        raise ValueError("Owned-zone exile requires one grouped controller-relative battlefield trigger")
+    return (*food, OWNED_ZONE_EXILE_CAPABILITY, "trigger.event.normalized_zone_change")
 
 
 EVENT_SUBSCRIPTIONS_FIELD = "event_subscriptions"
@@ -755,6 +775,14 @@ def source_event_intervening_recheck(host, program, *, context, controller, sour
             )
     except (ValueError, TypeError) as exc:
         raise GameRuleError(str(exc)) from exc
+    from .paid_noncreature_counter_transform import paid_cast_transform_runtime_dependencies, recheck_committed_payment
+
+    try:
+        if paid_cast_transform_runtime_dependencies(program):
+            return recheck_committed_payment(context)
+    except (ValueError, TypeError) as exc:
+        raise GameRuleError(str(exc)) from exc
+
     from .event_outcome_shapes import uses_zero_mana_cast_condition, zero_mana_cast_result_recheck
 
     if uses_zero_mana_cast_condition(program.event_condition):

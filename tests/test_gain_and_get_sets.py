@@ -49,6 +49,97 @@ class GainAndGetSetTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
 
+    def test_sylvan_awakening_reuses_the_exact_controlled_land_query_and_duration(self):
+        from quorune.compiler.fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
+        from quorune.next_turn_effect import NEXT_TURN_EFFECT_FIELD, NEXT_TURN_EFFECT_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+
+        card = self.db.lookup("Sylvan Awakening", fuzzy=False)
+        program = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", program.status, program.material_residuals)
+        node, = program.faces[0].nodes
+        effect, = node.effects
+        self.assertIsNone(node.target_schema)
+        self.assertIn(NEXT_TURN_EFFECT_CAPABILITY, node.capability_dependencies)
+        self.assertIs(effect[NEXT_TURN_EFFECT_FIELD], True)
+
+        template = card.oracle_text.replace("Until your next turn", "Until end of turn").replace("all lands", "lands")
+        existing = fixed_resolution_characteristics_effect_template(
+            template, source_name=card.name, source_is_permanent=False, source_card_types=(),
+        )
+        self.assertEqual((existing[1][0],), ({key: value for key, value in effect.items()
+                                            if key != NEXT_TURN_EFFECT_FIELD},))
+        wrong = replace(card, oracle_text=card.oracle_text.replace("all lands you control", "all tapped lands you control"))
+        self.assertNotEqual("exact", compile_oracle_card(
+            wrong, capability_registry=self.registry, capability_profile="commander_review").status)
+
+    def test_actual_sylvan_awakening_locks_current_lands_through_replay_and_expires_on_its_controllers_turn(self):
+        session = self.session(611_205_38)
+        spell = self.add(session.engine, "Sylvan Awakening", zone="hand")
+        watched = self.add(session.engine, "Generic Bound Plains", ref="sylvan-watched-land")
+        borrowed = self.add(session.engine, "Generic Bound Plains", ref="sylvan-borrowed-land")
+        reborn = self.add(session.engine, "Generic Bound Plains", ref="sylvan-reentered-land")
+        late = self.add(session.engine, "Generic Bound Plains", zone="hand", ref="sylvan-later-land")
+        foreign = self.add(session.engine, "Generic Bound Plains", seat="B", ref="sylvan-opposing-land")
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        theft = self.add(session.engine, "Word of Seizing", seat="B", zone="hand")
+        watched.tapped = True
+        for card in (spell, blink, theft):
+            binding = self.binding(session, card)
+            self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        session.state.config.semantic_policy = "trusted_only"
+        session.state.players["B"].mana_pool.update({"C": 3, "R": 2})
+        self.prepare(session, mana={"C": 2, "G": 1, "W": 1})
+        self.checkpoint(session)
+
+        self.cast(session, "A", spell, payment={"C": 2, "G": 1})
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        for card in (watched, borrowed, reborn):
+            live = session.state.cards[card.object_id]
+            self.assertEqual((2, 2), tuple(session.engine._numeric_stat(live.object_id, stat)
+                                           for stat in ("power", "toughness")))
+            types, subtypes, supertypes = session.engine._effective_type_parts(live)
+            self.assertTrue({"creature", "land"} <= set(types))
+            self.assertTrue({"elemental", "plains"} <= set(subtypes))
+            self.assertIn("basic", supertypes)
+            self.assertTrue({"reach", "indestructible", "haste"} <= set(session.engine._combat_keywords(live)))
+        self.assertTrue(session.state.cards[watched.object_id].tapped)
+        self.assertNotIn("creature", session.engine._effective_type_parts(session.state.cards[foreign.object_id])[0])
+
+        self.priority(session, "A")
+        command = {"action_id": "play-land:" + late.ref}
+        digest = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(digest, authoritative_state_hash(session.state))
+        played = session.act("pilot:A", command)
+        self.assertTrue(played.ok, played.summary)
+        self.assertNotIn("creature", session.engine._effective_type_parts(session.state.cards[late.object_id])[0])
+
+        incarnation = session.state.cards[reborn.object_id].logical_object_id
+        self.cast(session, "A", blink, [reborn.ref], {"W": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(incarnation, session.state.cards[reborn.object_id].logical_object_id)
+        self.assertNotIn("creature", session.engine._effective_type_parts(session.state.cards[reborn.object_id])[0])
+
+        self.cast(session, "B", theft, [borrowed.ref], {"C": 3, "R": 2})
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[borrowed.object_id]
+        self.assertEqual("B", current.controller)
+        self.assertIn("creature", session.engine._effective_type_parts(current)[0])
+        session = self.replay(session, load=True)
+
+        for seat in "BCD":
+            self.advance(session, lambda current, player=seat: current.state.active_player == player
+                         and current.state.step == "upkeep")
+            self.assertIn("creature", session.engine._effective_type_parts(session.state.cards[watched.object_id])[0])
+            self.assertTrue(session.state.cards[watched.object_id].tapped)
+        self.advance(session, lambda current: current.state.active_player == "A" and current.state.step == "upkeep")
+        for card in (watched, borrowed, reborn, late, foreign):
+            self.assertNotIn("creature", session.engine._effective_type_parts(session.state.cards[card.object_id])[0])
+        self.assertFalse(session.state.cards[watched.object_id].tapped)
+        self.replay(session, load=True)
+
     def test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample(self):
         session=self.session(750900);source=self.add(session.engine,'Craterhoof Behemoth',zone='hand')
         bodies=[self.add(session.engine,'Grizzly Bears',ref='hoof-body-'+str(i)) for i in range(2)]

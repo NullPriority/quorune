@@ -11022,14 +11022,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v1231-table-playtest-readiness",
-      "compiler_version": "oracle-ir-v1231",
+      "transition_id": "oracle-ir-v1232-tailnet-card-handoffs",
+      "compiler_version": "oracle-ir-v1232",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "The playtest transition concerns browser action input, deck readiness, printing preservation and the compiler-owned adapter changes."
+      "non_harvest_reason": "The playtest cut combines verified card families with browser and runtime improvements. Certification calculates the exact corpus gains."
     },
     "forecast_corrections": [
       {

@@ -68,7 +68,10 @@ def fixed_library_search_covered_mechanics(
         TARGET_LIBRARY_EXILE_CAPABILITY, TARGET_LIBRARY_EXILE_MECHANIC,
         TARGET_NAME_MULTIZONE_EXILE_CAPABILITY,
     )
+    from .dragon_graveyard_search_copy import DRAGON_GRAVEYARD_COPY_SEARCH_CAPABILITY, DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC
     covered: set[str] = set()
+    if DRAGON_GRAVEYARD_COPY_SEARCH_CAPABILITY in capabilities:
+        covered.add(DRAGON_GRAVEYARD_COPY_SEARCH_MECHANIC)
     if EXILED_TARGET_SEARCH_CAPABILITY in capabilities:
         covered.add(EXILED_TARGET_SEARCH_MECHANIC)
     if {TARGET_LIBRARY_EXILE_CAPABILITY, TARGET_NAME_MULTIZONE_EXILE_CAPABILITY}.intersection(capabilities):
@@ -150,6 +153,10 @@ def fixed_counted_library_search_node_capabilities(
         if DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID not in mechanic_ids:
             return ()
         return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID)
+    if template.shared_land_type:
+        from ..library_search_model import SHARED_LAND_TYPE_SEARCH_CAPABILITY
+
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, SHARED_LAND_TYPE_SEARCH_CAPABILITY)
     if template.different_names:
         from ..library_search_model import DIFFERENT_NAME_CREATURE_SEARCH_CAPABILITY
 
@@ -394,7 +401,12 @@ def fixed_library_search_node_capabilities(
     from .exiled_target_search_shapes import exiled_target_search_node_capabilities
     from .targeted_library_exile import targeted_library_exile_node_capabilities
     from .search_random_discard import private_search_random_discard_node_capabilities
+    from .dragon_graveyard_search_copy import dragon_graveyard_copy_search_node_capabilities
 
+    if dragon_search := dragon_graveyard_copy_search_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+    ):
+        return dragon_search
     if private_search := private_search_random_discard_node_capabilities(
         effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
     ):

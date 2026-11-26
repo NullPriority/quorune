@@ -12,7 +12,7 @@ from ..fixed_mana_abilities import _without_activation_restriction
 from .paid_sacrifice_amount_templates import paid_sacrifice_activation_mana_output
 from .public_quantity_mana import (
     chosen_devotion_mana_template, chosen_subtype_mana_template,
-    controlled_land_subtype_pair_mana_template, public_quantity_mana_template,
+    controlled_creature_threshold_mana_template, controlled_land_subtype_pair_mana_template, public_quantity_mana_template,
 )
 from .activated_costs import activated_ability_cost, activated_ability_cost_capabilities
 from .dependency_gate import explicit_capabilities_gate
@@ -27,6 +27,7 @@ def public_quantity_activated_mana_node(ability,node_id,line,span,capability_reg
               or chosen_devotion_mana_template(ability.effect_text)
               or chosen_subtype_mana_template(ability.effect_text)
               or controlled_land_subtype_pair_mana_template(ability.effect_text)
+              or controlled_creature_threshold_mana_template(ability.effect_text)
               or (public_quantity_mana_template(quantity_text, source_name=source_name)
                   if quantity_text is not None else None))
     if output is None:

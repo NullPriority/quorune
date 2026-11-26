@@ -91,6 +91,26 @@ def _validate_combat_relationship_format(format_value: Mapping[str, Any], state:
         raise ValueError("Combat relationship provenance does not match the initial checkpoint")
 
 
+_QUALIFIED_HISTORY_VERSION_FIELDS = (
+    "spell_origin_history_version", "graveyard_type_history_version", "spell_mana_history_version",
+    "spell_color_history_version", "creature_spell_counter_history_version", "crime_history_version",
+    "committed_occurrence_history_version", "damage_life_history_version", "permanent_death_history_version",
+    "death_name_history_version", "first_life_gain_history_version", "public_movement_history_version",
+    "venture_history_version", "plus_one_counter_placement_history_version", "land_play_history_version",
+    "permanent_counter_receipt_history_version", "draw_identity_history_version",
+    "permanent_entry_token_history_version",
+)
+
+
+def _validate_qualified_history_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    history = getattr(state, "turn_history", None)
+    for key in _QUALIFIED_HISTORY_VERSION_FIELDS:
+        declared = format_value.get(key, 0)
+        actual = getattr(history, key, None) or 0
+        if type(declared) is not int or declared not in {0, 1} or declared != actual:
+            raise ValueError("Qualified history provenance does not match the initial checkpoint")
+
+
 def format_state_versions(state: Any) -> dict[str, int]:
     """Return canonical manifest markers for additive state semantics."""
 
@@ -124,12 +144,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
             getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
         ),
         **({"arrival_history_version":1} if getattr(getattr(state,"turn_history",None),"arrival_history_version",None)==1 else {}),
-        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','spell_color_history_version','creature_spell_counter_history_version',
-            'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
-            'permanent_death_history_version','death_name_history_version','first_life_gain_history_version','public_movement_history_version',
-            'venture_history_version', 'plus_one_counter_placement_history_version',
-            'land_play_history_version', 'permanent_counter_receipt_history_version', 'draw_identity_history_version')
-            if getattr(getattr(state,'turn_history',None),key,None)==1},
+        **{key: 1 for key in _QUALIFIED_HISTORY_VERSION_FIELDS
+           if getattr(getattr(state, "turn_history", None), key, None) == 1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **cast_placement_state_fields(
             getattr(state, "cast_source_placement_version", None), getattr(state, "target_announcement_timing_version", None),
@@ -287,13 +303,7 @@ def validate_state_versions(
     arrival=format_value.get('arrival_history_version',0)
     actual_arrival=getattr(getattr(state,'turn_history',None),'arrival_history_version',None) or 0
     if type(arrival) is not int or arrival not in {0,1} or arrival!=actual_arrival:raise ValueError('Arrival-history provenance does not match the initial checkpoint')
-    for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','spell_color_history_version','creature_spell_counter_history_version',
-                'crime_history_version','committed_occurrence_history_version','damage_life_history_version',
-                'permanent_death_history_version','death_name_history_version','first_life_gain_history_version','public_movement_history_version',
-                'venture_history_version', 'plus_one_counter_placement_history_version',
-                'land_play_history_version', 'permanent_counter_receipt_history_version', 'draw_identity_history_version'):
-        declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
-        if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')
+    _validate_qualified_history_versions(format_value, state)
     tap_version = format_value.get("tap_state_event_version", 0)
     if type(tap_version) is not int or tap_version not in {0, 1} or tap_version != (state.tap_state_event_version or 0):
         raise ValueError("Tap-state event provenance does not match the initial checkpoint")

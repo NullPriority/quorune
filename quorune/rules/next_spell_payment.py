@@ -205,6 +205,9 @@ def expire_temporary_cast_ability_grants(stats):
     expire_next_cast_protection(stats)
     stats.pop(TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW, None)
     stats.pop(TURN_CREATURE_TARGET_PROHIBITION_WINDOW, None)
+    from .targeted_turn_target_prohibition import WINDOW
+
+    stats.pop(WINDOW, None)
 
 
 @dataclass(frozen=True, slots=True)

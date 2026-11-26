@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 from .day_night_nodes import day_night_counter_binding
+from .nonmana_activation_copy import nonmana_activation_copy_binding
 from typing import Any, Mapping
 
 from ..attack_batch_model import DIRECT_PLAYER_ATTACK_CAPABILITY, DIRECT_PLAYER_ATTACK_EVENT, direct_player_attack_condition
@@ -13,7 +14,8 @@ from ..rules.event_subscriptions import (
     FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
     OTHER_LAND_PLAY_SACRIFICE_CAPABILITY, OTHER_LAND_PLAY_SACRIFICE_TEMPLATE,
     PHYSICAL_CARD_PLAY_TEMPLATE, PHYSICAL_EXILE_PLAY_TREASURE_TEMPLATE, physical_card_play_event_condition,
-    other_land_play_condition,
+    OWNED_ZONE_EXILE_CAPABILITY, OWNED_ZONE_EXILE_EVENT, OWNED_ZONE_EXILE_VARIANT,
+    other_land_play_condition, owned_zone_exile_condition,
 )
 from ..type_subtype_vocabulary import ARTIFACT_SUBTYPES
 from ..source_sacrifice_model import SOURCE_UNATTACHMENT_VARIANT, UNATTACHMENT_EVENT, UNATTACHMENT_TRIGGER_CAPABILITY
@@ -468,6 +470,21 @@ def _graveyard_departure_spec(
     )
 
 
+def _owned_zone_exile_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    match = re.fullmatch(
+        r"Whenever one or more cards are put into exile from your library and/or your graveyard, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    return _spec(
+        OWNED_ZONE_EXILE_EVENT, OWNED_ZONE_EXILE_VARIANT, match["body"],
+        "fixed-counter-public-zone-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=owned_zone_exile_condition(),
+        capabilities=(OWNED_ZONE_EXILE_CAPABILITY, "trigger.effect.fixed_event"),
+    )
+
+
 def _public_token_zone_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
@@ -651,6 +668,7 @@ def _public_zone_spec(
         or _public_controlled_departure_spec(material_line)
         or _public_entry_zone_spec(material_line)
         or _graveyard_departure_spec(material_line)
+        or _owned_zone_exile_spec(material_line)
         or _public_sacrifice_spec(material_line, card_name=card_name)
         or _public_discard_spec(material_line)
     )
@@ -746,6 +764,20 @@ def _point_combat_spec(material_line):
                  condition=point_combat_condition(outbound=outbound), capabilities=capabilities)
 
 
+def fixed_source_combat_damage_recipient_condition(recipient):
+    return _all_conditions(
+        {"field": "source", "op": "eq", "value": "$source.ref"},
+        {"field": "combat", "op": "truthy", "value": True},
+        {"any": [
+            {"field": "target_kind", "op": "eq", "value": "player"},
+            {"all": [
+                {"field": "target_kind", "op": "eq", "value": "permanent"},
+                {"field": "target_types", "op": "contains_any", "value": [recipient]},
+            ]},
+        ]},
+    )
+
+
 def _public_damage_spec(
     material_line: str,
 ) -> FixedPublicEventBindingSpec | None:
@@ -828,33 +860,7 @@ def _public_damage_spec(
             extended.group("body"),
             "fixed-counter-public-damage-trigger-v1",
             "trigger-event-normalized-damage",
-            condition=_all_conditions(
-                {"field": "source", "op": "eq", "value": "$source.ref"},
-                {"field": "combat", "op": "truthy", "value": True},
-                {
-                    "any": [
-                        {
-                            "field": "target_kind",
-                            "op": "eq",
-                            "value": "player",
-                        },
-                        {
-                            "all": [
-                                {
-                                    "field": "target_kind",
-                                    "op": "eq",
-                                    "value": "permanent",
-                                },
-                                {
-                                    "field": "target_types",
-                                    "op": "contains_any",
-                                    "value": [recipient],
-                                },
-                            ]
-                        },
-                    ]
-                },
-            ),
+            condition=fixed_source_combat_damage_recipient_condition(recipient),
         )
     opponent = _OPPONENT_NONCOMBAT_DAMAGE_TRIGGER.fullmatch(material_line)
     if opponent is None:
@@ -1080,6 +1086,7 @@ def fixed_public_action_event_binding_spec(
         or _public_cycle_spec(material_line)
         or _creature_activation_draw_spec(material_line)
         or _public_ninjutsu_spec(material_line)
+        or nonmana_activation_copy_binding(material_line)
     )
 
 

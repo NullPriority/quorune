@@ -16,6 +16,10 @@ from .linked_loyalty_exile import (
 )
 from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
 from ..rules.commander_return_choice import COMMANDER_RETURN_FIELD
+from ..rules.owned_commander_amount import OWNED_COMMANDER_AMOUNT_FIELD
+from .owned_commander_amount import (
+    CANDIDATES_FIELD as COMMANDER_AMOUNT_CANDIDATES, complete_owned_commander_amount, prepare_owned_commander_amount,
+)
 from ..rules.void_counter_play import CHOICE_FIELD
 from .void_counter_play import CANDIDATES_FIELD, complete_void_counter_play, prepare_void_counter_play
 from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
@@ -30,6 +34,8 @@ from .opponent_greatest_power_destruction import (
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
 from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD
 from ..rules.ripple import RIPPLE_FIELD
+from ..rules.targeted_discard_spell_copy import COPY_OFFER_FIELD
+from .targeted_discard_spell_copy import complete_targeted_discard_copy, prepare_targeted_discard_copy
 from ..rules.permanent_resolution_choices import (
     COUNTER_KEYWORDS_VERSION, controlled_counter_keywords_dependencies, controlled_counter_keywords_results,
 )
@@ -118,6 +124,7 @@ class PublicObjectChoiceHandler:
         "_stack_label",
         CONTROLLED_RETURN_FIELD,
         COMMANDER_RETURN_FIELD, CHOICE_FIELD, CANDIDATES_FIELD, "source",
+        OWNED_COMMANDER_AMOUNT_FIELD, COMMANDER_AMOUNT_CANDIDATES,
         CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
         CONTROLLED_CREATURE_COUNTER_SNAPSHOTS,
         GREATEST_POWER_DESTRUCTION_FIELD,
@@ -129,6 +136,7 @@ class PublicObjectChoiceHandler:
         RIPPLE_FIELD,
         "cast_snapshot",
         "ripple_state",
+        COPY_OFFER_FIELD,
         "demonstrate",
         "demonstrate_state",
         "gravestorm",
@@ -173,6 +181,8 @@ class PublicObjectChoiceHandler:
         if 'gravestorm' in effect:
             from .gravestorm import prepare_gravestorm
             return prepare_gravestorm(effect,context)
+        if COPY_OFFER_FIELD in effect:
+            return prepare_targeted_discard_copy(effect, context)
         if 'demonstrate' in effect:
             from .demonstrate import prepare_demonstrate
             return prepare_demonstrate(effect,context)
@@ -199,6 +209,8 @@ class PublicObjectChoiceHandler:
             from .commander_return import prepare_commander_return
 
             return prepare_commander_return(effect, context)
+        if OWNED_COMMANDER_AMOUNT_FIELD in effect:
+            return prepare_owned_commander_amount(effect, context)
         if CONTROLLED_RETURN_FIELD in effect:
             from .controlled_return import prepare_controlled_return
             return prepare_controlled_return(effect, context)
@@ -292,6 +304,8 @@ class PublicObjectChoiceHandler:
             return complete_selected_conditional_exile(continuation, response, query)
         if 'gravestorm' in effect:
             raise SemanticChoiceError('Gravestorm delegates choices to its canonical copy instructions')
+        if COPY_OFFER_FIELD in effect:
+            return complete_targeted_discard_copy(continuation, response, query)
         if 'demonstrate' in effect:
             from .demonstrate import complete_demonstrate
             return complete_demonstrate(continuation,response,query)
@@ -318,6 +332,8 @@ class PublicObjectChoiceHandler:
             from .commander_return import complete_commander_return
 
             return complete_commander_return(continuation, response, query)
+        if OWNED_COMMANDER_AMOUNT_FIELD in effect:
+            return complete_owned_commander_amount(continuation, response, query)
         if CONTROLLED_RETURN_FIELD in effect:
             from .controlled_return import complete_controlled_return
             return complete_controlled_return(continuation, response, query)

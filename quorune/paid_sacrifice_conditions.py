@@ -201,6 +201,10 @@ def activation_paid_legendary_amass_result_is_closed(condition, reference, prefi
 
 def validate_paid_sacrifice_instruction(effect: Mapping):
     from .resolution_conditions import RESOLUTION_CONDITION_OPERATION, resolution_result_is_fixed
+    from .paid_activation_card_types import uses_paid_type_condition, validate_paid_type_instruction
+
+    if uses_paid_type_condition(effect):
+        return validate_paid_type_instruction(effect)
 
     fields = {"op", "schema_version", "player", "condition", "cast_fact", "effects", "mechanic_ids",
               "prefix_mechanic_ids"}

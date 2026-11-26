@@ -83,7 +83,43 @@ def validate_creature_self_damage_set(effect: Mapping[str, Any], *, resolved: bo
         raise ValueError("Simultaneous creature self-damage requires the exact untargeted set")
 
 
+SOURCE_POWER_OPPONENT_DAMAGE_VERSION = 7
+SOURCE_POWER_OPPONENT_DAMAGE_KIND = "source_power_opponents"
+SOURCE_POWER_OPPONENT_DAMAGE_CAPABILITY = "damage.creature_power.source_opponents"
+
+
+def source_power_opponent_damage_effect():
+    return {"op": CREATURE_POWER_DAMAGE_OPERATION, "schema_version": SOURCE_POWER_OPPONENT_DAMAGE_VERSION,
+            "kind": SOURCE_POWER_OPPONENT_DAMAGE_KIND, "source": "$source",
+            "source_lki": "$context." + CREATURE_POWER_DAMAGE_LKI_CONTEXT}
+
+
+def uses_source_power_opponent_damage(effect):
+    return effect.get("op") == CREATURE_POWER_DAMAGE_OPERATION and (
+        effect.get("kind") == SOURCE_POWER_OPPONENT_DAMAGE_KIND
+        or effect.get("schema_version") == SOURCE_POWER_OPPONENT_DAMAGE_VERSION
+    )
+
+
+def validate_source_power_opponent_damage(effect, *, resolved=False):
+    expected = source_power_opponent_damage_effect()
+    values = dict(effect)
+    if resolved:
+        for field in ("reason", "_runtime_source", "_replacement_event_ids", "_replacement_selections"):
+            values.pop(field, None)
+        ref = values.get("source")
+        if (type(ref) is not str or not ref or ref.startswith("$")
+                or not isinstance(values.get("source_lki"), Mapping)):
+            raise ValueError("Source-power opponent damage requires its original public source")
+        expected["source"] = ref
+        expected["source_lki"] = values["source_lki"]
+    if type(values.get("schema_version")) is not int or values != expected:
+        raise ValueError("Source-power opponent damage requires its closed original-source result")
+
 def creature_power_damage_runtime_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    if uses_source_power_opponent_damage(effect):
+        validate_source_power_opponent_damage(effect)
+        return (SOURCE_POWER_OPPONENT_DAMAGE_CAPABILITY,)
     if is_creature_self_damage_set(effect):
         validate_creature_self_damage_set(effect)
         return CREATURE_SELF_DAMAGE_SET_DEPENDENCIES

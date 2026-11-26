@@ -247,6 +247,12 @@ class ActivatedAbilityCatalogHandler:
                 if not required:
                     raise ValueError("Forage requires complete-card admission")
                 validate_forage_activation(compiled)
+            from ..paid_activation_card_types import has_bounded_sacrifice
+            from ..rules.activation.bounded_type_sacrifice import validate_paid_type_ability
+            if has_bounded_sacrifice(compiled):
+                if not required:
+                    raise ValueError("Bounded sacrifice requires complete-card admission")
+                validate_paid_type_ability(compiled)
             if compiled.chooses_activation_x and not required:
                 raise ValueError('Announced activation X requires complete-card admission')
             if compiled.ability_local_mana_reduction is not None and not required:
@@ -287,9 +293,10 @@ def activated_ability_catalog_descriptor(
     *, requires_complete_card_program: bool = False,
 ) -> dict[str, Any]:
     from ..rules.forage import has_forage_cost
+    from ..paid_activation_card_types import has_bounded_sacrifice
 
     requires_complete_card_program = (requires_complete_card_program or has_forage_cost(ability) or ability.chooses_activation_x
-        or ability.ability_local_mana_reduction is not None
+        or has_bounded_sacrifice(ability) or ability.ability_local_mana_reduction is not None
         or ability.reconfigure or ability.saddle_threshold is not None)
     return {
         "handler_id": ACTIVATED_ABILITY_CATALOG_HANDLER_ID,

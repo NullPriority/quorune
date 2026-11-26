@@ -28,8 +28,27 @@ def _leaf(text):
     return None
 
 
+def _half_library_draw_life_sequence(normalized):
+    if normalized.casefold() != (
+        "target player draws cards equal to half the number of cards in their library "
+        "and loses half their life. round up each time."
+    ):
+        return None
+    from ..fractional_quantity_model import HALF_LIBRARY_DRAW_MECHANIC, half_library_draw_effect
+    from .fractional_player_templates import fractional_player_result_template
+
+    loss = fractional_player_result_template("Target player loses half their life, rounded up.")
+    effects = (half_library_draw_effect(), *loss.effects)
+    mechanics = (
+        TARGET_PLAYER_SEQUENCE_MECHANIC, HALF_LIBRARY_DRAW_MECHANIC, "cr-121-drawing-a-card", *loss.mechanics,
+    )
+    return "fixed-target-player-effect-sequence-v1", effects, loss.target_schema, mechanics
+
+
 def fixed_target_player_sequence_template(text):
     normalized=' '.join(text.strip().split())
+    if fractional := _half_library_draw_life_sequence(normalized):
+        return fractional
     match=re.fullmatch(r'Target (?P<relation>player|opponent) (?P<body>.+)',normalized,re.I)
     if match is None or any(token in normalized for token in ('"','(',')','{')):return None
     verbs = r"(?:draws|mills|discards|exiles|loses|gains|gets|chooses|reveals|puts(?=\s+(?:a|one|two|three)\s))"

@@ -4,6 +4,7 @@ from dataclasses import replace
 from collections.abc import Mapping
 
 from ..event_spell_copy_model import (EventSpellCopySource,EVENT_SPELL_COPY_CONTEXT,EVENT_SPELL_COPY_MECHANIC,EVENT_SPELL_COPY_CAPABILITY,event_spell_copy_effect)
+from .nonmana_activation_copy_model import ACTIVATION_COPY_CONTEXT, ActivationCopySource, COPY_SOURCE_VERSION
 from ..replacement.immutable import thaw_value
 
 
@@ -62,53 +63,66 @@ def event_spell_copy_trigger_context(host,program,event,context):
 def resolve_event_spell_copy_source(host,effect):
     if 'copy_source' not in effect:return None
     raw=effect.get('copy_source')
-    source=decode_event_spell_copy_source(raw);item=source.item()
+    ability = isinstance(raw, Mapping) and raw.get('schema_version') == COPY_SOURCE_VERSION
+    if ability:
+        from .nonmana_activation_copy import capture_activation_copy_source
+
+        decode, capture, field = ActivationCopySource.from_dict, capture_activation_copy_source, ACTIVATION_COPY_CONTEXT
+    else:
+        decode, capture, field = decode_event_spell_copy_source, capture_event_spell_copy_source, EVENT_SPELL_COPY_CONTEXT
+    source=decode(raw);item=source.item()
     if effect.get('stack')!=item.ref:raise ValueError('Event spell-copy source reference changed')
     live=next((i for i in host.state.stack if i.ref==item.ref),None)
     if live is not None:
-        current=capture_event_spell_copy_source(host,live)
+        current=capture(host,live)
         if current.logical_object_id!=source.logical_object_id:raise ValueError('Another spell replaced the referenced incarnation')
         return current
     if source.departed:return source
     for pending in host.state.stack:
-        raw=pending.context.get(EVENT_SPELL_COPY_CONTEXT)
+        raw=pending.context.get(field)
         if raw is None:continue
-        known=decode_event_spell_copy_source(raw)
+        known=decode(raw)
         if known.item().ref==item.ref and known.logical_object_id==source.logical_object_id and known.departed:return known
     raise ValueError('Referenced spell departure information is unavailable')
 
 
 def pin_event_spell_copy_departure(host,target):
+    if target.kind == 'activated_ability':
+        from .nonmana_activation_copy import capture_activation_copy_source
+
+        decode, capture, field = ActivationCopySource.from_dict, capture_activation_copy_source, ACTIVATION_COPY_CONTEXT
+    else:
+        decode, capture, field = decode_event_spell_copy_source, capture_event_spell_copy_source, EVENT_SPELL_COPY_CONTEXT
     selected=[]
     for pending in host.state.stack:
-        raw=pending.context.get(EVENT_SPELL_COPY_CONTEXT)
+        raw=pending.context.get(field)
         if raw is None:continue
-        source=decode_event_spell_copy_source(raw)
+        source=decode(raw)
         if source.item().ref==target.ref:selected.append((pending,source))
     batches=[]
     for index,batch in enumerate(getattr(host.state,'pending_trigger_batches',())):
         matching=set()
         for group in batch.groups:
             for pending in group.items:
-                raw=pending.payload.get('context',{}).get(EVENT_SPELL_COPY_CONTEXT)
+                raw=pending.payload.get('context',{}).get(field)
                 if raw is None:continue
-                source=decode_event_spell_copy_source(raw)
+                source=decode(raw)
                 if source.item().ref==target.ref:
                     matching.add(pending.ref);selected.append((None,source))
         if matching:batches.append((index,batch,matching))
     if not selected:return
-    latest=capture_event_spell_copy_source(host,target,departed=True)
+    latest=capture(host,target,departed=True)
     for pending,source in selected:
         if source.logical_object_id!=latest.logical_object_id:raise ValueError('Referenced spell-copy departure incarnation changed')
     def pin_occurrence(pending):
         from ..trigger_batches import PendingTriggerItem
-        payload=pending.to_dict();payload['context'][EVENT_SPELL_COPY_CONTEXT]=latest.to_dict()
+        payload=pending.to_dict();payload['context'][field]=latest.to_dict()
         return PendingTriggerItem.from_dict(payload)
     replacements=[(index,replace(batch,groups=tuple(replace(group,items=tuple(
         pin_occurrence(pending) if pending.ref in matching else pending for pending in group.items
     )) for group in batch.groups))) for index,batch,matching in batches]
     for pending,_source in selected:
-        if pending is not None:pending.context[EVENT_SPELL_COPY_CONTEXT]=latest.to_dict()
+        if pending is not None:pending.context[field]=latest.to_dict()
     from ..trigger_processing import replace_pending_trigger_batch
     for index,batch in replacements:replace_pending_trigger_batch(host,index,batch)
 
@@ -116,10 +130,17 @@ def pin_event_spell_copy_departure(host,target):
 def cast_copy_runtime_dependencies(program):
     from .cast_target_copy import cast_target_copy_runtime_dependencies
 
-    return (*event_spell_copy_runtime_dependencies(program), *cast_target_copy_runtime_dependencies(program))
+    from .targeted_discard_spell_copy import targeted_discard_copy_runtime_dependencies
+
+    return (*event_spell_copy_runtime_dependencies(program), *cast_target_copy_runtime_dependencies(program),
+            *targeted_discard_copy_runtime_dependencies(program))
 
 
 def event_spell_copy_runtime_dependencies(program):
+    from .cast_spell_suspend import cast_spell_suspend_runtime_dependencies
+
+    if (suspended_copy := cast_spell_suspend_runtime_dependencies(program)) is not None:
+        return suspended_copy
     from ..event_spell_copy_model import cast_spell_token_condition
     from ..replacement.immutable import FrozenMap
     from .other_spell_history_shapes import other_spell_self_cast_runtime_dependencies

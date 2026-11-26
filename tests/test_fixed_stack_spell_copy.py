@@ -140,6 +140,128 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
             if row.get('source') == source.ref and row['id'].startswith('activate:')
             and 'stack' in json.dumps(row.get('target_schema', {})))
 
+    def test_targeted_discard_resolving_copy_uses_only_the_closed_shape(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.targeted_discard_spell_copy import CAPABILITY, COPY_OFFER_FIELD, copy_offer
+
+        card = self.db.lookup("Chain of Smog")
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(card.oracle_text)), (node.span.start, node.span.end))
+        self.assertEqual(copy_offer(), node.effects[1])
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        for text in (
+            card.oracle_text.replace("Target player", "Target opponent"),
+            card.oracle_text.replace("two cards", "three cards"),
+            card.oracle_text.replace("That player may", "You may"),
+            card.oracle_text.replace("That player may", "If they discarded two cards this way, that player may"),
+        ):
+            changed = compile_oracle_card(
+                replace(card, oracle_text=text), capability_registry=self.registry, capability_profile="commander_review",
+            )
+            self.assertFalse(any(CAPABILITY in effect.capability_dependencies
+                                 for face in changed.faces for effect in face.nodes), text)
+        session = self.session(70710301)
+        self.add(session.engine, card.name, zone="hand")
+        program, = (row for row in session.engine.semantics.programs_for_oracle(card.oracle_id)
+                    if CAPABILITY in row.capability_dependencies)
+        bad_effects = (
+            (program.effects[0], copy_offer("$controller")),
+            (program.effects[0], {**copy_offer(), COPY_OFFER_FIELD: True}),
+            ({**program.effects[0], "count": 1}, program.effects[1]),
+            tuple(reversed(program.effects)),
+        )
+        for effects in bad_effects:
+            bound = bind_semantic_program_runtime(
+                replace(program, effects=effects), capability_registry=self.registry, profile="commander_review",
+            )
+            self.assertFalse(bound["strict"])
+
+    def test_targeted_discard_resolving_copy_grammar_withdrawal_is_detected(self):
+        from quorune.rules.targeted_discard_spell_copy import CAPABILITY
+
+        card = self.db.lookup("Chain of Smog")
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        before = compile_oracle_card(card, **options)
+        self.assertEqual("exact", before.status, before.material_residuals)
+        self.assertIn(CAPABILITY, before.faces[0].nodes[0].capability_dependencies)
+        with mock.patch("quorune.compiler.targeted_discard_spell_copy.targeted_discard_spell_copy_template",
+                        return_value=None):
+            omitted = compile_oracle_card(card, **options)
+        self.assertFalse(omitted.faces[0].nodes[0].exact)
+        self.assertEqual(card.oracle_text, omitted.material_residuals[0].text)
+
+    def test_targeted_discard_resolving_copy_controls_each_copy_and_replays(self):
+        from quorune.record import authoritative_state_hash
+
+        session = self.session(70710302)
+
+        def choose(actor, **response):
+            accepted = session.act("pilot:" + actor, {"action_id": "choose", **response})
+            self.assertTrue(accepted.ok, accepted.summary)
+
+        engine = session.engine
+        source = self.add(engine, "Chain of Smog", zone="hand", ref="resolving-copy-original")
+        for seat in ("B", "C"):
+            for object_id in tuple(session.state.players[seat].zones["hand"]):
+                engine.move_card(object_id, "library", log=False)
+        hand = tuple(self.add(engine, "Generic Bound Plains", seat="B", zone="hand", ref=f"private-discard-{i}")
+                     for i in range(3))
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"B": 1, "C": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source, ["B"])
+        original = session.state.stack[-1]
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        for seat in ("A", "C", "D"):
+            packet = session.packet("pilot:" + seat, full=True)
+            self.assertIsNone(packet["decision"])
+            for card in hand:
+                self.assertNotIn(card.ref, json.dumps(packet))
+        before = authoritative_state_hash(session.state)
+        invalid = session.act("pilot:A", {"action_id": "choose", "cards": [hand[0].ref, hand[1].ref]})
+        self.assertFalse(invalid.ok, invalid.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        chosen = session.act("pilot:B", {"action_id": "choose", "cards": [hand[0].ref, hand[1].ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(["graveyard", "graveyard", "hand"],
+                         [session.state.cards[card.object_id].zone for card in hand])
+        session = self.replay(session, load=True)
+        choose("B", choice="copy")
+        self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+        choose("B")
+        first, = session.state.stack
+        self.assertEqual(("spell_copy", "B", ["B"], original.semantic_key),
+                         (first.kind, first.controller, first.targets, first.semantic_key))
+        self.assertNotEqual(original.ref, first.ref)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        choose("B", cards=[hand[2].ref])
+        self.assertEqual("graveyard", session.state.cards[hand[2].object_id].zone)
+        choose("B", choice="copy")
+        before = authoritative_state_hash(session.state)
+        invalid = session.act("pilot:B", {"action_id": "choose", "targets": ["C", "D"]})
+        self.assertFalse(invalid.ok, invalid.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        choose("B", targets=["C"])
+        second, = session.state.stack
+        self.assertEqual(("spell_copy", "B", ["C"], original.semantic_key),
+                         (second.kind, second.controller, second.targets, second.semantic_key))
+        self.assertNotEqual(first.ref, second.ref)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(["pilot:C"], session.pending_principals())
+        self.assertFalse(session.state.players["C"].zones["hand"])
+        choose("C", choice="decline")
+        self.assertFalse(session.state.stack)
+        self.assertEqual(1, len(session.engine._current_turn_history("spell_cast")))
+        self.replay(session)
+
     def test_actual_reverberate_copies_a_spell_with_independent_targets_and_full_replay(self):
         session = self.session(70710001)
         engine = session.engine

@@ -142,12 +142,16 @@ def is_closed_target_death_return_program(program) -> bool:
 
 def _cost_metric_runtime_requirements(program):
     required, blockers = set(), set()
+    from ..rules.paid_sacrifice_copy import paid_sacrifice_copy_runtime_dependencies
     from ..semantic_runtime.mana_abilities import exert_mana_runtime_dependencies, fixed_mana_life_runtime_dependencies
 
+    from ..rules.announced_subtype_sacrifice import announced_subtype_activation_runtime_dependencies
     for resolver, label in (
         (activated_catalog_runtime_dependencies, "runtime_ability_local_mana_reduction"),
+        (announced_subtype_activation_runtime_dependencies, "runtime_announced_subtype_sacrifice"),
         (fixed_mana_life_runtime_dependencies, "runtime_fixed_mana_life"),
         (exert_mana_runtime_dependencies, "runtime_exert_mana"),
+        (paid_sacrifice_copy_runtime_dependencies, "runtime_paid_sacrifice_copy"),
     ):
         try:
             required.update(resolver(program))
@@ -205,11 +209,13 @@ def _event_subscription_runtime_requirements(program):
     from ..rules.monarch_transition import monarch_became_runtime_dependencies
     from ..combat_entry_activations import ninjutsu_activation_trigger_dependencies
     from ..rules.creature_ability_activation import creature_ability_activation_runtime_dependencies
+    from ..rules.nonmana_activation_copy import nonmana_activation_copy_runtime_dependencies
     from ..rules.opponent_library_exile_triggers import library_exile_trigger_runtime_dependencies
     from ..rules.opposing_owner_entry_life import opposing_owner_entry_runtime_dependencies
     from ..rules.draw_step_drawing_settlement import draw_step_settlement_program_dependencies
     from ..rules.trigger_source_information import tapped_draw_damage_runtime_dependencies
     from ..rules.subtype_damage_controller import subtype_damage_program_dependencies
+    from ..rules.source_power_opponent_damage import source_power_opponent_damage_program_dependencies
     try:
         required.update(draw_step_settlement_program_dependencies(program))
     except (TypeError, ValueError) as exc:
@@ -232,10 +238,12 @@ def _event_subscription_runtime_requirements(program):
         required.update(monarch_became_runtime_dependencies(program))
         required.update(ninjutsu_activation_trigger_dependencies(program, subscriptions))
         required.update(creature_ability_activation_runtime_dependencies(program, subscriptions))
+        required.update(nonmana_activation_copy_runtime_dependencies(program, subscriptions))
         required.update(library_exile_trigger_runtime_dependencies(program))
         required.update(opposing_owner_entry_runtime_dependencies(program))
         required.update(tapped_draw_damage_runtime_dependencies(program))
         required.update(subtype_damage_program_dependencies(program))
+        required.update(source_power_opponent_damage_program_dependencies(program))
         required.update(controlled_spell_counter_runtime_dependencies(program, subscriptions))
         if program.event == TRANSFORM_EVENT or (
             subscriptions is not None and subscriptions.subscription_for(TRANSFORM_EVENT) is not None
@@ -481,8 +489,8 @@ def _event_query_runtime_requirements(program):
     from ..rules.additional_beginning import additional_beginning_runtime_dependencies
     from ..triggered_mana_model import fixed_triggered_mana_runtime_dependencies
     required, blockers = _affected_player_choice_runtime_requirements(program)
-    from ..entry_x_amount_model import entry_x_amount_runtime_dependencies
-    try:required.update(entry_x_amount_runtime_dependencies(program))
+    from ..rules.token_creation_capability_shapes import entry_x_program_runtime_dependencies
+    try:required.update(entry_x_program_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_entry_x_amount:invalid:{exc}')
     from ..ravenous_model import ravenous_runtime_dependencies
     try:required.update(ravenous_runtime_dependencies(program))
@@ -692,7 +700,10 @@ def _value_runtime_requirements(program):
     except (ValueError, TypeError) as exc:
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
+        from ..rules.controller_private_top_exile_model import controller_private_top_exile_program_dependencies
         from ..rules.same_name_zone_moves import same_name_zone_move_runtime_dependencies
+
+        required.update(controller_private_top_exile_program_dependencies(program, values))
 
         required.update(same_name_zone_move_runtime_dependencies(program))
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
@@ -834,7 +845,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
     )
     from ..public_zone_moves import stack_spell_exile_runtime_dependencies
     from ..rules.opponent_spell_or_permanent_return import opponent_spell_or_permanent_return_runtime_dependencies
-    from ..rules.milled_creature_tokens import milled_creature_token_program_dependencies
+    from ..rules.mill_capability_shapes import committed_mill_followup_program_dependencies
     from ..rules.destruction_regeneration_capability_shapes import kicked_entry_destruction_runtime_dependencies
     from ..rules.opponent_greatest_power_destruction import greatest_power_destruction_runtime_dependencies
     from ..rules.opponent_greatest_power_exile import greatest_power_exile_runtime_dependencies
@@ -925,7 +936,7 @@ def _zone_move_runtime_requirements(program, required, blockers):
         (void_play_dependencies, 'void_counter_play'),
         (stack_spell_exile_runtime_dependencies, 'stack_spell_exile'),
         (opponent_spell_or_permanent_return_runtime_dependencies, 'opponent_spell_or_permanent_return'),
-        (milled_creature_token_program_dependencies, 'milled_creature_tokens'),
+        (committed_mill_followup_program_dependencies, 'milled_creature_tokens'),
         (kicked_entry_destruction_runtime_dependencies, 'kicked_entry_destruction'),
         (greatest_power_destruction_runtime_dependencies, 'opponent_greatest_power_destruction'),
         (greatest_power_exile_runtime_dependencies, 'opponent_greatest_power_exile'),
@@ -1257,12 +1268,14 @@ def _dynamic_reference_runtime_requirements(program):
 def _player_quantity_runtime_requirements(program,required,blockers):
     """Validate independently bound public player quantities and their frames."""
     from ..rules.current_life_effect_amounts import current_life_program_dependencies
+    from ..rules.owned_commander_amount import owned_commander_amount_runtime_dependencies
     from ..rules.turn_life_loss_recovery import turn_life_loss_program_dependencies
     from ..rules.target_player_query_amounts import target_player_query_program_dependencies
     from ..rules.per_player_query_life import per_player_query_life_program_dependencies
     from ..rules.source_charge_life_totals import source_charge_life_program_dependencies
     from ..semantic_runtime.self_entry_counters import typed_dynamic_entry_counter_runtime_dependencies
     for resolver,label in ((current_life_program_dependencies,'current_life'),
+            (owned_commander_amount_runtime_dependencies, 'owned_commander_amount'),
             (typed_dynamic_entry_counter_runtime_dependencies, 'typed_dynamic_entry_counter'),
             (source_charge_life_program_dependencies, 'source_charge_life_total'),
             (turn_life_loss_program_dependencies,'turn_life_loss'),
@@ -1305,12 +1318,14 @@ def _temporary_player_rule_requirements(program, required, blockers):
 
 def _action_permission_runtime_requirements(program, required, blockers):
     from ..kicker import positive_generic_kicker_runtime_dependencies
+    from ..rules.player_capped_land_reveal import player_capped_land_reveal_runtime_dependencies
     from ..semantic_runtime.action_permissions import qualified_library_top_runtime_dependencies
     from ..semantic_runtime.mana_spending import tap_mana_multiplier_runtime_dependencies
 
     for resolver, label in (
         (qualified_library_top_runtime_dependencies, "qualified_library_top"),
         (positive_generic_kicker_runtime_dependencies, "positive_generic_kicker"),
+        (player_capped_land_reveal_runtime_dependencies, "player_capped_land_reveal"),
         (tap_mana_multiplier_runtime_dependencies, "tap_mana_multiplier"),
     ):
         try:
@@ -1343,12 +1358,14 @@ def _battlefield_runtime_requirements(program, required, blockers):
         combat_prevention_draw_runtime_dependencies, temporary_combat_draw_unblockable_runtime_dependencies,
     )
     from ..rules.source_counter_kind_draw import source_counter_kind_draw_runtime_dependencies
+    from ..rules.source_mutation_damage import source_mutation_damage_runtime_dependencies
     from ..rules.token_creation_capability_shapes import post_entry_copy_grant_runtime_dependencies
     from ..semantic_runtime.target_requirements import flagbearer_requirement_dependencies
 
     for resolve, label in (
         (combat_prevention_draw_runtime_dependencies, "combat_prevention_draw"),
         (source_counter_kind_draw_runtime_dependencies, "source_counter_kind_draw"),
+        (source_mutation_damage_runtime_dependencies, "source_mutation_damage"),
         (post_entry_copy_grant_runtime_dependencies, "post_entry_copy_grant"),
         (temporary_combat_draw_unblockable_runtime_dependencies, "temporary_combat_draw_unblockable"),
         (flagbearer_requirement_dependencies, "flagbearer_requirement"),

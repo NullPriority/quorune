@@ -29,6 +29,9 @@ class SpellControllerCreatureCountCounterTests(InheritedNativeFixture, unittest.
         database = Path(cls.temporary.name) / "spell-controller-creature-count.sqlite3"
         build_fixture_database([
             ROOT / "tests/fixtures/spell-controller-creature-count-counter-cards.json",
+            ROOT / "tests/fixtures/transmute-cards.json",
+            ROOT / "tests/fixtures/mixed-stack-counter-cards.json",
+            ROOT / "tests/fixtures/stack-target-change-payment-cards.json",
         ], database)
         cls.db = CardDatabase(database)
         cls.registry = load_default_capability_registry()
@@ -146,3 +149,143 @@ class SpellControllerCreatureCountCounterTests(InheritedNativeFixture, unittest.
         self.assertEqual(("battlefield", "C"), (game.state.cards[spell.object_id].zone,
                                                 game.state.cards[spell.object_id].controller))
         self.replay(game, load=True)
+
+    def _whole_hand_payment_scene(self, seed, *, cards, takeover=False,
+                                  spell_name="Sol Ring", spell_mana=None, counter_name="Perplex"):
+        game = self.session(seed)
+        counter = self.add(game.engine, counter_name, zone="hand", ref="whole-hand-counter")
+        spell = self.add(game.engine, spell_name, seat="B", zone="hand", ref="whole-hand-target")
+        for object_id in tuple(game.state.players["B"].zones["hand"]):
+            if object_id != spell.object_id:
+                game.engine.move_card(object_id, "library", log=False)
+        hand = tuple(self.add(game.engine, "Runeclaw Bear", seat="B", zone="hand", ref=f"payer-private-{i}")
+                     for i in range(cards))
+        self.assert_closed(game, counter)
+        self.assert_closed(game, spell)
+        transfer = self.add(game.engine, "Aethersnatch", seat="C", zone="hand") if takeover else None
+        self.prepare(game, active="B", actor="B", mana=spell_mana or {"C": 1})
+        game.state.players["A"].mana_pool.update({"C": 1, "U": 1, "B": 1})
+        if transfer is not None:
+            game.state.players["C"].mana_pool.update({"C": 4, "U": 2})
+        self.checkpoint(game)
+        self.cast(game, "B", spell)
+        targeted = self.stack_item(game, spell).ref
+        self.cast_for(game, "A", counter, [targeted])
+        if transfer is not None:
+            self.cast_for(game, "C", transfer, [targeted])
+            self.resolve_top(game)
+        self.assertEqual("semantic.choice", self.resolve(game).kind)
+        return game, counter, spell, targeted, hand
+
+    def test_perplex_pays_an_entire_or_empty_private_hand_and_replays(self):
+        import json
+        from quorune.rules.whole_hand_counter_payment import HAND_PAYMENT_SNAPSHOT
+
+        for count, pay in ((2, True), (0, True), (2, False)):
+            with self.subTest(count=count, pay=pay):
+                game, counter, spell, target, hand = self._whole_hand_payment_scene(60821250 + count + pay, cards=count)
+                self.assertEqual(["pilot:B"], game.pending_principals())
+                self.assertIn(HAND_PAYMENT_SNAPSHOT, str(game.state.pending_decision.continuation))
+                for seat in "ACD":
+                    packet = game.packet("pilot:" + seat, full=True)
+                    self.assertIsNone(packet["decision"])
+                    for card in hand:
+                        self.assertNotIn(card.ref, json.dumps(packet))
+                before = authoritative_state_hash(game.state)
+                for seat, payload in (
+                    ("A", {"action_id": "choose", "pay": True}),
+                    ("B", {"action_id": "choose", "pay": "yes"}),
+                ):
+                    denied = game.act("pilot:" + seat, payload)
+                    self.assertFalse(denied.ok, denied.summary)
+                    self.assertEqual(before, authoritative_state_hash(game.state))
+                game = self.replay(game, load=True)
+                result = game.act("pilot:B", {"action_id": "choose", "pay": pay})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual("graveyard", game.state.cards[counter.object_id].zone)
+                self.assertEqual(pay, any(item.ref == target for item in game.state.stack))
+                self.assertEqual("stack" if pay else "graveyard", game.state.cards[spell.object_id].zone)
+                for card in hand:
+                    self.assertEqual("graveyard" if pay else "hand", game.state.cards[card.object_id].zone)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("battlefield" if pay else "graveyard", game.state.cards[spell.object_id].zone)
+                self.replay(game, load=True)
+
+    def test_perplex_gives_the_choice_to_the_targets_current_controller(self):
+        game, _, spell, target, hand = self._whole_hand_payment_scene(60821256, cards=2, takeover=True)
+        self.assertEqual(("B", "C"), (game.state.cards[spell.object_id].owner, self.stack_item(game, spell).controller))
+        self.assertEqual(["pilot:C"], game.pending_principals())
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", {"action_id": "choose", "pay": False}).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:C", {"action_id": "choose", "pay": False})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertFalse(any(item.ref == target for item in game.state.stack))
+        self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "hand" for card in hand))
+        self.replay(game, load=True)
+
+    def test_perplex_decline_respects_the_canonical_counter_prohibition(self):
+        game, _, spell, target, hand = self._whole_hand_payment_scene(
+            60821257, cards=1, spell_name="Carnage Tyrant", spell_mana={"C": 4, "G": 2},
+        )
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        accepted = game.act("pilot:B", {"action_id": "choose", "pay": False})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(any(item.ref == target for item in game.state.stack))
+        self.assertEqual("hand", game.state.cards[hand[0].object_id].zone)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_mana_leak_native_payment_retains_hand_and_replays(self):
+        game, _, spell, target, hand = self._whole_hand_payment_scene(
+            60821259, cards=2, spell_mana={"C": 4}, counter_name="Mana Leak",
+        )
+        self.assertEqual(["pilot:B"], game.pending_principals())
+        self.assertEqual(3, game.state.players["B"].mana_pool["C"])
+        game = self.replay(game, load=True)
+        accepted = game.act("pilot:B", {"action_id": "choose", "pay": True})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(any(item.ref == target for item in game.state.stack))
+        self.assertEqual(0, game.state.players["B"].mana_pool["C"])
+        self.assertTrue(all(game.state.cards[card.object_id].zone == "hand" for card in hand))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("battlefield", game.state.cards[spell.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_perplex_requires_the_single_spell_and_its_whole_hand_scope(self):
+        from unittest.mock import patch
+        from quorune.rules.whole_hand_counter_payment import CAPABILITY, FIELD, whole_hand_counter_effect
+        from quorune.transmute import TRANSMUTE_CAPABILITY
+
+        bound, semantic = register_card(self.db, self.registry, "Perplex")
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        original = self.db.lookup("Perplex", fuzzy=False)
+        programs = semantic.programs_for_oracle(original.oracle_id)
+        payment, = (row for row in programs if CAPABILITY in row.capability_dependencies)
+        self.assertEqual((whole_hand_counter_effect(),), tuple(payment.effects))
+        self.assertTrue(any(TRANSMUTE_CAPABILITY in row.capability_dependencies for row in programs))
+        for changes in (
+            {"effects": ({**payment.effects[0], FIELD: True},)},
+            {"effects": ({**payment.effects[0], "player": "$controller"},)},
+            {"effects": ({"op": "choose_objects", "then": list(payment.effects)},)},
+            {"target_schema": {**payment.target_schema, "count": 2}},
+            {"active_zone": "battlefield", "event": "permanent.enter.self"},
+        ):
+            binding = bind_semantic_program_runtime(replace(payment, **changes),
+                capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+        for text in (
+            original.oracle_text.replace("their hand", "two cards"),
+            original.oracle_text.replace("its controller", "its owner"),
+            original.oracle_text.replace("target spell", "target triggered ability"),
+        ):
+            ir = compile_oracle_card(replace(original, oracle_text=text), capability_registry=self.registry,
+                                     capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+        with patch("quorune.compiler.effect_template_composition.targeted_whole_hand_counter_payment_template",
+                   return_value=None):
+            ir = compile_oracle_card(original, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)

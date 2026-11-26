@@ -773,6 +773,11 @@ def complete_replacement_order_choice(
 
         resume_scheduled_draw_replacement(host, restored, selection, error_type=error_type)
         return
+    if restored.resume_kind == "draw_library_choice_move":
+        from .drawing.library_choice_coordination import resume_library_choice_movement
+
+        resume_library_choice_movement(host, restored, selection, error_type=error_type)
+        return
     if restored.resume_kind == "draw_discard_or_mill":
         from .drawing.discard_coordination import resume_draw_discard_replacement
 

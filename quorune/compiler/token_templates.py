@@ -634,12 +634,39 @@ def static_token_creation_replacement_handler(text: str):
     )
 
 
+def _matching_pending_additional_tokens(text):
+    match = re.fullmatch(
+        r"If one or more tokens would be created under your control, "
+        r"those tokens plus that many (?P<definition>.+ tokens) are created instead\.",
+        text, re.I,
+    )
+    if match is None:
+        return None
+    definition = _fixed_additional_token_definition(match["definition"].removesuffix("s"))
+    if definition is None:
+        return None
+    from ..replacement.operations import MATCH_PENDING_TOKEN_QUANTITY
+    from ..semantic_runtime.token_replacements import (
+        MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY, MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID,
+    )
+
+    return ("additional-token-matching-pending-count-v1", {
+        "handler_id": MATCH_PENDING_ADDITIONAL_TOKEN_HANDLER_ID,
+        "schema_version": 3, "event": "token.create",
+        "condition": {"event_controller": "source_controller", "created_types_all": [], "created_subtypes_all": []},
+        "quantity": MATCH_PENDING_TOKEN_QUANTITY,
+        "token": dict(definition),
+    }, MATCH_PENDING_ADDITIONAL_TOKEN_CAPABILITY)
+
+
 def static_additional_token_replacement_handler(
     text: str,
 ) -> tuple[str, Mapping[str, Any], str] | None:
     """Lower the closed mandatory fixed additional-token wording family."""
 
     normalized = text.strip()
+    if matched := _matching_pending_additional_tokens(normalized):
+        return matched
     match = _CREATOR_FRAME.fullmatch(normalized)
     if match is None:
         match = _CONTROLLED_FRAME.fullmatch(normalized)

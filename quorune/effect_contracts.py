@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .rules.controller_private_top_exile_model import CONTROLLER_PRIVATE_TOP_EXILE_OPERATION
 from .opponent_library_exile_model import EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION
 
 REANIMATE_OPERATION = "".join(("re", "animate"))
@@ -30,6 +31,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "add_counter_selected",
                 "delayed_mana",
                 "delayed_pact_payment",
+                CONTROLLER_PRIVATE_TOP_EXILE_OPERATION,
                 EACH_OPPONENT_TOP_EXILE_OPERATION,
                 "goad",
                 "gain_class_level",
