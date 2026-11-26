@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import lru_cache
 from typing import Any, Mapping
 
@@ -10,6 +10,7 @@ from ..combat_entry_activations import (
     CombatEntryActivationError,
     FixedNinjutsuSpec,
     FixedEncoreSpec,
+    FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND,
     ENCORE_ABILITY_HANDLER_ID,
     ENCORE_EFFECT_HANDLER_ID,
     ENCORE_EFFECT_OPERATION,
@@ -102,6 +103,32 @@ def fixed_ninjutsu_specs_from_descriptors(
             continue
         result.extend(registry.lower(descriptor, None))
     return tuple(result)
+
+
+def is_fixed_ninjutsu_activation(program, ability) -> bool:
+    """Match the selected, compiled activation rather than any sibling ability."""
+    if (program is None or program.event != "activate" or program.active_zone != "hand"
+            or ability.builtin_semantic_key != program.key
+            or len(ability.choices) != 1 or ability.choices[0].kind != FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND):
+        return False
+    granted = program.provenance.get("granted_only") is True
+    try:
+        specs = fixed_ninjutsu_specs_from_descriptors(program.handlers)
+    except ValueError:
+        return False
+    for spec in specs:
+        if granted:
+            prefix = f"{program.ability_id}#ninjutsu-"
+            suffix = ability.ability_id.removeprefix(prefix)
+            if (spec.commander or suffix == ability.ability_id or len(suffix) != 20
+                    or any(char not in "0123456789abcdef" for char in suffix)):
+                continue
+        elif ability.ability_id != spec.ability_id:
+            continue
+        if replace(spec.to_activated_ability(), ability_id=ability.ability_id,
+                   builtin_semantic_key=program.key) == ability:
+            return True
+    return False
 
 
 @dataclass(frozen=True, slots=True)

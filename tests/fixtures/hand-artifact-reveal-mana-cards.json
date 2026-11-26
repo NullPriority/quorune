@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic tap-only artifact reveal mana witness",
+  "cards": [
+    {
+      "oracle_id": "8d4dc602-461a-4be9-8794-e5cf31649953",
+      "name": "Test Crucible Appraiser",
+      "mana_cost": "{3}",
+      "cmc": 3,
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "{T}: Reveal any number of artifact cards in your hand. Add {C}{C} for each card revealed this way.",
+      "power": "1",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 """Current controller-scoped spending facts in the existing permission registry."""
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-from ..mana_restrictions import mana_restriction_allows
+from ..mana_restrictions import exiled_spell_any_type_payer, exile_play_mana_mode, mana_restriction_allows
 from ..mana_spending_model import ManaSpendingMode, ManaSpendingPolicy
 from .action_permissions import (
     ACTION_PERMISSION_EVENT, ActionPermissionKind, StaticActionPermissionHandler, controller_action_permissions,
@@ -79,7 +79,17 @@ def mana_spending_handlers():
 
 
 def current_mana_spending_policy(host, player: str, spend_context: str | None) -> ManaSpendingPolicy | None:
+    from ..mana_restrictions import actual_ability_payment_color
+
+    if actual_ability_payment_color(spend_context) is not None:
+        return None
     modes=set()
+    payer = exiled_spell_any_type_payer(spend_context)
+    if payer is not None and payer == player:
+        modes.add(ManaSpendingMode.ANY_TYPE)
+    exile_mode = exile_play_mana_mode(spend_context, player)
+    if exile_mode is not None:
+        modes.add(exile_mode)
     for permission in controller_action_permissions(host,player):
         if permission.kind is ActionPermissionKind.MANA_WHITE_AS_RED:modes.add(ManaSpendingMode.WHITE_AS_RED)
         elif permission.kind is ActionPermissionKind.MANA_ANY_COLOR:modes.add(ManaSpendingMode.ANY_COLOR)

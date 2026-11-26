@@ -17,6 +17,7 @@ from .alternative_costs import (
     alternative_cost_condition_met,
     with_fixed_public_alternative_costs,
 )
+from .escape_grants import granted_escape_base_options
 
 
 class FixedCastLifecycleCostHost(Protocol):
@@ -156,6 +157,7 @@ def zone_lifecycle_base_options(
     )
     if escape is not None:
         result.append(escape.fixed_cost_option())
+    result.extend(granted_escape_base_options(host, seat, card, printed))
     jump_start = compiled_fixed_cast_lifecycle_spec(
         host,
         card,

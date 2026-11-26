@@ -70,7 +70,15 @@ def apply_entry_counter_operation(event,payload,children,operation,*,effect_id):
         payload['object_types']=sorted({*payload.get('object_types',()),operation.subtype})
     elif isinstance(operation,CreateAffectedObjectCounter):
         from .application import _create_affected_object_counter_event
-        _create_affected_object_counter_event(event,payload,children,operation,effect_id=effect_id)
+        from .entry_counter_types import BATTLEFIELD_ENTRY_COUNTER_SCOPE
+
+        if (payload.get(BATTLEFIELD_ENTRY_COUNTER_SCOPE) is True
+                and payload.get("destination") == "battlefield"
+                and payload.get("additional_entry_counter_instruction") is True
+                and operation.counter_name == "+1/+1"):
+            add_entry_counters(event,payload,children,operation,effect_id=effect_id)
+        else:
+            _create_affected_object_counter_event(event,payload,children,operation,effect_id=effect_id)
     elif isinstance(operation,GrantAffectedObjectKeyword):
         from .application import _apply_affected_object_keyword
         _apply_affected_object_keyword(event,payload,operation,effect_id=effect_id)

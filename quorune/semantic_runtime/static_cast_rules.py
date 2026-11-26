@@ -12,6 +12,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..attachments import attached_player_seat, attached_object_identity
 from ..card_program_faces import program_matches_face
 from ..cast_timing import CastTimingPermission
+from ..errors import GameRuleError
 from ..enchant_spec import (
     AuraRuleError,
     EnchantSpec,
@@ -25,6 +26,7 @@ from .battlefield_cascade_grants import BattlefieldCascadeGrantHandler, Battlefi
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .current_ability_components import program_has_current_ability_fragments
+from .linked_exile_name_cast import LinkedExileNameCast, LinkedExileNameCastHandler
 
 
 STATIC_CAST_RULE_EVENT = "cast.static.rule"
@@ -34,6 +36,8 @@ STATIC_CAST_LIMIT_HANDLER_ID = "rule.cast.limit.once-per-turn.v1"
 STATIC_UNCOUNTERABLE_HANDLER_ID = "rule.stack.uncounterable.fixed-query.v1"
 SPLIT_SECOND_HANDLER_ID = "rule.stack.split-second.v1"
 SPLIT_SECOND_CAPABILITY = "priority.stack.split_second"
+OPPONENT_SORCERY_TIMING_CAPABILITY = "casting.prohibition.opponents_sorcery_timing"
+OPPONENT_SORCERY_TIMING_DEPENDENCIES = ("casting.prohibition.fixed_public", OPPONENT_SORCERY_TIMING_CAPABILITY)
 
 
 class StaticCastRuleKind(StrEnum):
@@ -59,6 +63,7 @@ class StaticCastCondition(StrEnum):
     OPPONENT_CAST_SPELL_THIS_TURN = "opponent_cast_spell_this_turn"
     PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN = "player_attacked_with_creature_this_turn"
     OPPONENT_END_STEP = "opponent_end_step"
+    OUTSIDE_SORCERY_TIMING = "outside_sorcery_timing"
     CASTER_LAND_MANA_VALUE_LIMIT = "caster_land_mana_value_limit"
     NONCREATURE_MANA_VALUE_AT_LEAST_FOUR = "noncreature_mana_value_at_least_four"
     NONCREATURE_MANA_COST_HAS_X = "noncreature_mana_cost_has_x"
@@ -80,6 +85,7 @@ class StaticCastRuleSourceContext:
     chosen_name: str
     attached_player: str | None
     source_attached_creature: bool = False
+    source_object_id: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,6 +107,7 @@ class StaticCastRule:
     source_attached_player: str | None
     player_restriction: StaticPlayerRestrictionSpec | None = None
     source_attached_creature: bool = False
+    linked_exile_names: LinkedExileNameCast | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -196,11 +203,13 @@ class StaticCastRuleHandler:
             raise SemanticNodeError("Only cast prohibitions use a chosen name")
         if descriptor["affects_abilities"] and kind is not StaticCastRuleKind.UNCOUNTERABLE:
             raise SemanticNodeError("Only uncounterable rules may affect abilities")
-        if condition is StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN and (
+        if condition in {StaticCastCondition.PLAYER_ATTACKED_WITH_CREATURE_THIS_TURN,
+                         StaticCastCondition.OUTSIDE_SORCERY_TIMING} and (
             kind is not StaticCastRuleKind.CAST_PROHIBITION or scope is not StaticCastPlayerScope.SOURCE_OPPONENTS
             or queries != (ObjectQuerySpec(excluded_types=('land',)),) or zones or descriptor['chosen_name']
         ):
-            raise SemanticNodeError('Attack history requires an all-spell prohibition for the source opponents')
+            family = "Sorcery timing" if condition is StaticCastCondition.OUTSIDE_SORCERY_TIMING else "Attack history"
+            raise SemanticNodeError(f"{family} requires an all-spell prohibition for the source opponents")
         if restriction is not None:
             expected_kind = (StaticCastRuleKind.CAST_LIMIT if restriction.kind is StaticPlayerRestrictionKind.NONARTIFACT_LIMIT
                 else StaticCastRuleKind.CAST_PROHIBITION)
@@ -309,6 +318,7 @@ def default_static_cast_rule_registry() -> StaticCastRuleRegistry:
         (
             SplitSecondHandler(),
             BattlefieldCascadeGrantHandler(),
+            LinkedExileNameCastHandler(),
             StaticCastRuleHandler(
                 STATIC_CAST_TIMING_HANDLER_ID,
                 StaticCastRuleKind.TIMING_PERMISSION,
@@ -351,6 +361,8 @@ class StaticCastRuleHost(Protocol):
     def _public_object_query_result(self, card: Any) -> ObjectQueryResult: ...
 
     def _current_turn_history(self, kind: str) -> Sequence[Any]: ...
+
+    def _sorcery_timing(self, player: str) -> None: ...
 
     def card_record(self, card: Any) -> Any: ...
 
@@ -427,6 +439,7 @@ def active_static_cast_rules(host: StaticCastRuleHost) -> tuple[StaticCastRule, 
                 chosen_name=str(source.annotations.get("chosen_name") or ""),
                 attached_player=attached_player_seat(source),
                 source_attached_creature=source_is_attached_to_creature(host,source),
+                source_object_id=source.object_id,
             )
             for descriptor in program.handlers:
                 if descriptor.get('handler_id')!=SPLIT_SECOND_HANDLER_ID and registry.describe(str(descriptor.get("handler_id") or "")):
@@ -453,7 +466,36 @@ def _scope_applies(rule: StaticCastRule, player: str) -> bool:
     return player != rule.source_controller
 
 
+def opponent_sorcery_timing_descriptor_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if value.get("condition") != StaticCastCondition.OUTSIDE_SORCERY_TIMING:
+        return ()
+    handler = StaticCastRuleHandler(
+        STATIC_CAST_PROHIBITION_HANDLER_ID,
+        StaticCastRuleKind.CAST_PROHIBITION,
+        OPPONENT_SORCERY_TIMING_DEPENDENCIES,
+    )
+    from ..replacement.immutable import FrozenMap, thaw_value
+
+    try:
+        handler.validate(thaw_value(FrozenMap(value)))
+    except SemanticNodeError as exc:
+        raise ValueError(str(exc)) from exc
+    return OPPONENT_SORCERY_TIMING_DEPENDENCIES
+
+
+def _has_sorcery_timing(host: StaticCastRuleHost, player: str) -> bool:
+    if host.state.priority_player != player:
+        return False
+    try:
+        host._sorcery_timing(player)
+    except GameRuleError:
+        return False
+    return True
+
+
 def _condition_applies(host: StaticCastRuleHost, rule: StaticCastRule, *, player: str | None = None) -> bool:
+    if rule.condition is StaticCastCondition.OUTSIDE_SORCERY_TIMING:
+        return player is not None and not _has_sorcery_timing(host, player)
     if rule.condition in _MANA_VALUE_CAST_CONDITIONS:
         # These conditions use the selected spell mana cost.
         return False
@@ -656,6 +698,13 @@ def static_cast_prohibition_reason(
                 continue
         if not _rule_matches_spell(rule, row, spell_name=name):
             continue
+        if rule.linked_exile_names is not None:
+            from ..carddb_characteristics import cast_spell_rules_names
+
+            selected_name = face.get("name", name) if face is not None else name
+            names = frozenset(cast_spell_rules_names(selected_name, host.card_record(card)))
+            if not rule.linked_exile_names.matches(host, names):
+                continue
         if rule.origin_zones and card.zone not in rule.origin_zones:
             continue
         if rule.kind is StaticCastRuleKind.CAST_LIMIT:

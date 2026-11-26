@@ -240,6 +240,7 @@ class SelfZoneMoveIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     aura_target_ref: str | None = None
     effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
+    aura_target_logical_object_id: str | None = None
 
     def __post_init__(self) -> None:
         if (not isinstance(self.effect_entry_counters, tuple)
@@ -254,6 +255,11 @@ class SelfZoneMoveIntent:
             self.destination != 'battlefield' or type(self.aura_target_ref) is not str or not self.aura_target_ref
         ):
             raise SelfZoneMoveError('Self-zone Aura entry selection requires a battlefield destination and reference')
+        if self.aura_target_logical_object_id is not None and (
+            type(self.aura_target_logical_object_id) is not str or not self.aura_target_logical_object_id
+            or self.aura_target_ref is None or (self.origin, self.destination, self.source_form) != ('graveyard', 'battlefield', 'card')
+        ):
+            raise SelfZoneMoveError('Occurrence-bound Aura entry requires its exact graveyard source and battlefield recipient')
         if any(
             type(value) is not str or not value
             for value in (
@@ -317,6 +323,13 @@ def resolve_self_zone_move(
         )
         if "aura" not in subtypes:
             return None
+    if intent.aura_target_logical_object_id is not None and (
+        card.owner != intent.actor or not any(
+            recipient.ref == intent.aura_target_ref and recipient.logical_object_id == intent.aura_target_logical_object_id
+            and recipient.zone == "battlefield" and not recipient.phased_out for recipient in host.state.cards.values()
+        )
+    ):
+        return None
     if intent.effect_entry_counters:
         from .semantic_runtime.zone_move_intent import ZoneMoveIntent
         host.move_object_intent(ZoneMoveIntent(actor=intent.actor, object_ref=card.ref,

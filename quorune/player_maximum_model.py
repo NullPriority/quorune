@@ -10,6 +10,7 @@ PLAYER_MAXIMUM_FACT='unique_player_maximum'
 PLAYER_MAXIMUM_REFERENCE='unique_player_maximum'
 OPPONENT_MORE_METRIC_FACT='opponent_has_greater_metric'
 OPPONENT_MORE_METRIC_CAPABILITY='condition.player.opponent_greater_metric'
+OPPONENT_CREATURE_THRESHOLD_CAPABILITY = "trigger.condition.opponent_creature_threshold"
 LAND_COUNT_MAXIMIZERS_REFERENCE = 'land_count_maximizers'
 
 

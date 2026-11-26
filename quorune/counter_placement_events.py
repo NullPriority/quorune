@@ -56,7 +56,7 @@ def counter_event_subscribers(host):
     for event in selected:
         for source in sources:
             _zone,_characteristics,programs=_event_programs_for_source(host,source,event,source_zones=None,source_characteristics=None)
-            if any(_selected_event_subscription(program,event)[0] for program in programs):
+            if any(_selected_event_subscription(program,event)[0] for program, _ in programs):
                 selected[event].append(source)
     return selected
 

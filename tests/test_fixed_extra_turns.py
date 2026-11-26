@@ -35,6 +35,50 @@ class FixedExtraTurnCompilerTests(unittest.TestCase):
         return compile_oracle_card(turn_record(text, type_line=type_line),
             capability_registry=self.registry, capability_profile="commander_review")
 
+    def test_mindslaver_exact_activation_shape_withdrawal_and_mutations(self):
+        from quorune.rules.extra_turn_shapes import fixed_next_turn_control_node_capabilities
+        from quorune.turn_priority_model import FIXED_NEXT_TURN_CONTROL_CAPABILITY, TURN_CONTROL_LIFETIME_VERSION_FIELD
+
+        prefix = "{4}, {T}, Sacrifice this artifact: "
+        clause = "You control target player during that player's next turn."
+        text = prefix + clause + " (You see all cards that player could see and make all decisions for them.)"
+        ir = self.compile(text, type_line="Artifact")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual("activated_ability", node.kind)
+        self.assertEqual(text, node.text)
+        self.assertEqual("any", node.target_schema["player_relation"])
+        self.assertEqual({"op": "control_next_turn", "player": "$target.0", TURN_CONTROL_LIFETIME_VERSION_FIELD: 1},
+                         dict(node.effects[0]))
+        self.assertIn(FIXED_NEXT_TURN_CONTROL_CAPABILITY, node.capability_dependencies)
+
+        def capabilities(effect, target):
+            return fixed_next_turn_control_node_capabilities(
+                effects=(effect,), target_schema=target, mechanic_ids=node.mechanics,
+            )
+
+        for mutation in ({"player": "$controller"}, {TURN_CONTROL_LIFETIME_VERSION_FIELD: True},
+                         {TURN_CONTROL_LIFETIME_VERSION_FIELD: 2}, {"other": "unsupported"}):
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                capabilities({**node.effects[0], **mutation}, node.target_schema)
+        for mutation in ({"count": True}, {"count": 2}, {"player_relation": "opponent"}):
+            with self.subTest(target=mutation), self.assertRaises(ValueError):
+                capabilities(node.effects[0], {**node.target_schema, **mutation})
+
+        for neighbor in (clause.replace("next turn", "next combat"), clause + " Draw a card."):
+            with self.subTest(neighbor=neighbor):
+                self.assertTrue(self.compile(prefix + neighbor, type_line="Artifact").material_residuals)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        next(row for row in raw["capabilities"] if row["id"] == FIXED_NEXT_TURN_CONTROL_CAPABILITY).update(
+            status="blocked", blockers=["next-turn control unavailable"],
+        )
+        unavailable = compile_oracle_card(turn_record(text, type_line="Artifact"),
+                                          capability_registry=CapabilityRegistry(raw), capability_profile="commander_review")
+        self.assertTrue(unavailable.material_residuals)
+        with patch("quorune.compiler.extra_turn_templates.fixed_next_turn_control_effect_template", return_value=None):
+            self.assertTrue(self.compile(text, type_line="Artifact").material_residuals)
+
     def test_fixed_extra_turn_controller_and_target_grammar_preserves_recipients(self):
         for text, count, player, relation in (
             ("Take an extra turn after this one.", 1, "$controller", None),

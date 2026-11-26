@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_synthetic_rules_cards",
+  "source": "Synthetic witnesses for a targeted source-power trigger and live Monstrosity quantity",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000810131",
+      "name": "Generic Counter Steward",
+      "mana_cost": "{2}{G}",
+      "cmc": 3,
+      "type_line": "Creature — Human",
+      "oracle_text": "At the beginning of combat on your turn, put a number of +1/+1 counters equal to this creature's power on another target creature you control.\n{3}{G}{G}: Monstrosity X, where X is the number of counters among creatures you control.",
+      "power": "1",
+      "toughness": "3",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": ["Monstrosity"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000810132",
+      "name": "Generic Counter Rebuff",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000810133",
+      "name": "Generic Counter Spark",
+      "mana_cost": "{G}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Put a +1/+1 counter on target creature.",
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000810134",
+      "name": "Generic Counter Lantern",
+      "mana_cost": "{1}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000810135",
+      "name": "Generic Counter Forest",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Basic Land — Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "colors": [],
+      "color_identity": ["G"],
+      "produced_mana": ["G"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000810136",
+      "name": "Generic Counter Island",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Basic Land — Island",
+      "oracle_text": "({T}: Add {U}.)",
+      "colors": [],
+      "color_identity": ["U"],
+      "produced_mana": ["U"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

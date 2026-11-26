@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY, exact_mana_only_x_activation_cost
 from ..continuous_effect_model import ContinuousOperation, Layer
 from ..replacement.immutable import thaw_value
 from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION
@@ -13,6 +14,67 @@ from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION
 CREATURE_SUBTYPE_SET_RESULT_VERSION = 25
 CREATURE_SUBTYPE_SET_RESULT_MECHANIC = "temporary-creature-subtype-set-result"
 CREATURE_SUBTYPE_SET_RESULT_CAPABILITY = "continuous.resolution.creature_subtype_set_result"
+PAID_CONTROLLER_SUBTYPE_SET_CAPABILITY = "continuous.resolution.announced_x_controller_creature_types_and_base"
+PAID_CONTROLLER_SUBTYPE_SET_VERSION = 27
+PAID_CONTROLLER_SUBTYPE_SET_FIELD = "paid_controller_creature_types_and_base"
+PAID_CONTROLLER_SUBTYPE_SET_TEMPLATE = "announced-x-controller-creature-types-and-base-v1"
+
+
+def paid_controller_subtype_set_effect():
+    return {"op": CHARACTERISTIC_OPERATION, "schema_version": PAID_CONTROLLER_SUBTYPE_SET_VERSION,
+            PAID_CONTROLLER_SUBTYPE_SET_FIELD: True}
+
+
+def is_paid_controller_subtype_set_result(effect):
+    return isinstance(effect, Mapping) and effect.get("op") == CHARACTERISTIC_OPERATION and (
+        effect.get("schema_version") == PAID_CONTROLLER_SUBTYPE_SET_VERSION or PAID_CONTROLLER_SUBTYPE_SET_FIELD in effect
+    )
+
+
+def creature_subtype_set_component(subtype_set):
+    from ..continuous_effect_state import ResolutionContinuousComponent
+
+    return ResolutionContinuousComponent(Layer.TYPE, "4", (
+        ContinuousOperation("set_creature_subtype_set", subtype_set),
+    ))
+
+
+def paid_controller_subtype_set_components(amount):
+    from ..continuous_effect_state import ResolutionContinuousComponent
+
+    return (creature_subtype_set_component("all"), ResolutionContinuousComponent(Layer.POWER_TOUGHNESS, "7b", (
+        ContinuousOperation("set_power_toughness", (amount, amount)),
+    )))
+
+
+def validate_paid_controller_subtype_set_effect(effect, *, resolved=False):
+    metadata = {"_runtime_source", "reason"} if resolved else set()
+    if (not is_paid_controller_subtype_set_result(effect)
+            or {key: value for key, value in effect.items() if key not in metadata} != paid_controller_subtype_set_effect()
+            or type(effect["schema_version"]) is not int or effect[PAID_CONTROLLER_SUBTYPE_SET_FIELD] is not True):
+        raise ValueError("Paid controller types and base stats require the exact versioned result")
+
+
+def paid_controller_subtype_set_runtime_dependencies(program):
+    from ..compiler.activated_costs import activated_ability_cost
+    from ..semantic_runtime.activated_abilities import (
+        ACTIVATED_ABILITY_CATALOG_HANDLER_ID, activated_abilities_from_descriptors,
+    )
+
+    if (len(program.effects) != 1 or (program.event, program.active_zone) != ("activate", "battlefield")
+            or program.target_schema is not None or program.event_condition is not None
+            or not exact_mana_only_x_activation_cost(program.cost_schema)
+            or len(program.handlers) != 1 or program.handlers[0].get("handler_id") != ACTIVATED_ABILITY_CATALOG_HANDLER_ID
+            or program.handlers[0].get("requires_complete_card_program") is not True):
+        raise ValueError("Paid controller types and base stats require their complete ordinary X activation")
+    validate_paid_controller_subtype_set_effect(program.effects[0])
+    ability, = activated_abilities_from_descriptors(program.handlers)
+    if (ability.zones != ("battlefield",) or ability.mana_ability or ability.sorcery_speed
+            or ability.activation_conditions or ability.target_schema is not None or ability.builtin_semantic_key != program.key
+            or ability.generic_reduction_per_legendary_creature or ability.library_search_types
+            or not exact_mana_only_x_activation_cost(activated_ability_cost(ability))):
+        raise ValueError("Paid controller types and base stats require their original untargeted activation catalog")
+    return PAID_CONTROLLER_SUBTYPE_SET_CAPABILITY, ANNOUNCED_ACTIVATION_X_CAPABILITY
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,9 +144,7 @@ class CreatureSubtypeSetResult:
     def components(self):
         from ..continuous_effect_state import ResolutionContinuousComponent
 
-        result = [ResolutionContinuousComponent(Layer.TYPE, "4", (
-            ContinuousOperation("set_creature_subtype_set", self.subtype_set),
-        ))]
+        result = [creature_subtype_set_component(self.subtype_set)]
         if self.flying:
             result.append(ResolutionContinuousComponent(Layer.ABILITY, "6", (ContinuousOperation("add_ability", "Flying"),)))
         if self.base is not None:
@@ -99,8 +159,10 @@ class CreatureSubtypeSetResult:
 
 
 def is_creature_subtype_set_result(value):
-    return isinstance(value, Mapping) and value.get("op") == CHARACTERISTIC_OPERATION and (
-        value.get("schema_version") == CREATURE_SUBTYPE_SET_RESULT_VERSION or "subtype_set_result" in value
+    return is_paid_controller_subtype_set_result(value) or (
+        isinstance(value, Mapping) and value.get("op") == CHARACTERISTIC_OPERATION and (
+            value.get("schema_version") == CREATURE_SUBTYPE_SET_RESULT_VERSION or "subtype_set_result" in value
+        )
     )
 
 
@@ -125,6 +187,14 @@ def creature_subtype_set_instruction_dependencies(effects, target_schema):
 
 
 def creature_subtype_set_node_capabilities(*, effects, target_schema, mechanics):
+    if len(effects) == 1 and is_paid_controller_subtype_set_result(effects[0]):
+        if target_schema is not None or not {CREATURE_SUBTYPE_SET_RESULT_MECHANIC, "cr-611-continuous-effects"} <= set(mechanics):
+            return ()
+        try:
+            validate_paid_controller_subtype_set_effect(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return PAID_CONTROLLER_SUBTYPE_SET_CAPABILITY, ANNOUNCED_ACTIVATION_X_CAPABILITY
     if not {CREATURE_SUBTYPE_SET_RESULT_MECHANIC, "cr-611-continuous-effects", "cr-115-targets"} <= set(mechanics):
         return ()
     try:
@@ -136,7 +206,12 @@ def creature_subtype_set_node_capabilities(*, effects, target_schema, mechanics)
 def creature_subtype_set_runtime_dependencies(program):
     from .effect_shape_walkers import nested_effects
 
-    if not any(is_creature_subtype_set_result(effect) for effect in nested_effects((program.effects, program.handlers))):
+    effects = tuple(nested_effects((program.effects, program.target_schema, program.handlers)))
+    if PAID_CONTROLLER_SUBTYPE_SET_CAPABILITY in getattr(program, "capability_dependencies", ()) or any(
+        is_paid_controller_subtype_set_result(effect) for effect in effects
+    ):
+        return paid_controller_subtype_set_runtime_dependencies(program)
+    if not any(is_creature_subtype_set_result(effect) for effect in effects):
         return ()
     required = creature_subtype_set_instruction_dependencies(program.effects, program.target_schema)
     spec = CreatureSubtypeSetResult.from_mapping(program.effects[0]["subtype_set_result"])

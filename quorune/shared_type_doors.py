@@ -14,6 +14,30 @@ SHARED_TYPE_COPY_EXCEPTIONS = "shared_type_copy_exceptions"
 SHARED_TYPE_FORM = "shared_type_split_permanent"
 SHARED_TYPE_FORM_CAPABILITY = "permanent.shared_type_doors.lifecycle"
 ROOM_UNLOCK_EVENT_CAPABILITY = "trigger.event.room_unlock"
+ROOM_UNLOCKED_COUNT_CAPABILITY = "condition.room.unlocked_door_count"
+ROOM_DOOR_AMOUNT_KIND = "current_unlocked_room_door_count"
+ROOM_DOOR_AMOUNT_CAPABILITY = "quantity_expression.current_unlocked_room_doors"
+
+
+@dataclass(frozen=True, slots=True)
+class RoomDoorQuantity:
+    # The resolving controller's live public unlocked Room door count.
+
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise ValueError("Unsupported Room door quantity version")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"kind": ROOM_DOOR_AMOUNT_KIND, "schema_version": self.schema_version}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> RoomDoorQuantity:
+        if (not isinstance(value, Mapping) or set(value) != {"kind", "schema_version"}
+                or value["kind"] != ROOM_DOOR_AMOUNT_KIND):
+            raise ValueError("Room door quantities have a closed schema")
+        return cls(value["schema_version"])
 
 
 @dataclass(frozen=True, slots=True)

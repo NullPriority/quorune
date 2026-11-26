@@ -4,10 +4,20 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..effect_contracts import EffectFamilyContract, effect_operation_contracts
+from ..opponent_library_exile_model import (
+    EACH_OPPONENT_TOP_EXILE_CAPABILITY, EACH_OPPONENT_TOP_EXILE_OPERATION,
+    OPPONENT_LIBRARY_EXILE_PLAY_CAPABILITY, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION,
+    validate_each_opponent_top_exile, validate_opponent_library_exile_play,
+)
 from ..reanimation_entry_counters import REANIMATION_ENTRY_COUNTER_VERSIONS
 from ..replacement.immutable import FrozenMap
 from ..source_tap_effect import RUNTIME_SOURCE_CONTINUITY_FIELD, SOURCE_TAP_EFFECT_FIELD
+from ..source_control_phase_in_model import SOURCE_CONTROL_PHASE_OUT_SUBJECT, uses_source_control_phase_out
 from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION, validate_linked_instruction
+from ..rules.linked_loyalty_exile_model import (
+    LINKED_LOYALTY_EXILE_FIELD, linked_loyalty_entry_identity,
+    validate_linked_loyalty_exile_instruction,
+)
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DomainEffectIntent, IntentPlan
 from ..blocking_requirement_model import BLOCKING_REQUIREMENT_CAPABILITY,BLOCKING_REQUIREMENT_OPERATION
@@ -31,6 +41,17 @@ from ..phasing_model import (
 )
 
 
+def _validate_linked_exile_return_instruction(effect: Mapping[str, Any], *, actor: str) -> None:
+    if LINKED_LOYALTY_EXILE_FIELD not in effect:
+        validate_linked_instruction(effect)
+        return
+    instruction = {key: value for key, value in effect.items() if key != "_replacement_selections"}
+    if instruction[LINKED_LOYALTY_EXILE_FIELD] == "enter":
+        linked_loyalty_entry_identity(instruction)
+    else:
+        validate_linked_loyalty_exile_instruction(instruction, actor=actor)
+
+
 @dataclass(frozen=True, slots=True)
 class DomainEffectHandler:
     operation: str
@@ -48,6 +69,10 @@ class DomainEffectHandler:
 
     @property
     def rule_references(self) -> tuple[str, ...]:
+        if self.operation == EACH_OPPONENT_TOP_EXILE_OPERATION:
+            return ("101.4", "400.7", "406.3", "608.2c", "609.3", "701.13a")
+        if self.operation == OPPONENT_LIBRARY_EXILE_PLAY_OPERATION:
+            return ("305.1", "400.7", "406.3", "406.3a", "603.3a", "609.4b", "611.2a", "514.2")
         if self.operation=='grant_next_spell_cost_reduction':
             from ..next_spell_cost_model import RULES
             return RULES
@@ -83,6 +108,16 @@ class DomainEffectHandler:
             raise SemanticNodeError(
                 f"Handler {self.handler_id} cannot lower {operation!r}"
             )
+        if operation == "end_turn":
+            from ..rules.extra_turn_shapes import is_versioned_end_turn, validate_versioned_end_turn
+
+            if is_versioned_end_turn(effect):
+                try:
+                    validate_versioned_end_turn(effect)
+                except ValueError as exc:
+                    raise SemanticNodeError(str(exc)) from exc
+                if context.source is None or not context.source.stack_ref:
+                    raise SemanticNodeError("Ending the turn requires the current resolving stack object")
         if operation == 'recover_source_result':
             from ..rules.recover import validate_recover_result
             try:validate_recover_result(effect,resolved=True)
@@ -127,6 +162,15 @@ class DomainEffectHandler:
             raise SemanticNodeError(
                 "Semantic programs cannot supply authoritative runtime source context"
             )
+        if operation in {EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION}:
+            validate = (validate_each_opponent_top_exile if operation == EACH_OPPONENT_TOP_EXILE_OPERATION
+                        else validate_opponent_library_exile_play)
+            try:
+                validate({key: value for key, value in effect.items() if key != "reason"}, actor=context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            if context.source is None or not context.source.stack_ref:
+                raise SemanticNodeError("Opponent-library exile instructions require a resolving stack object")
         if operation == SADDLE_OPERATION:
             ref = effect.get("card")
             if set(effect) - {"op", "card", "reason"} or type(ref) is not str or not ref:
@@ -143,7 +187,7 @@ class DomainEffectHandler:
         if operation == PHASE_OUT_OPERATION:
             try:
                 subject = validate_phase_out_effect(effect, runtime=True)
-                if subject == "source" and context.source is None:
+                if subject in {"source", SOURCE_CONTROL_PHASE_OUT_SUBJECT} and context.source is None:
                     raise ValueError("Source phase out requires its typed source frame")
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
@@ -173,7 +217,7 @@ class DomainEffectHandler:
                 raise SemanticNodeError(str(exc)) from exc
         if operation == LINKED_EXILE_RETURN_OPERATION:
             try:
-                validate_linked_instruction(effect)
+                _validate_linked_exile_return_instruction(effect, actor=context.actor)
             except ValueError as exc:
                 raise SemanticNodeError(str(exc)) from exc
         if operation == 'set_day_night':
@@ -186,7 +230,7 @@ class DomainEffectHandler:
             except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
         if context.source is not None:
             runtime_effect["_runtime_source"] = context.source.to_dict()
-            if SOURCE_TAP_EFFECT_FIELD in effect:
+            if SOURCE_TAP_EFFECT_FIELD in effect or uses_source_control_phase_out(effect):
                 history = context.source.duration_history
                 runtime_effect[RUNTIME_SOURCE_CONTINUITY_FIELD] = {
                     "history": history.to_dict() if history is not None else None,
@@ -208,12 +252,56 @@ class DomainEffectHandler:
 
 def effect_descriptor_capability_dependencies(effect, registered):
     """Apply an exact immediate-object variant's narrower registered authority."""
+    from ..rad_counter_model import RAD_CAPABILITY, versioned_rad_player_counter_effect
 
+    if versioned_rad_player_counter_effect(effect):
+        return (*registered["capability_dependencies"], RAD_CAPABILITY)
+    if registered["operation"] == EACH_OPPONENT_TOP_EXILE_OPERATION:
+        from ..opponent_library_exile_model import DAMAGED_PLAYER_PRIVATE_TOP_CAPABILITY, DAMAGED_PLAYER_PRIVATE_TOP_VERSION
+
+        validate_each_opponent_top_exile(effect)
+        if effect["schema_version"] == DAMAGED_PLAYER_PRIVATE_TOP_VERSION:
+            return (*registered["capability_dependencies"], DAMAGED_PLAYER_PRIVATE_TOP_CAPABILITY)
+    if registered["operation"] == OPPONENT_LIBRARY_EXILE_PLAY_OPERATION:
+        validate_opponent_library_exile_play(effect)
+    if registered["operation"] == "grant_target_graveyard_escape":
+        from ..rules.target_graveyard_escape import validate_target_graveyard_escape_effect
+
+        validate_target_graveyard_escape_effect(effect)
+
+    if registered["operation"] == "protection_from_everything_until_next_turn":
+        from ..rules.next_personal_turn_protection import next_personal_turn_protection_dependencies
+
+        required = next_personal_turn_protection_dependencies(effect)
+        if required:
+            return (*registered["capability_dependencies"], *required)
+    if registered["operation"] == PHASE_OUT_OPERATION and (
+        effect.get("schema_version") == 5 or effect.get("subject") == "controlled_permanent_set"
+    ):
+        from ..phasing_model import CONTROLLED_PERMANENT_PHASE_OUT_CAPABILITY
+
+        validate_phase_out_effect(effect)
+        return (*registered["capability_dependencies"], CONTROLLED_PERMANENT_PHASE_OUT_CAPABILITY)
+    if registered["operation"] == "control_next_turn":
+        from ..rules.extra_turn_shapes import is_versioned_next_turn_control, validate_versioned_next_turn_control
+
+        if is_versioned_next_turn_control(effect):
+            return (*registered["capability_dependencies"], *validate_versioned_next_turn_control(effect))
+    if registered["operation"] == "end_turn":
+        from ..rules.extra_turn_shapes import is_versioned_end_turn, validate_versioned_end_turn
+
+        if is_versioned_end_turn(effect):
+            return (*registered["capability_dependencies"], *validate_versioned_end_turn(effect))
     if registered["operation"] == "resolve_fixed_object_action":
         from ..delayed_object_model import FORCED_BLOCK_STATUS_CAPABILITIES, is_forced_block_status_effect
 
         if is_forced_block_status_effect(effect):
             return FORCED_BLOCK_STATUS_CAPABILITIES
+    if registered["operation"] in {"schedule_fixed_object_action", "resolve_fixed_object_action"}:
+        from ..delayed_object_model import TARGET_DEATH_RETURN_CAPABILITY, is_target_death_return_effect
+
+        if is_target_death_return_effect(effect):
+            return (*registered["capability_dependencies"], TARGET_DEATH_RETURN_CAPABILITY)
     if registered["operation"] == "copy_until_end_of_turn":
         from ..rules.color_retaining_copy import RETAINED_COLOR_COPY_CAPABILITY, is_retained_color_upkeep_copy
         from ..rules.persistent_self_copy_trigger import (
@@ -229,9 +317,15 @@ def effect_descriptor_capability_dependencies(effect, registered):
 
         if is_linked_exile_copy_effect(effect):
             return LINKED_EXILE_COPY_DEPENDENCIES
+        from ..rules.announced_artifact_copy import (
+            ANNOUNCED_ARTIFACT_COPY_DEPENDENCIES, is_announced_artifact_copy_effect,
+        )
         from ..rules.announced_graveyard_copy import (
             ANNOUNCED_GRAVEYARD_COPY_DEPENDENCIES, is_announced_graveyard_copy_effect,
         )
+
+        if is_announced_artifact_copy_effect(effect):
+            return ANNOUNCED_ARTIFACT_COPY_DEPENDENCIES
 
         if is_announced_graveyard_copy_effect(effect):
             return ANNOUNCED_GRAVEYARD_COPY_DEPENDENCIES
@@ -242,9 +336,12 @@ def effect_descriptor_capability_dependencies(effect, registered):
         if is_graveyard_exile_copy_effect(effect):
             return GRAVEYARD_EXILE_COPY_DEPENDENCIES
         from ..rules.persistent_public_copy import (
-            PERSISTENT_PUBLIC_COPY_DEPENDENCIES, is_persistent_public_copy_effect,
+            CONTROLLED_ARTIFACT_COPY_DEPENDENCIES, PERSISTENT_PUBLIC_COPY_DEPENDENCIES,
+            is_controlled_artifact_copy_effect, is_persistent_public_copy_effect,
         )
 
+        if is_controlled_artifact_copy_effect(effect):
+            return CONTROLLED_ARTIFACT_COPY_DEPENDENCIES
         if is_persistent_public_copy_effect(effect):
             return PERSISTENT_PUBLIC_COPY_DEPENDENCIES
     if registered["operation"] == "set_life_total":
@@ -259,6 +356,10 @@ def effect_descriptor_capability_dependencies(effect, registered):
 
 
 def _domain_capabilities(operation):
+    if operation == EACH_OPPONENT_TOP_EXILE_OPERATION:
+        return (EACH_OPPONENT_TOP_EXILE_CAPABILITY,)
+    if operation == OPPONENT_LIBRARY_EXILE_PLAY_OPERATION:
+        return (OPPONENT_LIBRARY_EXILE_PLAY_CAPABILITY,)
     from ..target_source import TURN_SPELL_SOURCE_COLOR_PROTECTION_CAPABILITY, TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION
 
     if operation == TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION:
@@ -266,6 +367,10 @@ def _domain_capabilities(operation):
     if operation=='recover_source_result':
         from ..recover_model import RECOVER_RESULT_CAPABILITY
         return (RECOVER_RESULT_CAPABILITY,)
+    if operation == "grant_target_graveyard_escape":
+        from ..temporary_graveyard_escape import TEMPORARY_ESCAPE_CAPABILITY
+
+        return (TEMPORARY_ESCAPE_CAPABILITY,)
     if operation=='grant_next_spell_cost_reduction':
         from ..next_spell_cost_model import CAPABILITY
         return (CAPABILITY,)

@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 from typing import Any, Callable, Mapping, Sequence
 
+from ..event_counter_reference import attached_attack_counter_context_matches
+from .event_counter_results import entry_event_counter_result
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .modal_templates import fixed_nonrepeating_modal_template
 
@@ -17,7 +19,7 @@ NodeCompiler = Callable[..., OracleNode | None]
 class FixedModalContextBlocks:
     """Precompiled modal rows with source-order residual insertion."""
 
-    nodes: Mapping[int, tuple[OracleNode, tuple[OracleResidual, ...]]]
+    nodes: Mapping[int, tuple[tuple[OracleNode, ...], tuple[OracleResidual, ...]]]
     consumed_rows: frozenset[int]
 
     def append_to(
@@ -32,7 +34,7 @@ class FixedModalContextBlocks:
         result = self.nodes.get(row_index)
         if result is None:
             return False
-        node, block_residuals = result
+        (node, *granted_children), block_residuals = result
         residual_offset = len(residuals)
         remapped_ids = tuple(
             f"r{residual_offset + int(residual_id[1:])}"
@@ -46,6 +48,7 @@ class FixedModalContextBlocks:
             for index, residual in enumerate(block_residuals, 1)
         )
         nodes.append(replace(node, residual_ids=remapped_ids))
+        nodes.extend(granted_children)
         return True
 
 
@@ -62,9 +65,25 @@ def _modal_block_end(
     return end
 
 
+def _equipped_attack_binding(header: str, *, card_name: str):
+    if not header.casefold().startswith(("whenever equipped creature attacks,", "when equipped creature attacks,")):
+        return None
+    from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+
+    binding = fixed_counter_trigger_binding(header, card_name=card_name)
+    if binding is None or not attached_attack_counter_context_matches(
+        event=binding.event.value, active_zone=binding.active_zone,
+        event_condition=binding.event_condition,
+    ):
+        return None
+    return binding
+
+
 def _context_node(
     *,
     node_id: str,
+    oracle_id: str,
+    face_id: str,
     rows: Sequence[tuple[str, str, SourceSpan]],
     oracle_text: str,
     card_name: str,
@@ -76,13 +95,37 @@ def _context_node(
     effect_template: Any,
     activated_or_event_node: NodeCompiler,
     trigger_node: NodeCompiler,
-) -> tuple[OracleNode, tuple[OracleResidual, ...]] | None:
+) -> tuple[tuple[OracleNode, ...], tuple[OracleResidual, ...]] | None:
+    from .temporary_quoted_ability_nodes import temporary_land_mana_mode_nodes
+
+    binding = _equipped_attack_binding(rows[0][1], card_name=card_name)
+    mode_rows = iter(rows[1:])
+    granted_children: list[OracleNode] = []
+
+    def compile_mode(body: str):
+        line, _material, span = next(mode_rows)
+        ordinary = effect_template(body, card_name=card_name)
+        if ordinary[0] is not None:
+            return ordinary
+        if binding is not None:
+            counter = entry_event_counter_result(
+                binding, body, effect_template=effect_template, card_name=card_name,
+            )
+            if counter is not None:
+                return counter[0]
+        grant = temporary_land_mana_mode_nodes(body=body, line=line, span=span, oracle_id=oracle_id,
+            face_id=face_id, compile_inner=activated_or_event_node, effect_template=effect_template,
+            trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+            capability_profile=capability_profile)
+        if grant is None:
+            return ordinary
+        compiled, child = grant
+        granted_children.append(child)
+        return compiled
+
     modal = fixed_nonrepeating_modal_template(
         rows,
-        compile_effect=lambda body: effect_template(
-            body,
-            card_name=card_name,
-        ),
+        compile_effect=compile_mode,
     )
     if modal is None or not modal.context_prefix:
         return None
@@ -132,9 +175,22 @@ def _context_node(
         )
     if node is None or not node.lowerable:
         return None
+    if modal.minimum_modes == 0:
+        from ..rules.modal_selection import optional_combat_trigger_context_matches
+
+        if not optional_combat_trigger_context_matches(
+            event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+        ):
+            return None
+    from ..rules.modal_selection import distinct_turn_trigger_context_matches, has_distinct_turn_trigger_modes
+
+    if has_distinct_turn_trigger_modes(target_schema) and not distinct_turn_trigger_context_matches(
+        event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+    ):
+        return None
     block_text = oracle_text[span.start : span.end]
     return (
-        replace(node, text=block_text, span=span),
+        (replace(node, text=block_text, span=span), *granted_children),
         tuple(
             replace(residual, text=block_text, span=span)
             for residual in scratch_residuals
@@ -145,6 +201,7 @@ def _context_node(
 def fixed_nonrepeating_modal_context_blocks(
     *,
     material_rows: Sequence[tuple[str, str, SourceSpan]],
+    oracle_id: str,
     face_id: str,
     oracle_text: str,
     card_name: str,
@@ -159,7 +216,7 @@ def fixed_nonrepeating_modal_context_blocks(
 ) -> FixedModalContextBlocks:
     """Compile every disjoint header-plus-bullet modal context block."""
 
-    nodes: dict[int, tuple[OracleNode, tuple[OracleResidual, ...]]] = {}
+    nodes: dict[int, tuple[tuple[OracleNode, ...], tuple[OracleResidual, ...]]] = {}
     consumed_rows: set[int] = set()
     for start in range(len(material_rows)):
         if start in consumed_rows:
@@ -169,6 +226,8 @@ def fixed_nonrepeating_modal_context_blocks(
             continue
         result = _context_node(
             node_id=f"{face_id}:n{start + 1}",
+            oracle_id=oracle_id,
+            face_id=face_id,
             rows=material_rows[start:end],
             oracle_text=oracle_text,
             card_name=card_name,

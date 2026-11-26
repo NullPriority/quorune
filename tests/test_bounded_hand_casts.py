@@ -127,6 +127,78 @@ class BoundedHandCastCompilerTests(unittest.TestCase):
         self.assertNotEqual('exact',compile_oracle_card(compiler_controls.record(text),capability_registry=registry).status)
         self.assertEqual('exact',compile_oracle_card(compiler_controls.record('Draw two cards.'),capability_registry=registry).status)
 
+class LegendaryWizardHandCastContractTests(unittest.TestCase):
+    def test_legendary_wizard_hand_cast_rejects_forged_limits(self):
+        from copy import deepcopy
+
+        from quorune.bounded_hand_cast_model import (
+            LEGENDARY_WIZARD_HAND_CAST_CAPABILITY, legendary_wizard_hand_cast_effect,
+        )
+        from quorune.characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+        from quorune.object_predicate import ObjectQuerySpec
+        from quorune.query_effect_amount_model import PublicQueryAmountSpec
+
+        effect = legendary_wizard_hand_cast_effect()
+        self.assertIn(LEGENDARY_WIZARD_HAND_CAST_CAPABILITY, bounded_hand_cast_payload_dependencies(effect))
+        all_wizards = CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), subtypes_any=("wizard",)),
+        )
+        legendary_wizards = CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), subtypes_any=("wizard",), supertypes_all=("legendary",)),
+        )
+        for maximum in (
+            4,
+            PublicQueryAmountSpec(all_wizards, coefficient=2).to_dict(),
+            PublicQueryAmountSpec(legendary_wizards, coefficient=3).to_dict(),
+        ):
+            with self.subTest(maximum=maximum):
+                forged = deepcopy(effect)
+                forged[FIELD]["mana_value_limit"]["maximum"] = maximum
+                with self.assertRaisesRegex(ValueError, "exact live public mana-value limit"):
+                    bounded_hand_cast_payload_dependencies(forged)
+
+    def test_legendary_wizard_hand_cast_requires_own_combat_and_public_count_authority(self):
+        from dataclasses import replace
+
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        supported = (
+            "At the beginning of combat on your turn, you may cast an instant or sorcery spell with mana "
+            "value X or less from your hand without paying its mana cost, where X is twice the number of "
+            "legendary Wizards you control."
+        )
+        creature = replace(compiler_controls.record(supported), type_line="Legendary Creature — Wizard",
+                           power="1", toughness="1")
+        registry = load_default_capability_registry()
+        admitted = compile_oracle_card(creature, capability_registry=registry)
+        self.assertEqual("exact", admitted.status, admitted.material_residuals)
+        for unexpected in ("At the beginning of combat,", "At the beginning of the end step on your turn,"):
+            wrong_time = replace(creature, oracle_text=supported.replace(
+                "At the beginning of combat on your turn,", unexpected,
+            ))
+            self.assertNotEqual("exact", compile_oracle_card(wrong_time, capability_registry=registry).status)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        count = next(row for row in raw["capabilities"] if row["id"] == "quantity_expression.public_query_effect_amount")
+        count.update(status="blocked", blockers=["public count authority withdrawn"])
+        registry = CapabilityRegistry(raw)
+        evidence = build_index(
+            registry_value=raw,
+            declaration_source=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(ROOT).values()),
+        )
+        registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+        self.assertNotEqual("exact", compile_oracle_card(creature, capability_registry=registry).status)
+        fixed = compiler_controls.record(
+            "You may cast a spell with mana value 3 or less from your hand without paying its mana cost.",
+        )
+        self.assertEqual("exact", compile_oracle_card(fixed, capability_registry=registry).status)
+
+
 class BoundedHandCastRegistrationTests(unittest.TestCase):
     def test_all_five_originals_close_normally_and_variable_neighbor_keeps_its_complete_source(self):
         registry=load_default_capability_registry();semantics=SemanticRegistry()

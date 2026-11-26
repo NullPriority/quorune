@@ -5,7 +5,7 @@ from enum import Enum
 from typing import Any, Mapping
 
 from .counter_names import CounterStateError, normalized_counter_name
-from .object_predicate import ObjectQueryError, ObjectQuerySpec
+from .object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 
 
 class CharacteristicFragmentError(ValueError):
@@ -32,10 +32,12 @@ class CharacteristicQuantityScope(str, Enum):
     LINKED_OPPONENT_HAND = "linked_opponent_hand"
     LINKED_OPPONENT_DEFINITION = "linked_opponent_definition"
     LINKED_PLAYER_GRAVEYARD = "linked_player_graveyard"
+    SOURCE_LINKED_EXILE = "source_linked_exile"
     OPPONENT_ZONES = "opponent_zones"
     ALL_ZONES = "all_zones"
     ATTACHED_TO_SOURCE = "attached_to_source"
     ATTACHED_TO_RECIPIENT = "attached_to_recipient"
+    EQUIPMENT_ON_CONTROLLED_CREATURES = "equipment_on_controlled_creatures"
     SOURCE_COUNTER = "source_counter"
     CONTROLLER_OPPONENT_COUNT = "controller_opponent_count"
     CONTROLLER_LIFE_TOTAL = "controller_life_total"
@@ -50,12 +52,14 @@ class CharacteristicQuantityScope(str, Enum):
     CONTROLLER_COMMANDER_CAST_COUNT = "controller_commander_cast_count"
     ATTACKING_DEFENDER_ZONE = "attacking_defender_zone"
     COMBAT_STATE_BASIC_LAND_ZONE = "combat_state_basic_land_zone"
+    OPPONENT_CHOSEN_COLOR_PERMANENTS = "opponent_chosen_color_permanents"
 
 
 class CharacteristicQuantityReduction(str, Enum):
     MAXIMUM_ZONE_SIZE = 'maximum_zone_size'
     OBJECT_COUNT = "object_count"
     DISTINCT_BASIC_LAND_TYPES = "distinct_basic_land_types"
+    DISTINCT_PUBLIC_NAMES = "distinct_public_names"
     DISTINCT_CARD_TYPES = "distinct_card_types"
     DISTINCT_COLORS = "distinct_colors"
     MAXIMUM_MANA_VALUE = "maximum_mana_value"
@@ -72,15 +76,23 @@ DEFINING_LIFE_SCOPES = frozenset({
     CharacteristicQuantityScope.DEFINING_HALF_MAXIMUM_OPPONENT_LIFE,
 })
 CONTROLLER_TURN_LIFE_LOSS_MODIFIER_TEMPLATE = "continuous-self-controller-turn-life-loss-v1"
+SOURCE_LINKED_EXILE_QUANTITY_VERSION = 13
+SOURCE_LINKED_EXILE_MODIFIER_TEMPLATE = "continuous-source-linked-exile-count-v1"
+CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION = 14
+CHOSEN_COLOR_DEFINITION_CAPABILITY = "quantity_expression.opponent_chosen_color_permanents"
+CHOSEN_COLOR_DEFINITION_TEMPLATE = "continuous-opponent-chosen-color-definition-v1"
 CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES = (
     "condition.history.fixed_public_query", "quantity_expression.current_player_value",
 )
 PUBLIC_NAMED_COUNT_CAPABILITY = "quantity_expression.public_named_count"
+DISTINCT_PUBLIC_NAMES_CAPABILITY = "quantity_expression.distinct_public_names"
+NAMED_ATTACHED_EQUIPMENT_CAPABILITY = "condition.attachment.named_equipment_on_controlled_creature"
 NAMED_COUNTER_TOTAL_CAPABILITY = "quantity_expression.public_named_counter_total"
 ATTACKING_DEFENDER_LAND_COUNT_CAPABILITY = "quantity_expression.attacking_defender_land_count"
 COMBAT_STATE_BASIC_LAND_COUNT_CAPABILITY = "quantity_expression.combat_state_basic_land_count"
 
 LINKED_OPPONENT_HAND_QUERY = ObjectQuerySpec(zones=("hand",))
+DISTINCT_LAND_NAMES_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("land",))
 LINKED_OPPONENT_TAPPED_LANDS_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("land",), tapped=True)
 LINKED_OPPONENT_CREATURES_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
 _LINKED_OPPONENT_DEFINITION_QUERIES = (
@@ -108,6 +120,13 @@ class CharacteristicQuantitySpec:
     def __post_init__(self) -> None:
         self._validate_reduction_version()
         self._validate_scope_and_exclusions()
+        if (self.schema_version == CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION
+                or self.scope is CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS):
+            self._validate_chosen_color_definition_count()
+            return
+        if self.schema_version == SOURCE_LINKED_EXILE_QUANTITY_VERSION or self.scope is CharacteristicQuantityScope.SOURCE_LINKED_EXILE:
+            self._validate_source_linked_exile_count()
+            return
         if self.schema_version == 12 or self.scope is CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD:
             if (
                 self.schema_version != 12 or self.scope is not CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD
@@ -146,7 +165,7 @@ class CharacteristicQuantitySpec:
             return
         if self.scope is CharacteristicQuantityScope.CONTROLLER_COMMANDER_CAST_COUNT:
             raise CharacteristicFragmentError("Commander cast counts require their explicit quantity version")
-        if self.schema_version == 7:
+        if self.schema_version == 7 or self.scope is CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES:
             self._validate_named_count()
         if self.schema_version==5:
             from .public_zone_quantity_model import validate_public_zone_quantity
@@ -216,8 +235,33 @@ class CharacteristicQuantitySpec:
         ):
             raise CharacteristicFragmentError("An attacking defender quantity requires the closed current land count")
 
+    def _validate_source_linked_exile_count(self) -> None:
+        if (
+            self.schema_version != SOURCE_LINKED_EXILE_QUANTITY_VERSION
+            or self.scope is not CharacteristicQuantityScope.SOURCE_LINKED_EXILE
+            or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+            or self.query is not None or self.counter_name is not None or self.exclude_source
+            or self.exclude_attached_object or self.terms or self.mana_colors
+            or self.multiplier != 1 or self.offset != 0
+        ):
+            raise CharacteristicFragmentError("Source-linked exile needs its exact unscaled current card count")
+
+    def _validate_chosen_color_definition_count(self) -> None:
+        if (
+            self.schema_version != CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION
+            or self.scope is not CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS
+            or self.query is not None or self.counter_name is not None or self.terms
+            or self.exclude_source or self.exclude_attached_object
+            or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+            or self.multiplier != 1 or self.offset != 0
+        ):
+            raise CharacteristicFragmentError("A chosen-color definition counts the complete opposing public set")
+
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}:
+        if type(self.schema_version) is not int or self.schema_version not in {
+            1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, SOURCE_LINKED_EXILE_QUANTITY_VERSION,
+            CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION,
+        }:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
@@ -229,6 +273,11 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError("Characteristic reduction requires its explicit versioned vocabulary")
         if self.reduction is CharacteristicQuantityReduction.MAXIMUM_ZONE_SIZE and self.schema_version!=5:
             raise CharacteristicFragmentError('Zone maxima require their explicit zone-cardinality version')
+        if self.reduction is CharacteristicQuantityReduction.DISTINCT_PUBLIC_NAMES and (
+            self.schema_version != 2 or self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+            or self.query != DISTINCT_LAND_NAMES_QUERY or self.exclude_source or self.exclude_attached_object
+        ):
+            raise CharacteristicFragmentError("Distinct names require the complete controlled battlefield land query")
         if type(self.multiplier) is not int or self.multiplier < 1 or type(self.offset) is not int or self.offset < 0:
             raise CharacteristicFragmentError("Characteristic reduction arithmetic requires positive multiplier and nonnegative fixed offset")
         if self.reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS, CharacteristicQuantityReduction.DEVOTION}:
@@ -245,6 +294,14 @@ class CharacteristicQuantitySpec:
         if (type(name) is not str or not name or name != " ".join(name.split())
                 or any(ord(character) < 32 for character in name)):
             raise CharacteristicFragmentError("A named count requires one canonical literal name")
+        if self.scope is CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES:
+            if (self.schema_version != 7 or self.query != ObjectQuerySpec(
+                    zones=("battlefield",), types_all=("artifact",), subtypes_all=("equipment",))
+                    or self.exclude_source or self.exclude_attached_object or self.counter_name is not None
+                    or self.terms or self.multiplier != 1 or self.offset != 0
+                    or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT):
+                raise CharacteristicFragmentError("Named attached Equipment requires its exact battlefield count")
+            return
         query = self.query
         if (not isinstance(query, ObjectQuerySpec) or query.zones not in {("battlefield",), ("graveyard",)}
                 or self.scope not in {CharacteristicQuantityScope.CONTROLLER_ZONE,
@@ -272,8 +329,10 @@ class CharacteristicQuantitySpec:
             if self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
                 raise CharacteristicFragmentError("Transformed permanents require an unscaled object count")
         elif self.scope is CharacteristicQuantityScope.ATTACHED_OBJECT:
-            if self.reduction not in {CharacteristicQuantityReduction.DISTINCT_COLORS,CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE}:
-                raise CharacteristicFragmentError('Attached-object values require colors or mana value')
+            if self.reduction not in {CharacteristicQuantityReduction.DISTINCT_COLORS,
+                                      CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE,
+                                      CharacteristicQuantityReduction.TOTAL_COUNTERS}:
+                raise CharacteristicFragmentError("Attached-object values require colors, mana value, or counters")
         else:
             raise CharacteristicFragmentError('Version 4 reserves its explicit current-value scopes')
 
@@ -471,6 +530,7 @@ class CharacteristicQuantitySpec:
             },
             CharacteristicQuantityScope.ATTACHED_TO_SOURCE: {"battlefield"},
             CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT: {"battlefield"},
+            CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES: {"battlefield"},
         }
         if query.zones[0] not in allowed_zones[self.scope]:
             raise CharacteristicFragmentError(
@@ -527,6 +587,10 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError("Defining life totals have a closed version-eleven schema")
         if version == 12 and set(value) != extended:
             raise CharacteristicFragmentError("Linked-player graveyard definitions have a closed version-twelve schema")
+        if version == SOURCE_LINKED_EXILE_QUANTITY_VERSION and set(value) != extended:
+            raise CharacteristicFragmentError("Source-linked exile quantities have a closed version-thirteen schema")
+        if version == CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION and set(value) != extended:
+            raise CharacteristicFragmentError("Chosen-color definitions require their complete versioned quantity")
         if ((version in {2, 3, 4, 5, 6, 7, 8, 9, 10}) != ("reduction" in value)
                 or (version == 3) != ("terms" in value) or (version == 7) != ("literal_name" in value)):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
@@ -614,6 +678,11 @@ class QueryCharacteristicModifierSpec:
                 "Query characteristic abilities must be unique strings"
             )
         object.__setattr__(self, "add_abilities", abilities)
+        if self.quantity.scope is CharacteristicQuantityScope.SOURCE_LINKED_EXILE and (
+            self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
+            or (self.power, self.toughness) != (2, 2) or self.minimum_count or abilities or self.controller_turn_only
+        ):
+            raise CharacteristicFragmentError("Each associated exiled card adds the exact +2/+2 to its source")
         if self.quantity.scope is CharacteristicQuantityScope.LINKED_OPPONENT_HAND and (
             self.calculation is not PowerToughnessCalculation.PER_MATCHING_OBJECT
             or (self.power, self.toughness) != (-1, -1)
@@ -636,6 +705,7 @@ class QueryCharacteristicModifierSpec:
         if self.quantity.scope in {
             CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE, CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION,
             CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD, *DEFINING_LIFE_SCOPES,
+            CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS,
         }:
             raise CharacteristicFragmentError("Definition quantities must define the source's statistics")
         if self.quantity.scope is CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE and (
@@ -782,10 +852,16 @@ class QueryPowerToughnessDefinitionSpec:
             self.schema_version != 1 or not self.define_power or not self.define_toughness
         ):
             raise CharacteristicFragmentError("The combat-state land count defines both source stats without offsets")
+        if self.quantity.scope is CharacteristicQuantityScope.SOURCE_LINKED_EXILE:
+            raise CharacteristicFragmentError("Linked exile counts support additive source modifiers only")
         if self.quantity.scope is CharacteristicQuantityScope.LINKED_PLAYER_GRAVEYARD and (
             self.schema_version != 1 or not self.define_power or not self.define_toughness
         ):
             raise CharacteristicFragmentError("A linked-player graveyard count defines both stats without offsets")
+        if self.quantity.scope is CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS and (
+            self.schema_version != 1 or not self.define_power or not self.define_toughness
+        ):
+            raise CharacteristicFragmentError("The chosen-color public count defines both exact source statistics")
         if self.quantity.scope is CharacteristicQuantityScope.LINKED_OPPONENT_DEFINITION and (
             self.schema_version != 1 or not self.define_power
             or self.define_toughness == (self.quantity.query == LINKED_OPPONENT_TAPPED_LANDS_QUERY)
@@ -1026,6 +1102,19 @@ class DynamicPowerToughnessSpec:
         )
 
 
+def nonowner_control_quantity_capabilities(value: Any) -> tuple[str, ...]:
+    """Find the existing owner predicate on a typed public quantity."""
+    if isinstance(value, Mapping):
+        query = value.get("query")
+        if (not {"scope", "counter_name", "exclude_source"} <= set(value)
+                or not isinstance(query, Mapping) or "controlled_by_nonowner" not in query):
+            return ()
+        value = CharacteristicQuantitySpec.from_dict(value)
+    if not isinstance(value, CharacteristicQuantitySpec) or value.query is None or not value.query.controlled_by_nonowner:
+        return ()
+    return object_query_capabilities(value.query)
+
+
 def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
     """Derive producer authority from nested typed quantity descriptors."""
     if isinstance(value, CharacteristicQuantitySpec):
@@ -1034,7 +1123,8 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         from .public_zone_quantity_model import public_zone_quantity_dependencies
         zone_capabilities=public_zone_quantity_dependencies(value)
         devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
-        own = (*zone_capabilities,*(('state_query.devotion.current',) if devotion else ()))
+        own = (*zone_capabilities, *nonowner_control_quantity_capabilities(value),
+               *(('state_query.devotion.current',) if devotion else ()))
         if value.get('schema_version')==6 and {'scope','query','counter_name','exclude_source'}<=set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own=(*own,'quantity_expression.keyword_layer_count')
@@ -1045,6 +1135,18 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
 
             CharacteristicQuantitySpec.from_dict(value)
             own = (*own, ENTRY_DESIGNATION_CAPABILITY)
+        if value.get("scope") == CharacteristicQuantityScope.SOURCE_LINKED_EXILE.value and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, "zone.exile_until_source_departure.fixed")
+        if value.get("scope") == CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS.value and {
+            "query", "counter_name", "exclude_source",
+        } <= set(value):
+            from .entry_designations import ENTRY_DESIGNATION_CAPABILITY
+
+            CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, ENTRY_DESIGNATION_CAPABILITY, CHOSEN_COLOR_DEFINITION_CAPABILITY)
         if value.get("scope") == "controller_transformed_permanents" and {
             "query", "counter_name", "exclude_source",
         } <= set(value):
@@ -1065,9 +1167,14 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         } <= set(value):
             CharacteristicQuantitySpec.from_dict(value)
             own = (*own, NAMED_COUNTER_TOTAL_CAPABILITY)
-        if value.get('schema_version')==7 and {'scope','query','counter_name','exclude_source'}<=set(value):
+        if value.get("reduction") == CharacteristicQuantityReduction.DISTINCT_PUBLIC_NAMES.value:
             CharacteristicQuantitySpec.from_dict(value)
+            own = (*own, DISTINCT_PUBLIC_NAMES_CAPABILITY)
+        if value.get('schema_version')==7 and {'scope','query','counter_name','exclude_source'}<=set(value):
+            quantity = CharacteristicQuantitySpec.from_dict(value)
             own=(*own,PUBLIC_NAMED_COUNT_CAPABILITY)
+            if quantity.scope is CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES:
+                own=(*own,NAMED_ATTACHED_EQUIPMENT_CAPABILITY)
         if value.get('schema_version') == 8 and {'scope','query','counter_name','exclude_source'} <= set(value):
             CharacteristicQuantitySpec.from_dict(value)
             from .commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
@@ -1083,11 +1190,23 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         if value.get('kind')=='unique_player_maximum' or value.get('fact')=='unique_player_maximum':
             own=(*own,'condition.player.unique_maximum')
         if value.get('fact')=='opponent_has_greater_metric':own=(*own,'condition.player.opponent_greater_metric')
-        if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
-                and {'scope','query','counter_name','exclude_source'}<=set(value)):
+        if value.get("fact") == "controller_unlocked_room_doors":
+            from .continuous_conditions import FixedPublicStateConditionSpec
+            from .shared_type_doors import ROOM_UNLOCKED_COUNT_CAPABILITY
+
+            FixedPublicStateConditionSpec.from_dict(value)
+            own=(*own,ROOM_UNLOCKED_COUNT_CAPABILITY)
+        if (value.get('schema_version')==4 and {'scope','query','counter_name','exclude_source'}<=set(value)
+                and type(value['scope']) is str
+                and value['scope'] in {'controller_life_total','opponent_poison_counters','attached_object'}):
             if value['scope'] in {'controller_life_total','opponent_poison_counters'}:
                 own=(*own,'quantity_expression.current_player_value')
-            if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
+            if value["scope"] == "attached_object":
+                own = (*own, "quantity_expression.attached_object_value")
+                if value.get("reduction") == "total_counters":
+                    from .counter_snapshot import COUNTER_TOTAL_CAPABILITY
+
+                    own = (*own, COUNTER_TOTAL_CAPABILITY)
         scope = value.get("scope")
         if type(scope) is str and scope in {"opponents_below_half_starting_life", "players_at_or_below_half_starting_life"} and {
             "query", "counter_name", "exclude_source",

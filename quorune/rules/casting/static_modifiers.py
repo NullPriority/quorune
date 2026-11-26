@@ -9,6 +9,7 @@ from ...cast_cost_modifiers import PublicCastCostModifierV2Spec
 from ...semantic_runtime.cast_costs import active_fixed_spell_cost_reductions
 from ...self_cast_reductions import evaluated_self_reduction
 from ...targeted_spell_costs import validate_targeted_spell_cost_fact
+from .colored_hand_credit import HAND_CREDIT_AMOUNT
 
 
 def fixed_generic_reduction(
@@ -174,3 +175,19 @@ __all__ = [
     "apply_static_reductions",
     "fixed_generic_reduction",
 ]
+
+
+def apply_cast_static_reductions(
+    host: Any, seat: str, card: Any, option: dict[str, Any], *, program: Any,
+    cast_type_line: str | None = None,
+) -> None:
+    from ...morph import FACE_DOWN_CAST_METHODS
+
+    face_down_method = option.get("id") if option.get("id") in FACE_DOWN_CAST_METHODS else None
+    apply_static_reductions(
+        host, seat, card, option, program=program,
+        fixed_reduction=fixed_generic_reduction(
+            host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
+        ) + option.get(HAND_CREDIT_AMOUNT, 0),
+        cast_type_line=cast_type_line, face_down_method=face_down_method,
+    )

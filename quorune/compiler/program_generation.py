@@ -114,9 +114,6 @@ from ..rules.library_search_capability_shapes import (
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
 )
-from ..rules.library_selection_capability_shapes import (
-    fixed_library_selection_node_capabilities,
-)
 from ..rules.hand_inspection_capability_shapes import (
     fixed_hand_inspection_node_capabilities,
 )
@@ -133,8 +130,9 @@ from ..rules.fixed_effect_clause_shapes import is_closed_fixed_effect_clause_seq
 from ..rules.closed_effect_program_shapes import (
     closed_effect_program_node_capabilities,
 )
-from ..rules.echo_capability_shapes import fixed_mana_echo_node_capabilities
+from ..rules.echo_capability_shapes import discard_echo_node_capabilities, fixed_mana_echo_node_capabilities
 from ..rules.public_quantity_mana_shapes import is_closed_public_quantity_mana_program
+from ..rules.upkeep_game_win import is_closed_upkeep_game_win_program
 from ..rules.whole_hand_discard_shapes import is_closed_whole_hand_discard_program
 from ..transmute import is_closed_transmute_program
 from ..rules.fixed_effect_clause_shapes import is_closed_optional_composed_effect_program
@@ -301,14 +299,18 @@ def _independently_exact_protection_handler(node: Any) -> bool:
 
 def _generated_static_declaration(node: Any) -> bool:
     from ..commander_pairing import PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
-    from ..triggered_mana_model import CHOSEN_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
+    from ..triggered_mana_model import (
+        CHOSEN_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT,
+        SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY,
+    )
 
     return bool(
         PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage
         or node.template_id == PRINTED_COMMANDER_ELIGIBILITY_TEMPLATE
         or node.handlers
         or (node.kind == "triggered_ability" and node.event == FIXED_TRIGGERED_MANA_EVENT
-            and tuple(node.capability_dependencies) in ((FIXED_TRIGGERED_MANA_CAPABILITY,), (CHOSEN_TRIGGERED_MANA_CAPABILITY,)))
+            and tuple(node.capability_dependencies) in ((FIXED_TRIGGERED_MANA_CAPABILITY,), (CHOSEN_TRIGGERED_MANA_CAPABILITY,),
+                                                        (SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY,)))
         or (
             node.kind == "keyword_ability"
             and node.capability_dependencies
@@ -475,17 +477,6 @@ def _is_closed_fixed_creature_power_damage_program(
     )
 
 
-def _is_closed_fixed_library_selection_program(
-    program: SemanticProgram,
-) -> bool:
-    """Recognize one fixed controller library selection partition."""
-
-    return _node_capabilities_close_program(
-        program,
-        fixed_library_selection_node_capabilities,
-    )
-
-
 def _is_closed_fixed_hand_inspection_program(
     program: SemanticProgram,
 ) -> bool:
@@ -507,7 +498,12 @@ def _is_closed_fixed_surveil_program(program: SemanticProgram) -> bool:
 def _is_closed_fixed_token_creation_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize one compiler-owned fixed token-definition instruction."""
+    """Recognize fixed token definitions and typed face-down entry."""
+    if 'cloak' in program.coverage:
+        from ..rules.cloak_shapes import cloak_node_capabilities
+        required = cloak_node_capabilities(effects=program.effects, target_schema=program.target_schema,
+                                           mechanics=set(program.coverage))
+        return bool(required) and set(required) <= set(program.capability_dependencies)
     if all(effect.get('op') == 'manifest_card' for effect in program.effects):
         from ..rules.manifest_shapes import manifest_node_capabilities
         return bool(manifest_node_capabilities(effects=program.effects, target_schema=program.target_schema,
@@ -625,7 +621,7 @@ def _is_closed_targeted_tap_state_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"tap-and-untap", "cr-115-targets", "cr-615-prevention-effects"}
+                if value in {"tap-and-untap", "cr-115-targets", "cr-615-prevention-effects", "fixed-resolution-control", "cr-611-continuous-effects"}
             ),
         )
     )
@@ -664,10 +660,11 @@ def _is_closed_fixed_counter_placement_program(
         keyword_counter_mechanic(program.effects[0].get('counter'))
         if len(program.effects) == 1 else None
     )
+    from ..rules.aggregated_arrival_counters import MATCHED_ARRIVAL_MECHANIC
     placement_mechanics = {
         'cr-122-counters', 'cr-115-targets', 'named-counter-doubling',
         'fixed-entry-event-object-counter', 'fixed-public-event-source-counter',
-        'fixed-public-event-target-counter', keyword,
+        'fixed-public-event-target-counter', MATCHED_ARRIVAL_MECHANIC, keyword,
     }
     required = set(
         fixed_counter_placement_node_capabilities(
@@ -973,13 +970,13 @@ def _is_closed_fixed_life_cumulative_upkeep_program(
     )
 
 
-def _is_closed_fixed_mana_echo_program(
+def _is_closed_fixed_echo_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize exactly one ordinary fixed-mana Echo trigger."""
+    """Recognize one closed Echo payment and its shared upkeep condition."""
 
-    required = set(
-        fixed_mana_echo_node_capabilities(
+    for shape in (fixed_mana_echo_node_capabilities, discard_echo_node_capabilities):
+        required = shape(
             effects=program.effects,
             event_condition=program.event_condition,
             target_schema=program.target_schema,
@@ -987,10 +984,9 @@ def _is_closed_fixed_mana_echo_program(
                 value for value in program.coverage if value == "echo"
             ),
         )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
+        if required:
+            return set(required).issubset(program.capability_dependencies)
+    return False
 
 
 def _is_closed_fixed_counter_placement_set_program(
@@ -1195,6 +1191,8 @@ def _is_closed_graveyard_copy_cast_program(program: SemanticProgram) -> bool:
 
 def _closed_effect_recognizers():
     from ..preparation import is_closed_activated_preparation_program
+    from ..rules.noted_mana import is_closed_noted_mana_charge_program
+    from ..rules.extra_turn_shapes import is_closed_fixed_end_turn_program, is_closed_fixed_next_turn_control_program
     from ..rules.chosen_color_target_shapes import is_closed_chosen_color_target_program
     from ..rules.post_exchange_token import is_closed_post_exchange_token_program
     from ..rules.chosen_type_target_shapes import is_closed_chosen_creature_type_target_program
@@ -1204,13 +1202,15 @@ def _closed_effect_recognizers():
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
-    from ..rules.revealed_library_top import is_closed_reveal_top_program
+    from ..rules.revealed_library_top import is_closed_public_library_top_result
+    from ..rules.library_result_capability_shapes import is_closed_target_permanent_shuffle_reveal_program
     from ..rules.token_mill_repeat import is_closed_token_mill_repeat_program
     from ..rules.library_bottom_results import is_closed_library_bottom_result_program
     from ..rules.per_player_target_sets import is_closed_per_player_target_program
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
     from ..rules.library_order_shapes import is_closed_fixed_library_order_program
+    from ..rules.library_result_capability_shapes import is_closed_public_library_piles_program
     from ..rules.graveyard_card_targets import is_closed_opposing_graveyard_return_program
     from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
     from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
@@ -1220,8 +1220,15 @@ def _closed_effect_recognizers():
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     from ..rules.next_cast_counter_protection import is_closed_next_cast_protection_program
     from ..rules.land_play_permissions import is_closed_turn_land_plays_program
+    from .nonleaf_effect_closure import (
+        _is_closed_fixed_library_selection_program,
+        _is_closed_variable_library_selection_program,
+    )
     return (
         is_closed_activated_preparation_program,
+        is_closed_noted_mana_charge_program,
+        is_closed_fixed_end_turn_program,
+        is_closed_fixed_next_turn_control_program,
         is_closed_chosen_creature_type_target_program,
         is_closed_post_exchange_token_program,
         is_closed_chosen_color_target_program,
@@ -1231,7 +1238,8 @@ def _closed_effect_recognizers():
         is_closed_target_player_sequence_program,
         is_closed_target_set_result_sequence_program,
         is_closed_reanimation_entry_counter_program,
-        is_closed_reveal_top_program,
+        is_closed_public_library_top_result,
+        is_closed_target_permanent_shuffle_reveal_program,
         is_closed_token_mill_repeat_program,
         is_closed_library_bottom_result_program,
         is_closed_per_player_target_program,
@@ -1277,9 +1285,11 @@ def _closed_effect_recognizers():
         _is_closed_fixed_type_to_hand_search_program,
         _is_closed_fixed_life_program,
         _is_closed_fixed_library_selection_program,
+        _is_closed_variable_library_selection_program,
         _is_closed_fixed_hand_inspection_program,
         _is_closed_fixed_scry_program,
         is_closed_fixed_library_order_program,
+        is_closed_public_library_piles_program,
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,
         is_closed_fixed_prevention_program,
@@ -1312,13 +1322,14 @@ def _closed_effect_recognizers():
         _is_closed_fixed_player_counter_placement_program,
         _is_closed_fixed_life_cumulative_upkeep_program,
         _is_closed_fixed_mana_cumulative_upkeep_program,
-        _is_closed_fixed_mana_echo_program,
+        _is_closed_fixed_echo_program,
         _is_closed_targeted_counter_program,
         _is_closed_targeted_destruction_program,
         _is_closed_self_regeneration_program,
         _is_closed_mass_destruction_program,
         _is_closed_targeted_exile_program,
         _is_closed_targeted_return_to_hand_program,
+        is_closed_upkeep_game_win_program,
         _is_closed_targeted_graveyard_return_program,
         _is_closed_public_graveyard_card_exile_program,
         _is_closed_fixed_public_zone_move_set_program,
@@ -1350,18 +1361,16 @@ def _is_closed_public_query_amount_program(program: SemanticProgram) -> bool:
 
 def _is_closed_effect_program(program: SemanticProgram) -> bool:
     """Return whether a reviewed capability-shaped effect owns execution."""
-    from ..rules.named_searches import is_closed_named_zone_search_program
-    if is_closed_named_zone_search_program(program):
-        return True
-    from .nonleaf_effect_closure import effect_program_is_closed
-    from ..rules.attachment_action_capability_shapes import (
-        is_closed_fixed_source_equipment_activation_program, is_closed_targeted_equipment_attachment_program,
-    )
-    from ..rules.cast_cascade_grants import is_closed_cast_cascade_program
-    from ..rules.next_spell_payment import is_closed_next_spell_payment_program
-    if (is_closed_next_spell_payment_program(program) or is_closed_cast_cascade_program(program)
-            or is_closed_fixed_source_equipment_activation_program(program)
-            or is_closed_targeted_equipment_attachment_program(program)):
+    from .nonleaf_effect_closure import direct_effect_program_is_closed, effect_program_is_closed
+    from ..rules.artifact_search_exchange import artifact_search_exchange_program_dependencies
+
+    try:
+        exchange_dependencies = artifact_search_exchange_program_dependencies(program)
+    except ValueError:
+        return False
+    if exchange_dependencies:
+        return set(exchange_dependencies) <= set(program.capability_dependencies)
+    if direct_effect_program_is_closed(program):
         return True
     return effect_program_is_closed(program,recognizers=_closed_effect_recognizers(),
         recursive_is_closed=_is_closed_effect_program,composed_is_closed=is_closed_composed_spell_effect_program)
@@ -1442,8 +1451,8 @@ def _generated_programs_from_ir(
     )
     return list(
         with_compiled_activated_ability_catalog(
-            record, programs, ir=ir, rulings_hash=rulings_hash,
-            authored_by=ORACLE_COMPILER_VERSION,
+            record, programs, ir=ir, rulings_hash=rulings_hash, authored_by=ORACLE_COMPILER_VERSION,
+            capability_registry=capability_registry, capability_profile=capability_profile,
         )
     )
 
@@ -1549,18 +1558,11 @@ def _trusted_generated_programs(
     }
 
 
-def _register_augmented_activations(registry, record, existing_programs, provisional_programs):
-    for existing, augmented in zip(
-        existing_programs,
-        with_activated_ability_catalog(
-            record,
-            existing_programs,
-            reference_programs=provisional_programs,
-        ),
-        strict=True,
-    ):
-        if existing.to_dict() != augmented.to_dict():
-            registry.put(augmented)
+def _augment_existing_activation_catalog(registry, record, existing_programs, provisional_programs):
+    augmented = with_activated_ability_catalog(record, existing_programs, reference_programs=provisional_programs)
+    for existing, candidate in zip(existing_programs, augmented, strict=True):
+        if existing.to_dict() != candidate.to_dict():
+            registry.put(candidate)
 
 
 def register_generated_programs(
@@ -1614,7 +1616,7 @@ def register_generated_programs(
             from ..card_programs.adapters import retain_rules_only_card_program
 
             retain_rules_only_card_program(db, record, ir, registry, **generation_parameters)
-        _register_augmented_activations(registry, record, existing_programs, provisional_programs)
+        _augment_existing_activation_catalog(registry, record, existing_programs, provisional_programs)
         program_key_counts = Counter(
             program.key for program in provisional_programs
         )

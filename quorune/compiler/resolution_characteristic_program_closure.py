@@ -30,7 +30,13 @@ def is_closed_resolution_characteristic_program(program):
             effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
         )
         return bool(required and set(required) <= set(program.capability_dependencies))
-    for resolver in (fixed_resolution_characteristic_set_node_capabilities, temporary_quoted_grant_node_capabilities,temporary_keyword_removal_capabilities):
+    quoted = temporary_quoted_grant_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema,
+        mechanic_ids=program.coverage, cost_schema=program.cost_schema,
+    )
+    if quoted and set(quoted) <= set(program.capability_dependencies):
+        return True
+    for resolver in (fixed_resolution_characteristic_set_node_capabilities, temporary_keyword_removal_capabilities):
         required = resolver(effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage)
         if required and set(required) <= set(program.capability_dependencies):
             return True

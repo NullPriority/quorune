@@ -96,10 +96,25 @@ def compiled_emblem_effect_dependencies(effect):
 
 
 def compiled_emblem_runtime_dependencies(program):
+    from .delayed_object_model import (
+        ARTIFACT_GRAVEYARD_RETURN_DEPENDENCIES, ARTIFACT_GRAVEYARD_RETURN_EVENT,
+        artifact_graveyard_return_condition, artifact_graveyard_return_effect, is_artifact_graveyard_return,
+        validate_artifact_graveyard_return,
+    )
+
     required = set()
     def visit(value):
         if isinstance(value, Mapping):
             required.update(compiled_emblem_effect_dependencies(value))
+            if is_artifact_graveyard_return(value):
+                validate_artifact_graveyard_return(value, compiled=True)
+                if (program.event != ARTIFACT_GRAVEYARD_RETURN_EVENT
+                        or program.event_condition != artifact_graveyard_return_condition()
+                        or program.target_schema is not None or program.handlers
+                        or tuple(program.effects) != (artifact_graveyard_return_effect(),)
+                        or EMBLEM_CHILD_COVERAGE not in program.coverage):
+                    raise ValueError("Delayed artifact return requires its exact command-zone subscription")
+                required.update(ARTIFACT_GRAVEYARD_RETURN_DEPENDENCIES)
             for child in value.values():
                 visit(child)
         elif isinstance(value, (list, tuple)):

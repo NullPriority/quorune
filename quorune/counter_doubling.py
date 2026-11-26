@@ -78,12 +78,15 @@ def resolve_effect_counters_on_refs(host: CounterDoublingHost, *, actor, object_
 
 
 def resolve_effect_counter_set(host: CounterPlacementSetHost, *, actor, spec: AffectedPermanentSetSpec,
-    counter_name, amount, reason, source_ref=None, replacement_selections=(), paired_loyalty_source=None):
+    counter_name, amount, reason, source_ref=None, replacement_selections=(), paired_loyalty_source=None,
+    source_and_subtype_identity=None, declared_attack_members=None):
     if type(amount) is int:
         return resolve_counter_placement_set(host, actor=actor, spec=spec, counter_name=counter_name,
             amount=amount, reason=reason, source_ref=source_ref, replacement_selections=replacement_selections,
-            paired_loyalty_source=paired_loyalty_source)
-    if amount != EXISTING_COUNTER_AMOUNT or paired_loyalty_source is not None:
+            paired_loyalty_source=paired_loyalty_source, source_and_subtype_identity=source_and_subtype_identity,
+            declared_attack_members=declared_attack_members)
+    if (amount != EXISTING_COUNTER_AMOUNT or paired_loyalty_source is not None
+            or source_and_subtype_identity is not None or declared_attack_members is not None):
         raise CounterPlacementSetError("Unsupported counter-set amount")
     if spec.exclude_source and source_ref is None:
         raise CounterPlacementSetError("Source-excluding counter sets require a source")

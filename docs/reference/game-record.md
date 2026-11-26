@@ -20,6 +20,14 @@ A physical card can carry imported printing details in the optional
 Historical cards without printing data continue to omit the field when
 serialized.
 
+The current reviewed turn-control effect declares `turn_control_lifetime_version`
+with value `1`. Pending control keeps `next_turn_control_lifetime_version` in the
+target player's stats until their next actual turn. Active control uses
+`turn_control_lifetime_version` through exceptional priority and every repeated
+cleanup. The following actual turn clears the marker. Archived programs without
+the descriptor retain their original early-cleanup expiration. Declared null,
+boolean and unknown marker values are invalid.
+
 Fixed-mana Evoke descriptor version two emits payment-marker version two and
 records `evoke_source_identity_version: 2` with the source battlefield incarnation.
 Resolution requires that same incarnation under the trigger controller; blink,
@@ -647,6 +655,14 @@ Delve and mana remainders. Save/load revalidates the original reservation rather
 than replacing it with a new selection. Existing casting options omit this
 frame and retain their serialized form.
 
+A controller's game-duration unbounded cleanup limit is a typed
+`resolved_no_maximum_hand_size` continuous-journal entry. It records the resolving
+stack reference, fixed recipient, and creation timestamp. Round trips preserve
+its precedence alongside static hand-size settings. When a rolled draw
+suspends, the ordinary draw continuation carries its already-bound count and
+the following cleanup instruction. Earlier checkpoints retain their existing
+shape.
+
 Fixed random spell prices use the closed `random_discard` additional-cost
 descriptor with schema one and count one. Suspended payments reuse the private
 `_random_discard_cost_refs` response field and server payment identity. New
@@ -1094,6 +1110,13 @@ manifest binds this mode to the initial checkpoint. Expend occurrences retain
 an immutable player and before/after payment totals; later spending cannot
 change a queued crossing.
 
+
+`turn_history.land_play_history_version` enables the complete current-turn
+land-play facts when set to one and is mirrored in format provenance. A
+committed play records its acting seat and the land incarnation. Turn reset
+clears the facts and preserves the mode. A historical checkpoint without
+this mode records no additional land-play facts during replay.
+
 The version-one `qualified_spell_cast_number` event condition stores one
 closed spell-history query and a fixed positive equality threshold. It locates
 the exact committed cast incarnation in the existing current-turn journal and
@@ -1360,10 +1383,26 @@ destination scope when reconstructing the batch. Damage clearing commits only
 after the movement preflight succeeds. An absent version preserves the
 historical selection and commit order.
 
+The version-one `saga_intrinsic_ability_version` binds current chapter-aware
+Saga entry and turn actions to the initial checkpoint. Records without that
+field replay with their historical Saga behavior.
+
+The version-one rad trigger marker, `rad_trigger_version`, appears in both
+the initial checkpoint state and the record format. It enables radiation at
+the active player's precombat main phase. Historical records omit the marker
+and keep passive rad counters through replay. A present null, boolean,
+unknown version, or disagreement between the two locations rejects the record.
+
 Fresh games record the version-one `counter_quantity_provenance_version` field.
 Counter replacement continuations preserve whether a positive quantity
 replacement has changed the placement's origin for effect-only matching.
 Records with the field absent retain the historical matching behavior.
+
+The version-one `permanent_counter_receipt_history_version` binds the initial
+checkpoint to current-turn counter receipt history. Committed placements and
+entry counters record one receipt per receiving battlefield incarnation. A
+receipt remains valid after counter removal and the next turn starts a new
+journal. Earlier records keep their original placement history.
 
 An Endure counter-payment continuation records `effect_generated=false` in
 its intent identity. Resume checks the choosing controller, source

@@ -15,6 +15,8 @@ from .util import normalize_card_name, stable_json
 
 ENTRY_DESIGNATION_HANDLER_ID = "replacement.zone.entry-designation.v1"
 ENTRY_DESIGNATION_CAPABILITY = "zone.entry.public_designation"
+ENTRY_FACTION_CAPABILITY = "zone.entry.faction_designation"
+ENTRY_FACTIONS = ("Brotherhood", "Enclave")
 ENTRY_OPPONENT_HANDLER_ID = "replacement.zone.linked-entry-opponent.v1"
 ENTRY_OPPONENT_FIELD = "entry_chosen_opponent"
 LINKED_ENTRY_OPPONENT_FIELD = "linked_entry_opponent"
@@ -24,6 +26,12 @@ LINKED_ENTRY_PLAYER_TEMPLATE = "linked-entry-player-v2"
 LINKED_PLAYER_PROTECTION_HANDLER_ID = "continuous.characteristics.linked-player-protection.v1"
 LINKED_PLAYER_PROTECTION_TEMPLATE = "linked-entry-player-protection-v1"
 LINKED_PLAYER_PROTECTION_CAPABILITIES = (ENTRY_DESIGNATION_CAPABILITY, "protection.typed.debt")
+LINKED_COLOR_PROTECTION_HANDLER_ID = "continuous.characteristics.linked-color-protection.v1"
+LINKED_COLOR_PROTECTION_TEMPLATE = "linked-entry-color-protection-v1"
+LINKED_COLOR_PROTECTION_CAPABILITY = "continuous.characteristics.linked_entry_color_protection"
+LINKED_COLOR_PROTECTION_CAPABILITIES = (
+    ENTRY_DESIGNATION_CAPABILITY, "protection.typed.debt", LINKED_COLOR_PROTECTION_CAPABILITY,
+)
 LINKED_PLAYER_DAMAGE_HANDLER_ID = "replacement.damage.quantity.chosen-player.v3"
 LINKED_PLAYER_DAMAGE_TEMPLATE = "linked-entry-player-damage-quantity-v1"
 LINKED_PLAYER_RECEIVED_DAMAGE_TEMPLATE = "fixed-counter-linked-player-received-damage-v1"
@@ -71,10 +79,15 @@ CONDITIONAL_CHOSEN_CHARACTERISTICS_CAPABILITY = "continuous.characteristics.cond
 class EntryDesignationKind(StrEnum):
     COLOR = "color"
     CREATURE_TYPE = "creature_type"
+    FACTION = "faction"
 
     @property
-    def annotation(self) -> Literal["chosen_color", "chosen_creature_type"]:
-        return "chosen_color" if self is self.COLOR else "chosen_creature_type"
+    def annotation(self) -> Literal["chosen_color", "chosen_creature_type", "chosen_faction"]:
+        return {
+            self.COLOR: "chosen_color",
+            self.CREATURE_TYPE: "chosen_creature_type",
+            self.FACTION: "chosen_faction",
+        }[self]
 
     @property
     def event_field(self) -> str:
@@ -82,11 +95,9 @@ class EntryDesignationKind(StrEnum):
 
     @property
     def values(self) -> tuple[str, ...]:
-        return (
-            tuple("WUBRG")
-            if self is self.COLOR
-            else tuple(sorted(CREATURE_SUBTYPES))
-        )
+        if self is self.FACTION:
+            return ENTRY_FACTIONS
+        return tuple("WUBRG") if self is self.COLOR else tuple(sorted(CREATURE_SUBTYPES))
 
 
 def validate_counted_entry_counter_name(value: object) -> str:
@@ -180,6 +191,9 @@ def validate_designation(kind: EntryDesignationKind, value: object) -> str:
     if kind is EntryDesignationKind.COLOR:
         if value not in tuple("WUBRG"):
             raise ValueError("A chosen color must be one WUBRG color")
+    elif kind is EntryDesignationKind.FACTION:
+        if value not in ENTRY_FACTIONS:
+            raise ValueError("A chosen faction must be Brotherhood or Enclave")
     elif canonical_creature_subtype(value) != value:
         raise ValueError("A chosen creature type must use the pinned vocabulary")
     return value

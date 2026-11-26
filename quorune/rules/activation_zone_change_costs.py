@@ -77,6 +77,15 @@ def activation_zone_change_cost_reference(
             and origin == 'battlefield' and destination == 'graveyard'
             and not {'random_discard', 'choose_cost'}.intersection(cost_summary)
         ) else None
+    if "mill_library" in cost_summary:
+        refs = response.get("_mill_library_cost_refs")
+        count = cost_summary["mill_library"]
+        return object_ref if (
+            origin == "library" and destination == "graveyard" and response.get("from") == "battlefield"
+            and type(count) is int and count == 1
+            and isinstance(refs, (list, tuple)) and tuple(refs) == (object_ref,)
+            and not {"random_discard", "choose_cost", "granting_attachment"}.intersection(cost_summary)
+        ) else None
     if 'random_discard' in cost_summary:
         refs=response.get('_random_discard_cost_refs')
         payment_id=response.get('_mana_payment_id')

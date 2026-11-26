@@ -4,6 +4,29 @@ from ...activation_cost_choice import CostChoice
 from ...replacement.immutable import FrozenMap
 
 
+def source_sacrifice_power_price_is_closed(cost):
+    """Require one ordinary tap and self-sacrifice with a positive fixed mana price."""
+    flags = {
+        "tap_source": True, "sacrifice_source": True,
+        "untap_source": False, "discard_source": False, "exile_source": False,
+    }
+    empty = {"complex_symbols", "choices", "uncompiled_costs"}
+    zero = {"life_payment", "energy_payment"}
+    absent = {"loyalty_delta", "source_counter_removal_cost"}
+    if not isinstance(cost, Mapping) or set(cost) != set(flags) | empty | zero | absent | {"text", "mana"}:
+        return False
+    mana = cost["mana"]
+    return (
+        isinstance(mana, Mapping) and set(mana) == set("WUBRGC") | {"GENERIC"}
+        and all(type(amount) is int and amount >= 0 for amount in mana.values()) and any(mana.values())
+        and all(cost[name] is flag for name, flag in flags.items())
+        and all(isinstance(cost[name], (list, tuple)) and not cost[name] for name in empty)
+        and all(type(cost[name]) is int and cost[name] == 0 for name in zero)
+        and all(cost[name] is None for name in absent)
+        and type(cost["text"]) is str and bool(cost["text"])
+    )
+
+
 def activation_creature_sacrifice_choice(cost):
     if not isinstance(cost, Mapping):
         choices = getattr(cost, 'choices', None)

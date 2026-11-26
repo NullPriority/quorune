@@ -20,8 +20,7 @@ class TargetedPowerSacrificeLifeIntent(MoveObjectsSimultaneouslyIntent):
             or self.transition_kind is not ZoneTransitionKind.SACRIFICE
             or self.battlefield_controller is not None or self.battlefield_tapped or self.library_order is not None
             or not isinstance(self.result, GreatestPowerSacrificeLifeResult)
-            or ((self.result.characteristic == "toughness" or self.result.draw_after_life or self.result.draw_then_lose_life)
-                and self.result.player != self.actor)
+            or not self.result.has_valid_actor(self.actor)
         ):
             raise ValueError("Sacrifice life requires one exact affected player's selected creature")
 
@@ -38,6 +37,8 @@ def validate_targeted_power_sacrifice_life_identity(value: Mapping) -> dict:
             or any(type(value[key]) is not str or not value[key] for key in strings)):
         raise ValueError("Sacrifice life continuation requires its exact movement identity")
     result = GreatestPowerSacrificeLifeResult.from_dict(value["result"])
-    if (result.characteristic == "toughness" or result.draw_after_life or result.draw_then_lose_life) and result.player != value["actor"]:
-        raise ValueError("Controller sacrifice life requires the original actor")
+    if not result.has_valid_actor(value["actor"]):
+        if result.sacrificing_player is None:
+            raise ValueError("Controller sacrifice life requires the original actor")
+        raise ValueError("Targeted sacrifice life requires its resolving or sacrificing player")
     return {**dict(value), "result": result.to_dict()}

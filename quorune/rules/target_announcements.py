@@ -61,12 +61,15 @@ def dispatch_target_announcements(
             card.zone == 'battlefield' and not card.phased_out), None)
         if card is None:
             continue
-        types, _, _ = host._type_parts(str(host._effective_card_data(card).get('type_line') or ''))
+        types, subtypes, _ = host._type_parts(str(host._effective_card_data(card).get('type_line') or ''))
         occurrence = TargetAnnouncement(
             item.ref, item.controller, item.kind, card.ref, card.controller,
             card.logical_object_id, tuple(sorted(types)),
         )
-        host._dispatch_semantic_event(TARGET_ANNOUNCEMENT_EVENT, occurrence.to_context(), trigger_batch=trigger_batch)
+        host._dispatch_semantic_event(
+            TARGET_ANNOUNCEMENT_EVENT, occurrence.to_context(), trigger_batch=trigger_batch,
+            target_announcement_subtypes=tuple(sorted(subtypes)),
+        )
         if collect_ward:
             announced.append(ref)
     if announced:

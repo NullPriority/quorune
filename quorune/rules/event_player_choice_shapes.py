@@ -85,6 +85,16 @@ def event_player_sacrifice_node_capabilities(*, effects, target_schema, mechanic
 
 
 def is_closed_event_player_sacrifice_program(program):
+    from .opponent_damage_source_sacrifice import (
+        is_opponent_damage_source_sacrifice, opponent_damage_source_sacrifice_runtime_dependencies,
+    )
+
+    if any(is_opponent_damage_source_sacrifice(effect) for effect in program.effects):
+        try:
+            required = opponent_damage_source_sacrifice_runtime_dependencies(program)
+        except (TypeError, ValueError):
+            return False
+        return bool(required) and set(required).issubset(program.capability_dependencies)
     required = event_player_sacrifice_node_capabilities(effects=program.effects,
         target_schema=program.target_schema, mechanic_ids=program.coverage)
     return bool(required) and set(required).issubset(program.capability_dependencies) and all(
@@ -214,6 +224,12 @@ def event_bound_public_choice_recipient_has_left(host, raw_effect, effect):
 
 def event_player_choice_node_capabilities(*, effects, target_schema, mechanic_ids):
     """Resolve one of the independently closed affected-player choice results."""
+    from .opponent_damage_source_sacrifice import (
+        is_opponent_damage_source_sacrifice, opponent_damage_source_sacrifice_node_capabilities,
+    )
+
+    if len(effects) == 1 and is_opponent_damage_source_sacrifice(effects[0]):
+        return opponent_damage_source_sacrifice_node_capabilities(effects=effects, target_schema=target_schema)
     mechanics = tuple(mechanic_ids)
     if SPELL_CASTER_LAND_RETURN_MECHANIC in mechanics:
         return _spell_caster_land_return_capabilities(effects, target_schema)

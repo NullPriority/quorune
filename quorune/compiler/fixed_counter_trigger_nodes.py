@@ -28,7 +28,7 @@ from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE,
 from .announced_damage_templates import fixed_announced_damage_template
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
-from .trigger_result_templates import binding_effect_template
+from .trigger_result_templates import bound_trigger_effect_template as binding_effect_template
 from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition, validate_public_trigger_metadata
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
@@ -175,6 +175,8 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         CREATURE_EXPLORE_VARIANT,
         MUTATE_SOURCE_VARIANT,
         'player_expend',
+        'ordinary_land_mana_tap',
+        'opponent_land_enters_with_other_arrival',
         'public_waterbend',
         'public_ring_temptation', 'public_ring_bearer_choice',
         QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
@@ -239,32 +241,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         },
     }
 )
-MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
-    {
-        'source_block_pair_counterpart',
-        "source_room_door_unlock",
-        "controlled_enchantment_entry_or_room_unlock",
-        "enchanted_creature_tap_or_received_damage",
-        "independent_dual_event",
-        "qualified_zone_event_pair",
-        GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
-        "source_enters_or_attacks",
-        "source_enters_or_dies",
-        "source_attacks_or_blocks",
-        "source_blocks_or_becomes_blocked",
-        "source_enters_or_leaves_the_battlefield",
-        "source_enters_or_is_put_into_a_graveyard_from_the_battlefield",
-        "source_enters_or_is_turned_face_up",
-        "source_enters_or_deals_combat_damage_to_a_player",
-        "source_enters_or_becomes_monstrous",
-        "source_transform_pair",
-        "source_artifact_enters_and_is_sacrificed",
-        "enchanted_creature_attacks_or_blocks",
-        COMBAT_PARTICIPANT_DAMAGE_VARIANT,
-        "source_attacks_or_blocks_with_controlled_dinosaur",
-    }
-)
-from .public_event_closure_variants import PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
+from .public_event_closure_variants import MULTI_EVENT_BINDING_CLOSURE_VARIANTS, PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         *PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
@@ -1197,9 +1174,9 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
-def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool, effect_mechanics=()) -> tuple[str, ...]:
+def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool, effect_mechanics=(), result_template_id=None) -> tuple[str, ...]:
     from .trigger_runtime_coverage import trigger_runtime_coverage
-    return trigger_runtime_coverage(binding, current_ability=current_ability, effect_mechanics=effect_mechanics,
+    return trigger_runtime_coverage(binding, current_ability=current_ability, effect_mechanics=effect_mechanics, result_template_id=result_template_id,
         qualified_zone_variant=QUALIFIED_ZONE_VARIANT,
         aggregated_zone_variant=AGGREGATED_ZONE_VARIANT,
         ability_word_public_event_variants=_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
@@ -1229,7 +1206,9 @@ def _counter_binding_accepts_result(binding, body_mechanics, *, effects, target_
             effects=effects, target_schema=target_schema, mechanic_ids=body_mechanics,
         ):
             return True
-    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter','fixed-public-event-set-counter'}.intersection(body_mechanics))
+    from ..rules.aggregated_arrival_counters import MATCHED_ARRIVAL_MECHANIC
+    return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter',
+        'fixed-public-event-target-counter', 'fixed-public-event-set-counter', MATCHED_ARRIVAL_MECHANIC}.intersection(body_mechanics))
         or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
         or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
         and binding.variant in PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS)
@@ -1403,6 +1382,14 @@ def fixed_typed_event_effect_trigger_node(
 ) -> OracleNode | None:
     """Compose one closed event binding with one reviewed typed effect body."""
 
+    from .source_death_counter_shuffle import source_death_counter_shuffle_node
+
+    departure = source_death_counter_shuffle_node(
+        node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+    )
+    if departure is not None:
+        return departure
     counter_node = fixed_counter_event_trigger_node(
         node_id=node_id,
         line=line,
@@ -1422,12 +1409,21 @@ def fixed_typed_event_effect_trigger_node(
     binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
+    from ..rules.grouped_graveyard_departure import COVERAGE as GROUPED_GRAVEYARD_DEPARTURE_COVERAGE
+    from .grouped_graveyard_departure import grouped_graveyard_departure_result
+
+    departure_result = grouped_graveyard_departure_result(binding)
     allocation = fixed_announced_damage_template(
         binding.body,
         card_name=card_name,
         allow_source_pronoun=binding.variant in {"source_attacks", "source_enters_or_attacks"},
     )
-    if allocation is not None:
+    if departure_result is not None:
+        effects, mechanics, _ = departure_result
+        binding = replace(binding, event=FixedCounterTriggerEvent.CARD_LEAVE_GRAVEYARD_LOOKBACK)
+        compiled = binding.typed_effect_template_id, effects, None, mechanics
+        requires_current_ability = True
+    elif allocation is not None:
         compiled, requires_current_ability = allocation, False
     else:
         compiled, requires_current_ability = _binding_effect_template(
@@ -1449,7 +1445,7 @@ def fixed_typed_event_effect_trigger_node(
             and FIXED_NONREPEATING_MODAL_MECHANIC not in body_mechanics
         )
         or (_COUNTER_PLACEMENT_OPERATIONS.intersection(_nested_operations(effects))
-            and not (closed_unblocked_poison
+            and not (departure_result is not None or closed_unblocked_poison
                      or len(effects) == 1 and effects[0].get("op") == "look_top_shared_type_reveal"))
     ):
         return None
@@ -1468,27 +1464,21 @@ def fixed_typed_event_effect_trigger_node(
         capability_profile=capability_profile,
         explicit_capabilities=(
             *binding.explicit_capabilities,
+            *(departure_result[2] if departure_result is not None else ()),
             *crime_fact_dependencies(binding.public_state_condition.to_dict() if binding.public_state_condition is not None else None),
             *public_trigger_condition_capabilities(binding.public_state_condition),
         ),
     )
-    residual_ids = (
-        (
-            append_residual(
-                residuals,
-                kind="dependency_contract",
-                text=line,
-                span=span,
-                reason=(
-                    "fixed typed event-effect trigger lacks a trusted "
-                    "capability closure"
-                ),
-                blockers=gate.blockers,
-            ),
+    residual_ids = ()
+    if gate.blockers:
+        residual_id = append_residual(residuals,
+            kind="dependency_contract",
+            text=line,
+            span=span,
+            reason="fixed typed event-effect trigger lacks a trusted capability closure",
+            blockers=gate.blockers,
         )
-        if gate.blockers
-        else ()
-    )
+        residual_ids = (residual_id,)
     closure = gate.closure
     return OracleNode(
         node_id=node_id,
@@ -1505,9 +1495,10 @@ def fixed_typed_event_effect_trigger_node(
         target_schema=target_schema,
         runtime_coverage=(
             *_event_runtime_coverage(
-                binding, effect_mechanics=body_mechanics,
-                current_ability=fixed_typed_result_requires_current_ability(binding, template, requires_current_ability),
+                binding, effect_mechanics=body_mechanics, result_template_id=template,
+                current_ability=departure_result is not None or fixed_typed_result_requires_current_ability(binding, template, requires_current_ability),
             ),
+            *((GROUPED_GRAVEYARD_DEPARTURE_COVERAGE,) if departure_result is not None else ()),
             *((SCHEDULED_PLAYER_DEPARTURE_COVERAGE,) if SCHEDULED_PLAYER_MECHANIC in body_mechanics else ()),
         ),
         mechanics=mechanics,

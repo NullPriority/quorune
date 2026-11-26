@@ -244,3 +244,162 @@ class PersistentPublicCopyTests(InheritedNativeFixture, unittest.TestCase):
         self.assertNotEqual("exact", compiled(card, registry).status)
         with patch("quorune.compiler.persistent_public_copy.persistent_public_copy_template", return_value=None):
             self.assertNotEqual("exact", compiled(card, self.registry).status)
+
+
+class ControlledArtifactTemporaryCopyTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = TemporaryDirectory()
+        path = Path(cls.temporary.name) / "controlled-artifact-temporary-copy.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/scryfall-exact-lists.json",
+            ROOT / "tests/fixtures/fixed-qualified-stack-copy-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Controlled artifact copy", [
+            DeckEntry("Sliver Hivelord", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Sliver Hivelord"])
+
+    def test_shuri_copy_is_strict_and_requires_its_tap_price_timing_and_closed_roles(self):
+        from unittest.mock import patch
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime, bind_semantic_program_runtime
+        from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+        from quorune.rules.persistent_public_copy import (
+            CONTROLLED_ARTIFACT_COPY_CAPABILITY, CONTROLLED_ARTIFACT_COPY_VERSION,
+        )
+        from quorune.semantics import SemanticRegistry
+
+        profile = "commander_review"
+        card = self.db.lookup("Shuri, Wakandan Inventor", fuzzy=False)
+        registry = SemanticRegistry()
+        reviewed = registry.programs_for_oracle(card.oracle_id, event="activate")[0]
+        register_generated_programs(self.db, registry, [card], capability_registry=self.registry,
+            capability_profile=profile, promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True)
+        current, = registry.programs_for_oracle(card.oracle_id, event="activate")
+        self.assertEqual(reviewed.key, current.key)
+        self.assertTrue(current.provenance["authored_by"].startswith("oracle-ir-v"))
+        self.assertEqual(1, current.effects[0][CONTROLLED_ARTIFACT_COPY_VERSION])
+        self.assertTrue(current.handlers[0]["ability"]["sorcery_speed"])
+        self.assertEqual(1, current.cost_schema["mana"]["GENERIC"])
+        whole = compile_best_available_card_program(self.db, card, semantic_registry=registry,
+            capability_registry=self.registry, capability_profile=profile)
+        bound = bind_card_program_runtime(whole, capability_registry=self.registry, profile=profile)
+        self.assertTrue(bound["strict_capability_ready"], bound)
+        self.assertFalse(bound["compatibility_provenance"])
+        deps = tuple(cap for cap in current.capability_dependencies if cap != CONTROLLED_ARTIFACT_COPY_CAPABILITY)
+        omitted = replace(current, capability_dependencies=deps,
+                          capability_closure=self.registry.closure(deps, profile=profile).to_dict())
+        denied = bind_semantic_program_runtime(omitted, capability_registry=self.registry, profile=profile)
+        self.assertFalse(denied["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + CONTROLLED_ARTIFACT_COPY_CAPABILITY, denied["blockers"])
+
+        for malformed in (card.oracle_text.replace("{1}, {T}", "{2}, {T}"),
+                          card.oracle_text.replace(" Activate only as a sorcery.", ""),
+                          card.oracle_text.replace("a second target artifact you control", "a second target artifact")):
+            with self.subTest(malformed=malformed):
+                ir = compile_oracle_card(replace(card, oracle_text=malformed),
+                    capability_registry=self.registry, capability_profile=profile)
+                self.assertFalse(any(CONTROLLED_ARTIFACT_COPY_CAPABILITY in node.capability_dependencies
+                                     for face in ir.faces for node in face.nodes))
+        with patch("quorune.compiler.persistent_public_copy.controlled_artifact_copy_activation_template",
+                   return_value=None):
+            missing = compile_oracle_card(card, capability_registry=self.registry, capability_profile=profile)
+        self.assertTrue(missing.material_residuals)
+
+    @staticmethod
+    def copy_command(shuri, recipient, model):
+        return {"action_id": f"activate:{shuri.ref}:ab2", "pay": "auto", "targets": [
+            {"group": "copying", "ref": recipient.ref}, {"group": "copied", "ref": model.ref},
+        ]}
+
+    def test_native_shuri_copy_survives_source_departure_and_expires_without_reentry(self):
+        game = self.session(552500)
+        shuri = self.add(game.engine, "Shuri, Wakandan Inventor")
+        recipient = self.add(game.engine, "Strionic Resonator")
+        model = self.add(game.engine, "The Mightstone and Weakstone")
+        sundial = self.add(game.engine, "Sundial of the Infinite")
+        signet = self.add(game.engine, "Arcane Signet", zone="hand")
+        foreign = self.add(game.engine, "Sol Ring", seat="B")
+        bounce = self.add(game.engine, "Unsummon", seat="B", zone="hand")
+        self.add(game.engine, "Island", seat="B")
+        hidden = self.add(game.engine, "Counterspell", seat="C", zone="hand", ref="copy-private-hand")
+        shuri.acquired_control_turn_count = -1
+        recipient.tapped = True
+        recipient.counters["+1/+1"] = 1
+        identity = recipient.logical_object_id
+        self.assert_closed(game, shuri)
+        self.prepare(game, mana={"C": 3})
+        self.checkpoint(game)
+        self.cast_for(game, "A", signet, reserve={"C": 2})
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(2, game.state.players["A"].mana_pool["C"])
+        self.priority(game, "A")
+        before = authoritative_state_hash(game.state)
+        for seat, command in (("B", self.copy_command(shuri, recipient, model)),
+                              ("A", self.copy_command(shuri, recipient, recipient)),
+                              ("A", self.copy_command(shuri, recipient, foreign))):
+            self.assertFalse(game.act("pilot:" + seat, command).ok)
+            self.assertEqual(before, authoritative_state_hash(game.state))
+        result = game.act("pilot:A", self.copy_command(shuri, recipient, model))
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, game.state.players["A"].mana_pool["C"])
+        self.assertTrue(game.state.cards[shuri.object_id].tapped)
+        self.cast(game, "B", bounce, [shuri.ref])
+        self.resolve_top(game)
+        self.assertEqual("hand", game.state.cards[shuri.object_id].zone)
+        game = self.replay(game, load=True)
+        start = len(game.state.events)
+        self.assertIsNone(self.resolve(game))
+        current = game.state.cards[recipient.object_id]
+        data = game.engine._copyable_characteristics(current)
+        self.assertEqual("The Mightstone and Weakstone", data["name"])
+        self.assertNotIn("legendary", data["type_line"].casefold())
+        self.assertTrue(current.tapped)
+        self.assertEqual(1, current.counters["+1/+1"])
+        self.assertEqual(identity, current.logical_object_id)
+        self.assertFalse(any(event.code == "permanent.enter" for event in game.state.events[start:]))
+        for seat in "ABD":
+            self.assertNotIn(hidden.ref, json.dumps(game.packet("pilot:" + seat, full=True)))
+        self.replay(game, load=True)
+
+        self.priority(game, "A")
+        options = game.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in options if row["id"].startswith(f"activate:{sundial.ref}:"))
+        ended = game.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(ended.ok, ended.summary)
+        self.assertEqual("cleanup.discard", self.resolve(game).kind)
+        cleanup = game.packet("pilot:A", full=True)["decision"]["ctx"]
+        discard = game.act("pilot:A", {"a": "discard", "cards": [x["id"] for x in cleanup["hand"][:cleanup["count"]]]})
+        self.assertTrue(discard.ok, discard.summary)
+        self.assertEqual("Strionic Resonator", game.engine._effective_card_data(
+            game.state.cards[recipient.object_id])["name"])
+        self.replay(game, load=True)
+
+    def test_native_shuri_copy_has_no_result_if_either_target_leaves(self):
+        for role in ("copying", "copied"):
+            with self.subTest(role=role):
+                game = self.session(552502 + (role == "copied"))
+                shuri = self.add(game.engine, "Shuri, Wakandan Inventor")
+                recipient = self.add(game.engine, "Strionic Resonator")
+                model = self.add(game.engine, "The Mightstone and Weakstone")
+                removal = self.add(game.engine, "Disenchant", seat="B", zone="hand")
+                self.add(game.engine, "Plains", seat="B")
+                self.add(game.engine, "Wastes", seat="B")
+                shuri.acquired_control_turn_count = -1
+                self.prepare(game, mana={"C": 1})
+                self.checkpoint(game)
+                result = game.act("pilot:A", self.copy_command(shuri, recipient, model))
+                self.assertTrue(result.ok, result.summary)
+                lost = recipient if role == "copying" else model
+                self.cast(game, "B", removal, [lost.ref])
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("graveyard", game.state.cards[lost.object_id].zone)
+                self.assertEqual("Strionic Resonator", game.engine._effective_card_data(
+                    game.state.cards[recipient.object_id])["name"])
+                self.assertTrue(game.state.cards[shuri.object_id].tapped)
+                self.replay(game, load=True)

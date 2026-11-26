@@ -1,6 +1,7 @@
 """A complete cleanup clause over an already-closed ordinary token producer."""
 from . import regex_working_set as re
 from ..created_token_cleanup_model import CreatedTokenCleanupSpec, TOKEN_CLEANUP_MECHANIC
+from ..fixed_token_production import CREATED_TOKEN_HASTE_FIELD
 
 
 def _cleanup_parts(text):
@@ -18,6 +19,11 @@ def _cleanup_parts(text):
 
 
 def _effect_with_cleanup(effect, spec):
+    if CREATED_TOKEN_HASTE_FIELD in effect and (
+        spec != CreatedTokenCleanupSpec("sacrifice", "next_end_step") or type(effect.get("quantity")) is not int
+        or effect["quantity"] < 2
+    ):
+        return None
     result = {**dict(effect), 'token_cleanup': spec.to_dict()}
     if result['op'] == 'choose_fixed_attacking_token_destinations':
         result['token_entry_version'] = 2
@@ -35,7 +41,10 @@ def created_token_cleanup_template(text, *, compile_inner):
         return None
     if 'token_cleanup' in token.effect:
         return None
-    return type(token)(template_id=token.template_id+'-cleanup-v1', effect=_effect_with_cleanup(token.effect, spec),
+    effect = _effect_with_cleanup(token.effect, spec)
+    if effect is None:
+        return None
+    return type(token)(template_id=token.template_id+'-cleanup-v1', effect=effect,
         mechanics=tuple(dict.fromkeys((*token.mechanics, TOKEN_CLEANUP_MECHANIC))))
 
 
@@ -52,5 +61,8 @@ def scalar_created_token_cleanup_template(text, *, compile_inner, **context):
             'create_token', 'choose_fixed_attacking_token_destinations'}
             or any(key in effects[0] for key in ('copy_of', 'copy_spec', 'token_cleanup'))):
         return None
-    return template+'-cleanup-v1', (_effect_with_cleanup(effects[0], spec),), None, tuple(
+    effect = _effect_with_cleanup(effects[0], spec)
+    if effect is None:
+        return None
+    return template+'-cleanup-v1', (effect,), None, tuple(
         dict.fromkeys((*mechanics, TOKEN_CLEANUP_MECHANIC)))

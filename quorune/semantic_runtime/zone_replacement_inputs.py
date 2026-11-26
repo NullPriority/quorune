@@ -7,6 +7,7 @@ from dataclasses import replace
 from hashlib import sha256
 from typing import Any, Mapping, Sequence
 
+from ..ability_fragment_primitives import current_saga_intrinsic_abilities
 from ..entry_counters import EffectEntryCounter
 from ..zone_trigger_events import ZoneTransitionKind
 from ..replacement.entry_counter_types import ENTRY_TIME_COUNTER_TYPES_FIELD
@@ -75,16 +76,19 @@ def zone_change_subject_characteristics(host, card, destination, entry_character
         characteristics = prospective_creature_type_characteristics(host, card, characteristics,
             destination_controller=controller)
     card_types, subtypes, supertypes = host._type_parts(str(characteristics.get('type_line') or ''))
+    if destination == "battlefield" and "saga" in subtypes and current_saga_intrinsic_abilities(host.state):
+        from ..ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
+        from ..card_program_faces import prospective_face_view
+
+        entrant = prospective_face_view(host.card_record(card), card, characteristics.get("name"))
+        if prospective_entry_loses_intrinsic_abilities(host, entrant, controller):
+            characteristics[INTRINSIC_ABILITIES_REMOVED] = True
     return characteristics, controller, card_types, subtypes, supertypes
 
 
-def conditional_counter_entry_types(host, card, controller, *, copy_values=None):
-    """Read the entrant's type layer without adding it to the battlefield."""
-
-    from ..continuous_effects import Layer
+def _entry_layer_characteristics(host, card, controller, *, maximum_layer, copy_values=None):
     from ..entry_copy import COPIABLE_FACE_FIELD
     from ..zone_object_state import reset_card_after_zone_change
-    from .fixed_characteristic_settings import prospective_creature_type_characteristics
 
     preview = deepcopy(card)
     reset_card_after_zone_change(preview, destination="battlefield", stack_to_battlefield=False)
@@ -97,7 +101,25 @@ def conditional_counter_entry_types(host, card, controller, *, copy_values=None)
             preview, active_face=copy_values.get(COPIABLE_FACE_FIELD),
             annotations={**preview.annotations, "copy_overrides": dict(copy_values)},
         )
-    data = host._effective_card_data(preview, maximum_layer=Layer.TYPE)
+    return preview, host._effective_card_data(preview, maximum_layer=maximum_layer)
+
+
+def prospective_entry_loses_intrinsic_abilities(host, card, controller, *, copy_values=None):
+    from ..ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
+    from ..continuous_effects import Layer
+
+    _, data = _entry_layer_characteristics(
+        host, card, controller, maximum_layer=Layer.ABILITY, copy_values=copy_values,
+    )
+    return data.get(INTRINSIC_ABILITIES_REMOVED) is True
+
+
+def conditional_counter_entry_types(host, card, controller, *, copy_values=None):
+    """Read the entrant's type layer without adding it to the battlefield."""
+    from ..continuous_effects import Layer
+    from .fixed_characteristic_settings import prospective_creature_type_characteristics
+
+    preview, data = _entry_layer_characteristics(host, card, controller, maximum_layer=Layer.TYPE, copy_values=copy_values)
     data = prospective_creature_type_characteristics(
         host, preview, data, destination_controller=controller, include_controlled_subtypes=False,
     )
@@ -235,9 +257,9 @@ def validated_zone_change_snapshot_inputs(
 
 
 def _zone_change_snapshot_event_id(snapshot, subject):
-    from ..replacement.counted_entry_counters import TransferEntryCounters
+    from ..replacement.counted_entry_counters import ENTRY_COUNTER_TRANSFER_OPERATIONS
 
-    if any(isinstance(operation, TransferEntryCounters)
+    if any(isinstance(operation, ENTRY_COUNTER_TRANSFER_OPERATIONS)
            for effect in snapshot.effects for operation in effect.operations):
         # A resumed simultaneous ordering rebuilds the same subjects at a new
         # revision. Bind the offer to each original incarnation instead.
@@ -250,6 +272,8 @@ def zone_change_snapshot_event(
     snapshot: ZoneChangeReplacementSnapshot,
     subject: ZoneChangeSubjectSnapshot,
 ) -> ReplaceableEvent:
+    from ..replacement.entry_counter_types import BATTLEFIELD_ENTRY_COUNTER_SCOPE
+
     return ReplaceableEvent(
         event_id=_zone_change_snapshot_event_id(snapshot, subject),
         kind="zone.change",
@@ -278,6 +302,8 @@ def zone_change_snapshot_event(
             "object_kind": "card" if subject.is_card_object else "noncard",
             "object_ref": subject.object_ref,
             "object_types": list(subject.object_types),
+            **({BATTLEFIELD_ENTRY_COUNTER_SCOPE: True}
+               if any(counter.additional for counter in subject.effect_entry_counters) else {}),
             **({ENTRY_TIME_COUNTER_TYPES_FIELD: subject.entry_time_counter_types.to_dict()}
                if subject.entry_time_counter_types is not None else {}),
             "logical_object_id": subject.logical_object_id,
@@ -317,24 +343,48 @@ def snapshot_entry_scope(snapshot: ZoneChangeReplacementSnapshot) -> EntryReplac
 def zone_change_snapshot_events(snapshot: ZoneChangeReplacementSnapshot) -> tuple[ReplaceableEvent, ...]:
     from dataclasses import replace
     from ..replacement.amplify import AmplifyEntryOperation
+    from .entry_cost_preparation import has_entry_land_discard
 
     events = tuple(zone_change_snapshot_event(snapshot, subject) for subject in snapshot.subjects)
-    if not any(isinstance(operation, AmplifyEntryOperation)
+    if not has_entry_land_discard(snapshot) and not any(isinstance(operation, AmplifyEntryOperation)
         for effect in snapshot.effects for operation in effect.operations):
         return events
     scope = snapshot_entry_scope(snapshot)
     return tuple(replace(event, entry_scope=scope) for event in events)
 
 
+def source_local_zone_replacement_effects(host, registry, record, card, subject, programs):
+    """Collect only the current affected card's independently owned replacements."""
+    from ..card_program_faces import program_matches_face
+    from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
+    from ..opponent_discard_entry_model import OPPONENT_DISCARD_ENTRY_HANDLER
+    from .self_entry_counters import program_static_component_is_applicable
+    from .self_graveyard_exile import SELF_GRAVEYARD_REPLACEMENT_HANDLERS
+
+    accepted = {*SELF_GRAVEYARD_REPLACEMENT_HANDLERS, MADNESS_REPLACEMENT_HANDLER_ID, OPPONENT_DISCARD_ENTRY_HANDLER}
+    effects = []
+    for program in programs:
+        if (not program_matches_face(record, program, card)
+                or not program_static_component_is_applicable(host, program, card)):
+            continue
+        for index, descriptor in enumerate(program.handlers):
+            if descriptor.get("handler_id") in accepted:
+                effects.extend(registry.subject_replacement_effects(
+                    descriptor, subject=subject, component_id=f"{program.key}:{index}",
+                ))
+    return tuple(effects)
+
+
 def intrinsic_subject_replacement_effects(
     handler, descriptor, *, subject, component_id, host, simultaneous_departures, fallback,
 ) -> tuple[ReplacementEffect, ...]:
     """Bind an intrinsic replacement against its immutable subject information."""
+    from .day_night_entry import DayNightEntryHandler
     from .linked_graveyard_entry import LinkedGraveyardEntryHandler
     from .self_entry_counters import EntryCounterTransferHandler
 
     if isinstance(handler, (CountedCreatureTypeEntryDesignationHandler, EntryOpponentDesignationHandler,
-                            LinkedGraveyardEntryHandler, EntryCounterTransferHandler)):
+                            LinkedGraveyardEntryHandler, EntryCounterTransferHandler, DayNightEntryHandler)):
         return handler.subject_replacement_effects(
             descriptor, subject=subject, component_id=component_id, host=host,
             simultaneous_departures=simultaneous_departures,

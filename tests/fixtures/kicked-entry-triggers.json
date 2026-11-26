@@ -400,6 +400,56 @@
       }
     },
     {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Kicker",
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Thieving Skydiver",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "oracle_text": "Kicker {X}. X can't be 0. (You may pay an additional {X} as you cast this spell.)\nFlying\nWhen this creature enters, if it was kicked, gain control of target artifact with mana value X or less. If that artifact is an Equipment, attach it to this creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "1",
+      "type_line": "Creature — Merfolk Rogue"
+    },
+    {
       "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
       "name": "Verix Bladewing",
       "mana_cost": "{2}{R}{R}",
@@ -782,6 +832,60 @@
       "published_at": "2024-11-08",
       "source": "wotc",
       "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "comment": "If the Equipment can't be attached to Thieving Skydiver, most likely because Thieving Skydiver has left the battlefield before its triggered ability resolves, the Equipment remains attached to whatever it's currently attached to or remains unattached if attached to nothing.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The control-change effect of Thieving Skydiver lasts indefinitely. It doesn't wear off during the cleanup step, and it doesn't expire if Thieving Skydiver leaves the battlefield. In a multiplayer game, it does expire if you leave the game.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Thieving Skydiver's ability can target an artifact you already control. You'll attach it to Thieving Skydiver if it's an Equipment.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\"",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was.",
+      "oracle_id": "f509ac02-f22e-4d1a-9fe1-afa96dd7806d",
+      "published_at": "2024-11-08",
+      "source": "wotc"
     }
   ]
 }

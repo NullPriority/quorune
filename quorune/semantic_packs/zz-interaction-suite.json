@@ -295,6 +295,7 @@
       "provenance": {
         "source_oracle_hash": "5e306a2ee456f0c5926329cef90c12d37ac4988aed0065a6721a128247dc835a",
         "source_rulings_hash": "0ddb07c46036d0eb483637395605c83ee750a59c91762d69ebdfbc21f4eb031c",
+        "reviewed_equivalent_rulings_hashes": ["576f66fcf0cc0784bc3004836757146c11b0cfb86bcc02e5a048cf7fe263a1e1"],
         "authored_by": "interaction-kernel",
         "review_status": "reviewed"
       }

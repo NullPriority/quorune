@@ -170,6 +170,23 @@ class ComponentResolutionTests(unittest.TestCase):
                     self.assertTrue(implementation_component_resolves("quorune.witness.Second"))
                 self.assertFalse(implementation_component_resolves("quorune.witness.Second"))
 
+    def test_registry_snapshot_reuses_a_module_read_and_refreshes_next_time(self):
+        from quorune.rules.component_resolution import _component_source_snapshot
+
+        prefix = "quorune.rules.component_resolution."
+        source = "class First: pass\nclass Other: pass\n"
+        with patch.object(Path, "read_text", return_value=source) as read:
+            with _component_source_snapshot():
+                self.assertTrue(implementation_component_resolves(prefix + "First"))
+                self.assertTrue(implementation_component_resolves(prefix + "Other"))
+                self.assertFalse(implementation_component_resolves(prefix + "Absent"))
+                read.assert_called_once()
+            read.return_value = source.replace("First", "Gone_")
+            with _component_source_snapshot():
+                self.assertFalse(implementation_component_resolves(prefix + "First"))
+                self.assertTrue(implementation_component_resolves(prefix + "Other"))
+            self.assertEqual(2, read.call_count)
+
     def test_identical_source_reuses_exports_without_importing_the_module(self):
         source = (
             "raise RuntimeError('component validation must not execute source')\n"

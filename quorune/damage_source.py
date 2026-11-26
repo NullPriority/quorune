@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from .permanent_event_state_model import PermanentEventState
+from .permanent_event_state_model import (
+    SOURCE_ANY_COUNTER_FIELD, SOURCE_PLUS_ONE_COUNTER_FIELD, PermanentEventState, permanent_state_from_damage_context,
+)
 
 from dataclasses import dataclass
 from math import isfinite
@@ -17,6 +19,36 @@ from .ability_fragments import (
 
 class DamageError(ValueError):
     """A represented damage proposal cannot be resolved exactly."""
+
+
+def validate_damage_event_source_state(event):
+    if event.source_permanent_state is not None and not isinstance(event.source_permanent_state, PermanentEventState):
+        raise ValueError("Damage source permanent state must be typed")
+    for present in (event.source_had_plus_one_counter, event.source_had_any_counter):
+        if present is not None and (
+            type(present) is not bool or not event.combat or event.source_zone != "battlefield"
+            or "creature" not in event.source_types
+        ):
+            raise DamageError("Counter presence requires a sealed combat creature source")
+    identities = event.source_physical_commander_identities
+    if identities is not None:
+        if not isinstance(identities, PhysicalCommanderDamageIdentities):
+            raise ValueError("Physical commander damage identities must be typed")
+        identities.validate_source(
+            is_commander=event.source_is_commander,
+            designation_id=event.source_commander_designation_id, oracle_id=event.source_oracle_id,
+        )
+
+
+def damage_source_state_from_context(payload):
+    fields = {"source_permanent_state": permanent_state_from_damage_context(payload)}
+    for field in (SOURCE_PLUS_ONE_COUNTER_FIELD, SOURCE_ANY_COUNTER_FIELD):
+        if field in payload:
+            had_counter = payload[field]
+            if type(had_counter) is not bool:
+                raise DamageError("Committed damage source counter presence must be a boolean")
+            fields[field] = had_counter
+    return fields
 
 
 DAMAGE_PREVENTION_RESULT_VERSION_FIELD = "damage_prevention_result_version"
@@ -113,8 +145,15 @@ class DamageSourceSnapshot:
     combat_partners: tuple[str,...] = ()
     physical_commander_identities: PhysicalCommanderDamageIdentities | None = None
     permanent_state: PermanentEventState | None = None
+    had_plus_one_counter: bool | None = None
+    had_any_counter: bool | None = None
 
     def __post_init__(self) -> None:
+        for present in (self.had_plus_one_counter, self.had_any_counter):
+            if present is not None and (
+                type(present) is not bool or self.zone != "battlefield" or "creature" not in self.types
+            ):
+                raise DamageError("Counter presence requires a sealed battlefield creature")
         if self.permanent_state is not None and not isinstance(self.permanent_state,PermanentEventState):
             raise DamageError('Damage source permanent state must be typed or absent')
         if self.physical_commander_identities is not None:
@@ -178,6 +217,8 @@ class DamageSourceSnapshot:
 
     def to_dict(self) -> dict[str, object]:
         return {
+            **({"had_plus_one_counter": self.had_plus_one_counter} if self.had_plus_one_counter is not None else {}),
+            **({"had_any_counter": self.had_any_counter} if self.had_any_counter is not None else {}),
             **({'permanent_state':self.permanent_state.to_dict()} if self.permanent_state is not None else {}),
             **({'physical_commander_identities':self.physical_commander_identities.to_dict()}
                if self.physical_commander_identities is not None else {}),
@@ -224,7 +265,7 @@ class DamageSourceSnapshot:
             "toxic_value",
         }
         legacy_expected = expected - {"mana_value"}
-        if frozenset(set(value)-{'scope_facts','combat_partners','physical_commander_identities','permanent_state'}) not in {
+        if frozenset(set(value)-{'scope_facts','combat_partners','physical_commander_identities','permanent_state','had_plus_one_counter','had_any_counter'}) not in {
             frozenset(expected),
             frozenset(legacy_expected),
         }:
@@ -253,6 +294,9 @@ class DamageSourceSnapshot:
         for field in ("oracle_id", "commander_designation_id"):
             if value[field] is not None and type(value[field]) is not str:
                 raise DamageError("Damage source snapshot identity is malformed")
+        for field in ("had_plus_one_counter", "had_any_counter"):
+            if field in value and type(value[field]) is not bool:
+                raise DamageError("Damage source counter presence must be a boolean")
         if type(value["is_commander"]) is not bool:
             raise DamageError("Damage source commander flag is malformed")
         try:
@@ -261,6 +305,8 @@ class DamageSourceSnapshot:
             permanent=(PermanentEventState.from_dict(value['permanent_state']) if 'permanent_state' in value else None)
         except (ValueError,TypeError) as exc:raise DamageError(str(exc)) from exc
         return cls(
+            had_plus_one_counter=value.get("had_plus_one_counter"),
+            had_any_counter=value.get("had_any_counter"),
             permanent_state=permanent,
             physical_commander_identities=physical,
             scope_facts=value.get('scope_facts',()),

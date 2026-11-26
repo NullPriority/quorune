@@ -426,9 +426,10 @@ def prospective_creature_type_characteristics(
     programs = tuple(program for program in host.semantics.runtime_handler_programs_for_oracle(
         copiable_oracle_id(card, characteristics), active_zone='battlefield', event='characteristics.evaluate')
         if program.key in keys and host.semantic_program_is_current_trusted(program))
-    from ..rules.cross_zone_characteristics import controlled_chosen_subtype_entry_effects
+    from ..rules.cross_zone_characteristics import battlefield_entry_type_addition_effects
 
-    effects = list(controlled_chosen_subtype_entry_effects(host, destination_controller)) if include_controlled_subtypes else []
+    # Copy-form previews can already include the external layer-four effects.
+    effects = list(battlefield_entry_type_addition_effects(host, destination_controller)) if include_controlled_subtypes else []
     if not programs and not effects:
         return characteristics
     prospective = copy.copy(card)

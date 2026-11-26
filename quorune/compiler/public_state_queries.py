@@ -829,6 +829,11 @@ def fixed_power_toughness_battlefield_query(
     """Apply the closed layer-7c subject policy before parsing its query."""
 
     del oracle_line
+    if " ".join(subject.casefold().split()) == "face-down creatures you control":
+        return "source_controller", ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",),
+            state_predicate=PermanentStatePredicateSpec(face_down=True),
+        ), False
     parsed = fixed_characteristic_battlefield_query_subject(subject, allow_negative_keyword=True)
     if parsed is None or not (
         "creature" in parsed[1].types_all
@@ -1081,6 +1086,17 @@ def _fixed_public_query_count_condition(
     text: str,
 ) -> FixedPublicStateConditionSpec | None:
     normalized = " ".join(text.strip().rstrip(".").split())
+    distinct_land_names = re.fullmatch(
+        r"you control (?P<count>[a-z]+|[1-9][0-9]*) or more lands with different names",
+        normalized, re.IGNORECASE,
+    )
+    if distinct_land_names is not None:
+        amount = _fixed_condition_amount(distinct_land_names["count"])
+        if amount is None or amount < 2:
+            return None
+        from ..rules.distinct_land_entry import controlled_distinct_lands_at_least
+
+        return controlled_distinct_lands_at_least(amount)
     extension = (
         fixed_graveyard_condition_query(normalized)
         or fixed_public_condition_query_extension(normalized)
@@ -1473,6 +1489,11 @@ def fixed_public_state_parts(
         text,
         re.IGNORECASE,
     )
+    if during is None:
+        during = re.fullmatch(
+            r"(?P<body>This creature has [^.]+) during (?P<condition>your turn)\.?",
+            text, re.IGNORECASE,
+        )
     if during is not None:
         condition = fixed_public_state_condition(
             _explicit_condition_subject(

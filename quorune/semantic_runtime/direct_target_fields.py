@@ -73,8 +73,11 @@ class DirectTargetFields:
 
 def bound_graveyard_return_target_snapshot(effect, item, resolve_reference):
     """Retain the original target identity across resolution-time prefixes."""
+    from ..event_card_return import DEATH_SOURCE_RETURN_TARGET_FIELD
+
     if (effect.get('op') != 'return_graveyard_card_to_owner_hand'
             and not (effect.get('op')=='reanimate' and effect.get('schema_version') in (*REANIMATION_ENTRY_COUNTER_VERSIONS, *REANIMATION_FOLLOWUP_VERSIONS))
+            and not (effect.get('op') == 'reanimate' and DEATH_SOURCE_RETURN_TARGET_FIELD in effect)
             and not (effect.get('op') == 'move' and effect.get('from') == 'graveyard' and 'attacking_entry' in effect)):
         return {}
     reference = effect.get('card')

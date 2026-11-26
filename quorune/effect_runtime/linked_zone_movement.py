@@ -9,8 +9,8 @@ from ..event_card_return import (
     EVENT_LIBRARY_MOVE_VERSION,
     apply_death_source_exile, has_death_source_exile,
     available_event_library_components,
-    is_event_library_move,
-    validate_event_library_move,
+    is_event_hand_return, is_event_library_move,
+    validate_event_hand_return, validate_event_library_move,
 )
 from ..impulse_access import grant_temporary_cast_permission
 from ..impulse_access_model import TemporaryCastPermissionError, TemporaryCastPermissionGrant
@@ -18,11 +18,51 @@ from ..zone_object_cleanup import resolve_zone_object_cleanup_group
 from ..zone_trigger_events import ZoneTransitionKind
 
 
+def commit_resolved_zone_movement(
+    host, card, effect, *, destination, reason, transition_kind,
+    discard_origin=None, putting_player=None,
+):
+    """Apply a resolved movement through the ordinary zone transition owner."""
+    if transition_kind is ZoneTransitionKind.SACRIFICE:
+        from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
+        if sacrifice_is_prohibited(host.state, card):
+            return None
+    return host.move_card(
+        card.object_id,
+        destination,
+        **({"discard_effect_origin": discard_origin} if discard_origin is not None else {}),
+        **({"putting_player": putting_player} if putting_player is not None else {}),
+        controller=effect.get("controller"),
+        tapped=bool(effect["tapped"]) if "tapped" in effect else None,
+        position=effect["position"] if effect.get("position") is not None else "top",
+        reason=reason,
+        semantic_events=True,
+        transition_kind=transition_kind,
+        replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        aura_target_ref=(str(effect["_aura_target_ref"]) if effect.get("_aura_target_ref") is not None else None),
+    )
+
+
 def apply_move_if_in_zone(
     host: Any, effect: Mapping[str, Any], *, actor: str, operation: str, reason: str,
 ) -> Any:
+    from ..rules.discarded_card_exile import discarded_card_exile_movement, uses_discarded_card_exile
+
+    if uses_discarded_card_exile(effect):
+        try:
+            movement = discarded_card_exile_movement(effect, actor=actor)
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if movement is None:
+            return None
+        return _apply_move_if_in_zone(
+            host, movement, actor=actor, operation=operation, reason=reason, required_owner=actor,
+        )
     if has_death_source_exile(effect):
         return apply_death_source_exile(host, effect, actor=actor, reason=reason)
+    if is_event_hand_return(effect):
+        return _apply_event_hand_return(host, effect, actor=actor, reason=reason)
     if not is_event_library_move(effect):
         return _apply_move_if_in_zone(host, effect, actor=actor, operation=operation, reason=reason)
     try:
@@ -44,6 +84,38 @@ def apply_move_if_in_zone(
     if effect["shuffle"]:
         host.shuffle_library(owner, reason=reason)
     return moved
+
+
+def _apply_event_hand_return(host, effect, *, actor, reason):
+    from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, ZoneMoveIntent
+
+    try:
+        validate_event_hand_return(effect, resolved=True)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    owner = effect["owner"]
+    if owner not in host.active_seats:
+        return None
+    selections = tuple(effect.get("_replacement_selections", ()))
+    components = available_event_library_components(host, effect)
+    if components is not None:
+        if not components:
+            return None
+        return host.move_objects_simultaneously_intent(MoveObjectsSimultaneouslyIntent(
+            actor=actor, object_refs=tuple(card.ref for card in components),
+            expected_zones=("graveyard", "exile"), destination="hand", reason=reason,
+            replacement_selections=selections,
+        ))
+    card = next((card for card in host.state.cards.values() if card.ref == effect["card"]), None)
+    if card is None or not card.is_card_object or card.is_token:
+        return None
+    if card.owner != owner:
+        raise GameRuleError("The departure hand return owner differs from the departed card owner")
+    return host.move_object_intent(ZoneMoveIntent(
+        actor=actor, object_ref=effect["card"], expected_zones=(effect["from"],),
+        destination="hand", reason=reason, optional_if_missing=True,
+        expected_zone_change_counter=effect["expected_zone_change_counter"], replacement_selections=selections,
+    ))
 
 
 def _apply_library_component_move(host, effect, components, *, actor, operation, reason):
@@ -78,6 +150,7 @@ def _apply_move_if_in_zone(
     actor: str,
     operation: str,
     reason: str,
+    required_owner: str | None = None,
 ) -> Any:
     if "cards" in effect:
         return resolve_zone_object_cleanup_group(
@@ -120,7 +193,8 @@ def _apply_move_if_in_zone(
             importance=2,
         )
         return None
-    if not expected_zone or card.zone != expected_zone or card.phased_out:
+    if (not expected_zone or card.zone != expected_zone or card.phased_out
+            or required_owner is not None and card.owner != required_owner):
         return None
     expected_counter = effect.get(
         "expected_zone_change_counter"
@@ -161,37 +235,12 @@ def _apply_move_if_in_zone(
     ):
         return None
     destination = str(effect.get("destination") or "graveyard")
-    moved = host.move_card(
-        card.object_id,
-        destination,
-        controller=effect.get("controller"),
-        tapped=(
-            bool(effect["tapped"])
-            if "tapped" in effect
-            else None
-        ),
-        position=(
-            effect["position"]
-            if effect.get("position") is not None
-            else "top"
-        ),
-        reason=reason,
-        semantic_events=True,
-        transition_kind=(
-            ZoneTransitionKind.SACRIFICE
-            if effect.get("transition_kind") == "sacrifice"
-            else ZoneTransitionKind.ORDINARY
-        ),
-        replacement_selections=tuple(
-            effect.get("_replacement_selections") or ()
-        ),
-        aura_target_ref=(
-            str(effect["_aura_target_ref"])
-            if effect.get("_aura_target_ref") is not None
-            else None
-        ),
+    moved = commit_resolved_zone_movement(
+        host, card, effect, destination=destination, reason=reason,
+        transition_kind=(ZoneTransitionKind.SACRIFICE if effect.get("transition_kind") == "sacrifice"
+                         else ZoneTransitionKind.ORDINARY),
     )
-    if grant is not None and card.zone == destination:
+    if grant is not None and moved is not None and card.zone == destination:
         grant_temporary_cast_permission(
             host,
             card=card,

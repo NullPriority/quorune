@@ -251,6 +251,9 @@ def _prevention_aftermath_requests(
                 "placing_player",
                 "subject",
             }
+            version = value.get("schema_version", 1)
+            if type(version) is int and version == 2:
+                expected |= {"schema_version"}
             if set(value) != expected:
                 raise GameRuleError("Prevention counter aftermath is malformed")
             result.append(
@@ -264,6 +267,7 @@ def _prevention_aftermath_requests(
                     placing_player=str(value.get("placing_player") or actor),
                     per_prevented=value["per_prevented"],
                     fixed_amount=value["fixed_amount"],
+                    schema_version=version,
                 )
             )
             continue
@@ -493,26 +497,22 @@ def _apply_create_damage_redirection(
     actor: str,
     operation: str,
     reason: str,
-) -> str:
+) -> str | None:
     del operation
     consume = effect.get("consume_on_application", True)
     if type(consume) is not bool:
         raise GameRuleError("Damage redirection consumption must be boolean")
     try:
-        subject = _damage_subject(
-            recipient_snapshot(
-                host,
-                str(effect.get("subject") or actor),
-                actor=actor,
-            )
-        )
-        destination = _damage_subject(
-            recipient_snapshot(
-                host,
-                str(effect.get("destination") or ""),
-                actor=actor,
-            )
-        )
+        if "maximum_damage" in effect:
+            from .finite_damage_redirection import finite_damage_redirection_subjects
+
+            subjects = finite_damage_redirection_subjects(host, effect, actor=actor)
+            if subjects is None:
+                return None
+            subject, destination = subjects
+        else:
+            subject = _damage_subject(recipient_snapshot(host, str(effect.get("subject") or actor), actor=actor))
+            destination = _damage_subject(recipient_snapshot(host, str(effect.get("destination") or ""), actor=actor))
         redirection = DamageRedirectionEffect(
             redirection_id=host._next_ref("DR"),
             source_id=str(effect.get("source") or reason),
@@ -535,6 +535,7 @@ def _apply_create_damage_redirection(
             ),
             consume_on_application=consume,
             label=str(effect.get("label") or reason),
+            maximum_damage=effect.get("maximum_damage"),
         )
     except (DamageError, DamagePreventionCreationError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc

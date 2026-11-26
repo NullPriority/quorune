@@ -51,6 +51,15 @@ def opponent_has_greater_metric(state,controller,spec,*,public_object_resolver=N
     return any(value>values[controller] for seat,value in values.items() if seat!=controller)
 
 
+def maximum_opponent_creature_count(state, controller, *, public_object_resolver):
+    values = dict(current_player_metric_values(
+        state, PlayerMaximumSpec("creature_count"), public_object_resolver=public_object_resolver,
+    ))
+    if controller not in values:
+        raise ValueError("Opponent creature threshold requires its active original controller")
+    return max((count for seat, count in values.items() if seat != controller), default=0)
+
+
 def resolve_player_maximum(host,value,item):
     from .continuous_effect_model import Layer
     spec=PlayerMaximumSpec.from_reference(value)

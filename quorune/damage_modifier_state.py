@@ -723,6 +723,11 @@ class PlaceCountersPreventionAftermath:
                 "Prevention counter aftermath requires counter and player"
             )
         object.__setattr__(self, "counter_name", counter)
+        if self.counts_unpreventable:
+            if (type(self.schema_version) is not int or counter != "+1/+1" or type(self.per_prevented) is not int
+                    or self.per_prevented != 1 or type(self.fixed_amount) is not int or self.fixed_amount != 0):
+                raise DamageModifierError("Unpreventable damage aftermath requires one +1/+1 counter per damage")
+            return
         if self.schema_version != 1:
             raise DamageModifierError(
                 "Unsupported prevention aftermath schema version"
@@ -740,6 +745,10 @@ class PlaceCountersPreventionAftermath:
 
     def amount(self, prevented: int) -> int:
         return self.fixed_amount + self.per_prevented * prevented
+
+    @property
+    def counts_unpreventable(self) -> bool:
+        return self.schema_version == 2
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -1035,12 +1044,26 @@ class DamagePreventionShield:
                 "A prevention shield aftermath must use typed values"
             )
         object.__setattr__(self, "aftermath", aftermath)
+        if self.tracks_unpreventable_amount and (
+            len(aftermath) != 1 or self.mode != PreventionMode.ALL
+            or self.duration != DamageModifierDuration.UNTIL_END_OF_TURN
+            or aftermath[0].subject != self.subject or aftermath[0].placing_player != self.controller
+            or self.damage_kind != PreventionDamageKind.ANY or self.recipient_kind != PreventionRecipientKind.ANY
+            or self.scope != DamagePreventionScope() or self.chosen_source is not None
+            or self.triggered_ability is not None
+        ):
+            raise DamageModifierError("Unpreventable damage aftermath requires its exact full-turn recipient shield")
         if self.triggered_ability is not None and not isinstance(
             self.triggered_ability, PreventionTriggeredAbility
         ):
             raise DamageModifierError(
                 "A prevention shield triggered ability must be typed"
             )
+
+    @property
+    def tracks_unpreventable_amount(self) -> bool:
+        return any(isinstance(result, PlaceCountersPreventionAftermath) and result.counts_unpreventable
+                   for result in self.aftermath)
 
     @property
     def effect_id(self) -> str:
@@ -1192,6 +1215,7 @@ class DamageRedirectionEffect:
     chosen_source: ChosenDamageSource | None = None
     consume_on_application: bool = True
     label: str = ""
+    maximum_damage: int | None = None
 
     def __post_init__(self) -> None:
         if not all((self.redirection_id, self.source_id, self.controller)):
@@ -1216,6 +1240,12 @@ class DamageRedirectionEffect:
             raise DamageModifierError(
                 "Redirection consumption policy must be a boolean"
             )
+        if self.maximum_damage is not None and (
+            type(self.maximum_damage) is not int or self.maximum_damage != 1
+            or not self.consume_on_application or self.duration is not DamageModifierDuration.UNTIL_END_OF_TURN
+            or self.chosen_source is not None or self.subject.kind != "permanent" or self.destination.kind != "permanent"
+        ):
+            raise DamageModifierError("One-point redirection requires two permanent occurrences and cleanup expiry")
         if (
             type(self.created_turn_sequence) is not int
             or self.created_turn_sequence < 0
@@ -1244,12 +1274,15 @@ class DamageRedirectionEffect:
             ),
             "consume_on_application": self.consume_on_application,
             "label": self.label,
+            **({"maximum_damage": self.maximum_damage} if self.maximum_damage is not None else {}),
         }
 
     @classmethod
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "DamageRedirectionEffect":
+        if "maximum_damage" in value and type(value["maximum_damage"]) is not int:
+            raise DamageModifierError("A persisted redirection limit must be an integer")
         _exact_fields(
             value,
             {
@@ -1263,7 +1296,7 @@ class DamageRedirectionEffect:
                 "chosen_source",
                 "consume_on_application",
                 "label",
-            },
+            } | ({"maximum_damage"} if "maximum_damage" in value else set()),
             label="Damage redirection",
         )
         subject = value["subject"]
@@ -1298,4 +1331,5 @@ class DamageRedirectionEffect:
             ),
             consume_on_application=value["consume_on_application"],
             label=str(value["label"] or ""),
+            maximum_damage=value.get("maximum_damage"),
         )

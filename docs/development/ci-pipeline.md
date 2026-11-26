@@ -186,6 +186,10 @@ deletions cannot reuse an older test inventory.
 Compact dependency discovery shares parsed source, ordered AST enumerations and
 immutable function inventories within one report build. Alias, wrapper,
 parameter and database-mode contexts still resolve separately for each module.
+The report traces static deck entries in tests using the shared compact database
+and checked-in fixture paths used by local builders. Local files can remain
+separate from the shared compact database. Runtime-selected inputs use explicit
+declarations where the scanner cannot resolve them.
 Architecture analysis similarly shares each read-only source tree's enumerations
 and parent links across its existing guards. A new invocation reads current
 files again; failed reads and parses are not cached. Complete report and guard
@@ -444,6 +448,24 @@ change:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\finalize_generated.py --write
+```
+
+The required generated and architecture job audits retained card-program
+fingerprints before the broader generated checks. It reuses the governed card
+database cache. The audit checks each stored Oracle ID once, groups every
+unresolved mismatch by card, and uploads the full JSON report even when the
+check fails. Existing compiler-corpus verification binds the reports for
+programs generated on demand to the exact certification inputs.
+ Reviewed dungeon room equivalents preserve the sealed room
+programs when a marker change leaves their rules intact.
+
+If a release will use an additional approved snapshot, check both snapshots
+before merging. Repeat `--db` to include multiple data files in one report.
+The full local merge gate accepts the same set through repeated `--card-db`
+arguments. Its behavioral suites use their separate compact fixture database.
+
+```powershell
+.\.venv\Scripts\python.exe scripts/audit_card_program_fingerprints.py --db data/scryfall-current.sqlite3 --db path/to/release.sqlite3 --output local/card-program-fingerprints.json
 ```
 
 Compiler, capability, CardProgram, and card-support changes require the pinned

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed color and enchantment-type grants retaining one source Aura."""
+"""Closed linked protection grants to attached permanents."""
 
 from dataclasses import replace
 from . import regex_working_set as re
@@ -9,6 +9,16 @@ from ..protection_attachment_exceptions import CAPABILITY,SOURCE_AURA,CHOSEN_AUR
 
 
 def attached_protection_exception_handler(line,*,source_name='source'):
+    if re.fullmatch(
+        r"Equipped creature gets \+3/\+3 and has protection from each color that['’]s not in your commander['’]s color identity\.",
+        line.strip(), re.IGNORECASE,
+    ):
+        from ..semantic_runtime.attached_commander_protection import (
+            AttachedCommanderProtectionHandler, commander_complement_protection_descriptor,
+        )
+
+        return ("continuous-attached-commander-complement-protection-v1", commander_complement_protection_descriptor(),
+                AttachedCommanderProtectionHandler().capability_dependencies)
     if line.strip().casefold()=="enchanted creature has protection from the chosen color. this effect doesn't remove this aura.":
         return ('continuous-attached-source-chosen-color-protection-v1',
                 {'handler_id':CHOSEN_AURA_PROTECTION_HANDLER,'schema_version':1,'event':'characteristics.evaluate',

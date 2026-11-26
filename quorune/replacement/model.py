@@ -66,6 +66,23 @@ def _validate_prevention_life_scope(effect, operations, decline_operations):
         raise ReplacementEffectError("Prevention life gain requires one mandatory noncombat controller prevention")
 
 
+def _validate_combat_prevention_draw_scope(effect, operations, decline_operations):
+    marked = [operation for operation in (*operations, *decline_operations)
+              if isinstance(operation, PreventAmount) and operation.draw_for_combat_players]
+    if not marked:
+        return
+    conditions = thaw_value(effect.conditions)
+    source = conditions.get("source_logical_object_id", {})
+    logical_id = source.get("eq") if isinstance(source, dict) else None
+    if (len(marked) != 1 or len(operations) != 1 or decline_operations or effect.optional
+            or effect.event_kind != "damage" or effect.replacement_class is not ReplacementClass.OTHER
+            or type(logical_id) is not str or not logical_id
+            or not effect.effect_id.startswith("combat-prevention-draw:")
+            or conditions != {"source_logical_object_id": {"eq": logical_id}, "combat": {"eq": True},
+                              "target_kind": {"eq": "player"}, "amount": {"not_in": [0]}}):
+        raise ReplacementEffectError("Prevention draws require the one granted source and a combat player recipient")
+
+
 def _translate_error(exc: Exception) -> ReplacementEffectError:
     return ReplacementEffectError(str(exc))
 
@@ -525,6 +542,10 @@ class ReplacementEffect:
         validate_tribute_replacement(self,lowered,lowered_decline)
         _validate_shared_replacement_occurrence(self, lowered, lowered_decline)
         _validate_prevention_life_scope(self, lowered, lowered_decline)
+        _validate_combat_prevention_draw_scope(self, lowered, lowered_decline)
+        from .damage_redirection import validate_finite_damage_redirection
+
+        validate_finite_damage_redirection(self, lowered, lowered_decline)
         from ..entry_designations import EntryCardNameChoice
         if any(isinstance(operation, EntryCardNameChoice) for operation in (*lowered, *lowered_decline)):
             if (self.event_kind != "zone.change" or self.optional or len(lowered) != 1

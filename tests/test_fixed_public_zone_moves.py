@@ -3469,6 +3469,39 @@ class TargetedOwnerLibraryRuntimeTests(unittest.TestCase):
                     self.assertNotIn("lib", public["players"]["A"])
                 self.replay(session, load=True)
 
+    def test_original_tel_jilad_stylus_can_put_a_permanent_its_owner_does_not_control_on_bottom(self):
+        session = self.session(338014)
+        source = self.add(session.engine, "Tel-Jilad Stylus")
+        owned = self.add(session.engine, "Generic Bound Body", seat="B", ref="owned-but-borrowed")
+        owned.owner = "A"
+        borrowed = self.add(session.engine, "Generic Bound Body", ref="controlled-but-foreign")
+        borrowed.owner = "B"
+        self.assert_whole_admission(session, source.printed_name)
+        library = list(session.state.players["A"].zones["library"])
+        other_library = list(session.state.players["B"].zones["library"])
+        action = self.ready(session, source, {}, "battlefield")
+        offered = action["target_schema"]["legal_refs"]
+        self.assertIn(source.ref, offered)
+        self.assertIn(owned.ref, offered)
+        self.assertNotIn(borrowed.ref, offered)
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        for principal, ref in (("pilot:B", owned.ref), ("pilot:A", borrowed.ref)):
+            denied = session.act(principal, {"action_id": action["id"], "targets": [ref], "pay": "auto"})
+            self.assertFalse(denied.ok, denied.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": action["id"], "targets": [owned.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual([owned.object_id, *library], session.state.players["A"].zones["library"])
+        self.assertEqual(other_library, session.state.players["B"].zones["library"])
+        self.assertEqual("library", session.state.cards[owned.object_id].zone)
+        for seat in "BCD":
+            self.assertNotIn("lib", session.packet("pilot:" + seat, full=True)["state"]["players"]["A"])
+        self.replay(session, load=True)
+
     def test_original_king_crab_returns_borrowed_green_creature_to_owners_library(self):
         session = self.session(338012)
         source = self.add(session.engine, "King Crab")

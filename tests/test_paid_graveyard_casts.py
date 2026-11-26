@@ -576,3 +576,38 @@ class PaidGraveyardRuntimeTests(unittest.TestCase):
         malformed = deepcopy(descriptor); malformed['payment']['additional_costs'][0]['amount'] = True
         with self.assertRaises(ValueError):
             PaidGraveyardCastPermissionHandler().validate(malformed)
+
+class GrantedEscapeAuthorityTests(unittest.TestCase):
+    def test_granted_escape_quote_requires_the_same_live_source_incarnation(self):
+        from types import SimpleNamespace
+        from unittest.mock import Mock
+
+        from quorune.cast_lifecycles import (
+            GRANTED_ESCAPE_LIFECYCLE_VERSION,
+            FixedCastLifecycleKind,
+            FixedCastLifecycleSpec,
+        )
+        from quorune.rules.casting import escape_grants
+
+        spec = FixedCastLifecycleSpec(
+            None, None, None, FixedCastLifecycleKind.ESCAPE, None, None,
+            exile_count=3, schema_version=GRANTED_ESCAPE_LIFECYCLE_VERSION,
+        )
+        source = SimpleNamespace(object_id="grant", logical_object_id="grant@1")
+        reentered = SimpleNamespace(object_id="grant", logical_object_id="grant@2")
+        spell = SimpleNamespace(zone="graveyard", logical_object_id="spell@6")
+        printed = {"id": "printed", "kind": "mana", "requirements": {"W": 1}}
+        host = SimpleNamespace(_compiled_printed_cost_options=Mock(return_value=([printed], False)))
+
+        with (
+            patch.object(escape_grants, "_escape_face_price", return_value=("Tear", "{W}")),
+            patch.object(escape_grants, "_current_escape_grants", return_value=((source, "grant:ability", spec),)) as grants,
+        ):
+            original, = escape_grants.granted_escape_base_options(host, "A", spell, [printed])
+            self.assertTrue(escape_grants.validate_granted_escape_option(host, "A", spell, original, origin="graveyard"))
+            grants.return_value = ((reentered, "grant:ability", spec),)
+            with self.assertRaisesRegex(ValueError, "original Escape granting source"):
+                escape_grants.validate_granted_escape_option(host, "A", spell, original, origin="graveyard")
+            renewed, = escape_grants.granted_escape_base_options(host, "A", spell, [printed])
+            self.assertNotEqual(original["id"], renewed["id"])
+            self.assertTrue(escape_grants.validate_granted_escape_option(host, "A", spell, renewed, origin="graveyard"))

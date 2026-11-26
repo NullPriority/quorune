@@ -4,8 +4,16 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from .impulse_access_model import ImpulseAccessDuration
+from .land_exile_source_return_model import (
+    LAND_EXILE_RETURN_CAPABILITY, LAND_EXILE_RETURN_MECHANIC, LAND_EXILE_RETURN_SCOPE,
+    uses_land_exile_source_return, validate_land_exile_source_return,
+)
 from .mana_value_exile_model import TOTAL_MANA_EXILE_SCOPE, TOTAL_MANA_EXILE_CAPABILITY, TOTAL_MANA_EXILE_MECHANIC
 from .rules.library_selection import LibrarySelectionObjectIdentity
+from .targeted_exile_land_entry import (
+    TARGETED_EXILE_LAND_ENTRY_CAPABILITY, TARGETED_EXILE_LAND_ENTRY_MECHANIC,
+    TARGETED_EXILE_LAND_ENTRY_SCOPE, uses_targeted_exile_land_entry, validate_targeted_exile_land_entry,
+)
 
 
 FIXED_TOP_EXILE_OPERATION = "exile_fixed_library_tops_and_cast"
@@ -26,6 +34,11 @@ FIXED_TOP_EXILE_MECHANIC_CAPABILITIES = {
     CHOSEN_IMPULSE_MECHANIC: (CHOSEN_IMPULSE_CAPABILITY,),
     RESOLVING_TOP_PLAY_MECHANIC: (RESOLVING_TOP_PLAY_CAPABILITY,),
     TOTAL_MANA_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, TOTAL_MANA_EXILE_CAPABILITY),
+    LAND_EXILE_RETURN_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, LAND_EXILE_RETURN_CAPABILITY),
+    "fixed-each-opponent-library-top-exile": ("library.exile.each_opponent_top",),
+    "fixed-controlled-opponent-library-exile-play": ("permission.exile.controlled_opponent_library_batch",),
+    "trigger-event-resolving-opponent-library-exile": ("trigger.event.resolving_opponent_library_exile",),
+    TARGETED_EXILE_LAND_ENTRY_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY, TARGETED_EXILE_LAND_ENTRY_CAPABILITY),
 }
 FIXED_TOP_EXILE_RULES = ("400.7j", "601.2", "608.2c", "608.2d", "608.2g", "712.8a", "712.11")
 FIXED_TOP_EXILE_DAMAGE_CAPABILITIES = (
@@ -65,6 +78,10 @@ def validate_resolving_land_play_identity(value):
 
 
 def validate_fixed_top_exile(effect, *, resolved=False):
+    if uses_targeted_exile_land_entry(effect):
+        return validate_targeted_exile_land_entry(effect, resolved=resolved)
+    if uses_land_exile_source_return(effect):
+        return validate_land_exile_source_return(effect, resolved=resolved)
     if isinstance(effect, Mapping) and effect.get('scope') == TOTAL_MANA_EXILE_SCOPE:
         from .rules.mana_value_exile import validate_total_mana_instruction, validate_total_mana_step
         if type(effect.get('schema_version')) is int and effect['schema_version'] == 5 and resolved:
@@ -142,6 +159,11 @@ def fixed_top_exile_dependencies(effect):
     if effect.get("op") != FIXED_TOP_EXILE_OPERATION:
         return ()
     scope = validate_fixed_top_exile(effect)
+    if scope == LAND_EXILE_RETURN_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, LAND_EXILE_RETURN_CAPABILITY, "target.revalidate_resolution")
+    if scope == TARGETED_EXILE_LAND_ENTRY_SCOPE:
+        return (FIXED_TOP_EXILE_CAPABILITY, TARGETED_EXILE_LAND_ENTRY_CAPABILITY,
+                "target.revalidate_resolution", "zone.change.destination_replacement", "zone.entry.tapped_state")
     if scope == TOTAL_MANA_EXILE_SCOPE:
         return (FIXED_TOP_EXILE_CAPABILITY, TOTAL_MANA_EXILE_CAPABILITY)
     if scope == CHOSEN_IMPULSE_SCOPE:
@@ -159,6 +181,8 @@ def fixed_top_exile_result_rows(effect):
         raise ValueError("Fixed top exile offer requires its captured result set")
     instruction = effect["instruction"]
     scope = validate_fixed_top_exile(instruction, resolved=True)
+    if scope == TARGETED_EXILE_LAND_ENTRY_SCOPE and effect["results"]:
+        raise ValueError("The land entry offer reads the whole public exile zone")
     results = []
     for row in effect["results"]:
         if not isinstance(row, Mapping) or set(row) != {"owner", "identity"} or not _seat(row["owner"]):
@@ -171,7 +195,8 @@ def fixed_top_exile_result_rows(effect):
             raise ValueError("Fixed top exile captured too many cards")
     elif scope != TOTAL_MANA_EXILE_SCOPE and len({owner for owner, _ in results}) != len(results):
         raise ValueError("Fixed top exile results require one distinct card per library")
-    owner = instruction["supplier"] if scope == "cast_event_library" else instruction["player"]
+    owner = (instruction["supplier"] if scope in {"cast_event_library", LAND_EXILE_RETURN_SCOPE}
+             else instruction["player"])
     if scope != "each_library" and any(supplier != owner for supplier, _ in results):
         raise ValueError("Fixed top exile result came from an unrepresented library")
     return tuple(results)

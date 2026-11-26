@@ -8,7 +8,7 @@ from ..attachment_references import (
     ATTACHMENT_INFORMATION_CAPABILITY, AttachmentReferenceError, AttachmentReferenceKind, AttachmentReferenceSpec,
 )
 from ..compiler.fixed_resolution_characteristic_queries import (
-    fixed_resolution_characteristic_query_is_closed,
+    CONTROLLED_FLYING_CREATURES_QUERY, fixed_resolution_characteristic_query_is_closed,
 )
 from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORDS,
@@ -24,9 +24,13 @@ from ..resolution_characteristic_model import (CHARACTERISTIC_OPERATION, TARGET_
     TARGET_CARD_TYPE_ADDITION_CAPABILITY, TARGET_CARD_TYPE_ADDITION_MECHANIC)
 
 
+CONTROLLED_FLYING_STATS_CAPABILITY = "continuous.resolution.controlled_flying_fixed_stats"
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
     "continuous.resolution.fixed_characteristics_until_end_of_turn"
 )
+
+
+EQUIPPED_STAT_REFERENCE = AttachmentReferenceSpec(AttachmentReferenceKind.EQUIPPED, "permanent", schema_version=2)
 
 
 def is_attached_characteristic_effect(effect) -> bool:
@@ -40,12 +44,19 @@ def is_attached_characteristic_effect(effect) -> bool:
     )
 
 
-def _closed_enchanted_permanent(value) -> bool:
+def is_equipped_stat_mode_effect(effect) -> bool:
+    return (effect.get("op") == "modify_stats_until_end_of_turn"
+            and is_attached_characteristic_effect(effect)
+            and effect["card"].get("relation") == AttachmentReferenceKind.EQUIPPED.value)
+
+
+def _closed_attached_stat_reference(value) -> bool:
     try:
         reference = AttachmentReferenceSpec.from_dict(value)
     except AttachmentReferenceError:
         return False
-    return reference == AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+    return (reference.schema_version == 2 and reference.required_card_type == "permanent"
+            and reference.relation in {AttachmentReferenceKind.ENCHANTED, AttachmentReferenceKind.EQUIPPED})
 
 
 def fixed_attached_stat_node_capabilities(*, effects, target_schema, mechanic_ids) -> tuple[str, ...]:
@@ -57,7 +68,7 @@ def fixed_attached_stat_node_capabilities(*, effects, target_schema, mechanic_id
             or type(effect.get("power")) is not int or type(effect.get("toughness")) is not int
             or not (effect["power"] or effect["toughness"])):
         return ()
-    if not _closed_enchanted_permanent(effect["card"]):
+    if not _closed_attached_stat_reference(effect["card"]):
         return ()
     return (FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, ATTACHMENT_INFORMATION_CAPABILITY)
 
@@ -73,17 +84,45 @@ def fixed_attached_characteristic_node_capabilities(*, effects, target_schema, m
     keywords = effect.get("keywords")
     if (not isinstance(keywords, (list, tuple)) or not 1 <= len(keywords) <= 2
             or any(type(keyword) is not str or keyword not in FIXED_CHARACTERISTIC_KEYWORDS for keyword in keywords)
-            or len(set(keywords)) != len(keywords) or not _closed_enchanted_permanent(effect["card"])):
+            or len(set(keywords)) != len(keywords)):
+        return ()
+    try:
+        reference = AttachmentReferenceSpec.from_dict(effect["card"])
+    except AttachmentReferenceError:
+        return ()
+    if reference == AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2):
+        source_kind = "enchantment"
+    elif (tuple(keywords) == ("Hexproof",)
+          and reference == AttachmentReferenceSpec(AttachmentReferenceKind.EQUIPPED, "permanent", schema_version=2)):
+        source_kind = "artifact"
+    else:
         return ()
     from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
-    template = FixedSourceCharacteristicsTemplate(source_kind="enchantment", keywords=tuple(keywords))
+    template = FixedSourceCharacteristicsTemplate(source_kind=source_kind, keywords=tuple(keywords))
     if thaw_value(effect) != {**template.effects[0], "card": thaw_value(effect["card"])}:
         return ()
     if type(effect["power"]) is not int or type(effect["toughness"]) is not int:
         return ()
     return tuple(sorted({FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, ATTACHMENT_INFORMATION_CAPABILITY,
                          *(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
+
+
+EACH_COLOR_PROTECTION_FIELD = "protection_from_each_color"
+
+
+def fixed_set_each_color_protection_is_closed(effect, query, *, controller):
+    """Accept only a complete until-end-of-turn grant to the original controlled creature set."""
+    return (
+        set(effect) - {"_runtime_source"} == {
+            "op", "predicate", "power", "toughness", "keywords", EACH_COLOR_PROTECTION_FIELD,
+        }
+        and effect[EACH_COLOR_PROTECTION_FIELD] is True
+        and effect["op"] == "modify_all_matching_permanents_until_end_of_turn"
+        and all(type(effect[key]) is int and effect[key] == 0 for key in ("power", "toughness"))
+        and effect["predicate"] == query.to_dict()
+        and query == ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), controller=controller)
+    )
 
 
 def fixed_resolution_characteristic_set_node_capabilities(
@@ -94,6 +133,12 @@ def fixed_resolution_characteristic_set_node_capabilities(
 ) -> tuple[str, ...]:
     """Own one fixed or chosen resolution-locked public characteristic result."""
 
+    from .target_player_stat_untap import TARGET_PLAYER_STAT_UNTAP_VERSION, target_player_stat_untap_node_capabilities
+
+    if len(effects) == 1 and TARGET_PLAYER_STAT_UNTAP_VERSION in effects[0]:
+        return target_player_stat_untap_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if len(effects) == 1 and SAME_NAME_STAT_VERSION_FIELD in effects[0]:
         return same_name_creature_stat_node_capabilities(
             effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
@@ -135,6 +180,9 @@ def fixed_resolution_characteristic_set_node_capabilities(
     expected_fields = {"op", "predicate", "power", "toughness"}
     if has_keywords:
         expected_fields.add("keywords")
+    each_color_protection = EACH_COLOR_PROTECTION_FIELD in effect
+    if each_color_protection:
+        expected_fields.add(EACH_COLOR_PROTECTION_FIELD)
     if (
         set(effect) != expected_fields
         or effect.get("op")
@@ -148,13 +196,18 @@ def fixed_resolution_characteristic_set_node_capabilities(
         query = ObjectQuerySpec.from_dict(effect["predicate"])
     except (ObjectQueryError, TypeError):
         return ()
-    if (
-        dict(effect["predicate"]) != query.to_dict()
-        or not fixed_resolution_characteristic_query_is_closed(
-            query,
-            target_schema=target_schema,
-        )
+    if dict(effect["predicate"]) != query.to_dict():
+        return ()
+    if each_color_protection and (
+        next_turn or target_schema is not None or "protection" not in mechanics
+        or not fixed_set_each_color_protection_is_closed(effect, query, controller="$controller")
     ):
+        return ()
+    if query == CONTROLLED_FLYING_CREATURES_QUERY:
+        if target_schema is not None or has_keywords or next_turn or not (effect["power"] or effect["toughness"]):
+            return ()
+        return (CONTROLLED_FLYING_STATS_CAPABILITY, FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY)
+    if not fixed_resolution_characteristic_query_is_closed(query, target_schema=target_schema):
         return ()
     if has_keywords:
         raw_keywords = effect["keywords"]
@@ -183,6 +236,8 @@ def fixed_resolution_characteristic_set_node_capabilities(
         ):
             return ()
     dependencies = {FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, *object_query_capabilities(query)}
+    if each_color_protection:
+        dependencies.add("protection.typed.debt")
     if next_turn:
         dependencies.add(NEXT_TURN_EFFECT_CAPABILITY)
     if query.state_predicate is not None:
@@ -258,6 +313,10 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         return subtype_set
     if chosen_type := _chosen_type_temporary_modifier_runtime_dependencies(program):
         return chosen_type
+    from .target_player_stat_untap import target_player_stat_untap_runtime_dependencies
+
+    if target_player := target_player_stat_untap_runtime_dependencies(program):
+        return target_player
     if same_name := same_name_creature_stat_runtime_dependencies(program):
         return same_name
     from .event_player_modifiers import event_player_modifier_program_dependencies
@@ -267,6 +326,45 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
     if required := death_land_exile_runtime_dependencies(program):
         return required
     from .effect_shape_walkers import nested_effects
+    from ..resolution_characteristic_model import (
+        FIXED_SUBTYPE_BASE_CAPABILITY, TARGET_PLAYER_CREATURE_OVERWRITE_VERSION, is_fixed_subtype_base_instruction,
+    )
+    from .resolution_characteristic_shapes import (
+        is_target_creature_ability_loss, targeted_tap_then_ability_loss_capabilities,
+    )
+
+    if any(is_target_creature_ability_loss(effect) for effect in nested_effects((program.effects, program.handlers))):
+        owners = targeted_tap_then_ability_loss_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (not owners or (program.event, program.active_zone) != ("permanent.enter.self", "battlefield")
+                or program.handlers or program.cost_schema is not None or program.event_condition is not None):
+            raise ValueError("Tap and ability loss require their exact original self-entry trigger")
+        return owners
+
+    if any(effect.get("op") == CHARACTERISTIC_OPERATION
+           and effect.get("schema_version") == TARGET_PLAYER_CREATURE_OVERWRITE_VERSION
+           for effect in nested_effects((program.effects, program.handlers))):
+        from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+
+        owners = fixed_resolution_characteristic_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if (not owners or (program.event, program.active_zone) != ("resolve", "stack")
+                or not program.ability_id.startswith("spell:") or program.handlers or program.cost_schema is not None):
+            raise ValueError("Player creature overwrite requires its original complete spell resolution")
+        return owners
+
+    if any(is_fixed_subtype_base_instruction(effect) for effect in nested_effects((program.effects, program.handlers))):
+        from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
+
+        owners = fixed_resolution_characteristic_capabilities(
+            effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+        )
+        if FIXED_SUBTYPE_BASE_CAPABILITY not in owners:
+            raise ValueError("Base stats and an added subtype require one complete untargeted creature cohort")
+        return owners
+
     from ..target_land_type_model import (
         FIXED_TARGET_LAND_TYPE_VERSION, FIXED_TARGET_LAND_TYPE_MECHANIC,
         SOURCE_PRESENT_LAND_TYPE_CAPABILITY, SOURCE_EXIT_LAND_TYPE_CAPABILITY,
@@ -332,6 +430,10 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
             projected[stat], amount_owners = _runtime_stat_amount(effect.get(stat))
             required.update(amount_owners)
         query=ObjectQuerySpec.from_dict(projected['predicate'])
+        if query == CONTROLLED_FLYING_CREATURES_QUERY and any(
+            type(effect.get(stat)) is not int for stat in ("power", "toughness")
+        ):
+            raise ValueError("Flying stat modifiers require their fixed printed deltas")
         selection_schema=program.target_schema if query.controller=='$target.0' else None
         owners = fixed_resolution_characteristic_set_node_capabilities(
             effects=(projected,), target_schema=selection_schema, mechanic_ids=program.coverage,

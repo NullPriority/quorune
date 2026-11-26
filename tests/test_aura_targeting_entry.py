@@ -85,6 +85,26 @@ def aura_record(oracle_id: str, *, restriction: str = "creature") -> CardRecord:
 
 
 class SimpleEnchantModelTests(unittest.TestCase):
+    def test_linked_graveyard_enchant_switches_domains_and_retains_only_one_incarnation(self):
+        from types import SimpleNamespace
+        from quorune.aura import LinkedGraveyardCreatureEnchantSpec
+
+        spec = LinkedGraveyardCreatureEnchantSpec("returned")
+        source = SimpleNamespace(annotations={})
+        first = SimpleNamespace(object_id="card", logical_object_id="card@1")
+        second = SimpleNamespace(object_id="card", logical_object_id="card@2")
+
+        self.assertEqual(["graveyard"], spec.target_schema(source)["zones"])
+        self.assertTrue(spec.linked_target_allows(source, first))
+        source.annotations["returned"] = None
+        self.assertEqual(["battlefield"], spec.target_schema(source)["zones"])
+        self.assertFalse(spec.linked_target_allows(source, first))
+        source.annotations["returned"] = {"object_id": "card", "logical_object_id": "card@1"}
+        self.assertTrue(spec.linked_target_allows(source, first))
+        self.assertFalse(spec.linked_target_allows(source, second))
+        source.annotations["returned"] = "card"
+        self.assertTrue(spec.linked_target_allows(source, second))
+
     def test_model_is_canonical_immutable_and_fingerprinted(self):
         spec = SimpleEnchantSpec(
             " Creature ", AuraControllerRelation.YOU
@@ -1162,6 +1182,201 @@ class AuraTargetingEntryEngineTests(unittest.TestCase):
             aura.object_id,
             engine.state.players["B"].attachments,
         )
+
+    def prepare_linked_graveyard_aura(self, creature_name, *, responses=()):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        game = self.make_session(108720)
+        engine = game.engine
+        aura = self.card(engine, "B", "Animate Dead")
+        self.registry = load_default_capability_registry()
+        self.register_fixture_cards_on_add = True
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.rules.linked_graveyard_aura import (
+            LINKED_GRAVEYARD_AURA_ENTRY_TEMPLATE, LINKED_GRAVEYARD_AURA_SPELL_TEMPLATE,
+        )
+
+        source = self.db.by_oracle_id(aura.oracle_id)
+        program = compile_best_available_card_program(self.db, source, semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review")
+        runtime = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(runtime["strict_capability_ready"], runtime["blockers"])
+        actual = {row.provenance.get("template_id") for row in engine.semantics.programs_for_oracle(aura.oracle_id)}
+        self.assertTrue({LINKED_GRAVEYARD_AURA_ENTRY_TEMPLATE, LINKED_GRAVEYARD_AURA_SPELL_TEMPLATE} <= actual)
+
+        add = BoundEffectProgramRuntimeTests.add
+        creature = add(self, engine, creature_name, zone="graveyard", ref="buried-creature")
+        answers = [
+            add(self, engine, name, zone="hand", ref=f"aura-response-{index}")
+            for index, name in enumerate(responses)
+        ]
+        engine.move_card(aura.object_id, "hand", log=False)
+        engine.state.players["A"].mana_pool.update({"C": 12, "R": 9, "W": 5})
+        SelfPublicZoneRuntimeTests.prepare(self, game, actor="B", active="B", mana={"C": 1, "B": 1})
+        game.initial_checkpoint = checkpoint_envelope(engine.state)
+        game.commands.clear()
+        game.decisions.clear()
+        SelfPublicZoneRuntimeTests.cast(self, game, "B", aura, [creature.ref])
+        return game, aura, creature, answers
+
+    def assert_linked_aura_replay(self, game):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "linked-graveyard-aura"
+            game.save(path)
+            replay = replay_record(path, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(len(game.commands), replay["commands"])
+
+    def test_linked_graveyard_aura_preserves_trigger_control_and_replays(self):
+        from test_ring_native_actions import RingNativeActionTests
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        game, aura, creature, (steal_aura, remove_aura, steal_creature) = self.prepare_linked_graveyard_aura(
+            "Grizzly Bears", responses=("Word of Seizing", "Disenchant", "Word of Seizing")
+        )
+        until = RingNativeActionTests.until
+        cast = SelfPublicZoneRuntimeTests.cast
+        until(self, game, lambda _: aura.zone == "battlefield")
+        first_creature_incarnation = creature.logical_object_id
+        self.assertEqual(creature.object_id, aura.attached_to)
+        cast(self, game, "A", steal_aura, [aura.ref])
+        until(self, game, lambda _: aura.controller == "A")
+        entry = game.state.stack[-1]
+        self.assertEqual("B", entry.controller)
+        from quorune.rules.linked_graveyard_aura import LINKED_GRAVEYARD_AURA_ENTRY_TEMPLATE
+
+        self.assertEqual(LINKED_GRAVEYARD_AURA_ENTRY_TEMPLATE,
+                         game.engine.semantics.get(entry.semantic_key).provenance["template_id"])
+        until(self, game, lambda _: creature.zone == "battlefield")
+        self.assertEqual("B", creature.controller)
+        self.assertNotEqual(first_creature_incarnation, creature.logical_object_id)
+        self.assertEqual(creature.object_id, aura.attached_to)
+        self.assertEqual(1, game.engine._numeric_stat(creature.object_id, "power"))
+        cast(self, game, "A", remove_aura, [aura.ref])
+        until(self, game, lambda _: aura.zone == "graveyard")
+        sacrifice = game.state.stack[-1]
+        self.assertEqual("B", sacrifice.controller)
+        self.assertEqual("battlefield", creature.zone)
+        try:
+            cast(self, game, "A", steal_creature, [creature.ref])
+        except StopIteration:
+            self.fail(f"Creature-control response unavailable with {game.state.players['A'].mana_pool}")
+        until(self, game, lambda _: creature.controller == "A")
+        self.assertEqual("B", game.state.stack[-1].controller)
+        with patch.object(game.engine, "apply_effect", wraps=game.engine.apply_effect) as applied:
+            until(self, game, lambda _: creature.zone == "graveyard")
+        sacrifice, = [call for call in applied.call_args_list if call.args[0].get("op") == "sacrifice"]
+        self.assertEqual("A", sacrifice.kwargs["actor"])
+        self.assertEqual("A", creature.owner)
+        self.assertIn(creature.object_id, game.state.players["A"].zones["graveyard"])
+        self.assertEqual(1, sum(event.code == "trigger.delayed.created" for event in game.state.events))
+        self.assert_linked_aura_replay(game)
+
+    def test_linked_graveyard_aura_does_not_attach_to_protected_return(self):
+        from test_ring_native_actions import RingNativeActionTests
+
+        game, aura, creature, _ = self.prepare_linked_graveyard_aura("White Knight")
+        until = RingNativeActionTests.until
+        until(self, game, lambda _: creature.zone == "battlefield")
+        self.assertEqual("graveyard", aura.zone)
+        self.assertIsNone(aura.attached_to)
+        self.assertEqual(2, game.engine._numeric_stat(creature.object_id, "power"))
+        self.assertEqual([], creature.attachments)
+        from quorune.rules.linked_graveyard_aura import LINKED_RETURN_EVENT_CODE
+
+        returned, = [event for event in game.state.events if event.code == LINKED_RETURN_EVENT_CODE]
+        self.assertFalse(returned.details["attached"])
+        self.assertEqual("B", game.state.stack[-1].controller)
+        until(self, game, lambda _: creature.zone == "graveyard")
+        self.assert_linked_aura_replay(game)
+
+    def test_linked_graveyard_aura_departed_source_cannot_return_original_card(self):
+        from test_ring_native_actions import RingNativeActionTests
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        game, aura, creature, (removal,) = self.prepare_linked_graveyard_aura("Grizzly Bears", responses=("Disenchant",))
+        until = RingNativeActionTests.until
+        until(self, game, lambda _: aura.zone == "battlefield")
+        SelfPublicZoneRuntimeTests.cast(self, game, "A", removal, [aura.ref])
+        until(self, game, lambda _: aura.zone == "graveyard")
+        self.assertEqual("graveyard", creature.zone)
+        until(self, game, lambda _: not game.state.stack)
+        self.assertEqual("graveyard", creature.zone)
+        self.assertFalse(game.state.delayed_triggers)
+        self.assert_linked_aura_replay(game)
+
+    def test_linked_graveyard_aura_loses_old_restriction_when_return_is_redirected(self):
+        from quorune.replacement_effects import ReplacementClass, ReplacementEffect, SetField
+        from quorune.semantic_runtime import zone_replacements
+        from test_ring_native_actions import RingNativeActionTests
+
+        game, aura, creature, _ = self.prepare_linked_graveyard_aura("Grizzly Bears")
+        redirect = ReplacementEffect(
+            effect_id="test:graveyard-aura-return", source_id="test:exile-instead",
+            event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "object_ref": {"eq": creature.ref},
+                "origin": {"eq": "graveyard"},
+                "destination": {"eq": "battlefield"},
+            },
+            operations=(SetField("destination", "exile"),),
+        )
+        collect = zone_replacements.collect_zone_change_replacement_effects
+
+        def with_redirect(host, **kwargs):
+            return (*collect(host, **kwargs), redirect)
+
+        with patch.object(zone_replacements, "collect_zone_change_replacement_effects", with_redirect):
+            RingNativeActionTests.until(self, game, lambda _: creature.zone == "exile")
+            self.assertEqual("graveyard", aura.zone)
+            self.assertIsNone(aura.attached_to)
+            self.assertEqual([], creature.attachments)
+            self.assertFalse(game.state.delayed_triggers)
+            self.assert_linked_aura_replay(game)
+
+    def test_linked_graveyard_aura_resumes_a_sacrifice_replacement(self):
+        from quorune.replacement_effects import ReplacementClass, ReplacementEffect, SetField
+        from quorune.semantic_runtime import zone_replacements
+        from test_ring_native_actions import RingNativeActionTests
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        game, aura, creature, (removal,) = self.prepare_linked_graveyard_aura("Grizzly Bears", responses=("Disenchant",))
+        until = RingNativeActionTests.until
+        until(self, game, lambda _: creature.zone == "battlefield")
+        SelfPublicZoneRuntimeTests.cast(self, game, "A", removal, [aura.ref])
+        until(self, game, lambda _: aura.zone == "graveyard")
+        collect = zone_replacements.collect_zone_change_replacement_effects
+        redirects = tuple(
+            ReplacementEffect(
+                effect_id=f"test:linked-sacrifice-{zone}", source_id=f"test:{zone}",
+                event_kind="zone.change", replacement_class=ReplacementClass.OTHER,
+                conditions={
+                    "object_ref": {"eq": creature.ref},
+                    "origin": {"eq": "battlefield"},
+                    "destination": {"eq": "graveyard"},
+                },
+                operations=(SetField("destination", zone),),
+                label=f"Redirect to {zone}",
+            )
+            for zone in ("hand", "exile")
+        )
+
+        def with_redirects(host, **kwargs):
+            return (*collect(host, **kwargs), *redirects)
+
+        with patch.object(zone_replacements, "collect_zone_change_replacement_effects", with_redirects):
+            until(self, game, lambda current: current.state.pending_decision.kind == "replacement.order")
+            self.assertEqual(["B"], game.state.pending_decision.actors)
+            self.assertEqual("battlefield", creature.zone)
+            options = game.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+            self.assertEqual(2, len(options))
+            result = game.act("pilot:B", {"action_id": "choose", "replacement": options[0]["id"]})
+            self.assertTrue(result.ok, result.summary)
+            self.assertIn(creature.zone, {"hand", "exile"})
+            self.assertFalse(game.state.stack)
+            self.assert_linked_aura_replay(game)
 
     def test_graveyard_card_aura_attachment_clears_on_zone_change(self):
         session, aura, target, records = self.fixture(

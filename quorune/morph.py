@@ -57,6 +57,7 @@ FACE_DOWN_METHOD_RUNTIME_EVENTS = {
     DISGUISE_CAST_METHOD: DISGUISE_RUNTIME_EVENT,
 }
 MORPH_FACE_DOWN_LABEL = "Face-down spell"
+CLOAK_CHARACTERISTIC_METHOD = "cloak"
 MORPH_FACE_DOWN_VALUES: dict[str, Any] = {
     "name": "",
     "mana_cost": "",
@@ -257,13 +258,13 @@ def morph_handler_descriptor(
 def face_down_characteristics(
     method: str,
 ) -> dict[str, Any]:
-    if method not in FACE_DOWN_CAST_METHODS:
+    if method not in FACE_DOWN_CAST_METHODS and method != CLOAK_CHARACTERISTIC_METHOD:
         raise MorphError("Unsupported face-down characteristic method")
     values = {
         key: list(value) if isinstance(value, list) else value
         for key, value in MORPH_FACE_DOWN_VALUES.items()
     }
-    if method == DISGUISE_CAST_METHOD:
+    if method in {DISGUISE_CAST_METHOD, CLOAK_CHARACTERISTIC_METHOD}:
         values["abilities"] = ["Ward {2}"]
         values["ability_fragments"] = [
             ability_fragment_to_dict(WardSpec(generic_cost=2))

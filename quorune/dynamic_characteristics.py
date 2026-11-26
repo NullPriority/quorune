@@ -4,11 +4,12 @@ from typing import Any, Mapping, Protocol
 
 from .ability_fragments import canonical_ability_fragments
 from .characteristic_fragments import (
+    CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION,
     CharacteristicCountKind,
     ConditionalKeywordSpec,
     DynamicPowerToughnessSpec,
     PowerToughnessCalculation,
-    CharacteristicQuantityScope,
+    CharacteristicQuantityScope, SOURCE_LINKED_EXILE_QUANTITY_VERSION,
     CharacteristicQuantitySpec,
     CharacteristicQuantityReduction,
 )
@@ -62,6 +63,56 @@ def _combat_land_count_seat(
     return source.controller if source.zone in {"battlefield", "stack"} else source.owner
 
 
+def _controlled_creature_attachment_ids(
+    host: DynamicCharacteristicHost, controller: str, *, enforce_applicability: bool,
+) -> tuple[str, ...]:
+    from .attachments import attached_object_identity
+
+    state = host.state
+    player = state.players.get(controller)
+    if player is None or not player.in_game:
+        return ()
+    attachments = []
+    for object_id in player.zones["battlefield"]:
+        creature = state.cards[object_id]
+        if (creature.zone != "battlefield" or creature.phased_out
+                or creature.controller != controller or not creature.attachments):
+            continue
+        effective = host._effective_card_data(
+            creature, maximum_layer=Layer.COLOR,
+            _enforce_static_component_applicability=enforce_applicability,
+        )
+        types, _, _ = host._type_parts(str(effective.get("type_line") or ""))
+        if "creature" not in types:
+            continue
+        for attachment_id in creature.attachments:
+            attachment = state.cards.get(attachment_id)
+            if attachment is None:
+                continue
+            identity = attached_object_identity(state.cards, attachment)
+            if identity is not None and identity.object_id == object_id:
+                attachments.append(attachment_id)
+    return tuple(dict.fromkeys(attachments))
+
+
+def _attachment_quantity_object_ids(host, source, scope, *, enforce_applicability):
+    if scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
+        return tuple(source.attachments)
+    if scope is CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES:
+        return _controlled_creature_attachment_ids(
+            host, source.controller, enforce_applicability=enforce_applicability,
+        )
+    from .attachments import attached_object_identity
+
+    identity = attached_object_identity(host.state.cards, source)
+    if identity is None:
+        return None
+    recipient = host.state.cards[identity.object_id]
+    return tuple(object_id for object_id in dict.fromkeys(recipient.attachments)
+                 if object_id in host.state.cards
+                 and host.state.cards[object_id].attached_to == recipient.object_id)
+
+
 def query_characteristic_count(
     host: DynamicCharacteristicHost,
     source: Any,
@@ -87,7 +138,8 @@ def query_characteristic_count(
         from .public_zone_quantities import current_public_zone_quantity
         return current_public_zone_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
 
-    if quantity.schema_version in {4, 11, 12}:
+    if quantity.schema_version in {4, 11, 12, SOURCE_LINKED_EXILE_QUANTITY_VERSION,
+                                   CHOSEN_COLOR_DEFINITION_QUANTITY_VERSION}:
         from .rules.live_modifier_quantities import current_modifier_quantity
         return current_modifier_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
     if quantity.schema_version == 3:
@@ -118,17 +170,16 @@ def query_characteristic_count(
     if linked_seat is not None:
         object_ids = tuple(host.state.players[linked_seat].zones[zone])
         _maximum_layer = Layer.COLOR
-    elif quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_SOURCE:
-        object_ids = tuple(source.attachments)
-    elif quantity.scope is CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT:
-        from .attachments import attached_object_identity
-        identity = attached_object_identity(host.state.cards, source)
-        if identity is None:
+    elif quantity.scope in {
+        CharacteristicQuantityScope.ATTACHED_TO_SOURCE,
+        CharacteristicQuantityScope.ATTACHED_TO_RECIPIENT,
+        CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES,
+    }:
+        object_ids = _attachment_quantity_object_ids(
+            host, source, quantity.scope, enforce_applicability=_enforce_static_component_applicability,
+        )
+        if object_ids is None:
             return 0
-        recipient = host.state.cards[identity.object_id]
-        object_ids = tuple(object_id for object_id in dict.fromkeys(recipient.attachments)
-            if object_id in host.state.cards
-            and host.state.cards[object_id].attached_to == recipient.object_id)
     elif quantity.scope in {
         CharacteristicQuantityScope.ATTACKING_DEFENDER_ZONE,
         CharacteristicQuantityScope.COMBAT_STATE_BASIC_LAND_ZONE,
@@ -208,11 +259,9 @@ def query_characteristic_count(
         )
         if not object_matches_query(row, quantity.query):
             continue
-        if quantity.literal_name is not None:
-            from .carddb_characteristics import public_object_rules_names
-
-            record = host.card_record(candidate) if zone == "graveyard" else None
-            if quantity.literal_name not in public_object_rules_names(candidate, effective, record):
+        if quantity.literal_name is not None or quantity.reduction is CharacteristicQuantityReduction.DISTINCT_PUBLIC_NAMES:
+            effective = _name_quantity_values(host, candidate, effective, quantity.literal_name, zone)
+            if effective is None:
                 continue
         matched.append((row, effective, candidate.object_kind if quantity.schema_version == 2 else ""))
     amount = reduce_public_quantity(
@@ -220,6 +269,16 @@ def query_characteristic_count(
         counter_name=quantity.counter_name,
     )
     return amount * quantity.multiplier + quantity.offset
+
+
+def _name_quantity_values(host, candidate, effective, literal_name, zone):
+    from .carddb_characteristics import public_object_rules_names
+
+    record = host.card_record(candidate) if zone == "graveyard" else None
+    names = public_object_rules_names(candidate, effective, record)
+    if literal_name is None:
+        return {**effective, "current_rules_names": names}
+    return effective if literal_name in names else None
 
 
 def _quantity_attachment_state(host, candidate, quantity, *, enforce_applicability):

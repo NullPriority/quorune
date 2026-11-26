@@ -4,9 +4,13 @@ from collections import Counter
 from collections.abc import Mapping
 from dataclasses import replace
 
-from ..attack_batch_model import (ATTACK_BATCH_CONTEXT,QualifiedAttackBatchSpec,
+from ..affected_permanents import AffectedPermanentSetSpec
+from ..creature_subtypes import canonical_creature_subtype
+from ..object_predicate import ObjectQuerySpec
+from ..attack_batch_model import (ATTACK_BATCH_CONDITION,ATTACK_BATCH_CONTEXT,QualifiedAttackBatchSpec,
     QUALIFIED_ATTACK_BATCH_CAPABILITY,attack_batch_conditions)
 from ..attack_batch_model import (
+    ATTACHED_PLAYER_ATTACK_VARIANT,
     DECLARED_ATTACK_POWER_CAPABILITY,
     DECLARED_ATTACK_POWER_COVERAGE,
     DECLARED_ATTACK_POWER_FIELD,
@@ -17,10 +21,110 @@ from ..attack_batch_model import (
     direct_player_attack_condition,
 )
 from ..attack_transition_model import AttackRecipientKind, AttackTransitionEvent
+from ..fixed_token_production import gold_token_effect
 from ..initiative_model import TAKE_INITIATIVE_CAPABILITY
 from ..qualified_attack_model import ATTACK_FACT_PREFIX,ATTACK_FACT_COLLECTIONS,ATTACK_FACT_BOOLEANS,ATTACK_FACT_NUMBERS
 from ..object_query import ObjectQueryResult,object_matches_query
 from ..replacement.immutable import FrozenMap, thaw_value
+
+
+DECLARED_ATTACK_COUNTER_FIELD = "declared_attack_counter_members"
+DECLARED_ATTACK_COUNTER_REFERENCE = "$event.declared_attack_counter_members"
+DECLARED_ATTACK_COUNTER_CAPABILITY = "counter.producer.declared_attack_group"
+ATTACKING_OPPONENT_TOKEN_FIELD = "attacking_opponent_token_version"
+ATTACKING_OPPONENT_TOKEN_CAPABILITY = "token.creation.attacked_player_attacking_opponent"
+
+
+def attacking_opponent_token_effects():
+    return (gold_token_effect(), {
+        **gold_token_effect(), ATTACKING_OPPONENT_TOKEN_FIELD: 1,
+    })
+
+
+def attacking_opponent_token_effects_are_closed(effects):
+    return (len(effects) == 2
+            and all(isinstance(effect, Mapping) for effect in effects)
+            and type(effects[1].get(ATTACKING_OPPONENT_TOKEN_FIELD)) is int
+            and all(type(effect.get("quantity")) is int for effect in effects)
+            and tuple(thaw_value(effect) for effect in effects) == attacking_opponent_token_effects())
+
+
+def bind_attacking_opponent_token(host, item, effect):
+    if ATTACKING_OPPONENT_TOKEN_FIELD not in effect:
+        return effect
+    from .casting.public_conditions import current_creature_attacking_controller
+
+    context = item.context
+    attacker, defender = context.get("player"), context.get("defender")
+    if (item.kind != "triggered_ability" or context.get("event") != DIRECT_PLAYER_ATTACK_EVENT
+            or context.get("currently_resolving") is not True
+            or attacker not in host.seats or defender not in host.seats or attacker == defender
+            or not attacking_opponent_token_effects_are_closed((gold_token_effect(), effect))):
+        raise ValueError("Attacking-opponent creation needs its original direct-player attack")
+    if (attacker == item.controller or attacker != host.state.active_player
+            or attacker not in host.active_seats or defender not in host.active_seats
+            or not current_creature_attacking_controller(host, defender)):
+        return None
+    return {**gold_token_effect(), "controller": attacker}
+
+
+def declared_attack_counter_set():
+    return AffectedPermanentSetSpec(query=ObjectQuerySpec(zones=("battlefield",)))
+
+
+def declared_attack_counter_effect():
+    return {"op": "place_counters_on_set", "source": "$source",
+            "set": {"kind": "declared_attack_group", "schema_version": 1},
+            "counter": "+1/+1", "amount": 1, DECLARED_ATTACK_COUNTER_FIELD: DECLARED_ATTACK_COUNTER_REFERENCE}
+
+
+def resolved_declared_attack_counter_effect(effect, *, source_ref):
+    if not isinstance(effect, Mapping):
+        raise ValueError("Declared attack counters require one versioned effect")
+    raw = thaw_value(effect)
+    members = raw.get(DECLARED_ATTACK_COUNTER_FIELD)
+    raw[DECLARED_ATTACK_COUNTER_FIELD] = DECLARED_ATTACK_COUNTER_REFERENCE
+    expected = {**declared_attack_counter_effect(), "source": source_ref}
+    if (raw != expected or type(raw["amount"]) is not int
+            or type(raw["set"]["schema_version"]) is not int):
+        raise ValueError("Declared attack counters lost their exact compiled group")
+    return validate_declared_attack_counter_members(members)
+
+
+def declared_attack_counter_effect_capabilities(effect):
+    if (isinstance(effect, Mapping) and thaw_value(effect) == declared_attack_counter_effect()
+            and type(effect["amount"]) is int and type(effect["set"]["schema_version"]) is int):
+        return ("counter.producer.fixed_permanent_set_effect", DECLARED_ATTACK_COUNTER_CAPABILITY)
+    return ()
+
+
+def declared_attack_counter_condition(condition):
+    specs = attack_batch_conditions(condition)
+    if len(specs) != 1:
+        raise ValueError("Declared attack counters require one sealed attack predicate")
+    spec = specs[0]
+    types = spec.query.subtypes_all
+    if (spec.grouping != "declaration" or spec.minimum != 1 or spec.exclude_source
+            or len(types) != 1 or canonical_creature_subtype(types[0]) != types[0]
+            or spec.query != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), subtypes_all=types)):
+        raise ValueError("Declared attack counters require one fixed matching subtype")
+    canonical = {"all": [
+        {"field": "controller", "op": "eq", "value": "$source.controller"},
+        {"field": ATTACK_BATCH_CONDITION, "op": "gte", "value": 1, "attack_batch": spec.to_dict()},
+    ]}
+    if thaw_value(condition) != canonical:
+        raise ValueError("Declared attack counters require the original controller relation")
+    return canonical["all"][1]
+
+
+def declared_attack_counter_context(program, source, context):
+    if len(program.effects) != 1 or not declared_attack_counter_effect_capabilities(program.effects[0]):
+        return {}
+    condition = declared_attack_counter_condition(program.event_condition)
+    members = qualified_attack_incarnations(source, condition, context)
+    if not members:
+        raise ValueError("Declared attack counter trigger lost all matching declaration members")
+    return {DECLARED_ATTACK_COUNTER_FIELD: members}
 
 
 def seal_attack_declaration(event,characteristic_contexts):
@@ -102,23 +206,72 @@ def _row_matches(source,spec,row):
     return object_matches_query(candidate,query)
 
 
-def qualified_attack_match_count(source,condition,context):
-    spec=QualifiedAttackBatchSpec.from_dict(condition['attack_batch']);rows=_sealed_rows(context)
-    allowed={'declaration':{'player','planeswalker','battle'},'player':{'player'},'player_or_planeswalker':{'player','planeswalker'}}[spec.grouping]
-    total=0
-    occurrence=next((row for row in rows if row['reference']==context.get('card')),None)
-    if occurrence is None:raise ValueError('Attack occurrence is absent from its sealed declaration')
-    if context.get('controller',occurrence['controller'])!=occurrence['controller']:
+def _qualified_attack_matching_rows(source, condition, context):
+    spec = QualifiedAttackBatchSpec.from_dict(condition['attack_batch'])
+    rows = _sealed_rows(context)
+    allowed = {'declaration': {'player', 'planeswalker', 'battle'}, 'player': {'player'},
+               'player_or_planeswalker': {'player', 'planeswalker'}}[spec.grouping]
+    occurrence = next((row for row in rows if row['reference'] == context.get('card')), None)
+    if occurrence is None:
+        raise ValueError('Attack occurrence is absent from its sealed declaration')
+    if context.get('controller', occurrence['controller']) != occurrence['controller']:
         raise ValueError('Attack occurrence controller differs from its sealed declaration')
-    if occurrence['recipient_kind'] not in allowed:return 0
-    if spec.grouping!='declaration' and (occurrence['recipient_kind'],occurrence['recipient'])!=(context.get('attacked_recipient_kind'),context.get('defender')):
+    if occurrence['recipient_kind'] not in allowed:
+        return
+    expected = (context.get('attacked_recipient_kind'), context.get('defender'))
+    if spec.grouping != 'declaration' and (occurrence['recipient_kind'], occurrence['recipient']) != expected:
         raise ValueError('Attack occurrence recipient differs from its sealed declaration')
-    if not _row_matches(source,spec,occurrence):return 0
+    if not _row_matches(source, spec, occurrence):
+        return
     for row in rows:
-        if row['controller']!=source.controller or row['recipient_kind'] not in allowed:continue
-        if spec.grouping!='declaration' and (row['recipient_kind'],row['recipient'])!=(context.get('attacked_recipient_kind'),context.get('defender')):continue
-        if _row_matches(source,spec,row):total+=1
-    return total
+        if row['controller'] != source.controller or row['recipient_kind'] not in allowed:
+            continue
+        if spec.grouping != 'declaration' and (row['recipient_kind'], row['recipient']) != expected:
+            continue
+        if _row_matches(source, spec, row):
+            yield row
+
+
+def qualified_attack_match_count(source, condition, context):
+    return sum(1 for _ in _qualified_attack_matching_rows(source, condition, context))
+
+
+def qualified_attack_incarnations(source, condition, context):
+    """Retain the same declaration membership used to qualify the trigger."""
+    return tuple((row['reference'], row['logical_object_id'])
+                 for row in _qualified_attack_matching_rows(source, condition, context))
+
+
+def validate_declared_attack_counter_members(members):
+    if not isinstance(members, (tuple, list)) or not members:
+        raise ValueError("Attack counters require sealed declaration members")
+    references = set()
+    incarnations = set()
+    normal = []
+    for pair in members:
+        if (not isinstance(pair, (tuple, list)) or len(pair) != 2
+                or any(type(term) is not str or not term for term in pair)):
+            raise ValueError("Attack counter member identity is malformed")
+        reference, logical = pair
+        if reference in references or logical in incarnations:
+            raise ValueError("An attack counter member must occur only once")
+        references.add(reference)
+        incarnations.add(logical)
+        normal.append((reference, logical))
+    return tuple(normal)
+
+
+def current_declared_attack_counter_recipients(members, find_public_object):
+    """Resolve only original attacking incarnations which remain available."""
+    selected = []
+    for reference, logical in validate_declared_attack_counter_members(members):
+        current = find_public_object(reference)
+        if (current is not None and current.zone == "battlefield"
+                and not current.phased_out and current.logical_object_id == logical):
+            if current.ref != reference:
+                raise ValueError("The attack counter binding disagrees with the original reference")
+            selected.append(current)
+    return tuple(selected)
 
 
 def attack_batch_aggregation_scope(program,context):
@@ -185,10 +338,32 @@ def _mentions_declared_attack_power(value):
     return isinstance(value, (list, tuple)) and any(_mentions_declared_attack_power(child) for child in value)
 
 
+def _mentions_declared_attack_counter_group(value):
+    if isinstance(value, Mapping):
+        return (DECLARED_ATTACK_COUNTER_FIELD in value or value.get("kind") == "declared_attack_group"
+                or any(_mentions_declared_attack_counter_group(child) for child in value.values()))
+    if isinstance(value, (list, tuple)):
+        return any(_mentions_declared_attack_counter_group(child) for child in value)
+    return type(value) is str and value == DECLARED_ATTACK_COUNTER_REFERENCE
+
+
 def qualified_attack_batch_runtime_dependencies(program):
     from .event_subscriptions import EVENT_SUBSCRIPTIONS_FIELD, FixedEventSubscriptionSet
+    from .effect_shape_walkers import contains_nested_key
 
     condition = program.event_condition
+    effects = getattr(program, "effects", ())
+    target = getattr(program, "target_schema", None)
+    cost = getattr(program, "cost_schema", None)
+    handlers = getattr(program, "handlers", ())
+    attached_player = direct_player_attack_condition(ATTACHED_PLAYER_ATTACK_VARIANT)
+    if (condition == attached_player or contains_nested_key((effects, target, cost, handlers), ATTACKING_OPPONENT_TOKEN_FIELD)
+            or ATTACKING_OPPONENT_TOKEN_CAPABILITY in getattr(program, "capability_dependencies", ())):
+        if ((program.event, program.active_zone, condition) != (DIRECT_PLAYER_ATTACK_EVENT, "battlefield", attached_player)
+                or target is not None or cost is not None or handlers
+                or not attacking_opponent_token_effects_are_closed(effects)):
+            raise ValueError("Attached-player attack creation requires the original two untargeted instructions")
+        return (DIRECT_PLAYER_ATTACK_CAPABILITY, ATTACKING_OPPONENT_TOKEN_CAPABILITY)
     if isinstance(condition, Mapping) and EVENT_SUBSCRIPTIONS_FIELD in condition:
         subscriptions = FixedEventSubscriptionSet.from_condition(condition)
         if subscriptions is not None and any(
@@ -196,6 +371,12 @@ def qualified_attack_batch_runtime_dependencies(program):
         ):
             raise ValueError("Direct player attack requires a single event subscription")
     if program.event.removesuffix(".self") == DIRECT_PLAYER_ATTACK_EVENT:
+        from .faction_trigger_model import faction_condition
+        from .faction_trigger_shapes import faction_branch_for_program
+
+        if thaw_value(condition) == faction_condition("Enclave"):
+            faction_branch_for_program(program)
+            return (DIRECT_PLAYER_ATTACK_CAPABILITY,)
         for variant in DIRECT_PLAYER_ATTACK_VARIANTS:
             if (program.event == DIRECT_PLAYER_ATTACK_EVENT and program.active_zone == "battlefield"
                     and condition == direct_player_attack_condition(variant)):
@@ -214,4 +395,16 @@ def qualified_attack_batch_runtime_dependencies(program):
             raise ValueError("Declared attack power requires one source attack with a resolution recheck")
         _declared_attack_power_minimum(program.event_condition)
         return (DECLARED_ATTACK_POWER_CAPABILITY,)
+    extras = (target, cost, handlers)
+    if _mentions_declared_attack_counter_group(extras):
+        raise ValueError("Declared attack counters belong only to the original effect")
+    declared = DECLARED_ATTACK_COUNTER_CAPABILITY in getattr(program, "capability_dependencies", ())
+    if declared or _mentions_declared_attack_counter_group(effects):
+        required = declared_attack_counter_effect_capabilities(effects[0]) if len(effects) == 1 else ()
+        if (not required or program.active_zone != "battlefield" or program.event != "creature.attacks"
+                or "one_or_more_event_batch" not in program.coverage
+                or extras[0] is not None or extras[1] is not None or extras[2]):
+            raise ValueError("Declared attack counters need one complete untargeted attack result")
+        declared_attack_counter_condition(program.event_condition)
+        return (QUALIFIED_ATTACK_BATCH_CAPABILITY, *required)
     return (QUALIFIED_ATTACK_BATCH_CAPABILITY,) if specs else ()

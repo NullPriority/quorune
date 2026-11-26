@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic library-top life-priced permission witness",
+  "cards": [
+    {
+      "oracle_id": "dc46169c-2045-46c1-866e-ae0d706935e7",
+      "name": "Vessel of the Archive",
+      "mana_cost": "{3}{B}{B}{B}",
+      "cmc": 6,
+      "type_line": "Artifact",
+      "oracle_text": "You may look at the top card of your library any time.\nYou may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.\n{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life.",
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

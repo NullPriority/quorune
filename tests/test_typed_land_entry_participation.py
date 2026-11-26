@@ -785,8 +785,9 @@ class TypedLandEntryRuntimeTests(unittest.TestCase):
         self.assertEqual("graveyard", spell.zone)
         self.assertEqual("hand", target.zone)
 
+    @patch("quorune.compiler.announced_mana_value_target._distinct_graveyard_return_template", return_value=None)
     def test_agadeem_residual_spell_stays_fail_closed_while_land_entry_executes(
-        self,
+        self, omitted_front_template,
     ):
         session = self.session(61401266)
         engine = session.engine

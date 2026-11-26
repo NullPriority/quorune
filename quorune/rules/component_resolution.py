@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import ast
-from collections.abc import Callable
 from contextlib import contextmanager
 from contextvars import ContextVar
-from functools import cache, lru_cache
+from functools import lru_cache
 from pathlib import Path
 
 
@@ -33,59 +32,66 @@ def _module_exports(source: str) -> frozenset[str] | None:
     return frozenset(exported)
 
 
-_RESOLVE_COMPONENT: ContextVar[Callable[[str], bool] | None] = ContextVar(
-    "resolve_component", default=None,
+class _ComponentSources:
+    def __init__(self) -> None:
+        self.root = Path(__file__).resolve().parents[1]
+        self.modules: dict[tuple[str, ...], Path | None] = {}
+        self.exports: dict[Path, frozenset[str] | None] = {}
+
+    def module(self, parts: tuple[str, ...]) -> Path | None:
+        if parts not in self.modules:
+            relative = self.root.joinpath(*parts)
+            module = relative.with_suffix(".py")
+            if module.is_file():
+                self.modules[parts] = module
+            else:
+                package = relative / "__init__.py"
+                self.modules[parts] = package if package.is_file() else None
+        return self.modules[parts]
+
+    def symbols(self, module: Path) -> frozenset[str] | None:
+        if module not in self.exports:
+            try:
+                self.exports[module] = _module_exports(module.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError):
+                self.exports[module] = None
+        return self.exports[module]
+
+
+_COMPONENT_SOURCES: ContextVar[_ComponentSources | None] = ContextVar(
+    "component_sources", default=None
 )
 
 
-def _component_resolver() -> Callable[[str], bool]:
-    package_root = Path(__file__).resolve().parents[1]
-
-    @cache
-    def module_location(parts: tuple[str, ...]) -> Path | None:
-        relative = Path(*parts)
-        module_path = package_root / relative.with_suffix(".py")
-        if module_path.is_file():
-            return module_path
-        package_path = package_root / relative / "__init__.py"
-        return package_path if package_path.is_file() else None
-
-    @cache
-    def exports(module_path: Path) -> frozenset[str] | None:
-        try:
-            return _module_exports(module_path.read_text(encoding="utf-8"))
-        except (OSError, UnicodeError):
-            return None
-
-    def resolve(component: str) -> bool:
-        prefix = "quorune."
-        if not component.startswith(prefix):
-            return False
-        parts = tuple(component.removeprefix(prefix).split("."))
-        for length in range(len(parts), 0, -1):
-            module_path = module_location(parts[:length])
-            if module_path is None:
-                continue
-            if length == len(parts):
-                return True
-            exported = exports(module_path)
-            return exported is not None and parts[length] in exported
-        return False
-
-    return resolve
-
-
 @contextmanager
-def component_resolution_snapshot():
-    """Read each module once per registry validation and refresh next time."""
-    token = _RESOLVE_COMPONENT.set(_component_resolver())
+def _component_source_snapshot():
+    """Read each implementation module at most once in a registry validation."""
+    if _COMPONENT_SOURCES.get() is not None:
+        yield
+        return
+    token = _COMPONENT_SOURCES.set(_ComponentSources())
     try:
         yield
     finally:
-        _RESOLVE_COMPONENT.reset(token)
+        _COMPONENT_SOURCES.reset(token)
+
+
+component_resolution_snapshot = _component_source_snapshot
 
 
 def implementation_component_resolves(component: str) -> bool:
     """Resolve a package component without importing runtime game modules."""
-    resolve = _RESOLVE_COMPONENT.get() or _component_resolver()
-    return resolve(component)
+    prefix = "quorune."
+    if not component.startswith(prefix):
+        return False
+    parts = tuple(component.removeprefix(prefix).split("."))
+    sources = _COMPONENT_SOURCES.get() or _ComponentSources()
+    for length in range(len(parts), 0, -1):
+        module = sources.module(parts[:length])
+        if module is None:
+            continue
+        if length == len(parts):
+            return True
+        exported = sources.symbols(module)
+        return exported is not None and parts[length] in exported
+    return False

@@ -46,5 +46,20 @@ def announced_x_activation_effect(ability, *, source_name, compile_fixed, text):
         payment = targeted_controller_payment_template(text, cast_x_available=True, source_name=source_name)
         if payment is not None and payment.payment.uses_cast_x:
             return payment.compiled()
+    from .creature_subtype_set_templates import paid_controller_subtype_set_template
+
+    if subtype_set := paid_controller_subtype_set_template(ability, text):
+        return subtype_set
+    from .announced_mana_value_target import announced_activation_mana_value_target_template
+
+    if target := announced_activation_mana_value_target_template(ability, text):
+        return target
+    from .variable_library_selection_templates import variable_up_to_two_hand_selection_template
+
+    selection = variable_up_to_two_hand_selection_template(
+        text, source_name=source_name, cast_x_available=True, forbid_public_x=True,
+    )
+    if selection is not None:
+        return selection
     return declared_effect_amount_template(text, source_name=source_name,
         compile_fixed=compile_fixed, cast_x_available=True, forbid_public_x=True)

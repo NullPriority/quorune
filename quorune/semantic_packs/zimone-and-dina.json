@@ -3,68 +3,6 @@
   "name": "zimone-and-dina-vertical-slice",
   "programs": [
     {
-      "key": "5bc66b18-22ac-4138-b527-fa711116e298:spell:front",
-      "label": "Zimone and Dina permanent spell",
-      "oracle_id": "5bc66b18-22ac-4138-b527-fa711116e298",
-      "ability_id": "spell:front",
-      "active_zone": "stack",
-      "event": "resolve",
-      "effects": [],
-      "destination": "battlefield",
-      "trust_level": "trusted",
-      "coverage": ["permanent_characteristics"],
-      "tests": ["test_zimone_activation_and_second_draw_trigger"],
-      "provenance": {
-        "source_oracle_hash": "e233feb4416b8d33db3d7b7f52f07c8fcf01831e888f31ecac6ffb79e3879c24",
-        "source_rulings_hash": "e77d5ea4637fd78c9660e150168ad13c9e72513e6ab5d405ca724fabe1bc44fb",
-        "authored_by": "vertical-slice",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "5bc66b18-22ac-4138-b527-fa711116e298:ability:ab2",
-      "label": "Zimone and Dina activated ability",
-      "oracle_id": "5bc66b18-22ac-4138-b527-fa711116e298",
-      "ability_id": "ability:ab2",
-      "active_zone": "battlefield",
-      "event": "activate",
-      "effects": [
-        {
-          "op": "draw_optional_land",
-          "player": "$controller",
-          "repeat_if_land_count": 8
-        }
-      ],
-      "trust_level": "trusted",
-      "coverage": ["activated_ability", "player_choice", "conditional_repetition"],
-      "tests": ["test_zimone_activation_and_second_draw_trigger"],
-      "provenance": {
-        "source_oracle_hash": "e233feb4416b8d33db3d7b7f52f07c8fcf01831e888f31ecac6ffb79e3879c24",
-        "source_rulings_hash": "e77d5ea4637fd78c9660e150168ad13c9e72513e6ab5d405ca724fabe1bc44fb",
-        "authored_by": "vertical-slice",
-        "review_status": "reviewed"
-      }
-    },
-    {
-      "key": "5bc66b18-22ac-4138-b527-fa711116e298:trigger:second-draw",
-      "label": "Zimone and Dina second-card trigger",
-      "oracle_id": "5bc66b18-22ac-4138-b527-fa711116e298",
-      "ability_id": "trigger:second-draw",
-      "active_zone": "battlefield",
-      "event": "card.second_draw",
-      "effects": [{"op": "drain_opponent", "target": "$target.0", "amount": 2}],
-      "target_schema": {"count": 1, "selector": "opponent"},
-      "trust_level": "trusted",
-      "coverage": ["triggered_ability", "second_card_drawn_tracking", "target_selection"],
-      "tests": ["test_zimone_activation_and_second_draw_trigger"],
-      "provenance": {
-        "source_oracle_hash": "e233feb4416b8d33db3d7b7f52f07c8fcf01831e888f31ecac6ffb79e3879c24",
-        "source_rulings_hash": "e77d5ea4637fd78c9660e150168ad13c9e72513e6ab5d405ca724fabe1bc44fb",
-        "authored_by": "vertical-slice",
-        "review_status": "reviewed"
-      }
-    },
-    {
       "key": "8ad91f64-ccab-4edc-bd54-b2ee9267d614:spell:front",
       "label": "Lotus Cobra permanent spell",
       "oracle_id": "8ad91f64-ccab-4edc-bd54-b2ee9267d614",
@@ -76,6 +14,7 @@
       "provenance": {
         "source_oracle_hash": "fda510469c392dfaf037cffe1bf087bd6b51a2ffe51ff9c7b17865be740fecf3",
         "source_rulings_hash": "28be8cd4f3dc700022f869c9712b951aeb57d3b7e974958f49b0e9245188d8c8",
+        "reviewed_equivalent_rulings_hashes": ["a0ec45a61510db718888dffb0765ab85339f069ac1f450fe1676c201a66d7007"],
         "authored_by": "vertical-slice",
         "review_status": "reviewed"
       }
@@ -94,6 +33,7 @@
       "provenance": {
         "source_oracle_hash": "fda510469c392dfaf037cffe1bf087bd6b51a2ffe51ff9c7b17865be740fecf3",
         "source_rulings_hash": "28be8cd4f3dc700022f869c9712b951aeb57d3b7e974958f49b0e9245188d8c8",
+        "reviewed_equivalent_rulings_hashes": ["a0ec45a61510db718888dffb0765ab85339f069ac1f450fe1676c201a66d7007"],
         "authored_by": "vertical-slice",
         "review_status": "reviewed"
       }

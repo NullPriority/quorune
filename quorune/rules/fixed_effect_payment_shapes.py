@@ -151,27 +151,54 @@ def fixed_payment_event_player_runtime_dependencies(program):
     from .entry_player_counter_payment import (
         entry_player_counter_payment_dependencies, uses_entry_player_counter_payment,
     )
-    from .life_gain_counted_results import life_gain_counter_payment_program_dependencies
+    from .life_gain_counted_results import (
+        capped_life_gain_draw_program_dependencies, life_gain_counter_payment_program_dependencies,
+    )
+    from .opponent_event_mana_payment import opponent_event_mana_payment_program_dependencies, uses_opponent_event_mana_payment
     players={'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
     def references(value):
         if isinstance(value,Mapping):return set().union(*(references(child) for child in value.values()))
         if isinstance(value,(tuple,list)):return set().union(*(references(child) for child in value))
         return {value} if isinstance(value,str) and value in players else set()
     from ..spell_caster_sacrifice_payment import spell_caster_sacrifice_payment_program_dependencies
+    from ..fixed_effect_payment import EQUIPPED_DEATH_LIFE_DRAW_FIELD, equipped_death_life_draw_program_dependencies
+
+    from .mandatory_sacrifice_reanimation import mandatory_sacrifice_reanimation_runtime_dependencies
+
     required=set(life_gain_counter_payment_program_dependencies(program))
+    required.update(mandatory_sacrifice_reanimation_runtime_dependencies(program))
+    required.update(capped_life_gain_draw_program_dependencies(program))
+    equipped = equipped_death_life_draw_program_dependencies(program)
+    required.update(equipped)
     required.update(spell_caster_sacrifice_payment_program_dependencies(program))
     from .optional_sacrifice_stats import optional_sacrifice_stat_program_dependencies
     required.update(optional_sacrifice_stat_program_dependencies(program))
     from .fractional_life_payment import fractional_life_payment_program_dependencies
     required.update(fractional_life_payment_program_dependencies(program))
     from .event_player_result_shapes import _event_player_reference_is_closed
+    from .attached_copy_payment import attached_copy_payment_program_dependencies, uses_attached_copy_payment
+
     def visit(value):
         if isinstance(value,Mapping):
+            if uses_attached_copy_payment(value):
+                required.update(attached_copy_payment_program_dependencies(program, value))
+                return
+            if EQUIPPED_DEATH_LIFE_DRAW_FIELD in value:
+                if not equipped:
+                    raise ValueError("Equipped death life draw requires the complete trigger body")
+                return
             if uses_mandatory_source_counter_followup(value):
                 required.update(_mandatory_source_counter_program_dependencies(program, value))
                 return
+            from .source_entry_discard_exile import entry_discard_exile_program_dependencies, uses_entry_discard_exile
+            if uses_entry_discard_exile(value):
+                required.update(entry_discard_exile_program_dependencies(program, value))
+                return
             if uses_entry_player_counter_payment(value):
                 required.update(entry_player_counter_payment_dependencies(program, value))
+                return
+            if uses_opponent_event_mana_payment(value):
+                required.update(opponent_event_mana_payment_program_dependencies(program, value))
                 return
             if is_scheduled_life_return(value):
                 required.update(scheduled_life_return_program_dependencies(program, value))
@@ -193,13 +220,66 @@ def fixed_payment_event_player_runtime_dependencies(program):
     return tuple(sorted(required))
 
 
+def _mandatory_payment_node_capabilities(wrapper, target_schema, mechanics):
+    if uses_mandatory_source_counter_followup(wrapper):
+        return _mandatory_source_counter_node_capabilities(wrapper, target_schema, mechanics)
+    from .mandatory_sacrifice_reanimation import (
+        mandatory_sacrifice_reanimation_node_dependencies, uses_mandatory_sacrifice_reanimation,
+    )
+
+    if uses_mandatory_sacrifice_reanimation(wrapper):
+        try:
+            return mandatory_sacrifice_reanimation_node_dependencies(wrapper, target_schema)
+        except (TypeError, ValueError):
+            return ()
+    return None
+
+
 def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,
                                          mechanic_ids:Iterable[str])->tuple[str,...]:
     mechanics=set(mechanic_ids)
     if FIXED_EFFECT_PAYMENT_MECHANIC not in mechanics or len(effects)!=1:return ()
     wrapper=effects[0]
-    if uses_mandatory_source_counter_followup(wrapper):
-        return _mandatory_source_counter_node_capabilities(wrapper, target_schema, mechanics)
+    from .attached_copy_payment import attached_copy_payment_capabilities, uses_attached_copy_payment
+
+    if isinstance(wrapper, Mapping) and uses_attached_copy_payment(wrapper):
+        if target_schema is not None:
+            return ()
+        try:
+            return attached_copy_payment_capabilities(wrapper)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    from .source_entry_discard_exile import entry_discard_exile_capabilities, uses_entry_discard_exile
+
+    if uses_entry_discard_exile(wrapper):
+        if target_schema is not None:
+            return ()
+        try:
+            return entry_discard_exile_capabilities(wrapper)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    from .opponent_event_mana_payment import opponent_event_mana_payment_capabilities, uses_opponent_event_mana_payment
+
+    if uses_opponent_event_mana_payment(wrapper):
+        if target_schema is not None:
+            return ()
+        try:
+            return opponent_event_mana_payment_capabilities(wrapper)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    from ..fixed_effect_payment import (
+        EQUIPPED_DEATH_LIFE_DRAW_FIELD, equipped_death_life_draw_dependencies,
+    )
+    if EQUIPPED_DEATH_LIFE_DRAW_FIELD in wrapper:
+        if target_schema is not None:
+            return ()
+        try:
+            return equipped_death_life_draw_dependencies(wrapper)
+        except (TypeError, ValueError):
+            return ()
+    mandatory = _mandatory_payment_node_capabilities(wrapper, target_schema, mechanics)
+    if mandatory is not None:
+        return mandatory
     from .entry_player_counter_payment import (
         ENTRY_PLAYER_COUNTER_PAYMENT_MECHANIC, entry_player_counter_payment_capabilities,
         is_entry_player_counter_payment, uses_entry_player_counter_payment,
@@ -258,29 +338,27 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
         from .reflexive_payment_shapes import reflexive_payment_node_capabilities
         return reflexive_payment_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if isinstance(wrapper, Mapping) and wrapper.get('schema_version') == 3:
-        from ..source_maintenance import SOURCE_MAINTENANCE_MECHANIC, SourceMaintenanceSpec
-        if target_schema is not None or SOURCE_MAINTENANCE_MECHANIC not in mechanics:
-            return ()
-        try:
-            spec = SourceMaintenanceSpec.from_effect(wrapper)
-        except (KeyError, TypeError, ValueError):
-            return ()
-        if wrapper['player'] != '$controller' or wrapper['source'] != '$source.zone_object':
-            return ()
-        payment = spec.payment
-        if payment is not None and (
-            payment.kind in {'discard','exile','mana_discard'} and payment.predicate.owner != '$controller'
-            or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != '$controller'
-            or payment.kind in {'remove_source_counter','source_sacrifice'} and payment.source_ref!='$source.zone_object'
-        ):
-            return ()
-        return spec.capabilities
+        from ..source_maintenance import source_maintenance_node_capabilities
+
+        return source_maintenance_node_capabilities(wrapper, target_schema=target_schema, mechanic_ids=mechanics)
     fields={'op','schema_version','player','payment','effects'}
     if isinstance(wrapper, Mapping) and "declined_effects" in wrapper:
         fields.add("declined_effects")
     if not isinstance(wrapper,Mapping) or set(wrapper) not in (fields,fields|{'cost'}) or wrapper.get('op')!=OPTIONAL_MANA_PAYMENT_OPERATION or type(wrapper.get('schema_version'))is not int or wrapper['schema_version']!=2 or wrapper.get('player')!='$controller':return ()
     try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'], allow_mandatory=True)
     except (ValueError,TypeError,KeyError):return ()
+    from ..fixed_effect_payment import EQUIPPED_DEATH_LIFE_PRICE_VERSION
+    if payment.schema_version == EQUIPPED_DEATH_LIFE_PRICE_VERSION:
+        return ()
+    from ..fixed_effect_payment import MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION, mandatory_artifact_sacrifice_result_parts
+
+    if payment.schema_version == MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION:
+        try:
+            mandatory_artifact_sacrifice_result_parts(wrapper)
+        except (TypeError, ValueError):
+            return ()
+        if target_schema is not None:
+            return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
     if payment.kind in {'discard','exile','mana_discard'}and payment.predicate.owner!='$controller':return ()
     if payment.kind in {'sacrifice','tap','blight',RETURN_PAYMENT_KIND}and payment.predicate.controller!='$controller':return ()

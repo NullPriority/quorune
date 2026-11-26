@@ -1,0 +1,57 @@
+{
+  "cards": [
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}{B}",
+      "name": "Brainstealer Dragon",
+      "oracle_id": "13cb958f-1e66-4219-901a-ff58275c8475",
+      "oracle_text": "Flying\nAt the beginning of your end step, exile the top card of each opponent's library. You may play those cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any color to cast it.\nWhenever a nonland permanent an opponent owns enters the battlefield under your control, they lose life equal to its mana value.",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "6",
+      "type_line": "Creature — Dragon Horror"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

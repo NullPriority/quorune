@@ -18,6 +18,7 @@ _QUANTITY_FIELDS = {
     "lose_life": "amount",
     "create_token": "quantity",
     "place_counters": "amount",
+    "mana": "amount",
 }
 
 

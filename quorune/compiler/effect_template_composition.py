@@ -8,6 +8,7 @@ from . import regex_working_set as re
 
 from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, supports_next_turn_effect
 from .closed_effect_programs import closed_effect_program_template
+from .extra_turn_templates import fixed_end_turn_effect_template
 from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
 from .blight_templates import normalized_blight_sequence
@@ -15,7 +16,9 @@ from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
 from .source_tap_characteristics import tapped_source_characteristics_template
-from .source_tap_duration import match_tapped_source_duration, tapped_source_untap_restraint_template
+from .source_tap_duration import (
+    controlled_source_untap_restraint_template, match_tapped_source_duration, tapped_source_untap_restraint_template,
+)
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .reflexive_payment_templates import reflexive_payment_template
@@ -88,6 +91,24 @@ def _damage_life_result(body, card_name, source_context, compile_fixed):
     return targeted_dealt_life_gain_template(body, compile_damage=query_damage)
 
 
+def _spell_only_result(text: str, compile_atomic: EffectCompiler, compile_payment: EffectCompiler):
+    from .exile_until_same_name_templates import exile_until_same_name_template
+    from .resolution_condition_templates import other_spell_draw_template
+    from .token_creation_reflexive_templates import token_creation_reflexive_template
+
+    return (
+        exile_until_same_name_template(text)
+        or other_spell_draw_template(text, compile_component=compile_atomic)
+        or token_creation_reflexive_template(text, compile_effect=compile_payment)
+    )
+
+
+def _whole_contextual_effect_template(text):
+    from ..temporary_graveyard_escape import targeted_escape_template
+
+    return fixed_end_turn_effect_template(text) or targeted_escape_template(text)
+
+
 def reviewed_contextual_effect_template(
     text: str, *, card_name: str,
     compile_atomic: Callable[..., CompiledEffectTemplate],
@@ -98,6 +119,10 @@ def reviewed_contextual_effect_template(
     **source_context: Any,
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
+    # These instructions own the complete resolving operation.
+    whole = _whole_contextual_effect_template(text)
+    if whole is not None:
+        return whole
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
         if dealt_life := _damage_life_result(body, card_name, source_context, compile_fixed):
@@ -105,6 +130,8 @@ def reviewed_contextual_effect_template(
         from .mana_value_destruction import mana_value_destruction_template
         mana_value=mana_value_destruction_template(body,source_name=card_name,cast_x_available=cast_x_available)
         if mana_value is not None:return mana_value
+        if controlled_restraint := controlled_source_untap_restraint_template(body, source_context=source_context, card_name=card_name):
+            return controlled_restraint
         duration = match_tapped_source_duration(body, card_name=card_name, source_context=source_context)
         if duration is not None:
             tapped = tapped_source_untap_restraint_template(duration) or tapped_source_characteristics_template(
@@ -119,7 +146,8 @@ def reviewed_contextual_effect_template(
         if timed is not None:
             return timed
         from .reveal_until_library_selection_templates import reveal_until_library_selection_effect_template
-        reveal_until=reveal_until_library_selection_effect_template(body)
+        reveal_until=reveal_until_library_selection_effect_template(body,
+            allow_reflexive=source_context.get('source_is_permanent') is False)
         if reveal_until is not None:return reveal_until
         from .discover_templates import discover_effect_template
         discover=discover_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
@@ -227,12 +255,7 @@ def reviewed_contextual_effect_template(
         )
 
     if source_context.get("source_is_permanent") is False:
-        from .token_creation_reflexive_templates import token_creation_reflexive_template
-        from .resolution_condition_templates import other_spell_draw_template
-        spell_only = (
-            other_spell_draw_template(text, compile_component=atomic_with_characteristics)
-            or token_creation_reflexive_template(text, compile_effect=payment_body)
-        )
+        spell_only = _spell_only_result(text, atomic_with_characteristics, payment_body)
         if spell_only is not None:
             return spell_only
     compiled = compose(text, card_name=card_name)
@@ -254,12 +277,20 @@ def reviewed_effect_template_composition(
     allow_conditions: bool = True,
 ) -> CompiledEffectTemplate:
     """Preserve owned linked instructions before generic clause composition."""
+    from .permanent_resolution_choices import permanent_resolution_choice_template
+
+    if chosen_permanent := permanent_resolution_choice_template(text):
+        return chosen_permanent
+    if cast_x_available and text.casefold().startswith("each player mills x cards."):
+        from .mill_templates import committed_milled_creature_token_template
+        if milled := committed_milled_creature_token_template(text):
+            return milled
     from .graveyard_exile_branch_templates import graveyard_exile_branch_template
 
     from .graveyard_exile_token_templates import graveyard_exile_token_template
     from .graveyard_exile_type_outcome_templates import graveyard_exile_type_outcome_template
 
-    owned_exile = (graveyard_exile_branch_template(text) or graveyard_exile_token_template(text)
+    owned_exile = (graveyard_exile_branch_template(text, source_name=source_name) or graveyard_exile_token_template(text)
         or graveyard_exile_type_outcome_template(text))
     if owned_exile is not None:
         return owned_exile
@@ -300,6 +331,15 @@ def reviewed_effect_template_composition(
     return named if named is not None else _reviewed_effect_template_composition(text, **context)
 
 
+def _has_committed_followup(text):
+    return (
+        "destroyed this way" in text or "died this way" in text or "dies this way" in text or "exiled this way" in text
+        or "permanent put into a graveyard this way, its controller creates" in text
+        or "if that land was nonbasic, untap this creature" in text
+        or text.startswith("exile all attacking creatures target player controls.")
+    )
+
+
 def _reviewed_effect_template_composition(
     text: str,
     *,
@@ -334,13 +374,12 @@ def _reviewed_effect_template_composition(
         ))
         if death_exile is not None:
             return death_exile
-    if "card revealed this way" in folded and "each player reveals" in folded:
-        from .revealed_library_top_templates import reveal_top_result_template
+    if "the top card" in folded:
+        from .revealed_library_top_templates import public_top_reveal_template
 
-        reveal_top = reveal_top_result_template(text, compile_literal=compile_atomic)
-        if reveal_top is not None:
-            return reveal_top
-    if "destroyed this way" in folded or "exiled this way" in folded:
+        if public_top_reveal := public_top_reveal_template(text, folded=folded, compile_literal=compile_atomic):
+            return public_top_reveal
+    if _has_committed_followup(folded):
         from .destruction_followup_templates import destruction_followup_template
         from .public_exile_followup_templates import public_exile_followup_template
         from .targeted_exile_token_templates import targeted_exile_token_template
@@ -445,7 +484,7 @@ def _reviewed_effect_template_composition(
     )
     if sequence is not None:
         return sequence.compiled()
-    bound = bound_effect_program_template(text, compile_component=compile_atomic)
+    bound = bound_effect_program_template(text, compile_component=compile_atomic, source_name=source_name)
     if bound is not None:
         return bound.compiled()
     program = closed_effect_program_template(

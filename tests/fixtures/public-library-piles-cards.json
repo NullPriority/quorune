@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "source": "Read-only selection from the pinned Oracle and rulings snapshot",
+  "cards": [
+    {
+      "oracle_id": "437b2dab-15e0-4b9a-a204-58622d37a3b3",
+      "name": "Fact or Fiction",
+      "mana_cost": "{3}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Reveal the top five cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other into your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "cmc": 4.0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0aa556a6-66aa-42f1-ba41-0001e10c20a4",
+      "name": "Steam Augury",
+      "mana_cost": "{2}{U}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Reveal the top five cards of your library and separate them into two piles. An opponent chooses one of those piles. Put that pile into your hand and the other into your graveyard.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2015-11-13",
+      "cmc": 4.0,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "437b2dab-15e0-4b9a-a204-58622d37a3b3",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Piles may be empty."
+    },
+    {
+      "oracle_id": "0aa556a6-66aa-42f1-ba41-0001e10c20a4",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "If one of the piles is empty, the opponent will choose whether to put the cards from the other pile into your hand or into your graveyard."
+    },
+    {
+      "oracle_id": "0aa556a6-66aa-42f1-ba41-0001e10c20a4",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Steam Augury doesn't target any opponent. In a multiplayer game, you choose the opponent as the spell resolves."
+    }
+  ]
+}

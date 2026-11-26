@@ -113,7 +113,7 @@ class CountedLibrarySearchTests(unittest.TestCase):
 
     def test_original_search_programs_are_strictly_capability_bound(self):
         registry = load_default_capability_registry()
-        for name in ("Demonic Tutor", "Vampiric Tutor", "Merrow Harbinger", "Treasure Mage", "Trophy Mage", "Squadron Hawk", "Ignite the Beacon", "Entomb"):
+        for name in ("Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Merrow Harbinger", "Treasure Mage", "Trophy Mage", "Squadron Hawk", "Ignite the Beacon", "Entomb"):
             with self.subTest(name=name):
                 record = self.db.lookup(name)
                 ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
@@ -319,6 +319,59 @@ class CountedLibrarySearchTests(unittest.TestCase):
             "known_top", session.packet("pilot:B", full=True)["state"]["players"]["A"],
         )
         self.assert_replay(session)
+
+    def test_printed_qualified_top_search_reveals_only_the_found_creature(self):
+        for find_card in (True, False):
+            with self.subTest(find_card=find_card):
+                session, spell = self.setup_cast("Worldly Tutor", 70124010 + find_card)
+                found = self.card(session, "Duplicant", "library")
+                noncreature = self.card(session, "Sol Ring", "library")
+                foreign = self.card(session, "Duplicant", "library", owner="B")
+                self.offered_cast(session, spell)
+                decision = self.reach_search(session)
+                schema = decision["legal_actions"][0]["choice_schema"]
+                self.assertTrue(schema["rules_may_fail_to_find"])
+                self.assertIn(found.ref, schema["legal_refs"])
+                self.assertNotIn(noncreature.ref, schema["legal_refs"])
+                self.assertNotIn(foreign.ref, schema["legal_refs"])
+
+                for seat in "BCD":
+                    private_state = session.packet(f"pilot:{seat}", full=True)["state"]
+                    self.assertNotIn(json.dumps(found.ref), json.dumps(private_state))
+                    self.assertNotIn(json.dumps(noncreature.ref), json.dumps(private_state))
+
+                before = authoritative_state_hash(session.state)
+                for invalid in (noncreature, foreign):
+                    denied = session.act("pilot:A", {"action_id": "choose", "search_cards": [invalid.ref]})
+                    self.assertFalse(denied.ok, denied.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+
+                identity = found.logical_object_id
+                shuffles = session.state.players["A"].stats.get("shuffle_count", 0)
+                calls = []
+                original = ZoneTransitionOwner.shuffle_library
+
+                def observe_shuffle(owner, seat, **kwargs):
+                    calls.append(kwargs.get("excluded_object_ids", ()))
+                    return original(owner, seat, **kwargs)
+
+                with patch.object(ZoneTransitionOwner, "shuffle_library", observe_shuffle):
+                    result = session.act(
+                        "pilot:A", {"action_id": "choose", "search_cards": [found.ref] if find_card else []}
+                    )
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual([(found.object_id,) if find_card else ()], calls)
+                self.assertEqual(shuffles + 1, session.state.players["A"].stats["shuffle_count"])
+                if find_card:
+                    self.assertEqual(found.object_id, session.state.players["A"].zones["library"][-1])
+                    self.assertEqual(identity, session.state.cards[found.object_id].logical_object_id)
+                for seat in "ABCD":
+                    player = session.packet(f"pilot:{seat}", full=True)["state"]["players"]["A"]
+                    self.assertEqual(
+                        [found.ref] if find_card else [],
+                        [card["id"] for card in player.get("known_top", ())],
+                    )
+                self.assert_replay(session)
 
     def test_printed_named_multi_search_moves_one_simultaneous_private_batch(self):
         session, spell = self.setup_cast("Squadron Hawk", 70123003)

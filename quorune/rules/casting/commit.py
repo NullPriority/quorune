@@ -5,7 +5,10 @@ from ...spell_mana_counts import capture_spell_mana_counts
 from .spell_context import (
     PAID_SACRIFICE_FACT_FIELDS, declared_spell_context,
 )
-from .zone_cost_commit import commit_card_cost_changes, commit_ordered_zone_costs
+from .zone_cost_commit import (
+    commit_card_cost_changes, commit_granted_escape_zone_costs, commit_ordered_zone_costs,
+    _resolve_fixed_zone_change_additional_cost,
+)
 from .whole_zone_costs import commit_whole_zone_costs
 from .colored_hand_credit import commit_hand_credit_payment, hand_credit_reserved_ids, selected_hand_credit_objects
 from ...impending_model import impending_payment_context
@@ -30,7 +33,11 @@ from ...trigger_discovery import _ordered_event_sources
 import copy
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from ...cost_payments import ManaCostPayment
+    from ..mana_pool_payment import ManaPoolAllocation
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from ...cascade import cascade_trigger_items
@@ -52,7 +59,7 @@ from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
 from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec, compiled_mayhem_permission
 from ...printed_mana_cost_model import cast_snow_payment_kwargs
-from .face_queries import prospective_cast_card
+from .face_queries import TYPED_MANA_SPEND_TYPE_LINE_FIELD, prospective_cast_card
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
     FixedCastLifecycleKind,
@@ -99,15 +106,13 @@ from ..target_announcements import (
 from ...mana_spend_rules import consume_paid_mana_protection
 from ...continuous_effect_state import commit_paid_mana_haste
 from .source_placement import AnnouncedCastGrants, observe_cast_source_placement
+from .graveyard_departure import capture_graveyard_cast_departure, collect_graveyard_cast_departure
 from ...zone_trigger_events import ZoneTransitionKind
 from ..action_proposals import CastProposal, thaw_json
 from ..casting_additional_costs import (
     AdditionalCostError, announced_cost_x,
     fixed_counter_additional_cost,
     fixed_counter_cost_candidates,
-    FixedZoneChangeAdditionalCost,
-    fixed_zone_change_additional_cost,
-    fixed_zone_change_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
     fixed_life_payment_additional_cost, announced_x_life_additional_cost,
@@ -145,7 +150,7 @@ class CastCommitHost(Protocol):
         exclude_sources: set[str] | None = None,
         spend_context: Any = None,
         snow_required: int = 0,
-    ) -> tuple[dict[str, int], list[dict[str, Any]]]: ...
+    ) -> ManaCostPayment: ...
 
     def _spell_mana_spend_context(self, type_line: str) -> Any: ...
 
@@ -311,6 +316,10 @@ def _pay_fixed_life_additional_cost(
 
 
 def _pay_cast_choice_life_costs(host, proposal, card, selected_option) -> None:
+    from .library_top_life import library_top_life_amount
+
+    if alternate_life := library_top_life_amount(selected_option):
+        _pay_fixed_life_additional_cost(host, proposal, card, selected_option, alternate_life)
     if printed_life := printed_phyrexian_life_payment(selected_option):
         _pay_fixed_life_additional_cost(host, proposal, card, selected_option, printed_life)
     if optional_life := optional_life_cost_amount(selected_option):
@@ -380,14 +389,14 @@ def _commit_counter_placement_additional_cost(
     raw_journal = response.get("_mana_replacement_selections") or {}
     allowed_events = {event_id}
     if cost.schema_version == 2:
-        from ...mana_mode_effects import mana_damage_event_belongs_to_payment
+        from ...mana_mode_effects import mana_result_event_belongs_to_payment
 
         if blight_payment is None or not blight_payment.matches_payer(paid):
             raise CastProposalError("The selected Blight payer changed", reason="stale_blight_cast_payment")
         event_id = blight_payment.event_id(payment_id)
         allowed_events = {event_id}
         if isinstance(raw_journal, Mapping):
-            allowed_events.update(key for key in raw_journal if mana_damage_event_belongs_to_payment(key, payment_id))
+            allowed_events.update(key for key in raw_journal if mana_result_event_belongs_to_payment(key, payment_id))
     if not isinstance(raw_journal, Mapping) or set(raw_journal) - allowed_events:
         raise CastProposalError(
             "The casting replacement journal is malformed",
@@ -453,126 +462,6 @@ def _commit_counter_placement_additional_cost(
         changed_players=[proposal.seat],
     )
     return paid.ref
-
-
-def _resolve_fixed_zone_change_additional_cost(
-    host: CastCommitHost,
-    proposal: CastProposal,
-    response: Mapping[str, Any],
-    selected_option: Mapping[str, Any],
-    selected: Mapping[str, Any],
-) -> tuple[
-    tuple[Any, ...],
-    FixedZoneChangeAdditionalCost,
-    Mapping[str, tuple[str | None | Mapping[str, Any], ...]],
-]:
-    raw_costs = selected_option.get("additional_costs")
-    cost_position = selected.get("cost_position")
-    common_fields = {"kind", "operation", "cost_position"}
-    reference_field = "card" if "card" in selected else "cards"
-    if (
-        not isinstance(raw_costs, list)
-        or type(cost_position) is not int
-        or cost_position < 0
-        or cost_position >= len(raw_costs)
-        or set(selected) != common_fields | {reference_field}
-        or selected.get("kind") != ZONE_CHANGE_COST_KIND
-    ):
-        raise CastProposalError(
-            "The zone-change additional-cost selection is malformed",
-            reason="additional_cost_malformed",
-        )
-    try:
-        cost = fixed_zone_change_additional_cost(raw_costs[cost_position])
-    except AdditionalCostError as exc:
-        raise CastProposalError(
-            str(exc), reason="additional_cost_malformed"
-        ) from exc
-    from ..fixed_payment_groups import fixed_color_tap_zone_costs, fixed_discard_sacrifice_order, fixed_life_zone_costs
-    from ...nonmana_kicker import distinct_kicker_zone_costs
-    if cost is None or (len(raw_costs) != 1 and not fixed_life_zone_costs(raw_costs)
-            and not distinct_kicker_zone_costs(selected_option,raw_costs)
-            and not fixed_color_tap_zone_costs(raw_costs)
-            and not fixed_discard_sacrifice_order(selected_option, raw_costs)):
-        raise CastProposalError(
-            "The zone-change additional cost is outside the represented family",
-            reason="additional_cost_unsupported",
-        )
-    declared_x = selected_option.get('announced_additional_x')
-    if cost.count_parameter is not None and announced_cost_x(response.get('x')) != declared_x:
-        raise CastProposalError('Declared additional-cost X changed before commit', reason='stale_additional_x')
-    count = cost.required_count(declared_x)
-    if selected.get("operation") != cost.operation:
-        raise CastProposalError(
-            "The zone-change additional-cost operation is malformed",
-            reason="additional_cost_malformed",
-        )
-    raw_refs = (
-        [selected.get("card")]
-        if reference_field == "card"
-        else selected.get("cards")
-    )
-    candidates = fixed_zone_change_cost_candidates(
-            host,
-            actor=proposal.seat,
-            cost=cost,
-            exclude_object_id=proposal.object_id,
-        )
-    from .additional_zone_costs import ANNOUNCED_PITCH_X, announced_pitch_candidates
-    if ANNOUNCED_PITCH_X in selected_option and (
-        type(response.get("x")) is not int or response["x"] != selected_option[ANNOUNCED_PITCH_X]
-    ):
-        raise CastProposalError("Announced pitch X changed before commit", reason="stale_pitch_x")
-    candidates = announced_pitch_candidates(host, proposal.seat, selected_option, candidates)
-    if (
-        not isinstance(raw_refs, (list, tuple))
-        or len(raw_refs) != count
-        or len(set(raw_refs)) != count
-        or any(type(ref) is not str or ref not in candidates for ref in raw_refs)
-    ):
-        raise CastProposalError(
-            "The selected zone-change cost object is no longer legal",
-            status="unpayable",
-            reason="zone_change_cost_unpayable",
-        )
-    paid = tuple(
-        host._resolve_object(
-            proposal.seat,
-            ref,
-            zones={cost.origin_zone},
-            controlled_only=cost.origin_zone == "battlefield",
-            owned_only=cost.origin_zone != "battlefield",
-        )
-        for ref in raw_refs
-    )
-    raw_journal = response.get("_mana_replacement_selections") or {}
-    if not isinstance(raw_journal, Mapping) or len(raw_journal) > count:
-        raise CastProposalError(
-            "The casting replacement journal is malformed",
-            reason="replacement_journal_malformed",
-        )
-    journals: dict[str, tuple[str | None | Mapping[str, Any], ...]] = {}
-    for event_id, selections in raw_journal.items():
-        matched = next(
-            (
-                card
-                for card in paid
-                if type(event_id) is str
-                and event_id.startswith("zone.change:")
-                and event_id.endswith(f":{card.ref}")
-            ),
-            None,
-        )
-        if (
-            matched is None
-            or not isinstance(selections, (list, tuple))
-        ):
-            raise CastProposalError(
-                "The casting replacement journal is malformed",
-                reason="replacement_journal_malformed",
-            )
-        journals[matched.ref] = tuple(selections)
-    return paid, cost, journals
 
 
 def _fixed_zone_change_commit_entries(
@@ -735,6 +624,11 @@ def _commit_additional_costs(
     }
     if pledged_hand:
         commit_hand_credit_payment(host, proposal, card, pledged_hand, result)
+    if commit_granted_escape_zone_costs(
+        host, proposal, response, card, result, selected_option, required_paid_facts,
+        resolve_entries=_fixed_zone_change_commit_entries,
+    ):
+        return result
     from .additional_zone_costs import ordered_discard_sacrifice_selections
     cost_schema = program.cost_schema if program is not None else None
     try:
@@ -1055,6 +949,8 @@ def _dispatch_cast_events(
     prior_spell_count: int,
     prior_controller_spell_count: int,
     payment_triggers: list[StackItem],
+    mana_allocations: Sequence[ManaPoolAllocation],
+    graveyard_departure,
 ) -> None:
     trigger_batch = [*payment_triggers, *(
         cascade_trigger_items(host, spell=item, card=card)
@@ -1073,6 +969,7 @@ def _dispatch_cast_events(
             prior_spell_count=prior_spell_count,
         )
     )
+    collect_graveyard_cast_departure(host, card, graveyard_departure, trigger_batch)
     for (
         paid,
         origin,
@@ -1121,13 +1018,17 @@ def _dispatch_cast_events(
         spell_colors=(_colors(cast_colors)
                       if getattr(host.state.turn_history, "spell_color_history_version", None) == 1 else None),
     )
+    from ...spell_cast_names import record_spell_cast_names
+
+    record_spell_cast_names(host, item=item, card=card, effective=effective_spell,
+                            caster=proposal.seat, origin=proposal.origin, program=program)
     lifecycle = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if isinstance(lifecycle, Mapping) and lifecycle.get("kind") == FixedCastLifecycleKind.WARP.value:
         from ...turn_history import record_warped_spell
 
         record_warped_spell(host, actor=proposal.seat, object_incarnation=card.logical_object_id)
     card_fact = physical_card_event_context(host.state, card)
-    context = SpellCastEvent(
+    cast_event = SpellCastEvent(
         schema_version=8 if card_fact else 7,
         card_ref=card.ref,
         object_id=card.object_id,
@@ -1156,7 +1057,17 @@ def _dispatch_cast_events(
         creature_target_controllers=cast_creature_target_controllers(host, item),
         mana_spent_total=item.context.get('mana_spent_total'),
         **card_fact,
-    ).to_context()
+    )
+    from ...cast_origin_replacement import MAIN_PHASE_CAST_CONTEXT, MainPhaseCastFact, is_main_phase_cast_replacement
+
+    if program is not None and any(is_main_phase_cast_replacement(effect) for effect in program.effects):
+        item.context[MAIN_PHASE_CAST_CONTEXT] = MainPhaseCastFact.from_event(cast_event).to_dict()
+    from .mana_spend_entry import bind_paid_commander_entry
+    from .mana_spend_triggers import spent_mana_cast_triggers
+
+    bind_paid_commander_entry(host.state, item, card, mana_allocations)
+    trigger_batch.extend(spent_mana_cast_triggers(host, cast_event, mana_allocations))
+    context = cast_event.to_context()
     event_sources = _ordered_event_sources(host,None)
     if all(source.object_id != card.object_id for source in event_sources):
         event_sources.append(card)
@@ -1187,6 +1098,8 @@ def _revalidate_fixed_lifecycle_contract(
     proposal: CastProposal,
     card: Any,
     selected_option: Mapping[str, Any],
+    *,
+    x_value=None,
 ) -> None:
     from ..self_graveyard_discard import validate_self_graveyard_discard_option
     from ..death_cast_permissions import validate_qualified_death_option
@@ -1197,6 +1110,19 @@ def _revalidate_fixed_lifecycle_contract(
             selected_option,origin=proposal.origin)
     except ValueError as exc:
         raise CastProposalError(str(exc),reason='stale_self_graveyard_discard_contract') from exc
+    from ...cast_lifecycles import GRANTED_ESCAPE_USE_FIELD
+
+    if GRANTED_ESCAPE_USE_FIELD in selected_option:
+        from .escape_grants import validate_granted_escape_option
+
+        try:
+            if validate_granted_escape_option(
+                host, proposal.seat, prospective_cast_card(host, card, proposal.face),
+                selected_option, origin=proposal.origin, x_value=x_value,
+            ):
+                return
+        except ValueError as exc:
+            raise CastProposalError(str(exc), reason="stale_granted_escape_contract") from exc
     lifecycle_raw = selected_option.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if lifecycle_raw is None:
         return
@@ -1248,6 +1174,7 @@ def _revalidate_cast_contracts(
     record: Any,
     program: Any,
     details: Mapping[str, Any],
+    response: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Revalidate compiled casting contracts without mutating state."""
 
@@ -1293,7 +1220,7 @@ def _revalidate_cast_contracts(
         validate_replicate_commit(host, card, selected_option)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason='stale_replicate_contract') from exc
-    try:validate_kicker_commit(host,card,selected_option)
+    try:validate_kicker_commit(host,card,selected_option,announced_x=response.get("x"))
     except ValueError as exc:raise CastProposalError(str(exc),reason='stale_kicker_contract') from exc
     if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
         current_flashback = compiled_fixed_mana_flashback_spec(host, card)
@@ -1308,7 +1235,10 @@ def _revalidate_cast_contracts(
                 "The fixed-mana Flashback contract changed before commit",
                 reason="stale_flashback_contract",
             )
-    _revalidate_fixed_lifecycle_contract(host, proposal, card, selected_option)
+    _revalidate_fixed_lifecycle_contract(
+        host, proposal, card, selected_option,
+        x_value=selected_option.get("announced_target_x", selected_option.get("announced_additional_x", response.get("x"))),
+    )
     evoke_payment = selected_option.get(EVOKE_PAYMENT_FIELD)
     if evoke_payment is not None:
         if not validate_evoke_payment_marker(evoke_payment):
@@ -1401,6 +1331,20 @@ def _prepare_cast_announcement(host, proposal, card, record, program, selected_o
     return prepared_item, grants
 
 
+def _finish_cast_event_dispatch(
+    host, proposal, card, item, program, costs, *, prior_spell_count,
+    prior_controller_spell_count, payment_triggers, mana_allocations, graveyard_departure,
+):
+    _dispatch_cast_events(
+        host, proposal, card, item, program, costs,
+        prior_spell_count=prior_spell_count,
+        prior_controller_spell_count=prior_controller_spell_count,
+        payment_triggers=payment_triggers, mana_allocations=mana_allocations, graveyard_departure=graveyard_departure,
+    )
+    collect_legacy_paid_ward_occurrences(host, item)
+    host.state.players[proposal.seat].yield_policy = YieldPolicy()
+
+
 def _commit_cast_costs_and_stack(
     host: CastCommitHost,
     proposal: CastProposal,
@@ -1424,6 +1368,7 @@ def _commit_cast_costs_and_stack(
         record,
         program,
         details,
+        response,
     )
     requirements = dict(thaw_json(proposal.requirements))
     tap_cards = [
@@ -1440,33 +1385,44 @@ def _commit_cast_costs_and_stack(
     if 'waterbend_payment' in selected_option:
         from ..waterbend_payments import bind_waterbend_response
         bind_waterbend_response(response,selected_option['waterbend_payment'])
+    from .global_alternatives import reserve_turn_limited_battlefield_cost
+    try:
+        reserve_turn_limited_battlefield_cost(host, proposal, card, selected_option, cast_method=details.get("cast_method"))
+    except ValueError as exc:
+        raise CastProposalError(str(exc), reason="stale_battlefield_alternative_cost") from exc
+    from .spell_mana_payments import capture_spell_mana_payment, spell_payment_colors
+    from ...opponent_library_exile import commit_opponent_library_exile_spend_context
+    spend_context = commit_opponent_library_exile_spend_context(
+        host, proposal, card, selected_option, details, TYPED_MANA_SPEND_TYPE_LINE_FIELD,
+    )
+    graveyard_departure = capture_graveyard_cast_departure(host, card)
     prepared_item, grants = _prepare_cast_announcement(
         host, proposal, card, record, program, selected_option, details, response,
     )
+    spend_context = spell_payment_colors(host, proposal.seat, card, spend_context)
     from .splice_costs import announce_splice_sources
     spliced_cards = announce_splice_sources(host, proposal, card, selected_option)
-    from .spell_mana_payments import capture_spell_mana_payment
-    excluded = {payment_card.object_id for payment_card in tap_cards} | hand_credit_reserved_ids(selected_option)
-    from .face_queries import TYPED_MANA_SPEND_TYPE_LINE_FIELD
-    spend_context = host._spell_mana_spend_context(details.get(TYPED_MANA_SPEND_TYPE_LINE_FIELD, proposal.type_line))
+    excluded = {card.object_id, *(payment_card.object_id for payment_card in tap_cards)} | hand_credit_reserved_ids(selected_option)
     blight_payment = prepare_blight_cast_payment(host, proposal, selected_option, response)
     if assist is not None:
         apply_assist_cast_mana(host, assist, proposal, card, response, spend_context=spend_context,
                                excluded=excluded, spliced_cards=spliced_cards)
-        spent, activations, payment_triggers = commit_assist_cast_payment(
+        spent, activations, payment_triggers, mana_allocations = commit_assist_cast_payment(
             host, assist, response, requirements, spend_context,
         )
     else:
         mana_response, mana_replay = blight_cast_mana_response(blight_payment, response)
         payer_protection = {"preserve_source_id": blight_payment.payer_id} if blight_payment is not None else {}
         with blight_cast_replacement_scope(blight_payment):
-            spent, activations = host._pay_for_cost(
+            mana_payment = host._pay_for_cost(
                 proposal.seat, requirements, mana_response, exclude_sources=excluded,
                 spend_context=spend_context, **payer_protection, **cast_snow_payment_kwargs(selected_option),
             )
         if mana_replay is not None:
             mana_replay.validate()
-        payment_triggers = capture_spell_mana_payment(host, player=proposal.seat, spent=spent)
+        spent, activations = mana_payment.spent, mana_payment.activations
+        mana_allocations = (mana_payment.allocation,)
+        payment_triggers = capture_spell_mana_payment(host, player=proposal.seat, paid=mana_payment.allocation)
     from .post_mana_checks import revalidate_resources_after_mana
     revalidate_resources_after_mana(host, proposal, card, selected_option, details)
     _commit_tap_costs(host, proposal, card)
@@ -1528,20 +1484,15 @@ def _commit_cast_costs_and_stack(
     _record_cast(
         host, proposal, card, item, spent, activations, selected_option, costs
     )
+    from ..loyalty_graveyard_cast import commit_loyalty_graveyard_cast_use
+
     commit_turn_cast_grant_use(host,selected_option,spell=card,caster=proposal.seat)
-    _dispatch_cast_events(
-        host,
-        proposal,
-        card,
-        item,
-        program,
-        costs,
-        prior_spell_count=prior_spell_count,
+    commit_loyalty_graveyard_cast_use(selected_option, card, proposal)
+    _finish_cast_event_dispatch(
+        host, proposal, card, item, program, costs, prior_spell_count=prior_spell_count,
         prior_controller_spell_count=prior_controller_spell_count,
-        payment_triggers=payment_triggers,
+        payment_triggers=payment_triggers, mana_allocations=mana_allocations, graveyard_departure=graveyard_departure,
     )
-    collect_legacy_paid_ward_occurrences(host, item)
-    host.state.players[proposal.seat].yield_policy = YieldPolicy()
     return bool(details.get('during_resolution'))
 
 

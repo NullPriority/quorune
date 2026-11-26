@@ -360,6 +360,9 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                     trigger_batch=stack_items,
                 )
             )
+        from .rules.attacking_opponent_library_exile import dispatch_player_or_walker_attacked
+
+        semantic_trigger_refs.extend(dispatch_player_or_walker_attacked(engine, event, semantic_sources, stack_items))
         if engine.semantics.programs_for_event(DIRECT_PLAYER_ATTACK_EVENT):
             for facts in direct_player_attack_facts(event, getattr(engine.state, "initiative", None)):
                 semantic_trigger_refs.extend(engine._dispatch_semantic_event(

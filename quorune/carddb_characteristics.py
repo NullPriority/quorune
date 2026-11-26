@@ -169,9 +169,23 @@ def public_stack_rules_names(card: CardInstance, effective: Mapping[str, Any],
     name = effective.get('name')
     if type(name) is not str or not name or name != name.strip():
         raise ValueError('A visible spell requires explicit current public rules names')
+    return cast_spell_rules_names(name, record)
+
+
+def cast_spell_rules_names(name: str, record: CardRecord | None) -> tuple[str, ...]:
+    """Read an announced spell's name or the names of its fused split halves."""
+    if not name:
+        return ()
     if record is not None and record.faces and record.layout == 'split' and name == record.name:
         return tuple(face['name'] for face in record.faces)
     return (name,)
+
+
+def public_exile_rules_names(card: CardInstance, record: CardRecord | None) -> tuple[str, ...]:
+    """Read outside-stack rules names of a current face-up card in exile."""
+    if card.zone != "exile" or card.face_down or record is None:
+        return ()
+    return library_card_rules_names(record)
 
 
 def public_revealed_library_rules_names(card: CardInstance, record: CardRecord | None) -> tuple[str, ...]:

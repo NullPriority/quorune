@@ -213,6 +213,10 @@ def _ability_source_target_matches(predicate: str, row: Mapping[str, Any]) -> bo
     if (row.get('zone')!='stack' or row.get('category')!='ability'
             or not isinstance(item,StackItem) or source_types is None):
         return False
+    from .ability_source_information import ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER, ACTIVATED_PUBLIC_PERMANENT_SOURCE_TYPES
+
+    if predicate == ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER:
+        return item.kind == "activated_ability" and bool(ACTIVATED_PUBLIC_PERMANENT_SOURCE_TYPES.intersection(source_types))
     if predicate=='activated_artifact_source':
         return item.kind=='activated_ability' and 'artifact' in source_types
     if predicate == 'artifact_ability_source':

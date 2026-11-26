@@ -52,14 +52,16 @@ class GroupTemporaryDeclarationRestrictionTemplate:
     restriction: TemporaryDeclarationRestrictionKind
     target_spec: DirectPermanentTargetSpec | None = None
     maximum_targets: int = 1
-    optional_targets: bool = False
+    minimum_targets: int = 1
     affected_set: AffectedPermanentSetSpec | None = None
 
     def __post_init__(self) -> None:
         temporary_declaration_restriction(self.restriction)
         if (self.target_spec is None) == (self.affected_set is None):
             raise ValueError("Group declaration requires exactly one target set or live public set")
-        if type(self.maximum_targets) is not int or not 1 <= self.maximum_targets <= 6 or type(self.optional_targets) is not bool:
+        if (type(self.maximum_targets) is not int or type(self.minimum_targets) is not int
+                or not 1 <= self.maximum_targets <= 6 or not 0 <= self.minimum_targets <= self.maximum_targets
+                or self.minimum_targets not in {0, self.maximum_targets} and (self.minimum_targets, self.maximum_targets) != (1, 2)):
             raise ValueError("Declaration target bounds are malformed")
         if self.target_spec is not None and (not isinstance(self.target_spec, DirectPermanentTargetSpec) or not (
             "creature" in self.target_spec.to_target_schema().get("types_all", ())
@@ -75,8 +77,7 @@ class GroupTemporaryDeclarationRestrictionTemplate:
                 PermanentControllerRelation.ACTOR,
                 PermanentControllerRelation.OPPONENTS,
             }
-            or self.maximum_targets != 1
-            or self.optional_targets
+            or (self.minimum_targets, self.maximum_targets) != (1, 1)
         ):
             raise ValueError("Live declaration group predicate is unsupported")
 
@@ -85,9 +86,13 @@ class GroupTemporaryDeclarationRestrictionTemplate:
         if self.target_spec is None:
             return None
         schema = self.target_spec.to_target_schema()
-        schema["count"] = self.maximum_targets
-        if self.optional_targets:
-            schema["up_to"] = self.maximum_targets
+        if 0 < self.minimum_targets < self.maximum_targets:
+            schema.pop("count")
+            schema.update(min=self.minimum_targets, max=self.maximum_targets)
+        else:
+            schema["count"] = self.maximum_targets
+            if self.minimum_targets == 0:
+                schema["up_to"] = self.maximum_targets
         return schema
 
     def compiled(self) -> tuple[
@@ -104,14 +109,22 @@ class GroupTemporaryDeclarationRestrictionTemplate:
 
 
 def _group_declaration_template(text: str) -> GroupTemporaryDeclarationRestrictionTemplate | None:
-    multi = re.fullmatch(r"(?P<optional>up to )?(?P<count>one|two|three|four|five|six) target (?P<subject>.+?) can't (?P<restriction>attack or block|attack|block|be blocked) this turn\.?", text, re.I)
+    multi = re.fullmatch(
+        r"(?:(?P<range>one or two)|(?P<optional>up to )?(?P<count>one|two|three|four|five|six)) "
+        r"target (?P<subject>.+?) can't (?P<restriction>attack or block|attack|block|be blocked) this turn\.?",
+        text, re.I,
+    )
     if multi is not None:
         subject = re.sub(r"\bcreatures\b", "creature", multi["subject"], flags=re.I)
         spec = direct_permanent_target_spec("target " + subject)
         if spec is None or not ("creature" in spec.to_target_schema().get("types_all", ()) or spec.to_target_schema().get("types_any") == ["creature"]):
             return None
-        return GroupTemporaryDeclarationRestrictionTemplate(_RESTRICTION_KINDS[multi["restriction"].casefold()], target_spec=spec,
-            maximum_targets=_GROUP_COUNTS[multi["count"].casefold()], optional_targets=bool(multi["optional"]))
+        maximum = 2 if multi["range"] else _GROUP_COUNTS[multi["count"].casefold()]
+        minimum = 1 if multi["range"] else 0 if multi["optional"] else maximum
+        return GroupTemporaryDeclarationRestrictionTemplate(
+            _RESTRICTION_KINDS[multi["restriction"].casefold()], target_spec=spec,
+            maximum_targets=maximum, minimum_targets=minimum,
+        )
     group = re.fullmatch(r"(?P<subject>.+?) can't (?P<restriction>attack or block|attack|block|be blocked) this turn\.?", text, re.I)
     if group is None:
         return None

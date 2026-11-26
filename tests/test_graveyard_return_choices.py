@@ -15,6 +15,7 @@ from common import ROOT
 from quorune.object_query import ObjectQueryResult
 from quorune.replacement.immutable import FrozenMap
 from quorune.rules.graveyard_return_choices import (
+    BOUNDED_BATTLEFIELD_RETURN_CAPABILITY, BOUNDED_BATTLEFIELD_RETURN_VERSION,
     CAPABILITY, MECHANIC, OPERATION, GraveyardReturnSelection, graveyard_return_candidates,
     graveyard_return_choice_node_capabilities,
 )
@@ -23,9 +24,10 @@ from quorune.semantic_choices.graveyard_return import GraveyardReturnChoiceHandl
 from quorune.semantic_choices.model import SemanticChoiceError
 
 
-def row(ref, *, owner='A', controller=None, zone='graveyard', types=('creature',), incarnation=1, token=False):
+def row(ref, *, owner='A', controller=None, zone='graveyard', types=('creature',), incarnation=1, token=False,
+        mana_value=0):
     return ObjectQueryResult(object_id='object:'+ref,ref=ref,printed_name=ref,owner=owner,
-        controller=controller or owner,zone=zone,types=types,token=token,
+        controller=controller or owner,zone=zone,types=types,token=token,mana_value=mana_value,
         logical_object_id='object:'+ref+'@'+str(incarnation))
 
 
@@ -100,6 +102,99 @@ class GraveyardReturnChoiceTests(unittest.TestCase):
             with self.assertRaises(SemanticChoiceError):handler.complete(
                 SimpleNamespace(effect=FrozenMap({**dict(saved.effect),**change})),{'card':None},ctx.query)
 
+    def test_bounded_battlefield_choice_keeps_exact_current_mana_value_and_incarnation(self):
+        version = BOUNDED_BATTLEFIELD_RETURN_VERSION
+        spec = GraveyardReturnSelection(("creature",), schema_version=version, mana_value_max=2)
+        selected = row("selected", mana_value=2)
+        oversized = replace(selected, mana_value=3)
+        effect = {"op": OPERATION, "player": "A", "selection": spec.to_dict()}
+        handler = GraveyardReturnChoiceHandler()
+        initial = context((selected,), (selected.ref,))
+        prepared = handler.prepare(effect, initial)
+        self.assertEqual((0, 1, True), (prepared.request.choice.minimum, prepared.request.choice.maximum,
+                                      prepared.request.choice.optional))
+        saved = SimpleNamespace(effect=prepared.continuation_effect)
+        completion = handler.complete(saved, {"card": selected.ref}, initial.query)
+        self.assertFalse(completion.intents)
+        self.assertEqual("move_public_zone_set", completion.prepend_effects[0]["op"])
+        self.assertEqual("battlefield", completion.prepend_effects[0]["set"]["destination"])
+        self.assertFalse(handler.complete(saved, {"card": None}, initial.query).prepend_effects)
+        for stale in (oversized, replace(selected, logical_object_id="object:selected@2"), replace(selected, owner="B")):
+            with self.subTest(stale=stale), self.assertRaises(SemanticChoiceError):
+                handler.complete(saved, {"card": selected.ref}, query((stale,), (selected.ref,)))
+        self.assertFalse(spec.matches(oversized))
+        for maximum in (True, -1, 21, "2"):
+            with self.subTest(maximum=maximum), self.assertRaises(ValueError):
+                GraveyardReturnSelection(("creature",), schema_version=version, mana_value_max=maximum)
+        with self.assertRaises(ValueError):
+            GraveyardReturnSelection.from_dict({**spec.to_dict(), "schema_version": 1})
+
+    def test_bounded_battlefield_mana_value_query_omission_is_detected(self):
+        from unittest.mock import PropertyMock
+        from quorune.object_predicate import ObjectQuerySpec
+
+        selected = row("too-expensive", mana_value=3)
+        spec = GraveyardReturnSelection(("creature",), schema_version=BOUNDED_BATTLEFIELD_RETURN_VERSION,
+                                        mana_value_max=2)
+
+        def witness():
+            self.assertFalse(spec.matches(selected))
+
+        witness()
+        with patch.object(GraveyardReturnSelection, "query", new_callable=PropertyMock,
+                          return_value=ObjectQuerySpec(zones=("graveyard",), types_any=("creature",), token=False)):
+            with self.assertRaises(AssertionError):
+                witness()
+
+    def test_bounded_battlefield_choice_and_mill_authority_fail_closed_independently(self):
+        from quorune.compiler.graveyard_return_choice_templates import graveyard_return_choice_template
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+        from quorune.rules.evidence import _capability_validation_snapshot, validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+        from test_granted_skulk import record
+
+        text = "Mill three cards, then you may return a creature card with mana value 2 or less from your graveyard to the battlefield."
+        profile = "commander_review"
+        card = record(text, "Instant")
+        active = load_default_capability_registry()
+        ir = compile_oracle_card(card, capability_registry=active, capability_profile=profile)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(("mill", OPERATION), tuple(effect["op"] for effect in node.effects))
+        self.assertIsNone(node.target_schema)
+        self.assertIn(BOUNDED_BATTLEFIELD_RETURN_CAPABILITY, node.capability_dependencies)
+        for unsupported in (text.replace("a creature", "target creature"),
+                            text.replace("your graveyard", "an opponent's graveyard"),
+                            text.replace("2 or less", "X or less")):
+            with self.subTest(unsupported=unsupported):
+                rejected = compile_oracle_card(record(unsupported, "Instant"),
+                    capability_registry=active, capability_profile=profile)
+                self.assertIsNone(graveyard_return_choice_template(unsupported))
+                self.assertTrue(all(BOUNDED_BATTLEFIELD_RETURN_CAPABILITY not in node.capability_dependencies
+                                    for face in rejected.faces for node in face.nodes))
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        discovered = set(discover_tests(ROOT).values())
+        for missing in (BOUNDED_BATTLEFIELD_RETURN_CAPABILITY, "zone.mill.fixed"):
+            changed = deepcopy(raw)
+            target = next(row for row in changed["capabilities"] if row["id"] == missing)
+            target.update(status="blocked", blockers=["Scoped withdrawal"])
+            registry = CapabilityRegistry(changed)
+            with _capability_validation_snapshot():
+                index = build_index(registry_value=changed, declaration_source=declarations,
+                                    discovered_test_ids=discovered)
+                registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+            with self.subTest(missing=missing):
+                self.assertNotEqual("exact", compile_oracle_card(card,
+                    capability_registry=registry, capability_profile=profile).status)
+                alternative = ("Mill three cards." if missing == BOUNDED_BATTLEFIELD_RETURN_CAPABILITY
+                               else "You may return a creature card from your graveyard to your hand.")
+                control = compile_oracle_card(record(alternative, "Instant"),
+                    capability_registry=registry, capability_profile=profile)
+                self.assertEqual("exact", control.status, control.material_residuals)
+
     def test_compiler_orders_mill_then_untargeted_choice_and_withdrawal_preserves_plain_mill(self):
         from quorune.oracle_ir import compile_oracle_card
         from quorune.rules.capabilities import CapabilityRegistry,load_default_capability_registry
@@ -134,6 +229,49 @@ class GraveyardReturnChoiceTests(unittest.TestCase):
             capability_registry=blocked,capability_profile='commander_review').status)
         self.assertEqual('exact',compile_oracle_card(record('Mill three cards.','Instant'),
             capability_registry=blocked,capability_profile='commander_review').status)
+
+    def test_mandatory_creature_or_planeswalker_is_closed_and_cannot_decline(self):
+        from quorune.compiler.graveyard_return_choice_templates import graveyard_return_choice_template
+        from quorune.rules.graveyard_return_choices import mandatory_creature_or_planeswalker_return_effect
+
+        text = "Mill three cards, then return a creature or planeswalker card from your graveyard to your hand."
+        compiled = graveyard_return_choice_template(text)
+        self.assertIsNone(compiled[2])
+        choice = mandatory_creature_or_planeswalker_return_effect()
+        self.assertEqual(({"op": "mill", "player": "$controller", "count": 3}, choice), compiled[1])
+        self.assertIsNone(graveyard_return_choice_template(text.replace("a creature", "a target creature")))
+        self.assertIsNone(graveyard_return_choice_template(text.replace("from your", "milled this way from your")))
+        with self.assertRaises(ValueError):
+            GraveyardReturnSelection(("creature",), schema_version=choice["selection"]["schema_version"])
+
+        walker = row("walker", types=("planeswalker",))
+        ctx = context((walker,), ("walker",))
+        handler = GraveyardReturnChoiceHandler()
+        prepared = handler.prepare({**choice, "player": "A"}, ctx)
+        option = prepared.request.choice
+        self.assertEqual((1, 1, False), (option.minimum, option.maximum, option.optional))
+        self.assertEqual(5, choice["selection"]["schema_version"])
+        retained = {**choice, "player": "A", "selection": {**choice["selection"], "schema_version": 4}}
+        retained_offer = handler.prepare(retained, ctx)
+        self.assertEqual(option, retained_offer.request.choice)
+        self.assertEqual(4, retained_offer.continuation_effect["selection"]["schema_version"])
+        for malformed in (
+            {"schema_version": 4, "types_any": ["creature"]},
+            {"schema_version": 4, "types_any": ["creature", "planeswalker"], "mana_value_max": 2},
+            {"schema_version": 4, "types_any": ["creature", "planeswalker"], "mana_value_max": None},
+            {"schema_version": 5, "types_any": ["creature"], "mana_value_max": 2},
+            {"schema_version": 5, "types_any": ["creature", "planeswalker"], "mana_value_max": None},
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                GraveyardReturnSelection.from_dict(malformed)
+        continuation = SimpleNamespace(effect=prepared.continuation_effect)
+        with self.assertRaises(SemanticChoiceError):
+            handler.complete(continuation, {}, ctx.query)
+        result = handler.complete(continuation, {"card": walker.ref}, ctx.query)
+        self.assertEqual(walker.ref, result.intents[0].object_ref)
+        empty = handler.prepare({**choice, "player": "A"}, context((), ()))
+        self.assertIsNone(empty.request)
+        self.assertIsNotNone(empty.auto_continue)
 
     def test_runtime_infers_and_validates_choice_independently(self):
         from quorune.card_programs.runtime_requirements import program_dynamic_runtime_requirements
@@ -181,7 +319,8 @@ class GraveyardReturnChoiceNativeTests(unittest.TestCase):
         from scripts.build_test_database import build_fixture_database
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'graveyard-salvage.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/source-explore-cards.json',ROOT/'tests/fixtures/graveyard-salvage-cards.json'],path)
+            ROOT/'tests/fixtures/source-explore-cards.json',ROOT/'tests/fixtures/graveyard-salvage-cards.json',
+            ROOT/'tests/fixtures/scryfall-exact-lists.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Graveyard choice',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -230,6 +369,82 @@ class GraveyardReturnChoiceNativeTests(unittest.TestCase):
         session=self.replay(session,load=True)
         result=session.act('pilot:A',command);self.assertTrue(result.ok,result.summary)
         return session
+
+    def activate_tyvar_minus_two(self, session, tyvar):
+        from quorune.record import authoritative_state_hash
+
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"] == f"activate:{tyvar.ref}:ab3")
+        self.assertFalse(action.get("target_schema"))
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", {"action_id": action["id"]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, session.state.cards[tyvar.object_id].counters["loyalty"])
+        self.assertEqual([], session.state.stack[-1].targets)
+        return action["id"]
+
+    def test_actual_tyvar_mills_and_can_return_old_or_new_current_creature(self):
+        from quorune.record import authoritative_state_hash
+
+        for from_library in (False, True):
+            with self.subTest(from_library=from_library):
+                session = self.session(946101 + from_library)
+                tyvar = self.add(session.engine, "Tyvar, Jubilant Brawler", zone="hand")
+                old = self.add(session.engine, "Dryad Arbor", zone="graveyard")
+                expensive = self.add(session.engine, "Tireless Provisioner", zone="graveyard")
+                foreign = self.add(session.engine, "Grizzly Bears", seat="B", zone="graveyard", ref="tyvar-foreign")
+                new, rock, sorcery = self.library(session, ("Grizzly Bears", "Sol Ring", "Divination"))
+                self.assert_closed(session, tyvar)
+                self.start(session)
+                self.cast(session, tyvar)
+                self.resolve_top(session)
+                self.assertEqual(3, session.state.cards[tyvar.object_id].counters["loyalty"])
+                action = self.activate_tyvar_minus_two(session, tyvar)
+                session = self.replay(session, load=True)
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                self.assertEqual({old.ref, new.ref}, self.options(session))
+                self.assertTrue(all(session.state.cards[p.object_id].zone == "graveyard" for p in (new, rock, sorcery)))
+                self.assertEqual(0, len(session.state.players["A"].zones["library"]))
+                chosen = new if from_library else old
+                prior_incarnation = session.state.cards[chosen.object_id].logical_object_id
+                session = self.choose(session, chosen, (foreign.ref, expensive.ref, rock.ref, sorcery.ref))
+                self.assertIsNone(self.resolve(session))
+                returned = session.state.cards[chosen.object_id]
+                self.assertEqual(("battlefield", "A", False), (returned.zone, returned.controller, returned.tapped))
+                self.assertNotEqual(prior_incarnation, returned.logical_object_id)
+                self.priority(session, "A")
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", {"action_id": action}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                for seat in "ABC":
+                    self.assertNotIn("CRIME_PRIVATE_D_HAND", json.dumps(session.packet("pilot:" + seat, full=True)))
+                self.replay(session, load=True)
+
+    def test_actual_tyvar_short_mill_and_empty_library_preserve_decline_after_replacement(self):
+        for cards in (("Grizzly Bears",), ()):
+            with self.subTest(cards=cards):
+                session = self.session(946105 + len(cards))
+                tyvar = self.add(session.engine, "Tyvar, Jubilant Brawler", zone="hand")
+                old = self.add(session.engine, "Birds of Paradise", zone="graveyard")
+                self.add(session.engine, "Dauthi Voidwalker", seat="B")
+                milled = self.library(session, cards)
+                self.assert_closed(session, tyvar)
+                self.start(session)
+                self.cast(session, tyvar)
+                self.resolve_top(session)
+                self.activate_tyvar_minus_two(session, tyvar)
+                self.assertEqual("semantic.choice", self.resolve(session).kind)
+                self.assertEqual({old.ref}, self.options(session))
+                for exiled in milled:
+                    self.assertEqual("exile", session.state.cards[exiled.object_id].zone)
+                session = self.choose(session, None, tuple(card.ref for card in milled))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[old.object_id].zone)
+                self.assertEqual(1, session.state.cards[tyvar.object_id].counters["loyalty"])
+                self.replay(session, load=True)
 
     def test_actual_short_mill_can_return_preexisting_union_card_without_target_or_crime(self):
         session=self.session(646001)
@@ -312,3 +527,134 @@ class GraveyardReturnChoiceNativeTests(unittest.TestCase):
         from quorune.rules.crime import crime_count_this_turn
         self.assertEqual(0,crime_count_this_turn(session.state,'A'))
         self.replay(session,load=True)
+
+class TakenumaNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    from test_bound_effect_programs import BoundEffectProgramRuntimeTests as _actions
+
+    session = _actions.session
+    add = _actions.add
+    ready = _actions.ready
+    checkpoint = _actions.checkpoint
+    resolve = _actions.resolve
+    replay = _actions.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "takenuma.sqlite3"
+        fixtures = ("bound-effect-program-cards.json", "scryfall-exact-lists.json",
+                    "graveyard-exile-replacement-cards.json", "fixed-emblem-event-cards.json")
+        build_fixture_database([ROOT / "tests" / "fixtures" / name for name in fixtures], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Takenuma witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                 DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def channel_offer(self, session, source, generic):
+        self.ready(session, source, {"C": 3, "B": 1})
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = [entry for entry in actions if entry["id"] == f"activate:{source.ref}:ab2"]
+        mana = {"B": 1, "GENERIC": generic} if generic else {"B": 1}
+        self.assertEqual({"discard_self": 1, "m": mana}, action["cost_summary"])
+        self.assertEqual("hand", action["from"])
+        self.assertFalse(action.get("target_schema"))
+        return action
+
+    def act(self, session, action, **fields):
+        result = session.act("pilot:A", {"action_id": action, **fields})
+        self.assertTrue(result.ok, result.summary)
+
+    def test_channel_price_and_choices_from_the_settled_graveyard_replay(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime
+
+        session = self.session(646040)
+        engine = session.engine
+        source = self.add(engine, "Takenuma, Abandoned Mire", zone="hand")
+        walker = self.add(engine, "Vraska, Golgari Queen", zone="graveyard")
+        creature = self.add(engine, "Deathrite Shaman", zone="library")
+        self.add(engine, "Forest", zone="library", ref="takenuma-filler-a")
+        self.add(engine, "Forest", zone="library", ref="takenuma-filler-b")
+        self.add(engine, "Zimone and Dina", seat="B", ref="takenuma-foreign-legend")
+        self.add(engine, "Vraska, Golgari Queen", ref="takenuma-legendary-planeswalker")
+        land = self.add(engine, "Takenuma, Abandoned Mire", ref="takenuma-legendary-land")
+        land.tapped = True
+        foreign = self.add(engine, "Deathrite Shaman", seat="B", zone="graveyard", ref="takenuma-foreign-card")
+        self.channel_offer(session, source, generic=3)
+        self.add(engine, "Zimone and Dina", ref="takenuma-owned-legend")
+        engine.create_token("A", name="Legendary witness", characteristics={
+            "type_line": "Legendary Creature — Elf", "power": "1", "toughness": "1",
+        })
+        action = self.channel_offer(session, source, generic=1)
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(source.printed_name), semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        before_source = source.zone_change_counter
+        before_library = len(session.state.players["A"].zones["library"])
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": action["id"], "pay": "manual", "payment": {"C": 2}})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.act(session, action["id"], pay="manual", payment={"C": 1, "B": 1})
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(before_source + 1, session.state.cards[source.object_id].zone_change_counter)
+        self.assertEqual(0, session.state.players["A"].mana_pool.get("B", 0))
+        self.assertEqual(2, session.state.players["A"].mana_pool.get("C", 0))
+        self.assertFalse(session.state.stack[-1].targets)
+        decision = self.resolve(session)
+        self.assertEqual("semantic.choice", decision.kind)
+        self.assertEqual(before_library - 3, len(session.state.players["A"].zones["library"]))
+        ctx = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual(OPERATION, ctx["operation"])
+        self.assertEqual({creature.ref, walker.ref}, {row["id"] for row in ctx["objects"]})
+        before = authoritative_state_hash(session.state)
+        for command in ({"action_id": "choose"}, {"action_id": "choose", "card": foreign.ref}):
+            self.assertFalse(session.act("pilot:A", command).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        restored = self.replay(session, load=True)
+        for selected, branch in ((creature, restored), (walker, session)):
+            self.act(branch, "choose", card=selected.ref)
+            self.resolve(branch)
+            self.assertEqual("hand", branch.state.cards[selected.object_id].zone)
+            self.assertEqual(before_library - 3, len(branch.state.players["A"].zones["library"]))
+            self.assertEqual(before_source + 1, branch.state.cards[source.object_id].zone_change_counter)
+            self.replay(branch)
+
+    def test_channel_settles_empty_and_redirected_mill_without_a_choice(self):
+        for redirected in (False, True):
+            with self.subTest(redirected=redirected):
+                session = self.session(646041 + redirected)
+                engine = session.engine
+                source = self.add(engine, "Takenuma, Abandoned Mire", zone="hand")
+                if redirected:
+                    self.add(engine, "Rest in Peace", seat="B")
+                milled = [
+                    self.add(engine, name, zone="library", ref=f"takenuma-top-{index}")
+                    for index, name in enumerate(
+                        ("Deathrite Shaman", "Forest", "Forest") if redirected else ("Forest",) * 3
+                    )
+                ]
+                action = self.channel_offer(session, source, generic=3)
+                self.checkpoint(session)
+                self.act(session, action["id"], pay="auto")
+                self.assertIsNone(self.resolve(session))
+                zone = "exile" if redirected else "graveyard"
+                for card in (source, *milled):
+                    self.assertEqual(zone, session.state.cards[card.object_id].zone)
+                self.replay(session)

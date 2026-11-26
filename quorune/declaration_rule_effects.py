@@ -20,25 +20,45 @@ from .object_predicate import ObjectQuerySpec
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
 from .toughness_assignment_rule import TOUGHNESS_RULE_KIND,ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import BLOCK_CAPACITY_RULE_KIND, ResolvedBlockCapacityRule
-from .temporary_cast_rule_model import EFFECT_KIND as CAST_RESTRICTION_KIND,ResolvedCastRestriction
+from .temporary_cast_rule_model import (
+    EFFECT_KIND as CAST_RESTRICTION_KIND, NEXT_TURN_SORCERY_TIMING_KIND,
+    ResolvedCastRestriction, ResolvedNextTurnSorceryTiming,
+)
 from .draw_redirect_model import DRAW_REDIRECT_KIND, ResolvedDrawRedirect
+from .next_draw_replacement_model import NEXT_DRAW_REPLACEMENT_KIND, ResolvedNextDrawReplacement
 from .next_spell_cost_model import EFFECT_KIND as NEXT_SPELL_COST_KIND,ResolvedNextSpellCostReduction
 from .source_block_pair_model import SOURCE_BLOCK_PAIR_EFFECT_KIND, ResolvedSourceBlockPair
 from .library_search_model import LIBRARY_SEARCH_TEMP_KIND,ResolvedLibrarySearchProhibition
 from .damage_death_exile_model import DAMAGE_DEATH_EXILE_KIND, ResolvedDamageDeathExile
 from .linked_departure_exile_model import LINKED_DEPARTURE_EXILE_KIND, ResolvedLinkedDepartureExile
 from .source_untap_rule_model import SOURCE_UNTAP_RESTRAINT_KIND, ResolvedSourceUntapRestraint
+from .sacrifice_prohibition_model import SACRIFICE_PROHIBITION_KIND, ResolvedSacrificeProhibition
 from .life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_KIND, ResolvedLifeGainProhibition
 from .damage_prevention_permission import TEMPORARY_DAMAGE_PROHIBITION_KIND, ResolvedDamagePreventionProhibition
+from .game_hand_size_model import EFFECT_KIND as GAME_HAND_SIZE_KIND, ResolvedNoMaximumHandSize
+from .turn_match_outcome_model import TURN_OUTCOME_FIELD, ResolvedTurnMatchOutcomeProtection
+from .all_player_turn_rule_model import ALL_PLAYER_TURN_RULE_KIND, ResolvedAllPlayerTurnRule
 from .protected_attack_payment_model import EFFECT_KIND as ATTACK_PAYMENT_KIND, ResolvedProtectedAttackPayment
+from .next_turn_attack_restriction_model import ATTACK_RESTRICTION_EFFECT_KIND, ResolvedNextTurnAttackRestriction
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
+RESOLVED_ACTIVATION_PROHIBITION_KIND = "resolved_activation_prohibition"
+OPPONENT_BLOCKING_PROHIBITION_KIND = "unblockable_by_opponents"
+OPPONENT_BLOCKING_PROHIBITION = DeclarationRestrictionTemplate(
+    template_id="temporary-blocking-opponents-prohibition-v1",
+    declarations=("block",),
+    scope="source_option",
+)
 ATTACK_BLOCK_PROHIBITION = DeclarationRestrictionTemplate(
     template_id="intrinsic-attack-block-prohibition-v1",
     declarations=("attack", "block"),
     scope="self",
 )
+
+
+def live_opponent_attack_query(controller: str) -> ObjectQuerySpec:
+    return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), excluded_controllers=(controller,))
 
 
 def declaration_group_query_is_closed(query: ObjectQuerySpec, *, resolved: bool = False) -> bool:
@@ -79,6 +99,7 @@ class ResolutionDeclarationRuleEffect:
     live_query: ObjectQuerySpec | None = None
     expires_on_next_turn_of: str | None = None
     forbid_activations: bool = False
+    block_opponents_of: str | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -94,12 +115,12 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule effect timestamps must be nonnegative integers"
             )
         requirement = isinstance(self.restriction, DeclarationRequirementTemplate)
+        live_requirement = requirement and self.live_query is not None
         defender_permission = isinstance(self.restriction, DefenderAttackPermission)
         if requirement and (
             (self.restriction.schema_version, self.restriction.kind) not in {
                 (1, "all_able_blockers"), (1, "attack_each_combat"), (3, "attack_specific_player"),
             }
-            or self.live_query is not None
         ):
             raise ContinuousEffectError('Resolved requirements need one locked attack or all-able-blocker subject')
         if not (requirement or defender_permission or isinstance(self.restriction, DeclarationRestrictionTemplate)):
@@ -131,7 +152,13 @@ class ResolutionDeclarationRuleEffect:
             or duration is not ContinuousEffectDuration.UNTIL_NEXT_TURN
         ):
             raise ContinuousEffectError("Detain requires a locked next-turn attack and block prohibition")
-        if requirement and self.expires_on_next_turn_of is not None:
+        if live_requirement:
+            if (self.restriction.kind != "attack_each_combat"
+                    or duration is not ContinuousEffectDuration.UNTIL_NEXT_TURN
+                    or not self.expires_on_next_turn_of
+                    or self.live_query != live_opponent_attack_query(self.expires_on_next_turn_of)):
+                raise ContinuousEffectError("Live attack requirements need a controller-relative next-turn creature query")
+        elif requirement and self.expires_on_next_turn_of is not None:
             raise ContinuousEffectError("Resolved declaration requirements expire at end of turn")
         if defender_permission and duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN:
             raise ContinuousEffectError("Resolved Defender permissions expire at end of turn")
@@ -154,7 +181,13 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule locked identities must be unique typed values"
             )
         object.__setattr__(self, "locked_objects", locked)
-        if requirement and len(locked) != 1:
+        if self.restriction == OPPONENT_BLOCKING_PROHIBITION or self.block_opponents_of is not None:
+            if (self.restriction != OPPONENT_BLOCKING_PROHIBITION
+                    or type(self.block_opponents_of) is not str or not self.block_opponents_of
+                    or len(locked) != 1 or self.live_query is not None
+                    or duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN):
+                raise ContinuousEffectError("Opponent blocking rules require one locked object and an original controller")
+        if requirement and not live_requirement and len(locked) != 1:
             raise ContinuousEffectError('Resolved requirements lock exactly one battlefield incarnation')
         if defender_permission and self.live_query is None and len(locked) != 1:
             raise ContinuousEffectError("A locked Defender permission requires one battlefield incarnation")
@@ -180,6 +213,8 @@ class ResolutionDeclarationRuleEffect:
                 value["live_query"] = self.live_query.to_dict()
         elif isinstance(self.restriction, DeclarationRequirementTemplate):
             value.update(schema_version=3, requirement=self.restriction.to_dict())
+            if self.live_query is not None:
+                value.update(schema_version=7, live_query=self.live_query.to_dict())
         else:
             value['restriction'] = self.restriction.to_dict()
             if self.live_query is not None:
@@ -188,6 +223,8 @@ class ResolutionDeclarationRuleEffect:
             value["expires_on_next_turn_of"] = self.expires_on_next_turn_of
         if self.forbid_activations:
             value.update(schema_version=4, forbid_activations=True)
+        if self.block_opponents_of is not None:
+            value.update(schema_version=6, block_opponents_of=self.block_opponents_of)
         return value
 
     @classmethod
@@ -209,11 +246,14 @@ class ResolutionDeclarationRuleEffect:
         turn_expiry = decode_turn_expiry(value)
         fields = set(value) - {"expires_on_next_turn_of"}
         live = fields == expected | {"schema_version", "live_query"}
-        requirement = fields == (expected - {'restriction'}) | {'schema_version', 'requirement'}
+        requirement_fields = (expected - {"restriction"}) | {"schema_version", "requirement"}
+        live_requirement = fields == requirement_fields | {"live_query"}
+        requirement = fields == requirement_fields or live_requirement
         detain = fields == expected | {"schema_version", "forbid_activations"}
         permission_fields = (expected - {"restriction"}) | {"schema_version", "permission"}
         permission = fields in (permission_fields, permission_fields | {"live_query"})
-        if fields != expected and not (live or requirement or detain or permission):
+        opponent_blocking = fields == expected | {"schema_version", "block_opponents_of"}
+        if fields != expected and not (live or requirement or detain or permission or opponent_blocking):
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -223,14 +263,20 @@ class ResolutionDeclarationRuleEffect:
             )
         if live and (type(value["schema_version"]) is not int or value["schema_version"] != 2 or not isinstance(value["live_query"], Mapping)):
             raise ContinuousEffectError("Live declaration-rule schema version and query are malformed")
-        if requirement and (type(value['schema_version']) is not int or value['schema_version'] != 3):
-            raise ContinuousEffectError('Resolved requirement schema version is malformed')
+        if requirement and (type(value["schema_version"]) is not int
+                            or value["schema_version"] != (7 if live_requirement else 3)
+                            or live_requirement and not isinstance(value["live_query"], Mapping)):
+            raise ContinuousEffectError("Resolved requirement schema version is malformed")
         if detain and (type(value['schema_version']) is not int or value['schema_version'] != 4
                        or value['forbid_activations'] is not True):
             raise ContinuousEffectError('Detain declaration-rule schema version and scope are malformed')
         if permission and (type(value["schema_version"]) is not int or value["schema_version"] != 5
                            or ("live_query" in value and not isinstance(value["live_query"], Mapping))):
             raise ContinuousEffectError("Resolved Defender permission schema version or query is malformed")
+        if opponent_blocking and (
+                type(value["schema_version"]) is not int or value["schema_version"] != 6
+                or type(value["block_opponents_of"]) is not str or not value["block_opponents_of"]):
+            raise ContinuousEffectError("Opponent blocking rule schema version or controller is malformed")
         payload = value["permission"] if permission else value["requirement"] if requirement else value["restriction"]
         if not isinstance(payload, Mapping) or not isinstance(
             value["locked_objects"], list
@@ -257,6 +303,7 @@ class ResolutionDeclarationRuleEffect:
                 live_query=ObjectQuerySpec.from_dict(value["live_query"]) if "live_query" in fields else None,
                 expires_on_next_turn_of=turn_expiry,
                 forbid_activations=detain,
+                block_opponents_of=value.get("block_opponents_of") if opponent_blocking else None,
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):
@@ -268,10 +315,59 @@ class ResolutionDeclarationRuleEffect:
         return immutable_fingerprint(self.to_dict())
 
 
+@dataclass(frozen=True, slots=True)
+class ResolvedActivationProhibition:
+    """One original permanent cannot activate abilities through this turn's cleanup."""
+
+    effect_id: str
+    source_id: str
+    timestamp: int
+    subject: ContinuousObjectIdentity
+
+    def __post_init__(self) -> None:
+        if (type(self.effect_id) is not str or not self.effect_id
+                or type(self.source_id) is not str or not self.source_id
+                or type(self.timestamp) is not int or self.timestamp < 0
+                or not isinstance(self.subject, ContinuousObjectIdentity)):
+            raise ContinuousEffectError("Activation prohibition requires a resolving source and one original subject")
+
+    @property
+    def duration(self) -> ContinuousEffectDuration:
+        return ContinuousEffectDuration.UNTIL_END_OF_TURN
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "schema_version": 1,
+            "effect_kind": RESOLVED_ACTIVATION_PROHIBITION_KIND,
+            "effect_id": self.effect_id,
+            "source_id": self.source_id,
+            "timestamp": self.timestamp,
+            "subject": self.subject.to_dict(),
+        }
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> ResolvedActivationProhibition:
+        fields = {"schema_version", "effect_kind", "effect_id", "source_id", "timestamp", "subject"}
+        if (not isinstance(value, Mapping) or set(value) != fields
+                or value["effect_kind"] != RESOLVED_ACTIVATION_PROHIBITION_KIND
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+            raise ContinuousEffectError("Activation prohibition journal fields are closed")
+        return cls(
+            value["effect_id"], value["source_id"], value["timestamp"],
+            ContinuousObjectIdentity.from_dict(value["subject"]),
+        )
+
+    @property
+    def fingerprint(self) -> str:
+        return immutable_fingerprint(self.to_dict())
+
+
 ContinuousJournalEffect: TypeAlias = (
     ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule | ResolvedCastRestriction | ResolvedSourceBlockPair | ResolvedLibrarySearchProhibition | ResolvedDamageDeathExile | ResolvedSourceUntapRestraint
     | ResolvedLinkedDepartureExile | ResolvedNextSpellCostReduction | ResolvedLifeGainProhibition | ResolvedDamagePreventionProhibition
-    | ResolvedProtectedAttackPayment | ResolvedDrawRedirect
+    | ResolvedProtectedAttackPayment | ResolvedDrawRedirect | ResolvedActivationProhibition | ResolvedNextDrawReplacement
+    | ResolvedTurnMatchOutcomeProtection | ResolvedAllPlayerTurnRule | ResolvedSacrificeProhibition | ResolvedNoMaximumHandSize
+    | ResolvedNextTurnSorceryTiming | ResolvedNextTurnAttackRestriction
 )
 
 
@@ -281,15 +377,29 @@ def continuous_journal_effect_from_dict(
     """Deserialize additive journal records while preserving legacy effects."""
 
     if isinstance(value, Mapping) and "effect_kind" in value:
+        if value["effect_kind"] == RESOLVED_ACTIVATION_PROHIBITION_KIND:
+            return ResolvedActivationProhibition.from_dict(value)
         if value["effect_kind"] == DRAW_REDIRECT_KIND:
             return ResolvedDrawRedirect.from_dict(value)
+        if value["effect_kind"] == NEXT_DRAW_REPLACEMENT_KIND:
+            return ResolvedNextDrawReplacement.from_dict(value)
         if value["effect_kind"] == ATTACK_PAYMENT_KIND:
             return ResolvedProtectedAttackPayment.from_dict(value)
+        if value["effect_kind"] == ATTACK_RESTRICTION_EFFECT_KIND:
+            return ResolvedNextTurnAttackRestriction.from_dict(value)
         if value["effect_kind"] == TEMPORARY_DAMAGE_PROHIBITION_KIND:
             return ResolvedDamagePreventionProhibition.from_dict(value)
+        if value["effect_kind"] == ALL_PLAYER_TURN_RULE_KIND:
+            return ResolvedAllPlayerTurnRule.from_dict(value)
+        if value["effect_kind"] == GAME_HAND_SIZE_KIND:
+            return ResolvedNoMaximumHandSize.from_dict(value)
+        if value["effect_kind"] == TURN_OUTCOME_FIELD:
+            return ResolvedTurnMatchOutcomeProtection.from_dict(value)
         if value["effect_kind"] == TEMPORARY_LIFE_GAIN_PROHIBITION_KIND:
             return ResolvedLifeGainProhibition.from_dict(value)
         if value['effect_kind']==NEXT_SPELL_COST_KIND:return ResolvedNextSpellCostReduction.from_dict(value)
+        if value["effect_kind"] == SACRIFICE_PROHIBITION_KIND:
+            return ResolvedSacrificeProhibition.from_dict(value)
         if value["effect_kind"] == SOURCE_UNTAP_RESTRAINT_KIND:
             return ResolvedSourceUntapRestraint.from_dict(value)
         if value['effect_kind'] == DAMAGE_DEATH_EXILE_KIND:
@@ -299,6 +409,8 @@ def continuous_journal_effect_from_dict(
         if value['effect_kind']==LIBRARY_SEARCH_TEMP_KIND:return ResolvedLibrarySearchProhibition.from_dict(value)
         if value['effect_kind'] == SOURCE_BLOCK_PAIR_EFFECT_KIND:return ResolvedSourceBlockPair.from_dict(value)
         if value['effect_kind']==CAST_RESTRICTION_KIND:return ResolvedCastRestriction.from_dict(value)
+        if value["effect_kind"] == NEXT_TURN_SORCERY_TIMING_KIND:
+            return ResolvedNextTurnSorceryTiming.from_dict(value)
         if value['effect_kind'] == BLOCK_CAPACITY_RULE_KIND:
             return ResolvedBlockCapacityRule.from_dict(value)
         if value['effect_kind']==AS_UNBLOCKED_RULE_KIND:return AsUnblockedAssignmentRule.from_dict(value)

@@ -139,6 +139,27 @@ def fixed_homogeneous_target_set_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .event_player_targets import DAMAGED_PLAYER_GRAVEYARD_EXILE_CAPABILITY, is_damaged_player_graveyard_exile
+
+    event_owner = ()
+    if isinstance(target_schema, Mapping) and 'owner_seat' in target_schema:
+        if 'followup' in effect:
+            from .targeted_graveyard_outcomes import targeted_graveyard_outcome_node_capabilities
+
+            return targeted_graveyard_outcome_node_capabilities(effects=effects, target_schema=target_schema)
+        if not is_damaged_player_graveyard_exile(target_schema, effects):
+            return ()
+        target_schema = {key: value for key, value in target_schema.items() if key != 'owner_seat'}
+        event_owner = (DAMAGED_PLAYER_GRAVEYARD_EXILE_CAPABILITY,)
+    from .announced_destruction_controller_tokens import (
+        optional_graveyard_controller_token_dependencies, uses_optional_graveyard_controller_tokens,
+    )
+
+    if uses_optional_graveyard_controller_tokens(effect):
+        try:
+            return optional_graveyard_controller_token_dependencies(effect, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
     operation = effect.get("op")
     maximum = effect.get("maximum_targets")
     if operation == 'exile_permanent_targets' and 'followup' in effect:
@@ -224,6 +245,7 @@ def fixed_homogeneous_target_set_node_capabilities(
         _OPERATION_CAPABILITIES[str(operation)],
         *next_untap,
         *predicate_capabilities,
+        *event_owner,
         "target.revalidate_resolution",
     )
 
@@ -286,10 +308,24 @@ def announced_target_set_node_capabilities(
 
 def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
     """Require the new authority even if a producer omits its annotation."""
+    from .targeted_control_set import targeted_control_set_runtime_dependencies
+    from .counter_target_set_shapes import split_two_counter_program_dependencies
+    from .controlled_destruction_source_counters import controlled_destruction_source_counter_program_dependencies
+
+    if required := controlled_destruction_source_counter_program_dependencies(program):
+        return required
+    if split := split_two_counter_program_dependencies(program):
+        return split
+    if targeted_control := targeted_control_set_runtime_dependencies(program):
+        return targeted_control
     schema = getattr(program, "target_schema", None)
     parameter = schema.get('count_parameter') if isinstance(schema,Mapping) else None
     if isinstance(parameter,Mapping) and parameter.get('parameter')=='any_number':
         from .any_number_target_shapes import any_number_target_node_capabilities
+        from .monarch_selected_player_mill import monarch_selected_player_mill_runtime_dependencies
+
+        if monarch_mill := monarch_selected_player_mill_runtime_dependencies(program):
+            return monarch_mill
         owned=any_number_target_node_capabilities(effects=program.effects,target_schema=schema,mechanic_ids=program.coverage)
         if not owned:raise ValueError('Any-number target result or schema is malformed')
         return owned

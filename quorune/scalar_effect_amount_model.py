@@ -30,12 +30,18 @@ PAID_SACRIFICE_STAT_CONTEXT = 'paid_sacrifice_creature_stats'
 PAID_SACRIFICE_MANA_VALUE_MECHANIC = 'paid-sacrifice-mana-value'
 PAID_SACRIFICE_MANA_VALUE_CAPABILITY = 'quantity_expression.paid_sacrifice_mana_value'
 PAID_SACRIFICE_MANA_VALUE_CONTEXT = 'paid_sacrifice_mana_value'
+PAID_REVEALED_CREATURE_CAPABILITY = "quantity_expression.paid_revealed_creature"
+PAID_REVEALED_CREATURE_CONTEXT = "paid_revealed_creature"
+PAID_REVEALED_CREATURE_VERSION = 17
+SOURCE_COUNTER_KIND_COUNT_VERSION = 18
+SOURCE_COUNTER_KIND_COUNT_CAPABILITY = "quantity_expression.source_counter_kind_count"
 
 
 class ScalarAmountOrigin(StrEnum):
     PAID_ACTIVATION_CREATURE = 'paid_activation_creature_stat'
     PAID_SACRIFICE_CREATURE = 'paid_sacrifice_creature_stat'
     PAID_SACRIFICE_MANA_VALUE = 'paid_sacrifice_mana_value'
+    PAID_REVEALED_CREATURE = "paid_revealed_creature_characteristic"
     REFLEXIVE_PAID_CREATURE = 'reflexive_paid_creature_stat'
     CAST_SPELL_MANA_VALUE = 'committed_cast_spell_mana_value'
     CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
@@ -79,7 +85,7 @@ class ScalarEffectAmountSpec:
     hand_difference: UpkeepHandDifferenceSpec | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in range(1, TARGET_CREATURE_POWER_VERSION + 1):
+        if type(self.schema_version) is not int or self.schema_version not in range(1, SOURCE_COUNTER_KIND_COUNT_VERSION + 1):
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
         if (self.schema_version == 13) != (self.origin is ScalarAmountOrigin.PAID_ACTIVATION_CREATURE):
             raise PublicQueryAmountError('Paid activation stats require their explicit scalar version')
@@ -96,6 +102,7 @@ class ScalarEffectAmountSpec:
         _validate_reflexive_paid_power(self)
         _validate_upkeep_hand_difference(self)
         _validate_paid_sacrifice_mana_value(self)
+        _validate_paid_revealed_creature(self)
         if (self.schema_version == 10) != (self.origin is ScalarAmountOrigin.HISTORY_COUNT):
             raise PublicQueryAmountError("History counts require their explicit scalar version")
         if self.schema_version == 10:
@@ -144,6 +151,11 @@ class ScalarEffectAmountSpec:
                 raise PublicQueryAmountError("Counter scalar requires a canonical counter name")
         elif self.counter_name is not None:
             raise PublicQueryAmountError("Legacy scalar amounts do not carry counters")
+        if self.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION:
+            if (self.origin is not ScalarAmountOrigin.SOURCE or self.characteristic is not None
+                    or type(self.coefficient) is not int or self.coefficient != 1 or self.binding_id is not None):
+                raise PublicQueryAmountError("Distinct counter kinds require an unscaled source count")
+            counter_origin = True
         if not isinstance(self.origin, ScalarAmountOrigin):
             raise PublicQueryAmountError("Scalar amount requires a typed origin")
         if type(self.coefficient) is not int or self.coefficient not in {-2, -1, 1, 2}:
@@ -156,6 +168,7 @@ class ScalarEffectAmountSpec:
             ScalarAmountOrigin.REFLEXIVE_PAID_CREATURE,
             ScalarAmountOrigin.PAID_ACTIVATION_CREATURE,
             ScalarAmountOrigin.PAID_SACRIFICE_MANA_VALUE,
+            ScalarAmountOrigin.PAID_REVEALED_CREATURE,
             ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE, ScalarAmountOrigin.TARGET_CREATURE_POWER,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
@@ -187,8 +200,10 @@ class ScalarEffectAmountSpec:
     def referenced_quantity_capabilities(self) -> tuple[str, ...]:
         from .commander_cast_count_model import COMMANDER_CAST_COUNT_CAPABILITY
         return tuple(sorted({*self.history_count_capabilities,
+            *((SOURCE_COUNTER_KIND_COUNT_CAPABILITY,) if self.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION else ()),
             *((GRAVEYARD_TARGET_MANA_VALUE_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE else ()),
             *((TARGET_CREATURE_POWER_CAPABILITY,) if self.origin is ScalarAmountOrigin.TARGET_CREATURE_POWER else ()),
+            *((PAID_REVEALED_CREATURE_CAPABILITY,) if self.origin is ScalarAmountOrigin.PAID_REVEALED_CREATURE else ()),
             *((UPKEEP_HAND_DIFFERENCE_CAPABILITY,) if self.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE else ()),
             *((COMMANDER_CAST_COUNT_CAPABILITY,) if self.origin is ScalarAmountOrigin.CONTROLLER_COMMANDER_CAST_COUNT else ()),
             *(self.aggregate.capability_dependencies if self.aggregate is not None else ())}))
@@ -197,6 +212,10 @@ class ScalarEffectAmountSpec:
         return {"kind": SCALAR_AMOUNT_KIND, "schema_version": self.schema_version,
                 **self.producer_identity, "coefficient": self.coefficient,
                 "binding_id": self.binding_id}
+
+    @property
+    def reads_source_counters(self) -> bool:
+        return self.counter_name is not None or self.schema_version == SOURCE_COUNTER_KIND_COUNT_VERSION
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ScalarEffectAmountSpec":
@@ -261,6 +280,18 @@ def _validate_paid_sacrifice_mana_value(spec: ScalarEffectAmountSpec) -> None:
         spec.characteristic != 'mana_value' or spec.binding_id is not None or spec.coefficient != 1
     ):
         raise PublicQueryAmountError('Paid sacrifice amounts read one sealed mana value')
+
+
+def _validate_paid_revealed_creature(spec: ScalarEffectAmountSpec) -> None:
+    is_revealed = spec.origin is ScalarAmountOrigin.PAID_REVEALED_CREATURE
+    if (spec.schema_version == PAID_REVEALED_CREATURE_VERSION) != is_revealed:
+        raise PublicQueryAmountError("Paid reveal amounts require their explicit scalar version")
+    if is_revealed and (
+        spec.characteristic not in {"mana_value", "power"} or spec.binding_id is not None
+        or spec.coefficient not in {1, -1}
+        or (spec.characteristic == "power" and spec.coefficient != 1)
+    ):
+        raise PublicQueryAmountError("Paid reveal amounts read one bound mana value or power")
 
 
 def _validate_reflexive_paid_power(spec: ScalarEffectAmountSpec) -> None:
@@ -330,6 +361,38 @@ class PaidSacrificeManaValueSnapshot:
     def from_dict(cls, value):
         if not isinstance(value, Mapping) or set(value) != {'schema_version', 'logical_object_id', 'mana_value'}:
             raise PublicQueryAmountError('Paid sacrifice mana value is unavailable or malformed')
+        return cls(**value)
+
+
+@dataclass(frozen=True, slots=True)
+class PaidRevealedCreatureSnapshot:
+    stack_ref: str
+    logical_object_id: str
+    mana_value: int
+    power: int | None
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if (
+            not all(type(value) is str and value for value in (self.stack_ref, self.logical_object_id))
+            or type(self.mana_value) is not int or self.mana_value < 0
+            or (self.power is not None and type(self.power) is not int)
+            or type(self.schema_version) is not int or self.schema_version != 1
+        ):
+            raise PublicQueryAmountError("Paid reveal requires a stack, hand incarnation, and exact characteristics")
+
+    def to_dict(self):
+        return {
+            "schema_version": self.schema_version, "stack_ref": self.stack_ref,
+            "logical_object_id": self.logical_object_id, "mana_value": self.mana_value, "power": self.power,
+        }
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {
+            "schema_version", "stack_ref", "logical_object_id", "mana_value", "power",
+        }:
+            raise PublicQueryAmountError("Paid reveal characteristics are unavailable or malformed")
         return cls(**value)
 
 

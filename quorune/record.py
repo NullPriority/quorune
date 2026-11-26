@@ -16,7 +16,9 @@ from . import record_state_provenance
 from .record_decks import deck_fingerprints, deck_list_fingerprints
 from .record_trust import (
     capture_stack_resolution_inputs,
-    card_program_trust_provenance,
+    _canonical_hash,
+    record_semantics_provenance,
+    semantics_fingerprint,
     implicit_semantic_execution_provenance,
     rebase_command_semantics_provenance,
     runtime_trust_provenance,
@@ -71,11 +73,6 @@ def capability_id(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
 
-def _canonical_hash(value: Any) -> str:
-    compact = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    return hashlib.sha256(compact.encode("utf-8")).hexdigest()
-
-
 def checkpoint_state(state: GameState) -> dict[str, Any]:
     """Return authoritative state without logs or transport credentials."""
     return copy.deepcopy(state.to_dict(include_ephemeral=False))
@@ -94,7 +91,9 @@ def _hash_checkpoint_payload(payload: dict[str, Any]) -> str:
 
 
 def authoritative_state_hash(state: GameState | Mapping[str, Any]) -> str:
-    payload = checkpoint_state(state) if isinstance(state, GameState) else copy.deepcopy(dict(state))
+    # Normalization mutates only the new top-level mapping. Nested values
+    # are read by JSON encoding, so hashing does not require an isolated copy.
+    payload = state.to_dict(include_ephemeral=False) if isinstance(state, GameState) else dict(state)
     return _hash_checkpoint_payload(payload)
 
 
@@ -120,15 +119,6 @@ def checkpoint_envelope(state: GameState) -> dict[str, Any]:
         "active_capabilities": sorted(active_caps, key=lambda item: (item["principal"], item["id"])),
         "state": payload,
     }
-
-
-def semantics_fingerprint(registry: SemanticRegistry) -> str:
-    programs = {
-        key: registry.get(key).to_dict()
-        for key in registry.keys()
-        if registry.get(key) is not None
-    }
-    return _canonical_hash({"schema_version": 1, "programs": programs})
 
 
 def database_fingerprint(card_db: CardDatabase) -> dict[str, Any]:
@@ -689,7 +679,8 @@ def build_manifest(
     status: str | None = None,
     pause_reason: Mapping[str, Any] | None = None,
     migrated_from: str | None = None,
-    checkpoint_state_hash: str | None = None,
+    _state_hash: str | None = None,
+    saved_semantics: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     effective_status = (
         "complete"
@@ -712,8 +703,8 @@ def build_manifest(
         if any(value is not None for value in match_values)
         else "unavailable"
     )
-    semantics_hash = semantics_fingerprint(semantics)
-    program_fingerprints = semantics.card_program_fingerprints()
+    registry_hash, program_trust = record_semantics_provenance(semantics, saved_semantics)
+    program_fingerprints = {key: entry["fingerprint"] for key, entry in program_trust.items()}
     return {
         "schema_version": RECORD_SCHEMA_VERSION,
         "record_schema_version": RECORD_SCHEMA_VERSION,
@@ -752,12 +743,15 @@ def build_manifest(
         "profile_fingerprint_match": overall_profile_match,
         "seed": state.config.seed,
         "trace_level": state.config.trace_level,
-        "semantics_fingerprint": semantics_hash,
-        "semantics_registry": {"schema_version": 1, "hash": semantics_hash},
+        "semantics_fingerprint": registry_hash,
+        "semantics_registry": {
+            "schema_version": 1,
+            "hash": registry_hash,
+        },
         "card_programs": {
             "schema_version": 2,
             "fingerprints": program_fingerprints,
-            "trust": card_program_trust_provenance(semantics),
+            "trust": program_trust,
         },
         "runtime_trust": runtime_trust_provenance(),
         "scryfall": database_fingerprint(card_db),
@@ -782,12 +776,12 @@ def build_manifest(
         ),
         "winner": state.winner,
         "draw": state.draw,
-        "final_state_hash": checkpoint_state_hash if checkpoint_state_hash is not None else authoritative_state_hash(state),
+        "final_state_hash": _state_hash if _state_hash is not None else authoritative_state_hash(state),
         "replay": {
             "mode": replay_mode,
             "verification": "not_run",
             "engine_version": ENGINE_VERSION,
-            "semantics_fingerprint": semantics_hash,
+            "semantics_fingerprint": registry_hash,
             "card_program_fingerprints": dict(program_fingerprints),
         },
         "review": {
@@ -825,6 +819,7 @@ def write_record(
     status: str | None = None,
     pause_reason: Mapping[str, Any] | None = None,
     migrated_from: str | None = None,
+    saved_semantics: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)
@@ -865,7 +860,8 @@ def write_record(
         status=status,
         pause_reason=pause_reason,
         migrated_from=migrated_from,
-        checkpoint_state_hash=checkpoint["state_hash"],
+        _state_hash=checkpoint["state_hash"],
+        saved_semantics=saved_semantics,
     )
     if prior_manifest:
         if not migrated_from and prior_manifest.get("migrated_from"):

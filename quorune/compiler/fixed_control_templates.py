@@ -8,8 +8,10 @@ from typing import Any, Mapping
 
 from ..continuous_effect_model import ContinuousEffectDuration
 from ..control_exchange_model import PERMANENT_CONTROL_EXCHANGE_MECHANIC, PermanentControlExchange
+from ..entry_control_exchange_model import entry_exchange_event_condition
 from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
 from .fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
@@ -165,6 +167,61 @@ def fixed_two_controller_creature_transfer_template(text):
             (FIXED_CONTROL_MECHANIC, "cr-611-continuous-effects", "cr-115-targets", "tap-and-untap", "haste"))
 
 
+_ATTACHED_TEMPORARY_CONTROL_BODY = (
+    "gain control of enchanted permanent until end of turn. untap that permanent. it gains haste until end of turn."
+)
+
+
+def is_attached_temporary_control_body(text: str) -> bool:
+    return " ".join(text.split()).casefold() == _ATTACHED_TEMPORARY_CONTROL_BODY
+
+
+def attached_temporary_control_trigger_result(binding, body):
+    from ..rules.attached_temporary_control import (
+        ATTACHED_TEMPORARY_CONTROL_MECHANICS, attached_temporary_control_condition, attached_temporary_control_effect,
+    )
+
+    if (binding.variant != "independent_dual_event" or binding.active_zone != "battlefield"
+            or binding.event_condition != attached_temporary_control_condition()
+            or body != binding.body or not is_attached_temporary_control_body(body)):
+        return None
+    return ("attached-permanent-temporary-control-v1", (attached_temporary_control_effect(),),
+            None, ATTACHED_TEMPORARY_CONTROL_MECHANICS), False
+
+
+_TARGETED_CONTROL_PREFIX = "gain control of any number of target creatures"
+_OPPONENT_CONTROL_PREFIX = "for each opponent, gain control of up to one target creature that player controls"
+_TARGETED_CONTROL_SUFFIX = " until end of turn. untap those creatures. they gain haste until end of turn."
+
+
+def targeted_control_set_template(text: str, *, per_opponent: bool = False):
+    from ..rules.targeted_control_set import (
+        TARGETED_CONTROL_SET_MECHANICS, targeted_control_set_effect, targeted_control_set_schema,
+    )
+
+    prefix = _OPPONENT_CONTROL_PREFIX if per_opponent else _TARGETED_CONTROL_PREFIX
+    if " ".join(text.split()).casefold() != prefix + _TARGETED_CONTROL_SUFFIX:
+        return None
+    mechanics = TARGETED_CONTROL_SET_MECHANICS
+    if per_opponent:
+        mechanics = (*mechanics, "fixed-per-player-target-set")
+    return ("targeted-creature-control-set-v1", (targeted_control_set_effect(),),
+            targeted_control_set_schema(per_opponent=per_opponent), mechanics)
+
+
+def _fixed_power_control_predicate(subject: str) -> ObjectQuerySpec | None:
+    match = re.fullmatch(r"creatures with power (?P<power>[0-9]+) or (?P<bound>greater|less)", subject, re.IGNORECASE)
+    if match is None:
+        return None
+    comparison = TargetNumericComparison.AT_LEAST if match["bound"].casefold() == "greater" else TargetNumericComparison.AT_MOST
+    return ObjectQuerySpec(
+        zones=("battlefield",), types_all=("creature",),
+        numeric_characteristic=TargetNumericCharacteristicSpec(
+            TargetNumericCharacteristic.POWER, comparison, int(match["power"]),
+        ),
+    )
+
+
 def fixed_control_set_effect_template(text: str) -> FixedControlSetTemplate | None:
     normalized = " ".join(text.strip().split())
     match = re.fullmatch(
@@ -178,7 +235,10 @@ def fixed_control_set_effect_template(text: str) -> FixedControlSetTemplate | No
     if (match["subject"].casefold() == "them") is not untap_first:
         return None
     subject = (match["untap_subject"] if untap_first else match["subject"])[4:]
-    if subject.casefold() == "permanents you own":
+    power_query = _fixed_power_control_predicate(subject)
+    if power_query is not None:
+        query = power_query
+    elif subject.casefold() == "permanents you own":
         query = ObjectQuerySpec(zones=("battlefield",), owner="$controller")
     else:
         parsed = fixed_characteristic_battlefield_query_subject(subject)
@@ -210,6 +270,8 @@ def fixed_control_set_effect_template(text: str) -> FixedControlSetTemplate | No
         ) is None:
             return None
         steps.append("haste")
+    if power_query is not None and steps != ["gain_control", "untap", "haste"]:
+        return None
     return FixedControlSetTemplate(
         predicate=query,
         duration=(ContinuousEffectDuration.UNTIL_END_OF_TURN
@@ -243,5 +305,20 @@ def permanent_control_exchange_template(text, *, source_is_permanent=None, sourc
         return None
     return (
         f"fixed-permanent-control-exchange-{scope.value}-v1", (scope.to_effect(),), scope.target_schema(),
+        (PERMANENT_CONTROL_EXCHANGE_MECHANIC, "cr-115-targets", "cr-611-continuous-effects"),
+    )
+
+
+def entry_control_exchange_result_template(binding, body):
+    if ((binding.event.value, binding.active_zone) != ("permanent.enter", "battlefield")
+            or binding.event_condition != entry_exchange_event_condition() or body != binding.body
+            or " ".join(body.casefold().split()) != (
+                "its controller chooses target permanent another player controls that shares a card type with it. "
+                "exchange control of those permanents."
+            )):
+        return None
+    scope = PermanentControlExchange.ENTRY_SHARED_TYPE
+    return (
+        "entry-shared-type-control-exchange-v1", (scope.to_effect(),), scope.target_schema(),
         (PERMANENT_CONTROL_EXCHANGE_MECHANIC, "cr-115-targets", "cr-611-continuous-effects"),
     )

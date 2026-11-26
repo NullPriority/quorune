@@ -142,6 +142,12 @@ class RevealedLibraryTopSpec:
 
 
 def reveal_top_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from .revealed_creature_statistics import REVEALED_CREATURE_MECHANIC, scry_revealed_creature_capabilities
+
+    if REVEALED_CREATURE_MECHANIC in mechanic_ids:
+        return scry_revealed_creature_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if target_schema is not None or len(effects) != 1 or REVEAL_TOP_MECHANIC not in mechanic_ids:
         return ()
     try:
@@ -155,3 +161,9 @@ def is_closed_reveal_top_program(program):
         effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
     )
     return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
+def is_closed_public_library_top_result(program):
+    from .exile_until_same_name import is_closed_exile_until_same_name_program
+
+    return is_closed_reveal_top_program(program) or is_closed_exile_until_same_name_program(program)

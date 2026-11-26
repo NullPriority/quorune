@@ -411,16 +411,37 @@ class PerOpponentTokenNativeTests(PerOpponentTokenNativeFixture,unittest.TestCas
         self.assertEqual(Counter({'B':2,'C':2,'D':2}),Counter(s.state.combat.attackers[card.object_id] for card in tokens))
         self.replay(s,load=True)
 
-    def test_unsupported_definition_replacement_control_is_not_forced_or_counted(self):
-        from quorune.card_programs.adapters import compile_best_available_card_program
-        from quorune.card_programs import bind_card_program_runtime
-        from quorune.semantics import SemanticRegistry
-        card=self.db.lookup('Divine Visitation')
-        program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
-            capability_registry=self.registry,capability_profile='commander_review')
-        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
-        self.assertFalse(binding['strict_capability_ready'])
-        self.assertIn('trust_basis:unresolved',binding['blockers'])
+    def test_actual_definition_replacement_preserves_each_opponent_group_and_rejects_open_scope(self):
+        from collections import Counter
+        from dataclasses import replace
+        from quorune.oracle_ir import compile_oracle_card
+
+        s = self.session(508420139)
+        s.state.config.semantic_policy = "trusted_only"
+        source = self.add(s.engine, "Adeline, Resplendent Cathar")
+        replacement = self.add(s.engine, "Divine Visitation", zone="hand")
+        bearer = self.add(s.engine, "Grizzly Bears")
+        bearer.acquired_control_turn_count = -1
+        self.assert_closed(s, source)
+        self.assert_closed(s, replacement)
+        self.prepare(s, mana={"C": 3, "W": 2})
+        self.checkpoint(s)
+        self.cast(s, "A", replacement)
+        self.assertIsNone(self.resolve(s))
+        self.attack(s, [(bearer, "B")])
+        self.assertIsNone(self.resolve(s))
+        angels = self.created_tokens(s, "Angel")
+        self.assertEqual(3, len(angels))
+        self.assertTrue(all(card.tapped for card in angels))
+        self.assertEqual(Counter("BCD"), Counter(card.attacking for card in angels))
+        self.assertTrue(all(s.engine._numeric_stat(card.object_id, "power") == 4 for card in angels))
+        self.replay(s, load=True)
+
+        card = self.db.lookup("Divine Visitation")
+        altered = replace(card, oracle_text=card.oracle_text.replace("under your control",
+                          "under an opponent's control"))
+        compiled = compile_oracle_card(altered, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", compiled.status)
 
     def test_actual_token_creation_fault_restores_the_entire_batch_and_pending_choice_then_retries(self):
         from unittest.mock import patch

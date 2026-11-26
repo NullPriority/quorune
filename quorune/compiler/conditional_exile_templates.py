@@ -17,7 +17,8 @@ import hashlib
 from ..linked_exile_return_model import (
     ANNOUNCED_OPPONENT_EXILE_VERSION, LinkedExileReturnSpec, LINKED_EXILE_RETURN_MECHANIC,
     SAME_NAME_CONDITIONAL_EXILE_VERSION,
-    SameNameConditionalExileScope,
+    SELECTED_CONDITIONAL_EXILE_VERSION, SELECTED_CONDITIONAL_EXILE_FIELD,
+    SameNameConditionalExileScope, SelectedConditionalExileScope,
 )
 from ..replacement.immutable import thaw_value
 
@@ -33,6 +34,19 @@ _SAME_NAME = re.compile(
 )
 _CARDINALITY = re.compile(r'(?P<count>up to (?:one|two|three|four|five|six)|two|three|four|five|six) (?P<other>other )?target (?P<quality>.+)', re.IGNORECASE)
 _COUNTS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6}
+_NON_ANGEL_SELECTION = re.compile(
+    r"You may exile any number of non-Angel creatures you control until (?P<source>.+?) leaves the battlefield\.",
+    re.I,
+)
+_OTHER_NONTOKEN_SELECTION = re.compile(
+    r"Exile any number of other nontoken creatures you control until (?P<source>.+?) leaves the battlefield\.",
+    re.I,
+)
+_OTHER_NONLAND_SELECTION = re.compile(
+    r"Exile any number of other nonland permanents you control until (?P<source>.+?) leaves the battlefield\. "
+    r"Create a 1/1 white Soldier creature token for each permanent exiled this way\.",
+    re.I,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,10 +91,33 @@ class ConditionalSourceExileTemplate:
         ), schema, mechanics
 
 
+@dataclass(frozen=True, slots=True)
+class SelectedConditionalExileTemplate:
+    scope: SelectedConditionalExileScope
+
+    def compiled(self):
+        spec = LinkedExileReturnSpec(timing="source_departure", schema_version=SELECTED_CONDITIONAL_EXILE_VERSION,
+                                     selected_departure_scope=self.scope)
+        effect = {"op": "choose_objects", SELECTED_CONDITIONAL_EXILE_FIELD: spec.to_dict()}
+        return "selected-source-departure-exile-v1", (effect,), None, (LINKED_EXILE_RETURN_MECHANIC,)
+
+
 def conditional_source_exile_template(text: str, *, card_name: str,
-                                     source_is_permanent: bool) -> ConditionalSourceExileTemplate | None:
+                                     source_is_permanent: bool) -> ConditionalSourceExileTemplate | SelectedConditionalExileTemplate | None:
     if source_is_permanent is not True:
         return None
+    for grammar, scope in (
+        (_NON_ANGEL_SELECTION, SelectedConditionalExileScope.NON_ANGEL_CREATURES),
+        (_OTHER_NONLAND_SELECTION, SelectedConditionalExileScope.OTHER_NONLAND_PERMANENTS_WITH_SOLDIERS),
+        (_OTHER_NONTOKEN_SELECTION, SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES),
+    ):
+        selection = grammar.fullmatch(text.strip())
+        if selection is None:
+            continue
+        source = selection["source"]
+        own_pronoun = scope is SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES and source.casefold() == "it"
+        if own_pronoun or source_self_permanent_type(source) is not None or SourceReferenceSpec(card_name).matches(source):
+            return SelectedConditionalExileTemplate(scope)
     announced = _ANNOUNCED_OPPONENTS.fullmatch(text.strip())
     match = announced or _UNTIL.fullmatch(text.strip())
     if match is None:

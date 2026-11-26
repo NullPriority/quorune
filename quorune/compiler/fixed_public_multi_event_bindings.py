@@ -6,7 +6,7 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..rules.event_subscriptions import (
-    FixedEventSubscription,
+    DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, FixedEventSubscription,
     COMBAT_PARTICIPANT_DAMAGE_EVENT_CAPABILITIES, COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE,
     COMBAT_PARTICIPANT_DAMAGE_VARIANT, combat_participant_damage_condition,
     GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE, GRAVEYARD_CREATURE_TRANSITIONS_VARIANT,
@@ -42,7 +42,7 @@ _SOURCE_ARTIFACT_ENTRY_SACRIFICE = re.compile(
     re.IGNORECASE,
 )
 _ENCHANTED_CREATURE_ATTACK_BLOCK = re.compile(
-    r"^Whenever enchanted creature attacks or blocks, (?P<body>.+)$",
+    r"^Whenever enchanted creature (?P<pair>attacks or blocks|blocks or becomes blocked), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_ATTACK_BLOCK_DINOSAUR = re.compile(
@@ -216,6 +216,14 @@ def _scheduled_top_card_result(heads, body):
     return isinstance(template, ChosenTypeTopSelectionEffectTemplate) and template.may_put_in_graveyard
 
 
+def _scheduled_attached_control_result(heads, body):
+    from .fixed_control_templates import is_attached_temporary_control_body
+
+    return (tuple(head.casefold() for head in heads)
+            == ("when this aura enters", "at the beginning of your upkeep")
+            and is_attached_temporary_control_body(body))
+
+
 def _scheduled_pair_spec(material_line, *, card_name):
     """Compose a step and a closed entry/cast head without sharing predicates."""
     match = re.fullmatch(
@@ -235,7 +243,8 @@ def _scheduled_pair_spec(material_line, *, card_name):
     if (re.search(r'\b(?:it|its|they|them|their|that player|that creature|that card|'
             r'that spell|this way|that much)\b', match['body'], re.I)
             and not _scheduled_pair_has_local_linked_target(match['body'], card_name)
-            and not _scheduled_top_card_result(heads, match['body'])):
+            and not _scheduled_top_card_result(heads, match['body'])
+            and not _scheduled_attached_control_result(heads, match['body'])):
         return None
     from .fixed_counter_trigger_nodes import (
         fixed_counter_trigger_binding, _public_state_source_self_trigger_binding,
@@ -430,6 +439,22 @@ def _independent_pair_spec(independent, card_name):
             source_entry['source'].casefold() in {'this artifact', 'this creature', 'this enchantment', 'this permanent', 'this land'}
             or card_name and SourceReferenceSpec(card_name).matches(source_entry['source'])):
         return None
+    opponent_draw = re.fullmatch(
+        r"whenever an opponent draws a card except the first one they draw in each of their draw steps",
+        independent["second"], re.I,
+    )
+    if opponent_draw is not None:
+        return _spec(
+            "permanent.enter", "independent_dual_event", independent["body"],
+            "fixed-independent-dual-event-trigger-v1", "trigger-event-normalized-zone-change",
+            condition=fixed_event_subscription_condition((
+                FixedEventSubscription("permanent.enter", _source_condition()),
+                FixedEventSubscription(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT, {
+                    "field": "player", "op": "ne", "value": "$source.controller",
+                }),
+            )),
+            capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_card_draw"),
+        )
     # Each complete prefix keeps its own typed predicate and controller.
     # Calling the ordinary parser is bounded: child lines lack this separator.
     from .fixed_counter_trigger_nodes import fixed_counter_trigger_binding, _public_state_source_self_trigger_binding
@@ -588,6 +613,13 @@ def fixed_public_multi_event_binding_spec(
         )
     enchanted = _ENCHANTED_CREATURE_ATTACK_BLOCK.fullmatch(material_line)
     if enchanted is not None:
+        if enchanted["pair"].casefold() == "blocks or becomes blocked":
+            from ..rules.attack_event_results import ATTACHED_BLOCK_GROWTH_VARIANT, attached_block_growth_condition
+
+            return _spec("creature.blocks", ATTACHED_BLOCK_GROWTH_VARIANT, enchanted["body"],
+                "fixed-counter-public-multi-event-trigger-v1", "trigger-event-normalized-public-action",
+                condition=attached_block_growth_condition(),
+                capabilities=("trigger.subscription.fixed_multi_event", "attachment.reference.current_or_lki"))
         attached_condition = {
             "field": "source_attachment_target_ref",
             "op": "eq",

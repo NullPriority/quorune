@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from .ability_resolution_ordinal import (
-    ABILITY_RESOLVED_HISTORY, is_ability_resolution_ordinal, is_second_ability_draw,
+    ABILITY_RESOLVED_HISTORY, is_ability_resolution_ordinal, is_triggered_ability_resolution_ordinal,
     validate_ability_resolution_ordinal,
 )
 from .aura import aura_resolution_move_kwargs
@@ -83,6 +83,14 @@ class StackResolutionCompletionHost(Protocol):
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
 
+def prepare_resolving_stack_effects(host, item, effects):
+    """Capture per-instruction subjects before any resolving effect moves them."""
+    from .target_permanent_shuffle_reveal_model import bind_target_permanent_shuffle_reveal_owner
+
+    prepared = bind_ability_resolution_ordinals(host, item, effects)
+    return bind_target_permanent_shuffle_reveal_owner(host, item, prepared)
+
+
 def bind_ability_resolution_ordinals(host, item, effects):
     """Seal the ordinal after the normal stack target checks."""
     from .rules.third_resolved_source_trigger import ordinary_third_source_counter
@@ -97,7 +105,7 @@ def bind_ability_resolution_ordinals(host, item, effects):
     if len(prepared) != 2 or found != [1]:
         raise GameRuleError("An ability-resolution result requires its fixed prefix")
     instruction = prepared[1]
-    expected_kind = "triggered_ability" if is_second_ability_draw(instruction) else "activated_ability"
+    expected_kind = "triggered_ability" if is_triggered_ability_resolution_ordinal(instruction) else "activated_ability"
     if item.kind != expected_kind:
         raise GameRuleError("An ability-resolution result requires its exact stack ability kind")
     try:
@@ -173,6 +181,23 @@ def _intrinsic_empty_spell_provenance(host: GenericStackResolutionQuery, item: S
     if any(_has_intrinsic_empty_admission(program) for program in declarations):
         return "trusted_intrinsic_empty_spell"
     return None
+
+
+def arbiter_resolution_effects(raw: Any) -> list[dict[str, Any]]:
+    """Validate the raw arbiter effects before registration or resolution."""
+    from .next_turn_attack_restriction_model import ATTACK_RESTRICTION_OPERATION
+    from .rules.effect_shape_walkers import nested_effects
+    from .rules.event_optional_draw_shapes import EVENT_OPTIONAL_DRAW_FIELD, TABLE_DRAW_ATTACK_RESTRICTION_VERSION
+
+    effects = [dict(effect) for effect in raw or ()]
+    for effect in nested_effects(effects):
+        if (effect["op"].startswith("$")
+                or EVENT_OPTIONAL_DRAW_FIELD in effect and type(effect[EVENT_OPTIONAL_DRAW_FIELD]) is not int):
+            raise GameRuleError("Raw effect operations and optional draw versions must be literal")
+        if (effect["op"] == ATTACK_RESTRICTION_OPERATION
+                or effect.get(EVENT_OPTIONAL_DRAW_FIELD) == TABLE_DRAW_ATTACK_RESTRICTION_VERSION):
+            raise GameRuleError("This resolution requires server-issued optional draw choices")
+    return effects
 
 
 def arbiter_resolution_program_key(
@@ -397,6 +422,7 @@ def _complete_stack_resolution(
 
 
 __all__ = [
+    "arbiter_resolution_effects",
     "arbiter_resolution_program_key",
     "complete_stack_resolution",
     "EmptyStackResolution",

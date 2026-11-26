@@ -10,6 +10,16 @@ from ..discard_result_model import VARIABLE_SUBSET_DISCARD_DRAW_MECHANIC
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 
 
+def source_entry_creature_discard_or_exile_template(body):
+    if re.fullmatch(r"Exile it unless you discard a creature card[.]", body, re.I) is None:
+        return None
+    from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC
+    from ..rules.source_entry_discard_exile import entry_discard_exile_effect
+
+    return ("source-entry-discard-or-exile-v1", (entry_discard_exile_effect(),), None,
+            (FIXED_EFFECT_PAYMENT_MECHANIC,))
+
+
 def selected_land_discard_result_template(body):
     if re.fullmatch(
         r'You may discard any number of land cards\. Put that many \+1/\+1 counters on this creature and draw that many cards\.',

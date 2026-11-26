@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000602201",
+      "name": "Kettle Sparkhand",
+      "layout": "normal",
+      "type_line": "Creature — Human Artificer",
+      "mana_cost": "{1}{R}",
+      "cmc": 2,
+      "oracle_text": "{T}: This creature deals 2 damage to any target chosen at random.",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "1",
+      "toughness": "3"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000602202",
+      "name": "Harbor Toll Lantern",
+      "layout": "normal",
+      "type_line": "Enchantment",
+      "mana_cost": "{2}{U}",
+      "cmc": 3,
+      "oracle_text": "Abilities your opponents activate that target Flagbearers you control cost {3} more to activate.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000602203",
+      "name": "Harbor Banner Keeper",
+      "layout": "normal",
+      "type_line": "Creature — Human Flagbearer",
+      "mana_cost": "{1}{W}",
+      "cmc": 2,
+      "oracle_text": "",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "power": "1",
+      "toughness": "3"
+    }
+  ],
+  "rulings": []
+}

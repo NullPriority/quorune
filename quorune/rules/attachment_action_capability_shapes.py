@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .attachment_actions import (
     CREATE_AND_ATTACH,
+    CREATE_AND_OFFER_ENTRY_AURA,
     ENTRY_ATTACHMENT_VERSION,
     FIXED_SOURCE_ATTACHMENT_CAPABILITY,
     FOR_MIRRODIN_CAPABILITY,
@@ -16,6 +17,7 @@ from .attachment_actions import (
     TARGETED_EQUIPMENT_RECIPIENT,
     is_targeted_equipment_attachment,
     validate_targeted_equipment_attachment,
+    validate_created_entry_aura_attachment,
     validate_created_token_attachment,
     validate_entry_equipment_attachment,
 )
@@ -108,6 +110,11 @@ def targeted_equipment_attachment_node_capabilities(*, effects, target_schema, m
 
 
 def targeted_equipment_attachment_runtime_dependencies(program):
+    from .kicked_artifact_entry import has_kicked_artifact_entry_limit, project_kicked_artifact_entry_program
+
+    if has_kicked_artifact_entry_limit(program.target_schema):
+        return project_kicked_artifact_entry_program(program)[1]
+
     def uses(value):
         if isinstance(value, Mapping):
             return is_targeted_equipment_attachment(value) or any(uses(child) for child in value.values())
@@ -179,6 +186,13 @@ def fixed_attachment_action_node_capabilities(
             return ()
         try:
             return validate_entry_equipment_attachment(effect)
+        except (TypeError, ValueError):
+            return ()
+    if effect.get("op") == CREATE_AND_OFFER_ENTRY_AURA:
+        if target_schema is not None:
+            return ()
+        try:
+            return validate_created_entry_aura_attachment(effect)
         except (TypeError, ValueError):
             return ()
     if effect.get("op") == CREATE_AND_ATTACH:

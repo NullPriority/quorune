@@ -97,6 +97,50 @@ class OptionalStackTargetChangeTests(InheritedNativeFixture, unittest.TestCase):
                     price = programs["cast.cost"].handlers[0]["alternative_cost"]
                     self.assertEqual(("{0}", "controlled_commander"), (price["cost_text"], price["condition"]["kind"]))
 
+    def test_deflecting_swat_reviewed_and_generated_views_share_canonical_rulings(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.alternative_price_overlay import shadowed_reviewed_zero_price_keys
+        from quorune.card_programs.binding import bind_card_program_runtime
+        from quorune.compiler.program_generation import generated_programs, register_generated_programs
+        from quorune.preflight import card_semantic_status
+        from quorune.semantics import BUILTIN_PACK_DIRECTORY, SemanticRegistry
+
+        card = self.db.lookup("Deflecting Swat", fuzzy=False)
+        semantics = SemanticRegistry()
+        semantics.load_packs([BUILTIN_PACK_DIRECTORY / "zzz-v080-exact-deck-closure.json"])
+        reviewed, = semantics.programs_for_oracle(card.oracle_id)
+        rulings = tuple(self.db.rulings(card))
+        self.assertEqual(3, len(rulings))
+        settings = {"capability_registry": self.registry, "capability_profile": PROFILE}
+
+        # Equal-date imports can expose the same three rulings in a different order.
+        ordered = tuple(sorted(rulings, key=lambda row: row.comment, reverse=True))
+        with patch.object(self.db, "rulings", return_value=ordered):
+            generated = generated_programs(self.db, card, trust_level="trusted", **settings)
+            self.assertEqual({reviewed.key}, shadowed_reviewed_zero_price_keys(card, generated, (reviewed,)))
+            register_generated_programs(
+                self.db, semantics, (card,), **settings,
+                promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+                promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+            )
+            status = card_semantic_status(card, semantics, db=self.db, **settings)
+            program = compile_best_available_card_program(self.db, card, semantic_registry=semantics, **settings)
+
+        current = {ability.event: ability for ability in semantics.programs_for_oracle(card.oracle_id)}
+        self.assertEqual({"cast.cost", "resolve"}, set(current))
+        for ability in current.values():
+            self.assertEqual(reviewed.provenance["source_oracle_hash"], ability.provenance["source_oracle_hash"])
+            self.assertEqual(reviewed.provenance["source_rulings_hash"], ability.provenance["source_rulings_hash"])
+        self.assertTrue(status["source_hash_match"], status)
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile=PROFILE)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        self.assertEqual("capability_closed", binding["trust_basis"])
+
+        with patch.object(self.db, "rulings", return_value=ordered[:-1]):
+            changed = generated_programs(self.db, card, trust_level="trusted", **settings)
+        self.assertNotEqual(reviewed.provenance["source_rulings_hash"], changed[0].provenance["source_rulings_hash"])
+        self.assertEqual(set(), shadowed_reviewed_zero_price_keys(card, changed, (reviewed,)))
+
     def test_malformed_policy_and_missing_modal_dependency_fail_closed(self):
         _, programs = self.original_programs("Redirect")
         spell = programs["resolve"]

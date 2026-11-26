@@ -45,6 +45,24 @@ _MANA_VALUE_REWRITES = (
 _MANA_VALUE_OUTPUT = re.compile(rf'Add an amount of (?P<symbol>\{{[WUBRGC]\}}) equal to {_MANA_VALUE}\.', re.I)
 
 
+def has_paid_creature_mana_value_output(text: str) -> bool:
+    match = _MANA_VALUE_OUTPUT.fullmatch(text.strip())
+    return match is not None and match["permanent_type"].casefold() == "creature"
+
+
+def paid_sacrifice_activation_mana_output(ability):
+    from ..public_quantity_mana_abilities import paid_sacrifice_mana_price_type
+    from ..public_quantity_mana_model import PAID_SACRIFICE_QUANTITY_MANA_VERSION, PublicQuantityManaOutput
+
+    match = _MANA_VALUE_OUTPUT.fullmatch(ability.effect_text.strip())
+    if match is None or match["permanent_type"].casefold() != paid_sacrifice_mana_price_type(ability.choices):
+        return None
+    return PublicQuantityManaOutput(
+        "fixed", (match["symbol"][1].upper(),), ScalarEffectAmountSpec.from_dict(_mana_value_scalar()),
+        schema_version=PAID_SACRIFICE_QUANTITY_MANA_VERSION,
+    )
+
+
 def _stat_value(field: str, coefficient: int = 1):
     return ScalarEffectAmountSpec(ScalarAmountOrigin.PAID_SACRIFICE_CREATURE,
         characteristic=field, coefficient=coefficient, schema_version=9).to_dict()

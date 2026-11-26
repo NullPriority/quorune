@@ -9,6 +9,11 @@ maintenance: "hand-maintained"
 
 # Drawing-card transaction
 
+A scheduled upkeep trigger can draw privately for that upkeep's player from
+the original source's named +1/+1 counter count. Resolution reads the current
+incarnation while available and uses its captured last-known count after
+departure. A positive count proceeds through the ordinary draw coordinator.
+
 Represented game draws use one typed boundary. `drawing/model.py` distinguishes
 an instruction to draw N cards from each individual draw event, validates the
 replacement or prohibited result, and pins the affected player, library size,
@@ -63,6 +68,12 @@ commit preserve target legality, restrictions, costs and normal spell priority.
 The internal resolving-hand permission does not create an ordinary hand casting
 method. A card that leaves and returns to hand cannot reuse the older trigger.
 
+A controller life-gain trigger can offer a generic mana payment capped by
+the amount gained in that occurrence after replacements. The resolution
+choice quotes an affordable X without enumerating the range. Zero declines
+the payment. The existing mana owner commits a positive X before the draw
+owner issues that many private draws for the resolving controller.
+
 After an ordinary draw commits, `player_result_events.py` derives one immutable
 public occurrence with the drawer, per-player ordinal, and own-draw-
 step facts. It dispatches the ordinary draw, exact second draw, and represented
@@ -85,6 +96,30 @@ collects live CR 121.9 policies only after the result remains an ordinary draw,
 and resumes from the exact remaining count without growing the Python call stack. The same trampoline
 continues an APNAP batch, draw-step entry, or the exact next spell instruction.
 `drawing/continuation.py` owns that strict immutable Game Record v3 value.
+
+The Brotherhood instruction attaches an observer to each opponent draw in
+APNAP order. The draw transaction counts actual committed draws for its
+original resolving stack frame, including draws produced by a replacement.
+A prevented draw, empty-library attempt, or Dredge contributes zero. The
+controller's private follow-up starts after those instructions finish. The
+receipt retains the count without including drawn cards in stack context.
+
+One source combat trigger can roll a single unmodified d20 for its resolving
+controller and draw that many cards. The stack instruction publishes the face
+before calling the ordinary draw coordinator. A pending draw replacement
+retains the count and the remaining instruction, so resuming it uses the same
+roll. The following instruction adds a timestamped, game-duration no-maximum
+hand-size rule for that controller. Cleanup reads it alongside current static
+hand-size rules, even after the creature changes control or leaves. Dice
+modifiers, replacement rolls, and abilities that consume a roll occurrence
+remain outside this compiled scope.
+
+A fixed draw and keyword grant samples its controlled countered creatures
+once as the draw instruction begins. The sampled count feeds ordinary draw
+processing. The retained battlefield identities follow the continuation
+through draw replacements and supply one shared-timestamp keyword effect
+lasting through the current turn. A replacement that creates another
+eligible creature leaves that creature outside the retained grant.
 
 `drawing/captured_hand.py` represents the fixed draw, reveal, and optional
 cast instruction. The draw transaction retains the hand incarnation produced
@@ -170,6 +205,14 @@ intent executor rejects a
 `DrawCardsIntent` that has not been routed through the coordinator, preventing
 a future producer from bypassing replacement, replay, or privacy handling.
 
+An ordinary battlefield activation can schedule one fixed replacement for its
+resolving controller's next draw this turn. The duration journal retains the
+source and result through save and load. Applying the replacement consumes its
+exact grant before resolving a fixed life gain, a fixed token, or a private
+APNAP opponent discard. The ordinary draw pipeline resumes after the replacement
+result and any nested choices complete. Cleanup expires elements still in the
+journal.
+
 The current typed replacement vocabulary includes `PreventDraw`, `DredgeDraw`,
 legacy fixed instruction-count `MultiplyAmount`, and `CreateResultDraws`.
 Current unconditional controller-doubling programs replace one draw with two
@@ -181,7 +224,11 @@ an explicit compatibility handler and are not silently reinterpreted.
 An individual result draw can bind its own recipient. Replacement order begins
 with the current affected player. Each new recipient uses their own library,
 draw permissions, and available replacements. A consumed replacement identity
-follows the resulting draw through consecutive choices and replay.
+follows the resulting draw through consecutive choices and replay. The
+empty-hand doubler checks the current hand of its source controller before
+each individual draw, including each draw created by an earlier replacement.
+Its current ability and eligibility are revalidated when a pending
+replacement choice resumes.
 The first completed draw in an opponent’s own draw step is exempt from
 the corresponding static redirect. A resolving target-player redirect
 stores its target and controller in the duration journal and expires in cleanup.
@@ -206,6 +253,15 @@ legal. Dredge replaces rather than performs a draw and therefore does not
 consume a maximum-one allowance. An empty library is not itself a prohibition.
 The seat-scoped `offer_draw` handler validates the prospective drawer both
 before issuing a task and when the chooser accepts it.
+
+The controller end-step offer collects each player's one-card choice in APNAP
+order before committing the private draw batch. Later choosers can see earlier
+answers. The sealed choice continuation records a restriction for each accepting opponent
+after the draw batch finishes, including when a replacement redirects the
+opponent's draw. During that opponent's next actual turn, the shared attack
+declaration query excludes the trigger controller and permanents they currently
+control. A battle's protector still determines its ordinary combat eligibility.
+The restriction ends in cleanup for the recorded turn.
 
 Activation legality and draw outcome remain separate. A fixed draw ability is
 still activatable when a live effect will prohibit the eventual draw or the

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "5326381e-e5e7-4c3e-9565-4837b3ffaec0",
+      "name": "Skullsnatcher",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Rat Ninja",
+      "oracle_text": "Ninjutsu {B} ({B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, exile up to two target cards from that player's graveyard.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Ninjutsu"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-11-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "5326381e-e5e7-4c3e-9565-4837b3ffaec0",
+      "published_at": "2005-02-01",
+      "source": "wotc",
+      "comment": "Skullsnatcher’s ability can target zero, one, or two cards in that player’s graveyard."
+    }
+  ]
+}

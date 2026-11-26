@@ -14,7 +14,9 @@ from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILI
     LEGENDARY_SNOW_COPY_HANDLER, LEGENDARY_SNOW_COPY_CAPABILITIES, LEGENDARY_SNOW_EXCEPTION,
     CONDITIONAL_VANISHING_COPY_HANDLER, CONDITIONAL_VANISHING_COPY_CAPABILITIES,
     FACE_UP_OR_ENTRY_COPY_HANDLER, FACE_UP_OR_ENTRY_COPY_CAPABILITIES,
-    GRAVEYARD_PAIR_COPY_HANDLER, GRAVEYARD_PAIR_COPY_CAPABILITIES, GRAVEYARD_PAIR_COPY_QUERY)
+    GRAVEYARD_PAIR_COPY_HANDLER, GRAVEYARD_PAIR_COPY_CAPABILITIES, GRAVEYARD_PAIR_COPY_QUERY,
+    TEMPORARY_HASTE_COPY_VERSION, TEMPORARY_HASTE_COPY_HANDLER, TEMPORARY_HASTE_COPY_CAPABILITIES,
+    TEMPORARY_HASTE_COPY_QUERY, TEMPORARY_HASTE_COPY_EXCEPTION)
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristicSpec, TargetNumericCharacteristic, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
@@ -59,6 +61,16 @@ def _entry_copy_value_exception(text,*,source_name):
 def entry_copy_spec(text: str, *, source_name: str) -> EntryCopySpec | None:
     predicate=None
     normalized=' '.join(text.strip().split())
+    temporary = re.fullmatch(
+        r'As (?P<source>[^,]+) enters(?: the battlefield)?, you may have it become a copy of '
+        r'any creature on the battlefield until end of turn, except it has haste\.?', normalized, re.I,
+    )
+    if temporary is not None and (
+        source_self_permanent_type(temporary['source']) == 'artifact'
+        or SourceReferenceSpec(source_name).matches(temporary['source'])
+    ):
+        return EntryCopySpec(TEMPORARY_HASTE_COPY_QUERY, TEMPORARY_HASTE_COPY_EXCEPTION,
+                             schema_version=TEMPORARY_HASTE_COPY_VERSION)
     raid=re.fullmatch(r'Raid [—-] If you attacked this turn, (?P<copy>You may have .+)',normalized,re.I)
     if raid is not None:text=raid['copy'];predicate=EntryCopyPredicate('controller_attacked_this_turn')
     match = re.fullmatch(r'You may have (?P<source>.+?) enter (?P<tapped>tapped )?as a copy of '
@@ -234,6 +246,7 @@ def entry_copy_node(*, node_id, line, material_line, span, source_name,
         12: (FACE_UP_OR_ENTRY_COPY_HANDLER, FACE_UP_OR_ENTRY_COPY_CAPABILITIES),
         13: (GRAVEYARD_PAIR_COPY_HANDLER, GRAVEYARD_PAIR_COPY_CAPABILITIES),
         14: (RETAINED_COLOR_ENTRY_HANDLER, (ENTRY_COPY_CAPABILITY, RETAINED_COLOR_COPY_CAPABILITY)),
+        TEMPORARY_HASTE_COPY_VERSION: (TEMPORARY_HASTE_COPY_HANDLER, TEMPORARY_HASTE_COPY_CAPABILITIES),
     }[spec.schema_version]
     return runtime_handler_node(node_id=node_id, line=line, span=span,
         compiled=(f'intrinsic-entry-copy-v{spec.schema_version}',

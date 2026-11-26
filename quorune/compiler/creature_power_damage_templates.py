@@ -12,7 +12,7 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
-    creature_self_damage_set_effect,
+    creature_controller_damage_set_effect, creature_self_damage_set_effect,
 )
 from ..rules.source_references import SourceReferenceSpec
 
@@ -613,6 +613,11 @@ def fixed_creature_power_damage_effect_template(
 ) -> FixedCreaturePowerDamageTemplate | None:
     """Lower one closed Fight or creature-power damage instruction."""
 
+    if " ".join(text.casefold().split()) == "each creature deals 1 damage to its controller.":
+        return FixedCreaturePowerDamageTemplate(
+            "simultaneous-creature-controller-damage-v1", (creature_controller_damage_set_effect(),), None,
+            (CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage"),
+        )
     if self_damage := _creature_self_damage_set_template(text):
         return self_damage
     from .reciprocal_power_damage import reciprocal_power_damage_template

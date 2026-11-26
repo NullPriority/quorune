@@ -3,11 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..delayed_triggers import NEXT_TURN_COUNTER_DRAW_FIELD
 from ..replacement.immutable import FrozenMap
 from ..rules.event_optional_draw_shapes import (
     CAST_OPPONENT_DRAW_VERSION,
     DEFENDING_CONTROLLER_DRAW_VERSION,
     EVENT_OPTIONAL_DRAW_FIELD,
+    TABLE_DRAW_ATTACK_RESTRICTION_VERSION,
     validate_event_optional_draw_payload,
 )
 from .context import SemanticChoiceContext, SemanticChoiceQuery
@@ -50,51 +52,85 @@ def _cast_opponents(query: SemanticChoiceQuery, participant: str) -> tuple[str, 
     return tuple(seat for seat in query.apnap_order if seat != participant)
 
 
-def _cast_opponent_draw_stage(effect, query):
+def _group_draw_stage_fields(effect):
+    if effect[EVENT_OPTIONAL_DRAW_FIELD] == CAST_OPPONENT_DRAW_VERSION:
+        return "cast_draw_order", "cast_draw_choices"
+    return "table_draw_order", "table_draw_choices"
+
+
+def _group_draw_stage(effect, query):
     try:
         validate_event_optional_draw_payload(effect, materialized=True)
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
-    order = _cast_opponents(query, effect["cast_participant"])
+    if effect[EVENT_OPTIONAL_DRAW_FIELD] == CAST_OPPONENT_DRAW_VERSION:
+        order = _cast_opponents(query, effect["cast_participant"])
+    else:
+        if effect["protected_player"] not in query.active_seats:
+            raise SemanticChoiceError("Optional table draws require their current protected controller")
+        order = query.apnap_order
     if "player" not in effect:
         return order, ()
-    recorded_order = effect["cast_draw_order"]
-    choices = effect["cast_draw_choices"]
+    order_field, choices_field = _group_draw_stage_fields(effect)
+    recorded_order = effect[order_field]
+    choices = effect[choices_field]
     if (not isinstance(recorded_order, (tuple, list)) or tuple(recorded_order) != order
             or not isinstance(choices, (tuple, list)) or len(choices) >= len(order)
             or any(type(choice) is not str or choice not in ("draw", "decline", "unavailable") for choice in choices)
             or effect["player"] != order[len(choices)]):
-        raise SemanticChoiceError("Optional cast opponent draw continuation changed its ordered choices")
+        raise SemanticChoiceError("Optional draw continuation changed its ordered choices")
     return order, tuple(choices)
 
 
-def _advance_cast_opponent_draw(effect, order, choices):
+def _advance_group_draw(effect, order, choices):
     if len(choices) < len(order):
-        return (FrozenMap({**effect, "player": order[len(choices)], "cast_draw_order": order,
-                           "cast_draw_choices": choices}),)
+        order_field, choices_field = _group_draw_stage_fields(effect)
+        return (FrozenMap({**effect, "player": order[len(choices)], order_field: order, choices_field: choices}),)
     players = tuple(seat for seat, answer in zip(order, choices) if answer == "draw")
     if not players:
         return ()
-    return (FrozenMap({"op": "draw_each_player", "players": players, "count": 1, "private": True}),)
+    draw = FrozenMap({"op": "draw_each_player", "players": players, "count": 1, "private": True})
+    if effect[EVENT_OPTIONAL_DRAW_FIELD] == CAST_OPPONENT_DRAW_VERSION:
+        return (draw,)
+    protected_player = effect["protected_player"]
+    opponents = tuple(seat for seat in players if seat != protected_player)
+    if not opponents:
+        return (draw,)
+    from ..next_turn_attack_restriction_model import ATTACK_RESTRICTION_OPERATION
+
+    restriction = FrozenMap({
+        "op": ATTACK_RESTRICTION_OPERATION, "schema_version": 1,
+        "protected_player": protected_player, "opponents": opponents,
+    })
+    return draw, restriction
 
 
-def _prepare_cast_opponent_draw(effect, context):
-    order, choices = _cast_opponent_draw_stage(effect, context.query)
+def _prepare_group_draw(effect, context):
+    order, choices = _group_draw_stage(effect, context.query)
+    protects = effect.get("protected_player")
+    if protects is not None and protects != context.stack_controller:
+        raise SemanticChoiceError("Optional table draws require the original trigger controller")
     continuation = FrozenMap(effect)
     if "player" not in effect:
         return SemanticChoicePreparation(request=None, continuation_effect=continuation,
-            auto_continue=AutoContinue("Order the opponents' choices", _advance_cast_opponent_draw(effect, order, choices)))
+            auto_continue=AutoContinue(
+                "Order the players' choices" if protects is not None else "Order the opponents' choices",
+                _advance_group_draw(effect, order, choices),
+            ))
     if context.actor != effect["player"]:
-        raise SemanticChoiceError("Optional cast opponent draw requires its next chooser")
+        raise SemanticChoiceError("Optional group draw requires its next chooser")
     if not context.query.draw_permission(context.actor).allows_complete_draw(1):
         return SemanticChoicePreparation(request=None, continuation_effect=continuation,
             auto_continue=AutoContinue("The prospective drawer cannot legally draw",
-                _advance_cast_opponent_draw(effect, order, (*choices, "unavailable"))))
+                _advance_group_draw(effect, order, (*choices, "unavailable"))))
     previous = tuple({"player": seat, "choice": answer}
                      for seat, answer in zip(order, choices) if answer != "unavailable")
+    prompt = "Draw 1 card?"
+    if protects is not None and context.actor != protects:
+        prompt += f" If you choose to draw, you can't attack {protects} or permanents they control during your next turn."
     return SemanticChoicePreparation(
         request=SemanticChoiceRequest(
-            prompt="Draw 1 card?",
+            prompt=prompt,
             choice=ScalarChoice(field_name="choice", legal_values=("draw", "decline")),
             public_context=FrozenMap({"stack": context.stack_ref, "operation": "offer_draw",
                 "drawer": context.actor, "count": 1, "previous_choices": previous}),
@@ -103,15 +139,71 @@ def _prepare_cast_opponent_draw(effect, context):
     )
 
 
-def _complete_cast_opponent_draw(effect, response, query):
-    order, choices = _cast_opponent_draw_stage(effect, query)
+def _complete_group_draw(effect, response, query, *, controller):
+    order, choices = _group_draw_stage(effect, query)
+    if effect.get("protected_player", controller) != controller:
+        raise SemanticChoiceError("Optional table draws require the original trigger controller")
     actor = effect.get("player")
     choice = response.get("choice")
     if actor is None or type(choice) is not str or choice not in ("draw", "decline"):
-        raise SemanticChoiceError("Choose draw or decline for the current cast opponent")
+        raise SemanticChoiceError("Choose draw or decline for the current player")
     if choice == "draw" and not query.draw_permission(actor).allows_complete_draw(1):
         raise SemanticChoiceError("The prospective drawer can no longer legally draw")
-    return SemanticChoiceCompletion(prepend_effects=_advance_cast_opponent_draw(effect, order, (*choices, choice)))
+    return SemanticChoiceCompletion(prepend_effects=_advance_group_draw(effect, order, (*choices, choice)))
+
+
+def _next_turn_counter_draw_recipient(effect, query):
+    raw_fields = {"op", NEXT_TURN_COUNTER_DRAW_FIELD, "recipient", "private"}
+    if (set(effect) not in (raw_fields, raw_fields | {"player"}) or effect["op"] != "offer_draw"
+            or type(effect[NEXT_TURN_COUNTER_DRAW_FIELD]) is not int or effect[NEXT_TURN_COUNTER_DRAW_FIELD] != 1
+            or effect["private"] is not True or type(effect["recipient"]) is not str
+            or effect["recipient"] not in query.seats or effect.get("player", effect["recipient"]) != effect["recipient"]):
+        raise SemanticChoiceError("Delayed draw requires its original known spell controller")
+    return effect["recipient"]
+
+
+def _next_turn_counter_draw_counts(query, recipient):
+    permission = query.draw_permission(recipient)
+    return (0, *(count for count in (1, 2) if permission.allows_complete_draw(count)))
+
+
+def _prepare_next_turn_counter_draw(effect, context):
+    recipient = _next_turn_counter_draw_recipient(effect, context.query)
+    continuation = FrozenMap(effect)
+    if recipient not in context.query.active_seats:
+        return SemanticChoicePreparation(request=None, continuation_effect=continuation,
+            auto_continue=AutoContinue("The original spell controller has left the game"))
+    if "player" not in effect:
+        if context.actor != context.stack_controller:
+            raise SemanticChoiceError("The resolving delayed ability must offer its original recipient the draw")
+        return SemanticChoicePreparation(request=None, continuation_effect=continuation,
+            auto_continue=AutoContinue("Ask the original spell controller how many cards to draw",
+                (FrozenMap({**effect, "player": recipient}),)))
+    if context.actor != recipient:
+        raise SemanticChoiceError("Only the original spell controller may choose the draw amount")
+    counts = _next_turn_counter_draw_counts(context.query, recipient)
+    if counts == (0,):
+        return SemanticChoicePreparation(request=None, continuation_effect=continuation,
+            auto_continue=AutoContinue("The original spell controller cannot choose a positive draw"))
+    return SemanticChoicePreparation(request=SemanticChoiceRequest(
+        prompt="Choose how many cards to draw.",
+        choice=ScalarChoice("count", counts),
+        public_context=FrozenMap({"stack": context.stack_ref, "drawer": recipient}),
+    ), continuation_effect=continuation)
+
+
+def _complete_next_turn_counter_draw(effect, response, query):
+    recipient = _next_turn_counter_draw_recipient(effect, query)
+    allowed = {"count", "action", "action_id", "a", "cap", "reason", "plan", "next", "choice_schema", "label"}
+    count = response.get("count")
+    if (set(response) - allowed or effect.get("player") != recipient or recipient not in query.active_seats
+            or type(count) is not int or count not in _next_turn_counter_draw_counts(query, recipient)):
+        raise SemanticChoiceError("Choose one legal original-controller draw count")
+    if not count:
+        return SemanticChoiceCompletion()
+    return SemanticChoiceCompletion(prepend_effects=(
+        FrozenMap({"op": "draw", "player": recipient, "count": count, "private": True}),
+    ))
 
 
 def _defending_controller_draw_after_effects():
@@ -144,6 +236,11 @@ class OptionalDrawHandler:
         "cast_participant",
         "cast_draw_order",
         "cast_draw_choices",
+        "protected_player",
+        "table_draw_order",
+        "table_draw_choices",
+        NEXT_TURN_COUNTER_DRAW_FIELD,
+        "recipient",
     )
     private_data: tuple[str, ...] = ("drawn card",)
     projected_fields: tuple[str, ...] = (
@@ -201,8 +298,11 @@ class OptionalDrawHandler:
     ) -> SemanticChoicePreparation:
         from ..rules.event_optional_draw_shapes import DAMAGE_DEALER_DRAW_VERSION
 
-        if effect.get(EVENT_OPTIONAL_DRAW_FIELD) == CAST_OPPONENT_DRAW_VERSION:
-            return _prepare_cast_opponent_draw(effect, context)
+        if NEXT_TURN_COUNTER_DRAW_FIELD in effect:
+            return _prepare_next_turn_counter_draw(effect, context)
+
+        if effect.get(EVENT_OPTIONAL_DRAW_FIELD) in (CAST_OPPONENT_DRAW_VERSION, TABLE_DRAW_ATTACK_RESTRICTION_VERSION):
+            return _prepare_group_draw(effect, context)
         if effect.get(EVENT_OPTIONAL_DRAW_FIELD) == DEFENDING_CONTROLLER_DRAW_VERSION:
             try:
                 validate_event_optional_draw_payload(effect, materialized=True)
@@ -288,12 +388,18 @@ class OptionalDrawHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        if NEXT_TURN_COUNTER_DRAW_FIELD in continuation.effect:
+            return _complete_next_turn_counter_draw(continuation.effect, response, query)
         if 'event_optional_draw_version' in continuation.effect:
             allowed = {'choice', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema', 'label'}
             if set(response) - allowed:
                 raise SemanticChoiceError('The event draw response cannot change its participant or instruction')
-        if continuation.effect.get(EVENT_OPTIONAL_DRAW_FIELD) == CAST_OPPONENT_DRAW_VERSION:
-            return _complete_cast_opponent_draw(continuation.effect, response, query)
+        if continuation.effect.get(EVENT_OPTIONAL_DRAW_FIELD) in (
+            CAST_OPPONENT_DRAW_VERSION, TABLE_DRAW_ATTACK_RESTRICTION_VERSION,
+        ):
+            return _complete_group_draw(
+                continuation.effect, response, query, controller=continuation.semantic_frame.controller,
+            )
         actor = continuation.effect.get("player")
         if type(actor) is not str:
             raise SemanticChoiceError(

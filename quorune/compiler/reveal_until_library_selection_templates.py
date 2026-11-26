@@ -6,9 +6,9 @@ from . import regex_working_set as re
 
 from ..object_predicate import ObjectQuerySpec
 from ..reveal_until_library_selection_model import (
-    REVEAL_UNTIL_OPERATION,REVEAL_UNTIL_MECHANIC,validate_reveal_until_selection,
+    REVEAL_UNTIL_OPERATION,REVEAL_UNTIL_MECHANIC,REVEAL_UNTIL_REFLEXIVE_VERSION,validate_reveal_until_selection,
 )
-from .fixed_library_selection_templates import _term_predicates
+from .fixed_library_selection_templates import _selector_alternatives, _term_predicates
 from .fixed_numbers import FIXED_COUNT_PATTERN,fixed_number
 from .oracle_source_text import without_ability_word_label
 
@@ -17,9 +17,13 @@ _HEADER = re.compile(r'Reveal cards from the top of your library until you revea
 _ONE_RESULT = re.compile(r'Put that card (?P<destination>into your hand|onto the battlefield(?P<tapped> tapped)?) '
     r'and (?P<remainder>the rest|all other cards revealed this way) '
     r'(?P<rest>into your graveyard|on the bottom of your library in (?P<order>a random|any) order)\.',re.I)
+_REFLEXIVE_RESULT = re.compile(
+    r'(?P<partition>.+\.) When you reveal a creature card this way, put X \+1/\+1 counters '
+    r'on target creature you control, where X is the mana value of that card\.', re.I,
+)
 
 
-def reveal_until_library_selection_effect_template(text):
+def reveal_until_library_selection_effect_template(text, *, allow_reflexive=False):
     if 'until' not in text.casefold() or 'reveal' not in text.casefold():return None
     material = without_ability_word_label(' '.join(text.strip().split()))
     match = _HEADER.fullmatch(material) if material is not None else None
@@ -27,6 +31,8 @@ def reveal_until_library_selection_effect_template(text):
     count = 1 if match['count'].casefold() in {'a','an'} else fixed_number(match['count'])
     kind = match['kind'].casefold()
     predicates = _term_predicates(kind)
+    if kind == "elf or elemental":
+        predicates = _selector_alternatives(kind)
     if kind == 'nonlegendary creature':
         predicates = (ObjectQuerySpec(zones=('library',),types_any=('creature',),
             excluded_supertypes=('legendary',)).to_dict(),)
@@ -36,6 +42,10 @@ def reveal_until_library_selection_effect_template(text):
         'selected_destination':'hand','entry_tapped':False,
         'remainder_destination':'graveyard','remainder_order':'chosen'}
     tail = match['tail']
+    reflexive = _REFLEXIVE_RESULT.fullmatch(tail) if allow_reflexive else None
+    if reflexive is not None:
+        effect['schema_version'] = REVEAL_UNTIL_REFLEXIVE_VERSION
+        tail = reflexive['partition']
     if re.fullmatch(r'put all cards revealed this way into your hand\.',tail,re.I):
         effect['selection'] = 'all_revealed'
     else:
@@ -53,4 +63,4 @@ def reveal_until_library_selection_effect_template(text):
         else:return None
     try:validate_reveal_until_selection(effect)
     except (TypeError,ValueError,KeyError):return None
-    return 'reveal-until-library-selection-v1',(effect,),None,(REVEAL_UNTIL_MECHANIC,)
+    return f'reveal-until-library-selection-v{effect["schema_version"]}',(effect,),None,(REVEAL_UNTIL_MECHANIC,)

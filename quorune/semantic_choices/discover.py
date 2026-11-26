@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """One-at-a-time exile scanning over the existing zone-intent continuation."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from ..discover_model import (
     DISCOVER_CAPABILITY, DISCOVER_OPERATION, DISCOVER_STEP_OPERATION, NONLAND_SCAN_OPERATION, NONLAND_SCAN_STEP_OPERATION,
@@ -12,6 +12,7 @@ from ..discover_model import (
     require_current_discover_cards, validate_discover_effect, validate_nonland_scan_effect, validate_qualified_scan_effect,
 )
 from ..replacement.immutable import FrozenMap
+from ..stack_spell_name_scan_model import NAME_SCAN_OPERATION, NAME_SCAN_STEP_OPERATION, parse_name_scan_effect
 from ..rules.library_selection import LibrarySelectionObjectIdentity
 from ..semantic_runtime.zone_move_intent import ZoneMoveIntent
 from .discover_cast import DiscoverCastChoiceHandler
@@ -43,22 +44,30 @@ def _after_pending(progress,pending,query,actor):
     expected=f'{card.object_id}@{discover_zone_counter(card)+1}'
     if row.owner != (progress.supplier or actor) or row.object_id != card.object_id or row.logical_object_id != expected:
         raise SemanticChoiceError('The current Discover exile incarnation changed')
-    if progress.supplier is not None:
+    if progress.name_scan is not None:
+        candidate = progress.name_scan.qualified(types=row.types, names=query.public_exile_rules_names(row.ref))
+    elif progress.supplier is not None:
         candidate = 'instant' in row.types or 'sorcery' in row.types
     else:
         candidate = 'land' not in row.types and (
             progress.amount is None or discover_spell_qualifies(progress.amount, mana_value=row.mana_value)
         )
-    return ExileCastProgress(progress.amount, (*progress.exiled, _identity(row)),
-                             row.ref if candidate else None, progress.supplier)
+    return replace(progress, exiled=(*progress.exiled, _identity(row)), candidate_ref=row.ref if candidate else None)
 
 
 def _scan(effect,context,progress):
+    if progress.name_scan is not None:
+        stack = context.query.stack_object(context.stack_ref)
+        if stack is None:
+            raise SemanticChoiceError("The different-name exile lost its original resolving spell")
+        progress.name_scan.require_resolution(actor=context.actor, stack_ref=stack.ref, targets=stack.targets)
     require_current_discover_cards(progress,context.query,actor=context.actor)
     owner = progress.supplier or context.actor
     nonland = progress.finish_operation is None
     reason = 'Continue exiling through the first nonland card.' if nonland else 'Continue the current Discover procedure.'
-    if progress.supplier is not None:
+    if progress.name_scan is not None:
+        reason = 'Continue exiling through the first differently named nonland card.'
+    elif progress.supplier is not None:
         reason = 'Continue exiling through the first instant or sorcery card.'
     if progress.candidate_ref is not None:
         return _automatic(effect, {'op': progress.cast_operation,
@@ -74,7 +83,9 @@ def _scan(effect,context,progress):
         raise SemanticChoiceError('Discover requires an owned physical library top')
     card=_identity(row)
     move_reason = 'Exile through the first nonland card' if nonland else 'Discover'
-    if progress.supplier is not None:
+    if progress.name_scan is not None:
+        move_reason = 'Exile through the first differently named nonland card'
+    elif progress.supplier is not None:
         move_reason = 'Exile through the first instant or sorcery card'
     move=ZoneMoveIntent(owner,card.ref,('library',),'exile',move_reason,owned_only=True,
         expected_zone_change_counter=discover_zone_counter(card))
@@ -99,8 +110,10 @@ class DiscoverScanHandler:
 
     def prepare(self,effect,context):
         try:
+            cross_controller = self.operation in {NAME_SCAN_OPERATION, NAME_SCAN_STEP_OPERATION}
             if (effect.get('op')!=self.operation or effect.get('player')!=context.actor
-                    or context.actor!=context.stack_controller or context.actor not in context.query.active_seats):
+                    or (not cross_controller and context.actor != context.stack_controller)
+                    or context.actor not in context.query.active_seats):
                 raise SemanticChoiceError('Discover requires the resolving controller')
             if self.operation==DISCOVER_OPERATION:
                 validate_discover_effect(effect,resolved=True)
@@ -113,7 +126,10 @@ class DiscoverScanHandler:
                 if effect['supplier'] not in context.query.active_seats:
                     return _automatic(effect, reason='The supplying player has left the game.')
                 progress = ExileCastProgress(None, (), None, effect['supplier'])
-            elif self.operation in {DISCOVER_STEP_OPERATION, NONLAND_SCAN_STEP_OPERATION, QUALIFIED_SCAN_STEP_OPERATION}:
+            elif self.operation == NAME_SCAN_OPERATION:
+                progress = ExileCastProgress(None, (), None, name_scan=parse_name_scan_effect(effect))
+            elif self.operation in {DISCOVER_STEP_OPERATION, NONLAND_SCAN_STEP_OPERATION,
+                                    QUALIFIED_SCAN_STEP_OPERATION, NAME_SCAN_STEP_OPERATION}:
                 if (set(effect)!={'op','schema_version','player','progress','pending'}
                         or type(effect['schema_version']) is not int or effect['schema_version']!=1):
                     raise SemanticChoiceError('Discover step has a closed continuation shape')

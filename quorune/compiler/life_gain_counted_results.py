@@ -57,3 +57,16 @@ def life_gain_counted_counter_payment(text, *, binding, compile_result):
     if not life_gain_counter_payment_node_capabilities(effects=(wrapper,), target_schema=old.target_schema):
         return None
     return ('life-gain-counted-counter-payment-v1', (wrapper,), old.target_schema, old.mechanics), current
+
+
+def capped_life_gain_draw_payment(text, *, binding):
+    if not _is_controller_life_gain(binding) or not re.fullmatch(
+        r"You may pay \{X\}, where X is less than or equal to the amount of life you gained\. "
+        r"If you do, draw X cards\.", text.strip(), re.I,
+    ):
+        return None
+    from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC
+    from ..rules.life_gain_counted_results import capped_life_gain_draw_effect
+
+    return ("life-gain-capped-mana-draw-v1", (capped_life_gain_draw_effect(),),
+            None, (FIXED_EFFECT_PAYMENT_MECHANIC,)), False

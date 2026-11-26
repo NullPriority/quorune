@@ -9,8 +9,11 @@ EXTERNAL_ENTRY_COUNTER_CAPABILITY='counter.producer.external_additional_entry'
 EXTERNAL_ENTRY_COUNTER_HANDLER='replacement.zone.external-entry-counter.v1'
 EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER = "replacement.zone.external-chosen-subtype-entry-counter.v2"
 EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY = "counter.producer.external_chosen_creature_type_entry"
+EXTERNAL_NONTOKEN_ENTRY_COUNTER_HANDLER = "replacement.zone.external-nontoken-entry-counter.v3"
+EXTERNAL_NONTOKEN_ENTRY_COUNTER_CAPABILITY = "counter.producer.external_nontoken_creature_entry"
 EXTERNAL_ENTRY_COUNTER_HANDLER_IDS = frozenset({
     EXTERNAL_ENTRY_COUNTER_HANDLER, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
+    EXTERNAL_NONTOKEN_ENTRY_COUNTER_HANDLER,
 })
 
 

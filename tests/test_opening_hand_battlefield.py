@@ -148,6 +148,188 @@ class OpeningHandBattlefieldRuntimeTests(unittest.TestCase):
             self.assertTrue(result.ok,result.summary)
         self.fail('Requested seat did not receive its priority')
 
+    def _choose_opening_label(self, session, seat, label):
+        packet = session.packet(f"pilot:{seat}", full=True)["decision"]
+        value, = (row["id"] for row in packet["ctx"]["options"] if row["label"] == label)
+        result = session.act(f"pilot:{seat}", {"action_id": "choose", "opening_action": value})
+        self.assertTrue(result.ok, result.summary)
+
+    def _activate_gemstone(self, session, land, color=None):
+        ability, = (ability for ability in session.engine._activated_abilities(land) if ability.mana_ability)
+        command = {"a": "activate", "source": land.ref, "ability": ability.ability_id}
+        if color is not None:
+            command["mana_output"] = {color: 1}
+        return session.act(f"pilot:{land.controller}", command)
+
+    def test_gemstone_compiles_only_its_complete_hand_and_luck_mana_branches(self):
+        from quorune.fixed_mana_abilities import LUCK_COUNTER_MANA_CAPABILITY
+        from quorune.preflight import semantic_preflight
+        from quorune.semantic_runtime.action_permissions import OPENING_HAND_LUCK_CAPABILITY
+
+        gem = self.db.lookup("Gemstone Caverns", fuzzy=False)
+        result = compile_oracle_card(gem, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", result.status, result.material_residuals)
+        self.assertEqual({"activate", "action.permission"}, {node.event for node in result.faces[0].nodes})
+        ready, = semantic_preflight(self.db, DeckDefinition("Exact Gemstone admission", [DeckEntry(gem.name)], []))["cards"]
+        self.assertEqual("fully_playable", ready["status"], ready["unresolved"])
+        self.assertTrue(ready["card_program_strict_capability_ready"])
+        for old, new in (
+            ("not the starting player", "the starting player"),
+            ("exile a card from your hand", "discard a card"),
+            ("one mana of any color", "two mana of any color"),
+            ("luck counter", "charge counter"),
+        ):
+            with self.subTest(old=old, new=new):
+                mutated = replace(gem, oracle_text=gem.oracle_text.replace(old,new),
+                    faces=tuple({**face, "oracle_text": face["oracle_text"].replace(old,new)} for face in gem.faces))
+                variant = compile_oracle_card(mutated,capability_registry=self.registry,
+                                              capability_profile="commander_review")
+                self.assertNotEqual("exact", variant.status)
+        for capability in (OPENING_HAND_LUCK_CAPABILITY, LUCK_COUNTER_MANA_CAPABILITY):
+            with self.subTest(capability=capability):
+                raw = json.loads((ROOT/"quorune/rules/capability-registry.json").read_bytes())
+                next(row for row in raw["capabilities"] if row["id"] == capability).update(
+                    status="blocked", blockers=["Gemstone dependency withdrawal"])
+                withdrawn = CapabilityRegistry(raw)
+                withdrawn.mark_evidence_verified("0" * 64)
+                self.assertNotEqual("exact",compile_oracle_card(gem,capability_registry=withdrawn,
+                    capability_profile="commander_review").status)
+
+    def test_actual_nonstarter_gemstone_enters_and_exiles_privately_after_mulligans(self):
+        session = self.session(1036160, names_by_seat={
+            "C": ["Gemstone Caverns", "Leyline of Sanctity"],
+            "D": ["Gemstone Caverns", "Leyline of Sanctity"],
+            "A": ["Gemstone Caverns"],
+        }, first="C")
+        self.keep(session)
+        ready = session.state.pending_decision
+        self.assertEqual("opening.hand", ready.kind)
+        self.assertEqual(["C"], ready.actors)
+        self.assertEqual({"Finish opening actions", "Begin with Leyline of Sanctity"},
+                         {row["label"] for row in ready.payload_by_actor["C"]["options"]})
+        self._choose_opening_label(session, "C", "Finish opening actions")
+        land = self.card(session, "Gemstone Caverns", "D")
+        exile = self.card(session, "Leyline of Sanctity", "D")
+        self._choose_opening_label(session, "D", "Begin with Gemstone Caverns")
+        current = session.state.cards[land.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual({"luck": 1}, current.counters)
+        self.assertFalse(session.state.started)
+        self.assertIsNone(session.state.priority_player)
+        decision = session.state.pending_decision
+        self.assertEqual(["D"], decision.actors)
+        self.assertEqual("opening.hand", decision.kind)
+        refs = decision.payload_by_actor["D"]["legal_actions"][0]["choice_schema"]["refs"]["legal_refs"]
+        self.assertEqual(6, len(refs))
+        self.assertIn(exile.ref, refs)
+        for seat in "ABC":
+            private = json.dumps(session.packet(f"pilot:{seat}", full=True)["state"])
+            self.assertNotIn(json.dumps(exile.ref), private)
+        session = self.replay(session, load=True)
+        command = {"action_id": "choose", "refs": [exile.ref]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        for invalid in ([], [current.ref], [exile.ref, exile.ref]):
+            self.assertFalse(session.act("pilot:D", {**command, "refs": invalid}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose(session,[exile.ref],actor="D")
+        moved = session.state.cards[exile.object_id]
+        self.assertEqual("exile", moved.zone)
+        self.assertIn(json.dumps(moved.ref), json.dumps(session.packet("pilot:B",full=True)["state"]))
+        self.assertEqual(["A"],session.state.pending_decision.actors)
+        self._choose_opening_label(session, "A", "Finish opening actions")
+        self.assertTrue(session.state.started)
+        self.assertEqual("C", session.state.active_player)
+        self.assertEqual("hand", self.card(session,"Gemstone Caverns","A").zone)
+        self.assertEqual("hand", self.card(session,"Gemstone Caverns","C").zone)
+        self.replay(session, load=True)
+
+    def test_actual_normal_gemstone_land_play_stays_colorless_without_a_luck_counter(self):
+        session = self.session(1036161, names_by_seat={"A": ["Gemstone Caverns"]})
+        self.keep(session)
+        self.assertTrue(session.state.started)
+        land = self.card(session,"Gemstone Caverns")
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        played = session.act("pilot:A", {"action_id": "play-land:" + land.ref})
+        self.assertTrue(played.ok, played.summary)
+        land = session.state.cards[land.object_id]
+        self.assertFalse(land.counters)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(self._activate_gemstone(session, land, "U").ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = self._activate_gemstone(session, land)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(1,session.state.players["A"].mana_pool["C"])
+        self.replay(session, load=True)
+
+    def test_actual_gemstone_funds_a_cast_only_while_luck_counter_remains(self):
+        for remove in (False, True):
+            with self.subTest(remove=remove):
+                session = self.session(1036163 + int(remove), names_by_seat={})
+                self.keep(session)
+                land = self.add(session.engine,"Gemstone Caverns")
+                land.counters["luck"] = 1
+                spell = self.add(session.engine,"Opt",zone="hand")
+                hexmage = self.add(session.engine,"Vampire Hexmage")
+                self.prepare(session,mana={})
+                self.checkpoint(session)
+                if remove:
+                    ability, = (value for value in session.engine._activated_abilities(hexmage)
+                                if not value.mana_ability)
+                    spent = session.act("pilot:A", {"a":"activate","source":hexmage.ref,
+                        "ability":ability.ability_id,"targets":[land.ref]})
+                    self.assertTrue(spent.ok, spent.summary)
+                    self.assertIsNone(self.resolve(session))
+                    land=session.state.cards[land.object_id]
+                    self.assertFalse(land.counters)
+                    offered = session.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+                    self.assertNotIn("cast:"+spell.ref, {row["id"] for row in offered})
+                    accepted=self._activate_gemstone(session,land)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertEqual(1, session.state.players["A"].mana_pool["C"])
+                else:
+                    offered = session.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+                    self.assertIn("cast:"+spell.ref, {row["id"] for row in offered})
+                    accepted = session.act("pilot:A", {"action_id": "cast:" + spell.ref, "pay": "auto"})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertTrue(session.state.cards[land.object_id].tapped)
+                    self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+                    pending=self.resolve(session)
+                    self.assertEqual("semantic.choice",pending.kind)
+                    self.assertEqual(["A"],pending.actors)
+                self.replay(session,load=True)
+
+    def test_gemstone_runtime_mana_color_mutation_is_detected(self):
+        from quorune.mana import ManaMode
+        import quorune.mana_ability_runtime as owner
+
+        exact = owner._fixed_output_modes
+        def ordinary_only(ability, source):
+            if ability.dynamic_mana_output == "source_luck_counter_color_choice":
+                return (ManaMode({"C": 1}),)
+            return exact(ability, source)
+
+        session = self.session(1036166, names_by_seat={})
+        self.keep(session)
+        land = self.add(session.engine, "Gemstone Caverns")
+        land.counters["luck"] = 1
+        spell = self.add(session.engine, "Opt", zone="hand")
+        with patch.object(owner, "_fixed_output_modes", side_effect=ordinary_only):
+            self.prepare(session, mana={})
+            offered = session.packet("pilot:A",full=True)["decision"]["ctx"]["legal"]["actions"]
+            self.assertNotIn("cast:" + spell.ref, {row["id"] for row in offered})
+
+    def test_gemstone_opening_entry_counter_mutation_is_detected(self):
+        import quorune.rules.opening_hand_luck as owner
+
+        exact = owner.EffectEntryCounter
+        def wrong_counter(name, amount, *details):
+            return exact("charge", amount, *details)
+
+        with patch.object(owner,"EffectEntryCounter",side_effect=wrong_counter), self.assertRaises(AssertionError):
+            self.test_actual_nonstarter_gemstone_enters_and_exiles_privately_after_mulligans()
+
     def test_actual_kept_leyline_gets_private_atomic_loaded_action_before_first_turn(self):
         session=self.session()
         card=next(session.state.cards[oid] for oid in session.state.players['A'].zones['hand']

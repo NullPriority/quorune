@@ -24,8 +24,10 @@ when tabs share a cookie jar. A guest may claim one open seat or join watch-only
 as a spectator.
 
 Players choose a saved deck, submit a public deck URL, or paste a Commander
-list. The editor reports Commander legality, card behavior, and match readiness
-separately. It shows affected cards only to the person who submitted the list.
+list. The editor reports Commander legality, card rules support, and match
+readiness separately. When all cards pass rules verification, the match-wide
+Commander rules check can still be incomplete. Affected cards are visible
+only to the person who submitted the list.
 For card data mismatches it saves the list as an editable draft and shows every
 affected card. Open a card to see the changes in Oracle text or rulings when a
 retained snapshot matches the reviewed implementation. The details distinguish
@@ -111,6 +113,9 @@ when both are in view.
 
 Seat colors match across the battlefield, priority status, stack, and
 player-specific dialogs. Seat labels identify players alongside the colors.
+A player's board shows a chip for each commander that has dealt combat damage
+to that player. The chip uses the commander's original owner's seat color.
+Hover or focus a chip to see the commander's name.
 
 The desktop table fits a centered 16:9 area. Narrow or very short windows
 use the compact layout. Battlefield card faces turn 90 degrees when tapped,

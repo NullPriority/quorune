@@ -34,9 +34,36 @@ from ..scheduled_player import (
 from .scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_participant_schedule
 
 
+CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY = "trigger.event.controller_food_sacrifice_group"
+CONTROLLER_FOOD_SACRIFICE_GROUP_VARIANT = "controller_sacrifices_food"
+
+
+def controller_food_sacrifice_group_condition():
+    return {"all": [
+        {"field": "previous_controller", "op": "eq", "value": "$source.controller"},
+        {"field": "types", "op": "contains_any", "value": ["artifact"]},
+        {"field": "subtypes", "op": "contains_any", "value": ["food"]},
+    ]}
+
+
+def controller_food_sacrifice_group_dependencies(program):
+    matched = thaw_value(program.event_condition) == controller_food_sacrifice_group_condition()
+    if not matched and CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY not in program.capability_dependencies:
+        return ()
+    if (not matched or (program.event, program.active_zone) != ("permanent.sacrificed", "battlefield")
+            or "one_or_more_event_batch" not in program.coverage):
+        raise ValueError("Grouped Food sacrifices require the controller's actual sacrifice batch and Food facts")
+    return (CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY, "trigger.event.normalized_zone_change")
+
+
 EVENT_SUBSCRIPTIONS_FIELD = "event_subscriptions"
 LAND_PLAY_EVENT = "land.played"
+DRAW_EXCEPT_FIRST_OWN_STEP_EVENT = "card.draw_except_first_draw_step"
 PHYSICAL_CARD_PLAY_TEMPLATE = "fixed-physical-card-play-trigger-v1"
+PHYSICAL_EXILE_PLAY_TREASURE_TEMPLATE = "fixed-physical-exile-play-treasure-v1"
+PLAYED_LAND_REFERENCE_FIELD = "played_land_reference"
+OTHER_LAND_PLAY_SACRIFICE_TEMPLATE = "fixed-other-land-play-source-sacrifice-v1"
+OTHER_LAND_PLAY_SACRIFICE_CAPABILITY = "trigger.event.other_land_play_source_sacrifice"
 COMBAT_PARTICIPANT_DAMAGE_VARIANT = "creature_attacks_or_blocks_damage"
 COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE = "fixed-counter-combat-participant-damage-v1"
 COMBAT_PARTICIPANT_DAMAGE_PROGRAM_TEMPLATE = COMBAT_PARTICIPANT_DAMAGE_TRIGGER_TEMPLATE.replace(
@@ -59,21 +86,31 @@ class EventSubscriptionError(ValueError):
     """A serialized fixed multi-event subscription is malformed."""
 
 
-def physical_card_play_event_condition() -> dict[str, Any]:
-    physical = {"field": PHYSICAL_CARD_EVENT_FIELD, "op": "eq", "value": True}
+def physical_card_play_event_condition(*, from_exile: bool = False) -> dict[str, Any]:
+    facts = [{"field": PHYSICAL_CARD_EVENT_FIELD, "op": "eq", "value": True}]
+    if from_exile:
+        facts.append({"field": "from", "op": "eq", "value": "exile"})
     subscriptions = tuple(
         FixedEventSubscription(event, {"all": [
-            {"field": actor, "op": "eq", "value": "$source.controller"},
-            physical,
+            {"field": actor, "op": "eq", "value": "$source.controller"}, *facts,
         ]})
         for event, actor in ((LAND_PLAY_EVENT, "player"), ("spell.cast", "controller"))
     )
     return fixed_event_subscription_condition(subscriptions)
 
 
+def other_land_play_condition() -> dict[str, Any]:
+    return {"all": [
+        {"field": "player", "op": "eq", "value": "$source.controller"},
+        {"field": PHYSICAL_CARD_EVENT_FIELD, "op": "eq", "value": True},
+        {"field": PLAYED_LAND_REFERENCE_FIELD, "op": "truthy", "value": True},
+        {"field": PLAYED_LAND_REFERENCE_FIELD, "op": "ne", "value": "$source.ref"},
+    ]}
+
+
 def _contains_physical_card_fact(value: Any) -> bool:
     if isinstance(value, Mapping):
-        return value.get("field") == PHYSICAL_CARD_EVENT_FIELD or any(
+        return value.get("field") in (PHYSICAL_CARD_EVENT_FIELD, PLAYED_LAND_REFERENCE_FIELD) or any(
             _contains_physical_card_fact(child) for child in value.values()
         )
     if isinstance(value, (list, tuple)):
@@ -82,21 +119,49 @@ def _contains_physical_card_fact(value: Any) -> bool:
 
 
 def physical_card_play_runtime_dependencies(program) -> tuple[str, ...]:
-    if program.provenance.get("template_id") != PHYSICAL_CARD_PLAY_TEMPLATE:
+    template = program.provenance.get("template_id")
+    if template == OTHER_LAND_PLAY_SACRIFICE_TEMPLATE:
+        from ..source_sacrifice_model import fixed_source_sacrifice_effect
+
+        if (
+            (program.event, program.active_zone) != (LAND_PLAY_EVENT, "battlefield")
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or stable_json(program.event_condition) != stable_json(other_land_play_condition())
+            or stable_json(program.effects) != stable_json((fixed_source_sacrifice_effect(),))
+        ):
+            raise EventSubscriptionError("Other-land play requires the exact controller, different physical land, and source sacrifice")
+        return (OTHER_LAND_PLAY_SACRIFICE_CAPABILITY, "trigger.event.normalized_public_action")
+    if template not in {PHYSICAL_CARD_PLAY_TEMPLATE, PHYSICAL_EXILE_PLAY_TREASURE_TEMPLATE}:
         if _contains_physical_card_fact(program.event_condition):
             raise EventSubscriptionError("The physical-card fact requires the closed card-play production")
         return ()
+    from_exile = template == PHYSICAL_EXILE_PLAY_TREASURE_TEMPLATE
     if (
         (program.event, program.active_zone) != (LAND_PLAY_EVENT, "battlefield")
         or program.target_schema is not None
         or program.cost_schema is not None
-        or stable_json(program.event_condition) != stable_json(physical_card_play_event_condition())
-        or stable_json(program.effects) != stable_json(({"op": "draw", "player": "$controller", "count": 1, "private": True},))
+        or stable_json(program.event_condition) != stable_json(physical_card_play_event_condition(from_exile=from_exile))
+        or stable_json(program.effects) != stable_json((_physical_play_result(from_exile),))
         or program.handlers
     ):
-        raise EventSubscriptionError("Card-play draw requires both exact physical-card subscriptions and its fixed private result")
+        raise EventSubscriptionError("Card play requires both exact physical-card subscriptions and their fixed result")
     return ("trigger.event.normalized_public_action", "trigger.event.normalized_spell_cast",
-            "trigger.subscription.fixed_multi_event")
+            "trigger.subscription.fixed_multi_event", *(("token.creation.fixed_definition",) if from_exile else ()))
+
+
+def _physical_play_result(from_exile: bool) -> dict[str, Any]:
+    if not from_exile:
+        return {"op": "draw", "player": "$controller", "count": 1, "private": True}
+    from ..fixed_token_production import predefined_token_identity
+    from ..standard_token_abilities import TOKEN_ABILITY_PROFILE_FIELD
+
+    name, characteristics = predefined_token_identity("Treasure", {
+        "type_line": "Token Artifact — Treasure",
+        "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+        TOKEN_ABILITY_PROFILE_FIELD: "tap_sac_any_color_mana_v1",
+    })
+    return {"op": "create_token", "controller": "$controller", "name": name,
+            "quantity": 1, "characteristics": characteristics}
 
 
 def _public_state_leaves(value: Any):
@@ -296,6 +361,12 @@ def graveyard_creature_transition_damage_effect() -> dict[str, Any]:
 
 def graveyard_creature_transition_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .grouped_graveyard_departure import COVERAGE, grouped_graveyard_departure_program_dependencies
+
+    if COVERAGE in program.coverage:
+        if subscriptions is not None:
+            raise EventSubscriptionError("Grouped graveyard departure requires a single subscription")
+        return grouped_graveyard_departure_program_dependencies(program, event=GRAVEYARD_DEPARTURE_LOOKBACK_EVENT)
 
     template = GRAVEYARD_CREATURE_TRANSITIONS_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
     marked = template in str(program.provenance.get("template_id") or "").split("+")
@@ -569,21 +640,111 @@ def intervening_recheck_condition(program, *, context, controller):
     return shared
 
 
+def other_land_arrival_holds(state, context):
+    from ..public_history_query_model import PublicHistoryQuerySpec, matching_public_history_events
+
+    player = context.get("controller")
+    identity = context.get("card_object_identity")
+    types = context.get("types")
+    if (type(player) is not str or player not in state.players or type(identity) is not str or not identity
+            or not isinstance(types, (tuple, list)) or "land" not in types):
+        raise ValueError("Another-land history requires the exact committed land entry")
+    entries = matching_public_history_events(state, player, PublicHistoryQuerySpec("permanent_entered", types_all=("land",)))
+    if entries is None:
+        return False
+    identities = {row.object_incarnation for row in entries if row.object_incarnation}
+    return identity in identities and len(identities) > 1
+
+
+def entrant_land_advantage_holds(host, context, *, trigger_controller):
+    """Compare the committed entering seat and the original trigger controller."""
+    from ..continuous_effect_model import Layer
+    from ..player_maximum import current_player_metric_values
+    from ..player_maximum_model import LAND_COUNT_METRIC
+
+    entrant = context.get("controller")
+    identity = context.get("card_object_identity")
+    types = context.get("types")
+    if (type(entrant) is not str or entrant not in host.state.players
+            or type(trigger_controller) is not str or trigger_controller not in host.state.players
+            or type(identity) is not str or not identity
+            or not isinstance(types, (tuple, list)) or "land" not in types):
+        raise ValueError("Land advantage requires the original normalized land entrant and trigger controller")
+    if entrant == trigger_controller:
+        return False
+    values = dict(current_player_metric_values(
+        host.state, LAND_COUNT_METRIC,
+        public_object_resolver=lambda card: host._public_object_query_result(card, _maximum_layer=Layer.COLOR),
+    ))
+    return entrant in values and trigger_controller in values and values[entrant] > values[trigger_controller]
+
+
+def entrant_land_advantage_runtime_dependencies(program):
+    """Require the original intervening event, one exact private result and its recheck."""
+    from ..land_entry_condition_model import (
+        ENTRANT_LAND_ADVANTAGE_CAPABILITY, ENTRANT_LAND_ADVANTAGE_COVERAGE,
+        entrant_land_advantage_condition, entrant_land_advantage_leaf_is_closed, uses_entrant_land_advantage,
+    )
+    from ..object_predicate import ObjectQuerySpec
+    from ..replacement.immutable import FrozenMap
+
+    original = uses_entrant_land_advantage(program.event_condition)
+    if (not original and ENTRANT_LAND_ADVANTAGE_CAPABILITY not in program.capability_dependencies
+            and ENTRANT_LAND_ADVANTAGE_COVERAGE not in program.coverage):
+        return ()
+    expected = {"op": "put_card_from_hand", "player": "$controller", "tapped": False,
+                "query": ObjectQuerySpec(zones=("hand",), types_all=("land",)).canonical_dict()}
+    condition = FrozenMap(program.event_condition or {})
+    if ((program.event, program.active_zone) != ("land.enter", "battlefield")
+            or condition != FrozenMap(entrant_land_advantage_condition())
+            or not entrant_land_advantage_leaf_is_closed(condition["all"][1])
+            or len(program.effects) != 1 or FrozenMap(program.effects[0]) != FrozenMap(expected)
+            or program.effects[0]["tapped"] is not False or program.target_schema is not None
+            or program.cost_schema is not None or program.handlers
+            or not {"intervening_condition", ENTRANT_LAND_ADVANTAGE_COVERAGE} <= set(program.coverage)):
+        raise ValueError("Land advantage requires the closed opponent land trigger and its private land entry")
+    return (ENTRANT_LAND_ADVANTAGE_CAPABILITY, "trigger.condition.fixed_public_state",
+            "trigger.effect.fixed_event", "trigger.event.normalized_zone_change",
+            "trigger.placement.apnap", "zone.change.destination_replacement", "zone.move.fixed_private_hand_choice")
+
+
 def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
     """Recheck a condition whose source occurrence carries the relevant facts."""
     from ..other_spell_history_model import OTHER_SPELL_CAST_MECHANIC
     from .attached_greatest_power_condition import attached_greatest_power_event_condition, recheck_attached_greatest_power
     from .combat_damage_entry_history import COMBAT_DAMAGE_ENTRY_COVERAGE, recheck_combat_damage_entry
+    from .entrant_name_absence import ENTRANT_NAME_ABSENCE_COVERAGE, recheck_entrant_name_absence
     from .other_spell_history_shapes import recheck_other_spell_self_cast
-    from .trigger_source_information import recheck_untapped_damage_source, uses_original_untapped_source
+    from .trigger_source_information import original_source_tap_expectation, recheck_original_source_tap
+    from ..land_entry_condition_model import (
+        ENTRANT_LAND_ADVANTAGE_COVERAGE, OTHER_LAND_ARRIVAL_COVERAGE, OTHER_LAND_ARRIVAL_EVENT,
+    )
+
+    from .departure_counter_transfer import (
+        DEPARTURE_COUNTER_TRANSFER_COVERAGE, departure_counter_condition_holds,
+    )
 
     try:
-        if uses_original_untapped_source(host.state, program):
-            return recheck_untapped_damage_source(
+        if DEPARTURE_COUNTER_TRANSFER_COVERAGE in program.coverage:
+            return departure_counter_condition_holds(context, controller)
+        if ENTRANT_LAND_ADVANTAGE_COVERAGE in program.coverage:
+            if context.get("event") != OTHER_LAND_ARRIVAL_EVENT:
+                raise ValueError("The land advantage recheck lost its normalized event")
+            return entrant_land_advantage_holds(host, context, trigger_controller=controller)
+        if OTHER_LAND_ARRIVAL_COVERAGE in program.coverage:
+            if context.get("event") != OTHER_LAND_ARRIVAL_EVENT:
+                raise ValueError("The land entry history recheck lost its normalized event")
+            return other_land_arrival_holds(host.state, context)
+        expected_tapped = original_source_tap_expectation(host.state, program)
+        if expected_tapped is not None:
+            return recheck_original_source_tap(
                 host, context, event=program.event, controller=controller, source_object_id=source_object_id,
+                expected_tapped=expected_tapped,
             )
         if COMBAT_DAMAGE_ENTRY_COVERAGE in program.coverage:
             return recheck_combat_damage_entry(host.state, context)
+        if ENTRANT_NAME_ABSENCE_COVERAGE in program.coverage:
+            return recheck_entrant_name_absence(host, context, controller)
         if OTHER_SPELL_CAST_MECHANIC in program.coverage:
             return recheck_other_spell_self_cast(
                 host.state, context, controller=controller, source_object_id=source_object_id,

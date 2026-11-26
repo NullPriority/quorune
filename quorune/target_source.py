@@ -181,11 +181,11 @@ def spell_targeting_source(host,card):
 
 def ability_targeting_source(host,card):
     facts = capture_targeting_source(host, card).facts()
-    from .rules.chosen_color_target_shapes import current_linked_target_color
+    from .rules.chosen_color_target_shapes import current_linked_entry_color
 
     annotations = getattr(card, "annotations", {})
     subtype = annotations.get("chosen_creature_type")
-    color = current_linked_target_color(card)
+    color = current_linked_entry_color(card)
     choices = {}
     if subtype is not None and canonical_creature_subtype(subtype) == subtype:
         choices["chosen_creature_type"] = subtype

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from .received_damage_model import RECEIVED_DAMAGE_EVENTS
 from .token_copy_recipient_model import has_occurrence_copy_recipient
 from .rules.token_copy_recipients import represents_occurrence_controller_copy
+from .pawprint_modes import PAWPRINT_CAPABILITY, PAWPRINT_SELECTION_FIELD
 from .selection.target_query import target_identity_matches_snapshot
 from .target_controller_reference import (
     TARGET_CONTROLLER_INFORMATION_KIND,TARGET_CONTROLLER_INFORMATION_CAPABILITY,TARGET_CONTROLLER_INFORMATION_MECHANIC,
@@ -103,11 +104,22 @@ def _reference_indices(value):
 def pin_target_controller_departures(host,cards,*,error_type=ValueError):
     """Use the existing zone owner's atomic departure capture boundary."""
     try:
+        from .rules.spell_self_exile import CONDITIONAL_TARGET_LIFE_MECHANIC
+
         pin_occurrence_controller_departures(host,cards)
         departing={(c.object_id,c.zone_change_counter):c for c in cards};updates=[]
         for item in host.state.stack:
             program=host.semantics.get(item.semantic_key) if item.semantic_key else None
             indices=_reference_indices((program.effects if program else (),item.context.get('dynamic_effects',()),item.context.get('cast_option_effects',())))
+            schema = item.context.get("target_schema_override")
+            if (program and PAWPRINT_CAPABILITY in program.capability_dependencies
+                    and item.targets and schema and schema.get(PAWPRINT_SELECTION_FIELD)):
+                from .targets import mode_effects
+                groups = item.context.get("target_groups_current", item.context.get("target_groups"))
+                indices.update(_reference_indices(mode_effects(schema, item.modes, target_groups=groups)))
+            if (program and CONDITIONAL_TARGET_LIFE_MECHANIC in program.coverage and item.targets
+                    and item.targets[0] is not None and item.targets[0] not in host.state.players):
+                indices.add(0)
             if not indices:continue
             old=item.context.get(_LKI_FIELD,{})
             if not isinstance(old,Mapping):raise ValueError('Target controller departure book is malformed')
@@ -144,16 +156,19 @@ def is_occurrence_controller_reference(value):
 
 
 def _occurrence_reference(value):
-    if not (is_occurrence_controller_reference(value) or is_damage_dealer_controller_reference(value)):
+    if not (is_occurrence_controller_reference(value) or is_damage_dealer_controller_reference(value)
+            or is_damage_dealer_controller_reference(value, version=2)):
         raise ValueError("Occurrence controller information requires a closed incarnation reference")
 
 
-def _uses_damage_dealer_controller(value):
+def _uses_damage_dealer_controller(value, *, version=1):
     if isinstance(value, Mapping):
-        return is_damage_dealer_controller_reference(value) or any(
-            _uses_damage_dealer_controller(child) for child in value.values()
+        return is_damage_dealer_controller_reference(value, version=version) or any(
+            _uses_damage_dealer_controller(child, version=version) for child in value.values()
         )
-    return isinstance(value, (tuple, list)) and any(_uses_damage_dealer_controller(child) for child in value)
+    return isinstance(value, (tuple, list)) and any(
+        _uses_damage_dealer_controller(child, version=version) for child in value
+    )
 
 
 def _uses_occurrence_controller(value):
@@ -197,23 +212,27 @@ def _attacking_controller_identity(context):
     raise ValueError('Attacking controller information requires the original declared attacker')
 
 
-def _damage_dealer_controller_context(host, context):
+def _damage_dealer_controller_context(host, context, *, qualified=False):
+    from .damage_source import REPRESENTED_DAMAGE_SOURCE_ZONES
+
     object_id = context.get("source_object_id")
     identity = context.get("source_logical_object_id")
     ref = context.get("source")
     controller = context.get("source_controller")
+    zone = context.get("source_zone")
     if (any(type(value) is not str or not value for value in (object_id, identity, ref, controller))
             or identity.rpartition("@")[0] != object_id
-            or context.get("source_zone") != "battlefield"
-            or context.get("combat") is not True
-            or context.get("target_kind") != "player"
-            or "creature" not in context.get("source_types", ())
+            or (qualified and (zone not in REPRESENTED_DAMAGE_SOURCE_ZONES
+                               or context.get("target_kind") not in {"player", "permanent"}))
+            or (not qualified and (zone != "battlefield" or context.get("combat") is not True
+                                  or context.get("target_kind") != "player"
+                                  or "creature" not in context.get("source_types", ())))
             or type(context.get("amount")) is not int or context["amount"] <= 0):
         raise ValueError("Damage dealer controller information requires a committed creature combat damage occurrence")
     result = {"card_object_id": object_id, "card_object_identity": identity}
     card = host.state.cards.get(object_id)
-    if (card is None or card.zone != "battlefield" or card.logical_object_id != identity
-            or card.phased_out):
+    if (zone != "battlefield" or card is None or card.zone != "battlefield"
+            or card.logical_object_id != identity or card.phased_out):
         counter = identity.rpartition("@")[2]
         if not counter.isascii() or not counter.isdecimal():
             raise ValueError("Damage dealer controller has a malformed source incarnation")
@@ -228,8 +247,11 @@ def _damage_dealer_controller_context(host, context):
 
 def occurrence_controller_context(host, program, event, context):
     """Seal the original permanent for a public occurrence controller read."""
-    if event == "damage.dealt" and _uses_damage_dealer_controller(program.effects):
-        return _damage_dealer_controller_context(host, context)
+    if event == "damage.dealt":
+        if _uses_damage_dealer_controller(program.effects, version=2):
+            return _damage_dealer_controller_context(host, context, qualified=True)
+        if _uses_damage_dealer_controller(program.effects):
+            return _damage_dealer_controller_context(host, context)
     combat_events = {'creature.attacks', 'creature.blocks'}
     if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS | combat_events
             or not _uses_occurrence_controller(program.effects)):
@@ -263,7 +285,8 @@ def _occurrence_identity(item):
 
 def resolve_occurrence_controller_information(host, value, item, *, use_phased_lki=False):
     _occurrence_reference(value);object_id,identity=_occurrence_identity(item)
-    use_phased_lki = use_phased_lki or is_damage_dealer_controller_reference(value)
+    use_phased_lki = (use_phased_lki or is_damage_dealer_controller_reference(value)
+                      or is_damage_dealer_controller_reference(value, version=2))
     card=host.state.cards.get(object_id)
     if (card is not None and card.zone=='battlefield' and card.logical_object_id==identity
             and not (use_phased_lki and card.phased_out)):
@@ -283,7 +306,8 @@ def pin_occurrence_controller_departures(host, cards, *, phase_out=False):
             return False
         if phase_out:
             return (represents_occurrence_controller_copy(program.effects)
-                    or _uses_damage_dealer_controller(program.effects))
+                    or _uses_damage_dealer_controller(program.effects)
+                    or _uses_damage_dealer_controller(program.effects, version=2))
         return _uses_occurrence_controller(program.effects)
 
     departing={c.object_id:c for c in cards};updates=[]

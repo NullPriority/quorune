@@ -40,6 +40,35 @@ class HandEntryExpansionCompilerTests(unittest.TestCase):
                 zone='hand',types=types,subtypes=subtypes,supertypes=supertypes)
             self.assertEqual(expected,hand_entry_matches(row,queries))
 
+    def test_committed_cave_life_compiles_with_independent_life_and_subtype_authority(self):
+        from quorune.rules.hand_entry_followup import (
+            HAND_ENTRY_SUBTYPE_LIFE_VERSION, HandEntrySubtypeLife, decode_hand_entry_followup,
+        )
+
+        body = (
+            "Draw a card, then you may put a land card from your hand onto the battlefield. "
+            "If you put a Cave onto the battlefield this way, you gain four life."
+        )
+        registry = load_default_capability_registry()
+        record = replace(query_record(body), type_line="Sorcery")
+        ir = compile_oracle_card(record, capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        draw, entry = node.effects
+        self.assertEqual(("draw", "put_card_from_hand"), (draw["op"], entry["op"]))
+        self.assertEqual(HAND_ENTRY_SUBTYPE_LIFE_VERSION, entry["schema_version"])
+        self.assertEqual(HandEntrySubtypeLife("cave", 4), decode_hand_entry_followup(entry))
+        self.assertTrue({"life.change.effect", "state_query.permanent.public_state_predicate",
+                         "zone.move.fixed_private_hand_choice"}.issubset(node.capability_dependencies))
+        with self.assertRaises(ValueError):
+            decode_hand_entry_followup({**entry, "followup": {"land_subtype": "cave", "amount": True}})
+        with self.assertRaises(ValueError):
+            decode_hand_entry_followup({**entry, "tapped": True})
+        for unsupported in (body.replace("Cave", "Gate"), body.replace("four", "X"),
+                            body.replace("battlefield. If", "battlefield tapped. If")):
+            bad = compile_oracle_card(replace(record, oracle_text=unsupported), capability_registry=registry)
+            self.assertNotEqual("exact", bad.status, unsupported)
+
     def test_hand_entry_disjunction_schema_and_unsupported_tails_stay_closed(self):
         from quorune.hand_entry_queries import historic_hand_entry_query_descriptor,decode_hand_entry_queries
         descriptor=historic_hand_entry_query_descriptor()
@@ -253,6 +282,124 @@ class HandEntryExpansionRuntimeTests(unittest.TestCase):
         self.assertEqual(before_library-1,len(resumed.state.players['A'].zones['library']))
         self.assertEqual(before_plays,resumed.state.players['A'].land_plays_remaining)
         self.replay(resumed,load=True)
+
+
+class SpelunkingRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = witnesses.BoundEffectProgramRuntimeTests.session
+    add = witnesses.BoundEffectProgramRuntimeTests.add
+    ready = witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = witnesses.BoundEffectProgramRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "spelunking.sqlite3"
+        fixtures = ("bound-effect-program-cards.json", "external-entry-tapped-cards.json",
+                    "discover-cards.json", "opponent-life-gain-to-loss-cards.json", "fixed-basic-type-setting-cards.json")
+        build_fixture_database([ROOT / "tests" / "fixtures" / name for name in fixtures], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Spelunking witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                  DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def act(self, session, action, **fields):
+        result = session.act("pilot:A", {"action_id": action, **fields})
+        self.assertTrue(result.ok, result.summary)
+
+    def replacement_options(self, session):
+        decision = session.state.pending_decision
+        self.assertEqual("replacement.order", decision.kind)
+        self.assertEqual(["A"], decision.actors)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        return session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+
+    def cast_spelunking(self, session, source):
+        action = self.ready(session, source, {"C": 2, "G": 1})
+        self.checkpoint(session)
+        self.act(session, action["id"], pay="auto")
+        pending = self.resolve(session)
+        self.assertEqual("semantic.choice", pending.kind)
+        packet = session.packet("pilot:A", full=True)["decision"]
+        self.assertGreater(len(packet["ctx"]["objects"]), 1)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+
+    def test_cave_life_requires_an_arrival_with_the_effective_cave_subtype(self):
+        for decline in (True, False):
+            with self.subTest(decline=decline):
+                session = self.session(287041 + decline)
+                engine = session.engine
+                spell = self.add(engine, "Spelunking", zone="hand")
+                cave = self.add(engine, "Hidden Nursery", zone="hand")
+                self.add(engine, "Blood Moon", seat="B")
+                before = session.state.players["A"].life
+                self.cast_spelunking(session, spell)
+                if decline:
+                    self.act(session, "choose")
+                else:
+                    self.act(session, "choose", card=cave.ref)
+                self.resolve(session)
+                actual = session.state.cards[cave.object_id]
+                self.assertEqual("hand" if decline else "battlefield", actual.zone)
+                if not decline:
+                    types = engine._effective_card_data(actual)["type_line"].casefold()
+                    self.assertIn("mountain", types)
+                    self.assertNotIn("cave", types)
+                self.assertEqual(before, session.state.players["A"].life)
+
+    def test_copy_cave_then_life_replacement_replays_each_pending_choice(self):
+        session = self.session(287040)
+        engine = session.engine
+        spell = self.add(engine, "Spelunking", zone="hand")
+        vesuva = self.add(engine, "Vesuva", zone="hand")
+        cave = self.add(engine, "Hidden Nursery", seat="B")
+        doubling = self.add(engine, "Boon Reflection")
+        self.add(engine, "Tainted Remedy", seat="B")
+        before_life = session.state.players["A"].life
+        before_draws = len(session.state.players["A"].draw_history)
+        before_land_plays = session.state.players["A"].land_plays_remaining
+        before_move = vesuva.zone_change_counter
+
+        self.cast_spelunking(session, spell)
+        session = self.replay(session, load=True)
+        self.act(session, "choose", card=vesuva.ref)
+        self.replacement_options(session)
+        session = self.replay(session, load=True)
+        copied = False
+        for _ in range(4):
+            options = self.replacement_options(session)
+            copy_cave = next((option for option in options if cave.ref in option["id"]), None)
+            intrinsic = next((option for option in options if option.get("source") == vesuva.ref
+                              and not option.get("decline")), None)
+            if copy_cave is not None:
+                self.act(session, "choose", replacement=copy_cave["id"])
+                copied = True
+            elif not copied and intrinsic is not None:
+                self.act(session, "choose", replacement=intrinsic["id"])
+            else:
+                break
+        self.assertTrue(copied)
+        moved = session.state.cards[vesuva.object_id]
+        self.assertEqual(("battlefield", before_move + 1), (moved.zone, moved.zone_change_counter))
+        self.assertIn("cave", session.engine._effective_card_data(moved)["type_line"].casefold())
+        self.assertEqual(before_life, session.state.players["A"].life)
+        self.assertTrue(any(row.get("source") == doubling.ref for row in self.replacement_options(session)))
+        session = self.replay(session, load=True)
+        double = next(row for row in self.replacement_options(session) if row.get("source") == doubling.ref)
+        self.act(session, "choose", replacement=double["id"])
+        self.resolve(session)
+        self.assertEqual(before_life - 8, session.state.players["A"].life)
+        self.assertEqual(before_move + 1, session.state.cards[vesuva.object_id].zone_change_counter)
+        self.assertEqual(before_draws + 1, len(session.state.players["A"].draw_history))
+        self.assertEqual(before_land_plays, session.state.players["A"].land_plays_remaining)
+        self.replay(session)
 
 
 if __name__=='__main__':unittest.main()

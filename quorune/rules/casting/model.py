@@ -58,6 +58,7 @@ class CastProposalRequest:
     ignore_timing: bool = False
     during_resolution: bool = False
     schema_version: int = 1
+    authorized_hand_incarnation: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version != 1:
@@ -102,6 +103,12 @@ class CastProposalRequest:
             raise CastProposalError(
                 "Authorized cast costs require a scoped resolution zone"
             )
+        if self.authorized_hand_incarnation is not None and (
+            type(self.authorized_hand_incarnation) is not str or not self.authorized_hand_incarnation
+            or self.authorized_from_zone != "hand" or not self.during_resolution
+            or not self.force_without_mana_cost or not self.ignore_timing
+        ):
+            raise CastProposalError("A hand incarnation requires its scoped resolving free cast")
 
     @classmethod
     def from_submission(
@@ -116,6 +123,7 @@ class CastProposalRequest:
         ignore_priority: bool = False,
         ignore_timing: bool = False,
         during_resolution: bool = False,
+        authorized_hand_incarnation: str | None = None,
     ) -> "CastProposalRequest":
         raw_from = response.get("from")
         if raw_from is None:
@@ -170,6 +178,7 @@ class CastProposalRequest:
             ignore_priority=ignore_priority,
             ignore_timing=ignore_timing,
             during_resolution=during_resolution,
+            authorized_hand_incarnation=authorized_hand_incarnation,
         )
 
     def response(self) -> dict[str, Any]:

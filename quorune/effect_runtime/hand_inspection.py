@@ -61,6 +61,30 @@ def commit_colored_hand_reveal(host: Any, intent: Any) -> tuple[str, ...]:
     return tuple(selection['ref'] for selection in selections)
 
 
+def _commit_selected_hand_inspection(host, intent, cards):
+    item = next((entry for entry in host.state.stack if entry.ref == intent.scoped_stack_ref), None)
+    selected = tuple(card for card in cards if card.ref in intent.refs)
+    if (
+        item is None or item.controller != intent.actor or not item.context.get("currently_resolving")
+        or len(intent.refs) != min(3, len(cards)) or len(selected) != len(intent.refs)
+        or any(not card.is_card_object for card in selected)
+    ):
+        raise GameRuleError("Selected hand reveal requires its exact resolving subset")
+    snapshots = tuple({
+        "object_id": card.object_id, "logical_object_id": card.logical_object_id,
+        "ref": card.ref, "player": intent.player, "oracle_id": card.oracle_id,
+        "name": host.display_name(card.object_id),
+    } for card in selected)
+    for snapshot in snapshots:
+        validate_entry_hand_reveal(host, snapshot)
+    for snapshot in snapshots:
+        begin_stack_cost_hand_reveal(
+            host, snapshot, item=item, source_ref=item.ref,
+            summary="A selected card was revealed from hand.",
+        )
+    return intent.refs
+
+
 def commit_hand_inspection(
     host: Any,
     intent: InspectHandIntent,
@@ -71,6 +95,8 @@ def commit_hand_inspection(
     host._require_seat(intent.player, in_game=True)
     hand_ids = tuple(host.state.players[intent.player].zones["hand"])
     cards = tuple(host.state.cards[object_id] for object_id in hand_ids)
+    if intent.scoped_stack_ref is not None:
+        return _commit_selected_hand_inspection(host, intent, cards)
     current_refs = tuple(card.ref for card in cards)
     if len(intent.refs) != len(current_refs) or set(intent.refs) != set(
         current_refs
@@ -151,7 +177,7 @@ def _stack_cost_reveal_rows(item):
 def begin_stack_cost_hand_reveal(
     host, selection, *, item, source_ref, summary="A card was revealed to pay a casting cost.",
 ):
-    """CR701.20a: a revealed casting-cost card stays visible until stack departure."""
+    """Keep a scoped disclosure in the existing stack reveal ledger until departure."""
     card=validate_entry_hand_reveal(host,selection);prior=list(card.revealed_to)
     for pending in host.state.stack:
         for row in _stack_cost_reveal_rows(pending):

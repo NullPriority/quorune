@@ -3,7 +3,10 @@ from __future__ import annotations
 """Typed fixed Suspend special action and exile trigger lifecycle."""
 
 from dataclasses import replace
-from typing import Any, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Protocol, Sequence
+
+if TYPE_CHECKING:
+    from .cost_payments import ManaCostPayment
 
 from .cast_lifecycles import (
     FixedCastLifecycleKind,
@@ -75,7 +78,7 @@ class SuspendHost(Protocol):
         response: Mapping[str, Any],
         *,
         spend_context: Any = None,
-    ) -> tuple[dict[str, int], list[dict[str, Any]]]: ...
+    ) -> ManaCostPayment: ...
 
     def move_card(self, object_id: str, destination: str, **kwargs: Any) -> Any: ...
 
@@ -246,12 +249,13 @@ def commit_suspend(
         counter_event_id=counter_event_id,
     )
     clear_mana_undo_stack(host.state.players[seat].stats)
-    spent, activations = host._pay_for_cost(
+    mana_payment = host._pay_for_cost(
         seat,
         spec.mana_cost,
         response,
         spend_context=None,
     )
+    spent, activations = mana_payment.spent, mana_payment.activations
     host.move_card(
         card.object_id,
         "exile",

@@ -34,7 +34,25 @@ def bound_source_fixed_damage(binding, body):
     return damage.compiled() if damage is not None else None
 
 
+_RANDOM_OPPONENT_CREATURE_DAMAGE = re.compile(
+    r"(?:it|this creature) deals (?P<amount>[1-9][0-9]*) damage to a creature "
+    r"an opponent controls chosen at random\.?",
+    re.IGNORECASE,
+)
+
+
 def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_template):
+    if event_phrase == "dies":
+        from .library_search_templates import creature_subset_mana_value_search_template
+
+        if search := creature_subset_mana_value_search_template(body):
+            return (*search, None)
+        random_damage = _RANDOM_OPPONENT_CREATURE_DAMAGE.fullmatch(body.strip())
+        if random_damage is not None:
+            from ..rules.random_opponent_damage import random_opponent_damage_instruction
+
+            effect = random_opponent_damage_instruction(int(random_damage["amount"]))
+            return "damage-source-death-random-opponent-creature-v1", (effect,), None, ("cr-120-damage",), None
     if (event_phrase == "dies"
         and body.strip().casefold() == "destroy all permanents at the beginning of the next end step."):
         from ..rules.destruction_result_model import next_end_step_destruction_effect
@@ -46,11 +64,24 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         SOURCE_ENTRY_CAST_HAND_MECHANIC)
     condition=None
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
-    if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
+    if guard is not None:
+        body = guard['body']
+        condition = source_entry_cast_condition(origin='hand' if guard['origin'] else None)
+        if not guard['origin'] and body.casefold() == 'you gain protection from everything until your next turn.':
+            from ..rules.next_personal_turn_protection import (
+                CAST_ENTRY_PROTECTION_MECHANIC, CAST_ENTRY_PROTECTION_TEMPLATE, cast_entry_protection_effect,
+            )
+
+            return (CAST_ENTRY_PROTECTION_TEMPLATE, (cast_entry_protection_effect(),), None,
+                    (SOURCE_ENTRY_CAST_MECHANIC, CAST_ENTRY_PROTECTION_MECHANIC), condition)
     if event_phrase == 'enters':
-        from .discard_result_templates import selected_land_discard_result_template
-        if condition is None and (land_discard := selected_land_discard_result_template(body)) is not None:
-            return (*land_discard, None)
+        from .discard_result_templates import (
+            selected_land_discard_result_template, source_entry_creature_discard_or_exile_template,
+        )
+        if condition is None:
+            discard = source_entry_creature_discard_or_exile_template(body) or selected_land_discard_result_template(body)
+            if discard is not None:
+                return (*discard, None)
         from .manifest_templates import manifest_equipment_entry_template
         from .target_opponent_counter_choice import target_opponent_counter_choice_result
         from .keep_three_sacrifice_templates import keep_three_land_entry_template
@@ -59,10 +90,18 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
         from .library_search_templates import (
             optional_literal_name_any_number_search_template, recruiting_library_search_template,
         )
+        from .variable_library_selection_templates import devotion_library_win_template
+
+        from .qualified_library_search_templates import creature_stat_library_search_template
 
         if condition is None:
-            library_search = (optional_literal_name_any_number_search_template(body)
-                              or recruiting_library_search_template(body))
+            if devotion_win := devotion_library_win_template(body):
+                return (*devotion_win, None)
+            library_search = (
+                creature_stat_library_search_template(body)
+                or optional_literal_name_any_number_search_template(body)
+                or recruiting_library_search_template(body)
+            )
             if library_search is not None:
                 return (*library_search, None)
             entry_result = (target_opponent_counter_choice_result(body) or keep_three_land_entry_template(body)

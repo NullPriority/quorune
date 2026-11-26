@@ -1,0 +1,89 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Opal Palace",
+      "oracle_id": "aa6723a2-75da-49f5-a1ba-cbfa82c55301",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Land"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If Opal Palace's last ability produces two mana (most likely due to Mana Reflection) and you spend them to cast a commander, that commander enters with two counters for each time it's been cast from the command zone this game.",
+      "oracle_id": "aa6723a2-75da-49f5-a1ba-cbfa82c55301",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't have a commander, Opal Palace's last ability produces no mana.",
+      "oracle_id": "aa6723a2-75da-49f5-a1ba-cbfa82c55301",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have two commanders, the last ability adds one mana of any color in their combined color identities.",
+      "oracle_id": "aa6723a2-75da-49f5-a1ba-cbfa82c55301",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander is a card that has no colors in its color identity, Opal Palace's last ability produces no mana. It doesn't produce {C}.",
+      "oracle_id": "aa6723a2-75da-49f5-a1ba-cbfa82c55301",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "The \"number of times it's been cast from the command zone\" includes the most recent time. For example, the first time you cast your commander from the command zone in a game, if you spent mana from Opal Palace's last ability to do so, it will enter the battlefield with a +1/+1 counter.",
+      "oracle_id": "aa6723a2-75da-49f5-a1ba-cbfa82c55301",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned August Oracle and rulings for commander entry mana"
+}

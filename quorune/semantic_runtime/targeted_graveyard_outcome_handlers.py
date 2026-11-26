@@ -15,9 +15,10 @@ def lower_targeted_graveyard_outcome(effect, context, *, handler_id: str) -> Int
 
     try:
         spec = read_targeted_graveyard_outcome(effect, resolved=True)
-        cards, _, reason, selections = _fixed_target_fields(
+        extra = (TARGETED_GRAVEYARD_OUTCOME_FIELD, 'owner_seat') if spec.damage_linked else (TARGETED_GRAVEYARD_OUTCOME_FIELD,)
+        cards, maximum, reason, selections = _fixed_target_fields(
             effect, context, operation=TARGETED_GRAVEYARD_EXILE_OPERATION,
-            replacements=True, additional_fields=(TARGETED_GRAVEYARD_OUTCOME_FIELD,),
+            replacements=True, additional_fields=extra, variable_maximum=spec.damage_linked,
         )
         intent = TargetedGraveyardExileOutcomeIntent(
             actor=context.actor,
@@ -27,6 +28,8 @@ def lower_targeted_graveyard_outcome(effect, context, *, handler_id: str) -> Int
             reason=reason,
             replacement_selections=selections,
             result=spec,
+            damaged_player=effect['owner_seat'] if spec.damage_linked else None,
+            damage_target_bound=maximum if spec.damage_linked else None,
         )
     except (TypeError, ValueError, KeyError) as exc:
         raise SemanticNodeError(str(exc)) from exc

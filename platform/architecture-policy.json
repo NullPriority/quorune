@@ -171,6 +171,7 @@
       "quorune/emblems.py": "typed immutable emblem-creation preparation and authoritative public noncard command-object construction owner (ADR0142)",
       "quorune/engine.py": "legacy authoritative transaction and mutation boundary",
       "quorune/game_object_store.py": "canonical in-place current-object registration/detachment owner shared by copies, tokens, emblems and physical composition; preserves map aliases and validates edits before mutation",
+      "quorune/opponent_library_exile.py": "typed opponent-library exile batch and per-incarnation play permissions owner",
       "quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner",
       "quorune/initiative_runtime.py": "typed initiative designation and source-less trigger materialization owner",
       "quorune/life_change.py": "replacement-capable typed life-event transaction owner behind represented rules transactions",
@@ -220,6 +221,7 @@
       "quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner"
     },
     "read_only_consumers": {
+      "quorune/spell_cast_names.py": "reads committed cast facts and delegates ledger updates to the spell name owner",
       "quorune/ability_resolution_ordinal.py": "read-only committed ability resolution order for typed conditions",
       "quorune/other_spell_history_model.py": "read-only current spell history for typed conditions",
       "quorune/__init__.py": "public type re-export",
@@ -229,6 +231,9 @@
       "quorune/aura/runtime.py": "read-only Aura legality and entry planner delegating attachment mutation to the canonical owner",
       "quorune/cascade.py": "typed Cascade trigger and resolution coordinator delegating casting, zone movement, choice, and cleanup mutation to canonical owners",
       "quorune/cast_lifecycles.py": "typed casting-lifecycle coordinator delegating state changes to canonical cost, zone, keyword, trigger, and permission owners",
+      "quorune/cast_origin_replacement.py": "read-only committed spell casting origin and typed resolution replacement validation",
+      "quorune/rules/random_opponent_damage.py": "read-only current recipient selection and allocation for the canonical damage transaction",
+      "quorune/rules/random_activation_target.py": "read-only random selection from the ordinary public target snapshot at activation",
       "quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state",
       "quorune/characteristic_query_boundary_model.py": "pure current/absent completed-characteristic query version validation; no GameState access, mutation, order, component, projection or replay-trust authority",
       "quorune/characteristic_read_frames.py": "identity-scoped completed pure reads and immutable detached state/read-host views shared by prospective casting and face-up queries; no persistent game-state cache or mutation",
@@ -398,7 +403,8 @@
       "quorune/zone_trigger_events.py": "immutable normalized CR 603.6 zone-change occurrence and event derivation",
       "quorune/rules/token_creation_reflexive.py": "Reads the resolving source and verifies its bound instructions before the token owner handles mutation",
       "quorune/unattachment_triggers.py": "Reads attachment and departing object state and delegates event placement to the trigger owner",
-      "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners"
+      "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners",
+      "quorune/rules/linked_exile_activations.py": "Read current public exile incarnations and trusted activated ability catalogs for layer-six Food grants."
     }
   },
   "module_classifications": "platform/module-classifications.json",
@@ -521,6 +527,7 @@
     "quorune/champion_state.py",
     "quorune/linked_ability_exile_model.py",
     "quorune/linked_ability_exile_state.py",
+    "quorune/linked_exile_activation_model.py",
     "quorune/ring_effects.py",
     "quorune/ring_triggers.py",
     "quorune/ring_delays.py",

@@ -165,6 +165,11 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.fact is FixedPublicStateFact.CONTROLLER_UNLOCKED_ROOM_DOORS:
+            from ..card_program_faces import controlled_unlocked_room_door_count
+
+            return (controlled_unlocked_room_door_count(self.state, source.controller, self._public_object)
+                    if source is not None else None)
         if condition.fact is FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM:
             from ..player_maximum import current_player_maximum
             from ..player_maximum_model import PlayerMaximumSpec
@@ -175,6 +180,12 @@ class _FixedPublicStateSnapshotResolver:
             from ..player_maximum_model import PlayerMaximumSpec
             try:return int(opponent_has_greater_metric(self.state,source.controller,PlayerMaximumSpec(condition.fact_parameter),public_object_resolver=self._public_object))
             except ValueError:return None
+        if condition.fact is FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM:
+            from ..player_maximum import maximum_opponent_creature_count
+
+            return maximum_opponent_creature_count(
+                self.state, source.controller, public_object_resolver=self._public_object,
+            ) if source is not None else None
         if condition.fact in GREATEST_CREATURE_POWER_FACTS:
             return self._greatest_creature_power_result(source, condition)
         if condition.aggregate is not None:
@@ -797,9 +808,15 @@ def _component_public_state_snapshot(
 ):
     """Keep early-layer settings separate from characteristic query conditions."""
     handler_id = descriptor.get('handler_id')
+    from ..semantic_runtime.attached_combat_strike import EQUIPPED_COMBAT_STRIKE_HANDLER
+    from ..semantic_runtime.attached_commander_protection import COMMANDER_COMPLEMENT_PROTECTION_HANDLER
+
+    if (handler_id in {EQUIPPED_COMBAT_STRIKE_HANDLER, COMMANDER_COMPLEMENT_PROTECTION_HANDLER}
+            and maximum_layer is not None and maximum_layer < Layer.ABILITY):
+        return True, None
     from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
-    from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
-    if handler_id in {QUANTIFIED_ANTHEM_HANDLER,SHARED_TYPE_ANTHEM_HANDLER} and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
+    from ..semantic_runtime.shared_type_anthems import SHARED_NAME_ANTHEM_HANDLER, SHARED_TYPE_ANTHEM_HANDLER
+    if handler_id in {QUANTIFIED_ANTHEM_HANDLER,SHARED_TYPE_ANTHEM_HANDLER,SHARED_NAME_ANTHEM_HANDLER} and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
         return True,None
     if handler_id == 'continuous.characteristics.conditional-creature-type-removal.v1':
         from ..semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
@@ -867,8 +884,12 @@ def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,ma
 
 def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
     from ..semantic_runtime.fixed_characteristic_settings import CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID
-    from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
+    from ..semantic_runtime.shared_type_anthems import SHARED_NAME_ANTHEM_HANDLER, SHARED_TYPE_ANTHEM_HANDLER
 
+    from ..semantic_runtime.attached_combat_strike import EQUIPPED_COMBAT_STRIKE_HANDLER, equipped_block_counterpart_facts
+
+    if descriptor.get("handler_id") == EQUIPPED_COMBAT_STRIKE_HANDLER:
+        return equipped_block_counterpart_facts(state, source, resolver._public_object)
     if descriptor.get("handler_id") == CONTROLLED_AURA_RECIPIENT_SETTING_HANDLER_ID:
         if resolver.public_object_resolver is None:
             raise SemanticNodeError("Controlled Aura settings need cycle-safe public attachment facts")
@@ -878,7 +899,7 @@ def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
             if identity is not None:
                 participants.update((card.object_id, identity.object_id))
         return tuple(resolver._public_object(state.cards[object_id]) for object_id in sorted(participants))
-    if descriptor.get('handler_id')!=SHARED_TYPE_ANTHEM_HANDLER:
+    if descriptor.get('handler_id') not in {SHARED_TYPE_ANTHEM_HANDLER, SHARED_NAME_ANTHEM_HANDLER}:
         return None
     if descriptor.get('relation')=='source_attached_to_object' and not getattr(source,'attached_to',None):
         return None
@@ -989,9 +1010,30 @@ def _continuous_component_source_context(
     public_state: Any, resolved_quantity: Any,
     public_state_resolver: _FixedPublicStateSnapshotResolver,
     linked_player: str | None,
+    source_commander_colors: tuple[str, ...] | None,
 ) -> ContinuousEffectSourceContext:
     """Prepare the typed current-source facts used by one registered component."""
+    from ..entry_designations import LINKED_COLOR_PROTECTION_HANDLER_ID
     from ..soulbond_model import SOULBOND_GRANT_HANDLER
+    linked_color = None
+    if descriptor.get("handler_id") == LINKED_COLOR_PROTECTION_HANDLER_ID:
+        from ..rules.chosen_color_target_shapes import current_linked_entry_color
+
+        linked_color = current_linked_entry_color(source, program_key=program.key)
+    from ..linked_exile_characteristic_model import HANDLER_ID
+
+    linked_characteristic_cards = ()
+    if descriptor.get("handler_id") == HANDLER_ID:
+        from ..rules.linked_exile_characteristics import characteristic_link_binding, face_up_characteristic_links
+
+        linked_characteristic_cards = face_up_characteristic_links(state, source, characteristic_link_binding(descriptor))
+    from ..linked_exile_activation_model import LINKED_EXILE_ACTIVATION_HANDLER, descriptor_binding
+
+    linked_ability_pair = None
+    if descriptor.get("handler_id") == LINKED_EXILE_ACTIVATION_HANDLER:
+        from ..rules.linked_exile_activations import source_pair
+
+        linked_ability_pair = source_pair(source, descriptor_binding(descriptor))
     paired_object = None
     if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:
         from ..soulbond_state import paired_object_identity
@@ -1021,6 +1063,10 @@ def _continuous_component_source_context(
         resolved_quantity=resolved_quantity,
         paired_object=paired_object,
         linked_player=linked_player,
+        linked_color=linked_color,
+        linked_characteristic_cards=linked_characteristic_cards,
+        linked_ability_pair=linked_ability_pair,
+        source_commander_colors=source_commander_colors,
         current_block_counterparts=_current_block_counterpart_identities(state, source, descriptor),
         counter_placement_recipients=_counter_placement_recipient_identities(state, source, descriptor),
         public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
@@ -1041,6 +1087,7 @@ def collect_card_program_continuous_effects(
     metrics: ContinuousEffectCollectionMetrics | None = None,
     maximum_layer: Layer | None = None,
     public_object_resolver: Callable[[Any], ObjectQueryResult] | None = None,
+    commander_identity_resolver: Callable[[str], set[str]] | None = None,
     quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int]
     | None = None,
     setting_quantity_resolver: Callable[[Any, CharacteristicQuantitySpec], int] | None = None,
@@ -1057,6 +1104,8 @@ def collect_card_program_continuous_effects(
     completed_layer_queries = characteristic_query_boundary_version(
         getattr(state, 'characteristic_query_boundary_version', None)
     ) is not None
+    from ..semantic_runtime.attached_commander_protection import COMMANDER_COMPLEMENT_PROTECTION_HANDLER
+
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
         str(row["handler_id"]) for row in registry.inventory()
@@ -1128,11 +1177,15 @@ def collect_card_program_continuous_effects(
                         continue
                     resolved_quantity = _descriptor_characteristic_quantity(source,descriptor,
                         quantity_resolver=quantity_resolver,maximum_layer=maximum_layer)
+                    commander_colors = (tuple(sorted(commander_identity_resolver(source.controller)))
+                        if descriptor.get('handler_id') == COMMANDER_COMPLEMENT_PROTECTION_HANDLER
+                        and commander_identity_resolver is not None and getattr(source, 'attached_to', None) else None)
                     context = _continuous_component_source_context(state,source,program,descriptor,
                         descriptor_index=descriptor_index,grant_timestamp=grant_timestamp,occurrence=occurrence,
                         public_state=public_state,resolved_quantity=resolved_quantity,
                         public_state_resolver=public_state_resolver,
-                        linked_player=_linked_protection_player(semantics, program_is_trusted, source, descriptor))
+                        linked_player=_linked_protection_player(semantics, program_is_trusted, source, descriptor),
+                        source_commander_colors=commander_colors)
                     lowered = registry.lower(descriptor, context)
                     if maximum_layer is not None:
                         lowered = tuple(

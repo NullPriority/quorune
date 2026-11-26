@@ -1,11 +1,17 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol, Sequence
 
 from ..cast_timing import type_line_has_card_type
+from ..rules.faction_trigger_model import (
+    CountFactionDraw, FACTION_DRAW_OBSERVER_FIELD, FACTION_DRAW_RECEIPT_FIELD,
+)
 from ..model import CardInstance, GameState
+from ..next_draw_replacement_model import ResolvedNextDrawReplacement
 from ..player_result_events import CardDrawEvent, dispatch_card_draw_event
+from ..turn_history_model import DRAWN_HAND_CARD_EVENT
 from ..zone_trigger_events import ZoneTransitionKind
 from .captured_hand import CaptureDrawnHandCard
 from .model import (
@@ -34,6 +40,8 @@ class DrawCommitHost(Protocol):
     def apnap_order(self) -> list[str]: ...
 
     def card_record(self, card: CardInstance) -> Any: ...
+
+    def _record_turn_history(self, kind: str, **facts: Any) -> None: ...
 
     def _type_parts(
         self, type_line: str
@@ -74,6 +82,7 @@ class DrawCommitResult:
     drawn_object_id: str | None = None
     result_draws: tuple[QueuedDraw, ...] = ()
     discard_followup: QueuedDraw | None = None
+    scheduled_result: ResolvedNextDrawReplacement | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in {
@@ -83,6 +92,7 @@ class DrawCommitResult:
             "prohibited",
             "result_draws",
             "discard_or_mill",
+            "scheduled_result",
             _DREDGE_KIND,
         }:
             raise DrawError(f"Unsupported committed draw result {self.kind!r}")
@@ -106,6 +116,11 @@ class DrawCommitResult:
                 raise DrawError("A result-draw outcome requires queued draws")
         elif self.result_draws:
             raise DrawError("Only a result-draw outcome carries queued draws")
+        if self.kind == "scheduled_result":
+            if not isinstance(self.scheduled_result, ResolvedNextDrawReplacement) or self.scheduled_result.controller != self.player:
+                raise DrawError("The draw replacement outcome requires its exact consumed grant")
+        elif self.scheduled_result is not None:
+            raise DrawError("Only a scheduled draw outcome may carry a consumed grant")
         if self.kind == "discard_or_mill":
             if (
                 not isinstance(self.discard_followup, QueuedDraw)
@@ -126,6 +141,52 @@ def _require_current_request(
         raise DrawError("Draw player is no longer present")
     if len(host.state.players[request.player].zones[_LIBRARY_ZONE]) != request.library_size:
         raise DrawError("Draw library size changed before commit")
+
+
+def begin_faction_draw(item):
+    observer = CountFactionDraw(item.ref, item.controller)
+    if FACTION_DRAW_RECEIPT_FIELD in item.context:
+        raise ValueError("The resolving faction draw was already started")
+    item.context[FACTION_DRAW_RECEIPT_FIELD] = {
+        **observer.to_dict(), "schema_version": 1, "count": 0,
+    }
+    return {
+        "op": "draw_each_player", "scope": "controller_opponents", "count": 1,
+        "private": True, FACTION_DRAW_OBSERVER_FIELD: observer.to_dict(),
+    }
+
+
+def _receipt_count(item, observer):
+    receipt = item.context.get(FACTION_DRAW_RECEIPT_FIELD)
+    identity = {**observer.to_dict(), "schema_version": 1}
+    if (
+        not isinstance(receipt, Mapping) or set(receipt) != {*identity, "count"}
+        or type(receipt["schema_version"]) is not int
+        or any(receipt[key] != value for key, value in identity.items())
+        or type(receipt["count"]) is not int or receipt["count"] < 0
+        or item.ref != observer.stack_ref or item.controller != observer.controller
+        or item.kind != "triggered_ability" or item.context.get("currently_resolving") is not True
+    ):
+        raise ValueError("The faction draw receipt does not match its resolving instruction")
+    return receipt["count"]
+
+
+def record_faction_draw(state, observer):
+    item = next((item for item in state.stack if item.ref == observer.stack_ref), None)
+    if item is None:
+        raise ValueError("The originating faction draw no longer exists")
+    count = _receipt_count(item, observer)
+    item.context[FACTION_DRAW_RECEIPT_FIELD] = {
+        **item.context[FACTION_DRAW_RECEIPT_FIELD], "count": count + 1,
+    }
+
+
+def faction_draw_reward(item):
+    count = _receipt_count(item, CountFactionDraw(item.ref, item.controller))
+    del item.context[FACTION_DRAW_RECEIPT_FIELD]
+    if count == 0:
+        return None
+    return {"op": "draw", "player": item.controller, "count": count, "private": True}
 
 
 def _record_draw(
@@ -155,6 +216,10 @@ def _record_draw(
     if in_own_draw_step:
         draw_step_tracker[turn_key] = before_draw_step_count + 1
         host.state.record_additional_beginning_draw()
+    if getattr(getattr(host.state, "turn_history", None), "draw_identity_history_version", None) == 1:
+        host._record_turn_history(
+            DRAWN_HAND_CARD_EVENT, actor=resolution.player, object_incarnation=card.logical_object_id,
+        )
     player.draw_history.append(
         {
             "turn_sequence": host.state.turn_sequence,
@@ -283,6 +348,12 @@ def _apply_drawn_card_actions(
     if resolution is None:
         raise DrawError("A pending draw has no post-draw actions")
     for action in resolution.post_draw_actions:
+        if isinstance(action, CountFactionDraw):
+            try:
+                record_faction_draw(host.state, action)
+            except ValueError as exc:
+                raise DrawError(str(exc)) from exc
+            continue
         current = host.state.cards.get(object_id)
         if current is None or current.zone != "hand":
             raise DrawError(
@@ -341,6 +412,14 @@ def _apply_drawn_card_actions(
             )
             continue
         raise DrawError("Unsupported drawn-card post-action")
+
+
+def consume_prevented_empty_draws(state, seats: Sequence[str]) -> None:
+    """Expire attempts already examined at a state-based loss check."""
+    for seat in seats:
+        player = state.players[seat]
+        if player.attempted_empty_draw:
+            player.attempted_empty_draw = False
 
 
 def _commit_ordinary_draw(
@@ -548,6 +627,21 @@ def commit_prepared_draw_result(
             player=resolution.player,
             result_draws=resolution.result_draws,
         )
+    if resolution.kind == "scheduled_result":
+        from .scheduled_draw_coordination import SCHEDULED_DRAW_EVENT
+        from .scheduled_draw_results import consume_scheduled_draw_result
+
+        grant = consume_scheduled_draw_result(host.state, prepared, apnap_order=host.apnap_order())
+        host._log(
+            resolution.player, SCHEDULED_DRAW_EVENT,
+            "A scheduled result replaced this draw.",
+            {
+                "player": resolution.player, "grant": grant.effect_id, "source": grant.source_ref,
+                "grant_fingerprint": grant.fingerprint,
+            },
+            importance=1, changed_players=[resolution.player],
+        )
+        return DrawCommitResult(kind="scheduled_result", player=resolution.player, scheduled_result=grant)
     if resolution.kind == "discard_or_mill":
         return DrawCommitResult(
             kind="discard_or_mill",

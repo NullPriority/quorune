@@ -19,6 +19,23 @@ _OTHER_CONTROLLED_CREATURES = re.compile(
 
 _FIXED_KEYWORD_GRANT = re.compile(r"gains (?P<keyword>[a-z ]+) until end of turn\.", re.I)
 
+_ATTACKING_OPPONENT_GOLD = re.compile(
+    r"create a Gold token\. Each opponent attacking that player does the same\.", re.IGNORECASE,
+)
+
+
+def attached_player_attack_token_body_is_closed(body):
+    return _ATTACKING_OPPONENT_GOLD.fullmatch(body) is not None
+
+
+def attached_player_attack_token_result(binding, body):
+    from ..attack_batch_model import ATTACHED_PLAYER_ATTACK_VARIANT
+    from ..rules.attack_batches import attacking_opponent_token_effects
+
+    if binding.variant != ATTACHED_PLAYER_ATTACK_VARIANT or not attached_player_attack_token_body_is_closed(body):
+        return None
+    return "attached-player-attack-token-v1", attacking_opponent_token_effects(), None, ("cr-111-tokens",)
+
 
 def _seal_attack_relative_amounts(effect):
     sealed = False

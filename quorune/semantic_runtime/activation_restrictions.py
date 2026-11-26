@@ -13,9 +13,12 @@ from ..ability_fragments import (
 from ..abilities import ActivatedAbility
 from ..attachments import attached_player_seat
 from ..card_program_faces import program_matches_face
+from ..continuous_effect_model import ContinuousObjectIdentity
+from ..declaration_rule_effects import ResolvedActivationProhibition
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..rules.capabilities import load_default_capability_registry
+from .boast_allowance import BoastAllowanceHandler
 from ..static_player_restriction_model import StaticPlayerRestrictionSpec, StaticPlayerRestrictionKind
 from ..untap_step import (
     UntapInstruction,
@@ -374,6 +377,7 @@ def default_activation_restriction_registry() -> ActivationRestrictionRegistry:
         (
             ChosenNameNonmanaProhibitionHandler(),
             FixedPublicActivationProhibitionHandler(),
+            BoastAllowanceHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -414,9 +418,20 @@ def _resolved_activation_prohibitions(state, source, candidate_name) -> list[Act
 
     if not getattr(state, "continuous_effects", None):
         return []
-    return [ActivationProhibition(effect.source_id, str(candidate_name),
-                                  "resolution.declaration-rule.activation-prohibition.v4", "resolved_activation_prohibition")
-            for effect in active_resolution_declaration_rule_effects(state, source) if effect.forbid_activations]
+    restrictions = [
+        ActivationProhibition(effect.source_id, str(candidate_name),
+                              "resolution.declaration-rule.activation-prohibition.v4", "resolved_activation_prohibition")
+        for effect in active_resolution_declaration_rule_effects(state, source) if effect.forbid_activations
+    ]
+    if source.zone == "battlefield" and not source.phased_out:
+        identity = ContinuousObjectIdentity(source.object_id, source.logical_object_id)
+        restrictions.extend(
+            ActivationProhibition(effect.source_id, str(candidate_name),
+                                  "resolution.original-permanent.activation-prohibition.v1", "resolved_activation_prohibition")
+            for effect in state.continuous_effects
+            if isinstance(effect, ResolvedActivationProhibition) and effect.subject == identity
+        )
+    return restrictions
 
 
 def current_activation_prohibitions(

@@ -316,11 +316,43 @@ p { line-height: 1.65; }
 .player-board.active-player { border-width: 2px; border-color: #77907d; }
 .player-board.has-priority { outline: 2px dashed #a6ed72; outline-offset: -5px; box-shadow: 0 0 24px rgb(108 168 77 / 12%); }
 .player-board.own-board { background: linear-gradient(145deg, rgb(22 36 27 / 98%), rgb(14 23 17 / 96%)); }
-.player-board > header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: .65rem; margin-bottom: .55rem; }
+.player-board > header { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: .65rem; margin-bottom: .55rem; }
 .player-board header small { display: block; margin-top: .15rem; color: var(--muted); font-size: .68rem; }
-.commander-damage { display: flex; justify-content: space-between; gap: .55rem; margin: -.15rem 0 .55rem; padding: .32rem .45rem; border: 1px solid #684d36; border-radius: var(--radius-sm); color: #ffd7ad; background: #2d1d12; font-size: .66rem; }
-.commander-damage span { color: #c99b70; text-transform: uppercase; letter-spacing: .05em; }
-.player-name { display: flex; align-items: center; gap: .45rem; }
+.commander-damage { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .2rem; min-width: 0; }
+.commander-damage-chip {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 1.24rem;
+  padding: .12rem .25rem;
+  border: 1px solid color-mix(in srgb, currentColor 56%, transparent);
+  border-radius: 5px;
+  color: #e0c5ad;
+  background: color-mix(in srgb, currentColor 14%, #101813);
+  font: 600 .65rem/1.1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  cursor: help;
+}
+.commander-damage-chip[data-seat-accent] { color: var(--seat-color, #e0c5ad); }
+.commander-damage-chip:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.commander-damage-tooltip {
+  position: absolute;
+  z-index: 8;
+  inset-inline-start: 0;
+  inset-block-start: calc(100% + .22rem);
+  width: max-content;
+  max-width: min(19rem, 100%);
+  padding: .32rem .46rem;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  background: #101813;
+  font: 600 .68rem/1.25 system-ui, sans-serif;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  visibility: hidden;
+}
+.commander-damage-chip:is(:hover, :focus-visible) .commander-damage-tooltip { visibility: visible; }
+.player-name { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .45rem; }
 .you-chip { padding: .15rem .35rem; border-radius: 99px; color: var(--accent); background: rgb(166 237 114 / 10%); font: 600 .52rem var(--mono); text-transform: uppercase; }
 .life { display: grid; text-align: right; }
 .life span { color: #dff8d7; font: 600 1.65rem/1 var(--mono); }
@@ -734,10 +766,10 @@ p { line-height: 1.65; }
   }
 }
 .game-shell.spectator-table { padding-bottom: .55rem; }
-:where([data-seat="A"]) { --seat-color: #9fe6b8; }
-:where([data-seat="B"]) { --seat-color: #acc9ff; }
-:where([data-seat="C"]) { --seat-color: #ffd492; }
-:where([data-seat="D"]) { --seat-color: #f3a9e1; }
+:where([data-seat="A"], [data-seat-accent="A"]) { --seat-color: #9fe6b8; }
+:where([data-seat="B"], [data-seat-accent="B"]) { --seat-color: #acc9ff; }
+:where([data-seat="C"], [data-seat-accent="C"]) { --seat-color: #ffd492; }
+:where([data-seat="D"], [data-seat-accent="D"]) { --seat-color: #f3a9e1; }
 .seat-label {
   width: fit-content;
   display: inline-flex;
@@ -808,9 +840,10 @@ p { line-height: 1.65; }
   grid-template-rows: minmax(0, 1fr) auto auto;
 }
 .player-board > header { grid-area: header; margin: 0; gap: .35rem; }
+.boards-grid:not(.watching) .commander-damage-tooltip { inset-block: auto calc(100% + .22rem); }
 .player-board .seat-letter.small { width: 25px; height: 25px; font-size: .74rem; }
 .player-board[data-seat] .seat-letter { border-color: var(--seat-color); color: var(--seat-color); background: #17221c; }
-.player-board[data-seat] .player-name strong, .player-board[data-seat] .life span { color: var(--seat-color); }
+.player-board[data-seat] .player-name > strong, .player-board[data-seat] .life span { color: var(--seat-color); }
 .player-board.has-priority[data-seat] { outline-color: var(--seat-color); }
 .player-board .player-name { flex-wrap: wrap; gap: .25rem .4rem; }
 .player-board .player-name small { margin: 0; }
@@ -1272,6 +1305,7 @@ p { line-height: 1.65; }
     grid-template-areas: "header header" "command battlefield" "zones zones";
     grid-template-rows: auto minmax(0, 1fr) auto;
   }
+  .boards-grid:not(.watching) .commander-damage-tooltip { inset-block: calc(100% + .22rem) auto; }
 }
 @media (max-width: 630px) {
   .game-shell .table-workspace.has-stack-rail { grid-template-columns: 1fr; grid-template-rows: minmax(0, 1fr) auto; }

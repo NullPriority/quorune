@@ -12,6 +12,8 @@ PLAYER_LOSS_CAPABILITY = 'game.loss.effect'
 CAST_TRIGGER_SACRIFICE_COUNTER_CAPABILITY = "resolution.effect.cast_trigger_source_sacrifice_counter"
 CAST_EVENT_COUNTER_BIRDS_CAPABILITY = "resolution.effect.cast_event_counter_mana_value_birds"
 OPPONENT_LIFE_LOSS_MECHANIC = "opponent-life-loss-result"
+CONTROLLER_LIFE_LOSS_DRAW_MECHANIC = "controller-life-loss-draw"
+CONTROLLER_LIFE_LOSS_DRAW_VARIANT = "controller_life_loss_draw"
 _COUNTER = {'op':'counter_stack_target','stack':'$context.stack'}
 _LOSS = {'op':'lose_game','player':'$context.target'}
 
@@ -22,6 +24,40 @@ _OPPONENT_CAST = {"field": "controller", "op": "ne", "value": "$source.controlle
 
 def opponent_life_loss_condition():
     return {"field": "player", "op": "ne", "value": "$source.controller"}
+
+
+def controller_life_loss_draw_condition():
+    return {"field": "player", "op": "eq", "value": "$source.controller"}
+
+
+def controller_life_loss_draw_effect():
+    from ..scalar_effect_amount_model import ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    return {
+        "op": "draw", "player": "$controller", "private": True,
+        "count": ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT).to_dict(),
+    }
+
+
+def controller_life_loss_draw_node_capabilities(*, effects, target_schema):
+    from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY
+
+    if (target_schema is not None or len(effects) != 1 or not isinstance(effects[0], Mapping)
+            or effects[0].get("op") != "draw" or not isinstance(effects[0].get("count"), Mapping)
+            or FrozenMap(effects[0]) != FrozenMap(controller_life_loss_draw_effect())
+            or effects[0].get("private") is not True):
+        return ()
+    return (LIFE_LOSS_CAPABILITY, SCALAR_AMOUNT_CAPABILITY, "trigger.effect.fixed_event",
+            "trigger.placement.apnap", "zone.draw.library_to_hand")
+
+
+def _controller_life_loss_draw_program_dependencies(program, required):
+    if (not required or (program.event, program.active_zone) != (LIFE_LOSS_EVENT, "battlefield")
+            or program.cost_schema is not None or program.handlers
+            or "one_or_more_event_batch" in program.coverage
+            or program.event_condition != controller_life_loss_draw_condition()):
+        raise ValueError("Controller life loss requires its exact distinct occurrence and private committed-amount draw")
+    return required
 
 
 def opponent_life_loss_effect(*, mill):
@@ -261,14 +297,37 @@ def event_outcome_node_capabilities(*, effects, target_schema, mechanic_ids):
 
 
 def event_outcome_runtime_dependencies(program):
+    from .faction_trigger_shapes import faction_trigger_runtime_dependencies
+    from .paid_artifact_library_search import paid_artifact_search_runtime_dependencies
+
+    if dependencies := paid_artifact_search_runtime_dependencies(program):
+        return dependencies
+    if dependencies := faction_trigger_runtime_dependencies(program):
+        return dependencies
+    from .bargain_search import bargain_search_program_dependencies
+
+    if dependencies := bargain_search_program_dependencies(program):
+        return dependencies
     from .extra_turn_shapes import (
         fixed_extra_turn_end_step_loss_runtime_dependencies, opponent_color_extra_turn_runtime_dependencies,
     )
     from .library_search_capability_shapes import (
+        creature_subset_mana_value_search_runtime_dependencies,
+        creature_stat_library_search_runtime_dependencies,
         literal_name_any_number_runtime_dependencies, recruiting_library_search_runtime_dependencies,
-        target_name_library_search_runtime_dependencies,
+        target_name_library_search_runtime_dependencies, target_player_basic_land_search_runtime_dependencies,
     )
 
+    from .exiled_target_search_shapes import exiled_target_search_runtime_dependencies
+
+    if dependencies := target_player_basic_land_search_runtime_dependencies(program):
+        return dependencies
+    if dependencies := creature_subset_mana_value_search_runtime_dependencies(program):
+        return dependencies
+    if dependencies := creature_stat_library_search_runtime_dependencies(program):
+        return dependencies
+    if dependencies := exiled_target_search_runtime_dependencies(program):
+        return dependencies
     if dependencies := recruiting_library_search_runtime_dependencies(program):
         return dependencies
     if dependencies := literal_name_any_number_runtime_dependencies(program):
@@ -279,6 +338,12 @@ def event_outcome_runtime_dependencies(program):
         return dependencies
     if dependencies := fixed_extra_turn_end_step_loss_runtime_dependencies(program):
         return dependencies
+    controller_draw = controller_life_loss_draw_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema,
+    )
+    if (CONTROLLER_LIFE_LOSS_DRAW_MECHANIC in program.coverage
+            or (program.event == LIFE_LOSS_EVENT and controller_draw)):
+        return _controller_life_loss_draw_program_dependencies(program, controller_draw)
     if (program.event == LIFE_LOSS_EVENT or LIFE_LOSS_CAPABILITY in program.capability_dependencies
             or OPPONENT_LIFE_LOSS_MECHANIC in program.coverage):
         return _opponent_life_loss_program_dependencies(program)
@@ -286,6 +351,10 @@ def event_outcome_runtime_dependencies(program):
         return _cast_trigger_sacrifice_counter_program_dependencies(program)
     if _requires_cast_event_counter_birds(program):
         return _cast_event_counter_birds_program_dependencies(program)
+    from .shared_type_library import mandatory_shared_type_cast_program_dependencies
+
+    if required := mandatory_shared_type_cast_program_dependencies(program):
+        return required
     from .event_counter_threshold import source_depletion_counter_program_dependencies
 
     if required := source_depletion_counter_program_dependencies(program):
@@ -314,6 +383,7 @@ def event_outcome_runtime_dependencies(program):
 
 
 def event_outcome_program_is_closed(program):
+    from .faction_trigger_model import FACTION_DRAW_CAPABILITY
     from .event_counter_threshold import SOURCE_DEPLETION_THRESHOLD_CAPABILITY
 
     try: required = event_outcome_runtime_dependencies(program)
@@ -323,6 +393,7 @@ def event_outcome_program_is_closed(program):
         and (len(program.effects) == 1
              or CAST_TRIGGER_SACRIFICE_COUNTER_CAPABILITY in required
              or CAST_EVENT_COUNTER_BIRDS_CAPABILITY in required
-             or SOURCE_DEPLETION_THRESHOLD_CAPABILITY in required)
+             or SOURCE_DEPLETION_THRESHOLD_CAPABILITY in required
+             or FACTION_DRAW_CAPABILITY in required)
         and set(required).issubset(program.capability_dependencies)
     )

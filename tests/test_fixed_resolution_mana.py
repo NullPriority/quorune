@@ -53,6 +53,43 @@ class FixedResolutionManaCompilerTests(unittest.TestCase):
         self.assertFalse(mana_restriction_allows(restriction,ability_mana_spend_context('Artifact')))
 
 
+    def test_noncast_mana_rider_has_exact_authority_and_spend_context(self):
+        from quorune.mana_restrictions import (
+            ability_mana_spend_context, mana_restriction_allows, spell_mana_spend_context,
+        )
+        from quorune.mana_spend_rules import (
+            ManaSpendRule, NONCAST_MANA_PAYMENT_CAPABILITY, NONCAST_MANA_PAYMENT_RESTRICTION,
+        )
+
+        text = "Add {C}{C}. This mana can't be spent to cast spells."
+        card = replace(query_record(text), type_line="Instant")
+        data = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(NONCAST_MANA_PAYMENT_CAPABILITY, node.capability_dependencies)
+        self.assertEqual(NONCAST_MANA_PAYMENT_RESTRICTION, node.effects[0]["spend_restriction"])
+        self.assertTrue(mana_restriction_allows(NONCAST_MANA_PAYMENT_RESTRICTION, None))
+        self.assertTrue(mana_restriction_allows(NONCAST_MANA_PAYMENT_RESTRICTION, ability_mana_spend_context("Artifact")))
+
+        def assert_no_cast_payment():
+            for type_line in ("Instant", "Creature", "Artifact", "Enchantment — Room"):
+                self.assertFalse(mana_restriction_allows(NONCAST_MANA_PAYMENT_RESTRICTION, spell_mana_spend_context(type_line)))
+
+        assert_no_cast_payment()
+        with patch.object(ManaSpendRule, "allows", return_value=True):
+            with self.assertRaises(AssertionError):
+                assert_no_cast_payment()
+        row = next(row for row in data["capabilities"] if row["id"] == NONCAST_MANA_PAYMENT_CAPABILITY)
+        row.update(status="blocked", blockers=["non-cast payment authority removed"])
+        missing = CapabilityRegistry(data)
+        missing.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=missing, capability_profile="commander_review").status)
+        malformed = replace(card, oracle_text=text.replace("cast spells", "cast creature spells"))
+        self.assertNotEqual("exact", compile_oracle_card(malformed, capability_registry=registry).status)
+
+
 class FixedResolutionManaRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -110,6 +147,71 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
                 self.assertEqual(supported,binding['compatible_ready'])
                 if supported:self.assertEqual('exact',ir.status,ir.material_residuals)
                 else:self.assertIn('trust_basis:unresolved', binding['blockers'])
+
+    def test_thran_turbine_upkeep_offer_pays_an_ability_and_never_a_spell(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from quorune.mana_provenance import restricted_mana
+        from quorune.mana_spend_rules import NONCAST_MANA_PAYMENT_RESTRICTION
+
+        for apply in (False, True):
+            with self.subTest(apply=apply):
+                session = self.session(328030 + apply)
+                engine = session.engine
+                source = self.add(engine, "Thran Turbine")
+                ball = self.add(engine, "Crystal Ball")
+                spell = self.add(engine, "Spatial Contortion", zone="hand")
+                self.add(engine, "Generic Bound Body", seat="B")
+                private = self.add(engine, "Dark Ritual", seat="C", zone="hand", ref="private-c-turbine")
+                original = self.db.lookup("Thran Turbine", fuzzy=False)
+                program = compile_best_available_card_program(self.db, original, semantic_registry=engine.semantics,
+                    capability_registry=self.registry, capability_profile="commander_review")
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+
+                engine.state.active_player = "A"
+                engine.state.phase, engine.state.step = "beginning", "upkeep"
+                engine.state.phase_index = TURN_STEPS.index(("beginning", "upkeep"))
+                engine._enter_step()
+                engine._grant_priority("A")
+                engine.pump()
+                self.assertEqual(1, len(session.state.stack))
+                self.assertEqual("triggered_ability", session.state.stack[-1].kind)
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+                self.checkpoint(session)
+                self.assertEqual("semantic.choice", witnesses.BoundEffectProgramRuntimeTests.resolve(self, session).kind)
+                packet = session.packet("pilot:A", full=True)["decision"]
+                self.assertEqual("offer_optional_effect", packet["ctx"]["operation"])
+                for seat in "BCD":
+                    projected = session.packet("pilot:" + seat, full=True)
+                    self.assertIsNone(projected.get("decision"))
+                    if seat != "C":
+                        self.assertNotIn(private.ref, str(projected))
+                answer = {"action_id": "choose", "choice": "apply" if apply else "decline"}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:B", answer).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                outcome = session.act("pilot:A", answer)
+                self.assertTrue(outcome.ok, outcome.summary)
+                player = session.state.players["A"]
+                self.assertEqual(2 if apply else 0, player.mana_pool.get("C", 0))
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                self.assertFalse(any(action.get("card") == spell.ref for action in actions))
+                activation = next((action for action in actions if action["id"].startswith("activate:" + ball.ref + ":")), None)
+                if apply:
+                    self.assertEqual(2, restricted_mana(player)[NONCAST_MANA_PAYMENT_RESTRICTION]["C"])
+                    self.assertIsNotNone(activation)
+                    spent = session.act("pilot:A", {"action_id": activation["id"], "pay": "auto"})
+                    self.assertTrue(spent.ok, spent.summary)
+                    self.assertEqual(1, session.state.players["A"].mana_pool.get("C", 0))
+                    self.assertTrue(session.state.cards[ball.object_id].tapped)
+                    self.assertFalse(session.state.cards[source.object_id].tapped)
+                    self.assertEqual("activated_ability", session.state.stack[-1].kind)
+                else:
+                    self.assertIsNone(activation)
+                self.replay(session, load=True)
 
     def test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays(self):
         s=self.session(328001);e=s.engine;source=self.add(e,'Dark Ritual',zone='hand')

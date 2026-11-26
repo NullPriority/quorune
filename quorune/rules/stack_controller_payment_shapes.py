@@ -60,6 +60,22 @@ def source_opponent_target_announcement_condition_is_closed(condition: Any) -> b
     ]}
 
 
+def controlled_sliver_opponent_target_announcement_condition() -> dict[str, Any]:
+    return {"all": [
+        {"field": "controller", "op": "eq", "value": "$source.controller"},
+        {"field": "types", "op": "contains_any", "value": ["creature"]},
+        {"field": "subtypes", "op": "contains_any", "value": ["sliver"]},
+        {"field": "stack_controller", "op": "ne", "value": "$source.controller"},
+    ]}
+
+
+def target_announcement_payment_condition_is_closed(condition: Any) -> bool:
+    return (
+        source_opponent_target_announcement_condition_is_closed(condition)
+        or thaw_value(condition) == controlled_sliver_opponent_target_announcement_condition()
+    )
+
+
 def stack_controller_payment_node_capabilities(
     *, effects: Sequence[Mapping[str, Any]], target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
@@ -127,8 +143,8 @@ def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]
         from .target_announcements import TARGET_ANNOUNCEMENT_EVENT
 
         if ((program.event, program.active_zone) != (TARGET_ANNOUNCEMENT_EVENT, "battlefield")
-                or not source_opponent_target_announcement_condition_is_closed(program.event_condition)):
-            raise ValueError("Target announcement payment requires its exact source and opponent occurrence")
+                or not target_announcement_payment_condition_is_closed(program.event_condition)):
+            raise ValueError("Target announcement payment requires an exact opponent target occurrence scope")
         owned = stack_controller_payment_node_capabilities(
             effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
         )

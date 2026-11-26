@@ -160,6 +160,7 @@ class CharacteristicEvaluationHostMixin:
                 views.append(battlefield_type_dependency_view(
                     member, data, runtime_effects=(*local, *shared),
                     ignore_face_down=(member is card and ignore_face_down),
+                    linked_exile_resolver=self._resolve_linked_exile_characteristics,
                     dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
                 ))
             return battlefield_type_effect_order(views)
@@ -200,10 +201,12 @@ class CharacteristicEvaluationHostMixin:
             )
             else None
         )
+        from .continuous_type_dependencies import uses_live_type_dependencies
+
         type_order = (
             self._type_effect_order_for_recipients(card,base,runtime_effects,ignore_face_down=ignore_face_down)
             if card.zone == "battlefield" and (maximum_layer is None or maximum_layer >= Layer.TYPE)
-            and any(effect.recipient_scope_anchor is not None for effect in runtime_effects)
+            and any(uses_live_type_dependencies(effect) for effect in runtime_effects)
             else None
         )
         return separate_custom_display_text(
@@ -220,9 +223,15 @@ class CharacteristicEvaluationHostMixin:
                 modified=modified,
                 active_player=self.state.active_player,
                 type_order=type_order,
+                linked_exile_resolver=self._resolve_linked_exile_characteristics,
                 dependency_order_version=getattr(self.state, 'continuous_dependency_order_version', None),
             ),
         )
+
+    def _resolve_linked_exile_characteristics(self, value, *, statistics):
+        from .rules.linked_exile_characteristics import resolve_linked_exile_characteristics
+
+        return resolve_linked_exile_characteristics(self, value, statistics=statistics)
 
     def _attachment_public_state(
         self,
@@ -279,6 +288,7 @@ class CharacteristicEvaluationHostMixin:
         _maximum_layer: Layer | None = Layer.COLOR,
     ) -> ObjectQueryResult:
         """Project public facts; default to the cycle-safe layer-5 boundary."""
+        from .carddb_characteristics import public_object_rules_names
 
         effective = self._effective_card_data(
             card,
@@ -314,6 +324,7 @@ class CharacteristicEvaluationHostMixin:
             enchanted=enchanted,
             equipped=equipped,
             modified=modified,
+            public_rules_names=public_object_rules_names(card, effective),
         )
 
     @staticmethod
@@ -482,6 +493,7 @@ class CharacteristicEvaluationHostMixin:
         def collect(presence_only,sources):
             return collect_card_program_continuous_effects(self.state,self.semantics,self.semantic_program_is_current_trusted,
                 maximum_layer=Layer.ABILITY,static_component_presence_only=presence_only,
+                commander_identity_resolver=self._commander_identity,
                 public_object_resolver=partial(self._public_object_query_result,_enforce_static_component_applicability=False),
                 quantity_resolver=partial(query_characteristic_count,self,_enforce_static_component_applicability=False),
                 copied_static_source_resolver=self._copied_static_source_fragments,
@@ -733,6 +745,7 @@ class CharacteristicEvaluationHostMixin:
                     self.semantics,
                     self.semantic_program_is_current_trusted,
                     maximum_layer=maximum_layer,
+                    commander_identity_resolver=self._commander_identity,
                     public_object_resolver=(
                         partial(
                             self._public_object_query_result,
@@ -798,14 +811,11 @@ class CharacteristicEvaluationHostMixin:
                     *stack_cascade_grant_effects(self, card))
         if card.zone != "battlefield":
             from .rules.cross_zone_characteristics import cross_zone_type_effects_for_card
+            from .semantic_runtime.continuous_registry import off_battlefield_activation_grant_effects
 
             runtime_effects = (*runtime_effects, *cross_zone_type_effects_for_card(self, card, maximum_layer=maximum_layer))
-        if card.zone == "graveyard" and _enforce_static_component_applicability:
-            from .semantic_runtime.graveyard_unearth_grants import graveyard_unearth_effects_for_card
-
-            runtime_effects = (*runtime_effects, *graveyard_unearth_effects_for_card(
-                self, card, maximum_layer=maximum_layer,
-            ))
+            if _enforce_static_component_applicability:
+                runtime_effects += off_battlefield_activation_grant_effects(self, card, maximum_layer=maximum_layer)
         enchanted, equipped, modified = (
             self._attachment_public_state(
                 card,

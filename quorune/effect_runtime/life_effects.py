@@ -62,6 +62,7 @@ def prepare_life_effect_changes(
     effect: Mapping[str, Any],
     actor: str,
     reason: str,
+    event_prefix: str | None = None,
 ) -> PreparedLifeChangeBatch:
     source = effect.get("source")
     source_ref = str(source) if source is not None else None
@@ -78,15 +79,14 @@ def prepare_life_effect_changes(
         raise GameRuleError(
             "Life-change replacement selections must be a sequence"
         )
+    if event_prefix is None:
+        event_prefix = f"life.effect:{host.state.revision}:{host.state.event_sequence + 1}"
     try:
         prepared = prepare_life_change_batch(
             host,
             tuple(
                 LifeChangeRequest(
-                    event_id=(
-                        f"life.effect:{host.state.revision}:"
-                        f"{host.state.event_sequence + 1}:{index}"
-                    ),
+                    event_id=f"{event_prefix}:{index}",
                     player=change.player,
                     amount=change.amount,
                     source=source_ref,
@@ -99,10 +99,7 @@ def prepare_life_effect_changes(
             gain_permissions=collect_life_gain_permissions(host),
             selections=selections,
             require_all_selections=False,
-            batch_id=(
-                f"replacement:life.effect:{host.state.revision}:"
-                f"{host.state.event_sequence + 1}"
-            ),
+            batch_id=f"replacement:{event_prefix}",
         )
     except LifeChangeError as exc:
         raise GameRuleError(str(exc)) from exc
@@ -121,10 +118,13 @@ def prepare_life_effect_changes(
 
 
 def commit_prepared_life_effect_changes(
-    host: LifeEffectHost, prepared: PreparedLifeChangeBatch,
+    host: LifeEffectHost, prepared: PreparedLifeChangeBatch, *, radiation_counter_plan=None,
 ) -> PreparedLifeChangeBatch:
     try:
-        commit_life_change_batch(host, prepared)
+        if radiation_counter_plan is None:
+            commit_life_change_batch(host, prepared)
+        else:
+            commit_life_change_batch(host, prepared, radiation_counter_plan=radiation_counter_plan)
     except LifeChangeError as exc:
         raise GameRuleError(str(exc)) from exc
     dispatch_life_gain_records(host, prepared.records)
@@ -138,10 +138,15 @@ def _commit(
     effect: Mapping[str, Any],
     actor: str,
     reason: str,
+    event_prefix: str | None = None,
+    radiation_counter_plan=None,
 ) -> PreparedLifeChangeBatch:
-    return commit_prepared_life_effect_changes(host, prepare_life_effect_changes(
-        host, changes, effect=effect, actor=actor, reason=reason,
-    ))
+    prepared = prepare_life_effect_changes(
+        host, changes, effect=effect, actor=actor, reason=reason, event_prefix=event_prefix,
+    )
+    if radiation_counter_plan is None:
+        return commit_prepared_life_effect_changes(host, prepared)
+    return commit_prepared_life_effect_changes(host, prepared, radiation_counter_plan=radiation_counter_plan)
 
 
 def _result(prepared: PreparedLifeChangeBatch) -> LifeBatchResult:
@@ -191,14 +196,33 @@ def _apply_life(
     actor: str,
     operation: str,
     reason: str,
+    event_prefix: str | None = None,
 ) -> int | dict[str, int] | str:
     from ..life_gain_permission import TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD
-    from ..rules.public_life_gain_scopes import PUBLIC_LIFE_GAIN_FIELD, validate_public_life_gain
+    from ..rules.public_life_gain_scopes import (
+        PUBLIC_LIFE_GAIN_FIELD, SELECTED_PUBLIC_LIFE_GAIN_VERSION, validate_public_life_gain,
+        validate_selected_public_life_gain,
+    )
+
+    from ..rad_counter_model import RAD_EFFECT_FIELD
+    from ..rad_counters import plan_rad_removal
+
+    rad_plan = plan_rad_removal(host, effect, actor=actor) if RAD_EFFECT_FIELD in effect else None
 
     if TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in effect:
         from ..semantic_runtime.life_prohibitions import apply_temporary_life_gain_prohibition
 
         return apply_temporary_life_gain_prohibition(host, actor, effect)
+    if effect.get(PUBLIC_LIFE_GAIN_FIELD) == SELECTED_PUBLIC_LIFE_GAIN_VERSION:
+        from ..semantic_runtime.context import SemanticSourceContext
+
+        try:
+            validate_selected_public_life_gain(effect)
+            source_ref = SemanticSourceContext(**effect['_runtime_source']).card_ref
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        selected = {key: value for key, value in effect.items() if key != PUBLIC_LIFE_GAIN_FIELD}
+        return _apply_selected_life(host, selected, actor=actor, reason=reason, field='delta', source_ref=source_ref)
     if PUBLIC_LIFE_GAIN_FIELD in effect or "scope" in effect:
         try:validate_public_life_gain(effect,runtime=True)
         except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
@@ -221,6 +245,8 @@ def _apply_life(
         effect=effect,
         actor=actor,
         reason=reason,
+        event_prefix=event_prefix,
+        radiation_counter_plan=rad_plan,
     )
     result = _result(prepared)
     player_result = result.for_player(seat)

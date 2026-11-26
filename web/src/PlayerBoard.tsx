@@ -135,6 +135,7 @@ export function PlayerBoard({
         <span className="seat-letter small">{seat}</span>
         <div className="player-name">
           <strong>Seat {seat}</strong>{mine && <span className="you-chip">You</span>}
+          <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />
           <small>{String(player.hand_n ?? 0)} in hand</small>
         </div>
         {selection?.refs.includes(seat) ? <button type="button" className="life player-selection" data-player-ref={seat}
@@ -204,7 +205,6 @@ export function PlayerBoard({
           highlightedTargets={highlightedTargets} onOpen={onOpenZone} />
         <span>Land plays left <strong>{String(player.lands ?? 0)}</strong></span>
         {Object.keys(mana).length > 0 && <span>Mana <strong>{Object.entries(mana).map(([color, amount]) => `${color}${amount}`).join(" ")}</strong></span>}
-        <CommanderDamage seat={seat} value={player.cmd_dmg ?? []} />
         {mine && <button type="button" className="link-button" aria-pressed={arranging} disabled={Boolean(selection)}
           onClick={() => setArranging((active) => !active)}>{arranging ? "Done arranging" : "Arrange"}</button>}
         {mine && (arranging || arrangement.length > 0) && <button type="button" className="link-button"

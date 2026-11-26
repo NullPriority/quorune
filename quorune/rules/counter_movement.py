@@ -8,45 +8,93 @@ from ..counter_placement import (
     plan_prepared_counter_placement_commit, prepare_counter_placements,
 )
 from ..counter_state import CounterChange, commit_counter_changes, plan_counter_changes
-from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
+from ..semantic_runtime.counter_movement_intent import (
+    CounterMovementIntent, DistributeSourceCountersIntent, MoveCounterSetIntent,
+)
 
 
-def execute_counter_movement(host, intent: MoveCountersIntent) -> tuple[str, ...]:
-    """Resolve placement choices before atomically removing and placing counters."""
-    by_ref = {card.ref: card for card in host.state.cards.values()}
-    source = by_ref.get(intent.from_ref)
-    recipient = by_ref.get(intent.to_ref)
-    if (source is None or recipient is None or source is recipient
-            or source.zone != "battlefield" or recipient.zone != "battlefield"
-            or source.phased_out or recipient.phased_out
-            or source.logical_object_id != intent.from_identity
-            or recipient.logical_object_id != intent.to_identity
-            or source.counters.get(intent.counter_name, 0) < intent.amount):
+def _live_object(by_ref, ref, identity):
+    card = by_ref.get(ref)
+    if (card is None or card.zone != "battlefield" or card.phased_out
+            or card.logical_object_id != identity):
+        return None
+    return card
+
+
+def _distribution_requests(intent, by_ref, source):
+    if source.counters.get(intent.counter_name, 0) < intent.amount:
         return ()
-    prepared = prepare_counter_placements(host, (
+    requests = []
+    for share in intent.allocations:
+        recipient = _live_object(by_ref, share.ref, share.identity)
+        if recipient is None or recipient is source:
+            return ()
+        requests.append(CounterPlacementRequest(
+            subject_kind="permanent", subject_id=recipient.object_id,
+            counter_name=intent.counter_name, amount=share.amount,
+            placing_player=intent.actor, source_ref=intent.source_ref,
+        ))
+    return tuple(requests)
+
+
+def _single_recipient_requests(intent, by_ref, source):
+    recipient = _live_object(by_ref, intent.to_ref, intent.to_identity)
+    if (recipient is None or recipient is source
+            or isinstance(intent, MoveCounterSetIntent)
+            and (source.controller != intent.actor or recipient.controller != intent.actor)
+            or any(source.counters.get(kind, 0) < amount for kind, amount in intent.amounts.items())):
+        return ()
+    return tuple(
         CounterPlacementRequest(
             subject_kind="permanent", subject_id=recipient.object_id,
-            counter_name=intent.counter_name, amount=intent.amount,
-            placing_player=intent.actor, source_ref=intent.source_ref),
-    ), selections=intent.replacement_selections)
-    placement = plan_prepared_counter_placement_commit(host, prepared)
-    if not placement.rows or all(row.amount == 0 for row in placement.rows):
+            counter_name=kind, amount=amount, placing_player=intent.actor, source_ref=intent.source_ref,
+        )
+        for kind, amount in intent.amounts.items()
+    )
+
+
+def execute_counter_movement(host, intent: CounterMovementIntent) -> tuple[str, ...]:
+    """Resolve placement choices before atomically removing and placing counters."""
+    by_ref = {card.ref: card for card in host.state.cards.values()}
+    source = _live_object(by_ref, intent.from_ref, intent.from_identity)
+    if source is None:
         return ()
-    removal = CounterChange(
-        subject_kind="permanent", subject_id=source.object_id,
-        counter_name=intent.counter_name, amount=-intent.amount,
-        expected_zone="battlefield", expected_logical_object_id=intent.from_identity)
-    removal_plan = plan_counter_changes(host, (removal,))
+    distributing = isinstance(intent, DistributeSourceCountersIntent)
+    requests = (_distribution_requests if distributing else _single_recipient_requests)(intent, by_ref, source)
+    if not requests:
+        return ()
+    prepared = prepare_counter_placements(host, requests, selections=intent.replacement_selections)
+    placement = plan_prepared_counter_placement_commit(host, prepared)
+    successful = tuple(row for row in placement.rows if row.amount > 0)
+    if not successful:
+        return ()
+    removal_amounts = (
+        ((intent.counter_name, sum(row.requested for row in successful)),)
+        if distributing
+        else tuple((row.counter_name, intent.amounts[row.counter_name]) for row in successful)
+    )
+    removals = tuple(
+        CounterChange(
+            subject_kind="permanent", subject_id=source.object_id, counter_name=kind, amount=-amount,
+            expected_zone="battlefield", expected_logical_object_id=intent.from_identity,
+        )
+        for kind, amount in removal_amounts
+    )
+    removal_plan = plan_counter_changes(host, removals)
     joint = replace(removal_plan, transitions=(
         *removal_plan.transitions, *placement.state_plan.transitions))
     # Commit all state before dispatching either removal or placement observations.
     commit_counter_changes(host, joint)
-    host._log(intent.actor, "permanent.counter",
-              f"Moved {intent.amount} {intent.counter_name} counter(s) from {source.ref}.",
-              {"object": source.ref, "counter": intent.counter_name,
-               "delta": -intent.amount, "before": removal_plan.transitions[0].before,
-               "after": removal_plan.transitions[0].after, "source": intent.source_ref},
-              importance=1, changed_objects=[source.object_id])
+    for removal in removal_plan.transitions:
+        amount = -removal.applied_delta
+        host._log(intent.actor, "permanent.counter",
+                  f"Moved {amount} {removal.counter_name} counter(s) from {source.ref}.",
+                  {"object": source.ref, "counter": removal.counter_name,
+                   "delta": removal.applied_delta, "before": removal.before,
+                   "after": removal.after, "source": intent.source_ref},
+                  importance=1, changed_objects=[source.object_id])
     finish_counter_placement_commit(
         host, placement, placement.state_plan.transitions, reason=intent.reason)
-    return (recipient.ref,)
+    if distributing:
+        return tuple(row.display_ref for row in successful)
+    return (intent.to_ref,)

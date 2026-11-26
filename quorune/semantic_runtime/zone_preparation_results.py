@@ -18,6 +18,9 @@ def prepared_from_zone_event(
     devour_sacrifices: tuple[PreparedZoneChange,...] = (),
     graveyard_copy_exiles: tuple[PreparedZoneChange,...] = (),
 ) -> PreparedZoneChange:
+    from ..replacement.entry_counter_types import retain_committed_zone_counters
+
+    event = retain_committed_zone_counters(event)
     counter_events: list[ReplaceableEvent] = []
 
     def visit(current: ReplaceableEvent) -> None:

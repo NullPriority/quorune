@@ -6,6 +6,7 @@ from enum import Enum
 from typing import Any, Iterable, Mapping
 
 from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
+from ..mana_value_filter import ManaValueComparison, ManaValueFilter
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap, thaw_value
 from .committed_quantity_followups import (
@@ -16,12 +17,26 @@ from .committed_quantity_followups import (
     quantity_followup_from_count,
     token_followup_from_committed_controllers,
 )
+from .destruction_sized_token import (
+    DESTRUCTION_SIZED_TOKEN_CAPABILITY, DESTRUCTION_SIZED_TOKEN_VERSION, destruction_sized_token_result,
+    validate_destruction_sized_token,
+)
+from .target_player_destruction_death_tokens import (
+    TARGET_PLAYER_DEATH_TOKEN_CAPABILITY, TARGET_PLAYER_DEATH_TOKEN_VERSION,
+    validate_target_player_death_scope, validate_target_player_death_token_definition,
+)
 
 
 DESTRUCTION_RESULT_CAPABILITY = "permanent.destroy.result_quantity"
 DESTRUCTION_RESULT_MECHANIC = "committed-destruction-quantity"
 DESTRUCTION_CONTROLLER_TOKEN_CAPABILITY = "permanent.destroy.controller_token_result"
 DESTRUCTION_TOKEN_COUNTS_FIELD = COMMITTED_TOKEN_CREATOR_COUNTS_FIELD
+DESTRUCTION_MANA_ALLOCATION_CAPABILITY = "mana.production.committed_destruction_allocation"
+_MANA_ALLOCATION_SCOPE = AffectedPermanentSetSpec(
+    query=ObjectQuerySpec(zones=("battlefield",), excluded_types=("land",)),
+    mana_value_filter=ManaValueFilter(ManaValueComparison.AT_MOST, 2),
+)
+_MANA_ALLOCATION_INTENT = FrozenMap({"kind": "destroyed_permanent_black_green_allocation"})
 
 _CONTROLLER_TOKEN_DESTRUCTION_SCOPES = (
     AffectedPermanentSetSpec(query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))),
@@ -38,10 +53,20 @@ class DestructionFollowup:
     def __post_init__(self) -> None:
         if not isinstance(self.scope, AffectedPermanentSetSpec):
             raise ValueError("Destruction result requires a typed battlefield scope")
-        if type(self.schema_version) is not int or self.schema_version not in (1, 2):
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2, 3, TARGET_PLAYER_DEATH_TOKEN_VERSION, DESTRUCTION_SIZED_TOKEN_VERSION):
             raise ValueError("Destruction follow-up version is unsupported")
+        if self.uses_mana_allocation:
+            if (self.scope != _MANA_ALLOCATION_SCOPE or not isinstance(self.effect, Mapping)
+                    or FrozenMap(self.effect) != _MANA_ALLOCATION_INTENT):
+                raise ValueError("Destruction mana requires its exact nonland set and black-green result")
+            object.__setattr__(self, "effect", _MANA_ALLOCATION_INTENT)
+            return
         effect = fixed_quantity_effect(self.effect)
-        if self.uses_destroyed_controllers:
+        if self.uses_sized_token:
+            validate_destruction_sized_token(self.scope, effect)
+        elif self.uses_target_player_death_tokens:
+            validate_target_player_death_token_definition(self.scope, effect)
+        elif self.uses_destroyed_controllers:
             definition = effect.get("characteristics", {})
             type_line = definition.get("type_line", "")
             if (self.scope not in _CONTROLLER_TOKEN_DESTRUCTION_SCOPES
@@ -69,12 +94,39 @@ class DestructionFollowup:
     def uses_destroyed_controllers(self) -> bool:
         return self.schema_version == 2
 
+    @property
+    def uses_mana_allocation(self) -> bool:
+        return self.schema_version == 3
+
+    @property
+    def uses_target_player_death_tokens(self) -> bool:
+        return self.schema_version == TARGET_PLAYER_DEATH_TOKEN_VERSION
+
+    @property
+    def uses_sized_token(self) -> bool:
+        return self.schema_version == DESTRUCTION_SIZED_TOKEN_VERSION
+
     def validate_destruction_set(self, spec: AffectedPermanentSetSpec) -> None:
+        if self.uses_sized_token and spec != self.scope:
+            raise ValueError("Token size requires its original all-creature destruction set")
+        if self.uses_target_player_death_tokens:
+            validate_target_player_death_scope(spec)
         if self.uses_destroyed_controllers and spec != self.scope:
             raise ValueError("Controller tokens require the same complete set as their destruction")
+        if self.uses_mana_allocation and spec != self.scope:
+            raise ValueError("Destruction mana requires its original complete nonland set")
 
     @property
     def capability_dependencies(self) -> tuple[str, ...]:
+        if self.uses_mana_allocation:
+            return (DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_MANA_ALLOCATION_CAPABILITY,
+                    "mana.production.fixed_resolution_choice", "mana.production.variable_resolution_choice")
+        if self.uses_sized_token:
+            return (DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_SIZED_TOKEN_CAPABILITY,
+                    *fixed_followup_capabilities(self.effect))
+        if self.uses_target_player_death_tokens:
+            return (DESTRUCTION_RESULT_CAPABILITY, TARGET_PLAYER_DEATH_TOKEN_CAPABILITY,
+                    *fixed_followup_capabilities(self.effect))
         result = DESTRUCTION_CONTROLLER_TOKEN_CAPABILITY if self.uses_destroyed_controllers else DESTRUCTION_RESULT_CAPABILITY
         return (result, *fixed_followup_capabilities(self.effect))
 
@@ -90,11 +142,34 @@ class DestructionFollowup:
     @classmethod
     def from_destruction_effect(cls, effect: Mapping[str, Any]) -> DestructionFollowup:
         followup = cls.from_dict(effect["followup"])
-        if followup.uses_destroyed_controllers:
+        if followup.uses_sized_token and "regeneration_prohibited" in effect:
+            raise ValueError("Destruction size requires ordinary regeneration")
+        if followup.uses_target_player_death_tokens and "regeneration_prohibited" in effect:
+            raise ValueError("This death-conditioned result uses ordinary destruction and regeneration")
+        if (followup.uses_destroyed_controllers or followup.uses_mana_allocation
+                or followup.uses_target_player_death_tokens or followup.uses_sized_token):
             followup.validate_destruction_set(AffectedPermanentSetSpec.from_dict(effect["set"]))
         return followup
 
+    @classmethod
+    def black_green_mana(cls):
+        return cls(_MANA_ALLOCATION_SCOPE, _MANA_ALLOCATION_INTENT, schema_version=3)
+
+    def mana_from_committed_count(self, count: int, *, actor: str, source_ref: str | None) -> CommittedQuantityFollowup:
+        from ..variable_resolution_mana_model import VariableResolutionManaChoiceSpec
+
+        if not self.uses_mana_allocation or type(count) is not int or count < 0:
+            raise ValueError("Destruction mana requires a nonnegative committed destruction count")
+        if count == 0:
+            return CommittedQuantityFollowup(())
+        if any(type(value) is not str or not value or value.startswith("$") for value in (actor, source_ref)):
+            raise ValueError("Destruction mana requires its original controller and resolving source")
+        choice = VariableResolutionManaChoiceSpec("combination", ("B", "G"), count)
+        return CommittedQuantityFollowup((FrozenMap({**choice.effect(), "player": actor, "source": source_ref}),))
+
     def from_committed_count(self, count: int) -> CommittedQuantityFollowup:
+        if self.uses_sized_token:
+            return destruction_sized_token_result(self.effect, count)
         return quantity_followup_from_count(self.effect, count)
 
     def from_committed_controllers(self, controllers: Iterable[str]) -> CommittedQuantityFollowup:

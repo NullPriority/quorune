@@ -7,6 +7,9 @@ from ..reflexive_trigger_model import (
     SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION, ReflexiveTriggerProgram,
 )
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, RETURN_PAYMENT_KIND, FixedEffectPaymentSpec
+from ..granted_activation_model import (
+    GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY, GRANTING_ATTACHMENT_SACRIFICE_REF,
+)
 from ..replacement.immutable import thaw_value
 from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 
@@ -30,9 +33,27 @@ def reflexive_payment_parts(effect):
         raise ValueError('Bound reflexive triggers require a fixed resource payment or original source sacrifice')
     if payment.kind == 'source_sacrifice' and program.schema_version != BOUND_REFLEXIVE_PROGRAM_VERSION:
         raise ValueError('Reflexive source sacrifice requires its bound parent')
+    if payment.source_ref == GRANTING_ATTACHMENT_SACRIFICE_REF and (
+        payment.kind != 'source_sacrifice' or not _granting_attachment_damage(program)
+    ):
+        raise ValueError('A granting Equipment sacrifice requires fixed damage from the attacking creature')
     if program.schema_version == SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION:
         _validate_selected_sacrifice(effect['player'], payment, program)
     return payment, program
+
+
+def _granting_attachment_damage(program):
+    effects = program.effects
+    if len(effects) != 1:
+        return False
+    effect = effects[0]
+    return (set(effect) == {'op', 'amount', 'source', 'target'} and effect['op'] == 'damage'
+            and type(effect['amount']) is int and effect['amount'] > 0
+            and effect['source'] == '$source' and effect['target'] == '$target.0'
+            and thaw_value(program.target_schema) == {
+                'categories': ['player', 'permanent'], 'count': 1, 'predicate': 'damageable',
+                'zones': ['player', 'battlefield'],
+            })
 
 
 def _validate_selected_sacrifice(player, payment, program):
@@ -144,7 +165,10 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
         if (effect['player'] != '$controller'
                 or payment.kind in {'discard','exile','mana_discard'} and payment.predicate.owner != '$controller'
                 or payment.kind in {'sacrifice','tap','blight'} and payment.predicate.controller != '$controller'
-                or payment.kind in {'remove_source_counter', 'source_sacrifice'} and payment.source_ref!='$source.zone_object'):
+                or payment.kind == 'remove_source_counter' and payment.source_ref != '$source.zone_object'
+                or payment.kind == 'source_sacrifice' and payment.source_ref not in {
+                    '$source.zone_object', GRANTING_ATTACHMENT_SACRIFICE_REF,
+                }):
             return ()
         if payment.kind=='sacrifice' and payment.schema_version==6 and payment.predicate.exclude_ref!='$source.zone_object':
             return ()
@@ -153,8 +177,10 @@ def reflexive_payment_node_capabilities(*, effects, target_schema, mechanic_ids)
             return ()
         selected_sacrifice = ((SELECTED_REFLEXIVE_SACRIFICE_CAPABILITY,)
                               if program.schema_version == SELECTED_SACRIFICE_REFLEXIVE_PROGRAM_VERSION else ())
+        granting_sacrifice = ((GRANTING_ATTACHMENT_REFLEXIVE_CAPABILITY,)
+                             if payment.source_ref == GRANTING_ATTACHMENT_SACRIFICE_REF else ())
         return tuple(sorted({REFLEXIVE_PAYMENT_CAPABILITY, 'trigger.placement.apnap',
-            *selected_sacrifice, *payment.capabilities, *child_capabilities}))
+            *selected_sacrifice, *granting_sacrifice, *payment.capabilities, *child_capabilities}))
     except (KeyError, TypeError, ValueError):
         return ()
 
@@ -192,4 +218,10 @@ def reflexive_payment_runtime_dependencies(program):
         raise ValueError('Bound reflexive payments require an admitted creating trigger')
     if payment.kind == 'source_sacrifice' and program.active_zone != 'battlefield':
         raise ValueError('Reflexive source sacrifice requires its original battlefield program')
+    if payment.source_ref == GRANTING_ATTACHMENT_SACRIFICE_REF and (
+        program.provenance.get('granted_only') is not True or program.event != 'creature.attacks'
+        or program.event_condition != {'field': 'card', 'op': 'eq', 'value': '$source.ref'}
+        or program.cost_schema is not None or program.handlers
+    ):
+        raise ValueError('A granting Equipment sacrifice requires its admitted granted attack trigger')
     return owned

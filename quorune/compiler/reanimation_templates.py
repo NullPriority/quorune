@@ -216,8 +216,9 @@ class FixedTargetReanimationManaValueLossTemplate:
 
 def fixed_target_reanimation_mana_value_loss_template(text: str) -> FixedTargetReanimationManaValueLossTemplate | None:
     match = re.fullmatch(
-        r"(?P<move>(?:Put|Return) target creature card from (?:a|any) graveyard (?:onto|to) "
-        r"the battlefield under your control\.) You lose life equal to that card['’]s mana value\.",
+        r"(?P<move>(?:(?:Put|Return) target creature card from (?:a|any) graveyard (?:onto|to) "
+        r"the battlefield under your control|Return target creature card from your graveyard to the battlefield)\.) "
+        r"You lose life equal to that card['’]s mana value\.",
         " ".join(text.split()), re.I,
     )
     if match is None:

@@ -27,6 +27,11 @@ from ..entry_designations import (
     validate_designation,
 )
 from ..keyword_counters import keyword_counter_mechanic
+from ..linked_card_type import (
+    CAPABILITY as LINKED_CARD_TYPE_CAPABILITY, ENTRY_FIELD as LINKED_CARD_TYPE_ENTRY_FIELD,
+    ENTRY_HANDLER as LINKED_CARD_TYPE_ENTRY_HANDLER, OPTIONS as LINKED_CARD_TYPE_OPTIONS,
+    LinkedCardTypeChoice,
+)
 from ..replacement.counted_entry_counters import CreateCountedEntryCounters
 from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 from ..replacement.operations import UnionValues
@@ -111,6 +116,39 @@ class EntryDesignationHandler:
             operations=(SetField(kind.event_field, value), *followups),
             label=f"{subject.object_ref}: choose {kind.value.replace('_', ' ')} {value}",
         )
+
+
+@dataclass(frozen=True, slots=True)
+class LinkedCardTypeEntryHandler(EntryDesignationHandler):
+    handler_id: str = LINKED_CARD_TYPE_ENTRY_HANDLER
+    rule_references: tuple[str, ...] = ("205.2a", "400.7", "607.2d", "614.12", "614.12a", "616.1", "707.6")
+    capability_dependencies: tuple[str, ...] = (ENTRY_DESIGNATION_CAPABILITY, LINKED_CARD_TYPE_CAPABILITY)
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="linked card-type entry")
+        if (descriptor["handler_id"], type(descriptor["schema_version"]),
+                descriptor["schema_version"], descriptor["event"]) != (self.handler_id, int, 1, self.event):
+            raise SemanticNodeError("Linked card-type entry requires its exact replacement descriptor")
+
+    def subject_replacement_effects(self, descriptor, *, subject, component_id):
+        self.validate(descriptor)
+        if subject.destination_controller is None:
+            raise SemanticNodeError("Linked card-type entry requires a destination controller")
+        choices = (LinkedCardTypeChoice(card_type, component_id, subject.logical_object_id)
+                   for card_type in LINKED_CARD_TYPE_OPTIONS)
+        return tuple(ReplacementEffect(
+            effect_id=choice.effect_id(subject.object_ref),
+            source_id=subject.object_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "destination": {"eq": "battlefield"},
+                "object_ref": {"eq": subject.object_ref},
+                LINKED_CARD_TYPE_ENTRY_FIELD: {"eq": None},
+            },
+            operations=(SetField(LINKED_CARD_TYPE_ENTRY_FIELD, choice.to_dict()),),
+            label=f"{subject.object_ref}: choose card type {choice.card_type}",
+        ) for choice in choices)
 
 
 @dataclass(frozen=True, slots=True)

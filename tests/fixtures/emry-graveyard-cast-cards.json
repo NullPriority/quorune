@@ -1,0 +1,734 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for a targeted artifact graveyard cast activation",
+  "cards": [
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "name": "Emry, Lurker of the Loch",
+      "mana_cost": "{2}{U}",
+      "type_line": "Legendary Creature — Merfolk Wizard",
+      "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nWhen Emry enters, mill four cards.\n{T}: Choose target artifact card in your graveyard. You may cast that card this turn. (You still pay its costs. Timing rules still apply.)",
+      "power": "1",
+      "toughness": "2",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Affinity",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "name": "Sol Ring",
+      "mana_cost": "{1}",
+      "type_line": "Artifact",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "restricted"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "39451b4d-cd7a-40da-b457-cb51b609173f",
+      "name": "Seat of the Synod",
+      "mana_cost": "",
+      "type_line": "Artifact Land",
+      "oracle_text": "{T}: Add {U}.",
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "name": "Grizzly Bears",
+      "mana_cost": "{1}{G}",
+      "type_line": "Creature — Bear",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "name": "Murder",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target creature.",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "name": "Swamp",
+      "mana_cost": "",
+      "type_line": "Basic Land — Swamp",
+      "oracle_text": "({T}: Add {B}.)",
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
+      "name": "Noxious Revival",
+      "mana_cost": "{G/P}",
+      "type_line": "Instant",
+      "oracle_text": "({G/P} can be paid with either {G} or 2 life.)\nPut target card from a graveyard on top of its owner's library.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "name": "Thought Scour",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Target player mills two cards.\nDraw a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "1573f7f9-672c-421a-b1ac-3d0d8aea59ca",
+      "name": "Tormod's Crypt",
+      "mana_cost": "{0}",
+      "type_line": "Artifact",
+      "oracle_text": "{T}, Sacrifice this artifact: Exile target player's graveyard.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "64cf5d59-7bcd-4b0b-a160-c8468d4c0f60",
+      "name": "Vault Skirge",
+      "mana_cost": "{1}{B/P}",
+      "type_line": "Artifact Creature — Phyrexian Imp",
+      "oracle_text": "({B/P} can be paid with either {B} or 2 life.)\nFlying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "name": "Island",
+      "mana_cost": "",
+      "type_line": "Basic Land — Island",
+      "oracle_text": "({T}: Add {U}.)",
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "name": "Forest",
+      "mana_cost": "",
+      "type_line": "Basic Land — Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "name": "Isamaru, Hound of Konda",
+      "mana_cost": "{W}",
+      "type_line": "Legendary Creature — Dog",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "name": "Plains",
+      "mana_cost": "",
+      "type_line": "Basic Land — Plains",
+      "oracle_text": "({T}: Add {W}.)",
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "The cost reduction ability reduces only the generic mana in Emry's cost. The colored mana must still be paid."
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You'll still pay all costs for a spell cast this way, including additional costs. You may also pay alternative costs if any are available."
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Emry's last ability targets an artifact land card, you can't play it. Effects that allow you to \"cast\" a card don't allow you to play a land card."
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions (such as that of Emry). The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Once you announce that you're casting a spell, no player may take actions until the spell has been paid for. Notably, opponents can't try to change by how much Emry's cost is reduced."
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions for the target artifact card. Unless it has flash, you'll most likely only be able to cast it during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "da3e7d3d-2ca0-40c3-9602-fca37c92f507",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Casting the target card causes it to leave your graveyard and become a new object. You can't cast it again if it returns to your graveyard this turn."
+    },
+    {
+      "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "A card with Phyrexian mana symbols in its mana cost is each color that appears in that mana cost, regardless of how that cost may have been paid."
+    },
+    {
+      "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "To calculate the mana value of a card with Phyrexian mana symbols in its cost, count each Phyrexian mana symbol as 1."
+    },
+    {
+      "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "As you cast a spell or activate an activated ability with one or more Phyrexian mana symbols in its cost, you choose how to pay for each Phyrexian mana symbol at the same time you would choose modes or choose a value for X."
+    },
+    {
+      "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "Phyrexian mana is not a new color. Players can't produce Phyrexian mana."
+    },
+    {
+      "oracle_id": "97cabeda-9fe3-490d-99b4-4c8d87c17157",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If you're at 1 life or less, you can't pay 2 life."
+    },
+    {
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "Follow the instructions in the order listed on the card: if you target yourself, you'll put the top two cards of your library into your graveyard and then draw a card."
+    },
+    {
+      "oracle_id": "83101ba8-a569-4827-8c53-9ca0dfcd59a7",
+      "published_at": "2011-01-22",
+      "source": "wotc",
+      "comment": "If the target player is an illegal target when Thought Scour tries to resolve, it won't resolve and none of its effects will happen. You won't draw a card."
+    },
+    {
+      "oracle_id": "64cf5d59-7bcd-4b0b-a160-c8468d4c0f60",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "Phyrexian mana is not a new color. Players can't produce Phyrexian mana."
+    },
+    {
+      "oracle_id": "64cf5d59-7bcd-4b0b-a160-c8468d4c0f60",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "As you cast a spell or activate an activated ability with one or more Phyrexian mana symbols in its cost, you choose how to pay for each Phyrexian mana symbol at the same time you would choose modes or choose a value for X."
+    },
+    {
+      "oracle_id": "64cf5d59-7bcd-4b0b-a160-c8468d4c0f60",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "A card with Phyrexian mana symbols in its mana cost is each color that appears in that mana cost, regardless of how that cost may have been paid."
+    },
+    {
+      "oracle_id": "64cf5d59-7bcd-4b0b-a160-c8468d4c0f60",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "To calculate the mana value of a card with Phyrexian mana symbols in its cost, count each Phyrexian mana symbol as 1."
+    },
+    {
+      "oracle_id": "64cf5d59-7bcd-4b0b-a160-c8468d4c0f60",
+      "published_at": "2011-06-01",
+      "source": "wotc",
+      "comment": "If you're at 1 life or less, you can't pay 2 life."
+    }
+  ]
+}

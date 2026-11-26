@@ -36,6 +36,19 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
             compile_effect,has_faces=bool(record.faces)):
         return None
+    if spell and "damage that would reduce your life total" in material_line.casefold():
+        from ..rules.turn_match_outcome_protection import TURN_OUTCOME_TEMPLATE
+        from .damage_permission_templates import turn_damage_prevention_template
+
+        result = turn_damage_prevention_template(material_line, card_name=source_name, source_is_permanent=False)
+        if result is not None and result[0] == TURN_OUTCOME_TEMPLATE:
+            return None
+    if spell and not record.faces:
+        from .graveyard_cast_replacement import cast_origin_replacement_template
+        if cast_origin_replacement_template(
+            material_line, source_name=source_name, compile_component=lambda body: compile_effect(body, card_name=source_name),
+        ) is not None:
+            return None
     if spell and re.search(r"\bX plus 2 damage\b", material_line, re.I):
         from .declared_effect_amounts import declared_spell_effect_compiler
 
@@ -52,6 +65,9 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
         if body is not None and declared(body, card_name=source_name)[0] == VARIABLE_DAMAGE_TEMPLATE_ID:
             return None
     if spell and "spell is countered this way" in material_line.casefold():
+        from ..rules.stack_counter_followup import (
+            STACK_LIBRARY_COUNTER_POSITION_CAPABILITY, stack_counter_followup_node_capabilities,
+        )
         from ..zone_trigger_events import COUNTER_DESTINATION_FIELD
         from .declared_effect_amounts import declared_spell_effect_compiler
 
@@ -60,9 +76,13 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
             declared = declared_spell_effect_compiler(
                 record, is_spell=True, oracle_text=oracle_text, compile_effect=compile_effect,
             )
-            _, effects, _, _ = declared(body, card_name=source_name)
+            _, effects, target, mechanics = declared(body, card_name=source_name)
             if (len(effects) == 1 and effects[0].get("op") in {"counter_stack_target", "counter_unless_pay"}
                     and COUNTER_DESTINATION_FIELD in effects[0]):
+                return None
+            if STACK_LIBRARY_COUNTER_POSITION_CAPABILITY in stack_counter_followup_node_capabilities(
+                effects=effects, target_schema=target, mechanic_ids=mechanics,
+            ):
                 return None
     if spell:
         if 'instead if ' in material_line.casefold() and re.search(r'\bThen (?:it|that creature) (?:fights|deals damage equal to its power to) ', material_line, re.I):
@@ -71,6 +91,9 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
             if compiled[0] == 'conditional-target-power-preparation-v1' and conditional_prepared_power_capabilities(
                     effects=compiled[1], target_schema=compiled[2], mechanic_ids=compiled[3]):
                 return None
+        from .linked_exile_return_templates import prospective_entry_linked_return_template
+        if prospective_entry_linked_return_template(material_line) is not None:
+            return None
         from .reanimation_entry_counter_templates import conditional_reanimation_entry_counter_template
         if conditional_reanimation_entry_counter_template(material_line) is not None:
             return None
@@ -91,6 +114,12 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
             return None
     if spell and re.search(r"\bskip\b", material_line, re.I):
         if TURN_SKIP_MECHANIC in compile_effect(material_line, card_name=source_name)[3]:
+            return None
+    body = material_line if spell else material_line.partition(': ')[2]
+    if body.casefold().startswith("the next time you would draw a card this turn"):
+        from .next_draw_replacement_templates import next_draw_replacement_template
+
+        if next_draw_replacement_template(body) is not None:
             return None
     if 'would die this turn, exile it instead.' in material_line.casefold():
         body = material_line if spell else material_line.partition(': ')[2]

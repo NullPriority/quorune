@@ -116,6 +116,87 @@ class TemporaryDependencyRepository:
         )
 
 
+class StaticBuilderDependencyTests(unittest.TestCase):
+    def test_shared_compact_deck_entries_resolve_without_treating_local_decks_as_inputs(self):
+        from scripts.compact_ci_dependencies import discover_module_requirements
+
+        source = """
+COMMANDER = "Pinned Commander"
+class Shared:
+    def setUpClass(cls):
+        cls.db = CardDatabase(DB_PATH)
+    def session(self, unresolved):
+        return [DeckEntry(COMMANDER), DeckEntry(name="Pinned Card"), DeckEntry(unresolved)]
+    def shadowed(self, COMMANDER):
+        return DeckEntry(COMMANDER)
+class Local:
+    def setUpClass(cls):
+        cls.db = CardDatabase(own_fixture_path)
+    def session(self):
+        return [DeckEntry("Local Only")]
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests").mkdir()
+            (root / "tests/test_deck_entries.py").write_text(source, encoding="utf-8")
+            static, dynamic, errors = discover_module_requirements("test_deck_entries", root=root)
+
+        self.assertFalse(errors)
+        self.assertFalse(dynamic)
+        self.assertEqual(
+            {("card_name", "Pinned Commander", "Shared.session"), ("card_name", "Pinned Card", "Shared.session")},
+            {(row.kind, row.value, row.provenance.symbol) for row in static},
+        )
+
+    def test_local_builder_keeps_checked_in_fixture_paths_with_independent_static_provenance(self):
+        from scripts.compact_ci_dependencies import discover_module_requirements
+
+        source = """
+FIXTURE = ROOT / "tests/fixtures/pinned.json"
+class Local:
+    def setUpClass(cls):
+        local_fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([FIXTURE, temp_generated], output)
+        build_fixture_database([local_fixtures / name for name in ("first.json", "second.json")], output)
+        build_fixture_database([ROOT / "outside.json", local_fixtures / "missing.json"], output)
+"""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "tests/fixtures").mkdir(parents=True)
+            for relative in ("tests/fixtures/pinned.json", "tests/fixtures/first.json",
+                             "tests/fixtures/second.json", "outside.json"):
+                (root / relative).write_text("{}", encoding="utf-8")
+            (root / "tests/test_local_builder.py").write_text(source, encoding="utf-8")
+            static, dynamic, errors = discover_module_requirements("test_local_builder", root=root)
+
+        self.assertFalse(errors)
+        self.assertFalse(dynamic)
+        self.assertEqual(
+            {("local_fixture_file", f"tests/fixtures/{name}", "Local.setUpClass")
+             for name in ("pinned.json", "first.json", "second.json")},
+            {(row.kind, row.value, row.provenance.symbol) for row in static},
+        )
+
+
+    def test_local_builder_does_not_require_shared_compact_fixture_membership(self):
+        fixture = "tests/fixtures/local-only.json"
+        with tempfile.TemporaryDirectory() as directory:
+            repository = TemporaryDependencyRepository(
+                Path(directory),
+                cards=[card("Shared Card", "00000000-0000-4000-8000-000000000001")],
+                source=f'build_fixture_database([ROOT / "{fixture}"], output)\n',
+                extra_fixtures={fixture: []},
+            )
+            result = repository.report()
+
+        self.assertTrue(result["closed"])
+        self.assertEqual(1, result["fixture_count"])
+        self.assertEqual([], result["missing_fixture_requirements"])
+        local, = result["requirement_provenance"]
+        self.assertEqual("local_fixture_file", local["kind"])
+        self.assertEqual({"fixture_file": fixture}, local["resolution"])
+
+
 class CompactDependencyArtifactTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()

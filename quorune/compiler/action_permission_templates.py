@@ -10,6 +10,7 @@ from ..object_predicate import ObjectQuerySpec
 from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.action_permissions import (
     ACTION_PERMISSION_EVENT,
+    ARTIFACT_OR_COLORLESS_LIBRARY_SPELL_QUERIES,
     SOURCE_LOYALTY_INSTANT_CAPABILITY,
     SOURCE_LOYALTY_INSTANT_HANDLERS,
     ACTIVATE_CONTROLLED_CREATURE_AS_HASTE_HANDLER_ID,
@@ -17,10 +18,14 @@ from ..semantic_runtime.action_permissions import (
     SHARED_ADDITIONAL_LAND_PLAY_CAPABILITY,
     SHARED_ADDITIONAL_LAND_PLAY_HANDLER_ID,
     LIBRARY_TOP_ACTION_HANDLER_ID,
+    LIBRARY_TOP_LIFE_ACTION_CAPABILITY,
+    LIBRARY_TOP_LIFE_ACTION_HANDLER_ID,
     LIBRARY_TOP_VISIBILITY_HANDLER_ID,
     LAND_PLAY_FROM_OWN_GRAVEYARD_HANDLER_ID,
     OPENING_HAND_BATTLEFIELD_HANDLER_ID,
     OPENING_HAND_BATTLEFIELD_CAPABILITY,
+    OPENING_HAND_LUCK_HANDLER_ID,
+    OPENING_HAND_LUCK_CAPABILITY,
     QUALIFIED_LIBRARY_TOP_HANDLER_ID,
     ActionPermissionKind,
     ActionPermissionScope,
@@ -75,6 +80,11 @@ _TOP_LIBRARY_CAST_KEYWORDS = re.compile(
 )
 _TOP_LIBRARY_PLAY_ALL = re.compile(
     r"^You may play lands and cast spells from the top of your library\.?$",
+    re.IGNORECASE,
+)
+_TOP_LIBRARY_MANA_VALUE_IN_LIFE = re.compile(
+    r"You may play lands and cast spells from the top of your library\. "
+    r"If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost\.?",
     re.IGNORECASE,
 )
 _TOP_LIBRARY_PLAY_LANDS_AND_CAST = re.compile(
@@ -181,10 +191,7 @@ def _spell_queries(subject: str) -> list[dict[str, Any]] | None:
     if normalized == "instant and sorcery":
         return [_spell_query(types_any=("instant", "sorcery"))]
     if normalized == "artifact and colorless":
-        return [
-            _spell_query(types_all=("artifact",)),
-            _spell_query(colorless=True),
-        ]
+        return [query.to_dict() for query in ARTIFACT_OR_COLORLESS_LIBRARY_SPELL_QUERIES]
     if normalized == "historic":
         return _historic_queries(land=False)
     if normalized == "snow":
@@ -260,6 +267,17 @@ def opening_hand_battlefield_permission_handler(text: str, *, source_name: str |
     normalized=text.strip()
     if not normalized.casefold().startswith('if '):return None
     source_reference='this card' if not source_name else rf'(?:this card|{SourceReferenceSpec(source_name).regex_pattern})'
+    enter_reference = "it" if not source_name else rf"(?:it|{SourceReferenceSpec(source_name).regex_pattern})"
+    luck_entry = (
+        rf"If {source_reference} is in your opening hand and you['’]re not the starting player, "
+        rf"you may begin the game with {enter_reference} on the battlefield with a luck counter on it\. "
+        r"If you do, exile a card from your hand\."
+    )
+    if re.fullmatch(luck_entry, normalized, re.I):
+        return ("opening-hand-luck-permission-v1", {
+            **_descriptor(handler_id=OPENING_HAND_LUCK_HANDLER_ID, permission=ActionPermissionKind.OPENING_HAND_LUCK),
+            "requires_complete_card_program": True,
+        }, OPENING_HAND_LUCK_CAPABILITY)
     if re.fullmatch(rf'If {source_reference} is in your opening hand, you may begin the game with (?:it|him|her|them) on the battlefield\.?',
             normalized,re.IGNORECASE) is not None:
         return ('opening-hand-battlefield-permission-v1',{**_descriptor(
@@ -495,6 +513,15 @@ def _library_top_action_handler(normalized: str):
         normalized = normalized[: -len(_GARRUK_REMINDER)]
     if normalized.endswith(_HISTORIC_REMINDER):
         normalized = normalized[: -len(_HISTORIC_REMINDER)]
+    if _TOP_LIBRARY_MANA_VALUE_IN_LIFE.fullmatch(normalized) is not None:
+        descriptor = _library_action_descriptor(
+            land_queries=(_query(types_all=("land",)),), spell_queries=(_spell_query(),),
+        )
+        return (
+            "library-top-mana-value-life-v1",
+            {**descriptor, "handler_id": LIBRARY_TOP_LIFE_ACTION_HANDLER_ID},
+            ("library.action.top.static", LIBRARY_TOP_LIFE_ACTION_CAPABILITY),
+        )
     if _TOP_LIBRARY_PLAY_ALL.fullmatch(normalized) is not None:
         return (
             "play-and-cast-library-top-v1",
@@ -564,6 +591,15 @@ def _library_top_action_handler(normalized: str):
     cast_match = _TOP_LIBRARY_CAST.fullmatch(normalized)
     if cast_match is not None:
         queries = _spell_queries(cast_match.group("subject"))
+        if queries == [query.to_dict() for query in ARTIFACT_OR_COLORLESS_LIBRARY_SPELL_QUERIES]:
+            qualifier = LibraryTopQualifier.ARTIFACT_OR_COLORLESS_SPELL
+            descriptor = _library_action_descriptor(spell_queries=tuple(queries))
+            return (
+                'artifact-or-colorless-library-top-action-v2',
+                {**descriptor, 'handler_id': QUALIFIED_LIBRARY_TOP_HANDLER_ID,
+                 'schema_version': 2, 'qualifier': qualifier.value},
+                ('library.action.top.static', *library_top_qualifier_capabilities(qualifier)),
+            )
         if queries is not None:
             return (
                 "cast-library-top-public-query-v1",

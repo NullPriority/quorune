@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "damaged_player_hand_cast_card_data",
+  "source": "Pinned Scryfall original and Wizards rulings",
+  "cards": [
+    {
+      "oracle_id": "4f515250-0f1f-4fb7-aa75-b703b81ccd4a",
+      "name": "Silent-Blade Oni",
+      "mana_cost": "{3}{U}{U}{B}{B}",
+      "type_line": "Creature — Demon Ninja",
+      "oracle_text": "Ninjutsu {4}{U}{B} ({4}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, look at that player's hand. You may cast a spell from among those cards without paying its mana cost.",
+      "power": "6",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Ninjutsu"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 7.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "4f515250-0f1f-4fb7-aa75-b703b81ccd4a",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "If you cast a permanent spell this way, it will enter under your control when it resolves. If you cast an instant or sorcery spell this way, that card will be put into its owner's graveyard when it resolves."
+    },
+    {
+      "oracle_id": "4f515250-0f1f-4fb7-aa75-b703b81ccd4a",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "If you cast a card without paying its mana cost, you can't choose to cast it for any alternative costs, such as evoke or the alternative cost provided by the morph ability. If it has {X} in its mana cost, X must be 0. However, you can pay optional additional costs, such as kicker, and you must still pay mandatory additional costs, such as the one on Fling."
+    },
+    {
+      "oracle_id": "4f515250-0f1f-4fb7-aa75-b703b81ccd4a",
+      "published_at": "2012-06-01",
+      "source": "wotc",
+      "comment": "The nonland card you cast via the triggered ability is cast as part of the resolution of that ability. Timing restrictions based on the card's type are ignored. Other restrictions, such as \"Cast [this card] only during an opponent's turn,\" are not."
+    }
+  ]
+}

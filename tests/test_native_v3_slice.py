@@ -5,16 +5,20 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from common import keep_all, load_assets, make_session
+from common import keep_all, load_assets, make_session, pass_current
 from quorune import (
+    CommanderSession,
+    GameConfig,
     PilotMemory,
     PilotResponse,
     ScriptedPilot,
     SequentialPilotRunner,
     semantic_preflight,
 )
-from quorune.record import replay_record
+from quorune.deck import DeckDefinition, DeckEntry
+from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
 from quorune.report import derive_review, review_markdown
+from quorune.semantics import SemanticRegistry
 
 
 class NativeV3AuditAndPilotTests(unittest.TestCase):
@@ -319,6 +323,15 @@ class TrustedSemanticScenarioTests(unittest.TestCase):
             if len(lands) == 7:
                 break
         field = self._card(engine, "B", "Field of the Dead")
+        # The retained witness dispatches the reviewed v3 event directly.
+        # Current sessions use the typed permanent-entry trigger instead.
+        reviewed = SemanticRegistry()
+        former, = [program for program in reviewed.programs_for_oracle(field.oracle_id)
+                   if program.event == "land.enter"]
+        for program in engine.semantics.programs_for_oracle(field.oracle_id):
+            if program.event == "permanent.enter":
+                engine.semantics.remove(program.key)
+        engine.semantics.put(former)
         if field not in lands:
             lands[-1] = field
         for card in lands:
@@ -430,6 +443,107 @@ class TrustedSemanticScenarioTests(unittest.TestCase):
         self.assertEqual(life_a - 2, engine.state.players["A"].life)
         self.assertEqual(life_b + 2, engine.state.players["B"].life)
 
+    def test_zimone_repeats_after_eighth_land_and_replays_private_choices(self):
+        decks = {
+            "A": DeckDefinition(
+                "Opponent", [DeckEntry("Isamaru, Hound of Konda", 1, "commander"), DeckEntry("Plains", 30)],
+                ["Isamaru, Hound of Konda"],
+            ),
+            "B": DeckDefinition(
+                "Commander",
+                [
+                    DeckEntry("Zimone and Dina", 1, "commander"),
+                    DeckEntry("Forest", 26),
+                    DeckEntry("Island", 3),
+                    DeckEntry("Birds of Paradise"),
+                ],
+                ["Zimone and Dina"],
+            ),
+        }
+        session = CommanderSession.create(
+            self.db, decks, first_player="A", seed=917,
+            config=GameConfig(seed=917, auto_pass_empty_priority=False),
+        )
+        keep_all(session)
+        engine = session.engine
+        self._clear_decision(engine)
+        engine.state.pending_decision = None
+        engine.state.priority_passes = []
+        engine.state.active_player = "B"
+        engine.state.phase = "precombat_main"
+        engine.state.step = "main"
+        source = self._card(engine, "B", "Zimone and Dina")
+        fodder = self._card(engine, "B", "Birds of Paradise")
+        forests = [card for card in engine.state.cards.values() if card.owner == "B" and card.printed_name == "Forest"]
+        first, second = forests[7], self._card(engine, "B", "Island")
+        for card in (source, fodder, *forests[:7]):
+            engine.move_card(card.object_id, "battlefield", controller="B", log=False)
+        for card in (first, second):
+            engine.move_card(card.object_id, "hand", log=False)
+        player = engine.state.players["B"]
+        source.acquired_control_turn_count = player.turns_begun - 1
+        # One draw already happened this turn. The trigger must wait for both choices.
+        player.stats.setdefault("cards_drawn_by_turn", {})[str(engine.state.turn_sequence)] = 1
+        library_size, land_plays = len(player.zones["library"]), player.land_plays_remaining
+        life_a, life_b = engine.state.players["A"].life, player.life
+        engine._grant_priority("B")
+        engine._issue_priority("B")
+        actions = session.packet("pilot:B", full=True)["decision"]["legal_actions"]
+        action, = (row for row in actions if row.get("source") == source.ref)
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+
+        activated = session.act("pilot:B", {"action_id": action["id"], "cost_cards": [fodder.ref]})
+        self.assertTrue(activated.ok, activated.summary)
+        for _ in engine.seats:
+            pass_current(session)
+        self.assertEqual(library_size - 1, len(player.zones["library"]))
+        self.assertTrue(source.tapped)
+        self.assertEqual("graveyard", fodder.zone)
+
+        with tempfile.TemporaryDirectory() as temporary:
+            for index, choice in enumerate((first, second)):
+                packet = session.packet("pilot:B", full=True)["decision"]
+                self.assertEqual("semantic.choice", packet["kind"])
+                expected_private = (first.ref, second.ref) if index == 0 else (second.ref,)
+                for ref in expected_private:
+                    self.assertIn(ref, json.dumps(packet))
+                    self.assertNotIn(ref, json.dumps(session.packet("pilot:A", full=True)))
+                self.assertEqual(["activated_ability"], [item.kind for item in session.state.stack])
+                response = {"action_id": "choose", "card": choice.ref}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:A", response).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+
+                path = Path(temporary) / f"pending-{index}"
+                session.save(path, include_review=False)
+                self.assertEqual(before, replay_record(path, self.db, verify=True)["final_state_hash"])
+                session = CommanderSession.load(self.db, path)
+                chosen = session.act("pilot:B", response)
+                self.assertTrue(chosen.ok, chosen.summary)
+                entered = session.state.cards[choice.object_id]
+                self.assertEqual(("battlefield", True), (entered.zone, entered.tapped))
+                self.assertEqual(library_size - 2, len(session.state.players["B"].zones["library"]))
+
+            self.assertEqual("semantic.target", session.state.pending_decision.kind)
+            trigger, = session.state.stack
+            self.assertEqual("triggered_ability", trigger.kind)
+            targeted = session.act("pilot:B", {"action_id": "choose", "targets": ["A"]})
+            self.assertTrue(targeted.ok, targeted.summary)
+            for _ in session.engine.seats:
+                pass_current(session)
+            self.assertEqual(life_a - 2, session.state.players["A"].life)
+            self.assertEqual(life_b + 2, session.state.players["B"].life)
+            self.assertEqual(land_plays, session.state.players["B"].land_plays_remaining)
+            self.assertEqual([], session.state.stack)
+
+            path = Path(temporary) / "complete"
+            session.save(path, include_review=False)
+            result = replay_record(path, self.db, verify=True)
+            self.assertEqual("command_replay", result["mode"])
+            self.assertEqual(authoritative_state_hash(session.state), result["final_state_hash"])
+
     def test_mishra_creates_hasty_warform_and_delayed_sacrifice(self):
         session = make_session(
             self.db, self.mishra, self.zimone, players=2, seed=913
@@ -474,13 +588,11 @@ class TrustedSemanticScenarioTests(unittest.TestCase):
         self.assertEqual("4", data["power"])
         self.assertEqual("4", data["toughness"])
         self.assertIn("Haste", data["keywords"])
-        self.assertTrue(
-            any(
-                trigger.source_object_id == warform.object_id
-                and trigger.condition["step"] == "end_step"
-                for trigger in engine.state.delayed_triggers
-            )
-        )
+        cleanup, = [trigger for trigger in engine.state.delayed_triggers if trigger.active]
+        self.assertEqual(mishra.object_id, cleanup.source_object_id)
+        self.assertEqual(mishra.logical_object_id, cleanup.source_logical_object_id)
+        self.assertEqual([warform.object_id], cleanup.referred_object_ids)
+        self.assertEqual({"phase": "ending", "step": "end_step"}, cleanup.condition)
 
     def test_zulaport_drains_each_opponent_for_simultaneous_deaths(self):
         session = make_session(

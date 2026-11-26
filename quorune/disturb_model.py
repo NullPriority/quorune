@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Immutable front-ability authority for a fixed-cost transformed cast."""
+"""Immutable front-ability authority for a fixed-cost back-face cast."""
 
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -13,6 +13,9 @@ from .util import stable_json
 
 DISTURB_CAPABILITY = 'casting.lifecycle.disturb_fixed_mana'
 DISTURB_HANDLER = 'casting.cost.disturb.fixed-mana.v1'
+MORE_THAN_MEETS_THE_EYE_CAPABILITY = 'casting.lifecycle.more_than_meets_the_eye_fixed_mana'
+MORE_THAN_MEETS_THE_EYE_HANDLER = 'casting.cost.more-than-meets-the-eye.fixed-mana.v1'
+MORE_THAN_MEETS_THE_EYE_COST_ID = 'more_than_meets_the_eye'
 _MANA_KEYS = frozenset(('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C'))
 
 

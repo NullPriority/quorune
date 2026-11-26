@@ -361,6 +361,33 @@ def _apply_delayed_trigger(
 
 
 
+def _apply_created_token_haste(host, effect, *, actor, reason):
+    from ..rules.token_creation_capability_shapes import created_token_haste_closure
+    from ..token_creation import grant_haste_to_created_tokens
+
+    public = {key: value for key, value in effect.items() if key not in {"_runtime_source", "_replacement_selections"}}
+    if public.get("controller") != actor:
+        raise GameRuleError("The resolving controller must own the original token instruction")
+    try:
+        created_token_haste_closure({**public, "controller": "$controller"})
+        source = resolution_effect_source(host, effect)
+        item = host.state.stack[-1] if host.state.stack else None
+        if (item is None or item.ref != source.stack_ref or item.controller != actor
+                or item.context.get("currently_resolving") is not True):
+            raise ValueError("Created-token haste requires its resolving stack instruction")
+        created = host.create_token(
+            actor, name=public["name"], quantity=public["quantity"], characteristics=dict(public["characteristics"]),
+            tapped=public.get("tapped", False), reason=reason,
+            replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        )
+        if created:
+            targets = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in created)
+            grant_haste_to_created_tokens(host, source, targets)
+        return created
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+
+
 def _apply_create_token(
     host: Any,
     effect: Mapping[str, Any],
@@ -369,8 +396,15 @@ def _apply_create_token(
     operation: str,
     reason: str,
 ) -> Any:
-    controller = str(effect.get("controller") or actor)
+    from ..fixed_token_production import CREATED_TOKEN_HASTE_FIELD
     from ..reflexive_trigger_model import TOKEN_CREATION_REFLEXIVE_FIELD
+    from ..rules.destroyed_creature_copy import COMMITTED_DEATH_COPY_FIELD, apply_committed_death_copy
+
+    if COMMITTED_DEATH_COPY_FIELD in effect:
+        return apply_committed_death_copy(host, effect, actor=actor, reason=reason)
+    if CREATED_TOKEN_HASTE_FIELD in effect and "token_cleanup" not in effect:
+        return _apply_created_token_haste(host, effect, actor=actor, reason=reason)
+    controller = str(effect.get("controller") or actor)
     reflexive = None
     if TOKEN_CREATION_REFLEXIVE_FIELD in effect:
         from ..rules.token_creation_reflexive import authorize_token_creation_reflexive
@@ -390,6 +424,10 @@ def _apply_create_token(
         from ..created_token_cleanup import apply_fixed_token_cleanup_creation
         try:return apply_fixed_token_cleanup_creation(host, effect, actor=actor, reason=reason)
         except (TypeError, ValueError, KeyError) as exc:raise GameRuleError(str(exc)) from exc
+    from ..rules.attached_role_batch import ATTACHED_ROLE_BATCH_COMMIT, commit_attached_role_batch
+
+    if ATTACHED_ROLE_BATCH_COMMIT in effect:
+        return commit_attached_role_batch(host, effect, actor=actor, reason=reason)
     if '_role_order' in effect:
         from ..role_token_creation import create_ordered_role_token
         return create_ordered_role_token(host, effect, actor=actor, reason=reason)
@@ -692,7 +730,7 @@ def _apply_copy_until_end_of_turn(
     from ..rules.temporary_self_copy import (
         apply_temporary_artifact_copy_exception, decode_temporary_creature_copy_set,
         is_temporary_creature_copy_set, is_versioned_self_copy, prepare_temporary_creature_copy_set,
-        validate_bound_self_copy,
+        self_copy_model_zone, validate_bound_self_copy,
     )
 
     from ..rules.temporary_copy_subject import (
@@ -747,7 +785,7 @@ def _apply_copy_until_end_of_turn(
     target = host._resolve_object(
         actor,
         str(effect.get("target")),
-        zones={"battlefield"} if versioned else None,
+        zones={self_copy_model_zone(effect)} if versioned else None,
     )
     from ..defined_token_faces import single_face_copy_values
     characteristics = single_face_copy_values(host._copyable_characteristics(target))
@@ -1001,6 +1039,15 @@ def _apply_modify_stats_until_end_of_turn(
         return card.ref
     power = int(effect.get("power", 0))
     toughness = int(effect.get("toughness", 0))
+    from ..rules.current_combat_blocker_count import CURRENT_BLOCKER_COUNT_FIELD, resolve_current_blocker_bonus
+
+    if CURRENT_BLOCKER_COUNT_FIELD in effect:
+        try:
+            power = toughness = resolve_current_blocker_bonus(host, effect, card, actor=actor)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        if not power:
+            return card.ref
     if not _commit_temporary_characteristic_effect(
         host,
         effect,
@@ -1052,7 +1099,12 @@ def _apply_grant_play_without_mana_cost(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..rules.void_counter_play import GRANT_FIELD
+
+    if GRANT_FIELD in effect:
+        from ..impulse_access import grant_void_counter_play_permission
+
+        return grant_void_counter_play_permission(host, effect, actor=actor, reason=reason)
     card = host._resolve_object(
         actor,
         str(effect["card"]),
@@ -1117,6 +1169,10 @@ def _apply_grant_cast_permission(
         return apply_chosen_impulse_access(host, effect, actor=actor, reason=reason)
     if TEMPORARY_CAST_TIMING_FIELD in effect:
         return apply_temporary_cast_timing(host, effect, actor=actor, reason=reason)
+    from ..rules.loyalty_graveyard_cast import LOYALTY_GRAVEYARD_CAST_FIELD, grant_loyalty_graveyard_cast_permission
+
+    if LOYALTY_GRAVEYARD_CAST_FIELD in effect:
+        return grant_loyalty_graveyard_cast_permission(host, effect, actor=actor, reason=reason)
     card = host._resolve_object(
         actor,
         str(effect["card"]),

@@ -8,6 +8,8 @@ from dataclasses import replace
 from typing import Any
 
 from .model import TurnHistory, TurnHistoryEvent, TurnHistoryEventKind
+from .turn_history_model import LAND_PLAY_HISTORY_EVENT
+from .turn_history_model import DRAWN_HAND_CARD_EVENT
 
 
 def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
@@ -20,6 +22,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         spell_origin_history_version=history.spell_origin_history_version,
         spell_color_history_version=history.spell_color_history_version,
         plus_one_counter_placement_history_version=history.plus_one_counter_placement_history_version,
+        permanent_counter_receipt_history_version=history.permanent_counter_receipt_history_version,
         creature_spell_counter_history_version=history.creature_spell_counter_history_version,
         graveyard_type_history_version=history.graveyard_type_history_version,
         spell_mana_history_version=history.spell_mana_history_version,
@@ -31,6 +34,8 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         public_movement_history_version=history.public_movement_history_version,
         first_life_gain_history_version=history.first_life_gain_history_version,
         venture_history_version=history.venture_history_version,
+        land_play_history_version=history.land_play_history_version,
+        draw_identity_history_version=history.draw_identity_history_version,
     )
 
 
@@ -72,6 +77,16 @@ def roll_turn_history(
         previous_active_player=previous_active_player,
         previous_spell_cast_counts=dict(sorted(counts.items())),
     )
+
+
+def drawn_hand_incarnations_this_turn(history, *, turn_sequence, player):
+    """Return the actor's exact draw results, or unavailable for historical state."""
+    if getattr(history, "draw_identity_history_version", None) != 1:
+        return None
+    if history.turn_sequence != turn_sequence:
+        return ()
+    return tuple(event.object_incarnation for event in history.events
+                 if event.kind == DRAWN_HAND_CARD_EVENT and event.actor == player)
 
 
 def _graveyard_departure_fact(history, card, destination: str) -> TurnHistoryEvent | None:
@@ -151,6 +166,22 @@ def current_turn_history_events(
     ):
         return ()
     return tuple(event for event in history.events if event.kind == kind)
+
+
+def land_played_this_turn(state: Any, player: str) -> bool | None:
+    history = getattr(state, "turn_history", None)
+    if (getattr(history, "land_play_history_version", None) != 1
+            or history.turn_sequence != state.turn_sequence or history.schema_version != 1):
+        return None
+    return any(event.actor == player for event in current_turn_history_events(
+        history, turn_sequence=state.turn_sequence, kind=LAND_PLAY_HISTORY_EVENT,
+    ))
+
+
+def record_committed_land_play(host, player: str, object_incarnation: str) -> None:
+    history = getattr(host.state, "turn_history", None)
+    if getattr(history, "land_play_history_version", None) == 1:
+        host._record_turn_history(LAND_PLAY_HISTORY_EVENT, actor=player, object_incarnation=object_incarnation)
 
 
 def ventured_this_turn(state: Any, player: str) -> bool | None:

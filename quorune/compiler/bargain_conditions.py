@@ -4,10 +4,35 @@ from . import regex_working_set as re
 from ..bargain_model import BARGAIN_INSTANCE
 from ..declared_cast_cost_model import DECLARED_CAST_COST_MECHANIC, DeclaredCastCostKind
 from ..declared_cost_conditions import DeclaredCastCostCondition, validate_declared_cost_instruction
+from ..library_search_model import BARGAIN_SEARCH_VERSION
 from ..resolution_conditions import RESOLUTION_CONDITION_MECHANIC
+from ..rules.bargain_search import BARGAIN_SEARCH_MECHANIC, bargain_search_effect
+
+
+_BARGAIN_SEARCH = re.compile(
+    r"Search your library for a card, exile it face down, then shuffle\. "
+    r"If this spell was bargained, you may cast the exiled card without paying its mana cost "
+    r"if that spell['’]s mana value is (?P<maximum>0|[1-9][0-9]*) or less\. "
+    r"Put the exiled card into your hand if it wasn['’]t cast this way\.",
+    re.IGNORECASE,
+)
+
+
+def bargain_private_search_template(text):
+    """Retain the linked private result and its entire printed fallback."""
+    match = _BARGAIN_SEARCH.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    try:
+        effect = bargain_search_effect(int(match["maximum"]))
+    except ValueError:
+        return None
+    return f"bargained-private-search-cast-v{BARGAIN_SEARCH_VERSION}", (effect,), None, (BARGAIN_SEARCH_MECHANIC,)
 
 
 def bargain_same_target_template(text, *, source_name, compile_component):
+    if private_search := bargain_private_search_template(text):
+        return private_search
     procedure = bargain_procedure_template(text, compile_component=compile_component)
     if procedure is not None:return procedure
     match = re.fullmatch(r'(?P<normal>.+?\.) If this spell was bargained, (?P<other>that creature .+)\.', text.strip(), re.I)

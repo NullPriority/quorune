@@ -232,7 +232,112 @@
       },
       "power": "2",
       "toughness": "2"
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "name": "Quagnoth",
+      "mana_cost": "{5}{G}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nShroud (This creature can't be the target of spells or abilities.)\nWhen a spell or ability an opponent controls causes you to discard this card, return it to your hand.",
+      "power": "4",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2007-05-04",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Shroud",
+        "Split second"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "If an effect of a spell or ability an opponent controls causes Quagnoth to be discarded, but Quagnoth leaves its new zone after its ability triggers, the ability will have no effect when it resolves."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "If an effect of a spell or ability an opponent controls causes Quagnoth to be discarded, but Quagnoth moves from your hand directly to the Exile zone (due to Leyline of the Void, for example), the ability will trigger from that zone. It will return Quagnoth to your hand from that zone when it resolves."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "If Quagnoth is discarded normally (it moves from your hand to your graveyard), its last ability triggers from your graveyard. If Yixlid Jailer is on the battlefield, it won't trigger."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Split second doesn't stop triggered abilities from triggering, such as that of Chalice of the Void. If one does, its controller puts it on the stack and chooses targets for it, if any. Those abilities will resolve as normal."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Players still get priority while a card with split second is on the stack; their options are just limited to mana abilities and certain special actions."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Players may turn face-down creatures face up while a spell with split second is on the stack."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Casting a spell with split second won't affect spells and abilities that are already on the stack."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If the resolution of a triggered ability involves casting a spell, that spell can't be cast if a spell with split second is on the stack."
+    },
+    {
+      "oracle_id": "9250eb9e-690f-4563-8132-d737f6d22883",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "After a spell with split second resolves (or otherwise leaves the stack), players may again cast spells and activate abilities before the next object on the stack resolves."
+    }
+  ]
 }

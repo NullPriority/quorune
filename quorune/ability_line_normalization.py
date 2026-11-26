@@ -22,6 +22,15 @@ def strip_inline_reminder_and_granted_text(line: str) -> str:
             re.IGNORECASE,
         )
     )
+    _, colon, effect_text = line.partition(":")
+    if colon and "colorless artifact token named" in effect_text.casefold():
+        from .fixed_token_production import mana_life_token_name
+
+        preserve_token_declaration |= mana_life_token_name(effect_text) is not None
+    if colon and "gains" in effect_text.casefold() and "rounded down" in effect_text.casefold():
+        from .combat_prevention_draw_model import matches_combat_prevention_draw_grant
+
+        preserve_token_declaration |= matches_combat_prevention_draw_grant(effect_text)
     result: list[str] = []
     parenthetical_depth = 0
     quoted = False

@@ -6,6 +6,7 @@ from .mana_spend_rules import ManaSpendRule, ManaSpendRuleKind
 
 
 _TAILS = {
+    "spend this mana only to cast creature spells or activate abilities of creatures": ManaSpendRuleKind.CREATURE_SPELL_OR_BATTLEFIELD_ABILITY,
     "spend this mana only to cast a creature spell of the chosen type": ManaSpendRuleKind.CHOSEN_CREATURE,
     "spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type": ManaSpendRuleKind.CHOSEN_CREATURE_OR_ABILITY,
     "spend this mana only to cast a creature spell of the chosen type or a legendary creature spell": ManaSpendRuleKind.CHOSEN_OR_LEGENDARY_CREATURE,
@@ -14,6 +15,7 @@ _TAILS = {
     "spend this mana only to cast a spell of the chosen type or activate an ability of a source of the chosen type": ManaSpendRuleKind.CHOSEN_SUBTYPE_SPELL_OR_ABILITY,
     "if that mana is spent on a creature spell, it gains haste": ManaSpendRuleKind.CREATURE_HASTE,
     "if that mana is spent on a creature spell, it gains haste until end of turn": ManaSpendRuleKind.CREATURE_TEMPORARY_HASTE,
+    "if any of that mana is spent on a creature spell, it gains haste until end of turn": ManaSpendRuleKind.CREATURE_TEMPORARY_HASTE,
     "if that mana is spent on a dragon creature spell, it gains haste until end of turn": ManaSpendRuleKind.DRAGON_CREATURE_TEMPORARY_HASTE,
 }
 

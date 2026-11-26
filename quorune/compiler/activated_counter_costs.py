@@ -6,12 +6,25 @@ from dataclasses import replace
 from . import regex_working_set as re
 
 from ..abilities import CostChoice
+from ..activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_COST
 from ..rules.selected_counter_costs import (
     BLIGHT_ACTIVATION_COST_KIND,
+    DISTRIBUTED_PLUS_COUNTER_COST_KIND,
     SELECTED_PLUS_COUNTER_COST_KIND,
     blight_activation_cost_is_closed,
 )
 from ..rules.activation_counter_cost import SourceCounterRemovalCost
+
+
+def fixed_source_counter_placement_activation(ability):
+    clauses = tuple(" ".join(value.casefold().split()) for value in ability.uncompiled_costs)
+    effect = " ".join(ability.effect_text.strip().casefold().removesuffix(".").split())
+    if clauses != ("put a -1/-1 counter on this creature",) or effect != "untap this creature":
+        return ability
+    try:
+        return replace(ability, source_counter_placement_cost=SOURCE_COUNTER_PLACEMENT_COST, uncompiled_costs=())
+    except ValueError:
+        return ability
 
 
 def fixed_selected_counter_activation(ability):
@@ -23,9 +36,13 @@ def fixed_selected_counter_activation(ability):
             or len(ability.uncompiled_costs) != 1):
         return ability
     clause = ' '.join(ability.uncompiled_costs[0].strip(' .').split())
-    if not re.fullmatch(r'Remove (?:a|one|1) \+1/\+1 counter from a creature you control', clause, re.I):
+    if re.fullmatch(r'Remove (?:a|one|1) \+1/\+1 counter from a creature you control', clause, re.I):
+        kind = SELECTED_PLUS_COUNTER_COST_KIND
+    elif re.fullmatch(r'Remove (?:two|2) \+1/\+1 counters from among creatures you control', clause, re.I):
+        kind = DISTRIBUTED_PLUS_COUNTER_COST_KIND
+    else:
         return ability
-    choice = CostChoice(kind=SELECTED_PLUS_COUNTER_COST_KIND, count=1,
+    choice = CostChoice(kind=kind, count=1,
         zone='battlefield', card_type='creature')
     return replace(ability, choices=(choice,), uncompiled_costs=())
 

@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{R}",
+          "name": "Slicer, Hired Muscle",
+          "oracle_text": "More Than Meets the Eye {2}{R} (You may cast this card converted for {2}{R}.)\nDouble strike, haste\nAt the beginning of each opponent's upkeep, you may have that player gain control of Slicer until end of turn. If you do, untap Slicer, goad it, and it can't be sacrificed this turn. If you don't, convert it.",
+          "power": "3",
+          "toughness": "4",
+          "type_line": "Legendary Artifact Creature — Robot"
+        },
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Slicer, High-Speed Antagonist",
+          "oracle_text": "Living metal (During your turn, this Vehicle is also a creature.)\nFirst strike, haste\nWhenever Slicer deals combat damage to a player, convert it at end of combat.",
+          "power": "3",
+          "toughness": "2",
+          "type_line": "Legendary Artifact — Vehicle"
+        }
+      ],
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Goad",
+        "Living metal",
+        "First strike",
+        "Haste",
+        "Convert",
+        "More Than Meets the Eye",
+        "Double strike"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R} // ",
+      "name": "Slicer, Hired Muscle // Slicer, High-Speed Antagonist",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "oracle_text": "Slicer, Hired Muscle: More Than Meets the Eye {2}{R} (You may cast this card converted for {2}{R}.)\nDouble strike, haste\nAt the beginning of each opponent's upkeep, you may have that player gain control of Slicer until end of turn. If you do, untap Slicer, goad it, and it can't be sacrificed this turn. If you don't, convert it.\n//\nSlicer, High-Speed Antagonist: Living metal (During your turn, this Vehicle is also a creature.)\nFirst strike, haste\nWhenever Slicer deals combat damage to a player, convert it at end of combat.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-11-18",
+      "toughness": null,
+      "type_line": "Legendary Artifact Creature — Robot // Legendary Artifact — Vehicle"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a More Than Meets the Eye cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of a spell cast using More Than Meets the Eye is determined by the mana cost on the front face of the card, no matter what the total cost to cast the spell was.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "When you cast a spell using its More Than Meets the Eye ability, the card is put onto the stack with its back face up. The resulting spell has all characteristics of that face.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "While it's a creature, the Vehicle has its printed power and toughness.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a static ability of another permanent applies only to noncreature permanents, that ability applies to a Vehicle with living metal only during your opponents' turns. For example, if you control Arcee, Acrobatic Coupe and March of the Machines, Arcee will be a 2/2 artifact creature during your turn and a 3/3 artifact creature (because its mana value is 3) during each opponent's turn.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any triggered ability of another card that triggers whenever a permanent transforms will also trigger whenever a permanent converts.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"More Than Meets the Eye [cost]\" means \"You may cast this card converted by paying [cost] rather than its mana cost.\" It functions in any zone from which the spell can be cast.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "When you goad a creature, that creature must attack each combat if able and must attack a player other than you if able. It stays goaded until your next turn.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast this way enters the battlefield with its back face up.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Similarly, an ability of another card that instructs you to \"transform\" one of these cards will cause you to convert it, even if that ability doesn't use the word \"convert.\"",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you copy a permanent spell cast this way, the copy has the characteristics of the card's back face, even though it isn't itself a double-faced card.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The convert keyword action functions the same way as the transform keyword action found on some other cards; to convert a permanent on the battlefield, turn it over so that its other face is up.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "Converting a permanent doesn't affect any Auras or Equipment that are attached to it. Similarly, any counters on the permanent will remain on that permanent after it converts. Any continuous effects from a resolved spell or ability will continue to affect it. Any spells or abilities on the stack that target a permanent continue to do so after that permanent converts.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a converted permanent on the battlefield is equal to the mana value of the card's front face, no matter which face is up.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "\"Living metal\" means \"As long as it's your turn, this permanent is an artifact creature in addition to its other types.\"",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cost is an alternative cost, so it can't be combined with any other alternative costs. It can be combined with any applicable additional costs.",
+      "oracle_id": "fa716557-8e75-4617-8310-ab23a9ca1af1",
+      "published_at": "2022-10-14",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests"
+}

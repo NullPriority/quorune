@@ -44,10 +44,14 @@ def resolve_object(
             if card.ref.casefold() == normalized
         ]
         if not candidates:
+            from ..rules.private_opponent_top_exile import has_private_top_exile_designation, private_top_exile_viewer
+
             candidates = [
                 card for card in host.state.cards.values()
-                if card.printed_name.casefold() == normalized
-                or host.display_name(card.object_id).casefold() == normalized
+                if not (card.face_down and has_private_top_exile_designation(card)
+                        and seat != private_top_exile_viewer(host.state, card))
+                and (card.printed_name.casefold() == normalized
+                     or host.display_name(card.object_id).casefold() == normalized)
             ]
     filtered = [
         card for card in candidates

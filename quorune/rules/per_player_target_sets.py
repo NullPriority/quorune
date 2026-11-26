@@ -14,10 +14,22 @@ from .opponent_exile_draw_results import OPPONENT_EXILE_DRAW_FIELD, opponent_exi
 
 
 def per_player_target_node_capabilities(*,effects,target_schema,mechanic_ids):
+    from .controlled_destruction_source_counters import (
+        SOURCE_COUNTER_REWARD_MECHANIC, controlled_destruction_source_counter_node_capabilities,
+    )
+
+    if SOURCE_COUNTER_REWARD_MECHANIC in mechanic_ids:
+        return controlled_destruction_source_counter_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
     if not isinstance(target_schema,Mapping):return ()
     if (target_schema.get('distinct_controllers') is not True or target_schema.get('retain_controller') is not True
             or target_schema.get('zones')!=['battlefield'] or target_schema.get('categories')!=['permanent']
             or target_schema.get('controller_relation','any') not in {'any','opponent'}):return ()
+    from .targeted_control_set import TARGETED_CONTROL_SET_VERSION, targeted_control_set_node_capabilities
+
+    if len(effects) == 1 and TARGETED_CONTROL_SET_VERSION in effects[0]:
+        return targeted_control_set_node_capabilities(effects=effects, target_schema=target_schema)
     if any(is_announced_opponent_exile(effect) for effect in effects):
         from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 
@@ -54,6 +66,10 @@ def is_closed_per_player_target_program(program):
 
 
 def per_player_target_runtime_dependencies(program):
+    from .controlled_destruction_source_counters import controlled_destruction_source_counter_program_dependencies
+
+    if required := controlled_destruction_source_counter_program_dependencies(program):
+        return required
     schema=program.target_schema
     def constrained(value):
         if isinstance(value,Mapping):

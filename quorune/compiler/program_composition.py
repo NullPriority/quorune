@@ -49,7 +49,10 @@ def _resolution_destination(node, mechanics):
     terminal_move = terminal_spell_move(mechanics)
     if terminal_move is not None:
         return terminal_move.destination
-    if "fixed-permanent-additional-cost-declaration" in node.runtime_coverage:
+    from ..rules.linked_graveyard_aura import LINKED_GRAVEYARD_AURA_SPELL_TEMPLATE
+
+    if ("fixed-permanent-additional-cost-declaration" in node.runtime_coverage
+            or node.template_id == LINKED_GRAVEYARD_AURA_SPELL_TEMPLATE):
         return "battlefield"
     return "graveyard" if node.kind in {"spell_ability", "spell_variant"} else None
 
@@ -422,15 +425,33 @@ def _node_group_provenance(
     graveyard_entry_requires_complete_source = any(GRAVEYARD_SELF_ENTRY_MECHANIC in node.mechanics for node in nodes)
     from ..paid_alternative_cast_model import PAID_ALTERNATIVE_CAST_MECHANIC
     paid_alternative_requires_complete_source=any(PAID_ALTERNATIVE_CAST_MECHANIC in node.mechanics for node in nodes)
+    from ..source_entry_cast_information import PAID_WHITE_ENTRY_TARGET_MECHANIC
+    paid_white_requires_complete_source = any(PAID_WHITE_ENTRY_TARGET_MECHANIC in node.mechanics for node in nodes)
     from ..stack_target_change_model import STACK_TARGET_CHANGE_FIELDS, is_stack_target_change_payment
     stack_change_requires_complete_source = any(
         STACK_TARGET_CHANGE_FIELDS.intersection(effect) or is_stack_target_change_payment(effect)
         for node in nodes for effect in node.effects
     )
+    from ..cast_origin_replacement import CAST_REPLACEMENT_VERSIONS
+    cast_replacement_requires_complete_source = any(
+        effect.get("op") == "apply_if_public_condition"
+        and effect.get("schema_version") in CAST_REPLACEMENT_VERSIONS
+        for node in nodes for effect in node.effects
+    )
+    from ..rules.discarded_card_exile import uses_discarded_card_exile
+    discard_exile_requires_complete_source = any(
+        uses_discarded_card_exile(effect) for node in nodes for effect in node.effects
+    )
+    from ..rules.enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_MECHANIC
+    attached_departure_requires_complete_source = any(ENCHANTED_DEPARTURE_RETURN_MECHANIC in node.mechanics for node in nodes)
     requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
+                                or discard_exile_requires_complete_source
+                                or attached_departure_requires_complete_source
+                                or cast_replacement_requires_complete_source
                                 or stack_change_requires_complete_source
                                 or text_variant_requires_complete_source or preparation_requires_complete_source
-                                or graveyard_entry_requires_complete_source or paid_alternative_requires_complete_source)
+                                or graveyard_entry_requires_complete_source or paid_alternative_requires_complete_source
+                                or paid_white_requires_complete_source)
     requires_complete_card_program = requires_declared_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes

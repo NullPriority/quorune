@@ -19,6 +19,7 @@ from .model import (
 )
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
 from .spell_resolution_name_model import SpellResolutionNameLedger
+from .spell_cast_name_model import SpellCastNameHistory
 
 
 COMMANDER_DAMAGE_IDENTITY_VERSION = 2
@@ -129,6 +130,17 @@ def _composed_commander_cards(card):
             raise CommanderIdentityError('Stored commander designation contradicts its physical card')
         if designation is not None:result.append(raw)
     return tuple(result)
+
+
+def current_commander_objects(state, player):
+    """Find current objects carrying this player\'s physical commanders."""
+    for card in state.cards.values():
+        if (not card.is_commander or getattr(card, "phased_out", False)
+                or card.zone not in {"battlefield", "command", "exile", "graveyard", "hand", "library", "stack"}):
+            continue
+        parts = _composed_commander_cards(card)
+        if (card.owner == player if parts is None else any(part["owner"] == player for part in parts)):
+            yield card
 
 
 def physical_commander_damage_identities(card):
@@ -316,7 +328,7 @@ def initial_commander_state(
         last_normal_turn_player=None,
         departed_turn_boundary_version=1,
         mandatory_linked_loop=MandatoryLinkedLoopWatch(),
-        spell_resolution_name_ledger=SpellResolutionNameLedger(),
+        spell_resolution_name_ledger=SpellResolutionNameLedger(schema_version=2, cast_history=SpellCastNameHistory()),
         commander_damage_identity_version=(
             COMMANDER_DAMAGE_IDENTITY_VERSION
         ),
@@ -330,7 +342,8 @@ def initial_commander_state(
             committed_occurrence_history_version=1, damage_life_history_version=1,
             permanent_death_history_version=1, death_name_history_version=1, public_movement_history_version=1,
             first_life_gain_history_version=1, venture_history_version=1,
-            plus_one_counter_placement_history_version=1),
+            plus_one_counter_placement_history_version=1, land_play_history_version=1,
+            permanent_counter_receipt_history_version=1, draw_identity_history_version=1),
         active_player=None,
         phase="setup",
         step="mulligan",

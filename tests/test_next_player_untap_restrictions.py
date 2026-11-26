@@ -102,6 +102,86 @@ class NextPlayerUntapRestrictionTests(InheritedNativeFixture, unittest.TestCase)
                         capability_registry=self.registry, capability_profile=PROFILE)
                     self.assertNotEqual("exact", changed.status, oracle)
 
+    def next_kefnet_own_upkeep(self, game):
+        for seat in "BCDA":
+            self.until(game, lambda item: item.state.active_player == seat and item.state.step == "upkeep")
+
+    def test_actual_kefnet_keeps_indefinite_control_and_checks_late_lands_at_one_actual_step(self):
+        name = "Kefnet's Last Word"
+        record = self.db.lookup(name, fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, name)
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        self.assertEqual(("gain_control", "prohibit_next_untap"), tuple(effect["op"] for effect in program.effects))
+        opened = replace(program, effects=[program.effects[0], {**program.effects[1], "player": "$target.0"}])
+        self.assertFalse(bind_semantic_program_runtime(
+            opened, capability_registry=self.registry, profile=PROFILE,
+        )["strict"])
+        with patch("quorune.compiler.resolution_effect_templates.restrict_controller_lands_after_fixed_effect_template",
+                   return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(
+                record, capability_registry=self.registry, capability_profile=PROFILE,
+            ).status)
+
+        game = self.playing(61127248)
+        spell = self.add(game.engine, "Kefnet's Last Word", zone="hand")
+        copy_spell = self.add(game.engine, "Twincast", zone="hand")
+        original = self.add(game.engine, "Grizzly Bears", seat="B")
+        other = self.add(game.engine, "Sol Ring", seat="B")
+        old_land = self.add(game.engine, "Island", ref="old-tapped-island")
+        new_land = self.add(game.engine, "Coastal Tower", zone="hand")
+        for card in (spell, copy_spell, original, other, new_land):
+            self.assert_closed(game, card)
+        original.tapped = True
+        other.tapped = True
+        old_land.tapped = True
+        self.prepare(game, actor="A", active="A", mana={"U": 6})
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell, [original.ref], reserve={"U": 2})
+        self.cast_for(game, "A", copy_spell, [game.state.stack[-1].ref])
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["A"]), (pending.kind, pending.actors))
+        alternate = game.act("pilot:A", {"action_id": "choose", "targets": [other.ref]})
+        self.assertTrue(alternate.ok, alternate.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(("A", "A"), tuple(game.state.cards[card.object_id].controller for card in (original, other)))
+        self.assertEqual((NextPlayerUntapRestriction("A", NextPlayerUntapScope.LANDS),),
+                         game.state.next_player_untap_restrictions)
+        self.priority(game, "A")
+        played = game.act("pilot:A", {"action_id": "play-land:" + new_land.ref})
+        self.assertTrue(played.ok, played.summary)
+        self.assertTrue(game.state.cards[new_land.object_id].tapped)
+        game = self.replay(game, load=True)
+        self.next_kefnet_own_upkeep(game)
+        self.assertTrue(all(game.state.cards[land.object_id].tapped for land in (old_land, new_land)))
+        self.assertFalse(any(game.state.cards[card.object_id].tapped for card in (original, other)))
+        self.assertEqual((), game.state.next_player_untap_restrictions)
+        self.next_kefnet_own_upkeep(game)
+        self.assertFalse(any(game.state.cards[land.object_id].tapped for land in (old_land, new_land)))
+        self.assertEqual(("A", "A"), tuple(game.state.cards[card.object_id].controller for card in (original, other)))
+        self.replay(game, load=True)
+
+    def test_actual_kefnet_with_no_legal_original_target_never_schedules_the_lands(self):
+        game = self.playing(61127249)
+        spell = self.add(game.engine, "Kefnet's Last Word", zone="hand")
+        target = self.add(game.engine, "Grizzly Bears", seat="B")
+        response = self.add(game.engine, "Unsummon", seat="C", zone="hand")
+        land = self.add(game.engine, "Island", ref="unrestricted-island")
+        for card in (spell, target, response):
+            self.assert_closed(game, card)
+        land.tapped = True
+        self.prepare(game, actor="A", active="A", mana={"U": 4})
+        game.state.players["C"].mana_pool["U"] = 1
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell, [target.ref])
+        self.cast_for(game, "C", response, [target.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("hand", game.state.cards[target.object_id].zone)
+        self.assertEqual((), game.state.next_player_untap_restrictions)
+        self.next_kefnet_own_upkeep(game)
+        self.assertFalse(game.state.cards[land.object_id].tapped)
+        self.replay(game, load=True)
+
     def playing(self, seed):
         game = self.session(seed)
         for player in game.state.players.values():

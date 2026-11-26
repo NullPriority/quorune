@@ -10,6 +10,10 @@ _HANDLER_ID = "replacement.counter.quantity.v2"
 _COUNTER_NAME_ANY = "counters"
 _COUNTER_TARGET_GOBLIN = "goblin"
 _COUNTER_TARGET_VEHICLE = "vehicle"
+_CONTROLLER_COUNTER_DOUBLING_TEXT = (
+    "if you would put one or more counters on a permanent or player, "
+    "put twice that many of each of those kinds of counters on that permanent or player instead."
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +59,12 @@ _TARGETS = {
     ),
 }
 
+
+_MIXED_CONTROLLED_COUNTER_RECIPIENTS = re.compile(
+    r"If you would put one or more counters on a creature or planeswalker you control or on yourself, "
+    r"put that many plus one of each of those kinds of counters on that permanent or player instead\.",
+    re.I,
+)
 
 _OPPONENT_HALVES = re.compile(
     r"If an opponent would put one or more counters on a permanent or player, "
@@ -113,10 +123,23 @@ def _descriptor(
 
 
 def static_counter_quantity_replacement_handler(
-    text: str,
+    text: str, *, source_is_class: bool = False,
 ) -> tuple[str, Mapping[str, Any], str] | None:
     """Lower the closed ordinary counter-quantity replacement grammar."""
 
+    normalized = " ".join(text.casefold().split())
+    if source_is_class and normalized != _CONTROLLER_COUNTER_DOUBLING_TEXT:
+        return None
+    if _MIXED_CONTROLLED_COUNTER_RECIPIENTS.fullmatch(text):
+        from ..semantic_runtime.counter_replacements import (
+            MIXED_CONTROLLED_COUNTER_RECIPIENT_CAPABILITY, MIXED_CONTROLLED_COUNTER_RECIPIENT_HANDLER_ID,
+        )
+
+        return (
+            "static-mixed-controlled-counter-recipients-plus-one-v1",
+            {"handler_id": MIXED_CONTROLLED_COUNTER_RECIPIENT_HANDLER_ID, "schema_version": 1, "event": "counter.place"},
+            MIXED_CONTROLLED_COUNTER_RECIPIENT_CAPABILITY,
+        )
     if _OPPONENT_HALVES.fullmatch(text):
         from ..semantic_runtime.counter_replacements import OPPONENT_COUNTER_HALVING_HANDLER_ID
 
@@ -132,7 +155,7 @@ def static_counter_quantity_replacement_handler(
         if target is None:
             return None
         return (
-            "static-counter-quantity-replacement-v2",
+            "class-controller-counter-doubling-v1" if source_is_class else "static-counter-quantity-replacement-v2",
             _descriptor(
                 effect_scope=("effect_only" if actor == "an effect" else "any"),
                 placing_player_relation=(

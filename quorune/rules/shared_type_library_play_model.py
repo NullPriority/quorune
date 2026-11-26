@@ -14,17 +14,28 @@ from ..replacement.immutable import FrozenMap, thaw_value
 
 PLAY_STAGE = "play"
 _EFFECT_FIELDS = {"op", "player", "result", "_shared_type_stage", "_top", "_comparison"}
+_REVEAL_CAST_EFFECT_FIELDS = {
+    "op", "player", "result", "_shared_type_stage", "_revealed_identity", "_stack_label",
+}
 _OFFER_FIELDS = {"_stack_ref", "_options_fingerprint"}
 
 
 def revealed_shared_type_card(effect, *, actor, issued_stack=None):
     issued = issued_stack is not None
-    if (not isinstance(effect, Mapping) or set(effect) != _EFFECT_FIELDS | (_OFFER_FIELDS if issued else set())
+    if not isinstance(effect, Mapping):
+        raise ValueError("Revealed library play requires its exact continuation")
+    result = SharedTypeLibraryResult.from_dict(effect.get("result"))
+    fields = _REVEAL_CAST_EFFECT_FIELDS if result.mandatory_reveal else _EFFECT_FIELDS
+    if (set(effect) != fields | (_OFFER_FIELDS if issued else set())
             or effect["op"] != SHARED_TYPE_LIBRARY_OPERATION or effect["_shared_type_stage"] != PLAY_STAGE
             or effect["player"] != actor or type(actor) is not str or not actor
             or issued and effect["_stack_ref"] != issued_stack):
         raise ValueError("Kinship play requires its exact revealed-card continuation")
-    result = SharedTypeLibraryResult.from_dict(effect["result"])
+    if result.mandatory_reveal:
+        label = effect["_stack_label"]
+        if type(label) is not str or not label:
+            raise ValueError("The public reveal requires its original stack label")
+        return LibrarySelectionObjectIdentity.from_dict(effect["_revealed_identity"]), None
     comparison = SharedCreatureTypeComparison.from_dict(effect["_comparison"])
     top = effect["_top"]
     if (result.mechanics != (SHARED_TYPE_PLAY_MECHANIC,) or not comparison.matches

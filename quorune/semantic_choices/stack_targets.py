@@ -93,8 +93,8 @@ class StackTargetChoiceHandler:
                 permanent_copy = PermanentSpellCopySpec.from_dict(effect[PERMANENT_SPELL_COPY_FIELD])
             except (TypeError, ValueError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
-            if self.mode != "copy" or effect.get("retain_targets_only") is not True:
-                raise SemanticChoiceError("Permanent spell copy must retain the original choices")
+            if self.mode != "copy" or (effect.get("retain_targets_only") is True) != (permanent_copy.kind != "exile_cast_grant"):
+                raise SemanticChoiceError("Permanent spell copy must use its original target choice policy")
         copies = effect.get(FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD, 1)
         if FIXED_PERMANENT_SPELL_COPY_COUNT_FIELD in effect and (
             self.mode != "copy" or type(copies) is not int or copies != 3
@@ -260,6 +260,14 @@ class StackTargetChoiceHandler:
             groups = FrozenMap(grouped)
         actor = str(effect["_choice_actor"])
         if self.mode == "copy":
+            permanent_copy = None
+            if PERMANENT_SPELL_COPY_FIELD in effect:
+                try:
+                    permanent_copy = PermanentSpellCopySpec.from_dict(effect[PERMANENT_SPELL_COPY_FIELD])
+                except (TypeError, ValueError) as exc:
+                    raise SemanticChoiceError(str(exc)) from exc
+                if permanent_copy.kind != "exile_cast_grant" or target.copy_source is None:
+                    raise SemanticChoiceError("The copy choice lost its original spell grant")
             intent: Any = CopyStackItemIntent(
                 actor=actor,
                 controller=actor,
@@ -269,6 +277,7 @@ class StackTargetChoiceHandler:
                 reason=str(effect["_stack_label"]),
                 target_snapshots=FrozenMap(query.copied_target_snapshots(target_ref, actor=actor)),
                 copy_source=target.copy_source,
+                permanent_copy=permanent_copy,
             )
         else:
             snapshots = None

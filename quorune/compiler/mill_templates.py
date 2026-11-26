@@ -102,6 +102,32 @@ def _mill_template(subject, count, *, count_kind="fixed", extra_mechanics=()):
     )
 
 
+_COMMITTED_MILLED_CREATURE_TOKENS = re.compile(
+    r"Each player mills X cards\. For each creature card put into a graveyard this way, "
+    r"you create a tapped (?P<definition>[^.,]+) creature token\.",
+    re.IGNORECASE,
+)
+
+
+def committed_milled_creature_token_template(text):
+    match = _COMMITTED_MILLED_CREATURE_TOKENS.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    from .declared_effect_amounts import DECLARED_EFFECT_AMOUNT_MECHANIC
+    from ..rules.milled_creature_tokens import MilledCreatureTokens
+    from .token_templates import fixed_token_creation_effect_template
+
+    token = fixed_token_creation_effect_template("Create a tapped " + match["definition"] + " creature token.")
+    if token is None:
+        return None
+    try:
+        result = MilledCreatureTokens(token.effect)
+    except (TypeError, ValueError):
+        return None
+    return ("announced-x-mill-committed-creature-tokens-v1", (result.effect(),), None,
+            (MILL_MECHANIC_ID, DECLARED_EFFECT_AMOUNT_MECHANIC, *token.mechanics))
+
+
 def fixed_mill_effect_template(text: str) -> FixedMillEffectTemplate | None:
     """Lower one mandatory Mill through a closed count and recipient shape."""
     if re.fullmatch(r"Each opponent mills cards equal to the number of cards in their hand\.?$",

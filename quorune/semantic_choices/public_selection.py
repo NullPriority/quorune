@@ -9,7 +9,15 @@ from ..counter_placement_targets import (
     OPPONENT_CREATURE_COUNTER_CHOICE_VERSION,
     controlled_creature_counter_choice_dependencies,
 )
+from ..linked_exile_return_model import is_selected_conditional_exile
+from ..rules.linked_loyalty_exile_model import LINKED_LOYALTY_EXILE_FIELD
+from .linked_loyalty_exile import (
+    LINKED_LOYALTY_CHOICE_OFFERED, complete_linked_loyalty_exile, prepare_linked_loyalty_exile,
+)
 from ..rules.controlled_return import CONTROLLED_RETURN_FIELD
+from ..rules.commander_return_choice import COMMANDER_RETURN_FIELD
+from ..rules.void_counter_play import CHOICE_FIELD
+from .void_counter_play import CANDIDATES_FIELD, complete_void_counter_play, prepare_void_counter_play
 from ..rules.distinct_sacrifices import DISTINCT_SACRIFICE_FIELD
 from ..rules.opponent_greatest_power_destruction import GREATEST_POWER_DESTRUCTION_FIELD
 from ..rules.opponent_greatest_power_exile import GREATEST_POWER_EXILE_FIELD
@@ -22,6 +30,9 @@ from .opponent_greatest_power_destruction import (
 from ..drawing.captured_hand import CAPTURED_DRAW_CAST_FIELD
 from ..bounded_hand_cast_model import BOUNDED_HAND_CAST_FIELD
 from ..rules.ripple import RIPPLE_FIELD
+from ..rules.permanent_resolution_choices import (
+    COUNTER_KEYWORDS_VERSION, controlled_counter_keywords_dependencies, controlled_counter_keywords_results,
+)
 from ..semantic_runtime.intents import (
     CreateTokenIntent,
     LifeChangeIntent,
@@ -79,6 +90,14 @@ def _check_controlled_counter_choice(effect, rows, actor):
         raise SemanticChoiceError("The selected creature is no longer controlled and present")
 
 
+def _public_choice_candidates(effect, query):
+    refs = query.choice_candidate_refs()
+    followups = effect.get("then") or ()
+    if not any(isinstance(result, Mapping) and result.get("op") == "sacrifice_selected" for result in followups):
+        return refs
+    return tuple(ref for ref in refs if (row := query.object(ref)) is not None and not row.sacrifice_prohibited)
+
+
 @dataclass(frozen=True, slots=True)
 class PublicObjectChoiceHandler:
     operation: str = "choose_objects"
@@ -98,6 +117,7 @@ class PublicObjectChoiceHandler:
         "_maximum",
         "_stack_label",
         CONTROLLED_RETURN_FIELD,
+        COMMANDER_RETURN_FIELD, CHOICE_FIELD, CANDIDATES_FIELD, "source",
         CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD,
         CONTROLLED_CREATURE_COUNTER_SNAPSHOTS,
         GREATEST_POWER_DESTRUCTION_FIELD,
@@ -117,6 +137,9 @@ class PublicObjectChoiceHandler:
         "player",
         "_options_fingerprint",
         "_return_candidates",
+        LINKED_LOYALTY_EXILE_FIELD,
+        LINKED_LOYALTY_CHOICE_OFFERED,
+        "schema_version",
     )
     private_data: tuple[str, ...] = ("actor hand casting options",)
     projected_fields: tuple[str, ...] = (
@@ -141,6 +164,12 @@ class PublicObjectChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if LINKED_LOYALTY_EXILE_FIELD in effect:
+            return prepare_linked_loyalty_exile(effect, context)
+        if is_selected_conditional_exile(effect):
+            from ..conditional_exile_return import prepare_selected_conditional_exile
+
+            return prepare_selected_conditional_exile(effect, context)
         if 'gravestorm' in effect:
             from .gravestorm import prepare_gravestorm
             return prepare_gravestorm(effect,context)
@@ -164,10 +193,16 @@ class PublicObjectChoiceHandler:
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import prepare_distinct_sacrifices
             return prepare_distinct_sacrifices(effect, context)
+        if CHOICE_FIELD in effect:
+            return prepare_void_counter_play(effect, context)
+        if COMMANDER_RETURN_FIELD in effect:
+            from .commander_return import prepare_commander_return
+
+            return prepare_commander_return(effect, context)
         if CONTROLLED_RETURN_FIELD in effect:
             from .controlled_return import prepare_controlled_return
             return prepare_controlled_return(effect, context)
-        refs = context.query.choice_candidate_refs()
+        refs = _public_choice_candidates(effect, context.query)
         opponent = effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION
         if opponent:
             _validate_opponent_counter_actor(context.query, context.stack_ref, effect.get("player"))
@@ -249,6 +284,12 @@ class PublicObjectChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if LINKED_LOYALTY_EXILE_FIELD in effect:
+            return complete_linked_loyalty_exile(continuation, response, query)
+        if is_selected_conditional_exile(effect):
+            from ..conditional_exile_return import complete_selected_conditional_exile
+
+            return complete_selected_conditional_exile(continuation, response, query)
         if 'gravestorm' in effect:
             raise SemanticChoiceError('Gravestorm delegates choices to its canonical copy instructions')
         if 'demonstrate' in effect:
@@ -271,6 +312,12 @@ class PublicObjectChoiceHandler:
         if DISTINCT_SACRIFICE_FIELD in effect:
             from .distinct_sacrifices import complete_distinct_sacrifices
             return complete_distinct_sacrifices(continuation, response, query)
+        if CHOICE_FIELD in effect:
+            return complete_void_counter_play(continuation, response, query)
+        if COMMANDER_RETURN_FIELD in effect:
+            from .commander_return import complete_commander_return
+
+            return complete_commander_return(continuation, response, query)
         if CONTROLLED_RETURN_FIELD in effect:
             from .controlled_return import complete_controlled_return
             return complete_controlled_return(continuation, response, query)
@@ -308,8 +355,9 @@ class PublicObjectChoiceHandler:
             if not query.counter_placement_allowed(selected[0], "deathtouch", 1):
                 raise SemanticChoiceError("The selected creature can no longer receive its counter")
         label = str(effect["_stack_label"])
+        followup = _controlled_counter_keyword_followup(continuation, query, actor, selected)
         intents: list[Any] = []
-        for raw in effect.get("then", ()):
+        for raw in (() if followup else effect.get("then", ())):
             if not isinstance(raw, Mapping):
                 raise SemanticChoiceError("Object-choice continuation is malformed")
             next_effect = dict(raw)
@@ -375,7 +423,25 @@ class PublicObjectChoiceHandler:
                 ),
             )
         )
-        return SemanticChoiceCompletion(intents=tuple(intents))
+        return SemanticChoiceCompletion(intents=tuple(intents), prepend_effects=followup)
+
+
+def _controlled_counter_keyword_followup(continuation, query, actor, selected):
+    effect = continuation.effect
+    if effect.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) != COUNTER_KEYWORDS_VERSION:
+        return ()
+    stack = query.stack_object(continuation.stack_ref)
+    if stack is None or stack.controller != actor or actor not in query.active_seats or len(selected) != 1:
+        raise SemanticChoiceError("The resolving controller must choose one controlled creature")
+    transient = {"_choice_actor", "_legal_refs", "_minimum", "_maximum", "_stack_label",
+                 CONTROLLED_CREATURE_COUNTER_SNAPSHOTS}
+    try:
+        controlled_counter_keywords_dependencies(
+            FrozenMap({key: value for key, value in effect.items() if key not in transient}),
+        )
+    except (ValueError, TypeError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return controlled_counter_keywords_results(selected[0])
 
 
 @dataclass(frozen=True, slots=True)
@@ -579,9 +645,20 @@ class ProliferateChoiceHandler:
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
         from ..counter_placement_event_model import has_canonical_proliferate_choice_order
+        from ..rules.proliferate_phase_out import (
+            uses_proliferate_phase_choice, uses_proliferate_phase_out, validate_proliferate_phase_out,
+        )
 
+        if uses_proliferate_phase_choice(effect):
+            from .proliferate_phase_out import prepare_counter_phase_out_choice
+
+            return prepare_counter_phase_out_choice(effect, context)
         try:
-            canonical = has_canonical_proliferate_choice_order(effect)
+            if uses_proliferate_phase_out(effect):
+                validate_proliferate_phase_out(effect)
+                canonical = True
+            else:
+                canonical = has_canonical_proliferate_choice_order(effect)
         except ValueError as exc:
             raise SemanticChoiceError(str(exc)) from exc
         objects = tuple(
@@ -634,6 +711,22 @@ class ProliferateChoiceHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        from ..rules.proliferate_phase_out import (
+            uses_proliferate_phase_choice, uses_proliferate_phase_out, validate_proliferate_phase_out,
+        )
+
+        if uses_proliferate_phase_choice(continuation.effect):
+            from .proliferate_phase_out import complete_counter_phase_out_choice
+
+            return complete_counter_phase_out_choice(continuation, response, query)
+        choose_phase_out = uses_proliferate_phase_out(continuation.effect)
+        if choose_phase_out:
+            try:
+                validate_proliferate_phase_out({
+                    key: value for key, value in continuation.effect.items() if key not in self.continuation_fields
+                })
+            except ValueError as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         submitted = tuple(
             str(value)
             for value in response.get("objects", response.get("choices", ()))
@@ -693,6 +786,7 @@ class ProliferateChoiceHandler:
                 ProliferateIntent(
                     actor=actor,
                     subjects=tuple(subjects),
+                    choose_phase_out=choose_phase_out,
                     reason=str(continuation.effect["_stack_label"]),
                     source_ref=(
                         str(continuation.effect["_source_ref"])

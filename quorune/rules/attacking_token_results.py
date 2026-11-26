@@ -10,6 +10,10 @@ def attacking_token_result_closure(effect):
     from .token_creation_capability_shapes import _fixed_token_effect_closure
     from ..replacement.immutable import FrozenMap, thaw_value
     version = effect.get('token_entry_version') if isinstance(effect, Mapping) else None
+    from .attacking_entry_copy import DEPENDENCIES, uses_copy, validate_compiled
+    if isinstance(effect, Mapping) and uses_copy(effect):
+        validate_compiled(effect)
+        return DEPENDENCIES, {"cr-111-tokens", "cr-115-targets"}
     if type(version) is int and version == 3:
         from .per_opponent_attacking_tokens import per_opponent_attacking_token_closure
         return per_opponent_attacking_token_closure(effect)
@@ -39,7 +43,15 @@ def attacking_token_payload_dependencies(value):
 
 
 def attacking_token_node_capabilities(*, effects, target_schema, mechanic_ids):
-    if target_schema is not None or len(effects) != 1 or ATTACKING_TOKEN_MECHANIC not in mechanic_ids:
+    from .attacking_entry_copy import target_schema as attacking_copy_target_schema, uses_copy
+    from ..replacement.immutable import thaw_value
+
+    if len(effects) != 1 or ATTACKING_TOKEN_MECHANIC not in mechanic_ids:
+        return ()
+    if uses_copy(effects[0]):
+        if thaw_value(target_schema) != attacking_copy_target_schema():
+            return ()
+    elif target_schema is not None:
         return ()
     try:
         required, mechanics = attacking_token_result_closure(effects[0])

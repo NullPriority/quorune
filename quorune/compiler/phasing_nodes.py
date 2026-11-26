@@ -3,9 +3,20 @@ from __future__ import annotations
 """Source-spanned literal Phasing at the untap turn action."""
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-from ..phasing_model import PHASING_CAPABILITY, PHASING_EVENT, PHASING_HANDLER_ID
+from ..phasing_model import PHASE_OUT_MECHANIC, PHASING_CAPABILITY, PHASING_EVENT, PHASING_HANDLER_ID
+from ..replacement.immutable import thaw_value
+from ..source_control_phase_in_model import SOURCE_CONTROL_PHASE_OUT_TARGET, source_control_phase_out_effect
 from .dependency_gate import explicit_capability_gate
 from .ir_model import OracleNode, append_residual
+
+
+def controlled_saga_phase_out_template(text):
+    expected = "another target nonland permanent phases out. it can't phase in for as long as you control this saga."
+    normalized = " ".join(text.split()).casefold().replace("\u2019", "'")
+    if normalized != expected:
+        return None
+    return ("saga-source-control-phase-out-v6", (source_control_phase_out_effect(),),
+            thaw_value(SOURCE_CONTROL_PHASE_OUT_TARGET), (PHASE_OUT_MECHANIC, "cr-115-targets"))
 
 
 def printed_phasing_keyword_node(

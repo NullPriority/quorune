@@ -152,3 +152,16 @@ class QueueReflexiveTriggerIntent:
         if (self.paid_creature is not None and not isinstance(self.paid_creature, ReflexivePaidCreatureSnapshot)
                 or program.uses_paid_creature != (self.paid_creature is not None)):
             raise ValueError('Reflexive consequence and paid creature receipt do not agree')
+
+
+@dataclass(frozen=True, slots=True)
+class QueueRevealUntilReflexiveIntent:
+    controller: str
+    parent_stack_ref: str
+    revealed_logical_object_id: str
+
+    def __post_init__(self):
+        if any(type(value) is not str or not value for value in (
+            self.controller, self.parent_stack_ref, self.revealed_logical_object_id,
+        )):
+            raise ValueError('A reveal reflexive trigger requires the original frame and revealed incarnation')

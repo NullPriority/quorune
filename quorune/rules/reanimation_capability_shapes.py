@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Capability closure for fixed single-target reanimation."""
+"""Capability closure for exact graveyard-to-battlefield effects."""
 
 from collections.abc import Iterable, Mapping, Sequence
 
@@ -14,7 +14,8 @@ from ..relative_power_target import MANA_VALUE_POWER_CAPABILITY, MANA_VALUE_POWE
 from ..effect_contracts import REANIMATE_OPERATION
 from .reanimation_followup import (
     REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC,
-    REANIMATION_FOLLOWUP_VERSIONS, battlefield_entry_followup_capabilities, validate_reanimation_followup,
+    REANIMATION_FOLLOWUP_VERSIONS, DelayedReanimationSacrifice,
+    battlefield_entry_followup_capabilities, validate_reanimation_followup,
 )
 from ..targets import TargetGroup
 from ..target_numeric import (
@@ -38,7 +39,27 @@ def fixed_target_reanimation_covered_mechanics(
     if covered and MANA_VALUE_POWER_CAPABILITY in supplied:
         covered = (*covered, RELATIVE_TARGET_REANIMATION_MECHANIC)
     if ATTACKING_CARD_ENTRY_CAPABILITY in supplied:
-        return (*covered, SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC)
+        covered = (*covered, SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC)
+    from .death_battlefield_return import DEATH_BATTLEFIELD_RETURN_CAPABILITY, DEATH_BATTLEFIELD_RETURN_MECHANIC
+
+    if DEATH_BATTLEFIELD_RETURN_CAPABILITY in supplied:
+        covered = (*covered, DEATH_BATTLEFIELD_RETURN_MECHANIC)
+    from .ordered_graveyard_reanimation import (
+        ORDERED_GRAVEYARD_REANIMATION_CAPABILITY, ORDERED_GRAVEYARD_REANIMATION_MECHANIC,
+    )
+
+    if ORDERED_GRAVEYARD_REANIMATION_CAPABILITY in supplied:
+        covered = (*covered, ORDERED_GRAVEYARD_REANIMATION_MECHANIC)
+    from .enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_CAPABILITY, ENCHANTED_DEPARTURE_RETURN_MECHANIC
+
+    if ENCHANTED_DEPARTURE_RETURN_CAPABILITY in supplied:
+        covered = (*covered, ENCHANTED_DEPARTURE_RETURN_MECHANIC)
+    from .opposing_death_delayed_return import (
+        OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY, OPPOSING_DEATH_DELAYED_RETURN_MECHANIC,
+    )
+
+    if OPPOSING_DEATH_DELAYED_RETURN_CAPABILITY in supplied:
+        covered = (*covered, OPPOSING_DEATH_DELAYED_RETURN_MECHANIC)
     return covered
 
 
@@ -48,9 +69,32 @@ def fixed_target_reanimation_node_capabilities(
     target_schema: Mapping[str, object] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Recognize exactly one closed graveyard-to-battlefield target move."""
+    """Recognize one closed graveyard-to-battlefield move."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    from .ordered_graveyard_reanimation import ORDERED_GRAVEYARD_REANIMATION_MECHANIC
+
+    if ORDERED_GRAVEYARD_REANIMATION_MECHANIC in mechanics:
+        return ordered_graveyard_reanimation_node_capabilities(effects, target_schema)
+    from .death_battlefield_return import (
+        DEATH_BATTLEFIELD_RETURN_DEPENDENCIES, DEATH_BATTLEFIELD_RETURN_MECHANIC, death_battlefield_return_effect,
+    )
+
+    from .enchanted_departure_return import ENCHANTED_DEPARTURE_RETURN_MECHANIC
+    from .enchanted_departure_events import enchanted_departure_return_node_capabilities
+
+    if ENCHANTED_DEPARTURE_RETURN_MECHANIC in mechanics:
+        return enchanted_departure_return_node_capabilities(effects, target_schema)
+    from .opposing_death_delayed_return import (
+        OPPOSING_DEATH_DELAYED_RETURN_MECHANIC, opposing_death_delayed_return_node_capabilities,
+    )
+
+    if OPPOSING_DEATH_DELAYED_RETURN_MECHANIC in mechanics:
+        return opposing_death_delayed_return_node_capabilities(effects, target_schema)
+    if DEATH_BATTLEFIELD_RETURN_MECHANIC in mechanics:
+        if target_schema is None and tuple(effects) == (death_battlefield_return_effect(),):
+            return DEATH_BATTLEFIELD_RETURN_DEPENDENCIES
+        return ()
     if len(effects) == 1 and "attacking_card_entry" in effects[0]:
         from .attacking_card_entry import (
             ATTACKING_CARD_ENTRY_CAPABILITY,
@@ -235,6 +279,41 @@ def source_power_reanimation_runtime_dependencies(program):
     return required
 
 
+def ordered_graveyard_reanimation_node_capabilities(effects, target_schema):
+    from .ordered_graveyard_reanimation import (
+        ORDERED_GRAVEYARD_REANIMATION_CAPABILITY, validate_ordered_graveyard_reanimation,
+    )
+
+    if target_schema is not None or len(effects) != 1:
+        return ()
+    effect, = effects
+    try:
+        followup = validate_ordered_graveyard_reanimation(effect)
+    except (KeyError, TypeError, ValueError):
+        return ()
+    return (
+        ORDERED_GRAVEYARD_REANIMATION_CAPABILITY,
+        "zone.graveyard.ordered_simultaneous_arrival",
+        *battlefield_entry_followup_capabilities(followup),
+    )
+
+
+def ordered_graveyard_reanimation_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+    from .ordered_graveyard_reanimation import (
+        ORDERED_GRAVEYARD_REANIMATION_MECHANIC, is_ordered_graveyard_reanimation,
+    )
+
+    if (ORDERED_GRAVEYARD_REANIMATION_MECHANIC not in program.coverage
+            and not any(is_ordered_graveyard_reanimation(effect) for effect in nested_effects(program.effects))):
+        return ()
+    required = ordered_graveyard_reanimation_node_capabilities(program.effects, program.target_schema)
+    if (not required or program.event != "resolve" or program.active_zone != "stack"
+            or program.event_condition is not None or program.cost_schema is not None or program.handlers):
+        raise ValueError("Ordered graveyard return requires its exact untargeted resolving spell")
+    return required
+
+
 def _reanimation_followup_capabilities(effect, *, target_schema, mechanics):
     if REANIMATION_FOLLOWUP_MECHANIC not in mechanics:
         return ()
@@ -242,7 +321,13 @@ def _reanimation_followup_capabilities(effect, *, target_schema, mechanics):
         followup = validate_reanimation_followup(effect)
     except (ValueError, TypeError):
         return ()
-    if followup.exile_on_leave and (target_schema is None or "min" in target_schema):
+    if isinstance(followup, DelayedReanimationSacrifice):
+        from ..replacement.immutable import FrozenMap, thaw_value
+
+        if (thaw_value(FrozenMap(target_schema or {})) != followup.target_schema()
+                or type(target_schema.get("count")) is not int):
+            return ()
+    elif followup.exile_on_leave and (target_schema is None or "min" in target_schema):
         return ()
     base = {key: value for key, value in effect.items() if key not in {"schema_version", "followup"}}
     required = fixed_target_reanimation_node_capabilities(effects=(base,),

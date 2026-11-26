@@ -10,7 +10,58 @@ DAMAGE_DEALER_DRAW_VARIANT = "creature_combat_damage_to_source_opponent"
 DAMAGE_DEALER_DRAW_CAPABILITY = "resolution.event_player.damage_dealer_optional_draw"
 CAST_OPPONENT_DRAW_VERSION = 4
 DEFENDING_CONTROLLER_DRAW_VERSION = 5
+TABLE_DRAW_ATTACK_RESTRICTION_VERSION = 6
 CAST_OPPONENT_DRAW_STAGE_FIELDS = frozenset({"player", "cast_draw_order", "cast_draw_choices"})
+TABLE_DRAW_STAGE_FIELDS = frozenset({"player", "table_draw_order", "table_draw_choices"})
+
+
+def controller_end_step_condition():
+    return {"all": [
+        {"field": "player", "op": "eq", "value": "$source.controller"},
+        {"field": "step", "op": "eq", "value": "end_step"},
+    ]}
+
+
+def table_draw_attack_restriction_effect():
+    return {"op": "offer_draw", EVENT_OPTIONAL_DRAW_FIELD: TABLE_DRAW_ATTACK_RESTRICTION_VERSION,
+            "protected_player": "$controller", "count": 1, "private": True}
+
+
+def _table_draw_attack_restriction_payload_dependencies(effect, *, materialized):
+    from ..next_turn_attack_restriction_model import ATTACK_RESTRICTION_CAPABILITY
+
+    expected = table_draw_attack_restriction_effect()
+    fields = set(effect)
+    if materialized:
+        player = effect.get("protected_player")
+        if type(player) is not str or not player or player != player.strip() or player.startswith("$"):
+            raise ValueError("Optional table draws require their materialized trigger controller")
+        expected["protected_player"] = player
+        if TABLE_DRAW_STAGE_FIELDS <= fields:
+            fields -= TABLE_DRAW_STAGE_FIELDS
+    if (fields != set(expected) or type(effect.get(EVENT_OPTIONAL_DRAW_FIELD)) is not int
+            or type(effect.get("count")) is not int or effect.get("private") is not True
+            or any(effect.get(key) != value for key, value in expected.items())):
+        raise ValueError("Optional table draws require the closed one-card offer and protected player")
+    return (EVENT_OPTIONAL_DRAW_CAPABILITY, "resolution.event_player.fixed_result",
+            "zone.draw.library_to_hand", ATTACK_RESTRICTION_CAPABILITY)
+
+
+def _table_draw_attack_restriction_program_dependencies(program):
+    from ..replacement.immutable import FrozenMap
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get(EVENT_OPTIONAL_DRAW_FIELD) == TABLE_DRAW_ATTACK_RESTRICTION_VERSION
+               for effect in nested_effects((program.effects, program.handlers))):
+        return ()
+    if ((program.event, program.active_zone) != ("step.begin", "battlefield")
+            or program.cost_schema is not None or program.target_schema is not None or program.handlers
+            or "one_or_more_event_batch" in program.coverage or len(program.effects) != 1
+            or not isinstance(program.event_condition, Mapping)
+            or FrozenMap(program.event_condition) != FrozenMap(controller_end_step_condition())):
+        raise ValueError("Optional table draws require the original controller's end-step occurrence")
+    required = _table_draw_attack_restriction_payload_dependencies(program.effects[0], materialized=False)
+    return (*required, "trigger.effect.fixed_event", "trigger.placement.apnap")
 
 
 def cast_opponent_optional_draw_effect():
@@ -142,6 +193,8 @@ def _damage_dealer_draw_program_dependencies(program):
 
 
 def validate_event_optional_draw_payload(effect, *, materialized=False):
+    if isinstance(effect, Mapping) and effect.get(EVENT_OPTIONAL_DRAW_FIELD) == TABLE_DRAW_ATTACK_RESTRICTION_VERSION:
+        return _table_draw_attack_restriction_payload_dependencies(effect, materialized=materialized)
     if isinstance(effect, Mapping) and effect.get(EVENT_OPTIONAL_DRAW_FIELD) == DEFENDING_CONTROLLER_DRAW_VERSION:
         return _defending_controller_draw_payload_dependencies(effect, materialized=materialized)
     if isinstance(effect, Mapping) and effect.get(EVENT_OPTIONAL_DRAW_FIELD) == CAST_OPPONENT_DRAW_VERSION:
@@ -187,6 +240,12 @@ def _event_is_closed(program):
 
 def event_optional_draw_runtime_dependencies(program):
     from .event_creature_controller_results import death_controller_draw_program_dependencies
+    from .effect_shape_walkers import nested_effects
+    from ..next_turn_attack_restriction_model import ATTACK_RESTRICTION_OPERATION
+
+    if any(effect.get("op") == ATTACK_RESTRICTION_OPERATION
+           for effect in nested_effects((program.effects, program.handlers))):
+        raise ValueError("Next-turn attack restrictions must come from the committed optional draw choices")
     if death := death_controller_draw_program_dependencies(program):return death
     if dealer := _damage_dealer_draw_program_dependencies(program):
         return dealer
@@ -194,6 +253,8 @@ def event_optional_draw_runtime_dependencies(program):
         return cast
     if defender := _defending_controller_draw_program_dependencies(program):
         return defender
+    if table := _table_draw_attack_restriction_program_dependencies(program):
+        return table
     required = set()
     def visit(value):
         if isinstance(value, Mapping):
@@ -215,7 +276,8 @@ def is_closed_event_optional_draw_program(program):
         required = (death_controller_draw_program_dependencies(program)
                     or _damage_dealer_draw_program_dependencies(program)
                     or _cast_opponent_draw_program_dependencies(program)
-                    or _defending_controller_draw_program_dependencies(program))
+                    or _defending_controller_draw_program_dependencies(program)
+                    or _table_draw_attack_restriction_program_dependencies(program))
     except (KeyError, TypeError, ValueError):
         return False
     if required:

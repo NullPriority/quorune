@@ -230,3 +230,19 @@ def commit_linked_graveyard_entry(host, prepared, card):
             ability_pair=LINKED_EXILE_COPY_PAIR, objects=identities,
         )
         retain_linked_graveyard_entry_source(card)
+
+
+def retain_linked_artifact_search_result(host, item, effect, card, *, actor):
+    from .linked_library_imprint_model import uses_linked_artifact_library_instruction
+    from .rules.linked_library_imprint import linked_artifact_library_source
+
+    if not uses_linked_artifact_library_instruction(effect):
+        return card
+    try:
+        source, pair = linked_artifact_library_source(host, item, effect, actor=actor)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    if card.zone == "exile" and not card.is_token and not card.is_spell_copy:
+        record_linked_ability_exile(host, source=source, ability_pair=pair,
+            objects=(ExiledObjectIdentity(card.object_id, card.ref, card.logical_object_id),))
+    return card

@@ -79,6 +79,70 @@ class FixedBasicTypeSettingRuntimeTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
 
+    def test_actual_chapterless_saga_has_no_entry_or_turn_lore(self):
+        from quorune.saga_progression import capture_saga_lore_turn_action, represented_chapter_numbers
+
+        session = self.session(30507243)
+        engine = session.engine
+        moon = self.add(engine, "Blood Moon", zone="hand")
+        saga = self.add(engine, "Urza's Saga", zone="hand")
+        removal = self.add(engine, "Disenchant", zone="hand")
+        self.prepare(session, mana={"C": 3, "R": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", moon)
+        self.resolve(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(a for a in actions if a["id"] == "play-land:" + saga.ref)
+        result = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        current = session.state.cards[saga.object_id]
+        self.assertEqual("battlefield", current.zone)
+        types, subtypes, _ = engine._type_parts(engine._effective_card_data(current)["type_line"])
+        self.assertEqual({"enchantment", "land"}, types)
+        self.assertEqual({"saga", "mountain"}, subtypes)
+        observed = (current.counters.get("lore", 0), represented_chapter_numbers(engine, current),
+                    tuple(row.object_id for row in capture_saga_lore_turn_action(engine, "A").subjects))
+        self.assertEqual((0, (), ()), observed)
+        self.assertEqual({"intrinsic_mountain"}, {
+            ability.ability_id for ability in engine._activated_abilities(current)
+        })
+        self.assertFalse(session.state.stack)
+        self.cast(session, "A", removal, targets=[moon.ref])
+        self.resolve(session)
+        current = session.state.cards[saga.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual(0, current.counters.get("lore", 0))
+        self.assertEqual((1, 2, 3), represented_chapter_numbers(engine, current))
+        subjects = capture_saga_lore_turn_action(engine, "A").subjects
+        self.assertEqual((current.object_id,), tuple(row.object_id for row in subjects))
+        self.replay(session, load=True)
+
+    def test_actual_chapterless_saga_keeps_lore_it_already_had_without_progressing(self):
+        from quorune.saga_progression import capture_saga_lore_turn_action, saga_final_chapter_snapshot
+
+        session = self.session(30507244)
+        engine = session.engine
+        moon = self.add(engine, "Blood Moon", zone="hand")
+        saga = self.add(engine, "Urza's Saga", zone="hand")
+        self.prepare(session, mana={"C": 2, "R": 1})
+        self.checkpoint(session)
+        action = next(a for a in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if a["id"] == "play-land:" + saga.ref)
+        result = session.act("pilot:A", {"action_id": action["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve(session)
+        current = session.state.cards[saga.object_id]
+        self.assertEqual(1, current.counters["lore"])
+        self.assertIsNotNone(saga_final_chapter_snapshot(engine, current))
+        self.cast(session, "A", moon)
+        self.resolve(session)
+        current = session.state.cards[saga.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertEqual(1, current.counters["lore"])
+        self.assertIsNone(saga_final_chapter_snapshot(engine, current))
+        self.assertEqual((), capture_saga_lore_turn_action(engine, "A").subjects)
+        self.replay(session, load=True)
+
     def test_actual_blood_moon_removes_nonbasic_entry_replacements_before_land_play(self):
         session=self.session(30507201);engine=session.engine
         moon=self.add(engine,'Blood Moon',zone='hand')

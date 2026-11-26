@@ -7,6 +7,10 @@ from dataclasses import dataclass
 import hashlib
 
 from .mana_value_limit import ManaValueLimitSpec
+from .stack_spell_name_scan_model import (
+    NAME_SCAN_CAST_OPERATION, NAME_SCAN_FINISH_OPERATION, NAME_SCAN_STEP_OPERATION, StackSpellNameScan,
+)
+from .rules.bargain_search import BARGAIN_SEARCH_CAST_OPERATION
 from .replacement.immutable import FrozenMap,thaw_value
 from .rules.library_selection import LibrarySelectionObjectIdentity
 from .util import stable_json
@@ -29,8 +33,13 @@ QUALIFIED_SCAN_CAST_OPERATION = 'exile_until_instant_or_sorcery_cast_choice'
 QUALIFIED_SCAN_FINISH_OPERATION = 'exile_until_instant_or_sorcery_finish'
 QUALIFIED_SCAN_TARGET = FrozenMap({'zones': ['player'], 'categories': ['player'],
                                   'player_relation': 'opponent', 'count': 1})
-EXILE_CAST_CHOICE_OPERATIONS = (DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION, QUALIFIED_SCAN_CAST_OPERATION)
-EXILE_CAST_FINISH_OPERATIONS = (DISCOVER_FINISH_OPERATION, QUALIFIED_SCAN_FINISH_OPERATION)
+EXILE_CAST_CHOICE_OPERATIONS = (
+    DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION, QUALIFIED_SCAN_CAST_OPERATION,
+    BARGAIN_SEARCH_CAST_OPERATION, NAME_SCAN_CAST_OPERATION,
+)
+EXILE_CAST_FINISH_OPERATIONS = (
+    DISCOVER_FINISH_OPERATION, QUALIFIED_SCAN_FINISH_OPERATION, NAME_SCAN_FINISH_OPERATION,
+)
 
 
 def discover_options_fingerprint(options):
@@ -62,8 +71,17 @@ class ExileCastProgress:
     supplier: str | None = None
     fixed_top_payment: str | None = None
     copy_parent_ref: str | None = None
+    private_search_parent: str | None = None
+    name_scan: StackSpellNameScan | None = None
 
     def __post_init__(self):
+        if self.name_scan is not None and (
+            not isinstance(self.name_scan, StackSpellNameScan)
+            or any(value is not None for value in (
+                self.amount, self.supplier, self.fixed_top_payment, self.copy_parent_ref, self.private_search_parent,
+            ))
+        ):
+            raise ValueError("A different-name scan must retain its own bound spell and library rule")
         if self.amount is not None:
             ManaValueLimitSpec(self.amount)
         if self.supplier is not None and (
@@ -82,6 +100,12 @@ class ExileCastProgress:
             type(self.copy_parent_ref) is not str or not self.copy_parent_ref or self.fixed_top_payment != "free"
         ):
             raise ValueError("An exiled copy cast requires its resolving parent and free price")
+        if self.private_search_parent is not None and (
+            type(self.private_search_parent) is not str or not self.private_search_parent
+            or self.amount is None or len(exiled) != 1 or self.candidate_ref is None
+            or self.supplier is not None or self.fixed_top_payment is not None or self.copy_parent_ref is not None
+        ):
+            raise ValueError("A private search requires its single exile result and enclosing resolution")
         if (any(not isinstance(card,LibrarySelectionObjectIdentity) for card in exiled)
                 or any(len({getattr(card,key) for card in exiled})!=len(exiled)
                        for key in ('object_id','logical_object_id','ref'))
@@ -102,7 +126,9 @@ class ExileCastProgress:
 
     @property
     def step_operation(self):
-        if self.fixed_top_payment is not None:
+        if self.name_scan is not None:
+            return NAME_SCAN_STEP_OPERATION
+        if self.fixed_top_payment is not None or self.private_search_parent is not None:
             return None
         if self.supplier is not None:
             return QUALIFIED_SCAN_STEP_OPERATION
@@ -110,6 +136,10 @@ class ExileCastProgress:
 
     @property
     def cast_operation(self):
+        if self.name_scan is not None:
+            return NAME_SCAN_CAST_OPERATION
+        if self.private_search_parent is not None:
+            return BARGAIN_SEARCH_CAST_OPERATION
         if self.fixed_top_payment is not None:
             from .fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
             return FIXED_TOP_EXILE_OFFER_OPERATION
@@ -119,7 +149,9 @@ class ExileCastProgress:
 
     @property
     def finish_operation(self):
-        if self.fixed_top_payment is not None:
+        if self.name_scan is not None:
+            return NAME_SCAN_FINISH_OPERATION
+        if self.fixed_top_payment is not None or self.private_search_parent is not None:
             return None
         if self.supplier is not None:
             return QUALIFIED_SCAN_FINISH_OPERATION
@@ -137,6 +169,11 @@ class ExileCastProgress:
         if self.copy_parent_ref is not None:
             search = {"schema_version": 5, "scan": "graveyard_copy", "supplier": self.supplier,
                       "copy_parent_ref": self.copy_parent_ref}
+        if self.private_search_parent is not None:
+            search = {"schema_version": 6, "amount": self.amount,
+                      "private_search_parent": self.private_search_parent}
+        if self.name_scan is not None:
+            search = {"schema_version": 7, "name_scan": self.name_scan.to_dict()}
         return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
@@ -147,6 +184,8 @@ class ExileCastProgress:
         supplier = None
         payment = None
         copy_parent_ref = None
+        private_search_parent = None
+        name_scan = None
         if value['schema_version'] == 1 and set(value) == common | {'amount'}:
             amount = value['amount']
             ManaValueLimitSpec(amount)
@@ -164,12 +203,19 @@ class ExileCastProgress:
               and value["scan"] == "graveyard_copy" and type(value["copy_parent_ref"]) is str):
             amount, supplier, payment = None, value["supplier"], "free"
             copy_parent_ref = value["copy_parent_ref"]
+        elif value["schema_version"] == 6 and set(value) == common | {"amount", "private_search_parent"}:
+            amount, private_search_parent = value["amount"], value["private_search_parent"]
+            ManaValueLimitSpec(amount)
+            if type(private_search_parent) is not str or not private_search_parent:
+                raise ValueError("A private search requires its enclosing resolution")
+        elif value["schema_version"] == 7 and set(value) == common | {"name_scan"}:
+            amount, name_scan = None, StackSpellNameScan.from_dict(value["name_scan"])
         else:
             raise ValueError('Exile scan progress has a closed versioned shape')
         if not isinstance(value['exiled'], (list, tuple)):
             raise ValueError('Exile scan progress requires an ordered history')
         return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
-                   value['candidate_ref'], supplier, payment, copy_parent_ref)
+                   value['candidate_ref'], supplier, payment, copy_parent_ref, private_search_parent, name_scan)
 
 
 DiscoverProgress = ExileCastProgress

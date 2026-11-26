@@ -12,7 +12,7 @@ from ..object_predicate import ObjectQuerySpec
 
 _NAMED_COUNT_RELATION = (
     r"on the battlefield|you control|your opponents control|an opponent controls|"
-    r"in your graveyard|in all graveyards|in your opponents['’] graveyards|in an opponent['’]s graveyard"
+    r"in your graveyard|in all graveyards|in each graveyard|in your opponents['’] graveyards|in an opponent['’]s graveyard"
 )
 _NAME_CONNECTORS = frozenset("a an and at by for from in into of on the to under upon with".split())
 
@@ -31,7 +31,10 @@ def named_collection_quantity(text: str, *, compile_count) -> CharacteristicQuan
             or not words[0][0].isupper()
             or any(word[0].islower() and word not in _NAME_CONNECTORS for word in words)):
         return None
-    quantity = compile_count(f"{match['objects']} {match['relation']}")
+    relation = match["relation"]
+    if relation.casefold() == "in each graveyard":
+        relation = "in all graveyards"
+    quantity = compile_count(f"{match['objects']} {relation}")
     if quantity is None or quantity.schema_version != 1 or quantity.query is None:
         return None
     query = replace(quantity.query, token=False) if quantity.query.zones == ("graveyard",) else quantity.query

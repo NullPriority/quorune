@@ -59,6 +59,40 @@ def fixed_combat_prevention_attackers_untap_template(text: str):
             (*fog, attacking_creatures_next_untap_effect()), None, (*mechanics, "tap-and-untap"))
 
 
+def destroy_creatures_and_restrict_controller_lands_template(text: str):
+    normalized = " ".join(text.replace("’", "'").split()).casefold()
+    if normalized != "destroy all creatures. lands you control don't untap during your next untap step.":
+        return None
+    from .destruction_templates import mass_destruction_effect_template
+
+    _, destruction, _, mechanics = mass_destruction_effect_template("Destroy all creatures.").compiled()
+    restriction = {
+        "op": NEXT_PLAYER_UNTAP_OPERATION, "schema_version": NEXT_PLAYER_UNTAP_INSTRUCTION_VERSION,
+        "player": "$controller", "scope": NextPlayerUntapScope.LANDS.value,
+    }
+    return ("destroy-creatures-and-controller-land-untap-v1",
+            (*destruction, restriction), None, (*mechanics, "tap-and-untap"))
+
+
+def restrict_controller_lands_after_fixed_effect_template(text: str):
+    destruction = destroy_creatures_and_restrict_controller_lands_template(text)
+    if destruction is not None:
+        return destruction
+    normalized = " ".join(text.replace("’", "'").split()).casefold()
+    primary = "gain control of target artifact, creature, or enchantment."
+    if normalized != primary + " lands you control don't untap during your next untap step.":
+        return None
+    from .fixed_control_templates import fixed_control_effect_template
+
+    _, control, schema, mechanics = fixed_control_effect_template(primary).compiled()
+    restriction = {
+        "op": NEXT_PLAYER_UNTAP_OPERATION, "schema_version": NEXT_PLAYER_UNTAP_INSTRUCTION_VERSION,
+        "player": "$controller", "scope": NextPlayerUntapScope.LANDS.value,
+    }
+    return ("control-and-next-own-land-untap-v1",
+            (*control, restriction), schema, (*mechanics, "tap-and-untap"))
+
+
 def target_combat_prevention_two_untaps_template(text: str):
     normalized = " ".join(text.replace("’", "'").split()).casefold()
     if normalized != (
@@ -206,7 +240,7 @@ class SourceTapStateEffectTemplate:
 
 @dataclass(frozen=True, slots=True)
 class AttachedTapStateEffectTemplate:
-    """Typed lowering for one source-relative enchanted permanent."""
+    """Typed lowering for one source-relative attached permanent."""
 
     action: TapStateAction
     permanent_type: str
@@ -222,11 +256,17 @@ class AttachedTapStateEffectTemplate:
             "permanent",
         }:
             raise ValueError("Attached tap-state type is unsupported")
-        if self.relation is not AttachmentReferenceKind.ENCHANTED:
-            raise ValueError("Attached tap-state relation is unsupported")
+        if self.relation is AttachmentReferenceKind.EQUIPPED:
+            if (self.action, self.permanent_type) == (TapStateAction.UNTAP, "creature"):
+                return
+        elif self.relation is AttachmentReferenceKind.ENCHANTED:
+            return
+        raise ValueError("Attached tap-state relation is unsupported")
 
     @property
     def template_id(self) -> str:
+        if self.relation is AttachmentReferenceKind.EQUIPPED:
+            return "untap-equipped-creature-v1"
         return f"{self.action.value}-enchanted-{self.permanent_type}-v1"
 
     @property
@@ -237,6 +277,7 @@ class AttachedTapStateEffectTemplate:
                 "card": AttachmentReferenceSpec(
                     relation=self.relation,
                     required_card_type=self.permanent_type,
+                    schema_version=2 if self.relation is AttachmentReferenceKind.EQUIPPED else 1,
                 ).to_dict(),
             },
         )
@@ -370,6 +411,11 @@ def targeted_tap_state_effect_template(
             else None
         )
 
+    if (source_attachment_relation is AttachmentReferenceKind.EQUIPPED
+            and re.fullmatch(r"untap equipped creature\.?", normalized, re.I)):
+        return AttachedTapStateEffectTemplate(
+            action=TapStateAction.UNTAP, permanent_type="creature", relation=source_attachment_relation,
+        )
     attached = re.fullmatch(
         r"(?P<action>tap|untap) enchanted "
         r"(?P<kind>artifact|creature|land|permanent)\.?",

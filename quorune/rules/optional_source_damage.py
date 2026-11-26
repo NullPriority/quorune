@@ -13,6 +13,7 @@ OPTIONAL_SOURCE_DAMAGE_FIELD = "optional_source_damage"
 OPTIONAL_SOURCE_DAMAGE_MECHANIC = "optional-source-damage-alternate"
 OPTIONAL_SOURCE_DAMAGE_CAPABILITY = "resolution.choice.optional_source_damage"
 OPTIONAL_LAND_CONTROLLER_DAMAGE_CAPABILITY = "resolution.choice.optional_land_controller_damage"
+OPTIONAL_TARGET_CONTROLLER_DAMAGE_CAPABILITY = "resolution.choice.optional_target_controller_damage"
 _PROMPT = "Allow this spell to deal damage to you?"
 _BRANCHES = ("accept_damage", "decline_damage")
 _FIELDS = {"op", OPTIONAL_SOURCE_DAMAGE_FIELD, "player", "prompt", "options", "then_by_choice"}
@@ -26,6 +27,10 @@ _NONBASIC_LAND_TARGET = {
 def source_damage_choice(damage, alternate, *, chooser="$target.0"):
     if alternate["op"] == "destroy":
         fallback = "Destroy the targeted land"
+    elif alternate["op"] == "damage":
+        fallback = f"Deal {alternate['amount']} damage to the targeted creature"
+    elif alternate["op"] == "counter_stack_target":
+        fallback = "Counter the targeted spell"
     elif alternate["op"] == "draw":
         fallback = f"The caster draws {alternate['count']} cards"
     else:
@@ -60,6 +65,39 @@ def _target_land_controller_choice_capabilities(choice, damage, alternate, schem
     return tuple(sorted({OPTIONAL_SOURCE_DAMAGE_CAPABILITY, OPTIONAL_LAND_CONTROLLER_DAMAGE_CAPABILITY, *accepted, *declined}))
 
 
+def _target_controller_damage_capabilities(choice, damage, alternate, schema, mechanic_ids):
+    from .damage_capability_shapes import fixed_damage_node_capabilities
+    from .node_capability_shapes import targeted_counter_node_capabilities
+    from .stack_counter_followup import STACK_COUNTER_FOLLOWUP_CAPABILITY, STACK_TARGET_CONTROLLER
+
+    amount = damage.get("amount")
+    if type(amount) is not int or amount <= 0 or not isinstance(schema, dict) or type(schema.get("count")) is not int:
+        return ()
+    if alternate.get("op") == "damage":
+        if schema != {"zones": ["battlefield"], "categories": ["permanent"],
+                      "count": 1, "types_any": ["creature"]}:
+            return ()
+        chooser = target_controller_reference()
+        received = damage
+        fallback = fixed_damage_node_capabilities(effects=(alternate,), target_schema=schema, mechanic_ids=mechanic_ids)
+        support = ()
+    else:
+        if (schema != {"zones": ["stack"], "categories": ["spell"], "source_exclusion": True,
+                       "count": 1, "types_any": ["instant", "sorcery"]}
+                or alternate != {"op": "counter_stack_target", "stack": "$target.0"}):
+            return ()
+        chooser = STACK_TARGET_CONTROLLER
+        received = {**damage, "target": "$controller"}
+        fallback = targeted_counter_node_capabilities(effects=(alternate,), target_schema=schema, mechanic_ids=mechanic_ids)
+        support = (STACK_COUNTER_FOLLOWUP_CAPABILITY,)
+    if (damage != {"op": "damage", "source": "$source", "target": chooser, "amount": amount}
+            or not fallback or choice != source_damage_choice(damage, alternate, chooser=chooser)):
+        return ()
+    accepted = fixed_damage_node_capabilities(effects=(received,), target_schema=None, mechanic_ids=mechanic_ids)
+    return tuple(sorted({OPTIONAL_SOURCE_DAMAGE_CAPABILITY, OPTIONAL_TARGET_CONTROLLER_DAMAGE_CAPABILITY,
+                         "target.revalidate_resolution", *accepted, *fallback, *support})) if accepted else ()
+
+
 def optional_source_damage_node_capabilities(*, effects, target_schema, mechanic_ids):
     from .damage_capability_shapes import fixed_damage_node_capabilities
     from .node_capability_shapes import fixed_draw_node_capabilities
@@ -79,6 +117,8 @@ def optional_source_damage_node_capabilities(*, effects, target_schema, mechanic
         return ()
     damage = branches["accept_damage"][0]
     alternate = branches["decline_damage"][0]
+    if alternate.get("op") in {"damage", "counter_stack_target"}:
+        return _target_controller_damage_capabilities(choice, damage, alternate, schema, mechanic_ids)
     if alternate.get("op") == "destroy":
         if "amount" not in damage:
             return ()

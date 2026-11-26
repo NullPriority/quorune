@@ -9,7 +9,7 @@ from ..object_predicate import ObjectQuerySpec
 from ..object_query import object_matches_query
 from ..recipient_modifier_model import (
     RecipientQuantityKind, RecipientQuantitySpec, RECIPIENT_MODIFIER_OPERATION,
-    RECIPIENT_SHARED_TYPE_CAPABILITY,
+    RECIPIENT_SHARED_NAME_CAPABILITY, RECIPIENT_SHARED_TYPE_CAPABILITY,
 )
 from ..shared_creature_type_model import (
     SharedCreatureTypeObject, canonical_creature_types, shared_type_objects,
@@ -19,6 +19,7 @@ from .context import SemanticNodeError
 
 
 SHARED_TYPE_ANTHEM_HANDLER = 'continuous.anthem.shared-creature-type.v1'
+SHARED_NAME_ANTHEM_HANDLER = 'continuous.anthem.shared-creature-name.v1'
 
 
 @dataclass(frozen=True, slots=True)
@@ -74,3 +75,53 @@ class SharedTypeAnthemHandler:
             applies=base.predicate,relation=relation,
             related_object=context.attached_object if relation is ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT else None,
             operations=(ContinuousOperation(RECIPIENT_MODIFIER_OPERATION,modifier),)),)
+
+
+
+@dataclass(frozen=True, slots=True)
+class SharedNameAnthemHandler:
+    handler_id: str = SHARED_NAME_ANTHEM_HANDLER
+    schema_version: int = 1
+    family: str = 'continuous.recipient_shared_name_power_toughness_anthem'
+    event: str = 'characteristics.evaluate'
+    source_component_layer: Layer = Layer.POWER_TOUGHNESS
+    rule_references: tuple[str, ...] = ('201.2a','400.7','611.3a','611.3b','613.4c')
+    capability_dependencies: tuple[str, ...] = (RECIPIENT_SHARED_NAME_CAPABILITY,)
+
+    def validate(self, descriptor):
+        from .continuous_components import FixedQueryPowerToughnessAnthemHandler
+
+        exact_fields(descriptor, {'handler_id','schema_version','event','condition','modifier'}, field='same-name anthem')
+        if (descriptor['handler_id'] != self.handler_id or type(descriptor['schema_version']) is not int
+                or descriptor['schema_version'] != 1 or descriptor['event'] != self.event):
+            raise SemanticNodeError('Same-name anthem identity is malformed')
+        base = FixedQueryPowerToughnessAnthemHandler().validate({
+            'handler_id': 'continuous.anthem.fixed-query.v2', 'schema_version': 2, 'event': self.event,
+            'condition': descriptor['condition'], 'modifier': descriptor['modifier'],
+        })
+        if (base.target_controller != 'source_controller' or base.exclude_source
+                or base.predicate != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), token=False)):
+            raise SemanticNodeError('Same-name anthem recipients must be the controller’s nontoken creatures')
+        return base
+
+    def lower(self, descriptor, context):
+        from dataclasses import replace
+
+        base = self.validate(descriptor)
+        if context.public_type_objects is None:
+            raise SemanticNodeError('Same-name creature facts are unavailable')
+        creature_set = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), controller=context.source_controller)
+        objects = [
+            {'identity': ContinuousObjectIdentity(row.object_id, row.logical_object_id).to_dict(),
+             'names': sorted(set(row.public_rules_names))}
+            for row in context.public_type_objects if object_matches_query(row, creature_set)
+        ]
+        quantity = RecipientQuantitySpec(RecipientQuantityKind.OTHER_SAME_NAME_CREATURES,
+                                         schema_version=3, controller_relation='source_controller')
+        modifier = {'schema_version': 3, 'quantity': quantity.to_dict(), 'objects': objects,
+                    'power': base.power, 'toughness': base.toughness}
+        return (ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}',
+            source_id=context.source_object_id, layer=Layer.POWER_TOUGHNESS, sublayer='7c',
+            timestamp=context.source_timestamp, origin=ContinuousEffectOrigin.STATIC_ABILITY,
+            applies=replace(base.predicate, controller=context.source_controller),
+            operations=(ContinuousOperation(RECIPIENT_MODIFIER_OPERATION, modifier),)),)

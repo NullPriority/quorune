@@ -159,6 +159,40 @@ class EventSpellCopyCompilerTests(unittest.TestCase):
             self.assertIsNone(fixed_spell_cast_binding_spec('Whenever you cast a '+descriptor+' creature spell, copy it.'))
 
 
+    def test_cast_type_disjunction_keeps_relations_and_rejects_nearby_grammar(self):
+        from quorune.compiler.spell_cast_predicates import fixed_spell_cast_binding_spec
+
+        registry = load_default_capability_registry()
+        for relation, operator, result in (
+            ("you cast", "eq", "copy that spell. You may choose new targets for the copy."),
+            ("an opponent casts", "ne", "counter that spell."),
+        ):
+            with self.subTest(relation=relation):
+                prefix = f"Whenever {relation} an artifact, instant, or sorcery spell, "
+                binding = fixed_spell_cast_binding_spec(prefix + result)
+                self.assertIsNotNone(binding)
+                self.assertEqual(
+                    {"all": [
+                        {"field": "controller", "op": operator, "value": "$source.controller"},
+                        {"any": [
+                            {"field": "types", "op": "contains_any", "value": [kind]}
+                            for kind in ("artifact", "instant", "sorcery")
+                        ]},
+                    ]},
+                    binding.subject.event_condition,
+                )
+                text = prefix + result + " This ability triggers only once each turn."
+                self.assertEqual("exact", compile_oracle_card(query_record(text), capability_registry=registry,
+                    capability_profile="commander_review").status)
+                for unsupported in (
+                    text.replace("artifact, instant, or", "artifact, instant, and"),
+                    text.replace("artifact, instant, or", "artifact, or instant, or"),
+                    text.replace("an artifact, instant, or", "a creature, artifact, or"),
+                ):
+                    self.assertIsNone(fixed_spell_cast_binding_spec(unsupported))
+                    self.assertNotEqual("exact", compile_oracle_card(query_record(unsupported), capability_registry=registry).status)
+
+
 class EventSpellCopyNativeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
     session=native.ActivationPublicStateNativeTests.session
@@ -191,6 +225,126 @@ class EventSpellCopyNativeTests(unittest.TestCase):
             if decision.kind=='trigger.order':self.until(session,lambda s:s.state.pending_decision is not None and s.state.pending_decision.kind=='priority')
             else:self.fail('Unexpected copy decision: '+decision.kind)
         self.fail('Event copy did not finish')
+
+    def test_actual_jin_copies_departed_spell_and_counters_only_first_opponent(self):
+        session = self.session(603638201)
+        source = self.add(session.engine, "Jin-Gitaxias, Progress Tyrant", zone="hand")
+        creature = self.add(session.engine, "Grizzly Bears", zone="hand")
+        spell = self.add(session.engine, "Blaze", zone="hand")
+        repeat = self.add(session.engine, "Lightning Bolt", zone="hand", ref="jin-controller-repeat")
+        opposed = self.add(session.engine, "Lightning Bolt", seat="B", zone="hand", ref="jin-first-opponent")
+        counter = self.add(session.engine, "Counterspell", seat="C", zone="hand")
+        self.assert_closed(session, source)
+
+        def triggers(game):
+            return [
+                item for item in game.state.stack
+                if item.kind == "triggered_ability" and item.source_object_id == source.object_id
+            ]
+
+        self.prepare(session, mana={"C": 9, "U": 2, "G": 1, "R": 2})
+        session.state.players["B"].mana_pool["R"] = 1
+        session.state.players["C"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self.cast_for(session, "A", source, reserve={"C": 4, "G": 1, "R": 2})
+        self.assertEqual([], triggers(session))
+        self.assertIsNone(self.resolve(session))
+        self.cast_for(session, "A", creature, reserve={"C": 3, "R": 2})
+        self.assertEqual([], triggers(session))
+        self.assertIsNone(self.resolve(session))
+
+        self.priority(session, "A")
+        result = session.act("pilot:A", {
+            "action_id": self.action(session, "A", spell)["id"],
+            "targets": ["B"], "x": 3, "pay": "auto", "reserve": {"R": 1},
+        })
+        self.assertTrue(result.ok, result.summary)
+        original = next(item for item in session.state.stack if item.card_object_id == spell.object_id)
+        first_copy, = triggers(session)
+        self.assertEqual(original.ref, first_copy.context["stack"])
+        self.assertEqual(session.state.cards[spell.object_id].logical_object_id, first_copy.context["logical_object_id"])
+
+        self.cast_for(session, "A", repeat, ["D"])
+        self.assertEqual([first_copy.ref], [item.ref for item in triggers(session)])
+        self.cast_for(session, "B", opposed, ["D"])
+        opposing_item = next(item for item in session.state.stack if item.card_object_id == opposed.object_id)
+        copy_trigger, counter_trigger = triggers(session)
+        self.assertEqual(first_copy.ref, copy_trigger.ref)
+        self.assertEqual(opposing_item.ref, counter_trigger.context["stack"])
+        self.assertEqual(session.state.cards[opposed.object_id].logical_object_id, counter_trigger.context["logical_object_id"])
+        self.assertEqual([], counter_trigger.targets)
+        self.cast_for(session, "C", counter, [original.ref])
+        self.assertEqual([copy_trigger.ref, counter_trigger.ref], [item.ref for item in triggers(session)])
+
+        session = self.replay(session, load=True)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        for card in (spell, opposed, counter):
+            self.assertEqual("graveyard", session.state.cards[card.object_id].zone)
+        self.assertEqual(40, session.state.players["B"].life)
+        self.assertEqual(40, session.state.players["C"].life)
+        self.assertEqual(37, session.state.players["D"].life)
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        response = {"action_id": "choose", "targets": ["C"]}
+        self.assertFalse(session.act("pilot:B", response).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", response)
+        self.assertTrue(accepted.ok, accepted.summary)
+        copied, = [item for item in session.state.stack if item.kind == "spell_copy"]
+        self.assertEqual((3, ["C"]), (copied.x_value, copied.targets))
+        self.assertEqual([], triggers(session))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(37, session.state.players["C"].life)
+        self.assertEqual(40, session.state.players["B"].life)
+        self.replay(session, load=True)
+
+    def test_actual_jin_artifact_and_counter_limits_reset_on_next_turn(self):
+        session = self.session(603638202)
+        source = self.add(session.engine, "Jin-Gitaxias, Progress Tyrant")
+        artifact = self.add(session.engine, "Vedalken Orrery", zone="hand")
+        opposing_instant = self.add(session.engine, "Lightning Bolt", seat="B", zone="hand", ref="jin-first-turn-bolt")
+        opposing_creature = self.add(session.engine, "Grizzly Bears", seat="B", zone="hand")
+        opposing_artifact = self.add(session.engine, "Mendicant Core, Guidelight", seat="B", zone="hand")
+        next_instant = self.add(session.engine, "Lightning Bolt", zone="hand", ref="jin-next-turn-bolt")
+        for index in range(4):
+            self.add(session.engine, "Mountain", seat="B", ref=f"jin-b-mountain-{index}")
+        self.add(session.engine, "Forest", seat="B", ref="jin-b-forest")
+        for index in range(2):
+            self.add(session.engine, "Generic Bound Plains", seat="B", ref=f"jin-b-plains-{index}")
+            self.add(session.engine, "Skyline Cascade", seat="B", ref=f"jin-b-blue-land-{index}")
+        self.add(session.engine, "Mountain", ref="jin-a-mountain")
+        for card in (source, artifact, opposing_creature, opposing_artifact):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 4})
+        session.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(session)
+
+        self.cast_for(session, "A", artifact)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[artifact.object_id].zone)
+        token, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual("Vedalken Orrery", token.printed_name)
+        self.assertEqual("A", token.controller)
+        self.cast_for(session, "B", opposing_instant, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[opposing_instant.object_id].zone)
+        self.assertEqual(40, session.state.players["D"].life)
+
+        previous = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence > previous and game.state.phase == "precombat_main")
+        self.cast_for(session, "B", opposing_creature, reserve={"W": 1, "U": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[opposing_creature.object_id].zone)
+        self.cast_for(session, "B", opposing_artifact)
+        self.cast_for(session, "A", next_instant, ["D"])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        decision = session.act("pilot:A", {"action_id": "choose"})
+        self.assertTrue(decision.ok, decision.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[opposing_artifact.object_id].zone)
+        self.assertEqual(34, session.state.players["D"].life)
+        self.replay(session, load=True)
 
     def next_cast_registrations(self, session):
         return [row for row in session.state.delayed_triggers if row.active and "next_cast_copy" in row.condition]

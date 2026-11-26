@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+import hashlib
 
 from ..public_alternative_costs import FixedPublicAlternativeCostSpec, FIXED_PUBLIC_ALTERNATIVE_COST_HANDLER_ID
 from .admission import program_has_complete_card_program_admission
@@ -8,7 +9,7 @@ from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import thaw_value
 from ..rules.capabilities import targeted_exile_node_capabilities
 from ..rules.casting_additional_costs import fixed_zone_change_additional_cost
-from .current_view_equivalence import _same_current_source
+from .current_view_equivalence import _same_current_source, reviewed_rulings_match
 
 
 def _reviewed_zero_price_resolution_view(current):
@@ -36,6 +37,17 @@ def _reviewed_zero_price_resolution_view(current):
             'alternate', 'Cast without paying its mana cost while you control a commander',
         )
     return None
+
+
+def _reviewed_zero_price_sources_match(old, current, price):
+    """Require one current compiler source and a matching or explicitly reviewed ruling revision."""
+    oracle = current.provenance.get("source_oracle_hash")
+    rulings = current.provenance.get("source_rulings_hash")
+    if (not oracle or not rulings or old.provenance.get("source_oracle_hash") != oracle
+            or price.provenance.get("source_oracle_hash") != oracle
+            or price.provenance.get("source_rulings_hash") != rulings):
+        return False
+    return reviewed_rulings_match(old, rulings)
 
 
 def shadowed_reviewed_zero_price_keys(record, generated_programs, reviewed_programs):
@@ -69,9 +81,7 @@ def shadowed_reviewed_zero_price_keys(record, generated_programs, reviewed_progr
             if any(getattr(old, field) != getattr(current, field) for field in
                     ('active_zone', 'event', 'event_condition', 'handlers', 'destination', 'requires_arbiter')):
                 continue
-            if any(not current.provenance.get(field) or old.provenance.get(field) != current.provenance[field]
-                    or prices[0].provenance.get(field) != current.provenance[field]
-                    for field in ('source_oracle_hash', 'source_rulings_hash')):
+            if not _reviewed_zero_price_sources_match(old, current, prices[0]):
                 continue
             if old.target_schema != old_schema or list(old.effects) != old_effects:
                 continue
@@ -152,3 +162,65 @@ def shadowed_reviewed_pitch_counter_keys(record, generated_programs, reviewed_pr
             continue
         result.add(old.key)
     return result
+
+
+def _reviewed_hand_exile_evoke_pair(reviewed, record, price, spec):
+    from ..rules.casting.costs import _same_reviewed_hand_exile_evoke_price
+
+    views = [program for program in reviewed if program.oracle_id == record.oracle_id
+             and program.ability_id in {'spell:front', 'trigger:evoke'}]
+    oracle_hash = hashlib.sha256(record.oracle_text.encode('utf-8')).hexdigest()
+    if len(views) != 2 or any(
+        program.trust_level != 'trusted' or program.requires_arbiter or program.handlers
+        or program.target_schema is not None or program.trigger_limit is not None
+        or program.provenance.get('source_oracle_hash') != oracle_hash
+        or price.provenance.get('source_oracle_hash') != oracle_hash
+        or not price.provenance.get('source_rulings_hash')
+        or program.provenance.get('source_rulings_hash') != price.provenance['source_rulings_hash']
+        for program in views
+    ):
+        return set()
+    by_ability = {program.ability_id: program for program in views}
+    spell = by_ability.get('spell:front')
+    sacrifice = by_ability.get('trigger:evoke')
+    if spell is None or sacrifice is None:
+        return set()
+    schema = spell.cost_schema
+    options = schema.get('alternate_costs') if isinstance(schema, dict) and set(schema) == {'alternate_costs'} else None
+    if ((spell.active_zone, spell.event, spell.destination) != ('stack', 'resolve', 'battlefield')
+            or spell.effects or spell.event_condition is not None
+            or not isinstance(options, list) or len(options) != 1
+            or not _same_reviewed_hand_exile_evoke_price(spec, options[0])):
+        return set()
+    if ((sacrifice.active_zone, sacrifice.event, sacrifice.destination) != ('battlefield', 'permanent.enter.self', None)
+            or sacrifice.cost_schema is not None
+            or sacrifice.event_condition != {'field': 'source_annotation.evoked', 'op': 'truthy'}
+            or tuple(sacrifice.effects) != ({'op': 'sacrifice_if_present', 'card': '$source'},)):
+        return set()
+    return {spell.key, sacrifice.key}
+
+
+def shadowed_reviewed_hand_exile_evoke_keys(record, generated_programs, reviewed_programs):
+    """Replace an exact archived Evoke price and its sacrifice with the typed lifecycle."""
+    from ..hand_exile_evoke_model import HAND_EXILE_EVOKE_HANDLER_ID, HandExileEvokeSpec
+    from ..semantic_runtime.cast_costs import hand_exile_evoke_handler_descriptor
+
+    if record.layout != 'normal' or record.faces or not record.is_permanent_spell:
+        return set()
+    prices = [program for program in generated_programs if program.oracle_id == record.oracle_id
+              and program.trust_level == 'trusted' and (program.active_zone, program.event) == ('stack', 'cast.cost')
+              and program.capability_closure and program.capability_closure.get('trusted') is True
+              and str(program.provenance.get('authored_by', '')).startswith('oracle-ir-v')
+              and len(program.handlers) == 1 and program.handlers[0].get('handler_id') == HAND_EXILE_EVOKE_HANDLER_ID
+              and program_has_complete_card_program_admission(program)]
+    if len(prices) != 1:
+        return set()
+    price, = prices
+    descriptor, = price.handlers
+    try:
+        spec = HandExileEvokeSpec.from_dict(descriptor['evoke'])
+    except (KeyError, TypeError, ValueError):
+        return set()
+    if descriptor != hand_exile_evoke_handler_descriptor(spec):
+        return set()
+    return _reviewed_hand_exile_evoke_pair(reviewed_programs, record, price, spec)

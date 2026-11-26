@@ -35,11 +35,12 @@ def resolving_persistent_copy_source(host, effect, *, actor, kind):
 
 
 def persistent_copy_effect_handler(effect):
+    from ..rules.announced_artifact_copy import is_announced_artifact_copy_effect
     from ..rules.announced_graveyard_copy import is_announced_graveyard_copy_effect
     from ..rules.color_retaining_copy import is_retained_color_upkeep_copy
     from ..rules.graveyard_exile_copy import is_graveyard_exile_copy_effect
     from ..rules.linked_exile_copy import is_linked_exile_copy_effect
-    from ..rules.persistent_public_copy import is_persistent_public_copy_effect
+    from ..rules.persistent_public_copy import is_controlled_artifact_copy_effect, is_persistent_public_copy_effect
     from ..rules.persistent_self_copy_trigger import is_persistent_self_copy_trigger
 
     if is_persistent_self_copy_trigger(effect):
@@ -50,6 +51,10 @@ def persistent_copy_effect_handler(effect):
         from .color_retaining_copy import apply_retained_color_upkeep_copy
 
         return apply_retained_color_upkeep_copy
+    if is_announced_artifact_copy_effect(effect):
+        from .announced_artifact_copy import apply_announced_artifact_copy
+
+        return apply_announced_artifact_copy
     if is_announced_graveyard_copy_effect(effect):
         from .announced_graveyard_copy import apply_announced_graveyard_copy
 
@@ -62,6 +67,10 @@ def persistent_copy_effect_handler(effect):
         from .graveyard_exile_copy import apply_graveyard_exile_copy
 
         return apply_graveyard_exile_copy
+    if is_controlled_artifact_copy_effect(effect):
+        from .persistent_public_copy import apply_controlled_artifact_copy
+
+        return apply_controlled_artifact_copy
     if is_persistent_public_copy_effect(effect):
         from .persistent_public_copy import apply_persistent_public_copy
 

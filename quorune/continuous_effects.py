@@ -144,6 +144,7 @@ def _matches(
         token=bool(context.get("token", False)),
         commander=bool(context.get("commander",False)),
         tapped=bool(context.get("tapped", False)),
+        face_down=context.get("face_down") is True,
         phased_out=bool(context.get("phased_out", False)),
         known_to_actor=bool(context.get("known_to_actor", True)),
         counters=context.get("counters", {}),
@@ -440,6 +441,16 @@ def _apply_creature_subtype_change(state, operation, value):
         state.subtypes.update(word.title() for word in CREATURE_SUBTYPES)
 
 
+def _remove_planeswalker_card_type(state: CharacteristicState) -> None:
+    from .type_subtype_vocabulary import PLANESWALKER_SUBTYPES, correlated_subtypes
+
+    state.card_types = {kind for kind in state.card_types if kind.casefold() != "planeswalker"}
+    planeswalker_subtypes = {
+        subtype for subtype in state.subtypes if subtype.casefold() in PLANESWALKER_SUBTYPES
+    }
+    state.subtypes.difference_update(planeswalker_subtypes - correlated_subtypes(planeswalker_subtypes, state.card_types))
+
+
 def _apply_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
@@ -475,6 +486,9 @@ def _apply_operation(
         # for the pre-change text.
         state.activated_abilities = []
         return
+    if op == "remove_planeswalker_card_type":
+        _remove_planeswalker_card_type(state)
+        return
     if op == "remove_creature_card_type":
         state.card_types.difference_update(
             kind for kind in tuple(state.card_types) if kind.casefold() == "creature"
@@ -493,6 +507,19 @@ def _apply_operation(
         state.abilities=[]
         state.ability_fragments=[]
         state.activated_abilities=[]
+        return
+    if op in {"set_linked_exile_creature_subtypes", "set_linked_exile_creature_stats"}:
+        resolver = context.get("linked_exile_characteristics")
+        if not callable(resolver):
+            raise ContinuousEffectError("Linked exile characteristics require a public-state resolver")
+        statistics = op == "set_linked_exile_creature_stats"
+        values = resolver(value, statistics=statistics)
+        if values is not None and statistics:
+            from .continuous_stat_operations import apply_stat_operation
+
+            apply_stat_operation(state, ContinuousOperation("set_power_toughness", values), context)
+        elif values is not None:
+            _apply_creature_subtype_change(state, "set_creature_subtypes", values)
         return
     if op in {"set_creature_subtype", "set_creature_subtypes", "set_creature_subtype_set"}:
         _apply_creature_subtype_change(state, op, value)

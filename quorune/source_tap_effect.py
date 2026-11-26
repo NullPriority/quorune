@@ -9,6 +9,9 @@ from .next_turn_effect import NEXT_TURN_EFFECT_FIELD
 SOURCE_TAP_EFFECT_FIELD = "while_source_remains_tapped"
 SOURCE_TAP_EFFECT_CAPABILITY = "continuous.resolution.while_source_remains_tapped"
 SOURCE_TAP_UNTAP_CAPABILITY = "untap.step.while_source_remains_tapped"
+SOURCE_CONTROL_UNTAP_CAPABILITY = "untap.step.while_source_remains_controlled"
+SOURCE_CONTROL_UNTAP_FIELD = "controlled_source_untap_restraint_version"
+OPTIONAL_SOURCE_CONTROL_UNTAP_VERSION = 2
 SOURCE_TAP_MODIFIER_VERSION = 13
 RUNTIME_SOURCE_CONTINUITY_FIELD = "_runtime_source_continuity"
 
@@ -42,9 +45,24 @@ def split_source_tap_untap_restraint(effect: Mapping[str, Any]) -> tuple[Mapping
     return {key: value for key, value in effect.items() if key != SOURCE_TAP_EFFECT_FIELD}, True
 
 
+def split_source_control_untap_restraint(effect: Mapping[str, Any]) -> tuple[Mapping[str, Any], bool]:
+    if SOURCE_CONTROL_UNTAP_FIELD not in effect:
+        return effect, False
+    version = effect[SOURCE_CONTROL_UNTAP_FIELD]
+    if (
+        type(version) is not int or version not in {1, OPTIONAL_SOURCE_CONTROL_UNTAP_VERSION}
+        or effect.get("op") != "tap" or SOURCE_TAP_EFFECT_FIELD in effect
+    ):
+        raise ValueError("Source-control untap restraint requires its versioned single tap")
+    return {key: value for key, value in effect.items() if key != SOURCE_CONTROL_UNTAP_FIELD}, True
+
+
 def source_tap_effect_dependencies(value: Any) -> tuple[str, ...]:
     required = set()
     if isinstance(value, Mapping):
+        if SOURCE_CONTROL_UNTAP_FIELD in value:
+            split_source_control_untap_restraint(value)
+            required.add(SOURCE_CONTROL_UNTAP_CAPABILITY)
         if SOURCE_TAP_EFFECT_FIELD in value:
             if value.get("op") in ("tap", "set_public_tap_state"):
                 split_source_tap_untap_restraint(value)

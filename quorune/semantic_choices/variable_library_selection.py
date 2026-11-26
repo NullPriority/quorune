@@ -5,9 +5,19 @@ from dataclasses import dataclass
 from ..replacement.immutable import FrozenMap
 from ..variable_library_selection_model import (
     VARIABLE_LIBRARY_SELECTION_OPERATION,VARIABLE_LIBRARY_SELECTION_CAPABILITY,
-    fixed_selection_for_resolved_count,
+    fixed_selection_for_resolved_count, uses_devotion_library_win,
 )
 from .model import AutoContinue,SemanticChoicePreparation,SemanticChoiceError
+
+
+def _devotion_steps(effect, context, selection):
+    actor = context.actor
+    size = len(context.query.library_refs(actor, top_first=True))
+    devotion = effect["look_count"]
+    if effect["stage"] == "compare":
+        return (FrozenMap({"op": "win_game", "player": actor}),) if devotion >= size else ()
+    comparison = FrozenMap({**dict(effect), "stage": "compare"})
+    return (FrozenMap(selection), comparison) if selection is not None and size else (comparison,)
 
 
 @dataclass(frozen=True,slots=True)
@@ -30,9 +40,11 @@ class VariableLibrarySelectionHandler:
             raise SemanticChoiceError('Variable inspection controller changed')
         try:fixed=fixed_selection_for_resolved_count(effect)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
+        steps = (_devotion_steps(effect, context, fixed) if uses_devotion_library_win(effect)
+                 else (FrozenMap(fixed),) if fixed is not None else ())
         return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
             auto_continue=AutoContinue(reason='The resolved count determines the next library instruction.',
-                prepend_effects=(FrozenMap(fixed),) if fixed is not None else ()))
+                prepend_effects=steps))
 
     def complete(self,continuation,response,query):
         raise SemanticChoiceError('The count bridge never accepts a player-selected count')

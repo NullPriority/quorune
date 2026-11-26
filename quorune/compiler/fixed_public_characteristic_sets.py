@@ -10,10 +10,13 @@ from ..object_predicate import ObjectQuerySpec
 from ..rules.same_name_creature_modifiers import (
     SAME_NAME_STAT_MECHANICS, SameNameCreatureStats, same_name_stat_target_schema,
 )
+from ..rules.target_player_stat_untap import (
+    TARGET_PLAYER_STAT_UNTAP_MECHANICS, TargetPlayerStatUntapSpec, target_player_stat_untap_schema,
+)
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from .continuous_templates import controlled_characteristic_until_end_of_turn_effect
 from .fixed_resolution_characteristic_queries import (
-    fixed_resolution_characteristic_query_is_closed,
+    CONTROLLED_FLYING_CREATURES_QUERY, fixed_resolution_characteristic_query_is_closed,
 )
 from .public_state_queries import (
     fixed_characteristic_battlefield_query_subject,
@@ -27,6 +30,10 @@ _TRAILING_REMINDER = re.compile(r"\s*\([^()]*(?:\([^()]*\)[^()]*)*\)\s*$")
 _PUBLIC_CREATURE_SET = re.compile(
     r"^(?P<subject>.+?) "
     r"(?P<verb>get|gets|gain|gains) (?P<result>.+)$",
+    re.IGNORECASE,
+)
+_TARGET_PLAYER_STAT_UNTAP = re.compile(
+    r"Creatures target player controls get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) until end of turn\. Untap them\.",
     re.IGNORECASE,
 )
 _SAME_NAME_CREATURE_STATS = re.compile(
@@ -104,10 +111,8 @@ def _public_query(
         return None
     if exclude_source:
         query = replace(query, exclude_ref="$source")
-    if not fixed_resolution_characteristic_query_is_closed(
-        query,
-        target_schema=None,
-    ):
+    if (query != CONTROLLED_FLYING_CREATURES_QUERY
+            and not fixed_resolution_characteristic_query_is_closed(query, target_schema=None)):
         return None
     return query, None
 
@@ -150,6 +155,12 @@ def fixed_public_characteristic_set_effect_template(
 ] | None:
     """Lower one closed creature/subtype set and lock it at resolution."""
 
+    if stat_untap := _TARGET_PLAYER_STAT_UNTAP.fullmatch(" ".join(oracle_line.split())):
+        power, toughness = int(stat_untap["p"]), int(stat_untap["t"])
+        if not (power or toughness):
+            return None
+        return (FIXED_PUBLIC_CHARACTERISTIC_SET_TEMPLATE_ID, (TargetPlayerStatUntapSpec(power, toughness).to_effect(),),
+                target_player_stat_untap_schema(), TARGET_PLAYER_STAT_UNTAP_MECHANICS)
     if same_name := _same_name_creature_stat_template(oracle_line):
         return same_name
     oracle_line = _keyword_before_stat_grant(oracle_line)
@@ -184,6 +195,11 @@ def fixed_public_characteristic_set_effect_template(
         **dict(effects[0]),
         "predicate": query.to_dict(),
     }
+    if query == CONTROLLED_FLYING_CREATURES_QUERY and (
+        set(effect) != {"op", "predicate", "power", "toughness"}
+        or not (effect["power"] or effect["toughness"])
+    ):
+        return None
     return (
         FIXED_PUBLIC_CHARACTERISTIC_SET_TEMPLATE_ID,
         (effect,),

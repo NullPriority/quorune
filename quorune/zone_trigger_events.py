@@ -423,7 +423,9 @@ def _validated_source_entry_cast_information(occurrence):
     if (occurrence.destination!='battlefield' or info.source!=ContinuousObjectIdentity(
             occurrence.object_id,occurrence.current_logical_object_id)
             or info.cast is not None and (occurrence.origin!='stack'
-                or info.cast.stack_logical_object_id!=occurrence.previous_logical_object_id)):
+                or info.cast.stack_logical_object_id!=occurrence.previous_logical_object_id)
+            or info.mana_spent_counts is not None and (occurrence.origin != "stack"
+                or info.mana_spent_counts.logical_object_id != occurrence.previous_logical_object_id)):
         raise ZoneTriggerEventError('Source-entry information differs from the actual committed entry')
     return FrozenMap(info.to_dict())
 

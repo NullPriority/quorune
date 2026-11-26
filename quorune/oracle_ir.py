@@ -30,8 +30,8 @@ from .compiler.fixed_public_characteristic_sets import (
 )
 from .compiler.fixed_attachment_keyword_nodes import fixed_attachment_keyword_node
 from .compiler.fixed_stack_spell_copy import next_cast_copy_template
-from .compiler.attached_granted_ability_nodes import (
-    compile_early_material_nodes as _early_material_nodes,
+from .compiler.saga_chapter_grants import (
+    compile_early_material_nodes_with_saga_grants as _early_material_nodes,
 )
 from .compiler.effect_template_composition import (
     reviewed_contextual_effect_template,
@@ -64,11 +64,12 @@ from .compiler.source_self_effect_templates import (
 from .compiler.fixed_controller_effect_sequences import (
     fixed_controller_effect_sequence_template,
 )
-from .compiler.fixed_counter_trigger_nodes import (
-    fixed_typed_event_effect_trigger_node,
+from .compiler.controlled_spell_counter_nodes import (
+    fixed_typed_or_controlled_spell_counter_trigger_node,
 )
 from .compiler.fixed_keyword_entry_nodes import fixed_keyword_entry_nodes
 from .compiler.keyword_event_effect_nodes import (
+    counter_scaled_annihilator_mechanics,
     fixed_keyword_event_effect_node,
     fixed_keyword_event_effect_mechanics,
 )
@@ -103,9 +104,7 @@ from .compiler.mill_templates import fixed_mill_effect_template
 from .compiler.impulse_access_templates import (
     fixed_impulse_access_effect_template,
 )
-from .compiler.modal_context_nodes import (
-    fixed_nonrepeating_modal_context_blocks,
-)
+from .compiler.independent_target_rows import prepare_target_clause_context, mark_independent_target_nodes
 from .compiler.modal_templates import (
     fixed_choose_one_modal_spell_template,
     fixed_nonrepeating_modal_template,
@@ -696,7 +695,7 @@ def _keyword_nodes(
     mechanics = keyword_mechanics(
         material_line,
         keywords,
-    ) or fixed_keyword_event_effect_mechanics(material_line, keywords)
+    ) or fixed_keyword_event_effect_mechanics(material_line, keywords) or counter_scaled_annihilator_mechanics(material_line, card_name)
     if mechanics is None:
         return ()
     if 'ravenous' in mechanics:
@@ -1111,7 +1110,7 @@ def _activated_or_fixed_event_trigger_node(
     if triggered_mana is not None:
         return triggered_mana
     from .compiler.room_bindings import own_door_binding
-    return fixed_typed_event_effect_trigger_node(
+    return fixed_typed_or_controlled_spell_counter_trigger_node(
         node_id=node_id, line=line, material_line=trigger_ability_word_material_line(material_line), span=span,
         card_name=card_name, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
@@ -1136,11 +1135,12 @@ def _typed_whole_spell_face(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleFaceIR | None:
-    from .compiler.paid_mana_spell_faces import compile_paid_mana_spell_face
-    paid=compile_paid_mana_spell_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
+    from .compiler.paid_mana_spell_faces import compile_cast_fact_spell_face
+    cast_fact = compile_cast_fact_spell_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
         material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if paid is not None:return paid
+    if cast_fact is not None:
+        return cast_fact
     from .compiler.paired_spell_faces import compile_fixed_text_variant_face
     alternative = compile_fixed_text_variant_face(record=record, face_id=face_id, face_name=face_name,
         oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
@@ -1226,11 +1226,11 @@ def _compile_face(
         )
         if typed_face is not None:
             return spell_lifecycle_context_owner.apply_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
-    from .compiler.independent_target_rows import prepare_target_clause_context,mark_independent_target_nodes
-    material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,face_id=face_id,oracle_text=oracle_text,
+    material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,oracle_id=record.oracle_id,face_id=face_id,oracle_text=oracle_text,
         card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,
-        activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node)
+        activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node,
+        allow_linked_card_type=permanent and class_context is None and leveler_context is None)
     compile_inner, contextual_trigger_node = linked_face_ability_compilers(
         record, material_rows, contextual_trigger_effect_template, compile_inner,
         card_name=face_name or record.name, card_types=card_types, permanent=permanent,
@@ -1246,7 +1246,7 @@ def _compile_face(
             nodes.extend(player_nodes)
             continue
         early_nodes = _early_material_nodes(
-            record=record, face_id=face_id, node_id=node_id, line=line,
+            record=record, face_id=face_id, node_id=node_id, line=line, type_line=type_line,
             material_line=material_line, span=span,
             source_name=face_name or record.name, effect_template=contextual_effect_template, keywords=keywords,
             printed_card_types=tuple(sorted(card_types)),

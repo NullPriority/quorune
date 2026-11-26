@@ -85,9 +85,14 @@ def composite_granted_ability_nodes(**values):
     if replacement:required.add(TYPE_REPLACEMENT_GRANT_CAPABILITY)
     template='continuous-type-replacement-grant-v2' if replacement else 'continuous-composite-typed-grant-v1'
     if subtype:
-        from ..semantic_runtime.subtype_composite_grants import SUBTYPE_COMPOSITE_GRANT_HANDLER,SUBTYPE_COMPOSITE_GRANT_CAPABILITY
+        from ..semantic_runtime.subtype_composite_grants import (
+            OTHER_CREATURES_FOOD_GRANT_CAPABILITY, SUBTYPE_COMPOSITE_GRANT_HANDLER,
+            SUBTYPE_COMPOSITE_GRANT_CAPABILITY, food_creature_type_instructions,
+        )
         handler_id=SUBTYPE_COMPOSITE_GRANT_HANDLER;version=3;required.add(SUBTYPE_COMPOSITE_GRANT_CAPABILITY)
         template='continuous-subtype-composite-grant-v3'
+        if modifier["type_operations"] == food_creature_type_instructions():
+            required.add(OTHER_CREATURES_FOOD_GRANT_CAPABILITY)
     def compiled(fragment,dependencies):
         return template,{'handler_id':handler_id,'schema_version':version,'event':'characteristics.evaluate',
             'target':target,'modifier':{**deepcopy(modifier),'add_ability_fragments':[dict(fragment)]}},tuple(sorted(required|set(dependencies)))

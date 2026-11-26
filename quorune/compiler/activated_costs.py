@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..activated_ability_descriptor import SOURCE_COUNTER_PLACEMENT_CAPABILITY, SOURCE_COUNTER_PLACEMENT_FIELD
+
 from . import regex_working_set as re
 from typing import Any, Sequence
 
@@ -80,6 +82,18 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    from ..rules.forage import FORAGE_ACTIVATION_CAPABILITY, has_forage_cost
+
+    if has_forage_cost(ability):
+        additional.append(FORAGE_ACTIVATION_CAPABILITY)
+    from ..rules.chosen_color_draw_price import CAPABILITY as CHOSEN_COLOR_DRAW_CAPABILITY, chosen_color_draw_text
+
+    if chosen_color_draw_text(ability.cost_text, ability.effect_text):
+        additional.append(CHOSEN_COLOR_DRAW_CAPABILITY)
+    if ability.loyalty_x:
+        from ..rules.linked_loyalty_exile_model import LOYALTY_X_CAPABILITY
+
+        additional.append(LOYALTY_X_CAPABILITY)
     if ability.variable_colored_reveal_price is not None:
         from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_CAPABILITY
 
@@ -173,6 +187,11 @@ def activated_ability_cost_capabilities(
     if any(choice.sacrifice_schema_version is not None for choice in ability.choices):
         from ..keyword_sacrifice_cost_model import KEYWORD_SACRIFICE_CAPABILITY
         additional.append(KEYWORD_SACRIFICE_CAPABILITY)
+    if ability.source_counter_placement_cost is not None:
+        additional.append(SOURCE_COUNTER_PLACEMENT_CAPABILITY)
+    if ability.mill_library_cost:
+        from ..rules.activation.mill_library_cost import MILL_LIBRARY_ACTIVATION_COST_CAPABILITY
+        additional.append(MILL_LIBRARY_ACTIVATION_COST_CAPABILITY)
     return tuple(dict.fromkeys(additional))
 
 
@@ -202,6 +221,8 @@ def activated_ability_cost(
         "uncompiled_costs": list(ability.uncompiled_costs),
     }
     if ability.announced_x_symbols is not None:result['announced_x_symbols']=ability.announced_x_symbols
+    if ability.loyalty_x:
+        result["loyalty_x"] = True
     if ability.variable_colored_reveal_price is not None:
         from ..colored_hand_reveal_model import VARIABLE_COLORED_REVEAL_PRICE_FIELD
 
@@ -218,10 +239,18 @@ def activated_ability_cost(
         result["activation_limit"] = ability.activation_limit.value
     if ability.power_up is not None:result['power_up']=ability.power_up.to_dict()
     if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
+    if ability.mill_library_cost:
+        result['mill_library_cost'] = ability.mill_library_cost
+    if ability.source_counter_placement_cost is not None:
+        result[SOURCE_COUNTER_PLACEMENT_FIELD] = ability.source_counter_placement_cost.to_dict()
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
     if ability.saddle_threshold is not None:
         result["saddle"] = ability.saddle_threshold
+    from ..rules.chosen_color_draw_price import FIELD as CHOSEN_COLOR_DRAW_PAYMENT, chosen_color_draw_text
+
+    if chosen_color_draw_text(ability.cost_text, ability.effect_text):
+        result[CHOSEN_COLOR_DRAW_PAYMENT] = 1
     if public_timing is not None:
         result[PUBLIC_ACTIVATION_FIELD] = public_activation_descriptor(public_timing)
     return result

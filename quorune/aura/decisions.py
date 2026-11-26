@@ -104,6 +104,65 @@ class AuraEntryContinuation:
                     or any(type(key) is not str or not key or type(value) is not str or not value
                            for key, value in selections.items())):
                 raise AuraRuleError("Saved public Aura entry selections are malformed")
+        from ..rules.death_battlefield_return import is_death_battlefield_return, validate_death_battlefield_return
+        from ..rules.granted_death_role_return import (
+            is_granted_death_role_return, validate_granted_death_role_return,
+            is_granted_self_death_return, validate_granted_self_death_return,
+        )
+        from ..rules.enchanted_departure_return import is_enchanted_departure_return, validate_enchanted_departure_return
+
+        if is_enchanted_departure_return(self.effect):
+            try:
+                validate_enchanted_departure_return(self.effect, materialized=True)
+            except ValueError as exc:
+                raise AuraRuleError(str(exc)) from exc
+        if is_death_battlefield_return(self.effect):
+            try:
+                validate_death_battlefield_return(self.effect)
+            except ValueError as exc:
+                raise AuraRuleError(str(exc)) from exc
+        try:
+            if is_granted_death_role_return(self.effect):
+                validate_granted_death_role_return(self.effect)
+            if is_granted_self_death_return(self.effect):
+                validate_granted_self_death_return(self.effect)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise AuraRuleError(str(exc)) from exc
+        from ..rules.opposing_death_delayed_return import (
+            is_opposing_death_delayed_return, validate_opposing_death_delayed_return,
+        )
+        if is_opposing_death_delayed_return(self.effect):
+            try:
+                validate_opposing_death_delayed_return(self.effect, required_phase="return")
+            except ValueError as exc:
+                raise AuraRuleError(str(exc)) from exc
+        from ..delayed_object_model import is_accepted_source_bound_creature_return, validate_source_bound_creature_return
+        if is_accepted_source_bound_creature_return(self.effect):
+            try:
+                validate_source_bound_creature_return(self.effect)
+            except ValueError as exc:
+                raise AuraRuleError(str(exc)) from exc
+        from ..delayed_object_model import is_artifact_graveyard_return, validate_artifact_graveyard_return, RESOLVE_OBJECT_ACTION
+        if self.effect.get("op") == RESOLVE_OBJECT_ACTION and is_artifact_graveyard_return(self.effect):
+            from ..rules.death_battlefield_return import decode_death_battlefield_arrivals
+
+            try:
+                validate_artifact_graveyard_return(self.effect)
+                decode_death_battlefield_arrivals(self.effect["object"])
+            except ValueError as exc:
+                raise AuraRuleError(str(exc)) from exc
+        from ..linked_exile_return_model import ExiledObjectIdentity, is_public_linked_return
+
+        if is_public_linked_return(self.effect) and "_aura_target_refs" in self.effect:
+            try:
+                eligible = {ExiledObjectIdentity.from_dict(value).object_id for value in self.effect["objects"]}
+                selections = self.effect["_aura_target_refs"]
+                if not isinstance(selections, Mapping) or not set(selections) <= eligible or any(
+                    type(ref) is not str or not ref for ref in selections.values()
+                ):
+                    raise ValueError("Saved choices must refer to the original exiled objects")
+            except (TypeError, ValueError, KeyError) as exc:
+                raise AuraRuleError("Saved delayed Aura entry selections are malformed") from exc
 
     @classmethod
     def from_dict(
@@ -367,10 +426,26 @@ def complete_aura_entry_choice(
             "Selected Aura entry target is no longer legal"
         )
     effect = thaw_value(restored.effect)
+    from ..rules.death_battlefield_return import is_death_battlefield_return
+    from ..rules.granted_death_role_return import is_granted_death_role_return, is_granted_self_death_return
+    from ..rules.enchanted_departure_return import is_enchanted_departure_return
+    from ..rules.opposing_death_delayed_return import is_opposing_death_delayed_return
+    from ..delayed_object_model import is_accepted_source_bound_creature_return
+    from ..delayed_object_model import is_artifact_graveyard_return, RESOLVE_OBJECT_ACTION
     from ..private_hand_entry_model import SELECTED_HAND_ENTRY_OPERATION
-    from ..linked_exile_return_model import LINKED_ABILITY_TIMING, LINKED_EXILE_RETURN_OPERATION
+    from ..linked_exile_return_model import (
+        LINKED_ABILITY_TIMING, LINKED_EXILE_RETURN_OPERATION, is_public_linked_return, is_exiled_target_search_return,
+    )
     from ..public_zone_moves import PUBLIC_AURA_ENTRY_VERSIONS
     if (effect.get("op") == SELECTED_HAND_ENTRY_OPERATION
+            or is_public_linked_return(effect)
+            or is_exiled_target_search_return(effect)
+            or is_death_battlefield_return(effect)
+            or is_granted_death_role_return(effect) or is_granted_self_death_return(effect)
+            or is_enchanted_departure_return(effect)
+            or is_opposing_death_delayed_return(effect)
+            or is_accepted_source_bound_creature_return(effect)
+            or (effect.get("op") == RESOLVE_OBJECT_ACTION and is_artifact_graveyard_return(effect))
             or (effect.get("op") == LINKED_EXILE_RETURN_OPERATION and effect.get("phase") == "return"
             and effect.get("spec", {}).get("timing") == LINKED_ABILITY_TIMING)
             or (effect.get("op") == "move_public_zone_set"

@@ -267,7 +267,10 @@ def _fixed_set_damage_capabilities(
     mechanics: set[str],
 ) -> tuple[str, ...] | None:
     from .defending_creature_damage import defending_creature_damage_capabilities, is_defending_creature_damage
+    from .random_opponent_damage import RANDOM_OPPONENT_DAMAGE_FIELD, random_opponent_damage_capabilities
 
+    if RANDOM_OPPONENT_DAMAGE_FIELD in effect:
+        return random_opponent_damage_capabilities(effect, target_schema)
     if DEALT_LIFE_GAIN_FIELD in effect:
         if (target_schema is not None or type(effect[DEALT_LIFE_GAIN_FIELD]) is not int
                 or effect[DEALT_LIFE_GAIN_FIELD] != 1):
@@ -517,6 +520,8 @@ def damage_death_exile_scope_is_closed(effect, target_schema) -> bool:
         return False
     if scope is DamageDeathExileScope.DEALT_CREATURES:
         return True
+    if scope is DamageDeathExileScope.TARGET_CREATURE_OR_PLANESWALKER:
+        return target_schema == _FIXED_DAMAGE_TARGET_SCHEMAS['creature_or_planeswalker']
     if scope is not DamageDeathExileScope.TARGET:
         return False
     if target_schema == _FIXED_DAMAGE_TARGET_SCHEMAS['creature']:
@@ -627,6 +632,11 @@ def fixed_damage_node_capabilities(
     mechanic_ids = tuple(mechanic_ids)
     if any(TEMPORARY_DAMAGE_PROHIBITION_FIELD in effect for effect in effects):
         return _turn_damage_prevention_capabilities(effects, target_schema)
+    from ..turn_match_outcome_model import TURN_OUTCOME_FIELD
+    from .turn_match_outcome_protection import turn_match_outcome_node_capabilities
+
+    if any(TURN_OUTCOME_FIELD in effect for effect in effects):
+        return turn_match_outcome_node_capabilities(effects, target_schema)
     from .event_damage_sources import event_damage_source_node_capabilities
     dealer = event_damage_source_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if dealer:return dealer
@@ -638,6 +648,18 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .random_activation_target import (
+        RANDOM_ACTIVATION_TARGET_CAPABILITY, RANDOM_ACTIVATION_TARGET_FIELD, ordinary_random_activation_damage,
+    )
+    if RANDOM_ACTIVATION_TARGET_FIELD in effect:
+        if target_schema != _FIXED_DAMAGE_TARGET_SCHEMAS["any_target"] or type(target_schema["count"]) is not int:
+            return ()
+        try:
+            ordinary = ordinary_random_activation_damage(effect)
+        except ValueError:
+            return ()
+        required = _fixed_direct_damage_capabilities(ordinary, target_schema, mechanics)
+        return (*required, RANDOM_ACTIVATION_TARGET_CAPABILITY) if required else ()
     if SOURCE_RELATIVE_DAMAGE_VERSION_FIELD in effect:
         if target_schema is not None:
             return ()

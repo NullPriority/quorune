@@ -90,6 +90,7 @@ class ServerSettings:
     secure_cookies: bool = False
     build_id: str = __version__
     card_image_db: Path | None = None
+    auto_pass_empty_priority: bool = False
 
     @classmethod
     def from_environment(cls) -> "ServerSettings":
@@ -124,6 +125,7 @@ class ServerSettings:
             secure_cookies=os.environ.get("MTG_SECURE_COOKIES") == "1",
             build_id=_source_build_id(),
             card_image_db=Path(card_image_db) if card_image_db else None,
+            auto_pass_empty_priority=os.environ.get("MTG_AUTO_PASS_EMPTY_PRIORITY") == "1",
         )
 
 
@@ -1126,10 +1128,8 @@ def create_app(settings: ServerSettings | None = None) -> FastAPI:
                         profile=profile,
                         review_profile="commander_review",
                         semantic_policy="trusted_only",
-                        # Browser clients receive every empty priority capability.
-                        # Their saved auto-pass preference may submit that ordinary
-                        # command, while full-control users can hold priority.
-                        auto_pass_empty_priority=False,
+                        # The host opts into engine advancement for new games.
+                        auto_pass_empty_priority=resolved.auto_pass_empty_priority,
                         manual_active_main_phase=True,
                         # Browser tables expose a durable complete public log.
                         # Retain every engine event in the private Game Record;

@@ -53,7 +53,7 @@ def enqueue_reflexive_trigger(host, intent):
     return _place_reflexive_trigger(host, parent, consequence, paid_creature=intent.paid_creature)
 
 
-def token_creation_reflexive_source(host, parent, consequence):
+def resolving_reflexive_source(host, parent, consequence):
     """Use the resolving spell entity or the original battlefield source's locked facts."""
     from ..target_source import BOUND_TARGETING_SOURCE_VERSION, TARGETING_SOURCE_CONTEXT, capture_targeting_source
 
@@ -67,9 +67,13 @@ def token_creation_reflexive_source(host, parent, consequence):
     return source.object_id, {TARGETING_SOURCE_CONTEXT: binding.to_dict(), 'source_logical_object_id': binding.logical_object_id}
 
 
-def enqueue_token_creation_reflexive(host, parent, consequence):
-    source_id, source_context = token_creation_reflexive_source(host, parent, consequence)
+def enqueue_resolving_reflexive(host, parent, consequence):
+    source_id, source_context = resolving_reflexive_source(host, parent, consequence)
     return _place_reflexive_trigger(host, parent, consequence, source_id=source_id, source_context=source_context)
+
+
+def enqueue_token_creation_reflexive(host, parent, consequence):
+    return enqueue_resolving_reflexive(host, parent, consequence)
 
 
 def _place_reflexive_trigger(host, parent, consequence, *, paid_creature=None, source_id=None, source_context=None):
@@ -94,7 +98,13 @@ def _place_reflexive_trigger(host, parent, consequence, *, paid_creature=None, s
     context.update(event='trigger.reflexive', reflexive_parent=parent.ref,
         dynamic_effects=consequence.to_dict()['effects'])
     if consequence.target_schema is not None:
-        context.update(target_schema_override=consequence.to_dict()['target_schema'], trigger_target_selection_pending=True)
+        from .reflexive_defender_exile import bind_target_schema
+
+        try:
+            schema = bind_target_schema(host, parent, consequence, source)
+        except (ValueError, TypeError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        context.update(target_schema_override=schema, trigger_target_selection_pending=True)
     ref = host._next_ref('S')
     item = StackItem(stack_id=host._stable_runtime_id('stack', ref), ref=ref, kind='triggered_ability',
         controller=parent.controller, label=parent.label + ' — reflexive', source_object_id=source_id,

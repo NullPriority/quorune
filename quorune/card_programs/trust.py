@@ -219,6 +219,8 @@ def build_program_trust_closure(
             all_ignored = False
         blockers.update(_ability_input_blockers(ability, oracle_source_hash=oracle_source_hash,
                                                 rulings_source_hash=rulings_source_hash))
+    from ..rules.nonhuman_undying_anthem import nonhuman_undying_anthem_linkage_blockers
+    blockers.update(nonhuman_undying_anthem_linkage_blockers(semantic_abilities))
     for residual in residuals:
         if residual.get("material", True):
             residual_id = str(residual.get("residual_id") or "unknown")

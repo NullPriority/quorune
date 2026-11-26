@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .ability_fragments import GrantedTriggeredAbilitySpec
 
 
 STACK_SPELL_COPY_CAPABILITY = 'stack.copy.fixed_instant_or_sorcery'
@@ -111,6 +115,7 @@ def qualified_stack_copy_specs():
 
 
 
+EXILE_CAST_COPY_CAPABILITY = "stack.copy.exile_cast_permanent_grant"
 PERMANENT_SPELL_COPY_FIELD = "permanent_spell_copy"
 PERMANENT_SPELL_COPY_CAPABILITY = "stack.copy.permanent_spell.fixed_exception"
 
@@ -121,19 +126,33 @@ class PermanentSpellCopySpec:
 
     kind: str
     schema_version: int = 1
+    grant: GrantedTriggeredAbilitySpec | None = None
 
     def __post_init__(self) -> None:
+        if self.kind == "exile_cast_grant":
+            from .ability_fragments import GrantedTriggeredAbilitySpec
+
+            if (type(self.schema_version) is not int or self.schema_version != 2
+                    or not isinstance(self.grant, GrantedTriggeredAbilitySpec)
+                    or self.grant.schema_version != 1 or self.grant.event != "step.begin"):
+                raise ValueError("An exile-cast copy requires the exact recurring triggered grant")
+            return
         if (
             type(self.kind) is not str or self.kind not in {"nonlegendary", "artifact"}
-            or type(self.schema_version) is not int or self.schema_version != 1
+            or type(self.schema_version) is not int or self.schema_version != 1 or self.grant is not None
         ):
             raise ValueError("Permanent spell copy requires a closed characteristic exception")
 
     def to_dict(self):
-        return {"schema_version": self.schema_version, "kind": self.kind}
+        return {"schema_version": self.schema_version, "kind": self.kind,
+                **({"grant": self.grant.to_dict()} if self.grant is not None else {})}
 
     @classmethod
     def from_dict(cls, value):
+        if isinstance(value, Mapping) and set(value) == {"schema_version", "kind", "grant"}:
+            from .ability_fragments import GrantedTriggeredAbilitySpec
+
+            return cls(value["kind"], value["schema_version"], GrantedTriggeredAbilitySpec.from_dict(value["grant"]))
         if not isinstance(value, Mapping) or set(value) != {"schema_version", "kind"}:
             raise ValueError("Permanent spell copy exception fields are closed")
         return cls(value["kind"], value["schema_version"])
@@ -146,10 +165,10 @@ class PermanentSpellCopySpec:
 
     @property
     def effects(self):
-        if self.kind == "artifact":
+        if self.kind in {"artifact", "exile_cast_grant"}:
             from .event_spell_copy_model import event_spell_copy_effect
 
-            effect = event_spell_copy_effect(retain_targets_only=True)
+            effect = event_spell_copy_effect(retain_targets_only=self.kind == "artifact")
         else:
             effect = {"op": "copy_stack_item", "stack": "$target.0", "retain_targets_only": True}
         return ({**effect, PERMANENT_SPELL_COPY_FIELD: self.to_dict()},)

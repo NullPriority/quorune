@@ -5,9 +5,14 @@ from ...target_source import spell_targeting_source
 import copy
 from collections.abc import Mapping
 from dataclasses import replace
-from .face_queries import prospective_cast_card,cast_resolution_is_trusted,cast_offer_id,selected_cast_program,selected_cast_card_view
+from .face_queries import (
+    prospective_cast_card, cast_resolution_is_trusted, cast_offer_id, selected_cast_program,
+    selected_cast_card_view, face_down_library_top_cast_permission,
+)
 from .aftermath import aftermath_cast_prohibition_reason
-from .disturb_costs import cast_view_zone_permission,disturb_back_cast_permission
+from .disturb_costs import (
+    cast_view_zone_permission, disturb_back_cast_permission, more_than_meets_the_eye_back_face,
+)
 from ..prototype import compiled_prototype_spec
 from .characteristic_methods import characteristic_cast_view,characteristic_program_key,characteristic_offer_fields
 from ..fuse import fuse_source_cast_is_complete
@@ -41,7 +46,10 @@ from ..action_proposals import (
     thaw_json,
 )
 from ..casting_additional_costs import AdditionalCostError, announced_cost_x
-from ..modal_selection import canonical_modes
+from ..modal_selection import (
+    COMMANDER_CAST_MODE_LIMIT_FIELD, canonical_modes, commander_cast_mode_limit_matches,
+    controls_wizard, wizard_cast_mode_limit_matches,
+)
 from .costs import CastCostHost, revalidate_convoke_payment
 from .model import CastProposalError, CastProposalRequest, CastProposalResult
 
@@ -148,9 +156,14 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
         zones=set(request.zones),
         owned_only=False,
     )
+    if request.authorized_hand_incarnation is not None and (
+        card.zone != "hand" or card.logical_object_id != request.authorized_hand_incarnation
+    ):
+        raise CastProposalError("The selected hand card changed incarnation", reason="stale_source")
     resolving_hand_authority = (
         card.zone == "hand" and request.authorized_from_zone == "hand"
-        and request.authorized_cost_option is not None and request.during_resolution
+        and request.during_resolution
+        and (request.authorized_cost_option is not None or request.authorized_hand_incarnation is not None)
     )
     if card.zone in {"hand", "command"} and card.owner != request.actor and not resolving_hand_authority:
         raise CastProposalError(
@@ -169,6 +182,7 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
     if (
         card.zone not in {"hand", "command"}
         and not internally_authorized
+        and not face_down_library_top_cast_permission(host, request.actor, card, request.cast_method)
         and not cast_view_zone_permission(host,request.actor,selected_cast_card_view(host,card,request.required_face or request.face,request.cast_method))
     ):
         raise CastProposalError(
@@ -176,6 +190,17 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
             reason="zone_permission",
         )
     return card
+
+
+def _intrinsic_back_face_cast_allowed(host, request, card, face_name):
+    if disturb_back_cast_permission(host, request.actor, card, face_name):
+        return True
+    return (
+        request.cast_method is None
+        and not request.force_without_mana_cost
+        and request.authorized_cost_option is None
+        and more_than_meets_the_eye_back_face(host, card, face_name) is not None
+    )
 
 
 def _cast_face(
@@ -199,7 +224,7 @@ def _cast_face(
         and record.faces
         and str(face.get("name") or "").casefold()
         != str(record.faces[0].get("name") or "").casefold()
-        and not disturb_back_cast_permission(host,request.actor,card,str(face.get('name') or ''))
+        and not _intrinsic_back_face_cast_allowed(host, request, card, str(face.get('name') or ''))
     ):
         raise CastProposalError(
             "A transforming double-faced card's back face cannot be cast without a rules effect that specifically allows it",
@@ -648,6 +673,25 @@ def _cast_program_and_cost(
     return type_line, mana_cost, commander_tax, semantic_key, program, selected
 
 
+def _cast_mode_selection_schema(host, seat, card, schema):
+    """Use the same live 601.2b bounds for offers and accepted commands."""
+    if not isinstance(schema, Mapping) or COMMANDER_CAST_MODE_LIMIT_FIELD not in schema:
+        return schema
+    if wizard_cast_mode_limit_matches(schema):
+        return {**schema, "max_modes": 2 if controls_wizard(host, seat) else 1}
+    if not commander_cast_mode_limit_matches(schema):
+        raise ValueError("Malformed cast mode condition")
+
+    from ...public_alternative_costs import (
+        FixedPublicAlternativeCondition, FixedPublicAlternativeConditionKind,
+        fixed_public_alternative_condition_met,
+    )
+
+    condition = FixedPublicAlternativeCondition(FixedPublicAlternativeConditionKind.CONTROLLED_COMMANDER, schema_version=2)
+    maximum = 2 if fixed_public_alternative_condition_met(host, seat, card, condition.to_dict()) else 1
+    return {**schema, "max_modes": maximum}
+
+
 def _cast_targets_and_tap_costs(
     host: CastProposalHost,
     request: CastProposalRequest,
@@ -680,29 +724,29 @@ def _cast_targets_and_tap_costs(
         if aura_target_schema is not None
         else None
     )
+    from ...pawprint_modes import PAWPRINT_RESULT_MODES
+    requested_modes = selected_dict.get(PAWPRINT_RESULT_MODES, request.modes)
+    announced_schema = _cast_mode_selection_schema(
+        host, request.actor, card, target_schema if target_schema is not None else getattr(program, "target_schema", None),
+    )
     targets, target_groups = host._validate_semantic_targets(
         request.actor,
         program,
         host._normalize_target_submission(request.response().get("targets")),
-        modes=list(request.modes),
+        modes=list(requested_modes),
         acting_source=spell_targeting_source(host,card), source_ref=card.ref,
-        target_schema=target_schema,
+        target_schema=announced_schema,
         announcing_targets=True,
-    )
-    effective_target_schema = (
-        target_schema
-        if target_schema is not None
-        else getattr(program, "target_schema", None)
     )
     selected_modes = (
         list(
             canonical_modes(
-                effective_target_schema,
-                request.modes,
-                require_modes=bool(available_modes(effective_target_schema)),
+                announced_schema,
+                requested_modes,
+                require_modes=bool(available_modes(announced_schema)),
             )
         )
-        if effective_target_schema is not None
+        if announced_schema is not None
         else []
     )
     if "splice_modes" in selected_dict:
@@ -920,7 +964,8 @@ def _cast_offer_payload(
         public_schema = None
         if target_spec is not None:
             from ...announced_damage import preview_cast_allocation_schema
-            target_spec = preview_cast_allocation_schema(target_spec, raw)
+            announcement_spec = _cast_mode_selection_schema(host, seat, card, target_spec)
+            target_spec = preview_cast_allocation_schema(announcement_spec, raw)
             public_schema = host._public_target_schema(
                 seat, target_spec, acting_source=spell_targeting_source(host,card), source_ref=card.ref,
                 announcing_targets=True,
@@ -934,7 +979,8 @@ def _cast_offer_payload(
         }
         from ..optional_life_cost_model import optional_life_cost_amount
         from ...printed_mana_cost_model import printed_phyrexian_life_payment
-        life_payment=optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw)
+        from .library_top_life import library_top_life_amount
+        life_payment = optional_life_cost_amount(raw) + printed_phyrexian_life_payment(raw) + library_top_life_amount(raw)
         if life_payment:
             projected['additional_life']=life_payment
         if public_schema is not None:
@@ -973,6 +1019,8 @@ def _cast_offer_payload(
 
 def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type_line, declaration,
                       resolving_payment, resolving_origin):
+    if resolving_payment == "free" and not face_down and more_than_meets_the_eye_back_face(host, card) is not None:
+        return ()
     alternative = None
     if face_down:
         alternative = {
@@ -1034,7 +1082,9 @@ def build_cast_offer(
     card=prospective_cast_card(host,card,face_name)
     from ..cross_zone_characteristics import prospective_cross_zone_spell_type_line
 
-    if resolving_payment is None and card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):
+    if (resolving_payment is None and card.zone not in {'hand', 'command'}
+            and not face_down_library_top_cast_permission(host, seat, card, cast_method)
+            and not cast_view_zone_permission(host, seat, card)):
         return CastProposalResult('unavailable','zone_permission')
     type_line = (
         "Creature"

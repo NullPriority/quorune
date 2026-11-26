@@ -15,8 +15,22 @@ from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
-from scripts.build_test_database import build_fixture_database
+from scripts.build_test_database import _card_payload, build_fixture_database
 import test_bound_effect_programs as witnesses
+
+
+COMMITTED_ENTRY_NAME = "Prepare the Orchard"
+COMMITTED_ENTRY_BODY = (
+    "You sacrifice a creature. If you do, draw a card, then you may put a "
+    "land card and/or a creature card from your hand onto the battlefield."
+)
+COMMITTED_ENTRY_MODAL = (
+    "Choose one —\n"
+    "• Tend the Beds — " + COMMITTED_ENTRY_BODY + "\n"
+    "• Retrieve the Tools — Return one or two target permanent cards from your graveyard to your hand."
+)
+DUAL_ENTRY_NAME = "Orchard Rootling"
+GRAVEYARD_RESPONSE_NAME = "Clear the Ledger"
 
 
 class PrivateHandCollectionCompilerTests(unittest.TestCase):
@@ -103,6 +117,64 @@ class PrivateHandCollectionCompilerTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status, ir.material_residuals)
 
 
+    def test_committed_sacrifice_hand_entry_compiles_only_with_its_closed_roles_and_outcomes(self):
+        from quorune.private_hand_entry_model import PrivateHandCollectionSpec
+        from quorune.rules.any_number_sacrifice import (
+            ANY_NUMBER_SACRIFICE_FIELD, COMMITTED_SACRIFICE_HAND_ENTRY_CAPABILITY,
+        )
+
+        ir = self.compile(COMMITTED_ENTRY_MODAL)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(COMMITTED_SACRIFICE_HAND_ENTRY_CAPABILITY, node.capability_dependencies)
+        first, second = node.target_schema["modes"].values()
+        self.assertEqual([], first["groups"])
+        effect, = first["effects"]
+        self.assertEqual((["$controller"], "sacrifice", 1),
+                         (effect["players"], effect["then"], effect["count"]))
+        self.assertEqual(["creature"], effect["predicate"]["types_all"])
+        followup = effect[ANY_NUMBER_SACRIFICE_FIELD]["followup"]
+        self.assertEqual("$controller", followup["player"])
+        spec = PrivateHandCollectionSpec.from_dict(followup["selection"])
+        self.assertTrue(spec.one_of_each)
+        self.assertEqual([1, 2], [second["min"], second["max"]])
+        self.assertEqual("you", second["owner_relation"])
+        self.assertIn("planeswalker", second["types_any"])
+
+        for changed in (
+            COMMITTED_ENTRY_MODAL.replace("You sacrifice", "Target player sacrifices"),
+            COMMITTED_ENTRY_MODAL.replace("If you do, draw a card, then", "Unless you do, draw a card, then"),
+            COMMITTED_ENTRY_MODAL.replace("land card and/or a creature card", "land card and/or a land card"),
+            COMMITTED_ENTRY_MODAL.replace("from your hand", "from another player's hand"),
+            COMMITTED_ENTRY_MODAL + " Rewrite history.",
+        ):
+            with self.subTest(changed=changed):
+                self.assertNotEqual("exact", self.compile(changed).status)
+        with patch("quorune.compiler.resolution_effect_templates.committed_sacrifice_hand_entry_template",
+                   return_value=None):
+            self.assertNotEqual("exact", self.compile(COMMITTED_ENTRY_MODAL).status)
+
+
+
+    def test_committed_sacrifice_hand_entry_withdrawal_fails_closed(self):
+        from quorune.private_hand_entry_model import PRIVATE_HAND_TYPE_SLOTS_CAPABILITY
+        from quorune.rules.any_number_sacrifice import COMMITTED_SACRIFICE_HAND_ENTRY_CAPABILITY
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        self.assertEqual("exact", self.compile(COMMITTED_ENTRY_MODAL).status)
+        for dependency in (COMMITTED_SACRIFICE_HAND_ENTRY_CAPABILITY, PRIVATE_HAND_TYPE_SLOTS_CAPABILITY,
+                           "choice.affected_player.fixed_sacrifice", "zone.draw.library_to_hand"):
+            with self.subTest(dependency=dependency):
+                raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+                row = next(row for row in raw["capabilities"] if row["id"] == dependency)
+                row.update(status="blocked", blockers=["withdrawn for the private entry dependency witness"])
+                registry = CapabilityRegistry(raw)
+                registry.mark_evidence_verified(self.registry.evidence_fingerprint)
+                ir = compile_oracle_card(witnesses.record(COMMITTED_ENTRY_MODAL, "Sorcery"),
+                    capability_registry=registry, capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+
+
 class PrivateHandCollectionRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
     session = witnesses.BoundEffectProgramRuntimeTests.session
@@ -115,9 +187,22 @@ class PrivateHandCollectionRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
-        path = Path(cls.temporary.name) / "private-hand.sqlite3"
+        directory = Path(cls.temporary.name)
+        path = directory / "private-hand.sqlite3"
+        synthetic = directory / "committed-entry-cards.json"
+        records = (
+            replace(witnesses.record(COMMITTED_ENTRY_MODAL, "Sorcery"),
+                    name=COMMITTED_ENTRY_NAME, oracle_id="00000000-0000-4000-8000-000000663001"),
+            replace(witnesses.record("", "Land Creature — Forest Plant"),
+                    name=DUAL_ENTRY_NAME, oracle_id="00000000-0000-4000-8000-000000663002",
+                    mana_cost="", mana_value=0, produced_mana=("G",), power="1", toughness="1"),
+            replace(witnesses.record("Exile target card from a graveyard."),
+                    name=GRAVEYARD_RESPONSE_NAME, oracle_id="00000000-0000-4000-8000-000000663003"),
+        )
+        synthetic.write_text(json.dumps({"schema_version": 1, "cards": [_card_payload(card) for card in records]}),
+                             encoding="utf-8")
         build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
-            ROOT / "tests/fixtures/private-hand-collection-cards.json"], path)
+            ROOT / "tests/fixtures/private-hand-collection-cards.json", synthetic], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Private collection witness", [
@@ -338,6 +423,139 @@ class PrivateHandCollectionRuntimeTests(unittest.TestCase):
         self.assertEqual("battlefield", session.state.cards[entrant.object_id].zone)
         self.replay(session, load=True)
 
+    def modal_command(self, session, source, mode, targets=()):
+        action = self.ready(session, source, {"G": 1})
+        return {"action_id": action["id"], "modes": [mode], "targets": list(targets), "pay": "auto"}
+
+    def test_committed_sacrifice_mode_draws_before_distinct_private_slots_and_replays(self):
+        session = self.session(663001)
+        engine = session.engine
+        source = self.add(engine, COMMITTED_ENTRY_NAME, zone="hand", ref="closed-modal-entry")
+        victim = self.add(engine, "Generic Bound Body", ref="eligible-committed-sacrifice")
+        foreign = self.add(engine, "Generic Bound Body", seat="B", ref="foreign-committed-sacrifice")
+        first = self.add(engine, "Generic Bound Body", zone="hand", ref="private-creature-one")
+        extra = self.add(engine, "Generic Bound Body", zone="hand", ref="private-creature-two")
+        land = self.add(engine, "Generic Bound Plains", zone="hand", ref="private-ordinary-land")
+        other_hand = self.add(engine, "Generic Bound Body", seat="B", zone="hand", ref="foreign-private-creature")
+        nonpermanent = self.add(engine, "Generic Bound Growth", zone="hand", ref="private-nonpermanent")
+        drawn = self.add(engine, DUAL_ENTRY_NAME, zone="library", ref="private-drawn-dual-card")
+        player = session.state.players["A"]
+        self.assertEqual(drawn.object_id, player.zones["library"][-1])
+        player.land_plays_remaining = 0
+        command = self.modal_command(session, source, "mode_1")
+        self.checkpoint(session)
+
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [foreign.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertTrue(session.act("pilot:A", command).ok)
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertEqual("library", session.state.cards[drawn.object_id].zone)
+        before = authoritative_state_hash(session.state)
+        for actor, refs in (("A", []), ("A", [foreign.ref]), ("B", [victim.ref])):
+            self.assertFalse(session.act(f"pilot:{actor}", {"action_id": "choose", "cards": refs}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+        session = self.replay(session, load=True)
+        accepted = session.act("pilot:A", {"action_id": "choose", "cards": [victim.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual("graveyard", session.state.cards[victim.object_id].zone)
+        self.assertEqual("hand", session.state.cards[drawn.object_id].zone)
+        projected = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        candidates = {row["id"] for row in projected["objects"]}
+        self.assertTrue({first.ref, extra.ref, land.ref, drawn.ref} <= candidates)
+        self.assertFalse({other_hand.ref, nonpermanent.ref} & candidates)
+        self.assertIn("subset_maxima", json.dumps(projected))
+        opponent_packet = json.dumps(session.packet("pilot:B", full=True))
+        for private in (first, extra, land, drawn):
+            self.assertNotIn(private.ref, opponent_packet)
+
+        before = authoritative_state_hash(session.state)
+        for actor, refs in (
+            ("A", [first.ref, extra.ref]),
+            ("A", [drawn.ref, drawn.ref]),
+            ("A", [first.ref, drawn.ref, land.ref]),
+            ("A", [other_hand.ref]),
+            ("A", [nonpermanent.ref]),
+            ("B", [first.ref]),
+        ):
+            self.assertFalse(session.act(f"pilot:{actor}", {"action_id": "choose", "cards": refs}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+        declined = self.replay(session, load=True)
+        self.assertIsNone(self.choose(declined, []))
+        self.assertTrue(all(declined.state.cards[card.object_id].zone == "hand" for card in (drawn, first)))
+        self.assertEqual("graveyard", declined.state.cards[victim.object_id].zone)
+        self.replay(declined, load=True)
+
+        self.assertIsNone(self.choose(session, [drawn.ref, first.ref]))
+        entries = [session.state.cards[card.object_id] for card in (drawn, first)]
+        self.assertTrue(all((card.zone, card.controller) == ("battlefield", "A") for card in entries))
+        self.assertEqual(entries[0].zone_timestamp, entries[1].zone_timestamp)
+        self.assertEqual("battlefield", session.state.cards[foreign.object_id].zone)
+        self.assertEqual("hand", session.state.cards[land.object_id].zone)
+        self.assertEqual(0, session.state.players["A"].land_plays_remaining)
+        self.replay(session, load=True)
+
+    def test_missing_sacrifice_skips_private_draw_and_entry(self):
+        session = self.session(663002)
+        source = self.add(session.engine, COMMITTED_ENTRY_NAME, zone="hand", ref="empty-commit-mode")
+        opponent = self.add(session.engine, "Generic Bound Body", seat="B", ref="only-creature")
+        card_to_enter = self.add(session.engine, "Generic Bound Body", zone="hand", ref="untouched-private-card")
+        command = self.modal_command(session, source, "mode_1")
+        hand_count = len(session.state.players["A"].zones["hand"])
+        library = tuple(session.state.players["A"].zones["library"])
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[opponent.object_id].zone)
+        self.assertEqual("hand", session.state.cards[card_to_enter.object_id].zone)
+        self.assertEqual(hand_count - 1, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual(library, tuple(session.state.players["A"].zones["library"]))
+        self.replay(session, load=True)
+
+    def test_return_mode_keeps_owned_permanent_bounds_and_each_legal_survivor(self):
+        session = self.session(663003)
+        source = self.add(session.engine, COMMITTED_ENTRY_NAME, zone="hand", ref="closed-modal-return")
+        first = self.add(session.engine, "Generic Bound Body", zone="graveyard", ref="return-survivor")
+        lost = self.add(session.engine, "Generic Bound Plains", zone="graveyard", ref="lost-return-target")
+        nonpermanent = self.add(session.engine, "Generic Bound Growth", zone="graveyard", ref="not-permanent")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="B", zone="graveyard", ref="foreign-grave-card")
+        own_creature = self.add(session.engine, "Generic Bound Body", ref="no-branch-sacrifice")
+        response = self.add(session.engine, GRAVEYARD_RESPONSE_NAME, seat="B", zone="hand", ref="remove-one-return-target")
+        session.state.players["B"].mana_pool["G"] = 1
+        command = self.modal_command(session, source, "mode_2", (first.ref, lost.ref))
+        self.checkpoint(session)
+        before = authoritative_state_hash(session.state)
+        for invalid_modes in ([], ["mode_3"], ["mode_1", "mode_2"]):
+            self.assertFalse(session.act("pilot:A", {**command, "modes": invalid_modes}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        for invalid_targets in ([], [first.ref, first.ref], [foreign.ref], [nonpermanent.ref],
+                                [first.ref, lost.ref, foreign.ref]):
+            self.assertFalse(session.act("pilot:A", {**command, "targets": invalid_targets}).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+        for _ in range(4):
+            if session.state.priority_player == "B":
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual("B", session.state.priority_player)
+        accepted = session.act("pilot:B", {
+            "action_id": f"cast:{response.ref}", "targets": [lost.ref], "pay": "auto",
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[first.object_id].zone)
+        self.assertEqual("exile", session.state.cards[lost.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[foreign.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[own_creature.object_id].zone)
+        self.replay(session, load=True)
 
 if __name__ == "__main__":
     unittest.main()

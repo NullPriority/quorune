@@ -9,6 +9,7 @@ from .fixed_effect_clause_shapes import (
     closed_effect_component_capabilities,
 )
 from ..fractional_quantity_model import HALF_QUANTITY_KIND
+from .public_quantity_mana_shapes import fixed_then_named_graveyard_mana_capabilities
 from ..linked_exile_return_model import LINKED_EXILE_RETURN_OPERATION, LinkedExileReturnSpec
 from ..replacement.immutable import thaw_value
 from .bound_effect_program_shapes import (
@@ -89,6 +90,11 @@ def closed_effect_program_node_capabilities(
                for effect in effects)
     ):
         return ()
+    named_mana = fixed_then_named_graveyard_mana_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanics,
+    )
+    if named_mana:
+        return (CLOSED_EFFECT_PROGRAM_CAPABILITY, *named_mana)
     target_effects = tuple(
         effect for effect in effects if _contains_target_reference(effect)
     )
@@ -165,6 +171,11 @@ def _ordered_body_runtime_dependencies(program, schema):
 
     if not 2 <= len(effects) <= 8:
         raise ValueError("Closed ordered programs require two to eight effects")
+    named_mana = fixed_then_named_graveyard_mana_capabilities(
+        effects=effects, target_schema=schema, mechanic_ids=mechanics,
+    )
+    if named_mana:
+        return tuple(sorted({CLOSED_EFFECT_PROGRAM_CAPABILITY, *named_mana, *suffix_dependencies}))
     if any(isinstance(value, Mapping) and value.get("kind") == HALF_QUANTITY_KIND
            for effect in effects for value in (effect.get("amount"), effect.get("count"))):
         owned = closed_effect_program_node_capabilities(
@@ -187,7 +198,29 @@ def _ordered_body_runtime_dependencies(program, schema):
 
 def closed_effect_program_runtime_dependencies(program):
     """Keep the persisted ordered-program kind bound to its mutation owner."""
+    from .death_counter_shuffle import death_counter_shuffle_dependencies
+    from .bound_effect_program_shapes import source_target_counter_batch_program_dependencies
+    from .qualified_token_creators import qualified_token_creator_program_dependencies
+    from .fixed_effect_clause_shapes import (
+        equipped_counter_proliferate_runtime_dependencies, fixed_proliferate_sequence_runtime_dependencies,
+    )
+
+    from .linked_exile_activations import linked_exile_activation_runtime_dependencies
+
+    if departure := death_counter_shuffle_dependencies(program):
+        return departure
+    if linked_activation := linked_exile_activation_runtime_dependencies(program):
+        return linked_activation
+    if proliferate := fixed_proliferate_sequence_runtime_dependencies(program):
+        return proliferate
+    if paired := source_target_counter_batch_program_dependencies(program):
+        return paired
+    if qualified := qualified_token_creator_program_dependencies(program):
+        return qualified
     from .prepared_creature_power_damage_shapes import untapped_controller_damage_runtime_dependencies
+
+    if counter_proliferate := equipped_counter_proliferate_runtime_dependencies(program):
+        return counter_proliferate
 
     if prepared_damage := untapped_controller_damage_runtime_dependencies(program):
         return prepared_damage
@@ -217,8 +250,13 @@ def closed_effect_program_runtime_dependencies(program):
         decode=fixed_nonrepeating_modal_branches if FIXED_NONREPEATING_MODAL_MECHANIC in mechanics else fixed_choose_one_modal_branches
         branches=decode(effects=program.effects,target_schema=schema,mechanic_ids=tuple(sorted(mechanics)))
         if branches is None:raise ValueError('Modal ordered-program branches are malformed')
+        from ..pawprint_modes import PAWPRINT_MECHANIC
         from .modal_node_capabilities import fixed_modal_capability_dependencies
-        modal_owned=fixed_modal_capability_dependencies(effects=program.effects,target_schema=schema,mechanics=tuple(sorted(mechanics)))
+
+        modal_owned = fixed_modal_capability_dependencies(
+            effects=program.effects, target_schema=schema, mechanics=tuple(sorted(mechanics)),
+            allow_pawprint_draw=PAWPRINT_MECHANIC in program.coverage,
+        )
         if not modal_owned:raise ValueError('Modal ordered-program sibling branches are not independently closed')
         required=set()
         for branch in branches:

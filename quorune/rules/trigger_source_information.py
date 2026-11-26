@@ -3,9 +3,18 @@ from __future__ import annotations
 """Read-only typed result-source information prepared by trigger orchestration."""
 
 from collections.abc import Mapping
+from typing import TYPE_CHECKING, Any
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..ability_source_information import retains_original_source_tap_status
+from ..attachment_references import (
+    ATTACHMENT_INFORMATION_VERSION,
+    SourceAttachmentSnapshot,
+    attachment_information_capabilities,
+    capture_last_known_attachment_snapshot,
+    capture_source_attachment_snapshot,
+    required_attachment_relation,
+)
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
@@ -21,14 +30,96 @@ from ..creature_power_damage import capture_creature_power_damage_source_lki
 from ..creature_power_damage_model import CREATURE_POWER_DAMAGE_LKI_CONTEXT
 
 
+if TYPE_CHECKING:
+    from ..model import CardInstance
+    from ..semantics import SemanticProgram
+
+
+def _trigger_attachment_payload(program: SemanticProgram):
+    from .attached_greatest_power_condition import attached_greatest_power_event_condition
+
+    condition = attached_greatest_power_event_condition(program.event_condition)
+    return (*program.effects, condition.to_dict()) if condition is not None else program.effects
+
+
+def _trigger_attachment_snapshot(
+    cards: Mapping[str, CardInstance],
+    source: CardInstance,
+    program: SemanticProgram,
+) -> SourceAttachmentSnapshot | None:
+    relation = required_attachment_relation(_trigger_attachment_payload(program))
+    if relation is None:
+        return None
+    if cards.get(source.object_id) is source:
+        return capture_source_attachment_snapshot(cards, source, relation)
+    attached = cards.get(source.attached_to or "")
+    return capture_last_known_attachment_snapshot(
+        cards,
+        source,
+        relation,
+        source_logical_object_id=source.logical_object_id,
+        attached_to_ref=attached.ref if attached is not None else None,
+    )
+
+
+def _versioned_attachment_information(program: SemanticProgram) -> dict[str, int]:
+    if attachment_information_capabilities(_trigger_attachment_payload(program)):
+        return {ATTACHMENT_INFORMATION_VERSION: 1}
+    return {}
+
+
+def trigger_attachment_context(
+    cards: Mapping[str, CardInstance],
+    source: CardInstance,
+    program: SemanticProgram,
+) -> dict[str, Any]:
+    """Capture current or last-known attachment and designation information for a trigger."""
+    from ..attachment_source_return import attachment_source_return_context
+    from ..designation_prevention import (
+        DESIGNATION_INFORMATION_FIELD,
+        capture_program_designation_information,
+    )
+
+    designation = capture_program_designation_information(source, program)
+    extra = {DESIGNATION_INFORMATION_FIELD: designation} if designation is not None else {}
+    extra.update(attachment_source_return_context(source, program))
+    snapshot = _trigger_attachment_snapshot(cards, source, program)
+    if snapshot is None:
+        return {"source_logical_object_id": source.logical_object_id, **extra}
+
+    from .attachment_controller_information import capture_attachment_controller_context
+
+    return {
+        "source_logical_object_id": snapshot.source.logical_object_id,
+        "source_attachment_snapshot": snapshot.to_dict(),
+        **_versioned_attachment_information(program),
+        **capture_attachment_controller_context(cards, program, snapshot),
+        **extra,
+    }
+
+
 def trigger_result_source_information(host, *, source, program, event, stack_context, occurrence_context,
         source_characteristics, active_zone):
     """Collect typed result-source information after the occurrence has been sealed."""
     from .entry_x_graveyard_target import entry_x_graveyard_trigger_context
+    from .entry_x_support import entry_x_support_trigger_context
+
+    from .death_counter_shuffle import death_counter_shuffle_context
+    from .kicked_artifact_entry import kicked_artifact_entry_trigger_context
+    from .enchanted_departure_events import enchanted_departure_observer_context
+    from .opposing_death_delayed_return import opposing_death_observer_context
 
     result = entry_x_graveyard_trigger_context(program, source, stack_context)
+    result.update(kicked_artifact_entry_trigger_context(program, source, stack_context))
+    result.update(death_counter_shuffle_context(source, program, event, occurrence_context))
+    result.update(entry_x_support_trigger_context(program, source, stack_context))
+    result.update(enchanted_departure_observer_context(source, program, event, occurrence_context))
+    result.update(opposing_death_observer_context(source, program))
     from ..phasing_model import phase_out_effect
-    if tuple(program.effects) == (phase_out_effect(),):
+    from .source_counter_distribution import uses_source_counter_distribution
+
+    if (tuple(program.effects) == (phase_out_effect(),)
+            or any(uses_source_counter_distribution(effect) for effect in program.effects)):
         result["source_logical_object_id"] = source.logical_object_id
     from .gravestorm import GRAVESTORM_FIELD, gravestorm_program_dependencies, capture_gravestorm_cast_source
     if any(GRAVESTORM_FIELD in effect for effect in program.effects):
@@ -62,8 +153,13 @@ def trigger_result_source_information(host, *, source, program, event, stack_con
     result.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
     from ..target_source import capture_targeting_source, TARGETING_SOURCE_CONTEXT
     from ..ability_source_information import complete_ability_source_information
+    from ..fixed_token_production import uses_source_bound_populate
     from .endure_model import ENDURE_CAPABILITY
-    if program.target_schema or complete_ability_source_information(host.state) or ENDURE_CAPABILITY in program.capability_dependencies:
+    source_bound_populate = any(uses_source_bound_populate(effect) for effect in program.effects)
+    if source_bound_populate:
+        result["source_logical_object_id"] = source.logical_object_id
+    if (program.target_schema or source_bound_populate or complete_ability_source_information(host.state)
+            or ENDURE_CAPABILITY in program.capability_dependencies):
         result[TARGETING_SOURCE_CONTEXT] = capture_targeting_source(
             host, source, characteristics=source_characteristics, zone=active_zone,
         ).to_dict()
@@ -79,6 +175,10 @@ def trigger_result_source_information(host, *, source, program, event, stack_con
 
     result.update(source_charge_life_trigger_context(source, program))
     result.update(original_source_tap_context(host.state, source, program))
+    from .any_number_sacrifice import ANY_NUMBER_SACRIFICE_FIELD
+    if any(ANY_NUMBER_SACRIFICE_FIELD in effect and effect.get("exclude_ref") == "$source.zone_object"
+           for effect in program.effects):
+        result["source_logical_object_id"] = source.logical_object_id
     return result
 
 
@@ -165,21 +265,74 @@ def untapped_damage_draw_runtime_dependencies(program):
             "effect.choice.optional_fixed", "zone.draw.library_to_hand", "trigger.placement.apnap")
 
 
-def uses_original_untapped_source(state, program):
-    if uses_untapped_damage_source(program):
-        return True
+TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY = "trigger.condition.tapped_draw_source_damage"
+TAPPED_DRAW_SOURCE_DAMAGE_TEMPLATE = "fixed-counter-tapped-draw-source-damage-v1"
+
+
+def tapped_draw_source_condition():
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY, schema_version=2,
+        predicate=ObjectQuerySpec(zones=("battlefield",), state_predicate=PermanentStatePredicateSpec(tapped=True)),
+    )
+
+
+def tapped_draw_damage_condition():
+    return {"all": [
+        {"all": [
+            {"field": "player", "op": "eq", "value": "$source.controller"},
+            {"field": "step", "op": "eq", "value": "draw"},
+        ]},
+        {"field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, "op": "truthy", "value": True,
+         "condition": tapped_draw_source_condition().to_dict()},
+    ]}
+
+
+_TAPPED_DRAW_DAMAGE_CONDITION = FrozenMap(tapped_draw_damage_condition())
+_TAPPED_DRAW_DAMAGE_EFFECT = FrozenMap({"op": "damage", "source": "$source", "target": "$controller", "amount": 1})
+
+
+def _tapped_draw_damage_shape(program):
     return (
+        (program.event, program.active_zone) == ("step.begin", "battlefield")
+        and FrozenMap(program.event_condition or {}) == _TAPPED_DRAW_DAMAGE_CONDITION
+        and len(program.effects) == 1
+        and FrozenMap(program.effects[0]) == _TAPPED_DRAW_DAMAGE_EFFECT
+        and type(program.effects[0].get("amount")) is int
+    )
+
+
+def tapped_draw_damage_runtime_dependencies(program):
+    template = TAPPED_DRAW_SOURCE_DAMAGE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
+    marked = (TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY in program.capability_dependencies
+              or template in str(program.provenance.get("template_id") or "").split("+"))
+    closed = _tapped_draw_damage_shape(program)
+    if not marked and not closed:
+        return ()
+    if (not closed or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or not {"intervening_condition", FIXED_PUBLIC_STATE_INTERVENING_COVERAGE} <= set(program.coverage)):
+        raise ValueError("Tapped draw damage requires its original source, own draw step, and fixed controller damage")
+    return (TAPPED_DRAW_SOURCE_DAMAGE_CAPABILITY, "trigger.condition.fixed_public_state")
+
+
+def original_source_tap_expectation(state, program) -> bool | None:
+    if uses_untapped_damage_source(program):
+        return False
+    if _tapped_draw_damage_shape(program):
+        return True
+    if (
         program.event == "step.begin"
         and program.active_zone == "battlefield"
         and FIXED_PUBLIC_STATE_INTERVENING_COVERAGE in program.coverage
         and retains_original_source_tap_status(state)
         and isinstance(program.event_condition, Mapping)
         and FrozenMap(program.event_condition) == _DRAW_STEP_UNTAPPED_CONDITION
-    )
+    ):
+        return False
+    return None
 
 
 def original_source_tap_context(state, source, program):
-    if not uses_original_untapped_source(state, program):
+    if original_source_tap_expectation(state, program) is None:
         return {}
     identity = ContinuousObjectIdentity(source.object_id, source.logical_object_id)
     return {"source_logical_object_id": identity.logical_object_id,
@@ -193,10 +346,10 @@ def _read_source_status(context, field):
         or type(value["schema_version"]) is not int or value["schema_version"] != 1
         or value["departure_tapped"] is not None and type(value["departure_tapped"]) is not bool
     ):
-        raise ValueError("An untapped source condition requires its versioned tap observation")
+        raise ValueError("An original source condition requires its versioned tap observation")
     identity = ContinuousObjectIdentity.from_dict(value["source"])
     if identity.logical_object_id != context.get("source_logical_object_id"):
-        raise ValueError("An untapped source condition lost its original source identity")
+        raise ValueError("A source tap condition lost its original identity")
     return value, identity
 
 
@@ -222,15 +375,16 @@ def pin_untapped_damage_source_departures(host, cards, *, error_type):
         raise error_type(str(exc)) from exc
 
 
-def recheck_untapped_damage_source(host, context, *, event, controller, source_object_id):
+def recheck_original_source_tap(host, context, *, event, controller, source_object_id, expected_tapped):
     value, identity = _read_source_status(context, _source_status_field(host.state))
     if (identity.object_id != source_object_id or context.get("event") != event
             or context.get("intervening_condition_controller") != controller
-            or event == "step.begin" and context.get("step") != "draw"):
-        raise ValueError("An untapped source condition changed its original occurrence or controller")
+            or event == "step.begin" and context.get("step") != "draw"
+            or expected_tapped and context.get("player") != controller):
+        raise ValueError("A source tap condition changed its original occurrence or controller")
     source = host.state.cards.get(identity.object_id)
     if source is not None and source.zone == "battlefield" and source.logical_object_id == identity.logical_object_id:
-        return not source.tapped
+        return source.tapped is expected_tapped
     if value["departure_tapped"] is None:
         raise ValueError("A departed source requires its last known tap status")
-    return not value["departure_tapped"]
+    return value["departure_tapped"] is expected_tapped

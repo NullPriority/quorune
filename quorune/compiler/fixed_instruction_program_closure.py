@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Reviewed closure of separately owned fixed rule-action instructions."""
 
+from ..rules.artifact_sacrifice_return import is_closed_artifact_sacrifice_return_program
 from ..rules.extra_turn_shapes import is_closed_fixed_extra_turn_program
 from ..rules.scheduled_turn_skip_shapes import is_closed_scheduled_turn_skip_program
 from ..rules.earthbend_shapes import is_closed_earthbend_program
@@ -16,6 +17,8 @@ from ..rules.created_token_counter_shapes import is_closed_created_token_counter
 from ..rules.token_creation_reflexive import is_closed_token_creation_reflexive_program
 from ..rules.incubate_capability_shapes import is_closed_incubate_program
 from ..rules.discover_capability_shapes import is_closed_discover_program
+from ..rules.milled_creature_tokens import is_closed_milled_creature_token_program
+from ..rules.ordered_type_sacrifice import is_closed_ordered_type_sacrifice_program
 from ..rules.variable_library_selection_shapes import is_closed_variable_library_selection_program
 from ..rules.reveal_until_library_selection_shapes import is_closed_reveal_until_library_selection_program
 from ..rules.detain import is_closed_permanent_action_prohibition_program
@@ -25,7 +28,15 @@ from ..bounded_hand_cast_model import is_closed_bounded_hand_cast_program
 from ..dungeon_progress import is_closed_venture_program
 from ..initiative_model import is_closed_initiative_program
 from ..rules.monarch_capability_shapes import is_closed_fixed_monarch_program
-from ..rules.linked_exile_return_shapes import is_closed_linked_fading_activation_program
+from ..rules.library_result_capability_shapes import is_closed_mana_contribution_draw_program
+from ..rules.owner_library_position_shapes import is_closed_draw_source_owner_top_program
+from ..rules.loot_transform_graveyard import is_closed_loot_transform_or_graveyard_cast_program
+from ..rules.controller_top_exile_activation import is_closed_controller_top_exile_program
+from ..rules.opponent_library_exile_triggers import is_closed_draw_then_opponent_exile_program
+from ..rules.linked_exile_return_shapes import (
+    is_closed_controller_library_top_hand_program, is_closed_linked_fading_activation_program,
+)
+from ..rules.linked_loyalty_exile_shapes import is_closed_linked_loyalty_activation_program
 from ..rules.next_spell_payment import (
     is_closed_turn_color_spell_protection_program, is_closed_turn_spell_source_color_protection_program,
 )
@@ -40,6 +51,12 @@ def is_closed_fixed_instruction_program(program):
         return True
     from ..rules.fixed_hand_putback import is_closed_fixed_putback_program
     if is_closed_fixed_putback_program(program):return True
+    from ..rules.linked_hand_mana import is_closed_linked_hand_imprint
+    if is_closed_linked_hand_imprint(program):
+        return True
+    from ..rules.draw_step_drawing_settlement import is_closed_draw_step_settlement_program
+    if is_closed_draw_step_settlement_program(program):
+        return True
     from ..rules.hand_library_redraw import is_closed_hand_library_redraw_program
     if is_closed_hand_library_redraw_program(program):return True
     from ..rules.referenced_damage_shapes import is_closed_referenced_damage_program
@@ -52,6 +69,8 @@ def is_closed_fixed_instruction_program(program):
     from ..rules.source_sacrifice_shapes import is_closed_fixed_source_sacrifice_program
     from ..rules.target_all_counter_removal import is_closed_target_all_counter_variant_program
     from ..rules.chosen_counter_removal import is_closed_chosen_counter_removal_program
+    from ..rules.chosen_counter_placement import is_closed_chosen_counter_placement_program
+    from ..rules.captured_draw_keyword_grant import is_closed_captured_draw_keyword_grant_program
     from ..rules.optional_target_results import is_closed_optional_target_result_program
     from ..rules.target_land_type import is_closed_target_land_type_program
     from ..rules.graveyard_recycling import is_closed_graveyard_recycling_program
@@ -61,11 +80,19 @@ def is_closed_fixed_instruction_program(program):
     from ..rules.collective_source_damage import is_closed_collective_source_damage_program
     from ..rules.protected_attack_payments import is_closed_protected_attack_payment_program
     from ..rules.opponent_discard_results import is_closed_opponent_discard_program
+    from ..rules.fame_fortune_choices import is_closed_fame_fortune_program
     return any(recognizer(program) for recognizer in (
         is_closed_event_optional_draw_program,
+        is_closed_mana_contribution_draw_program,
+        is_closed_draw_source_owner_top_program,
+        is_closed_controller_top_exile_program,
+        is_closed_loot_transform_or_graveyard_cast_program,
+        is_closed_draw_then_opponent_exile_program,
         is_closed_fixed_source_sacrifice_program,
         is_closed_target_all_counter_variant_program,
         is_closed_chosen_counter_removal_program,
+        is_closed_chosen_counter_placement_program,
+        is_closed_captured_draw_keyword_grant_program,
         is_closed_optional_target_result_program,
         is_closed_target_land_type_program,
         is_closed_graveyard_recycling_program,
@@ -75,6 +102,8 @@ def is_closed_fixed_instruction_program(program):
         is_closed_collective_source_damage_program,
         is_closed_protected_attack_payment_program,
         is_closed_opponent_discard_program,
+        is_closed_fame_fortune_program,
+        is_closed_artifact_sacrifice_return_program,
         is_closed_created_token_counter_program,
         is_closed_token_creation_reflexive_program,
         is_closed_distinct_sacrifice_program,
@@ -84,12 +113,16 @@ def is_closed_fixed_instruction_program(program):
         is_closed_initiative_program,
         is_closed_fixed_monarch_program,
         is_closed_linked_fading_activation_program,
+        is_closed_controller_library_top_hand_program,
+        is_closed_linked_loyalty_activation_program,
         is_closed_turn_color_spell_protection_program,
         is_closed_turn_spell_source_color_protection_program,
         is_closed_incubate_program,
         is_closed_fixed_endure_program,
         is_closed_fixed_blight_program,
         is_closed_discover_program,
+        is_closed_milled_creature_token_program,
+        is_closed_ordered_type_sacrifice_program,
         is_closed_permanent_action_prohibition_program,
         is_closed_variable_library_selection_program,
         is_closed_reveal_until_library_selection_program,

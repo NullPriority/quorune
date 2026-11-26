@@ -1,0 +1,199 @@
+{
+  "cards": [
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Scry"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{G}{G}",
+      "name": "Nissa's Revelation",
+      "oracle_id": "ba9cd7bc-846f-4b5c-a1dc-9763a60dafc9",
+      "oracle_text": "Scry 5, then reveal the top card of your library. If it's a creature card, you draw cards equal to its power and you gain life equal to its toughness.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-11-16",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Lhurgoyf",
+      "oracle_id": "0fe76004-b2f4-4b11-abce-75fd76f68b4d",
+      "oracle_text": "Lhurgoyf's power is equal to the number of creature cards in all graveyards and its toughness is equal to that number plus 1.",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2018-06-08",
+      "toughness": "1+*",
+      "type_line": "Creature — Lhurgoyf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{G}{G}",
+          "name": "Esika, God of the Tree",
+          "oracle_text": "Vigilance\n{T}: Add one mana of any color.\nOther legendary creatures you control have vigilance and \"{T}: Add one mana of any color.\"",
+          "power": "1",
+          "toughness": "4",
+          "type_line": "Legendary Creature — God"
+        },
+        {
+          "colors": [
+            "B",
+            "G",
+            "R",
+            "U",
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}{U}{B}{R}{G}",
+          "name": "The Prismatic Bridge",
+          "oracle_text": "At the beginning of your upkeep, reveal cards from the top of your library until you reveal a creature or planeswalker card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Enchantment"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{G} // {W}{U}{B}{R}{G}",
+      "name": "Esika, God of the Tree // The Prismatic Bridge",
+      "oracle_id": "92023a5d-a143-4950-a71b-d736e6b8e959",
+      "oracle_text": "Esika, God of the Tree: Vigilance\n{T}: Add one mana of any color.\nOther legendary creatures you control have vigilance and \"{T}: Add one mana of any color.\"\n//\nThe Prismatic Bridge: At the beginning of your upkeep, reveal cards from the top of your library until you reveal a creature or planeswalker card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2021-02-05",
+      "toughness": null,
+      "type_line": "Legendary Creature — God // Legendary Enchantment"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If the top card of your library isn’t a creature card or it’s a creature card with power 0 or less, you won’t draw any cards. Otherwise, the first card you draw will be the card you revealed.",
+      "oracle_id": "ba9cd7bc-846f-4b5c-a1dc-9763a60dafc9",
+      "published_at": "2015-06-22",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Read-only pinned Oracle and ruling rows"
+}

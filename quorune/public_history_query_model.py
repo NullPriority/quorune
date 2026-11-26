@@ -7,12 +7,14 @@ from typing import Any
 from .creature_subtypes import canonical_creature_subtype
 from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS, PUBLIC_MOVEMENT_HISTORY_KINDS
 from .turn_history_model import (
-    CAST_CREATURE_COUNTERED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
+    CAST_CREATURE_COUNTERED_EVENT, PERMANENT_COUNTER_RECEIVED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
 )
 
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
 COUNTER_PLACEMENT_HISTORY_CAPABILITY = "condition.history.plus_one_counter_placement"
 COUNTER_PLACEMENT_HISTORY_QUERY_VERSION = 7
+SOURCE_COUNTER_RECEIPT_CAPABILITY = "condition.history.source_counter_receipt"
+SOURCE_COUNTER_RECEIPT_QUERY_VERSION = 8
 OPPONENT_LIFE_LOSS_HISTORY_CAPABILITY = "condition.history.opponent_life_loss_including_departed"
 COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
 TOKEN_CREATION_FACT = "controller_tokens_created_this_turn"
@@ -22,7 +24,8 @@ PERMANENT_DEATH_HISTORY_CAPABILITY = "zone.turn_history.permanent_death"
 PUBLIC_MOVEMENT_HISTORY_CAPABILITY = "condition.history.public_movement"
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
     'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard',
-    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
+    'permanent_died', 'player_damaged', CAST_CREATURE_COUNTERED_EVENT, PLUS_ONE_COUNTERS_PLACED_EVENT,
+    PERMANENT_COUNTER_RECEIVED_EVENT}) | COMMITTED_OCCURRENCE_HISTORY_KINDS | PUBLIC_MOVEMENT_HISTORY_KINDS
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
 
@@ -45,7 +48,9 @@ class PublicHistoryQuerySpec:
     source_only: bool = False
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, COUNTER_PLACEMENT_HISTORY_QUERY_VERSION}:
+        if type(self.schema_version) is not int or self.schema_version not in {
+            1, 2, 3, 4, 5, 6, COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION,
+        }:
             raise ValueError("Unsupported public history query version")
         if self.event not in _EVENTS or self.relation not in {'controller','any_player','opponents'}:raise ValueError('Unknown history event or principal relation')
         if self.reduction not in {'count','sum_amount','max_player_amount'}:raise ValueError('Unknown history reduction')
@@ -118,15 +123,21 @@ class PublicHistoryQuerySpec:
         if self.exclude_source and self.schema_version != 4:
             raise ValueError("Source exclusion requires version-four history")
         placement_query = self.event == PLUS_ONE_COUNTERS_PLACED_EVENT
+        receipt_query = self.event == PERMANENT_COUNTER_RECEIVED_EVENT
         if (self.schema_version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION) != placement_query:
             raise ValueError("Counter placement history requires its explicit query version")
-        if type(self.source_only) is not bool or (self.source_only and not placement_query):
+        if (self.schema_version == SOURCE_COUNTER_RECEIPT_QUERY_VERSION) != receipt_query:
+            raise ValueError("Source counter receipts require their explicit query version")
+        if type(self.source_only) is not bool or (self.source_only and not (placement_query or receipt_query)):
             raise ValueError("Only counter placement history supports source-incarnation matching")
         if placement_query and (
             self.relation != "controller" or self.types_all not in ((), ("creature",))
             or self.types_any or self.excluded_types or (self.source_only and self.types_all)
         ):
             raise ValueError("Counter placement history requires the placing controller and a closed recipient scope")
+        if receipt_query and (self.relation != 'any_player' or not self.source_only
+                              or self.types_all or self.types_any or self.excluded_types):
+            raise ValueError("A counter receipt query requires only the exact source incarnation")
 
     def to_dict(self):
         return {'schema_version':self.schema_version,'event':self.event,'relation':self.relation,'types_all':list(self.types_all),
@@ -136,7 +147,9 @@ class PublicHistoryQuerySpec:
             **({"exclude_source": True} if self.exclude_source else {}),
             **({"artifact_subtype": self.artifact_subtype} if self.artifact_subtype is not None else {}),
             **({'excluded_name':self.excluded_name,'excluded_subtype':self.excluded_subtype} if self.schema_version==5 else {}),
-            **({"source_only": self.source_only} if self.schema_version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION else {})}
+            **({"source_only": self.source_only} if self.schema_version in {
+                COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION,
+            } else {})}
 
     @classmethod
     def from_dict(cls,value):
@@ -153,7 +166,7 @@ class PublicHistoryQuerySpec:
                 fields.update(("creature_subtype", "token", "exclude_source"))
         elif version == 5:
             fields.update(('creature_subtype','token','excluded_name','excluded_subtype'))
-        elif version == COUNTER_PLACEMENT_HISTORY_QUERY_VERSION:
+        elif version in (COUNTER_PLACEMENT_HISTORY_QUERY_VERSION, SOURCE_COUNTER_RECEIPT_QUERY_VERSION):
             fields.add("source_only")
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError('Public history queries have a closed field set')
@@ -163,6 +176,7 @@ class PublicHistoryQuerySpec:
     def capability_dependencies(self):
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
             *((COUNTER_PLACEMENT_HISTORY_CAPABILITY,) if self.event == PLUS_ONE_COUNTERS_PLACED_EVENT else ()),
+            *((SOURCE_COUNTER_RECEIPT_CAPABILITY,) if self.event == PERMANENT_COUNTER_RECEIVED_EVENT else ()),
             *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
             *((PERMANENT_DEATH_HISTORY_CAPABILITY,) if self.event == "permanent_died" else ()),
             *(('condition.history.qualified_death_exclusion',) if self.schema_version==5 else ()),
@@ -183,6 +197,15 @@ def current_plus_one_counter_placement_query(
     )
 
 
+def current_source_counter_receipt_query() -> PublicHistoryQuerySpec:
+    return PublicHistoryQuerySpec(
+        PERMANENT_COUNTER_RECEIVED_EVENT,
+        relation='any_player',
+        schema_version=SOURCE_COUNTER_RECEIPT_QUERY_VERSION,
+        source_only=True,
+    )
+
+
 def opponent_life_loss_including_departed_query() -> PublicHistoryQuerySpec:
     return PublicHistoryQuerySpec("player_lost_life", relation="opponents",
                                   reduction="sum_amount", schema_version=6)
@@ -192,6 +215,12 @@ def matching_public_history_events(state,controller,spec,*,source_incarnation=No
     """Return sealed matching occurrences, or unavailable history."""
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
+    if spec.event == PERMANENT_COUNTER_RECEIVED_EVENT:
+        if (history.permanent_counter_receipt_history_version != 1
+                or type(source_incarnation) is not str or not source_incarnation):
+            return None
+        return tuple(event for event in history.events if event.kind == PERMANENT_COUNTER_RECEIVED_EVENT
+                     and event.object_incarnation == source_incarnation)
     if (spec.event == PLUS_ONE_COUNTERS_PLACED_EVENT
             and history.plus_one_counter_placement_history_version != 1):
         return None

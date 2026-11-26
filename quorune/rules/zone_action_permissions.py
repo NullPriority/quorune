@@ -49,6 +49,7 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any, *, include_so
 
 def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True,
     include_qualified_death: bool = True) -> bool:
+    from .casting.escape_grants import compiled_granted_escape_permission
     from .graveyard_cast_costs import compiled_paid_graveyard_specs
     if compiled_paid_graveyard_specs(host, seat, card):
         return True
@@ -70,6 +71,7 @@ def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_so
             and compiled_fixed_mana_flashback_spec(host, card) is not None
         )
         or compiled_fixed_zone_cast_permission(host, seat, card)
+        or (include_source_grants and compiled_granted_escape_permission(host, seat, card))
     )
 
 

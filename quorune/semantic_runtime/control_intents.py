@@ -71,6 +71,7 @@ class GainControlSetIntent:
     steps: tuple[str, ...]
     reason: str
     opponent: str | None = None
+    target_refs: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
         _validate_control(self.actor, self.controller, self.duration, self.source, self.reason)
@@ -93,6 +94,17 @@ class GainControlSetIntent:
             or self.steps != ("untap", "gain_control", "haste")
         ):
             raise ValueError("Two-controller creature transfer requires the exact opposing groups and result order")
+        if self.target_refs is not None:
+            from ..rules.attached_temporary_control import ATTACHED_CONTROL_RECEIVERS
+            from ..rules.targeted_control_set import TARGETED_CONTROL_SET_RECEIVERS, TARGETED_CONTROL_SET_STEPS
+
+            if (self.opponent is not None or self.controller != self.actor
+                    or self.predicate not in (TARGETED_CONTROL_SET_RECEIVERS, ATTACHED_CONTROL_RECEIVERS)
+                    or self.steps != TARGETED_CONTROL_SET_STEPS
+                    or type(self.target_refs) is not tuple or any(type(ref) is not str or not ref for ref in self.target_refs)
+                    or len(set(self.target_refs)) != len(self.target_refs)
+                    or (self.predicate == ATTACHED_CONTROL_RECEIVERS and len(self.target_refs) != 1)):
+                raise ValueError("Explicit control sets require their original references and printed order")
 
 
 @dataclass(frozen=True,slots=True)
@@ -110,6 +122,18 @@ class GiveControlIntent:
         _validate_control(self.actor,self.actor,self.duration,self.source,self.reason)
         if any(type(value) is not str or not value for value in (self.object_ref,self.controller)):
             raise ValueError('Recipient control requires a permanent and explicit acquiring player')
+
+
+@dataclass(frozen=True, slots=True)
+class UpkeepSourceHandoffIntent(GiveControlIntent):
+    """The typed result of choosing the original upkeep handoff."""
+    duration: ContinuousEffectDuration = field(init=False, default=ContinuousEffectDuration.UNTIL_END_OF_TURN)
+
+    def __post_init__(self):
+        GiveControlIntent.__post_init__(self)
+        if (self.controller == self.actor or self.object_ref != self.source.card_ref
+                or self.source.object_id is None or self.source.logical_object_id is None):
+            raise ValueError("The upkeep handoff requires the original source and an opposing recipient")
 
 
 @dataclass(frozen=True,slots=True)

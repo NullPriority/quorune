@@ -1,0 +1,64 @@
+{
+  "cards": [
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}{G}",
+      "name": "Glorious Sunrise",
+      "oracle_id": "844c1024-db80-4287-9770-3b10e53d0fc8",
+      "oracle_text": "At the beginning of combat on your turn, choose one —\n• Creatures you control get +1/+1 and gain trample until end of turn.\n• Target land gains \"{T}: Add {G}{G}{G}\" until end of turn.\n• Draw a card if you control a creature with power 3 or greater.\n• You gain 3 life.",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2021-11-19",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Glorious Sunrise's third mode may be chosen even if you don't control any creatures with power 3 or greater as the ability goes on the stack. If you control a creature with power 3 or greater when it resolves, you will draw a card. If not, it will do nothing as it resolves.",
+      "oracle_id": "844c1024-db80-4287-9770-3b10e53d0fc8",
+      "published_at": "2021-11-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

@@ -92,6 +92,7 @@ class PlaceCountersAftermathRequest:
     per_prevented: int = 0
     fixed_amount: int = 0
     subject_ref: str | None = None
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if not " ".join(str(self.counter_name).casefold().split()):
@@ -651,6 +652,7 @@ def _aftermath_for_subject(
                 placing_player=value.placing_player,
                 per_prevented=value.per_prevented,
                 fixed_amount=value.fixed_amount,
+                schema_version=value.schema_version,
             )
         )
     return tuple(result)

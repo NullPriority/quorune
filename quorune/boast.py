@@ -40,7 +40,9 @@ def validate_forecast_ability(ability):
 def boast_runtime_dependencies(program):
     from .abilities import ActivatedAbility
     from .semantic_runtime.activated_abilities import is_structural_activated_ability_catalog_program
-    required=set()
+    from .rules.boast_allowance import boast_allowance_program_dependencies
+
+    required = set(boast_allowance_program_dependencies(program))
     for descriptor in program.handlers:
         if descriptor.get('handler_id')!='activation.catalog.pinned.v1':continue
         raw=descriptor.get('ability',{})

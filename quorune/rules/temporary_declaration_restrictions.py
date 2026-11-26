@@ -20,7 +20,10 @@ from ..continuous_effect_state import (
     create_resolution_declaration_rule_effect,
 )
 from ..declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
-from ..declaration_rule_effects import ATTACK_BLOCK_PROHIBITION, ResolutionDeclarationRuleEffect
+from ..declaration_rule_effects import (
+    ATTACK_BLOCK_PROHIBITION, OPPONENT_BLOCKING_PROHIBITION, OPPONENT_BLOCKING_PROHIBITION_KIND,
+    ResolutionDeclarationRuleEffect,
+)
 from ..object_query import ObjectQueryResult
 from ..characteristic_read_frames import characteristic_read_method
 
@@ -73,6 +76,7 @@ class CurrentDeclarationRestriction:
     source: Any
     template: DeclarationRestrictionTemplate
     giver: Any | None = None
+    block_opponents_of: str | None = None
 
 
 def temporary_declaration_restriction(
@@ -123,6 +127,27 @@ def temporary_declaration_restriction(
     )
 
 
+def single_target_schema_from_declaration_group(
+    schema: Mapping[str, Any],
+) -> dict[str, Any] | None:
+    """Validate the represented group bounds and derive its individual target schema."""
+    count_fields = set(schema) & {"count", "up_to", "min", "max"}
+    if count_fields == {"min", "max"}:
+        if any(type(schema[field]) is not int for field in count_fields) or (schema["min"], schema["max"]) != (1, 2):
+            return None
+    elif count_fields in ({"count"}, {"count", "up_to"}):
+        maximum = schema["count"]
+        if type(maximum) is not int or not 1 <= maximum <= 6:
+            return None
+        if "up_to" in schema and (type(schema["up_to"]) is not int or schema["up_to"] != maximum):
+            return None
+    else:
+        return None
+    single = {key: value for key, value in schema.items() if key not in count_fields}
+    single["count"] = 1
+    return single
+
+
 def commit_temporary_declaration_restriction(
     host: TemporaryDeclarationRestrictionHost,
     *,
@@ -131,6 +156,7 @@ def commit_temporary_declaration_restriction(
     kind: TemporaryDeclarationRestrictionKind | str | Mapping,
     expires_on_next_turn_of: str | None = None,
     attack_defender: str | None = None,
+    block_opponents_of: str | None = None,
 ) -> ResolutionDeclarationRuleEffect:
     """Create one locked, duration-bound declaration rule."""
 
@@ -144,7 +170,8 @@ def commit_temporary_declaration_restriction(
         raise TemporaryDeclarationRestrictionError(
             "Temporary declaration restrictions require typed resolution source identity"
         )
-    restriction = temporary_declaration_restriction(kind, attack_defender=attack_defender)
+    restriction = (OPPONENT_BLOCKING_PROHIBITION if kind == OPPONENT_BLOCKING_PROHIBITION_KIND
+                   else temporary_declaration_restriction(kind, attack_defender=attack_defender))
     if (isinstance(restriction, DeclarationRequirementTemplate) and restriction.defender is not None
             and restriction.defender not in host.state.players):
         raise TemporaryDeclarationRestrictionError("A specific attack requirement must bind a represented player")
@@ -156,6 +183,7 @@ def commit_temporary_declaration_restriction(
             restriction=restriction,
             duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
             expires_on_next_turn_of=expires_on_next_turn_of,
+            block_opponents_of=block_opponents_of,
         )
     except (ContinuousEffectError, ContinuousEffectStateError) as exc:
         raise TemporaryDeclarationRestrictionError(str(exc)) from exc
@@ -223,6 +251,7 @@ def current_declaration_restrictions(
                     participant_id=f"{source.ref}:resolved:{index}",
                     source=source,
                     template=effect.restriction,
+                    block_opponents_of=effect.block_opponents_of,
                 )
             )
     from .bound_static_declarations import current_bound_declaration_rules

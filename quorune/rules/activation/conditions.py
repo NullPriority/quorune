@@ -105,6 +105,18 @@ def _public_query_count(
     return count
 
 
+def _charge_counter_status(source):
+    from ...counter_snapshot import permanent_counter_snapshot
+
+    if source is None or source.zone != "battlefield":
+        return "unresolved", "activation_source_required"
+    try:
+        count = permanent_counter_snapshot(source.counters).get("charge", 0)
+    except ValueError:
+        return "unresolved", "unknown_charge_counter_count"
+    return ("unavailable", "requires_no_charge_counters") if count else ("payable", None)
+
+
 def _typed_condition_status(
     host: ActivationConditionHost,
     seat: str,
@@ -121,6 +133,8 @@ def _typed_condition_status(
     if kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN:
         from .source_attack import source_attack_condition_status
         return source_attack_condition_status(host,source)
+    if kind is ActivationConditionKind.SOURCE_NO_CHARGE_COUNTERS:
+        return _charge_counter_status(source)
     if kind is ActivationConditionKind.SOURCE_ATTACHED_TO_CREATURE:
         target = host.state.cards.get(getattr(source, 'attached_to', None))
         attached = (source is not None and source.zone == 'battlefield'
@@ -249,11 +263,14 @@ def activation_condition_status(
         if source is None:
             return "unresolved", "activation_source_required"
         try:
+            from ..boast_allowance import maximum_boast_activations
+
             usage = activation_usage_verdict(
                 source,
                 ability_id=ability.ability_id,
                 limit=ability.activation_limit,
                 turn_sequence=host.state.turn_sequence,
+                maximum=maximum_boast_activations(host, seat, ability, source),
             )
         except ActivationUsageError:
             return "unresolved", "malformed_activation_usage"

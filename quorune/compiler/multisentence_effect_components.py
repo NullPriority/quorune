@@ -6,8 +6,19 @@ from . import regex_working_set as re
 from .closed_effect_programs import ClosedEffectProgramTemplate, _NESTED_SEQUENCE_MECHANICS, _top_level_positions
 
 
+_CAPTURED_DRAW_KEYWORD_GRANT = re.compile(
+    r"Draw a card for each creature you control with a \+1/\+1 counter on it\. "
+    r"Those creatures gain indestructible until end of turn\.",
+    re.IGNORECASE,
+)
+
+
 def multisentence_effect_program(text: str, *, compile_component):
     normalized = text.strip()
+    if _CAPTURED_DRAW_KEYWORD_GRANT.fullmatch(" ".join(normalized.split())):
+        from ..rules.captured_draw_keyword_grant import CAPTURED_DRAW_KEYWORD_MECHANICS, captured_draw_keyword_instruction
+
+        return "captured-draw-keyword-grant-v1", (captured_draw_keyword_instruction(),), None, CAPTURED_DRAW_KEYWORD_MECHANICS
     positions = _top_level_positions(normalized, '. ')
     if positions is None or not 2 <= len(positions) <= 7:
         return None

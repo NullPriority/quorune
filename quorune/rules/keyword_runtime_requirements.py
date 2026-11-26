@@ -8,11 +8,40 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,TRIGGE
 
 
 def registered_component_capabilities(descriptor,registered):
-    """Keep the inventory union, while binding one validated fragment variant."""
+    """Bind direct capabilities for the validated descriptor variant."""
     from ..semantic_runtime.ability_fragments import (
-        TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID,TriggerMultiplierAbilityFragmentHandler,
+        TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID, TriggerMultiplierAbilityFragmentHandler,
+        WARD_SACRIFICE_FRAGMENT_HANDLER_ID, WardSacrificeAbilityFragmentHandler,
     )
+    from ..semantic_runtime.cross_zone_type_additions import (
+        CROSS_ZONE_TYPE_ADDITION_HANDLER, CrossZoneTypeAdditionHandler,
+    )
+    if descriptor.get("handler_id") == CROSS_ZONE_TYPE_ADDITION_HANDLER:
+        return CrossZoneTypeAdditionHandler().required_capabilities(descriptor)
+
+    from ..semantic_runtime.global_alternative_costs import GLOBAL_ALTERNATIVE_HANDLER, GlobalAlternativeCostHandler
+    if descriptor.get("handler_id") == GLOBAL_ALTERNATIVE_HANDLER:
+        return GlobalAlternativeCostHandler().required_capabilities(descriptor)
+
+    from ..semantic_runtime.subtype_composite_grants import (
+        SUBTYPE_COMPOSITE_GRANT_HANDLER, FixedSubtypeCompositeGrantHandler,
+    )
+    if descriptor.get("handler_id") == SUBTYPE_COMPOSITE_GRANT_HANDLER:
+        return FixedSubtypeCompositeGrantHandler().required_capabilities(descriptor)
+
     dependencies=tuple(registered['capability_dependencies'])
+    from ..kicker import KICKER_COST_HANDLER_ID, POSITIVE_GENERIC_KICKER_CAPABILITY
+    from ..semantic_runtime.kicker import FixedManaKickerHandler
+
+    if descriptor.get("handler_id") == KICKER_COST_HANDLER_ID:
+        spec = FixedManaKickerHandler().validate(descriptor)
+        return (POSITIVE_GENERIC_KICKER_CAPABILITY,) if spec.has_positive_generic_x else dependencies
+
+    if descriptor.get("handler_id") == "rule.cast.prohibition.fixed-public.v1":
+        from ..semantic_runtime.static_cast_rules import opponent_sorcery_timing_descriptor_dependencies
+
+        if timing := opponent_sorcery_timing_descriptor_dependencies(descriptor):
+            return timing
     from ..semantic_runtime.fixed_characteristic_settings import (
         NONOWNER_CREATURE_MODIFIER_HANDLER, NonownerCreatureModifierHandler,
     )
@@ -23,6 +52,11 @@ def registered_component_capabilities(descriptor,registered):
         from ..characteristic_fragments import CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES
 
         return (*dependencies, *CONTROLLER_TURN_LIFE_LOSS_CAPABILITIES)
+    if descriptor.get("handler_id") == WARD_SACRIFICE_FRAGMENT_HANDLER_ID:
+        fragment = WardSacrificeAbilityFragmentHandler().validate(descriptor)
+        if fragment.capability_id not in dependencies:
+            raise ValueError("Ward sacrifice variant has no registered owner")
+        return (fragment.capability_id,)
     if descriptor.get('handler_id')!=TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID:return dependencies
     fragment=TriggerMultiplierAbilityFragmentHandler().validate(descriptor)
     if fragment.capability_id not in dependencies:
@@ -154,6 +188,8 @@ def keyword_runtime_dependencies(program):
     if 'banding' in program.coverage:
         required.add('combat.banding')
     required.update(_fragment_descriptor_requirements((program.handlers, program.effects)))
+    from .mana_point_result import mana_point_runtime_dependencies
+    required.update(mana_point_runtime_dependencies(program))
     if program.provenance.get('granted_only') and program.ability_id.startswith('ability:granted:'):
         from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
         from ..granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY

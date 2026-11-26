@@ -15,14 +15,30 @@ from typing import Any, Mapping
 from .activation_usage import ActivationLimit
 from .rules.activation_counter_cost import SourceCounterRemovalCost
 from .object_predicate import ObjectQuerySpec
+from .linked_exile_return_model import validate_linked_ability_binding
+from .rules.linked_hand_mana_model import MANA_HANDLER, OUTPUT, normalized
 from .replacement.immutable import FrozenMap, thaw_value
 
 
 COLOR_SET_MANA_HANDLER_ID = "ability.activated.mana.color-set.v1"
 COMMANDER_IDENTITY_MANA_HANDLER_ID = "ability.activated.mana.commander-identity.v1"
+COMMANDER_TYPE_SCRY_MANA_HANDLER_ID = "ability.activated.mana.commander-type-scry.v1"
+COMMANDER_ENTRY_COUNTER_MANA_HANDLER_ID = "ability.activated.mana.commander-entry-counters.v1"
 COMMANDER_IDENTITY_MANA_CAPABILITY = "mana.activated.commander_identity"
 MANA_COST_KEYS = ("GENERIC", "W", "U", "B", "R", "G", "C")
 _ABILITY_ID = re.compile(r"^ab[1-9][0-9]*$")
+_COMMANDER_IDENTITY_OUTPUT = "add one mana of any color in your commander's color identity."
+_COMMANDER_TYPE_SCRY_OUTPUT = (
+    _COMMANDER_IDENTITY_OUTPUT
+    + " when that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1."
+)
+
+_COMMANDER_ENTRY_COUNTER_OUTPUT = (
+    _COMMANDER_IDENTITY_OUTPUT
+    + " if you spend this mana to cast your commander, it enters with a number of additional "
+      "+1/+1 counters on it equal to the number of times it's been cast from the command zone this game."
+)
+_COMMANDER_ENTRY_MANA_COST = {"GENERIC": 1, **dict.fromkeys("WUBRGC", 0)}
 
 
 class ColorSetManaAbilityError(ValueError):
@@ -38,6 +54,7 @@ class ColorSetRelation(str, Enum):
     CONTROLLER = "controller"
     OWNER = "owner"
     COMMANDER_IDENTITY = "commander_identity"
+    LINKED_EXILE = "linked_exile"
 
 
 def _exact_fields(
@@ -126,6 +143,9 @@ class ColorSetActivatedManaAbilitySpec:
     query: ObjectQuerySpec | None
     activation_limit: ActivationLimit | None = None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
+    commander_type_scry: bool = False
+    commander_entry_counters: bool = False
+    linked_exile_pair: str | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -210,6 +230,18 @@ class ColorSetActivatedManaAbilitySpec:
             raise ColorSetManaAbilityError(
                 "Color-set mana source counter cost must be typed or null"
             )
+        if type(self.commander_type_scry) is not bool or (
+            self.commander_type_scry and (not self.uses_commander_identity or self.activation_limit is not None)
+        ):
+            raise ColorSetManaAbilityError("Commander-type Scry requires its exact commander mana ability")
+        if type(self.commander_entry_counters) is not bool or (
+            self.commander_entry_counters and (
+                not self.uses_commander_identity or self.commander_type_scry or self.activation_limit is not None
+            )
+        ):
+            raise ColorSetManaAbilityError("Commander entry counters require their exact commander mana ability")
+        if self.relation is not ColorSetRelation.LINKED_EXILE and self.linked_exile_pair is not None:
+            raise ColorSetManaAbilityError("Only linked exile mana has a linked pair")
         self._validate_query()
 
     @property
@@ -222,9 +254,14 @@ class ColorSetActivatedManaAbilitySpec:
             if (
                 query is not None or self.selection is not ColorSetSelection.CHOOSE_ONE
                 or not self.tap_source or self.sacrifice_source or self.life_payment
-                or any(self.mana_cost.values()) or self.source_counter_removal_cost is not None
+                or (dict(self.mana_cost) != _COMMANDER_ENTRY_MANA_COST
+                    if self.commander_entry_counters else any(self.mana_cost.values()))
+                or self.source_counter_removal_cost is not None
             ):
-                raise ColorSetManaAbilityError("Commander identity mana requires its exact tap-only color choice")
+                raise ColorSetManaAbilityError("Commander identity mana requires its exact payment and color choice")
+            return
+        if self.relation is ColorSetRelation.LINKED_EXILE:
+            self._validate_linked_exile_output()
             return
         if query is None:
             raise ColorSetManaAbilityError("Object color-set mana requires its typed query")
@@ -281,6 +318,16 @@ class ColorSetActivatedManaAbilitySpec:
                 "Color-set mana query is not a supported canonical shape"
             )
 
+    def _validate_linked_exile_output(self):
+        validate_linked_ability_binding(self.linked_exile_pair)
+        if (self.query is not None or self.selection is not ColorSetSelection.CHOOSE_ONE
+                or self.cost_text.casefold() != "{t}" or normalized(self.effect_text) != OUTPUT
+                or normalized(self.oracle_line) != "{t}: " + OUTPUT
+                or not self.tap_source or self.sacrifice_source or self.life_payment
+                or any(self.mana_cost.values()) or self.activation_limit is not None
+                or self.source_counter_removal_cost is not None):
+            raise ColorSetManaAbilityError("Linked exile mana requires its exact tap and one-color output")
+
     def to_dict(self) -> dict[str, Any]:
         value = {
             "ability_id": self.ability_id,
@@ -302,6 +349,12 @@ class ColorSetActivatedManaAbilitySpec:
             value["source_counter_removal_cost"] = (
                 self.source_counter_removal_cost.to_dict()
             )
+        if self.commander_type_scry:
+            value["commander_type_scry"] = True
+        if self.commander_entry_counters:
+            value["commander_entry_counters"] = True
+        if self.linked_exile_pair is not None:
+            value["linked_exile_pair"] = self.linked_exile_pair
         return value
 
     @classmethod
@@ -326,6 +379,17 @@ class ColorSetActivatedManaAbilitySpec:
             expected.add("activation_limit")
         if "source_counter_removal_cost" in value:
             expected.add("source_counter_removal_cost")
+        if "commander_type_scry" in value:
+            if value["commander_type_scry"] is not True:
+                raise ColorSetManaAbilityError("An absent commander Scry rider must be omitted")
+            expected.add("commander_type_scry")
+        if "commander_entry_counters" in value:
+            if value["commander_entry_counters"] is not True:
+                raise ColorSetManaAbilityError("An absent commander entry rider must be omitted")
+            expected.add("commander_entry_counters")
+        if "linked_exile_pair" in value:
+            validate_linked_ability_binding(value["linked_exile_pair"])
+            expected.add("linked_exile_pair")
         _exact_fields(value, expected, field="color-set mana ability")
         mana_cost = value["mana_cost"]
         query = value["query"]
@@ -362,6 +426,9 @@ class ColorSetActivatedManaAbilitySpec:
             relation=value["relation"],
             selection=value["selection"],
             query=None if query is None else ObjectQuerySpec.from_dict(query),
+            commander_type_scry=value.get("commander_type_scry", False),
+            commander_entry_counters=value.get("commander_entry_counters", False),
+            linked_exile_pair=value.get("linked_exile_pair"),
             activation_limit=value.get("activation_limit"),
             source_counter_removal_cost=(
                 None
@@ -396,7 +463,7 @@ class ColorSetActivatedManaAbilitySpec:
 _TEMPLATES: dict[
     str, tuple[ColorSetRelation, ColorSetSelection, ObjectQuerySpec | None]
 ] = {
-    "add one mana of any color in your commander's color identity.": (
+    _COMMANDER_IDENTITY_OUTPUT: (
         ColorSetRelation.COMMANDER_IDENTITY, ColorSetSelection.CHOOSE_ONE, None,
     ),
     (
@@ -441,7 +508,12 @@ def compile_color_set_activated_mana_ability(
 ) -> ColorSetActivatedManaAbilitySpec | None:
     """Lower one exact color-set output within the closed grammar."""
 
-    template = _TEMPLATES.get(" ".join(str(ability.effect_text).split()).casefold())
+    effect = " ".join(str(ability.effect_text).split()).casefold()
+    commander_type_scry = effect == _COMMANDER_TYPE_SCRY_OUTPUT
+    commander_entry_counters = effect == _COMMANDER_ENTRY_COUNTER_OUTPUT
+    template = _TEMPLATES.get(
+        _COMMANDER_IDENTITY_OUTPUT if commander_type_scry or commander_entry_counters else effect
+    )
     if template is None:
         return None
     if (
@@ -465,7 +537,10 @@ def compile_color_set_activated_mana_ability(
         or not ability.tap_source
         or ability.sacrifice_source
         or ability.life_payment
-        or any(int(ability.mana.get(key, 0)) for key in MANA_COST_KEYS)
+        or (dict(ability.mana) != _COMMANDER_ENTRY_MANA_COST
+            if commander_entry_counters else any(int(ability.mana.get(key, 0)) for key in MANA_COST_KEYS))
+        or ((commander_type_scry or commander_entry_counters) and ability.activation_limit is not None)
+        or (commander_entry_counters and ability.source_counter_removal_cost is not None)
     ):
         return None
     relation, selection, query = template
@@ -486,14 +561,23 @@ def compile_color_set_activated_mana_ability(
         query=query,
         activation_limit=ability.activation_limit,
         source_counter_removal_cost=ability.source_counter_removal_cost,
+        commander_type_scry=commander_type_scry,
+        commander_entry_counters=commander_entry_counters,
     )
 
 
 def color_set_mana_handler_descriptor(
     spec: ColorSetActivatedManaAbilitySpec,
 ) -> dict[str, Any]:
+    handler = COMMANDER_IDENTITY_MANA_HANDLER_ID if spec.uses_commander_identity else COLOR_SET_MANA_HANDLER_ID
+    if spec.commander_type_scry:
+        handler = COMMANDER_TYPE_SCRY_MANA_HANDLER_ID
+    elif spec.commander_entry_counters:
+        handler = COMMANDER_ENTRY_COUNTER_MANA_HANDLER_ID
+    elif spec.linked_exile_pair is not None:
+        handler = MANA_HANDLER
     return {
-        "handler_id": COMMANDER_IDENTITY_MANA_HANDLER_ID if spec.uses_commander_identity else COLOR_SET_MANA_HANDLER_ID,
+        "handler_id": handler,
         "schema_version": 1,
         "event": "activate",
         "ability": spec.to_dict(),

@@ -9,6 +9,7 @@ from typing import Any, Mapping
 
 EXTRA_COMBAT_FOLLOWUP_FIELD = "extra_combat_after_untap"
 EXTRA_COMBAT_CAPABILITY = "turn.phase.extra_combat_after_current"
+EXTRA_COMBAT_MECHANIC = "fixed-extra-combat-after-untap"
 EXTRA_COMBAT_PHASES_FIELD = "extra_combat_phases"
 
 

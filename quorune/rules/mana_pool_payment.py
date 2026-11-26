@@ -37,9 +37,19 @@ class PoolManaUnit:
         if self.snow:
             traits.append("Snow")
         if self.restriction:
-            traits.append(self.restriction.replace("_", " "))
+            from ..mana_spend_rules import CommanderEntryCounterMana, CommanderScryMana, decode_source_bound_cast_mana
+
+            rider = decode_source_bound_cast_mana(self.restriction)
+            if isinstance(rider, CommanderScryMana):
+                traits.append("Scry 1 on matching creature cast")
+            elif isinstance(rider, CommanderEntryCounterMana):
+                traits.append("Additional counters on your commander")
+            else:
+                traits.append(self.restriction.replace("_", " "))
         if self.retention == "end_of_combat":
             traits.append("Retained until end of combat")
+        elif self.retention == "end_of_turn":
+            traits.append("Retained until end of turn")
         return self.color + " · " + (" · ".join(traits) if traits else "Ordinary")
 
 
@@ -110,6 +120,28 @@ def decode_pool_payment(raw: Any, player: Any) -> ManaPoolAllocation:
     return ManaPoolAllocation(tuple((available[key], raw[key]) for key in sorted(raw)))
 
 
+def _pool_choice_rows(units: Mapping[PoolManaUnit, int]) -> list[dict[str, Any]]:
+    return [
+        {"id": unit.key, "label": unit.label(), "color": unit.color, "maximum": amount}
+        for unit, amount in sorted(
+            units.items(), key=lambda row: (_COLORS.index(row[0].color), row[0].key)
+        )
+    ]
+
+
+def payable_mana_pool_rows(
+    player: Any,
+    restriction_allows: Callable[[str, str | None], bool],
+    spend_context: str | None,
+) -> list[dict[str, Any]]:
+    """Describe the payer's current units eligible for one cost."""
+    return _pool_choice_rows({
+        unit: amount
+        for unit, amount in mana_pool_units(player).items()
+        if unit.restriction is None or restriction_allows(unit.restriction, spend_context)
+    })
+
+
 def mana_pool_choice_context(state: Any, actor: str | None, kind: str, context: Mapping[str, Any]) -> Mapping[str, Any]:
     """Add actor-local form metadata outside the recorded decision state."""
     if actor not in state.players or kind != "priority":
@@ -117,6 +149,4 @@ def mana_pool_choice_context(state: Any, actor: str | None, kind: str, context: 
     units = mana_pool_units(state.players[actor])
     if not any(unit.snow or unit.restriction is not None or unit.retention is not None for unit in units):
         return context
-    rows = [{"id": unit.key, "label": unit.label(), "color": unit.color, "maximum": amount}
-            for unit, amount in sorted(units.items(), key=lambda row: (_COLORS.index(row[0].color), row[0].key))]
-    return {**context, "mana_pool_rows": rows}
+    return {**context, "mana_pool_rows": _pool_choice_rows(units)}

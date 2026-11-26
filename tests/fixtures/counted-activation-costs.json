@@ -583,6 +583,121 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "312c7a7b-2084-42b0-9b13-0a6d3e43a73d",
+      "name": "Camellia, the Seedmiser",
+      "mana_cost": "{1}{B}{G}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Squirrel Warlock",
+      "oracle_text": "Menace\nOther Squirrels you control have menace.\nWhenever you sacrifice one or more Foods, create a 1/1 green Squirrel creature token.\n{2}, Forage: Put a +1/+1 counter on each other Squirrel you control. (To forage, exile three cards from your graveyard or sacrifice a Food.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Forage",
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "oracle_id": "fixture:forage-food",
+      "name": "Forage Food Witness",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact Creature — Food Goblin",
+      "power": "1",
+      "toughness": "1",
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "oracle_text": "{T}: Add {G}.",
+      "produced_mana": [
+        "G"
+      ]
+    },
+    {
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "oracle_id": "fixture:forage-squirrel",
+      "name": "Forage Squirrel Witness",
+      "mana_cost": "{1}{G}",
+      "cmc": 2,
+      "type_line": "Creature — Squirrel",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "oracle_text": ""
+    },
+    {
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "released_at": "2026-01-01",
+      "oracle_id": "fixture:forage-nonfood",
+      "name": "Forage Nonfood Witness",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact Creature — Treasure Goblin",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1"
     }
   ],
   "rulings": [
@@ -645,6 +760,24 @@
       "published_at": "2022-12-08",
       "source": "wotc",
       "comment": "You can sacrifice Pashalik Mons to pay the cost of its last ability."
+    },
+    {
+      "oracle_id": "312c7a7b-2084-42b0-9b13-0a6d3e43a73d",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "312c7a7b-2084-42b0-9b13-0a6d3e43a73d",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "312c7a7b-2084-42b0-9b13-0a6d3e43a73d",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
     }
   ]
 }

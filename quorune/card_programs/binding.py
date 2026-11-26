@@ -23,14 +23,42 @@ def _hash(value: Any) -> str:
 
 def _semantic_program_requirements(program):
     from ..rules.announced_mana_value_target import (
-        announced_mana_value_capability, has_announced_mana_value_limit, project_announced_target_program,
+        DISTINCT_GRAVEYARD_MANA_VALUE_CAPABILITY, announced_mana_value_capability,
+        has_announced_mana_value_limit, has_distinct_own_graveyard_mana_value_limit,
+        project_announced_target_program, uses_distinct_graveyard_reanimation,
     )
+    from ..rules.effect_shape_walkers import nested_effects
+
+    if (
+        any(uses_distinct_graveyard_reanimation(effect) for effect in nested_effects((program.effects, program.handlers, program.target_schema)))
+        and not has_distinct_own_graveyard_mana_value_limit(program.target_schema or {})
+    ):
+        return {DISTINCT_GRAVEYARD_MANA_VALUE_CAPABILITY}, {"runtime_distinct_reanimation:missing_announced_target_group"}
 
     from ..rules.entry_x_graveyard_target import (
         ENTRY_X_GRAVEYARD_REQUIREMENTS, has_entry_x_target_limit, project_entry_x_graveyard_target_program,
     )
 
-    if has_entry_x_target_limit(program.target_schema):
+    from ..rules.kicked_artifact_entry import (
+        KICKED_ARTIFACT_ENTRY_REQUIREMENTS, has_kicked_artifact_entry_limit, project_kicked_artifact_entry_program,
+    )
+
+    from ..rules.entry_x_support import (
+        ENTRY_X_SUPPORT_REQUIREMENTS, has_entry_x_support, project_entry_x_support_program,
+    )
+
+    if has_kicked_artifact_entry_limit(program.target_schema):
+        try:
+            projected, capabilities = project_kicked_artifact_entry_program(program)
+        except (TypeError, ValueError, KeyError) as exc:
+            return set(KICKED_ARTIFACT_ENTRY_REQUIREMENTS), {f"runtime_kicked_artifact_entry:invalid:{exc}"}
+        required, blockers = program_dynamic_runtime_requirements(projected)
+        return required.union(capabilities), blockers
+    if has_entry_x_support(program.target_schema):
+        capabilities = ENTRY_X_SUPPORT_REQUIREMENTS
+        project = project_entry_x_support_program
+        label = "entry_x_support_target"
+    elif has_entry_x_target_limit(program.target_schema):
         capabilities = ENTRY_X_GRAVEYARD_REQUIREMENTS
         project = project_entry_x_graveyard_target_program
         label = "entry_x_mana_value_target"
@@ -205,6 +233,10 @@ def bind_card_program_runtime(
     capability_registry: Any,
     profile: str,
 ) -> dict[str, Any]:
+    from ..rules.temporary_ability_grant import (
+        validate_life_loss_self_death_grant_child, validate_temporary_combat_draw_unblockable_child,
+    )
+
     ability_bindings = [
         bind_semantic_program_runtime(
             ability,
@@ -218,6 +250,30 @@ def bind_card_program_runtime(
         for binding in ability_bindings
         for blocker in binding["blockers"]
     }
+    from ..rules.nonhuman_undying_anthem import nonhuman_undying_anthem_linkage_blockers
+    blockers.update(nonhuman_undying_anthem_linkage_blockers(card_program.abilities))
+    abilities_by_key = {ability.key: ability for ability in card_program.abilities}
+    for ability in card_program.abilities:
+        try:
+            validate_temporary_combat_draw_unblockable_child(ability, abilities_by_key.get)
+        except (TypeError, ValueError, KeyError) as exc:
+            blockers.add(f"ability:{ability.ability_id}:runtime_temporary_combat_draw_child:invalid:{exc}")
+        try:
+            validate_life_loss_self_death_grant_child(ability, abilities_by_key.get)
+        except (TypeError, ValueError, KeyError) as exc:
+            blockers.add(f"ability:{ability.ability_id}:runtime_temporary_self_death_child:invalid:{exc}")
+    from ..rules.linked_color_cast_exile import validate_linked_color_cast_card_group
+
+    try:
+        validate_linked_color_cast_card_group(card_program.abilities)
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_linked_color_cast_group:invalid:{exc}")
+    from ..rules.linked_hand_mana import validate_linked_hand_mana_group
+
+    try:
+        validate_linked_hand_mana_group(card_program.abilities)
+    except (TypeError, ValueError, KeyError) as exc:
+        blockers.add(f"runtime_linked_hand_mana_group:invalid:{exc}")
     basis = str(card_program.trust_closure.get("trust_basis") or "unresolved")
     if basis in {"provisional", "unresolved"}:
         blockers.add(f"trust_basis:{basis}")
@@ -249,6 +305,8 @@ def bind_card_program_runtime(
             }
             and not any(
                 blocker.startswith("trust_basis:")
+                or blocker.startswith("runtime_linked_color_cast_group:")
+                or blocker.startswith("runtime_linked_hand_mana_group:")
                 or blocker == "compatibility_provenance:missing"
                 for blocker in blockers
             )

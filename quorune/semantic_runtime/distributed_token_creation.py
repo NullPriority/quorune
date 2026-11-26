@@ -14,12 +14,15 @@ from ..fixed_token_production import (
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.committed_quantity_followups import COMMITTED_TOKEN_CREATOR_COUNTS_FIELD
+from ..rules.qualified_token_creators import uses_qualified_token_creators, resolved_qualified_token_creators
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import IntentPlan
 from .token_creation_intent import DistributedTokenCreationIntent
 
 
 def _distributed_creators(raw, actor, apnap):
+    if uses_qualified_token_creators(raw):
+        return resolved_qualified_token_creators(raw, apnap), ()
     if COMMITTED_TOKEN_CREATOR_COUNTS_FIELD in raw:
         counts = raw[COMMITTED_TOKEN_CREATOR_COUNTS_FIELD]
         fields = {"op", "controller", "token", COMMITTED_TOKEN_CREATOR_COUNTS_FIELD}

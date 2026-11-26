@@ -7,11 +7,14 @@ import shutil
 import sqlite3
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
 from common import DB_PATH, ROOT
 from quorune import CardDatabase
+from quorune.card_programs.binding import bind_card_program_runtime
+from quorune.card_programs.trust import FORMAT_PROFILE_CAPABILITIES
 from quorune.record import database_fingerprint, replay_record
 from server import ServerSettings, create_app
 from server.app import COOKIE_NAME, CSRF_COOKIE_NAME, _websocket_origin_allowed
@@ -88,6 +91,43 @@ class ServerApplicationTests(unittest.TestCase):
                     self.assertEqual("legal", response.json()["format_legality"]["status"])
                 else:
                     self.assertIn("printed limit", response.text)
+
+    def test_deck_upload_distinguishes_card_rules_from_match_rules(self):
+        player, _ = self.guest("Rules Readiness Pilot")
+        response = self.client.post("/api/v1/rooms", headers=self.auth(player), json={})
+        self.assertEqual(201, response.status_code, response.text)
+        room = response.json()["room"]["room_id"]
+        deck = {
+            "name": "Rules readiness",
+            "commander": "Krenko, Tin Street Kingpin",
+            "decklist": "Commander:\n1 Krenko, Tin Street Kingpin\nMainboard:\n99 Mountain\n",
+        }
+
+        def submit():
+            with patch.dict(FORMAT_PROFILE_CAPABILITIES, {"commander_review": ()}):
+                response = self.client.put(
+                    f"/api/v1/rooms/{room}/deck", headers=self.auth(player), json=deck
+                )
+            self.assertEqual(200, response.status_code, response.text)
+            return response.json()["preflight"]
+
+        ready = submit()
+        self.assertEqual(100, ready["fully_playable_cards"])
+        self.assertTrue(ready["card_rules_ready"])
+        self.assertFalse(ready["trusted_only_ready"])
+
+        commander = self.client.app.state.runtime.card_db.lookup(deck["commander"])
+
+        def missing_commander_binding(program, **kwargs):
+            binding = bind_card_program_runtime(program, **kwargs)
+            if program.oracle_id == commander.oracle_id:
+                binding["strict_capability_ready"] = False
+            return binding
+
+        with patch("quorune.preflight.bind_card_program_runtime", side_effect=missing_commander_binding):
+            blocked = submit()
+        self.assertFalse(blocked["card_rules_ready"])
+        self.assertFalse(blocked["trusted_only_ready"])
 
     def test_websocket_origin_accepts_exact_same_origin_and_rejects_foreign(self):
         configured = ("http://127.0.0.1:5173",)
@@ -226,11 +266,20 @@ class ServerApplicationTests(unittest.TestCase):
                 "INSERT INTO rulings(oracle_id, published_at, source, comment) VALUES (?, ?, ?, ?)",
                 (swat, "2026-11-20", "wotc", "A new ruling in the test snapshot."),
             )
+            # The all-ASCII variant is a reviewed equivalent. Changing one
+            # ruling gives this fixture a distinct formatting-only fingerprint.
             changed = connection.execute(
-                "UPDATE rulings SET comment = REPLACE(comment, ?, ?) WHERE oracle_id = ? AND INSTR(comment, ?) > 0",
+                """
+                UPDATE rulings SET comment = REPLACE(comment, ?, ?)
+                WHERE rowid = (
+                    SELECT rowid FROM rulings
+                    WHERE oracle_id = ? AND INSTR(comment, ?) > 0
+                    ORDER BY published_at, source, comment LIMIT 1
+                )
+                """,
                 ("’", "'", rollick, "’"),
             ).rowcount
-            self.assertGreater(changed, 0)
+            self.assertEqual(1, changed)
             connection.execute(
                 "INSERT OR REPLACE INTO metadata(key, value) VALUES (?, ?)",
                 ("scryfall_rulings_updated_at", "2026-11-20T12:00:00Z"),

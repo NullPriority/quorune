@@ -5,8 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..cast_origin_replacement import CAST_REPLACEMENT_VERSIONS, MAIN_PHASE_CAST_PREPARATION_VERSION
 from ..ability_resolution_ordinal import is_ability_resolution_ordinal, validate_ability_resolution_ordinal
 from ..other_spell_history_model import is_other_spell_draw, validate_other_spell_draw
+from ..rules.entrant_power_branch import (
+    ENTRANT_POWER_BRANCH_FIELD, resolved_entrant_power_branch, uses_entrant_power_branch,
+)
 from ..replacement.immutable import FrozenMap
 from ..paid_sacrifice_conditions import PAID_SACRIFICE_CONDITION_VERSION
 from ..resolution_conditions import (
@@ -21,6 +25,19 @@ from .model import (
 )
 
 
+def _prepare_controlled_artifact_token_branch(effect, context):
+    from ..rules.controlled_artifact_token_result import controlled_artifact_token_effects
+
+    try:
+        effects = controlled_artifact_token_effects(effect, actor=context.actor, stack_controller=context.stack_controller)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue("Compare the original artifact's controller.", prepend_effects=effects),
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class PublicResolutionConditionHandler:
     operation: str = RESOLUTION_CONDITION_OPERATION
@@ -28,7 +45,10 @@ class PublicResolutionConditionHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 109.5", "CR 608.2c", "CR 608.2h")
     capability_dependencies: tuple[str, ...] = (RESOLUTION_CONDITION_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding','condition_target', 'resolution_ordinal')
+    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding','condition_target', 'resolution_ordinal',
+        ENTRANT_POWER_BRANCH_FIELD, 'minimum', 'counter_count', 'power', 'entrant', 'source',
+        'named_cast_win', 'win', 'card',
+        'point_game_loss', 'target', 'remove_from', 'count')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -38,6 +58,24 @@ class PublicResolutionConditionHandler:
     test_modules: tuple[str, ...] = ("tests.test_resolution_public_conditions",)
 
     def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        from ..rules.named_cast_win import uses_named_cast_win
+        if uses_named_cast_win(effect):
+            return _prepare_named_cast_win(effect, context)
+        from ..rules.controlled_artifact_token_result import uses_controlled_artifact_token_branch
+        if uses_controlled_artifact_token_branch(effect):
+            return _prepare_controlled_artifact_token_branch(effect, context)
+        if uses_entrant_power_branch(effect):
+            try:
+                result = resolved_entrant_power_branch(effect, context.actor, context.stack_controller)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("Compare the original entrant's power.", prepend_effects=result),
+            )
+        from ..rules.combat_point_counters import uses_point_game_loss
+        if uses_point_game_loss(effect):
+            return _prepare_point_game_loss(effect, context)
         if is_other_spell_draw(effect):
             return _prepare_other_spell_draw(effect, context)
         if is_ability_resolution_ordinal(effect):
@@ -67,13 +105,16 @@ class PublicResolutionConditionHandler:
                 auto_continue=AutoContinue(reason='sealed Kicker target branch',
                     prepend_effects=tuple(FrozenMap(child) for child in branch)))
         otherwise=effect.get('otherwise_effects',())
+        if effect.get("schema_version") == MAIN_PHASE_CAST_PREPARATION_VERSION:
+            effects = tuple(child for child in effects if _available_preparation_instruction(child))
+            otherwise = tuple(child for child in otherwise if _available_preparation_instruction(child))
         from .resolution_result_validation import validate_resolution_result_children
         validate_resolution_result_children(effect, effects, otherwise, context)
         try:
             version = effect.get("schema_version")
             if version in {6, 7}:
                 matched = effect["cast_fact"] >= condition.minimum
-            elif version in {2, 4, 5, PAID_SACRIFICE_CONDITION_VERSION}:
+            elif version in {2, 4, 5, PAID_SACRIFICE_CONDITION_VERSION, *CAST_REPLACEMENT_VERSIONS}:
                 matched = effect["cast_fact"]
             else:
                 matched = context.query.resolution_condition_matches(condition.to_dict())
@@ -92,6 +133,14 @@ class PublicResolutionConditionHandler:
 
     def complete(self, continuation: SemanticChoiceContinuation, response: Mapping[str, Any], query: SemanticChoiceQuery) -> SemanticChoiceCompletion:
         raise SemanticChoiceError("Public resolution conditions issue no player choice")
+
+
+def _available_preparation_instruction(effect):
+    if effect["op"] == "creature_power_damage":
+        return effect["source"] is not None and effect["target"] is not None
+    if effect["op"] == "modify_stats_until_end_of_turn":
+        return effect["card"] is not None
+    return True
 
 
 def _prepare_other_spell_draw(effect, context):
@@ -124,6 +173,32 @@ def _prepare_ability_resolution_ordinal(effect, context):
             prepend_effects=tuple(FrozenMap(child) for child in children)
             if effect["resolution_ordinal"] == effect["condition"]["ordinal"] else (),
         ),
+    )
+
+
+def _prepare_named_cast_win(effect, context):
+    from ..rules.named_cast_win import named_cast_win_bound_results
+
+    try:
+        effects = named_cast_win_bound_results(effect, actor=context.actor, stack_controller=context.stack_controller)
+    except (TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue("Check the committed named casts.", prepend_effects=effects),
+    )
+
+
+def _prepare_point_game_loss(effect, context):
+    from ..rules.combat_point_counters import point_game_loss_bound_results
+
+    try:
+        results = point_game_loss_bound_results(effect, actor=context.actor, stack_controller=context.stack_controller)
+    except (KeyError, TypeError, ValueError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        auto_continue=AutoContinue("Check the original permanent's point counters.", prepend_effects=results),
     )
 
 

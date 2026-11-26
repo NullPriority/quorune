@@ -13,10 +13,41 @@ from .model import CardInstance, GameState
 from .life_state import PreparedLifePayment
 from .semantic_runtime import PreparedZoneChange
 from .zone_trigger_processing import DepartureTriggerSnapshot
+from .zone_trigger_events import ZoneTransitionKind
 
 
 EXILE_ZONE = "exile"
 LIBRARY_ZONE = "library"
+
+
+def sacrifice_transition_is_prohibited(state, card, kind):
+    if kind is not ZoneTransitionKind.SACRIFICE:
+        return False
+    from .sacrifice_prohibition_model import sacrifice_is_prohibited
+
+    return sacrifice_is_prohibited(state, card)
+
+
+def filter_prohibited_sacrifice_transitions(state, changes, transition_kinds):
+    if not transition_kinds:
+        return changes, transition_kinds
+    blocked = {
+        object_id for object_id, _ in changes if object_id in state.cards
+        and sacrifice_transition_is_prohibited(state, state.cards[object_id], transition_kinds.get(object_id))
+    }
+    if not blocked:
+        return changes, transition_kinds
+    return ([(object_id, zone) for object_id, zone in changes if object_id not in blocked],
+            {key: kind for key, kind in transition_kinds.items() if key not in blocked})
+
+
+def validate_simultaneous_controllers(changes, controllers, aura_targets, active_seats):
+    change_ids = {object_id for object_id, _destination in changes}
+    if set(controllers) - change_ids or any(
+        type(value) is not str or value not in active_seats for value in controllers.values()):
+        raise GameRuleError('Simultaneous zone-move destination controllers are invalid')
+    if set(aura_targets) - change_ids or any(type(value) is not str or not value for value in aura_targets.values()):
+        raise GameRuleError('Simultaneous Aura entry selections are invalid')
 
 
 def replacement_library_position(prepared: PreparedZoneChange, position: str | int | None) -> str | int | None:
@@ -174,6 +205,11 @@ class ZoneMovePlan:
     aura_entry_plan: Any
     manifest_entry: bool = False
     reveal_face_down_departure: bool = False
+    cloak_entry: bool = False
+
+    @property
+    def library_face_down_entry(self) -> bool:
+        return self.manifest_entry or self.cloak_entry
 
 
 def entry_putting_player(host: ZoneTransitionHost, card: CardInstance, destination: str, player: str | None) -> str | None:
@@ -233,6 +269,35 @@ def capture_simultaneous_departure(
             putting_player=putting_player,
         ),
     )
+
+
+def prepare_entry_replacement_for_move(host, card, destination, *, controller, entry_characteristics,
+        tapped, entry_pay_life, transition_kind, replacement_selections, prepared_replacement, library_face_down_entry,
+        cloaked=False, discard_effect_origin=None):
+    """Prepare one requested entry or redirect through its canonical move owner."""
+    from .semantic_runtime.zone_replacements import prepare_zone_change_replacement
+
+    if library_face_down_entry:
+        from .manifest import prepare_manifest_entry_replacement
+        prepared_replacement = prepare_manifest_entry_replacement(host, card,
+            controller=controller or card.owner, characteristics=entry_characteristics,
+            selections=tuple(replacement_selections), cloaked=cloaked)
+        replacement_selections = ()
+    replacement = prepare_zone_change_replacement(
+        host,
+        card,
+        destination,
+        destination_controller=controller,
+        entry_characteristics=entry_characteristics,
+        requested_tapped=bool(tapped) if tapped is not None else False,
+        entry_pay_life=entry_pay_life,
+        transition_kind=transition_kind,
+        selections=tuple(replacement_selections),
+        prepared=prepared_replacement,
+        error_type=GameRuleError,
+        discard_effect_origin=discard_effect_origin,
+    )
+    return replacement
 
 __all__ = [
     "EXILE_ZONE",

@@ -7,6 +7,7 @@ import re
 from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING, cast
 
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..rules.mana_contribution_draw import MANA_CONTRIBUTION_DRAW_OPERATION
 from ..replacement.immutable import thaw_value
 from ..util import stable_json
 from .trust import build_program_trust_closure
@@ -192,6 +193,7 @@ def _choice_nodes(effects: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
         {"effect_index": index, "operation": str(effect.get("op") or "")}
         for index, effect in enumerate(effects)
         if any(marker in str(effect.get("op") or "") for marker in markers)
+        or effect.get("op") == MANA_CONTRIBUTION_DRAW_OPERATION
         or any(key in effect for key in ("choice", "choices", "prompt"))
     ]
 

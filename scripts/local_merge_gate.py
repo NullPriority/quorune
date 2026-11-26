@@ -74,13 +74,22 @@ def build_steps(
     output: Path,
     focused_tests: Sequence[str],
     npm: str = "npm",
+    card_databases: Sequence[Path] = (ROOT / "data/scryfall-current.sqlite3",),
 ) -> list[GateStep]:
     protocol_output = output / "protocol-demo"
     wheel_output = output / "dist"
+    card_database_arguments = tuple(arg for path in card_databases for arg in ("--db", str(path)))
     return [
         GateStep(
             "python_runtime_policy",
             (python, "scripts/validate_python_runtime.py"),
+        ),
+        GateStep(
+            "card_program_source_fingerprints",
+            (
+                python, "scripts/audit_card_program_fingerprints.py", *card_database_arguments,
+                "--output", str(output / "card-program-fingerprints.json"),
+            ),
         ),
         GateStep(
             "generated_capability_evidence_freshness",
@@ -415,6 +424,10 @@ def main() -> int:
     parser.add_argument("--expected-branch", required=True)
     parser.add_argument("--expected-sha")
     parser.add_argument(
+        "--card-db", type=Path, action="append",
+        help="Full card snapshot for the fingerprint audit. Repeat for additional release snapshots.",
+    )
+    parser.add_argument(
         "--focused-test",
         action="append",
         default=[],
@@ -452,12 +465,16 @@ def main() -> int:
     if npm is None:
         raise SystemExit("npm is required for the browser merge gate")
     environment = gate_environment(database)
+    card_databases = args.card_db or [
+        Path(os.environ.get("MTG_CARD_DB") or ROOT / "data/scryfall-current.sqlite3")
+    ]
     steps = build_steps(
         python,
         database=database,
         output=output,
         focused_tests=focused_tests,
         npm=npm,
+        card_databases=card_databases,
     )
     summary_path = output / "summary.json"
     summary: dict = {

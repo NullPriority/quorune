@@ -16,6 +16,16 @@ def fixed_event_outcome_template(binding, body, *, card_name, effect_template):
                      None, (PHASE_OUT_MECHANIC,)), False)
     from ..life_change import LIFE_LOSS_EVENT
     loss_body = body.strip().casefold().removesuffix(".")
+    if binding.event.value == LIFE_LOSS_EVENT and loss_body == "draw that many cards":
+        from ..rules.event_outcome_shapes import (
+            CONTROLLER_LIFE_LOSS_DRAW_MECHANIC, controller_life_loss_draw_condition, controller_life_loss_draw_effect,
+        )
+
+        if binding.event_condition == controller_life_loss_draw_condition():
+            return (
+                "controller-life-loss-draw-v1", (controller_life_loss_draw_effect(),), None,
+                (CONTROLLER_LIFE_LOSS_DRAW_MECHANIC,),
+            ), True
     if binding.event.value == LIFE_LOSS_EVENT and loss_body in (
         "you gain that much life", "that player mills that many cards",
     ):

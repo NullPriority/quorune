@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "cae166de-e681-40a0-83a8-3c17cf40e2fc",
+      "name": "Commander's Plate",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature gets +3/+3 and has protection from each color that's not in your commander's color identity.\nEquip commander {3}\nEquip {5}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-11-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "cae166de-e681-40a0-83a8-3c17cf40e2fc",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If your commander is a card that has no colors in its color identity, Commander's Plate gives it protection from each color."
+    },
+    {
+      "oracle_id": "cae166de-e681-40a0-83a8-3c17cf40e2fc",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you have no commander, Commander's Plate grants no protection abilities. The equipped creature still gets +3/+3."
+    },
+    {
+      "oracle_id": "cae166de-e681-40a0-83a8-3c17cf40e2fc",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you have two commanders and attach Commander's Plate to one, it has protection from each color not in your two commanders' combined color identity."
+    }
+  ]
+}

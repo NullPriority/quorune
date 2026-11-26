@@ -6,6 +6,7 @@ import hashlib
 from typing import Any, Mapping, Protocol, Sequence
 from .counter_placement_event_model import CounterPlacementOccurrence
 from .counter_prevention import collect_shield_counter_effects
+from .drawing.model import QueuedDraw
 from .model import StackItem
 
 from .counter_state import (
@@ -23,7 +24,9 @@ from .damage_results import (
     prepare_damage_results,
     PreparedDamageResults,
 )
-from .damage_source import DAMAGE_PREVENTION_RESULT_VERSION_FIELD
+from .damage_source import (
+    DAMAGE_PREVENTION_RESULT_VERSION_FIELD, damage_source_state_from_context, validate_damage_event_source_state,
+)
 from .damage_transaction import (
     DamageReplacementChoiceRequired,
     DamageTransactionPort,
@@ -44,9 +47,7 @@ from .semantic_runtime.damage_permissions import collect_damage_prevention_permi
 from .deathtouch import DeathtouchError, deathtouch_damage_result_applies
 from .commander import CommanderIdentityError, commander_damage_keys
 from .commander_damage_identity_model import PhysicalCommanderDamageIdentities
-from .permanent_event_state_model import (
-    PermanentEventState, damage_permanent_state_context, permanent_state_from_damage_context,
-)
+from .permanent_event_state_model import PermanentEventState, damage_permanent_state_context
 from .combat_damage_events import (
     canonical_combat_assignment_values,
     combat_damage_event_identity,
@@ -61,7 +62,6 @@ from .damage_prevention import (
     DamageModifierError,
     DamageModifierSnapshot,
     plan_damage_modifier_commit,
-    project_damage_modifier_snapshot,
     project_damage_modifier_snapshot,
     validate_damage_modifier_plan,
 )
@@ -84,6 +84,8 @@ from .replacement_effects import (
     ReplacementSelection,
     advance_replacement_batch,
 )
+from .replacement.damage_redirection import DAMAGE_SPLIT_ORIGIN, coalesce_redirected_damage
+from .rules.damage_redirection_protection import protection_proposals_for_redirection
 from .prevention_triggers import (
     PreventionTriggeredAbility,
     PreventionTriggerError,
@@ -193,8 +195,9 @@ def _normalized_keywords(values: Sequence[Any]) -> tuple[str, ...]:
 class DamageEvent:
     """One final source-recipient result from an authoritative damage batch.
 
-    ``assigned_amount`` is the positive amount proposed by the producer before
-    CR 614/615 processing. Replacement and prevention effects may increase,
+    ``assigned_amount`` is the amount proposed by the producer before CR 614/615
+    processing. A derived redirection branch carries no original assignment.
+    Replacement and prevention effects may increase,
     decrease, or prevent damage in an interleaved order, so dealt plus
     prevented damage is intentionally not required to equal the proposal.
     """
@@ -231,21 +234,22 @@ class DamageEvent:
     source_supertypes: tuple[str, ...] = ()
     source_physical_commander_identities: PhysicalCommanderDamageIdentities | None = None
     source_permanent_state: PermanentEventState | None = None
+    source_had_plus_one_counter: bool | None = None
+    split_origin: str | None = None
+    source_had_any_counter: bool | None = None
 
     def __post_init__(self) -> None:
-        if self.source_permanent_state is not None and not isinstance(self.source_permanent_state,PermanentEventState):
-            raise ValueError('Damage source permanent state must be typed')
-        if self.source_physical_commander_identities is not None:
-            if not isinstance(self.source_physical_commander_identities,PhysicalCommanderDamageIdentities):
-                raise ValueError('Physical commander damage identities must be typed')
-            self.source_physical_commander_identities.validate_source(is_commander=self.source_is_commander,
-                designation_id=self.source_commander_designation_id,oracle_id=self.source_oracle_id)
+        validate_damage_event_source_state(self)
         if self.target_kind not in {"player", "permanent"}:
             raise ValueError(
                 "Damage target kinds must be player or permanent"
             )
-        if self.assigned_amount <= 0:
+        if self.split_origin is None and self.assigned_amount <= 0:
             raise ValueError("A damage event requires a positive assignment")
+        if self.split_origin is not None and (
+            type(self.split_origin) is not str or not self.split_origin or self.assigned_amount != 0
+        ):
+            raise ValueError("Only a derived damage branch can have no original assignment")
         if self.dealt_amount < 0 or self.prevented_amount < 0:
             raise ValueError("Damage event results cannot be negative")
         if self.target_kind == "player" and self.target_object_id is not None:
@@ -278,7 +282,8 @@ class DamageEvent:
         """Return the stable normalized context consumed by trigger programs."""
 
         return {
-            **damage_permanent_state_context(self.source_permanent_state),
+            **damage_permanent_state_context(self.source_permanent_state, had_plus_one_counter=self.source_had_plus_one_counter,
+                had_any_counter=self.source_had_any_counter),
             **({'source_physical_commander_identities':self.source_physical_commander_identities.to_dict()}
                if self.source_physical_commander_identities is not None else {}),
             # ``card`` is the established self-event identity field used by
@@ -392,6 +397,7 @@ class DamageBatchResult:
     nested_damage_results: tuple["DamageBatchResult", ...] = ()
     counter_occurrences: tuple[CounterPlacementOccurrence, ...] = ()
     ring_trigger_items: tuple[StackItem, ...] = ()
+    combat_prevention_draws: tuple[QueuedDraw, ...] = ()
 
     @property
     def dealt_amount(self) -> int:
@@ -503,7 +509,7 @@ def damage_proposal(
         source=(
             source_override
             if source_override is not None
-            else source_snapshot(host, source_ref, controller=actor)
+            else source_snapshot(host, source_ref, controller=actor, combat=combat)
         ),
         recipient=recipient_snapshot(host, target, actor=actor),
         amount=amount,
@@ -581,6 +587,7 @@ def combat_damage_proposals(
             host,
             source.ref,
             controller=source.controller,
+            combat=True,
         )
         recipient_value = recipient_snapshot(
             host,
@@ -707,7 +714,7 @@ def _prepare_damage_result_batch(host, events, *, damage_effects, sources, sourc
         )
         result_progress = prepare_damage_results(
             host,
-            events,
+            coalesce_redirected_damage(events),
             effects=result_effects,
             gain_permissions=gain_permissions,
             prevention_results=immediate_results,
@@ -774,6 +781,7 @@ def prepare_damage_batch(
     from .semantic_runtime.damage_replacements import (
         collect_damage_replacement_effects,
     )
+    from .rules.combat_prevention_draw import combat_prevention_draw_replacements
 
     permission = collect_damage_prevention_permissions(host,sources=sources,source_zones=source_zones)
     nonzero = tuple(replace(proposal,unpreventable=proposal.unpreventable or permission.unpreventable(
@@ -786,8 +794,9 @@ def prepare_damage_batch(
         ),
         *collect_damage_modifier_effects(host, snapshot=current_modifiers),
         *collect_shield_counter_effects(host),
-        *_protection_prevention_effects(host, nonzero),
+        *combat_prevention_draw_replacements(host, nonzero),
     )
+    effects = (*effects, *_protection_prevention_effects(host, protection_proposals_for_redirection(host, nonzero, effects)))
     events = tuple(proposal.event() for proposal in nonzero)
     if effects:
         damage_progress = advance_replacement_batch(
@@ -974,7 +983,8 @@ def _event_result(event: ReplaceableEvent) -> tuple[int, int, int]:
     proposed = int(event.payload.get("proposed_amount", -1))
     amount = int(event.payload.get("amount", -1))
     prevented = int(event.payload.get("prevented", 0))
-    if proposed < 1 or amount < 0 or prevented < 0:
+    minimum = 0 if DAMAGE_SPLIT_ORIGIN in event.payload else 1
+    if proposed < minimum or amount < 0 or prevented < 0:
         raise DamageError("Resolved damage event produced invalid amounts")
     return proposed, amount, prevented
 
@@ -993,10 +1003,10 @@ def _final_event(
     try:
         physical=(PhysicalCommanderDamageIdentities.from_dict(payload['source_physical_commander_identities'])
             if 'source_physical_commander_identities' in payload else None)
-        permanent_state=permanent_state_from_damage_context(payload)
+        source_state=damage_source_state_from_context(payload)
     except (ValueError,TypeError) as exc:raise DamageError(str(exc)) from exc
     return DamageEvent(
-        source_permanent_state=permanent_state,
+        **source_state,
         source_physical_commander_identities=physical,
         source=str(payload.get("source") or ""),
         source_object_id=str(payload.get("source_object_id") or ""),
@@ -1065,6 +1075,7 @@ def _final_event(
         first_strike_step=bool(payload.get("first_strike_step")),
         unpreventable=bool(payload.get("unpreventable")),
         applied_effects=event.applied_effects,
+        split_origin=payload.get(DAMAGE_SPLIT_ORIGIN),
         source_toxic_value=(
             int(payload["source_toxic_value"])
             if payload.get("source_toxic_value") is not None
@@ -1134,33 +1145,6 @@ def _validate_result_replacement_journal(
             raise DamageError(
                 "Damage-result replacement journal does not match its snapshot"
             )
-
-
-def _log_result_replacement_journal(
-    host: DamageHost,
-    prepared: PreparedDamageBatch,
-) -> None:
-    effects = {effect.effect_id: effect for effect in prepared.result_effects}
-    events = {event.event_id: event for event in prepared.result_events}
-    for selection in prepared.result_journal:
-        selected_id = str(selection.effect_id or "")
-        if selected_id.startswith("decline:"):
-            continue
-        effect = effects[selected_id]
-        event = events[selection.event_id]
-        host._log(
-            None,
-            "replacement.apply",
-            f"{effect.source_id} modified a damage-result event.",
-            {
-                "source": effect.source_id,
-                "effect_id": effect.effect_id,
-                "result_subject": event.payload.get("subject"),
-                "result_subject_kind": event.payload.get("subject_kind"),
-                "event_path": list(selection.path),
-            },
-            importance=2,
-        )
 
 
 def _prevention_applied_events(
@@ -1243,7 +1227,7 @@ def _prevention_applied_events(
 
 def _materialized_damage_events(host: DamageHost, prepared: PreparedDamageBatch) -> list[DamageEvent]:
     final_events: list[DamageEvent] = []
-    for event in prepared.events:
+    for event in coalesce_redirected_damage(prepared.events):
         proposed, amount, prevented = _event_result(event)
         target_kind = str(event.payload.get("target_kind") or "")
         target = str(event.payload.get("target") or "")
@@ -1308,6 +1292,12 @@ def commit_prepared_damage_batch(
 ) -> DamageBatchResult:
     """Atomically validate and commit a choice-complete damage batch."""
 
+    from .rules.combat_prevention_draw import combat_prevention_draws
+
+    try:
+        draw_instructions = combat_prevention_draws(host, prepared.events)
+    except (TypeError, ValueError) as exc:
+        raise DamageError(str(exc)) from exc
     final_events = _materialized_damage_events(host, prepared)
     from .counter_prevention import projected_counter_prevention_host, commit_immediate_counter_prevention
     result_host = projected_counter_prevention_host(host, prepared.aftermath.counter_removals)
@@ -1408,7 +1398,9 @@ def commit_prepared_damage_batch(
 
     if log_replacements:
         _log_replacement_journal(host, prepared)
-        _log_result_replacement_journal(host, prepared)
+        from .damage_aftermath_preparation import log_damage_result_replacements
+
+        log_damage_result_replacements(host, prepared)
     return DamageBatchResult(
         events=tuple(final_events),
         changed_objects=tuple(dict.fromkeys(changed_objects)),
@@ -1425,6 +1417,7 @@ def commit_prepared_damage_batch(
         nested_damage_results=aftermath.nested_damage_results,
         counter_occurrences=(*committed.counter_occurrences,*aftermath.counter_occurrences),
         ring_trigger_items=ring_trigger_items,
+        combat_prevention_draws=draw_instructions,
     )
 
 

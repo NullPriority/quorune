@@ -1,5 +1,6 @@
 """Orchestrate independently owned spell keyword contexts without changing source rows."""
 from dataclasses import dataclass
+from ..characteristic_evaluation import type_parts
 from .cipher_nodes import cipher_source_rows, apply_cipher_context
 from .paradigm_nodes import paradigm_source_rows, apply_paradigm_context
 
@@ -8,6 +9,8 @@ from .paradigm_nodes import paradigm_source_rows, apply_paradigm_context
 class SpellLifecycleCompilationContext:
     cipher: object
     paradigm: object
+    source_name: str
+    single_face_types: frozenset[str]
 
 
 def contextual_source_rows(record, rows):
@@ -15,7 +18,8 @@ def contextual_source_rows(record, rows):
     rows, station = station_source_context(record, rows)
     rows, cipher = cipher_source_rows(record, rows)
     rows, paradigm = paradigm_source_rows(rows)
-    return rows, station, SpellLifecycleCompilationContext(cipher, paradigm)
+    single_face_types = frozenset(type_parts(record.type_line)[0]) if not record.faces else frozenset()
+    return rows, station, SpellLifecycleCompilationContext(cipher, paradigm, record.name, single_face_types)
 
 
 def apply_context(face, context, *, capability_registry, capability_profile):
@@ -25,7 +29,29 @@ def apply_context(face, context, *, capability_registry, capability_profile):
         capability_registry=capability_registry, capability_profile=capability_profile)
 
 
-def finish_contextual_face(context, *args):
+def finish_contextual_face(context, leveler, oracle_id, face_id, face_name, oracle_text, material_rows,
+                           keywords, nodes, residuals, capability_registry, capability_profile):
+    from .discarded_card_exile_templates import restrict_linked_discard_exile
+    from .ir_model import append_residual
+    from .enchanted_departure_return_templates import require_enchanted_departure_restriction
     from .leveler_context_nodes import leveler_face_ir
-    return apply_context(leveler_face_ir(*args), context,
-        capability_registry=args[-2], capability_profile=args[-1])
+    from .linked_exile_characteristics import paired_linked_exile_characteristics
+    from .linked_hand_mana import paired_linked_hand_mana
+    from .linked_color_cast_exile import paired_linked_color_cast_exile
+
+    nodes = restrict_linked_discard_exile(
+        nodes, oracle_text=oracle_text, source_name=face_name or oracle_id,
+        residuals=residuals, append_residual=append_residual,
+    )
+    nodes = require_enchanted_departure_restriction(nodes, residuals)
+    nodes = paired_linked_exile_characteristics(nodes, residuals, source_name=face_name or oracle_id, face=face_id,
+        capability_registry=capability_registry, capability_profile=capability_profile)
+    nodes = paired_linked_color_cast_exile(nodes, residuals, source_name=context.source_name, oracle_id=oracle_id,
+        face_id=face_id, source_types=context.single_face_types,
+        capability_registry=capability_registry, capability_profile=capability_profile)
+    nodes = paired_linked_hand_mana(nodes, residuals, oracle_id=oracle_id, face_id=face_id,
+        source_types=context.single_face_types, capability_registry=capability_registry,
+        capability_profile=capability_profile)
+    face = leveler_face_ir(leveler, oracle_id, face_id, face_name, oracle_text, material_rows,
+        keywords, nodes, residuals, capability_registry, capability_profile)
+    return apply_context(face, context, capability_registry=capability_registry, capability_profile=capability_profile)

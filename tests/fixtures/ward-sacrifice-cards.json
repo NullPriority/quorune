@@ -147,6 +147,64 @@
       },
       "layout": "normal",
       "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702149",
+      "name": "Trial Food Keeper",
+      "mana_cost": "{3}{G}",
+      "cmc": 4,
+      "type_line": "Creature — Elf",
+      "power": "3",
+      "toughness": "3",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Ward"
+      ],
+      "oracle_text": "Ward—Sacrifice a Food.",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702150",
+      "name": "Trial Cooked Meal",
+      "mana_cost": "{0}",
+      "cmc": 0,
+      "type_line": "Artifact — Food",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "oracle_text": "",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
+    },
+    {
+      "oracle_id": "00000000-0000-4f40-8f56-000000702151",
+      "name": "Trial Food Artisan",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact Creature — Food Golem",
+      "power": "2",
+      "toughness": "2",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "oracle_text": "",
+      "legalities": {
+        "commander": "legal"
+      },
+      "layout": "normal",
+      "released_at": "2026-01-01"
     }
   ],
   "rulings": [],

@@ -11,7 +11,9 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
     CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,
-    CREATURE_SELF_DAMAGE_SET_DEPENDENCIES,
+    CREATURE_SELF_DAMAGE_SET_DEPENDENCIES, CREATURE_CONTROLLER_DAMAGE_SET_DEPENDENCIES,
+    CREATURE_CONTROLLER_DAMAGE_SET_CAPABILITY, is_creature_controller_damage_set,
+    validate_creature_controller_damage_set,
     is_creature_self_damage_set,
     validate_creature_self_damage_set,
     OCCURRENCE_POWER_DAMAGE_LKI,
@@ -233,6 +235,12 @@ def _creature_self_damage_set_capabilities(effects, target_schema, mechanics):
     if (len(effects) != 1 or target_schema is not None or "cr-115-targets" in mechanics
             or not {CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage"} <= mechanics):
         return ()
+    if is_creature_controller_damage_set(effects[0]):
+        try:
+            validate_creature_controller_damage_set(effects[0])
+        except (TypeError, ValueError):
+            return ()
+        return CREATURE_CONTROLLER_DAMAGE_SET_DEPENDENCIES
     try:
         validate_creature_self_damage_set(effects[0])
     except (TypeError, ValueError):
@@ -249,7 +257,7 @@ def fixed_creature_power_damage_node_capabilities(
     """Recognize the compiler-owned Fight, bite, and self-damage set shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
-    if any(is_creature_self_damage_set(effect) for effect in effects):
+    if any(is_creature_self_damage_set(effect) or is_creature_controller_damage_set(effect) for effect in effects):
         return _creature_self_damage_set_capabilities(effects, target_schema, mechanics)
     from ..reciprocal_power_damage import RECIPROCAL_POWER_MECHANIC, reciprocal_power_damage_capabilities
     if RECIPROCAL_POWER_MECHANIC in mechanics:
@@ -377,9 +385,12 @@ def fixed_creature_power_damage_node_capabilities(
 def fixed_creature_power_damage_covered_mechanics(
     capability_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    if CREATURE_POWER_DAMAGE_CAPABILITY not in set(capability_ids):
-        return ()
-    return (CREATURE_POWER_DAMAGE_MECHANIC, "fight")
+    capabilities = set(capability_ids)
+    if CREATURE_POWER_DAMAGE_CAPABILITY in capabilities:
+        return (CREATURE_POWER_DAMAGE_MECHANIC, "fight")
+    if CREATURE_CONTROLLER_DAMAGE_SET_CAPABILITY in capabilities:
+        return (CREATURE_POWER_DAMAGE_MECHANIC, "cr-120-damage")
+    return ()
 
 
 __all__ = [

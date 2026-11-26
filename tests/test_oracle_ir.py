@@ -2432,6 +2432,20 @@ class OracleIRTests(unittest.TestCase):
         self.assertTrue(tuple(material_source_lines(transform)))
         self.assertTrue(tuple(material_source_lines(dryad)))
 
+    def test_passive_meld_partner_reminder_is_layout_bound_and_explains_no_action(self):
+        reminder = "(Melds with Urza, Lord Protector.)"
+        self.assertEqual((), tuple(material_source_lines(reminder, layout="meld")))
+        self.assertTrue(tuple(material_source_lines(reminder, layout="normal")))
+        for material in (
+            reminder + " Draw a card.",
+            "(Melds with Urza, Lord Protector. Draw a card.)",
+            "(Melds with Urza, Lord Protector and draw a card.)",
+            "(Melds with Urza, Lord Protector.) (Draw two cards.)",
+            "Exile them, then meld them into Urza, Planeswalker.",
+        ):
+            with self.subTest(material=material):
+                self.assertTrue(tuple(material_source_lines(material, layout="meld")))
+
     def test_standalone_reminder_classifier_mutation_is_killed(self):
         base = self.db.lookup("Flying Men")
         record = replace(

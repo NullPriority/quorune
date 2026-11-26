@@ -1,0 +1,178 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Command Beacon",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "oracle_text": "{T}: Add {C}.\n{T}, Sacrifice this land: Put your commander into your hand from the command zone.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [
+        "Flash",
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Beacon Partner Alpha",
+      "oracle_id": "fixture:beacon-partner-alpha",
+      "oracle_text": "Flash\nPartner",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [
+        "Flash",
+        "Partner"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "mana_cost": "{1}",
+      "name": "Beacon Partner Beta",
+      "oracle_id": "fixture:beacon-partner-beta",
+      "oracle_text": "Flash\nPartner",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If your commander isn't in the command zone (or you're not playing Commander) as the last ability resolves, nothing happens.",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a commander from your hand, the additional cost based on the number of times you've cast it from your command zone (sometimes referred to as the \"commander tax\") doesn't apply. Additionally, that casting won't add to the tax if you later cast the commander from the command zone.",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "published_at": "2015-11-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have two commanders with the partner ability in the command zone, Command Beacon's effect puts one of your choice into your hand, not both.",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "published_at": "2016-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you have two commanders with the partner ability in the command zone, Command Beacon's effect puts one of your choice into your hand, not both.",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If your commander isn't in the command zone (or you don't have a commander) as the last ability resolves, nothing happens.",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast a commander from your hand, the commander tax doesn't apply. Additionally, that casting won't add to commander tax if you later cast the commander from the command zone.",
+      "oracle_id": "7e8c2a18-e404-40ff-a9e0-ec3eeb6d576e",
+      "published_at": "2020-11-10",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Commander cards and synthetic Partner timing witnesses"
+}

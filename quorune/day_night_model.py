@@ -65,3 +65,38 @@ __all__ = [
     "DayNightError",
     "NIGHTBOUND_TEMPLATE_ID",
 ]
+
+
+DAY_ENTRY_CAPABILITY = "card_form.initial_day_as_enters"
+DAY_ENTRY_HANDLER = "replacement.zone.initial_day.v1"
+DAY_ENTRY_FIELD = "entry_initial_day"
+DAY_TOGGLE_EVENT = "game.day_night.changed"
+DAY_TOGGLE_COUNTER_CAPABILITY = "counter.producer.day_night_toggle"
+DAY_TOGGLE_COUNTER_VARIANT = "day_night_toggle_source_counter"
+
+
+def day_entry_descriptor():
+    return {"handler_id":DAY_ENTRY_HANDLER, "schema_version":1, "event":"zone.change"}
+
+
+def day_night_toggle_condition():
+    return {"any": [{"all": [{"field":"from", "op":"eq", "value":before},
+                             {"field":"to", "op":"eq", "value":after}]}
+                    for before, after in (("day","night"),("night","day"))]}
+
+
+def day_night_toggle_runtime_dependencies(program):
+    if program.event != DAY_TOGGLE_EVENT and DAY_TOGGLE_COUNTER_CAPABILITY not in program.capability_dependencies:
+        return ()
+    from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .replacement.immutable import thaw_value
+
+    expected = {"op":"place_counters", "card":"$source.zone_object", "counter":"+1/+1", "amount":1, "source":"$source"}
+    if ((program.event, program.active_zone) != (DAY_TOGGLE_EVENT, "battlefield")
+            or thaw_value(program.event_condition) != day_night_toggle_condition()
+            or tuple(program.effects) != (expected,) or type(program.effects[0]["amount"]) is not int
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or program.trigger_limit is not None or CURRENT_ABILITY_FRAGMENT_COVERAGE not in program.coverage):
+        raise ValueError("Day/night counters require the original untargeted battlefield source toggle.")
+    return (DAY_TOGGLE_COUNTER_CAPABILITY, "counter.producer.fixed_effect",
+            "trigger.event.normalized_public_action", "trigger.placement.apnap")

@@ -7,11 +7,14 @@ from ..compiler.event_player_results import (EVENT_PLAYER_RESULT_CAPABILITY,EVEN
 from .mill_capability_shapes import fixed_mill_node_capabilities,mill_covered_mechanics
 from .received_damage_events import is_creature_receiving_event
 from ..event_player_result_values import (
-    SPELL_CAST_COUNT_HISTORY, SpellCastCountLifeSpec, event_result_value_capabilities,
-    uses_spell_cast_count_life,
+    EquippedCombatHandCountSpec, SPELL_CAST_COUNT_HISTORY, SpellCastCountLifeSpec,
+    event_result_value_capabilities, uses_equipped_combat_hand_count, uses_spell_cast_count_life,
 )
 from ..public_history_query_model import public_history_query_value
 from .effect_shape_walkers import nested_effects
+from .death_controller_opponents import (
+    death_opponent_node_capabilities, death_opponents_program_dependencies, uses_death_opponent_results,
+)
 from ..fractional_quantity_model import HALF_LIFE_CAPABILITY,HALF_LIFE_MECHANIC
 from collections.abc import Mapping
 
@@ -94,12 +97,119 @@ def bind_spell_cast_count_life_effect(state, item, effect):
     return {"op": effect["op"], "player": seat, spec.amount_field: count}
 
 
+_DRAWING_PLAYER_ONE_DAMAGE = {"op": "damage", "source": "$source", "target": "$context.player", "amount": 1}
+
+
+def _is_drawing_player_one_damage(effect):
+    return isinstance(effect, Mapping) and effect == _DRAWING_PLAYER_ONE_DAMAGE and type(effect["amount"]) is int
+
+
+def is_optional_drawing_player_damage(effect):
+    if (not isinstance(effect, Mapping) or set(effect) != {"op", "player", "effects"}
+            or effect.get("op") != "offer_optional_effect" or effect.get("player") != "$controller"):
+        return False
+    effects = effect["effects"]
+    return isinstance(effects, (tuple, list)) and len(effects) == 1 and _is_drawing_player_one_damage(effects[0])
+
+
+def _optional_drawing_player_damage_runtime_dependencies(program):
+    from ..characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from ..continuous_conditions import (
+        FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+        FixedPublicStateConditionKind, FixedPublicStateConditionSpec,
+    )
+    from ..object_predicate import ObjectQuerySpec
+    from ..replacement.immutable import thaw_value
+
+    red_permanent = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST, amount=1, schema_version=2,
+        quantity=CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+            query=ObjectQuerySpec(zones=("battlefield",), colors_all=("R",)),
+        ),
+    )
+    expected = {"all": [
+        {"field": "player", "op": "ne", "value": "$source.controller"},
+        {"field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, "op": "truthy", "value": True,
+         "condition": red_permanent.to_dict()},
+    ]}
+    condition = thaw_value(program.event_condition)
+    if (program.event != "card.drawn" or program.active_zone != "battlefield"
+            or len(program.effects) != 1 or not is_optional_drawing_player_damage(program.effects[0])
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or condition != expected or condition["all"][1]["value"] is not True
+            or not {"intervening_condition", FIXED_PUBLIC_STATE_INTERVENING_COVERAGE} <= set(program.coverage)):
+        raise ValueError("Optional draw damage requires the exact opponent draw and intervening red permanent")
+    from ..compiler.optional_effect_templates import FIXED_OPTIONAL_EFFECT_CAPABILITY
+
+    return (FIXED_OPTIONAL_EFFECT_CAPABILITY, "trigger.event.normalized_card_draw",
+            "trigger.condition.fixed_public_state")
+
+
+def _closed_draw_damage_has_recipient(item, effect):
+    if item.context.get("event") != "card.drawn":
+        return False
+    return (is_optional_drawing_player_damage(effect)
+            or item.context.get("intervening_condition") == {} and _is_drawing_player_one_damage(effect))
+
+
+def bind_event_player_count_effect(state, item, effect):
+    from .opposing_owner_entry_life import bind_opposing_owner_entry_life, uses_opposing_owner_entry_life
+
+    if uses_opposing_owner_entry_life(effect):
+        return bind_opposing_owner_entry_life(state, item, effect)
+    if _closed_draw_damage_has_recipient(item, effect):
+        player = state.players.get(item.context.get("player"))
+        if player is None:
+            raise ValueError("Draw damage is missing its committed drawing player")
+        return effect if player.in_game else None
+    from ..land_entry_condition_model import OTHER_LAND_ARRIVAL_EVENT, other_land_arrival_damage_effect
+
+    if (item.context.get("event") == OTHER_LAND_ARRIVAL_EVENT and effect == other_land_arrival_damage_effect()
+            and item.context.get("intervening_condition") is not None):
+        from ..land_entry_condition_model import uses_other_land_arrival_condition
+
+        if uses_other_land_arrival_condition(item.context["intervening_condition"]):
+            player = state.players.get(item.context.get("controller"))
+            if player is None:
+                raise ValueError("Land entry history damage lost its entering player")
+            return effect if player.in_game else None
+    from ..triggered_mana_model import LAND_MANA_TAP_EVENT, land_mana_tap_damage_effect
+
+    if item.context.get("event") == LAND_MANA_TAP_EVENT and effect == land_mana_tap_damage_effect():
+        player = state.players.get(item.context.get("player"))
+        if player is None or type(item.context.get("land_basic")) is not bool:
+            raise ValueError("Land mana tap damage lost its recorded producer")
+        return effect if player.in_game else None
+    if not uses_equipped_combat_hand_count(effect):
+        return bind_spell_cast_count_life_effect(state, item, effect)
+    spec = EquippedCombatHandCountSpec.from_effect(effect)
+    if (item.context.get("event") != "damage.dealt" or item.context.get("combat") is not True
+            or item.context.get("target_kind") != "player"):
+        raise ValueError("Hand-size results require the sealed combat player damage occurrence")
+    seat = item.context.get("target") if spec.role == "damaged_player" else item.controller
+    if type(seat) is not str or seat not in state.players:
+        raise ValueError("Hand size lost its original player")
+    player = state.players[seat]
+    if not player.in_game:
+        return None
+    hand = player.zones.get("hand")
+    if not isinstance(hand, list):
+        raise ValueError("The role player has no hand-size information")
+    if not hand:
+        return None
+    return {**effect, spec.amount_field: len(hand)}
+
+
 def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic_ids):
     if UNBLOCKED_DEFENDER_POISON_MECHANIC in mechanic_ids:
         return unblocked_defender_poison_node_capabilities(effects, target_schema)
     if EVENT_PLAYER_DAMAGE_MECHANIC in set(mechanic_ids):
         return fixed_event_player_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if EVENT_PLAYER_RESULT_MECHANIC not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
+    if uses_death_opponent_results(effects):
+        required = death_opponent_node_capabilities(effects, target_schema)
+        return (*required, EVENT_PLAYER_RESULT_CAPABILITY) if required else ()
     if len(effects) == 1 and uses_spell_cast_count_life(effects[0]):
         try:
             SpellCastCountLifeSpec.from_effect(effects[0])
@@ -152,12 +262,40 @@ def is_closed_fixed_event_player_result_program(program):
     required=fixed_event_player_result_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
     if not required or not set(required).issubset(program.capability_dependencies):return False
+    if uses_death_opponent_results(program.effects):
+        try:
+            return set(death_opponents_program_dependencies(program)) <= set(program.capability_dependencies)
+        except (TypeError, ValueError):
+            return False
     return all(_event_player_reference_is_closed(program,
         effect['target'] if effect.get('op') == 'damage' else effect['player'], amount=effect.get('amount'))
         for effect in program.effects)
 
 
+def _equipped_combat_hand_count_capabilities(effects, target_schema, mechanics):
+    if (target_schema is not None or len(effects) != 2
+            or not {EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_DAMAGE_MECHANIC} <= set(mechanics)):
+        return ()
+    damage = effects[0]
+    try:
+        roles = tuple(EquippedCombatHandCountSpec.from_effect(row).role for row in effects)
+    except (TypeError, ValueError):
+        return ()
+    if roles != ("damaged_player", "trigger_controller"):
+        return ()
+    projected_damage = fixed_event_player_damage_node_capabilities(
+        effects=({**damage, "amount": 1},), target_schema=None, mechanic_ids=mechanics,
+    )
+    if not projected_damage:
+        return ()
+    return tuple(sorted({*projected_damage, SCALAR_AMOUNT_CAPABILITY, "life.change.effect",
+                         "attachment.reference.current_or_lki", "trigger.event.normalized_damage",
+                         "trigger.placement.apnap"}))
+
+
 def fixed_event_player_damage_node_capabilities(*,effects,target_schema,mechanic_ids):
+    if any(uses_equipped_combat_hand_count(effect) for effect in effects):
+        return _equipped_combat_hand_count_capabilities(effects, target_schema, mechanic_ids)
     if not {EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC}<=set(mechanic_ids) or target_schema is not None or len(effects)!=1:return ()
     effect=effects[0]
     target = effect.get('target')
@@ -243,7 +381,36 @@ def blocking_controller_runtime_dependencies(program):
     return (*required, 'trigger.event.normalized_public_action') if required else ()
 
 
+def _equipped_combat_hand_count_runtime_dependencies(program):
+    from ..replacement.immutable import FrozenMap
+
+    expected = {"all": [
+        {"field": "source_attachment_target_ref", "op": "eq", "value": "$context.source"},
+        {"field": "target_kind", "op": "eq", "value": "player"},
+        {"field": "combat", "op": "truthy", "value": True},
+    ]}
+    required = _equipped_combat_hand_count_capabilities(program.effects, program.target_schema, program.coverage)
+    if (not required or (program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or FrozenMap(program.event_condition or {}) != FrozenMap(expected)
+            or program.cost_schema is not None or program.handlers):
+        raise ValueError("The ordered hand counts require the original equipped combat player damage")
+    return required
+
+
 def event_player_damage_runtime_dependencies(program):
+    from ..land_entry_condition_model import OTHER_LAND_ARRIVAL_COVERAGE, uses_other_land_arrival_condition
+    from ..triggered_mana_model import LAND_MANA_TAP_EVENT, SOURCE_MANA_TAP_DAMAGE_MECHANIC, SOURCE_MANA_TAP_EVENT
+
+    if program.event == SOURCE_MANA_TAP_EVENT or SOURCE_MANA_TAP_DAMAGE_MECHANIC in program.coverage:
+        return _source_mana_tap_damage_dependencies(program)
+    if OTHER_LAND_ARRIVAL_COVERAGE in program.coverage or uses_other_land_arrival_condition(program.event_condition):
+        return _opponent_other_land_arrival_dependencies(program)
+    if program.event == LAND_MANA_TAP_EVENT:
+        from .tap_state_capability_shapes import mana_tapped_land_untap_runtime_dependencies
+
+        return mana_tapped_land_untap_runtime_dependencies(program) or _land_mana_tap_damage_dependencies(program)
+    if any(uses_equipped_combat_hand_count(effect) for effect in nested_effects((program.effects, program.handlers))):
+        return _equipped_combat_hand_count_runtime_dependencies(program)
     required=set();has_marker=EVENT_PLAYER_DAMAGE_MECHANIC in program.coverage
     energy=False
     def visit(node):
@@ -263,10 +430,75 @@ def event_player_damage_runtime_dependencies(program):
         elif isinstance(node,(list,tuple)):
             for child in node:visit(child)
     visit(program.effects)
+    if any(is_optional_drawing_player_damage(effect) for effect in nested_effects(program.effects)):
+        required.update(_optional_drawing_player_damage_runtime_dependencies(program))
     if has_marker and not required:raise ValueError('Fixed event-player damage marker lacks a closed bound instruction')
     if energy:
         required.update(combat_damage_energy_runtime_dependencies(program))
     return tuple(sorted(required))
+
+
+def _opponent_other_land_arrival_dependencies(program):
+    from ..land_entry_condition_model import (
+        OTHER_LAND_ARRIVAL_COVERAGE, OTHER_LAND_ARRIVAL_EVENT, opponent_other_land_arrival_condition,
+        other_land_arrival_damage_effect, other_land_arrival_leaf_is_closed,
+    )
+    from ..public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
+    from ..replacement.immutable import thaw_value
+
+    condition = thaw_value(program.event_condition)
+    if (program.event != OTHER_LAND_ARRIVAL_EVENT or program.active_zone != "battlefield"
+            or not {OTHER_LAND_ARRIVAL_COVERAGE, "intervening_condition"} <= set(program.coverage)
+            or condition != opponent_other_land_arrival_condition()
+            or not other_land_arrival_leaf_is_closed(condition["all"][1])
+            or len(program.effects) != 1 or thaw_value(program.effects[0]) != other_land_arrival_damage_effect()
+            or type(program.effects[0].get("amount")) is not int
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers):
+        raise ValueError("Opponent land entry history requires the original committed other arrival and fixed damage")
+    damage = fixed_event_player_damage_node_capabilities(
+        effects=program.effects, target_schema=None,
+        mechanic_ids={EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_DAMAGE_MECHANIC},
+    )
+    return (*damage, PUBLIC_HISTORY_QUERY_CAPABILITY, "trigger.condition.fixed_public_state",
+            "trigger.event.normalized_zone_change")
+
+
+def _source_mana_tap_damage_dependencies(program):
+    from ..replacement.immutable import thaw_value
+    from ..triggered_mana_model import (
+        SOURCE_MANA_TAP_CAPABILITY, SOURCE_MANA_TAP_DAMAGE_MECHANIC, SOURCE_MANA_TAP_EVENT,
+        source_mana_tap_condition, source_mana_tap_damage_effect,
+    )
+    from .damage_capability_shapes import fixed_damage_node_capabilities
+
+    if (program.event != SOURCE_MANA_TAP_EVENT or program.active_zone != "battlefield"
+            or SOURCE_MANA_TAP_DAMAGE_MECHANIC not in program.coverage
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or thaw_value(program.event_condition) != source_mana_tap_condition()
+            or len(program.effects) != 1 or thaw_value(program.effects[0]) != source_mana_tap_damage_effect()
+            or type(program.effects[0].get("amount")) is not int):
+        raise ValueError("Source mana tap damage requires the exact activating source and fixed opponent damage")
+    damage = fixed_damage_node_capabilities(effects=program.effects, target_schema=None,
+                                            mechanic_ids={"cr-120-damage"})
+    return (SOURCE_MANA_TAP_CAPABILITY, "trigger.event.normalized_public_action", *damage)
+
+
+def _land_mana_tap_damage_dependencies(program):
+    from ..replacement.immutable import thaw_value
+    from ..triggered_mana_model import land_mana_tap_condition, land_mana_tap_damage_effect
+
+    if (program.active_zone != "battlefield" or program.target_schema is not None
+            or program.cost_schema is not None or program.handlers
+            or len(program.effects) != 1 or thaw_value(program.effects[0]) != land_mana_tap_damage_effect()
+            or type(program.effects[0].get("amount")) is not int
+            or thaw_value(program.event_condition) not in (None, land_mana_tap_condition(nonbasic=True))
+            or program.event_condition is not None and program.event_condition.get("value") is not False):
+        raise ValueError("Land mana tap damage requires the exact activating player and optional nonbasic filter")
+    required = fixed_event_player_damage_node_capabilities(
+        effects=program.effects, target_schema=None,
+        mechanic_ids={EVENT_PLAYER_RESULT_MECHANIC, EVENT_PLAYER_DAMAGE_MECHANIC},
+    )
+    return (*required, "trigger.event.normalized_public_action")
 
 
 def _event_player_reference_is_closed(program,player,*,amount=None):

@@ -74,6 +74,51 @@ def player_history_life_loss_runtime_dependencies(program):
     return owned
 
 
+def temporary_life_total_and_permanent_protection_effects():
+    from ..life_gain_permission import temporary_controller_life_total_prohibition_effect
+    from ..object_predicate import ObjectQuerySpec
+
+    return (
+        temporary_controller_life_total_prohibition_effect(),
+        {"op": "modify_all_matching_permanents_until_end_of_turn",
+         "predicate": ObjectQuerySpec(zones=("battlefield",), controller="$controller").to_dict(),
+         "power": 0, "toughness": 0, "keywords": ["Hexproof", "Indestructible"]},
+    )
+
+
+def _temporary_life_total_protection_capabilities(effects, target_schema, mechanics):
+    from ..life_gain_permission import TEMPORARY_LIFE_TOTAL_PROHIBITION_CAPABILITY
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+    from ..replacement.immutable import thaw_value
+    from .fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
+
+    if (
+        target_schema is not None or len(effects) != 2
+        or not {"cr-119-life", "cr-611-continuous-effects", "hexproof", "indestructible"} <= set(mechanics)
+        or tuple(thaw_value(effects)) != temporary_life_total_and_permanent_protection_effects()
+    ):
+        return ()
+    if type(effects[1].get("power")) is not int or type(effects[1].get("toughness")) is not int:
+        return ()
+    required = fixed_resolution_characteristic_set_node_capabilities(
+        effects=(thaw_value(effects[1]),), target_schema=None, mechanic_ids=mechanics,
+    )
+    if not required:
+        return ()
+    return tuple(sorted({
+        TEMPORARY_LIFE_TOTAL_PROHIBITION_CAPABILITY, "life.change.effect", *required,
+        *(capability for keyword in effects[1]["keywords"]
+          for capability in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword]),
+    }))
+
+
+def _uses_temporary_controller_life_total(effect, marker):
+    definition = effect.get(marker)
+    return isinstance(definition, Mapping) and (
+        definition.get("affected_player_relation") == "controller" or definition.get("schema_version") == 2
+    )
+
+
 def temporary_life_gain_runtime_dependencies(program):
     from ..life_gain_permission import (
         LIFE_GAIN_PROHIBITION_CAPABILITY, TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD,
@@ -84,6 +129,13 @@ def temporary_life_gain_runtime_dependencies(program):
     effects = (*program.effects, *getattr(program, "handlers", ()))
     if not any(TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in effect for effect in nested_effects(effects)):
         return ()
+    if any(_uses_temporary_controller_life_total(effect, TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD)
+           for effect in nested_effects(effects)):
+        required = _temporary_life_total_protection_capabilities(program.effects, program.target_schema, program.coverage)
+        if (not required or (program.event, program.active_zone) != ("resolve", "stack")
+                or program.event_condition is not None or program.handlers):
+            raise ValueError("Temporary life-total and characteristic protection requires the exact untargeted spell")
+        return required
     if len(program.effects) == 3 and TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD in program.effects[0]:
         from .damage_capability_shapes import turn_damage_prevention_runtime_dependencies
 
@@ -123,7 +175,11 @@ def fixed_life_node_capabilities(
         )
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
-    if "cr-119-life" not in mechanics or len(effects) != 1:
+    if "cr-119-life" not in mechanics:
+        return ()
+    if len(effects) == 2:
+        return _temporary_life_total_protection_capabilities(effects, target_schema, mechanics)
+    if len(effects) != 1:
         return ()
     effect = effects[0]
     operation = effect.get("op")

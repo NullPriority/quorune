@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic controlled nonflying death-return witness",
+  "cards": [
+    {
+      "oracle_id": "7628e7fc-6b5e-4a27-a9a0-851f327256c8",
+      "name": "Gleamwing Caretaker",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4,
+      "type_line": "Creature — Insect",
+      "oracle_text": "Flying\nWhenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.",
+      "power": "3",
+      "toughness": "4",
+      "keywords": ["Flying"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

@@ -11,6 +11,12 @@ from ..util import stable_json
 
 SPELL_CAST_KEYWORD_CAPABILITY = "trigger.event.spell_cast_keyword"
 CAST_SPELL_KEYWORDS = frozenset({"flying"})
+SOURCE_POWER_CAST_FIELD = "opposing_noncreature_cast_below_source_power"
+SOURCE_POWER_CAST_CAPABILITY = "trigger.condition.cast_mana_value_below_source_power"
+SOURCE_POWER_CAST_CAPABILITIES = (
+    "trigger.event.normalized_spell_cast",
+    SOURCE_POWER_CAST_CAPABILITY,
+)
 
 
 class SpellCastEventError(ValueError):
@@ -584,7 +590,48 @@ def _validate_spell_cast_mana_value_limit(condition):
     ManaValueLimitSpec(condition["value"])
 
 
+def source_power_cast_condition() -> dict[str, Any]:
+    return {"field": SOURCE_POWER_CAST_FIELD, "op": "truthy", "value": True}
+
+
+def _is_source_power_cast_condition(value) -> bool:
+    return value == source_power_cast_condition() and value["value"] is True
+
+
+def _uses_source_power_cast_condition(value) -> bool:
+    if isinstance(value, Mapping):
+        return value.get("field") == SOURCE_POWER_CAST_FIELD or any(
+            _uses_source_power_cast_condition(child) for child in value.values()
+        )
+    if isinstance(value, (tuple, list)):
+        return any(_uses_source_power_cast_condition(child) for child in value)
+    return False
+
+
+def opposing_noncreature_cast_below_source_power(host, condition, context, source) -> bool:
+    """Read effective source power when the ordinary cast occurrence is discovered."""
+    from ..object_query import exact_numeric_characteristic
+
+    if not _is_source_power_cast_condition(condition):
+        raise SpellCastEventError("Source-power cast conditions have a closed shape")
+    cast = SpellCastEvent.from_context(context)
+    if cast.mana_value is None:
+        raise SpellCastEventError("Source-power comparison requires a represented stack mana value")
+    if cast.controller == source.controller or "creature" in cast.types:
+        return False
+    if source.zone != "battlefield" or source.phased_out:
+        return False
+    power = exact_numeric_characteristic(source, host._effective_card_data(source), "power")
+    return power is not None and cast.mana_value < power
+
+
 def spell_cast_event_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
+    condition = program.event_condition
+    if _uses_source_power_cast_condition(condition):
+        if (subscriptions is not None or program.event != "spell.cast"
+                or program.active_zone != "battlefield" or not _is_source_power_cast_condition(condition)):
+            raise SpellCastEventError("Source-power comparison requires its exact battlefield cast subscription")
+        return SOURCE_POWER_CAST_CAPABILITIES
     if subscriptions is None:
         if program.event != "spell.cast":
             return ()

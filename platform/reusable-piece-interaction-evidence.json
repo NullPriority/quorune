@@ -22895,6 +22895,38 @@
       ],
       "interaction_order": 2,
       "assertion": "A real creature cast creates the mandatory equipment entry attachment. The attached rule applies its printed power and toughness modifiers to that bearer. Exact replay reproduces the result."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_committed_damage_from_own_dealer_seals_counters_and_choice_authority",
+      "piece_ids": [
+        "capability.counter.producer.optional_fixed_event_trigger",
+        "capability.trigger.event.normalized_damage"
+      ],
+      "capability_ids": [
+        "counter.producer.optional_fixed_event_trigger",
+        "trigger.event.normalized_damage"
+      ],
+      "interaction_order": 2,
+      "assertion": "Native damage demonstrates full and partial prevention separately, the same-seat dealer, a different affected seat, optional acceptance and decline, and exact pending and complete replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_activation_pays_now_draws_privately_for_resolving_controller_after_departure",
+      "piece_ids": [
+        "capability.activation.source_counter_removal.fixed",
+        "capability.counter.producer.fixed_public_source_event",
+        "capability.resolution.effect_sequence.fixed_controller"
+      ],
+      "capability_ids": [
+        "activation.source_counter_removal.fixed",
+        "counter.producer.fixed_public_source_event",
+        "resolution.effect_sequence.fixed_controller"
+      ],
+      "interaction_order": 3,
+      "assertion": "A non-owner charges the controlled artifact with their own damage, pays the now-available activation, and gains life before privately drawing after an actual departure. Excluded and rejected commands leave state intact, and exact replay verifies the sequence."
     }
   ],
   "schema_version": 2

@@ -13,6 +13,7 @@ from ..cast_lifecycles import (
     FIXED_CAST_LIFECYCLE_HANDLER_CAPABILITIES,
     FIXED_CAST_LIFECYCLE_HANDLER_ID,
     FIXED_CAST_LIFECYCLE_RUNTIME_EVENT,
+    GRANTED_ESCAPE_LIFECYCLE_VERSION,
 )
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -93,9 +94,12 @@ class FixedCastLifecycleHandler:
                 "Fixed cast lifecycles require complete-card admission"
             )
         try:
-            return FixedCastLifecycleSpec.from_dict(
+            spec = FixedCastLifecycleSpec.from_dict(
                 descriptor["lifecycle"]
             )
+            if spec.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+                raise FixedCastLifecycleError("Granted Escape requires its current battlefield source")
+            return spec
         except (FixedCastLifecycleError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
 

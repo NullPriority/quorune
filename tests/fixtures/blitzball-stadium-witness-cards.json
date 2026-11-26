@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "focused_synthetic_rules_cards",
+  "source": "Synthetic witnesses for announced support and temporary combat-damage grants",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709831",
+      "name": "Generic Training Arena",
+      "mana_cost": "{X}{U}",
+      "cmc": 1,
+      "type_line": "Artifact",
+      "oracle_text": "When Generic Training Arena enters, support X.\nExhibition \u2014 {3}, {T}: Until end of turn, target creature gains \"Whenever this creature deals combat damage to a player, draw a card for each kind of counter on it\" and it can't be blocked this turn.",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": ["Support"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709832",
+      "name": "Generic Training Shooter",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "{R}: This creature deals 1 damage to any target.",
+      "power": "2",
+      "toughness": "5",
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709833",
+      "name": "Generic Training Recall",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709834",
+      "name": "Generic Training Observer",
+      "mana_cost": "{3}{U}",
+      "cmc": 4,
+      "type_line": "Planeswalker \u2014 Observer",
+      "oracle_text": "+1: Draw a card.",
+      "loyalty": "5",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709835",
+      "name": "Generic Training Grove",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Basic Land \u2014 Forest",
+      "oracle_text": "({T}: Add {G}.)",
+      "colors": [],
+      "color_identity": ["G"],
+      "keywords": [],
+      "produced_mana": ["G"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709836",
+      "name": "Generic Training Springs",
+      "mana_cost": "",
+      "cmc": 0,
+      "type_line": "Basic Land \u2014 Island",
+      "oracle_text": "({T}: Add {U}.)",
+      "colors": [],
+      "color_identity": ["U"],
+      "keywords": [],
+      "produced_mana": ["U"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

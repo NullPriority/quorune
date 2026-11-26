@@ -10,9 +10,11 @@ from ..replacement_effects import ReplacementClass, ReplacementEffect, SetField
 
 
 def damage_death_exile_subjects(scope, events, original_target=None):
-    if scope is DamageDeathExileScope.TARGET:
-        if original_target is None or original_target.kind != 'permanent' or 'creature' not in original_target.types:
-            raise GameRuleError('Targeted death exile requires the original creature incarnation')
+    target_types = scope.original_target_types if isinstance(scope, DamageDeathExileScope) else ()
+    if target_types:
+        if (original_target is None or original_target.kind != 'permanent'
+                or not set(target_types).intersection(original_target.types)):
+            raise GameRuleError('Targeted death exile requires an original incarnation in its represented type set')
         return (ContinuousObjectIdentity(original_target.object_id, original_target.logical_object_id),)
     if scope is DamageDeathExileScope.DEALT_CREATURES:
         return tuple(dict.fromkeys(

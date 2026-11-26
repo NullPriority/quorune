@@ -661,6 +661,41 @@ function DamageAssignments({
   );
 }
 
+function QuantityMap({ field, value, onValue, labelFor }: {
+  field: ChoiceField;
+  value: JsonValue | undefined;
+  onValue: (value: JsonValue) => void;
+  labelFor: (value: string) => string;
+}) {
+  const amounts = record(value);
+  const budget = Number(field.exact_total ?? field.maximum_total);
+  const total = Object.values(amounts).reduce<number>((sum, amount) => sum + Number(amount), 0);
+  return (
+    <fieldset className="choice-field">
+      <legend><FieldLabel field={field} /></legend>
+      <p>{total} of {budget} assigned</p>
+      {list(field.options).map((rawOption) => {
+        const option = record(rawOption);
+        const ref = text(option.value);
+        return (
+          <label key={ref} className="choice-option">
+            <input type="number" min={0} max={Number(field.maximum_each ?? budget)} step={1}
+              value={Number(amounts[ref] ?? 0)} aria-label={labelFor(ref)}
+              onChange={(event) => {
+                const next = { ...amounts };
+                const amount = Number(event.target.value);
+                if (amount === 0) delete next[ref];
+                else next[ref] = amount;
+                onValue(next);
+              }} />
+            <span>{labelFor(ref)}</span>
+          </label>
+        );
+      })}
+    </fieldset>
+  );
+}
+
 function ObjectMap({
   field,
   value,
@@ -859,6 +894,7 @@ function ChoiceControl({
   if (control === "assignment_map") return <AssignmentMap field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "damage_assignments") return <DamageAssignments field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "object_map") return <ObjectMap field={field} value={value} onValue={set} labelFor={labelFor} />;
+  if (control === "quantity_map") return <QuantityMap field={field} value={value} onValue={set} labelFor={labelFor} />;
   if (control === "boolean") {
     const legalValues = list(field.legal_values).filter(
       (candidate): candidate is boolean => typeof candidate === "boolean",

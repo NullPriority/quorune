@@ -15,6 +15,10 @@ from .rules.hybrid_resolution_payment import (
     HYBRID_RESOLUTION_PAYMENT_CAPABILITY, HYBRID_RESOLUTION_PAYMENT_KIND,
     HYBRID_RESOLUTION_PAYMENT_VERSION, hybrid_resolution_mana_options,
 )
+from .rules.mandatory_sacrifice_reanimation import (
+    MANDATORY_ARTIFACT_REANIMATION_VERSION, MANDATORY_CREATURE_SACRIFICE_VERSION,
+    MANDATORY_REANIMATION_PAYMENT_VERSIONS, MANDATORY_SACRIFICE_REANIMATION_CAPABILITY,
+)
 
 
 FIXED_EFFECT_PAYMENT_MECHANIC = "fixed-optional-mana-payment"
@@ -24,6 +28,15 @@ ANOTHER_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.another_fixed_resolution'
 SOURCE_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.fixed_source_resolution'
 MANDATORY_DISCARD_PAYMENT_CAPABILITY = "cost.discard.mandatory_fixed_resolution"
 MANDATORY_DISCARD_PAYMENT_VERSION = 8
+MANDATORY_ARTIFACT_SACRIFICE_CAPABILITY = "cost.sacrifice.mandatory_fixed_artifact_resolution"
+MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION = 16
+_MANDATORY_SACRIFICES = {
+    MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION: ("artifact", MANDATORY_ARTIFACT_SACRIFICE_CAPABILITY),
+    MANDATORY_ARTIFACT_REANIMATION_VERSION: ("artifact", MANDATORY_ARTIFACT_SACRIFICE_CAPABILITY),
+    MANDATORY_CREATURE_SACRIFICE_VERSION: ("creature", MANDATORY_SACRIFICE_REANIMATION_CAPABILITY),
+}
+EQUIPPED_DEATH_LIFE_PRICE_VERSION = 14
+OPPONENT_SOURCE_POWER_MANA_PRICE_VERSION = 15
 RETURN_PAYMENT_KIND = "return_owner_hand"
 RETURN_PAYMENT_VERSION = 11
 _MANA_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
@@ -56,6 +69,25 @@ def _validate_fixed_tap_predicate(predicate: ObjectQuerySpec | None) -> None:
         raise ValueError('Tap payment predicate is outside the closed controlled untapped family')
 
 
+def _validate_calculated_payment(spec) -> None:
+    if spec.schema_version == EQUIPPED_DEATH_LIFE_PRICE_VERSION:
+        if (spec.kind != "life" or type(spec.amount) is not int or spec.amount < 0
+                or any(value is not None for value in
+                       (spec.requirements, spec.predicate, spec.counter_name, spec.source_ref))
+                or spec.hybrid_symbols != ()):
+            raise ValueError("An equipped death quotes exactly one nonnegative life price")
+        return
+    requirements = spec.requirements
+    if (spec.kind != "mana" or type(spec.amount) is not int or spec.amount != 1
+            or not isinstance(requirements, Mapping) or set(requirements) != _MANA_KEYS
+            or any(type(value) is not int or value < 0 for value in requirements.values())
+            or any(requirements[key] for key in _MANA_KEYS - {"GENERIC"})
+            or any(value is not None for value in (spec.predicate, spec.counter_name, spec.source_ref))
+            or spec.hybrid_symbols != ()):
+        raise ValueError("An opponent's source-power payment quotes one nonnegative generic mana price")
+    object.__setattr__(spec, "requirements", FrozenMap(requirements))
+
+
 @dataclass(frozen=True, slots=True)
 class FixedEffectPaymentSpec:
     kind: str
@@ -69,9 +101,22 @@ class FixedEffectPaymentSpec:
 
     @property
     def mandatory(self) -> bool:
-        return type(self.schema_version) is int and self.schema_version == MANDATORY_DISCARD_PAYMENT_VERSION
+        return type(self.schema_version) is int and self.schema_version in (
+            MANDATORY_DISCARD_PAYMENT_VERSION, *_MANDATORY_SACRIFICES,
+        )
+
+    @property
+    def mandatory_sacrifice_type(self):
+        if self.schema_version in _MANDATORY_SACRIFICES and self.kind == "sacrifice":
+            return _MANDATORY_SACRIFICES[self.schema_version][0]
+        return None
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version in {
+            EQUIPPED_DEATH_LIFE_PRICE_VERSION, OPPONENT_SOURCE_POWER_MANA_PRICE_VERSION,
+        }:
+            _validate_calculated_payment(self)
+            return
         if type(self.schema_version) is int and self.schema_version == 13:
             from .rules.fractional_life_payment import validate_resolved_fractional_payment_spec
             validate_resolved_fractional_payment_spec(self)
@@ -87,7 +132,10 @@ class FixedEffectPaymentSpec:
             self._validate_blight()
             return
         if self.mandatory:
-            self._validate_mandatory_discard()
+            if self.schema_version in _MANDATORY_SACRIFICES:
+                self._validate_mandatory_sacrifice(_MANDATORY_SACRIFICES[self.schema_version][0])
+            else:
+                self._validate_mandatory_discard()
             return
         if self.kind == RETURN_PAYMENT_KIND:
             if (type(self.schema_version) is not int or self.schema_version != RETURN_PAYMENT_VERSION
@@ -199,6 +247,17 @@ class FixedEffectPaymentSpec:
         ):
             raise ValueError("Mandatory discard payment requires one unqualified owned hand card")
 
+    def _validate_mandatory_sacrifice(self, permanent_type) -> None:
+        predicate = self.predicate
+        if (
+            self.kind != "sacrifice" or type(self.amount) is not int or self.amount != 1
+            or any(value is not None for value in (self.requirements, self.counter_name, self.source_ref))
+            or not isinstance(predicate, ObjectQuerySpec)
+            or type(predicate.controller) is not str or not predicate.controller
+            or predicate != mandatory_sacrifice_predicate(predicate.controller, permanent_type)
+        ):
+            raise ValueError(f"Mandatory {permanent_type} sacrifice requires one controlled {permanent_type}")
+
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version":self.schema_version, "kind":self.kind, "amount":self.amount,
                 "requirements":thaw_value(self.requirements) if self.requirements is not None else None,
@@ -217,8 +276,10 @@ class FixedEffectPaymentSpec:
         if isinstance(value,Mapping) and value.get('kind')==HYBRID_RESOLUTION_PAYMENT_KIND:fields|={'hybrid_symbols'}
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError("Fixed effect payment fields are malformed")
-        if value["schema_version"] == MANDATORY_DISCARD_PAYMENT_VERSION and not allow_mandatory:
-            raise ValueError("Mandatory discard is outside this payment's resolution scope")
+        if value["schema_version"] == OPPONENT_SOURCE_POWER_MANA_PRICE_VERSION:
+            raise ValueError("A source-power price requires its original opponent spell occurrence")
+        if value["schema_version"] in (MANDATORY_DISCARD_PAYMENT_VERSION, *_MANDATORY_SACRIFICES) and not allow_mandatory:
+            raise ValueError("Mandatory object payment is outside this payment's resolution scope")
         predicate = thaw_value(value["predicate"])
         return cls(kind=value["kind"], amount=value["amount"], schema_version=value["schema_version"],
             counter_name=value.get('counter_name'),source_ref=value.get('source_ref'),
@@ -248,9 +309,70 @@ class FixedEffectPaymentSpec:
         costs[HYBRID_RESOLUTION_PAYMENT_KIND]=(HYBRID_RESOLUTION_PAYMENT_CAPABILITY,)
         costs[RETURN_PAYMENT_KIND] = (CONTROLLED_RETURN_CAPABILITY, "zone.change.destination_replacement")
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind], *object_query_capabilities(self.predicate),
-            *((MANDATORY_DISCARD_PAYMENT_CAPABILITY,) if self.mandatory else ()),
+            *((MANDATORY_DISCARD_PAYMENT_CAPABILITY,) if self.mandatory and self.kind == "discard" else ()),
+            *((_MANDATORY_SACRIFICES[self.schema_version][1],) if self.mandatory_sacrifice_type else ()),
             *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()),
             *(('cost.object.repeated_resolution',) if self.schema_version==12 else ()))
+
+
+EQUIPPED_DEATH_LIFE_DRAW_FIELD = "equipped_death_life_draw"
+_EQUIPPED_CREATURE_DEATH = {"field": "attachments", "op": "contains_any", "value": ["$source.ref"]}
+_EQUIPPED_DEATH_LIFE_DRAW_DEPENDENCIES = (
+    FIXED_EFFECT_PAYMENT_CAPABILITY,
+    "attachment.reference.current_or_lki",
+    "casting.additional_cost.fixed_life_payment",
+    "trigger.event.normalized_zone_change",
+    "zone.draw.library_to_hand",
+)
+
+
+def equipped_death_life_draw_effect():
+    return {
+        "op": "offer_optional_mana_payment",
+        "schema_version": 2,
+        "player": "$controller",
+        EQUIPPED_DEATH_LIFE_DRAW_FIELD: 1,
+    }
+
+
+def equipped_death_life_draw_dependencies(effect):
+    if not isinstance(effect, Mapping) or EQUIPPED_DEATH_LIFE_DRAW_FIELD not in effect:
+        return ()
+    if (type(effect.get("schema_version")) is not int
+            or type(effect[EQUIPPED_DEATH_LIFE_DRAW_FIELD]) is not int
+            or thaw_value(effect) != equipped_death_life_draw_effect()):
+        raise ValueError("Equipped death life draw requires the exact controller payment and same-size draw")
+    return _EQUIPPED_DEATH_LIFE_DRAW_DEPENDENCIES
+
+
+def equipped_death_life_draw_program_dependencies(program):
+    effects = [effect for effect in program.effects if EQUIPPED_DEATH_LIFE_DRAW_FIELD in effect]
+    if not effects:
+        return ()
+    if (len(program.effects) != 1 or program.target_schema is not None or program.cost_schema is not None
+            or program.handlers or program.active_zone != "battlefield" or program.event != "creature.dies"
+            or thaw_value(program.event_condition) != _EQUIPPED_CREATURE_DEATH):
+        raise ValueError("Equipped death life draw must use the original creature death and attachment occurrence")
+    return equipped_death_life_draw_dependencies(effects[0])
+
+
+def bind_equipped_death_life_draw(item, raw):
+    equipped_death_life_draw_dependencies(raw)
+    context = item.context
+    power = context.get("power")
+    if (context.get("event") != "creature.dies" or type(power) is not int
+            or not context.get("card_object_identity") or not context.get("attachments")):
+        raise ValueError("The normalized equipped-creature death is missing its recorded last power")
+    amount = max(0, power)
+    return {
+        "op": "offer_optional_mana_payment",
+        "schema_version": 2,
+        "player": item.controller,
+        "payment": FixedEffectPaymentSpec(
+            "life", amount=amount, schema_version=EQUIPPED_DEATH_LIFE_PRICE_VERSION,
+        ).to_dict(),
+        "effects": [{"op": "draw", "player": item.controller, "count": amount, "private": True}] if amount else [],
+    }
 
 
 MANDATORY_SOURCE_COUNTER_FOLLOWUP_VERSION = 16
@@ -283,9 +405,55 @@ def mandatory_source_counter_followup_parts(value, *, resolved: bool = False):
     return spec, effects[0]
 
 
+def mandatory_sacrifice_predicate(controller, permanent_type):
+    return ObjectQuerySpec(zones=("battlefield",), controller=controller, types_any=(permanent_type,),
+                           known_to_actor=True)
+
+
+def mandatory_artifact_sacrifice_predicate(controller):
+    return mandatory_sacrifice_predicate(controller, "artifact")
+
+
+def mandatory_artifact_sacrifice_result_parts(value, *, resolved=False):
+    if (set(value) != {"op", "schema_version", "player", "payment", "effects"}
+            or value["op"] != "offer_optional_mana_payment"
+            or type(value["schema_version"]) is not int or value["schema_version"] != 2
+            or type(value["player"]) is not str or not value["player"]
+            or not resolved and value["player"] != "$controller"):
+        raise ValueError("Mandatory artifact sacrifice requires the fixed controller result")
+    payment = FixedEffectPaymentSpec.from_dict(value["payment"], allow_mandatory=True)
+    if (payment.schema_version != MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION
+            or payment.predicate.controller != value["player"]):
+        raise ValueError("Mandatory artifact sacrifice requires its current controller")
+    effects = value["effects"]
+    if not isinstance(effects, (list, tuple)) or len(effects) != 1 or not isinstance(effects[0], Mapping):
+        raise ValueError("Mandatory artifact sacrifice requires its single source counter result")
+    child = effects[0]
+    expected = {"op": "place_counters", "card": "$source.zone_object", "counter": "+1/+1",
+                "amount": 2, "source": "$source"}
+    if resolved and set(child) == set(expected):
+        for field in ("card", "source"):
+            bound = child[field]
+            if bound is not None and (type(bound) is not str or not bound or bound.startswith("$")):
+                raise ValueError("Artifact sacrifice result lost its bound counter recipient")
+            expected[field] = bound
+    if type(child.get("amount")) is not int or FrozenMap(child) != FrozenMap(expected):
+        raise ValueError("Mandatory artifact sacrifice requires two counters on the original source")
+    return payment, child
+
+
 def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     if not isinstance(value, Mapping) or value.get("op") != "offer_optional_mana_payment":
         return ()
+    from .rules.opponent_event_mana_payment import opponent_event_mana_payment_capabilities, uses_opponent_event_mana_payment
+    from .rules.attached_copy_payment import attached_copy_payment_capabilities, uses_attached_copy_payment
+
+    if uses_attached_copy_payment(value):
+        return attached_copy_payment_capabilities(value)
+    if uses_opponent_event_mana_payment(value):
+        return opponent_event_mana_payment_capabilities(value)
+    if required := equipped_death_life_draw_dependencies(value):
+        return required
     if uses_mandatory_source_counter_followup(value):
         payment, _ = mandatory_source_counter_followup_parts(value)
         return payment.capabilities
@@ -306,6 +474,8 @@ def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, .
     descriptor = value.get("payment")
     if not isinstance(descriptor, Mapping):
         return ()
+    if descriptor.get("schema_version") == EQUIPPED_DEATH_LIFE_PRICE_VERSION:
+        raise ValueError("An equipped-death life quote may only be generated at resolution")
     from .rules.entry_player_counter_payment import (
         entry_player_counter_payment_capabilities, is_entry_player_counter_payment, uses_entry_player_counter_payment,
     )
@@ -330,6 +500,13 @@ def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, .
                 or "cost" in value or "declined_effects" in value):
             raise ValueError("Return payment requires its closed controller resolution scope")
         return payment.capabilities
+    if descriptor.get("schema_version") == MANDATORY_ARTIFACT_SACRIFICE_PAYMENT_VERSION:
+        payment, _ = mandatory_artifact_sacrifice_result_parts(value)
+        return (*payment.capabilities, "counter.producer.fixed_effect")
+    if descriptor.get("schema_version") in MANDATORY_REANIMATION_PAYMENT_VERSIONS:
+        from .rules.mandatory_sacrifice_reanimation import mandatory_sacrifice_reanimation_payload_dependencies
+
+        return mandatory_sacrifice_reanimation_payload_dependencies(value)
     mandatory = descriptor.get("schema_version") == MANDATORY_DISCARD_PAYMENT_VERSION
     if not mandatory and descriptor.get("kind") != "mana_discard":
         return ()

@@ -786,6 +786,15 @@ class PaidManaHasteAndLimitedChoiceTests(unittest.TestCase):
             self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:" + viewer, full=True)))
         self.replay(session, load=True)
 
+    def test_partial_spending_wording_preserves_the_exact_creature_haste_grant(self):
+        from quorune.fixed_mana_spend_templates import fixed_mana_spend_rule_template
+
+        original = "Add {C}{C}. If that mana is spent on a creature spell, it gains haste until end of turn."
+        current = original.replace("If that mana", "If any of that mana")
+        permission = fixed_mana_spend_rule_template(original)
+        self.assertIsNotNone(permission)
+        self.assertEqual(permission, fixed_mana_spend_rule_template(current))
+
     def test_generator_servant_spends_both_units_and_haste_expires(self):
         from quorune.haste import has_effective_haste
         from quorune.mana_provenance import mana_provenance_lots

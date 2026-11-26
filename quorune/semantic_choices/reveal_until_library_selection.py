@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from ..replacement.immutable import FrozenMap
 from ..reveal_until_library_selection_model import (
-    REVEAL_UNTIL_OPERATION,REVEAL_UNTIL_CAPABILITY,fixed_selection_after_reveal_until,
+    REVEAL_UNTIL_OPERATION,REVEAL_UNTIL_CAPABILITY,REVEAL_UNTIL_REFLEXIVE_VERSION,reveal_until_partition,
 )
 from .model import AutoContinue,SemanticChoicePreparation,SemanticChoiceError
 
@@ -21,6 +21,21 @@ def _all_revealed_hand_intents(fixed,context):
         LibrarySelectionIntent(actor=context.actor,player=context.actor,arrangement=arrangement,
             reason=context.stack_label,source_stack_ref=context.stack_ref,
             looked_are_public=True,selected_are_public=True))
+
+
+def _prepare_reflexive_partition(effect, context, fixed, revealed):
+    from ..reflexive_trigger_model import QueueRevealUntilReflexiveIntent
+    from .fixed_library_selection import FixedLibrarySelectionChoiceHandler
+
+    partition = FixedLibrarySelectionChoiceHandler().prepare(fixed, context)
+    reveal, move = partition.preparation_intents
+    # Lock the revealed incarnation before its zone changes. Placement waits for spell resolution.
+    enqueue = QueueRevealUntilReflexiveIntent(context.actor, context.stack_ref, revealed.logical_object_id)
+    return SemanticChoicePreparation(
+        request=None, continuation_effect=FrozenMap(effect),
+        preparation_intents=(reveal, enqueue, move),
+        auto_continue=partition.auto_continue,
+    )
 
 
 @dataclass(frozen=True,slots=True)
@@ -42,8 +57,10 @@ class RevealUntilLibrarySelectionHandler:
         if (effect.get('player')!=context.actor or context.stack_controller!=context.actor
                 or context.actor not in context.query.active_seats):
             raise SemanticChoiceError('Reveal-until requires the resolving live controller')
-        try:fixed = fixed_selection_after_reveal_until(effect,context.query)
+        try:fixed, revealed = reveal_until_partition(effect,context.query)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
+        if revealed is not None and effect['schema_version'] == REVEAL_UNTIL_REFLEXIVE_VERSION:
+            return _prepare_reflexive_partition(effect, context, fixed, revealed)
         all_revealed = fixed is not None and effect['selection']=='all_revealed'
         return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
             preparation_intents=_all_revealed_hand_intents(fixed,context) if all_revealed else (),

@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
+from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
@@ -22,6 +23,7 @@ from quorune.rules.optional_source_damage import (
 )
 from scripts.build_test_database import build_fixture_database
 from scripts.update_capability_evidence import build_index, discover_tests
+from test_controller_creature_keyword_absence import register_card
 
 
 class OptionalSourceDamageTests(InheritedNativeFixture, unittest.TestCase):
@@ -44,6 +46,83 @@ class OptionalSourceDamageTests(InheritedNativeFixture, unittest.TestCase):
         cls.deck = DeckDefinition("Optional source damage", [
             DeckEntry(ruler, 1, "commander"), DeckEntry("Generic Bound Plains", 30),
         ], [ruler])
+
+    def test_actual_blazing_uses_the_new_creature_controller_even_if_the_accepted_damage_is_prevented(self):
+        game = self.session(61127245)
+        spell = self.add(game.engine, "Blazing Salvo", zone="hand")
+        creature = self.add(game.engine, "Ornithopter", seat="B")
+        steal = self.add(game.engine, "Act of Aggression", seat="C", zone="hand")
+        protection = self.add(game.engine, "Solitary Confinement", seat="C")
+        for card in (spell, creature, steal, protection):
+            self.assert_closed(game, card)
+        self.prepare(game, actor="A", active="A", mana={"R": 1})
+        game.state.players["C"].mana_pool["R"] = 5
+        self.checkpoint(game)
+        self.cast_for(game, "A", spell, [creature.ref])
+        self.priority(game, "C")
+        offered = self.action(game, "C", steal)
+        mana_only, = (option for option in offered["cost_options"] if not option.get("additional_life"))
+        transfer = game.act("pilot:C", {"action_id": offered["id"], "cost_option": mana_only["id"],
+                                         "targets": [creature.ref], "pay": "auto"})
+        self.assertTrue(transfer.ok, transfer.summary)
+        self.resolve_top(game)
+        self.assertEqual("C", game.state.cards[creature.object_id].controller)
+        pending = self.resolve(game)
+        self.assertEqual(("semantic.choice", ["C"]), (pending.kind, pending.actors))
+        lives = tuple(game.state.players[seat].life for seat in "BC")
+        command = {"action_id": "choose", "choice": "accept_damage"}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        game = self.replay(game, load=True)
+        chosen = game.act("pilot:C", command)
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(lives, tuple(game.state.players[seat].life for seat in "BC"))
+        self.assertEqual("battlefield", game.state.cards[creature.object_id].zone)
+        self.replay(game, load=True)
+
+    def test_actual_molten_offers_the_original_stack_controller_its_exact_damage_or_counter(self):
+        record = self.db.lookup("Molten Influence", fuzzy=False)
+        report, semantics = register_card(self.db, self.registry, "Molten Influence")
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        program, = semantics.programs_for_oracle(record.oracle_id)
+        opened = replace(program, target_schema={
+            key: value for key, value in program.target_schema.items() if key != "types_any"
+        })
+        self.assertFalse(bind_semantic_program_runtime(
+            opened, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
+        with patch("quorune.compiler.optional_source_damage_templates._optional_target_controller_damage",
+                   return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(
+                record, capability_registry=self.registry, capability_profile="commander_review",
+            ).status)
+
+        for target_name, targets, mana, response, expected in (
+            ("Lightning Bolt", ["A"], {"R": 1}, "decline_damage", (40, 40)),
+            ("Lightning Bolt", ["A"], {"R": 1}, "accept_damage", (37, 36)),
+            ("Volcanic Fallout", [], {"R": 3}, "decline_damage", (38, 38)),
+        ):
+            with self.subTest(target=target_name, response=response):
+                game = self.session(61127246)
+                spell = self.add(game.engine, "Molten Influence", zone="hand")
+                target = self.add(game.engine, target_name, seat="B", zone="hand")
+                for card in (spell, target):
+                    self.assert_closed(game, card)
+                self.prepare(game, actor="A", active="A", mana={"R": 2})
+                game.state.players["B"].mana_pool.update(mana)
+                self.checkpoint(game)
+                self.cast_for(game, "B", target, targets)
+                self.cast_for(game, "A", spell, [game.state.stack[-1].ref])
+                pending = self.resolve(game)
+                self.assertEqual(("semantic.choice", ["B"]), (pending.kind, pending.actors))
+                result = game.act("pilot:B", {"action_id": "choose", "choice": response})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual(expected, tuple(game.state.players[seat].life for seat in "AB"))
+                self.replay(game, load=True)
+
 
     def scene(self, seed, name, *, jump_start=False, prevent=False):
         game = self.session(seed)

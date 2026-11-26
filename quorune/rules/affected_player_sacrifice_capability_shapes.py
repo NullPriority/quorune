@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_dependencies
+from ..apnap_object_payment import (
+    DECLINED_LIFE_LOSS, OTHER_PLAYER_SACRIFICE_CAPABILITY, OTHER_PLAYER_SACRIFICE_SCOPE,
+    apnap_object_payment_dependencies, validate_other_player_sacrifice,
+)
 from ..compiler.affected_player_sacrifice_templates import (
     FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
     FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC,
@@ -22,9 +25,23 @@ from ..power_sacrifice_model import (
     GreatestPowerSacrificeSpec, validate_controller_sacrifice_toughness_life, validate_entry_sacrifice_power_life_draw,
 )
 from ..public_characteristic_aggregate_model import PUBLIC_STAT_AGGREGATE_CAPABILITY
+from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
 from ..player_maximum_model import LAND_COUNT_METRIC, uses_land_count_maximizers
 from ..replacement.immutable import FrozenMap, thaw_value
 from .effect_shape_walkers import contains_nested_key, nested_effects
+from .keep_permanents_by_type import (
+    KEEP_PERMANENTS_BY_TYPE_OPERATION, keep_by_type_capabilities, keep_by_type_runtime_dependencies,
+)
+from .any_number_sacrifice import (
+    ANY_NUMBER_SACRIFICE_FIELD, any_number_sacrifice_capabilities, any_number_sacrifice_runtime_dependencies,
+)
+from .counted_sacrifice_tokens import (
+    COUNTED_SACRIFICE_TOKEN_FIELD, counted_sacrifice_token_capabilities, counted_sacrifice_token_runtime_dependencies,
+)
+from .target_sacrifice_toughness import (
+    TARGET_SACRIFICE_TOUGHNESS_FIELD, target_sacrifice_toughness_capabilities,
+    target_sacrifice_toughness_runtime_dependencies,
+)
 
 
 def most_lands_attack_sacrifice_effect_is_closed(effect, *, actor="$controller"):
@@ -150,6 +167,10 @@ def greatest_power_sacrifice_runtime_dependencies(program):
         _controller_sacrifice_life_runtime_dependencies(program)
         or _entry_sacrifice_power_draw_runtime_dependencies(program)
         or _attack_sacrifice_stat_runtime_dependencies(program)
+        or target_sacrifice_toughness_runtime_dependencies(program)
+        or counted_sacrifice_token_runtime_dependencies(program)
+        or any_number_sacrifice_runtime_dependencies(program)
+        or keep_by_type_runtime_dependencies(program)
     ):
         return required
     effects = (*program.effects, *getattr(program, "handlers", ()))
@@ -162,7 +183,10 @@ def greatest_power_sacrifice_runtime_dependencies(program):
     if not _greatest_power_sacrifice_target_is_closed(program.target_schema, spec):
         raise ValueError("Greatest-power sacrifice has the wrong affected target scope")
     event_zone = (program.event, program.active_zone)
-    if spec.target_player is not None:
+    if spec.mana_value:
+        if event_zone != ("resolve", "stack") or len(program.effects) != 1:
+            raise ValueError("Greatest mana-value sacrifice requires one closed untargeted spell result")
+    elif spec.target_player is not None:
         if event_zone != ("resolve", "stack") or len(program.effects) != 1:
             raise ValueError("Targeted greatest-power sacrifice and life require one closed spell result")
     elif spec.lost_life_only:
@@ -184,7 +208,7 @@ def _greatest_power_sacrifice_dependencies(spec):
     return (
         FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
         "zone.change.destination_replacement",
-        PUBLIC_STAT_AGGREGATE_CAPABILITY,
+        PUBLIC_QUERY_AMOUNT_CAPABILITY if spec.mana_value else PUBLIC_STAT_AGGREGATE_CAPABILITY,
         *(("condition.history.fixed_public_query",) if spec.lost_life_only else ()),
         *(("target.revalidate_resolution", "life.change.effect") if spec.target_player is not None else ()),
     )
@@ -194,6 +218,30 @@ def is_closed_affected_player_sacrifice_program(program: Any) -> bool:
     required=fixed_affected_player_sacrifice_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
     return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
+def _specialized_sacrifice_node_capabilities(effect, target_schema):
+    if effect.get("op") == KEEP_PERMANENTS_BY_TYPE_OPERATION:
+        try:
+            return keep_by_type_capabilities(effect, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if ANY_NUMBER_SACRIFICE_FIELD in effect:
+        try:
+            return any_number_sacrifice_capabilities(effect, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if COUNTED_SACRIFICE_TOKEN_FIELD in effect:
+        try:
+            return counted_sacrifice_token_capabilities(effect, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    if TARGET_SACRIFICE_TOUGHNESS_FIELD in effect:
+        try:
+            return target_sacrifice_toughness_capabilities(effect, target_schema)
+        except (KeyError, TypeError, ValueError):
+            return ()
+    return None
 
 
 def fixed_affected_player_sacrifice_node_capabilities(
@@ -216,6 +264,22 @@ def fixed_affected_player_sacrifice_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .ordered_type_sacrifice import ORDERED_TYPE_SACRIFICE_OPERATION, ordered_type_sacrifice_node_capabilities
+    from .sacrifice_discard_fallback import sacrifice_discard_fallback_node_capabilities, uses_sacrifice_discard_fallback
+
+    if uses_sacrifice_discard_fallback(effect):
+        return sacrifice_discard_fallback_node_capabilities(effects, target_schema)
+    if effect.get("op") == ORDERED_TYPE_SACRIFICE_OPERATION:
+        return ordered_type_sacrifice_node_capabilities(effects=effects, target_schema=target_schema)
+    specialized = _specialized_sacrifice_node_capabilities(effect, target_schema)
+    if specialized is not None:
+        return specialized
+    if effect.get("players") == OTHER_PLAYER_SACRIFICE_SCOPE:
+        try:
+            validate_other_player_sacrifice(effect, actor="$controller")
+        except (KeyError, TypeError, ValueError):
+            return ()
+        return _OTHER_PLAYER_SACRIFICE_DEPENDENCIES if target_schema is None else ()
     if ATTACK_SACRIFICE_STAT_FIELD in effect:
         try:
             validate_attack_sacrifice_stat_effect(effect)
@@ -324,13 +388,32 @@ def fixed_affected_player_sacrifice_node_capabilities(
     return tuple(sorted(dependencies))
 
 
+_OTHER_PLAYER_SACRIFICE_DEPENDENCIES = (
+    FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY, OTHER_PLAYER_SACRIFICE_CAPABILITY,
+    "zone.change.destination_replacement",
+)
+
+
+def other_player_sacrifice_runtime_dependencies(program):
+    marked = tuple(effect for effect in nested_effects((*program.effects, *program.handlers))
+                   if effect.get("players") == OTHER_PLAYER_SACRIFICE_SCOPE
+                   and COUNTED_SACRIFICE_TOKEN_FIELD not in effect)
+    if not marked and OTHER_PLAYER_SACRIFICE_CAPABILITY not in program.capability_dependencies:
+        return ()
+    if (len(marked) != 1 or tuple(program.effects) != marked or program.target_schema is not None
+            or program.active_zone != "battlefield" or program.event not in {"activate", "creature.dies", "permanent.dies"}):
+        raise ValueError("Other-player sacrifice requires its single untargeted battlefield result")
+    validate_other_player_sacrifice(marked[0], actor="$controller")
+    return _OTHER_PLAYER_SACRIFICE_DEPENDENCIES
+
+
 def source_excluded_sacrifice_runtime_dependencies(program):
     """Source-object authority is required by the payload, independent of tags."""
     required = set()
     def visit(value):
         if isinstance(value, Mapping):
             if (value.get('op') == 'choose_cards_apnap' and value.get('then') == 'sacrifice'
-                    and value.get('exclude_ref') == '$source.zone_object'):
+                    and value.get('exclude_ref') == '$source.zone_object' and ANY_NUMBER_SACRIFICE_FIELD not in value):
                 if not isinstance(value.get('predicate'),Mapping) or not fixed_affected_player_sacrifice_predicate_is_closed(value['predicate']):
                     raise ValueError('Source-excluded sacrifice requires a closed permanent predicate')
                 required.add(SOURCE_EXCLUDED_SACRIFICE_CAPABILITY)

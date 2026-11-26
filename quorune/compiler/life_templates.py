@@ -16,6 +16,10 @@ _DOUBLE_CONTROLLER_LIFE_GAIN = re.compile(
     r"^If you would gain life, you gain twice that much life instead\.?$",
     re.IGNORECASE,
 )
+_DOUBLE_CONTROLLER_LOW_LIFE_GAIN = re.compile(
+    r"^If you would gain life while you have 5 or less life, you gain twice that much life instead\.?$",
+    re.IGNORECASE,
+)
 
 _PLUS_CONTROLLER_LIFE_GAIN = re.compile(
     rf"^If you would gain life, you gain that much life plus (?P<amount>{FIXED_COUNT_PATTERN}) instead\.?$",
@@ -24,6 +28,10 @@ _PLUS_CONTROLLER_LIFE_GAIN = re.compile(
 
 
 def static_life_gain_prohibition_handler(text):
+    if re.fullmatch(r"Your life total can['’]t change\.?", text.strip(), re.I):
+        from ..life_gain_permission import LIFE_TOTAL_PROHIBITION_CAPABILITY, life_total_prohibition_descriptor
+
+        return "static-controller-life-total-prohibition-v1", life_total_prohibition_descriptor(), LIFE_TOTAL_PROHIBITION_CAPABILITY
     from ..life_gain_permission import (FixedLifeGainProhibitionSpec,LIFE_GAIN_PROHIBITION_CAPABILITY,
         LIFE_GAIN_PROHIBITION_HANDLER,LIFE_GAIN_PROHIBITION_EVENT)
     match = re.fullmatch(r"(?P<players>Players|Your opponents) can't gain life\.?",text.strip(),re.I)
@@ -72,20 +80,37 @@ def static_life_handler(
             },
             "life.gain.replacement.static_addition",
         )
+    if _DOUBLE_CONTROLLER_LOW_LIFE_GAIN.fullmatch(text) is not None:
+        from ..semantic_runtime.life_replacements import (
+            LOW_LIFE_GAIN_MULTIPLIER_CAPABILITY,
+            LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID,
+        )
+
+        return _life_gain_multiplier_template(
+            "life-gain-double-controller-five-or-less-static-v1",
+            LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID,
+            LOW_LIFE_GAIN_MULTIPLIER_CAPABILITY,
+        )
     if _DOUBLE_CONTROLLER_LIFE_GAIN.fullmatch(text) is None:
         return None
-    return (
+    return _life_gain_multiplier_template(
         "life-gain-double-controller-static-v1",
+        "replacement.life.gain.multiplier.v1",
+        "life.gain.replacement.static_multiplier",
+    )
+
+
+def _life_gain_multiplier_template(template_id, handler_id, capability):
+    return (
+        template_id,
         {
-            "handler_id": "replacement.life.gain.multiplier.v1",
+            "handler_id": handler_id,
             "schema_version": 1,
             "event": "life.change",
-            "condition": {
-                "affected_player_relation": "source_controller",
-            },
+            "condition": {"affected_player_relation": "source_controller"},
             "modification": {"multiplier": 2},
         },
-        "life.gain.replacement.static_multiplier",
+        capability,
     )
 
 

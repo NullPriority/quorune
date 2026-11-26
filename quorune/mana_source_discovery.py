@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """Read-only typed mana-source discovery for authoritative auto-payment."""
 
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -11,6 +13,7 @@ from .characteristic_read_frames import characteristic_read_method
 from .haste import summoning_sickness_prohibits_tap_or_untap_cost
 from .mana import ManaMode, ManaSource
 from .mana_ability_runtime import (
+    has_ordinary_mana_mode_price,
     payable_mana_modes,
     typed_mana_modes_for_abilities,
 )
@@ -55,6 +58,7 @@ def _unrestricted_when_payable(
     *,
     spend_context: str | None,
     intermediate_contexts: frozenset[str] = frozenset(),
+    include_unspendable: bool = False,
 ) -> tuple[ManaMode, ...]:
     result: list[ManaMode] = []
     for mode in modes:
@@ -64,7 +68,7 @@ def _unrestricted_when_payable(
             continue
         if host._mana_restriction_allows(restriction, spend_context):
             result.append(replace(mode, conditional=False))
-        elif mode.triggered_mana and valid_produced_mana_spend_restriction(restriction):
+        elif (include_unspendable or mode.triggered_mana) and valid_produced_mana_spend_restriction(restriction):
             result.append(replace(mode, conditional=False, base_fundable=False))
         elif any(host._mana_restriction_allows(restriction, context) for context in intermediate_contexts):
             result.append(replace(mode, conditional=True, intermediate_only=True))
@@ -73,10 +77,16 @@ def _unrestricted_when_payable(
 
 def _mana_plan_cost_is_supported(host, seat, card, ability: ActivatedAbility) -> bool:
     """Admit an existing closed priced mode or a currently free source."""
-    from .public_quantity_mana_runtime import chosen_subtype_mana_output
+    from .rules.forage import has_forage_cost
 
-    if chosen_subtype_mana_output(ability) is not None:
+    if has_forage_cost(ability):
+        return False
+    if has_ordinary_mana_mode_price(ability):
         return True
+    from .rules.whole_hand_mana import is_whole_hand_mana_ability
+
+    if is_whole_hand_mana_ability(ability):
+        return False
     if ability.mana_cost_options:
         return supports_hybrid_filter_price(ability, ability.mana_cost_options, ability.fixed_mana_outputs)
     from .rules.activation.x_costs import activation_requirements
@@ -84,12 +94,53 @@ def _mana_plan_cost_is_supported(host, seat, card, ability: ActivatedAbility) ->
     return not any(requirements.values())
 
 
+_hand_mana_window: ContextVar[tuple[str, Mapping[str, str]] | None] = ContextVar(
+    "hand_mana_window", default=None,
+)
+
+
+@contextmanager
+def capture_hand_mana_window(host, seat, *, reserved_source=None):
+    """Mana activation precedes the selected object costs of the announcement."""
+    eligible = {
+        oid: host.state.cards[oid].logical_object_id
+        for oid in host.state.players[seat].zones["hand"]
+        if reserved_source is None or oid != reserved_source.object_id
+    }
+    token = _hand_mana_window.set((seat, eligible))
+    try:
+        yield
+    finally:
+        _hand_mana_window.reset(token)
+
+
+def _hand_mana_plan_abilities(host, seat, card):
+    if card.owner != seat or card.object_id not in host.state.players[seat].zones["hand"]:
+        return ()
+    window = _hand_mana_window.get()
+    if window is not None and window[0] == seat and window[1].get(card.object_id) != card.logical_object_id:
+        return ()
+    from .semantic_runtime.activation_restrictions import current_activation_prohibitions
+
+    return tuple(
+        ability for ability in host._activated_abilities(card)
+        if ability.mana_ability and ability.exile_source and ability.zones == ("hand",)
+        and ability.fixed_mana_outputs and not current_activation_prohibitions(host, card, ability, actor=seat)
+    )
+
+
 def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> tuple[ActivatedAbility, ...]:
-    """Shared source eligibility for tap mana and one-use self-sacrifice mana."""
+    """Discover typed mana modes from the current authorized source zone."""
+    if card.zone == "hand":
+        return _hand_mana_plan_abilities(host, seat, card)
     if card.zone!='battlefield' or card.controller!=seat or card.phased_out:
         return ()
+    from .sacrifice_prohibition_model import sacrifice_is_prohibited
+
+    sacrifice_prohibited = sacrifice_is_prohibited(host.state, card)
     abilities=tuple(ability for ability in host._activated_abilities(card)
-        if ability.mana_ability and card.zone in ability.zones)
+        if ability.mana_ability and card.zone in ability.zones
+        and (not ability.sacrifice_source or not sacrifice_prohibited))
     blocked_tap=card.tapped
     if not blocked_tap and any(ability.tap_source for ability in abilities):
         if card_types is None:
@@ -128,8 +179,9 @@ def available_mana_sources(
     seat: str,
     *,
     spend_context: str | None = None,
+    include_unspendable: bool = False,
 ) -> list[ManaSource]:
-    """Discover payable modes without mutating game state."""
+    """Discover legal mana modes, optionally including typed outputs that cannot fund this payment."""
 
     sources: list[ManaSource] = []
     recordless_sources: set[str] = set()
@@ -186,8 +238,15 @@ def available_mana_sources(
                     snow="snow" in supertypes,
                 )
             )
+    for object_id in host.state.players[seat].zones["hand"]:
+        card = host.state.cards[object_id]
+        abilities = _hand_mana_plan_abilities(host, seat, card)
+        if abilities:
+            modes = payable_mana_modes(typed_mana_modes_for_abilities(host, seat, card, abilities))
+            _, _, supertypes = host._type_parts(str(host._effective_card_data(card).get("type_line") or ""))
+            sources.append(ManaSource(object_id, card.ref, host.display_name(object_id), modes, snow="snow" in supertypes))
     intermediate = frozenset(mode.price.spend_context for source in sources for mode in source.modes if mode.price)
-    departures = frozenset(source.object_id for source in sources if any(mode.sacrifices_source for mode in source.modes))
+    departures = frozenset(source.object_id for source in sources if any(mode.consumes_source for mode in source.modes))
     result = []
     for source in sources:
         with_triggers = modes_with_triggered_mana(host, seat, host.state.cards[source.object_id], source.modes,
@@ -195,6 +254,7 @@ def available_mana_sources(
         legacy_recordless = source.object_id in recordless_sources and not any(mode.triggered_mana for mode in with_triggers)
         modes = (with_triggers if legacy_recordless else _unrestricted_when_payable(
             host, with_triggers, spend_context=spend_context, intermediate_contexts=intermediate,
+            include_unspendable=include_unspendable,
         ))
         if modes:
             result.append(replace(source, modes=modes))

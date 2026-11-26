@@ -121,6 +121,9 @@ def publish_token_creations(
     """Seal every creator's history and entry facts before dispatch."""
     previous_quantities = tuple(_record_creation(host, creation, reason) for creation in creations)
     contexts = tuple(_entry_contexts(host, creation, reason) for creation in creations)
+    from .rules.unpaid_creature_entry import GROUP_FIELD, token_members
+
+    unpaid_members = token_members(host, contexts)
     trigger_batch: list[Any] = []
     if prepared_counters is not None:
         dispatch_prepared_counter_events(host, prepared_counters, reason=reason, trigger_batch=trigger_batch)
@@ -130,7 +133,8 @@ def publish_token_creations(
             entry = context
             if getattr(host.state, BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD, None) == 1:
                 entry = {**context, "putting_player": creation.controller}
-            host._dispatch_semantic_event("permanent.enter", entry, trigger_batch=trigger_batch)
+            permanent_entry = {**entry, GROUP_FIELD: unpaid_members} if unpaid_members else entry
+            host._dispatch_semantic_event("permanent.enter", permanent_entry, trigger_batch=trigger_batch)
             for card_type in ("artifact", "creature", "land", "enchantment"):
                 if card_type in entry["types"]:
                     host._dispatch_semantic_event(f"{card_type}.enter", entry, trigger_batch=trigger_batch)

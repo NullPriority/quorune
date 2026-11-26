@@ -65,6 +65,7 @@ class ContinuousEffectDuration(str, Enum):
 
     WHILE_SOURCE_PRESENT = "while_source_present"
     UNTIL_END_OF_TURN = "until_end_of_turn"
+    UNTIL_END_OF_GAME = "until_end_of_game"
     UNTIL_NEXT_TURN = "until_next_turn"
     UNTIL_RECIPIENT_CONTROLLER_UNTAP = "until_recipient_controller_untap"
     UNTIL_CONTROL_CHANGE = "until_control_change"
@@ -124,10 +125,12 @@ _OPERATION_LAYERS = {
     "set_basic_land_types": Layer.TYPE,
     "set_creature_subtype": Layer.TYPE,
     "set_creature_subtypes": Layer.TYPE,
+    "set_linked_exile_creature_subtypes": Layer.TYPE,
     "set_creature_subtype_set": Layer.TYPE,
     "add_types": Layer.TYPE,
     "remove_types": Layer.TYPE,
     "remove_creature_card_type": Layer.TYPE,
+    "remove_planeswalker_card_type": Layer.TYPE,
     "set_colors": Layer.COLOR,
     "add_colors": Layer.COLOR,
     "remove_colors": Layer.COLOR,
@@ -144,6 +147,8 @@ _OPERATION_LAYERS = {
     "set_power": Layer.POWER_TOUGHNESS,
     "set_toughness": Layer.POWER_TOUGHNESS,
     "set_power_toughness": Layer.POWER_TOUGHNESS,
+    "set_linked_exile_creature_stats": Layer.POWER_TOUGHNESS,
+    "default_creature_stats": Layer.POWER_TOUGHNESS,
     "modify_power_toughness": Layer.POWER_TOUGHNESS,
     "modify_power_toughness_by_recipient_quantity": Layer.POWER_TOUGHNESS,
     "switch_power_toughness": Layer.POWER_TOUGHNESS,
@@ -342,6 +347,15 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         words=_nonempty_words(value,field_name=op)
         if field is not None or any(word not in BASIC_LAND_MANA for word in words):
             raise ContinuousEffectError('Basic land type setting requires canonical basic subtypes and no field')
+    elif op in {"set_linked_exile_creature_subtypes", "set_linked_exile_creature_stats"}:
+        from .linked_exile_characteristic_model import linked_exile_characteristic_candidates
+
+        if field is not None:
+            raise ContinuousEffectError("A linked exile setting does not accept a field")
+        try:
+            linked_exile_characteristic_candidates(value)
+        except (TypeError, ValueError) as exc:
+            raise ContinuousEffectError(str(exc)) from exc
     elif op == "set_creature_subtype_set":
         if field is not None or type(value) is not str or value not in {"all", "none"}:
             raise ContinuousEffectError("Creature subtype sets require all or none without a field")
@@ -393,6 +407,8 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
         "remove_landwalk_abilities",
         "remove_all_colors",
         "remove_creature_card_type",
+        "remove_planeswalker_card_type",
+        "default_creature_stats",
         "switch_power_toughness",
     }:
         if field is not None or value is not None:
@@ -527,6 +543,8 @@ def _validate_continuous_effect_identity_scope(
         validate_attachment_duration(effect, locked)
     except ValueError as exc:
         raise ContinuousEffectError(str(exc)) from exc
+    if effect.duration is ContinuousEffectDuration.UNTIL_END_OF_GAME:
+        raise ContinuousEffectError("Game duration requires a typed player-rule effect")
     validate_turn_expiry(effect.duration, effect.expires_on_next_turn_of)
     if (effect.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN
             and effect.origin is not ContinuousEffectOrigin.RESOLUTION):
@@ -560,6 +578,10 @@ def _validate_continuous_effect_identity_scope(
                     or effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES
                     and effect.layer is Layer.TYPE and len(locked) == len(effect.operations) == 1
                     and effect.operations[0].op == "set_basic_land_types"
+                    or effect.duration is ContinuousEffectDuration.UNTIL_SOURCE_LEAVES
+                    and effect.layer is Layer.ABILITY and effect.sublayer == "6"
+                    and len(locked) == len(effect.operations) == 1
+                    and effect.operations[0].op == "remove_all_abilities"
                 ))
                 or not isinstance(effect.duration_source, ContinuousObjectIdentity)
                 or not isinstance(effect.duration_history, SourceContinuitySnapshot)

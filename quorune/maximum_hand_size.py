@@ -7,6 +7,7 @@ from typing import Any, Mapping, Protocol
 
 from .ability_fragments import StaticComponentSpec
 from .composition_characteristics import copied_static_component_instances
+from .game_hand_size_model import ResolvedNoMaximumHandSize
 from .rules.linked_entry_opponent import current_linked_entry_opponent
 
 
@@ -158,7 +159,11 @@ def _hand_size_rule_applies(host, spec, source, seat: str) -> bool:
 
 
 def _current_hand_size_rules(host: MaximumHandSizeHost, seat: str):
-    rows = []
+    rows = [
+        (effect.timestamp, NoMaximumHandSizeSpec())
+        for effect in host.state.continuous_effects or ()
+        if isinstance(effect, ResolvedNoMaximumHandSize) and effect.controller == seat
+    ]
     for source in host.state.cards.values():
         if source.zone != "battlefield" or source.phased_out:
             continue

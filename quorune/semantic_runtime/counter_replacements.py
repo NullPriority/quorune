@@ -15,6 +15,7 @@ from ..replacement_effects import (
     ReplacementSelection,
     advance_replacement_batch,
 )
+from ..replacement.applicability import COUNTER_RECIPIENT_TYPES_FIELD
 from ..replacement.operations import HalveCounterPlacementAmount
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
@@ -28,6 +29,8 @@ from .context import SemanticNodeError
 _QUANTITY_HANDLER_ID = "replacement.counter.quantity.v1"
 _QUANTITY_V2_HANDLER_ID = "replacement.counter.quantity.v2"
 OPPONENT_COUNTER_HALVING_HANDLER_ID = "replacement.counter.opponent-halving.v1"
+MIXED_CONTROLLED_COUNTER_RECIPIENT_HANDLER_ID = "replacement.counter.mixed-controlled-recipient-plus-one.v1"
+MIXED_CONTROLLED_COUNTER_RECIPIENT_CAPABILITY = "counter.placement.mixed_controlled_recipients_plus_one"
 _RELATIONS = {"any", "source_controller", "opponent"}
 _EFFECT_SCOPES = {"any", "effect_only"}
 _TARGET_KINDS = {"permanent", "player"}
@@ -46,6 +49,8 @@ _TARGET_TYPE_PREDICATES = {
 
 
 class CounterReplacementHost(Protocol):
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+
     semantics: Any
     active_seats: list[str]
 
@@ -732,6 +737,51 @@ class OpponentCounterHalvingHandler:
         return (self.replacement_effect(descriptor, context),)
 
 
+@dataclass(frozen=True, slots=True)
+class MixedControlledCounterRecipientHandler:
+    """One replacement for the source controller's own eligible placements."""
+
+    handler_id: str = MIXED_CONTROLLED_COUNTER_RECIPIENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "replacement.counter.quantity"
+    event: str = "counter.place"
+    rule_references: tuple[str, ...] = ("122.6", "614.1a", "614.5", "614.12", "616.1")
+    capability_dependencies: tuple[str, ...] = (MIXED_CONTROLLED_COUNTER_RECIPIENT_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="Mixed counter recipients")
+        if (
+            descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+            or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
+        ):
+            raise SemanticNodeError("Mixed counter recipients require their exact typed placement event")
+
+    def replacement_effect(
+        self, descriptor: Mapping[str, Any], context: CounterReplacementSourceContext,
+    ) -> ReplacementEffect:
+        self.validate(descriptor)
+        controller = context.source_controller
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{context.source_ref}:{context.component_id or 'mixed'}",
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "placing_player": {"eq": controller},
+                "target_controller": {"eq": controller},
+                COUNTER_RECIPIENT_TYPES_FIELD: {"contains_any": ["creature", "planeswalker", "player"]},
+                "amount": {"gte": 1},
+            },
+            operations=({"op": "add", "field": "amount", "amount": 1},),
+            label=f"{context.source_ref}: add one counter of the placed kind",
+        )
+
+    def lower(
+        self, descriptor: Mapping[str, Any], context: CounterReplacementSourceContext,
+    ) -> tuple[ReplacementEffect, ...]:
+        return (self.replacement_effect(descriptor, context),)
+
+
 class CounterPlacementReplacementRegistry(
     RuntimeComponentRegistry[
         CounterReplacementSourceContext,
@@ -761,6 +811,7 @@ def default_counter_placement_replacement_registry(
             CounterQuantityReplacementHandler(),
             CounterQuantityReplacementV2Handler(),
             OpponentCounterHalvingHandler(),
+            MixedControlledCounterRecipientHandler(),
         )
     )
     registry.require_registered_capabilities(
@@ -782,6 +833,9 @@ def collect_counter_placement_replacement_effects(
         if sources is not None
         else host._semantic_event_sources(zones={"battlefield"})
     )
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .current_ability_components import program_has_current_ability_fragments
+
     registry = default_counter_placement_replacement_registry()
     effects: list[ReplacementEffect] = []
     for source in candidates:
@@ -802,7 +856,9 @@ def collect_counter_placement_replacement_effects(
             event="counter.place",
         )
         for program in programs:
-            if not host.semantic_program_is_current_trusted(program):
+            if (not host.semantic_program_is_current_trusted(program)
+                    or (CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
+                        and not program_has_current_ability_fragments(program, host._effective_card_data(source)))):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
                 effects.append(

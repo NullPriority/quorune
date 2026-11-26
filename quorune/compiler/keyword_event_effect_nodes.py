@@ -7,9 +7,13 @@ from . import regex_working_set as re
 from typing import Any, Mapping, Sequence
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
-from ..object_predicate import ObjectQuerySpec
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.graveyard_card_targets import OwnGraveyardCardTargetSpec
+from ..rules.counter_scaled_annihilator import (
+    COUNTER_SCALED_ANNIHILATOR_MECHANIC, annihilator_sacrifice_effect,
+    counter_scaled_annihilator_dependencies, counter_scaled_annihilator_effect,
+)
+from ..rules.source_references import SourceReferenceSpec
 from .dependency_gate import explicit_capability_gate,explicit_capabilities_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 
@@ -130,20 +134,7 @@ class FixedKeywordEventEffectSpec:
                 },
             )
         if self.keyword == "annihilator":
-            return (
-                {
-                    "op": "choose_cards_apnap",
-                    "actor": "$controller",
-                    "players": ["$context.defending_player"],
-                    "zone": "battlefield",
-                    "predicate": ObjectQuerySpec(
-                        zones=("battlefield",),
-                    ).to_dict(),
-                    "count": self.amount,
-                    "then": "sacrifice",
-                    "prompt": "Choose the required permanent(s) to sacrifice.",
-                },
-            )
+            return (annihilator_sacrifice_effect(self.amount),)
         if self.keyword == "firebending":
             return (
                 {
@@ -222,6 +213,18 @@ def fixed_keyword_event_effect_spec(
         return None
 
 
+def counter_scaled_annihilator_mechanics(material_line: str, source_name: str) -> tuple[str, ...] | None:
+    match = re.fullmatch(
+        r"(?P<source>.+?) has annihilator X, where X is the number of \+1/\+1 counters on it\.",
+        " ".join(material_line.split()), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    if match["source"].casefold() == "this creature" or SourceReferenceSpec(source_name).matches(match["source"]):
+        return (COUNTER_SCALED_ANNIHILATOR_MECHANIC,)
+    return None
+
+
 def fixed_keyword_event_effect_node(
     *,
     node_id: str,
@@ -235,14 +238,16 @@ def fixed_keyword_event_effect_node(
 ) -> OracleNode | None:
     """Lower one exact public keyword trigger through existing event owners."""
 
-    spec = fixed_keyword_event_effect_spec(material_line)
-    if spec is None or mechanics != (spec.keyword,):
+    counter_scaled = mechanics == (COUNTER_SCALED_ANNIHILATOR_MECHANIC,)
+    spec = FixedKeywordEventEffectSpec("annihilator") if counter_scaled else fixed_keyword_event_effect_spec(material_line)
+    if spec is None or not counter_scaled and mechanics != (spec.keyword,):
         return None
-    gate = explicit_capability_gate(
-        spec.capability_id,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-    )
+    if counter_scaled:
+        gate = explicit_capabilities_gate(counter_scaled_annihilator_dependencies(),
+            capability_registry=capability_registry, capability_profile=capability_profile)
+    else:
+        gate = explicit_capability_gate(spec.capability_id,
+            capability_registry=capability_registry, capability_profile=capability_profile)
     if spec.keyword=='provoke':
         gate=explicit_capabilities_gate((spec.capability_id,'combat.block.requirement_this_combat','effect.choice.optional_fixed',
             'permanent.untap.effect','target.revalidate_resolution'),capability_registry=capability_registry,capability_profile=capability_profile)
@@ -274,13 +279,14 @@ def fixed_keyword_event_effect_node(
         event_condition=spec.event_condition,
         lowerable=True,
         exact=not residual_ids,
-        template_id=f"fixed-keyword-{spec.keyword}-event-effect-v1",
-        effects=spec.effects,
+        template_id=("counter-scaled-annihilator-v1" if counter_scaled
+                     else f"fixed-keyword-{spec.keyword}-event-effect-v1"),
+        effects=(counter_scaled_annihilator_effect(),) if counter_scaled else spec.effects,
         target_schema=spec.target_schema,
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         mechanics=(
             spec.keyword,
-            FIXED_KEYWORD_EVENT_EFFECT_MECHANIC,
+            COUNTER_SCALED_ANNIHILATOR_MECHANIC if counter_scaled else FIXED_KEYWORD_EVENT_EFFECT_MECHANIC,
             "cr-603-handling-triggered-abilities",
         ),
         residual_ids=residual_ids,

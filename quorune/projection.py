@@ -9,11 +9,13 @@ from .announced_damage import ANNOUNCED_DAMAGE_CONTEXT
 from .carddb import CardDatabase
 from .characteristic_evaluation import evaluate_card_characteristics
 from .choice_forms import build_action_form
+from .permissions import CapabilityManager, current_turn_controller, decision_context_for_capability
 from .attachments import attachment_target_ref
 from .commander import commander_damage_source
 from .continuous_effect_state import active_resolution_effects, is_fixed_target_color_effect
 from .counter_state import player_counter_snapshot
 from .omen import omen_characteristic_face
+from .rules.action_catalog import visible_decision_payload
 from .rules.face_characteristic_values import current_face_mana_value
 from .model import (
     CardInstance,
@@ -25,6 +27,7 @@ from .model import (
 from .object_query import exact_numeric_characteristic
 from .protocol import PROTOCOL_VERSION, json_patch, view_hash
 from .util import stable_json, truncate
+from .zone_object_state import face_down_exile_viewers
 
 
 def _commander_damage_rows(
@@ -117,11 +120,9 @@ class StateProjector:
     def _view_seats_for(self, principal: str) -> set[str]:
         """Return every seat whose private information this principal may see.
 
-        A pilot always remains the player for their authenticated seat.  If a
-        current capability authorizes that pilot to make decisions for a
-        controlled player, CR 723.4 additionally exposes that controlled
-        player's information; it does not replace access to the controller's
-        own hand or other private information (CR 723.8).
+        A pilot keeps access for their authenticated seat while controlling
+        another player. The live grant also exposes the controlled player's
+        information, including between that player's decisions (CR 723.4, 723.8).
         """
 
         seats: set[str] = set()
@@ -130,26 +131,12 @@ class StateProjector:
             seats.add(own_seat)
             seats.update(
                 player_seat
-                for player_seat, player in self.state.players.items()
-                if player.stats.get("turn_controlled_by") == own_seat
+                for player_seat in self.state.players
+                if current_turn_controller(self.state, player_seat) == own_seat
             )
-        decision = self.state.pending_decision
-        if decision is not None:
-            capability = next(
-                (
-                    value
-                    for value in self.state.capabilities.values()
-                    if value.decision_id == decision.decision_id
-                    and value.principal == principal
-                    and not value.consumed
-                ),
-                None,
-            )
-            if (
-                capability is not None
-                and capability.actor in self.state.players
-            ):
-                seats.add(capability.actor)
+        capability = CapabilityManager(self.state).capability_for(principal)
+        if capability is not None and capability.actor in self.state.players:
+            seats.add(capability.actor)
         return seats
 
     def _event_visible(self, event: Event, principal: str) -> bool:
@@ -173,6 +160,8 @@ class StateProjector:
     def _card_visible(self, card: CardInstance, principal: str) -> bool:
         if principal in {"analyst", "admin"}:
             return True
+        if card.zone == "exile" and card.face_down:
+            return bool(self._view_seats_for(principal) & face_down_exile_viewers(self.state, card))
         if card.annotations.get("hidden_after_owner_left"):
             seats = self._view_seats_for(principal)
             return any(
@@ -493,25 +482,19 @@ class StateProjector:
         decision = self.state.pending_decision
         if decision is None:
             return None
-        capability = next(
-            (
-                cap for cap in self.state.capabilities.values()
-                if cap.decision_id == decision.decision_id
-                and cap.principal == principal
-                and not cap.consumed
-            ),
-            None,
-        )
+        capability = CapabilityManager(self.state).capability_for(principal)
         if capability is None:
             return None
         actor_key = capability.actor or principal
-        context = copy.deepcopy(decision.payload_by_actor.get(actor_key, {}))
+        context = copy.deepcopy(decision_context_for_capability(decision, capability))
         self._present_resolution_choice(decision, context, principal)
         from .rules.mana_pool_payment import mana_pool_choice_context
 
         context = mana_pool_choice_context(self.state, capability.actor, decision.kind, context)
         from .land_entry_coordination import offer_land_entry_payment_recovery
         offer_land_entry_payment_recovery(self.state, decision, capability.actor, context)
+        if principal not in {"analyst", "admin"}:
+            context = visible_decision_payload(self.state, actor_key, context)
         raw_actions = list(
             (context.get("legal") or {}).get("actions")
             or context.get("legal_actions")
@@ -897,6 +880,17 @@ class StateProjector:
         except KeyError:
             return {"cid": oracle_id[:8], "n": "Custom token"}
 
+    @staticmethod
+    def _event_summary(event: Event) -> str:
+        if (
+            event.summary == event.code == "library.top.reveal"
+            and set(event.details) == {"player", "card"}
+        ):
+            player, card = event.details["player"], event.details["card"]
+            if type(player) is str and player == event.actor and type(card) is str and card:
+                return f"{player} revealed {card}."
+        return event.summary
+
     def _events(self, principal: str, after: int) -> list[dict[str, Any]]:
         result = []
         for event in self.state.events:
@@ -908,7 +902,7 @@ class StateProjector:
                 "id": event.event_id,
                 "c": event.code,
                 "a": event.actor,
-                "s": event.summary,
+                "s": self._event_summary(event),
                 **({"d": event.details} if event.importance >= 3 else {}),
             })
         return result[-24:]
@@ -947,7 +941,7 @@ class StateProjector:
                     "id": event.event_id,
                     "code": event.code,
                     "actor": event.actor,
-                    "summary": event.summary,
+                    "summary": self._event_summary(event),
                     "importance": event.importance,
                 }
                 for event in page

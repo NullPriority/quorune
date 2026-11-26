@@ -9,6 +9,12 @@ from ..rules.fixed_stat_multipliers import is_fixed_stat_multiplier
 
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
+    from ..rules.captured_draw_keyword_grant import CAPTURED_DRAW_KEYWORD_GRANT_FIELD
+
+    if CAPTURED_DRAW_KEYWORD_GRANT_FIELD in effect:
+        from .captured_draw_keyword_grant import apply_captured_draw_keyword_grant
+
+        return True, apply_captured_draw_keyword_grant(host, effect, actor=actor, reason=reason)
     version=effect.get('schema_version')
     from ..rules.creature_subtype_set_results import is_creature_subtype_set_result
     from ..resolution_color_model import TARGET_COLOR_VERSIONS

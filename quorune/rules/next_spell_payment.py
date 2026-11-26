@@ -10,6 +10,10 @@ from ..target_source import (
     TURN_SPELL_SOURCE_COLOR_PROTECTION_OPERATION, TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW,
     turn_spell_source_color_grant,
 )
+from ..turn_creature_target_prohibition_model import (
+    TURN_CREATURE_TARGET_PROHIBITION_CAPABILITY, TURN_CREATURE_TARGET_PROHIBITION_MECHANIC,
+    TURN_CREATURE_TARGET_PROHIBITION_WINDOW,
+)
 from ..qualified_hexproof import (
     QUALIFIED_HEXPROOF_CAPABILITY, TURN_COLOR_SPELL_PROTECTION_CAPABILITY, TURN_COLOR_SPELL_PROTECTION_MECHANIC,
     turn_color_spell_protection_colors, uses_turn_color_spell_protection,
@@ -143,20 +147,27 @@ def temporary_player_rule_node_capabilities(**shape):
     from .next_cast_counter_protection import next_cast_protection_node_capabilities
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
     from ..draw_redirect_model import temporary_draw_redirect_node_capabilities
+    from .next_draw_replacement_shapes import next_draw_replacement_node_capabilities
     from .event_spell_copy import next_cast_copy_node_capabilities
     from .temporary_cast_timing import temporary_cast_timing_node_capabilities
     from .land_play_permissions import turn_land_plays_node_capabilities
+    from .all_player_turn_rules import all_player_turn_rule_node_capabilities
+    from .turn_creature_target_prohibition import turn_creature_target_prohibition_node_capabilities
 
     return (next_spell_payment_node_capabilities(**shape) or cast_cascade_node_capabilities(**shape)
             or next_cast_protection_node_capabilities(**shape) or temporary_cast_node_capabilities(**shape)
-            or temporary_draw_redirect_node_capabilities(**shape)
+            or temporary_draw_redirect_node_capabilities(**shape) or next_draw_replacement_node_capabilities(**shape)
             or next_cast_copy_node_capabilities(**shape) or temporary_cast_timing_node_capabilities(**shape)
             or turn_land_plays_node_capabilities(**shape) or turn_color_spell_protection_node_capabilities(**shape)
-            or turn_spell_source_color_protection_node_capabilities(**shape))
+            or turn_spell_source_color_protection_node_capabilities(**shape)
+            or turn_creature_target_prohibition_node_capabilities(**shape)
+            or all_player_turn_rule_node_capabilities(**shape))
 
 
 def temporary_player_rule_covered_mechanics(supplied):
+    from .all_player_turn_rules import ALL_PLAYER_TURN_RULE_CAPABILITIES, ALL_PLAYER_TURN_RULE_MECHANIC
     from ..draw_redirect_model import DRAW_REDIRECT_CAPABILITY, DRAW_REDIRECT_MECHANIC
+    from ..next_draw_replacement_model import NEXT_DRAW_REPLACEMENT_CAPABILITY, NEXT_DRAW_REPLACEMENT_MECHANIC
     from .cast_cascade_grants import CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC
     from .next_cast_counter_protection import NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC
 
@@ -165,14 +176,17 @@ def temporary_player_rule_covered_mechanics(supplied):
     from .land_play_permissions import TURN_LAND_PLAY_ALLOWANCE_CAPABILITY, TURN_LAND_PLAY_ALLOWANCE_MECHANIC
 
     return {mechanic for capability, mechanic in ((NEXT_SPELL_PAYMENT_CAPABILITY, NEXT_SPELL_PAYMENT_MECHANIC),
+        *((capability, ALL_PLAYER_TURN_RULE_MECHANIC) for capability in ALL_PLAYER_TURN_RULE_CAPABILITIES.values()),
         (CAST_CASCADE_CAPABILITY, CAST_CASCADE_MECHANIC),
         (NEXT_CAST_PROTECTION_CAPABILITY, NEXT_CAST_PROTECTION_MECHANIC),
         (NEXT_CAST_COPY_CAPABILITY, NEXT_CAST_COPY_MECHANIC),
         (DRAW_REDIRECT_CAPABILITY, DRAW_REDIRECT_MECHANIC),
+        (NEXT_DRAW_REPLACEMENT_CAPABILITY, NEXT_DRAW_REPLACEMENT_MECHANIC),
         (TEMPORARY_CAST_TIMING_CAPABILITY, TEMPORARY_CAST_TIMING_MECHANIC),
         (TURN_LAND_PLAY_ALLOWANCE_CAPABILITY, TURN_LAND_PLAY_ALLOWANCE_MECHANIC),
         (TURN_COLOR_SPELL_PROTECTION_CAPABILITY, TURN_COLOR_SPELL_PROTECTION_MECHANIC),
-        (TURN_SPELL_SOURCE_COLOR_PROTECTION_CAPABILITY, TURN_SPELL_SOURCE_COLOR_PROTECTION_MECHANIC)) if capability in supplied}
+        (TURN_SPELL_SOURCE_COLOR_PROTECTION_CAPABILITY, TURN_SPELL_SOURCE_COLOR_PROTECTION_MECHANIC),
+        (TURN_CREATURE_TARGET_PROHIBITION_CAPABILITY, TURN_CREATURE_TARGET_PROHIBITION_MECHANIC)) if capability in supplied}
 
 
 def expire_temporary_cast_ability_grants(stats):
@@ -181,13 +195,16 @@ def expire_temporary_cast_ability_grants(stats):
     from .temporary_cast_timing import expire_temporary_cast_timing
 
     from .land_play_permissions import expire_turn_land_play_allowance
+    from ..temporary_graveyard_escape import TEMPORARY_ESCAPE_STATS_FIELD
 
+    stats.pop(TEMPORARY_ESCAPE_STATS_FIELD, None)
     expire_temporary_cast_timing(stats)
     expire_turn_land_play_allowance(stats)
     expire_next_spell_payments(stats)
     expire_cast_cascade_grants(stats)
     expire_next_cast_protection(stats)
     stats.pop(TURN_SPELL_SOURCE_COLOR_PROTECTION_WINDOW, None)
+    stats.pop(TURN_CREATURE_TARGET_PROHIBITION_WINDOW, None)
 
 
 @dataclass(frozen=True, slots=True)

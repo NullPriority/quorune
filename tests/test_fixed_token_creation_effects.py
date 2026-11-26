@@ -2293,6 +2293,7 @@ class FixedTokenCreatorRuntimeTests(InheritedNativeFixture, unittest.TestCase):
                 fixtures / "fixed-token-creation-cards.json",
                 fixtures / "additional-token-definition-cards.json",
                 fixtures / "incubate-cards.json",
+                fixtures / "nested-token-abilities-cards.json",
             ],
             database_path,
         )
@@ -2307,6 +2308,67 @@ class FixedTokenCreatorRuntimeTests(InheritedNativeFixture, unittest.TestCase):
     @staticmethod
     def tokens(session):
         return [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+
+    def test_nested_token_death_grants_paid_shift_to_the_successor(self):
+        game = self.session(7573122)
+        original = self.add(game.engine, 'Generic Nesting Skimmer', ref='nesting-parent')
+        land = self.add(game.engine, 'Forest', zone='hand', ref='nesting-land')
+        removals = [
+            self.add(game.engine, 'Lightning Bolt', seat='B', zone='hand', ref=f'nesting-removal-{index}')
+            for index in range(2)
+        ]
+        self.assert_closed(game, original)
+        self.prepare(game, mana={'U': 1})
+        game.state.players['B'].mana_pool.update({'R': 2})
+        game.state.config.semantic_policy = 'trusted_only'
+        self.checkpoint(game)
+        play = game.act('pilot:A', {'action_id': 'play-land:' + land.ref})
+        self.assertTrue(play.ok, play.summary)
+        self.assertIsNone(self.resolve(game))
+        egg, = (obj for obj in game.state.cards.values()
+               if obj.zone == 'battlefield' and obj.object_kind == 'token')
+        self.assertEqual('A', egg.controller)
+        self.assertEqual(1, game.engine._numeric_stat(egg.object_id, 'power'))
+        self.assertEqual(2, game.engine._numeric_stat(egg.object_id, 'toughness'))
+        self.assertIn('Defender', game.engine._effective_card_data(egg)['keywords'])
+        self.priority(game, 'A')
+        actions = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        self.assertFalse(any(row['id'].startswith('activate:' + egg.ref + ':') for row in actions))
+
+        self.cast(game, 'B', removals[0], [original.ref])
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual('graveyard', game.state.cards[original.object_id].zone)
+        self.cast(game, 'B', removals[1], [egg.ref])
+        self.resolve_top(game)
+        trigger, = game.state.stack
+        self.assertEqual(egg.object_id, trigger.source_object_id)
+        self.assertTrue(all(obj.zone != 'battlefield'
+                            for obj in game.state.cards.values() if obj.object_kind == 'token'))
+        game = self.replay(game, load=True)
+        self.assertEqual(egg.object_id, game.state.stack[-1].source_object_id)
+        self.assertIsNone(self.resolve(game))
+
+        successor, = (obj for obj in game.state.cards.values()
+                   if obj.zone == 'battlefield' and obj.object_kind == 'token')
+        self.assertEqual('A', successor.controller)
+        self.assertNotEqual(egg.logical_object_id, successor.logical_object_id)
+        self.assertEqual(2, game.engine._numeric_stat(successor.object_id, 'power'))
+        self.assertEqual(3, game.engine._numeric_stat(successor.object_id, 'toughness'))
+        self.assertIn('Flying', game.engine._effective_card_data(successor)['keywords'])
+        self.priority(game, 'A')
+        actions = game.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        activation, = (row for row in actions if row['id'].startswith('activate:' + successor.ref + ':ability:granted:'))
+        command = {'action_id': activation['id'], 'pay': 'auto'}
+        before = authoritative_state_hash(game.state)
+        self.assertFalse(game.act('pilot:B', command).ok)
+        self.assertEqual(before, authoritative_state_hash(game.state))
+        accepted = game.act('pilot:A', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, game.state.players['A'].mana_pool.get('U', 0))
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual(2, game.engine._numeric_stat(successor.object_id, 'power'))
+        self.assertEqual(4, game.engine._numeric_stat(successor.object_id, 'toughness'))
+        self.replay(game, load=True)
 
     def test_original_wanted_scoundrels_recipient_chooses_replacement_and_owns_tokens(self):
         session = self.session(711010)
@@ -2623,6 +2685,26 @@ class TokenCopyRecipeModelTests(unittest.TestCase):
         self.assertEqual(["Flying"], result["keywords"])
         additive = apply_copy_exception(source, TokenCopyExceptionSpec(add_card_types=("artifact",)))
         self.assertEqual([definition], additive["ability_fragments"])
+
+    def test_signed_base_copy_outcome_keeps_negative_copiable_power_and_rejects_other_shapes(self):
+        from quorune.token_copy_recipes import (SIGNED_COPY_BASE_STATS_VERSION, TokenCopyExceptionSpec,
+            TokenCopyRecipeSpec, apply_copy_exception)
+
+        version = SIGNED_COPY_BASE_STATS_VERSION
+        exception = TokenCopyExceptionSpec(power=-1, toughness=3, schema_version=version)
+        raw = exception.to_dict()
+        self.assertEqual(exception, TokenCopyExceptionSpec.from_dict(raw))
+        original = {'name': 'Original', 'type_line': 'Creature — Elf', 'power': '2', 'toughness': '5',
+                    'keywords': ['Flying'], 'ability_fragments': []}
+        copied = apply_copy_exception(original, exception)
+        self.assertEqual(('-1', '3', ['Flying']), (copied['power'], copied['toughness'], copied['keywords']))
+        self.assertEqual(('2', '5'), (original['power'], original['toughness']))
+        for malformed in ({**raw, 'schema_version': 1}, {**raw, 'power': False},
+                          {**raw, 'remove_legendary': True}, {**raw, 'toughness': None}):
+            with self.assertRaises(ValueError):
+                TokenCopyExceptionSpec.from_dict(malformed)
+        with self.assertRaises(ValueError):
+            TokenCopyRecipeSpec(origin='target', exception=exception)
 
     def test_copy_recipe_codec_rejects_unknown_fields_booleans_and_open_values(self):
         from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
@@ -2982,6 +3064,180 @@ class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
             restored.save(archive)
 
 
+class PostEntryCopyGrantTests(unittest.TestCase):
+    from test_linked_exile_return import LinkedExileReturnActionTests as _helpers
+
+    session = _helpers.session
+    add = _helpers.add
+    seal = _helpers.seal
+    cast = _helpers.cast
+    finish = _helpers.finish
+    replay = _helpers.replay
+    advance = TokenCopyCopiableBoundaryActionTests.advance
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "post-entry-copy.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/linked-exile-return-cards.json",
+            ROOT / "tests/fixtures/token-copy-recipe-cards.json",
+            ROOT / "tests/fixtures/token-copy-boundary-cards.json",
+            ROOT / "tests/fixtures/targeted-destroy-hasty-token-cleanup-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Post-entry copy grants", [
+            DeckEntry("Generic Blink Commander", 1, "commander"),
+            DeckEntry("Generic Blink Plains", 15),
+        ], ["Generic Blink Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def create_session(self, seed, *names):
+        session = self.session(seed)
+        session.state.players["A"].mana_pool.update({"R": 8, "W": 4})
+        records = tuple(self.db.lookup(name) for name in ("Jaxis, the Troublemaker", *names))
+        register_generated_programs(
+            self.db, session.engine.semantics, records,
+            trust_level="trusted", capability_registry=self.registry, capability_profile="commander_review",
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        for record in records:
+            programs = session.engine.semantics.programs_for_oracle(record.oracle_id)
+            self.assertTrue(programs, record.name)
+            self.assertTrue(all(session.engine.semantic_program_is_current_trusted(p) for p in programs), record.name)
+        return session
+
+    def activate(self, session, source, model, discard, *, excluded=()):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = (row for row in actions if row.get("source") == source.ref and row["id"].startswith("activate:"))
+        self.assertIn(model.ref, action["target_schema"]["legal_refs"])
+        self.assertTrue(set(excluded).isdisjoint(action["target_schema"]["legal_refs"]))
+        command = {"action_id": action["id"], "pay": "auto", "cost_cards": [discard.ref]}
+        for ref in excluded:
+            before = authoritative_state_hash(session.state)
+            result = session.act("pilot:A", {**command, "targets": [ref]})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {**command, "targets": [model.ref], "cost_cards": [model.ref]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        mana_before = session.state.players["A"].mana_pool["R"]
+        result = session.act("pilot:A", {**command, "targets": [model.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual("graveyard", session.state.cards[discard.object_id].zone)
+        self.assertEqual(mana_before - 1, session.state.players["A"].mana_pool["R"])
+
+    @staticmethod
+    def tokens(session):
+        return [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+
+    def test_actual_post_entry_copy_grants_replacement_members_and_draws_without_copying_grants(self):
+        from quorune.ability_fragments import GrantedTriggeredAbilitySpec
+
+        session = self.create_session(26112507, "Anointed Procession", "Generic Copy Creature Spell", "Generic Blink Destroy")
+        source = self.add(session, "Jaxis, the Troublemaker", "JAXIS", zone="battlefield")
+        model = self.add(session, "Generic Copiable Creature", "MODEL", zone="battlefield")
+        opponent = self.add(session, "Generic Copiable Creature", "OPPONENT", owner="B", zone="battlefield")
+        discard = self.add(session, "Generic Blink Plains", "DISCARD")
+        repeat = self.add(session, "Generic Copy Creature Spell", "REPEAT")
+        destroy = self.add(session, "Generic Blink Destroy", "DESTROY")
+        removal = self.add(session, "Generic Blink Destroy", "DESTROY-SOURCE")
+        self.add(session, "Anointed Procession", "DOUBLE", zone="battlefield")
+        model.tapped = True
+        model.counters["+1/+1"] = 1
+        self.seal(session)
+
+        original_source = source.logical_object_id
+        self.activate(session, source, model, discard, excluded=(source.ref, opponent.ref))
+        self.cast(session, removal, [source.ref])
+        self.finish(session)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        originals = self.tokens(session)
+        self.assertEqual(2, len(originals))
+        for card in originals:
+            self.assertEqual(session.engine._copyable_characteristics(model), session.engine._copyable_characteristics(card))
+            self.assertFalse(card.tapped)
+            self.assertEqual({}, card.counters)
+            self.assertIn("haste", session.engine._combat_keywords(card))
+            grant, = (fragment for fragment in session.engine._effective_ability_fragments(card)
+                      if isinstance(fragment, GrantedTriggeredAbilitySpec))
+            self.assertEqual("permanent.graveyard.self", grant.event)
+        cleanup, = [trigger for trigger in session.state.delayed_triggers if trigger.active]
+        self.assertEqual(original_source, cleanup.source_logical_object_id)
+
+        self.cast(session, repeat, [originals[0].ref])
+        self.finish(session)
+        second_generation = [card for card in self.tokens(session) if card not in originals]
+        self.assertEqual(2, len(second_generation))
+        for card in second_generation:
+            self.assertNotIn("haste", session.engine._combat_keywords(card))
+            self.assertFalse(any(isinstance(fragment, GrantedTriggeredAbilitySpec)
+                                for fragment in session.engine._effective_ability_fragments(card)))
+
+        self.cast(session, destroy, [originals[0].ref])
+        hand_before = len(session.state.players["A"].zones["hand"])
+        self.finish(session)
+        self.assertEqual(hand_before + 1, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual("outside", session.state.cards[originals[0].object_id].zone)
+        self.advance(session, "ending", "end_step")
+        self.finish(session)
+        self.assertEqual(hand_before + 2, len(session.state.players["A"].zones["hand"]))
+        self.assertEqual("outside", session.state.cards[originals[1].object_id].zone)
+        self.assertEqual({card.object_id for card in second_generation}, {card.object_id for card in self.tokens(session)})
+        self.replay(session)
+
+    def test_actual_post_entry_copy_rejects_stale_target_after_paid_activation(self):
+        session = self.create_session(26112508, "Generic Immediate Blink")
+        source = self.add(session, "Jaxis, the Troublemaker", "JAXIS", zone="battlefield")
+        model = self.add(session, "Generic Copiable Creature", "MODEL", zone="battlefield")
+        blink = self.add(session, "Generic Immediate Blink", "BLINK")
+        discard = self.add(session, "Generic Blink Plains", "DISCARD")
+        self.seal(session)
+        self.activate(session, source, model, discard)
+        old_identity = model.logical_object_id
+        self.cast(session, blink, [model.ref])
+        self.finish(session)
+        self.assertNotEqual(old_identity, session.state.cards[model.object_id].logical_object_id)
+        self.assertFalse(self.tokens(session))
+        self.assertFalse(session.state.delayed_triggers)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual("graveyard", session.state.cards[discard.object_id].zone)
+        self.replay(session)
+
+    def test_actual_blitz_cast_retains_its_separate_death_draw_and_end_step(self):
+        session = self.create_session(26112509)
+        source = self.add(session, "Jaxis, the Troublemaker", "JAXIS")
+        self.seal(session)
+        action = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                      if row["id"] == "cast:" + source.ref)
+        self.assertIn("blitz", {option["id"] for option in action["cost_options"]})
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto", "cost_option": "blitz"})
+        self.assertTrue(result.ok, result.summary)
+        self.finish(session)
+        vested = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", vested.zone)
+        self.assertIn("haste", session.engine._combat_keywords(vested))
+        hand_before = len(session.state.players["A"].zones["hand"])
+        self.advance(session, "ending", "end_step")
+        self.finish(session)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual(hand_before + 1, len(session.state.players["A"].zones["hand"]))
+        self.replay(session)
+
+
 class TokenCopyCopiableSubjectOwnerTests(unittest.TestCase):
     def test_copiable_subject_and_explicit_snapshot_kill_effective_type_mutation(self):
         import inspect
@@ -3000,14 +3256,15 @@ class TokenCopyCopiableSubjectOwnerTests(unittest.TestCase):
         snapshot = {"characteristics": {"type_line": "Enchantment — Aura"}}
         with patch.object(host, "_resolve_object", side_effect=AssertionError("Explicit snapshot must not read live source")):
             self.assertEqual(({"enchantment"}, {"aura"}), owner._creation_subject(host, "A", **args, copy_snapshot=snapshot)[:2])
-        source = inspect.getsource(owner._creation_subject)
-        expression = "host._copyable_characteristics(copied_source)"
+        source = inspect.getsource(owner._creation_type_line)
+        expression = "host._copyable_characteristics(source)"
         self.assertEqual(1, source.count(expression))
         namespace = dict(vars(owner))
-        exec(compile(source.replace(expression, "host._effective_card_data(copied_source)"),
+        exec(compile(source.replace(expression, "host._effective_card_data(source)"),
                      "<wrong-copy-replacement-characteristic-boundary>", "exec"), namespace)
-        with self.assertRaises(AssertionError):
-            self.assertEqual({"artifact"}, namespace["_creation_subject"](host, "A", **args)[0])
+        with patch.object(owner, "_creation_type_line", namespace["_creation_type_line"]):
+            with self.assertRaises(AssertionError):
+                self.assertEqual({"artifact"}, owner._creation_subject(host, "A", **args)[0])
 
 
 if __name__ == "__main__":

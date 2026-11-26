@@ -7,6 +7,8 @@ import random
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..model import CardInstance
+from ..linked_library_imprint_model import LIBRARY_IMPRINT_DESTINATION
+from ..private_opponent_library_cast_model import PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION
 from ..library_battlefield_model import LIBRARY_SHUFFLE_REMAINDER, RevealedCreatureEntryFollowup
 from .library_partition import (
     LibraryPartitionError,
@@ -89,10 +91,16 @@ class LibrarySelectionArrangement:
                 "exile",
                 LIBRARY_SHUFFLE_REMAINDER,
             }
-            or self.selected_destination not in {'hand','library_top','battlefield'}
+            or self.selected_destination not in {
+                "hand", "library_top", "battlefield", LIBRARY_IMPRINT_DESTINATION, PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION,
+            }
             or type(self.entry_tapped) is not bool
             or self.entry_tapped and self.selected_destination!='battlefield'
-            or (self.selected_destination=='library_top')!=(self.remainder_destination=='exile')
+            or self.remainder_destination == "exile" and self.selected_destination != "library_top"
+            or self.selected_destination == "library_top" and not (
+                self.remainder_destination == "exile"
+                or self.remainder_destination == "library_bottom" and self.remainder_order == "random"
+            )
             or self.remainder_order not in {"chosen", "random"}
         ):
             raise LibrarySelectionError(
@@ -109,6 +117,19 @@ class LibrarySelectionArrangement:
             )
         except LibraryPartitionError as exc:
             raise LibrarySelectionError(str(exc)) from exc
+        if self.selected_destination == LIBRARY_IMPRINT_DESTINATION and (
+                self.remainder_destination != "library_bottom" or self.remainder_order != "chosen"
+                or len(looked) > 4 or len(selected) != int(bool(looked))):
+            raise LibrarySelectionError("A private library imprint must exile one when possible and order the rest")
+        from .private_damage_library_cast import damage_library_cast_arrangement
+
+        if self.selected_destination == PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION and (
+                len(selected) != int(bool(looked))
+                or not (damage_library_cast_arrangement(self) and len(looked) <= 3
+                        or self.remainder_destination == "library_bottom" and self.remainder_order == "random" and len(looked) <= 4)):
+            raise LibrarySelectionError("Private opponent library access exiles one and randomly bottoms the remainder")
+        if self.selected_destination == "library_top" and self.remainder_destination == "library_bottom" and len(selected) > 1:
+            raise LibrarySelectionError("The private top selection keeps at most one card")
         if ((self.remainder_destination == LIBRARY_SHUFFLE_REMAINDER) != (self.entry_followup is not None)
                 or self.entry_followup is not None and (
                     not isinstance(self.entry_followup, RevealedCreatureEntryFollowup)
@@ -135,6 +156,28 @@ class LibrarySelectionArrangement:
         object.__setattr__(self, "looked", looked)
         object.__setattr__(self, "selected_refs", selected)
         object.__setattr__(self, "remainder_refs", remainder)
+
+
+    def validate_entry_attachment(
+        self, target_ref: str | None, *, controller_selected: bool, looked_are_public: bool = False,
+    ) -> None:
+        if target_ref is None:
+            return
+        public_stopping_match = (
+            looked_are_public and bool(self.looked)
+            and self.selected_refs == (self.looked[-1].ref,)
+            and self.remainder_destination == "library_bottom" and self.remainder_order == "random"
+        )
+        if (
+            type(target_ref) is not str
+            or not target_ref
+            or not controller_selected
+            or self.selected_destination != "battlefield"
+            or not (len(self.looked) == 1 or public_stopping_match)
+            or len(self.selected_refs) != 1
+            or self.entry_followup is not None
+        ):
+            raise LibrarySelectionError("An Aura attachment requires one controller-selected library entrant")
 
 
 class LibrarySelectionCommitHost(Protocol):
@@ -204,6 +247,9 @@ def commit_library_selection(
     replacement_selections: Sequence[
         str | None | Mapping[str, Any]
     ] = (),
+    entry_aura_target_ref: str | None = None,
+    require_graveyard_order: bool = False,
+    graveyard_orders=None,
 ) -> tuple[str, ...]:
     """Commit one identity-pinned selection and remainder as one process."""
 
@@ -220,12 +266,50 @@ def commit_library_selection(
         raise LibrarySelectionError(
             "Library selection commit metadata is malformed"
         )
+    from .private_damage_library_cast import damage_library_cast_arrangement
+
+    damage_cast = damage_library_cast_arrangement(arrangement)
+    hand_partition = actor == player and arrangement.selected_destination == "hand" and arrangement.remainder_destination == "graveyard"
+    if (type(require_graveyard_order) is not bool or require_graveyard_order and not (hand_partition or damage_cast)
+            or graveyard_orders is not None and not require_graveyard_order
+            or damage_cast and not require_graveyard_order):
+        raise LibrarySelectionError("Library selection arrival orders require its own hand and graveyard")
     cards = _validated_objects(
         host,
         actor=actor,
         player=player,
         arrangement=arrangement,
     )
+    if damage_cast:
+        from .private_damage_library_cast import commit_private_damage_library_cast
+
+        return commit_private_damage_library_cast(
+            host, actor=actor, player=player, arrangement=arrangement, cards=cards, reason=reason,
+            source_stack_ref=source_stack_ref, looked_are_public=looked_are_public,
+            selected_are_public=selected_are_public, replacement_selections=replacement_selections,
+            graveyard_orders=graveyard_orders,
+        )
+    if arrangement.selected_destination == PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION:
+        from .private_opponent_library_cast import commit_private_opponent_library_cast
+
+        return commit_private_opponent_library_cast(
+            host, actor=actor, player=player, arrangement=arrangement, cards=cards, reason=reason,
+            source_stack_ref=source_stack_ref, looked_are_public=looked_are_public,
+            selected_are_public=selected_are_public, replacement_selections=replacement_selections,
+        )
+    if arrangement.selected_destination == LIBRARY_IMPRINT_DESTINATION:
+        from .library_imprint_selection import commit_library_imprint
+
+        return commit_library_imprint(
+            host, actor=actor, player=player, arrangement=arrangement, cards=cards, reason=reason,
+            source_stack_ref=source_stack_ref, looked_are_public=looked_are_public,
+            selected_are_public=selected_are_public, replacement_selections=replacement_selections,
+        )
+    if arrangement.selected_destination == "library_top" and arrangement.remainder_destination == "library_bottom":
+        return _commit_private_top_bottom_selection(
+            host, actor=actor, player=player, arrangement=arrangement, cards=cards,
+            reason=reason, source_stack_ref=source_stack_ref,
+        )
     if arrangement.selected_destination=='library_top':
         return _commit_top_exile_selection(host,actor=actor,player=player,arrangement=arrangement,cards=cards,
             reason=reason,replacement_selections=replacement_selections)
@@ -234,7 +318,7 @@ def commit_library_selection(
         return commit_library_battlefield_selection(host,actor=actor,player=player,arrangement=arrangement,
             cards=cards,reason=reason,source_stack_ref=source_stack_ref,
             looked_are_public=looked_are_public,selected_are_public=selected_are_public,
-            replacement_selections=replacement_selections)
+            replacement_selections=replacement_selections, entry_aura_target_ref=entry_aura_target_ref)
     changes = [
         (cards[ref].object_id, "hand")
         for ref in arrangement.selected_refs
@@ -250,6 +334,8 @@ def commit_library_selection(
             reason=reason,
             log=False,
             replacement_selections=replacement_selections,
+            **({"require_graveyard_order": True, "graveyard_orders": graveyard_orders}
+               if require_graveyard_order else {}),
         )
 
     if arrangement.remainder_destination == "library_bottom":
@@ -257,10 +343,7 @@ def commit_library_selection(
             cards[ref].object_id for ref in arrangement.remainder_refs
         ]
         if arrangement.remainder_order == "random":
-            random.Random(
-                f"{host.state.config.seed}|{player}|fixed-library-selection|"
-                f"{host.state.event_sequence}|{source_stack_ref}"
-            ).shuffle(bottom_ids)
+            _shuffle_bottom_selection(host, player, source_stack_ref, bottom_ids)
         library = host.state.players[player].zones["library"]
         try:
             commit_ordered_library_partition(
@@ -302,6 +385,37 @@ def commit_library_selection(
         importance=1,
         changed_objects=changed,
         changed_players=[player],
+    )
+    return tuple(value.ref for value in arrangement.looked)
+
+
+def _shuffle_bottom_selection(host, player, source_stack_ref, bottom_ids):
+    random.Random(
+        f"{host.state.config.seed}|{player}|fixed-library-selection|"
+        f"{host.state.event_sequence}|{source_stack_ref}"
+    ).shuffle(bottom_ids)
+
+
+def _commit_private_top_bottom_selection(host, *, actor, player, arrangement, cards, reason, source_stack_ref):
+    top = [cards[ref].object_id for ref in arrangement.selected_refs]
+    bottom = [cards[ref].object_id for ref in arrangement.remainder_refs]
+    _shuffle_bottom_selection(host, player, source_stack_ref, bottom)
+    try:
+        commit_ordered_library_partition(
+            host.state.players[player].zones["library"], top_top_first=top, bottom_bottom_first=bottom,
+        )
+    except LibraryPartitionError as exc:
+        raise LibrarySelectionError(str(exc)) from exc
+    host._log(
+        actor, "library.selection",
+        f"{player} kept {len(top)} looked-at card(s) on top and put the rest on the bottom in a random order.",
+        {
+            "player": player, "looked_count": len(arrangement.looked), "selected_count": len(top),
+            "remainder_count": len(bottom), "selected_destination": "library_top",
+            "remainder_destination": "library_bottom", "reason": reason,
+        },
+        visibility=[player, "analyst"], importance=1,
+        changed_objects=[value.object_id for value in arrangement.looked], changed_players=[player],
     )
     return tuple(value.ref for value in arrangement.looked)
 

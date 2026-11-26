@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
+import json
 import tempfile
 import unittest
 from unittest import mock
@@ -294,3 +295,200 @@ class CountedActivationActionTests(unittest.TestCase):
             self.assertIn(card.object_id, session.state.players[card.owner].zones['hand'])
         self.resolve(session); self.assertEqual('hand', session.state.cards[target.object_id].zone)
         self.replay(session)
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+class ForageNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "forage-costs.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/counted-activation-costs.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Flourishing Squirrels", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _forage_action(self, session, source):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action, = [row for row in actions if row["id"].startswith(f"activate:{source.ref}:")]
+        return action
+
+    def _rejected(self, session, principal, command):
+        before = authoritative_state_hash(session.state)
+        failed = session.act(f"pilot:{principal}", command)
+        self.assertFalse(failed.ok, failed.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def _token_squirrels(self, session, seat):
+        return [card for card in session.state.cards.values()
+                if card.zone == "battlefield" and card.controller == seat and card.is_token
+                and "squirrel" in session.engine._effective_type_parts(card)[1]]
+
+    def test_camellia_food_payment_uses_current_control_and_counters_the_new_squirrel(self):
+        session = self.session(106000270)
+        engine = session.engine
+        source = self.add(engine, "Camellia, the Seedmiser", ref="FORAGE-CAMELLIA")
+        meal = self.add(engine, "Forage Food Witness", seat="B", ref="FORAGE-BORROWED")
+        opponent_meal = self.add(engine, "Forage Food Witness", seat="C", ref="FORAGE-OPPONENT")
+        wrong_type = self.add(engine, "Forage Nonfood Witness", ref="FORAGE-NONFOOD")
+        own = self.add(engine, "Forage Squirrel Witness", ref="FORAGE-SQUIRREL")
+        foreign = self.add(engine, "Forage Squirrel Witness", seat="B", ref="FORAGE-FOREIGN-SQUIRREL")
+        graveyard = [self.add(engine, "Forage Squirrel Witness", zone="graveyard", ref=f"FORAGE-GRAVE-{index}")
+                     for index in range(3)]
+        foreign_graveyard = self.add(engine, "Forage Squirrel Witness", seat="B", zone="graveyard", ref="FORAGE-FOREIGN-GRAVE")
+        forest = self.add(engine, "Forest", ref="FORAGE-FOREST")
+        engine.change_control(meal.object_id, "A", reason="Seed a borrowed Food")
+        meal.acquired_control_turn_count = -1
+        for card in (source, meal):
+            self.assert_closed(session, card)
+        self.assertIn("menace", engine._combat_keywords(source))
+        self.assertIn("menace", engine._combat_keywords(own))
+        self.assertNotIn("menace", engine._combat_keywords(foreign))
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        action = self._forage_action(session, source)
+        field = action["choice_schema"]["cost_cards"]
+        self.assertEqual([1, 3], field["allowed_counts"])
+        self.assertEqual({meal.ref, *(card.ref for card in graveyard)}, set(field["legal_refs"]))
+        offer = {"action_id": action["id"], "pay": "auto"}
+        for actor, refs in (
+            ("B", [meal.ref]), ("A", [wrong_type.ref]), ("A", [opponent_meal.ref]),
+            ("A", [graveyard[0].ref]), ("A", [meal.ref, graveyard[0].ref, graveyard[1].ref]),
+            ("A", [graveyard[0].ref, graveyard[1].ref, foreign_graveyard.ref]),
+        ):
+            self._rejected(session, actor, {**offer, "cost_cards": refs})
+        accepted = session.act("pilot:A", {**offer, "cost_cards": [meal.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(session.state.cards[forest.object_id].tapped)
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.assertIn(meal.object_id, session.state.players["B"].zones["graveyard"])
+        self.assertEqual(("activated_ability", "triggered_ability"),
+                         tuple(item.kind for item in session.state.stack))
+        self.assertEqual((), tuple(self._token_squirrels(session, "A")))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        token, = self._token_squirrels(session, "A")
+        self.assertEqual(1, token.counters.get("+1/+1"))
+        self.assertEqual(1, session.state.cards[own.object_id].counters.get("+1/+1"))
+        self.assertFalse(session.state.cards[source.object_id].counters)
+        self.assertFalse(session.state.cards[foreign.object_id].counters)
+        self.replay(session, load=True)
+
+    def test_camellia_forage_exiles_three_owned_cards_and_keeps_food_trigger_idle(self):
+        session = self.session(106000271)
+        engine = session.engine
+        source = self.add(engine, "Camellia, the Seedmiser")
+        own = self.add(engine, "Forage Squirrel Witness", ref="FORAGE-EXILE-SQUIRREL")
+        graveyard = [self.add(engine, "Forage Squirrel Witness", zone="graveyard", ref=f"FORAGE-EXILE-{index}")
+                     for index in range(3)]
+        foreign = self.add(engine, "Forage Squirrel Witness", seat="C", zone="graveyard", ref="FORAGE-EXILE-FOREIGN")
+        self.add(engine, "Forage Food Witness", seat="D", ref="FORAGE-EXILE-OTHER-FOOD")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2})
+        self.checkpoint(session)
+        action = self._forage_action(session, source)
+        field = action["choice_schema"]["cost_cards"]
+        self.assertEqual([3], field["allowed_counts"])
+        self.assertEqual({card.ref for card in graveyard}, set(field["legal_refs"]))
+        offer = {"action_id": action["id"], "pay": "auto"}
+        for refs in ([graveyard[0].ref, graveyard[1].ref],
+                     [graveyard[0].ref, graveyard[0].ref, graveyard[2].ref],
+                     [graveyard[0].ref, graveyard[1].ref, foreign.ref]):
+            self._rejected(session, "A", {**offer, "cost_cards": refs})
+        accepted = session.act("pilot:A", {**offer, "cost_cards": [card.ref for card in graveyard]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(("activated_ability",), tuple(item.kind for item in session.state.stack))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({card.object_id for card in graveyard}, set(session.state.players["A"].zones["exile"]))
+        self.assertEqual("graveyard", session.state.cards[foreign.object_id].zone)
+        self.assertEqual(1, session.state.cards[own.object_id].counters.get("+1/+1"))
+        self.assertFalse(self._token_squirrels(session, "A"))
+        self.replay(session, load=True)
+
+    def test_camellia_groups_foods_in_one_sacrifice_batch_and_excludes_nonfood_or_other_player(self):
+        for actor, foods in (("A", 2), ("A", 1), ("A", 0), ("B", 2)):
+            with self.subTest(actor=actor, foods=foods):
+                session = self.session(106000272 + foods)
+                engine = session.engine
+                source = self.add(engine, "Camellia, the Seedmiser")
+                warrens = self.add(engine, "Goblin Warrens", seat=actor, ref="FORAGE-BATCH-WARRENS")
+                selected = [self.add(engine, "Forage Food Witness" if rank < foods else "Forage Nonfood Witness",
+                                     seat=actor, ref=f"FORAGE-BATCH-{rank}") for rank in range(2)]
+                self.assert_closed(session, source)
+                self.assert_closed(session, warrens)
+                mana = {"C": 2, "R": 1}
+                self.prepare(session, mana=mana if actor == "A" else {})
+                if actor != "A":
+                    session.state.players[actor].mana_pool.update(mana)
+                self.checkpoint(session)
+                self.priority(session, actor)
+                actions = session.packet(f"pilot:{actor}", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action, = [row for row in actions if row["id"].startswith(f"activate:{warrens.ref}:")]
+                executed = session.act(f"pilot:{actor}", {
+                    "action_id": action["id"], "pay": "auto",
+                    "cost_cards": [card.ref for card in selected],
+                })
+                self.assertTrue(executed.ok, executed.summary)
+                expected = int(actor == "A" and foods > 0)
+                self.assertEqual(expected, sum(item.kind == "triggered_ability" for item in session.state.stack))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(expected, len(self._token_squirrels(session, "A")))
+                self.replay(session, load=True)
+
+    def test_camellia_requires_typed_forage_and_actual_food_sacrifice_group(self):
+        from copy import deepcopy
+        from dataclasses import replace
+        from quorune.abilities import CostChoice
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.event_subscriptions import (
+            CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY, controller_food_sacrifice_group_dependencies,
+        )
+        from quorune.rules.forage import FORAGE_ACTIVATION_CAPABILITY, forage_activation_runtime_dependencies
+
+        record = self.db.lookup("Camellia, the Seedmiser")
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        for text in (
+            record.oracle_text.replace("sacrifice one or more Foods", "sacrifice one or more objects of an unknown type"),
+            record.oracle_text.replace("{2}, Forage", "{2}, Forage twice"),
+        ):
+            with self.subTest(text=text):
+                candidate = compile_oracle_card(replace(record, oracle_text=text), capability_registry=self.registry,
+                                                capability_profile="commander_review")
+                self.assertNotEqual("exact", candidate.status)
+        for updates in ({"count": 2}, {"zone": "graveyard"}, {"card_type": "artifact"}):
+            with self.subTest(updates=updates), self.assertRaises(ValueError):
+                CostChoice(kind="forage", **updates)
+
+        session = self.session(106000279)
+        source = self.add(session.engine, "Camellia, the Seedmiser")
+        self.assert_closed(session, source)
+        programs = session.engine.semantics.programs_for_oracle(source.oracle_id)
+        activated, = (p for p in programs if p.event == "activate")
+        triggered, = (p for p in programs if p.event == "permanent.sacrificed")
+        self.assertIn(FORAGE_ACTIVATION_CAPABILITY, forage_activation_runtime_dependencies(activated))
+        self.assertIn(CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY, controller_food_sacrifice_group_dependencies(triggered))
+        invalid = replace(triggered, coverage=tuple(coverage for coverage in triggered.coverage if coverage != "one_or_more_event_batch"))
+        with self.assertRaises(ValueError):
+            controller_food_sacrifice_group_dependencies(invalid)
+        invalid = replace(activated, cost_schema={**activated.cost_schema, "choices": []})
+        with self.assertRaises(ValueError):
+            forage_activation_runtime_dependencies(invalid)
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for dependency in (FORAGE_ACTIVATION_CAPABILITY, CONTROLLER_FOOD_SACRIFICE_GROUP_CAPABILITY,
+                           "activation.selected_zone_change.fixed", "trigger.event.normalized_zone_change"):
+            with self.subTest(dependency=dependency):
+                blocked = deepcopy(raw)
+                authority = next(row for row in blocked["capabilities"] if row["id"] == dependency)
+                authority.update(status="blocked", blockers=["Required Forage or Food group authority withdrawn"])
+                candidate = compile_oracle_card(record, capability_registry=CapabilityRegistry(blocked),
+                                                capability_profile="commander_review")
+                self.assertNotEqual("exact", candidate.status)

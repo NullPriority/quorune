@@ -1,9 +1,16 @@
 """Fixed destruction selections expressed by existing immutable query fields."""
 from . import regex_working_set as re
 from dataclasses import replace
-from ..object_predicate import ObjectQuerySpec
+from ..object_predicate import CounterAbsenceSpec, ObjectQuerySpec, PermanentStatePredicateSpec
 from ..target_numeric import TargetNumericCharacteristic,TargetNumericCharacteristicSpec,TargetNumericComparison
 from .noncreature_quantity_subtypes import noncreature_quantity_subtype_fields
+
+
+def creature_counter_absence_query(counter_name: str | None) -> ObjectQuerySpec:
+    return ObjectQuerySpec(
+        zones=("battlefield",), types_all=("creature",),
+        state_predicate=PermanentStatePredicateSpec(counter_absence=CounterAbsenceSpec(counter_name)),
+    )
 
 
 def qualified_destruction_query(phrase,*,parse_base):

@@ -52,6 +52,32 @@ def validate_explicit_land_entry_payment(host: LandEntryContinuationHost, seat: 
             raise LandEntryLifeUnavailable(str(exc)) from exc
 
 
+def validate_batched_entry_life_requests(changes, prepared_replacements, entry_pay_life):
+    if entry_pay_life and (prepared_replacements or any(
+            (object_id, "battlefield") not in changes or value is not True
+            for object_id, value in entry_pay_life.items())):
+        raise GameRuleError("Life payments must be explicit for selected entries in the current batch")
+
+
+def preflight_batched_entry_life_payments(host, prepared, paid_objects):
+    if not paid_objects:
+        return
+    totals = {}
+    for object_id in paid_objects:
+        plan = prepared.get(object_id)
+        if plan is None or plan.destination != "battlefield":
+            continue
+        if not plan.entry_life_payment or plan.destination_controller is None:
+            raise GameRuleError("A selected battlefield entry cannot authorize its life payment")
+        controller = plan.destination_controller
+        totals[controller] = totals.get(controller, 0) + plan.entry_life_payment
+    for controller, amount in totals.items():
+        try:
+            prepare_life_payment(host, controller, amount)
+        except LifeStateError as exc:
+            raise GameRuleError(str(exc)) from exc
+
+
 def can_skip_unavailable_land_entry_payment(state, restored, seat):
     if restored.resume_kind != "land_entry" or restored.priority_seat != seat or seat not in state.players:
         return False

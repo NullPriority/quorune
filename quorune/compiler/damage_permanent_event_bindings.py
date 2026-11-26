@@ -6,7 +6,7 @@ from ..rules.source_references import SourceReferenceSpec,source_self_permanent_
 
 def _damage_dealer_result_binding_spec(text):
     match = re.fullmatch(
-        r"Whenever a (?P<kind>creature|permanent) deals (?P<combat>combat )?damage to you, (?P<body>.+)",
+        r"Whenever a (?P<kind>creature|permanent|Human) deals (?P<combat>combat )?damage to you, (?P<body>.+)",
         text, re.I,
     )
     if match is None:
@@ -14,6 +14,7 @@ def _damage_dealer_result_binding_spec(text):
     role = (match["kind"].casefold(), bool(match["combat"]), match["body"].replace("’", "'").casefold())
     variant = {
         ("creature", False, "destroy it."): "damage_creature_destroy",
+        ("human", False, "destroy it."): "damage_human_destroy",
         ("permanent", False, "return it to its owner's hand."): "damage_permanent_return",
         ("creature", True, "destroy that creature. create a 1/1 white and black spirit creature token with flying."):
             "combat_damage_creature_destroy_token",
@@ -44,12 +45,21 @@ def _opponent_damage_counter_binding_spec(text):
     )
 
 
+_RECIPIENT_DAMAGE_COUNTER_KINDS = {
+    "put that many +1/+1 counters on this creature.": "+1/+1",
+    "put that many charge counters on this artifact.": "charge",
+}
+
+
+def recipient_damage_source_counter_kind(body: str) -> str | None:
+    return _RECIPIENT_DAMAGE_COUNTER_KINDS.get(body.casefold())
+
+
 def _recipient_damage_counter_binding_spec(text):
     match = re.fullmatch(
-        r"Whenever you(?:['’]re| are) dealt damage, "
-        r"(?P<body>you may put that many \+1/\+1 counters on this creature\.)", text, re.I,
+        r"Whenever you(?:['’]re| are) dealt damage, (?P<body>you may (?P<effect>.+))", text, re.I,
     )
-    if match is None:
+    if match is None or recipient_damage_source_counter_kind(match["effect"]) is None:
         return None
     from .fixed_public_event_trigger_bindings import _spec
     from ..rules.optional_counter_capability_shapes import (
@@ -63,7 +73,27 @@ def _recipient_damage_counter_binding_spec(text):
     )
 
 
+def _opponent_damage_source_sacrifice_binding_spec(text):
+    match = re.fullmatch(
+        r"Whenever a source an opponent controls deals damage to you, "
+        r"(?P<body>that player sacrifices a permanent of their choice\.)", text, re.I,
+    )
+    if match is None:
+        return None
+    from .fixed_public_event_trigger_bindings import _spec
+    from ..rules.optional_counter_capability_shapes import opponent_damage_to_controller_condition
+    from ..rules.opponent_damage_source_sacrifice import OPPONENT_DAMAGE_SOURCE_SACRIFICE_VARIANT
+
+    return _spec(
+        "damage.dealt", OPPONENT_DAMAGE_SOURCE_SACRIFICE_VARIANT, match["body"],
+        "fixed-opponent-damage-source-sacrifice-v1", "trigger-event-normalized-damage",
+        condition=opponent_damage_to_controller_condition(),
+    )
+
+
 def damage_permanent_binding_spec(text,*,card_name):
+    if sacrifice := _opponent_damage_source_sacrifice_binding_spec(text):
+        return sacrifice
     if counters := _opponent_damage_counter_binding_spec(text) or _recipient_damage_counter_binding_spec(text):
         return counters
     if dealer := _damage_dealer_result_binding_spec(text):

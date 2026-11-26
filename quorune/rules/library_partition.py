@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Iterable, Sequence
 
 from ..errors import GameRuleError
-from ..library_order_model import LibraryArrivalOrder
+from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder, RandomGraveyardBottomOrder
 
 if TYPE_CHECKING:
     from ..model import CardInstance
@@ -139,9 +139,7 @@ def validate_ordered_library_destination(host, cards_by_id, changes, order: Libr
     if len(owners) != 1:
         raise GameRuleError("Ordered library movements require a single library")
     owner, = owners
-    from ..library_order_model import DepartedLibraryArrivalOrder
-
-    if isinstance(order, DepartedLibraryArrivalOrder) and order.chooser != owner:
+    if isinstance(order, (DepartedLibraryArrivalOrder, RandomGraveyardBottomOrder)) and order.chooser != owner:
         raise GameRuleError("The library owner must order a departed card group")
     return owner
 
@@ -149,7 +147,7 @@ def validate_ordered_library_destination(host, cards_by_id, changes, order: Libr
 def commit_ordered_library_arrivals(
     library: list[str], order: LibraryArrivalOrder, committed: Iterable[CardInstance],
 ) -> None:
-    """Place arriving cards and grant knowledge of their private permutation."""
+    """Place actual arrivals and apply the ordering operation's positional knowledge."""
     arrivals = {card.object_id: card for card in committed if card.zone == "library"}
     ordered = tuple(member for member in order.members if member in arrivals)
     if not ordered:
@@ -166,8 +164,12 @@ def commit_ordered_library_arrivals(
             bottom_bottom_first=ordered if order.position == "bottom" else (),
         )
     if len(ordered) > 1:
+        random_bottom = isinstance(order, RandomGraveyardBottomOrder)
         for member in ordered:
-            arrivals[member].known_to = [order.chooser]
+            card = arrivals[member]
+            card.known_to = [] if random_bottom else [order.chooser]
+            if random_bottom:
+                card.revealed_to = []
 
 
 __all__ = [

@@ -20,6 +20,10 @@ ENTRY_ATTACHMENT_CAPABILITY = "attachment.action.entry_equipment"
 ENTRY_ATTACHMENT_VERSION = "entry_attachment_version"
 ENTRY_ATTACHMENT_EVENTS = frozenset({"permanent.enter", "creature.enter"})
 FIXED_RESTRICTED_EQUIP_CAPABILITY = "attachment.equip.fixed_restricted"
+PLANESWALKER_EQUIP_CAPABILITY = "attachment.equip.planeswalker"
+EQUIP_SEMANTIC_KEY = "builtin:equip"
+PLANESWALKER_EQUIP_SEMANTIC_KEY = "builtin:equip-planeswalker"
+PLANESWALKER_EQUIP_RESULT = "planeswalker_equip_version"
 FIXED_NONMANA_EQUIP_CAPABILITY = "attachment.equip.fixed_nonmana"
 LIVING_WEAPON_CAPABILITY = "trigger.keyword.living_weapon"
 FOR_MIRRODIN_CAPABILITY = "trigger.keyword.for_mirrodin"
@@ -30,6 +34,71 @@ CREATED_TOKEN_ATTACHMENT_DEPENDENCIES = (
     "token.creation.fixed_definition",
     FIXED_SOURCE_ATTACHMENT_CAPABILITY,
 )
+
+
+CREATE_AND_OFFER_ENTRY_AURA = "create_token_then_offer_entry_aura_attachment"
+OFFER_ENTRY_AURA_ATTACHMENT = "offer_entry_aura_attachment_to_created_token"
+CHOOSE_ENTRY_AURA_RECIPIENT = "choose_entry_aura_created_token"
+CREATED_ENTRY_AURA_ATTACHMENT_DEPENDENCIES = (
+    *CREATED_TOKEN_ATTACHMENT_DEPENDENCIES,
+    "trigger.event.normalized_zone_change",
+    "effect.choice.optional_fixed",
+)
+
+
+def controlled_enchantment_entry(event, zone, condition) -> bool:
+    from ..replacement.immutable import thaw_value
+
+    return (event, zone) == ("permanent.enter", "battlefield") and thaw_value(condition) == {
+        "all": [
+            {"field": "controller", "op": "eq", "value": "$source.controller"},
+            {"field": "types", "op": "contains_any", "value": ["enchantment"]},
+        ],
+    }
+
+
+def validate_created_entry_aura_attachment(effect: Mapping[str, Any], *, resolved: bool = False) -> tuple[str, ...]:
+    """Validate one creation with the original public entrant as the Aura."""
+    from ..created_token_counter_model import validate_single_created_token
+
+    if (
+        set(effect) != {"op", "schema_version", "controller", "aura", "token", "token_mechanics"}
+        or effect["op"] != CREATE_AND_OFFER_ENTRY_AURA
+        or type(effect["schema_version"]) is not int or effect["schema_version"] != 1
+    ):
+        raise ValueError("Created-token Aura attachment has a closed schema")
+    if resolved:
+        actor, aura = effect["controller"], effect["aura"]
+        if type(actor) is not str or not actor or (aura is not None and (type(aura) is not str or not aura or aura.startswith("$"))):
+            raise ValueError("Created-token Aura attachment has unresolved actor or entrant")
+    elif effect["controller"] != "$controller" or effect["aura"] != EVENT_ENTRY_OBJECT:
+        raise ValueError("Created-token Aura attachment requires the original entrant")
+    from ..characteristic_evaluation import type_parts
+
+    characteristics = effect["token"].get("characteristics") if isinstance(effect["token"], Mapping) else None
+    if (
+        not isinstance(characteristics, Mapping)
+        or "creature" not in type_parts(str(characteristics.get("type_line") or ""))[0]
+        or not {"power", "toughness"} <= set(characteristics)
+    ):
+        raise ValueError("Created-token Aura attachment requires a fixed creature definition")
+    return tuple(dict.fromkeys((
+        *CREATED_ENTRY_AURA_ATTACHMENT_DEPENDENCIES, *validate_single_created_token(effect),
+    )))
+
+
+def created_entry_aura_attachment_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(effect.get("op") == CREATE_AND_OFFER_ENTRY_AURA for effect in nested_effects(program.effects)):
+        return ()
+    if (
+        not controlled_enchantment_entry(program.event, program.active_zone, program.event_condition)
+        or len(program.effects) != 1 or program.target_schema is not None
+        or "cr-701-3-attach" not in program.coverage
+    ):
+        raise ValueError("Created-token Aura attachment requires the untargeted controlled-enchantment entry")
+    return validate_created_entry_aura_attachment(program.effects[0])
 
 
 def validate_created_token_attachment(effect: Mapping[str, Any], *, resolved: bool = False) -> tuple[str, ...]:
@@ -63,10 +132,12 @@ def created_token_attachment_payload_dependencies(value: Any) -> tuple[str, ...]
     if not isinstance(value, Mapping):
         return ()
     operation = value.get("op")
-    if operation == ATTACH_CREATED_TOKEN:
+    if operation in {ATTACH_CREATED_TOKEN, OFFER_ENTRY_AURA_ATTACHMENT, CHOOSE_ENTRY_AURA_RECIPIENT}:
         raise ValueError("Attachment recipients must come from committed token results")
     if operation == CREATE_AND_ATTACH:
         return validate_created_token_attachment(value)
+    if operation == CREATE_AND_OFFER_ENTRY_AURA:
+        return validate_created_entry_aura_attachment(value)
     return ()
 
 def entry_equipment_attachment_effect():
@@ -124,6 +195,14 @@ def validate_targeted_equipment_attachment(
     return None
 
 
+def resolve_targeted_equipment_attachment(host, effect, *, actor):
+    from .kicked_artifact_entry import KICKED_ARTIFACT_ATTACH, checked_kicked_artifact_attachment
+
+    if KICKED_ARTIFACT_ATTACH in effect:
+        return checked_kicked_artifact_attachment(host, effect, actor=actor)
+    return validate_targeted_equipment_attachment(effect, resolved=True)
+
+
 def validate_entry_equipment_attachment(effect: Mapping[str, Any], *, resolved: bool = False) -> tuple[str, ...]:
     expected = entry_equipment_attachment_effect()
     fields = set(effect) - ({"_runtime_source"} if resolved else set())
@@ -166,7 +245,7 @@ def entry_equipment_attachment_runtime_dependencies(program):
     return (*validate_entry_equipment_attachment(children[0]), "effect.choice.optional_fixed")
 
 
-def equipment_attachment_is_legal(host, equipment, creature) -> bool:
+def equipment_attachment_is_legal(host, equipment, creature, *, recipient_type="creature") -> bool:
     from .reconfigure import source_has_reconfigure
     from ..protection import ProtectionVerdict
     from ..target_protection_engine_adapter import protection_verdict_for_ref
@@ -174,7 +253,7 @@ def equipment_attachment_is_legal(host, equipment, creature) -> bool:
     types, subtypes, _ = host._type_parts(str(host._effective_card_data(equipment).get("type_line") or ""))
     recipient = host._effective_card_data(creature)
     recipient_types, _, _ = host._type_parts(str(recipient.get("type_line") or ""))
-    return ("creature" in recipient_types and "artifact" in types and "equipment" in subtypes
+    return (recipient_type in recipient_types and "artifact" in types and "equipment" in subtypes
             and equipment.object_id != creature.object_id
             and ("creature" not in types or source_has_reconfigure(host, equipment))
             and protection_verdict_for_ref(host, recipient, equipment.ref) is ProtectionVerdict.ALLOWED)
@@ -205,7 +284,7 @@ def unavailable_optional_equipment_attachment(host, raw_effect, effect) -> bool:
 _FIXED_MANA = r"(?:\{(?:\d+|[WUBRGC](?:/[WUBRG]|/P)?|[WUBRG]/[WUBRG]/P|2/[WUBRG])\})+"
 _EQUIP_SUBTYPE = r"[A-Z][A-Za-z'-]*"
 _EQUIP = re.compile(
-    rf"^Equip(?: (?P<restriction>creature token|commander|legendary creature|"
+    rf"^Equip(?: (?P<restriction>creature token|commander|legendary creature|planeswalker|"
     rf"{_EQUIP_SUBTYPE}(?:(?:, {_EQUIP_SUBTYPE})?,? or {_EQUIP_SUBTYPE})?))? "
     rf"(?P<cost>{_FIXED_MANA}(?: or {_FIXED_MANA})?)"
     r"(?P<once>\. Activate only once each turn\.)?\.?$",
@@ -227,6 +306,11 @@ class FixedEquipAbilitySpec:
     once_per_turn: bool
     nonmana: bool = False
     local_cost_text: str = ''
+    planeswalker: bool = False
+
+    @property
+    def semantic_key(self) -> str:
+        return PLANESWALKER_EQUIP_SEMANTIC_KEY if self.planeswalker else EQUIP_SEMANTIC_KEY
 
     @property
     def requires_catalog(self) -> bool:
@@ -234,6 +318,8 @@ class FixedEquipAbilitySpec:
 
     @property
     def capability_id(self) -> str:
+        if self.planeswalker:
+            return PLANESWALKER_EQUIP_CAPABILITY
         if self.nonmana:
             return FIXED_NONMANA_EQUIP_CAPABILITY
         return (
@@ -260,6 +346,9 @@ def fixed_equip_ability_spec(text: str) -> FixedEquipAbilitySpec | None:
     if match is None:
         return None
     restriction = None if nonmana else match.group("restriction")
+    planeswalker = restriction == "planeswalker"
+    if planeswalker and (local_cost_text or not re.fullmatch(r"(?:\{(?:\d+|[WUBRGC])\})+", match.group("cost"))):
+        return None
     schema: dict[str, Any] = {
         "zones": ["battlefield"],
         "categories": ["permanent"],
@@ -269,7 +358,10 @@ def fixed_equip_ability_spec(text: str) -> FixedEquipAbilitySpec | None:
     }
     if restriction is not None:
         normalized = restriction.casefold()
-        if normalized == "creature token":
+        if planeswalker:
+            del schema["creature"]
+            schema["types_all"] = ["planeswalker"]
+        elif normalized == "creature token":
             schema["token"] = True
         elif normalized == "commander":
             schema["commander"] = True
@@ -287,6 +379,7 @@ def fixed_equip_ability_spec(text: str) -> FixedEquipAbilitySpec | None:
         once_per_turn=match.group("once") is not None,
         nonmana=nonmana is not None,
         local_cost_text=local_cost_text,
+        planeswalker=planeswalker,
     )
 
 

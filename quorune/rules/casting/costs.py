@@ -33,9 +33,9 @@ from ...compiled_kicker import compiled_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
 from .replicate_costs import with_replicate_cost_schema
-from .base_cost_options import _flashback_base_options, _zone_cast_base_options
+from .base_cost_options import _flashback_base_options, _zone_cast_base_options, initial_cast_base_authority
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
-from .disturb_costs import disturb_back_cast_permission,disturb_base_options
+from .disturb_costs import disturb_base_options
 from ...impending_model import IMPENDING_CAST_OPTION, IMPENDING_MECHANIC, IMPENDING_PRICE_FIELD
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
 from .mutate_costs import with_mutate_cost_schema
@@ -72,10 +72,7 @@ from .lifecycle_costs import (
     with_fixed_public_alternative_costs,
     zone_lifecycle_base_options,
 )
-from .static_modifiers import (
-    apply_static_reductions as _apply_owned_static_reductions,
-    fixed_generic_reduction as _static_generic_reduction,
-)
+from .static_modifiers import apply_cast_static_reductions
 from .targeted_costs import target_cost_for_x_preview
 from .affordable_x import _maximum_affordable_x_with_mechanics
 from .colored_hand_credit import (HAND_CREDIT_AMOUNT, bind_hand_credit, bind_hand_credit_choice, hand_credit_reserved_ids)
@@ -406,7 +403,11 @@ def _cast_schema_and_mechanics(
 
 def _additional_x_with_free_mana(host, seat, card, program, *, suppress_source_costs):
     resolved = _cast_schema_and_mechanics(host, seat, card, program, suppress_source_costs=suppress_source_costs)
-    if resolved is None or not announced_additional_cost_dependencies(resolved[0]):
+    from .option_expansion import has_positive_generic_kicker_cost
+
+    if resolved is None or not (
+        announced_additional_cost_dependencies(resolved[0]) or has_positive_generic_kicker_cost(resolved[0])
+    ):
         return False
     _options, printed_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
     return not printed_x
@@ -453,12 +454,9 @@ def _initial_options(
     bool,
 ] | None:
     x_value = response.get("x")
-    temporary_permission = host._temporary_play_permission(seat, card)
-    intrinsic_disturb = (disturb_back_cast_permission(host,seat,card)
-        and not (force_without_mana_cost or suppress_source_costs or alternative_base is not None))
-    cast_without_mana = force_without_mana_cost or bool(
-        temporary_permission and temporary_permission.get("without_mana_cost")
-        and not intrinsic_disturb and not resolving_exile_authority
+    temporary_permission, intrinsic_disturb, alternative_base, cast_without_mana, separately_payable = initial_cast_base_authority(
+        host, seat, card, alternative_base, force_without_mana_cost=force_without_mana_cost,
+        suppress_source_costs=suppress_source_costs, resolving_exile_authority=resolving_exile_authority,
     )
     printed_base = _printed_or_fixed_cast_base(host, seat, card, program, x_value=x_value, hint=hint,
         cast_without_mana=cast_without_mana, alternative_base=alternative_base,
@@ -501,6 +499,13 @@ def _initial_options(
         suppress_source_costs=suppress_source_costs or alternative_base is not None,
         resolving_exile_authority=resolving_exile_authority,
     )
+    if separately_payable:
+        from ...opponent_library_exile import separately_payable_exile_cast_base_options
+        base.extend(separately_payable_exile_cast_base_options(
+            host, seat, card, program, x_value=x_value, hint=hint, has_x=has_x,
+            suppress_source_costs=suppress_source_costs, printed_base_options=_printed_or_fixed_cast_base,
+            zone_base_options=_zone_cast_base_options,
+        ))
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
     from .global_alternatives import battlefield_alternative_base_options
@@ -531,9 +536,11 @@ def _initial_options(
     if intrinsic_disturb:
         base=disturb_base_options(host,seat,card,commander_tax=commander_tax)
     from .fixed_text_variant_costs import all_fixed_variant_cost_options
+    from ...impulse_access import is_chosen_exile_play_permission
     variants = all_fixed_variant_cost_options(host, seat, card, program, commander_tax=commander_tax,
-        force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
-        suppress_source_costs=suppress_source_costs)
+        force_without_mana_cost=force_without_mana_cost or is_chosen_exile_play_permission(temporary_permission), alternative_base=alternative_base,
+        suppress_source_costs=suppress_source_costs,
+        exile_permission=temporary_permission if cast_without_mana else None)
     if variants is None:
         return None
     base.extend(variants)
@@ -550,6 +557,12 @@ def _initial_options(
     expanded = with_spree_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .entwine_costs import with_entwine_mode_cost_options
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
+    from .kicked_modal_costs import with_kicked_modal_mode_cost_options
+    expanded = with_kicked_modal_mode_cost_options(program, schema, expanded)
+    from .escalate_tap_costs import with_escalate_tap_mode_cost_options
+    expanded = with_escalate_tap_mode_cost_options(program, schema, expanded, response, hint=hint)
+    from .pawprint_costs import with_pawprint_mode_cost_options
+    expanded = with_pawprint_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .option_expansion import expand_optional_resource_costs
     expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
         mechanics=mechanics, mandatory=mandatory, cast_type_line=cast_type_line, declared_schema=program.cost_schema if program else None)
@@ -557,36 +570,13 @@ def _initial_options(
     from .assist_costs import ASSIST_OPTION_FIELD
     if schema.get("compiled_assist") is True:
         expanded = [{**option, ASSIST_OPTION_FIELD: 1} for option in expanded]
-    return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
+    from ..loyalty_graveyard_cast import mark_loyalty_graveyard_cast_options
 
-
-def _apply_static_reductions(
-    host: CastCostHost,
-    seat: str,
-    card: Any,
-    option: dict[str, Any],
-    *,
-    program: Any,
-    cast_type_line: str | None = None,
-) -> None:
-    from ...morph import FACE_DOWN_CAST_METHODS
-    face_down_method=option.get('id') if option.get('id') in FACE_DOWN_CAST_METHODS else None
-    _apply_owned_static_reductions(
-        host,
-        seat,
-        card,
-        option,
-        program=program,
-        fixed_reduction=_static_generic_reduction(
-            host,
-            seat,
-            card,
-            cast_type_line=cast_type_line,
-            face_down_method=face_down_method,
-        ) + option.get(HAND_CREDIT_AMOUNT, 0),
-        cast_type_line=cast_type_line,
-        face_down_method=face_down_method,
+    expanded = mark_loyalty_graveyard_cast_options(
+        with_aftermath_stack_context(host,card,expanded), temporary_permission,
+        excluded=force_without_mana_cost or alternative_base is not None,
     )
+    return expanded, mandatory, mechanics, has_x
 
 
 def _apply_affinity(
@@ -1199,13 +1189,17 @@ def _apply_additional_costs(
             if len(mandatory_costs) != 1 and not (
                     fixed_life_random_costs(mandatory_costs) or fixed_life_zone_costs(mandatory_costs)):
                 return False
-            if host.state.players[seat].life < life_cost.amount:
+            from ...life_state import available_life_for_payment
+
+            if available_life_for_payment(host, seat) < life_cost.amount:
                 return False
             continue
         if kind == "life_x":
             selected_x = int(response["x"]) if response.get("x") is not None else 0
             minimum = int(additional.get("minimum", 0))
-            maximum = host.state.players[seat].life
+            from ...life_state import available_life_for_payment
+
+            maximum = available_life_for_payment(host, seat)
             if maximum < minimum or not minimum <= selected_x <= maximum:
                 return False
             choice_schema["x"] = {
@@ -1297,7 +1291,7 @@ def _finalize_option(
     apply_target_cost_increase(option)
     if not bind_hand_credit(host, seat, card, option, getattr(program, 'cost_schema', None), response, hint=hint):
         return None
-    _apply_static_reductions(
+    apply_cast_static_reductions(
         host,
         seat,
         card,
@@ -1306,6 +1300,9 @@ def _finalize_option(
         cast_type_line=cast_type_line,
     )
     reduce_emerge_total(host, seat, card, option)
+    from ...semantic_runtime.cast_costs import active_spell_mana_floor, apply_final_spell_mana_floor
+
+    apply_final_spell_mana_floor(option, active_spell_mana_floor(host))
     exile_spec = option.get("exile_from_hand")
     if isinstance(exile_spec, Mapping):
         candidates = host._exile_cost_candidates(seat, card, exile_spec)
@@ -1351,18 +1348,28 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         **cast_snow_payment_kwargs(option),
     ):
         return None
+    if hint and (option.get(ASSIST_OPTION_FIELD) != 1 or "assist_helper" not in choice_schema):
+        from ..hand_artifact_mana import artifact_hand_mana_payment_fields
+        from .source_placement import cast_payment_read_host
+
+        choice_schema.update(artifact_hand_mana_payment_fields(
+            cast_payment_read_host(host, seat), seat, spend_context=spend_context, exclude_sources=excluded,
+        ))
     if selected_cards:
         option["selected_tap_cost_cards"] = [card.ref for card in selected_cards]
+    from ...kicker import POSITIVE_GENERIC_KICKER_X
+
+    kicker_x = option.get(POSITIVE_GENERIC_KICKER_X)
     x_value_policy = option.get("x_value_policy")
     if x_value_policy == "zero":
         if response.get("x") is not None and int(response["x"]) != 0:
             return None
     elif x_value_policy not in (None, ANNOUNCED_X_PITCH_POLICY):
         return None
-    elif has_x and x_value_policy is None:
-        minimum_x = option.get('library_top_minimum_x', 0)
+    elif (has_x or kicker_x is not None) and x_value_policy is None:
+        minimum_x = max(option.get('library_top_minimum_x', 0), int(kicker_x is not None))
         from .affordable_x import quoted_printed_x_price
-        quoted_price = quoted_printed_x_price(host, card, option, response) if hint else None
+        quoted_price = quoted_printed_x_price(host, card, option, response) if hint or kicker_x is not None else None
         maximum = _maximum_affordable_x_with_mechanics(
             host,
             seat,
@@ -1491,6 +1498,7 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
         if announced_mana_value:
             option = bind_announced_target_cost_option(
                 target_schema, option, submission, hint=hint, has_mana_x=target_mana_x,
+                target_limit=len(host.state.cards),
             )
             if option is None:
                 continue
@@ -1516,13 +1524,10 @@ def _cast_cost_options_for_submission(host, seat, card, program, submission, *, 
                 type_line=option_cast_type_line, hint=hint)
             if option is None:
                 continue
-        spend_context = host._spell_mana_spend_context(
-            str(
-                option_cast_type_line
-                if option_cast_type_line is not None
-                else host._effective_card_data(card).get("type_line") or ""
-            )
-        )
+        from .spell_mana_payments import cast_cost_option_mana_spend_context
+        spend_context = cast_cost_option_mana_spend_context(host, seat, card, option_cast_type_line,
+            option=option, suppress_opponent_exile_mana=force_without_mana_cost or resolving_exile_authority,
+            face_down=suppress_source_costs)
         from .targeted_costs import target_cost_variants
         from .target_count_costs import target_count_price_variants
         if hint:

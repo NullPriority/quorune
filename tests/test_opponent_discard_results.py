@@ -25,7 +25,7 @@ from scripts.build_test_database import build_fixture_database
 
 
 class OpponentDiscardResultTests(InheritedNativeFixture, unittest.TestCase):
-    names = {"return":"Generic Discarded Return", "life":"Generic Discarded Life", "token":"Generic Discarded Token"}
+    names = {"return":"Generic Discarded Return", "life":"Generic Discarded Life", "token":"Generic Discarded Token", "quagnoth":"Quagnoth"}
     play_whole_hand_spell = origin_witnesses.DiscardEffectOriginTests.play_whole_hand_spell
     ready = origin_witnesses.DiscardEffectOriginTests.ready
 
@@ -78,6 +78,15 @@ class OpponentDiscardResultTests(InheritedNativeFixture, unittest.TestCase):
                 game = self.replay(game, load=True)
                 self.assertIsNone(self.resolve(game))
                 self.assertEqual("hand", game.state.cards[card.object_id].zone)
+                self.assertIn(card.object_id, game.state.players["B"].zones["hand"])
+                self.replay(game, load=True)
+
+    def test_actual_quagnoth_returns_from_both_discard_destinations_and_replays(self):
+        for redirected in (False, True):
+            with self.subTest(redirected=redirected):
+                game, card = self.discard_trigger(70109171 + redirected, "quagnoth", redirected=redirected)
+                game = self.replay(game, load=True)
+                self.assertIsNone(self.resolve(game))
                 self.assertIn(card.object_id, game.state.players["B"].zones["hand"])
                 self.replay(game, load=True)
 

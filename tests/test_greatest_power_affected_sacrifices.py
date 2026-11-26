@@ -11,12 +11,15 @@ from inherited_composition_fixture import InheritedNativeFixture
 from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
 from quorune.compiler import affected_player_sacrifice_templates
+from quorune.continuous_effect_model import ContinuousObjectIdentity
+from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.power_sacrifice_model import GREATEST_POWER_SACRIFICE_FIELD, GreatestPowerSacrificeSpec
 from quorune.record import authoritative_state_hash
 from quorune.replacement.immutable import thaw_value
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.sacrifice_prohibition_model import ResolvedSacrificeProhibition
 from scripts.build_test_database import build_fixture_database
 from test_controller_creature_keyword_absence import register_card
 
@@ -29,9 +32,18 @@ ORIGINALS = {DOOM: False, PAPALYMO: True}
 SACRIFICE = "choice.affected_player.fixed_sacrifice"
 MAXIMUM = "quantity_expression.public_characteristic_aggregate"
 HISTORY = "condition.history.fixed_public_query"
+MANA_VALUE = "quantity_expression.public_query_effect_amount"
+MANA_VALUE_EFFECT = (
+    "Each opponent sacrifices a creature or planeswalker with the greatest mana value "
+    "among creatures and planeswalkers they control."
+)
 
 
 class GreatestPowerAffectedSacrificeTests(InheritedNativeFixture, unittest.TestCase):
+    mana_value_spell = "Greatest Mana Sacrifice Witness"
+    payment_creature = "Ancient Brontodon"
+    wrong_color_creature = "Walking Corpse"
+
     @classmethod
     def setUpClass(cls):
         cls.temporary = TemporaryDirectory()
@@ -40,7 +52,7 @@ class GreatestPowerAffectedSacrificeTests(InheritedNativeFixture, unittest.TestC
             "ability-source-counter-cards.json": {"Shock", "Sol Ring"},
             "activation-public-state-cards.json": {"Giant Growth"},
             "additional-conditional-modifier-cards.json": {"Revitalize"},
-            "additional-continuous-carriers-cards.json": {"Walking Corpse"},
+            "additional-continuous-carriers-cards.json": {"Walking Corpse", "Hill Giant"},
             "bound-effect-program-cards.json": {"Generic Bound Plains"},
             "counter-replacement-cards.json": {"Ancient Brontodon"},
             "source-attack-alone-cards.json": {"Isamaru, Hound of Konda"},
@@ -56,6 +68,18 @@ class GreatestPowerAffectedSacrificeTests(InheritedNativeFixture, unittest.TestC
             piece = folder / filename
             piece.write_text(json.dumps(doc), encoding="utf-8")
             pieces.append(piece)
+        synthetic = folder / "mana-value-sacrifice-witness.json"
+        synthetic.write_text(json.dumps({"schema_version": 1, "cards": [{
+            "oracle_id": "00000000-0000-4000-8000-000000009523",
+            "name": cls.mana_value_spell, "layout": "normal", "mana_cost": "{2}{B}{B}",
+            "cmc": 4, "type_line": "Instant", "colors": ["B"], "color_identity": ["B"],
+            "legalities": {"commander": "legal", "duel": "legal"},
+            "oracle_text": (
+                "You may sacrifice a nontoken green creature rather than pay this spell's mana cost.\n"
+                + MANA_VALUE_EFFECT
+            ),
+        }]}), encoding="utf-8")
+        pieces.append(synthetic)
         path = folder / "opponent-greatest-power-sacrifices.sqlite3"
         build_fixture_database(pieces, path)
         cls.db = CardDatabase(path)
@@ -129,6 +153,120 @@ class GreatestPowerAffectedSacrificeTests(InheritedNativeFixture, unittest.TestC
 
     def _zone(self, game, card):
         return game.state.cards[card.object_id].zone
+
+    def test_greatest_mana_value_requires_the_exact_untargeted_spell_shape(self):
+        card, result, programs = self.original_sacrifice(self.mana_value_spell)
+        self.assertEqual("exact", compile_oracle_card(
+            card, capability_registry=self.registry, capability_profile=PROFILE,
+        ).status)
+        effect, = thaw_value(result.effects)
+        self.assertEqual(GreatestPowerSacrificeSpec(mana_value=True), GreatestPowerSacrificeSpec.from_effect(effect))
+        self.assertEqual({"metric": "mana_value", "schema_version": 3}, effect[GREATEST_POWER_SACRIFICE_FIELD])
+        self.assertIsNone(result.target_schema)
+        self.assertLessEqual({SACRIFICE, MANA_VALUE, "zone.change.destination_replacement"},
+                             set(result.capability_dependencies))
+        self.assertTrue(any(program.event == "cast.cost" for program in programs))
+        for mutation in (
+            replace(result, event="activate", active_zone="battlefield"),
+            replace(result, effects=({**effect, "players": "all"},)),
+            replace(result, effects=(effect, {"op": "draw", "count": 1})),
+        ):
+            binding = bind_semantic_program_runtime(mutation, capability_registry=self.registry, profile=PROFILE)
+            self.assertFalse(binding["strict"], binding)
+        deps = tuple(value for value in result.capability_dependencies if value != MANA_VALUE)
+        mutation = replace(result, capability_dependencies=deps,
+                           capability_closure=self.registry.closure(deps, profile=PROFILE).to_dict())
+        binding = bind_semantic_program_runtime(mutation, capability_registry=self.registry, profile=PROFILE)
+        self.assertFalse(binding["strict"], binding)
+        self.assertTrue(any(MANA_VALUE in blocker for blocker in binding["blockers"]))
+        for text in (
+            MANA_VALUE_EFFECT.replace("Each opponent", "Each player"),
+            MANA_VALUE_EFFECT.replace("greatest mana value", "least mana value"),
+            MANA_VALUE_EFFECT.replace("creatures and planeswalkers", "permanents"),
+        ):
+            unsupported = compile_oracle_card(
+                replace(card, oracle_text=text), capability_registry=self.registry, capability_profile=PROFILE,
+            )
+            self.assertTrue(unsupported.material_residuals)
+
+    def test_mana_value_sacrifice_normal_cast_batches_off_turn_choices_and_replays(self):
+        game = self.session(77134011)
+        engine = game.engine
+        spell = self.add(engine, self.mana_value_spell, zone="hand")
+        copied = self.add(engine, "Ancient Brontodon")
+        token_ref, = engine.create_token("C", name="", copy_of=copied.ref)
+        token = engine._resolve_object("C", token_ref, zones={"battlefield"})
+        low_c = self.add(engine, "Walking Corpse", seat="C", ref="mana-low-c")
+        walker = self.add(engine, "The Wanderer", seat="B")
+        creature = self.add(engine, "Hill Giant", seat="B")
+        low_b = self.add(engine, "Walking Corpse", seat="B", ref="mana-low-b")
+        protected = self.add(engine, "Ancient Brontodon", seat="D", ref="mana-protected-d")
+        low_d = self.add(engine, "Walking Corpse", seat="D", ref="mana-low-d")
+        commit_continuous_effect(game.state, ResolvedSacrificeProhibition(
+            effect_id="test-protected-maximum", timestamp=engine._next_zone_timestamp(),
+            subject=ContinuousObjectIdentity(protected.object_id, protected.logical_object_id),
+        ))
+        self.assertEqual(8, engine._effective_card_data(token)["mana_value"])
+        self.assertEqual(4, engine._effective_card_data(creature)["mana_value"])
+        self.assertEqual(4, engine._effective_card_data(walker)["mana_value"])
+        self.assert_closed(game, spell)
+        self.prepare(game, active="C", actor="C")
+        game.state.players["A"].mana_pool.update({"C": 2, "B": 2})
+        self.checkpoint(game)
+        self.cast(game, "A", spell)
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+        self.assertEqual([token.ref], self._options(game, "C")["options"])
+        self._reject(game, "C", {"action_id": "choose", "cards": [low_c.ref]})
+        self._choose(game, "C", token)
+        tie = self._options(game, "B")
+        self.assertEqual({walker.ref, creature.ref}, set(tie["options"]))
+        self.assertEqual([token.ref], tie["prior_public_choices"]["C"])
+        self.assertEqual("battlefield", self._zone(game, token))
+        self._reject(game, "B", {"action_id": "choose", "cards": [low_b.ref]})
+        self._reject(game, "C", {"action_id": "choose", "cards": [walker.ref]})
+        game = self.replay(game, load=True)
+        self._reject(game, "B", {"action_id": "choose", "cards": [token.ref]})
+        self._choose(game, "B", walker)
+        self.assertIsNone(self.resolve(game))
+        batch, = (event for event in game.state.events if event.code == "choice.sacrifice")
+        self.assertEqual((token.ref, walker.ref), batch.details["objects"])
+        self.assertEqual("graveyard", self._zone(game, walker))
+        self.assertTrue(token.object_id not in game.state.cards or self._zone(game, token) != "battlefield")
+        self.assertEqual({"battlefield"}, {self._zone(game, card) for card in
+                         (copied, creature, low_c, low_b, protected, low_d)})
+        self.replay(game, load=True)
+
+    def test_mana_value_sacrifice_alternative_cost_rejects_ineligible_prices_and_replays(self):
+        game = self.session(77134012)
+        engine = game.engine
+        spell = self.add(engine, self.mana_value_spell, zone="hand")
+        payment = self.add(engine, self.payment_creature)
+        wrong_color = self.add(engine, self.wrong_color_creature)
+        token_ref, = engine.create_token("A", name="", copy_of=payment.ref)
+        opponent_price = self.add(engine, self.payment_creature, seat="B", ref="mana-foreign-price")
+        absent = self.add(engine, self.payment_creature, zone="graveyard", ref="mana-graveyard-price")
+        self.prepare(game)
+        self.assert_closed(game, spell)
+        self.checkpoint(game)
+        action = self.action(game, "A", spell)
+        option, = (value for value in action["cost_options"] if value["id"] == "plain-alternative-ab1")
+        self.assertEqual([payment.ref], option["choice_schema"]["sacrifice_cards"]["legal_refs"])
+        command = {"action_id": action["id"], "cost_option": option["id"], "pay": "auto"}
+        for forbidden in (token_ref, wrong_color.ref, opponent_price.ref, absent.ref):
+            self._reject(game, "A", {**command, "sacrifice_cards": [forbidden]})
+        paid = game.act("pilot:A", {**command, "sacrifice_cards": [payment.ref]})
+        self.assertTrue(paid.ok, paid.summary)
+        self.assertEqual("graveyard", self._zone(game, payment))
+        self.assertEqual("battlefield", self._zone(game, opponent_price))
+        self.assertEqual([], game.state.stack[-1].targets)
+        self.assertEqual("choice.apnap", self.resolve(game).kind)
+        self.assertEqual([opponent_price.ref], self._options(game, "B")["options"])
+        self._choose(game, "B", opponent_price)
+        self.assertIsNone(self.resolve(game))
+        self.assertEqual("graveyard", self._zone(game, opponent_price))
+        self.assertEqual("battlefield", self._zone(game, wrong_color))
+        self.replay(game, load=True)
 
     def test_actual_doom_uses_current_power_per_seat_and_commits_after_ordered_public_choices(self):
         game = self.session(77134001)

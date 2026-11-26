@@ -166,6 +166,10 @@ Unrelated blocked registry entries do not block a match. A blocked capability
 does block when it enters the match or dynamic reachable set. Conservative
 overblocking is allowed; underblocking is not.
 
+An opposing noncreature cast can compare its committed stack mana value with
+the source's effective power. Trigger discovery reads power once. The queued
+trigger resolves after later changes to the source or the original spell.
+
 ## Runtime binding and replay
 
 Strict binding compares every declared ability closure to the current registry

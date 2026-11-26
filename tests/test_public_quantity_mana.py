@@ -27,6 +27,72 @@ import test_bound_effect_programs as witnesses
 
 
 class PublicQuantityManaCompilerTests(unittest.TestCase):
+    def test_paid_sacrifice_output_keeps_the_typed_price_and_capability(self):
+        from quorune.compiler.activated_zone_change_costs import fixed_activated_zone_change_cost
+        from quorune.compiler.paid_sacrifice_amount_templates import paid_sacrifice_activation_mana_output
+        from quorune.public_quantity_mana_model import PAID_SACRIFICE_QUANTITY_MANA_CAPABILITY
+
+        body = "Add an amount of {B} equal to the sacrificed creature's mana value."
+        oracle = "{T}, Sacrifice another creature: " + body
+        parsed, = parse_activated_abilities(card_name="Paid source witness", oracle_text=oracle)
+        ability = fixed_activated_zone_change_cost(parsed)
+        output = paid_sacrifice_activation_mana_output(ability)
+        self.assertEqual(output, PublicQuantityManaOutput.from_dict(output.to_dict()))
+        self.assertIsNotNone(compile_public_quantity_activated_mana_ability(ability, output))
+        def assert_missing_tap_is_rejected():
+            self.assertIsNone(compile_public_quantity_activated_mana_ability(replace(ability, tap_source=False), output))
+        assert_missing_tap_is_rejected()
+        with patch("quorune.public_quantity_mana_abilities._paid_sacrifice_mana_price", return_value=True):
+            with self.assertRaises(AssertionError):
+                assert_missing_tap_is_rejected()
+        self.assertIsNone(paid_sacrifice_activation_mana_output(replace(ability, effect_text=body.replace("creature", "artifact"))))
+        forged = {**output.to_dict(), "schema_version": 1}
+        with self.assertRaises(ValueError):
+            PublicQuantityManaOutput.from_dict(forged)
+
+        record = query_record(oracle)
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertIn(PAID_SACRIFICE_QUANTITY_MANA_CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in raw["capabilities"] if row["id"] == PAID_SACRIFICE_QUANTITY_MANA_CAPABILITY)
+        capability.update(status="blocked", blockers=["selected sacrifice output withdrawn"])
+        missing = CapabilityRegistry(raw)
+        missing.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=missing, capability_profile="commander_review").status)
+
+    def test_chosen_devotion_mana_keeps_its_price_and_seals_color_authority(self):
+        from quorune.compiler.public_quantity_mana import chosen_devotion_mana_template
+        from quorune.public_quantity_mana_model import CHOSEN_DEVOTION_MANA_CAPABILITY
+
+        body = "Choose a color. Add an amount of mana of that color equal to your devotion to that color."
+        record = replace(query_record("{2}, {T}: " + body), type_line="Land")
+        output = chosen_devotion_mana_template(body)
+        self.assertEqual(output, PublicQuantityManaOutput.from_dict(output.to_dict()))
+        with self.assertRaises(ValueError):
+            PublicQuantityManaOutput.from_dict({**output.to_dict(), "colors": ["B", "C", "G", "R", "U", "W"]})
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        self.assertIn(CHOSEN_DEVOTION_MANA_CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
+        invalid, = parse_activated_abilities(card_name=record.name, oracle_text="{T}: " + body)
+
+        def assert_missing_price_is_rejected():
+            self.assertIsNone(compile_public_quantity_activated_mana_ability(invalid, output))
+
+        assert_missing_price_is_rejected()
+        with patch("quorune.public_quantity_mana_abilities._generic_two_tap_mana_price", return_value=True):
+            with self.assertRaises(AssertionError):
+                assert_missing_price_is_rejected()
+        data = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        next(row for row in data["capabilities"] if row["id"] == CHOSEN_DEVOTION_MANA_CAPABILITY).update(
+            status="blocked", blockers=["devotion owner unavailable"])
+        missing = CapabilityRegistry(data)
+        missing.mark_evidence_verified("0" * 64)
+        self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=missing,
+                                                       capability_profile="commander_review").status)
+
     def test_public_stat_aggregate_mana_codec_and_dependency_gate(self):
         import copy
         from quorune.card_programs import compile_card_program,bind_card_program_runtime
@@ -142,7 +208,9 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
         cls.temporary=tempfile.TemporaryDirectory()
         path=Path(cls.temporary.name)/'mana.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/public-quantity-mana-cards.json'],path)
+            ROOT/'tests/fixtures/public-quantity-mana-cards.json',
+            ROOT/'tests/fixtures/live-tapped-land-mana-test-cards.json',
+            ROOT/'tests/fixtures/named-graveyard-mana-test-cards.json'],path)
         cls.db=CardDatabase(path)
         cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Mana amount witness',[DeckEntry('Generic Bound Commander',1,'commander'),
@@ -280,6 +348,78 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
         self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
         self.replay(session, load=True)
 
+    def test_fixed_mana_then_named_graveyard_count_resolves_in_order_and_replays(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        session = self.session(283091)
+        engine = session.engine
+        name = "Cinder Test Spark"
+        spell = self.add(engine, name, zone="hand")
+        self.add(engine, name, zone="graveyard", ref="named-own-graveyard")
+        self.add(engine, name, seat="C", zone="graveyard", ref="named-other-graveyard")
+        self.add(engine, "Battle Hymn", seat="D", zone="graveyard", ref="different-spell")
+        self.add(engine, name, seat="B", zone="hand", ref="named-private-hand")
+        record = self.db.lookup(name)
+        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        fixed, counted = node.effects
+        self.assertEqual(2, fixed["amount"])
+        self.assertEqual(name, counted["amount"]["quantity"]["literal_name"])
+        self.assertIn("resolution.effect_program.closed_components", node.capability_dependencies)
+        program = compile_best_available_card_program(
+            self.db, record, semantic_registry=engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+        action = self.ready(session, spell, {"G": 1})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, session.state.players["A"].mana_pool["G"])
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual(4, session.state.players["A"].mana_pool["G"])
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_tapped_opponent_land_mana_samples_current_state_and_replays(self):
+        session = self.session(283090)
+        engine = session.engine
+        spell = self.add(engine, "Tidal Test Burst", zone="hand")
+        own = self.add(engine, "Generic Bound Plains", ref="own-tapped-land")
+        later = self.add(engine, "Generic Bound Plains", seat="B", ref="opponent-land")
+        early = self.add(engine, "Generic Bound Plains", seat="C", ref="already-tapped-land")
+        self.add(engine, "Generic Bound Plains", seat="D", ref="untapped-opponent-land")
+        own.tapped = early.tapped = True
+        other = self.add(engine, "Generic Bound Body", seat="B", ref="tapped-nonland")
+        other.tapped = True
+
+        action = self.ready(session, spell, {"C": 1, "U": 1})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, session.state.players["A"].mana_pool["U"])
+
+        self.assertEqual("A", session.state.priority_player)
+        result = session.act("pilot:A", {"action_id": "pass"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("B", session.state.priority_player)
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(row for row in actions if row["id"].startswith(f"activate:{later.ref}:"))
+        result = session.act("pilot:B", {"action_id": offer["id"]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[later.object_id].tapped)
+
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertEqual(2, session.state.players["A"].mana_pool["U"])
+        self.replay(session, load=True)
+
     def test_quantity_mana_spell_counts_at_resolution_and_replays(self):
         session=self.session(283004);engine=session.engine
         self.add(engine,'Generic Bound Body')
@@ -318,6 +458,49 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
         self.assertTrue(session.state.cards[source.object_id].tapped)
         self.replay(session,load=True)
 
+    def test_original_nykthos_pays_its_cost_for_selected_current_devotion_and_replays(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        for index, (color, expected) in enumerate((("G", 3), ("U", 0))):
+            with self.subTest(color=color):
+                session = self.session(283050 + index)
+                engine = session.engine
+                land = self.add(engine, "Nykthos, Shrine to Nyx")
+                self.add(engine, "Circle of Dreams Druid", ref="ordinary-devotion")
+                self.add(engine, "Circle of Dreams Druid", seat="B", ref="other-devotion")
+                phased = self.add(engine, "Circle of Dreams Druid", ref="phased-devotion")
+                phased.phased_out = True
+                private = self.add(engine, "Generic Bound Growth", zone="hand", seat="C", ref="private-C-devotion")
+                original = self.db.lookup(land.printed_name, fuzzy=False)
+                program = compile_best_available_card_program(self.db, original, semantic_registry=engine.semantics,
+                    capability_registry=self.registry, capability_profile="commander_review")
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                self.ready(session, land, {"C": 2})
+                actions = session.packet("pilot:A", full=True)["decision"]["legal_actions"]
+                offered = [action for action in actions if action["id"].startswith("activate:" + land.ref + ":")]
+                self.assertEqual(2, len(offered))
+                choice_action = next(action for action in offered if "mana_choice" in (action.get("choice_schema") or {}))
+                self.assertTrue(choice_action["mana_ability"])
+                field = next(field for field in choice_action["form"]["fields"] if field["name"] == "mana_choice")
+                self.assertEqual(set("WUBRG"), {option["value"] for option in field["options"]})
+                self.assertNotIn(private.ref, str(session.packet("pilot:B", full=True)))
+                self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                for seat, response in (("B", {"mana_choice": color}), ("A", {"mana_choice": "C"}),
+                                       ("A", {"mana_output": {color: 90}})):
+                    denied = session.act("pilot:" + seat, {"action_id": choice_action["id"], **response})
+                    self.assertFalse(denied.ok, denied.summary)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act("pilot:A", {"action_id": choice_action["id"], "mana_choice": color, "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(0, session.state.players["A"].mana_pool.get("C", 0))
+                self.assertEqual(expected, session.state.players["A"].mana_pool.get(color, 0))
+                self.assertTrue(session.state.cards[land.object_id].tapped)
+                self.assertEqual([], session.state.stack)
+                self.replay(session, load=True)
+
     def test_quantity_mana_controller_query_is_offered_accepted_and_replayed(self):
         session=self.session(283001);engine=session.engine
         source=self.add(engine,'Circle of Dreams Druid',seat='B')
@@ -352,6 +535,65 @@ class PublicQuantityManaRuntimeTests(unittest.TestCase):
         self.assertEqual('graveyard',session.state.cards[source.object_id].zone)
         self.assertEqual({},session.state.cards[source.object_id].counters)
         self.replay(session,load=True)
+
+    def test_paid_sacrifice_mana_uses_the_committed_creature_and_replays(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.public_quantity_reductions import public_mana_value
+
+        cases = (
+            (283040, "Soldevi Adnate", None, 2),
+            (283041, "Illuminor Szeras", "Generic Bound Body", 1),
+            (283042, "Illuminor Szeras", "Clone", 0),
+            (283043, "Soldevi Adnate", "Ornithopter", 0),
+            (283044, "Priest of Yawgmoth", "Sol Ring", 1),
+        )
+        for seed, name, other, expected in cases:
+            with self.subTest(source=name, cost=other):
+                session = self.session(seed)
+                engine = session.engine
+                source = self.add(engine, name)
+                paid = self.add(engine, other) if other is not None else source
+                noncandidate = self.add(engine, "Generic Bound Body" if other == "Sol Ring" else "Sol Ring",
+                                         ref="wrong-paid-type")
+                rival = self.add(engine, "Ornithopter", seat="D", ref="foreign-creature")
+                if other == "Clone":
+                    paid.annotations["copy_overrides"] = engine._copyable_characteristics(rival)
+                    self.assertEqual(0, public_mana_value(engine._effective_card_data(paid)))
+                private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="private-C-payer")
+                record = self.db.lookup(name, fuzzy=False)
+                program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+                    capability_registry=self.registry, capability_profile="commander_review")
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                action = self.ready(session, source, {})
+                self.assertTrue(action["mana_ability"])
+                ability, = engine._activated_abilities(source)
+                self.assertFalse(engine._mana_modes_for_ability("A", source, ability))
+                self.assertNotIn(private.ref, str(session.packet("pilot:B", full=True)))
+                self.checkpoint(session)
+                initial = authoritative_state_hash(session.state)
+                unauthorized = [("pilot:B", paid.ref), ("pilot:A", noncandidate.ref), ("pilot:A", rival.ref)]
+                if name == "Illuminor Szeras":
+                    unauthorized.append(("pilot:A", source.ref))
+                for principal, ref in unauthorized:
+                    rejected = session.act(principal, {"action_id": action["id"], "cost_cards": [ref]})
+                    self.assertFalse(rejected.ok, rejected.summary)
+                    self.assertEqual(initial, authoritative_state_hash(session.state))
+                forged = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [paid.ref],
+                                                "mana_output": {"B": expected + 1}})
+                self.assertFalse(forged.ok, forged.summary)
+                self.assertEqual(initial, authoritative_state_hash(session.state))
+                accepted = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [paid.ref]})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual(expected, session.state.players["A"].mana_pool.get("B", 0))
+                self.assertEqual("graveyard", session.state.cards[paid.object_id].zone)
+                if other == "Clone":
+                    self.assertEqual(4, public_mana_value(engine._effective_card_data(session.state.cards[paid.object_id])))
+                self.assertEqual([], session.state.stack)
+                if paid is not source:
+                    self.assertTrue(session.state.cards[source.object_id].tapped)
+                self.replay(session, load=True)
 
     def test_quantity_mana_counter_cost_is_removed_before_counting(self):
         session=self.session(283005);engine=session.engine

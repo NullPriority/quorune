@@ -139,6 +139,16 @@ class TriggerProcessingOwner:
         ):
             trigger.active = False
             return False
+        from .rules.source_bound_delayed_return import SOURCE_BOUND_NEXT_END_STEP, source_bound_end_step_result
+
+        if SOURCE_BOUND_NEXT_END_STEP in trigger.condition:
+            try:
+                result = source_bound_end_step_result(self.state, trigger, context)
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            if result is False:
+                trigger.active = False
+            return result is True
         from .rules.extra_turn_shapes import SCHEDULED_EXTRA_TURN_END_STEP_LOSS, extra_turn_end_step_loss_trigger_turn
 
         if SCHEDULED_EXTRA_TURN_END_STEP_LOSS in trigger.condition:
@@ -432,6 +442,31 @@ def replace_pending_trigger_batch(host, index: int, batch: PendingTriggerBatch) 
 
 
 
+def trigger_occurrence_observations(host, program, event, context):
+    from .token_copy_references import triggered_copy_reference_context
+    from .target_controller_information import occurrence_controller_context
+    from .rules.entry_type_return import shared_entry_return_trigger_context
+    from .rules.entry_creature_type_mana import entry_creature_type_trigger_context
+    from .rules.entrant_power_branch import entrant_power_trigger_context
+    from .rules.entrant_name_absence import entrant_name_trigger_context
+    from .rules.entry_control_exchange import entry_exchange_trigger_context
+    from .rules.discarded_card_exile import discarded_card_exile_trigger_context
+
+    try:
+        return {
+            **triggered_copy_reference_context(host, program, event, context),
+            **occurrence_controller_context(host, program, event, context),
+            **shared_entry_return_trigger_context(program, event, context),
+            **entry_creature_type_trigger_context(program, event, context),
+            **entrant_power_trigger_context(program, event, context),
+            **entrant_name_trigger_context(program, event, context),
+            **entry_exchange_trigger_context(program, event, context),
+            **discarded_card_exile_trigger_context(program, event),
+        }
+    except (TypeError, ValueError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+
+
 def pin_trigger_context_entry(host, field, capture):
     """Save one typed observation on committed and pending trigger occurrences."""
     stack_updates = []
@@ -507,21 +542,42 @@ def pin_upkeep_hand_at_departure(host, departing: Sequence[str]) -> None:
 
 def pin_zone_departure_trigger_facts(host, cards: Sequence[CardInstance], *, error_type=StateInvariantError):
     """Retain the observed public trigger facts before their subjects leave."""
+    from .rules.entrant_name_absence import pin_entrant_names_before_departure
+    from .rules.entrant_power_branch import pin_entrant_power_departures
+    from .rules.entry_type_return import pin_entry_type_return_departures
+    from .rules.entry_creature_type_mana import pin_entry_creature_type_departures
+    from .rules.entry_control_exchange import pin_entry_exchange_departures
     from .rules.event_counter_threshold import pin_event_counter_threshold_departures
     from .rules.evolve_entrant import pin_evolve_entrant_departures
     from .rules.trigger_source_information import pin_untapped_damage_source_departures
 
     pin_event_counter_threshold_departures(host, cards, error_type=error_type)
+    pin_entry_type_return_departures(host, cards, error_type=error_type)
+    pin_entry_creature_type_departures(host, cards, error_type=error_type)
+    pin_entrant_power_departures(host, cards, error_type=error_type)
+    pin_entrant_names_before_departure(host, cards, error_type=error_type)
+    pin_entry_exchange_departures(host, cards, error_type=error_type)
     pin_evolve_entrant_departures(host, cards, error_type=error_type)
     pin_untapped_damage_source_departures(host, cards, error_type=error_type)
 
 
 def pin_player_departure_trigger_facts(host, departing: Sequence[str]) -> None:
+    from .rules.entrant_name_absence import pin_entrant_names_before_departure
+    from .rules.entrant_power_branch import pin_entrant_power_departures
+    from .rules.entry_type_return import pin_entry_type_return_departures
+    from .rules.entry_creature_type_mana import pin_entry_creature_type_departures
+    from .rules.entry_control_exchange import pin_entry_exchange_departures
     from .rules.event_counter_threshold import pin_event_counter_threshold_departures
 
     from .rules.trigger_source_information import pin_untapped_damage_source_departures
 
     pin_upkeep_hand_at_departure(host, departing)
+    departing_cards = tuple(card for card in host.state.cards.values() if card.owner in departing)
+    pin_entry_type_return_departures(host, departing_cards, error_type=StateInvariantError)
+    pin_entry_creature_type_departures(host, departing_cards, error_type=StateInvariantError)
+    pin_entrant_power_departures(host, departing_cards, error_type=StateInvariantError)
+    pin_entrant_names_before_departure(host, departing_cards, error_type=StateInvariantError)
+    pin_entry_exchange_departures(host, departing_cards, error_type=StateInvariantError)
     pin_untapped_damage_source_departures(host, (
         card for card in host.state.cards.values() if card.owner in departing
     ), error_type=StateInvariantError)
@@ -924,6 +980,15 @@ def expire_next_cast_copy_triggers(host: TriggerProcessingHost) -> None:
 
     for trigger in host.state.delayed_triggers:
         if (trigger.active and NEXT_CAST_COPY_FIELD in trigger.condition
+                and trigger.expires_turn_sequence < host.state.turn_sequence):
+            trigger.active = False
+
+
+def expire_target_death_return_triggers(host: TriggerProcessingHost) -> None:
+    from .delayed_object_model import TARGET_DEATH_RETURN_EVENT
+
+    for trigger in host.state.delayed_triggers:
+        if (trigger.active and trigger.event_kind == TARGET_DEATH_RETURN_EVENT
                 and trigger.expires_turn_sequence < host.state.turn_sequence):
             trigger.active = False
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 
+from ..cast_lifecycles import GRANTED_ESCAPE_CAPABILITY, granted_escape_descriptor
 from ..object_predicate import ObjectQuerySpec
 from ..rules.turn_cast_grant_model import (
     TURN_CAST_GRANT_CAPABILITY, TURN_CAST_GRANT_EVENT, TURN_CAST_GRANT_HANDLER, TurnCastGrantSpec,
@@ -16,6 +17,12 @@ _CLAUSE = re.compile(r'^Once during each of your turns, you may cast (?P<subject
 _COMMAND_GRAVEYARD_CAST = re.compile(
     r"You may cast instant and sorcery spells from your graveyard\. "
     r"If a spell cast this way would be put into your graveyard, exile it instead\.",
+    re.IGNORECASE,
+)
+_GRANTED_ESCAPE = re.compile(
+    r"Each nonland card in your graveyard has escape\. The escape cost is equal to the card['’]s mana cost "
+    r"plus exile three other cards from your graveyard\."
+    r"(?: \(You may cast cards from your graveyard for their escape cost\.\))?",
     re.IGNORECASE,
 )
 
@@ -51,6 +58,8 @@ def _spell_predicate(subject):
 
 def turn_cast_grant_handler(text):
     material = ' '.join(text.strip().split())
+    if _GRANTED_ESCAPE.fullmatch(material):
+        return "source-granted-escape-v1", granted_escape_descriptor(), (GRANTED_ESCAPE_CAPABILITY,)
     material=re.sub(r"^[A-Z][A-Za-z' ]{0,80} — (?=Once during each of your turns,)",'',material)
     qualified = _qualified_graveyard_grant(material)
     if qualified is not None:

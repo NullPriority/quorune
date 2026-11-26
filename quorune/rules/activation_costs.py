@@ -489,6 +489,10 @@ def activation_choice_candidates(
         return blight_activation_cost_candidates(host, actor, source, ability, choice)
     if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES:
         return selected_counter_cost_candidates(host, actor, choice)
+    from .forage import FORAGE_COST_KIND, forage_candidates
+
+    if choice.kind == FORAGE_COST_KIND:
+        return forage_candidates(host, actor)
     typed_cost = choice.fixed_zone_change_cost()
     if typed_cost is not None:
         return fixed_zone_change_cost_candidates(

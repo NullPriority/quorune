@@ -9,13 +9,16 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..replacement.operations import SetField
 from ..replacement_effects import ReplacementClass, ReplacementEffect
 from ..rules.capabilities import load_default_capability_registry
-from ..life_gain_permission import FixedLifeGainProhibitionSpec
+from ..life_gain_permission import FixedLifeGainProhibitionSpec, ControllerLifeTotalProhibition
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .current_ability_components import program_has_current_ability_fragments
 from .context import SemanticNodeError
 
 
 _LIFE_GAIN_HANDLER_ID = "replacement.life.gain.multiplier.v1"
+LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID = "replacement.life.gain.multiplier.low_life.v1"
+LOW_LIFE_GAIN_MULTIPLIER_CAPABILITY = "life.gain.replacement.controller_at_five_or_less"
+_LOW_LIFE_GAIN_CEILING = 5
 _LIFE_GAIN_ADDITION_HANDLER_ID = "replacement.life.gain.addition.v1"
 _LIFE_GAIN_ADDITION_CAPABILITY = "life.gain.replacement.static_addition"
 OPPONENT_LIFE_GAIN_TO_LOSS_HANDLER_ID = "replacement.life.gain.to_loss.opponent.v1"
@@ -33,9 +36,20 @@ class LifeReplacementSemantics(Protocol):
     ) -> Sequence[Any]: ...
 
 
+class LifeReplacementPlayer(Protocol):
+    life: int
+
+
+class LifeReplacementState(Protocol):
+    players: Mapping[str, LifeReplacementPlayer]
+
+
 class LifeReplacementHost(Protocol):
     semantics: LifeReplacementSemantics
+    state: LifeReplacementState
     active_seats: list[str]
+
+    def _effective_static_component_key_map(self) -> Mapping[str, Sequence[str]]: ...
 
     def _semantic_event_sources(
         self, *, zones: set[str] | None = None
@@ -159,6 +173,10 @@ class LifeGainMultiplierHandler:
         multiplier = modification["multiplier"]
         if type(multiplier) is not int or multiplier < 2:
             raise SemanticNodeError("Life-gain multiplier must be an integer of at least 2")
+        if self.handler_id == LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID and (
+            type(descriptor["schema_version"]) is not int or relation != "source_controller" or multiplier != 2
+        ):
+            raise SemanticNodeError("The low-life replacement requires its source-controller doubling")
         return LifeGainMultiplierNode(affected_player_relation=relation, multiplier=multiplier)
 
     def replacement_effect(
@@ -263,7 +281,7 @@ class OpponentLifeGainToLossHandler:
 class LifeReplacementRegistry(
     RuntimeComponentRegistry[
         LifeReplacementSourceContext,
-        ReplacementEffect | FixedLifeGainProhibitionSpec,
+        ReplacementEffect | FixedLifeGainProhibitionSpec | ControllerLifeTotalProhibition,
     ]
 ):
     def replacement_effect(
@@ -283,10 +301,15 @@ class LifeReplacementRegistry(
 
 @lru_cache(maxsize=1)
 def default_life_replacement_registry() -> LifeReplacementRegistry:
-    from .life_prohibitions import LifeGainProhibitionHandler
+    from .life_prohibitions import LifeGainProhibitionHandler, LifeTotalProhibitionHandler
     registry = LifeReplacementRegistry((
-        LifeGainMultiplierHandler(), LifeGainAdditionHandler(),
-        OpponentLifeGainToLossHandler(), LifeGainProhibitionHandler(),
+        LifeGainMultiplierHandler(),
+        LifeGainMultiplierHandler(
+            handler_id=LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID,
+            capability_dependencies=(LOW_LIFE_GAIN_MULTIPLIER_CAPABILITY,),
+        ),
+        LifeGainAdditionHandler(), OpponentLifeGainToLossHandler(),
+        LifeGainProhibitionHandler(), LifeTotalProhibitionHandler(),
     ))
     registry.require_registered_capabilities(
         load_default_capability_registry()
@@ -309,6 +332,7 @@ def collect_life_change_replacement_effects(
     )
     registry = default_life_replacement_registry()
     effects: list[ReplacementEffect] = []
+    component_map = None
     for source in candidates:
         active_zone = (
             source_zones.get(source.object_id, source.zone)
@@ -335,6 +359,13 @@ def collect_life_change_replacement_effects(
                 if not program_has_current_ability_fragments(program, host._effective_card_data(source)):
                     continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                if descriptor.get("handler_id") == LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID:
+                    if host.state.players[source.controller].life > _LOW_LIFE_GAIN_CEILING:
+                        continue
+                    if component_map is None:
+                        component_map = host._effective_static_component_key_map()
+                    if program.key not in component_map.get(source.object_id, ()):
+                        continue
                 effects.append(
                     registry.replacement_effect(
                         descriptor,

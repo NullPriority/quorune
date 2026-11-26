@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..characteristic_fragments import CHOSEN_COLOR_DEFINITION_TEMPLATE
 from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
@@ -158,10 +159,13 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
         DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
     )
 
-    step_exempt_handlers = {
+    from ..semantic_runtime.draw_replacements import EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID
+
+    current_draw_handlers = {
         DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
         DRAW_STEP_EXEMPT_MULTIPLIER_HANDLER_ID,
         DRAW_STEP_EXEMPT_REDIRECT_HANDLER_ID,
+        EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
     }
     return StaticRuntimeTemplate(
         compiled=draw_result,
@@ -169,7 +173,7 @@ def _draw_template(text: str) -> StaticRuntimeTemplate | None:
         event="draw",
         runtime_coverage=(
             (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if draw_result[1]["handler_id"] in step_exempt_handlers else ()
+            if draw_result[1]["handler_id"] in current_draw_handlers else ()
         ),
         dependency_reason=(
             "generic result-draw replacement depends on an untrusted rules "
@@ -274,6 +278,7 @@ def _source_permanent_participation_template(
         text,
         source_name=source_name or "",
     )
+    from ..cast_cost_modifiers import SPELL_MANA_FLOOR_TEMPLATE
     from .chosen_type_cast_costs import CHOSEN_TYPE_CAST_COST_TEMPLATE, chosen_type_spell_cost_handler
     from .targeted_spell_costs import targeted_spell_cost_template
     spell_cost_reduction = (targeted_spell_cost_template(text,source_name=source_name or 'source')
@@ -293,7 +298,7 @@ def _source_permanent_participation_template(
                 "static_ability",
                 *(
                     (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1", CHOSEN_TYPE_CAST_COST_TEMPLATE}
+                    if template_id in {"public-fixed-spell-cost-modifier-v1", "public-conditional-spell-cost-modifier-v1", "targeted-fixed-spell-cost-v1", "optional-life-colored-reduction-v1", CHOSEN_TYPE_CAST_COST_TEMPLATE, SPELL_MANA_FLOOR_TEMPLATE}
                     else ()
                 ),
             ),
@@ -327,7 +332,7 @@ def _source_permanent_participation_template(
         or fixed_library_search_rule_handler(text)
         or static_action_permission_handler(text, source_name=source_name))
     if action_permission is not None:
-        opening_hand=action_permission[0] in {'opening-hand-battlefield-permission-v1','opening-hand-reveal-permission-v1'}
+        opening_hand=action_permission[0] in {'opening-hand-battlefield-permission-v1','opening-hand-reveal-permission-v1','opening-hand-luck-permission-v1'}
         return StaticRuntimeTemplate(
             compiled=action_permission,
             kind="static_ability",
@@ -385,6 +390,7 @@ def _query_definition_static_runtime_template(
         kind="static_ability",
         event="continuous",
         active_zone="all",
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,) if compiled[0] == CHOSEN_COLOR_DEFINITION_TEMPLATE else (),
         dependency_reason=(
             "query-derived characteristic definitions require their "
             "cycle-safe all-zone capability"
@@ -432,7 +438,13 @@ def _basic_land_type_runtime_template(text):
 
 
 def _self_characteristic_runtime_template(text: str, *, source_name: str) -> StaticRuntimeTemplate | None:
-    from .all_colors_definitions import all_colors_definition_handler
+    from .all_colors_definitions import all_colors_definition_handler, all_nonbasic_land_types_handler
+
+    land_types = all_nonbasic_land_types_handler(text)
+    if land_types is not None:
+        return StaticRuntimeTemplate(compiled=land_types, kind="static_ability", event="continuous", active_zone="all",
+            runtime_coverage=("layer_4_all_nonbasic_land_types",),
+            dependency_reason="All nonbasic land types require the all-zone subtype definition owner")
     definition=all_colors_definition_handler(text,source_name=source_name)
     if definition is not None:
         return StaticRuntimeTemplate(compiled=definition,kind='static_ability',event='continuous',active_zone='all',
@@ -491,6 +503,33 @@ def _attacking_count_bushido_runtime_template(text, *, source_name):
     )
 
 
+def _keyword_grant_runtime_template(text, *, source_is_class: bool):
+    from .attached_ability_templates import fixed_query_keywords_and_color_protection_handler
+    from .conditional_color_grants import controller_creature_color_keyword_handler
+
+    if source_is_class:
+        if " ".join(text.casefold().split()).removesuffix(".") != "permanents you control with counters on them have ward {1}":
+            return None
+        compiled = fixed_query_keyword_grant_handler(text)
+        if compiled is None:
+            return None
+        compiled = ("class-controlled-countered-permanent-ward-v1", *compiled[1:])
+    else:
+        compiled = (
+            controller_creature_color_keyword_handler(text)
+            or fixed_query_keywords_and_color_protection_handler(text)
+            or fixed_query_keyword_grant_handler(text, allow_disjoint_negative=True)
+        )
+    if compiled is None:
+        return None
+    return StaticRuntimeTemplate(
+        compiled=compiled,
+        kind="static_ability",
+        event="characteristics.evaluate",
+        dependency_reason="generic controlled keyword grants require their closed continuous-effect capability",
+    )
+
+
 def _continuous_static_runtime_template(
     text: str,
     *,
@@ -542,24 +581,8 @@ def _continuous_static_runtime_template(
                 "closed continuous-effect capabilities"
             ),
         )
-    from .attached_ability_templates import fixed_query_keywords_and_color_protection_handler
-    from .conditional_color_grants import controller_creature_color_keyword_handler
-
-    keyword_grant = None if source_is_class else (
-        controller_creature_color_keyword_handler(text)
-        or fixed_query_keywords_and_color_protection_handler(text)
-        or fixed_query_keyword_grant_handler(text, allow_disjoint_negative=True)
-    )
-    if keyword_grant is not None:
-        return StaticRuntimeTemplate(
-            compiled=keyword_grant,
-            kind="static_ability",
-            event="characteristics.evaluate",
-            dependency_reason=(
-                "generic controlled keyword grants require their closed "
-                "continuous-effect capability"
-            ),
-        )
+    if keyword_grant := _keyword_grant_runtime_template(text, source_is_class=source_is_class):
+        return keyword_grant
     query_definition = _query_definition_static_runtime_template(
         text,
         source_name=source_name,
@@ -800,6 +823,19 @@ def _static_damage_runtime_template(
 
 
 
+def _conditional_stack_cascade_template(text, *, source_name):
+    from .battlefield_cascade_grants import conditional_stack_cascade_handler
+
+    compiled = conditional_stack_cascade_handler(text, source_name=source_name)
+    if compiled is None:
+        return None
+    return StaticRuntimeTemplate(
+        compiled=compiled, kind="static_ability", event=compiled[1]["event"],
+        active_zone="stack", runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+        dependency_reason="Conditional self Cascade requires the typed stack characteristic and cast trigger",
+    )
+
+
 def static_runtime_template(
     text: str,
     *,
@@ -809,6 +845,10 @@ def static_runtime_template(
     source_is_class: bool = False,
 ) -> StaticRuntimeTemplate | None:
     """Select one closed static runtime production for an Oracle line."""
+
+    if source_name is not None and not source_is_class:
+        if cascade := _conditional_stack_cascade_template(text, source_name=source_name):
+            return cascade
 
     self_spell_reduction = self_target_reduction_template(text) or self_spell_cost_reduction_handler(text)
     if self_spell_reduction is not None:
@@ -875,16 +915,14 @@ def static_runtime_template(
                 runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
                 dependency_reason="Venture limits require current static components and turn history",
             )
-        counter_quantity = (
-            None
-            if source_is_class
-            else static_counter_quantity_replacement_handler(text)
-        )
+        counter_quantity = static_counter_quantity_replacement_handler(text, source_is_class=source_is_class)
         if counter_quantity is not None:
             return StaticRuntimeTemplate(
                 compiled=counter_quantity,
                 kind="replacement_effect",
                 event="counter.place",
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+                    if source_is_class else (),
                 dependency_reason=(
                     "generic counter-quantity replacement depends on an "
                     "untrusted rules capability"
@@ -920,10 +958,16 @@ def static_runtime_template(
         return continuous
     static_life = static_life_handler(text)
     if static_life is not None:
+        from ..semantic_runtime.life_replacements import LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID
+
         return StaticRuntimeTemplate(
             compiled=static_life,
             kind="replacement_effect",
             event="life.change",
+            runtime_coverage=(
+                (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
+                if static_life[1]["handler_id"] == LOW_LIFE_GAIN_MULTIPLIER_HANDLER_ID else ()
+            ),
             dependency_reason=(
                 "generic life-gain replacement depends on an untrusted "
                 "rules capability"

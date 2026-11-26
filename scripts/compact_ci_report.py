@@ -219,6 +219,14 @@ def build_dependency_report(
                                 "deck_file": requirement.value,
                                 "entries": len(deck.entries),
                             }
+                    elif requirement.kind == "local_fixture_file":
+                        if not (root / requirement.value).is_file():
+                            missing_fixtures.append({
+                                "fixture_file": requirement.value,
+                                "error": "required local builder fixture is missing",
+                            })
+                        else:
+                            resolutions[identity] = {"fixture_file": requirement.value}
                     elif requirement.kind == "fixture_file":
                         if requirement.value not in fixture_set:
                             missing_fixtures.append(

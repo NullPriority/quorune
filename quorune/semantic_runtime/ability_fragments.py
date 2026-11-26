@@ -1162,7 +1162,9 @@ class WardNonmanaAbilityFragmentHandler:
 class WardSacrificeAbilityFragmentHandler(WardNonmanaAbilityFragmentHandler):
     handler_id: str = WARD_SACRIFICE_FRAGMENT_HANDLER_ID
     rule_references: tuple[str, ...] = ("118.4", "118.5", "603.3", "701.21a", "702.21a")
-    capability_dependencies: tuple[str, ...] = ("trigger.keyword.ward.fixed_sacrifice",)
+    capability_dependencies: tuple[str, ...] = (
+        "trigger.keyword.ward.fixed_sacrifice", "trigger.keyword.ward.two_permanents",
+    )
 
     def validate(self, descriptor: Mapping[str, Any]) -> WardSpec:
         spec = _fragment(
@@ -1503,7 +1505,7 @@ class AbilityFragmentRegistry(
 
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
-    from .all_colors import AllColorsDefinitionHandler
+    from .all_colors import AllColorsDefinitionHandler, AllNonbasicLandTypesDefinitionHandler
     from .off_battlefield_creatures import OffBattlefieldSelfCreatureHandler
     from .combat_metadata import AttachedGoadFragmentHandler
     from .deck_copy_limits import DeckCopyLimitFragmentHandler
@@ -1511,6 +1513,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
     from .block_as_though import source_owned_blocking_fragment_handlers
     from .commander_cast_copies import CommanderCastCopyHandler
     from .counter_permissions import CounterProhibitionAbilityFragmentHandler
+    from ..rules.activation.battlefield_grants import BattlefieldCreatureActivationGrantHandler
     registry = AbilityFragmentRegistry(
         (
             AllCreatureTypesCharacteristicDefinitionAbilityFragmentHandler(),
@@ -1546,12 +1549,14 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             EnchantedPlayerAttackRequirementHandler(),
             BoundStaticDeclarationRulesHandler(),
             AttachedActivationRuleHandler(),
+            BattlefieldCreatureActivationGrantHandler(),
             DeclarationRequirementComponentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),
             ConditionalKeywordAbilityFragmentHandler(),
             ColorlessCharacteristicDefinitionAbilityFragmentHandler(),
             AllColorsDefinitionHandler(),
+            AllNonbasicLandTypesDefinitionHandler(),
             OffBattlefieldSelfCreatureHandler(),
             DethroneAbilityFragmentHandler(),
             DynamicPowerToughnessAbilityFragmentHandler(),

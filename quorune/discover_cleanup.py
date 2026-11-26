@@ -7,16 +7,19 @@ from .zone_transitions import ZoneTransitionOwner
 
 
 def execute_discover_cleanup(host,intent):
-    require_discover_resolution(host,actor=intent.actor,stack_ref=intent.stack_ref)
+    require_discover_resolution(host, actor=intent.actor, stack_ref=intent.stack_ref, progress=intent.progress)
     cards=require_discover_exile(host,intent.progress,actor=intent.actor,include_candidate=False)
     supplier = intent.progress.supplier
-    purpose = 'exile-until-instant-or-sorcery' if supplier is not None else 'discover'
-    reason = 'Exile scan random-bottom cleanup' if supplier is not None else 'Discover'
+    name_scan = intent.progress.name_scan
+    purpose = 'countered-spell-different-name' if name_scan is not None else (
+        'exile-until-instant-or-sorcery' if supplier is not None else 'discover'
+    )
+    reason = 'Exile scan random-bottom cleanup' if supplier is not None or name_scan is not None else 'Discover'
     moved=ZoneTransitionOwner(host).move_exiled_cards_to_library_bottom_random(
         tuple(card.object_id for card in cards),owner=supplier or intent.actor,
         randomization_key=f'{intent.stack_ref}|{purpose}|{host.state.event_sequence}',reason=reason,
         replacement_selections=intent.replacement_selections)
-    if supplier is not None:
+    if supplier is not None or name_scan is not None:
         return
     details={'player':intent.actor,'amount':intent.progress.amount,
         'discovered_card':intent.progress.candidate_ref,'exiled_count':len(intent.progress.exiled),

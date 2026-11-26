@@ -7,9 +7,11 @@ from pathlib import Path
 import time
 from typing import Any, Mapping, Sequence
 
+from .permissions import decision_context_for_capability
 from .carddb import CardDatabase
 from .deck import DeckDefinition, DeckLoader
 from .engine import ActionResult, CommanderEngine
+from .errors import GameRuleError
 from .model import GameConfig
 from .oracle_ir import register_generated_programs
 from .projection import ProjectionCursor, StateProjector
@@ -18,6 +20,7 @@ from .profiles import (
     deck_list_fingerprint,
     deck_source_fingerprint,
 )
+from .rules.action_catalog import concealed_face_down_exile_cards, visible_decision_payload
 from .rules.action_explanations import projected_action_explanations
 from .rules.capabilities import load_default_capability_registry
 from .rules.evidence import _capability_validation_snapshot
@@ -252,16 +255,7 @@ class CommanderSession:
         return self.cursors.setdefault(principal, ProjectionCursor())
 
     def pending_principals(self) -> list[str]:
-        decision = self.state.pending_decision
-        if decision is None:
-            return []
-        principals: list[str] = []
-        for actor in decision.actors:
-            principal = f"pilot:{actor}" if decision.role == "pilot" else decision.role
-            cap = self.engine.permissions.capability_for(principal)
-            if cap and principal not in principals:
-                principals.append(principal)
-        return principals
+        return list(dict.fromkeys(capability.principal for capability in self.engine.permissions.pending_capabilities()))
 
     def packet(
         self,
@@ -371,7 +365,9 @@ class CommanderSession:
         if decision is None or capability is None:
             raise ValueError("Future choice has no current capability")
         actor = capability.actor or principal
-        context = decision.payload_by_actor.get(actor, {})
+        context = decision_context_for_capability(decision, capability)
+        if principal not in {"analyst", "admin"}:
+            context = visible_decision_payload(self.state, actor, context)
         for key, value in future_choices.items():
             if key != "search_card_name":
                 planned[str(key)] = copy.deepcopy(value)
@@ -532,7 +528,9 @@ class CommanderSession:
         if decision is None or capability is None:
             raise ValueError("No pending decision for action_id")
         actor_key = capability.actor or principal
-        context = decision.payload_by_actor.get(actor_key, {})
+        context = decision_context_for_capability(decision, capability)
+        if principal not in {"analyst", "admin"}:
+            context = visible_decision_payload(self.state, actor_key, context)
         legal = context.get("legal", {})
         catalog = list(
             legal.get("actions")
@@ -560,6 +558,46 @@ class CommanderSession:
         audit["action_id"] = str(action_id)
         return action, payload, audit
 
+    def _reject_concealed_exile_source(
+        self, actor: str, action: str, payload: Mapping[str, Any],
+    ) -> None:
+        if action not in {"cast", "play_land", "activate"}:
+            return
+        raw_zones = payload.get("from")
+        if action == "play_land":
+            zones = {str(raw_zones or "hand")}
+        elif raw_zones is None:
+            zones = (
+                {"battlefield", "hand", "graveyard", "exile"}
+                if action == "activate"
+                else {"hand", "command"}
+            )
+        elif isinstance(raw_zones, str):
+            zones = {raw_zones}
+        elif isinstance(raw_zones, Sequence) and not isinstance(raw_zones, (bytes, bytearray)):
+            zones = {str(zone) for zone in raw_zones}
+        else:
+            return
+        if "exile" not in zones:
+            return
+        field = "source" if action == "activate" else "card"
+        reference = str(payload.get(field) or payload.get("id") or "")
+        normalized = reference.casefold().strip()
+        concealed = concealed_face_down_exile_cards(self.state, actor)
+        if not any(
+            reference == card.object_id
+            or normalized in {card.ref.casefold(), card.printed_name.casefold()}
+            or normalized == self.engine.display_name(card.object_id).casefold()
+            for card in concealed
+        ):
+            return
+        try:
+            source = self.engine._resolve_object(actor, reference, zones=zones)
+        except GameRuleError:
+            source = None
+        if source is None or any(source is card for card in concealed):
+            raise ValueError(f"Could not find {reference!r} for {actor} in requested zones")
+
     @staticmethod
     def _legal_alternatives(capability: Any, context: Mapping[str, Any]) -> list[dict[str, Any]]:
         legal = context.get("legal") or {}
@@ -586,12 +624,14 @@ class CommanderSession:
             return ActionResult(False, f"No pending capability for {principal}", [], state_changed=False)
         try:
             action, payload, audit = self._expand_action_id(principal, response)
+            if principal not in {"analyst", "admin"}:
+                self._reject_concealed_exile_source(capability.actor or principal, action, payload)
         except ValueError as exc:
             decision = self.state.pending_decision
             actor = capability.actor or principal
             cursor = self.cursors.get(principal)
             actor_context = copy.deepcopy(
-                decision.payload_by_actor.get(actor, {}) if decision else {}
+                decision_context_for_capability(decision, capability) if decision else {}
             )
             current_hash = authoritative_state_hash(self.state)
             retry_count = sum(
@@ -698,7 +738,7 @@ class CommanderSession:
         }
         actor = capability.actor or principal
         actor_context = copy.deepcopy(
-            decision.payload_by_actor.get(actor, {}) if decision else {}
+            decision_context_for_capability(decision, capability) if decision else {}
         )
         result, resolution_inputs = submit_with_resolution_capture(self.engine, before_stack_items,
             token=capability.token,
@@ -958,7 +998,7 @@ class CommanderSession:
         if not self.initial_checkpoint:
             self.initial_checkpoint = checkpoint_envelope(self.state)
         self.engine.semantics.path = directory / "semantics.json"
-        self.engine.semantics.save()
+        saved_semantics = self.engine.semantics.save(return_payload=True)
         manifest = write_record(
             directory,
             state=self.state,
@@ -974,6 +1014,7 @@ class CommanderSession:
             codex_arena=self.arena_metadata,
             status=self.record_status,
             pause_reason=self.pause_reason,
+            saved_semantics=saved_semantics,
         )
         self.arena_metadata = copy.deepcopy(
             dict(manifest.get("codex_arena") or {})
@@ -1054,6 +1095,7 @@ class CommanderSession:
         }
 
     @classmethod
+    @_capability_validation_snapshot()
     def load(
         cls,
         card_db: CardDatabase,

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000709521",
+      "name": "Gallery Sentinel",
+      "mana_cost": "{2}{W}",
+      "cmc": 3,
+      "type_line": "Creature — Human",
+      "oracle_text": "This creature gets +2/+0 as long as there are 2 or more unlocked doors among Rooms you control.",
+      "power": "2",
+      "toughness": "3",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

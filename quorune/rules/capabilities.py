@@ -14,6 +14,7 @@ from .blight_model import BLIGHT_CAPABILITY, BLIGHT_MECHANIC
 from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
 from ..face_up_effect_model import FACE_UP_EFFECT_CAPABILITY,FACE_UP_EFFECT_MECHANIC
 from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
+from .spell_self_exile import TERMINAL_SPELL_MOVE_CAPABILITIES
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -30,7 +31,11 @@ from ..class_levels import (
     CLASS_LIFECYCLE_CAPABILITY_ID,
     CLASS_MECHANIC_ID,
 )
-from .component_resolution import component_resolution_snapshot, implementation_component_resolves
+from .capability_graph import validate_capability_graph
+from .component_resolution import (
+    _component_source_snapshot,
+    implementation_component_resolves,
+)
 from .effect_shape_walkers import (
     contains_aftermath_kind as _contains_aftermath_kind,
     contains_nested_key as _contains_nested_key,
@@ -55,6 +60,9 @@ from .reanimation_capability_shapes import fixed_target_reanimation_covered_mech
 from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
 from ..resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC
 from ..fixed_top_exile import FIXED_TOP_EXILE_MECHANIC_CAPABILITIES
+from ..cast_lifecycles import FIXED_CAST_LIFECYCLE_MECHANICS as _FIXED_CAST_LIFECYCLE_MECHANICS
+from ..landwalk_vocabulary import BASIC_LANDWALK_TYPES
+_BASIC_LANDWALK_MECHANICS = tuple(keyword for keyword, _ in BASIC_LANDWALK_TYPES)
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -133,6 +141,7 @@ from ..compiler.fixed_library_selection_templates import (
 )
 from .closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC, closed_effect_program_node_capabilities
 from .modal_node_capabilities import fixed_modal_capability_dependencies as _fixed_modal_capability_dependencies
+from .special_node_shapes import SAGA_CHAPTER_GRANT_MECHANIC_DEPENDENCIES
 from ..compiler.modal_templates import (
     FIXED_CHOOSE_ONE_MODAL_CAPABILITY,
     FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -241,20 +250,7 @@ _SUNBURST_MECHANIC = "sunburst"
 _ECHO_MECHANIC = "echo"
 _UNEARTH_MECHANIC = "unearth"
 _KICKER_MECHANIC = "kicker"
-_FIXED_CAST_LIFECYCLE_MECHANICS = (
-    "buyback",
-    "dash",
-    "retrace",
-    "warp",
-)
 _DEVOID_MECHANIC = "devoid"
-_BASIC_LANDWALK_MECHANICS = (
-    "plainswalk",
-    "islandwalk",
-    "swampwalk",
-    "mountainwalk",
-    "forestwalk",
-)
 _FIRST_STRIKE_MECHANIC = "first strike"
 _DOUBLE_STRIKE_MECHANIC = "double strike"
 _EXILE_MECHANIC = "exile"
@@ -277,9 +273,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'temporary-library-search-prohibition': ('library.search.prohibition.resolution_until_end_of_turn',),
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
     'own-graveyard-return-choice': ('zone.return.own_graveyard_choice',),
-    'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
-    'spell-resolution-self-shuffle': ('zone.shuffle.resolving_spell',),
-    'spell-resolution-self-bottom': ('zone.library_bottom.resolving_spell',),
+    **TERMINAL_SPELL_MOVE_CAPABILITIES,
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'any-number-target-set': ('target.cardinality.any_number',),
     'selected-player-result-set': ('resolution.target_set.selected_player_results',),
@@ -296,7 +290,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'alternative-quality-discard': ('choice.affected_player.alternative_discard',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
+    'fixed-pawprint-mode-budget': ('casting.modal.pawprint_budget',),
     'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
+    'fixed-extra-combat-after-untap': ('turn.phase.extra_combat_after_current',),
     'sequential-reciprocal-power-damage': ('damage.creature_power.reciprocal_sequence',),
     'conditional-target-power-preparation': ('resolution.effect_program.conditional_target_preparation',),
     'current-target-self-replacement': ('resolution.effect.current_target_self_replacement',),
@@ -313,7 +309,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     ENTRY_PERMANENT_RESULT_MECHANIC: (ENTRY_PERMANENT_RESULT_CAPABILITY,),
     **RESOLUTION_STAT_MECHANIC_CAPABILITIES,
-    'ascend':('player.designation.citys_blessing',),
+    'ascend':('player.designation.citys_blessing',), 'cloak':('keyword_action.cloak.library',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
     AFTERLIFE_MECHANIC_ID: (AFTERLIFE_CAPABILITY_ID,), **{keyword: (f"trigger.keyword.{keyword}.fixed",) for keyword in ("afflict", "annihilator", "firebending", "ingest", "mobilize", "soulshift")},
@@ -365,6 +361,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'discover':('library.discover.controller',),
     'exile-until-nonland-cast': ('library.exile_until_nonland.cast_without_mana',),
     'exile-until-instant-or-sorcery-cast': ('library.exile_until_instant_or_sorcery.cast_and_return',),
+    'stack-counter-different-name-exile-cast': ('stack.counter.different_name_exile_cast',),
     **FIXED_TOP_EXILE_MECHANIC_CAPABILITIES,
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
@@ -372,6 +369,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     REANIMATION_FOLLOWUP_MECHANIC: (REANIMATION_FOLLOWUP_CAPABILITY,),
     'variable-library-selection':('library.select.variable_controller',),
     'reveal-until-library-selection':('library.select.reveal_until_controller',),
+    'fixed-control-target-players-next-turn': ('turn.control.target_players_next_turn',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     **FIXED_RULE_ACTION_CAPABILITIES,
     **DISCARD_FAMILY_CAPABILITIES,
@@ -450,6 +448,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _LIFELINK_MECHANIC: ("damage.result.lifelink",),
     _TOXIC_MECHANIC: ("damage.result.toxic",),
     "wither": ("damage.result.wither",),
+    "departure_counter_transfer": ("counter.producer.departure_snapshot_transfer",),
+    "counter-recipient-opponent-blockers": ("combat.declaration.counter_recipient_opponent_blockers",),
     "trigger-event-normalized-zone-change": (
         "trigger.event.normalized_zone_change",
     ),
@@ -464,6 +464,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
         "trigger.event.normalized_self_attack",
     ),
     "trigger-event-normalized-public-action": ("trigger.event.normalized_public_action",),
+    "source-mana-tap-damage": ("trigger.event.source_tap_for_mana",),
     'trigger-event-normalized-counter-placement': ('trigger.event.normalized_counter_placement',),
     "tap-state-event-player-result": ("trigger.event.normalized_public_action",),
     "scheduled-player-event-result": ("trigger.event.scheduled_player_result",),
@@ -486,6 +487,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-saga-chapter": (
         "counter.producer.saga_lore",
     ),
+    **SAGA_CHAPTER_GRANT_MECHANIC_DEPENDENCIES,
     "fixed-counter-event-trigger": (
         "counter.producer.fixed_event_trigger",
     ),
@@ -580,6 +582,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         ENTRY_PERMANENT_RESULT_MECHANIC,
         *RESOLUTION_STAT_MECHANIC_CAPABILITIES,
         'ascend',
+        "fixed-control-target-players-next-turn",
         "fixed-extra-turn-after-current",
         *FIXED_RULE_ACTION_CAPABILITIES,
         "declared-effect-amount",
@@ -790,9 +793,13 @@ class CapabilityRegistry:
     available for migration reporting, but they do not gate a smaller closure.
     """
 
-    @component_resolution_snapshot()
-    def __init__(self, value: Mapping[str, Any]):
-        raw = json.loads(json.dumps(dict(value)))
+    @_component_source_snapshot()
+    def __init__(
+        self, value: Mapping[str, Any], *, _owns_document: bool = False
+    ):
+        raw = dict(value)
+        if not _owns_document:
+            raw = json.loads(json.dumps(raw))
         _require_exact_fields(raw, _REGISTRY_FIELDS, field="registry")
         schema_version = raw.get("schema_version")
         if type(schema_version) is not int or schema_version != CAPABILITY_REGISTRY_SCHEMA_VERSION:
@@ -864,8 +871,7 @@ class CapabilityRegistry:
                 required=True,
             )
 
-        self._validate_references()
-        self._validate_acyclic()
+        validate_capability_graph(self._capabilities, self._aggregates, CapabilityRegistryError)
         self._raw = raw
         self._fingerprint = _hash(raw)
         self._evidence_fingerprint: str | None = None
@@ -1007,50 +1013,13 @@ class CapabilityRegistry:
             )
         return row
 
-    def _validate_references(self) -> None:
-        known = set(self._capabilities)
-        for capability_id, row in self._capabilities.items():
-            missing = sorted(set(row["dependencies"]) - known)
-            if missing:
-                raise CapabilityRegistryError(
-                    f"{capability_id} has unknown dependencies: "
-                    + ", ".join(missing)
-                )
-        for mechanic_id, dependencies in self._aggregates.items():
-            missing = sorted(set(dependencies) - known)
-            if missing:
-                raise CapabilityRegistryError(
-                    f"{mechanic_id} aggregate has unknown capabilities: "
-                    + ", ".join(missing)
-                )
-
-    def _validate_acyclic(self) -> None:
-        visiting: list[str] = []
-        complete: set[str] = set()
-
-        def visit(capability_id: str) -> None:
-            if capability_id in complete:
-                return
-            if capability_id in visiting:
-                start = visiting.index(capability_id)
-                cycle = [*visiting[start:], capability_id]
-                raise CapabilityRegistryError(
-                    "Capability dependency cycle: " + " -> ".join(cycle)
-                )
-            visiting.append(capability_id)
-            for dependency in self._capabilities[capability_id][
-                "dependencies"
-            ]:
-                visit(str(dependency))
-            visiting.pop()
-            complete.add(capability_id)
-
-        for capability_id in sorted(self._capabilities):
-            visit(capability_id)
-
     @classmethod
     def from_path(cls, path: str | Path) -> "CapabilityRegistry":
-        return cls(json.loads(Path(path).read_text(encoding="utf-8")))
+        value = json.loads(Path(path).read_text(encoding="utf-8"))
+        if cls is CapabilityRegistry:
+            # JSON decoding produced fresh data owned by this registry.
+            return cls(value, _owns_document=True)
+        return cls(value)
 
     @property
     def fingerprint(self) -> str:
@@ -1198,19 +1167,15 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    if mechanics.intersection(
-        {
-            FIXED_CHOOSE_ONE_MODAL_MECHANIC,
-            FIXED_NONREPEATING_MODAL_MECHANIC,
-        }
-    ):
-        from .spree_capability_shapes import modal_cost_capabilities
-        return modal_cost_capabilities(effects=effects, target_schema=target_schema,
-            mechanics=mechanic_values, cost_schema=cost_schema, modal_resolver=_fixed_modal_capability_dependencies)
-
-    from .special_node_shapes import special_node_capabilities,special_trigger_envelope_capabilities
-    special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
-    if special is not None:return special_trigger_envelope_capabilities(special,mechanics)
+    from .special_node_shapes import special_or_modal_node_capabilities
+    special = special_or_modal_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanics=mechanics,
+        mechanic_values=mechanic_values, cost_schema=cost_schema,
+        modal_mechanics=(FIXED_CHOOSE_ONE_MODAL_MECHANIC, FIXED_NONREPEATING_MODAL_MECHANIC),
+        modal_resolver=_fixed_modal_capability_dependencies,
+    )
+    if special is not None:
+        return special
 
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
@@ -1400,11 +1365,7 @@ def _fixed_modal_covered_mechanics(supplied: set[str]) -> set[str]:
         FIXED_CHOOSE_ONE_MODAL_CAPABILITY: FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_CAPABILITY: FIXED_NONREPEATING_MODAL_MECHANIC,
     }
-    return {
-        mechanic
-        for capability, mechanic in mapping.items()
-        if capability in supplied
-    }
+    return {mechanic for capability, mechanic in mapping.items() if capability in supplied}
 
 
 def _return_to_hand_covered_mechanics(supplied: set[str]) -> set[str]:
@@ -1432,6 +1393,9 @@ def capability_covered_mechanics(
         for mechanic, required in MECHANIC_CAPABILITY_DEPENDENCIES.items()
         if set(required).issubset(supplied)
     }
+    from .artifact_search_exchange import ARTIFACT_SEARCH_EXCHANGE_CAPABILITY, ARTIFACT_SEARCH_EXCHANGE_MECHANIC
+    if ARTIFACT_SEARCH_EXCHANGE_CAPABILITY in supplied:
+        covered.add(ARTIFACT_SEARCH_EXCHANGE_MECHANIC)
     from ..resolution_conditions import RESOLUTION_CONDITION_CAPABILITY, RESOLUTION_CONDITION_MECHANIC
     if RESOLUTION_CONDITION_CAPABILITY in supplied:
         covered.add(RESOLUTION_CONDITION_MECHANIC)
@@ -1556,7 +1520,7 @@ def capability_covered_mechanics(
         covered.add("cr-601-casting-spells")
     from .cumulative_upkeep_capability_shapes import cumulative_upkeep_covered_mechanics
     covered.update(cumulative_upkeep_covered_mechanics(supplied))
-    if "trigger.keyword.echo.fixed_mana" in supplied:
+    if supplied.intersection({"trigger.keyword.echo.fixed_mana", "trigger.keyword.echo.discard_one"}):
         covered.add(_ECHO_MECHANIC)
     if "keyword_action.explore.single" in supplied:
         covered.add("explore")

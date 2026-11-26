@@ -94,7 +94,9 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    CONTROLLER_UNLOCKED_ROOM_DOORS = "controller_unlocked_room_doors"
     OPPONENT_HAS_GREATER_METRIC = 'opponent_has_greater_metric'
+    OPPONENT_CREATURE_COUNT_MAXIMUM = "opponent_creature_count_maximum"
     UNIQUE_PLAYER_MAXIMUM = 'unique_player_maximum'
     CONTROLS_A_GREATEST_POWER_CREATURE = "controls_a_greatest_power_creature"
     CONTROLS_EACH_GREATEST_POWER_CREATURE = "controls_each_greatest_power_creature"
@@ -340,6 +342,10 @@ def _validate_public_fact_fields(
         raise FixedPublicStateConditionError(
             "Public-fact conditions require a closed fact and positive threshold"
         )
+    if fact is FixedPublicStateFact.CONTROLLER_UNLOCKED_ROOM_DOORS:
+        if schema_version != 4 or type(amount) is not int or amount < 1 or parameter is not None:
+            raise FixedPublicStateConditionError("Unlocked Room counts require a fixed positive public threshold")
+        return
     if fact in BLOCK_DECLARATION_TIMING_FACTS:
         if schema_version != 4 or amount != 1 or parameter is not None:
             raise FixedPublicStateConditionError("Block declaration timing requires its exact boolean window")
@@ -347,6 +353,10 @@ def _validate_public_fact_fields(
     if fact in GREATEST_CREATURE_POWER_FACTS:
         if schema_version != 4 or amount != 1 or parameter is not None:
             raise FixedPublicStateConditionError("Greatest creature power requires one closed controller comparison")
+        return
+    if fact is FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM:
+        if schema_version != 4 or not 1 <= amount <= 10 or parameter is not None:
+            raise FixedPublicStateConditionError("Opponent creature thresholds require a fixed positive creature count")
         return
     if fact in {FixedPublicStateFact.UNIQUE_PLAYER_MAXIMUM,FixedPublicStateFact.OPPONENT_HAS_GREATER_METRIC}:
         from .player_maximum_model import validate_player_maximum_fact

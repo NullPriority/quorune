@@ -22,6 +22,12 @@ def permanent_spell_copy_node_dependencies(effect, target_schema):
         return ()
     if spec.kind == "artifact":
         return (PERMANENT_SPELL_COPY_CAPABILITY, EVENT_SPELL_COPY_CAPABILITY)
+    if spec.kind == "exile_cast_grant":
+        from ..stack_spell_copy_model import EXILE_CAST_COPY_CAPABILITY
+
+        return (EXILE_CAST_COPY_CAPABILITY, EVENT_SPELL_COPY_CAPABILITY,
+                "continuous.resolution.fixed_keyword_zone_object", "token.creation.fixed_copy",
+                "trigger.event.normalized_spell_cast", "trigger.placement.apnap")
     return (PERMANENT_SPELL_COPY_CAPABILITY, QUALIFIED_STACK_COPY_CAPABILITY, "target.revalidate_resolution")
 
 
@@ -91,7 +97,7 @@ def qualified_stack_copy_runtime_dependencies(program):
     if any(PERMANENT_SPELL_COPY_FIELD in effect for effect in effects):
         if len(effects) == 1:
             spec = PermanentSpellCopySpec.from_dict(effects[0][PERMANENT_SPELL_COPY_FIELD])
-            if spec.kind == 'artifact':
+            if spec.kind in {'artifact', 'exile_cast_grant'}:
                 return ()
             if required := permanent_spell_copy_node_dependencies(effects[0], schema):
                 return required
@@ -113,9 +119,10 @@ def qualified_stack_copy_runtime_dependencies(program):
 def reviewed_stack_copy_with_current_policy(current, old):
     """Compare only complete, closed compiler copies with exact legacy shapes.
 
-    The old permanent-spell row omitted the printed retained-target policy.
-    Only an admitted current source may replace that row, using normal strict
-    binding and the shared source-hash/catalog-price checks in its caller.
+    The reviewed permanent-spell shape omits the printed retained-target
+    policy. The reviewed artifact-source predicate predates current/LKI source
+    qualification. Existing records retain both reviewed shapes. The caller
+    checks source hashes, catalog, price and strict binding for the current view.
     """
     from dataclasses import replace
     from copy import deepcopy
@@ -140,7 +147,10 @@ def reviewed_stack_copy_with_current_policy(current, old):
         elif isinstance(spec, FixedStackSpellCopySpec):
             legacy['types_any'] = ['Instant', 'Sorcery']
         if old.target_schema != legacy:
-            continue
+            if (kind != 'activated_or_triggered_ability' or spec.source_filter != 'artifact'
+                    or old.target_schema != {**legacy, 'predicate': 'artifact_source'}
+                    or type(old.target_schema['count']) is not int):
+                continue
         handlers = deepcopy(old.handlers)
         if len(handlers) != 1 or handlers[0].get('handler_id') != 'activation.catalog.pinned.v1':
             return None

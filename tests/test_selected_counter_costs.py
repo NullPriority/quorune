@@ -311,3 +311,173 @@ class SelectedCounterCostRuntimeTests(unittest.TestCase):
         with patch('quorune.compiler.activated_counter_costs.fixed_selected_counter_activation', side_effect=lambda ability: ability):
             with self.assertRaises(AssertionError):
                 getattr(type(self)(method), method)()
+
+from inherited_composition_fixture import InheritedNativeFixture
+
+
+class DistributedCounterCostRuntimeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "distributed-counters.sqlite3"
+        base = [ROOT / "tests/fixtures/bound-effect-program-cards.json",
+                ROOT / "tests/fixtures/controlled-counter-cost-cards.json"]
+        names = {card["name"] for fixture in base for card in json.loads(fixture.read_text(encoding="utf-8"))["cards"]}
+        if "Sol Ring" not in names:
+            other = json.loads((ROOT / "tests/fixtures/subtype-composite-grant-cards.json").read_text(encoding="utf-8"))
+            ring, = (card for card in other["cards"] if card["name"] == "Sol Ring")
+            supplement = path.with_name("distributed-counter-support.json")
+            supplement.write_text(json.dumps({"schema_version": 1, "cards": [ring], "rulings": [
+                row for row in other["rulings"] if row["oracle_id"] == ring["oracle_id"]
+            ]}), encoding="utf-8")
+            base.append(supplement)
+        build_fixture_database(base, path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Distributed counter cost", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    def _hopeful_actions(self, session, source):
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return [row for row in actions if row["id"].startswith(f"activate:{source.ref}:")]
+
+    def _rejected(self, session, actor, command):
+        before = authoritative_state_hash(session.state)
+        failed = session.act(f"pilot:{actor}", command)
+        self.assertFalse(failed.ok, failed.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+    def test_hopeful_initiate_can_pay_two_from_one_or_one_each_and_replay(self):
+        from quorune.choice_forms import build_action_form
+
+        for split in (False, True):
+            with self.subTest(split=split):
+                session = self.session(734205 + int(split))
+                engine = session.engine
+                source = self.add(engine, "Hopeful Initiate", ref="HOPEFUL-SOURCE")
+                source.counters["+1/+1"] = 1
+                double = self.add(engine, "Generic Bound Body", ref="HOPEFUL-DOUBLE")
+                double.counters["+1/+1"] = 2
+                double.owner = "B"
+                single = self.add(engine, "Generic Bound Body", ref="HOPEFUL-SINGLE")
+                single.counters["+1/+1"] = 1
+                opposing = self.add(engine, "Generic Bound Body", seat="B", ref="HOPEFUL-OPPONENT")
+                opposing.counters["+1/+1"] = 2
+                noncreature = self.add(engine, "Hardened Scales", ref="HOPEFUL-NONCREATURE")
+                noncreature.counters["+1/+1"] = 2
+                target = self.add(engine, "Sol Ring" if split else "Hardened Scales", seat="B", ref="HOPEFUL-TARGET")
+                private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="HOPEFUL-PRIVATE")
+                self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2, "W": 1})
+                self.checkpoint(session)
+
+                action, = self._hopeful_actions(session, source)
+                field = action["choice_schema"]["cost_cards"]
+                self.assertEqual([1, 2], field["allowed_counts"])
+                self.assertEqual([double.ref], field["single_creature_refs"])
+                self.assertEqual({source.ref, double.ref, single.ref}, set(field["legal_refs"]))
+                self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+                self.assertNotIn(opposing.ref, action["target_schema"]["legal_refs"])
+                context = session.packet("pilot:A", full=True)["decision"]["ctx"]
+                form = build_action_form(action, decision_kind="priority", context=context)
+                self.assertTrue(any(field["name"] == "cost_cards" for field in form["fields"]))
+                payment = [source.ref, single.ref] if split else [double.ref]
+                command = {"action_id": action["id"], "targets": [target.ref], "pay": "auto"}
+                for actor, refs in (
+                    ("B", payment), ("A", [single.ref]), ("A", [opposing.ref]), ("A", [noncreature.ref]),
+                    ("A", [double.ref, double.ref]), ("A", [source.ref, single.ref, double.ref]),
+                ):
+                    self._rejected(session, actor, {**command, "cost_cards": refs})
+                self._rejected(session, "A", {**command, "cost_cards": payment, "targets": [opposing.ref]})
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+                accepted = session.act("pilot:A", {**command, "cost_cards": payment})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+                self.assertEqual((0, 2, 0) if split else (1, 0, 1),
+                    tuple(session.state.cards[creature.object_id].counters.get("+1/+1", 0)
+                          for creature in (source, double, single)))
+                self.assertEqual(2, session.state.cards[opposing.object_id].counters["+1/+1"])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_hopeful_initiate_training_makes_split_payment_available(self):
+        session = self.session(734207)
+        engine = session.engine
+        source = self.add(engine, "Hopeful Initiate", ref="HOPEFUL-TRAINING")
+        larger = self.add(engine, "Generic Bound Body", ref="HOPEFUL-TRAINING-PARTNER")
+        for attacker in (source, larger):
+            attacker.acquired_control_turn_count = -1
+        larger.counters["+1/+1"] = 1
+        target = self.add(engine, "Sol Ring", seat="B", ref="HOPEFUL-TRAINING-TARGET")
+        for index in range(3):
+            self.add(engine, "Generic Bound Plains", ref=f"HOPEFUL-TRAINING-MANA-{index}")
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.assertFalse(self._hopeful_actions(session, source))
+
+        self.attack(session, [(source, "B"), (larger, "B")])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[source.object_id].counters.get("+1/+1"))
+        self.until(session, lambda game: game.state.phase == "postcombat_main")
+        action, = self._hopeful_actions(session, source)
+        self.assertEqual([2], action["choice_schema"]["cost_cards"]["allowed_counts"])
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto",
+                                          "targets": [target.ref], "cost_cards": [source.ref, larger.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertFalse(session.state.cards[source.object_id].counters)
+        self.assertFalse(session.state.cards[larger.object_id].counters)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_hopeful_initiate_distributed_descriptor_and_authority_fail_closed(self):
+        from copy import deepcopy
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.selected_counter_costs import (
+            DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY, DISTRIBUTED_PLUS_COUNTER_COST_KIND,
+            selected_counter_runtime_dependencies,
+        )
+
+        card = self.db.lookup("Hopeful Initiate")
+        ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        result, = (node for node in ir.faces[0].nodes if node.event == "activate")
+        self.assertIn(DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY, result.capability_dependencies)
+        typed = CostChoice(DISTRIBUTED_PLUS_COUNTER_COST_KIND, card_type="creature")
+        self.assertEqual(typed, CostChoice.from_dict(typed.to_dict()))
+        for mutated in ({"count": 2}, {"card_type": "artifact"}, {"counter_amount": 3}):
+            with self.subTest(mutated=mutated), self.assertRaises(ValueError):
+                CostChoice.from_dict({**typed.to_dict(), **mutated})
+        for text in (
+            card.oracle_text.replace("Remove two", "Remove three"),
+            card.oracle_text.replace("creatures you control", "permanents you control"),
+            card.oracle_text.replace("from among creatures you control", "from among creatures an opponent controls"),
+        ):
+            with self.subTest(text=text):
+                candidate = compile_oracle_card(replace(card, oracle_text=text), capability_registry=self.registry,
+                                                capability_profile="commander_review")
+                self.assertNotEqual("exact", candidate.status)
+
+        session = self.session(734208)
+        source = self.add(session.engine, "Hopeful Initiate")
+        self.assert_closed(session, source)
+        program, = (program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if program.event == "activate")
+        self.assertIn(DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY, selected_counter_runtime_dependencies(program))
+        broken = replace(program, cost_schema={**program.cost_schema, "choices": []})
+        with self.assertRaises(ValueError):
+            selected_counter_runtime_dependencies(broken)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        for dependency in (DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY, SELECTED_COUNTER_COST_CAPABILITY):
+            with self.subTest(dependency=dependency):
+                registry = deepcopy(raw)
+                owner = next(row for row in registry["capabilities"] if row["id"] == dependency)
+                owner.update(status="blocked", blockers=["Selected counter removal capability withdrawn"])
+                blocked = compile_oracle_card(card, capability_registry=CapabilityRegistry(registry),
+                                              capability_profile="commander_review")
+                self.assertNotEqual("exact", blocked.status)

@@ -132,16 +132,40 @@ def self_regeneration_effect_template(
     return SelfRegenerationEffectTemplate()
 
 
+@dataclass(frozen=True, slots=True)
+class ControlledCreatureRegenerationEffectTemplate:
+    template_id: str = "regenerate-current-controlled-creatures-v2"
+    target_schema: None = None
+    mechanics: tuple[str, ...] = ("regenerate",)
+
+    @property
+    def effects(self):
+        from ..regeneration import controlled_creature_regeneration_effect
+
+        return (controlled_creature_regeneration_effect(),)
+
+    def compiled(self):
+        return self.template_id, self.effects, self.target_schema, self.mechanics
+
+
+def controlled_creature_regeneration_template(text):
+    if text.casefold() == "regenerate each creature you control.":
+        return ControlledCreatureRegenerationEffectTemplate()
+    return None
+
+
 def fixed_regeneration_effect_template(
     text: str,
     *,
     card_name: str,
     source_is_permanent: bool | None,
     source_attachment_relation: AttachmentReferenceKind | None = None,
-) -> SelfRegenerationEffectTemplate | FixedRegenerationEffectTemplate | None:
+) -> SelfRegenerationEffectTemplate | FixedRegenerationEffectTemplate | ControlledCreatureRegenerationEffectTemplate | None:
     """Lower one fixed source, attached-object, or direct-target shield."""
 
     normalized = " ".join(text.strip().split())
+    if group := controlled_creature_regeneration_template(normalized):
+        return group
     self_template = self_regeneration_effect_template(normalized)
     if self_template is not None and source_is_permanent is True:
         return self_template
@@ -150,13 +174,13 @@ def fixed_regeneration_effect_template(
             template_id='regenerate-this-permanent-v1',_card_reference=SOURCE_ZONE_OBJECT)
 
     target_match = re.fullmatch(
-        r"regenerate (?P<subject>target .+)\.",
+        r"regenerate (?P<subject>(?:another )?target .+)\.",
         normalized,
         re.IGNORECASE,
     )
     if target_match is not None:
         target_spec = direct_permanent_target_spec(target_match.group("subject"))
-        if target_spec is None:
+        if target_spec is None or (target_spec.source_exclusion and source_is_permanent is not True):
             return None
         return FixedRegenerationEffectTemplate(
             template_id=f"regenerate-target-{target_spec.slug}-v1",

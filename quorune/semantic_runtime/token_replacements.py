@@ -5,6 +5,12 @@ from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..replacement import CreateAdditionalToken, MultiplyTokenCreation
+from ..replacement.immutable import thaw_value
+from ..replacement.operations import ReplaceCreatureTokenDefinition, ReplacePredefinedArtifactTokenSet
+from ..creature_token_definition_replacement import (
+    CREATURE_TOKEN_DEFINITION_CAPABILITY, CREATURE_TOKEN_DEFINITION_HANDLER,
+    PREDEFINED_TOKEN_SET_CAPABILITY, PREDEFINED_TOKEN_SET_HANDLER, PREDEFINED_TOKEN_SET_SUBTYPES,
+)
 from ..fixed_token_production import (
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenProductionError,
@@ -733,6 +739,104 @@ class TokenQuantityReplacementHandler:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class CreatureTokenDefinitionReplacementHandler:
+    """Controller-scoped substitution over current creature creation members."""
+
+    handler_id: str = CREATURE_TOKEN_DEFINITION_HANDLER
+    schema_version: int = 1
+    family: str = "replacement.token.creature_definition"
+    event: str = "token.create"
+    rule_references: tuple[str, ...] = ("111.3", "614.5", "614.6", "614.16", "616.1")
+    capability_dependencies: tuple[str, ...] = (CREATURE_TOKEN_DEFINITION_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> TokenDefinition:
+        exact_fields(
+            descriptor, {"handler_id", "schema_version", "event", "condition", "definition"},
+            field="creature token definition replacement",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+            or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
+            or thaw_value(descriptor["condition"]) != {
+                "event_controller": "source_controller", "created_types": ["creature"],
+            }
+        ):
+            raise SemanticNodeError("Creature token definition replacement requires its fixed controller scope")
+        if not isinstance(descriptor["definition"], Mapping):
+            raise SemanticNodeError("Creature token definition data must be an object")
+        definition = TokenDefinition.from_mapping(descriptor["definition"])
+        if "creature" not in _token_characteristic_parts(definition.type_line)[0]:
+            raise SemanticNodeError("Creature token definition replacement must produce a creature")
+        definition.characteristics()
+        return definition
+
+    def lower(self, descriptor, context) -> tuple[AdditionalTokenIntent, ...]:
+        self.validate(descriptor)
+        return ()
+
+    def replacement_effect(self, descriptor, context):
+        definition = self.validate(descriptor)
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{context.source_ref}:{context.component_id}",
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "event_controller": {"eq": context.source_controller},
+                "created_types": {"contains_all": ["creature"]},
+            },
+            operations=(ReplaceCreatureTokenDefinition(
+                name=definition.name, characteristics=definition.characteristics(),
+                handler_id=self.handler_id, source_ref=context.source_ref,
+            ),),
+            label=f"{context.source_ref}: replace the creature token definitions",
+        )
+
+
+@dataclass(frozen=True, slots=True)
+class PredefinedArtifactTokenSetReplacementHandler:
+    """Current controller-scoped substitution on the token creation batch."""
+
+    handler_id: str = PREDEFINED_TOKEN_SET_HANDLER
+    schema_version: int = 1
+    family: str = "replacement.token.predefined_artifact_set"
+    event: str = "token.create"
+    rule_references: tuple[str, ...] = (
+        "111.10a", "111.10b", "111.10f", "614.5", "614.6", "616.1", "616.2", "701.7b",
+    )
+    capability_dependencies: tuple[str, ...] = (PREDEFINED_TOKEN_SET_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> None:
+        exact_fields(
+            descriptor, {"handler_id", "schema_version", "event", "event_controller"},
+            field="predefined artifact token set replacement",
+        )
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
+                or descriptor["event_controller"] != "source_controller"):
+            raise SemanticNodeError("Predefined artifact token substitution requires its fixed controller scope")
+
+    def lower(self, descriptor, context) -> tuple[AdditionalTokenIntent, ...]:
+        self.validate(descriptor)
+        return ()
+
+    def replacement_effect(self, descriptor, context):
+        self.validate(descriptor)
+        return ReplacementEffect(
+            effect_id=f"{self.handler_id}:{context.source_ref}:{context.component_id}",
+            source_id=context.source_ref,
+            event_kind=self.event,
+            replacement_class=ReplacementClass.OTHER,
+            conditions={
+                "event_controller": {"eq": context.source_controller},
+                "created_subtypes": {"contains_any": PREDEFINED_TOKEN_SET_SUBTYPES},
+            },
+            operations=(ReplacePredefinedArtifactTokenSet(self.handler_id, context.source_ref),),
+            label=f"{context.source_ref}: create a Clue, a Food, and a Treasure for each matching token",
+        )
+
+
 class TokenCreationReplacementRegistry(
     RuntimeComponentRegistry[
         TokenCreationReplacementContext,
@@ -762,6 +866,8 @@ def default_token_creation_replacement_registry(
             AdditionalTokenReplacementHandler(),
             GenericAdditionalTokenReplacementHandler(),
             TokenQuantityReplacementHandler(),
+            CreatureTokenDefinitionReplacementHandler(),
+            PredefinedArtifactTokenSetReplacementHandler(),
         )
     )
     registry.require_registered_capabilities(

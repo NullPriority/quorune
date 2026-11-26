@@ -14,6 +14,10 @@ _ORDINARY_SAGA_RULES_REMINDER = re.compile(
 _TRANSFORM_REMINDER = re.compile(
     r"\(Transforms from [^)]+\.\)", re.IGNORECASE
 )
+_MELD_PARTNER_NAME_WORD = r"(?:[A-Z][\w'’‐-]*|[dl]['’][A-Z][\w'’‐-]*|and|by|de|of|the)"
+_MELD_PARTNER_REMINDER = re.compile(
+    rf"\(Melds with [A-Z][\w'’‐-]*(?:,? {_MELD_PARTNER_NAME_WORD})*\.\)"
+)
 _DRYAD_ARBOR_REMINDER = (
     "(This land isn't a spell, it's affected by summoning sickness, and it "
     'has "{T}: Add {G}.")'
@@ -114,10 +118,16 @@ def is_standalone_parenthetical_reminder(text: str) -> bool:
     return saw_group and depth == 0
 
 
+def is_passive_meld_partner_reminder(text: str) -> bool:
+    """Recognize a single partner-name clause in the printed reminder form."""
+    return _MELD_PARTNER_REMINDER.fullmatch(text.strip()) is not None
+
+
 def is_nonexecuting_standalone_reminder(
     text: str,
     *,
     transform: bool = False,
+    meld: bool = False,
     dryad_arbor: bool = False,
 ) -> bool:
     """Recognize reminders whose authority is already carried structurally."""
@@ -132,6 +142,7 @@ def is_nonexecuting_standalone_reminder(
         or _COLORLESS_MANA_REMINDER.fullmatch(stripped)
         or _SNOW_MANA_REMINDER.fullmatch(stripped)
         or (transform and _TRANSFORM_REMINDER.fullmatch(stripped))
+        or (meld and is_passive_meld_partner_reminder(stripped))
         or (dryad_arbor and stripped == _DRYAD_ARBOR_REMINDER)
     )
 
@@ -143,7 +154,7 @@ def material_source_lines(
     layout: str = "",
     type_line: str = "",
 ) -> Iterable[tuple[str, str, SourceSpan]]:
-    """Yield material Oracle rows while omitting the ordinary Saga reminder."""
+    """Yield source-spanned material rows, skipping recognized reminders."""
 
     for line, span in source_lines(text):
         material_line = without_parenthetical_reminder(line)
@@ -152,6 +163,7 @@ def material_source_lines(
             and is_nonexecuting_standalone_reminder(
                 line,
                 transform=layout == "transform",
+                meld=layout == "meld",
                 dryad_arbor=(
                     "land creature" in type_line.replace("—", " ").casefold()
                     and "forest dryad" in type_line.casefold()
@@ -170,6 +182,7 @@ def material_source_lines(
 
 __all__ = [
     "is_nonexecuting_standalone_reminder",
+    "is_passive_meld_partner_reminder",
     "is_standalone_parenthetical_reminder",
     "material_source_lines",
     "source_lines",

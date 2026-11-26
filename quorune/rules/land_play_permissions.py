@@ -144,7 +144,9 @@ def resolving_land_play_options(host, actor, card, *, origin):
         option = {"kind": "land", "card": card.ref, "face": face_name, "requirements": {},
                   "label": f"Play {face_name or card.printed_name}", "pay_life": False}
         result.append(option)
-        if 0 < life <= host.state.players[actor].life:
+        from ..life_state import available_life_for_payment
+
+        if 0 < life <= available_life_for_payment(host, actor):
             result.append({**option, "label": f"{option['label']} and pay {life} life", "pay_life": True})
     prefix = "fixed-top-land:" if origin == "exile" else "revealed-library-land:"
     return tuple({**option, "id": prefix + discover_options_fingerprint((option,))} for option in result)

@@ -743,8 +743,8 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
     await expect(opponent.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
     await expect(host.locator(".player-board")).toHaveCount(2);
     await expect(opponent.locator(".player-board")).toHaveCount(2);
-    await expect(host.getByTestId("commander-damage-A")).toContainText("0");
-    await expect(host.getByTestId("commander-damage-B")).toContainText("0");
+    await expect(host.getByTestId("commander-damage-A")).toHaveCount(0);
+    await expect(host.getByTestId("commander-damage-B")).toHaveCount(0);
     await expect(host.getByTestId("hand-panel")).toHaveAttribute("data-resizable", "true");
     expect(await host.getByTestId("hand-panel").evaluate((element) => {
       const style = getComputedStyle(element);
@@ -1487,8 +1487,8 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
         if (!(await page.getByTestId("player-B").getByLabel("22 life").isVisible())) {
           return false;
         }
-        const damage = await page.getByTestId("commander-damage-B").textContent();
-        if (!damage?.includes("18 from Yargle and Multani")) return false;
+        const amount = page.getByTestId("commander-damage-B").locator(".commander-damage-amount");
+        if (await amount.count() !== 1 || (await amount.textContent())?.trim() !== "18") return false;
       }
       return true;
     }, testInfo, durableTransitionTimeout);
@@ -1496,10 +1496,19 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
       await expect(page.getByTestId("player-B").getByLabel("22 life")).toBeVisible({
         timeout: durableTransitionTimeout,
       });
-      await expect(page.getByTestId("commander-damage-B")).toContainText(
-        "18 from Yargle and Multani",
-        { timeout: durableTransitionTimeout },
-      );
+      const commanderDamage = page.getByTestId("commander-damage-B").locator(".commander-damage-chip");
+      await expect(commanderDamage.locator(".commander-damage-amount")).toHaveText("18", {
+        timeout: durableTransitionTimeout,
+      });
+      await expect(commanderDamage).toHaveAttribute("data-seat-accent", "A");
+      const ownerSeat = page.getByTestId("player-A").locator(".seat-letter");
+      expect(await commanderDamage.evaluate((element) => getComputedStyle(element).color))
+        .toBe(await ownerSeat.evaluate((element) => getComputedStyle(element).color));
+      const tooltip = commanderDamage.locator(".commander-damage-tooltip");
+      await expect(tooltip).toBeHidden();
+      await commanderDamage.hover();
+      await expect(tooltip).toBeVisible();
+      await expect(tooltip).toHaveText("Yargle and Multani");
     }
     await ensureFullControl(opponent);
     // Arm the defender before this pass can end the host's turn; toggling

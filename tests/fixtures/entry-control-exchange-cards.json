@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic delegated permanent entry exchange witness",
+  "cards": [
+    {
+      "oracle_id": "979c6cc3-4b49-4751-bd17-efbe9d4f4a38",
+      "name": "Parliament of Copper",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever an artifact, creature, or enchantment enters, its controller chooses target permanent another player controls that shares a card type with it. Exchange control of those permanents.",
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

@@ -24,7 +24,7 @@ from ..util import mana_cost_to_vector
 from .creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .counted_zone_costs import fixed_counted_zone_change_cost_clause
-from ..rules.reveal_additional_cost import FixedRevealAdditionalCost
+from ..rules.reveal_additional_cost import CREATURE_TYPE_REVEAL_VERSION, FixedRevealAdditionalCost
 from .behold_cost_templates import FixedBeholdAdditionalCostTemplate, fixed_behold_cost_leaf, without_fixed_behold_reminder
 from ..rules.tap_additional_cost import COLOR_TAP_SCHEMA_VERSION, FixedTapAdditionalCost
 from ..rules.casting_additional_costs import COLOR_RETURN_SCHEMA_VERSION
@@ -407,13 +407,19 @@ class FixedManaPaymentAdditionalCostTemplate:
 
 @dataclass(frozen=True,slots=True)
 class FixedRevealAdditionalCostTemplate:
-    subtype: str
+    subtype: str | None
 
     @property
     def template_id(self):return 'spell-additional-cost-fixed-reveal-hand-v1'
 
     @property
-    def descriptor(self):return FixedRevealAdditionalCost(self.subtype).to_descriptor()
+    def descriptor(self):
+        version = CREATURE_TYPE_REVEAL_VERSION if self.subtype is None else 1
+        return FixedRevealAdditionalCost(self.subtype, schema_version=version).to_descriptor()
+
+    @property
+    def cost_schema(self):
+        return {"additional_costs": [self.descriptor]}
 
 
 @dataclass(frozen=True,slots=True)

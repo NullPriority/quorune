@@ -1,0 +1,434 @@
+{
+  "cards": [
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "name": "Strength-Testing Hammer",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Whenever equipped creature attacks, roll a six-sided die. That creature gets +X/+0 until end of turn, where X is the result. Then if it has the greatest power or is tied for greatest power among creatures on the battlefield, draw a card.\nEquip {3}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Chains of Mephistopheles",
+      "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
+      "oracle_text": "If a player would draw a card except the first one they draw in each of their draw steps, that player discards a card instead. If the player discards a card this way, they draw a card. If the player doesn't discard a card this way, they mill a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2007-09-10",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Results can be numbers not ordinarily possible on a six-sided die. Spells like Scooch can change the result to 0 or 7, for example."
+    },
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If an ability triggers \"whenever you roll a die,\" it will trigger whenever you roll any die, including the planar die. This is a change from previous Un- rules. Some abilities use the result to determine part of the effect. If you get a non-numerical result (currently just the planar die, but the future is long), that part of the effect won't do anything."
+    },
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Each die is identified by the number of faces it has. A six-sided die is a die with six equally likely outcomes: 1, 2, 3, 4, 5, and 6. The roll must be fair. Although physical dice are recommended, digital substitutes are allowed except in cases where the physical die is required for the effect."
+    },
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Some effects may modify the result of a die roll. This may be part of the instruction to roll a die, or it may come from other cards. Anything that references the \"result\" of a die roll is looking for the result after these modifications."
+    },
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Something in the game must tell you to roll a die. If you roll a die for any other reason (to simulate a coin flip, to choose pizza toppings, to create alternate timelines), that roll doesn't count."
+    },
+    {
+      "oracle_id": "4548d471-e78a-473e-84d4-cd2af64c9d28",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If a die is rerolled, the original roll essentially never happened: it doesn't cause any abilities to trigger, and no effect that cares about die rolls will consider it."
+    },
+    {
+      "comment": "Cards which are drawn as a cost are affected by this card because replacement effects can alter the payment of costs.",
+      "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effect is cumulative. If there are two of these on the battlefield, each of them will modify each draw (after the first one if during the draw step), and will cause the player to discard or to “mill” a card from their library. As they resolve in order, the player must discard if possible. Once the player fails to discard and instead “mills” a card, all further effects of additional Chains of Mephistopheles will not do anything. This is because the “mill” also replaces the draw effect and the player is no longer drawing a card. You handle them in order. Each one makes you discard first and then continue or else mill a card and lose the draw.",
+      "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "A player’s normal card draw on their turn is exempt from this effect. All other draws will be affected.",
+      "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Here’s what happens when Chains of Mephistopheles replaces a player’s draw: — If that player has at least one card in their hand, they discard a card and then draws a card. — If that player’s hand is empty, they put the top card of their library into their graveyard. The player doesn’t draw a card at all.",
+      "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability would cause a player to draw multiple cards, this is treated as a number of individual “draw one card” actions. Apply the effect of Chains of Mephistopheles to each one.",
+      "oracle_id": "eae87919-6322-4bd2-ae9c-b1ce25d686da",
+      "published_at": "2007-09-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for focused native witnesses"
+}

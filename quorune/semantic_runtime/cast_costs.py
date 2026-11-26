@@ -11,6 +11,7 @@ from ..cast_cost_modifiers import (
     CastCostTurnRelation,
     PublicCastCostModifierSpec,
     PublicCastCostModifierV2Spec,
+    SPELL_MANA_FLOOR_CAPABILITY, SPELL_MANA_FLOOR_HANDLER_ID, FixedSpellManaFloorSpec,
 )
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionError
 from ..card_program_faces import program_matches_face
@@ -57,7 +58,7 @@ from .context import SemanticNodeError
 from .paid_entry_copy import PaidEntryCopyCostHandler
 from .multikicker import FixedManaMultikickerHandler
 from .emerge import FixedManaEmergeHandler
-from .disturb import FixedManaDisturbHandler
+from .disturb import FixedManaDisturbHandler, MoreThanMeetsTheEyeHandler
 from .replicate import FixedManaReplicateHandler
 from .conspire import FixedConspireHandler
 from .casualty import FixedCasualtyHandler
@@ -442,6 +443,31 @@ class HandExileEvokeCostHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class UntappedSpellManaFloorHandler:
+    handler_id: str = SPELL_MANA_FLOOR_HANDLER_ID
+    schema_version: int = 1
+    family: str = SPELL_MANA_FLOOR_CAPABILITY
+    event: str = FIXED_SPELL_COST_REDUCTION_EVENT
+    rule_references: tuple[str, ...] = ("601.2f", "601.2g", "601.2h")
+    capability_dependencies: tuple[str, ...] = (SPELL_MANA_FLOOR_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> FixedSpellManaFloorSpec:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event", "floor", REQUIRES_COMPLETE_CARD_PROGRAM_FIELD},
+                     field="untapped final spell mana floor")
+        if (descriptor["handler_id"] != self.handler_id or descriptor["event"] != self.event
+                or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != self.schema_version
+                or descriptor[REQUIRES_COMPLETE_CARD_PROGRAM_FIELD] is not True):
+            raise SemanticNodeError("The spell mana floor requires its exact static descriptor")
+        try:
+            return FixedSpellManaFloorSpec.from_dict(descriptor["floor"])
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self, descriptor: Mapping[str, Any], context: object) -> tuple[FixedSpellManaFloorSpec, ...]:
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
 class FixedSpellCostReductionHandler:
     handler_id: str = FIXED_SPELL_COST_REDUCTION_HANDLER_ID
     schema_version: int = 3
@@ -608,6 +634,7 @@ class CastCostComponentRegistry(
         | HandExileEvokeSpec
         | FixedManaImpendingSpec
         | FixedSpellCostReductionSpec
+        | FixedSpellManaFloorSpec
         | SelfSpellCostReductionSpec
         | FixedManaMultikickerSpec
         | FixedManaEmergeSpec
@@ -627,13 +654,13 @@ class CastCostComponentRegistry(
 
 @lru_cache(maxsize=1)
 def default_cast_cost_component_registry() -> CastCostComponentRegistry:
-    from .chosen_type_cast_costs import ChosenTypeSpellCostModifierHandler
+    from .chosen_type_cast_costs import ChosenTypeSpellCostModifierHandler, LinkedCardTypeSpellCostModifierHandler
     from .global_alternative_costs import GlobalAlternativeCostHandler
     from .splice_costs import SpliceCostHandler
     from .impending import FixedManaImpendingHandler
     from .target_count_costs import FixedManaPerTargetCostHandler
     from .optional_life_costs import OptionalLifeColorReductionHandler
-    from .turn_cast_grants import TurnCastGrantHandler, turn_cast_rider_handlers, qualified_turn_grant_handlers
+    from .turn_cast_grants import GrantedEscapeHandler, TurnCastGrantHandler, turn_cast_rider_handlers, qualified_turn_grant_handlers
     registry = CastCostComponentRegistry(
         (
             AffinityCostHandler(),
@@ -644,9 +671,11 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             HandExileEvokeCostHandler(),
             FixedManaImpendingHandler(),
             FixedSpellCostReductionHandler(),
+            UntappedSpellManaFloorHandler(),
             TargetedSpellCostHandler(),
             ConditionalSpellCostModifierHandler(),
             ChosenTypeSpellCostModifierHandler(),
+            LinkedCardTypeSpellCostModifierHandler(),
             ImproviseCostHandler(),
             SelfSpellCostReductionHandler(),
             TypedAffinityCostHandler(),
@@ -654,6 +683,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaMultikickerHandler(),
             FixedManaEmergeHandler(),
             FixedManaDisturbHandler(),
+            MoreThanMeetsTheEyeHandler(),
             FixedManaReplicateHandler(),
             SpliceCostHandler(),
             FixedConspireHandler(),
@@ -667,6 +697,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaPerTargetCostHandler(),
             OptionalLifeColorReductionHandler(),
             TurnCastGrantHandler(),
+            GrantedEscapeHandler(),
             *turn_cast_rider_handlers(),
             *qualified_turn_grant_handlers(),
             *(SpellPaymentGrantHandler(kind) for kind in SPELL_PAYMENT_GRANT_HANDLERS),
@@ -851,33 +882,8 @@ def _turn_history_types_match(
     )
 
 
-def active_fixed_spell_cost_reductions(
-    host: FixedSpellCostReductionHost,
-    seat: str,
-    card: Any,
-    *,
-    cast_type_line: str | None = None,
-    face_down_method: str | None = None,
-) -> tuple[FixedSpellCostReductionSpec, ...]:
-    """Collect applicable trusted reducers at the casting boundary."""
-
-    from ..cast_cost_modifiers import CHOSEN_TYPE_CAST_COST_HANDLER_ID
-    from ..compiled_cast_timing import prospective_conditional_flash_spell_data
-    from .chosen_type_cast_costs import chosen_type_cost_spell_row
-
-    chosen_row = None
-    effective = dict(prospective_conditional_flash_spell_data(host,card,seat,face_down_method=face_down_method))
-    if cast_type_line is not None:
-        effective["type_line"] = cast_type_line
-    row = object_query_result(
-        card,
-        effective,
-        type_parts=host._type_parts(str(effective.get("type_line") or "")),
-        known_to_actor=True,
-        attached_to_ref=None,
-    )
-    registry = default_cast_cost_component_registry()
-    reductions: list[FixedSpellCostReductionSpec] = []
+def _current_public_cost_programs(host: FixedSpellCostReductionHost):
+    """Return live, face-correct public cost programs whose abilities still apply."""
     static_component_key_map: Mapping[str, Sequence[str]] | None = None
     for source in host._semantic_event_sources(zones={"battlefield"}):
         if (
@@ -910,74 +916,153 @@ def active_fixed_spell_cost_reductions(
                     static_component_key_map.get(source.object_id, ())
                 ):
                     continue
-            for descriptor in program.handlers:
-                if (
-                    descriptor.get("handler_id")
-                    not in {FIXED_SPELL_COST_REDUCTION_HANDLER_ID, CONDITIONAL_SPELL_COST_HANDLER_ID,
-                            CHOSEN_TYPE_CAST_COST_HANDLER_ID}
+            yield source, program
+
+
+def spell_mana_floor_program_dependencies(program) -> tuple[str, ...]:
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
+    marked = tuple(row for row in program.handlers if row.get("handler_id") == SPELL_MANA_FLOOR_HANDLER_ID)
+    if not marked and SPELL_MANA_FLOOR_CAPABILITY not in program.capability_dependencies:
+        return ()
+    if ((program.event, program.active_zone) != (FIXED_SPELL_COST_REDUCTION_EVENT, "battlefield")
+            or len(marked) != 1 or tuple(program.handlers) != marked or program.effects
+            or program.cost_schema is not None or program.target_schema is not None
+            or program.event_condition is not None
+            or not {"static_ability", CURRENT_ABILITY_FRAGMENT_COVERAGE} <= set(program.coverage)):
+        raise ValueError("The final spell mana floor requires its complete current battlefield static ability")
+    return (SPELL_MANA_FLOOR_CAPABILITY,)
+
+
+def active_spell_mana_floor(host: FixedSpellCostReductionHost) -> int:
+    """Read the active floor before the chosen price starts being paid."""
+    semantics = getattr(host, "semantics", None)
+    if semantics is None or not any(
+        SPELL_MANA_FLOOR_CAPABILITY in program.capability_dependencies
+        for program in semantics.programs_for_event(FIXED_SPELL_COST_REDUCTION_EVENT)
+    ):
+        return 0
+    registry = default_cast_cost_component_registry()
+    floor = 0
+    for source, program in _current_public_cost_programs(host):
+        if source.tapped:
+            continue
+        for descriptor in program.handlers:
+            if descriptor.get("handler_id") == SPELL_MANA_FLOOR_HANDLER_ID:
+                spec, = registry.lower(descriptor, source)
+                floor = max(floor, spec.minimum_mana)
+    return floor
+
+
+def apply_final_spell_mana_floor(option: dict[str, Any], minimum_mana: int) -> None:
+    """Add only the final generic shortfall before tap or other payment methods."""
+    if not minimum_mana:
+        return
+    requirements = option["requirements"]
+    shortfall = minimum_mana - sum(requirements.values())
+    if shortfall > 0:
+        requirements["GENERIC"] += shortfall
+        option.setdefault("cost_increases", []).append({"kind": "minimum_total_mana", "count": shortfall})
+
+
+def active_fixed_spell_cost_reductions(
+    host: FixedSpellCostReductionHost,
+    seat: str,
+    card: Any,
+    *,
+    cast_type_line: str | None = None,
+    face_down_method: str | None = None,
+) -> tuple[FixedSpellCostReductionSpec, ...]:
+    """Collect applicable trusted reducers at the casting boundary."""
+
+    from ..cast_cost_modifiers import CHOSEN_TYPE_CAST_COST_HANDLER_ID
+    from ..compiled_cast_timing import prospective_conditional_flash_spell_data
+    from ..linked_card_type import COST_HANDLER as LINKED_CARD_TYPE_COST_HANDLER, bound_card_type
+    from .chosen_type_cast_costs import chosen_type_cost_spell_row
+
+    chosen_row = None
+    effective = dict(prospective_conditional_flash_spell_data(host,card,seat,face_down_method=face_down_method))
+    if cast_type_line is not None:
+        effective["type_line"] = cast_type_line
+    row = object_query_result(
+        card,
+        effective,
+        type_parts=host._type_parts(str(effective.get("type_line") or "")),
+        known_to_actor=True,
+        attached_to_ref=None,
+    )
+    registry = default_cast_cost_component_registry()
+    reductions: list[FixedSpellCostReductionSpec] = []
+    chosen_handlers = {CHOSEN_TYPE_CAST_COST_HANDLER_ID, LINKED_CARD_TYPE_COST_HANDLER}
+    for source, program in _current_public_cost_programs(host):
+        for descriptor in program.handlers:
+            handler_id = descriptor.get("handler_id")
+            if handler_id not in chosen_handlers | {
+                FIXED_SPELL_COST_REDUCTION_HANDLER_ID, CONDITIONAL_SPELL_COST_HANDLER_ID,
+            }:
+                continue
+            if handler_id == CONDITIONAL_SPELL_COST_HANDLER_ID:
+                condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
+                if not host._fixed_public_state_condition_holds(source, condition, require_available=True):
+                    continue
+            operand = bound_card_type(source, program.key) if handler_id == LINKED_CARD_TYPE_COST_HANDLER else source
+            lowered = registry.lower(descriptor, operand)
+            if not lowered:
+                continue
+            spec, = lowered
+            assert isinstance(spec, FixedSpellCostReductionSpec)
+            spell_row = row
+            if handler_id in chosen_handlers:
+                if chosen_row is None:
+                    chosen_row = chosen_type_cost_spell_row(
+                        host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
+                    )
+                spell_row = chosen_row
+            if (
+                _modifier_context_applies(
+                    host,
+                    spec,
+                    source_controller=source.controller,
+                    caster=seat,
+                    origin=card.zone,
+                )
+                and any(
+                    object_matches_query(spell_row, predicate)
+                    for predicate in spec.predicates_any
+                )
+            ):
+                if isinstance(spec, PublicCastCostModifierV2Spec) and (
+                    (
+                        spec.minimum_mana_value is not None
+                        and row.mana_value < spec.minimum_mana_value
+                    )
+                    or (
+                        spec.maximum_mana_value is not None
+                        and row.mana_value > spec.maximum_mana_value
+                    )
                 ):
                     continue
-                if descriptor['handler_id'] == CONDITIONAL_SPELL_COST_HANDLER_ID:
-                    condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])
-                    if not host._fixed_public_state_condition_holds(source, condition, require_available=True):
-                        continue
-                lowered = registry.lower(descriptor, source)
-                if not lowered:
-                    continue
-                spec, = lowered
-                assert isinstance(spec, FixedSpellCostReductionSpec)
-                spell_row = row
-                if descriptor["handler_id"] == CHOSEN_TYPE_CAST_COST_HANDLER_ID:
-                    if chosen_row is None:
-                        chosen_row = chosen_type_cost_spell_row(
-                            host, seat, card, cast_type_line=cast_type_line, face_down_method=face_down_method,
-                        )
-                    spell_row = chosen_row
                 if (
-                    _modifier_context_applies(
+                    isinstance(spec, PublicCastCostModifierV2Spec)
+                    and spec.multiplier is not None
+                ):
+                    multiplier = cast_reduction_multiplier(
                         host,
-                        spec,
-                        source_controller=source.controller,
-                        caster=seat,
-                        origin=card.zone,
+                        seat,
+                        CastReductionMetric.from_dict(spec.multiplier),
+                        source=source,
                     )
-                    and any(
-                        object_matches_query(spell_row, predicate)
-                        for predicate in spec.predicates_any
-                    )
-                ):
-                    if isinstance(spec, PublicCastCostModifierV2Spec) and (
-                        (
-                            spec.minimum_mana_value is not None
-                            and row.mana_value < spec.minimum_mana_value
-                        )
-                        or (
-                            spec.maximum_mana_value is not None
-                            and row.mana_value > spec.maximum_mana_value
-                        )
-                    ):
+                    if not multiplier:
                         continue
-                    if (
-                        isinstance(spec, PublicCastCostModifierV2Spec)
-                        and spec.multiplier is not None
-                    ):
-                        multiplier = cast_reduction_multiplier(
-                            host,
-                            seat,
-                            CastReductionMetric.from_dict(spec.multiplier),
-                            source=source,
-                        )
-                        if not multiplier:
-                            continue
-                        spec = replace(
-                            spec,
-                            mana_adjustment=tuple(
-                                (key, amount * multiplier)
-                                for key, amount in spec.mana_adjustment
-                            ),
-                            multiplier=None,
-                        )
-                    reductions.append(spec)
+                    spec = replace(
+                        spec,
+                        mana_adjustment=tuple(
+                            (key, amount * multiplier)
+                            for key, amount in spec.mana_adjustment
+                        ),
+                        multiplier=None,
+                    )
+                reductions.append(spec)
     return tuple(reductions) + active_next_spell_cost_reductions(host,seat,card,cast_type_line,face_down_method)
 
 

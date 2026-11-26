@@ -7,7 +7,8 @@ from . import regex_working_set as re
 from typing import Callable
 
 from ..ability_resolution_ordinal import (
-    SECOND_ABILITY_DRAW_CONDITION, SECOND_ABILITY_DRAW_VERSION,
+    FIRST_ABILITY_COUNTER_CONDITION, FIRST_ABILITY_COUNTER_VERSION,
+    SECOND_ABILITY_DRAW_CONDITION, SECOND_ABILITY_DRAW_VERSION, SECOND_ABILITY_REVEAL_VERSION,
     THIRD_ABILITY_RESULT_CONDITION, THIRD_ABILITY_RESULT_VERSION,
 )
 from ..continuous_conditions import FixedPublicStateFact
@@ -22,6 +23,7 @@ from ..resolution_conditions import (
     validate_resolution_condition_instruction,
 )
 from .closed_effect_programs import CompiledEffectTemplate, _top_level_positions
+from .fixed_numbers import FIXED_COUNT_PATTERN
 from .public_state_queries import fixed_public_state_condition
 from .public_state_fact_queries import greatest_creature_power_control_condition
 
@@ -29,6 +31,14 @@ from .public_state_fact_queries import greatest_creature_power_control_condition
 _LINKED_BRANCH_WORDS = re.compile(r"\b(?:instead|this way|that much|otherwise|if)\b", re.I)
 _COMPOUND_SUFFIX_RESULT = re.compile(r"\bthen\b|;", re.I)
 _OTHERWISE = ". Otherwise, "
+_DRAW_TAPPED_LAND_REPEAT = re.compile(
+    rf"Draw (?:a|one) card\. You may put a land card from your hand onto the battlefield tapped\. "
+    rf"If you control (?:{FIXED_COUNT_PATTERN}) or more lands, repeat this process once\.",
+    re.IGNORECASE,
+)
+_ATTACK_HISTORY_DRAW_DISCARD = re.compile(
+    r"(?P<draw>Draw (?:a card|two cards)\.) Then discard a card unless you attacked this turn\.", re.I,
+)
 
 
 def _leading_condition_parts(text: str) -> tuple[tuple[str, str, str], ...]:
@@ -86,6 +96,67 @@ def _second_ability_draw_template(text, compile_component):
         }
         return ("second-ability-resolution-draw-v1", (*deepcopy(mandatory[1]), wrapper),
                 deepcopy(mandatory[2]), tuple(dict.fromkeys((RESOLUTION_CONDITION_MECHANIC, *mandatory[3], *result[3]))))
+    return None
+
+
+def first_ability_counter_trigger_result(binding, body, *, compile_component):
+    from ..rules.ability_resolution_ordinal_shapes import (
+        CONTROLLED_ARTIFACT_ENTRY, first_ability_counter_node_capabilities,
+    )
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != (
+        "artifact.enter", "artifact:source_controller:including_source:any_object", "battlefield",
+    ) or body != binding.body or binding.event_condition != CONTROLLED_ARTIFACT_ENTRY):
+        return None
+    for prefix, condition, result in _leading_condition_parts(body):
+        if (prefix.casefold(), condition.casefold(), result.casefold()) != (
+            "you gain 1 life.", "this is the first time this ability has resolved this turn",
+            "put a +1/+1 counter on this creature.",
+        ):
+            continue
+        mandatory = compile_component(prefix)
+        counter = compile_component(result)
+        if mandatory[0] is None or counter[0] is None or mandatory[2] is not None or counter[2] is not None:
+            return None
+        wrapper = {
+            "op": RESOLUTION_CONDITION_OPERATION, "schema_version": FIRST_ABILITY_COUNTER_VERSION,
+            "player": "$controller", "condition": dict(FIRST_ABILITY_COUNTER_CONDITION),
+            "resolution_ordinal": None, "effects": list(counter[1]),
+            "mechanic_ids": list(counter[3]), "prefix_mechanic_ids": list(mandatory[3]),
+        }
+        effects = (*mandatory[1], wrapper)
+        mechanics = (RESOLUTION_CONDITION_MECHANIC, *mandatory[3], *counter[3])
+        if first_ability_counter_node_capabilities(effects=effects, target_schema=None, mechanic_ids=mechanics):
+            return "first-artifact-entry-source-counter-v1", effects, None, mechanics
+    return None
+
+
+def second_ability_reveal_trigger_result(binding, body):
+    from ..rules.ability_resolution_ordinal_shapes import CONTROLLED_LAND_ENTRY, second_ability_reveal_node_capabilities
+    from .fixed_resolution_mana import fixed_resolution_mana_effect_template
+    from .reveal_until_library_selection_templates import reveal_until_library_selection_effect_template
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("land.enter", "controlled_land", "battlefield")
+            or body != binding.body or binding.event_condition != CONTROLLED_LAND_ENTRY):
+        return None
+    for prefix, condition, result in _leading_condition_parts(" ".join(body.split())):
+        if (prefix.casefold() != "add one mana of any color."
+                or condition.casefold() != "this is the second time this ability has resolved this turn"):
+            continue
+        mandatory = fixed_resolution_mana_effect_template(prefix)
+        selection = reveal_until_library_selection_effect_template(result)
+        if mandatory is None or selection is None:
+            continue
+        wrapper = {
+            "op": RESOLUTION_CONDITION_OPERATION, "schema_version": SECOND_ABILITY_REVEAL_VERSION,
+            "player": "$controller", "condition": dict(SECOND_ABILITY_DRAW_CONDITION),
+            "resolution_ordinal": None, "effects": list(selection[1]),
+            "mechanic_ids": list(selection[3]), "prefix_mechanic_ids": list(mandatory[3]),
+        }
+        effects = (*mandatory[1], wrapper)
+        mechanics = (RESOLUTION_CONDITION_MECHANIC, *mandatory[3], *selection[3])
+        if second_ability_reveal_node_capabilities(effects=effects, target_schema=None, mechanic_ids=mechanics):
+            return "second-land-entry-reveal-until-v1", effects, None, mechanics
     return None
 
 
@@ -153,6 +224,8 @@ def resolution_condition_template(
     compile_component: Callable[[str], CompiledEffectTemplate],
 ) -> CompiledEffectTemplate | None:
     normalized = re.sub(r"^[A-Z][A-Za-z' ]{0,80} — ", "", text.strip())
+    if attack_discard := _ATTACK_HISTORY_DRAW_DISCARD.fullmatch(normalized):
+        normalized = f"{attack_discard['draw']} If you haven't attacked this turn, discard a card."
     if ordinal := _second_ability_draw_template(normalized, compile_component):
         return ordinal
     from .public_self_replacement_templates import fixed_public_self_replacement_template
@@ -204,8 +277,15 @@ def resolution_condition_template(
         condition = greatest_power or fixed_public_state_condition(condition_text, source_name=source_name)
         if condition is None or not resolution_condition_is_closed(condition):
             continue
-        conditional = compile_component(body)
         mandatory = compile_component(prefix) if prefix else (None, (), None, ())
+        # This relative instruction repeats only the two resolution effects. Keeping
+        # the condition after them observes the land after its entry has settled.
+        repeat_draw_and_entry = (
+            body.casefold() == "repeat this process once."
+            and _DRAW_TAPPED_LAND_REPEAT.fullmatch(normalized) is not None
+            and mandatory[0] == "fixed-draw-then-private-hand-entry-v1"
+        )
+        conditional = mandatory if repeat_draw_and_entry else compile_component(body)
         if conditional[0] is None or not conditional[1] or (prefix and mandatory[0] is None):
             continue
         if (conditional[2] is not None) != greatest_power_discard:

@@ -4,9 +4,10 @@ from . import regex_working_set as re
 
 from ..combat_removal import (
     BLOCKED_ATTACKER_REFERENCE, COMBAT_REMOVAL_MECHANIC, COMBAT_REMOVAL_OPERATION,
+    CONTROLLED_BLOCKED_ATTACKER, optional_blocked_attacker_return_effect,
 )
 from .direct_target import direct_permanent_target_spec
-from .optional_effect_templates import fixed_optional_effect_template
+from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, fixed_optional_effect_template
 
 
 def combat_removal_effect_template(text):
@@ -38,6 +39,15 @@ def combat_removal_effect_template(text):
 def optional_blocked_combat_removal_template(binding, body):
     if binding.event.value != 'creature.becomes_blocked':
         return None
+    if (
+        binding.active_zone == 'battlefield'
+        and binding.variant == 'a_creature_you_control_becomes_blocked'
+        and binding.event_condition == CONTROLLED_BLOCKED_ATTACKER
+        and body == binding.body
+        and body.casefold() == "you may return it to its owner's hand."
+    ):
+        return ('optional-original-blocked-attacker-return-v1', (optional_blocked_attacker_return_effect(),),
+                None, (FIXED_OPTIONAL_EFFECT_MECHANIC, 'return-to-owner-hand'))
     subjects = {
         'this_creature_becomes_blocked': {'it', 'this creature'},
         'a_creature_you_control_becomes_blocked': {'that creature'},

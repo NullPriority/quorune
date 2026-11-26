@@ -3,13 +3,15 @@ from __future__ import annotations
 """Current source-bound mana triggers supersede their old compatibility views."""
 
 from ..resolution_mana_model import ResolutionManaChoiceSpec,RESOLUTION_MANA_CHOICE_CAPABILITY
+from .current_view_equivalence import reviewed_rulings_match
 
 
 def _same_source(current,old,record):
     return (current.oracle_id==old.oracle_id==record.oracle_id and old.trust_level=='trusted'
         and not str(old.provenance.get('authored_by','')).startswith('oracle-ir-v')
-        and all(current.provenance.get(key) and current.provenance[key]==old.provenance.get(key)
-            for key in ('source_oracle_hash','source_rulings_hash')))
+        and current.provenance.get('source_oracle_hash')
+        and current.provenance['source_oracle_hash'] == old.provenance.get('source_oracle_hash')
+        and reviewed_rulings_match(old, current.provenance.get('source_rulings_hash')))
 
 
 def shadowed_reviewed_resolution_mana_keys(record,generated_programs,reviewed_programs):

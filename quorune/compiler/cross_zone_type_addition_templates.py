@@ -17,12 +17,18 @@ from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.cross_zone_type_additions import (
     CONTROLLED_CHOSEN_CREATURE_SUBTYPE_CAPABILITY, CONTROLLED_CHOSEN_CREATURE_SUBTYPE_HANDLER,
     CROSS_ZONE_CHOSEN_CREATURE_TYPE_CAPABILITY, CROSS_ZONE_CHOSEN_CREATURE_TYPE_HANDLER,
+    CROSS_ZONE_ALL_CREATURE_TYPES_CAPABILITY,
     CROSS_ZONE_TYPE_ADDITION_CAPABILITY, CROSS_ZONE_TYPE_ADDITION_HANDLER, CrossZoneTypeAdditionSpec,
 )
 
 
 _CREATURES = re.compile(
     r"Creatures you control are (?P<type>artifacts|enchantments|the chosen type) in addition to their other types\. "
+    r"The same is true for creature spells you control and creature cards you own that aren't on the battlefield\.",
+    re.IGNORECASE,
+)
+_ALL_CREATURE_SUBTYPES = re.compile(
+    r"Creatures you control are every creature type\. "
     r"The same is true for creature spells you control and creature cards you own that aren't on the battlefield\.",
     re.IGNORECASE,
 )
@@ -50,6 +56,13 @@ def cross_zone_type_addition_handler(text):
             "handler_id": CONTROLLED_CHOSEN_CREATURE_SUBTYPE_HANDLER, "schema_version": 1,
             "event": "characteristics.evaluate", "requires_complete_card_program": True,
         }, (ENTRY_DESIGNATION_CAPABILITY, CONTROLLED_CHOSEN_CREATURE_SUBTYPE_CAPABILITY))
+    if _ALL_CREATURE_SUBTYPES.fullmatch(material) is not None:
+        spec = CrossZoneTypeAdditionSpec(None, "creatures", True, schema_version=2)
+        return ("static-cross-zone-all-creature-types-v2", {
+            "handler_id": CROSS_ZONE_TYPE_ADDITION_HANDLER, "schema_version": 1,
+            "event": "characteristics.evaluate", "requires_complete_card_program": True,
+            "addition": spec.to_dict(),
+        }, (CROSS_ZONE_ALL_CREATURE_TYPES_CAPABILITY,))
     for grammar, receiver, owned in (
         (_CREATURES, "creatures", True),
         (_NONLAND, "nonland_permanents", True),

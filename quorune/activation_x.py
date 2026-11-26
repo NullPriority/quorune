@@ -104,6 +104,26 @@ def validate_activation_x_ability(ability) -> None:
     validate_activation_x_discard(ability)
 
 
+def exact_mana_only_x_activation_cost(cost) -> bool:
+    from collections.abc import Mapping
+
+    from .replacement.immutable import thaw_value
+
+    expected = {
+        "text": "{X}", "mana": dict.fromkeys(("GENERIC", *"WUBRGC"), 0),
+        "complex_symbols": [], "tap_source": False, "untap_source": False,
+        "discard_source": False, "sacrifice_source": False, "exile_source": False,
+        "life_payment": 0, "energy_payment": 0, "loyalty_delta": None,
+        "source_counter_removal_cost": None, "choices": [], "uncompiled_costs": [],
+        "announced_x_symbols": 1,
+    }
+    if not isinstance(cost, Mapping):
+        return False
+    mana = cost.get("mana")
+    return (isinstance(mana, Mapping) and all(type(amount) is int for amount in mana.values())
+            and type(cost.get("announced_x_symbols")) is int and thaw_value(cost) == expected)
+
+
 def chosen_activation_x(ability, response) -> int | None:
     if not ability.chooses_activation_x:
         return None

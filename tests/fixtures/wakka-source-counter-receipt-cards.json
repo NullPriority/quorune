@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "pinned-wakka-source-counter-receipt",
+  "source": {
+    "oracle_source_sha256": "9d44ab29ff15a239d48f190ec59adb8046049d9a18e8010b793a96361749295d"
+  },
+  "cards": [
+    {
+      "oracle_id": "fbd37284-35ff-4409-b6d5-f813c06c4931",
+      "name": "Wakka, Devoted Guardian",
+      "mana_cost": "{2}{G}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Warrior",
+      "oracle_text": "Reach, trample\nWhenever Wakka deals combat damage to a player, destroy up to one target artifact that player controls and put a +1/+1 counter on Wakka.\nBlitzball Captain — At the beginning of your end step, if a counter was put on Wakka this turn, put a +1/+1 counter on each other creature you control.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Reach",
+        "Trample",
+        "Blitzball Captain"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "fbd37284-35ff-4409-b6d5-f813c06c4931",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "Wakka's last ability checks at the moment it would trigger to see if a counter was put on Wakka this turn. If none were, the ability won't trigger at all. Once your end step begins, it's too late to put a counter on Wakka in order to cause this ability to trigger."
+    },
+    {
+      "oracle_id": "fbd37284-35ff-4409-b6d5-f813c06c4931",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "You don't have to choose a target for Wakka's second ability. However, if you do and the target is illegal as the ability tries to resolve, it won't resolve and none of its effects will happen. You won't put a counter on Wakka."
+    }
+  ]
+}

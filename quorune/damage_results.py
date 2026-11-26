@@ -683,6 +683,11 @@ def _append_accumulated_player_results(
     gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
 ) -> None:
     for player, (amount, event_ids) in sorted(state.life_losses.items()):
+        if not gain_permissions.allows_loss(player):
+            # A dealt event still needs its target result root, with no life-loss leaf.
+            _ensure_accumulator(state.accumulators, affected_player=player,
+                                affected_object=None, subject_ref=player)
+            continue
         _append_player_life(
             state.accumulators,
             event_id=f"damage.result:life.loss:{player}",

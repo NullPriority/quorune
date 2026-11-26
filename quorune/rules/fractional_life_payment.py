@@ -107,6 +107,10 @@ def fractional_life_payment_program_dependencies(program):
     if not _contains_fractional_price(values):return ()
     if _contains_fractional_price(values, resolved=True) or getattr(program, 'handlers', ()):
         raise ValueError('Bound fractional amounts are server-created cost facts, not declared program prices')
+    from .cast_trigger_life_payment import cast_trigger_life_payment_runtime_dependencies
+    cast_payment = cast_trigger_life_payment_runtime_dependencies(program)
+    if cast_payment:
+        return cast_payment
     from .recover import recover_program_dependencies
     required = recover_program_dependencies(program)
     if FRACTIONAL_RECOVER_CAPABILITY not in required:

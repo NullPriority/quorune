@@ -21,6 +21,7 @@ from .replacement import (
     ReplacementClass,
     ReplacementEffect,
 )
+from .replacement.operations import TRACK_UNPREVENTABLE_AMOUNT_VERSION
 from .util import stable_json
 
 
@@ -72,7 +73,8 @@ def _shield_replacement_effect(
         conditions.update(shield.chosen_source.event_conditions())
     operation: PreventAmount | PreventUsingShield
     if shield.mode == PreventionMode.ALL:
-        operation = PreventAmount()
+        operation = (PreventAmount(schema_version=TRACK_UNPREVENTABLE_AMOUNT_VERSION)
+                     if shield.tracks_unpreventable_amount else PreventAmount())
     else:
         operation = PreventUsingShield(
             shield_id=shield.shield_id,
@@ -106,6 +108,7 @@ def _redirection_replacement_effect(
         conditions=conditions,
         operations=(
             RedirectDamage(
+                maximum_damage=redirection.maximum_damage,
                 target=destination.ref,
                 target_kind=destination.kind,
                 target_controller=destination.controller,
@@ -127,7 +130,9 @@ def _redirection_replacement_effect(
     )
 
 
-def _subject_is_current(host: DamageModifierHost, subject: DamageSubject) -> bool:
+def _subject_is_current(
+    host: DamageModifierHost, subject: DamageSubject, *, require_phased_in: bool = False,
+) -> bool:
     if subject.kind == "player":
         return subject.ref in host.active_seats
     if subject.kind == "any":
@@ -138,6 +143,7 @@ def _subject_is_current(host: DamageModifierHost, subject: DamageSubject) -> boo
         card is not None
         and card.zone == "battlefield"
         and card.logical_object_id == subject.logical_object_id
+        and (not require_phased_in or not card.phased_out)
     )
 
 
@@ -172,8 +178,9 @@ def collect_damage_modifier_effects(
                 source_powers = _current_battlefield_source_powers(host)
             effects.append(_shield_replacement_effect(shield, source_powers=source_powers))
     for redirection in current.redirections:
-        if not _subject_is_current(host, redirection.subject) or not _subject_is_current(
-            host, redirection.destination
+        require_phased_in = redirection.maximum_damage is not None
+        if not _subject_is_current(host, redirection.subject, require_phased_in=require_phased_in) or not _subject_is_current(
+            host, redirection.destination, require_phased_in=require_phased_in,
         ):
             continue
         try:

@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 from typing import Any, Mapping, Sequence
 
+from .rules.mana_contribution_draw import MANA_CONTRIBUTION_DRAW_OPERATION
+
 
 FORM_VERSION = 1
 
@@ -162,6 +164,16 @@ def _field(
     legal_refs = value.get("legal_refs")
     if shape == "object_map":
         return _object_map_field(name, value, context)
+    if shape == "quantity_map":
+        field.update({
+            "control": "quantity_map",
+            "options": _options(list(value.get("legal_refs") or []), context),
+            "minimum_each": value.get("minimum_each", 0),
+            "maximum_each": value.get("maximum_each"),
+        })
+        bound = "exact_total" if "exact_total" in value else "maximum_total"
+        field[bound] = value[bound]
+        return field
     if shape == "ordered_partition":
         return _ordered_partition_field(name, value, context)
     if name == "copy_targets" and value.get("copy_count") is not None:
@@ -493,8 +505,14 @@ def _special_fields(
         minimum = 0 if can_decline else count
         from .library_order_model import HAND_TOP_FIRST
 
-        return [_ref_field("cards", refs, context, minimum=minimum, maximum=count,
-                           ordered=context.get("order") == HAND_TOP_FIRST)]
+        field = _ref_field("cards", refs, context, minimum=minimum, maximum=count,
+                           ordered=context.get("order") == HAND_TOP_FIRST)
+        if context.get("declined_life_loss") is not None and count > 1:
+            from .apnap_object_payment import object_payment_cardinalities
+
+            field["allowed_cardinalities"] = list(object_payment_cardinalities(count))
+            field["distinct"] = True
+        return [field]
     if decision_kind == "state.legend" and action_name == "choose":
         refs = list(context.get("keep_one") or [])
         return [_ref_field("card", refs, context, minimum=1, maximum=1)]
@@ -683,7 +701,7 @@ def build_action_form(
         fields = _special_fields(action, decision_kind, context)
     pool_rows = context.get("mana_pool_rows")
     activation_price = action.get("cost_summary")
-    if decision_kind == "priority" and pool_rows and (
+    priority_payment = decision_kind == "priority" and (
         action.get("action") == "cast"
         or action.get("action") == "activate" and (
             action.get("cost_options")
@@ -691,7 +709,13 @@ def build_action_form(
                 activation_price.get("m") or activation_price.get("announced_x_symbols")
             )
         )
-    ):
+    )
+    contribution_payment = (
+        decision_kind == "semantic.choice"
+        and context.get("operation") == MANA_CONTRIBUTION_DRAW_OPERATION
+        and action.get("id") == "choose"
+    )
+    if pool_rows and (priority_payment or contribution_payment):
         from .rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD
 
         fields.append({"name": MANA_POOL_PAYMENT_FIELD, "label": "Choose mana from your pool",

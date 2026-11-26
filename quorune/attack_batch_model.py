@@ -14,13 +14,17 @@ DECLARED_ATTACK_POWER_COVERAGE = "declared_attacker_total_power_intervening"
 DECLARED_ATTACK_POWER_CAPABILITY = "trigger.condition.declared_attacker_total_power"
 DIRECT_PLAYER_ATTACK_EVENT = "combat.player_attacked"
 DIRECT_PLAYER_ATTACK_CAPABILITY = "trigger.event.direct_player_attack"
+ATTACHED_PLAYER_ATTACK_VARIANT = "enchanted_player_attacked"
 DIRECT_PLAYER_ATTACK_VARIANTS = ("controller_attacks_player", "controller_attacks_initiative_holder",
-                                 "opponent_attacks_controller", "opponent_attacks_controller_with_two")
+                                 "opponent_attacks_controller", "opponent_attacks_controller_with_two",
+                                 ATTACHED_PLAYER_ATTACK_VARIANT)
 
 
 def direct_player_attack_condition(variant: str) -> dict:
     if variant not in DIRECT_PLAYER_ATTACK_VARIANTS:
         raise ValueError("Direct player attack requires a represented subject")
+    if variant == ATTACHED_PLAYER_ATTACK_VARIANT:
+        return {"field": "source_attached_player", "op": "eq", "value": "$context.defender"}
     field = "player" if variant.startswith("controller_attacks_") else "defender"
     relation = {"field": field, "op": "eq", "value": "$source.controller"}
     if variant == "controller_attacks_initiative_holder":

@@ -24,9 +24,25 @@ def graveyard_self_return_binding(text,*,card_name,compile_binding):
     result = _return_body(paid['result'] if paid else body,card_name,optional=paid is None)
     if result is None:return None
     battlefield = result['destination'].casefold() == 'the battlefield'
+    if battlefield and paid is not None and paid["mana"] == "{B}" and not result["tapped"] and re.fullmatch(
+        r"Whenever another creature is put into your graveyard from the battlefield", split["head"], re.I,
+    ):
+        from .fixed_counter_trigger_nodes import FixedCounterTriggerBinding
+        from .fixed_public_event_trigger_bindings import _spec
+        from .qualified_zone_event_bindings import public_binding_from_spec
+        from .trigger_event_vocabulary import FixedCounterTriggerEvent
+        from ..rules.graveyard_self_return import owned_other_creature_death_condition
+
+        spec = _spec("creature.dies", "owned_other_creature_death_paid_return", body,
+                     "fixed-counter-graveyard-self-return-v1", "trigger-event-normalized-zone-change",
+                     condition=owned_other_creature_death_condition(), active_zone="graveyard",
+                     capabilities=(GRAVEYARD_SELF_ENTRY_CAPABILITY,))
+        return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
     if 'one or more' in split['head'].casefold():return None
     base=compile_binding(split['head']+', draw a card.')
     if base is None or not battlefield and base.public_state_condition is not None:return None
+    if base.event.value == 'creature.dies':
+        return None
     if base.event.value not in (GRAVEYARD_SELF_ENTRY_EVENTS if battlefield else GRAVEYARD_SELF_RETURN_EVENTS):
         return None
     if any(word in split['head'].casefold() for word in ('enchanted','equipped','this creature','this artifact','this enchantment')):return None

@@ -13,7 +13,13 @@ from ..entry_counter_model import (
     DynamicEntryCounterValueSource,
     EntryCounterError,
     PAID_COLOR_ENTRY_CAPABILITY,
+    PAID_GREEN_PAIRS_ENTRY_CAPABILITY,
     CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,
+    PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES,
+    ENTRY_CREATURE_VALUE_CAPABILITY,
+    ENTRY_CREATURE_VALUE_SOURCES,
+    EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,
 )
 from ..spell_mana_counts import MANA_SPENT_COUNTS_CAPABILITY
 from ..characteristic_fragments import characteristic_quantity_capabilities
@@ -174,6 +180,9 @@ def _dynamic_compiled(
     amount_spec: DynamicEntryCounterAmountSpec,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]]:
     uses_current_life = amount_spec.value_source is DynamicEntryCounterValueSource.CONTROLLER_LIFE_TOTAL
+    uses_public_maximum = amount_spec.value_source in PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES
+    uses_creature_values = amount_spec.value_source in ENTRY_CREATURE_VALUE_SOURCES
+    uses_exile = amount_spec.value_source is DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE
     return (
         DYNAMIC_SELF_ENTRY_COUNTER_TEMPLATE,
         {
@@ -183,7 +192,7 @@ def _dynamic_compiled(
             "counter_name": counter_name,
             "amount_spec": amount_spec.to_dict(),
             **({"requires_complete_card_program": True}
-               if amount_spec.mana_color is not None or uses_current_life else {}),
+               if amount_spec.mana_color is not None or uses_current_life or uses_public_maximum or uses_creature_values or uses_exile else {}),
             "rule_id": (
                 "702.138c"
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -194,7 +203,12 @@ def _dynamic_compiled(
             DYNAMIC_SELF_ENTRY_COUNTER_CAPABILITY,
             *characteristic_quantity_capabilities(amount_spec.quantity),
             *((CURRENT_LIFE_ENTRY_COUNTER_CAPABILITY,) if uses_current_life else ()),
+            *((PUBLIC_MAXIMUM_ENTRY_COUNTER_CAPABILITY,) if uses_public_maximum else ()),
+            *((ENTRY_CREATURE_VALUE_CAPABILITY,) if uses_creature_values else ()),
+            *((EXILED_MANA_VALUE_ENTRY_COUNTER_CAPABILITY,) if uses_exile else ()),
             *((PAID_COLOR_ENTRY_CAPABILITY,MANA_SPENT_COUNTS_CAPABILITY) if amount_spec.mana_color is not None else ()),
+            *((PAID_GREEN_PAIRS_ENTRY_CAPABILITY,)
+              if amount_spec.calculation is DynamicEntryCounterCalculation.PAID_GREEN_PAIRS else ()),
             *(
                 ("casting.lifecycle.fixed_zone_cast",)
                 if amount_spec.value_source is DynamicEntryCounterValueSource.ESCAPED
@@ -441,11 +455,51 @@ def _conditional_dynamic_amount_body(
     return None
 
 
+_PUBLIC_MAXIMUM_ENTRY_BODIES = {
+    "a number of suspect counters on it equal to the greatest number of creatures a player controls":
+        DynamicEntryCounterValueSource.MAX_PLAYER_CREATURES,
+    "a number of +1/+1 counters on it equal to the greatest number of cards an opponent has drawn this turn":
+        DynamicEntryCounterValueSource.MAX_OPPONENT_DRAWS,
+}
+
+
+_ENTRY_CREATURE_VALUE_BODIES = {
+    "x +1/+1 counters on it, where x is the greatest power among other creatures you control":
+        DynamicEntryCounterValueSource.MAX_OTHER_CONTROLLED_POWER,
+    "x +1/+1 counters on it, where x is the greatest power among creatures you control and creature cards in your graveyard":
+        DynamicEntryCounterValueSource.MAX_CONTROLLED_POWER_AND_GRAVEYARD,
+    "x +1/+1 counters on it, where x is the total toughness of other creatures you control":
+        DynamicEntryCounterValueSource.TOTAL_OTHER_CONTROLLED_TOUGHNESS,
+    "a +1/+1 counter on it for each +1/+1 counter among other creatures you control":
+        DynamicEntryCounterValueSource.TOTAL_OTHER_CONTROLLED_PLUS_COUNTERS,
+    "a +1/+1 counter on it for each other red creature you control and a +1/+1 counter on it for each other green creature you control":
+        DynamicEntryCounterValueSource.OTHER_CONTROLLED_RED_AND_GREEN_COUNTS,
+}
+
+
 def _dynamic_amount_body(
     body: str,
     *,
     source_name: str,
 ) -> tuple[str, DynamicEntryCounterAmountSpec] | None:
+    if re.fullmatch(
+        r"a number of \+1/\+1 counters on it equal to the (?:greatest|highest) mana value among cards in exile",
+        body, re.IGNORECASE,
+    ):
+        return "+1/+1", DynamicEntryCounterAmountSpec(
+            value_source=DynamicEntryCounterValueSource.MAX_EXILED_CARD_MANA_VALUE,
+            calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
+    current_creatures = _ENTRY_CREATURE_VALUE_BODIES.get(body.casefold())
+    if current_creatures is not None:
+        return "+1/+1", DynamicEntryCounterAmountSpec(
+            value_source=current_creatures, calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
+    maximum = _PUBLIC_MAXIMUM_ENTRY_BODIES.get(body.casefold())
+    if maximum is not None:
+        return PUBLIC_MAXIMUM_ENTRY_COUNTER_NAMES[maximum], DynamicEntryCounterAmountSpec(
+            value_source=maximum, calculation=DynamicEntryCounterCalculation.MULTIPLY,
+        )
     for compiler in (
         _x_dynamic_amount_body,
         _counted_dynamic_amount_body,

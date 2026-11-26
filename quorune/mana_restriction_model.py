@@ -3,6 +3,9 @@ from __future__ import annotations
 """Immutable canonical spending-predicate encoding, independent of game state."""
 
 _RESTRICTION_PREFIX = "mana-restriction-v1"
+ROOM_UNLOCK_SPEND_KIND = "room_unlock"
+ROOM_UNLOCK_MANA_SPEND_CONTEXT = "mana-room-unlock-v1"
+ROOM_CAST_UNLOCK_MANA_CAPABILITY = "mana.spend.room_cast_or_unlock"
 _CLAUSE_AXES = frozenset(
     {"any", "types_any", "types_none", "subtypes_any", "supertypes_any"}
 )
@@ -20,6 +23,12 @@ def _token(value: str) -> str:
     return "_".join(value.casefold().split())
 
 
+def _spend_clause_is_supported(kind: str, axis: str) -> bool:
+    if kind == ROOM_UNLOCK_SPEND_KIND:
+        return axis == "any"
+    return kind in {"spell", "ability"} and axis in _CLAUSE_AXES
+
+
 def canonical_mana_spend_restriction(
     clauses: tuple[tuple[str, str, tuple[str, ...]], ...],
 ) -> str:
@@ -27,7 +36,7 @@ def canonical_mana_spend_restriction(
 
     normalized: list[str] = []
     for kind, axis, raw_values in clauses:
-        if kind not in {"spell", "ability"} or axis not in _CLAUSE_AXES:
+        if not _spend_clause_is_supported(kind, axis):
             raise ValueError("mana spend restriction clause is unsupported")
         values = tuple(sorted({_token(value) for value in raw_values if value}))
         if axis == "any":
@@ -39,7 +48,17 @@ def canonical_mana_spend_restriction(
         normalized.append(f"{kind}.{axis}={','.join(values)}")
     if not normalized or len(normalized) != len(set(normalized)):
         raise ValueError("mana spend restriction clauses must be nonempty and unique")
+    if any(value.startswith(ROOM_UNLOCK_SPEND_KIND + ".") for value in normalized) and set(normalized) != {
+        f"{ROOM_UNLOCK_SPEND_KIND}.any=*", "spell.subtypes_any=room",
+    }:
+        raise ValueError("Room unlock mana requires its complete Room casting restriction")
     return _RESTRICTION_PREFIX + "|" + "|".join(sorted(normalized))
+
+
+ROOM_CAST_UNLOCK_MANA_RESTRICTION = canonical_mana_spend_restriction((
+    ("spell", "subtypes_any", ("room",)),
+    (ROOM_UNLOCK_SPEND_KIND, "any", ()),
+))
 
 
 def _typed_restriction(
@@ -55,8 +74,7 @@ def _typed_restriction(
         if (
             separator != "="
             or dot != "."
-            or kind not in {"spell", "ability"}
-            or axis not in _CLAUSE_AXES
+            or not _spend_clause_is_supported(kind, axis)
             or (axis == "any" and values != {"*"})
             or (axis != "any" and not values)
         ):
@@ -74,6 +92,12 @@ def _typed_restriction(
 def valid_mana_spend_restriction(value: object) -> bool:
     return bool(isinstance(value, str)
         and (value in _LEGACY_RESTRICTIONS or _typed_restriction(value) is not None))
+
+
+def valid_resolution_mana_spend_restriction(value: object) -> bool:
+    from .mana_spend_rules import NONCAST_MANA_PAYMENT_RESTRICTION
+
+    return value == NONCAST_MANA_PAYMENT_RESTRICTION or valid_mana_spend_restriction(value)
 
 
 def valid_produced_mana_spend_restriction(value: object) -> bool:

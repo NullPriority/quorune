@@ -13,6 +13,7 @@ from ..creature_power_damage_model import (
     OCCURRENCE_POWER_DAMAGE_CONTEXT, OCCURRENCE_POWER_DAMAGE_SOURCE, OCCURRENCE_POWER_DAMAGE_VERSION,
 )
 from ..entry_copy import copiable_oracle_id
+from ..graveyard_exile_branches_model import GRAVEYARD_EXILE_BRANCH_OPERATION, GraveyardExileBranchSpec
 from ..trigger_batches import PendingTriggerBatch
 from .damage_snapshots import source_snapshot
 from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
@@ -65,6 +66,8 @@ def bind_source_relative_damage(host, effect, item, *, resolve):
 
 def needs_stack_damage_source(value):
     if isinstance(value, Mapping):
+        if value.get("op") == GRAVEYARD_EXILE_BRANCH_OPERATION:
+            return GraveyardExileBranchSpec.from_dict(value.get("result")).classifies_land
         if value.get("op") == "choose_option":
             from .collective_source_damage import COLLECTIVE_SOURCE_DAMAGE_FIELD
             if COLLECTIVE_SOURCE_DAMAGE_FIELD in value:

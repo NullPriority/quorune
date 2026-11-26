@@ -10,6 +10,8 @@ from .model import (
     ReplacementEffect,
     ReplacementEffectError,
 )
+COUNTER_RECIPIENT_TYPES_FIELD = "counter_recipient_types_v1"
+
 _COLLECTION_PREDICATES = {
     "contains",
     "contains_all",
@@ -39,6 +41,16 @@ def event_field(event: ReplaceableEvent, field_name: str) -> Any:
         from ..zone_object_qualifications import zone_object_qualifications_v1
         try:return zone_object_qualifications_v1(event)
         except (ValueError,TypeError) as exc:raise ReplacementEffectError(str(exc)) from exc
+    if field_name == COUNTER_RECIPIENT_TYPES_FIELD:
+        if event.kind != "counter.place":
+            return ()
+        kind = event.payload.get("target_kind")
+        if kind == "player":
+            return ("player",)
+        types = event.payload.get("target_types")
+        if kind != "permanent" or not isinstance(types, (tuple, list)):
+            return ()
+        return tuple(value for value in types if value != "player")
     if field_name == "kind":
         return event.kind
     if field_name == "affected_player":
@@ -154,6 +166,7 @@ def replacement_choice(
     from .amplify import AmplifyEntryOperation
     from .operations import GraveyardCopyEntryOperation, LinkedGraveyardEntryOperation
     from .composition_scope import replacement_condition_event
+    from ..rules.entry_land_discard import entry_land_discard_applicable
     def matches(effect):
         try:return condition_matches(effect.conditions,replacement_condition_event(event,effect))
         except (ValueError,TypeError,KeyError) as exc:raise ReplacementEffectError(str(exc)) from exc
@@ -165,6 +178,7 @@ def replacement_choice(
         and effect.effect_id not in event.applied_effects
         and (effect.occurrence_id is None or effect.occurrence_id not in used_occurrences)
         and matches(effect)
+        and entry_land_discard_applicable(event, effect.operations)
         and all(not isinstance(operation,GraveyardCopyEntryOperation) or len(operation.eligible_cards(event)) >= 2
                 for operation in effect.operations)
         and all(not isinstance(operation, LinkedGraveyardEntryOperation) or operation.eligible_cards(event)

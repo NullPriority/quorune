@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "fa4dffda-6f04-4d0b-829d-28a1a5794dee",
+      "name": "Millikin",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact Creature \u2014 Construct",
+      "oracle_text": "{T}, Mill a card: Add {C}. (To mill a card, put the top card of your library into your graveyard.)",
+      "power": "0",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Rest in Peace",
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "oracle_text": "When this enchantment enters, exile all graveyards.\nIf a card or token would be put into a graveyard from anywhere, exile it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}{B}",
+      "name": "Leyline of the Void",
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nIf a card would be put into an opponent's graveyard from anywhere, exile it instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Enchantment"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "fa4dffda-6f04-4d0b-829d-28a1a5794dee",
+      "source": "wotc",
+      "published_at": "2022-12-08",
+      "comment": "If an effect allows you to look at the top card of your library any time or to play with the top card of your library revealed, and you activate Millikin's mana ability while casting a spell, you can't look at the new top card of your library until you are done casting the spell. The same is true if you activate Millikin's ability while activating another ability."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "source": "wotc",
+      "published_at": "2018-03-16",
+      "comment": "While Rest in Peace is on the battlefield, abilities that trigger whenever a creature dies won't trigger because cards and tokens are never put into a player's graveyard."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "source": "wotc",
+      "published_at": "2018-03-16",
+      "comment": "If a card is discarded while Rest in Peace is on the battlefield, abilities that function when a card is discarded (such as madness) still work, even though that card never reaches a graveyard. In addition, spells or abilities that check the characteristics of a discarded card (such as Chandra Ablaze's first ability) can find that card in exile."
+    },
+    {
+      "oracle_id": "087f9ad7-e74f-40e2-8102-1ed2925d0418",
+      "source": "wotc",
+      "published_at": "2018-03-16",
+      "comment": "If Rest in Peace is destroyed by a spell, Rest in Peace will be exiled and then the spell will be put into its owner's graveyard."
+    },
+    {
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "source": "wotc",
+      "published_at": "2024-09-20",
+      "comment": "Tokens can still die while Leyline of the Void is on the battlefield."
+    },
+    {
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "source": "wotc",
+      "published_at": "2024-09-20",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "source": "wotc",
+      "published_at": "2024-09-20",
+      "comment": "If your opponent discards a card while you control Leyline of the Void, abilities that check whether a card is discarded (such as Hollow One, or a madness ability of the discarded card) still work, even though that card never reaches that player's graveyard. In addition, spells or abilities that check the characteristics of the discarded card can find that card in exile."
+    },
+    {
+      "oracle_id": "f4e32fc1-1b8d-441e-8e76-71f19f98e925",
+      "source": "wotc",
+      "published_at": "2024-09-20",
+      "comment": "While Leyline of the Void is on the battlefield, nontoken creatures your opponents control won't die. They'll be exiled instead. Abilities that would trigger when those creatures die won't trigger."
+    }
+  ],
+  "source": "Pinned library Mill activation and competing replacement cards"
+}

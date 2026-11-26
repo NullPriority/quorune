@@ -6,9 +6,11 @@ from dataclasses import replace
 from . import regex_working_set as re
 from typing import Any, Callable, Mapping
 
+from ..permanent_event_state_model import supported_countered_combat_optional_result
+from ..rules.controlled_spell_counter import CONTROLLED_SPELL_COUNTER_EVENT
 from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,
-    OPTIONAL_RESULT_LIMIT_KIND, departure_trigger_limit_event, supported_optional_result_limit,
-    supported_trigger_limit_subscriptions)
+    OPTIONAL_RESULT_LIMIT_KIND, departure_trigger_limit_event,
+    supported_optional_result_limit, supported_trigger_limit_subscriptions)
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..dungeon_progress import DUNGEON_VENTURE_FIELD
 from .dependency_gate import dependency_gate
@@ -50,7 +52,8 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
     inner_arguments.update(line=match["body"], material_line=material, residuals=private_residuals)
     node = compile_inner(**inner_arguments)
     if (node is None or not node.exact or node.kind != "triggered_ability"
-            or node.active_zone != "battlefield" or node.trigger_limit is not None):
+            or node.active_zone != "battlefield" or node.trigger_limit is not None
+            or node.event == CONTROLLED_SPELL_COUNTER_EVENT):
         return None
     if group is not None:
         # The existing usage claim suppresses every later matching sacrifice.
@@ -70,10 +73,14 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
                 or node.effects[0].get("op") != "choose_option" or DUNGEON_VENTURE_FIELD not in node.effects[0]):
             return None
     if resolution_match is not None:
-        if not (supported_trigger_limit_subscriptions(node.event, node.event_condition)
-                and supported_optional_result_limit(node)):
+        if not supported_trigger_limit_subscriptions(node.event, node.event_condition):
             return None
-        limit = TriggerLimitSpec(3, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        if supported_countered_combat_optional_result(node):
+            limit = TriggerLimitSpec(4, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        elif supported_optional_result_limit(node):
+            limit = TriggerLimitSpec(3, kind=OPTIONAL_RESULT_LIMIT_KIND)
+        else:
+            return None
     elif supported_trigger_limit_subscriptions(node.event,node.event_condition):limit=TriggerLimitSpec()
     elif departure_trigger_limit_event(node.event,node.event_condition):limit=TriggerLimitSpec(2,source_scope='event_incarnation')
     else:return None

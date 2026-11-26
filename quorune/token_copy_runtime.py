@@ -5,7 +5,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping, Sequence
 
-from .token_copy_recipes import TokenCopyBatchSpec, TokenCopyRecipeError, TokenCopyRecipeSpec, apply_copy_exception
+from .token_copy_recipes import (
+    TokenCopyBatchKind, TokenCopyBatchSpec, TokenCopyExceptionSpec, TokenCopyRecipeError,
+    TokenCopyRecipeSpec, apply_copy_exception,
+)
 from .token_copy_recipient_model import has_occurrence_copy_recipient
 from .token_copy_references import copy_reference_snapshot
 
@@ -39,8 +42,10 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
             or recipe.origin!='target' or type(target['index']) is not int or not 0<=target['index']<len(item.targets)):
         raise TokenCopyRecipeError('Modal copy target lost its bound announcement slot')
     if target is not None and item.targets[target['index']] is None:return []
+    from .rules.attached_copy_payment import FALLBACK_FIELD
+
     reference = copy_reference_snapshot(host, item, recipe, target_index=None if target is None else target['index'],
-                                        use_phased_lki=occurrence_copy)
+                                        use_phased_lki=occurrence_copy, paid_attachment=FALLBACK_FIELD in effect)
     if reference is None:
         return []
     snapshot = deepcopy(dict(reference["snapshot"]))
@@ -50,7 +55,31 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
     if recipe.creation_origin=='embalm':
         from .conditional_copy_model import EMBALMED_DESIGNATION
         snapshot['annotations'][EMBALMED_DESIGNATION]=True
-    if recipe.cleanup != "none" or recipe.temporary_keywords:
+    cleanup_plan = None
+    haste_source = None
+    if recipe.post_entry_grant is not None or recipe.source_bound_cleanup:
+        from .continuous_effect_state import ResolutionEffectSource
+        from .created_token_cleanup import CreatedTokenCleanupPlan
+        from .created_token_cleanup_model import CreatedTokenCleanupSpec
+        from .semantic_runtime.context import SemanticSourceContext
+
+        grant = recipe.post_entry_grant
+        if item.context.get("currently_resolving") is not True:
+            detail = ("Post-entry copy grants require their current resolving stack item" if grant is not None
+                      else "Source-bound copy aftercare requires its current resolving stack item")
+            raise TokenCopyRecipeError(detail)
+        if grant is not None:
+            parent = host.semantics.get(item.semantic_key)
+            child = host.semantics.get(grant.semantic_key)
+            if (parent is None or child is None or not parent.oracle_id or child.oracle_id != parent.oracle_id
+                    or child.ability_id != grant.ability_id or child.event != grant.event
+                    or not host.semantic_program_is_current_trusted(child)):
+                raise TokenCopyRecipeError("Post-entry copy requires its original trusted token death trigger")
+        cleanup_plan = CreatedTokenCleanupPlan(
+            CreatedTokenCleanupSpec("sacrifice", "next_end_step"), SemanticSourceContext(**dict(source)),
+        )
+        haste_source = ResolutionEffectSource(**dict(source))
+    elif recipe.cleanup != "none" or recipe.temporary_keywords:
         snapshot["annotations"][COPY_AFTERCARE] = {"cleanup": recipe.cleanup, "controller": actor,
             "binding": f"{item.stack_id}:token-copy", "keywords": list(recipe.temporary_keywords),
             "keyword_duration": recipe.keyword_duration, "source": dict(source)}
@@ -60,7 +89,8 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
         copy_of=reference["ref"], copy_snapshot=snapshot, copy_source_zone=reference["zone"],
         tapped=effect.get("tapped", False),
         reason=reason, replacement_selections=tuple(effect.get("_replacement_selections") or ()),
-        copied_aura_selections=copied_aura_token_selections(item))
+        copied_aura_selections=copied_aura_token_selections(item), token_cleanup=cleanup_plan,
+        post_entry_haste_source=haste_source, post_entry_triggered_grant=recipe.post_entry_grant)
     clear_copied_aura_token_selections(item)
     return created
 
@@ -93,12 +123,20 @@ def apply_copy_batch(host: Any, effect: Mapping[str, Any], *, actor: str, reason
         models = matching_battlefield_objects(host, spec.model_query(player))
     if not models:
         return []
+    cleanup = None
+    if spec.kind is TokenCopyBatchKind.ANNOUNCED_HASTY_COPIES:
+        from .created_token_cleanup import CreatedTokenCleanupPlan
+        from .created_token_cleanup_model import CreatedTokenCleanupSpec
+        from .semantic_runtime.context import SemanticSourceContext
+
+        cleanup = CreatedTokenCleanupPlan(CreatedTokenCleanupSpec("exile", "next_end_step"),
+                                          SemanticSourceContext(**dict(source)))
     tokens, card_types, subtypes, sources = _prepare_copy_batch(host, actor, models, spec.exception)
     created = _create_token_specs(
         host, actor, token_specs=tokens, created_types=card_types, created_subtypes=subtypes,
         replacement_sources=sources, base_name="", base_quantity=len(tokens), reason=reason,
         replacement_selections=tuple(effect.get("_replacement_selections") or ()),
-        copied_aura_selections=copied_aura_token_selections(item),
+        copied_aura_selections=copied_aura_token_selections(item), token_cleanup=cleanup,
     )
     clear_copied_aura_token_selections(item)
     return created
@@ -113,7 +151,7 @@ def _prepare_copy_batch(host, actor, models, exception):
     sources: dict[str, Any] = {}
     for model in models:
         snapshot = token_copy_snapshot(host, model)
-        if exception.remove_legendary:
+        if exception != TokenCopyExceptionSpec():
             values = apply_copy_exception(snapshot["characteristics"], exception)
             snapshot["characteristics"] = values
             snapshot["annotations"]["copy_overrides"] = values

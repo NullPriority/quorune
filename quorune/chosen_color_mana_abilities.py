@@ -6,13 +6,14 @@ from dataclasses import dataclass, replace
 import re
 from typing import Mapping
 
-from .chosen_color_mana_model import ChosenColorManaOutput, CHOSEN_COLOR_MANA_HANDLER_ID
+from .chosen_color_mana_model import ChosenColorManaOutput, CHOSEN_COLOR_MANA_HANDLER_ID, NOTED_MANA_OUTPUT_VERSION
 from .fixed_mana_abilities import (
     FixedActivatedManaAbilitySpec, FixedManaMode, _without_activation_restriction,
     _without_spend_restriction, fixed_mana_modes_from_effect,
 )
 from .public_quantity_mana_abilities import compile_mana_activation_costs
 from .replacement.immutable import FrozenMap
+from .mana_spend_rules import CHOSEN_MONOCOLORED_RESTRICTION
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,6 +27,23 @@ class ChosenColorActivatedManaAbilitySpec:
         if (self.costs.modes != (FixedManaMode(green=1),) or self.costs.spend_restriction is not None
                 or self.costs.result is not None):
             raise ValueError('Chosen-color cost descriptor carries a competing result')
+        if self.output.schema_version == 2 and (
+            self.costs.cost_text != "{T}" or not self.costs.tap_source or any(self.costs.mana_cost.values())
+            or any((self.costs.sacrifice_source, self.costs.life_payment, self.costs.choices,
+                    self.costs.activation_conditions, self.costs.activation_limit, self.costs.mana_cost_options,
+                    self.costs.source_counter_removal_cost))
+        ):
+            raise ValueError("Chosen-color mono mana requires its exact ordinary tap")
+
+        if self.output.schema_version == NOTED_MANA_OUTPUT_VERSION:
+            from .compiler.activated_costs import activated_ability_cost
+            from .rules.noted_mana import SPEND_EFFECT_TEXT, noted_mana_cost_is_closed
+
+            ability = self.costs.to_activated_ability()
+            if (self.costs.effect_text.casefold() != SPEND_EFFECT_TEXT or ability.activation_conditions
+                    or ability.activation_limit is not None or self.costs.luck_counter_color_choice
+                    or self.costs.mana_cost_options or not noted_mana_cost_is_closed(activated_ability_cost(ability), charge=False)):
+                raise ValueError("Last noted mana requires its original tap and charge counter price")
 
     def to_dict(self):
         return {'costs': self.costs.to_dict(), 'output': self.output.to_dict()}
@@ -45,6 +63,25 @@ def compile_chosen_color_activated_mana_ability(ability):
     text = _without_activation_restriction(ability, ' '.join(ability.effect_text.split()))
     if text is None:
         return None
+    from .compiler.activated_costs import activated_ability_cost
+    from .rules.noted_mana import SPEND_EFFECT_TEXT, noted_mana_cost_is_closed
+
+    if text.casefold() == SPEND_EFFECT_TEXT:
+        if ability.activation_conditions or ability.activation_limit is not None:
+            return None
+        costs = compile_mana_activation_costs(ability)
+        if costs is None or not noted_mana_cost_is_closed(activated_ability_cost(ability), charge=False):
+            return None
+        return ChosenColorActivatedManaAbilitySpec(costs, ChosenColorManaOutput(1, schema_version=NOTED_MANA_OUTPUT_VERSION))
+    if text.casefold() == ("add four mana of the chosen color. "
+                           "spend this mana only to cast monocolored spells of that color."):
+        if ability.cost_text != "{T}" or not ability.tap_source:
+            return None
+        costs = compile_mana_activation_costs(ability)
+        if costs is None:
+            return None
+        return ChosenColorActivatedManaAbilitySpec(costs,
+            ChosenColorManaOutput(4, restriction=CHOSEN_MONOCOLORED_RESTRICTION, schema_version=2))
     text = _without_spend_restriction(text, ability.mana_spend_restriction)
     if text is None:
         return None

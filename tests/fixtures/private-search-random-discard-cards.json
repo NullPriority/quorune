@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "source": "Read-only selection from the pinned Oracle and rulings snapshot",
+  "cards": [
+    {
+      "oracle_id": "a54f0869-94c8-42af-9080-166efb9486a4",
+      "name": "Gamble",
+      "mana_cost": "{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for a card, put that card into your hand, discard a card at random, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "cmc": 1.0,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "a54f0869-94c8-42af-9080-166efb9486a4",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "You might end up discarding the card you searched for. It's a gamble!"
+    }
+  ]
+}

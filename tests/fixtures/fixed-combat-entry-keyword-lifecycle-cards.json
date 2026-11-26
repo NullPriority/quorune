@@ -154,7 +154,323 @@
       "layout": "normal",
       "released_at": "2026-09-22",
       "legalities": {"commander": "legal"}
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "name": "Silver-Fur Master",
+      "mana_cost": "{U}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Rat Ninja",
+      "oracle_text": "Ninjutsu {U}{B} ({U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nNinjutsu abilities you activate cost {1} less to activate.\nOther Ninja and Rogue creatures you control get +1/+1.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Ninjutsu"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "name": "Ninja of the Deep Hours",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Ninja",
+      "oracle_text": "Ninjutsu {1}{U} ({1}{U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, you may draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Ninjutsu"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-08-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a61ef0cc-1da9-49f9-b0dc-01cf9f6205be",
+      "name": "Changeling Outcast",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "Changeling (This card is every creature type.)\nThis creature can't block and can't be blocked.",
+      "power": "1",
+      "toughness": "1",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Changeling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "406eabe2-df62-49e2-bb39-c0227509d875",
+      "name": "Irrigated Farmland",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Plains Island",
+      "oracle_text": "({T}: Add {W} or {U}.)\nThis land enters tapped.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although the Ninja is attacking, it was never declared as an attacking creature (for purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As you activate a ninjutsu ability, you reveal the Ninja card in your hand and return the attacking creature. The Ninja card stays revealed and isn't put onto the battlefield until the ability resolves. If it leaves your hand before then, it won't enter the battlefield at all."
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a creature in combat has first strike or double strike, you can activate the ninjutsu ability during the first-strike combat damage step. The Ninja will deal combat damage during the regular combat damage step, even if it has first strike."
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Puff of smoke not included."
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The creature with ninjutsu enters the battlefield attacking the same player or planeswalker that the returned creature was attacking. This is a rule specific to ninjutsu; in other cases, when a creature is put onto the battlefield attacking, that creature's controller chooses which player or planeswalker it's attacking."
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The ninjutsu ability can be activated during the declare blockers step, combat damage step, or end of combat step. In most cases (see below), if you wait until the combatdamage step or end of combat step, it will be after combat damage has been dealt, so the Ninja won't deal combat damage."
+    },
+    {
+      "oracle_id": "60ec735d-c9be-4776-beb7-f603ae22edbf",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The ninjutsu ability can be activated only after blockers have been declared. Before then, attacking creatures are neither blocked nor unblocked."
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Although the Ninja is attacking, it was never declared as an attacking creature (for purposes of abilities that trigger whenever a creature attacks, for example)."
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "As you activate a ninjutsu ability, you reveal the Ninja card in your hand and return the attacking creature. The Ninja isn't put onto the battlefield until the ability resolves. If it leaves your hand before then, it won't enter the battlefield at all."
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a creature in combat has first strike or double strike, you can activate the ninjutsu ability during the first-strike combat damage step. The Ninja will deal combat damage during the regular combat damage step in this case, even if it has first strike."
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The creature put onto the battlefield with ninjutsu enters the battlefield attacking the same player or planeswalker that the returned creature was attacking. This is a rule specific to ninjutsu."
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The ninjutsu ability can be activated during the declare blockers step, combat damage step, or end of combat step. If you wait until after the declare blockers step, because all combat damage is dealt at once, the Ninja won't normally deal combat damage."
+    },
+    {
+      "oracle_id": "1f3c2b00-0000-4ae1-9650-9553accac52e",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "The ninjutsu ability can be activated only after blockers have been declared. Before then, attacking creatures are neither blocked nor unblocked."
+    }
+  ]
 }

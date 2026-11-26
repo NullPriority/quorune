@@ -24,7 +24,7 @@ def _modifier_subject(head):
     lowered = head.casefold()
     if lowered == 'equip abilities you activate of other equipment':
         return OTHER_EQUIPMENT_ACTIVATION_SUBJECT, 'source_controller', 'equip', OTHER_EQUIPMENT_ACTIVATION_PREDICATE
-    if lowered in {'equip abilities you activate','cycling abilities you activate'}:
+    if lowered in {'equip abilities you activate','cycling abilities you activate','ninjutsu abilities you activate'}:
         return 'any','source_controller',lowered.split()[0],ObjectQuerySpec()
     if lowered == 'activated abilities':
         return 'any', 'any', 'all', ObjectQuerySpec()
@@ -67,6 +67,8 @@ def static_activation_cost_modifier_handler(text):
     if subject is None:
         return None
     relation, controller, scope, predicate = subject
+    if scope == 'ninjutsu' and match['nonmana']:
+        return None
     if match['nonmana']:
         scope = 'nonmana'
     amount = int(match['amount']) * (1 if match['direction'].casefold() == 'more' else -1)

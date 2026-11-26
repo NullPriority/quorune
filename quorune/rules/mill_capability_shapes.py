@@ -98,6 +98,9 @@ def fixed_mill_node_capabilities(
     effect = effects[0]
     if effect.get("op") != "mill":
         return ()
+    if "followup" in effect:
+        from .milled_creature_tokens import milled_creature_token_node_capabilities
+        return milled_creature_token_node_capabilities(effects, target_schema)
     count = effect.get("count")
     caps = (MILL_CAPABILITY_ID,)
     if isinstance(count, Mapping) and count.get("kind") == OPPONENT_HAND_MILL_KIND:

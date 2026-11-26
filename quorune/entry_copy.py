@@ -8,7 +8,7 @@ from typing import Any, Mapping
 from .creature_subtypes import canonical_creature_subtype
 from .object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from .target_numeric import TargetNumericCharacteristic, TargetNumericComparison
-from .token_copy_recipes import TokenCopyExceptionSpec
+from .token_copy_recipes import RETAINED_LEGEND_PARTNER_VERSION, TokenCopyExceptionSpec
 from .entry_copy_predicates import EntryCopyPredicate
 from .conditional_copy_model import ConditionalCopyException
 from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD,defined_token_current_characteristics
@@ -48,6 +48,15 @@ GRAVEYARD_PAIR_COPY_HANDLER = 'replacement.zone.entry-copy.v13'
 GRAVEYARD_PAIR_COPY_CAPABILITY = 'zone.entry.graveyard_copy_pair'
 GRAVEYARD_PAIR_COPY_CAPABILITIES = (ENTRY_COPY_CAPABILITY, GRAVEYARD_PAIR_COPY_CAPABILITY)
 GRAVEYARD_PAIR_COPY_QUERY = ObjectQuerySpec(zones=('graveyard',),types_all=('creature',))
+TEMPORARY_HASTE_COPY_VERSION = 15
+TEMPORARY_HASTE_COPY_HANDLER = 'replacement.zone.entry-copy.v15'
+TEMPORARY_HASTE_COPY_CAPABILITY = 'zone.entry.copy_until_turn_end_with_haste'
+TEMPORARY_HASTE_COPY_CAPABILITIES = (
+    ENTRY_COPY_CAPABILITY, ENTRY_COPY_VALUES_CAPABILITY, TEMPORARY_HASTE_COPY_CAPABILITY,
+    'activation.tap_untap_cost.haste', 'combat.attack.haste',
+)
+TEMPORARY_HASTE_COPY_QUERY = ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))
+TEMPORARY_HASTE_COPY_EXCEPTION = TokenCopyExceptionSpec(add_keywords=('Haste',))
 COPIABLE_ORACLE_FIELD = '_copiable_oracle_id'
 COPIABLE_FACE_FIELD = '_copiable_face_id'
 
@@ -143,6 +152,11 @@ def _legacy_view_of_copy_query(query: ObjectQuerySpec) -> ObjectQuerySpec:
         subtypes_all=() if equipment else query.subtypes_all)
 
 
+RETAINED_LEGEND_PARTNER_COPY_QUERY = ObjectQuerySpec(
+    zones=('battlefield',), types_all=('creature',), controller='$controller', exclude_ref='$source.ref',
+)
+
+
 @dataclass(frozen=True, slots=True)
 class EntryCopySpec:
     selection: ObjectQuerySpec
@@ -156,7 +170,7 @@ class EntryCopySpec:
     type_directed_counters: bool = False
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, TEMPORARY_HASTE_COPY_VERSION}:
             raise ValueError('Entry copy requires one current typed schema')
         if not isinstance(self.selection, ObjectQuerySpec) or not isinstance(self.exception, TokenCopyExceptionSpec):
             raise ValueError('Entry copy requires typed selection and copy exceptions')
@@ -192,6 +206,14 @@ class EntryCopySpec:
         if self.conditional_vanishing and self.selection != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)):
             raise ValueError('Conditional Vanishing requires the unqualified public creature copy')
         query = _legacy_view_of_copy_query(self.selection) if self.schema_version == 2 else self.selection
+        if self.exception.schema_version == RETAINED_LEGEND_PARTNER_VERSION:
+            if self.schema_version != 1 or query != RETAINED_LEGEND_PARTNER_COPY_QUERY:
+                raise ValueError('The retained legend and Partner abilities require another creature you control')
+            query = replace(query, exclude_ref=None)
+        if self.temporary_haste and (
+            query != TEMPORARY_HASTE_COPY_QUERY or self.exception != TEMPORARY_HASTE_COPY_EXCEPTION
+        ):
+            raise ValueError('Temporary haste entry copies require the exact public creature and haste exception')
         if self.face_up_or_entry or self.retains_color:
             from .ability_fragments import GrantedTriggeredAbilitySpec, canonical_ability_fragments
 
@@ -255,6 +277,10 @@ class EntryCopySpec:
     @property
     def retains_color(self) -> bool:
         return self.schema_version == 14
+
+    @property
+    def temporary_haste(self) -> bool:
+        return self.schema_version == TEMPORARY_HASTE_COPY_VERSION
 
     def to_dict(self) -> dict[str, Any]:
         return {

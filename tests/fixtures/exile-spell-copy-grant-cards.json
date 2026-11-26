@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "97a85a3e-258e-49b7-8ebe-7efee808da7a",
+      "name": "Nalfeshnee",
+      "mana_cost": "{5}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Beast Demon",
+      "oracle_text": "Flying\nWhenever you cast a spell from exile, copy it. You may choose new targets for the copy. If it's a permanent spell, the copy gains haste and \"At the beginning of the end step, sacrifice this permanent.\" (A copy of a permanent spell becomes a token.)",
+      "power": "4",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

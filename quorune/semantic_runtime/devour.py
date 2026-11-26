@@ -39,8 +39,12 @@ def devour_effects_for_spec(host,subject,spec,*,component_id):
     query=ObjectQuerySpec(zones=('battlefield',),controller=controller,
         types_all=('creature',) if spec.quality is DevourQuality.CREATURE else ('artifact',),
         subtypes_all=('food',) if spec.quality is DevourQuality.FOOD else (),known_to_actor=True)
+    from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
     rows=[]
     for card in host._semantic_event_sources(zones={'battlefield'}):
+        if sacrifice_is_prohibited(host.state, card):
+            continue
         data=host._effective_card_data(card)
         rows.append(object_query_result(card,data,type_parts=host._type_parts(str(data.get('type_line') or '')),
             known_to_actor=True,attached_to_ref=None))

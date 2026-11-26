@@ -79,6 +79,8 @@ def _typed_participation(text,source_name):
     text=text.rstrip('.')
     fixed={
         "Room abilities of dungeons you own trigger an additional time": OWNED_DUNGEON_ROOM,
+        "If a triggered ability of equipped creature triggers, that ability triggers an additional time": "equipped_creature_source",
+        "If an ability of equipped creature triggers, that ability triggers an additional time": "equipped_creature_source",
         "If a permanent entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'permanent_enters',
         "If a permanent entering the battlefield causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'permanent_enters',
         "If a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time":'land_enters',

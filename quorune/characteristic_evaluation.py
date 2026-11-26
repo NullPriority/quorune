@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import copy
 import re
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from .continuous_effects import (
     CharacteristicState,
@@ -40,6 +40,7 @@ from .characteristic_fragments import (
 from .creature_subtypes import CREATURE_SUBTYPES
 from .type_subtype_vocabulary import CARD_SUPERTYPES
 from .all_colors import AllColorsCharacteristicDefinitionSpec,ALL_COLORS
+from .basic_land_types import AllNonbasicLandTypesDefinitionSpec, NONBASIC_LAND_SUBTYPES
 from .off_battlefield_creatures import OffBattlefieldSelfCreatureSpec
 
 
@@ -293,10 +294,17 @@ def _has_all_creature_types_characteristic_definition(
     )
 
 
-def _all_creature_types_effect(
+def _has_all_nonbasic_land_types_definition(base, overrides):
+    return any(isinstance(fragment, AllNonbasicLandTypesDefinitionSpec) for fragment in
+               canonical_ability_fragments(overrides.get("ability_fragments", base.get("ability_fragments", ()))))
+
+
+def _subtype_definition_effect(
     card: CardInstance,
     *,
     enabled: bool,
+    name: str,
+    subtypes: Iterable[str],
     face_down_values: Any,
     ignore_face_down: bool,
 ) -> ContinuousEffect | None:
@@ -307,7 +315,7 @@ def _all_creature_types_effect(
     ):
         return None
     return ContinuousEffect(
-        effect_id=f"{card.object_id}:all-creature-types-definition",
+        effect_id=f"{card.object_id}:{name}",
         source_id=card.object_id,
         layer=Layer.TYPE,
         sublayer="4",
@@ -315,7 +323,7 @@ def _all_creature_types_effect(
         operations=(
             ContinuousOperation(
                 "add_types",
-                sorted(CREATURE_SUBTYPES),
+                sorted(subtypes),
                 field="subtypes",
             ),
         ),
@@ -359,6 +367,7 @@ def _object_continuous_effects(
     added_subtypes: Sequence[str],
     *,
     has_all_creature_types_definition: bool,
+    has_all_nonbasic_land_types_definition: bool,
     has_colorless_definition: bool,
     has_all_colors_definition: bool,
     ignore_face_down: bool = False,
@@ -393,14 +402,15 @@ def _object_continuous_effects(
                 duration=ContinuousEffectDuration.ZONE_OBJECT,
             )
         )
-    all_creature_types = _all_creature_types_effect(
-        card,
-        enabled=has_all_creature_types_definition,
-        face_down_values=face_down_values,
-        ignore_face_down=ignore_face_down,
-    )
-    if all_creature_types is not None:
-        effects.append(all_creature_types)
+    for enabled, name, subtypes in (
+        (has_all_creature_types_definition, "all-creature-types-definition", CREATURE_SUBTYPES),
+        (has_all_nonbasic_land_types_definition, "all-nonbasic-land-types-definition", NONBASIC_LAND_SUBTYPES),
+    ):
+        if effect := _subtype_definition_effect(
+            card, enabled=enabled, name=name, subtypes=subtypes,
+            face_down_values=face_down_values, ignore_face_down=ignore_face_down,
+        ):
+            effects.append(effect)
     type_operations: list[ContinuousOperation] = []
     if card.annotations.get("bestowed") and card.attached_to:
         type_operations.extend(
@@ -531,6 +541,9 @@ def _query_characteristic_effects(
     materialized: list[ContinuousEffect] = []
     for index, fragment in enumerate(fragments):
         if isinstance(fragment, QueryPowerToughnessDefinitionSpec):
+            if (fragment.quantity.scope is CharacteristicQuantityScope.OPPONENT_CHOSEN_COLOR_PERMANENTS
+                    and maximum_layer is not None and maximum_layer < Layer.POWER_TOUGHNESS):
+                continue
             count = count_resolver(fragment.quantity)
             if type(count) is not int or (count < 0 and fragment.quantity.scope not in DEFINING_LIFE_SCOPES):
                 raise ContinuousEffectError(
@@ -705,7 +718,7 @@ def _normalized_unlayered_characteristics(result):
     return result
 
 
-def _card_characteristic_query_context(card, *, enchanted=False, equipped=False, modified=False):
+def _card_characteristic_query_context(card, *, enchanted=False, equipped=False, modified=False, ignore_face_down=False):
     return {
         "object_id": card.object_id,
         "logical_object_id": card.logical_object_id,
@@ -716,6 +729,7 @@ def _card_characteristic_query_context(card, *, enchanted=False, equipped=False,
         "token": card.is_token,
         "commander": card.is_commander,
         "tapped": card.tapped,
+        "face_down": card.face_down and not ignore_face_down,
         "phased_out": card.phased_out,
         "known_to_actor": True,
         "counters": card.counters,
@@ -729,7 +743,7 @@ def _card_characteristic_query_context(card, *, enchanted=False, equipped=False,
 
 
 def battlefield_type_dependency_view(
-    card, base, *, runtime_effects=(), ignore_face_down=False,
+    card, base, *, runtime_effects=(), ignore_face_down=False, linked_exile_resolver=None,
     dependency_order_version=CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ):
     """Prepare the real pre-type state and per-object operations without mutating the game."""
@@ -738,11 +752,14 @@ def battlefield_type_dependency_view(
     object_effects = _object_continuous_effects(
         card, overrides, added_types, added_subtypes,
         has_all_creature_types_definition=_has_all_creature_types_characteristic_definition(base, overrides),
+        has_all_nonbasic_land_types_definition=_has_all_nonbasic_land_types_definition(base, overrides),
         has_colorless_definition=False, has_all_colors_definition=False, ignore_face_down=ignore_face_down,
     )
     effects = (*object_effects, *runtime_effects)
-    context = _card_characteristic_query_context(card)
+    context = _card_characteristic_query_context(card, ignore_face_down=ignore_face_down)
     context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
+    if linked_exile_resolver is not None:
+        context["linked_exile_characteristics"] = linked_exile_resolver
     evaluate_continuous_effects(state, (effect for effect in effects if effect.layer < Layer.TYPE),
                                 context=context)
     return state, context, tuple(effect for effect in effects if effect.layer is Layer.TYPE)
@@ -779,6 +796,7 @@ def evaluate_card_characteristics(
     modified: bool = False,
     active_player: str | None = None,
     type_order=None,
+    linked_exile_resolver=None,
     dependency_order_version: int | None = CONTINUOUS_DEPENDENCY_ORDER_VERSION,
 ) -> dict[str, Any]:
     """Evaluate one object's declarative CR 613 characteristic state.
@@ -796,6 +814,7 @@ def evaluate_card_characteristics(
         overrides,
     )
     has_all_colors_definition = _has_all_colors_definition(result,overrides)
+    has_all_land_types = _has_all_nonbasic_land_types_definition(result, overrides)
     has_all_creature_types_definition = (
         _has_all_creature_types_characteristic_definition(
             result,
@@ -820,6 +839,7 @@ def evaluate_card_characteristics(
         or has_colorless_definition
         or has_all_colors_definition
         or has_all_creature_types_definition
+        or has_all_land_types
         or (
             card.face_down
             and not ignore_face_down
@@ -844,11 +864,16 @@ def evaluate_card_characteristics(
         ),
         has_colorless_definition=has_colorless_definition,
         has_all_colors_definition=has_all_colors_definition,
+        has_all_nonbasic_land_types_definition=has_all_land_types,
         ignore_face_down=ignore_face_down,
     )
     effects.extend((*source_zone_effects, *runtime_effects))
-    context = _card_characteristic_query_context(card, enchanted=enchanted, equipped=equipped, modified=modified)
+    context = _card_characteristic_query_context(
+        card, enchanted=enchanted, equipped=equipped, modified=modified, ignore_face_down=ignore_face_down,
+    )
     context[CONTINUOUS_DEPENDENCY_ORDER_FIELD] = dependency_order_version
+    if linked_exile_resolver is not None:
+        context["linked_exile_characteristics"] = linked_exile_resolver
     if type_order is not None:
         context["type_order"] = type_order
     if query_count_resolver is not None and (
@@ -895,9 +920,18 @@ def evaluate_card_characteristics(
         )
         for effect in effects
     )
-    return _render_characteristics(
+    characteristics = _render_characteristics(
         card,
         result,
         values,
         render_type_line=render_type_line,
     )
+    if "saga" in values["subtypes"] and any(
+        effect.effect_id in applied
+        and any(operation.op in {"set_basic_land_types", "remove_all_abilities"} for operation in effect.operations)
+        for effect in effects
+    ):
+        from .ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
+
+        characteristics[INTRINSIC_ABILITIES_REMOVED] = True
+    return characteristics

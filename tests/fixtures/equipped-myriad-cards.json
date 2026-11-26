@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "name": "Blade of Selves",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature has myriad. (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)\nEquip {4}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Each token copies exactly what was printed on the original creature and nothing else. It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If the defending player is your only opponent, no tokens are put onto the battlefield."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If myriad creates more than one token for any given player (due to an effect such as the one Doubling Season creates), you may choose separately for each token whether it's attacking the player or a planeswalker they control."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If the equipped creature is legendary, the tokens will all enter the battlefield. Then you'll choose one of them to remain on the battlefield. The others will be put into your graveyard. Any enters-the-battlefield or dies triggers of the tokens will work."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The term “defending player” in the myriad rules (or any other ability of an attacking creature) refers to the player the creature with myriad was attacking at the time it became an attacking creature this combat, or the controller of the planeswalker the creature was attacking at the time it became an attacking creature this combat."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "The token creatures all enter the battlefield at the same time."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Although the tokens enter the battlefield attacking, they were never declared as attackers. Abilities that trigger whenever a creature attacks won't trigger, including the myriad ability of the tokens. If there any costs to have a creature attack, those costs won't apply to the tokens."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied creature will trigger when the token enters the battlefield. Any “as [this permanent] enters the battlefield” or “[this permanent] enters the battlefield with” abilities of the copied creature will also work."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If a creature has multiple instances of myriad, each triggers separately. You'll get two tokens per opponent other than the defending player."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "You choose whether each token is attacking the player or a planeswalker they control as the token is created."
+    },
+    {
+      "oracle_id": "9c329f3d-4d0a-4012-8aa6-92afdd120a52",
+      "published_at": "2015-11-04",
+      "source": "wotc",
+      "comment": "If the tokens aren't creatures (perhaps because the equipped creature was an animated land), they'll enter the battlefield but they won't be attacking. You'll still exile those tokens at end of combat."
+    }
+  ]
+}

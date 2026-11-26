@@ -869,3 +869,26 @@ test("copy targets preserve defaults and validate each copy", () => {
   choices.copy_targets = [{ target: ["C01"] }, { target: [] }];
   assert.match(validateChoices(copies, choices)[0], /Copy 2/);
 });
+
+test("A nontarget allocation accepts any legal positive shares within the available total", () => {
+  const action = form([{
+    name: "counter_allocation", control: "quantity_map", minimum_each: 1, maximum_total: 4,
+    options: [{ value: "your-creature" }, { value: "other-creature" }],
+  }]);
+  const empty = initialChoices(action);
+  assert.deepEqual(empty, { counter_allocation: {} });
+  assert.deepEqual(validateChoices(action, empty), []);
+  assert.deepEqual(executableChoices(action, empty), empty);
+  const legal = { counter_allocation: { "your-creature": 2, "other-creature": 1 } };
+  assert.deepEqual(validateChoices(action, legal), []);
+  assert.deepEqual(executableChoices(action, legal), legal);
+  for (const counter_allocation of [
+    { "your-creature": 2, "other-creature": 3 },
+    { "your-creature": 0 },
+    { "your-creature": 0.5 },
+    { "your-creature": "1" },
+    { "unoffered-card": 1 },
+  ]) {
+    assert.match(validateChoices(action, { counter_allocation }).join(), /allows up to 4/);
+  }
+});

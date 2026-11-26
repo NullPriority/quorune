@@ -34,7 +34,15 @@ def compile_whole_modal_face(*, record, face_id, face_name, type_line, keywords,
                             capability_profile, residuals, compile_inner, trigger_node, grant_effect_templates,
                             compile_keyword=None):
     from .whole_modal_templates import whole_modal_spell_template
+    from .own_combat_modal_templates import split_own_combat_modal
+
     original_rows=material_rows;siblings=()
+    restricted = split_own_combat_modal(
+        material_rows, face_id=face_id, source_name=face_name or record.name, effect_template=effect_template,
+        capability_registry=capability_registry, capability_profile=capability_profile,
+    )
+    if restricted is not None:
+        material_rows,siblings,effect_template=restricted
     arguments=dict(record=record, face_id=face_id, source_name=face_name or record.name,
         effect_template=effect_template, printed_card_types=tuple(sorted(type_parts(type_line)[0])),
         keywords=keywords, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
@@ -42,7 +50,7 @@ def compile_whole_modal_face(*, record, face_id, face_name, type_line, keywords,
         grant_effect_templates=grant_effect_templates)
     branches = ModalTokenBranchCompiler(material_rows=material_rows,**arguments)
     modal_template = whole_modal_spell_template(material_rows, compile_effect=branches)
-    if modal_template is None and compile_keyword is not None:
+    if modal_template is None and restricted is None and compile_keyword is not None:
         separated=_modal_keyword_siblings(material_rows,record=record,face_id=face_id,face_name=face_name,
             type_line=type_line,keywords=keywords,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,capability_profile=capability_profile,compile_keyword=compile_keyword)
@@ -54,6 +62,14 @@ def compile_whole_modal_face(*, record, face_id, face_name, type_line, keywords,
         return None
     template, effects, target_schema, mechanics = modal_template.compiled()
     cost_schema = getattr(modal_template, 'cost_schema', None)
+    from ..kicked_modal import KICKED_MODAL_FIELD
+    from ..kicker import KICKER_COST_HANDLER_ID
+
+    if cost_schema and KICKED_MODAL_FIELD in cost_schema:
+        kicker = [handler for node in siblings for handler in node.handlers
+                  if handler.get("handler_id") == KICKER_COST_HANDLER_ID]
+        if len(kicker) != 1 or record.layout != "normal" or record.faces:
+            return None
     gate = dependency_gate(
         mechanics=mechanics,
         effects=effects,

@@ -8,6 +8,7 @@ from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
 from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .tap_state_templates import (
+    restrict_controller_lands_after_fixed_effect_template,
     fixed_combat_prevention_attackers_untap_template, next_player_untap_effect_template,
     target_combat_prevention_two_untaps_template,
 )
@@ -38,7 +39,10 @@ from .affected_player_discard_templates import (
 )
 from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
-    fixed_affected_player_sacrifice_effect_template,
+    any_number_sacrifice_template, committed_sacrifice_hand_entry_template,
+    counted_sacrifice_damage_template, counted_sacrifice_token_template,
+    fixed_affected_player_sacrifice_effect_template, keep_by_type_template, ordered_type_sacrifice_template,
+    sacrifice_discard_fallback_template, target_sacrifice_toughness_template,
 )
 from .fixed_attachment_templates import (
     created_token_attachment_effect_template,
@@ -112,7 +116,7 @@ from .temporary_declaration_templates import (
 from .temporary_target_interactions import temporary_target_interaction_effect_template
 from .source_keyword_choices import source_keyword_choice_template
 from .source_protection_choices import source_protection_choice_template
-from .source_fixed_protection import source_fixed_protection_template
+from .source_fixed_protection import each_color_protection_template, source_fixed_protection_template
 from .fixed_target_color import fixed_target_color_template
 
 
@@ -319,8 +323,9 @@ def _source_context_resolution_template(
     blight = fixed_blight_effect_template(text)
     if blight is not None:
         return blight
-    extra_turn = fixed_extra_turn_effect_template(text)
-    if extra_turn is not None:return extra_turn
+    turn_result = fixed_extra_turn_effect_template(text)
+    if turn_result is not None:
+        return turn_result
     scheduled_skip = scheduled_turn_skip_effect_template(text)
     if scheduled_skip is not None:
         return scheduled_skip
@@ -350,6 +355,10 @@ def _source_context_resolution_template(
     discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
+    from .die_roll_draw_templates import controller_hand_count_draw_and_size_template
+
+    if hand_count := controller_hand_count_draw_and_size_template(text):
+        return hand_count
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)
     if mana is not None:
         return mana
@@ -375,14 +384,17 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .library_search_templates import private_search_random_discard_effect_template
     from .player_life_exchange import player_life_exchange_template
     from .post_exchange_token import post_exchange_token_spell_template
 
-    if closed := (creature_subtype_set_template(text)
+    if closed := (private_search_random_discard_effect_template(text)
+                  or creature_subtype_set_template(text)
                   or post_exchange_token_spell_template(text)
                   or player_life_exchange_template(text)
                   or all_permanent_counters_then_token_exile_template(text)
                   or fixed_combat_prevention_attackers_untap_template(text)
+                  or restrict_controller_lands_after_fixed_effect_template(text)
                   or target_combat_prevention_two_untaps_template(text)):
         return closed
     from .temporary_self_copy_templates import temporary_copy_subject_template, temporary_creature_copy_set_template
@@ -444,7 +456,8 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     random_return=random_graveyard_return_template(text)
     if random_return is not None:return random_return
     from .manifest_templates import manifest_effect_template
-    manifest = manifest_effect_template(text)
+    from .cloak_templates import cloak_effect_template
+    manifest = manifest_effect_template(text) or cloak_effect_template(text)
     if manifest is not None:
         return manifest
     return None
@@ -492,7 +505,7 @@ def _opponent_greatest_power_exile_template(text: str) -> CompiledEffectTemplate
     )
 
 
-def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+def _affected_player_object_effect_template(text: str, *, card_name: str) -> CompiledEffectTemplate | None:
     if greatest_power_exile := _opponent_greatest_power_exile_template(text):
         return greatest_power_exile
     if distinct := _distinct_sacrifice_template(text):
@@ -505,6 +518,22 @@ def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate
         payment = apnap_object_payment_template(text)
         if payment is not None:
             return payment
+    if keep_types := keep_by_type_template(text):
+        return keep_types
+    if ordered := ordered_type_sacrifice_template(text):
+        return ordered
+    if fallback := sacrifice_discard_fallback_template(text):
+        return fallback
+    if sacrifice_damage := counted_sacrifice_damage_template(text, card_name=card_name):
+        return sacrifice_damage
+    if sacrifice_entry := committed_sacrifice_hand_entry_template(text):
+        return sacrifice_entry
+    if arbitrary_sacrifice := any_number_sacrifice_template(text):
+        return arbitrary_sacrifice
+    if sacrifice_tokens := counted_sacrifice_token_template(text):
+        return sacrifice_tokens
+    if sacrifice_life := target_sacrifice_toughness_template(text):
+        return sacrifice_life
     sacrifice = fixed_affected_player_sacrifice_effect_template(text)
     if sacrifice is not None:
         return sacrifice.compiled()
@@ -521,6 +550,8 @@ def _temporary_characteristic_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None, source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
     """Retain ordered source protection, keyword and source/target characteristic leaves."""
+    if protection := each_color_protection_template(text):
+        return protection
     protection_choice = source_protection_choice_template(text, source_is_permanent=source_is_permanent,
         source_card_types=tuple(source_card_types), source_name=card_name)
     if protection_choice is not None:
@@ -602,6 +633,12 @@ def _greatest_power_target_template(text: str) -> CompiledEffectTemplate | None:
 
 
 def _source_reference_resolution_template(text, *, card_name, source_is_permanent, attachment):
+    from ..rules.combat_prevention_draw import combat_prevention_draw_grant_template
+
+    combat_draw = combat_prevention_draw_grant_template(text)
+    if combat_draw is not None:
+        return combat_draw
+
     from .referenced_damage_templates import attachment_fixed_damage_template
     from .optional_source_damage_templates import optional_source_damage_template
     from .collective_source_damage_templates import collective_source_damage_spell_template
@@ -712,7 +749,7 @@ def typed_resolution_effect_template(
     )
     if fixed_player_counter_placement is not None:
         return fixed_player_counter_placement.compiled()
-    if (affected_object := _affected_player_object_effect_template(text)) is not None:
+    if (affected_object := _affected_player_object_effect_template(text, card_name=card_name)) is not None:
         return affected_object
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)

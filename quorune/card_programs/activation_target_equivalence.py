@@ -67,6 +67,19 @@ def _fixed_graveyard_artifact_target(schema):
     except (TypeError, ValueError):return None
 
 
+def _optional_creature_target(schema):
+    if not isinstance(schema, Mapping):
+        return None
+    common = {"zones": ["battlefield"], "categories": ["permanent"]}
+    typed = {**common, "types_any": ["creature"], "up_to": 1}
+    if schema == typed and type(schema["up_to"]) is int:
+        return target_plan(typed)
+    legacy = {**common, "creature": True, "min": 0, "max": 1}
+    if schema == legacy and schema["creature"] is True and all(type(schema[key]) is int for key in ("min", "max")):
+        return target_plan(typed)
+    return None
+
+
 def _optional_tapped_creature_target(schema):
     required = {'zones', 'categories', 'types_any', 'up_to'}
     if (not isinstance(schema, Mapping) or not required <= set(schema)
@@ -85,12 +98,46 @@ def _optional_tapped_creature_target(schema):
     except (TypeError, ValueError):return None
 
 
+def _owned_graveyard_permanent_target(schema):
+    from ..rules.temporary_self_copy import temporary_graveyard_copy_target_schema
+
+    expected = temporary_graveyard_copy_target_schema()
+    if not isinstance(schema, Mapping) or type(schema.get("count")) is not int:
+        return None
+    legacy = {key: value for key, value in expected.items() if key != "types_any"}
+    if schema == expected or schema == {**legacy, "predicate": "permanent_card"}:
+        return target_plan(expected)
+    return None
+
+
+def _same_player_artifact_pair_target(schema):
+    from ..rules.artifact_sacrifice_return import artifact_sacrifice_return_targets
+
+    expected = artifact_sacrifice_return_targets()
+    if not isinstance(schema, Mapping):
+        return None
+    legacy = deepcopy(expected)
+    for group in legacy["groups"]:
+        group.pop("types_any")
+        group.pop("count")
+        group.update(artifact=True, min=1, max=1)
+    if schema == expected and all(type(group["count"]) is int for group in schema["groups"]):
+        return expected
+    if schema == legacy and all(
+        group["artifact"] is True and type(group["min"]) is int and type(group["max"]) is int
+        for group in schema["groups"]
+    ):
+        return expected
+    return None
+
+
 def reviewed_activation_with_equivalent_target(current, old):
     if current.target_schema == old.target_schema:
         return old
     equivalent = False
     for decode in (_single_creature_target, _fixed_graveyard_artifact_target,
-                   _optional_tapped_creature_target, _single_nonland_permanent_target):
+                   _optional_creature_target, _optional_tapped_creature_target, _single_nonland_permanent_target,
+                   _owned_graveyard_permanent_target, _same_player_artifact_pair_target):
         a, b = (decode(p.target_schema) for p in (current, old))
         if a is not None and b is not None and a == b:
             equivalent = True;break

@@ -25,7 +25,7 @@ _SPELL_CAST_TRIGGER = re.compile(
 )
 _CHARACTERISTIC_SPELL_CAST_TRIGGER = re.compile(
     r"^Whenever (?P<relation>you cast|an opponent casts|a player casts) "
-    r"(?P<article>a|an) (?P<quality>[A-Za-z][A-Za-z' -]*?) spell, "
+    r"(?P<article>a|an) (?P<quality>artifact, instant, or sorcery|[A-Za-z][A-Za-z' -]*?) spell, "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -589,11 +589,13 @@ def _spell_cast_characteristic_term(
 def _spell_cast_characteristic_query(
     quality: str,
 ) -> FixedSpellCastCharacteristicQuery | None:
-    parts = tuple(
-        " ".join(value.split()) for value in quality.casefold().split(" or ")
-    )
-    if not 1 <= len(parts) <= 2:
-        return None
+    normalized = quality.casefold()
+    if normalized == "artifact, instant, or sorcery":
+        parts = ("artifact", "instant", "sorcery")
+    else:
+        parts = tuple(" ".join(value.split()) for value in normalized.split(" or "))
+        if not 1 <= len(parts) <= 2:
+            return None
     terms = tuple(_spell_cast_characteristic_term(value) for value in parts)
     if any(term is None for term in terms):
         return None
@@ -767,6 +769,35 @@ def _subtyped_creature_spell_cast_binding(material_line: str) -> FixedSpellCastB
     )
 
 
+def source_power_cast_binding_spec(material_line: str, *, card_name: str | None):
+    from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+    from ..rules.spell_cast_events import SOURCE_POWER_CAST_CAPABILITIES, source_power_cast_condition
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+
+    match = re.fullmatch(
+        r"Whenever an opponent casts a noncreature spell with mana value less than "
+        r"(?P<source>.+?)['’]s power, (?P<body>.+)",
+        material_line,
+        re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    subject = match["source"]
+    if source_self_permanent_type(subject) is None and (
+        card_name is None or not SourceReferenceSpec(card_name).matches(subject)
+    ):
+        return None
+    return FixedPublicEventBindingSpec(
+        event="spell.cast",
+        variant="opponent_noncreature_cast_below_source_power",
+        body=match["body"],
+        template_id="fixed-source-power-spell-cast-trigger-v1",
+        mechanic="trigger-event-normalized-spell-cast",
+        condition=source_power_cast_condition(),
+        capabilities=SOURCE_POWER_CAST_CAPABILITIES,
+    )
+
+
 def _mana_value_limit_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
     match = re.fullmatch(
         r"Whenever (?P<caster>a player casts|an opponent casts) a spell with mana value "
@@ -823,17 +854,17 @@ def _history_spell_cast_binding(
                 ordinal.group("ordinal").casefold()
             ],
         )
-    first_opponent_turn = re.fullmatch(
-        r"Whenever you cast your first spell during each opponent's turn, "
-        r"(?P<body>.+)",
+    opponent_turn = re.fullmatch(
+        r"Whenever you cast (?:your (?P<first>first) spell during each|a spell during an) "
+        r"opponent's turn, (?P<body>.+)",
         material_line,
         re.IGNORECASE,
     )
-    if first_opponent_turn is not None:
+    if opponent_turn is not None:
         return _binding(
-            body=first_opponent_turn.group("body"),
+            body=opponent_turn.group("body"),
             controller=FixedSpellCastController.SOURCE,
-            caster_spell_number=1,
+            caster_spell_number=1 if opponent_turn["first"] else None,
             turn_relation=FixedSpellCastTurnRelation.OPPONENT,
         )
     player_ordinal = re.fullmatch(

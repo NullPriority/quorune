@@ -295,6 +295,7 @@ from .intents import (
     CreateRegenerationShieldIntent,
     IntentPlan,
     EliminatePlayersIntent,
+    WinGameIntent,
     ExploreCompletedIntent,
     ConniveCompletedIntent,
     GrantZoneObjectKeywordIntent,
@@ -369,7 +370,10 @@ from .random_discard import RandomDiscardHandler
 from .random_graveyard_returns import RandomGraveyardReturnHandler
 from .temporary_cast_restrictions import TemporaryCastRestrictionHandler
 from .temporary_draw_redirect import TemporaryDrawRedirectHandler
+from .game_hand_size import NoMaximumForGameHandler
+from .scheduled_next_draw import ScheduledNextDrawResultHandler
 from .protected_attack_payments import ProtectedAttackPaymentHandler
+from .next_turn_attack_restriction import NextTurnAttackRestrictionHandler
 from .library_search_rules import ProhibitLibrarySearchHandler
 from .station_handlers import STATION_HANDLERS, StationCounterPlacementHandler
 from .zone_object_keyword_handlers import (
@@ -410,7 +414,8 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .library_bottom_results import LibraryBottomResultHandler
     from .earthbend_handlers import EARTHBEND_HANDLERS
     from .emblem_creation import CreateCompiledEmblemHandler
-    from .revealed_library_top import RevealEachLibraryTopHandler
+    from .revealed_library_top import EnterRevealedLibraryTopHandler, RevealEachLibraryTopHandler
+    from .target_controller_library_reveal import PlaceMatchingRevealedPermanentHandler
     from .scheduled_turn_skip import ScheduledTurnSkipHandler
     from .additional_beginning import ScheduledAdditionalBeginningHandler
     from .suspect_handler import SuspectHandler
@@ -424,6 +429,8 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             TokenMillRepeatHandler(),
             LibraryBottomResultHandler(),
             RevealEachLibraryTopHandler(),
+            EnterRevealedLibraryTopHandler(),
+            PlaceMatchingRevealedPermanentHandler(),
             ScheduledTurnSkipHandler(),
             ScheduledAdditionalBeginningHandler(),
             SuspectHandler(),
@@ -436,6 +443,9 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             RandomDiscardHandler(),
             RandomGraveyardReturnHandler(),
             TemporaryCastRestrictionHandler(), TemporaryDrawRedirectHandler(), ProtectedAttackPaymentHandler(),
+            NextTurnAttackRestrictionHandler(),
+            ScheduledNextDrawResultHandler(),
+            NoMaximumForGameHandler(),
             ProhibitLibrarySearchHandler(),
             *TAP_STATE_HANDLERS,
             *DESTRUCTION_HANDLERS,

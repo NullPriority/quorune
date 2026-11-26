@@ -10,10 +10,14 @@ from .dynamic_characteristics import query_characteristic_count
 from .errors import GameRuleError
 from .mana import ManaMode
 from .public_quantity_mana_model import (
-    CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION, PUBLIC_QUANTITY_MANA_KIND, PublicQuantityManaOutput,
+    CHOSEN_DEVOTION_MANA_VERSION, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
+    ControlledLandSubtypePairManaAmount,
+    PAID_ACTIVATION_MANA_VALUE_CONTEXT, PAID_SACRIFICE_QUANTITY_MANA_VERSION,
+    PUBLIC_QUANTITY_MANA_KIND, PublicQuantityManaOutput,
 )
 from .rules.chosen_type_events import chosen_type_event_value
 from .scalar_effect_amounts import resolve_scalar_effect_amount, scalar_source_context
+from .scalar_effect_amount_model import PaidSacrificeManaValueSnapshot
 from .util import normalize_mana_bundle
 from .replacement.immutable import FrozenMap, thaw_value
 from .live_battlefield_quantities import current_live_battlefield_count
@@ -25,6 +29,7 @@ class ManaSourceInformation:
     source: Any
     scalar_context: Mapping[str, Any]
     chosen_creature_type: str | None = None
+    paid_mana_value: PaidSacrificeManaValueSnapshot | None = None
 
 
 def public_quantity_output(ability) -> PublicQuantityManaOutput | None:
@@ -40,12 +45,23 @@ def chosen_subtype_mana_output(ability) -> PublicQuantityManaOutput | None:
     return None
 
 
-def capture_mana_source_information(host, seat, source, ability):
+def capture_mana_source_information(host, seat, source, ability, *, paid_objects=(), paid_cost_fact=None):
     """Capture only server-owned source information after other costs are paid."""
     output = public_quantity_output(ability)
     if output is None:
         return None
     locked = replace(source, controller=seat, counters=dict(source.counters))
+    if output.schema_version == PAID_SACRIFICE_QUANTITY_MANA_VERSION:
+        if paid_cost_fact is None or paid_cost_fact[0] != PAID_ACTIVATION_MANA_VALUE_CONTEXT:
+            raise GameRuleError("Mana output requires the exact paid sacrifice")
+        fact = paid_cost_fact[1]
+        if tuple(paid_objects) != (fact["paid_object_id"],):
+            raise GameRuleError("Mana output lost the paid object's identity")
+        try:
+            snapshot = PaidSacrificeManaValueSnapshot.from_dict(fact["snapshot"])
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        return ManaSourceInformation(locked, FrozenMap(), paid_mana_value=snapshot)
     context = scalar_source_context(host, source, (output.to_dict(),))
     chosen = chosen_type_event_value(source) if output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION else None
     return ManaSourceInformation(locked, FrozenMap(context), chosen)
@@ -57,12 +73,20 @@ def public_quantity_mana_amount(host, seat, source, output, *, source_informatio
     info = source_information
     locked = info.source if info is not None else replace(source, controller=seat)
     try:
-        if output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION:
+        if output.schema_version == PAID_SACRIFICE_QUANTITY_MANA_VERSION:
+            if info is None or info.paid_mana_value is None:
+                raise ValueError("Mana output requires the committed sacrifice's mana value")
+            amount = info.paid_mana_value.mana_value
+        elif output.schema_version == CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION:
             chosen = info.chosen_creature_type if info is not None else chosen_type_event_value(locked)
             if chosen is None:
                 return 0
             query = replace(output.amount.query, subtypes_all=(chosen,))
             amount = query_characteristic_count(host, locked, replace(output.amount, query=query))
+        elif isinstance(output.amount, ControlledLandSubtypePairManaAmount):
+            amount = output.amount.enhanced_amount if all(
+                query_characteristic_count(host, locked, query) for query in output.amount.queries
+            ) else 1
         elif isinstance(output.amount, LiveBattlefieldQuantitySpec):
             amount = current_live_battlefield_count(host, seat, output.amount, source_ref=locked.ref)
         elif isinstance(output.amount, CharacteristicQuantitySpec):
@@ -90,6 +114,8 @@ def public_quantity_mana_offer_amount(host, seat, source, ability, output):
 
 def public_quantity_mana_modes(host, seat, source, ability):
     output = public_quantity_output(ability)
+    if output.schema_version in {PAID_SACRIFICE_QUANTITY_MANA_VERSION, CHOSEN_DEVOTION_MANA_VERSION}:
+        return ()
     amount = public_quantity_mana_amount(host, seat, source, output)
     # Pure-color allocations are useful payment candidates. Mixed allocations
     # are represented by the closed choice schema, never exponential modes.
@@ -104,6 +130,13 @@ def public_quantity_mana_modes(host, seat, source, ability):
 
 def select_public_quantity_mana(host, seat, source, ability, response, *, source_information=None):
     output = public_quantity_output(ability)
+    if output.schema_version == CHOSEN_DEVOTION_MANA_VERSION:
+        from .devotion import current_devotion
+
+        color = response.get("mana_choice")
+        if response.get("mana_output") is not None or type(color) is not str or color not in output.colors:
+            raise GameRuleError("Choose one offered ordinary color for the devotion mana")
+        return normalize_mana_bundle({color: current_devotion(host, seat, (color,))})
     amount = public_quantity_mana_amount(host, seat, source, output, source_information=source_information)
     raw = response.get('mana_output')
     choice = response.get('mana_choice')
@@ -136,6 +169,10 @@ def public_quantity_mana_choice_schema(host, seat, source, ability):
     output = public_quantity_output(ability)
     if output is None or output.selection == 'fixed':
         return None
+    if output.schema_version == CHOSEN_DEVOTION_MANA_VERSION:
+        labels = {"W": "White", "U": "Blue", "B": "Black", "R": "Red", "G": "Green"}
+        return {"mana_choice": {"type": "enum", "label": "Mana color",
+            "legal_values": list(labels), "option_labels": labels}}
     return {'mana_output': {'type': 'mana_bundle', 'label': 'Mana to add',
         'allowed_colors': list(output.colors), 'total': public_quantity_mana_offer_amount(host, seat, source, ability, output),
         'single_color': output.selection == 'choose_one'}}

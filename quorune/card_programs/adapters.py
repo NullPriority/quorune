@@ -320,6 +320,42 @@ def compile_card_program(
     )
 
 
+def _matches_retained_card_form(retained: SemanticProgram, fresh: SemanticProgram) -> bool:
+    """Compare complete declarations while respecting the requested trust level."""
+    stored = retained.to_dict()
+    current = fresh.to_dict()
+    if stored == current:
+        return True
+    if fresh.trust_level != "provisional" or retained.trust_level != "trusted":
+        return False
+    # An ordinary retained form was compiled as trusted. Explicit provisional
+    # compilation keeps its own trust result while checking the same contract.
+    current["trust_level"] = "trusted"
+    current["requires_arbiter"] = False
+    current["provenance"] = {
+        **current["provenance"], "review_status": "capability_closure_verified",
+    }
+    return stored == current
+
+
+def _without_retained_card_forms(
+    programs: Iterable[SemanticProgram], forms: tuple[SemanticProgram, ...],
+) -> Iterable[SemanticProgram]:
+    if not forms:
+        return programs
+    forms_by_key = {program.key: program for program in forms}
+    overlay = []
+    for program in programs:
+        fresh = forms_by_key.get(program.key)
+        if fresh is None:
+            overlay.append(program)
+        elif not _matches_retained_card_form(program, fresh):
+            raise CardProgramError(
+                f"Retained card-form ability {program.key} conflicts with the current declaration"
+            )
+    return overlay
+
+
 def _compile_card_program_from_ir(
     db: CardDatabase, record: CardRecord, ir: Any, *,
     semantic_registry: SemanticRegistry | None,
@@ -351,11 +387,24 @@ def _compile_card_program_from_ir(
     }
     reviewed_keys: list[str] = []
     superseded_reviewed_keys: list[str] = []
+    ruling_hash = rulings_source_hash(db, record)
+    card_form_programs = _card_form_rule_programs(
+        record,
+        nodes=card_form_compilation.nodes,
+        oracle_source_hash=ir.oracle_hash,
+        rulings_hash=ruling_hash,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
+        trust_level=trust_level,
+    )
     if semantic_registry is not None:
+        overlay = _without_retained_card_forms(
+            semantic_registry.programs_for_oracle(record.oracle_id), card_form_programs,
+        )
         reviewed_programs = tuple(
             with_activated_ability_catalog(
                 record,
-                semantic_registry.programs_for_oracle(record.oracle_id),
+                overlay,
                 reference_programs=tuple(programs.values()),
             )
         )
@@ -385,16 +434,6 @@ def _compile_card_program_from_ir(
                         programs.pop(key)
             programs[program.key] = program
             reviewed_keys.append(program.key)
-    ruling_hash = rulings_source_hash(db, record)
-    card_form_programs = _card_form_rule_programs(
-        record,
-        nodes=card_form_compilation.nodes,
-        oracle_source_hash=ir.oracle_hash,
-        rulings_hash=ruling_hash,
-        capability_registry=capability_registry,
-        capability_profile=capability_profile,
-        trust_level=trust_level,
-    )
     abilities = _bind_program_faces(
         (*programs.values(), *card_form_programs), faces
     )
@@ -452,22 +491,21 @@ def _compile_card_program_from_ir(
     )
 
 
-
 def retain_rules_only_card_program(db, record, ir, registry, *, capability_registry, capability_profile):
-    """Register complete rules-derived abilities through the normal runtime view."""
+    """Retain a complete rules-only card in the normal runtime view."""
     if ir.status != "exact" or ir.material_residuals:
         return
     compiled = _compile_best_available_card_program_from_ir(
         db, record, ir, semantic_registry=registry, capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
-    if (compiled.residuals or compiled.trust_closure["trust_basis"] != "capability_closed"
-            or not compiled.abilities or not all(
-                "generated_card_form_rule" in ability.coverage for ability in compiled.abilities
-            )):
+    if compiled.residuals or compiled.trust_closure["trust_basis"] != "capability_closed":
         return
-    for ability in compiled.abilities:
-        registry.put(ability)
+    if not compiled.abilities:
+        registry.retain_empty_card_program(compiled)
+    elif all("generated_card_form_rule" in ability.coverage for ability in compiled.abilities):
+        for ability in compiled.abilities:
+            registry.put(ability)
 
 
 def compile_best_available_card_program(

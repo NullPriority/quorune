@@ -4,6 +4,35 @@ from . import regex_working_set as re
 from ..rules.attacking_token_results import ATTACKING_TOKEN_MECHANIC, ATTACKING_TOKEN_OPERATION
 
 
+_ENTRY_COPY_BODY = ("create a token that's a copy of another target attacking creature. "
+                    "the token enters tapped and attacking.")
+
+
+def attacking_entry_copy_binding(text, *, card_name):
+    from ..rules.attacking_entry_copy import CAPABILITY, condition
+    from .fixed_public_event_trigger_bindings import _source_subject, _spec
+
+    if not card_name or "if it's attacking" not in text.casefold().replace("’", "'"):
+        return None
+    match = re.fullmatch(r"When (?P<source>.+?) enters from your hand, if it['’]s attacking, (?P<body>.+)",
+                         text, re.I)
+    if match is None or not _source_subject(match["source"], card_name=card_name):
+        return None
+    body = " ".join(match["body"].split()).casefold().replace("’", "'")
+    if body != _ENTRY_COPY_BODY:
+        return None
+    return _spec("permanent.enter", "attacking_entry_copy", match["body"], "attacking-entry-target-copy-v1",
+                 "trigger-event-normalized-zone-change", condition=condition(), capabilities=(CAPABILITY,))
+
+
+def attacking_entry_copy_result(binding, body):
+    if binding.variant != "attacking_entry_copy" or body != binding.body:
+        return None
+    from ..rules.attacking_entry_copy import effect, target_schema
+
+    return (binding.template_id, (effect(),), target_schema(), (ATTACKING_TOKEN_MECHANIC, "cr-111-tokens", "cr-115-targets"))
+
+
 def fixed_attacking_token_template(text, *, compile_fixed):
     if 'attacking' not in text.casefold():
         return None

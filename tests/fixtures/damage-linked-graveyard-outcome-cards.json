@@ -1,0 +1,328 @@
+{
+  "cards": [
+    {
+      "oracle_id": "66e66543-1f56-4e62-9183-3804843db101",
+      "name": "Froghemoth",
+      "mana_cost": "{3}{G}{G}",
+      "cmc": 5.0,
+      "type_line": "Creature — Frog Horror",
+      "oracle_text": "Trample, haste\nWhenever this creature deals combat damage to a player, exile up to that many target cards from their graveyard. Put a +1/+1 counter on this creature for each creature card exiled this way. You gain 1 life for each noncreature card exiled this way.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Haste",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Swamp",
+      "oracle_id": "56719f6a-1a6c-4c0a-8d21-18f7d7350b68",
+      "oracle_text": "({T}: Add {B}.)",
+      "power": null,
+      "produced_mana": [
+        "B"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Swamp"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "card_faces": [],
+      "cmc": 1.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{B}",
+      "name": "Cremate",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "oracle_text": "Exile target card from a graveyard.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "If the target card is no longer in the graveyard when Cremate tries to resolve, it won't resolve and none of its effects will happen. You won't draw a card.",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must be able to target a card in a graveyard to cast Cremate.",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for focused native witnesses"
+}

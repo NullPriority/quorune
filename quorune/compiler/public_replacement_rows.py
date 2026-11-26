@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Retain raw spans while joining closed public-state spell clauses."""
 
+from ..delayed_triggers import fixed_next_upkeep_payment_cost
 from . import regex_working_set as re
 from .ir_model import SourceSpan
 from .oracle_source_text import without_ability_word_label
@@ -14,6 +15,34 @@ def public_replacement_material_rows(rows, *, oracle_text, source_name, compile_
     result=[]
     for row in rows:
         material = row[1]
+        if result and material.casefold().startswith("exile ") and result[-1][1].casefold().endswith("phase out."):
+            from ..rules.next_personal_turn_protection import NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE
+            from ..rules.spell_self_exile import SELF_EXILE
+
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            if compile_effect(combined, card_name=source_name)[0] == f"{SELF_EXILE.template}+{NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE}":
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
+        if result and material.casefold().replace("’", "'") == "you draw a card at the beginning of the next turn's upkeep.":
+            from .stack_counter_followup import STACK_NEXT_TURN_DRAW_PAIR_TEMPLATE
+
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            if compile_effect(combined, card_name=source_name)[0] == STACK_NEXT_TURN_DRAW_PAIR_TEMPLATE:
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
+        if result and material.casefold().startswith("at the beginning of your next upkeep, pay "):
+            previous = result[-1]
+            combined = previous[1] + " " + material
+            compiled = compile_effect(combined, card_name=source_name)
+            if (compiled[0] == "fixed-effect-clause-sequence-v1"
+                    and len(compiled[1]) == 2 and fixed_next_upkeep_payment_cost(compiled[1][1]) is not None):
+                span = SourceSpan(previous[2].start, row[2].end, previous[2].line)
+                result[-1] = (oracle_text[span.start:span.end], combined, span)
+                continue
         if len(result) >= 2 and material.casefold() == "those creatures gain haste until end of turn.":
             initial, transfer = result[-2:]
             combined = " ".join((initial[1], transfer[1], material))

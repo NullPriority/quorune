@@ -30,6 +30,7 @@ class DungeonDefinition:
     source_oracle_hash: str
     entry_mode: VentureMode
     rooms: tuple[DungeonRoom, ...]
+    equivalent_oracle_hashes: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.dungeon, DungeonId) or not isinstance(self.entry_mode, VentureMode):
@@ -39,6 +40,14 @@ class DungeonDefinition:
             or any(character not in "0123456789abcdef" for character in self.source_oracle_hash)
         ):
             raise ValueError("Dungeon requires pinned Oracle source data")
+        if type(self.equivalent_oracle_hashes) is not tuple or any(
+            type(value) is not str or len(value) != 64 or value == self.source_oracle_hash
+            or any(character not in "0123456789abcdef" for character in value)
+            for value in self.equivalent_oracle_hashes
+        ):
+            raise ValueError("Dungeon source equivalents require distinct reviewed Oracle hashes")
+        if len(set(self.equivalent_oracle_hashes)) != len(self.equivalent_oracle_hashes):
+            raise ValueError("Dungeon source equivalents must be unique")
         if type(self.rooms) is not tuple or not self.rooms or any(
             not isinstance(room, DungeonRoom) for room in self.rooms
         ):
@@ -117,6 +126,8 @@ DUNGEON_CATALOG = MappingProxyType({
                 DungeonRoom("Catacombs", (8,)),
                 DungeonRoom("Throne of the Dead Three"),
             ),
+            # The other face's marker metadata and reminder changed. Its rules and the nine rooms match.
+            equivalent_oracle_hashes=("7a97231281c8e70d829ce9bd6a6ea14e75380ea8f5fbbd96824c1d3ef3e5a10d",),
         ),
     )
 })

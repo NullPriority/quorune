@@ -86,6 +86,7 @@ export interface RecentGame {
 
 export interface DeckPreflight {
   trusted_only_ready: boolean;
+  card_rules_ready?: boolean;
   data_integrity_issue?: boolean;
   card_behavior_ready?: boolean;
   format_verification_pending?: boolean;
@@ -242,6 +243,12 @@ export interface SystemStatus {
   browser: { served_by_server: boolean };
 }
 
+export type DeckSubmission = {
+  deck: { deck_id: string; name: string; commanders: string[] };
+  preflight: DeckPreflight;
+  format_legality: { status: string; issues: LegalityIssue[] };
+};
+
 export const api = {
   system: () => request<SystemStatus>("/api/v1/system"),
   refreshSystem: () =>
@@ -306,11 +313,7 @@ export const api = {
     legality_confirmation?: string,
     saved_deck_id?: string,
   ) =>
-    request<{
-      deck: { deck_id: string; name: string; commanders: string[] };
-      preflight: DeckPreflight;
-      format_legality: { status: string; issues: LegalityIssue[] };
-    }>(
+    request<DeckSubmission>(
       `/api/v1/rooms/${roomId}/deck`,
       {
         method: "PUT",

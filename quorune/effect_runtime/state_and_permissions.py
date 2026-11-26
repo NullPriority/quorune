@@ -7,6 +7,9 @@ from ..counter_placement import CounterPlacementError, place_counters_on_refs
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
 from ..model import GoadDesignation
+from ..opponent_library_exile import apply_each_opponent_top_exile, apply_opponent_library_exile_play
+from ..rules.target_graveyard_escape import apply_target_graveyard_escape
+from ..opponent_library_exile_model import EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION
 from ..permanent_designations import (
     AdvanceClassLevelRequest,
     PermanentDesignationError,
@@ -14,7 +17,9 @@ from ..permanent_designations import (
 )
 from ..semantic_runtime.combat_metadata import active_goading_players
 from ..trigger_processing import schedule_delayed_trigger
+from .all_player_turn_rules import apply_all_player_turn_rule
 from .player_speed import apply_speed_increase
+from .turn_creature_target_prohibition import apply_turn_creature_target_prohibition
 
 
 OPERATIONS = effect_family_contract("state-and-permissions.v1").operations
@@ -461,10 +466,17 @@ def _apply_mana(
     source_ref = str(effect.get("source") or "")
     retain_until = effect.get("retain_until")
     restriction = effect.get('spend_restriction')
-    from ..mana_restrictions import valid_mana_spend_restriction
-    if restriction is not None and not valid_mana_spend_restriction(restriction):
+    from ..mana_restriction_model import valid_resolution_mana_spend_restriction
+    if restriction is not None and not valid_resolution_mana_spend_restriction(restriction):
         raise GameRuleError('Semantic mana spend restriction is malformed')
-    if retain_until not in {None, "end_of_combat"}:
+    if retain_until == "end_of_turn":
+        from ..rules.turn_retained_resolution_mana import validate_resolution
+
+        try:
+            validate_resolution(host, effect, actor=actor)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    elif retain_until not in {None, "end_of_combat"}:
         raise GameRuleError("Semantic mana retention is unsupported")
     host._add_mana_to_pool(
         seat,
@@ -579,7 +591,10 @@ def _apply_set_day_night(host, effect, *, actor, operation, reason):
 
 
 HANDLERS = {
+    EACH_OPPONENT_TOP_EXILE_OPERATION: apply_each_opponent_top_exile,
+    OPPONENT_LIBRARY_EXILE_PLAY_OPERATION: apply_opponent_library_exile_play,
     'grant_next_spell_cost_reduction': apply_next_spell_cost_reduction,
+    'grant_target_graveyard_escape': apply_target_graveyard_escape,
     'set_day_night': _apply_set_day_night,
     'increase_speed': apply_speed_increase,
     'add_counter_selected': _apply_add_counter_selected,
@@ -589,6 +604,8 @@ HANDLERS = {
     'gain_class_level': _apply_gain_class_level,
     'grant_uncounterable_hexproof_from_colors_until_end': _apply_grant_uncounterable_hexproof_from_colors_until_end,
     'grant_turn_spell_source_color_protection': _apply_turn_spell_source_color_protection,
+    'grant_turn_creature_target_prohibition': apply_turn_creature_target_prohibition,
+    'all_player_turn_rule': apply_all_player_turn_rule,
     'mana': _apply_mana,
     'grant_next_spell_payment': _apply_next_spell_payment,
     'grant_cast_cascade': _apply_cast_cascade_grant,

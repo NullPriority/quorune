@@ -14,5 +14,5 @@ def activation_requirements(host, seat, source, ability, response=None, *, targe
 def validate_activation_x_payment(host, seat, source, ability, requirements):
     if not host._cost_is_affordable(seat, requirements,
             exclude_sources={source.object_id} if ability.tap_source else set(),
-            spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or ''))):
+            spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or ''), source_zone=source.zone)):
         raise ValueError('Insufficient mana for the announced activation X')

@@ -476,6 +476,19 @@ def _scaled_life_aftermath(normalized: str) -> PreventionTemplate | None:
     return None
 
 
+def _full_counter_aftermath(normalized: str) -> PreventionTemplate | None:
+    if re.fullmatch(
+        r"Choose target creature you control\. If damage would be dealt to that creature this turn, "
+        r"prevent that damage and put that many \+1/\+1 counters on it[.]?", normalized, re.I,
+    ) is None:
+        return None
+    from .direct_target import direct_permanent_target_spec
+    from ..rules.prevention_component_shapes import TARGET_FULL_COUNTER_TEMPLATE, target_full_counter_aftermath_effect
+
+    schema = direct_permanent_target_spec("target creature you control").to_target_schema()
+    return TARGET_FULL_COUNTER_TEMPLATE, (target_full_counter_aftermath_effect(),), schema, _rules(schema, "cr-122-counters")
+
+
 def _counter_aftermath(normalized: str) -> PreventionTemplate | None:
     match = re.fullmatch(
         rf"prevent the next (?P<amount>\d+|x) damage that would be dealt to "
@@ -860,6 +873,7 @@ _PREVENTION_PRODUCTIONS = (
     _chosen_source_all_damage,
     _scaled_life_aftermath,
     _counter_aftermath,
+    _full_counter_aftermath,
     _shared_color_creatures,
     _fixed_combat_shield,
     _all_combat_damage,

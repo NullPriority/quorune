@@ -167,6 +167,13 @@ def _damage_source_characteristics(host, source):
 
 def dispatch_committed_batch_zone_events(host, snapshots, occurrences, *, trigger_batch):
     """Dispatch each committed batch member against its sealed departure inputs."""
+    from .rules.unpaid_creature_entry import capture_batch
+
+    with capture_batch(host, occurrences):
+        _dispatch_batch_zone_members(host, snapshots, occurrences, trigger_batch=trigger_batch)
+
+
+def _dispatch_batch_zone_members(host, snapshots, occurrences, *, trigger_batch):
     for (card, departure), occurrence in zip(snapshots, occurrences, strict=True):
         sources = departure.trigger_sources
         host._dispatch_zone_change_events(
@@ -253,6 +260,11 @@ def dispatch_zone_change_occurrence(
         if event.kind == "card.discarded":
             _dispatch_opponent_source_discard(host, card, occurrence, context, pending)
         if event.kind=='permanent.enter':
+            from .rules.attacking_entry_copy import capture_entry_fact
+            from .rules.unpaid_creature_entry import capture_group
+
+            context = capture_entry_fact(host, context, card, occurrence)
+            context = capture_group(host, context, occurrence)
             from .tribute_entry_results import tribute_entry_context
             from .devour import devour_entry_context
             context = {**dict(context), **tribute_entry_context(card, occurrence),
@@ -260,14 +272,43 @@ def dispatch_zone_change_occurrence(
         if event.kind == "creature.dies":
             from .event_card_return import death_source_exile_context
 
-            context = death_source_exile_context(host, context, occurrence, composition_departures)
-        if composition_departures and event.kind == "permanent.leave":
-            from .event_card_return import event_library_departure_context
+            from .rules.death_battlefield_return import death_battlefield_return_context
 
-            context = event_library_departure_context(host, context, occurrence, composition_departures)
+            context = death_source_exile_context(host, context, occurrence, composition_departures)
+            context = death_battlefield_return_context(host, context, occurrence, composition_departures)
+        if event.kind == "artifact.graveyard" and occurrence.composition is not None:
+            from .delayed_object_actions import capture_artifact_graveyard_composition
+
+            context = capture_artifact_graveyard_composition(host, context, occurrence, composition_departures)
+        if event.kind == "permanent.graveyard":
+            from .delayed_object_actions import collect_target_death_return
+            from .rules.death_battlefield_return import death_battlefield_return_context
+            from .rules.source_bound_delayed_return import small_creature_death_context
+
+            context = death_battlefield_return_context(host, context, occurrence, composition_departures,
+                                                       permanent_graveyard=True)
+            context = small_creature_death_context(host, context, occurrence, composition_departures)
+            collect_target_death_return(host, occurrence, composition_departures, pending)
+        if event.kind == "permanent.leave":
+            from .aura.runtime import collect_reanimating_aura_departure
+            from .counter_snapshot import permanent_counter_snapshot
+            from .rules.departure_counter_transfer import (
+                DEPARTURE_COUNTER_SNAPSHOT_FIELD, DEPARTURE_COUNTER_TRANSFER_CAPABILITY,
+            )
+
+            collect_reanimating_aura_departure(host, occurrence, pending)
+            if event_has_capability_subscriber(host, event.kind, DEPARTURE_COUNTER_TRANSFER_CAPABILITY):
+                context = {**context, DEPARTURE_COUNTER_SNAPSHOT_FIELD: dict(
+                    permanent_counter_snapshot(occurrence.previous_counters or {}))}
+            from .rules.enchanted_departure_events import enchanted_departure_context
+
+            context = enchanted_departure_context(host, context, occurrence, composition_departures)
+            if composition_departures:
+                from .event_card_return import event_library_departure_context
+
+                context = event_library_departure_context(host, context, occurrence, composition_departures)
         if event.kind == "permanent.enter" and getattr(card, "face_down", False):
             from .face_up_effect_model import FACE_DOWN_ENTRY_CAPABILITY, FACE_DOWN_ENTRY_FIELD
-            from .rules.event_subscriptions import event_has_capability_subscriber
 
             if event_has_capability_subscriber(host, event.kind, FACE_DOWN_ENTRY_CAPABILITY):
                 context = {**dict(context), FACE_DOWN_ENTRY_FIELD: True}

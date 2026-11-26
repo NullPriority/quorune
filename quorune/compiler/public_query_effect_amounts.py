@@ -670,7 +670,7 @@ def _composed_query_shape_context(effects, mechanics):
 def public_query_amount_program_is_closed(program: Any, *, required_dependencies) -> bool:
     """Keep scalar admission with its existing fixed shape and target owners."""
     from ..rules.target_creature_power_results import target_creature_power_node_capabilities
-    from ..rules.target_recipient_results import target_sacrifice_power_node_capabilities
+    from ..rules.target_recipient_results import target_characteristic_token_node_capabilities
     from ..rules.prevention_component_shapes import targeted_prevention_result_node_capabilities
 
     prevention = targeted_prevention_result_node_capabilities(
@@ -679,11 +679,11 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     if prevention:
         return set(prevention) <= set(program.capability_dependencies)
 
-    sacrifice = target_sacrifice_power_node_capabilities(
+    tokens = target_characteristic_token_node_capabilities(
         effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
     )
-    if sacrifice:
-        return set(sacrifice) <= set(program.capability_dependencies)
+    if tokens:
+        return set(tokens) <= set(program.capability_dependencies)
     power_dependencies = target_creature_power_node_capabilities(
         effects=program.effects, target_schema=program.target_schema, cost_schema=program.cost_schema,
     )
@@ -738,6 +738,8 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         or not required.issubset(program.capability_dependencies)
     ):
         return False
+    from ..rules.counter_placement_capability_shapes import fixed_counter_placement_set_node_capabilities
+
     scalar_specs = scalar_amount_specs(program.effects)
     target_mana_value_sequence = (
         len(scalar_specs) == 1
@@ -761,6 +763,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             attack_event_characteristic_capabilities,
             fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
+            fixed_counter_placement_set_node_capabilities,
             fixed_counter_placement_target_set_node_capabilities,
             fixed_player_counter_placement_node_capabilities,
             *((fixed_counter_controller_effect_sequence_node_capabilities,)
@@ -806,6 +809,10 @@ def public_query_amount_shape_context(
             return public_query_amount_shape_context(*scalar)
         return scalar
     if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics:
+        from ..rules.milled_creature_tokens import uses_milled_creature_tokens
+
+        if len(effects) == 1 and uses_milled_creature_tokens(effects[0]):
+            return tuple(effects), set(mechanics)
         return declared_amount_shape_context(effects, mechanics, target_schema=target_schema)
     if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC not in mechanics:
         return tuple(effects), set(mechanics)

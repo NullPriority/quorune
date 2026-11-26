@@ -140,7 +140,7 @@ def static_runtime_node(
             residuals=residuals,
         )
     from .devotion_templates import fixed_devotion_increase_handler
-    from .token_templates import static_token_quantity_replacement_handler
+    from .token_templates import static_token_creation_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     from .legend_rule_templates import static_legend_rule_exemption_handler
     legend = (static_legend_rule_exemption_handler(material_line)
@@ -189,7 +189,7 @@ def static_runtime_node(
     if prohibition is not None:
         return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=prohibition,
             kind='static_ability',event=LIFE_GAIN_PROHIBITION_EVENT,runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
-            dependency_reason='Static life-gain permission requires its typed rules owner',
+            dependency_reason='Static life-change permission requires its typed rules owner',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     life_conversion = (
         static_opponent_life_gain_to_loss_handler(material_line)
@@ -209,12 +209,12 @@ def static_runtime_node(
             kind='static_ability',event='devotion.evaluate',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
             dependency_reason='Devotion requires its current public-query capability',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    token = (static_token_quantity_replacement_handler(material_line)
+    token = (static_token_creation_replacement_handler(material_line)
         if not source_is_class and card_types.intersection(permanent_card_types) else None)
     if token is not None:
         return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=token,
             kind='replacement_effect',event='token.create',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
-            dependency_reason='Token quantity replacement requires its canonical replacement owner',
+            dependency_reason='Token creation replacement requires its canonical replacement owner',
             capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     from .static_recipient_qualifiers import recipient_qualified_static_handler
     qualified = (recipient_qualified_static_handler(material_line)

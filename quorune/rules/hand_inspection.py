@@ -12,6 +12,7 @@ from ..object_query import ObjectQueryResult, object_matches_query
 
 
 FIXED_HAND_INSPECTION_OPERATION = "fixed_hand_inspection"
+SELECTED_HAND_REVEAL_DISCARD_CAPABILITY = "choice.target_hand.selected_reveal_discard"
 DEFENDING_HAND_OBSERVATION_CAPABILITY = "choice.defending_hand.private_observation"
 DEFENDING_HAND_OBSERVATION_MECHANIC = "fixed-defending-hand-observation"
 DEFENDING_HAND_OBSERVATION_VERSION_FIELD = "defending_hand_observation_version"
@@ -20,6 +21,7 @@ DEFENDING_HAND_OBSERVATION_VERSION_FIELD = "defending_hand_observation_version"
 class HandInspectionMode(str, Enum):
     REVEAL = "reveal"
     LOOK = "look"
+    REVEAL_SELECTED_THREE = "reveal_selected_three"
 
 
 class HandInspectionAction(str, Enum):
@@ -27,6 +29,17 @@ class HandInspectionAction(str, Enum):
     DISCARD = "discard"
     EXILE = "exile"
     DISCARD_ALL = "discard_all"
+
+
+def selected_hand_reveal_discard_effect(*, player="$target.0", target="$target.0"):
+    return {
+        "op": FIXED_HAND_INSPECTION_OPERATION,
+        "player": player,
+        "target": target,
+        "inspection": HandInspectionMode.REVEAL_SELECTED_THREE.value,
+        "action": HandInspectionAction.DISCARD.value,
+        "predicate": HandCardPredicateSpec(ObjectQuerySpec(zones=("hand",))).to_dict(),
+    }
 
 
 def defending_hand_observation_effect(
@@ -63,6 +76,7 @@ class InspectHandIntent:
     reason: str
     public: bool
     keep_revealed: bool = True
+    scoped_stack_ref: str | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -78,6 +92,10 @@ class InspectHandIntent:
             or len(refs) != len(set(refs))
             or type(self.public) is not bool
             or type(self.keep_revealed) is not bool
+            or (self.scoped_stack_ref is not None and (
+                type(self.scoped_stack_ref) is not str or not self.scoped_stack_ref
+                or not self.public or not self.keep_revealed or not 1 <= len(refs) <= 3
+            ))
         ):
             raise ValueError("Hand-inspection intent is malformed")
         object.__setattr__(self, "refs", refs)

@@ -6,6 +6,10 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
+from ..cast_cost_modifiers import (
+    SPELL_MANA_FLOOR_CAPABILITY, SPELL_MANA_FLOOR_HANDLER_ID, SPELL_MANA_FLOOR_TEMPLATE, FixedSpellManaFloorSpec,
+)
 from ..basic_land_types import LAND_SUBTYPES
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_predicate import PermanentStatePredicateSpec
@@ -882,8 +886,19 @@ def static_fixed_spell_cost_reduction_handler(
     text: str,
     *, source_name: str = 'source',
 ) -> CastCostModifierTemplate | None:
-    """Lower one public fixed-generic modifier through the shared schema."""
+    """Lower one printed static modifier through the shared cost owner."""
 
+    if " ".join(text.casefold().split()) == (
+        "as long as this artifact is untapped, each spell that would cost less than "
+        "three mana to cast costs three mana to cast."
+    ):
+        return (
+            SPELL_MANA_FLOOR_TEMPLATE,
+            {"handler_id": SPELL_MANA_FLOOR_HANDLER_ID, "schema_version": 1,
+             "event": FIXED_SPELL_COST_REDUCTION_EVENT, "floor": FixedSpellManaFloorSpec().to_dict(),
+             REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True},
+            SPELL_MANA_FLOOR_CAPABILITY,
+        )
     from .optional_life_costs import optional_life_color_reduction_template
     unconditional = optional_life_color_reduction_template(text) or _unconditional_spell_cost_reduction_handler(text, source_name=source_name)
     if unconditional is not None:

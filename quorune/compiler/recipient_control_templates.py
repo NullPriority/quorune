@@ -2,8 +2,18 @@
 from . import regex_working_set as re
 from ..recipient_control_model import (RECIPIENT_CONTROL_MECHANIC,recipient_control_effect,
     CHOOSE_CONTROL_RECIPIENT_OPERATION,GIVE_CONTROL_SET_OPERATION)
+from ..replacement.immutable import FrozenMap
 from ..rules.source_references import SourceReferenceSpec,source_self_permanent_type
 from .direct_target import direct_permanent_target_spec
+
+
+SOURCE_UPKEEP_HANDOFF_TEMPLATE = "opponent-upkeep-source-handoff-v1"
+_SOURCE_UPKEEP_HANDOFF = re.compile(
+    r"You may have that player gain control of (?P<source>[^.]+?) until end of turn\. "
+    r"If you do, untap (?P<untap>[^.]+?), goad it, and it can['’]t be sacrificed this turn\. "
+    r"If you don['’]t, convert it\.",
+    re.I,
+)
 
 
 def recipient_control_effect_template(text,*,card_name,source_is_permanent=None):
@@ -74,7 +84,27 @@ def normalized_source_recipient_control_body(body):
     return match['recipient']+' gains control of this permanent.' if match is not None else None
 
 
+def _source_upkeep_handoff_result(binding, body, *, card_name):
+    if (body != binding.body or (binding.event.value, binding.variant, binding.active_zone)
+            != ("step.begin", "each_opponent_upkeep", "battlefield")):
+        return None
+    match = _SOURCE_UPKEEP_HANDOFF.fullmatch(" ".join(body.split()))
+    if match is None:
+        return None
+    source = SourceReferenceSpec(card_name)
+    if not all(source.matches(phrase) or source_self_permanent_type(phrase) for phrase in match.groups()):
+        return None
+    from ..rules.source_upkeep_handoff import source_upkeep_handoff_condition, source_upkeep_handoff_effect
+    from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC
+
+    if FrozenMap(binding.event_condition or {}) != FrozenMap(source_upkeep_handoff_condition()):
+        return None
+    return (SOURCE_UPKEEP_HANDOFF_TEMPLATE, (source_upkeep_handoff_effect(),), None, (FIXED_OPTIONAL_EFFECT_MECHANIC,))
+
+
 def source_bound_recipient_control_result(binding,body,*,card_name):
+    if handoff := _source_upkeep_handoff_result(binding, body, card_name=card_name):
+        return handoff
     if binding.event.value.startswith(('spell.','card.')):return None
     if not (binding.event.value.endswith('.self') or binding.variant in {
             'source_attacks','this_creature_blocks','this_creature_becomes_blocked','source_blocks_or_becomes_blocked'}):return None

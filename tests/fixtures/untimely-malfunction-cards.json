@@ -1,0 +1,74 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Untimely Malfunction",
+      "oracle_id": "2c49d24a-98a4-43c2-bb59-1ef13d4214c2",
+      "oracle_text": "Choose one \u2014\n\u2022 Destroy target artifact.\n\u2022 Change the target of target spell or ability with a single target.\n\u2022 One or two target creatures can't block this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "The effect of Untimely Malfunction's last mode won't cause creatures that are already blocking to stop blocking.",
+      "oracle_id": "2c49d24a-98a4-43c2-bb59-1ef13d4214c2",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "You don't choose the new target for the spell or ability targeted with Untimely Malfunction's second mode until Untimely Malfunction resolves. You must change the target if possible. However, you can't change the target to an illegal target. If there are no legal targets to choose from, the target isn't changed. It doesn't matter if the original target has somehow become illegal itself.",
+      "oracle_id": "2c49d24a-98a4-43c2-bb59-1ef13d4214c2",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability targets multiple things, you can't target it with Untimely Malfunction's second mode, even if all but one of those targets have become illegal.",
+      "oracle_id": "2c49d24a-98a4-43c2-bb59-1ef13d4214c2",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

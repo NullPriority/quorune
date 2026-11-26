@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "source": "Original synthetic fixed public return after a draw replacement",
+  "cards": [
+    {
+      "oracle_id": "ab10df96-97af-4f8f-8e08-2ef2cfd70d2d",
+      "name": "Harbor Assessments",
+      "mana_cost": "{2}{U}",
+      "cmc": 3,
+      "type_line": "Enchantment",
+      "oracle_text": "{1}: The next time you would draw a card this turn, each player returns a permanent they control to its owner's hand instead.",
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

@@ -1,6 +1,59 @@
 {
   "cards": [
     {
+      "oracle_id": "2ffc6372-f63b-4f32-8dd0-2d7938aeb412",
+      "name": "Carpet of Flowers",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of each of your main phases, if you haven't added mana with this ability this turn, you may add X mana of any one color, where X is the number of Islands target opponent controls.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "1998-10-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "cmc": 2.0,
       "color_identity": [
         "U"
@@ -183,7 +236,7 @@
       "produced_mana": [],
       "released_at": "2016-06-10",
       "toughness": null,
-      "type_line": "Legendary Enchantment \u2014 Shrine"
+      "type_line": "Legendary Enchantment — Shrine"
     },
     {
       "cmc": 1.0,
@@ -230,7 +283,7 @@
       "produced_mana": [],
       "released_at": "2020-07-17",
       "toughness": "2",
-      "type_line": "Legendary Creature \u2014 Dog"
+      "type_line": "Legendary Creature — Dog"
     },
     {
       "cmc": 0.0,
@@ -273,7 +326,7 @@
       "produced_mana": [],
       "released_at": "2011-05-14",
       "toughness": "1",
-      "type_line": "Artifact Creature \u2014 Construct"
+      "type_line": "Artifact Creature — Construct"
     },
     {
       "cmc": 0.0,
@@ -320,7 +373,7 @@
       ],
       "released_at": "2026-11-13",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Plains"
+      "type_line": "Basic Land — Plains"
     },
     {
       "cmc": 3.0,
@@ -373,7 +426,7 @@
       ],
       "released_at": "2020-07-03",
       "toughness": null,
-      "type_line": "Legendary Enchantment \u2014 Shrine"
+      "type_line": "Legendary Enchantment — Shrine"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -385,10 +438,22 @@
       "source": "wotc"
     },
     {
-      "comment": "Shrines count only enchantments with the subtype Shrine. Other cards with \u201cshrine\u201d in their name (such as Jungle Shrine, Luxa River Shrine, and Nantuko Shrine) don't count.",
+      "comment": "Shrines count only enchantments with the subtype Shrine. Other cards with “shrine” in their name (such as Jungle Shrine, Luxa River Shrine, and Nantuko Shrine) don't count.",
       "oracle_id": "132859dd-de66-45c6-8af4-ab5e202a17b0",
       "published_at": "2020-06-23",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "2ffc6372-f63b-4f32-8dd0-2d7938aeb412",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The ability is not a mana ability."
+    },
+    {
+      "oracle_id": "2ffc6372-f63b-4f32-8dd0-2d7938aeb412",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You can target a different opponent each turn."
     },
     {
       "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",

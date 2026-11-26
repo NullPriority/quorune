@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .opponent_library_exile_model import EACH_OPPONENT_TOP_EXILE_OPERATION, OPPONENT_LIBRARY_EXILE_PLAY_OPERATION
+
 REANIMATE_OPERATION = "".join(("re", "animate"))
 
 
@@ -28,18 +30,23 @@ EFFECT_FAMILY_CONTRACTS = (
                 "add_counter_selected",
                 "delayed_mana",
                 "delayed_pact_payment",
+                EACH_OPPONENT_TOP_EXILE_OPERATION,
                 "goad",
                 "gain_class_level",
                 "increase_speed",
                 "set_day_night",
                 "mana",
+                OPPONENT_LIBRARY_EXILE_PLAY_OPERATION,
                 "grant_next_spell_payment",
                 "grant_cast_cascade",
                 "next_spell_improvise",
                 "next_spell_uncounterable",
                 "grant_next_spell_cost_reduction",
+                "grant_target_graveyard_escape",
                 "grant_uncounterable_hexproof_from_colors_until_end",
                 "grant_turn_spell_source_color_protection",
+                "grant_turn_creature_target_prohibition",
+                "all_player_turn_rule",
                 "veil_of_summer",
             }
         ),

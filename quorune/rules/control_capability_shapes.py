@@ -10,8 +10,9 @@ from ..control_effects import control_set_query_is_closed
 from ..control_exchange_model import (
     PERMANENT_CONTROL_EXCHANGE_CAPABILITY,
     PERMANENT_CONTROL_EXCHANGE_MECHANIC, PERMANENT_CONTROL_EXCHANGE_OPERATION,
-    decode_permanent_control_exchange,
+    PermanentControlExchange, decode_permanent_control_exchange,
 )
+from ..entry_control_exchange_model import entry_exchange_event_condition
 from ..replacement.immutable import thaw_value
 from ..util import stable_json
 from ..object_predicate import ObjectQuerySpec
@@ -56,6 +57,10 @@ def permanent_control_exchange_runtime_dependencies(program):
         return ()
     if len(program.effects) != 1:
         raise ValueError("Permanent control exchange requires one complete instruction")
+    if exchanges[0].get("scope") == PermanentControlExchange.ENTRY_SHARED_TYPE.value and (
+            (program.event, program.active_zone) != ("permanent.enter", "battlefield")
+            or thaw_value(program.event_condition) != entry_exchange_event_condition()):
+        raise ValueError("Entry exchange requires its original permanent entry subscription")
     return _exchange_dependencies(exchanges[0], program.target_schema)
 
 
@@ -108,6 +113,12 @@ def fixed_control_node_capabilities(
     mechanics = set(mechanic_ids)
     if not {FIXED_CONTROL_MECHANIC, "cr-611-continuous-effects"}.issubset(mechanics) or not effects:
         return ()
+    from .attached_temporary_control import (
+        ATTACHED_TEMPORARY_CONTROL_VERSION, attached_temporary_control_node_capabilities,
+    )
+
+    if len(effects) == 1 and ATTACHED_TEMPORARY_CONTROL_VERSION in effects[0]:
+        return attached_temporary_control_node_capabilities(effects=effects, target_schema=target_schema)
     if len(effects) == 1 and isinstance(effects[0], Mapping) and TWO_CONTROLLER_CREATURE_TRANSFER_FIELD in effects[0]:
         return _two_controller_creature_transfer_dependencies(effects, target_schema, mechanics)
     dependencies = {FIXED_CONTROL_CAPABILITY}

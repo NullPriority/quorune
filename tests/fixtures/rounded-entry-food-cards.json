@@ -1,0 +1,484 @@
+{
+  "cards": [
+    {
+      "oracle_id": "de595f1b-3f7d-45e0-a31b-ed23e5d1ee48",
+      "name": "The Goose Mother",
+      "mana_cost": "{X}{G}{U}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Bird Hydra",
+      "oracle_text": "Flying\nThe Goose Mother enters with X +1/+1 counters on it.\nWhen The Goose Mother enters, create half X Food tokens, rounded up.\nWhenever The Goose Mother attacks, you may sacrifice a Food. If you do, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Food"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "name": "Gingerbrute",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact Creature — Food Golem",
+      "oracle_text": "Haste (This creature can attack and {T} as soon as it comes under your control.)\n{1}: This creature can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this creature: You gain 3 life.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-09-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "name": "Hardened Scales",
+      "mana_cost": "{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on it instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "card_faces": []
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Cloudshift",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "de595f1b-3f7d-45e0-a31b-ed23e5d1ee48",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "oracle_id": "de595f1b-3f7d-45e0-a31b-ed23e5d1ee48",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "de595f1b-3f7d-45e0-a31b-ed23e5d1ee48",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Tough Cookie (an Artifact Creature — Food Golem) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost)."
+    },
+    {
+      "oracle_id": "de595f1b-3f7d-45e0-a31b-ed23e5d1ee48",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Activating Gingerbrute's middle ability after it has become blocked by a creature without haste won't cause it to become unblocked."
+    },
+    {
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Tough Cookie (an Artifact Creature — Food Golem) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost)."
+    },
+    {
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "10b8d4c7-7553-4d76-b643-d98b80701e13",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the delicious cards."
+    },
+    {
+      "comment": "If a creature you control would enter the battlefield with a number of +1/+1 counters on it, it enters with that many plus one instead.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If two or more effects attempt to modify how many counters would be put on a creature you control, you choose the order to apply those effects, no matter who controls the sources of those effects.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each additional Hardened Scales you control will increase the number of +1/+1 counters placed on a creature you control by one.",
+      "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled.",
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for focused native witnesses"
+}

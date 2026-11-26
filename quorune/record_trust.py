@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -105,22 +106,57 @@ def _resolved_stack_inputs(events, before_event_sequence, captured, *, require_c
         yield item, captured.physical_cards.get(stack_ref) if isinstance(captured, StackResolutionInputs) else None
 
 
+def _canonical_hash(value: Any) -> str:
+    compact = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(compact.encode("utf-8")).hexdigest()
+
+
+def semantics_fingerprint(registry: SemanticRegistry) -> str:
+    programs = {
+        key: registry.get(key).to_dict()
+        for key in registry.keys()
+        if registry.get(key) is not None
+    }
+    return _canonical_hash({"schema_version": 1, "programs": programs})
+
+
 def card_program_trust_provenance(
     semantics: SemanticRegistry,
+    *,
+    saved_programs: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> dict[str, dict[str, Any]]:
+    if saved_programs is None:
+        programs = (
+            (program.oracle_id, program.fingerprint, program.trust_closure)
+            for program in semantics.card_programs()
+        )
+    else:
+        programs = (
+            (oracle_id, program["fingerprint"], program["trust_closure"])
+            for oracle_id, program in saved_programs.items()
+        )
     return {
-        program.oracle_id: {
-            "fingerprint": program.fingerprint,
-            "trust_basis": program.trust_closure["trust_basis"],
-            "trust_closure_fingerprint": program.trust_closure[
-                "fingerprint"
-            ],
-            "strict_capability_ready": program.trust_closure[
-                "strict_capability_ready"
-            ],
+        oracle_id: {
+            "fingerprint": fingerprint,
+            "trust_basis": trust["trust_basis"],
+            "trust_closure_fingerprint": trust["fingerprint"],
+            "strict_capability_ready": trust["strict_capability_ready"],
         }
-        for program in semantics.card_programs()
+        for oracle_id, fingerprint, trust in programs
     }
+
+
+def record_semantics_provenance(
+    semantics: SemanticRegistry, saved_semantics: Mapping[str, Any] | None
+) -> tuple[str, dict[str, dict[str, Any]]]:
+    if saved_semantics is None:
+        return semantics_fingerprint(semantics), card_program_trust_provenance(semantics)
+    registry_hash = _canonical_hash(
+        {"schema_version": 1, "programs": saved_semantics["programs"]}
+    )
+    return registry_hash, card_program_trust_provenance(
+        semantics, saved_programs=saved_semantics["card_programs"]
+    )
 
 
 def runtime_trust_provenance() -> dict[str, Any]:

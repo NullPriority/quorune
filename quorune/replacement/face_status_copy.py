@@ -160,7 +160,7 @@ def face_up_copy_subject(card) -> FaceUpCopySubject:
 
 def face_up_copy_payment_scope(batch, effects, *, action, seat, response):
     """Validate an unresolved copy choice reached by the paid face-up action."""
-    from ..mana_mode_effects import mana_damage_event_belongs_to_payment
+    from ..mana_mode_effects import mana_result_event_belongs_to_payment
 
     if action != "turn_face_up" or len(batch.events) != 1:
         raise ValueError("A face-up copy continuation requires its exact special action")
@@ -175,7 +175,7 @@ def face_up_copy_payment_scope(batch, effects, *, action, seat, response):
     journal = response.get("_mana_replacement_selections")
     if isinstance(journal, Mapping) and event.event_id in journal:
         raise ValueError("A decided face-up choice cannot be pending again")
-    prior = {event_id for event_id in journal if mana_damage_event_belongs_to_payment(event_id, response["_mana_payment_id"])} if isinstance(journal, Mapping) else set()
+    prior = {event_id for event_id in journal if mana_result_event_belongs_to_payment(event_id, response["_mana_payment_id"])} if isinstance(journal, Mapping) else set()
     return {event.event_id, *prior}, prior
 
 

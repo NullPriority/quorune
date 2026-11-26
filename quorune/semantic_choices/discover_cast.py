@@ -20,22 +20,33 @@ def _finish_effect(actor,progress):
 
 def _hand_intent(actor,progress):
     candidate=progress.candidate
-    return ZoneMoveIntent(actor,candidate.ref,('exile',),'hand','Discover',owned_only=True,
+    reason = 'Private library search' if progress.private_search_parent is not None else 'Discover'
+    return ZoneMoveIntent(actor,candidate.ref,('exile',),'hand',reason,owned_only=True,
         expected_zone_change_counter=discover_zone_counter(candidate))
 
 
 def _decline(actor, progress):
-    if progress.supplier is not None:
+    if progress.private_search_parent is not None:
+        return (_hand_intent(actor, progress),), ()
+    if progress.supplier is not None or progress.name_scan is not None:
         return (), (_finish_effect(actor, replace(progress, candidate_ref=None)),)
     if progress.amount is not None:
         return (_hand_intent(actor, progress),), (_finish_effect(actor, progress),)
     return (), ()
 
 
-def _progress(effect,actor,query,*,finishing=False):
+def _progress(effect, actor, query, *, stack_ref, stack_controller, finishing=False):
     if effect.get('player')!=actor or actor not in query.active_seats:
         raise SemanticChoiceError('Discover requires the resolving controller')
     progress = ExileCastProgress.from_dict(effect['progress'])
+    if progress.name_scan is None:
+        if actor != stack_controller:
+            raise SemanticChoiceError('Discover requires the resolving controller')
+    else:
+        stack = query.stack_object(stack_ref)
+        if stack is None:
+            raise SemanticChoiceError('The differently named exile lost its original resolving spell')
+        progress.name_scan.require_resolution(actor=actor, stack_ref=stack.ref, targets=stack.targets)
     expected = progress.finish_operation if finishing else progress.cast_operation
     if expected != effect.get('op'):
         raise SemanticChoiceError('The exile cast changed its printed search rule')
@@ -61,10 +72,11 @@ class DiscoverCastChoiceHandler:
     test_modules: tuple[str,...]=('tests.test_discover_rules',)
 
     def prepare(self,effect,context):
-        if set(effect)!={'op','player','progress'} or effect['op']!=self.operation or context.actor!=context.stack_controller:
+        if set(effect)!={'op','player','progress'} or effect['op']!=self.operation:
             raise SemanticChoiceError('Discover choice has a closed source-bound shape')
         finishing = self.operation in EXILE_CAST_FINISH_OPERATIONS
-        progress=_progress(effect,context.actor,context.query,finishing=finishing)
+        progress = _progress(effect, context.actor, context.query, finishing=finishing,
+                             stack_ref=context.stack_ref, stack_controller=context.stack_controller)
         if finishing:
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 preparation_intents=(DiscoverCleanupIntent(context.actor,context.stack_ref,progress),),
@@ -74,12 +86,15 @@ class DiscoverCastChoiceHandler:
         options=tuple(context.query.authorized_cast_options())
         if not options:
             intents, finish = _decline(context.actor, progress)
-            reason = 'The discovered card cannot be cast and goes to hand.' if progress.amount is not None else (
+            reason = 'The searched card goes to hand.' if progress.private_search_parent is not None else (
+                'The discovered card cannot be cast and goes to hand.' if progress.amount is not None else (
                 'The supplied card cannot be cast and returns with the other exiled cards.' if finish
-                else 'The supplied card cannot be cast and stays exiled.')
+                else 'The supplied card cannot be cast and stays exiled.'))
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 preparation_intents=intents, auto_continue=AutoContinue(reason=reason, prepend_effects=finish))
-        if progress.supplier is not None:
+        if progress.private_search_parent is not None:
+            prompt = 'Cast the searched card without paying its mana cost, or put it into your hand?'
+        elif progress.supplier is not None or progress.name_scan is not None:
             prompt = 'Cast the exiled card without paying its mana cost, or return it with the other exiled cards?'
         elif progress.amount is not None:
             prompt = 'Cast the discovered card without paying its mana cost, or put it into your hand?'
@@ -99,7 +114,9 @@ class DiscoverCastChoiceHandler:
                 '_choice_actor','_stack_ref','_options_fingerprint'} or effect['op']!=self.operation
                 or effect['_stack_ref']!=continuation.stack_ref or effect['_choice_actor']!=effect['player']):
             raise SemanticChoiceError('Discover choice continuation changed')
-        actor=effect['_choice_actor'];progress=_progress(effect,actor,query)
+        actor = effect['_choice_actor']
+        progress = _progress(effect, actor, query, stack_ref=continuation.stack_ref,
+                             stack_controller=continuation.semantic_frame.controller)
         options=tuple(query.authorized_cast_options())
         if discover_options_fingerprint(options)!=effect['_options_fingerprint']:
             raise SemanticChoiceError('Discover casting options changed')

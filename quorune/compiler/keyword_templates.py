@@ -57,7 +57,9 @@ def keyword_mechanics(
     if 'recover' in known:
         from .fractional_life_payment_templates import recover_half_life_price_from_line
         if recover_half_life_price_from_line(text.strip()) is not None:return ('recover',)
-    if material.casefold().startswith("equip abilities you activate of other equipment "):
+    if material.casefold().startswith((
+        "equip abilities you activate of other equipment ", "ninjutsu abilities you activate ",
+    )):
         return None
     if "equip" in known and fixed_equip_ability_spec(material) is not None:
         return ("equip",)
@@ -67,6 +69,8 @@ def keyword_mechanics(
         return ('kicker',)
     if "evoke" in known and re.match(r"Evoke\s*[—–-]", material, re.I):
         return ("evoke",)
+    if "echo" in known and re.match(r"Echo\s*[—–-]", material, re.I):
+        return ("echo",)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
     cycling_parts = [part.strip() for part in material.split(",")]

@@ -1,9 +1,72 @@
 from __future__ import annotations
 
 import copy
-from typing import Sequence
+from typing import Mapping, Sequence
 
 from .model import DelayedTrigger, StackItem
+
+
+FIXED_NEXT_UPKEEP_PAYMENT_CAPABILITY = "trigger.delayed.fixed_upkeep_payment"
+_FIXED_UPKEEP_PAYMENT_LABEL = "Pay at the beginning of your next upkeep"
+_FIXED_UPKEEP_MANA_KEYS = frozenset({"GENERIC", "C", "W", "U", "B", "R", "G"})
+
+
+def fixed_next_upkeep_payment_effect(cost: Mapping[str, int]) -> dict:
+    """Seal one original-controller upkeep schedule and fixed ordinary mana payment."""
+    if (not isinstance(cost, Mapping) or not cost or not set(cost) <= _FIXED_UPKEEP_MANA_KEYS
+            or not set(cost) - {"GENERIC"}
+            or any(type(amount) is not int or amount <= 0 for amount in cost.values())):
+        raise ValueError("Delayed upkeep payment requires positive fixed ordinary mana")
+    return {
+        "op": "delayed_trigger",
+        "controller": "$controller",
+        "source": "$source",
+        "label": _FIXED_UPKEEP_PAYMENT_LABEL,
+        "event": "step.begin",
+        "condition": {"player": "controller", "phase": "beginning", "step": "upkeep"},
+        "stack": {
+            "label": _FIXED_UPKEEP_PAYMENT_LABEL,
+            "context": {"dynamic_effects": [{"op": "pay_or_lose", "cost": dict(cost)}]},
+        },
+        "once": True,
+    }
+
+
+def fixed_next_upkeep_payment_cost(effect) -> dict[str, int] | None:
+    from .replacement.immutable import thaw_value
+
+    try:
+        literal = thaw_value(effect)
+        payment, = literal["stack"]["context"]["dynamic_effects"]
+        cost = payment["cost"]
+        if literal != fixed_next_upkeep_payment_effect(cost):
+            return None
+        return dict(cost)
+    except (TypeError, ValueError, KeyError):
+        return None
+
+
+NEXT_TURN_COUNTER_DRAW_FIELD = "next_turn_counter_draw_version"
+
+
+def counter_next_turn_draw_effects(recipient: str) -> tuple[dict, dict]:
+    def delayed(label, instruction):
+        return {
+            "op": "delayed_trigger",
+            "controller": "$controller",
+            "source": "$source",
+            "label": label,
+            "event": "step.begin",
+            "condition": {"phase": "beginning", "step": "upkeep", "next_turn_after_sequence": "$turn_sequence"},
+            "stack": {"label": label, "context": {"dynamic_effects": [instruction]}},
+            "once": True,
+        }
+
+    return (
+        delayed("May draw up to two cards", {"op": "offer_draw", NEXT_TURN_COUNTER_DRAW_FIELD: 1,
+                                              "recipient": recipient, "private": True}),
+        delayed("Draw a card", {"op": "draw", "count": 1, "private": True}),
+    )
 
 
 def materialize_delayed_trigger(

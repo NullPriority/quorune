@@ -9,7 +9,9 @@ from quorune.declared_cost_conditions import DeclaredCastCostCondition
 from quorune.object_query import ObjectQueryResult, query_objects
 from quorune.rules.casting.bargain_costs import bargain_sacrifice_cost
 from quorune.rules.casting_additional_costs import FixedZoneChangeAdditionalCost, AdditionalCostError
-from quorune.sacrifice_union_model import SacrificePredicateUnion, controlled_permanent_predicate
+from quorune.sacrifice_union_model import (
+    SacrificePredicateUnion, colored_or_artifact_creature_sacrifice, controlled_permanent_predicate,
+)
 
 
 class BargainModelTests(unittest.TestCase):
@@ -89,3 +91,61 @@ class BargainModelTests(unittest.TestCase):
             entered = next(row for row in normalized_zone_trigger_events(event) if row.kind == 'permanent.enter')
             self.assertEqual((spec.instance_id,) if chosen else (), entered.context['declared_cast_cost_instances'])
         with self.assertRaises(ZoneTriggerEventError):zone_witnesses.occurrence(origin='hand', declared_cast_costs=spec.declaration(True).to_dict())
+
+class ColoredOrArtifactCreatureSacrificeTests(unittest.TestCase):
+    def test_sacrifice_union_keeps_creature_required_in_both_clauses(self):
+        from quorune.object_query import ObjectQueryResult, object_matches_query
+
+        union = colored_or_artifact_creature_sacrifice("B")
+        self.assertEqual(union, SacrificePredicateUnion.from_dict(union.to_dict()))
+        predicates = union.bound_predicates("A")
+        examples = (
+            (("creature",), ("B",), "A", "battlefield", True),
+            (("artifact", "creature"), (), "A", "battlefield", True),
+            (("artifact", "creature"), ("R",), "A", "battlefield", True),
+            (("artifact",), ("B",), "A", "battlefield", False),
+            (("creature",), ("R",), "A", "battlefield", False),
+            (("artifact", "creature"), (), "B", "battlefield", False),
+            (("creature",), ("B",), "A", "graveyard", False),
+        )
+        for types, colors, controller, zone, expected in examples:
+            with self.subTest(types=types, colors=colors, controller=controller, zone=zone):
+                row = ObjectQueryResult(ref="cost", object_id="physical:cost", printed_name="Cost witness", owner="A",
+                    controller=controller, zone=zone, types=types, colors=colors)
+                self.assertEqual(expected, any(object_matches_query(row, part) for part in predicates))
+        after = union.to_dict()
+        after["predicates"][1] = controlled_permanent_predicate(types_all=("artifact",)).to_dict()
+        with self.assertRaises(ValueError):
+            SacrificePredicateUnion.from_dict(after)
+        with self.assertRaises(ValueError):
+            SacrificePredicateUnion(union.predicates, 1)
+
+    def test_activation_sacrifice_union_retains_its_complete_price(self):
+        from quorune.activation_cost_choice import CostChoice
+        from quorune.replacement.immutable import FrozenMap
+
+        union = colored_or_artifact_creature_sacrifice("B")
+        choice = CostChoice("sacrifice_one", predicate=FrozenMap(controlled_permanent_predicate().to_dict()),
+                            predicate_union=FrozenMap(union.to_dict()))
+        self.assertEqual(choice, CostChoice.from_dict(choice.to_dict()))
+        self.assertEqual(union, choice.fixed_zone_change_cost().predicate_union)
+        self.assertEqual(union.to_dict(), choice.compact()["predicate_union"])
+        for change in ({"predicate_union": None}, {"kind": "discard_one"}, {"count": 2}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                CostChoice.from_dict({**choice.to_dict(), **change})
+
+    def test_activation_sacrifice_union_parses_only_one_complete_cost(self):
+        from quorune.abilities import parse_activated_abilities
+        from quorune.compiler.activated_zone_change_costs import fixed_activated_zone_change_cost
+
+        line = "{T}, Sacrifice a black or artifact creature: Add an amount of {B} equal to the sacrificed creature's mana value."
+        ability, = parse_activated_abilities(card_name="Selected sacrifice witness", oracle_text=line)
+        material = fixed_activated_zone_change_cost(ability)
+        self.assertEqual((), material.uncompiled_costs)
+        self.assertTrue(material.tap_source)
+        choice, = material.choices
+        self.assertFalse(choice.another)
+        self.assertEqual(colored_or_artifact_creature_sacrifice("B"), choice.fixed_zone_change_cost().predicate_union)
+        unsupported, = parse_activated_abilities(card_name="Selected sacrifice witness",
+                                                  oracle_text=line.replace("a black", "two black"))
+        self.assertEqual(unsupported, fixed_activated_zone_change_cost(unsupported))

@@ -1,19 +1,47 @@
 """Bind an ordinary X-cost permanent's self-entry instruction to sealed entry X."""
 from collections.abc import Mapping
 from . import regex_working_set as re
-from ..entry_x_amount_model import EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC
+from ..entry_x_amount_model import EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,entry_half_x_food_effect
 from ..query_effect_amount_model import CAST_X_AMOUNT_KIND,CastXAmountSpec
-from .declared_effect_amounts import declared_effect_amount_template
+from .declared_effect_amounts import DECLARED_EFFECT_AMOUNT_MECHANIC, declared_effect_amount_template
 from .draw_templates import trigger_ability_word_material_line
 from .optional_effect_templates import fixed_optional_effect_template
 
 
+_SUPPORT_X_BODY = re.compile(r"support X\.?", re.IGNORECASE)
+
+
+def _entry_x_support_effect_compiler(ordinary):
+    def compile_body(body, **kwargs):
+        if _SUPPORT_X_BODY.fullmatch(body) is None:
+            return ordinary(body, **kwargs)
+        template, effects, schema, mechanics = ordinary("Support 1.", **kwargs)
+        if template is None:
+            return template, effects, schema, mechanics
+        from ..rules.entry_x_support import declare_entry_x_support
+
+        effects, schema = declare_entry_x_support(effects, schema)
+        return "support-entry-x-v1", effects, schema, (*mechanics, ENTRY_X_AMOUNT_MECHANIC)
+
+    return compile_body
+
+
 def entry_x_trigger_effect_compiler(record,material_line,*,card_name,ordinary,match_source):
     if '{X}' not in record.mana_cost or record.faces or re.search(r'\bX\b',material_line) is None:return ordinary
-    matched=match_source(trigger_ability_word_material_line(material_line),card_name=card_name)
+    material = trigger_ability_word_material_line(material_line)
+    if record.mana_cost.count("{X}") == 1 and "support" in material.casefold():
+        from .oracle_source_text import without_parenthetical_reminder
+
+        support = match_source(without_parenthetical_reminder(material), card_name=card_name)
+        if (support is not None and support["event"].casefold() == "enters"
+                and _SUPPORT_X_BODY.fullmatch(support["body"])):
+            return _entry_x_support_effect_compiler(ordinary)
+
+    matched=match_source(material,card_name=card_name)
     if (matched is None
             or matched['event'].casefold()!='enters' or not re.search(r'\bX\b',matched['body'])
             or re.search(r'\bwhere X\b',matched['body'],re.I)):return ordinary
+
     def declared(body, **kwargs):
         def fixed(text):
             from .damage_templates import source_pronoun_damage_effect_template
@@ -31,6 +59,11 @@ def entry_x_trigger_effect_compiler(record,material_line,*,card_name,ordinary,ma
         return value[0],tuple(bind(effect) for effect in value[1]),value[2],(*value[3],ENTRY_X_AMOUNT_MECHANIC)
 
     def compile_body(body, **kwargs):
+        if re.fullmatch(r"create half X Food tokens, rounded up\.", body, re.IGNORECASE):
+            template, _effects, schema, mechanics = ordinary("Create two Food tokens.", **kwargs)
+            if template is not None and schema is None:
+                return ("entry-half-x-food-v1", (entry_half_x_food_effect(),), None,
+                        (*mechanics, DECLARED_EFFECT_AMOUNT_MECHANIC, ENTRY_X_AMOUNT_MECHANIC))
         if body.casefold().startswith("you may search "):
             optional = fixed_optional_effect_template(body, compile_effect=lambda text: declared(text, **kwargs))
             if optional is not None:
@@ -86,9 +119,15 @@ def entry_x_typed_event_compiler(record, compile_event):
 
 
 def entry_result_trigger_node_compiler(record, *, trigger_node, ordinary_effect, match_source, material_rows):
+    from .paid_color_entry_templates import paid_white_entry_effect_compiler
+
     def compile_trigger(**values):
-        effect=entry_x_trigger_effect_compiler(record,values.get('material_line') or values['line'],
+        material = values.get("material_line") or values["line"]
+        effect=entry_x_trigger_effect_compiler(record,material,
             card_name=values['card_name'],ordinary=ordinary_effect,match_source=match_source)
+        effect = paid_white_entry_effect_compiler(
+            record, material, card_name=values["card_name"], ordinary=effect, match_source=match_source,
+        )
         return trigger_node(**values,effect_template=effect)
 
     from .devour_nodes import devour_result_trigger_compiler

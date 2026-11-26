@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Immutable CR 119.7 permission values, separate from replacements."""
+"""Immutable life-change permission values, separate from replacements."""
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
@@ -12,6 +12,9 @@ from .replacement.immutable import immutable_fingerprint
 LIFE_GAIN_PROHIBITION_CAPABILITY = 'life.gain.prohibition.static'
 LIFE_GAIN_PROHIBITION_HANDLER = 'life.gain.prohibition.v1'
 LIFE_GAIN_PROHIBITION_EVENT = 'life.gain.permission'
+LIFE_TOTAL_PROHIBITION_CAPABILITY = 'life.change.prohibition.controller'
+LIFE_TOTAL_PROHIBITION_HANDLER = 'life.total.prohibition.controller.v1'
+TEMPORARY_LIFE_TOTAL_PROHIBITION_CAPABILITY = 'life.change.prohibition.controller_until_end_of_turn'
 TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD = 'temporary_life_gain_prohibition'
 TEMPORARY_LIFE_GAIN_PROHIBITION_KIND = 'temporary_life_gain_prohibition'
 
@@ -19,17 +22,26 @@ TEMPORARY_LIFE_GAIN_PROHIBITION_KIND = 'temporary_life_gain_prohibition'
 @dataclass(frozen=True, slots=True)
 class LifeGainPermissionSnapshot:
     denied_players: tuple[str, ...] = ()
+    denied_loss_players: tuple[str, ...] = ()
 
     def __post_init__(self):
-        if (not isinstance(self.denied_players, tuple)
-                or any(type(p) is not str or not p for p in self.denied_players)
-                or self.denied_players != tuple(sorted(set(self.denied_players)))):
-            raise ValueError('Life-gain permissions require unique canonical player IDs')
+        for players in (self.denied_players, self.denied_loss_players):
+            if (not isinstance(players, tuple)
+                    or any(type(player) is not str or not player for player in players)
+                    or players != tuple(sorted(set(players)))):
+                raise ValueError("Life permissions require unique canonical player IDs")
 
     def allows_gain(self, player: str) -> bool:
-        if type(player) is not str or not player:
-            raise ValueError('Life-gain permissions require a player ID')
-        return player not in self.denied_players
+        return _allows_life_change(player, self.denied_players)
+
+    def allows_loss(self, player: str) -> bool:
+        return _allows_life_change(player, self.denied_loss_players)
+
+
+def _allows_life_change(player: str, denied: tuple[str, ...]) -> bool:
+    if type(player) is not str or not player:
+        raise ValueError("Life permissions require a player ID")
+    return player not in denied
 
 
 ALLOW_ALL_LIFE_GAIN = LifeGainPermissionSnapshot()
@@ -75,13 +87,26 @@ class ResolvedLifeGainProhibition:
         if (
             any(type(value) is not str or not value for value in (self.effect_id, self.source_id, self.controller))
             or type(self.timestamp) is not int or self.timestamp < 0
-            or self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN
+            or (self.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN
+                and (self.duration is not ContinuousEffectDuration.UNTIL_NEXT_TURN or not self.denies_loss))
         ):
-            raise ContinuousEffectError("Resolved life permission requires its source, controller and cleanup duration")
+            raise ContinuousEffectError("Resolved life permission requires its source, controller and a represented duration")
         LifeGainPermissionSnapshot(self.denied_players)
-        spec = FixedLifeGainProhibitionSpec(self.affected_player_relation)
-        if (self.controller in self.denied_players) != (spec.affected_player_relation == "any"):
-            raise ContinuousEffectError("Resolved life permission does not match its relation")
+        if self.denies_loss:
+            if self.denied_players != (self.controller,):
+                raise ContinuousEffectError("A temporary life-total prohibition requires only its resolving controller")
+        else:
+            spec = FixedLifeGainProhibitionSpec(self.affected_player_relation)
+            if (self.controller in self.denied_players) != (spec.affected_player_relation == "any"):
+                raise ContinuousEffectError("Resolved life permission does not match its relation")
+
+    @property
+    def denies_loss(self) -> bool:
+        return self.affected_player_relation == "controller"
+
+    @property
+    def expires_on_next_turn_of(self) -> str | None:
+        return self.controller if self.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN else None
 
     def to_dict(self):
         value = {
@@ -92,6 +117,9 @@ class ResolvedLifeGainProhibition:
         }
         if self.affected_player_relation == "any":
             value.update(schema_version=2, affected_player_relation="any")
+        elif self.denies_loss:
+            version = 4 if self.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN else 3
+            value.update(schema_version=version, affected_player_relation="controller")
         return value
 
     @classmethod
@@ -110,11 +138,18 @@ class ResolvedLifeGainProhibition:
         elif (value["schema_version"] == 2 and set(value) == fields | {"affected_player_relation"}
               and value["affected_player_relation"] == "any"):
             relation = "any"
+        elif (value["schema_version"] in {3, 4} and set(value) == fields | {"affected_player_relation"}
+              and value["affected_player_relation"] == "controller"):
+            relation = "controller"
         else:
             raise ContinuousEffectError("Malformed temporary life permission relation or version")
+        duration = (ContinuousEffectDuration.UNTIL_NEXT_TURN if value["schema_version"] == 4
+                    else ContinuousEffectDuration.UNTIL_END_OF_TURN)
+        if value["duration"] != duration.value:
+            raise ContinuousEffectError("Temporary life permission duration does not match its schema")
         return cls(
             value["effect_id"], value["source_id"], value["timestamp"], value["controller"],
-            tuple(value["denied_players"]), ContinuousEffectDuration(value["duration"]), relation,
+            tuple(value["denied_players"]), duration, relation,
         )
 
     @property
@@ -133,6 +168,13 @@ def temporary_opponent_life_gain_effect():
     return temporary_life_gain_effect("opponent")
 
 
+def temporary_controller_life_total_prohibition_effect():
+    return {
+        "op": "life", "source": "$stack",
+        TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD: {"schema_version": 2, "affected_player_relation": "controller"},
+    }
+
+
 def validate_temporary_life_gain_effect(effect, *, resolved=False):
     expected = {"op", "source", TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD}
     if resolved:
@@ -141,7 +183,15 @@ def validate_temporary_life_gain_effect(effect, *, resolved=False):
     if (set(effect) != expected or effect.get("op") != "life"
             or type(source) is not str or not source or not resolved and source != "$stack"):
         raise ValueError("Temporary life permission requires its closed resolving source")
-    return FixedLifeGainProhibitionSpec.from_dict(effect[TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD])
+    definition = effect[TEMPORARY_LIFE_GAIN_PROHIBITION_FIELD]
+    if (isinstance(definition, Mapping) and type(definition.get("schema_version")) is int
+            and dict(definition) == {"schema_version": 2, "affected_player_relation": "controller"}):
+        return ControllerLifeTotalProhibition()
+    if (isinstance(definition, Mapping) and type(definition.get("schema_version")) is int
+            and dict(definition) == {"schema_version": 3, "affected_player_relation": "controller",
+                                     "duration": ContinuousEffectDuration.UNTIL_NEXT_TURN.value}):
+        return ControllerLifeTotalProhibition(ContinuousEffectDuration.UNTIL_NEXT_TURN)
+    return FixedLifeGainProhibitionSpec.from_dict(definition)
 
 
 def decode_life_gain_prohibition(descriptor):
@@ -154,11 +204,45 @@ def decode_life_gain_prohibition(descriptor):
     return FixedLifeGainProhibitionSpec.from_dict(descriptor['condition'])
 
 
+def life_total_prohibition_descriptor() -> dict:
+    return {"handler_id": LIFE_TOTAL_PROHIBITION_HANDLER, "schema_version": 1,
+            "event": LIFE_GAIN_PROHIBITION_EVENT, "affected_player_relation": "controller"}
+
+
+def decode_life_total_prohibition(descriptor):
+    if (not isinstance(descriptor, Mapping) or type(descriptor.get("schema_version")) is not int
+            or dict(descriptor) != life_total_prohibition_descriptor()):
+        raise ValueError("Life total prohibition requires its exact current controller")
+    return ControllerLifeTotalProhibition()
+
+
+@dataclass(frozen=True, slots=True)
+class ControllerLifeTotalProhibition:
+    duration: ContinuousEffectDuration = ContinuousEffectDuration.UNTIL_END_OF_TURN
+
+    @property
+    def affected_player_relation(self) -> str:
+        return "controller"
+
+    def permissions(self, controller: str, active_players: Sequence[str]) -> LifeGainPermissionSnapshot:
+        if type(controller) is not str or not controller or controller not in active_players:
+            raise ValueError("Life total prohibition requires an active controller")
+        return LifeGainPermissionSnapshot((controller,), (controller,))
+
+
 def life_gain_prohibition_payload_dependencies(value, *, coverage=()):
-    if not isinstance(value, Mapping) or value.get('handler_id') != LIFE_GAIN_PROHIBITION_HANDLER:
+    if not isinstance(value, Mapping):
         return ()
-    decode_life_gain_prohibition(value)
+    handler = value.get("handler_id")
+    if handler == LIFE_TOTAL_PROHIBITION_HANDLER:
+        decode_life_total_prohibition(value)
+        capability = LIFE_TOTAL_PROHIBITION_CAPABILITY
+    elif handler == LIFE_GAIN_PROHIBITION_HANDLER:
+        decode_life_gain_prohibition(value)
+        capability = LIFE_GAIN_PROHIBITION_CAPABILITY
+    else:
+        return ()
     from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     if CURRENT_ABILITY_FRAGMENT_COVERAGE not in coverage:
-        raise ValueError('Life-gain prohibition requires current source-ability scope')
-    return (LIFE_GAIN_PROHIBITION_CAPABILITY,)
+        raise ValueError("Life prohibition requires current source-ability scope")
+    return (capability,)

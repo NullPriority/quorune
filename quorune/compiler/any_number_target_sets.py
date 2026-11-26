@@ -10,7 +10,9 @@ from ..target_cardinality import (
     AnnouncedTargetCardinality, SELECTED_PLAYER_RESULT_LAYOUTS,
     SELECTED_PLAYER_RESULT_MECHANIC, selected_target_count_descriptor,
 )
+from .affected_player_sacrifice_templates import fixed_affected_player_sacrifice_effect_template
 from .draw_templates import fixed_draw_effect_template
+from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
 from .target_characteristic_sets import target_characteristic_set_template
 
@@ -18,6 +20,10 @@ ANY_NUMBER_TARGET_MECHANIC = "any-number-target-set"
 
 
 def any_number_target_set_template(text):
+    from .fixed_control_templates import targeted_control_set_template
+
+    if control := targeted_control_set_template(text):
+        return control
     phasing = re.fullmatch(
         r"any number of (?P<subject>target nonland permanents you control|"
         r"other target creatures you control) phase out\.?",
@@ -53,6 +59,11 @@ _PLAYER_RESULT = re.compile(
     r"(?P<subject>players|opponents) each (?P<body>.+?)\.?",
     re.IGNORECASE,
 )
+_SACRIFICE_MANA_DRAW = re.compile(
+    r"(lose 2 life) and sacrifice a creature of their choice\. "
+    r"You add \{B\}\{B\} and draw a card",
+    re.IGNORECASE,
+)
 _SHARED_AMOUNT = re.compile(
     r"(?P<result>gain life|discard a number of cards) equal to "
     r"the greatest mana value among permanents you control",
@@ -61,6 +72,10 @@ _SHARED_AMOUNT = re.compile(
 
 
 def _selected_player_leaf(clause, compile_independent):
+    if clause.casefold() == "mill cards equal to the number of cards in their graveyard":
+        from ..selected_graveyard_mill_count import SelectedGraveyardMillCount
+
+        return {"op": "mill", "players": "$targets", "count": SelectedGraveyardMillCount().to_dict()}, ("mill",)
     verbs = {"mill": "mills", "gain": "gains", "lose": "loses", "discard": "discards"}
     shared = _SHARED_AMOUNT.fullmatch(clause)
     if shared is not None:
@@ -110,7 +125,10 @@ def any_number_player_result_template(text, *, compile_independent):
         mechanics.extend(prefix[3])
     mill_loss = re.fullmatch(r"(mill .+?) and (lose .+)", body, re.IGNORECASE)
     discard_draw = re.fullmatch(r"(discard their hands), then (draw .+)", body, re.IGNORECASE)
-    composition = mill_loss or discard_draw
+    sacrifice_mana_draw = None
+    if match["prefix"] is None and match["subject"].casefold() == "players":
+        sacrifice_mana_draw = _SACRIFICE_MANA_DRAW.fullmatch(body)
+    composition = mill_loss or discard_draw or sacrifice_mana_draw
     clauses = composition.groups() if composition else (body,)
     for clause in clauses:
         selected = _selected_player_leaf(clause, compile_independent)
@@ -119,6 +137,20 @@ def any_number_player_result_template(text, *, compile_independent):
         effect, covered = selected
         effects.append(effect)
         mechanics.extend(covered)
+    if sacrifice_mana_draw is not None:
+        sacrifice = fixed_affected_player_sacrifice_effect_template("Target player sacrifices a creature.")
+        if sacrifice is None:
+            return None
+        selected = dict(sacrifice.effects[0])
+        del selected["target"]
+        effects.append({**selected, "players": "$targets"})
+        mechanics.extend(sacrifice.mechanics)
+        for compiled in (fixed_resolution_mana_effect_template("Add {B}{B}."),
+                         fixed_draw_effect_template("Draw a card.")):
+            if compiled is None:
+                return None
+            effects.extend(compiled[1])
+            mechanics.extend(compiled[3])
     operations = tuple(effect["op"] for effect in effects)
     if operations not in SELECTED_PLAYER_RESULT_LAYOUTS:
         return None

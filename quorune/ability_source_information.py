@@ -7,7 +7,12 @@ from collections.abc import Mapping
 ABILITY_SOURCE_INFORMATION_VERSION = 2
 ABILITY_SOURCE_INFORMATION_CAPABILITY = 'target.ability_source.current_or_lki'
 QUALIFIED_COPY_SOURCE_FILTERS = frozenset({'artifact_ability_source', 'colorless_ability_source'})
-ABILITY_SOURCE_FILTERS = frozenset({'activated_artifact_source','noncreature_ability_source', *QUALIFIED_COPY_SOURCE_FILTERS})
+ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER = "activated_artifact_creature_enchantment_land_source"
+ACTIVATED_PUBLIC_PERMANENT_SOURCE_TYPES = frozenset({"artifact", "creature", "enchantment", "land"})
+ABILITY_SOURCE_FILTERS = frozenset({
+    "activated_artifact_source", "noncreature_ability_source", ACTIVATED_PUBLIC_PERMANENT_SOURCE_FILTER,
+    *QUALIFIED_COPY_SOURCE_FILTERS,
+})
 
 
 def ability_source_information_version(value):

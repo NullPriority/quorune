@@ -95,6 +95,27 @@ def _issue_preparation_replacement_choice(
     )
 
 
+def issue_semantic_choice(
+    host: SemanticPreparationCoordinationHost,
+    continuation: SemanticChoiceContinuation,
+    actor: str,
+    payload: Mapping[str, Any],
+    *,
+    allowed_actions: Sequence[str] = ("choose",),
+) -> None:
+    decision = host.permissions.issue(
+        kind="semantic.choice",
+        role=_PILOT_ROLE,
+        actors=[actor],
+        allowed_actions=list(allowed_actions),
+        payload_by_actor={actor: dict(payload)},
+        continuation=continuation.to_dict(),
+    )
+    decision.continuation = continuation.with_pending_choice(
+        decision.decision_id
+    ).to_dict()
+
+
 def _finish_preparation(
     host: SemanticPreparationCoordinationHost,
     *,
@@ -122,17 +143,17 @@ def _finish_preparation(
         return
     if preparation.request is None:
         raise SemanticChoiceError("Semantic preparation has no resume path")
-    decision = host.permissions.issue(
-        kind="semantic.choice",
-        role=_PILOT_ROLE,
-        actors=[actor],
-        allowed_actions=["choose"],
-        payload_by_actor={actor: preparation.request.payload()},
-        continuation=continuation.to_dict(),
-    )
-    decision.continuation = continuation.with_pending_choice(
-        decision.decision_id
-    ).to_dict()
+    from .public_library_pile_departure import pile_concession_offer
+    from .fame_fortune import fame_fortune_concession_offer
+
+    payload = preparation.request.payload()
+    actions = ["choose"]
+    concession = (pile_concession_offer(host, continuation, actor)
+                  or fame_fortune_concession_offer(host, continuation, actor))
+    if concession is not None:
+        payload["legal_actions"].append(concession)
+        actions.append("concede")
+    issue_semantic_choice(host, continuation, actor, payload, allowed_actions=actions)
 
 
 def continue_semantic_preparation(
@@ -206,9 +227,20 @@ def continue_semantic_preparation(
                 saved=encode_preparation_after_commit(continuation,actor,preparation,intents[index+1:],committed_results)
                 if finish_choice_intent_returns(host,waiting,saved):return False
         except GraveyardArrivalChoiceRequired as required:
-            from .discard_graveyard_order import prepare_discard_graveyard_order
+            from ..semantic_runtime.library_selection_intent import LibrarySelectionIntent
+            if isinstance(intent, LibrarySelectionIntent):
+                from ..private_opponent_library_cast_model import uses_damage_library_cast_selection
+                from .damage_library_cast_order import prepare_damage_library_graveyard_order
+                from .public_library_piles import prepare_public_pile_graveyard_order
 
-            owner, waiting_order = prepare_discard_graveyard_order(
+                prepare_order = (prepare_damage_library_graveyard_order if uses_damage_library_cast_selection(continuation.effect)
+                                 else prepare_public_pile_graveyard_order)
+            else:
+                from .discard_graveyard_order import prepare_discard_graveyard_order
+
+                prepare_order = prepare_discard_graveyard_order
+
+            owner, waiting_order = prepare_order(
                 host, continuation, intent, required, index=index, count=len(intents),
             )
             _finish_preparation(

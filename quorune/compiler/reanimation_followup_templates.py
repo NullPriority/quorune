@@ -7,7 +7,7 @@ from . import regex_working_set as re
 
 from ..rules.reanimation_followup import (
     BattlefieldEntryFollowup, REANIMATION_EXILE_REPLACEMENT_VERSION, REANIMATION_FOLLOWUP_MECHANIC,
-    REANIMATION_FOLLOWUP_VERSION,
+    REANIMATION_FOLLOWUP_VERSION, REANIMATION_SACRIFICE_ONLY_VERSION, DelayedReanimationSacrifice,
 )
 from .reanimation_templates import FixedTargetReanimationTemplate, fixed_target_reanimation_effect_template
 
@@ -30,13 +30,18 @@ _EXILE_ON_LEAVE = re.compile(
 @dataclass(frozen=True, slots=True)
 class FixedReanimationFollowupTemplate:
     base: FixedTargetReanimationTemplate
-    followup: BattlefieldEntryFollowup
+    followup: BattlefieldEntryFollowup | DelayedReanimationSacrifice
 
     def compiled(self):
         template, effects, schema, mechanics = self.base.compiled()
-        version = REANIMATION_EXILE_REPLACEMENT_VERSION if self.followup.exile_on_leave else REANIMATION_FOLLOWUP_VERSION
+        if isinstance(self.followup, DelayedReanimationSacrifice):
+            version = REANIMATION_SACRIFICE_ONLY_VERSION
+            result = "sacrifice"
+        else:
+            version = REANIMATION_EXILE_REPLACEMENT_VERSION if self.followup.exile_on_leave else REANIMATION_FOLLOWUP_VERSION
+            result = "haste-departure"
         effect = {**effects[0], "schema_version": version, "followup": self.followup.to_dict()}
-        return (f"{template}-haste-departure-v{version}", (effect,), schema, (*mechanics, REANIMATION_FOLLOWUP_MECHANIC))
+        return (f"{template}-{result}-v{version}", (effect,), schema, (*mechanics, REANIMATION_FOLLOWUP_MECHANIC))
 
 
 def fixed_battlefield_entry_followup(text, *, receiver_types):
@@ -64,6 +69,12 @@ def fixed_battlefield_entry_followup(text, *, receiver_types):
 
 def fixed_reanimation_followup_template(text):
     base_text, separator, tail = text.strip().partition(". ")
+    if (
+        base_text.casefold() == "return target creature card from your graveyard to the battlefield"
+        and tail.casefold() == "sacrifice that creature at the beginning of the next end step."
+    ):
+        base = fixed_target_reanimation_effect_template(base_text)
+        return FixedReanimationFollowupTemplate(base, DelayedReanimationSacrifice()) if base is not None else None
     if not separator or "haste" not in tail.casefold():
         return None
     base = fixed_target_reanimation_effect_template(base_text)

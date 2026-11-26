@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic scheduled draw result test inputs",
+  "rulings": [],
+  "cards": [
+    {
+      "oracle_id": "d449e50a-2536-4d11-b71e-23e2ed93730a",
+      "name": "Dawn Account",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "{1}: The next time you would draw a card this turn, you gain 7 life instead.",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "keywords": [],
+      "produced_mana": []
+    },
+    {
+      "oracle_id": "d449e50a-2536-4d11-b71e-23e2ed93730b",
+      "name": "Meadow Tallies",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "{1}: The next time you would draw a card this turn, create a 3/3 green Goat creature token instead.",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "keywords": [],
+      "produced_mana": []
+    },
+    {
+      "oracle_id": "d449e50a-2536-4d11-b71e-23e2ed93730c",
+      "name": "Silent Assessment",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "{1}: The next time you would draw a card this turn, each opponent discards one card instead.",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "keywords": [],
+      "produced_mana": []
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 """Lower one original player's optional damage choice and fixed alternate result."""
 
 from . import regex_working_set as re
+from .counter_templates import targeted_counter_effect_template
 from .damage_templates import fixed_damage_effect_template
 from .destruction_templates import targeted_destruction_effect_template
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -26,10 +27,58 @@ _DESTROY = re.compile(
 )
 
 
+_CREATURE_CONTROLLER_DAMAGE = re.compile(
+    r"(?P<primary_source>.+?) deals (?P<primary>[1-9][0-9]*) damage to target creature "
+    r"unless that creature['’]s controller has (?P<source>.+?) deal (?P<damage>[1-9][0-9]*) damage to them\.",
+    re.I,
+)
+_SPELL_CONTROLLER_DAMAGE = re.compile(
+    r"Counter target instant or sorcery spell unless its controller has "
+    r"(?P<source>.+?) deal (?P<damage>[1-9][0-9]*) damage to them\.",
+    re.I,
+)
+
+
+def _optional_target_controller_damage(body, card_name):
+    from ..rules.stack_counter_followup import STACK_TARGET_CONTROLLER
+
+    creature = _CREATURE_CONTROLLER_DAMAGE.fullmatch(body)
+    match = creature or _SPELL_CONTROLLER_DAMAGE.fullmatch(body)
+    if match is None:
+        return None
+    source = SourceReferenceSpec(card_name)
+    subjects = (match["source"], creature["primary_source"]) if creature is not None else (match["source"],)
+    if any(subject.casefold() != "this spell" and not source.matches(subject) for subject in subjects):
+        return None
+    if creature is not None:
+        template = fixed_damage_effect_template(
+            f"This spell deals {creature['primary']} damage to target creature.", card_name=card_name,
+        )
+        chooser = target_controller_reference()
+        binding = (TARGET_CONTROLLER_INFORMATION_MECHANIC,)
+    else:
+        template = targeted_counter_effect_template("Counter target instant or sorcery spell.")
+        chooser = STACK_TARGET_CONTROLLER
+        binding = ()
+    if template is None:
+        return None
+    _, (alternate,), schema, mechanics = template.compiled()
+    damage = {"op": "damage", "source": "$source", "target": chooser, "amount": int(match["damage"])}
+    return (
+        "fixed-optional-target-controller-damage-v1",
+        (source_damage_choice(damage, alternate, chooser=chooser),),
+        schema,
+        tuple(dict.fromkeys((OPTIONAL_SOURCE_DAMAGE_MECHANIC, *binding, "cr-120-damage", *mechanics))),
+    )
+
+
 def optional_source_damage_template(text, *, card_name, source_is_permanent):
     if source_is_permanent is not False:
         return None
     body = " ".join(text.split())
+    controlled = _optional_target_controller_damage(body, card_name)
+    if controlled is not None:
+        return controlled
     draw = _DRAW.fullmatch(body)
     destroy = _DESTROY.fullmatch(body)
     match = draw or destroy or _DISCARD.fullmatch(body)

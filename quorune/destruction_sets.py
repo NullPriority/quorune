@@ -19,6 +19,7 @@ from .destruction import (
 )
 from .rules.committed_quantity_followups import CommittedQuantityFollowup
 from .rules.destruction_result_model import DestructionFollowup
+from .rules.target_player_destruction_death_tokens import tokens_after_target_player_creature_deaths
 from .object_query import ObjectQueryResult
 from .rules.qualified_destruction import RelativePowerDestructionSetSpec, select_relative_power_destruction_rows
 from .util import stable_json
@@ -166,6 +167,30 @@ def snapshot_destruction_set(
     )
 
 
+def _count_original_destructions(snapshot, actual):
+    committed = frozenset(actual)
+    return sum(permanent.object_id in committed for permanent in snapshot.permanents)
+
+
+def _followup_after_destruction(followup, result, snapshot, counted, *, actor, source_ref):
+    if followup.uses_sized_token:
+        return followup.from_committed_count(_count_original_destructions(snapshot, result.destroyed_object_ids))
+    if followup.uses_target_player_death_tokens:
+        count = _count_original_destructions(snapshot, result.died_object_ids)
+        return tokens_after_target_player_creature_deaths(snapshot.spec, followup.effect, count)
+    if followup.uses_destroyed_controllers:
+        destroyed = frozenset(result.destroyed_object_ids)
+        return followup.from_committed_controllers(
+            permanent.controller for permanent in snapshot.permanents
+            if permanent.object_id in destroyed
+        )
+    if followup.uses_mana_allocation:
+        return followup.mana_from_committed_count(
+            len(result.destroyed_object_ids), actor=actor, source_ref=source_ref,
+        )
+    return followup.from_committed_count(sum(object_id in counted for object_id in result.destroyed_object_ids))
+
+
 def resolve_destruction_set(
     host: DestructionSetHost,
     *,
@@ -196,7 +221,8 @@ def resolve_destruction_set(
             followup.validate_destruction_set(spec)
         except ValueError as exc:
             raise DestructionSetError(str(exc)) from exc
-        if not followup.uses_destroyed_controllers:
+        if not (followup.uses_destroyed_controllers or followup.uses_mana_allocation
+                or followup.uses_target_player_death_tokens or followup.uses_sized_token):
             rows = host.affected_permanent_object_rows(actor)
             count_snapshot = snapshot_destruction_set(host, actor=actor, spec=followup.scope, object_rows=rows)
             counted = frozenset(permanent.object_id for permanent in count_snapshot.permanents)
@@ -222,7 +248,8 @@ def resolve_destruction_set(
             ),
             replacement_selections=replacement_selections,
         )
-        result = commit_destruction_plan(host, plan)
+        record_deaths = followup is not None and followup.uses_target_player_death_tokens
+        result = commit_destruction_plan(host, plan, record_graveyard_outcomes=record_deaths)
     except DestructionError as exc:
         raise DestructionSetError(str(exc)) from exc
     host._log(
@@ -244,13 +271,7 @@ def resolve_destruction_set(
         ),
     )
     if followup is not None:
-        if followup.uses_destroyed_controllers:
-            destroyed = frozenset(result.destroyed_object_ids)
-            return followup.from_committed_controllers(
-                permanent.controller for permanent in snapshot.permanents
-                if permanent.object_id in destroyed
-            )
-        return followup.from_committed_count(sum(object_id in counted for object_id in result.destroyed_object_ids))
+        return _followup_after_destruction(followup, result, snapshot, counted, actor=actor, source_ref=source_ref)
     return result
 
 

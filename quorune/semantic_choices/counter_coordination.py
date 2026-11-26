@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.life_gain_cost_intent import LifeGainCostBatchIntent
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
-from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
+from ..semantic_runtime.counter_movement_intent import COUNTER_MOVEMENT_INTENT_TYPES, CounterMovementIntent
 from ..discover_model import DiscoverCastIntent
 from ..fixed_top_exile import ResolvingExileLandPlayIntent
 from ..rules.shared_type_library_play_model import ResolvingSharedTypeLibraryPlayIntent
@@ -141,7 +141,7 @@ def _issue_semantic_intent_replacement_choice(
     response: Mapping[str, Any],
     intent: (
         PlaceCountersOnSetIntent
-        | MoveCountersIntent
+        | CounterMovementIntent
         | LifeChangeIntent
         | PlaceCounterBatchIntent
         | PlaceCountersOnTargetsIntent
@@ -209,6 +209,18 @@ def _with_committed_quantity_followup(completion, intent, index, result):
         binding = SelectedLandDiscardCounterDraws if intent.selected_lands else IntentResultPlayerDraws
         effects = binding(0, "own").resolved_effects(result)
         return replace(completion, prepend_effects=(*effects, *completion.prepend_effects))
+    if isinstance(intent, ProliferateIntent) and intent.choose_phase_out:
+        from ..rules.proliferate_phase_out import counter_phase_choice_receipts
+
+        if (not isinstance(result, CommittedQuantityFollowup) or len(result.effects) > 1
+                or index != len(completion.intents) - 1):
+            raise SemanticChoiceError("A Proliferate choice needs its committed phase-out result")
+        for effect in result.effects:
+            try:
+                counter_phase_choice_receipts(effect)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
+        return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
     if not isinstance(result, CommittedQuantityFollowup):
         return completion
     if not isinstance(intent, (ResumeCompositionOrderIntent, GraveyardExileLifeResultIntent)) or index != len(completion.intents) - 1:
@@ -274,6 +286,10 @@ def continue_semantic_completion(
             with defer_conditional_cost_returns() as waiting:
                 result = execute_intent_plan(host,IntentPlan(operation=str(continuation.effect.get('op') or ''),
                     handler_id=continuation.handler_id,intents=(intent,)))
+            if continuation.effect.get("op") == "choose_mana":
+                from .resolution_mana import record_optional_target_mana_committed
+
+                record_optional_target_mana_committed(host, item, actor, continuation.effect, intent, result)
             completion = _with_committed_quantity_followup(completion, intent, index, result)
             if waiting:
                 from .completed_choice import encode_remaining_completion,finish_choice_intent_returns
@@ -306,7 +322,7 @@ def continue_semantic_completion(
                     ResolveBoundedHandCastIntent,
                     GraveyardCastIntent,
                     PlaceCountersOnSetIntent,
-                    MoveCountersIntent,
+                    *COUNTER_MOVEMENT_INTENT_TYPES,
                     LifeChangeIntent,
                     LifeGainCostBatchIntent,
                     PlaceCounterBatchIntent,

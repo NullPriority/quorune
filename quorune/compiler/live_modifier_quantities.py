@@ -28,7 +28,8 @@ def source_modifier_quantity(text):
 
 def attached_object_quantity(text):
     text=' '.join(text.strip().rstrip('.').split()).casefold()
-    reduction={'of its colors':Reduction.DISTINCT_COLORS,'its mana value':Reduction.MAXIMUM_MANA_VALUE}.get(text)
+    reduction = {"of its colors": Reduction.DISTINCT_COLORS, "its mana value": Reduction.MAXIMUM_MANA_VALUE,
+                 "counter on it": Reduction.TOTAL_COUNTERS}.get(text)
     return CharacteristicQuantitySpec(Scope.ATTACHED_OBJECT,schema_version=4,reduction=reduction) if reduction is not None else None
 
 

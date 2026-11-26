@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..cast_timing import OpponentUpkeepCastWindow
+from ..cast_timing import ControllerCombatCastWindow, OpponentUpkeepCastWindow
 from ..continuous_conditions import (
     BLOCK_DECLARATION_TIMING_FACTS, FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
 )
@@ -68,11 +68,12 @@ class SelfCastRestrictionHandler:
             raise SemanticNodeError('Intrinsic cast-restriction identity changed')
         if marked:
             version = descriptor['intrinsic_condition_version']
-            if type(version) is not int or version not in (2, 3, 4):
+            if type(version) is not int or version not in (2, 3, 4, 5):
                 raise SemanticNodeError('Unsupported intrinsic public cast condition version')
-            if version == 4:
+            if version in (4, 5):
+                window = OpponentUpkeepCastWindow if version == 4 else ControllerCombatCastWindow
                 try:
-                    return OpponentUpkeepCastWindow.from_dict(descriptor["source_condition"])
+                    return window.from_dict(descriptor["source_condition"])
                 except ValueError as exc:
                     raise SemanticNodeError(str(exc)) from exc
             try:condition = FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])

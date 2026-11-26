@@ -562,6 +562,12 @@ class SylvanLibraryChoiceHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..rules.draw_step_drawing_settlement import DRAW_STEP_SETTLEMENT_VERSION_FIELD
+
+        if DRAW_STEP_SETTLEMENT_VERSION_FIELD in effect:
+            from .draw_step_settlement import prepare_draw_step_settlement
+
+            return prepare_draw_step_settlement(effect, context)
         hand = {
             row.ref: row
             for row in context.query.objects(
@@ -647,6 +653,12 @@ class SylvanLibraryChoiceHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        from ..rules.draw_step_drawing_settlement import DRAW_STEP_SETTLEMENT_VERSION_FIELD
+
+        if DRAW_STEP_SETTLEMENT_VERSION_FIELD in effect:
+            from .draw_step_settlement import complete_draw_step_settlement
+
+            return complete_draw_step_settlement(continuation, response, query)
         raw = response.get("decisions") or {}
         if not isinstance(raw, Mapping):
             raise SemanticChoiceError("Sylvan decisions must be an object map")
@@ -666,7 +678,7 @@ class SylvanLibraryChoiceHandler:
             ref for ref, value in decisions.items() if value == "pay_life"
         )
         life_cost = 4 * len(life_cards)
-        if query.player_life(actor) < life_cost:
+        if query.player_life_for_payment(actor) < life_cost:
             raise SemanticChoiceError("The selected life payment is not payable")
         top_cards = {
             ref for ref, value in decisions.items() if value == "top"

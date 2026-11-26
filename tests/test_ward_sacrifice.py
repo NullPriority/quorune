@@ -121,6 +121,44 @@ class WardSacrificeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(printed_power + 3, game.engine._numeric_stat(ward.object_id, "power"))
         self.replay(game, load=True)
 
+    def test_food_ward_requires_current_controlled_food_and_replays_paid_and_declined(self):
+        for paid in (False, True):
+            with self.subTest(paid=paid):
+                game = self.session(702_210_49 + int(paid))
+                engine = game.engine
+                ward = self.add(engine, "Trial Food Keeper", seat="B", ref="FOOD-WARD")
+                meal = self.add(engine, "Trial Cooked Meal", seat="C", ref="FOOD-MEAL")
+                artisan = self.add(engine, "Trial Food Artisan", ref="FOOD-ARTISAN")
+                other_artifact = self.add(engine, self.artifact, ref="FOOD-WRONG-ARTIFACT")
+                other_creature = self.add(engine, self.creature, ref="FOOD-WRONG-CREATURE")
+                opponent_food = self.add(engine, "Trial Cooked Meal", seat="D", ref="FOOD-OPPONENT")
+                private = self.add(engine, "Trial Food Artisan", seat="D", zone="hand", ref="FOOD-PRIVATE")
+                spell = self.add(engine, self.growth, zone="hand", ref="FOOD-TARGETING-SPELL")
+                engine.change_control(meal.object_id, "A", reason="The payer controls the Food")
+                initial_power = engine._numeric_stat(ward.object_id, "power")
+                self._begin(game, ward, spell)
+                ref = self._target(game, ward, spell)
+                self.assertIsNotNone(self.resolve(game))
+                self.assertEqual({meal.ref, artisan.ref}, self._choice(game))
+                self.assertNotIn(private.ref, json.dumps(game.packet("pilot:A", full=True)))
+                self.assertIsNone(game.packet("pilot:B", full=True)["decision"])
+                for actor, refs in (
+                    ("B", [meal.ref]), ("A", [other_artifact.ref]), ("A", [other_creature.ref]),
+                    ("A", [opponent_food.ref]), ("A", [meal.ref, artisan.ref]),
+                ):
+                    self._choose(game, refs, actor=actor, expected=False)
+                game = self.replay(game, load=True)
+                self._choose(game, [meal.ref] if paid else [])
+                self.assertEqual(paid, any(item.ref == ref for item in game.state.stack))
+                self.assertIsNone(self.resolve(game))
+                self.assertEqual("graveyard" if paid else "battlefield", game.state.cards[meal.object_id].zone)
+                if paid:
+                    self.assertIn(meal.object_id, game.state.players["C"].zones["graveyard"])
+                self.assertEqual("battlefield", game.state.cards[artisan.object_id].zone)
+                self.assertEqual("graveyard", game.state.cards[spell.object_id].zone)
+                self.assertEqual(initial_power + (3 if paid else 0), game.engine._numeric_stat(ward.object_id, "power"))
+                self.replay(game, load=True)
+
     def test_positive_mana_value_ward_offers_a_public_artifact_and_excludes_zero_value(self):
         game = self.session(702_210_42)
         engine = game.engine
@@ -192,7 +230,8 @@ class WardSacrificeTests(InheritedNativeFixture, unittest.TestCase):
             return compile_oracle_card(card, capability_registry=registry, capability_profile="commander_review")
 
         for name, scope in ((self.creature_ward, WardSacrificeScope.CREATURE),
-                            (self.value_ward, WardSacrificeScope.PERMANENT_WITH_POSITIVE_MANA_VALUE)):
+                            (self.value_ward, WardSacrificeScope.PERMANENT_WITH_POSITIVE_MANA_VALUE),
+                            ("Trial Food Keeper", WardSacrificeScope.FOOD_ARTIFACT)):
             card = self.db.lookup(name)
             ir = compile_card(card, self.registry)
             self.assertEqual("exact", ir.status, ir.material_residuals)
@@ -209,5 +248,12 @@ class WardSacrificeTests(InheritedNativeFixture, unittest.TestCase):
         registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
         card = self.db.lookup(self.creature_ward)
         self.assertNotEqual("exact", compile_card(card, registry).status)
+        food = self.db.lookup("Trial Food Keeper")
+        self.assertNotEqual("exact", compile_card(food, registry).status)
+        from dataclasses import replace
+        for cost in ("Sacrifice two Foods", "Sacrifice an untapped Food", "Sacrifice a Food or Treasure"):
+            with self.subTest(cost=cost):
+                malformed = replace(food, oracle_text=f"Ward—{cost}.")
+                self.assertNotEqual("exact", compile_card(malformed, self.registry).status)
         with patch("quorune.compiler.ward_cost_templates.ward_sacrifice_scope", return_value=None):
             self.assertNotEqual("exact", compile_card(card, self.registry).status)

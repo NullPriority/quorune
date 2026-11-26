@@ -1,12 +1,34 @@
 from __future__ import annotations
 
-"""Per-object CR613.8 applicability dependencies for fixed type setters."""
+"""CR 613.8 applicability dependencies for represented type changes."""
 
 from copy import deepcopy
 from dataclasses import dataclass, replace
 from itertools import groupby
-from .continuous_effect_model import ContinuousEffectDuration, Layer
+from .continuous_effect_model import ContinuousEffectDuration, ContinuousEffectOrigin, Layer
 from .basic_land_types import BASIC_LAND_MANA
+from .object_predicate import ObjectQuerySpec
+
+
+CREATURE_SUBTYPE_BATTLEFIELD_QUERY = ObjectQuerySpec(
+    zones=("battlefield",), types_any=("creature", "kindred"),
+)
+
+
+def _locked_creature_subtype_scope(effect):
+    return (
+        effect.layer is Layer.TYPE
+        and effect.origin is ContinuousEffectOrigin.RESOLUTION
+        and effect.duration is ContinuousEffectDuration.ZONE_OBJECT
+        and bool(effect.locked_objects)
+        and effect.applies == CREATURE_SUBTYPE_BATTLEFIELD_QUERY
+        and len(effect.operations) == 1
+        and effect.operations[0].op == "add_types" and effect.operations[0].field == "subtypes"
+    )
+
+
+def uses_live_type_dependencies(effect):
+    return effect.recipient_scope_anchor is not None or _locked_creature_subtype_scope(effect)
 
 
 def bind_type_applicability_dependencies(effects,base,context):
@@ -84,7 +106,7 @@ def _dependency_cycle_ready(dependencies, order_key):
     raise AssertionError("A finite type-dependency graph has a terminal component")
 
 
-def _live_type_effect_order(effects, dependencies_for, cycles):
+def live_dependency_effect_order(effects, dependencies_for, cycles):
     """Apply one graph step at a time, rebuilding dependencies against the new state."""
     remaining = {effect.effect_id: effect for effect in effects}
     def order_key(key):
@@ -137,7 +159,7 @@ def battlefield_type_effect_order(views):
 
     cycles = []
     ordered = []
-    for effect in _live_type_effect_order(all_effects.values(), dependencies_for, cycles):
+    for effect in live_dependency_effect_order(all_effects.values(), dependencies_for, cycles):
         ordered.append(effect.effect_id)
         for base, context, local in rows:
             if effect.effect_id in local and _type_effect_matches_object(effect, base, context):
@@ -150,7 +172,7 @@ def effects_with_live_type_recipient_scopes(ordered, present, base, context, cyc
     """Retain the existing order except where a new grouped recipient can participate."""
     from .continuous_effects import _matches
 
-    if not any(effect.recipient_scope_anchor is not None for effect in present):
+    if not any(uses_live_type_dependencies(effect) for effect in present):
         yield from ordered
         return
     for layer, grouped in groupby(ordered, key=lambda effect: effect.layer):
@@ -165,8 +187,12 @@ def effects_with_live_type_recipient_scopes(ordered, present, base, context, cyc
             yield from by_id.values()
             continue
         if layer is not Layer.TYPE or not any(
-            effect.recipient_scope_anchor is not None
-            and _matches(replace(effect.applies, types_all=()), base, context)
+            (effect.recipient_scope_anchor is not None
+             and _matches(replace(effect.applies, types_all=()), base, context))
+            or (_locked_creature_subtype_scope(effect)
+                and _type_effect_matches_object(
+                    replace(effect, applies=replace(effect.applies, types_any=())), base, context,
+                ))
             for effect in group
         ):
             yield from group
@@ -174,7 +200,7 @@ def effects_with_live_type_recipient_scopes(ordered, present, base, context, cyc
         # Discard dependencies inferred by the historical one-pass type helper.
         type_ids = {effect.effect_id for effect in group}
         cycles[:] = [cycle for cycle in cycles if not set(cycle).issubset(type_ids)]
-        yield from _live_type_effect_order(
+        yield from live_dependency_effect_order(
             tuple(effect for effect in present if effect.layer is Layer.TYPE),
             lambda remaining: _current_type_dependencies(remaining, base, context), cycles,
         )

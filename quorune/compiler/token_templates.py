@@ -14,7 +14,9 @@ from ..ability_fragments import (
     decayed_ability_fragments,
 )
 from ..fixed_token_production import (
+    CREATED_TOKEN_HASTE_FIELD,
     FOOD_TOKEN_CHARACTERISTICS,
+    GOLD_TOKEN_CHARACTERISTICS,
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenCreationTemplate,
     fixed_ordinary_token_name,
@@ -97,7 +99,7 @@ _FIXED_CREATURE_TOKEN = re.compile(
 _FIXED_PREDEFINED_TOKEN = re.compile(
     rf"^Create (?P<count>{FIXED_COUNT_PATTERN}|eleven|twelve|thirteen) "
     r"(?P<tapped>tapped )?"
-    r"(?P<name>Treasure|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood|Lander|Mutagen|Walker) tokens?\.?$",
+    r"(?P<name>Treasure|Gold|Food|Map|Clue|Powerstone|Junk|Vibranium|Blood|Lander|Mutagen|Walker) tokens?\.?$",
     re.IGNORECASE,
 )
 _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
@@ -129,6 +131,7 @@ _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         ),
         "ability_profile": "tap_sac_any_color_mana_v1",
     },
+    "gold token": {"name": "Gold", **GOLD_TOKEN_CHARACTERISTICS},
     "food token": {
         "name": _TOKEN_FOOD,
         **FOOD_TOKEN_CHARACTERISTICS,
@@ -201,6 +204,7 @@ _PREDEFINED_CREATION_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         "lander token", "mutagen token", "walker token",
         "blood token",
         "treasure token",
+        "gold token",
         "food token",
         "map token",
         "clue token",
@@ -488,6 +492,28 @@ def _fixed_token_batch_creation_effect_template(
     )
 
 
+def _created_token_haste_template(text):
+    match = re.fullmatch(
+        r"(?P<creation>Create .+?)\. (?P<subject>It gains|They gain) haste until end of turn\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    base = _single_fixed_token_creation_effect_template(match["creation"] + ".")
+    if base is None or base.target_schema is not None:
+        return None
+    from ..rules.token_creation_capability_shapes import created_token_haste_closure
+
+    effect = {**base.effect, CREATED_TOKEN_HASTE_FIELD: 1}
+    try:
+        created_token_haste_closure(effect)
+    except (TypeError, ValueError):
+        return None
+    if (base.effect["quantity"] == 1) != (match["subject"].casefold() == "it gains"):
+        return None
+    return FixedTokenCreationTemplate(base.template_id + "-then-haste-v1", effect, base.mechanics)
+
+
 def fixed_token_creation_effect_template(
     text: str,
 ) -> FixedTokenCreationTemplate | None:
@@ -507,6 +533,9 @@ def fixed_token_creation_effect_template(
     explicit_creator = re.match(r"^You\s+create\s+", text.lstrip(), re.IGNORECASE)
     if explicit_creator is not None:
         text = "Create " + text.lstrip()[explicit_creator.end():]
+    haste = _created_token_haste_template(text)
+    if haste is not None:
+        return haste
     cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
     from .per_opponent_attacking_tokens import per_opponent_attacking_token_template
     scoped = per_opponent_attacking_token_template(text, compile_attacking=lambda line:
@@ -552,6 +581,57 @@ def _fixed_additional_token_definition(text: str) -> Mapping[str, Any] | None:
     try:TokenDefinition.from_mapping(definition).characteristics()
     except (SemanticNodeError,TypeError,ValueError):return None
     return definition
+
+
+def static_creature_token_definition_replacement_handler(text: str):
+    """Lower a fixed creature-token definition for the same creation quantity."""
+
+    match = re.fullmatch(
+        r"If one or more creature tokens would be created under your control, "
+        r"that many (?P<definition>.+ creature tokens(?: with [^.]+)?) are created instead\.?",
+        text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    singular = re.sub(r"\btokens\b", "token", match["definition"], count=1, flags=re.I)
+    definition = _fixed_additional_token_definition(singular)
+    if definition is None:
+        return None
+    from ..characteristic_evaluation import type_parts
+
+    if "creature" not in type_parts(str(definition["type_line"]))[0]:
+        return None
+    return ("controller-creature-token-definition-replacement-v1", {
+        "handler_id": "replacement.token.creature-definition.v1", "schema_version": 1,
+        "event": "token.create",
+        "condition": {"event_controller": "source_controller", "created_types": ["creature"]},
+        "definition": definition,
+    }, ("token.creation.replace_creature_definition",))
+
+
+def static_predefined_token_set_replacement_handler(text: str):
+    """Compile the mandatory one-of-each substitution for predefined artifacts."""
+    if re.fullmatch(
+        r"If you would create a Clue, Food, or Treasure token, instead create one of each\.?",
+        text.strip(), re.I,
+    ) is None:
+        return None
+    from ..creature_token_definition_replacement import (
+        PREDEFINED_TOKEN_SET_CAPABILITY, PREDEFINED_TOKEN_SET_HANDLER,
+    )
+
+    return ("controller-predefined-artifact-token-set-replacement-v1", {
+        "handler_id": PREDEFINED_TOKEN_SET_HANDLER, "schema_version": 1,
+        "event": "token.create", "event_controller": "source_controller",
+    }, (PREDEFINED_TOKEN_SET_CAPABILITY,))
+
+
+def static_token_creation_replacement_handler(text: str):
+    return (
+        static_token_quantity_replacement_handler(text)
+        or static_creature_token_definition_replacement_handler(text)
+        or static_predefined_token_set_replacement_handler(text)
+    )
 
 
 def static_additional_token_replacement_handler(

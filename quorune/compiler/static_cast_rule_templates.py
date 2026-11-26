@@ -12,6 +12,7 @@ from ..rules.source_references import SourceReferenceSpec
 from ..semantic_runtime.static_cast_rules import (
     STATIC_CAST_LIMIT_HANDLER_ID,
     STATIC_CAST_PROHIBITION_HANDLER_ID,
+    OPPONENT_SORCERY_TIMING_DEPENDENCIES,
     STATIC_CAST_RULE_EVENT,
     STATIC_CAST_TIMING_HANDLER_ID,
     STATIC_UNCOUNTERABLE_HANDLER_ID,
@@ -334,6 +335,22 @@ def _noncreature_mana_prohibition(normalized: str) -> StaticCastRuleTemplate | N
     return None
 
 
+def _opponent_sorcery_timing_rule(normalized: str) -> StaticCastRuleTemplate | None:
+    if not re.fullmatch(r"Each opponent can cast spells only any time they could cast a sorcery[.]?", normalized, re.I):
+        return None
+    return (
+        "static-opponents-sorcery-timing-v1",
+        _descriptor(
+            handler_id=STATIC_CAST_PROHIBITION_HANDLER_ID,
+            kind=StaticCastRuleKind.CAST_PROHIBITION,
+            scope=StaticCastPlayerScope.SOURCE_OPPONENTS,
+            queries=(_query(),),
+            condition=StaticCastCondition.OUTSIDE_SORCERY_TIMING,
+        ),
+        OPPONENT_SORCERY_TIMING_DEPENDENCIES,
+    )
+
+
 def _cast_prohibition_or_limit_rule(
     normalized: str,
 ) -> StaticCastRuleTemplate | None:
@@ -496,6 +513,7 @@ def static_cast_rule_handler(
     normalized = _without_exact_reminder(text)
     return (
         _timing_rule(normalized, source_name=source_name)
+        or _opponent_sorcery_timing_rule(normalized)
         or _cast_prohibition_or_limit_rule(normalized)
         or _uncounterable_rule(normalized)
     )

@@ -3,6 +3,9 @@ from __future__ import annotations
 """One resolution grammar dispatcher for ordinary and named counter placements."""
 
 from . import regex_working_set as re
+from ..creature_subtypes import canonical_creature_subtype_surface
+from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+from ..counter_placement_sets import SOURCE_AND_CONTROLLED_SUBTYPE_FIELD, controlled_counter_subtype_subjects
 from ..counter_placement_sets import PAIRED_PLANESWALKER_LOYALTY_FIELD, controlled_counter_subjects
 from .counter_doubling_templates import named_counter_doubling_effect_template
 from .counter_placement_group_templates import fixed_counter_placement_group_effect_template
@@ -15,6 +18,46 @@ _PAIRED_PLANESWALKER_LOYALTY = re.compile(
     r"Put a \+1/\+1 counter on each creature you control and a loyalty counter on each other planeswalker you control\.?",
     re.IGNORECASE,
 )
+
+
+_SOURCE_AND_CONTROLLED_SUBTYPE = re.compile(
+    r"Put a \+1/\+1 counter on (?P<source>.+?) and a \+1/\+1 counter on each "
+    r"(?P<subtype>.+?) you control\.", re.IGNORECASE,
+)
+
+
+def source_and_controlled_subtype_counter_template(text, card_name):
+    match = _SOURCE_AND_CONTROLLED_SUBTYPE.fullmatch(text.strip())
+    if match is None:
+        return None
+    source = match["source"]
+    if (source_self_permanent_type(source) is None
+            and (not card_name or not SourceReferenceSpec(card_name).matches(source))):
+        return None
+    subtype = canonical_creature_subtype_surface(match["subtype"])
+    if subtype is None:
+        return None
+    effect = {
+        "op": "place_counters_on_set", "source": "$source",
+        "set": controlled_counter_subtype_subjects(subtype).to_dict(),
+        "counter": "+1/+1", "amount": 1, SOURCE_AND_CONTROLLED_SUBTYPE_FIELD: 1,
+    }
+    return "fixed-source-and-controlled-subtype-counter-placement-v1", (effect,), None, ("cr-122-counters",)
+
+
+def chosen_counter_placement_activation_result(ability, text):
+    body = " ".join(text.split()).casefold()
+    if body != ("choose a counter on target permanent or player. "
+                "give that permanent or player another counter of that kind."):
+        return None
+    from ..rules.chosen_counter_placement import (
+        chosen_counter_placement_effect, chosen_counter_placement_price_is_closed, chosen_counter_placement_target_schema,
+    )
+
+    if not chosen_counter_placement_price_is_closed(ability):
+        return None
+    return ("chosen-counter-placement-v1", (chosen_counter_placement_effect(),),
+            chosen_counter_placement_target_schema(), ("cr-122-counters", "cr-115-targets"))
 
 
 def counter_resolution_effect_template(text, *, card_name, source_is_permanent, source_attachment_relation):

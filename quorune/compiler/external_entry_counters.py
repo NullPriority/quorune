@@ -7,6 +7,7 @@ from ..entry_designations import ENTRY_DESIGNATION_CAPABILITY
 from ..external_entry_counter_model import (
     EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_CAPABILITY, EXTERNAL_CHOSEN_SUBTYPE_ENTRY_COUNTER_HANDLER,
     EXTERNAL_ENTRY_COUNTER_CAPABILITY, EXTERNAL_ENTRY_COUNTER_HANDLER, ExternalEntryCounterSpec,
+    EXTERNAL_NONTOKEN_ENTRY_COUNTER_CAPABILITY, EXTERNAL_NONTOKEN_ENTRY_COUNTER_HANDLER,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .creature_subtypes import canonical_creature_subtype
@@ -28,6 +29,12 @@ def external_entry_counter_handler(text,*,source_name):
     material=' '.join(text.strip().split()).rstrip('.')
     if chosen := _chosen_subtype_external_counter_handler(material):
         return chosen
+    if material.casefold() == "each other nontoken creature you control enters with an additional +1/+1 counter on it":
+        return "external-nontoken-entry-counter-v3", {
+            "handler_id": EXTERNAL_NONTOKEN_ENTRY_COUNTER_HANDLER,
+            "schema_version": 3, "event": "zone.change", "entry_counter": ExternalEntryCounterSpec().to_dict(),
+        }, (EXTERNAL_ENTRY_COUNTER_CAPABILITY, "counter.placement.quantity_replacement",
+            EXTERNAL_NONTOKEN_ENTRY_COUNTER_CAPABILITY)
     source=SourceReferenceSpec(source_name).regex_pattern
     fixed=re.fullmatch(r'Each other (?P<kind>non-[A-Za-z-]+ |[A-Za-z-]+ )?creature you control enters with an additional \+1/\+1 counter on it',material,re.I)
     if fixed is not None:

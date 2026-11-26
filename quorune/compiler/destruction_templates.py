@@ -382,10 +382,17 @@ def mass_destruction_effect_template(
 ) -> MassDestructionEffectTemplate | AttachedDestructionEffectTemplate | None:
     if attached := attached_destruction_set_template(text):
         return attached
+    if " ".join(text.casefold().split()).removesuffix(".") == "destroy all creatures with no counters on them":
+        from .qualified_destruction_queries import creature_counter_absence_query
+
+        return MassDestructionEffectTemplate(AffectedPermanentSetSpec(query=creature_counter_absence_query(None)))
     split = _split_regeneration_prohibition(text)
     if split is None:
         return None
     destruction, prohibition_subject = split
+    if (prohibition_subject is None and destruction.casefold().replace("’", "'").removesuffix(".")
+            == "destroy all creatures you don't control and all planeswalkers you don't control"):
+        destruction = "Destroy all creatures and planeswalkers you don't control."
     if prohibition_subject not in {
         None,
         "they",

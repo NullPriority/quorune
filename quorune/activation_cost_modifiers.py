@@ -270,10 +270,15 @@ class FixedActivationCostModifierSpec:
             raise ValueError('Unsupported activation-cost source relation')
         if self.controller_relation not in {'any', 'source_controller', 'source_opponents'}:
             raise ValueError('Unsupported activation-cost controller relation')
-        if self.ability_scope not in {'all', 'nonmana','equip','cycling', 'boast'} or (self.ability_scope == 'boast' and self.schema_version != 3):
+        if self.ability_scope not in {'all', 'nonmana','equip','cycling', 'ninjutsu', 'boast'} or (self.ability_scope == 'boast' and self.schema_version != 3):
             raise ValueError('Unsupported activation-cost ability scope')
         if not isinstance(self.predicate, ObjectQuerySpec):
             raise ValueError('Activation-cost source predicates must be typed')
+        if self.ability_scope == 'ninjutsu' and (
+            self.schema_version != 1 or self.subject_relation != 'any'
+            or self.controller_relation != 'source_controller' or self.generic_adjustment >= 0 or self.minimum_mana
+        ):
+            raise ValueError('Ninjutsu applies only to the controller’s fixed generic reduction')
         if self.subject_relation == OTHER_EQUIPMENT_ACTIVATION_SUBJECT and (
             self.schema_version != 1 or self.controller_relation != 'source_controller'
             or self.ability_scope != 'equip' or self.generic_adjustment >= 0 or self.minimum_mana != 0

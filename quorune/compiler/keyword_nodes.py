@@ -408,9 +408,11 @@ def closed_special_keyword_node(
     from .ripple_nodes import ripple_keyword_node
     from .demonstrate_nodes import demonstrate_keyword_node
     from .gravestorm_nodes import gravestorm_keyword_node
-    for lower in (gravestorm_keyword_node,demonstrate_keyword_node,ripple_keyword_node,recover_keyword_node,graveyard_copy_keyword_node,ordinary_unearth_keyword_node,fixed_mana_kicker_keyword_node,increment_keyword_node):
+    for lower in (gravestorm_keyword_node,demonstrate_keyword_node,ripple_keyword_node,recover_keyword_node,graveyard_copy_keyword_node,ordinary_unearth_keyword_node,increment_keyword_node):
         node=lower(**values)
         if node is not None:return node
+    kicker = fixed_mana_kicker_keyword_node(record=record, face_id=face_id, **values)
+    if kicker is not None:return kicker
     renown = renown_keyword_node(
         **values,
         trusted_mechanics=trusted_mechanics,

@@ -10,10 +10,20 @@ from ..untargeted_untap_model import (
 def untargeted_untap_payload_dependencies(value):
     if not isinstance(value, Mapping) or value.get('op') != UNTARGETED_UNTAP_OPERATION:
         return ()
-    FixedLandUntapChoiceSpec.from_effect(value)
-    if value['player'] != '$controller':
-        raise ValueError('Land untap program requires its reserved controller')
+    spec = FixedLandUntapChoiceSpec.from_effect(value)
+    if value["player"] != ("$context.player" if spec.scheduled else "$controller"):
+        raise ValueError("Land untap requires its resolving controller or exact scheduled participant")
     return (UNTARGETED_UNTAP_CAPABILITY, 'permanent.untap.effect')
+
+
+def scheduled_land_untap_candidates(host, actor):
+    from .untap_permissions import untap_is_permitted
+
+    return tuple(sorted(
+        row.ref for row in host.affected_permanent_object_rows(actor)
+        if row.zone == "battlefield" and row.controller == actor and row.tapped and not row.phased_out
+        and "land" in row.types and untap_is_permitted(host, host.state.cards[row.object_id])
+    ))
 
 
 def fixed_land_untap_choice_capabilities(*, effects, target_schema, mechanic_ids):

@@ -5,8 +5,15 @@ from __future__ import annotations
 from . import regex_working_set as re
 
 from .closed_effect_programs import _top_level_positions
+from ..characteristic_fragments import (
+    CharacteristicQuantityScope, CharacteristicQuantitySpec, characteristic_quantity_capabilities,
+)
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID, FixedPublicStateConditionKind, FixedPublicStateConditionSpec,
+)
+from ..object_predicate import ObjectQuerySpec
 from .continuous_templates import (
-    attached_fixed_characteristics_handler, fixed_public_state_characteristics_handler,
+    _conditional_target, attached_fixed_characteristics_handler, fixed_public_state_characteristics_handler,
 )
 
 
@@ -59,7 +66,49 @@ def _additive_public_state_pair(text: str, *, source_name: str):
     )
 
 
+def _named_equipment_additive_pair(text: str, *, source_name: str):
+    match = re.fullmatch(
+        r"(?P<base>Equipped creature gets [+-][0-9]+/[+-][0-9]+\.) "
+        r"It gets an additional (?P<modifier>[+-][0-9]+/[+-][0-9]+ and has [^.]+?) "
+        r"as long as an Equipment named (?P<name>[^\W\d_][\w’'\-]*(?: (?!or\b)[\w’'\-]+)*) "
+        r"is attached to a creature you control\.?",
+        text.strip(), re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    base = attached_fixed_characteristics_handler(match["base"], source_name=source_name)
+    added = _conditional_target(
+        "Equipped creature gets " + match["modifier"] + ".", source_name=source_name,
+    )
+    if base is None or added is None:
+        return None
+    target, modifier, capabilities = added
+    if target["kind"] != "attached" or target["types_all"] != ["creature"]:
+        return None
+    condition = FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+        schema_version=2, amount=1,
+        quantity=CharacteristicQuantitySpec(
+            CharacteristicQuantityScope.EQUIPMENT_ON_CONTROLLED_CREATURES,
+            query=ObjectQuerySpec(zones=("battlefield",), types_all=("artifact",), subtypes_all=("equipment",)),
+            literal_name=match["name"], schema_version=7,
+        ),
+    ).to_dict()
+    conditional = {
+        "handler_id": FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
+        "schema_version": 1,
+        "event": "characteristics.evaluate",
+        "source_condition": condition,
+        "target": target,
+        "modifier": modifier,
+    }
+    required = {"continuous.characteristics.fixed_public_state", *base[2], *capabilities,
+                *characteristic_quantity_capabilities(condition)}
+    return "attached-additive-named-equipment-v1", (base[1], conditional), tuple(sorted(required))
+
+
 def composed_public_state_characteristics_handler(text: str, *, source_name: str):
     return (attached_otherwise_stat_handler(text, source_name=source_name)
+        or _named_equipment_additive_pair(text, source_name=source_name)
         or fixed_public_state_characteristics_handler(text, source_name=source_name)
         or _additive_public_state_pair(text, source_name=source_name))

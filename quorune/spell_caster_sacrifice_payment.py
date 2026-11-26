@@ -43,9 +43,12 @@ def spell_caster_sacrifice_payment_effect(*, player="$context.player", controlle
 
 
 def uses_spell_caster_sacrifice_payment(effect):
+    from .rules.opponent_event_mana_payment import uses_opponent_event_mana_payment
+
     return isinstance(effect, Mapping) and effect.get("op") == _OPERATION and (
         effect.get("schema_version") == SPELL_CASTER_SACRIFICE_PAYMENT_VERSION
         or effect.get("player") == "$context.player" and "declined_effects" in effect
+        and not uses_opponent_event_mana_payment(effect)
     )
 
 

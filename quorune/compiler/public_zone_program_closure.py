@@ -3,14 +3,16 @@ from __future__ import annotations
 """Shared promotion boundaries for closed public graveyard movements."""
 
 from ..rules.reanimation_capability_shapes import (
-    fixed_target_reanimation_node_capabilities, source_power_reanimation_runtime_dependencies,
+    fixed_target_reanimation_node_capabilities, ordered_graveyard_reanimation_runtime_dependencies,
+    source_power_reanimation_runtime_dependencies,
 )
 from ..rules.graveyard_card_targets import targeted_graveyard_return_node_capabilities
 
 
 def is_closed_reanimation_effect_program(program):
     try:
-        required = source_power_reanimation_runtime_dependencies(program)
+        required = (ordered_graveyard_reanimation_runtime_dependencies(program)
+                    or source_power_reanimation_runtime_dependencies(program))
     except (ValueError, TypeError):
         return False
     if not required:

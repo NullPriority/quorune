@@ -53,17 +53,19 @@ def _exert_players(card: Any) -> list[str]:
     return value
 
 
-def exert_permanent(host: Any, card: Any, *, actor: str, linked_program: str,
-                    trigger_batch: list[Any]) -> None:
+def exert_permanent(host: Any, card: Any, *, actor: str, linked_program: str | None,
+                    trigger_batch: list[Any] | None) -> None:
     """Pay one CR 701.43 cost and publish its linked result before later costs."""
     if (card.zone != 'battlefield' or card.phased_out or actor not in host.active_seats
-            or type(linked_program) is not str or not linked_program):
+            or (linked_program is not None and (type(linked_program) is not str or not linked_program))):
         raise TapStateError('Exert requires a present permanent, acting player and linked cost')
     prohibit_next_player_untap(host,card,actor=actor)
     context = {'card': card.ref, 'player': actor, 'controller': card.controller,
                'object_id': card.object_id, 'logical_object_id': card.logical_object_id,
-               'linked_exert_program': linked_program}
-    host._log(actor, 'permanent.exerted', 'Permanent was exerted as an attack cost.',
+               **({'linked_exert_program': linked_program} if linked_program is not None else {})}
+    summary = ("Permanent was exerted as an attack cost." if linked_program is not None
+               else "Permanent was exerted as a mana ability cost.")
+    host._log(actor, 'permanent.exerted', summary,
               context, changed_objects=[card.object_id], changed_players=[actor])
     host._dispatch_semantic_event('permanent.exerted', context, trigger_batch=trigger_batch)
 

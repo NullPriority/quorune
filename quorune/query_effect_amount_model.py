@@ -11,6 +11,9 @@ from .characteristic_fragments import (
 )
 from .object_predicate import ObjectQueryError, ObjectQuerySpec, PermanentStatePredicateSpec
 from .live_battlefield_quantity_model import LiveBattlefieldQuantitySpec, LIVE_BATTLEFIELD_QUANTITY_KIND
+from .shared_type_doors import (
+    RoomDoorQuantity, ROOM_DOOR_AMOUNT_KIND, ROOM_DOOR_AMOUNT_CAPABILITY, ROOM_UNLOCKED_COUNT_CAPABILITY,
+)
 
 
 PUBLIC_QUERY_AMOUNT_KIND = "public_query_effect_amount"
@@ -81,7 +84,11 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
     return True
 
 
-def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec) -> bool:
+def _quantity_is_public_amount_closed(
+    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec | RoomDoorQuantity,
+) -> bool:
+    if isinstance(quantity, RoomDoorQuantity):
+        return True
     if isinstance(quantity,CharacteristicQuantitySpec) and quantity.schema_version==5:return True
     if isinstance(quantity, LiveBattlefieldQuantitySpec):
         return True
@@ -99,6 +106,8 @@ ATTACK_SHARED_TYPE_AMOUNT_VERSION = 4
 ATTACK_SHARED_TYPE_AMOUNT_CAPABILITY = "quantity_expression.attack_shared_creature_type_count"
 SOURCE_SHARED_TYPE_AMOUNT_VERSION = 5
 SOURCE_SHARED_TYPE_AMOUNT_CAPABILITY = "quantity_expression.controlled_source_shared_creature_type_count"
+ENTRY_SHARED_TYPE_AMOUNT_VERSION = 6
+ENTRY_SHARED_TYPE_AMOUNT_CAPABILITY = "quantity_expression.controlled_entrant_shared_creature_type_count"
 
 _ATTACK_SHARED_TYPE_QUANTITY = LiveBattlefieldQuantitySpec(
     controller_relation="any", exclude_source=True,
@@ -112,12 +121,14 @@ _SOURCE_SHARED_TYPE_QUANTITY = LiveBattlefieldQuantitySpec(
     query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
 )
 
+_ENTRY_SHARED_TYPE_QUANTITY = replace(_SOURCE_SHARED_TYPE_QUANTITY, exclude_source=False)
+
 
 @dataclass(frozen=True, slots=True)
 class PublicQueryAmountSpec:
     """One signed coefficient over a current public object-query count."""
 
-    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec
+    quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec | RoomDoorQuantity
     coefficient: int = 1
     schema_version: int = 1
     binding_id: str | None = None
@@ -125,6 +136,7 @@ class PublicQueryAmountSpec:
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {
             1, 2, 3, ATTACK_SHARED_TYPE_AMOUNT_VERSION, SOURCE_SHARED_TYPE_AMOUNT_VERSION,
+            ENTRY_SHARED_TYPE_AMOUNT_VERSION,
         }:
             raise PublicQueryAmountError(
                 "Unsupported public query effect amount schema version"
@@ -141,7 +153,7 @@ class PublicQueryAmountSpec:
             )
         if self.schema_version == 2 and self.coefficient not in {-1, 1}:
             raise PublicQueryAmountError("Declared result coefficients are exactly one or minus one")
-        if not isinstance(self.quantity, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec)):
+        if not isinstance(self.quantity, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec, RoomDoorQuantity)):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a typed quantity"
             )
@@ -158,6 +170,9 @@ class PublicQueryAmountSpec:
         elif self.schema_version == SOURCE_SHARED_TYPE_AMOUNT_VERSION:
             if self.quantity != _SOURCE_SHARED_TYPE_QUANTITY or self.coefficient != 1:
                 raise PublicQueryAmountError("Shared source type amounts require one controlled other-creature count")
+        elif self.schema_version == ENTRY_SHARED_TYPE_AMOUNT_VERSION:
+            if self.quantity != _ENTRY_SHARED_TYPE_QUANTITY or self.coefficient != 1:
+                raise PublicQueryAmountError("Shared entrant type amounts require one controlled creature count")
         elif not _quantity_is_public_amount_closed(self.quantity):
             raise PublicQueryAmountError(
                 "Public query effect amount requires a cycle-safe public zone query"
@@ -201,9 +216,13 @@ class PublicQueryAmountSpec:
             )
         try:
             raw = value['quantity']
-            quantity = (LiveBattlefieldQuantitySpec.from_dict(raw)
-                if isinstance(raw, Mapping) and raw.get('kind') == LIVE_BATTLEFIELD_QUANTITY_KIND
-                else CharacteristicQuantitySpec.from_dict(raw))
+            kind = raw.get('kind') if isinstance(raw, Mapping) else None
+            if kind == LIVE_BATTLEFIELD_QUANTITY_KIND:
+                quantity = LiveBattlefieldQuantitySpec.from_dict(raw)
+            elif kind == ROOM_DOOR_AMOUNT_KIND:
+                quantity = RoomDoorQuantity.from_dict(raw)
+            else:
+                quantity = CharacteristicQuantitySpec.from_dict(raw)
         except (CharacteristicFragmentError, ObjectQueryError, TypeError, ValueError) as exc:
             raise PublicQueryAmountError(str(exc)) from exc
         return cls(
@@ -230,8 +249,16 @@ def source_shared_type_amount_spec() -> PublicQueryAmountSpec:
     return PublicQueryAmountSpec(_SOURCE_SHARED_TYPE_QUANTITY, schema_version=SOURCE_SHARED_TYPE_AMOUNT_VERSION)
 
 
+def entry_shared_type_amount_spec() -> PublicQueryAmountSpec:
+    return PublicQueryAmountSpec(_ENTRY_SHARED_TYPE_QUANTITY, schema_version=ENTRY_SHARED_TYPE_AMOUNT_VERSION)
+
+
 def public_query_amount_runtime_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     spec = PublicQueryAmountSpec.from_dict(value)
+    if isinstance(spec.quantity, RoomDoorQuantity):
+        declaration = (DECLARED_AMOUNT_CAPABILITY,) if spec.schema_version == 2 else ()
+        return (PUBLIC_QUERY_AMOUNT_CAPABILITY, ROOM_DOOR_AMOUNT_CAPABILITY,
+                ROOM_UNLOCKED_COUNT_CAPABILITY, *declaration)
     if spec.schema_version == 2:
         return (PUBLIC_QUERY_AMOUNT_CAPABILITY, DECLARED_AMOUNT_CAPABILITY)
     if spec.schema_version == ATTACK_SHARED_TYPE_AMOUNT_VERSION:
@@ -243,6 +270,10 @@ def public_query_amount_runtime_dependencies(value: Mapping[str, Any]) -> tuple[
 
         return (PUBLIC_QUERY_AMOUNT_CAPABILITY, SOURCE_SHARED_TYPE_AMOUNT_CAPABILITY,
                 SHARED_CREATURE_TYPE_QUERY_CAPABILITY, "target.ability_source.current_or_lki")
+    if spec.schema_version == ENTRY_SHARED_TYPE_AMOUNT_VERSION:
+        from .shared_creature_type_model import SHARED_CREATURE_TYPE_QUERY_CAPABILITY
+
+        return (PUBLIC_QUERY_AMOUNT_CAPABILITY, ENTRY_SHARED_TYPE_AMOUNT_CAPABILITY, SHARED_CREATURE_TYPE_QUERY_CAPABILITY)
     return (PUBLIC_QUERY_AMOUNT_CAPABILITY,)
 
 

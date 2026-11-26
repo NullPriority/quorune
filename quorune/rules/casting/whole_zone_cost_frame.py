@@ -1,4 +1,4 @@
-"""Authoritative restart frame for a cast with two automatic zone costs."""
+"""Authoritative restart frame for priority actions with whole-zone costs."""
 
 from __future__ import annotations
 
@@ -114,3 +114,16 @@ class WholeZoneCostChoiceRequired(ReplacementChoiceRequired):
     def __init__(self, required: ReplacementChoiceRequired, frame: WholeZoneCostFrame):
         super().__init__(batch=required.batch, effects=required.effects, pending=required.pending)
         self.frame = frame
+
+
+def whole_zone_cost_event_ids(batch, response, *, action, seat):
+    frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
+    if action == "activate":
+        from ..activation.whole_hand_mana_costs import validate_activation_frame
+
+        validate_activation_frame(frame, response)
+    elif action == "cast":
+        frame.validate_response(response)
+    else:
+        raise ReplacementEffectError("Automatic zone costs require their exact priority action")
+    return frame.replacement_event_ids(batch, seat=seat)

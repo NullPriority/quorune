@@ -1,6 +1,7 @@
 """Versioned public permanent state, separate from derived characteristics."""
 from dataclasses import dataclass,fields
 from collections.abc import Mapping
+from typing import Any
 
 BATTLEFIELD_ENTRY_PLAYER_VERSION_FIELD = "battlefield_entry_player_version"
 
@@ -19,6 +20,11 @@ ZONE_EVENT_NUMERICS_KEY = 'public_zone_event_numerics'
 ZONE_EVENT_NUMERICS_VERSION = 2
 STATE_QUALIFIED_ZONE_CAPABILITY='trigger.event.state_qualified_zone_change'
 STATE_QUALIFIED_DAMAGE_CAPABILITY='trigger.event.state_qualified_damage'
+COUNTERED_DAMAGE_SOURCE_CAPABILITY = "trigger.event.countered_creature_combat_damage"
+COUNTERED_DAMAGE_SOURCE_VARIANT = "countered_controlled_creature_combat_damage_player"
+SOURCE_PLUS_ONE_COUNTER_FIELD = "source_had_plus_one_counter"
+COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY = "trigger.event.countered_combat_damage_draw_proliferate"
+SOURCE_ANY_COUNTER_FIELD = "source_had_any_counter"
 
 
 def permanent_event_state_version(value):
@@ -62,8 +68,13 @@ def sealed_permanent_state_context(characteristics):
     return PermanentEventState.from_dict(characteristics[PERMANENT_EVENT_STATE_KEY]).context()
 
 
-def damage_permanent_state_context(facts):
-    return {} if facts is None else {'source_'+key:value for key,value in facts.context().items()}
+def damage_permanent_state_context(facts, *, had_plus_one_counter=None, had_any_counter=None):
+    context = {} if facts is None else {"source_" + key: value for key, value in facts.context().items()}
+    if had_plus_one_counter is not None:
+        context[SOURCE_PLUS_ONE_COUNTER_FIELD] = had_plus_one_counter
+    if had_any_counter is not None:
+        context[SOURCE_ANY_COUNTER_FIELD] = had_any_counter
+    return context
 
 
 def permanent_state_from_damage_context(payload):
@@ -106,6 +117,78 @@ def state_qualified_zone_runtime_dependencies(program):
         capability=STATE_QUALIFIED_ZONE_CAPABILITY)
 
 
+def countered_creature_combat_damage_condition():
+    return {"all": [
+        {"field": "source_controller", "op": "eq", "value": "$source.controller"},
+        {"field": "source_zone", "op": "eq", "value": "battlefield"},
+        {"field": "source_types", "op": "contains_any", "value": ["creature"]},
+        {"field": "target_kind", "op": "eq", "value": "player"},
+        {"field": "combat", "op": "truthy", "value": True},
+        {"field": SOURCE_PLUS_ONE_COUNTER_FIELD, "op": "eq", "value": True},
+    ]}
+
+
+def any_counter_combat_damage_condition():
+    conditions = countered_creature_combat_damage_condition()["all"]
+    conditions[-1]["field"] = SOURCE_ANY_COUNTER_FIELD
+    return {"all": conditions}
+
+
+def _uses_countered_damage_source(value, *, field=SOURCE_PLUS_ONE_COUNTER_FIELD):
+    if isinstance(value, Mapping):
+        return (value.get("field") == field
+                or any(_uses_countered_damage_source(child, field=field) for child in value.values()))
+    if isinstance(value, (list, tuple)):
+        return any(_uses_countered_damage_source(child, field=field) for child in value)
+    return False
+
+
+def optional_draw_proliferate_is_closed(effects, *, player='$controller') -> bool:
+    from .counter_placement_event_model import PROLIFERATE_ORDER_VERSION_FIELD
+
+    if not isinstance(effects, (list, tuple)) or len(effects) != 2:
+        return False
+    draw, proliferate = effects
+    return (
+        draw == {"op": "draw", "player": player, "count": 1, "private": True}
+        and type(draw["count"]) is int and draw["private"] is True
+        and proliferate == {"op": "proliferate", PROLIFERATE_ORDER_VERSION_FIELD: 1}
+        and type(proliferate[PROLIFERATE_ORDER_VERSION_FIELD]) is int
+    )
+
+
+def supported_countered_combat_optional_result(program: Any) -> bool:
+    from .replacement.immutable import FrozenMap
+
+    if ((program.event, program.active_zone) != ("damage.dealt", "battlefield")
+            or program.target_schema is not None or len(program.effects) != 1
+            or FrozenMap(program.event_condition or {}) != FrozenMap(any_counter_combat_damage_condition())):
+        return False
+    wrapper = program.effects[0]
+    return (set(wrapper) == {"op", "player", "effects"} and wrapper["op"] == "offer_optional_effect"
+            and wrapper["player"] == "$controller" and optional_draw_proliferate_is_closed(wrapper["effects"]))
+
+
 def state_qualified_damage_runtime_dependencies(program):
+    if (COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY in program.capability_dependencies
+            or _uses_countered_damage_source(program.event_condition, field=SOURCE_ANY_COUNTER_FIELD)):
+        if (not supported_countered_combat_optional_result(program)
+                or program.handlers or program.cost_schema is not None
+                or "one_or_more_event_batch" not in program.coverage
+                or program.trigger_limit != {"schema_version": 4, "kind": "optional_result_once_per_turn"}):
+            raise ValueError("Countered combat group requires its exact optional draw and proliferate result")
+        return (COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY,)
+    if (COUNTERED_DAMAGE_SOURCE_CAPABILITY in program.capability_dependencies
+            or _uses_countered_damage_source(program.event_condition)):
+        from .replacement.immutable import FrozenMap
+
+        expected = {"op": "offer_draw", "player": "$controller", "drawer": "$controller",
+                    "count": 1, "private": True}
+        if (program.event != "damage.dealt" or program.active_zone != "battlefield"
+                or FrozenMap(program.event_condition) != FrozenMap(countered_creature_combat_damage_condition())
+                or program.target_schema is not None or program.handlers or len(program.effects) != 1
+                or FrozenMap(program.effects[0]) != FrozenMap(expected)):
+            raise ValueError("Countered creature damage requires the exact controlled combat draw occurrence")
+        return (COUNTERED_DAMAGE_SOURCE_CAPABILITY,)
     return _state_event_dependencies(program,prefix='source_'+PERMANENT_EVENT_STATE_PREFIX,
         events={'damage.dealt'},capability=STATE_QUALIFIED_DAMAGE_CAPABILITY)

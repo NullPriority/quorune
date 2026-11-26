@@ -182,10 +182,9 @@ class InteractionKernelTests(unittest.TestCase):
         engine._cast("A", {"card": drain.ref, "targets": [target.ref]})
         self.resolve_top(engine)
         self.assertFalse(any(item.ref == target.ref for item in engine.state.stack))
-        delayed = next(
-            trigger
-            for trigger in engine.state.delayed_triggers
-            if trigger.label == "Mana Drain delayed mana"
+        delayed, = (
+            trigger for trigger in engine.state.delayed_triggers
+            if trigger.controller == "A" and trigger.event_kind == "step.begin"
         )
         self.assertEqual(
             ["precombat_main", "postcombat_main"],
@@ -410,7 +409,8 @@ class InteractionKernelTests(unittest.TestCase):
         delayed = next(
             trigger
             for trigger in engine.state.delayed_triggers
-            if trigger.label == "Pact of Negation delayed payment"
+            if trigger.controller == "A" and trigger.event_kind == "step.begin"
+            and trigger.condition.get("step") == "upkeep"
         )
         advance_fixture_turn(engine)
         matches = engine._matching_delayed_triggers(
@@ -451,7 +451,8 @@ class InteractionKernelTests(unittest.TestCase):
         delayed = next(
             trigger
             for trigger in engine.state.delayed_triggers
-            if trigger.label == "Pact of Negation delayed payment"
+            if trigger.controller == "A" and trigger.event_kind == "step.begin"
+            and trigger.condition.get("step") == "upkeep"
         )
         engine.state.players["A"].mana_pool.update(
             {"C": 3, "U": 2}
@@ -521,7 +522,8 @@ class InteractionKernelTests(unittest.TestCase):
         delayed = next(
             trigger
             for trigger in engine.state.delayed_triggers
-            if trigger.label == "Pact of Negation delayed payment"
+            if trigger.controller == "A" and trigger.event_kind == "step.begin"
+            and trigger.condition.get("step") == "upkeep"
         )
         advance_fixture_turn(engine)
         engine.state.active_player = "A"

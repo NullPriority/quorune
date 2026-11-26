@@ -2,12 +2,15 @@ from __future__ import annotations
 
 """Compile bounded static characteristic children into the existing grant owner."""
 
-from ..ability_fragments import StaticComponentSpec, ability_fragment_to_dict
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE, StaticComponentSpec, ability_fragment_to_dict
 from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
+from ..rules.match_outcome_restrictions import MATCH_OUTCOME_RESTRICTION_TEMPLATE, compile_match_outcome_component
 from ..static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY
 
 
 def _compiled_characteristic(text, *, source_name):
+    if outcome := compile_match_outcome_component(text):
+        return MATCH_OUTCOME_RESTRICTION_TEMPLATE, outcome.descriptor(), outcome.dependencies
     from .continuous_templates import (
         attached_fixed_characteristics_handler,
         fixed_power_toughness_anthem_handler,
@@ -34,7 +37,8 @@ def compile_granted_characteristic_inner(**values):
         return None
     return runtime_handler_node(node_id=values['node_id'], line=values['line'], span=values['span'],
         compiled=compiled, kind='static_ability', event='characteristics.evaluate', active_zone='battlefield',
-        runtime_coverage=(), dependency_reason='Granted characteristic child requires its existing continuous owner',
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,) if compiled[0] == MATCH_OUTCOME_RESTRICTION_TEMPLATE else (),
+        dependency_reason='Granted characteristic child requires its existing continuous owner',
         capability_registry=values['capability_registry'], capability_profile=values['capability_profile'],
         residuals=values['residuals'])
 

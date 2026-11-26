@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "e7eb7ac8-08ab-419b-8508-987afd0bb93b",
+      "name": "Cunning Rhetoric",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever an opponent attacks you and/or one or more planeswalkers you control, exile the top card of that player's library. You may play that card for as long as it remains exiled, and you may spend mana as though it were mana of any color to cast it.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "e7eb7ac8-08ab-419b-8508-987afd0bb93b",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "You'll still pay all costs for a spell cast this way, including additional costs. You may also pay alternative costs if any are available."
+    },
+    {
+      "oracle_id": "e7eb7ac8-08ab-419b-8508-987afd0bb93b",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions for the exiled card. If it's a land, you can't play it unless you have land plays available."
+    },
+    {
+      "oracle_id": "e7eb7ac8-08ab-419b-8508-987afd0bb93b",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you play a card this way, it leaves exile and becomes a new object. If it returns to exile later in the turn, you can't play it again."
+    }
+  ]
+}

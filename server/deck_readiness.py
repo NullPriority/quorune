@@ -153,6 +153,7 @@ def compact_deck_preflight(report: dict[str, Any]) -> dict[str, Any]:
             reasons.extend(reason for reason in result["reasons"] if reason not in reasons)
     affected = [{"name": name, "reasons": reasons} for name, reasons in reasons_by_name.items()]
     return {
+        "card_rules_ready": bool(report.get("card_rules_ready")),
         "trusted_only_ready": bool(report.get("trusted_only_ready")),
         "deck_review_eligible_possible": bool(report.get("deck_review_eligible_possible")),
         "fully_playable_cards": report.get("fully_playable_cards"),

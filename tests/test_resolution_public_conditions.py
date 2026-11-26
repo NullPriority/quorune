@@ -22,6 +22,46 @@ from inherited_composition_fixture import InheritedNativeFixture
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_controlled_land_threshold_repeats_only_the_draw_and_tapped_entry(self):
+        from test_bound_effect_programs import record
+        from quorune.oracle_ir import compile_oracle_card
+
+        registry = load_default_capability_registry()
+        text = (
+            "{T}, Sacrifice another creature: Draw a card. "
+            "You may put a land card from your hand onto the battlefield tapped. "
+            "If you control six or more lands, repeat this process once."
+        )
+        ir = compile_oracle_card(
+            record(text, "Creature — Human"),
+            capability_registry=registry,
+            capability_profile="commander_review",
+        )
+        self.assertEqual("exact", ir.status, ir.to_dict())
+        node, = ir.faces[0].nodes
+        draw, entry, repeat = node.effects
+        self.assertEqual(("draw", "put_card_from_hand"), (draw["op"], entry["op"]))
+        self.assertEqual(1, draw["count"])
+        self.assertIs(entry["tapped"], True)
+        self.assertEqual("apply_if_public_condition", repeat["op"])
+        self.assertEqual(6, repeat["condition"]["amount"])
+        self.assertEqual([draw, entry], repeat["effects"])
+        self.assertTrue(node.cost["tap_source"])
+        self.assertEqual("sacrifice_one", node.cost["choices"][0]["k"])
+        for invalid in (
+            text.replace("repeat this process once", "repeat this process twice"),
+            text.replace("draw a card", "draw two cards").replace("Draw a card", "Draw two cards"),
+            text.replace("a land card", "a basic land card"),
+            text.replace("more lands", "more creatures"),
+        ):
+            with self.subTest(invalid=invalid):
+                unsupported = compile_oracle_card(
+                    record(invalid, "Creature — Human"),
+                    capability_registry=registry,
+                    capability_profile="commander_review",
+                )
+                self.assertTrue(unsupported.material_residuals)
+
     def test_public_alternative_preserves_prefix_and_validates_both_result_shapes(self):
         from quorune.resolution_conditions import RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
         from quorune.rules.resolution_condition_shapes import resolution_condition_node_capabilities

@@ -67,7 +67,9 @@ def optional_life_cost_variants(host, seat, card, options, *, cast_type_line):
     for provider in providers:
         groups[provider['cost']['color']].append(provider)
     colors = sorted(groups)
-    maximum = max(0, host.state.players[seat].life // 2)
+    from ...life_state import available_life_for_payment
+
+    maximum = max(0, available_life_for_payment(host, seat) // 2)
     # Equal-color providers have identical consequences. Enumerate counts, not subsets.
     counts = tuple(tuple(n) for n in product(*(range(min(len(groups[c]), maximum) + 1) for c in colors)) if 0 < sum(n) <= maximum)
     from ...morph import FACE_DOWN_CAST_METHODS
@@ -104,8 +106,10 @@ def optional_life_payment_affordable(host, seat, option, response):
     from ...life_state import LifeStateError, prepare_life_payment
     from ...printed_mana_cost_model import printed_phyrexian_life_payment
     from ..casting_additional_cost_groups import fixed_life_payment_additional_cost, announced_x_life_additional_cost
+    from .library_top_life import LIBRARY_TOP_LIFE_PRICE_FIELD, library_top_life_amount
+
     printed = printed_phyrexian_life_payment(option)
-    amount = optional_life_cost_amount(option) + printed
+    amount = optional_life_cost_amount(option) + printed + library_top_life_amount(option)
     if not amount:
         return True
     for raw in option.get('additional_costs', ()):
@@ -117,10 +121,12 @@ def optional_life_payment_affordable(host, seat, option, response):
             amount += declared.amount_for(option.get('announced_additional_x'))
         elif raw.get('kind') == 'life_x':
             amount += int(response.get('x', 0))
-    if printed:
+    if printed or LIBRARY_TOP_LIFE_PRICE_FIELD in option:
         try:
             prepare_life_payment(host, seat, amount)
         except LifeStateError:
             return False
         return True
-    return host.state.players[seat].life >= amount
+    from ...life_state import available_life_for_payment
+
+    return available_life_for_payment(host, seat) >= amount

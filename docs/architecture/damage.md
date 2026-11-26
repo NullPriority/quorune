@@ -32,6 +32,14 @@ replaces these facts with the destination snapshot; it recomputes block-pair
 and shared-color relations instead of inheriting the former recipient's scope.
 Empty source and redirection extensions preserve their legacy serialized form.
 
+A one-point redirection keeps the remaining damage on its original recipient.
+The redirected point keeps the same source and combat facts and uses the new
+recipient's current replacement and prevention eligibility. The affected
+controller chooses the order when several simultaneous assignments compete for
+that point. Each effect applies once and expires at cleanup if unused. It
+cannot affect a returned incarnation of either permanent. When damage from one
+occurrence reconverges, result processing deals it together.
+
 Current execution also seals typed public permanent state from the canonical
 object query. Singular source-qualified damage subscriptions distinguish
 enchanted, equipped, modified, tapped and combat state without reading the
@@ -40,6 +48,13 @@ qualify as modifications; an Aura qualifies only when its controller matches
 the permanent's controller. The optional versioned snapshot survives damage
 proposal serialization, replacement choices and final semantic dispatch.
 Historical records omit unknown facts; partial or coerced facts reject.
+
+A trusted counter-qualified draw subscriber requests one additional public
+source fact for creature combat damage. The sealed boolean records whether
+that source had a +1/+1 counter when damage was dealt. The resulting triggers
+remain independent per source and occurrence. Counter changes after damage
+leave those triggers in place. Saved registries without the subscriber keep
+the former source and event encodings.
 
 Newly compiled battlefield-static damage components require their own current
 layer-6 ability component. Amount replacements, fixed prevention and
@@ -198,10 +213,12 @@ overlapping groups before creating proposals. Every recipient then enters one
 rollback, and replay behavior cannot diverge from single-target or combat
 damage.
 
-Death-exile followups seal the originally selected creature or the creatures
-that actually received positive damage. The typed end-of-turn journal exposes
-their battlefield-to-graveyard replacements before state-based actions. A
-returning permanent has a new incarnation and leaves the prior rule behind.
+Death-exile followups can seal an announced creature, an announced creature
+or planeswalker, or creatures that actually received positive damage. A
+followup that names the announced target still seals that incarnation when
+damage is prevented. The end-of-turn journal applies the battlefield-to-
+graveyard replacement before state-based actions. A returning permanent has
+a new incarnation and leaves the prior rule behind.
 
 The affected-set owner accepts a nonnegative resolved integer. A zero amount
 delegates to the same canonical no-damage boundary: it produces no replacement
@@ -276,7 +293,10 @@ gain result for a prohibited player. Ordinary life changes retain a zero
 resolved audit result without dispatching a gain occurrence. Life loss and
 life payments retain their separate rules. Each damage step collects its own
 current snapshot, while simultaneous damage results use the same precommit
-permission facts.
+permission facts. The controller's low-life doubler uses the same pre-event
+life total for the entire replacement sequence. A positive life-total setting
+enters that sequence as a gain equal to the difference from the current
+total.
 
 Static unpreventability uses the existing authoritative damage flag. Current
 ambient rules are collected when damage is prepared; a source's own rule is
@@ -331,6 +351,13 @@ Attached tap-or-damage subscriptions independently seal the same reference
 from each represented event transport. Unknown recipient predicates remain
 compiler residuals.
 
+A subtype-qualified damage trigger uses the committed occurrence. The
+ability belongs to its provider's controller. The result belongs to the
+original dealer's current controller or its last known controller after
+departure. A combat-to-player trigger may offer that controller a token.
+A general damage trigger can instead use the actual dealt amount for a
+separate life change, including damage dealt to a permanent.
+
 ## Replay, privacy, and extension
 
 Event IDs derive from stable damage-step, source-incarnation, recipient, and
@@ -375,3 +402,18 @@ damage batch to the players who accepted. All declines can trigger the
 printed draw or mill for the original target. For source-entry abilities,
 an acceptance can require sacrifice of the original creature even if
 replacement or prevention leaves the accepting player's life unchanged.
+
+
+## Combat point counters
+
+A point-counter artifact's removal trigger sees actual creature combat damage
+to its controller. Its placement trigger sees actual creature combat damage
+from a creature that controller controls to an opponent. Each qualifying
+damage event keeps its own recipient, even when two attackers hit the same
+player together. Fully prevented damage produces no occurrence.
+
+The placement trigger places the counter before testing the original
+artifact's point count. A departed source supplies its final public point
+count. Meeting the threshold removes only its point counters and applies loss
+to the actual damaged player. The tapped mana ability uses the same ordinary
+counter replacement owner, with no threshold check.

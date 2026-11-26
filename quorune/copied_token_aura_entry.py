@@ -10,6 +10,7 @@ from .aura.model import AuraEntryChoiceRequired, AuraEntryOutcome, AuraRuleError
 from .aura.runtime import prepare_aura_entry
 from .continuous_effect_model import ContinuousObjectIdentity
 from .token_copy_recipes import TOKEN_COPY_BATCH_FIELD, TokenCopyBatchSpec, TokenCopyRecipeSpec
+from .rules.destroyed_creature_copy import COMMITTED_DEATH_COPY_FIELD
 from .token_copy_recipient_model import has_occurrence_copy_recipient
 
 
@@ -19,7 +20,7 @@ COPIED_AURA_TOKEN_SELECTIONS = "copied_aura_token_selections"
 
 def copied_token_instruction(effect: Mapping[str, Any]) -> bool:
     return (
-        effect.get("op") == "create_token" and "copy_spec" in effect
+        effect.get("op") == "create_token" and ("copy_spec" in effect or COMMITTED_DEATH_COPY_FIELD in effect)
         or effect.get("op") == "create_token_batch" and TOKEN_COPY_BATCH_FIELD in effect
     )
 
@@ -180,7 +181,12 @@ def complete_copied_aura_token_choice(host, decision, *, error_type: type[Except
         raise error_type("Copied Aura token continuation has no current resolving controller")
     try:
         slot = _copy_slot(raw["slot"])
-        if has_occurrence_copy_recipient(effect):
+        if COMMITTED_DEATH_COPY_FIELD in effect:
+            from .rules.destroyed_creature_copy import committed_death_copy_controller
+
+            if committed_death_copy_controller(host, effect, item) != actor:
+                raise AuraRuleError("Copied Aura choice requires its death-copy recipient")
+        elif has_occurrence_copy_recipient(effect):
             from .rules.token_copy_recipients import resolved_occurrence_copy_recipient
 
             if resolved_occurrence_copy_recipient(host, effect, item) != actor:

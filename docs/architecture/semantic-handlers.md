@@ -19,6 +19,16 @@ exile branch. Resolved prices use an explicit version-thirteen cost kind;
 positive fixed-life and fixed-mana Recover encodings keep their meanings.
 Unscoped resolved prices, other rounding and unrepresented riders fail closed.
 
+A controller-first mana contribution gives each remaining player a resolution
+choice in turn order. Each player can activate represented mana abilities,
+contribute zero, or select the exact eligible units from their own pool. The
+payment owner rechecks the current quote and the selected units on submission.
+Once every contribution is committed, the draw owner uses the combined amount
+for each player’s private draws in active-player order. Saved continuations
+preserve the next payer, the amount already paid, and pending mana replacement
+choices. The compiler admits the complete draw instruction. Other printed
+contribution results remain unresolved.
+
 Death-controller optional draws use version two of the event optional-draw
 instruction. The complete all-creature death occurrence retains the creature's
 last battlefield controller as both chooser and drawer, independently from the
@@ -85,6 +95,15 @@ replace the departed explorer's identity or controller. The legacy permanent
 completion and qualified creature completion join one ordinary APNAP batch;
 the type facts remain transient choice and intent data.
 
+Ordinary artifact departure can produce one counter batch for the original source and a current controlled subtype set. The query retains the trigger controller, and both contributions to an overlapping recipient are combined before replacements. A departed or newer source incarnation receives only independently applicable subtype counters.
+
+A trigger that names an artifact an opponent controls reads its battlefield controller immediately before departure. Its fixed counter result queries the trigger controller's current creatures for either printed subtype. A creature with both subtypes receives one placement.
+
+A temporary combat prevention ability binds the creature that currently has the grant and the player receiving the damage event. Its additional draws use the damage amount at application, including when prevention is prohibited. The ordinary ordered draw coordinator retains both participants, replacement choices, and private cards. [Assassin’s Creed release notes](https://magic.wizards.com/en/news/feature/assassins-creed-release-notes)
+
+A fixed stackless payment adds its selected mana, then resolves positive life gain for the original payer through current life replacements. A pending replacement choice retains the same payment identity and resumes that action.
+
+
 Public source-counter results reuse the counter compiler's self-reference
 vocabulary and closed counter/controller sequence owner. Source growth followed
 by a temporary declaration rule composes the existing leaves, each pinned to
@@ -96,6 +115,13 @@ the object’s card types, other subtypes and abilities. Any associated
 flying, base statistics or modifiers use their own layers with one
 resolution timestamp. The result locks its affected objects through the
 end of the turn.
+
+All-player turn rules use the continuous-effect journal and expire at cleanup.
+Player hexproof uses the normal opposing-source check. Life-loss prohibition
+blocks positive life payments and preserves life gain and other results of
+dealt damage. Match outcome prohibition applies to explicit and state-based
+wins and losses. Players can still concede, and the last remaining player
+wins. The resolved rules remain in force after their caster leaves the game.
 
 A two-player life exchange snapshots the two valid participants and their
 current totals. The life owner checks whether both requests can proceed,
@@ -246,6 +272,11 @@ replacement changes or prevents the actual draw. The discard choice is issued
 after the draw, includes the resulting hand, and remains private to its chooser.
 Arbitrary linked conditions, random counts, and unrepresented player variants
 remain residuals.
+
+A source can offer fixed opponent life loss after a controller cast on an
+opponent's turn. Each qualifying cast independently uses the retained
+turn and caster facts. The optional chooser can decline or commit one
+opponent-only life batch.
 
 Optional-result validation receives the existing immutable resolving-source
 snapshot from the owning stack item, both when preparing a choice and when
@@ -497,6 +528,12 @@ Commander exile-to-command choice happens after immediate blink finishes, but
 may remove a delayed-return card from exile. Old records retain their pinned
 trust provenance; this new grammar does not reinterpret historical records.
 
+A life-paid library-top activation uses the normal activation cost and zone
+owners. Each resolution retains the resulting face-down exile incarnation
+and schedules one independent trigger for the controller's next end step.
+The delayed return puts the retained object in that player's hand. An empty
+library or redirected move leaves the delayed trigger with no object to return.
+
 Schema four adds the separately gated immediate transformed-source return.
 The linked owner derives an eligible back face from the physical card and gives
 that face to the zone owner before entry processing. It retains the resolving
@@ -553,6 +590,14 @@ controller's current lands at trigger creation and resolution. A delayed
 battlefield return with a fixed counter uses the same incarnation check.
 The entry transaction places the counter and applies replacements before
 publishing the battlefield entry.
+
+The controlled nonflying creature death result uses the last battlefield
+controller and effective flying. Its trigger retains every physical card that
+reached the graveyard from the same death, including the parts of a merged
+permanent. Resolution revalidates each incarnation and returns the eligible
+cards together under their owners. The entry transaction places the flying
+counters before publishing entry events. An arriving Aura uses its owner's
+ordinary nonspell attachment choice before movement.
 
 The same payment registration accepts a closed v3 source-maintenance payload.
 Its fixed cost uses the shared v2 cost preparation and completion helpers.
@@ -651,12 +696,35 @@ the grant while later activations use the current controller. Later entrants
 and departed recipients do not inherit the earlier effect. A departure event
 uses the canonical predeparture fragment snapshot to publish its already
 triggered ability with the departing recipient as source.
+
+An activated ability can grant one quoted combat-damage trigger and prevent
+the same revalidated creature from being blocked that turn. When the
+creature deals combat damage to a player, its controller at trigger time
+draws one card per counter kind present on that source at resolution. The
+draw amount uses last-known counters for a departed source. Cleanup ends
+the temporary ability and block restriction.
+
 The event-bound battlefield-return instruction emits the existing typed zone
 move with its exact graveyard incarnation, owner controller, tapped entry and
 optional fixed entry counter. Replacement preparation receives the same
 requested tapped state as commit, so the prepared identity remains valid when
 entry counters and tapped entry occur together. The existing Persist/Undying
 owner follows the same entering-controller counter attribution.
+
+A source-bound delayed graveyard return retains the original battlefield
+source and the physical cards from the qualifying departure. The one-shot
+scheduler checks the source at the next end step. Resolution checks it
+again before offering the return to the delayed trigger's controller. The
+existing zone owner returns eligible graveyard incarnations simultaneously
+and collects any Aura attachment choices before movement.
+
+An opposing-death return records the physical graveyard arrivals and the
+resolving trigger's controller. It uses the next actual end step and returns
+only the retained incarnations that still qualify. The zone move carries
+the extra entry counter through the normal replacement path. It commits
+the additive characteristics on the new battlefield incarnation before
+publishing its entry occurrence. Prospective replacement decisions continue
+to use their existing inputs.
 
 Reanimation instruction version seven represents an Aura returning after its
 enchanted creature dies. The occurrence captures the Aura's battlefield
@@ -728,6 +796,14 @@ zero. Casting-cost discards and earlier turn-history events cannot enter the
 result. Replacement suspension retains the intent identity; conditional return
 suspension retains the already bound draws through the existing completed-choice
 continuation. No new game-state cache or mutation owner is introduced.
+
+Counted Ward lets the original targeting stack object's controller pay with
+two distinct permanents that player controls. The shared object-payment owner
+validates and moves both as one cost. Declining attempts to counter that stack
+object. Variable Annihilator uses the defending player from the original attack
+and counts the attacking incarnation's +1/+1 counters at resolution, with last
+known information after departure. It reuses the fixed Annihilator sacrifice
+instruction with the resolved count.
 
 Mandatory “sacrifice a permanent” instructions for the resolving controller
 reuse the same `choose_cards_apnap` owner as fixed player-targeted sacrifices.
@@ -1109,3 +1185,13 @@ the resolving player as its expiry anchor. The ordinary declaration
 solver collects that fixed mana requirement for each chosen attack
 against the player or a planeswalker they control. The source can leave
 while the payment remains active. The player's next turn ends the rule.
+
+## Public opponent choices and temporary control
+
+Fame and Fortune choices are public and proceed in turn order from the
+active player, skipping the spell controller. The spell controller
+chooses a current creature for each Fame player who controls one. The
+control owner applies the full set together, then untaps the creatures
+and gives them haste through cleanup. Each Fortune result keeps the
+ordinary private draw and public Treasure creation. An opponent who
+concedes on their choice leaves the remaining decisions intact.

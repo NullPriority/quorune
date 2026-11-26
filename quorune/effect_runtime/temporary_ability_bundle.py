@@ -5,7 +5,11 @@ from __future__ import annotations
 from ..continuous_effect_model import ContinuousOperation,Layer
 from ..continuous_effect_state import create_resolution_continuous_effect,resolution_effect_source
 from ..errors import GameRuleError
-from ..rules.temporary_ability_grant import decode_temporary_ability_grant,BACKUP_CONTEXT,BACKUP_COVERAGE
+from ..rules.temporary_ability_grant import (
+    BACKUP_CONTEXT, BACKUP_COVERAGE, decode_temporary_ability_grant, each_color_protection_query,
+    is_each_color_protection_bundle, validate_temporary_combat_draw_unblockable_child,
+)
+from ..rules.combat_prevention_draw import CombatPreventionDrawSpec, FRAGMENT_KIND as COMBAT_PREVENTION_DRAW_FRAGMENT
 from ..object_predicate import ObjectQuerySpec
 
 
@@ -56,8 +60,9 @@ def apply_temporary_ability_bundle(host,effect,*,actor,reason):
                 'ability_fragments': instruction['ability_fragments'], 'exclude_source': False, 'printed_only': False})
         except (TypeError, ValueError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
-        if len(fragments) != 1 or fragments[0]['kind'] not in {'granted_activated', 'granted_triggered'}:
-            raise GameRuleError('Temporary query grant requires one activated or triggered ability')
+        all_color_protection = query == each_color_protection_query(actor) and is_each_color_protection_bundle(fragments)
+        if not all_color_protection and (len(fragments) != 1 or fragments[0]['kind'] not in {'granted_activated', 'granted_triggered'}):
+            raise GameRuleError('Temporary query grant requires one closed ability bundle')
         targets = matching_battlefield_objects(host, query)
         _verify_child_programs(host, fragments)
         if targets:
@@ -79,6 +84,15 @@ def apply_temporary_ability_bundle(host,effect,*,actor,reason):
             if item is None or type(item.context.get(BACKUP_CONTEXT)) is not bool:raise GameRuleError('Printed ability grant requires its locked source origin')
             if not item.context[BACKUP_CONTEXT]:return []
         _verify_child_programs(host, fragments)
+        if fragments and fragments[0]["kind"] == "granted_triggered":
+            stack_item = next((item for item in host.state.stack if item.ref == source.stack_ref), None)
+            activation = host.semantics.get(stack_item.semantic_key) if stack_item is not None else None
+            validate_temporary_combat_draw_unblockable_child(activation, host.semantics.get)
+        if fragments and fragments[0]["kind"] == COMBAT_PREVENTION_DRAW_FRAGMENT:
+            if not source.stack_ref or not any(item.ref == source.stack_ref for item in host.state.stack):
+                raise GameRuleError("Combat prevention and draw requires its resolving grant")
+            instance = CombatPreventionDrawSpec(2, f"{source.stack_ref}:{card.logical_object_id}")
+            fragments = ({"kind": COMBAT_PREVENTION_DRAW_FRAGMENT, "value": instance.to_dict()},)
         operations=tuple([*(ContinuousOperation('add_ability',k) for k in keywords),*(ContinuousOperation('add_ability_fragment',value) for value in fragments)])
         if operations:create_resolution_continuous_effect(host,source=source,targets=(card,),layer=Layer.ABILITY,sublayer='6',operations=operations)
     except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc

@@ -145,6 +145,10 @@ class ContinuousEffectSourceContext:
     current_block_counterparts: tuple[ContinuousObjectIdentity, ...] = ()
     counter_placement_recipients: tuple[ContinuousObjectIdentity, ...] = ()
     linked_player: str | None = None
+    linked_color: str | None = None
+    linked_characteristic_cards: tuple = ()
+    linked_ability_pair: str | None = None
+    source_commander_colors: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
         counterparts = self.current_block_counterparts

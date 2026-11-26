@@ -1,0 +1,383 @@
+{
+  "cards": [
+    {
+      "oracle_id": "376c9d3f-21d3-4251-bb6a-026fa9e1b0e1",
+      "name": "Skyshroud Claim",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Search your library for up to two Forest cards, put them onto the battlefield, then shuffle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Temple Garden",
+      "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
+      "oracle_text": "({T}: Add {G} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+      "power": null,
+      "produced_mana": [
+        "G",
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Land — Forest Plains"
+    },
+    {
+      "oracle_id": "16052b52-ade1-406f-a06b-ce7ea607fb63",
+      "name": "Stomping Ground",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Mountain Forest",
+      "oracle_text": "({T}: Add {R} or {G}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G",
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Unlike most dual lands, this land has two basic land types. It's not basic, so cards such as District Guide can't find it, but it does have the appropriate land types for effects such as that of Drowned Catacomb (from the Ixalan set).",
+      "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect puts this land onto the battlefield tapped, you may pay 2 life, but it still enters tapped.",
+      "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
+      "published_at": "2025-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "This land has two basic land types. It's not basic, so cards such as Tend the Sprigs can't find it, but it does have the appropriate land types for effects such as that of Great Arashin City (from the Tarkir: Dragonstorm release).",
+      "oracle_id": "f413a83d-a40d-434c-b20a-4c707c0527fa",
+      "published_at": "2025-11-17",
+      "source": "wotc"
+    },
+    {
+      "oracle_id": "16052b52-ade1-406f-a06b-ce7ea607fb63",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Unlike most dual lands, this land has two basic land types. It's not basic, so cards such as District Guide can't find it, but it does have the appropriate land types for effects such as that of Drowned Catacomb (from the Ixalan set)."
+    },
+    {
+      "oracle_id": "16052b52-ade1-406f-a06b-ce7ea607fb63",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "If an effect puts this land onto the battlefield tapped, you may pay 2 life, but it still enters tapped."
+    },
+    {
+      "oracle_id": "16052b52-ade1-406f-a06b-ce7ea607fb63",
+      "published_at": "2026-10-07",
+      "source": "wotc",
+      "comment": "This land has two basic land types. It's not basic, so cards such as Final Frontier can't find it, but it does have the appropriate land types for effects such as that of Mistrise Village (from the Tarkir: Dragonstorm release)."
+    },
+    {
+      "oracle_id": "16052b52-ade1-406f-a06b-ce7ea607fb63",
+      "published_at": "2026-10-07",
+      "source": "wotc",
+      "comment": "If an effect puts this land onto the battlefield tapped, you may pay 2 life, but it still enters tapped."
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for focused native witnesses"
+}

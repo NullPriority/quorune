@@ -3,13 +3,18 @@
 from collections.abc import Mapping
 
 from ..ability_resolution_ordinal import (
-    is_second_ability_draw, is_third_ability_result, ordinal_controller_creatures,
-    validate_second_ability_draw, validate_third_ability_result,
+    FIRST_ARTIFACT_ENTRY_COUNTER_CAPABILITY, SECOND_LAND_ENTRY_REVEAL_CAPABILITY,
+    is_first_ability_counter, is_second_ability_draw, is_second_ability_reveal,
+    is_third_ability_result, ordinal_controller_creatures,
+    validate_first_ability_counter, validate_second_ability_draw, validate_second_ability_reveal,
+    validate_third_ability_result,
 )
 from ..replacement.immutable import FrozenMap, thaw_value
 
 
 _ORDINAL_CAPABILITIES = {"resolution.effect.public_condition", "condition.history.fixed_public_query"}
+CONTROLLED_ARTIFACT_ENTRY = FrozenMap({"field": "controller", "op": "eq", "value": "$source.controller"})
+CONTROLLED_LAND_ENTRY = FrozenMap({"field": "controller", "op": "eq", "value": "$source.controller"})
 _LIFE = {"op": "life", "player": "$controller", "delta": 1}
 _DAMAGE = {"op": "damage_each_opponent", "source": "$source", "amount": 1}
 _BUFF = {"op": "modify_stats_until_end_of_turn", "card": "$target.0", "power": 1, "toughness": 0}
@@ -44,6 +49,70 @@ def second_ability_draw_node_capabilities(*, effects, target_schema, mechanic_id
     except (TypeError, ValueError):
         return ()
     return _ordinal_component_capabilities(effects, target_schema, mechanic_ids, children)
+
+
+def first_ability_counter_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) != 2 or target_schema is not None:
+        return ()
+    if effects[0] != _LIFE or type(effects[0]["delta"]) is not int:
+        return ()
+    try:
+        children = validate_first_ability_counter(effects[1])
+    except (TypeError, ValueError):
+        return ()
+    required = _ordinal_component_capabilities(effects, target_schema, mechanic_ids, children)
+    return (*required, FIRST_ARTIFACT_ENTRY_COUNTER_CAPABILITY) if required else ()
+
+
+def first_ability_counter_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(is_first_ability_counter(effect) for effect in nested_effects(program.effects)):
+        return ()
+    if ((program.event, program.active_zone) != ("artifact.enter", "battlefield")
+            or program.cost_schema is not None or program.handlers
+            or not program.ability_id.startswith("trigger:")
+            or program.event_condition != CONTROLLED_ARTIFACT_ENTRY):
+        raise ValueError("The first-resolution counter requires its original controlled artifact entry")
+    required = first_ability_counter_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required:
+        raise ValueError("The first-resolution counter requires its mandatory life gain and original source result")
+    return (*required, "counter.producer.fixed_event_trigger",
+            "trigger.event.normalized_zone_change", "trigger.placement.apnap")
+
+
+def second_ability_reveal_node_capabilities(*, effects, target_schema, mechanic_ids):
+    from ..resolution_mana_model import ResolutionManaChoiceSpec
+
+    if len(effects) != 2 or target_schema is not None:
+        return ()
+    try:
+        prefix = ResolutionManaChoiceSpec.from_effect(effects[0])
+        if prefix != ResolutionManaChoiceSpec("one_color", 1) or FrozenMap(effects[0]) != FrozenMap(prefix.effect()):
+            return ()
+        children = validate_second_ability_reveal(effects[1])
+    except (KeyError, TypeError, ValueError):
+        return ()
+    required = _ordinal_component_capabilities(effects, target_schema, mechanic_ids, children)
+    return (*required, SECOND_LAND_ENTRY_REVEAL_CAPABILITY) if required else ()
+
+
+def second_ability_reveal_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if not any(is_second_ability_reveal(effect) for effect in nested_effects(program.effects)):
+        return ()
+    if ((program.event, program.active_zone) != ("land.enter", "battlefield") or program.cost_schema is not None
+            or program.handlers or program.event_condition != CONTROLLED_LAND_ENTRY):
+        raise ValueError("The second-resolution reveal requires its original unpriced controlled land entry")
+    required = second_ability_reveal_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required:
+        raise ValueError("The second-resolution reveal requires a complete mana choice and reveal-until partition")
+    return (*required, "trigger.effect.fixed_event", "trigger.event.normalized_zone_change", "trigger.placement.apnap")
 
 
 def _ordinal_component_capabilities(effects, target_schema, mechanic_ids, children):

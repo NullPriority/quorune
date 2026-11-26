@@ -457,7 +457,7 @@ class ExactArtifactEngineTests(unittest.TestCase):
             "A", treasure_ref, zones={"battlefield"}
         )
         copied = engine._effective_card_data(treasure)
-        self.assertEqual("Phyrexian Myr", copied["name"])
+        self.assertEqual("Phyrexian Myr Token", copied["name"])
         self.assertIn("Artifact Creature", copied["type_line"])
         self.assertEqual("2", copied["power"])
         self.assertIn("Haste", copied["keywords"])

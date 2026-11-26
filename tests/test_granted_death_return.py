@@ -50,7 +50,7 @@ class GrantedDeathReturnCompilerTests(unittest.TestCase):
                      'Creatures you control have undying X.',
                      'Creatures you control have persist and undying.',
                      'Creatures you control have persist and remember the prophecy.',
-                     'Other non-Human creatures you control get +1/+1 and have undying.',
+                     'Other non-Human creatures you control get +2/+2 and have undying.',
                      'Creatures you control have persist.\nThe remembered prophecy becomes true.'):
             with self.subTest(text=text):
                 ir = compile_oracle_card(query_record(text), capability_registry=registry)

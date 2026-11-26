@@ -327,7 +327,7 @@ class PutTypedCardFromHandHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
-        from ..rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_VERSION, decode_hand_entry_followup
+        from ..rules.hand_entry_followup import decode_hand_entry_followup
         from ..rules.attacking_card_entry import attacking_entry_choice, decode_hand_attacking_entry
 
         try:
@@ -385,7 +385,7 @@ class PutTypedCardFromHandHandler:
             'hand_entry_query': continuation.effect['_choice_query'],
         }
         if followup is not None:
-            move.update(schema_version=HAND_ENTRY_FOLLOWUP_VERSION, followup=followup.to_dict())
+            move.update(schema_version=continuation.effect["schema_version"], followup=followup.to_dict())
         if attacking:
             return SemanticChoiceCompletion(prepend_effects=(FrozenMap(attacking_entry_choice(move)),))
         return SemanticChoiceCompletion(prepend_effects=(FrozenMap(move),))

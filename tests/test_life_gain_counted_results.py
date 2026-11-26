@@ -107,6 +107,33 @@ class LifeGainCounterPaymentTests(unittest.TestCase):
             effects=(effect,), target_schema=result[2], cost_schema=None, handlers=(), coverage=())
         with self.assertRaises(ValueError): life_gain_counter_payment_program_dependencies(Row(**values))
 
+    def test_well_of_lost_dreams_payment_requires_original_controller_event_and_amount(self):
+        from quorune.compiler.life_gain_counted_results import capped_life_gain_draw_payment
+        from quorune.rules.life_gain_counted_results import capped_life_gain_draw_program_dependencies
+
+        text = ("You may pay {X}, where X is less than or equal to the amount of life you gained. "
+                "If you do, draw X cards.")
+        result, _ = capped_life_gain_draw_payment(text, binding=binding())
+        _, effects, schema, _ = result
+        values = dict(event="life.gained", active_zone="battlefield", event_condition=binding().event_condition,
+                      effects=effects, target_schema=schema, cost_schema=None, handlers=(), coverage=(),
+                      ability_id="trigger:front:n1")
+        self.assertIn("zone.draw.library_to_hand", capped_life_gain_draw_program_dependencies(Row(**values)))
+        for bad in (text.replace("less than or equal to", "less than"), text.replace("you gained", "they gained"),
+                    text.replace("draw X cards", "draw two cards"), text + " Scry 1."):
+            with self.subTest(body=bad):
+                self.assertIsNone(capped_life_gain_draw_payment(bad, binding=binding()))
+        self.assertIsNone(capped_life_gain_draw_payment(text, binding=binding(variant="opponent_life_gain")))
+        changes = (
+            {"event": "spell.cast"}, {"event_condition": None}, {"active_zone": "hand"},
+            {"effects": ({**effects[0], "schema_version": 17.0},)},
+            {"effects": ({**effects[0], "schema_version": 2},)},
+            {"effects": ({**effects[0], "payment": {**effects[0]["payment"], "limit": 9}},)},
+        )
+        for change in changes:
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                capped_life_gain_draw_program_dependencies(Row(**(values | change)))
+
     def test_resolved_projection_keeps_sealed_positive_count_and_rejects_unresolved_amount(self):
         from copy import deepcopy
         from quorune.rules.life_gain_counted_results import LIFE_GAIN_COUNTER_RESULT_FIELD as FIELD, life_gain_counter_payment_projection
@@ -185,6 +212,103 @@ class LifeGainCountedCounterNativeTests(InheritedNativeFixture, unittest.TestCas
                 capability_closure=self.registry.closure(deps, profile='commander_review').to_dict())
             bound = bind_semantic_program_runtime(changed, capability_registry=self.registry, profile='commander_review')
             self.assertFalse(bound['strict']); self.assertIn('capability:undeclared_runtime_dependency:' + cap, bound['blockers'])
+
+    def test_actual_well_of_lost_dreams_uses_committed_gain_after_replacement_and_source_departure(self):
+        from quorune.record import authoritative_state_hash
+
+        session, private = self.start(728030)
+        engine = session.engine
+        well = self.add(engine, "Well of Lost Dreams")
+        reflection = self.add(engine, "Boon Reflection")
+        gain = self.add(engine, "Revitalize", zone="hand")
+        answer = self.add(engine, "Disenchant", seat="B", zone="hand")
+        for card in (well, reflection, gain, answer):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 9, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", gain)
+        self.resolve_top(session)
+        self.assertEqual(46, session.state.players["A"].life)
+        self.assertEqual(1, self.trigger_count(session, well))
+        self.cast(session, "B", answer, [well.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[well.object_id].zone)
+
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        actor = session.packet("pilot:A", full=True)["decision"]
+        from quorune.choice_forms import build_action_form
+
+        action, = actor["ctx"]["legal_actions"]
+        self.assertEqual({"field": "x", "type": "integer", "minimum": 0, "maximum": 6, "default": 0},
+                         action["choice_schema"])
+        form = build_action_form(action, decision_kind="semantic.choice", context=actor["ctx"])
+        field, = form["fields"]
+        self.assertEqual(("x", "integer", 0, 6), (field["name"], field["control"], field["minimum"], field["maximum"]))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        for seat, amount in (("A", -1), ("A", True), ("A", 7), ("B", 4)):
+            denied = session.act("pilot:" + seat, {"action_id": "choose", "x": amount})
+            self.assertFalse(denied.ok, denied.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+        player = session.state.players["A"]
+        previous_hand = set(player.zones["hand"])
+        drawn = set(player.zones["library"][-4:])
+        previous_mana = sum(player.mana_pool.values())
+        result = session.act("pilot:A", {"action_id": "choose", "x": 4})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(previous_mana - 4, sum(session.state.players["A"].mana_pool.values()))
+        self.assertEqual(drawn, set(session.state.players["A"].zones["hand"]) - previous_hand)
+        for seat in "ABCD":
+            view = json.dumps(session.packet("pilot:" + seat, full=True)["state"])
+            for value in drawn:
+                reference = json.dumps(session.state.cards[value].ref)
+                if seat == "A":
+                    self.assertIn(reference, view)
+                else:
+                    self.assertNotIn(reference, view)
+        self.finish(session, private)
+
+    def test_actual_well_of_lost_dreams_quotes_only_payable_x_and_can_decline(self):
+        from quorune.record import authoritative_state_hash
+
+        session, private = self.start(728031)
+        well = self.add(session.engine, "Well of Lost Dreams")
+        other_gain = self.add(session.engine, "Revitalize", seat="B", zone="hand", ref="foreign-well-heal")
+        own_gain = self.add(session.engine, "Revitalize", zone="hand", ref="well-controller-heal")
+        for card in (well, own_gain, other_gain):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(session)
+        self.cast(session, "B", other_gain)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(43, session.state.players["B"].life)
+        self.assertEqual(0, self.trigger_count(session, well))
+
+        self.cast(session, "A", own_gain)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertEqual(43, session.state.players["A"].life)
+        decision = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual(2, decision["legal_actions"][0]["choice_schema"]["maximum"])
+        before = authoritative_state_hash(session.state)
+        too_much = session.act("pilot:A", {"action_id": "choose", "x": 3})
+        self.assertFalse(too_much.ok, too_much.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        session = self.replay(session, load=True)
+        player = session.state.players["A"]
+        previous_hand = list(player.zones["hand"])
+        previous_mana = dict(player.mana_pool)
+        result = session.act("pilot:A", {"action_id": "choose", "x": 0})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(previous_hand, session.state.players["A"].zones["hand"])
+        self.assertEqual(previous_mana, session.state.players["A"].mana_pool)
+        self.finish(session, private)
 
     def test_actual_printed_cast_and_gain_choose_target_before_one_white_mana_payment_and_replay_privately(self):
         s, private, source, gain, own, foreign = self.world(728001)

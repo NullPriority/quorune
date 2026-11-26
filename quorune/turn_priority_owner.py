@@ -108,6 +108,7 @@ class TurnPriorityDecisionOwner:
             "player.speed",
             "game.day_night",
             "permanent.transform",
+            "permanent.convert",
             "token.create",
             "control.change",
             "permanent.goad",
@@ -258,13 +259,7 @@ class TurnPriorityDecisionOwner:
             except ManaUndoError as exc:
                 raise GameRuleError(str(exc)) from exc
         elif action == "concede":
-            clear_mana_undo_stack(self.state.players[seat].stats)
-            if response.get("confirm_concede") is not True:
-                raise GameRuleError(
-                    "Concession requires explicit confirmation"
-                )
-            self.state.priority_passes = []
-            self.host._eliminate_players([seat], reason="conceded")
+            commit_confirmed_concession(self.host, seat, response)
             if getattr(self.state, "priority_concession_stabilization_version", None) == 1:
                 if not self.state.game_over:
                     self.state.priority_concession_resume_from = seat
@@ -735,3 +730,12 @@ class TurnPriorityDecisionOwner:
                 return
             self.host._enter_step()
         raise StateInvariantError("Automatic transition limit exceeded")
+
+
+def commit_confirmed_concession(host, seat, response):
+    """Commit the seat's confirmed departure through the game owner."""
+    clear_mana_undo_stack(host.state.players[seat].stats)
+    if response.get("confirm_concede") is not True:
+        raise GameRuleError("Concession requires explicit confirmation")
+    host.state.priority_passes = []
+    host._eliminate_players([seat], reason="conceded")

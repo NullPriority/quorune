@@ -373,6 +373,60 @@ class ConditionalFreeCastRuntimeTests(unittest.TestCase):
         broadened=[replace(p,target_schema={**p.target_schema,'types_any':['creature','artifact']}) if p.event=='resolve' else p for p in current]
         self.assertEqual(set(),shadowed_reviewed_zero_price_keys(record,broadened,(old,)))
 
+    def test_reviewed_free_casts_accept_known_ruling_revisions_only(self):
+        from quorune.card_programs.alternative_price_overlay import shadowed_reviewed_zero_price_keys
+        from quorune.compiler.program_generation import generated_programs
+        from quorune.preflight import semantic_preflight
+        from quorune.semantics import SemanticRegistry
+
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        rollick = self.db.lookup("Deadly Rollick", fuzzy=False)
+        price_rulings = tuple(replace(row, comment=row.comment.replace("\u2019", "'"))
+                             for row in self.db.rulings(rollick))
+        self.assertEqual(2, len(price_rulings))
+        swat = self.db.lookup("Deflecting Swat", fuzzy=False)
+        approved = {
+            "Deadly Rollick": (
+                price_rulings,
+                "576f66fcf0cc0784bc3004836757146c11b0cfb86bcc02e5a048cf7fe263a1e1",
+            ),
+            "Deflecting Swat": (
+                (*self.db.rulings(swat), *(replace(row, oracle_id=swat.oracle_id) for row in price_rulings)),
+                "6a932903212235325dcb33c06a042b4513c2e9a09882e36dc906d00e526b58f1",
+            ),
+        }
+        for record in (swat, rollick):
+            rows, expected = approved[record.name]
+            with self.subTest(card=record.name):
+                semantics = SemanticRegistry()
+                old, = semantics.programs_for_oracle(record.oracle_id)
+                self.assertNotEqual(expected, old.provenance["source_rulings_hash"])
+
+                def test_rulings(card):
+                    if card.oracle_id == record.oracle_id:
+                        return rows
+                    return original_rulings(card)
+
+                original_rulings = self.db.rulings
+                deck = DeckDefinition("Ruling revision", [DeckEntry(record.name, 1)], [])
+                with patch.object(self.db, "rulings", side_effect=test_rulings):
+                    generated = generated_programs(self.db, record, trust_level="trusted", **options)
+                    self.assertEqual({expected}, {p.provenance["source_rulings_hash"] for p in generated})
+                    self.assertEqual({old.key}, shadowed_reviewed_zero_price_keys(record, generated, (old,)))
+                    no_review = replace(old, provenance={k: v for k, v in old.provenance.items()
+                                                        if k != "reviewed_equivalent_rulings_hashes"})
+                    self.assertEqual(set(), shadowed_reviewed_zero_price_keys(record, generated, (no_review,)))
+                    status, = semantic_preflight(self.db, deck, registry=semantics)["cards"]
+                self.assertTrue(status["source_hash_match"], status["unresolved"])
+                self.assertTrue(status["card_program_strict_capability_ready"])
+                current = semantics.programs_for_oracle(record.oracle_id)
+                self.assertEqual({"cast.cost", "resolve"}, {p.event for p in current})
+                self.assertEqual({expected}, {p.provenance["source_rulings_hash"] for p in current})
+                revised = (*rows[:-1], replace(rows[-1], comment="Unreviewed fixture ruling."))
+                with patch.object(self.db, "rulings", return_value=revised):
+                    unknown = generated_programs(self.db, record, trust_level="trusted", **options)
+                self.assertEqual(set(), shadowed_reviewed_zero_price_keys(record, unknown, (old,)))
+
     def test_unowned_new_target_companion_stays_residual(self):
         from quorune.oracle_ir import compile_oracle_card
         source = self.db.lookup('Deflecting Swat')

@@ -23,7 +23,8 @@ from .creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_OPERATION,
     OCCURRENCE_POWER_DAMAGE_CONTEXT,
     OCCURRENCE_POWER_DAMAGE_VERSION,
-    is_creature_self_damage_set,
+    is_creature_self_damage_set, is_creature_controller_damage_set,
+    validate_creature_controller_damage_set,
     occurrence_power_damage_in,
     validate_creature_self_damage_set,
 )
@@ -349,23 +350,26 @@ _BATTLEFIELD_CREATURES = AffectedPermanentSetSpec(
 )
 
 
-def _creature_self_damage_proposals(host, effect, *, actor, reason):
+def _creature_set_damage_proposals(host, effect, *, actor, reason):
+    to_controller = is_creature_controller_damage_set(effect)
+    validate = validate_creature_controller_damage_set if to_controller else validate_creature_self_damage_set
     try:
-        validate_creature_self_damage_set(effect, resolved=True)
+        validate(effect, resolved=True)
         creatures = select_affected_permanents(
             host.affected_permanent_object_rows(actor), _BATTLEFIELD_CREATURES, actor=actor,
             active_seats=host.affected_permanent_active_seats(), apnap_order=host.affected_permanent_apnap_order(),
         )
-        return _self_damage_for_creatures(host, creatures, actor=actor, reason=reason)
+        return _damage_for_creature_set(host, creatures, actor=actor, reason=reason, to_controller=to_controller)
     except (DamageError, TypeError, ValueError) as exc:
         raise CreaturePowerDamageError(str(exc)) from exc
 
 
-def _self_damage_for_creatures(host, creatures, *, actor, reason):
+def _damage_for_creature_set(host, creatures, *, actor, reason, to_controller=False):
     proposals = []
-    batch_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:self-set"
+    batch_kind = "controller-set" if to_controller else "self-set"
+    batch_id = f"damage.creature-power:{host.state.revision}:{host.state.event_sequence + 1}:{batch_kind}"
     for row in creatures:
-        power = row.effective_power
+        power = 1 if to_controller else row.effective_power
         if type(power) is not int:
             raise CreaturePowerDamageError("A selected creature has no exact current power")
         if power <= 0:
@@ -378,7 +382,7 @@ def _self_damage_for_creatures(host, creatures, *, actor, reason):
             source = replace(source, oracle_id=None)
         proposals.append(damage_proposal(
             host, proposal_id=f"{batch_id}:{len(proposals)}", actor=actor,
-            source_ref=row.ref, target=row.ref, amount=power, combat=False,
+            source_ref=row.ref, target=row.controller if to_controller else row.ref, amount=power, combat=False,
             reason=reason, source_override=source,
         ))
     return proposals
@@ -393,8 +397,8 @@ def resolve_creature_power_damage(
 ) -> tuple[int, ...]:
     """Resolve one creature-power instruction through the canonical damage batch."""
 
-    if is_creature_self_damage_set(effect):
-        proposals = _creature_self_damage_proposals(host, effect, actor=actor, reason=reason)
+    if is_creature_self_damage_set(effect) or is_creature_controller_damage_set(effect):
+        proposals = _creature_set_damage_proposals(host, effect, actor=actor, reason=reason)
         return _resolve_power_damage_batch(host, effect, proposals)
     kind, source_ref, target_ref, must_be_creature, multiplier = _instruction(effect)
     if source_ref is None or target_ref is None:

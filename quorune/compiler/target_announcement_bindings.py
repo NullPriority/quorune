@@ -5,6 +5,10 @@ from __future__ import annotations
 from . import regex_working_set as re
 
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
+from ..rules.stack_controller_payment_shapes import (
+    controlled_sliver_opponent_target_announcement_condition,
+    target_announcement_payment_condition_is_closed,
+)
 from ..rules.target_announcements import TARGET_ANNOUNCEMENT_CAPABILITY, TARGET_ANNOUNCEMENT_EVENT
 from .fixed_public_event_trigger_bindings import _spec
 
@@ -12,6 +16,9 @@ from .fixed_public_event_trigger_bindings import _spec
 _TRIGGER = re.compile(
     r'^(?:When|Whenever) (?P<subject>.+?) becomes the target of a '
     r'(?P<kind>spell or ability|spell|ability)(?P<opponent> an opponent controls)?, (?P<body>.+)$', re.I,
+)
+_FIXED_COUNTER_PAYMENT = re.compile(
+    r'counter that spell or ability unless its controller pays \{2\}\.?', re.I,
 )
 
 
@@ -35,22 +42,27 @@ def target_announcement_source_sacrifice(binding, body: str, *, card_name: str):
 
 
 def target_announcement_bound_result(binding, body: str, *, card_name: str):
-    if binding.variant == 'source_target_announcement' and re.fullmatch(
-        r'counter that spell or ability unless its controller pays \{2\}\.?', body, re.I,
-    ):
+    if (binding.variant in {'source_target_announcement', 'public_target_announcement'}
+            and _FIXED_COUNTER_PAYMENT.fullmatch(body)
+            and target_announcement_payment_condition_is_closed(binding.public_condition)):
         from ..rules.stack_controller_payment_cost import (
             STACK_CONTROLLER_PAYMENT_MECHANIC, target_announcement_counter_payment_effect,
         )
-        from ..rules.stack_controller_payment_shapes import source_opponent_target_announcement_condition_is_closed
-
-        if source_opponent_target_announcement_condition_is_closed(binding.public_condition):
-            return (
-                'target-announcement-counter-unless-pay-v1',
-                (target_announcement_counter_payment_effect(),),
-                None,
-                ('counter', STACK_CONTROLLER_PAYMENT_MECHANIC),
-            )
+        return (
+            'target-announcement-counter-unless-pay-v1',
+            (target_announcement_counter_payment_effect(),),
+            None,
+            ('counter', STACK_CONTROLLER_PAYMENT_MECHANIC),
+        )
     return target_announcement_source_sacrifice(binding, body, card_name=card_name)
+
+
+def _target_announcement_spec(body, *, condition, source_targeted=False):
+    return _spec(
+        TARGET_ANNOUNCEMENT_EVENT, 'source_target_announcement' if source_targeted else 'public_target_announcement', body,
+        'fixed-counter-target-announcement-trigger-v1', 'trigger-event-normalized-target-announcement',
+        condition=condition, capabilities=(TARGET_ANNOUNCEMENT_CAPABILITY,),
+    )
 
 
 def target_announcement_binding_spec(material_line: str, *, card_name: str | None = None):
@@ -58,6 +70,13 @@ def target_announcement_binding_spec(material_line: str, *, card_name: str | Non
     if match is None:
         return None
     subject = match['subject'].casefold()
+    if subject == 'a sliver creature you control':
+        if (match['kind'].casefold() != 'spell or ability' or not match['opponent']
+                or not _FIXED_COUNTER_PAYMENT.fullmatch(match['body'])):
+            return None
+        return _target_announcement_spec(
+            match['body'], condition=controlled_sliver_opponent_target_announcement_condition(),
+        )
     conditions = []
     source_targeted = False
     if source_self_permanent_type(subject) is not None or card_name and SourceReferenceSpec(card_name).matches(match['subject']):
@@ -77,8 +96,6 @@ def target_announcement_binding_spec(material_line: str, *, card_name: str | Non
         conditions.append({'field': 'stack_kind', 'op': 'in', 'value': kinds[match['kind'].casefold()]})
     if match['opponent']:
         conditions.append({'field': 'stack_controller', 'op': 'ne', 'value': '$source.controller'})
-    return _spec(
-        TARGET_ANNOUNCEMENT_EVENT, 'source_target_announcement' if source_targeted else 'public_target_announcement', match['body'],
-        'fixed-counter-target-announcement-trigger-v1', 'trigger-event-normalized-target-announcement',
-        condition={'all': conditions}, capabilities=(TARGET_ANNOUNCEMENT_CAPABILITY,),
+    return _target_announcement_spec(
+        match['body'], condition={'all': conditions}, source_targeted=source_targeted,
     )

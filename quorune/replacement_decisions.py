@@ -236,7 +236,7 @@ def _priority_action_cost_event_id(batch: ReplacementEventBatch) -> str:
     event = batch.events[0]
     from .replacement.face_status_copy import FACE_UP_COPY_EVENT
 
-    if event.kind not in {"counter.place", "zone.change", FACE_UP_COPY_EVENT} or not event.event_id:
+    if event.kind not in {"counter.place", "zone.change", "life.change", FACE_UP_COPY_EVENT} or not event.event_id:
         raise ReplacementEffectError(
             "Priority-action cost continuation has an unsupported event"
         )
@@ -276,21 +276,32 @@ def _quantity_followup_plan(plan: IntentPlan) -> bool:
     from .semantic_runtime.targeted_graveyard_outcome_intent import TargetedGraveyardExileOutcomeIntent
     from .semantic_runtime.targeted_exile_token_intent import CommittedTargetExileIntent
     from .semantic_runtime.intents import (
-        DealFixedDamageSetIntent, DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent,
+        DealFixedDamageSetIntent, DestroyPermanentIntent, DestroyPermanentSetIntent, DestroyPermanentTargetsIntent,
+        MillCardsIntent, MovePublicZoneSetIntent, RemoveCountersIntent, RevealEachLibraryTopIntent,
     )
 
+    from .delayed_object_model import RESOLVE_OBJECT_ACTION, SOURCE_BOUND_RETURN_OFFER, is_source_bound_creature_return
+    from .rules.granted_death_role_return import is_granted_death_role_return
+    from .rules.hand_entry_followup import uses_committed_hand_entry_life
+
     return any(
-        isinstance(intent, (TokenMillRepeatIntent, LibraryBottomResultIntent, EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
+        isinstance(intent, DomainEffectIntent) and intent.operation == RESOLVE_OBJECT_ACTION
+        and is_source_bound_creature_return(intent.effect) and intent.effect.get("action") == SOURCE_BOUND_RETURN_OFFER
+        or isinstance(intent, DomainEffectIntent) and is_granted_death_role_return(intent.effect)
+        or isinstance(intent, DomainEffectIntent) and uses_committed_hand_entry_life(intent.effect)
+        or isinstance(intent, (TokenMillRepeatIntent, LibraryBottomResultIntent, EarthbendIntent, GraveyardCardCounterLifeIntent, GraveyardExileBranchIntent,
             GraveyardExileTokenIntent, GraveyardExileTypeOutcomeIntent, TargetedGraveyardExileOutcomeIntent, CommittedTargetExileIntent))
         or isinstance(intent, FixedSourceSacrificeIntent) and intent.cast_participant is not None
         or isinstance(intent, DealFixedDamageSetIntent) and intent.gain_life_from_dealt
+        or isinstance(intent, RemoveCountersIntent) and intent.gain_life_from_removed
         or (
             isinstance(intent, DomainEffectIntent)
             and intent.operation == "damage"
             and intent.effect.get(DEALT_LIFE_GAIN_FIELD) == TARGETED_DEALT_LIFE_GAIN_VERSION
         )
         or (
-            isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
+            isinstance(intent, (DestroyPermanentIntent, DestroyPermanentSetIntent, DestroyPermanentTargetsIntent,
+                                MillCardsIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
             and intent.followup is not None
         )
         for intent in plan.intents
@@ -330,10 +341,22 @@ def apply_effect_with_replacement_choice(
     from .transform_order_model import TransformTimestampOrderRequired
     from .transform_timestamp_order import issue_transform_resolution_order
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
+    from .resolving_library_exile import resolving_library_exile_source
+    from .rules.attached_copy_payment import FALLBACK_FIELD, committed_copy_fallback
+
     committed_followup = False
     try:
-        with composition_resolution_actor(item.controller):
-            if plan is None:
+        with composition_resolution_actor(item.controller), resolving_library_exile_source(host, item):
+            if FALLBACK_FIELD in effect:
+                fallback = committed_copy_fallback(effect, player=item.controller)
+                created = (host.apply_effect(effect, actor=item.controller, as_cost=False) if plan is None
+                           else execute_intent_plan(host, plan))
+                if not isinstance(created, (list, tuple)) or any(type(ref) is not str or not ref for ref in created):
+                    raise GameRuleError("Copy fallback requires the committed token references")
+                if not created:
+                    remaining = (fallback, *remaining)
+                    committed_followup = True
+            elif plan is None:
                 host.apply_effect(effect, actor=item.controller, as_cost=False)
             elif _quantity_followup_plan(plan):
                 from .conditional_exile_return import return_deferred_source_departures
@@ -522,7 +545,7 @@ def _resume_mana_replacement(
     try:
         _validate_mana_payment_frame(host, restored.thaw_priority_frame())
         response = restored.thaw_priority_response()
-        if WHOLE_ZONE_COST_FRAME_FIELD in response:
+        if WHOLE_ZONE_COST_FRAME_FIELD in response and all(event.kind == "zone.change" for event in restored.batch.events):
             frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
             response[WHOLE_ZONE_COST_FRAME_FIELD] = frame.append_selection(selection).to_dict()
             resume_mana_choice_capable_priority_action(
@@ -744,6 +767,11 @@ def complete_replacement_order_choice(
     if restored.resume_kind=='opening_hand_entry':
         from .opening_hand import resume_opening_hand_replacement
         resume_opening_hand_replacement(host,restored,selection)
+        return
+    if restored.resume_kind == "scheduled_draw_result":
+        from .drawing.scheduled_draw_coordination import resume_scheduled_draw_replacement
+
+        resume_scheduled_draw_replacement(host, restored, selection, error_type=error_type)
         return
     if restored.resume_kind == "draw_discard_or_mill":
         from .drawing.discard_coordination import resume_draw_discard_replacement

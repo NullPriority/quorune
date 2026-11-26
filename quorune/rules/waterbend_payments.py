@@ -73,7 +73,7 @@ def dispatch_waterbend_occurrence(host,seat,payment,*,source_ref,reason):
 def activation_waterbend_plan(host,seat,source,ability,requirements,response,*,hint):
     from ..mana_restrictions import ability_mana_spend_context
     result=select_waterbend_payment(host,seat,ability.waterbend,requirements,response,hint=hint,
-        spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or '')),
+        spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or ''), source_zone=source.zone),
         excluded=(source.object_id,) if ability.tap_source else ())
     if result is not None and not hint and response.get('_waterbend_payment') not in (None,result[2].to_dict()):
         raise ValueError('Waterbend payment incarnation changed across continuation')
@@ -89,13 +89,13 @@ def pay_activation_waterbend(host,proposal,source,ability,response):
     from ..errors import GameRuleError
     try:cards=validate_waterbend_payment(host,proposal.seat,raw,cost=ability.waterbend,excluded=excluded)
     except ValueError as exc:raise GameRuleError(str(exc)) from exc
-    spent,activations=host._pay_for_cost(proposal.seat,thaw_json(proposal.requirements),response,
+    mana_payment=host._pay_for_cost(proposal.seat,thaw_json(proposal.requirements),response,
         exclude_sources=set(excluded)|{card.object_id for card in cards},
-        spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or '')))
+        spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or ''), source_zone=source.zone))
     try:cards=validate_waterbend_payment(host,proposal.seat,raw,cost=ability.waterbend,excluded=excluded)
     except ValueError as exc:raise GameRuleError(str(exc)) from exc
     tap_waterbend_objects(host,proposal.seat,cards,reason='Waterbend activation cost')
-    return [card.object_id for card in cards],activations,spent,None
+    return [card.object_id for card in cards],mana_payment.activations,mana_payment.spent,None
 
 
 def bind_waterbend_response(response,raw):

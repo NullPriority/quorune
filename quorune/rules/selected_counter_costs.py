@@ -8,10 +8,13 @@ from .blight_model import BLIGHT_COUNTER, blight_creature_predicate
 
 SELECTED_PLUS_COUNTER_COST_KIND = "remove_one_plus_one_counter"
 SELECTED_COUNTER_COST_CAPABILITY = "activation.selected_counter_removal.fixed"
+DISTRIBUTED_PLUS_COUNTER_COST_KIND = "remove_two_distributed_plus_one_counters"
+DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY = "activation.selected_counter_removal.distributed_two"
 BLIGHT_ACTIVATION_COST_KIND = "blight"
 BLIGHT_ACTIVATION_COST_CAPABILITY = "activation.blight.fixed"
 SELECTED_COUNTER_COST_CAPABILITIES = {
     SELECTED_PLUS_COUNTER_COST_KIND: SELECTED_COUNTER_COST_CAPABILITY,
+    DISTRIBUTED_PLUS_COUNTER_COST_KIND: DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY,
     BLIGHT_ACTIVATION_COST_KIND: BLIGHT_ACTIVATION_COST_CAPABILITY,
 }
 
@@ -26,7 +29,7 @@ def validate_selected_counter_choice(choice):
         if type(choice.counter_amount) is not int or choice.counter_amount <= 0:
             raise ValueError("A Blight cost requires a positive fixed counter amount")
     elif choice.counter_amount is not None:
-        raise ValueError("Selected counter removal requires exactly one +1/+1 counter")
+        raise ValueError("Selected counter removal has its own fixed counter amount")
 
 
 def blight_activation_choice(ability):
@@ -70,7 +73,19 @@ def selected_counter_cost_candidates(host, actor, choice):
         zones=("battlefield",), controller=actor, types_all=("creature",),
         state_predicate=PermanentStatePredicateSpec(counter_name="+1/+1", minimum_counter_count=1),
     )
-    return tuple(row.ref for row in query_objects(rows, query))
+    eligible = tuple(query_objects(rows, query))
+    if choice.kind == DISTRIBUTED_PLUS_COUNTER_COST_KIND and len(eligible) == 1:
+        if not _can_pay_both_counters(host.state.cards[eligible[0].object_id]):
+            return ()
+    return tuple(row.ref for row in eligible)
+
+
+def _can_pay_both_counters(card):
+    return card.counters.get("+1/+1", 0) >= 2
+
+
+def has_distributed_counter_cost(ability):
+    return any(choice.kind == DISTRIBUTED_PLUS_COUNTER_COST_KIND for choice in ability.choices)
 
 
 def blight_activation_cost_candidates(host, actor, source, ability, choice):
@@ -82,7 +97,7 @@ def blight_activation_cost_candidates(host, actor, source, ability, choice):
     refs = selected_counter_cost_candidates(host, actor, choice)
     if not refs:
         return ()
-    spend_context = ability_mana_spend_context(str(host._effective_card_data(source).get("type_line") or ""))
+    spend_context = ability_mana_spend_context(str(host._effective_card_data(source).get("type_line") or ""), source_zone=source.zone)
     excluded = {source.object_id} if ability.tap_source else set()
     sacrificing_sources = sacrificing_mana_source_ids(
         host, actor, refs, spend_context=spend_context, exclude_sources=excluded,
@@ -130,15 +145,39 @@ def select_counter_cost_creature(host, actor, ability, response):
                 if host.state.cards[object_id].ref == ref)
 
 
+def _distributed_counter_selection(host, actor, ability, response):
+    if len(ability.choices) != 1 or ability.choices[0].kind != DISTRIBUTED_PLUS_COUNTER_COST_KIND:
+        raise ValueError("Distributed payment requires its one isolated counter cost")
+    if ("cost_cards" in response and "cost_objects" in response
+            and response["cost_cards"] != response["cost_objects"]):
+        raise ValueError("Distributed counter payment aliases disagree")
+    refs = response.get("cost_cards", response.get("cost_objects"))
+    if (not isinstance(refs, (list, tuple)) or len(refs) not in {1, 2}
+            or any(type(ref) is not str or not ref for ref in refs) or len(set(refs)) != len(refs)):
+        raise ValueError("Choose one creature with two +1/+1 counters or two creatures with one each")
+    legal = selected_counter_cost_candidates(host, actor, ability.choices[0])
+    if any(ref not in legal for ref in refs):
+        raise ValueError("Only creatures you control with available +1/+1 counters can pay")
+    by_ref = {host.state.cards[object_id].ref: host.state.cards[object_id]
+              for object_id in host.state.players[actor].zones["battlefield"]}
+    cards = tuple(by_ref[ref] for ref in refs)
+    if len(cards) == 1 and not _can_pay_both_counters(cards[0]):
+        raise ValueError("The selected creature needs two +1/+1 counters")
+    return cards, 2 if len(cards) == 1 else 1
+
+
 def pay_selected_counter_cost(host, actor, source, ability, response):
     from ..counter_removal import CounterRemoval, commit_counter_removals, plan_counter_removals
 
-    card = select_counter_cost_creature(host, actor, ability, response)
-    plan = plan_counter_removals(host, (CounterRemoval(object_id=card.object_id,
-        counter_name="+1/+1", amount=1, expected_zone="battlefield",
-        expected_logical_object_id=card.logical_object_id),))
+    if has_distributed_counter_cost(ability):
+        cards, amount = _distributed_counter_selection(host, actor, ability, response)
+    else:
+        cards, amount = (select_counter_cost_creature(host, actor, ability, response),), 1
+    plan = plan_counter_removals(host, tuple(CounterRemoval(object_id=card.object_id,
+        counter_name="+1/+1", amount=amount, expected_zone="battlefield",
+        expected_logical_object_id=card.logical_object_id) for card in cards))
     commit_counter_removals(host, plan)
-    return [card.object_id]
+    return [card.object_id for card in cards]
 
 
 def _blight_payment_event_prefix(payment_id, source_ref, ability_id):
@@ -154,7 +193,7 @@ def pay_blight_activation_cost(host, proposal, choice, payer_identity, response)
     from ..counter_placement import (
         CounterPlacementRequest, commit_prepared_counter_placements, prepare_counter_placements,
     )
-    from ..mana_mode_effects import mana_damage_event_belongs_to_payment
+    from ..mana_mode_effects import mana_result_event_belongs_to_payment
 
     object_id, ref, logical_id = payer_identity
     payer = host.state.cards.get(object_id)
@@ -168,7 +207,7 @@ def pay_blight_activation_cost(host, proposal, choice, payer_identity, response)
     )
     journal = response.get("_mana_replacement_selections") or {}
     if not isinstance(journal, Mapping) or any(
-        key != event_id and not mana_damage_event_belongs_to_payment(key, payment_id)
+        key != event_id and not mana_result_event_belongs_to_payment(key, payment_id)
         for key in journal
     ):
         raise ValueError("Blight activation replacement journal is malformed")
@@ -188,13 +227,26 @@ def pay_blight_activation_cost(host, proposal, choice, payer_identity, response)
     return [payer.object_id]
 
 
-def selected_counter_cost_choice_schema(ability, hint):
+def selected_counter_cost_choice_schema(ability, hint, *, host=None, actor=None):
     choices = tuple(choice for choice in ability.choices if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES)
     if not choices:
         return None
     if len(choices) != 1 or len(ability.choices) != 1:
         raise ValueError("Selected counter costs require one isolated public selection")
     choice = choices[0]
+    if choice.kind == DISTRIBUTED_PLUS_COUNTER_COST_KIND:
+        if host is None or actor is None:
+            raise ValueError("Distributed counter choice requires its current payer")
+        refs = tuple(hint["choose_cost"][0]["legal_refs"])
+        single = [host.state.cards[object_id].ref for object_id in host.state.players[actor].zones["battlefield"]
+                  if host.state.cards[object_id].ref in refs and _can_pay_both_counters(host.state.cards[object_id])]
+        counts = [count for count, available in ((1, bool(single)), (2, len(refs) >= 2)) if available]
+        if not counts:
+            return None
+        return {"cost_cards": {"type": "array",
+            "label": "Remove two +1/+1 counters from one creature or one each from two creatures",
+            "legal_refs": list(refs), "minimum": min(counts), "maximum": max(counts),
+            "allowed_counts": counts, "single_creature_refs": single}}
     label = (
         f"Creature to blight {choice.counter_amount}" if choice.kind == BLIGHT_ACTIVATION_COST_KIND
         else "Creature to remove a +1/+1 counter from"
@@ -221,7 +273,10 @@ def _valid_compact_selected_counter_cost(choice):
 
 def selected_counter_runtime_dependencies(program):
     schema = getattr(program, "cost_schema", None)
+    declared_distributed = DISTRIBUTED_PLUS_COUNTER_COST_CAPABILITY in getattr(program, "capability_dependencies", ())
     if not isinstance(schema, Mapping):
+        if declared_distributed:
+            raise ValueError("A distributed counter payment requires its cost schema")
         return ()
     choices = schema.get("choices") or ()
     selected = [
@@ -230,7 +285,13 @@ def selected_counter_runtime_dependencies(program):
         and choice["k"] in SELECTED_COUNTER_COST_CAPABILITIES
     ]
     if not selected:
+        if declared_distributed:
+            raise ValueError("A distributed counter payment requires its typed cost choice")
         return ()
+    if declared_distributed and selected[0].get("k") != DISTRIBUTED_PLUS_COUNTER_COST_KIND:
+        raise ValueError("A distributed counter payment cannot silently become a different cost")
+    if selected[0].get("k") == DISTRIBUTED_PLUS_COUNTER_COST_KIND and getattr(program, "active_zone", None) != "battlefield":
+        raise ValueError("A distributed counter payment requires a battlefield activation")
     if (len(selected) != 1 or len(choices) != 1
             or not _valid_compact_selected_counter_cost(selected[0])
             or getattr(program, "event", None) != "activate"):
@@ -258,13 +319,13 @@ def _offered_blight_cost(response):
 
 
 def blight_prior_mana_replacement_event_ids(response):
-    from ..mana_mode_effects import mana_damage_event_belongs_to_payment
+    from ..mana_mode_effects import mana_result_event_belongs_to_payment
 
     journal = response.get("_mana_replacement_selections")
     if not isinstance(journal, Mapping) or _offered_blight_cost(response) is None:
         return set()
     payment_id = response.get("_mana_payment_id")
-    return {key for key in journal if mana_damage_event_belongs_to_payment(key, payment_id)}
+    return {key for key in journal if mana_result_event_belongs_to_payment(key, payment_id)}
 
 
 def is_blight_activation_cost_event(event, response):

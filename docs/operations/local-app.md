@@ -68,6 +68,27 @@ The browser receives projected card fields and constrained image routes, never
 the bulk export. Archives, databases, retained snapshots, images, records, and
 caches are local runtime data and must not be committed.
 
+### Verify the staged catalog before a playtest deployment
+
+Run this check from the release checkout before stopping the live app. Pass the
+SQLite database and the Scryfall **All Cards** gzip archive staged for this
+deployment.
+
+```powershell
+$quoruneStagedDb = Read-Host 'Enter the staged Scryfall SQLite path'
+$quoruneAllCards = Read-Host 'Enter the staged All Cards gzip path'
+.\.venv\Scripts\python.exe scripts\verify_playtest_catalog.py `
+  --db $quoruneStagedDb --all-cards $quoruneAllCards
+```
+
+The command fetches the live bulk manifest and reads the two staged files.
+It checks the Oracle and rulings timestamps and exact source URLs in SQLite,
+then checks the all-language archive's name, byte count, and gzip signature.
+The JSON result records the archive's SHA-256. Pass `--all-cards-sha256` with
+the digest from the trusted download receipt to verify it during the check.
+A nonzero exit identifies the stale or unreadable inputs. Refresh them in
+staging and rerun the check before deployment.
+
 ## Environment settings
 
 | Setting | Purpose |

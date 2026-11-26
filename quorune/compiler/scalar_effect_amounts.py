@@ -303,11 +303,42 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
 
 def trigger_scalar_effect_amount_template(text: str, *, binding, source_name: str, compile_fixed: Callable):
     """Bind the scalar result to the quantities supplied by this subscription."""
+    from ..counter_placement_sets import (
+        SOURCE_POWER_COMBAT_COUNTER_CONDITION, SOURCE_POWER_COMBAT_TARGET_COUNTER_MECHANIC,
+        source_power_combat_counter_effect, source_power_combat_counter_target_schema,
+        source_power_combat_target_counter_effect,
+    )
+
+    if ((binding.event.value, binding.variant) == ("step.begin", "combat on your turn")
+            and getattr(binding, "active_zone", None) == "battlefield"
+            and binding.event_condition == SOURCE_POWER_COMBAT_COUNTER_CONDITION):
+        mechanics = ("cr-122-counters", "declared-effect-amount", SCALAR_AMOUNT_MECHANIC)
+        if re.fullmatch(r"Put X \+1/\+1 counters on each creature you control, "
+                        r"where X is this creature['’]s power\.?", text.strip(), re.I):
+            return ("source-power-combat-creature-counter-set-v1", (source_power_combat_counter_effect(),),
+                    None, mechanics)
+        if re.fullmatch(
+            rf"Put a number of \+1/\+1 counters equal to "
+            rf"(?:this creature|{SourceReferenceSpec(source_name).regex_pattern})['’]s power "
+            rf"on another target creature you control\.?", text.strip(), re.I,
+        ):
+            return ("source-power-combat-creature-target-counters-v1",
+                    (source_power_combat_target_counter_effect(),), source_power_combat_counter_target_schema(),
+                    (*mechanics, "cr-115-targets", SOURCE_POWER_COMBAT_TARGET_COUNTER_MECHANIC))
     from .life_gain_counted_results import life_gain_counted_counter_result, life_gain_counted_self_growth_result
     counted = life_gain_counted_counter_result(text, binding=binding) or life_gain_counted_self_growth_result(text, binding=binding)
     if counted is not None:
         text = counted
     event = binding.event.value
+    if (event == "damage.dealt.self" and binding.variant == "source_combat_damage_player"
+            and binding.active_zone == "battlefield" and text == binding.body
+            and re.fullmatch(r"Draw a card for each kind of counter on it\.?", text.strip(), re.I)):
+        from ..rules.source_counter_kind_draw import (
+            source_combat_damage_to_player_condition_is_exact, source_counter_kind_draw_effect,
+        )
+        if source_combat_damage_to_player_condition_is_exact(binding.event_condition):
+            return ("source-combat-counter-kind-draw-v1", (source_counter_kind_draw_effect(),), None,
+                    (SCALAR_AMOUNT_MECHANIC, "cr-121-drawing-a-card"))
     if (event == "damage.dealt.self" and binding.variant == "source_combat_damage_player"
             and text == binding.body and re.fullmatch(r"You get that many \{E\}\s*\.?", text.strip(), re.I)):
         from ..rules.event_player_result_shapes import combat_damage_energy_effect
@@ -352,6 +383,16 @@ def scalar_amount_shape_context(effects, mechanics):
     """Project only validated result slots, retaining the original fixed owner."""
     from ..scalar_effect_amount_model import PAID_SACRIFICE_MANA_VALUE_MECHANIC
 
+    from ..counter_placement_sets import source_power_combat_counter_projection, uses_source_power_combat_counter_set
+
+    if any(uses_source_power_combat_counter_set(effect) for effect in effects):
+        if len(effects) != 1:
+            return None
+        try:
+            fixed = source_power_combat_counter_projection(effects[0])
+        except (TypeError, ValueError):
+            return None
+        return (fixed,), set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount"}
     if len(effects) == 1 and effects[0].get("op") == "place_player_counters":
         from ..rules.event_player_result_shapes import combat_damage_energy_fixed_projection
 
@@ -377,8 +418,9 @@ def scalar_amount_shape_context(effects, mechanics):
             spec = ScalarEffectAmountSpec.from_dict(value)
             if spec.origin is ScalarAmountOrigin.UPKEEP_HAND_DIFFERENCE:
                 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_MECHANIC
-                if SCHEDULED_PLAYER_MECHANIC not in mechanics or (operation,path)!=("damage",("amount",)):
-                    raise PublicQueryAmountError("Upkeep hand difference requires its scheduled player damage slot")
+                amount_slots = {("damage", ("amount",)), ("life", ("delta",))}
+                if SCHEDULED_PLAYER_MECHANIC not in mechanics or (operation, path) not in amount_slots:
+                    raise PublicQueryAmountError("Upkeep hand difference requires its scheduled damage or life slot")
             elif spec.origin is ScalarAmountOrigin.TARGET_GRAVEYARD_MANA_VALUE:
                 if not _graveyard_target_life_slot(operation, path, effects):
                     raise PublicQueryAmountError("Graveyard-target mana value requires its exact life-result slot")

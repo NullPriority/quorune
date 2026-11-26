@@ -4,6 +4,12 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 
+from ..replacement.immutable import FrozenMap
+from ..rules.turn_creature_target_prohibition import CONTROLLER_SPELL_CAST_CONDITION
+from ..turn_creature_target_prohibition_model import (
+    TURN_CREATURE_TARGET_PROHIBITION_MECHANIC, turn_creature_target_prohibition_instruction,
+)
+
 from ..qualified_hexproof import (
     HEXPROOF_COLORS, TURN_COLOR_SPELL_PROTECTION_MECHANIC, TURN_COLOR_SPELL_PROTECTION_OPERATION,
 )
@@ -78,12 +84,20 @@ _CAST_TIMING_SCOPES = {
 
 def _temporary_cast_timing_template(text):
     material = " ".join(text.casefold().split()).removesuffix(" (it can be cast any time you could cast an instant.)")
-    scope = _CAST_TIMING_SCOPES.get(material.removesuffix("."))
+    material = material.removesuffix(".")
+    version = 1
+    if material == "until your next turn, you may cast sorcery spells as though they had flash":
+        from ..rules.temporary_cast_timing import NEXT_TURN_SORCERY_TIMING_VERSION
+
+        scope = TemporaryCastTimingScope.SORCERY_SPELLS
+        version = NEXT_TURN_SORCERY_TIMING_VERSION
+    else:
+        scope = _CAST_TIMING_SCOPES.get(material)
     if scope is None:
         return None
-    effect = {"op": TEMPORARY_CAST_TIMING_OPERATION, "schema_version": 1, "player": "$controller",
+    effect = {"op": TEMPORARY_CAST_TIMING_OPERATION, "schema_version": version, "player": "$controller",
               TEMPORARY_CAST_TIMING_FIELD: scope.value}
-    return "temporary-controller-cast-timing-v1", (effect,), None, (TEMPORARY_CAST_TIMING_MECHANIC,)
+    return f"temporary-controller-cast-timing-v{version}", (effect,), None, (TEMPORARY_CAST_TIMING_MECHANIC,)
 
 
 _TURN_LAND_PLAY_ALLOWANCE = re.compile(
@@ -125,6 +139,17 @@ _SPELL_SOURCE_COLOR_PROTECTION = re.compile(
 )
 
 
+def turn_creature_target_prohibition_trigger_template(binding, body):
+    expected = "creatures you control can't be the targets of spells or abilities your opponents control this turn."
+    normalized = " ".join(body.split()).casefold().replace("\u2019", "'")
+    if (normalized != expected or body != binding.body
+            or (binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+            or FrozenMap(binding.event_condition or {}) != CONTROLLER_SPELL_CAST_CONDITION):
+        return None
+    return ("turn-creature-opponent-target-prohibition-v1", (turn_creature_target_prohibition_instruction(),),
+            None, (TURN_CREATURE_TARGET_PROHIBITION_MECHANIC,))
+
+
 def turn_spell_source_color_protection_template(text):
     match = _SPELL_SOURCE_COLOR_PROTECTION.fullmatch(" ".join(text.split()))
     if match is None:
@@ -156,8 +181,44 @@ def turn_color_spell_protection_template(text):
     return "fixed-turn-counter-and-color-hexproof-v1", effects, None, (TURN_COLOR_SPELL_PROTECTION_MECHANIC,)
 
 
+def next_personal_turn_protection_template(text):
+    from ..rules.next_personal_turn_protection import (
+        NEXT_PERSONAL_TURN_PROTECTION_MECHANIC, NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE,
+        next_personal_turn_protection_effects,
+    )
+
+    material = " ".join(text.casefold().replace("’", "'").split()).removesuffix(".")
+    if material != (
+        "until your next turn, your life total can't change and you gain protection from everything. "
+        "all permanents you control phase out"
+    ):
+        return None
+    return (
+        NEXT_PERSONAL_TURN_PROTECTION_TEMPLATE,
+        next_personal_turn_protection_effects(), None, (NEXT_PERSONAL_TURN_PROTECTION_MECHANIC,),
+    )
+
+
+def _temporary_life_total_protection_template(text):
+    if not re.fullmatch(
+        r"Until end of turn, your life total can['’]t change, and permanents you control "
+        r"gain hexproof and indestructible\.?",
+        " ".join(text.split()), re.I,
+    ):
+        return None
+    from ..rules.fixed_controller_effect_shapes import temporary_life_total_and_permanent_protection_effects
+
+    return (
+        "temporary-controller-life-total-and-permanent-protection-v1",
+        temporary_life_total_and_permanent_protection_effects(), None,
+        ("cr-119-life", "cr-611-continuous-effects", "hexproof", "indestructible"),
+    )
+
+
 def temporary_player_rule_template(text):
+    from .all_player_turn_rules import all_player_turn_rules_template
     from .fixed_stack_spell_copy import next_cast_copy_template
+    from .next_draw_replacement_templates import next_draw_replacement_effect_template
 
     if re.fullmatch(
         r"Until end of turn, if target player would draw a card, instead that player skips that draw and you draw a card\.",
@@ -171,7 +232,9 @@ def temporary_player_rule_template(text):
             (DRAW_REDIRECT_MECHANIC, "cr-115-targets"),
         )
 
-    if grant := (turn_color_spell_protection_template(text) or turn_spell_source_color_protection_template(text)
+    if grant := (all_player_turn_rules_template(text) or next_personal_turn_protection_template(text) or _temporary_life_total_protection_template(text)
+                 or next_draw_replacement_effect_template(text)
+                 or turn_color_spell_protection_template(text) or turn_spell_source_color_protection_template(text)
                  or _temporary_cascade_template(text)
                  or _next_cast_protection_template(text)
                  or next_cast_copy_template(text) or _temporary_cast_timing_template(text)

@@ -9,6 +9,7 @@ from .affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
     select_affected_permanents,
+    target_player_creature_snapshot_spec,
     target_unspent_mana_tap_spec,
 )
 from .mana_provenance import lose_all_unspent_mana
@@ -16,12 +17,20 @@ from .mana_undo import clear_mana_undo_stack
 from .object_query import ObjectQueryResult
 from .continuous_effect_model import ContinuousObjectIdentity
 from .source_untap_rule_model import PendingSourceUntapRestraint
-from .tap_state import dispatch_tap_state_occurrence, set_permanent_tapped
+from .tap_state import dispatch_tap_state_occurrence, prohibit_next_player_untap, set_permanent_tapped
 from .trigger_processing import enqueue_trigger_batch
 
 
 class PublicTapStateSetError(ValueError):
     pass
+
+
+def _validate_snapshot_restraint(flag, spec, tapped, untap_restraint, lose_unspent_mana):
+    if type(flag) is not bool or flag and (
+        not tapped or untap_restraint is not None or lose_unspent_mana
+        or spec.target_controller is None or spec != target_player_creature_snapshot_spec(spec.target_controller)
+    ):
+        raise PublicTapStateSetError("The next-player untap restriction requires the exact original creature set")
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,6 +42,7 @@ class SetPublicPermanentsTappedIntent:
     source_ref: str | None = None
     untap_restraint: PendingSourceUntapRestraint | None = None
     lose_unspent_mana: bool = False
+    restrain_snapshot_on_player_untap: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -57,6 +67,8 @@ class SetPublicPermanentsTappedIntent:
             )
         ):
             raise ValueError("Public-set tap-state intent is malformed")
+        _validate_snapshot_restraint(self.restrain_snapshot_on_player_untap, self.spec, self.tapped,
+                                     self.untap_restraint, self.lose_unspent_mana)
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,53 +103,28 @@ class PublicTapStateSetHost(Protocol):
     ) -> None: ...
 
 
-def resolve_public_tap_state_set(
-    host: PublicTapStateSetHost,
-    *,
-    actor: str,
-    spec: AffectedPermanentSetSpec,
-    tapped: bool,
-    reason: str,
-    source_ref: str | None = None,
-    untap_restraint: PendingSourceUntapRestraint | None = None,
-    lose_unspent_mana: bool = False,
-) -> tuple[str, ...]:
-    if type(actor) is not str or not actor or type(reason) is not str or not reason:
-        raise PublicTapStateSetError(
-            "Public tap-state sets require actor and reason"
-        )
-    if type(tapped) is not bool:
-        raise PublicTapStateSetError("Public tap-state result must be boolean")
-    if untap_restraint is not None and (not tapped or not isinstance(untap_restraint, PendingSourceUntapRestraint)):
-        raise PublicTapStateSetError("Public untap restraint requires a typed tap instruction")
-    rows = host.affected_permanent_object_rows(actor)
-    if untap_restraint is not None and spec.exclude_source:
-        original = untap_restraint.source
-        if original is not None:
-            rows = tuple(row for row in rows if (row.object_id, row.logical_object_id) != (
-                original.object_id, original.logical_object_id,
-            ))
-        spec = replace(spec, exclude_source=False)
-    try:
-        selected = select_affected_permanents(
-            rows,
-            spec,
-            actor=actor,
-            active_seats=host.affected_permanent_active_seats(),
-            apnap_order=host.affected_permanent_apnap_order(),
-            source_ref=source_ref,
-        )
-    except AffectedPermanentSetError as exc:
-        raise PublicTapStateSetError(str(exc)) from exc
-    snapshot = tuple(
+def snapshot_public_tap_state(rows) -> tuple[PublicTapStatePermanent, ...]:
+    """Capture stable public identity for each selected permanent."""
+    return tuple(
         PublicTapStatePermanent(
             object_id=row.object_id,
             logical_object_id=row.logical_object_id,
             ref=row.ref,
             controller=row.controller,
         )
-        for row in selected
+        for row in rows
     )
+
+
+def commit_public_tap_state_snapshot(
+    host: PublicTapStateSetHost,
+    snapshot: tuple[PublicTapStatePermanent, ...],
+    *,
+    actor: str,
+    tapped: bool,
+    reason: str,
+) -> tuple[str, ...]:
+    """Mutate the selected incarnations as a group before publishing tap events."""
     for value in snapshot:
         card = host.state.cards.get(value.object_id)
         if (
@@ -173,6 +160,54 @@ def resolve_public_tap_state_set(
             )
     if pending:
         enqueue_trigger_batch(host, pending)
+    return results
+
+
+def resolve_public_tap_state_set(
+    host: PublicTapStateSetHost,
+    *,
+    actor: str,
+    spec: AffectedPermanentSetSpec,
+    tapped: bool,
+    reason: str,
+    source_ref: str | None = None,
+    untap_restraint: PendingSourceUntapRestraint | None = None,
+    lose_unspent_mana: bool = False,
+    restrain_snapshot_on_player_untap: bool = False,
+) -> tuple[str, ...]:
+    if type(actor) is not str or not actor or type(reason) is not str or not reason:
+        raise PublicTapStateSetError(
+            "Public tap-state sets require actor and reason"
+        )
+    if type(tapped) is not bool:
+        raise PublicTapStateSetError("Public tap-state result must be boolean")
+    if untap_restraint is not None and (not tapped or not isinstance(untap_restraint, PendingSourceUntapRestraint)):
+        raise PublicTapStateSetError("Public untap restraint requires a typed tap instruction")
+    _validate_snapshot_restraint(restrain_snapshot_on_player_untap, spec, tapped, untap_restraint, lose_unspent_mana)
+    rows = host.affected_permanent_object_rows(actor)
+    if untap_restraint is not None and spec.exclude_source:
+        original = untap_restraint.source
+        if original is not None:
+            rows = tuple(row for row in rows if (row.object_id, row.logical_object_id) != (
+                original.object_id, original.logical_object_id,
+            ))
+        spec = replace(spec, exclude_source=False)
+    try:
+        selected = select_affected_permanents(
+            rows,
+            spec,
+            actor=actor,
+            active_seats=host.affected_permanent_active_seats(),
+            apnap_order=host.affected_permanent_apnap_order(),
+            source_ref=source_ref,
+        )
+    except AffectedPermanentSetError as exc:
+        raise PublicTapStateSetError(str(exc)) from exc
+    snapshot = snapshot_public_tap_state(selected)
+    results = commit_public_tap_state_snapshot(host, snapshot, actor=actor, tapped=tapped, reason=reason)
+    if restrain_snapshot_on_player_untap:
+        for value in snapshot:
+            prohibit_next_player_untap(host, host.state.cards[value.object_id], actor=spec.target_controller)
     if untap_restraint is not None:
         from .rules.untap_permissions import commit_source_untap_restraint
         commit_source_untap_restraint(host, untap_restraint, tuple(
@@ -206,5 +241,7 @@ def resolve_public_tap_state_set(
 __all__ = [
     "PublicTapStateSetError",
     "SetPublicPermanentsTappedIntent",
+    "commit_public_tap_state_snapshot",
     "resolve_public_tap_state_set",
+    "snapshot_public_tap_state",
 ]

@@ -9,7 +9,7 @@ kernel can therefore expose Channel and other zone-specific abilities without
 letting a pilot invent a cheaper cost or mutate state directly.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from .power_up_model import PowerUpSpec, POWER_UP_UNCOMPILED
 from .fixed_mana_results import FixedManaResultSpec
 from enum import Enum
@@ -29,7 +29,12 @@ from .activation_condition_model import (
     activation_restriction_spec,
 )
 from .activation_restriction_composition import activation_restriction_from_effect
-from .activated_ability_descriptor import ABILITY_LOCAL_MANA_REDUCTION_FIELD, validate_activated_ability_descriptor
+from .activated_ability_descriptor import (
+    ABILITY_LOCAL_MANA_REDUCTION_FIELD, SOURCE_COUNTER_PLACEMENT_COST,
+    SOURCE_COUNTER_PLACEMENT_FIELD, SOURCE_COUNTER_PLACEMENT_OFFER_FIELD,
+    decode_source_counter_placement_cost, validate_activated_ability_descriptor,
+)
+from .cumulative_counter_upkeep import CounterPlacementCostSpec
 from .activation_cost_modifiers import (
     AbilityLocalManaReduction, ability_local_mana_reduction_from_dict, ability_local_reduction_origin_is_supported,
     validate_ability_local_mana_reduction,
@@ -176,6 +181,9 @@ class ActivatedAbility:
     saddle_threshold: int | None = None
     ability_local_mana_reduction: AbilityLocalManaReduction | None = None
     variable_colored_reveal_price: VariableColoredRevealPrice | None = None
+    mill_library_cost: int = 0
+    source_counter_placement_cost: CounterPlacementCostSpec | None = None
+    loyalty_x: bool = False
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -184,6 +192,8 @@ class ActivatedAbility:
             validate_bound_granting_attachment_payment(self)
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
+        from .rules.linked_loyalty_exile_model import validate_loyalty_x_ability
+        validate_loyalty_x_ability(self)
         price = self.variable_colored_reveal_price
         if price is not None and (
             not isinstance(price, VariableColoredRevealPrice) or not price.matches_mana(self.mana)
@@ -199,6 +209,16 @@ class ActivatedAbility:
             raise ValueError('Fixed mana result must be typed')
         _validate_ability_identity_and_cost(self)
         _validate_ability_sequences_and_scalars(self)
+        if (type(self.mill_library_cost) is not int or self.mill_library_cost not in {0, 1}
+                or self.mill_library_cost and (
+                    self.zones != ("battlefield",) or not self.tap_source or self.mana_ability
+                    or self.target_schema is not None or any(self.mana.values()) or self.loyalty_delta is not None
+                    or self.source_counter_removal_cost is not None
+                    or any((self.untap_source, self.discard_source, self.sacrifice_source, self.exile_source,
+                            self.choices, self.uncompiled_costs, self.complex_symbols, self.life_payment,
+                            self.energy_payment, self.mana_cost_options, self.random_discard_payment, self.waterbend))
+                )):
+            raise ValueError("A library Mill price requires one card and its ordinary battlefield tap activation")
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
         if self.ability_local_mana_reduction is not None:
@@ -217,7 +237,7 @@ class ActivatedAbility:
 
     @property
     def chooses_activation_x(self) -> bool:
-        return self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
+        return self.loyalty_x or self.announced_x_symbols is not None or self.variable_colored_reveal_price is not None
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -284,9 +304,15 @@ class ActivatedAbility:
         if self.fixed_mana_result is not None:result['fixed_mana_result']=self.fixed_mana_result.to_dict()
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
+        if self.mill_library_cost:
+            result['mill_library_cost'] = self.mill_library_cost
+        if self.source_counter_placement_cost is not None:
+            result[SOURCE_COUNTER_PLACEMENT_FIELD] = self.source_counter_placement_cost.to_dict()
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
         if self.variable_colored_reveal_price is not None:
             result[VARIABLE_COLORED_REVEAL_PRICE_FIELD] = self.variable_colored_reveal_price.to_dict()
+        if self.loyalty_x:
+            result["loyalty_x"] = True
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         if self.forecast:result['forecast']=True
@@ -339,7 +365,13 @@ class ActivatedAbility:
             energy_payment=value["energy_payment"],
             random_discard_payment=value.get('random_discard_payment',0),
             waterbend=FixedWaterbendCost.from_dict(value['waterbend']) if 'waterbend' in value else None,
+            mill_library_cost=value.get('mill_library_cost', 0),
+            source_counter_placement_cost=(
+                decode_source_counter_placement_cost(value[SOURCE_COUNTER_PLACEMENT_FIELD])
+                if SOURCE_COUNTER_PLACEMENT_FIELD in value else None
+            ),
             loyalty_delta=value["loyalty_delta"],
+            loyalty_x=value.get("loyalty_x", False),
             source_counter_removal_cost=(
                 None
                 if value.get("source_counter_removal_cost") is None
@@ -430,7 +462,13 @@ class ActivatedAbility:
         if self.waterbend is not None:result['waterbend']=self.waterbend.to_dict()
         if self.random_discard_payment:
             result['random_discard']=self.random_discard_payment
-        if self.loyalty_delta is not None:
+        if self.mill_library_cost:
+            result['mill_library'] = self.mill_library_cost
+        if self.source_counter_placement_cost is not None:
+            result[SOURCE_COUNTER_PLACEMENT_OFFER_FIELD] = self.source_counter_placement_cost.to_dict()
+        if self.loyalty_x:
+            result["loyalty_x"] = True
+        elif self.loyalty_delta is not None:
             result["loyalty"] = self.loyalty_delta
         if self.source_counter_removal_cost is not None:
             result["remove_source_counter"] = (
@@ -622,6 +660,24 @@ def _normalize_and_validate_ability_descriptors(
 
 
 def _validate_ability_closed_vocabulary(ability: ActivatedAbility) -> None:
+    cost = ability.source_counter_placement_cost
+    if cost is not None and (
+        cost != SOURCE_COUNTER_PLACEMENT_COST
+        or ability.zones != ("battlefield",)
+        or ability.target_schema is not None
+        or ability.loyalty_delta is not None
+        or any(ability.mana.values())
+        or any((ability.mana_ability, ability.complex_symbols, ability.mana_cost_options,
+                ability.tap_source, ability.untap_source, ability.discard_source,
+                ability.sacrifice_source, ability.exile_source, ability.life_payment,
+                ability.energy_payment, ability.random_discard_payment, ability.waterbend,
+                ability.source_counter_removal_cost, ability.choices, ability.uncompiled_costs,
+                ability.announced_x_symbols, ability.mill_library_cost, ability.granting_attachment_payment,
+                ability.crew_threshold is not None, ability.saddle_threshold is not None,
+                ability.activation_conditions, ability.activation_limit is not None,
+                ability.sorcery_speed, ability.power_up, ability.boast, ability.forecast, ability.reconfigure))
+    ):
+        raise ValueError("The source counter placement requires the closed ordinary nonmana activation")
     if ability.builtin_semantic_key is not None and (
         not isinstance(ability.builtin_semantic_key, str)
         or not ability.builtin_semantic_key.strip()
@@ -682,6 +738,10 @@ def _ability_zones(
     if prefix in {"cycling", "forecast"}:
         return ("hand",)
     if "discard this card" in lower_cost and (prefix or "channel" in keyword_set):
+        return ("hand",)
+    from .fixed_mana_abilities import HAND_EXILE_MANA_COSTS
+
+    if lower_cost in HAND_EXILE_MANA_COSTS:
         return ("hand",)
     if "exile this card from your graveyard" in lower_cost:
         return ("graveyard",)
@@ -785,13 +845,14 @@ def _fixed_equip_keyword_ability(
     if spec is None:
         return None
     cost = _parse_cost(spec.cost_text, card_name)
+    target = "planeswalker" if spec.planeswalker else "creature"
     return ActivatedAbility(
         ability_id=f"ab{line_index + 1}",
         line_index=line_index,
         oracle_line=raw_line.strip(),
         cost_text=spec.cost_text,
         effect_text=(
-            "Attach this Equipment to target creature you control. "
+            f"Attach this Equipment to target {target} you control. "
             "Activate only as a sorcery."
         ) + (' ' + spec.local_cost_text if spec.local_cost_text else ''),
         zones=("battlefield",),
@@ -810,7 +871,7 @@ def _fixed_equip_keyword_ability(
         choices=cost.choices,
         uncompiled_costs=cost.uncompiled,
         sorcery_speed=True,
-        builtin_semantic_key="builtin:equip",
+        builtin_semantic_key=spec.semantic_key,
         target_schema=FrozenMap(spec.target_schema),
         source_counter_removal_cost=cost.source_counter_removal_cost,
         activation_limit=(
@@ -889,6 +950,7 @@ class _ParsedCost:
     uncompiled: tuple[str, ...]
     random_discard_payment: int = 0
     waterbend: FixedWaterbendCost | None = None
+    loyalty_x: bool = False
 
 
 def _fixed_activation_energy_payment(clause: str) -> int | None:
@@ -919,8 +981,11 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
     life_payment = 0
     energy_payment = 0
     random_discard_payment = 0
+    from .rules.linked_loyalty_exile_model import is_loyalty_x_cost
+
     waterbend = None
-    loyalty_delta: int | None = None
+    loyalty_x = is_loyalty_x_cost(actual_cost)
+    loyalty_delta = 0 if loyalty_x else None
     source_counter_removal_cost: SourceCounterRemovalCost | None = None
     loyalty_clauses = 0
     choices: list[CostChoice] = []
@@ -965,6 +1030,8 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
             continue
         residue = re.sub(r"\{[^{}]+\}", "", clause).strip()
         if not residue:
+            continue
+        if loyalty_x:
             continue
         lower = residue.casefold().strip(" .")
         loyalty_match = re.fullmatch(r"(?:(?P<sign>[+\-\u2212])(?P<amount>\d+)|0)", residue)
@@ -1029,6 +1096,7 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         random_discard_payment=random_discard_payment,
         waterbend=waterbend,
         loyalty_delta=loyalty_delta,
+        loyalty_x=loyalty_x,
         source_counter_removal_cost=source_counter_removal_cost,
         choices=tuple(choices),
         uncompiled=tuple(uncompiled),
@@ -1381,6 +1449,10 @@ def _parse_activated_line(
     prefix = (keyword_override or keyword_prefix or "").casefold()
     parsed_cost, forecast = forecast_cost_without_source_reveal(prefix, actual_cost)
     cost = _parse_cost(parsed_cost, card_name)
+    from .fixed_mana_abilities import is_hand_exile_mana_text
+
+    if not prefix and is_hand_exile_mana_text(actual_cost, effect_text):
+        cost = replace(cost, exile_source=True, uncompiled=())
     if prefix == "exhaust":
         effect_text = re.sub(
             r"\s*\(activate each exhaust ability only once\.\)\s*$",
@@ -1426,6 +1498,7 @@ def _parse_activated_line(
             random_discard_payment=cost.random_discard_payment,
             waterbend=cost.waterbend,
             loyalty_delta=cost.loyalty_delta,
+            loyalty_x=cost.loyalty_x,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,
             uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ()), *((FORECAST_UNCOMPILED,) if prefix == 'forecast' and not forecast else ())),

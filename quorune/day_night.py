@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Protocol, Sequence
 
-from .day_night_model import DayNightBoundMode, DayNightError
+from .day_night_model import DAY_ENTRY_FIELD, DAY_TOGGLE_EVENT, DayNightBoundMode, DayNightError
 from .model import CardInstance, StackItem
 from .permanent_transform import (
     commit_transform_batch,
@@ -96,12 +96,29 @@ def _commit_designation(
     )
 
 
+def commit_initial_day_entry(host, prepared, *, reason):
+    if host.state.day_night is None and prepared.event is not None and prepared.event.payload.get(DAY_ENTRY_FIELD) is True:
+        _commit_designation(host, "day", reason=reason)
+
+
+def _publish_day_night_toggle(host, previous, *, trigger_batch=None):
+    current = host.state.day_night
+    registry = getattr(host, "semantics", None)
+    if (previous is None or current == previous or registry is None
+            or not registry.programs_for_event(DAY_TOGGLE_EVENT)):
+        return
+    host._dispatch_semantic_event(DAY_TOGGLE_EVENT, {"from":previous, "to":current}, trigger_batch=trigger_batch)
+
+
 def set_day_night_designation(host: DayNightHost, designation: str, *, reason: str):
     """Resolve CR 731.1 through the same designation and face owners."""
     if type(designation) is not str or designation not in {'day','night'} or type(reason) is not str or not reason:
         raise DayNightError('Explicit day/night designation is invalid')
+    previous = host.state.day_night
     _commit_designation(host, designation, reason=reason)
-    return synchronize_day_night(host, reason=reason)
+    result = synchronize_day_night(host, reason=reason)
+    _publish_day_night_toggle(host, previous)
+    return result
 
 
 def synchronize_day_night(
@@ -155,7 +172,8 @@ def apply_untap_day_night_transition(
         if host.state.turn_history is not None
         else None
     )
-    target = host.state.day_night
+    previous = host.state.day_night
+    target = previous
     if counts is not None and previous_active is not None:
         active_count = counts.get(previous_active, 0)
         if target == "day" and active_count == 0:
@@ -168,11 +186,13 @@ def apply_untap_day_night_transition(
             target,
             reason="previous active player's spell count at untap",
         )
-    return synchronize_day_night(
+    result = synchronize_day_night(
         host,
         reason="day/night untap synchronization",
         trigger_batch=trigger_batch,
     )
+    _publish_day_night_toggle(host, previous, trigger_batch=trigger_batch)
+    return result
 
 
 __all__ = [

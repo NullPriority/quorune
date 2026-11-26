@@ -7,7 +7,7 @@ from typing import Any, Mapping
 
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
-from .intents import CreateRegenerationShieldIntent, IntentPlan
+from .intents import CreateRegenerationShieldIntent, CreateRegenerationShieldSetIntent, IntentPlan
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,6 +31,19 @@ class CreateRegenerationShieldHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        from ..regeneration import controlled_regeneration_members, is_controlled_creature_regeneration
+
+        if is_controlled_creature_regeneration(effect):
+            try:
+                members = controlled_regeneration_members(effect, context.actor)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            shields = tuple(CreateRegenerationShieldIntent(
+                actor=context.actor, object_ref=reference,
+                logical_object_id=incarnation, reason=context.default_reason,
+            ) for reference, incarnation in members)
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id,
+                              intents=(CreateRegenerationShieldSetIntent(context.actor, shields),))
         fields = validate_direct_target_effect(
             effect,
             context,

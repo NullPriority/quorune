@@ -42,7 +42,21 @@ def _whole_cost_order(cost_schema, option, response):
         raise CastProposalError(str(exc), reason="additional_cost_malformed") from exc
 
 
+def whole_zone_sacrifice_payable(host, actor):
+    from ...sacrifice_prohibition_model import sacrifice_is_prohibited
+
+    battlefield = (host.state.cards[object_id] for object_id in host.state.players[actor].zones["battlefield"])
+    return not any(
+        card.zone == "battlefield" and card.controller == actor and not card.phased_out
+        and sacrifice_is_prohibited(host.state, card)
+        for card in battlefield
+    )
+
+
 def _cost_objects(host, proposal, cost):
+    if cost.origin_zone == "battlefield" and not whole_zone_sacrifice_payable(host, proposal.seat):
+        raise CastProposalError("A permanent in the required payment set cannot be sacrificed",
+                                reason="sacrifice_prohibited")
     refs = fixed_zone_change_cost_candidates(
         host, actor=proposal.seat, cost=cost, exclude_object_id=proposal.object_id,
     )

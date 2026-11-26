@@ -9,6 +9,32 @@ from ..spell_history_transform_model import SPELL_HISTORY_TRANSFORM_MECHANIC_ID
 
 PERMANENT_TRANSFORM_CAPABILITY_ID = "permanent.transform.face_change"
 TRIGGERED_SOURCE_TRANSFORM_MECHANIC = "fixed-triggered-source-transform"
+OPTIONAL_SOURCE_TRANSFORM_VERSION = 4
+
+
+def optional_source_transform_child(wrapper, *, player, resolved=False):
+    children = wrapper.get("effects")
+    if (
+        set(wrapper) != {"op", "player", "effects", "schema_version"}
+        or wrapper["op"] != "offer_optional_effect"
+        or wrapper["player"] != player
+        or type(wrapper["schema_version"]) is not int
+        or wrapper["schema_version"] != OPTIONAL_SOURCE_TRANSFORM_VERSION
+        or not isinstance(children, (tuple, list))
+        or len(children) != 1
+        or not isinstance(children[0], Mapping)
+    ):
+        raise ValueError("Expected the versioned optional source transform")
+    child = children[0]
+    if set(child) != {"op", "card", "expected_transform_count"} or child["op"] != "transform":
+        raise ValueError("Expected one original source transform")
+    if resolved:
+        ref, count = child["card"], child["expected_transform_count"]
+        if (ref is not None and (type(ref) is not str or not ref)) or type(count) is not int or count < 0:
+            raise ValueError("Expected the captured source and original transform count")
+    elif child["card"] != "$source.zone_object" or child["expected_transform_count"] != "$source.transform_count":
+        raise ValueError("Expected the original source and transform-count snapshot")
+    return child
 
 
 def source_transform_node_capabilities(

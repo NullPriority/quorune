@@ -143,11 +143,21 @@ class LocalMergeGateTests(unittest.TestCase):
                 database=output / "test-ci.sqlite3",
                 output=output,
                 focused_tests=DEFAULT_FOCUSED_TESTS,
+                card_databases=(output / "pinned.sqlite3", output / "release.sqlite3"),
             )
 
         by_name = {step.name: step.command for step in steps}
         self.assertEqual(
+            (
+                "python-under-test", "scripts/audit_card_program_fingerprints.py",
+                "--db", str(output / "pinned.sqlite3"), "--db", str(output / "release.sqlite3"),
+                "--output", str(output / "card-program-fingerprints.json"),
+            ),
+            by_name["card_program_source_fingerprints"],
+        )
+        self.assertEqual(
             {
+                "card_program_source_fingerprints",
                 "generated_capability_evidence_freshness",
                 "generated_card_unlock_frontier_freshness",
                 "generated_reusable_piece_freshness",

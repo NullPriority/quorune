@@ -13,6 +13,7 @@ from ..entry_designations import (
     ENTRY_DESIGNATION_CAPABILITY, SELF_CHOSEN_SUBTYPE_CAPABILITY, SELF_CHOSEN_SUBTYPE_CONTINUOUS_HANDLER_ID,
     EntryDesignationKind, validate_designation,
 )
+from ..creature_subtypes import CREATURE_SUBTYPES
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..object_predicate import ObjectQuerySpec
 from .component_registry import exact_fields
@@ -25,21 +26,30 @@ if TYPE_CHECKING:
 
 CROSS_ZONE_TYPE_ADDITION_HANDLER = "continuous.characteristics.cross-zone-type-addition.v1"
 CROSS_ZONE_TYPE_ADDITION_CAPABILITY = "continuous.characteristics.cross_zone_type_addition"
+CROSS_ZONE_ALL_CREATURE_TYPES_CAPABILITY = "continuous.characteristics.cross_zone_all_creature_types"
 CROSS_ZONE_CHOSEN_CREATURE_TYPE_HANDLER = "continuous.characteristics.cross-zone-chosen-creature-type.v1"
 CROSS_ZONE_CHOSEN_CREATURE_TYPE_CAPABILITY = "continuous.characteristics.cross_zone_chosen_creature_type"
 CONTROLLED_CHOSEN_CREATURE_SUBTYPE_HANDLER = "continuous.characteristics.controlled-chosen-subtype.v1"
 CONTROLLED_CHOSEN_CREATURE_SUBTYPE_CAPABILITY = "continuous.characteristics.controlled_chosen_creature_subtype"
 _OWNED_CARD_ZONES = ("command", "exile", "graveyard", "hand", "library", "stack")
 _PERMANENT_SPELL_TYPES = tuple(sorted(PERMANENT_CARD_TYPES - {"land"}))
+_ALL_CREATURE_SUBTYPES = tuple(value.title() for value in sorted(CREATURE_SUBTYPES))
 
 
 @dataclass(frozen=True, slots=True)
 class CrossZoneTypeAdditionSpec:
-    added_type: str
+    added_type: str | None
     receiver: str
     includes_owned_cards: bool
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+            raise ValueError("Cross-zone type addition schema version is unsupported")
+        if self.schema_version == 2:
+            if self.added_type is not None or self.receiver != "creatures" or self.includes_owned_cards is not True:
+                raise ValueError("All creature types require the complete controlled and owned creature scopes")
+            return
         if (type(self.added_type) is not str or self.added_type not in {"artifact", "enchantment"}
                 or type(self.receiver) is not str or self.receiver not in {"creatures", "nonland_permanents"}
                 or type(self.includes_owned_cards) is not bool):
@@ -47,10 +57,19 @@ class CrossZoneTypeAdditionSpec:
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> CrossZoneTypeAdditionSpec:
+        if isinstance(value, Mapping) and "schema_version" in value:
+            exact_fields(value, {"schema_version", "subtypes", "receiver", "includes_owned_cards"},
+                         field="cross-zone creature subtype addition")
+            if type(value["schema_version"]) is not int or value["schema_version"] != 2 or value["subtypes"] != "all_creature_types":
+                raise ValueError("Expected the versioned all-creature-types addition")
+            return cls(None, value["receiver"], value["includes_owned_cards"], schema_version=2)
         exact_fields(value, {"added_type", "receiver", "includes_owned_cards"}, field="cross-zone type addition")
         return cls(value["added_type"], value["receiver"], value["includes_owned_cards"])
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == 2:
+            return {"schema_version": 2, "subtypes": "all_creature_types", "receiver": self.receiver,
+                    "includes_owned_cards": self.includes_owned_cards}
         return {"added_type": self.added_type, "receiver": self.receiver,
                 "includes_owned_cards": self.includes_owned_cards}
 
@@ -98,7 +117,10 @@ class CrossZoneTypeAdditionHandler:
     event: str = "characteristics.evaluate"
     source_component_layer: Layer = Layer.TYPE
     rule_references: tuple[str, ...] = ("109.2a", "109.2b", "110.4a", "110.4b", "205.1b", "611.3b", "613.1d")
-    capability_dependencies: tuple[str, ...] = (CROSS_ZONE_TYPE_ADDITION_CAPABILITY,)
+    capability_dependencies: tuple[str, ...] = (
+        CROSS_ZONE_TYPE_ADDITION_CAPABILITY,
+        CROSS_ZONE_ALL_CREATURE_TYPES_CAPABILITY,
+    )
 
     def validate(self, descriptor: Mapping[str, Any]) -> CrossZoneTypeAdditionSpec:
         exact_fields(descriptor, {"handler_id", "schema_version", "event", "requires_complete_card_program", "addition"},
@@ -109,9 +131,17 @@ class CrossZoneTypeAdditionHandler:
             raise SemanticNodeError("Cross-zone type additions require their exact handler and complete source")
         return CrossZoneTypeAdditionSpec.from_dict(descriptor["addition"])
 
+    def required_capabilities(self, descriptor: Mapping[str, Any]) -> tuple[str, ...]:
+        if self.validate(descriptor).schema_version == 2:
+            return (CROSS_ZONE_ALL_CREATURE_TYPES_CAPABILITY,)
+        return (CROSS_ZONE_TYPE_ADDITION_CAPABILITY,)
+
     def lower(self, descriptor, context):
         spec = self.validate(descriptor)
-        operation = ContinuousOperation("add_types", (spec.added_type.title(),), field="card_types")
+        if spec.schema_version == 2:
+            operation = ContinuousOperation("add_types", _ALL_CREATURE_SUBTYPES, field="subtypes")
+        else:
+            operation = ContinuousOperation("add_types", (spec.added_type.title(),), field="card_types")
         return _type_addition_effects(context, operation, spec.recipients(context.source_controller))
 
 

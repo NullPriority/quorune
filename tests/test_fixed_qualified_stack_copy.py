@@ -27,7 +27,10 @@ from quorune.target_predicates import target_predicate_matches
 from quorune.targets import target_plan
 
 NAMES = ['Lithoform Engine', 'Strionic Resonator', "Tawnos, Urza's Apprentice", 'Abstruse Archaic']
-FIXTURE = ROOT/'tests/fixtures/fixed-qualified-stack-copy-cards.json'
+FIXTURES = [
+    ROOT / "tests/fixtures/fixed-qualified-stack-copy-cards.json",
+    ROOT / "tests/fixtures/scryfall-exact-lists.json",
+]
 
 
 class QualifiedStackCopyModelTests(unittest.TestCase):
@@ -109,7 +112,7 @@ class QualifiedStackCopyCompilerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory(); path = Path(cls.temporary.name)/'qualified-copy.sqlite3'
-        build_fixture_database([FIXTURE], path); cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
+        build_fixture_database(FIXTURES, path); cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
 
     @classmethod
     def tearDownClass(cls): cls.db.close(); cls.temporary.cleanup()
@@ -141,6 +144,62 @@ class QualifiedStackCopyCompilerTests(unittest.TestCase):
                     checked = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile='commander_review')
                     self.assertFalse(checked['strict'])
                     self.assertIn('capability:undeclared_runtime_dependency:stack.copy.fixed_qualified_target', checked['blockers'])
+
+    def test_scientist_uses_strict_source_qualified_copy_with_exact_reviewed_precedence(self):
+        from quorune.card_programs.activation_view_equivalence import shadowed_reviewed_activation_view_keys
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_card_program_runtime, bind_semantic_program_runtime
+        from quorune.compiler.activated_ability_catalog import with_activated_ability_catalog
+        from quorune.semantics import SemanticRegistry
+
+        card = self.db.lookup("Scientist Supreme of A.I.M.", fuzzy=False)
+        semantics = SemanticRegistry()
+        reviewed = next(p for p in semantics.programs_for_oracle(card.oracle_id) if p.event == "activate")
+        profile = "commander_review"
+        register_generated_programs(self.db, semantics, [card], capability_registry=self.registry,
+            capability_profile=profile, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True, promote_exact_runtime_handlers=True)
+        current, = semantics.programs_for_oracle(card.oracle_id, event="activate")
+        self.assertTrue(current.provenance["authored_by"].startswith("oracle-ir-v"))
+        self.assertEqual("artifact_ability_source", current.target_schema["predicate"])
+        self.assertIn(ABILITY_SOURCE_INFORMATION_CAPABILITY, current.capability_dependencies)
+        self.assertEqual(2, current.cost_schema["life_payment"])
+        self.assertEqual("once_per_turn", current.cost_schema["activation_limit"])
+        conditions = current.handlers[0]["ability"]["activation_conditions"]
+        self.assertEqual(["controllers_turn"], [condition["kind"] for condition in conditions])
+
+        program = compile_best_available_card_program(self.db, card, semantic_registry=semantics,
+            capability_registry=self.registry, capability_profile=profile)
+        bound = bind_card_program_runtime(program, capability_registry=self.registry, profile=profile)
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        self.assertFalse(bound["compatibility_provenance"])
+        dependencies = tuple(cap for cap in current.capability_dependencies if cap != ABILITY_SOURCE_INFORMATION_CAPABILITY)
+        omitted = replace(current, capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile=profile).to_dict())
+        omitted_binding = bind_semantic_program_runtime(omitted, capability_registry=self.registry, profile=profile)
+        self.assertFalse(omitted_binding["strict"])
+        self.assertIn("capability:undeclared_runtime_dependency:" + ABILITY_SOURCE_INFORMATION_CAPABILITY,
+            omitted_binding["blockers"])
+
+        augmented, = with_activated_ability_catalog(card, [reviewed], reference_programs=[current])
+        self.assertEqual("artifact_source", reviewed.target_schema["predicate"])
+        self.assertEqual("artifact_source", augmented.handlers[0]["ability"]["target_schema"]["predicate"])
+
+        def shadowed(old):
+            return shadowed_reviewed_activation_view_keys(card, [current], [old],
+                capability_registry=self.registry, capability_profile=profile)
+
+        self.assertEqual({reviewed.key}, shadowed(augmented))
+        for delta in ({"controller": "opponent"}, {"count": True}, {"count": 2}, {"predicate": "any_ability"}):
+            with self.subTest(delta=delta):
+                schema = {**augmented.target_schema, **delta}
+                handlers = deepcopy(augmented.handlers)
+                handlers[0]["ability"]["target_schema"] = schema
+                self.assertFalse(shadowed(replace(augmented, target_schema=schema, handlers=handlers)))
+        self.assertFalse(shadowed(replace(augmented, cost_schema={**current.cost_schema, "life_payment": 1})))
+        timing = deepcopy(augmented.handlers)
+        timing[0]["ability"]["activation_conditions"] = []
+        self.assertFalse(shadowed(replace(augmented, handlers=timing)))
 
     def test_genuine_copy_owner_withdrawal_keeps_the_old_spell_copy_owner(self):
         from copy import deepcopy
@@ -190,7 +249,7 @@ class QualifiedStackCopyNativeTests(InheritedNativeFixture, unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory(); path = Path(cls.temporary.name)/'qualified-copy-native.sqlite3'
-        build_fixture_database([FIXTURE], path); cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
+        build_fixture_database(FIXTURES, path); cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Qualified stack copies', [DeckEntry('Sliver Hivelord', 1, 'commander'),
             DeckEntry('Generic Bound Plains', 30)], ['Sliver Hivelord'])
 
@@ -246,6 +305,87 @@ class QualifiedStackCopyNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.cast(s, 'B', remove, [rod.ref]); self.resolve_top(s)
         self.activate_target(s, copier, original.ref); self.choose_targets(s, ['D']); self.assertIsNone(self.resolve(s))
         self.assertEqual([40, 39, 40, 38], [s.state.players[x].life for x in 'ABCD']); self.finish(s, private)
+
+    def test_actual_scientist_pays_life_once_and_retargets_departed_artifact_ability(self):
+        session = self.session(871021)
+        scientist = self.add(session.engine, "Scientist Supreme of A.I.M.")
+        rod = self.add(session.engine, "Rod of Ruin")
+        nonartifact = self.add(session.engine, "Prodigal Sorcerer")
+        mana_rock = self.add(session.engine, "Sol Ring")
+        self.add(session.engine, "Fervor")
+        remove = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+        self.add(session.engine, "Plains", seat="B")
+        self.add(session.engine, "Wastes", seat="B")
+        private = self.add(session.engine, "Counterspell", seat="C", zone="hand", ref="scientist-private")
+        self.assert_closed(session, scientist)
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        self.activate_target(session, nonartifact, "D")
+        wrong_source = session.state.stack[-1]
+        self.activate_target(session, rod, "B")
+        original = session.state.stack[-1]
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        mana = next(a for a in actions if a["id"].startswith("activate:" + mana_rock.ref + ":"))
+        result = session.act("pilot:A", {"action_id": mana["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual([wrong_source.ref, original.ref], [item.ref for item in session.state.stack])
+        self.cast(session, "B", remove, [rod.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[rod.object_id].zone)
+        self.priority(session, "A")
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(a for a in actions if a["id"].startswith("activate:" + scientist.ref + ":"))
+        self.assertEqual([original.ref], action["target_schema"]["legal_refs"])
+        self.reject(session, "A", {"action_id": action["id"], "targets": [wrong_source.ref], "pay": "auto"})
+        self.assertEqual(40, session.state.players["A"].life)
+        self.activate_target(session, scientist, original.ref)
+        self.assertEqual(38, session.state.players["A"].life)
+        self.priority(session, "A")
+        self.reject(session, "A", {"action_id": action["id"], "targets": [original.ref], "pay": "auto"})
+        self.assertEqual(38, session.state.players["A"].life)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        session = self.replay(session, load=True)
+        self.choose_targets(session, ["D"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([38, 39, 40, 38], [session.state.players[seat].life for seat in "ABCD"])
+        self.finish(session, private)
+
+    def test_actual_scientist_copies_artifact_trigger_on_own_turn_only(self):
+        for active in ("A", "B"):
+            with self.subTest(active=active):
+                session = self.session(871022 if active == "A" else 871023)
+                scientist = self.add(session.engine, "Scientist Supreme of A.I.M.")
+                artifact = self.add(session.engine, "Ichor Wellspring", zone="hand")
+                self.add(session.engine, "Vedalken Orrery")
+                self.assert_closed(session, scientist)
+                self.prepare(session, mana={"C": 2})
+                session.state.active_player = active
+                self.checkpoint(session)
+                self.cast(session, "A", artifact)
+                self.resolve_top(session)
+                original = session.state.stack[-1]
+                self.assertEqual("triggered_ability", original.kind)
+                self.assertEqual(artifact.object_id, original.source_object_id)
+                self.priority(session, "A")
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                offers = [a for a in actions if a["id"].startswith("activate:" + scientist.ref + ":")]
+                hand = len(session.state.players["A"].zones["hand"])
+                if active == "B":
+                    self.assertFalse(offers)
+                    self.reject(session, "A", {
+                        "action_id": "activate:" + scientist.ref + ":ab1",
+                        "targets": [original.ref],
+                        "pay": "auto",
+                    })
+                else:
+                    self.assertEqual(1, len(offers))
+                    self.activate_target(session, scientist, original.ref)
+                self.assertIsNone(self.resolve(session))
+                copies = int(active == "A")
+                self.assertEqual(hand + 1 + copies, len(session.state.players["A"].zones["hand"]))
+                self.assertEqual(40 - 2 * copies, session.state.players["A"].life)
+                self.replay(session, load=True)
 
     def test_actual_archaic_excludes_colored_source_and_copies_colorless_damage(self):
         s = self.session(871030); copier = self.add(s.engine, 'Abstruse Archaic'); rod = self.add(s.engine, 'Rod of Ruin')

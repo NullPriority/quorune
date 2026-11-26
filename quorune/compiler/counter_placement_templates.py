@@ -606,6 +606,10 @@ class FixedPlayerCounterPlacementTemplate:
             "amount": self.count,
             "source": "$source",
         }
+        from ..rad_counter_model import RAD_COUNTER, RAD_PRODUCER_FIELD, RAD_TRIGGER_VERSION
+
+        if self.counter_name == RAD_COUNTER:
+            effect[RAD_PRODUCER_FIELD] = RAD_TRIGGER_VERSION
         if self.subject is PlayerCounterPlacementSubject.TARGET:
             effect["target"] = "$target.0"
         return (effect,)
@@ -1054,7 +1058,13 @@ def fixed_counter_set_spec_is_closed(
             return False
     subtype_disjunction = tuple(query.subtypes_any)
     if subtype_disjunction:
-        if subtypes or type_shape or not 2 <= len(subtype_disjunction) <= 8:
+        if subtypes or type_shape not in {(), ("creature",)} or not 2 <= len(subtype_disjunction) <= 8:
+            return False
+        if type_shape and (
+            len(subtype_disjunction) != 2 or spec.controller_relation is not PermanentControllerRelation.ACTOR
+            or spec.exclude_source or query.state_predicate is not None or query.keywords_all or query.colors_any
+            or query.supertypes_all or query.token is not None or query.tapped is not None
+        ):
             return False
         if any(
             canonical_creature_subtype(value) != value
@@ -1191,6 +1201,23 @@ def _fixed_counter_set_subtype_predicates(
     }
 
 
+def _controlled_creature_subtype_choice(phrase: str) -> AffectedPermanentSetSpec | None:
+    match = re.fullmatch(
+        r"creature you control that(?:['’]s| is) an? (?P<first>[a-z][a-z' -]*?) or an? (?P<second>[a-z][a-z' -]*)",
+        phrase,
+    )
+    if match is None:
+        return None
+    left = canonical_creature_subtype(match.group("first"))
+    right = canonical_creature_subtype(match.group("second"))
+    if left is None or right is None or left == right:
+        return None
+    return AffectedPermanentSetSpec(
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), subtypes_any=(left, right)),
+        controller_relation=PermanentControllerRelation.ACTOR,
+    )
+
+
 def _fixed_counter_set_query(
     subject: str,
 ) -> tuple[AffectedPermanentSetSpec, str | None] | None:
@@ -1198,6 +1225,8 @@ def _fixed_counter_set_query(
     if not phrase.startswith("each "):
         return None
     phrase = phrase[5:]
+    if subtype_choice := _controlled_creature_subtype_choice(phrase):
+        return subtype_choice, None
     combat=re.fullmatch(r'(?P<state>attacking|blocking) (?P<body>creature(?: .+)?)',phrase)
     combat_state=None
     if combat is not None:

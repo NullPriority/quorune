@@ -2,15 +2,60 @@
 
 from . import regex_working_set as re
 from ..object_predicate import ObjectQuerySpec
-from ..qualified_library_search_model import QualifiedLibrarySearchSpec
+from ..qualified_library_search_model import CREATURE_KEYWORD_TOP_SEARCH_KEYWORDS, QualifiedLibrarySearchSpec
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
+from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
 
 _COLORS = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
 _SEARCH = re.compile(r"Search your library for an? (?P<quality>.+?) card(?P<after>.*?)"
     r", (?P<reveal>reveal it, )?put it (?P<destination>into your hand|onto the battlefield), then shuffle\.", re.I)
 
 
+_CREATURE_STAT_SEARCH = re.compile(
+    r"(?P<optional>you may )?search your library for a creature card with "
+    r"(?P<stat>power|toughness) 2 or less, reveal it, put it into your hand, then shuffle\.",
+    re.IGNORECASE,
+)
+
+
+def creature_stat_library_search_template(text: str):
+    match = _CREATURE_STAT_SEARCH.fullmatch(" ".join(text.split()))
+    if match is None:
+        return None
+    stat = TargetNumericCharacteristic(match["stat"].casefold())
+    optional = match["optional"] is not None
+    if optional != (stat is TargetNumericCharacteristic.TOUGHNESS):
+        return None
+    template, effects, targets, mechanics = QualifiedLibrarySearchSpec(
+        ObjectQuerySpec(zones=("library",), types_all=("creature",)),
+        "hand",
+        True,
+        stat_bound=TargetNumericCharacteristicSpec(stat, TargetNumericComparison.AT_MOST, 2),
+    ).compiled()
+    if not optional:
+        return template, effects, targets, mechanics
+    return FixedOptionalEffectTemplate(
+        component_template_id=template,
+        _component_effects=effects,
+        _target_schema=targets,
+        mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, *mechanics),
+    ).compiled()
+
+
+_KEYWORD_TOP_SEARCH = (
+    "search your library for a creature card with deathtouch, hexproof, reach, or trample "
+    "and reveal it. shuffle and put that card on top."
+)
+
+
 def qualified_library_search_template(text):
-    match = _SEARCH.fullmatch(" ".join(text.strip().split()))
+    normalized = " ".join(text.strip().split())
+    if normalized.casefold() == _KEYWORD_TOP_SEARCH:
+        return QualifiedLibrarySearchSpec(
+            ObjectQuerySpec(zones=("library",), types_all=("creature",)), "library_top", True,
+            keywords_any=CREATURE_KEYWORD_TOP_SEARCH_KEYWORDS,
+        )
+    match = _SEARCH.fullmatch(normalized)
     if match is None:return None
     quality = match["quality"].casefold();after = match["after"].casefold()
     query = None;maximum = None;values = ()

@@ -188,6 +188,43 @@ class ResolutionManaChoiceTests(unittest.TestCase):
         self.assertNotIn(empty.key,selected);self.assertIn(trigger.key,selected)
         self.assertTrue(self.binding(s,card)['strict_capability_ready'])
 
+    def test_lotus_cobra_reviewed_landfall_ruling_revision(self):
+        from quorune.card_programs.resolution_mana_overlay import shadowed_reviewed_resolution_mana_keys
+        from quorune.compiler.program_generation import generated_programs
+        from quorune.preflight import semantic_preflight
+        from quorune.semantics import SemanticRegistry
+
+        record = self.db.lookup("Lotus Cobra", fuzzy=False)
+        original = self.db.rulings(record)
+        self.assertEqual(8, len(original))
+        updated = tuple(
+            replace(row, published_at="2025-07-25", comment=row.comment.replace("\xa0\xa0", "").replace(
+                "landfall ability of the permanents", "landfall ability of permanents").replace(
+                " (As a result, you can have those abilities resolve in the order of your choosing.).",
+                ". As a result, you can have those abilities resolve in the order of your choosing."))
+            if row.published_at == "2024-11-08" else row
+            for row in original
+        )
+        expected = "a0ec45a61510db718888dffb0765ab85339f069ac1f450fe1676c201a66d7007"
+        registry = SemanticRegistry()
+        reviewed = registry.programs_for_oracle(record.oracle_id)
+        self.assertEqual(2, len(reviewed))
+        options = {"capability_registry": self.registry, "capability_profile": "commander_review"}
+        with patch.object(self.db, "rulings", return_value=updated):
+            compiled = generated_programs(self.db, record, trust_level="trusted", **options)
+            self.assertEqual({expected}, {p.provenance["source_rulings_hash"] for p in compiled})
+            self.assertEqual({p.key for p in reviewed},
+                             shadowed_reviewed_resolution_mana_keys(record, compiled, reviewed))
+            deck = DeckDefinition("Landfall ruling revision", [DeckEntry(record.name, 1)], [])
+            row, = semantic_preflight(self.db, deck, registry=registry)["cards"]
+        self.assertTrue(row["card_program_strict_capability_ready"], row["unresolved"])
+        self.assertTrue(row["source_hash_match"])
+        current, = registry.programs_for_oracle(record.oracle_id)
+        self.assertEqual("land.enter", current.event)
+        self.assertEqual(expected, current.provenance["source_rulings_hash"])
+        unknown = replace(current, provenance={**current.provenance, "source_rulings_hash": "0" * 64})
+        self.assertFalse(shadowed_reviewed_resolution_mana_keys(record, (unknown,), reviewed))
+
     def test_foreign_land_does_not_trigger_and_real_stifle_counters_own_land_trigger(self):
         for foreign in (True,False):
             s=self.session(805057+foreign);source=self.add(s.engine,'Lotus Cobra')

@@ -805,6 +805,53 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "7ddbf891-7f80-44e9-b94c-70c1da0b91ed",
+      "name": "Getaway Barrel",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Artifact",
+      "oracle_text": "When this artifact is put into a graveyard from the battlefield, reveal the top thirteen cards of your library. Put a random creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      }
     }
   ],
   "rulings": [

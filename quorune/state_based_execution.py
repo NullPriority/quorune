@@ -67,6 +67,8 @@ class StateBasedSnapshotHost(Protocol):
 
 def permanent_sba_snapshots(host: StateBasedSnapshotHost) -> list[PermanentSnapshot]:
     """Capture one current public view before any state-based mutation."""
+    from .sacrifice_prohibition_model import sacrifice_is_prohibited
+
     snapshots: list[PermanentSnapshot] = []
     seen: set[str] = set()
     for seat in host.active_seats:
@@ -136,7 +138,8 @@ def permanent_sba_snapshots(host: StateBasedSnapshotHost) -> list[PermanentSnaps
                         if "battle" in card_types
                         else False
                     ),
-                    saga=saga_final_chapter_snapshot(host, card),
+                    saga=(None if sacrifice_is_prohibited(host.state, card)
+                          else saga_final_chapter_snapshot(host, card)),
                     attached_to=card.attached_to,
                     attachment_legal=(
                         host._attachment_is_legal(
@@ -168,11 +171,27 @@ def commit_state_based_principal_changes(host: StateBasedPrincipalHost) -> bool:
     if synchronize_control_effects(host, reason="control effect changed"):
         return True
     losers = player_loss_seats(host.state, host.active_seats)
+    if losers:
+        from .drawing.transaction import consume_prevented_empty_draws
+        from .rules.match_outcome_restrictions import current_match_outcome_restrictions
+
+        prohibited = current_match_outcome_restrictions(host).loss_prohibited
+        consume_prevented_empty_draws(host.state, tuple(seat for seat in losers if seat in prohibited))
+        losers = tuple(seat for seat in losers if seat not in prohibited)
     if not losers:
         from .rules.player_speed_state import start_player_speeds
         return start_player_speeds(host)
     host._eliminate_players(losers, reason="state-based loss")
     return True
+
+
+def commit_game_win(host, seat: str) -> None:
+    """Close the match through the shared terminal outcome boundary."""
+    host.state.game_over = True
+    host.state.winner = seat
+    host.state.priority_player = None
+    host.permissions.invalidate_current()
+    host._log(seat, "game.win", f"{seat} won the game.", importance=3, changed_players=[seat])
 
 
 def commit_game_draw(host, *, reason: str) -> None:

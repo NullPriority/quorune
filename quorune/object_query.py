@@ -48,6 +48,10 @@ class ObjectQueryResult:
     equipped: bool = False
     modified: bool = False
     commander: bool = False
+    face_down: bool = False
+    physical_card: bool = True
+    sacrifice_prohibited: bool = False
+    public_rules_names: tuple[str, ...] = field(default=(), compare=False)
 
     def __post_init__(self) -> None:
         if not isinstance(self.counters, FrozenMap):
@@ -69,6 +73,8 @@ class ObjectQueryResult:
             "equipped",
             "modified",
             "commander",
+            "face_down",
+            "sacrifice_prohibited",
         ):
             if type(getattr(self, field_name)) is not bool:
                 raise ValueError(
@@ -134,6 +140,8 @@ def object_query_result(
     enchanted: bool = False,
     equipped: bool = False,
     modified: bool | None = None,
+    sacrifice_prohibited: bool = False,
+    public_rules_names: tuple[str, ...] = (),
 ) -> ObjectQueryResult:
     types, subtypes, supertypes = type_parts
     return ObjectQueryResult(
@@ -164,9 +172,13 @@ def object_query_result(
             card, effective, "toughness"
         ),
         token=bool(card.is_token),
+        physical_card=not card.is_token and getattr(card, "object_kind", "card") == "card",
         commander=bool(getattr(card,'is_commander',False)),
         tapped=bool(card.tapped),
         phased_out=bool(card.phased_out),
+        face_down=getattr(card, "face_down", False) is True,
+        sacrifice_prohibited=sacrifice_prohibited,
+        public_rules_names=public_rules_names,
         known_to_actor=known_to_actor,
         attached_to_ref=attached_to_ref,
         battle_protector=getattr(card, "battle_protector", None),
@@ -247,6 +259,7 @@ def object_matches_query(
                 equipped=row.equipped,
                 modified=row.modified,
                 monstrous=row.monstrous_value is not None,
+                face_down=row.face_down,
             )
         )
     )

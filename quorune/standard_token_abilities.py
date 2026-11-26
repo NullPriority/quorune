@@ -8,6 +8,10 @@ from typing import Any, Mapping
 from .abilities import ActivatedAbility, CostChoice
 from .object_predicate import ObjectQuerySpec
 from .fixed_mana_abilities import FixedManaMode
+from .fixed_mana_results import FixedManaResultSpec, GAIN_CONTROLLER_LIFE
+from .fixed_token_production import (
+    GOLD_TOKEN_MANA_ABILITY, GOLD_TOKEN_MANA_PROFILE, TOKEN_MANA_LIFE_ABILITY, TOKEN_MANA_LIFE_PROFILE,
+)
 from .replacement.immutable import FrozenMap
 from .util import normalize_mana_bundle
 from .defined_token_faces import (
@@ -21,6 +25,8 @@ from .defined_token_faces import (
 class StandardTokenAbilityProfile(str, Enum):
     TWO_TRANSFORM_SOURCE = INCUBATOR_TRANSFORM_PROFILE
     TAP_SAC_ANY_COLOR_MANA = "tap_sac_any_color_mana_v1"
+    SAC_ANY_COLOR_MANA = GOLD_TOKEN_MANA_PROFILE
+    TAP_SAC_MANA_LIFE = TOKEN_MANA_LIFE_PROFILE
     TWO_TAP_SAC_GAIN_THREE_LIFE = "two_tap_sac_gain_three_life_v1"
     TWO_SAC_DRAW_CARD = "two_sac_draw_card_v1"
     ONE_TAP_SAC_EXPLORE_CONTROLLED_CREATURE = (
@@ -44,21 +50,34 @@ def _transform_source() -> ActivatedAbility:
     )
 
 
-def _any_color_mana() -> ActivatedAbility:
+def _any_color_mana(*, tap_source: bool = True) -> ActivatedAbility:
+    line = f"{{T}}, {GOLD_TOKEN_MANA_ABILITY}" if tap_source else GOLD_TOKEN_MANA_ABILITY
+    cost, _, effect = line.partition(": ")
     return ActivatedAbility(
         ability_id="ab1",
         line_index=0,
-        oracle_line="{T}, Sacrifice this token: Add one mana of any color.",
-        cost_text="{T}, Sacrifice this token",
-        effect_text="Add one mana of any color.",
+        oracle_line=line,
+        cost_text=cost,
+        effect_text=effect,
         zones=("battlefield",),
         mana=normalize_mana_bundle(None),
-        tap_source=True,
+        tap_source=tap_source,
         sacrifice_source=True,
         mana_ability=True,
         fixed_mana_outputs=tuple(
             FixedManaMode.from_bundle({color: 1}) for color in "WUBRG"
         ),
+    )
+
+
+def _mana_life() -> ActivatedAbility:
+    cost, _, effect = TOKEN_MANA_LIFE_ABILITY.partition(": ")
+    return ActivatedAbility(
+        ability_id="ab1", line_index=0, oracle_line=TOKEN_MANA_LIFE_ABILITY,
+        cost_text=cost, effect_text=effect, zones=("battlefield",), mana=normalize_mana_bundle(None),
+        tap_source=True, sacrifice_source=True, mana_ability=True,
+        fixed_mana_outputs=tuple(FixedManaMode.from_bundle({color: 1}) for color in "RG"),
+        fixed_mana_result=FixedManaResultSpec(GAIN_CONTROLLER_LIFE, 2, schema_version=3),
     )
 
 
@@ -206,6 +225,8 @@ _STANDARD_TOKEN_ABILITIES = {
     StandardTokenAbilityProfile.TAP_SAC_ANY_COLOR_MANA: (
         _any_color_mana(),
     ),
+    StandardTokenAbilityProfile.SAC_ANY_COLOR_MANA: (_any_color_mana(tap_source=False),),
+    StandardTokenAbilityProfile.TAP_SAC_MANA_LIFE: (_mana_life(),),
     StandardTokenAbilityProfile.TWO_TAP_SAC_GAIN_THREE_LIFE: (
         _gain_three_life(),
     ),

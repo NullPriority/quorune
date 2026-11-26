@@ -10,7 +10,7 @@ from .committed_quantity_followups import CommittedQuantityFollowup
 
 def capture_sacrifice_life_amount(host, intent, card) -> int | PaidCreatureStatSnapshot:
     result = intent.result
-    if (card.logical_object_id != result.incarnation or card.controller != result.player
+    if (card.logical_object_id != result.incarnation or card.controller != result.sacrifice_controller
             or card.zone != "battlefield" or card.phased_out):
         raise GameRuleError("The selected creature no longer matches its sacrifice incarnation")
     try:

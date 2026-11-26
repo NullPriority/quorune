@@ -17,6 +17,7 @@ from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILI
     CONDITIONAL_VANISHING_COPY_HANDLER, CONDITIONAL_VANISHING_COPY_CAPABILITIES,
     FACE_UP_OR_ENTRY_COPY_HANDLER, FACE_UP_OR_ENTRY_COPY_CAPABILITIES,
     GRAVEYARD_PAIR_COPY_HANDLER, GRAVEYARD_PAIR_COPY_CAPABILITIES,
+    TEMPORARY_HASTE_COPY_VERSION, TEMPORARY_HASTE_COPY_HANDLER, TEMPORARY_HASTE_COPY_CAPABILITIES,
     COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD, copiable_oracle_id)
 from ..object_query import object_matches_query, object_query_result
 from ..replacement_effects import CreateAffectedObjectCounter, ReplacementClass, ReplacementEffect, SetField
@@ -32,7 +33,9 @@ from ..entry_copy_predicates import ENTRY_COPY_PREDICATE_HANDLER,ENTRY_COPY_PRED
 _COPY_VERSIONS = {ENTRY_COPY_HANDLER: 1, ENTRY_COPY_QUERY_HANDLER: 2, ENTRY_COPY_VALUES_HANDLER: 3,
     ENTRY_COPY_PREDICATE_HANDLER: 4, CONDITIONAL_COPY_HANDLER: 5, ENTRY_COPY_TAPPED_HANDLER: 6,
     CONTROLLED_COPY_SHIELD_HANDLER: 7, ANNOUNCED_X_COPY_COUNTER_HANDLER: 8, TYPE_DIRECTED_COPY_COUNTER_HANDLER: 9,
-    LEGENDARY_SNOW_COPY_HANDLER: 10, CONDITIONAL_VANISHING_COPY_HANDLER: 11, FACE_UP_OR_ENTRY_COPY_HANDLER: 12, GRAVEYARD_PAIR_COPY_HANDLER: 13, RETAINED_COLOR_ENTRY_HANDLER: 14}
+    LEGENDARY_SNOW_COPY_HANDLER: 10, CONDITIONAL_VANISHING_COPY_HANDLER: 11, FACE_UP_OR_ENTRY_COPY_HANDLER: 12,
+    GRAVEYARD_PAIR_COPY_HANDLER: 13, RETAINED_COLOR_ENTRY_HANDLER: 14,
+    TEMPORARY_HASTE_COPY_HANDLER: TEMPORARY_HASTE_COPY_VERSION}
 
 
 @dataclass(frozen=True, slots=True)
@@ -117,6 +120,12 @@ def entry_copy_handler(version):
         return EntryCopyHandler(handler_id=RETAINED_COLOR_ENTRY_HANDLER, schema_version=14,
             capability_dependencies=(ENTRY_COPY_CAPABILITY, RETAINED_COLOR_COPY_CAPABILITY),
             rule_references=(*EntryCopyHandler().rule_references, '707.9a', '707.9c', '707.9d'))
+    if version == TEMPORARY_HASTE_COPY_VERSION:
+        return EntryCopyHandler(
+            handler_id=TEMPORARY_HASTE_COPY_HANDLER, schema_version=TEMPORARY_HASTE_COPY_VERSION,
+            capability_dependencies=TEMPORARY_HASTE_COPY_CAPABILITIES,
+            rule_references=(*EntryCopyHandler().rule_references, '514.2', '702.10', '707.9a'),
+        )
     raise SemanticNodeError('Copy selector version is unsupported')
 
 
@@ -222,20 +231,34 @@ def _copied_entry_effects(host, subject, source, target, values, *, form_key, si
              if prospective_types is None else prospective_types)
     copied_subject = replace(subject, object_types=types, self_entry_counter_amounts=amounts,
         entry_condition_metrics=entry_condition_metrics(host, subject.destination_controller))
+    card_types, card_subtypes, _ = host._type_parts(str(values["type_line"]))
+    counter_characteristics = values
+    from ..ability_fragment_primitives import current_saga_intrinsic_abilities
+
+    if "saga" in card_subtypes and current_saga_intrinsic_abilities(host.state):
+        from ..ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED
+        from .zone_replacement_inputs import prospective_entry_loses_intrinsic_abilities
+
+        if prospective_entry_loses_intrinsic_abilities(
+            host, source, subject.destination_controller, copy_values=values,
+        ):
+            counter_characteristics = {**values, INTRINSIC_ABILITIES_REMOVED: True}
     effects = list(intrinsic_entry_counter_effects(object_ref=subject.object_ref,
         destination_controller=subject.destination_controller,
-        counters=intrinsic_entry_counters(values, card_types=host._type_parts(str(values['type_line']))[0],
-            card_subtypes=host._type_parts(str(values['type_line']))[1], keywords=values.get('keywords', ()))))
+        counters=intrinsic_entry_counters(counter_characteristics, card_types=card_types,
+            card_subtypes=card_subtypes, keywords=values.get('keywords', ()))))
     registry = default_zone_change_replacement_registry()
     for program in programs:
         for index, descriptor in enumerate(program.handlers):
             if descriptor.get('handler_id') in _COPY_VERSIONS:
                 continue
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
+            from ..day_night_model import DAY_ENTRY_HANDLER
+            from ..rules.entry_land_discard import HANDLER as ENTRY_LAND_DISCARD_HANDLER
             from ..devour import DEVOUR_HANDLER
             from ..preparation_model import PREPARATION_HANDLER
             from .self_entry_counters import ENTRY_COUNTER_TRANSFER_HANDLER_ID
-            if descriptor.get('handler_id') in {PREPARATION_HANDLER, AMPLIFY_HANDLER, ENTRY_COUNTER_TRANSFER_HANDLER_ID}:
+            if descriptor.get('handler_id') in {PREPARATION_HANDLER, AMPLIFY_HANDLER, ENTRY_COUNTER_TRANSFER_HANDLER_ID, DAY_ENTRY_HANDLER}:
                 from .self_entry_counters import program_static_component_is_applicable
                 if not program_static_component_is_applicable(host,program,preview,prospective_zone='battlefield',
                         prospective_controller=subject.destination_controller):continue
@@ -247,6 +270,12 @@ def _copied_entry_effects(host, subject, source, target, values, *, form_key, si
             if descriptor.get('handler_id')==DEVOUR_HANDLER:
                 from .devour import DevourEntryHandler,devour_effects_for_spec
                 effects.extend(devour_effects_for_spec(host,copied_subject,DevourEntryHandler().validate(descriptor),component_id=f'{program.key}:{index}'))
+                continue
+            if descriptor.get('handler_id')==ENTRY_LAND_DISCARD_HANDLER:
+                from .entry_land_discard import EntryLandDiscardHandler, entry_land_discard_options
+
+                EntryLandDiscardHandler().validate(descriptor)
+                effects.extend(entry_land_discard_options(host,copied_subject,component_id=f'{program.key}:{index}'))
                 continue
             if descriptor.get('handler_id')==ENTRY_REVEAL_HANDLER:
                 from .entry_reveal import EntryRevealHandler,entry_reveal_effects_for_spec
@@ -278,7 +307,7 @@ def _copy_form_view(source,values,history=None):
 
 
 def _entry_copy_history(view, spec, values, *, prior_form):
-    if not spec.face_up_or_entry:
+    if not (spec.face_up_or_entry or spec.temporary_haste):
         return None
     from ..replacement.face_status_copy import (
         COPY_HISTORY_FIELD, CopyExpiry, CopyValueState, ScopedCopyValues, current_copy_history, scoped_copy_form,
@@ -293,7 +322,8 @@ def _entry_copy_history(view, spec, values, *, prior_form):
             else:
                 prior = None
         history = ScopedCopyValues(scoped_copy_form(prior) if prior is not None else CopyValueState(None))
-    return history.apply(CopyExpiry.FACE_DOWN, scoped_copy_form(values))
+    expiry = CopyExpiry.END_OF_TURN if spec.temporary_haste else CopyExpiry.FACE_DOWN
+    return history.apply(expiry, scoped_copy_form(values))
 
 
 def _copy_programs(host,source,*,controller):
@@ -421,11 +451,11 @@ def entry_copy_replacement_effects(host, subject, *, prospective_objects=None, s
     if subject.destination!='battlefield':return ()
     source=(prospective_objects or {}).get(subject.object_id) or host.state.cards.get(subject.object_id)
     if source is None or host.card_record(source) is None:return ()
-    from ..rules.cross_zone_characteristics import controlled_chosen_subtype_entry_effects
+    from ..rules.cross_zone_characteristics import battlefield_entry_type_addition_effects
     from .zone_replacement_inputs import conditional_counter_entry_types
 
-    controlled_subtypes_apply = bool(controlled_chosen_subtype_entry_effects(host, subject.destination_controller))
-    preview_types = controlled_subtypes_apply or any(counter.required_entry_type is not None
+    entry_types_apply = bool(battlefield_entry_type_addition_effects(host, subject.destination_controller))
+    preview_types = entry_types_apply or any(counter.required_entry_type is not None
                                                       for counter in subject.effect_entry_counters)
     queue=[(source,initial_form)];seen=set();effects={};forms={};counter_permissions={}
     choice_counters = {}
@@ -461,7 +491,7 @@ def entry_copy_replacement_effects(host, subject, *, prospective_objects=None, s
                         for effect in _copied_entry_effects(
                             host, subject, source, target, values, form_key=next_key,
                             simultaneous_departures=simultaneous_departures,
-                            prospective_types=types if controlled_subtypes_apply or spec.type_directed_counters else None,
+                            prospective_types=types if entry_types_apply or spec.type_directed_counters else None,
                         ):
                             from ..replacement.tribute import copied_tribute_replacement
                             bound=copied_tribute_replacement(effect,prefix=next_key+':',form_key=next_key)

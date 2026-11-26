@@ -1336,6 +1336,18 @@ class QualifiedRegenerationCompilerTests(unittest.TestCase):
                 if text.endswith("Samurai."):
                     self.assertNotIn("types_any", node.target_schema)
 
+    def test_other_target_regeneration_retains_a_closed_subtype_and_source_exclusion(self):
+        ir = self.compile("{B}: Regenerate another target Goblin.")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(["goblin"], node.target_schema["subtypes_any"])
+        self.assertTrue(node.target_schema["source_exclusion"])
+        self.assertNotIn("types_any", node.target_schema)
+        self.assertIn("permanent.regeneration.fixed_effect", node.capability_dependencies)
+        self.assertIn("target.revalidate_resolution", node.capability_dependencies)
+        self.assertNotEqual("exact", self.compile("{B}: Regenerate another target player.").status)
+        self.assertNotEqual("exact", self.compile("Regenerate another target Goblin.", type_line="Instant").status)
+
     def test_normalized_regeneration_trigger_retains_its_closed_result_owner(self):
         ir = self.compile("Whenever you cast a Spirit or Arcane spell, regenerate target creature.")
         self.assertEqual("exact", ir.status, ir.material_residuals)
@@ -1393,6 +1405,61 @@ class QualifiedRegenerationRuntimeTests(unittest.TestCase):
             capability_registry=self.registry, capability_profile="commander_review")
         binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
         self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def test_original_other_target_regeneration_excludes_the_source_and_replays(self):
+        cards = (
+            (337012, "Mad Auntie", "Boggart Shenanigans", True),
+            (337013, "Ezuri, Renegade Leader", "Elvish Mystic", False),
+        )
+        for seed, name, other, taps_source in cards:
+            with self.subTest(card=name):
+                session = self.session(seed)
+                source = self.add(session.engine, name)
+                same_name = self.add(session.engine, name, seat="C", ref="different-source")
+                target = self.add(session.engine, other, seat="B")
+                nonmatch = self.add(session.engine, "Generic Bound Body", seat="D")
+                spell = self.add(session.engine, "Naturalize", zone="hand") if taps_source else None
+                self.assert_whole_admission(session, name)
+                self.ready(session, source, {"G": 1, "C": 1})
+                actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                action = next(action for action in actions if action["id"].startswith("activate:" + source.ref + ":")
+                              and action.get("target_schema"))
+                legal = action["target_schema"]["legal_refs"]
+                self.assertIn(same_name.ref, legal)
+                self.assertIn(target.ref, legal)
+                self.assertNotIn(source.ref, legal)
+                self.assertNotIn(nonmatch.ref, legal)
+                self.checkpoint(session)
+                before = authoritative_state_hash(session.state)
+                for principal, target_ref in (("pilot:A", source.ref), ("pilot:A", nonmatch.ref), ("pilot:B", target.ref)):
+                    rejected = session.act(principal, {"action_id": action["id"], "targets": [target_ref], "pay": "auto"})
+                    self.assertFalse(rejected.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                payment = {"pay": "auto"} if taps_source else {"pay": "manual", "payment": {"G": 1}}
+                activated = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], **payment})
+                self.assertTrue(activated.ok, activated.summary)
+                self.assertEqual(taps_source, session.state.cards[source.object_id].tapped)
+                self.assertEqual(int(taps_source), session.state.players["A"].mana_pool.get("G", 0))
+                session = self.replay(session, load=True)
+                self.resolve(session)
+                self.assertEqual(0, session.state.cards[source.object_id].regeneration_shields)
+                self.assertEqual(1, session.state.cards[target.object_id].regeneration_shields)
+                self.assertFalse(session.state.cards[target.object_id].tapped)
+                for seat in "ABCD":
+                    players = session.packet("pilot:" + seat, full=True)["state"]["players"]
+                    public = next(card for card in players["B"]["bf"] if card["id"] == target.ref)
+                    self.assertEqual(1, public["regen"])
+                if spell is not None:
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    destroy = next(action for action in actions if action.get("card") == spell.ref)
+                    cast = session.act("pilot:A", {"action_id": destroy["id"], "targets": [target.ref], "pay": "auto"})
+                    self.assertTrue(cast.ok, cast.summary)
+                    self.resolve(session)
+                    regenerated = session.state.cards[target.object_id]
+                    self.assertEqual("battlefield", regenerated.zone)
+                    self.assertEqual(0, regenerated.regeneration_shields)
+                    self.assertTrue(regenerated.tapped)
+                self.replay(session, load=True)
 
     def test_original_boneknitter_regenerates_foreign_kindred_zombie_and_replays(self):
         session = self.session(337010)

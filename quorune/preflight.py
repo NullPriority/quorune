@@ -327,7 +327,14 @@ def _kernel_compiles_cast_cost(record: CardRecord) -> bool:
     return True
 
 
-def _generic_land_status(record: CardRecord) -> tuple[str, list[str]]:
+def _generic_land_status(record: CardRecord, trusted_programs=(), source_lines=()) -> tuple[str, list[str]]:
+    from .color_set_mana_abilities import COMMANDER_TYPE_SCRY_MANA_HANDLER_ID
+
+    spends_mana_with_delayed_trigger = any(
+        handler.get("handler_id") == COMMANDER_TYPE_SCRY_MANA_HANDLER_ID
+        for program in trusted_programs for handler in program.handlers
+    )
+    covered_trigger_lines = source_lines if spends_mana_with_delayed_trigger else ()
     oracle = record.oracle_text.casefold()
     compiled_entry = any(
         static_entry_state_handler(line, source_name=record.name) is not None
@@ -340,12 +347,14 @@ def _generic_land_status(record: CardRecord) -> tuple[str, list[str]]:
         or compiled_entry
         or "search your library for a" in oracle
     )
-    if "when " in oracle or "whenever " in oracle:
+    uncovered_material = "\n".join(
+        line.casefold() for line in _material_oracle_text(record).splitlines()
+        if line.strip() not in covered_trigger_lines
+    ) if covered_trigger_lines else oracle
+    if any(marker in uncovered_material for marker in ("when ", "whenever ", "return a land you control")):
         unresolved.append("triggered_ability")
     if "as " in oracle and "enters" in oracle and not supported:
         unresolved.append("replacement_effect")
-    if "return a land you control" in oracle:
-        unresolved.append("triggered_ability")
     return ("trusted_builtin" if supported and not unresolved else "partial"), unresolved
 
 
@@ -546,7 +555,7 @@ def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability
                 'you may cast that card','you may play lands from','you may play it this turn')))
     ):
         unresolved.append("zone_permission")
-    return tuple(unresolved),frozenset(legacy_coverage)
+    return tuple(unresolved),frozenset(legacy_coverage),source_lines
 
 
 def card_semantic_status(
@@ -610,11 +619,6 @@ def card_semantic_status(
         if not ability.compiled_cost and not ability.mana_ability
     )
     oracle = _material_oracle_text(record).casefold()
-    if record.is_land:
-        generic_status, generic_unresolved = _generic_land_status(record)
-        unresolved.extend(generic_unresolved)
-    else:
-        generic_status = "none"
     trigger_lines = _printed_trigger_lines(record)
     trusted_event_programs = [
         program
@@ -628,9 +632,13 @@ def card_semantic_status(
         for program in trusted_programs
         for value in program.coverage
     }
-    material_unresolved,legacy_coverage=_unresolved_source_materials(
+    material_unresolved,legacy_coverage,source_lines=_unresolved_source_materials(
         record,oracle_ir,trusted_programs,capability_registry,capability_profile)
     unresolved.extend(material_unresolved)
+    generic_status = "none"
+    if record.is_land:
+        generic_status, generic_unresolved = _generic_land_status(record, trusted_programs, source_lines)
+        unresolved.extend(generic_unresolved)
     trusted_ids = {
         program.ability_id
         for program in trusted_programs
@@ -899,15 +907,17 @@ def _deck_preflight_rows(
     return cards, card_programs
 
 
-def _deck_binding_blockers(
-    cards: list[dict[str, Any]], match_blockers: list[str],
+def _deck_strict_binding_blockers(
+    cards: list[dict[str, Any]], match_blockers: list[str]
 ) -> list[str]:
     blockers = set(match_blockers)
     for row in cards:
+        name = row["name"]
         if row["card_program_fingerprint"] is None:
-            blockers.add(f"card_program:missing:{row['name']}")
-        if binding := row["card_program_runtime_binding"]:
-            blockers.update(f"card:{row['name']}:{issue}" for issue in binding["blockers"])
+            blockers.add(f"card_program:missing:{name}")
+        binding = row["card_program_runtime_binding"]
+        if binding is not None:
+            blockers.update(f"card:{name}:{blocker}" for blocker in binding["blockers"])
     return sorted(blockers)
 
 
@@ -984,12 +994,22 @@ def semantic_preflight(
         registry=capability_registry,
         profile=capability_profile,
     )
-    strict_binding_blockers = _deck_binding_blockers(cards, match_trust_closure["blockers"])
+    strict_binding_blockers = _deck_strict_binding_blockers(
+        cards, match_trust_closure["blockers"]
+    )
+    deck_review_eligible = not (
+        unresolved_cards or partial_cards or drifted_cards or ignored_without_reason
+    )
+    total_cards = deck.total_cards()
+    card_rules_ready = (
+        0 < total_cards == quantities["fully_playable"]
+        and deck_review_eligible
+        and not uncovered_oracle_residual_cards
+        and all(row["card_program_strict_capability_ready"] for row in cards)
+    )
     compatibility_ready = (
-        not unresolved_cards
-        and not partial_cards
-        and not drifted_cards
-        and not ignored_without_reason and match_trust_closure["compatible_ready"]
+        deck_review_eligible
+        and match_trust_closure["compatible_ready"]
         and all(
             row["card_program_runtime_binding"]["compatible_ready"]
             for row in cards
@@ -1010,7 +1030,7 @@ def semantic_preflight(
             capability_registry.evidence_fingerprint
         ),
         "card_data_metadata": db.metadata(),
-        "total_cards": deck.total_cards(),
+        "total_cards": total_cards,
         "fully_playable_cards": quantities["fully_playable"],
         "partial_cards": quantities["partial"],
         "unresolved_cards": quantities["unresolved"],
@@ -1021,15 +1041,10 @@ def semantic_preflight(
         "expected_arbiter_calls": sum(
             int(row["quantity"]) for row in unresolved_cards + partial_cards
         ),
-        "deck_review_eligible_possible": not unresolved_cards
-        and not partial_cards
-        and not drifted_cards
-        and not ignored_without_reason,
+        "deck_review_eligible_possible": deck_review_eligible,
+        "card_rules_ready": card_rules_ready,
         "trusted_only_ready": (
-            not unresolved_cards
-            and not partial_cards
-            and not drifted_cards
-            and not ignored_without_reason
+            deck_review_eligible
             and not strict_binding_blockers
             and match_trust_closure["strict_capability_ready"]
         ),

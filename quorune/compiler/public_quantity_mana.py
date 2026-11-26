@@ -24,7 +24,9 @@ from .live_battlefield_quantities import resolution_quantity
 
 
 from ..public_quantity_mana_model import (
-    CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
+    CHOSEN_DEVOTION_MANA_VERSION, CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
+    CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION, ControlledLandSubtypePairManaAmount,
+    chosen_devotion_mana_count,
     PublicQuantityManaOutput as PublicQuantityManaTemplate,
     chosen_subtype_quantity_mana_count,
 )
@@ -70,6 +72,17 @@ def _amount(value: str, *, source_name: str, count: bool):
     return None
 
 
+def chosen_devotion_mana_template(text: str) -> PublicQuantityManaTemplate | None:
+    if " ".join(text.strip().split()).casefold() != (
+        "choose a color. add an amount of mana of that color equal to your devotion to that color."
+    ):
+        return None
+    return PublicQuantityManaTemplate(
+        "choose_one", tuple(sorted("WUBRG")), chosen_devotion_mana_count(),
+        schema_version=CHOSEN_DEVOTION_MANA_VERSION,
+    )
+
+
 def chosen_subtype_mana_template(text: str) -> PublicQuantityManaTemplate | None:
     if " ".join(text.strip().split()).casefold() != (
         "choose a color. add an amount of mana of that color equal to "
@@ -79,6 +92,23 @@ def chosen_subtype_mana_template(text: str) -> PublicQuantityManaTemplate | None
     return PublicQuantityManaTemplate(
         "choose_one", tuple(sorted("WUBRG")), chosen_subtype_quantity_mana_count(),
         schema_version=CHOSEN_SUBTYPE_QUANTITY_MANA_VERSION,
+    )
+
+
+def controlled_land_subtype_pair_mana_template(text: str) -> PublicQuantityManaTemplate | None:
+    match = re.fullmatch(
+        r"Add \{C\}\. If you control an Urza['’]s (?P<first>Mine|Power-Plant|Tower) "
+        r"and an Urza['’]s (?P<second>Mine|Power-Plant|Tower), add (?P<enhanced>(?:\{C\}){2,3}) instead\.",
+        " ".join(text.split()), re.I,
+    )
+    if match is None:
+        return None
+    types = tuple(sorted((match["first"].casefold(), match["second"].casefold())))
+    if types[0] == types[1]:
+        return None
+    return PublicQuantityManaTemplate(
+        "fixed", ("C",), ControlledLandSubtypePairManaAmount(types, match["enhanced"].count("{")),
+        schema_version=CONTROLLED_LAND_SUBTYPE_PAIR_MANA_VERSION,
     )
 
 

@@ -59,6 +59,8 @@ class ObjectRulesQuery(Protocol):
         zones: tuple[str, ...] | None = None,
     ) -> ChoiceObjectView | None: ...
 
+    def public_exile_rules_names(self, ref: str) -> tuple[str, ...]: ...
+
 
 class StackRulesQuery(Protocol):
     def stack_object(
@@ -131,6 +133,8 @@ class SemanticChoiceQuery(
 
     def player_life(self, seat: str) -> int: ...
 
+    def player_life_for_payment(self, seat: str) -> int: ...
+
     def player_counter(self, seat: str, counter: str) -> int: ...
 
     def player_counters(self, seat: str) -> Mapping[str, int]: ...
@@ -140,12 +144,15 @@ class SemanticChoiceQuery(
 
     def library_refs(self, seat: str, *, top_first: bool) -> tuple[str, ...]: ...
     def library_search_allowed(self,seat:str)->bool: ...
+    def library_search_refs(self, seat: str) -> tuple[str, ...]: ...
 
     def mana_pool(self, seat: str) -> Mapping[str, int]: ...
 
     def canonical_card_name(self, submitted: str) -> str | None: ...
 
     def drawn_this_turn(self, seat: str) -> tuple[str, ...]: ...
+
+    def drawn_hand_incarnations_this_turn(self, seat: str) -> tuple[str, ...] | None: ...
 
     def committed_discard_incarnations(self) -> tuple[str, ...]: ...
 
@@ -170,12 +177,21 @@ class SemanticChoiceQuery(
     def attacking_card_entry_status(self) -> str | None: ...
 
     @property
+    def revealed_card_entry_possible(self) -> bool: ...
+
+    @property
     def damage_source_candidates_are_complete(self) -> bool: ...
 
     @property
     def turn_sequence(self) -> int: ...
 
     def ring_choice_plan(self, player: str) -> RingBearerChoicePlan: ...
+
+    @property
+    def land_entry_life_options(self) -> Mapping[str, int]: ...
+
+    @property
+    def land_entry_life_budget(self) -> int: ...
 
     @property
     def venture_journey(self) -> DungeonJourney | None: ...
@@ -202,6 +218,7 @@ class SnapshotSemanticChoiceQuery:
     target_schemas: FrozenMap = field(default_factory=FrozenMap)
     validated_targets: FrozenMap = field(default_factory=FrozenMap)
     drawn_this_turn_by_seat: FrozenMap = field(default_factory=FrozenMap)
+    drawn_hand_incarnations_by_seat: FrozenMap = field(default_factory=FrozenMap)
     opponent_cast_colors_by_seat: FrozenMap = field(default_factory=FrozenMap)
     draw_permissions_by_seat: FrozenMap = field(default_factory=FrozenMap)
     materialized_choice_candidates: tuple[str, ...] = ()
@@ -225,10 +242,15 @@ class SnapshotSemanticChoiceQuery:
     discard_hand_inputs: FrozenMap | None = None
     attacking_token_entry_allowed: bool = False
     attacking_card_entry_status: str | None = None
+    revealed_card_entry_possible: bool = True
     venture_journey: DungeonJourney | None = None
     venture_allowed: bool = True
     life_gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN
     ward_discard_order_version: int | None = None
+    exile_offer_rule_names: FrozenMap = field(default_factory=FrozenMap)
+    land_entry_life_options: FrozenMap = field(default_factory=FrozenMap)
+    land_entry_life_budget: int = 0
+    library_search_refs_by_seat: FrozenMap = field(default_factory=FrozenMap)
 
     def __post_init__(self) -> None:
         if type(self.attacking_token_entry_allowed) is not bool:
@@ -266,11 +288,14 @@ class SnapshotSemanticChoiceQuery:
             "target_schemas",
             "validated_targets",
             "drawn_this_turn_by_seat",
+            "drawn_hand_incarnations_by_seat",
             "opponent_cast_colors_by_seat",
             "draw_permissions_by_seat",
             "resolution_condition_facts",
             "library_search_allowed_by_seat",
+            "library_search_refs_by_seat",
             "ring_choice_plans",
+            "land_entry_life_options",
         ):
             value = getattr(self, field_name)
             if not isinstance(value, FrozenMap):
@@ -343,6 +368,11 @@ class SnapshotSemanticChoiceQuery:
             ),
             None,
         )
+
+    def public_exile_rules_names(self, ref: str) -> tuple[str, ...]:
+        if ref not in self.exile_offer_rule_names:
+            raise ValueError("The exile choice has no rules-name snapshot for this card")
+        return tuple(self.exile_offer_rule_names[ref])
 
     def authorized_cast_options(self) -> tuple[Mapping[str, Any], ...]:
         return tuple(self.authorized_cast_option_rows)
@@ -432,6 +462,10 @@ class SnapshotSemanticChoiceQuery:
     ) -> bool:
         return self._cost_key(seat, requirements) in self.affordable_costs
 
+    def player_life_for_payment(self, seat: str) -> int:
+        total = self.player_life(seat)
+        return total if self.life_gain_permissions.allows_loss(seat) else 0
+
     def player_life(self, seat: str) -> int:
         return int(self.life_by_seat[seat])
 
@@ -458,6 +492,9 @@ class SnapshotSemanticChoiceQuery:
         if type(value) is not bool:raise ValueError('Library search permission snapshot must be boolean')
         return value
 
+    def library_search_refs(self, seat: str) -> tuple[str, ...]:
+        return tuple(self.library_search_refs_by_seat[seat])
+
     def mana_pool(self, seat: str) -> Mapping[str, int]:
         value = self.mana_by_seat.get(seat, FrozenMap())
         return {key: int(amount) for key, amount in value.items()}
@@ -471,6 +508,9 @@ class SnapshotSemanticChoiceQuery:
             str(value)
             for value in self.drawn_this_turn_by_seat.get(seat, ())
         )
+
+    def drawn_hand_incarnations_this_turn(self, seat: str) -> tuple[str, ...] | None:
+        return self.drawn_hand_incarnations_by_seat.get(seat)
 
     def opponent_cast_colors_this_turn(self, seat: str) -> tuple[str, ...]:
         if seat not in self.seat_order:

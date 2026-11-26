@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from . import regex_working_set as re
 
-from ..cast_timing import CAST_PERMISSION_ACTIVE_ZONE, OpponentUpkeepCastWindow, OpponentUpkeepWindow
+from ..cast_timing import CAST_PERMISSION_ACTIVE_ZONE, ControllerCombatCastWindow, OpponentUpkeepCastWindow, OpponentUpkeepWindow
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec, block_declaration_timing_condition
 from ..public_history_query_model import opponent_life_loss_including_departed_query
 from ..rules.source_references import SourceReferenceSpec
@@ -64,6 +64,9 @@ def self_cast_restriction_nodes(*, node_id, line, material_line, span, source_na
     elif surface == "cast this spell only during your turn":
         condition = FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_TURN)
         version = 3
+    elif surface == "cast this spell only during combat on your turn":
+        condition = ControllerCombatCastWindow()
+        version = 5
     elif (condition := _opponent_life_loss_cast_condition(material, source_name=source_name)) is not None:
         version = 2
     elif block_window is not None:
@@ -92,6 +95,7 @@ def self_cast_restriction_nodes(*, node_id, line, material_line, span, source_na
             2: 'fixed-self-cast-public-condition-v2',
             3: 'fixed-self-cast-own-turn-v3',
             4: 'fixed-self-cast-opponent-upkeep-v4',
+            5: 'fixed-self-cast-own-combat-v5',
         }[version], descriptor, handler.capability_dependencies),
         kind='static_ability', event=handler.event, active_zone=CAST_PERMISSION_ACTIVE_ZONE,
         dependency_reason='Intrinsic cast restrictions require their public-condition and proposal owners',

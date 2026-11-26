@@ -26,7 +26,7 @@ def _validated(effect, actor, query):
     return FrozenMap(effect)
 
 
-def _possible(effect, query):
+def can_move_plus_one_counter(effect, query):
     source = query.object(effect["from_ref"], zones=("battlefield",))
     recipient = query.object(effect["to_ref"], zones=("battlefield",))
     return bool(source and recipient and source.object_id != recipient.object_id
@@ -53,7 +53,7 @@ class GraftCounterMovementHandler:
 
     def prepare(self, effect, context):
         pinned = _validated(effect, context.actor, context.query)
-        if not _possible(pinned, context.query):
+        if not can_move_plus_one_counter(pinned, context.query):
             return SemanticChoicePreparation(request=None, continuation_effect=pinned,
                 auto_continue=AutoContinue("Graft cannot move a counter between its original objects"))
         return SemanticChoicePreparation(
@@ -68,7 +68,7 @@ class GraftCounterMovementHandler:
         pinned = _validated(continuation.effect, continuation.effect.get("player"), query)
         if type(response.get("choice")) is not str or response.get("choice") not in {"move", "decline"}:
             raise SemanticChoiceError("Choose move or decline")
-        if response["choice"] == "decline" or not _possible(pinned, query):
+        if response["choice"] == "decline" or not can_move_plus_one_counter(pinned, query):
             return SemanticChoiceCompletion()
         return SemanticChoiceCompletion(intents=(MoveCountersIntent(
             actor=pinned["player"], from_ref=pinned["from_ref"], from_identity=pinned["from_identity"],

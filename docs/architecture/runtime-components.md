@@ -83,7 +83,10 @@ event antecedents and newly created object references remain excluded. Trigger
 targets still use the shared announcement and resolution revalidation owner.
 Fixed source-return entry subscriptions declare `permanent.return.owner_hand`
 alongside their return-choice family so registered bounce intents retain strict
-capability closure.
+capability closure. A fixed activated land self-return uses the same owner-hand
+transaction and the source incarnation recorded at activation. Ordinary priority
+and typed activation conditions govern admission. The nontargeted instruction
+leaves any later incarnation untouched.
 
 Committed scalar amounts accept the source-specific `damage.dealt.self`
 subscription identity without normalizing it away. Broad source damage may
@@ -152,6 +155,14 @@ quantities remain residual. Fixed affected-player
 discard registration separately verifies its closed choice shape and declared
 dependencies before promoting a generated program.
 
+A controller-discard exile trigger uses the committed discard occurrence and
+its exact graveyard incarnation. It has no target selection. When a fixed-mana
+Madness choice declines and commits a graveyard arrival, the existing trigger
+context owner pins that exact successor on each waiting discard occurrence.
+Other redirects and later graveyard incarnations leave the effect with no
+object to move. A separate linked-exile reader requires its own producer and
+keeps this unlinked instruction outside complete source admission.
+
 Fixed static prevention version 2 uses the existing extended damage source
 predicate for printed color restrictions. Source colors come from the frozen
 damage proposal; matching damage events each receive the printed prevention
@@ -212,6 +223,35 @@ ordinary untap result retains the stack and original source identity.
 
 `activation.selected_tap.fixed_legendary` is required by the compiler and the
 descriptor-derived runtime minimum, including mana without a catalog carrier.
+A whole-hand discard and source sacrifice can pay a fixed mana ability
+at instant timing. An explicit priority action pays both groups through the
+ordinary zone owner, preserving replacement choices and the exact private
+hand across a restart. Automatic spell payment uses mana already produced
+by the activation.
+
+A source-linked color-set descriptor reads only current exile incarnations
+recorded by its paired optional hand exile. The resolving controller sees the
+private hand choices. The ordinary zone transition exposes the selected card
+when it commits to face-up exile. Manual activation and automatic payment
+use the same current linked colors, with no productive mode for an empty or
+colorless link.
+
+A priced tap-and-exert mana ability applies exert to the acting player's next
+untap before adding its mana. The existing spend rider grants temporary haste
+to each creature spell that uses that mana. Those units may also pay other
+costs without granting haste.
+
+A tap-and-forage mana activation presents the ordinary Forage resource
+choice and the two-unit color bundle in the same explicit activation.
+Automatic payment can use the resulting mana. The payer chooses the
+Forage resource before the mana is produced.
+
+A chosen-color mana lot can carry a restriction to spells whose current
+color set contains only the color bound at production. Offers and payment
+use the selected spell face's colors. A chosen-color draw price keeps
+ordinary cost modifiers and requires the resulting payment in the
+source's current chosen color.
+
 Fixed-output, public-quantity, and chosen-color mana descriptors expose their
 selected costs through the shared typed activation adapter. Earlier cost
 versions keep their serialized shape and reject the new
@@ -332,6 +372,14 @@ modifier leaves an undefined noncreature power or toughness undefined.
 Records carrying earlier runtime-trust identities remain descriptor-readable;
 the existing provenance check determines whether their execution is compatible.
 
+One closed current source grants Undying and +1/+1 to the same live set of
+other controlled non-Human creatures. The ability grant supplies the layer-6
+fragment and the anthem supplies the layer-7c modifier. The grant links to
+the exact Undying program from the same source span. The departure snapshot
+retains a qualifying creature’s granted Undying when the source
+leaves in the same event. Undying inspects the departing incarnation’s
+counters.
+
 Current program assembly replaces a narrower reviewed subtype anthem when a
 trusted corrected generic descriptor owns the same source-pinned instruction.
 Oracle and ruling hashes, controller scope, event, costs, targets, effects and
@@ -415,6 +463,15 @@ unspent mana and its provenance. Mana retained across combat steps is still
 unspent. An illegal player target prevents both results. Historical public
 tap results retain their original payload and resolution.
 
+An own-cast trigger can add a red mana lot that remains through step and
+phase boundaries. The trigger uses the stack. Only the mana it produced
+persists until cleanup.
+
+A controlled creature that attacked may use a second boast during its
+controller's turn while the appropriate static permission applies. The
+ordinary first-use mark is retained. A separate second-use mark belongs
+to the same ability and source incarnation.
+
 An intrinsic own-turn cast restriction uses the existing shared offer and
 command check. A conditional extra turn reads the current turn's sealed
 opponent spell colors at resolution. It counts opposing spells cast in
@@ -481,6 +538,11 @@ controller. The normalized event supplies the original public permanent
 incarnation and distinguishes all damage from combat damage. The
 untargeted move affects that incarnation if it is still present. The
 ordered token result remains independent of the attempted destruction.
+
+The Human-source response reads the saved Human subtype and damaged player.
+It accepts combat and noncombat damage from any controller. Destruction uses
+the original battlefield dealer’s exact incarnation. A Human spell can
+create the trigger with no permanent to destroy.
 
 An optional source counter trigger checks the committed dealer's controller
 for a permanent or spell and its owner in other zones. Each qualifying
@@ -730,6 +792,16 @@ resolution does not turn the removal effect into a cost. A blinked source's
 new counters are unaffected. Counter actions on other event recipients remain
 unfinished. Schema 1 retains its movement-action encoding.
 
+A targeted death return checks for a creature with at least one counter when
+the ability is announced and when it resolves. Its resolution registers a
+watch for that battlefield incarnation until the next turn, including deaths
+during cleanup. The watch keeps the creating ability's controller and survives
+later counter loss, control changes and the creating permanent's departure.
+The matching battlefield-to-graveyard event queues a mandatory ability that can
+return only the resulting graveyard incarnation to the card owner's hand. If a
+merged permanent dies, the ability tracks each of its card components that
+arrived in a graveyard in that event.
+
 Dealt-damage creature heads test source and recipient predicates separately
 against committed public damage facts. Combat-only heads require combat damage.
 Source-self heads require both the reference and logical incarnation, so a
@@ -806,6 +878,13 @@ mode set, and treats an empty qualifying set as a legal activation that adds no
 mana. Runtime code does not parse Oracle prose. Wider dynamic or conditional
 mana wording remains residual.
 
+The paid commander-identity variant binds its color and activation price
+through the same mana authority. Each produced unit carries its original
+source and controller in the mana pool. A committed cast that spends one
+or more of those units on the controller's own commander binds the specific
+commander's command-zone cast count to that spell. The canonical battlefield
+entry transaction adds the counters, including one contribution per unit.
+
 `permission.action.static` owns immutable controller- or table-scoped action
 permissions discovered from current-face, trusted descriptors on phased-in
 battlefield sources. Its closed handlers authorize an owned graveyard land,
@@ -817,7 +896,11 @@ and commands. Qualified actions use the source's live attachment, chosen type,
 or controller-relative battlefield facts. A fixed spell mana-value threshold
 reads the selected spell face and its announced X. The cost owner previews
 payable values from the required minimum, preserves independent source grants,
-and revalidates the selected X before placing the spell. Projection
+and revalidates the selected X before placing the spell. An alternative
+life price binds the live library permission to the selected spell face.
+Printed X is zero. The ordinary cast transaction pays the life price and
+any additional costs, lets independent permissions keep their own prices,
+and reveals the new private top card after payment finishes. Projection
 distinguishes a controller-private look from a
 public reveal and exposes no deeper library object. Additional-land components
 contribute to the current total allowance, while a versioned turn ledger counts
@@ -1049,9 +1132,12 @@ Unmarked records use the historical Unearth priority. Countered, stale,
 partial-card, copied, granted, multiface, and nonordinary-cost variants fail
 closed without interpreting Oracle or reminder prose.
 
-`casting.kicker.fixed-mana.v1` owns one single fixed ordinary-mana Kicker cost
-descriptor. It contributes an optional additional total-cost branch only when
-the compiler's complete-card admission certificate is exact, and commit
+`casting.kicker.fixed-mana.v1` owns the ordinary-mana Kicker descriptor. Strict
+binding uses the validated price to require the fixed-mana capability directly
+for a fixed price, or the positive generic-X capability for a positive-X price.
+The positive-X capability depends on the fixed-mana casting owner. The handler
+contributes an optional additional total-cost branch only when the compiler's
+complete-card admission certificate is exact, and commit
 revalidates the descriptor before payment. The selected cost records one typed
 paid-Kicker spell fact that zone replacement and normalized entry events capture
 before CR 400.7 reset.
@@ -1302,6 +1388,12 @@ source still contributes any component. Exact attached restraints may carry a
 typed declaration fragment and an all-ability or nonmana activation
 prohibition; source-controller relations remain anchored to the granting
 source.
+
+An attached bonus can depend on a named Equipment worn by any creature
+controlled by the source's controller. Another player can control the
+qualifying Equipment. The condition reads current names and types through
+layer five and follows reciprocal live attachments. The bonus and granted
+keyword still apply to the original source's own recipient.
 
 Relative attachment counts use a versioned `attached_to_recipient` quantity.
 The resolver follows the source's reciprocal attachment relation and counts
@@ -1611,6 +1703,31 @@ additional costs and total-cost modifiers keep their existing owners.
 Variable or complex prices, variable printed bases, unclosed bodies, repeated
 instances and other source forms remain residual.
 
+### Activated abilities from linked exile
+
+A linked Food grant reads the source’s current battlefield ability and gives
+its controller’s Food artifacts a layer-six reference to the original ability
+pair. The public graveyard trigger records only a committed exile incarnation.
+The activation query reads Layer 6 characteristics from current face-up linked
+creature cards. It binds trusted, represented battlefield activations and
+intrinsic mana abilities without recursively reading the donor's activation
+offers. Each offer retains the linked source and donor incarnations and
+original ability identity. Commands and payment use the Food as the source.
+An activation already on the stack retains that source and its effect when
+the donor leaves exile or the grant ends.
+
+### Differently named battlefield activation grants
+
+A live static component grants the represented battlefield activations of
+current creatures controlled by the recipient's controller whose current names
+are disjoint from the recipient's. The ability query reads the existing Layer 6
+snapshot, including direct grants and ability loss. It applies the remaining
+cross-object grants in dependency order, reevaluating each step and using
+continuous-effect timestamps to break dependency loops. Each donor incarnation
+and ability instance binds separately. Activation costs, timing, targets and
+self-reference use the recipient. Once placed, the ordinary stack ability
+retains its result when the donor leaves or the grant disappears.
+
 ### Fixed instant and sorcery stack copies
 
 `FixedStackSpellCopySpec` represents one copy of a current instant or sorcery
@@ -1655,6 +1772,29 @@ Existing Storm prompts, logs and saved continuation shapes retain their format.
 Multiple or granted instances, permanent spells, variable printed bases, mixed
 consuming payment mechanics and unresolved sibling bodies remain residual.
 
+### Source conversion and upkeep handoffs
+
+More Than Meets the Eye binds a fixed alternative price to the original
+card's back face. A legal cast from a permitted zone pays that price with the
+normal tax, additional costs and cost modifiers. The back face supplies the
+stack and entry characteristics, and the front face supplies mana value.
+Living Metal adds Artifact and Creature to its source in layer 4 during the
+current controller's turn.
+
+The opponent-upkeep source handoff uses the original trigger controller and
+the opponent captured by the upkeep occurrence. Accepting leases the surviving
+battlefield incarnation through cleanup, untaps it, and goads it for the
+chooser. The same turn's sacrifice prohibition follows that incarnation.
+Cleanup ends the control lease and the sacrifice prohibition. The goad
+expires on the chooser's next turn. Declining converts the original object
+using the conversion count captured when the upkeep ability entered the stack.
+
+Actual source combat damage to a player can schedule a conversion at the next
+end-of-combat step. The delayed ability holds the source incarnation and its
+conversion count at creation. Changes to either identity prevent a stale
+conversion. The normal stack and step owners retain both trigger frames
+through save and replay.
+
 ### Fixed mana Disturb and source-local graveyard exile
 
 `FixedManaDisturbSpec` binds one front-face declaration to its transforming
@@ -1679,6 +1819,24 @@ bounce and other zone resets remove copied/current back-face state normally.
 It participates in the ordinary replacement class, preserving affected-player
 choice among competing replacements. Complex prices, repeated declarations,
 other card forms and unrepresented sibling bodies remain residual.
+
+### Temporary grants and tapped owner returns
+
+An instant can resolve fixed controller life loss followed by a temporary
+self-death trigger on its sole creature target. The ordinary target gate checks
+that target before either instruction resolves. The granted trigger reads the
+holder's recorded battlefield departure and exact physical graveyard arrivals.
+It follows the holder after type changes and returns surviving permanent cards
+together, tapped under their owners' control, through ordinary entry replacement.
+
+### Committed creature activations
+
+A creature-activation trigger reads the authenticated activator and the original
+battlefield source even if a cost moved it. Native stack and mana activations
+use this occurrence. Ordinary trigger placement waits for priority, including
+when the mana was activated during payment. A turn-limited observer claims its
+use at discovery inside the same transaction. Mana undo is available only when
+no trigger observed the activation and the ordinary undo requirements pass.
 
 ### Typed token children in modal branches
 

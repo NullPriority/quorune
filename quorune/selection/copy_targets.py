@@ -149,8 +149,9 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
         else:
             changed_refs.add(ref)
         selected.append({"group": group_id, "ref": ref})
-    if changed_refs.intersection(snapshots):
-        raise GameRuleError("Copying two incarnations of one public target reference is unsupported")
+    shared = changed_refs.intersection(snapshots)
+    if any(FrozenMap(host._target_snapshot(ref)) != FrozenMap(snapshots[ref]) for ref in shared):
+        raise GameRuleError("A copied reference cannot combine different target snapshots")
     proof = CopyTargetValidation(
         FrozenMap({group: len(refs) for group, refs in original.items()}),
         FrozenMap(retained), FrozenMap(snapshots),
@@ -160,7 +161,7 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
         target_schema=schema, copy_targets=proof, acting_source=acting_source,
         record_optimization=record_optimization,
     )
-    for ref in changed_refs:
+    for ref in changed_refs.difference(snapshots):
         snapshots[ref] = dict(host._target_snapshot(ref))
     return PreparedCopyTargets(tuple(targets), FrozenMap(groups), FrozenMap(snapshots))
 

@@ -4,6 +4,7 @@ from dataclasses import dataclass, replace
 from typing import Any, Mapping, Sequence
 
 from .captured_hand import CaptureDrawnHandCard
+from ..rules.faction_trigger_model import CountFactionDraw, FACTION_AFTER_DRAW_ACTION
 
 from ..replacement import (
     ReplaceableEvent,
@@ -110,6 +111,7 @@ DrawnCardAction = (
     | RevealDrawnCardBySource
     | DiscardDrawnCardUnlessType
     | CaptureDrawnHandCard
+    | CountFactionDraw
 )
 
 
@@ -119,6 +121,11 @@ def drawn_card_action_from_dict(
     if not isinstance(value, Mapping):
         raise DrawError("Drawn-card actions must be objects")
     action = value.get("action")
+    if action == FACTION_AFTER_DRAW_ACTION:
+        try:
+            return CountFactionDraw.from_dict(value)
+        except ValueError as exc:
+            raise DrawError(str(exc)) from exc
     if action == "capture_drawn_hand_card":
         if set(value) != {"action", "stack_ref", "count"}:
             raise DrawError("Drawn-card capture fields are invalid")
@@ -178,8 +185,9 @@ class DrawCardsIntent:
 
     def __post_init__(self) -> None:
         actions = tuple(self.post_draw_actions)
-        if any(not isinstance(action, (RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard))
-               for action in actions):
+        if any(not isinstance(action, (
+            RevealDrawnCard, DiscardDrawnCardUnlessType, CaptureDrawnHandCard, CountFactionDraw,
+        )) for action in actions):
             raise TypeError("Draw intents require typed post-draw actions")
         object.__setattr__(self, "post_draw_actions", actions)
 
@@ -350,6 +358,7 @@ class DrawEventResolution:
     result_draws: tuple[QueuedDraw, ...] = ()
     post_draw_actions: tuple[DrawnCardAction, ...] = ()
     discard_followup: QueuedDraw | None = None
+    scheduled_grant_id: str | None = None
 
     def __post_init__(self) -> None:
         if self.kind not in {
@@ -358,6 +367,7 @@ class DrawEventResolution:
             "prohibited",
             "result_draws",
             "discard_or_mill",
+            "scheduled_result",
             _DREDGE_KIND,
         }:
             raise DrawError(f"Unsupported draw result {self.kind!r}")
@@ -406,6 +416,10 @@ class DrawEventResolution:
             raise DrawError(
                 "Only a result-draw replacement may carry queued draws"
             )
+        if self.kind == "scheduled_result":
+            _stable_string(self.scheduled_grant_id, field="Scheduled draw result grant")
+        elif self.scheduled_grant_id is not None:
+            raise DrawError("Only a scheduled result may refer to a next-draw grant")
         if self.kind == "discard_or_mill":
             if (
                 not isinstance(self.discard_followup, QueuedDraw)
@@ -618,6 +632,7 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         "prohibited",
         "result_draws",
         "discard_or_mill",
+        "scheduled_result",
         _DREDGE_KIND,
     } and is_draw is not False:
         raise DrawError("A replaced draw must clear its draw flag")
@@ -681,6 +696,7 @@ def _draw_resolution(event: ReplaceableEvent) -> DrawEventResolution:
         prohibition_ids=tuple(prohibition_ids),
         result_draws=tuple(result_draws),
         discard_followup=discard_followup,
+        scheduled_grant_id=payload.get("scheduled_grant_id"),
         post_draw_actions=tuple(
             drawn_card_action_from_dict(action)
             for action in post_action_values

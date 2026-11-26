@@ -49,7 +49,6 @@ from ..rules.finality_counters import finality_counter_replacement
 from ..rules.damage_death_exile import damage_death_exile_replacements
 from ..rules.reanimation_followup import linked_departure_exile_replacements
 from ..zone_trigger_events import ZoneTransitionKind
-from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .counter_replacements import (
@@ -66,13 +65,15 @@ from .entry_choices import ReadAheadEntryChoiceHandler, RiotEntryChoiceHandler, 
 from .tribute import TributeEntryHandler
 from .entry_designations import (
     CountedCreatureTypeEntryDesignationHandler, EntryCardNameHandler, EntryDesignationHandler,
-    LimitedCreatureTypeEntryDesignationHandler,
+    LimitedCreatureTypeEntryDesignationHandler, LinkedCardTypeEntryHandler,
     CountedEntryOpponentHandler, EntryOpponentDesignationHandler, EntryPlayerDesignationHandler,
     SelfChosenSubtypeEntryHandler,
 )
 from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_handler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
+from .day_night_entry import DayNightEntryHandler
+from .entry_land_discard import EntryLandDiscardHandler, entry_land_discard_effects
 from .linked_graveyard_entry import LinkedGraveyardEntryHandler
 from ..rules.amplify import AMPLIFY_HANDLER, amplify_hand_reveals
 from .amplify import AmplifyEntryHandler, amplify_replacement_effects
@@ -81,6 +82,8 @@ from .preparation import PreparationEntryHandler
 from .kicker import FixedKickedEntryHandler
 from .multikicker import MultikickerEntryHandler, prospective_multikicker_fields
 from .madness import MadnessDiscardReplacementHandler
+from .opponent_discard_entry import OpponentDiscardEntryHandler
+from ..discard_effect_origin import DiscardEffectOrigin
 from .self_graveyard_exile import (
     SELF_GRAVEYARD_REPLACEMENT_HANDLERS, SelfGraveyardExileHandler, SelfGraveyardShuffleHandler,
     prepare_commander_zone_replacements,
@@ -92,7 +95,9 @@ from .entry_state import (
     FixedEntryConditionReplacementHandler,
 )
 from .external_entry_state import ExternalEntryStateHandler
-from .external_entry_counters import ExternalChosenSubtypeEntryCounterHandler, ExternalEntryCounterHandler
+from .external_entry_counters import (
+    ExternalChosenSubtypeEntryCounterHandler, ExternalEntryCounterHandler, ExternalNontokenEntryCounterHandler,
+)
 from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER_IDS
 from ..qualified_entry_state_model import QUALIFIED_ENTRY_STATE_HANDLER, EntryStateSourceSnapshot
 from .qualified_entry_state import QualifiedEntryStateHandler
@@ -109,6 +114,7 @@ from .zone_replacement_model import (
 )
 from .zone_replacement_inputs import (
     intrinsic_subject_replacement_effects,
+    source_local_zone_replacement_effects,
     active_zone_replacement_sources,
     subject_entry_counter_fields,
     zone_change_subject_characteristics,
@@ -166,6 +172,7 @@ class ZoneReplacementHost(Protocol):
         *,
         importance: int = 1,
         changed_objects: Sequence[str] | None = None,
+        visibility: Sequence[str] | None = None,
     ) -> Any: ...
 
 
@@ -467,8 +474,10 @@ def default_zone_change_replacement_registry(
             QualifiedEntryStateHandler(),
             ExternalEntryCounterHandler(),
             ExternalChosenSubtypeEntryCounterHandler(),
+            ExternalNontokenEntryCounterHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
+            LinkedCardTypeEntryHandler(),
             EntryCardNameHandler(),
             EntryOpponentDesignationHandler(),
             EntryPlayerDesignationHandler(),
@@ -491,8 +500,11 @@ def default_zone_change_replacement_registry(
             entry_copy_handler(12),
             entry_copy_handler(13),
             entry_copy_handler(14),
+            entry_copy_handler(15),
             LinkedGraveyardEntryHandler(),
             EntryRevealHandler(),
+            DayNightEntryHandler(),
+            EntryLandDiscardHandler(),
             AmplifyEntryHandler(),
             DevourEntryHandler(),
             PreparationEntryHandler(),
@@ -503,6 +515,7 @@ def default_zone_change_replacement_registry(
             FixedKickedEntryHandler(),
             MultikickerEntryHandler(),
             MadnessDiscardReplacementHandler(),
+            OpponentDiscardEntryHandler(),
             SelfGraveyardExileHandler(),
             SelfGraveyardShuffleHandler(),
             *intrinsic_entry_counter_handlers(),
@@ -822,6 +835,7 @@ def _zone_change_snapshot_subjects(
     transition_kinds: Mapping[str, ZoneTransitionKind],
     error_type: type[Exception],
     prospective_objects: Mapping[str, Any],
+    discard_effect_origin: DiscardEffectOrigin | None = None,
 ) -> tuple[ZoneChangeSubjectSnapshot, ...]:
     subjects: list[ZoneChangeSubjectSnapshot] = []
     entry_metrics_by_controller: dict[str | None, Mapping[str, int]] = {}
@@ -928,6 +942,10 @@ def _zone_change_snapshot_subjects(
                     **subject_entry_counter_fields(host, card, destination, destination_controller,
                         characteristics, (card_types, subtypes, supertypes), counters),
                     is_card_object=card.is_card_object,
+                    discard_effect_origin=(
+                        discard_effect_origin if card.zone == "hand" and destination == "graveyard"
+                        and transition_kinds.get(card.object_id) is ZoneTransitionKind.DISCARD else None
+                    ),
                     transition_kind=transition_kinds.get(
                         card.object_id,
                         ZoneTransitionKind.ORDINARY,
@@ -990,38 +1008,10 @@ def _zone_change_snapshot_effects(
         record = host.card_record(card)
         if record is None:
             continue
-        for program in _zone_change_programs_for_record(
-            host,
-            record,
-            active_zone="all",
-        ):
-            if (
-                not program_matches_face(record, program, card)
-                or not program_static_component_is_applicable(
-                    host, program, card
-                )
-            ):
-                continue
-            for descriptor_index, descriptor in enumerate(program.handlers):
-                if (
-                    descriptor.get("handler_id")
-                    not in {*SELF_GRAVEYARD_REPLACEMENT_HANDLERS, MADNESS_REPLACEMENT_HANDLER_ID}
-                ):
-                    continue
-                subject_effects.extend(
-                    registry.subject_replacement_effects(
-                        descriptor,
-                        subject=subject,
-                        component_id=f"{program.key}:{descriptor_index}",
-                    )
-                )
+        programs = _zone_change_programs_for_record(host, record, active_zone="all")
+        subject_effects.extend(source_local_zone_replacement_effects(host, registry, record, card, subject, programs))
         if subject.destination != "battlefield":
             continue
-        programs = _zone_change_programs_for_record(
-            host,
-            record,
-            active_zone="all",
-        )
         for program in programs:
             if not program_matches_face(
                 record,
@@ -1068,6 +1058,8 @@ def _zone_change_snapshot_effects(
                 *(effect for subject in subjects for effect in entry_copy_replacement_effects(
                     host, subject, prospective_objects=prospective_objects, simultaneous_departures=simultaneous_departures)),
                 *(effect for subject in subjects for effect in entry_reveal_replacement_effects(host, subject)),
+                *(effect for subject in subjects for effect in entry_land_discard_effects(
+                    host, subject, prospective_objects=prospective_objects)),
                 *(effect for subject in subjects for effect in devour_replacement_effects(host, subject,prospective_objects=prospective_objects)),
                 *subject_effects,
     )
@@ -1098,6 +1090,7 @@ def capture_zone_change_replacement_snapshot(
     error_type: type[Exception] = ZoneReplacementError,
     prospective_objects: Mapping[str, Any] | None = None,
     face_down_entry_objects: Mapping[str, Any] | None = None,
+    discard_effect_origin: DiscardEffectOrigin | None = None,
 ) -> ZoneChangeReplacementSnapshot:
     """Capture every represented source and affected object before mutation."""
 
@@ -1138,12 +1131,15 @@ def capture_zone_change_replacement_snapshot(
             "Prospective entry objects must be new outside-zone tokens bound to this batch"
         )
     face_down = dict(face_down_entry_objects or {})
+    if face_down:
+        from ..manifest import has_cloak_mask
+
     for key, card in face_down.items():
         current = host.state.cards.get(key)
         if (key not in supplied_ids or current is None or key in prospective
                 or card.object_id != key or card.logical_object_id != current.logical_object_id
                 or current.zone != 'library' or card.zone != 'library' or card.face_down is not True
-                or card.annotations.get('manifested_card') != {'schema_version': 1}
+                or (card.annotations.get('manifested_card') != {'schema_version': 1} and not has_cloak_mask(card))
                 or (key, 'battlefield') not in supplied):
             raise error_type('Face-down entry views require the current bound library-card incarnation')
     prospective.update(face_down)
@@ -1175,6 +1171,9 @@ def capture_zone_change_replacement_snapshot(
         transition_kinds=kinds,
         error_type=error_type,
         prospective_objects=prospective,
+        discard_effect_origin=(
+            discard_effect_origin if getattr(host.state, "discard_effect_origin_version", None) == 1 else None
+        ),
     )
     active_sources = active_zone_replacement_sources(
         host,
@@ -1225,6 +1224,7 @@ def prepare_zone_change_replacement(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     prepared: PreparedZoneChange | None = None,
     error_type: type[Exception] = ZoneReplacementError,
+    discard_effect_origin: DiscardEffectOrigin | None = None,
 ) -> PreparedZoneChange:
     """Resolve ambient destination replacements before a zone mutation."""
 
@@ -1299,6 +1299,7 @@ def prepare_zone_change_replacement(
         requested_tapped={card.object_id: requested_tapped},
         entry_pay_life={card.object_id: entry_pay_life},
         transition_kinds={card.object_id: transition_kind},
+        discard_effect_origin=discard_effect_origin,
         sources=sources,
         source_zones=source_zones,
         selections=selections,
@@ -1328,6 +1329,7 @@ def prepare_zone_change_replacement_batch(
     transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     error_type: type[Exception] = ZoneReplacementError,
+    discard_effect_origin: DiscardEffectOrigin | None = None,
 ) -> dict[str, PreparedZoneChange]:
     """Resolve one immutable simultaneous batch before mutating any object."""
 
@@ -1345,6 +1347,7 @@ def prepare_zone_change_replacement_batch(
         sources=sources,
         source_zones=source_zones,
         error_type=error_type,
+        discard_effect_origin=discard_effect_origin,
     )
     prepared=prepare_zone_change_replacement_snapshot(
         snapshot,selections=selections,error_type=error_type,host=host,
@@ -1366,6 +1369,7 @@ def prepare_zone_change_replacement_snapshot(
     event_ids: Mapping[str, str] | None = None,
     host=None,
     prospective_objects=None,
+    prepare_entry_discards=True,
 ) -> dict[str, PreparedZoneChange]:
     """Resolve a captured batch and its prepared entry-cost reads."""
 
@@ -1373,17 +1377,12 @@ def prepare_zone_change_replacement_snapshot(
         raise error_type(
             "Zone replacement preparation requires an immutable snapshot"
         )
-    from .graveyard_copy_preparation import has_graveyard_copy_operation, prepare_graveyard_copy_snapshot
-    if has_graveyard_copy_operation(snapshot):
-        if host is None or event_ids is not None:
-            raise error_type("Graveyard copy requires its captured entry host")
-        return prepare_graveyard_copy_snapshot(host,snapshot,selections=selections,error_type=error_type,
-                                              prospective_objects=prospective_objects)
-    from ..replacement.operations import DevourEntryOperation
-    if any(isinstance(op,DevourEntryOperation) for effect in snapshot.effects for op in effect.operations):
-        if event_ids is not None:raise error_type('Explicit zone event identities do not represent Devour entry')
-        from .devour_preparation import prepare_devour_snapshot
-        return prepare_devour_snapshot(snapshot,selections=selections,error_type=error_type)
+    from .entry_cost_preparation import prepare_special_entry_costs
+    costs = prepare_special_entry_costs(snapshot, host=host, selections=selections,
+        error_type=error_type, prospective_objects=prospective_objects, event_ids=event_ids,
+        prepare_entry_discards=prepare_entry_discards)
+    if costs is not None:
+        return costs
     events = zone_change_snapshot_events(snapshot)
     if event_ids is not None:
         refs = {event.payload['object_ref'] for event in events}
@@ -1474,8 +1473,9 @@ def log_applied_zone_replacements(
     *,
     requested_destination: str,
     error_type: type[Exception],
+    visibility: Sequence[str] | None = None,
 ) -> None:
-    """Emit public audit events from a committed replacement journal."""
+    """Emit audit events from a committed replacement journal."""
 
     effect_by_id = {
         effect.effect_id: effect for effect in prepared.effects
@@ -1522,6 +1522,7 @@ def log_applied_zone_replacements(
             },
             importance=2,
             changed_objects=[card.object_id],
+            **({"visibility": visibility} if visibility is not None else {}),
         )
 
 

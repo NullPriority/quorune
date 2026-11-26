@@ -25,6 +25,7 @@ from .context import SemanticNodeError
 from .draw_step_discard import DrawStepExemptDiscardHandler
 from .draw_step_redirect import DrawStepExemptRedirectHandler
 from .temporary_draw_redirect import collect_temporary_draw_redirects
+from ..drawing.scheduled_draw_results import collect_scheduled_draw_replacements
 
 
 DREDGE_HANDLER_ID = "replacement.draw.dredge.v1"
@@ -32,6 +33,8 @@ DRAW_INSTRUCTION_MULTIPLIER_HANDLER_ID = (
     "replacement.draw.instruction.multiply.v1"
 )
 DRAW_RESULT_MULTIPLIER_HANDLER_ID = "replacement.draw.result.multiply.v1"
+EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID = "replacement.draw.result.multiply.empty_hand.v1"
+EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY = "zone.draw.replacement.controller_empty_hand"
 _DREDGE_LABEL = "Dredge "
 _DRAW_STEP_EXEMPT_HANDLERS = {
     DRAW_STEP_EXEMPT_DISCARD_HANDLER_ID,
@@ -186,7 +189,10 @@ class DrawResultMultiplierHandler:
             raise SemanticNodeError(
                 "Runtime handler ID does not match the draw replacement registry"
             )
-        if descriptor["schema_version"] != self.schema_version:
+        if descriptor["schema_version"] != self.schema_version or (
+            self.handler_id == EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID
+            and type(descriptor["schema_version"]) is not int
+        ):
             raise SemanticNodeError(
                 f"Unsupported {self.handler_id} schema version"
             )
@@ -516,6 +522,10 @@ def default_draw_replacement_registry() -> DrawReplacementRegistry:
             DredgeReplacementHandler(),
             DrawInstructionMultiplierHandler(),
             DrawResultMultiplierHandler(),
+            DrawResultMultiplierHandler(
+                handler_id=EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID,
+                capability_dependencies=(EMPTY_HAND_DRAW_MULTIPLIER_CAPABILITY,),
+            ),
             DrawStepExemptRedirectHandler(),
             DrawStepExemptDiscardHandler(),
             DrawResultMultiplierHandler(
@@ -545,6 +555,7 @@ def collect_draw_replacement_effects(
     registry = default_draw_replacement_registry()
     graveyard = host.state.players[player].zones["graveyard"]
     effects = collect_temporary_draw_redirects(host, player, active_seats)
+    effects.extend(collect_scheduled_draw_replacements(host.state, player))
     for object_id in graveyard:
         source = host.state.cards[object_id]
         if source.owner != player or source.zone != "graveyard":
@@ -599,9 +610,11 @@ def collect_draw_replacement_effects(
                     and (source.controller != player) != applies_to_opponent
                 ):
                     continue
-                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS:
-                    if is_first_draw_in_own_draw_step(host.state, player):
-                        continue
+                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS and is_first_draw_in_own_draw_step(host.state, player):
+                    continue
+                if handler_id == EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID and host.state.players[player].zones["hand"]:
+                    continue
+                if handler_id in _DRAW_STEP_EXEMPT_HANDLERS or handler_id == EMPTY_HAND_DRAW_MULTIPLIER_HANDLER_ID:
                     if component_map is None:
                         component_map = host._effective_static_component_key_map()
                     if program.key not in component_map.get(source.object_id, ()):

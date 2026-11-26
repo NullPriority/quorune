@@ -108,7 +108,11 @@ class DamageProposal:
         if self.amount < 1:
             raise DamageError("Zero damage has no replaceable event")
         payload = {
-            **damage_permanent_state_context(self.source.permanent_state),
+            **damage_permanent_state_context(
+                self.source.permanent_state,
+                had_plus_one_counter=self.source.had_plus_one_counter if self.combat else None,
+                had_any_counter=self.source.had_any_counter if self.combat else None,
+            ),
             **({'source_physical_commander_identities':self.source.physical_commander_identities.to_dict()}
                if self.source.physical_commander_identities is not None else {}),
             "source": self.source.ref,

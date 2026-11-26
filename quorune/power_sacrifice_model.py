@@ -33,8 +33,13 @@ GREATEST_POWER_SACRIFICE_LIFE_RESULT = "greatest_power_sacrifice_life_result"
 class GreatestPowerSacrificeSpec:
     lost_life_only: bool = False
     target_player: str | None = None
+    mana_value: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.mana_value) is not bool or self.mana_value and (
+            self.lost_life_only or self.target_player is not None
+        ):
+            raise ValueError("Greatest mana-value sacrifice requires its untargeted opponent scope")
         if type(self.lost_life_only) is not bool:
             raise ValueError("Greatest-power sacrifice requires one exact opponent scope")
         if self.target_player is not None and (
@@ -48,18 +53,27 @@ class GreatestPowerSacrificeSpec:
             return None
         return {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
 
+    @property
+    def predicate(self) -> ObjectQuerySpec:
+        if self.mana_value:
+            return ObjectQuerySpec(zones=("battlefield",), types_any=("creature", "planeswalker"))
+        return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+
     def effect(self, *, actor: str = "$controller") -> dict[str, Any]:
         value = {
             "op": "choose_cards_apnap",
             "actor": actor,
             "players": "opponents",
             "zone": "battlefield",
-            "predicate": ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)).to_dict(),
+            "predicate": self.predicate.to_dict(),
             "count": 1,
             "then": "sacrifice",
             "prompt": "Choose one of your creatures with the greatest power to sacrifice.",
             GREATEST_POWER_SACRIFICE_FIELD: {"schema_version": 1, "lost_life_only": self.lost_life_only},
         }
+        if self.mana_value:
+            value.update(prompt="Choose a creature or planeswalker you control with the greatest mana value to sacrifice.")
+            value[GREATEST_POWER_SACRIFICE_FIELD] = {"schema_version": 3, "metric": "mana_value"}
         if self.target_player is not None:
             value.update(players=[self.target_player], target=self.target_player)
             value[GREATEST_POWER_SACRIFICE_FIELD] = {"schema_version": 2, "gain_life": True}
@@ -81,10 +95,12 @@ class GreatestPowerSacrificeSpec:
                     or actor != "$controller" and (actor.startswith("$") or target.startswith("$"))):
                 raise ValueError("Greatest-power sacrifice requires its announced affected player")
             spec = cls(target_player=target)
+        elif thaw_value(raw) == {"schema_version": 3, "metric": "mana_value"}:
+            spec = cls(mana_value=True)
         else:
-            raise ValueError("Greatest-power sacrifice requires its exact descriptor version")
+            raise ValueError("Greatest-stat sacrifice requires its exact descriptor version")
         if type(effect.get("count")) is not int or thaw_value(effect) != spec.effect(actor=actor):
-            raise ValueError("Greatest-power sacrifice requires one controlled creature per affected opponent")
+            raise ValueError("Greatest-stat sacrifice requires its closed controlled permanent choice")
         return spec
 
 
@@ -181,6 +197,7 @@ class GreatestPowerSacrificeLifeResult:
     characteristic: str = "power"
     draw_after_life: bool = False
     draw_then_lose_life: bool = False
+    sacrificing_player: str | None = None
 
     def __post_init__(self) -> None:
         if any(type(value) is not str or not value or value.startswith("$")
@@ -193,9 +210,26 @@ class GreatestPowerSacrificeLifeResult:
             or ((self.draw_after_life or self.draw_then_lose_life) and self.characteristic != "power")
         ):
             raise ValueError("Sacrifice life requires a represented creature characteristic and result")
+        if self.sacrificing_player is not None and (
+            type(self.sacrificing_player) is not str or not self.sacrificing_player or self.sacrificing_player.startswith("$")
+            or self.characteristic != "toughness" or self.draw_after_life or self.draw_then_lose_life
+        ):
+            raise ValueError("Targeted sacrifice toughness requires its exact chooser and separate life recipient")
+
+    @property
+    def sacrifice_controller(self):
+        return self.sacrificing_player if self.sacrificing_player is not None else self.player
+
+    def has_valid_actor(self, actor):
+        if self.sacrificing_player is not None:
+            return self.player in (actor, self.sacrificing_player)
+        return (self.characteristic != "toughness" and not self.draw_after_life and not self.draw_then_lose_life
+                or self.player == actor)
 
     def to_dict(self) -> dict[str, Any]:
         fields = {"player": self.player, "incarnation": self.incarnation}
+        if self.sacrificing_player is not None:
+            return {"schema_version": 5, **fields, "sacrificing_player": self.sacrificing_player}
         if self.draw_then_lose_life:
             return {"schema_version": 4, **fields, "draw_then_lose_life": True}
         if self.draw_after_life:
@@ -217,4 +251,7 @@ class GreatestPowerSacrificeLifeResult:
                 return cls(raw["player"], raw["incarnation"], draw_after_life=True)
             if raw["schema_version"] == 4 and set(raw) == fields | {"draw_then_lose_life"} and raw["draw_then_lose_life"] is True:
                 return cls(raw["player"], raw["incarnation"], draw_then_lose_life=True)
+            if (raw["schema_version"] == 5 and set(raw) == fields | {"sacrificing_player"}
+                    and type(raw["sacrificing_player"]) is str):
+                return cls(raw["player"], raw["incarnation"], "toughness", sacrificing_player=raw["sacrificing_player"])
         raise ValueError("Sacrifice life requires its exact committed-result descriptor")

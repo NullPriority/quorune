@@ -22,6 +22,93 @@ from .aura import AuraEntryChoiceRequired
 _DEFERRED_RETURNS: ContextVar[list[Any] | None] = ContextVar('conditional_cost_returns', default=None)
 
 
+def _selected_exile_candidates(query, scope, actor):
+    from .public_zone_moves import PublicZoneMoveObject
+    from .semantic_choices.model import SemanticChoiceError
+
+    source = query.resolution_source
+    if source is None or source.object_id is None or source.logical_object_id is None:
+        raise SemanticChoiceError("Conditional exile requires the original source identity")
+    battlefield = query.objects(zones=("battlefield",), include_phased_out=True)
+    if not any(row.object_id == source.object_id and row.logical_object_id == source.logical_object_id
+               for row in battlefield):
+        return ()
+    return tuple(PublicZoneMoveObject.from_row(row) for row in sorted(battlefield, key=lambda row: row.ref)
+                 if row.controller == actor and not row.phased_out
+                 and scope.matches(card_object_id=row.object_id, source_object_id=source.object_id,
+                                   types=row.types, subtypes=row.subtypes, token=row.token))
+
+
+def prepare_selected_conditional_exile(effect, context):
+    from .linked_exile_return_model import selected_conditional_exile_spec
+    from .replacement.immutable import FrozenMap
+    from .semantic_choices.model import (
+        AutoContinue, ObjectChoice, SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest,
+    )
+
+    try:
+        spec = selected_conditional_exile_spec(effect)
+    except (ValueError, TypeError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    if context.actor != context.stack_controller or context.actor not in context.query.active_seats:
+        raise SemanticChoiceError("The original trigger controller chooses the conditional exile")
+    candidates = _selected_exile_candidates(context.query, spec.selected_departure_scope, context.actor)
+    if not candidates:
+        return SemanticChoicePreparation(None, FrozenMap(effect),
+            auto_continue=AutoContinue("No eligible objects to exile"))
+    return SemanticChoicePreparation(
+        request=SemanticChoiceRequest(
+            prompt="Choose any number of eligible permanents to exile until the source leaves the battlefield.",
+            choice=ObjectChoice(field_name="objects", legal_refs=tuple(card.ref for card in candidates),
+                zones=("battlefield",), minimum=0, maximum=len(candidates), optional=True,
+                visibility="public", controller_relation="actor"),
+            public_context=FrozenMap({"stack": context.stack_ref, "operation": "choose_objects"}),
+        ),
+        continuation_effect=FrozenMap({**dict(effect), "_choice_actor": context.actor,
+            "_selected_conditional_exile_candidates": [card.to_dict() for card in candidates]}),
+    )
+
+
+def complete_selected_conditional_exile(continuation, response, query):
+    from .linked_exile_return_model import (
+        LINKED_EXILE_RETURN_OPERATION, SELECTED_CONDITIONAL_EXILE_FIELD, SELECTED_EXILE_QUANTITY_KIND,
+        SelectedConditionalExileScope, conditional_exile_soldier_token, selected_conditional_exile_spec,
+    )
+    from .public_zone_moves import PublicZoneMoveObject
+    from .replacement.immutable import FrozenMap
+    from .semantic_choices.model import SemanticChoiceCompletion, SemanticChoiceError
+
+    effect = continuation.effect
+    if set(effect) != {"op", SELECTED_CONDITIONAL_EXILE_FIELD, "_choice_actor", "_selected_conditional_exile_candidates"}:
+        raise SemanticChoiceError("Selected conditional exile continuation is malformed")
+    actor = effect["_choice_actor"]
+    try:
+        spec = selected_conditional_exile_spec({"op": effect["op"], SELECTED_CONDITIONAL_EXILE_FIELD: effect[SELECTED_CONDITIONAL_EXILE_FIELD]})
+        saved = tuple(PublicZoneMoveObject.from_dict(value) for value in effect["_selected_conditional_exile_candidates"])
+    except (ValueError, TypeError) as exc:
+        raise SemanticChoiceError(str(exc)) from exc
+    scope = spec.selected_departure_scope
+    if (actor != continuation.semantic_frame.controller or actor not in query.active_seats
+            or saved != _selected_exile_candidates(query, scope, actor)):
+        raise SemanticChoiceError("The original controller or public choice incarnations changed")
+    selection = response.get("objects", ())
+    by_ref = {card.ref: card for card in saved}
+    if (not isinstance(selection, (list, tuple)) or any(type(ref) is not str or ref not in by_ref for ref in selection)
+            or len(selection) != len(set(selection))):
+        raise SemanticChoiceError("Choose only distinct eligible public permanents")
+    if not selection:
+        return SemanticChoiceCompletion()
+    shared = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": scope.binding_id, "spec": spec.to_dict()}
+    effects = [
+        {**shared, "phase": "exile", "cards": [by_ref[ref].to_dict() for ref in selection]},
+        {**shared, "phase": "return"},
+    ]
+    if scope is SelectedConditionalExileScope.OTHER_NONLAND_PERMANENTS_WITH_SOLDIERS:
+        effects.append({**conditional_exile_soldier_token(),
+            "quantity": {"kind": SELECTED_EXILE_QUANTITY_KIND, "schema_version": 1, "binding_id": scope.binding_id}})
+    return SemanticChoiceCompletion(prepend_effects=tuple(FrozenMap(child) for child in effects))
+
+
 def conditional_exile_source(effect: Mapping[str,Any]) -> ContinuousObjectIdentity:
     source=effect.get('_runtime_source')
     if not isinstance(source,Mapping):raise GameRuleError('Conditional exile requires authoritative source context')
@@ -29,12 +116,16 @@ def conditional_exile_source(effect: Mapping[str,Any]) -> ContinuousObjectIdenti
     except (KeyError,ValueError) as exc:raise GameRuleError('Conditional exile source identity is unavailable') from exc
 
 
-def retain_or_return_conditional_exile(host: Any, item: Any, binding_id: str, objects: Sequence[Any], effect: Mapping[str,Any]):
-    from .linked_exile_return_model import ExiledObjectIdentity
+def retain_or_return_conditional_exile(
+    host: Any, item: Any, binding_id: str, objects: Sequence[Any], effect: Mapping[str, Any], *, selected_scope=None,
+):
+    from .linked_exile_return_model import ExiledObjectIdentity, SelectedConditionalExileScope
     if not objects:return []
     source=conditional_exile_source(effect)
+    linked = selected_scope is SelectedConditionalExileScope.OTHER_NONTOKEN_CREATURES
     binding=ConditionalExileBinding(item.ref+':'+binding_id,source,
-        tuple(ExiledObjectIdentity.from_dict(value) for value in objects))
+        tuple(ExiledObjectIdentity.from_dict(value) for value in objects),
+        schema_version=2 if linked else 1, linked_scope=selected_scope if linked else None)
     if conditional_source_remains(source,host.state.cards):
         ZoneTransitionOwner(host).remember_conditional_exile(binding)
         return []

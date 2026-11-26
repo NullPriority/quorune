@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic Quorune rules fixture",
+  "cards": [
+    {
+      "oracle_id": "40c4b6f2-b24f-4456-844b-67146cce6830",
+      "name": "Generic Storm Reckoner",
+      "mana_cost": "{1}{U}",
+      "cmc": 2,
+      "type_line": "Creature — Bird Scout",
+      "oracle_text": "Flying, haste\nWhenever this creature deals combat damage to a player, roll a d20. Draw a number of cards equal to the result. You have no maximum hand size for the rest of the game.",
+      "power": "3",
+      "toughness": "2",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

@@ -3,7 +3,10 @@ from __future__ import annotations
 from typing import Any, Protocol
 
 from .card_programs.admission import program_has_complete_card_program_admission
-from .kicker import FixedManaKickerSpec, KICKER_MECHANIC_ID, KICKER_RUNTIME_EVENT
+from .kicker import (
+    FixedManaKickerSpec, KICKER_MECHANIC_ID, KICKER_RUNTIME_EVENT,
+    POSITIVE_GENERIC_KICKER_X, supports_positive_generic_kicker,
+)
 from .nonmana_kicker import FixedNonmanaKickerSpec
 from .semantic_runtime.kicker import default_fixed_mana_kicker_registry
 
@@ -48,20 +51,37 @@ def compiled_kicker_spec(
             if registry.describe(str(descriptor.get("handler_id") or "")) is None:
                 continue
             result.extend(registry.lower(descriptor, None))
-    return result[0] if len(result) == 1 else None
+    if len(result) != 1:
+        return None
+    spec, = result
+    if (
+        isinstance(spec, FixedManaKickerSpec) and spec.has_positive_generic_x
+        and not supports_positive_generic_kicker(record, "front")
+    ):
+        return None
+    return spec
 
 
 def compiled_fixed_mana_kicker_spec(host,card):
     """Compatibility entry point retaining the historical fixed-mana return type."""
     spec=compiled_kicker_spec(host,card)
-    return spec if isinstance(spec,FixedManaKickerSpec) else None
+    return spec if isinstance(spec, FixedManaKickerSpec) and not spec.has_positive_generic_x else None
 
 
-def validate_kicker_commit(host,card,option):
-    if str(option.get('kind') or '').casefold()!='kicker':return
+def validate_kicker_commit(host,card,option,*,announced_x=None):
+    paid_x = option.get(POSITIVE_GENERIC_KICKER_X)
+    if str(option.get('kind') or '').casefold() != KICKER_MECHANIC_ID:
+        if paid_x is not None:
+            raise ValueError('Only a Kicker cost may bind its announced X')
+        return
     spec=compiled_kicker_spec(host,card)
     if spec is None or option.get('kicker_fingerprint')!=spec.fingerprint:
         raise ValueError('The sealed Kicker contract changed before commit')
+    if isinstance(spec, FixedManaKickerSpec) and spec.has_positive_generic_x:
+        if type(paid_x) is not int or paid_x < 1 or type(announced_x) is not int or paid_x != announced_x:
+            raise ValueError('The sealed Kicker X changed before commit')
+    elif paid_x is not None:
+        raise ValueError('The sealed fixed Kicker cost cannot bind X')
     if isinstance(spec,FixedNonmanaKickerSpec):
         from .replacement.immutable import thaw_value
         expected=[thaw_value(v) for v in spec.additional_costs]

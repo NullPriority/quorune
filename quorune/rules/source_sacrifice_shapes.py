@@ -9,7 +9,22 @@ from ..source_sacrifice_model import (
 
 
 def fixed_source_sacrifice_node_capabilities(*, effects, target_schema, mechanic_ids):
-    if len(effects) != 1 or target_schema is not None or SOURCE_SACRIFICE_MECHANIC not in mechanic_ids:
+    if target_schema is not None or SOURCE_SACRIFICE_MECHANIC not in mechanic_ids:
+        return ()
+    if len(effects) == 2:
+        from ..source_sacrifice_model import fixed_source_sacrifice_effect
+        from ..library_search_model import FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION
+        from .library_search_capability_shapes import fixed_counted_library_search_node_capabilities
+
+        if (effects[0] != fixed_source_sacrifice_effect() or type(effects[0][SOURCE_SACRIFICE_FIELD]) is not int
+                or effects[0]["tapped"] is not False
+                or effects[1].get("schema_version") != FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION):
+            return ()
+        search = fixed_counted_library_search_node_capabilities(
+            effects=effects[1:], target_schema=None, mechanic_ids=mechanic_ids,
+        )
+        return (*fixed_source_sacrifice_dependencies(effects[0]), *search) if search else ()
+    if len(effects) != 1:
         return ()
     try:
         return fixed_source_sacrifice_dependencies(effects[0])
@@ -17,7 +32,61 @@ def fixed_source_sacrifice_node_capabilities(*, effects, target_schema, mechanic
         return ()
 
 
+def uses_opponent_threshold_search(effects):
+    from ..library_search_model import FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION
+
+    return any(effect.get("op") == "search"
+               and effect.get("schema_version") == FIXED_CREATURE_GROUP_BATTLEFIELD_SEARCH_VERSION for effect in effects)
+
+
+def uses_fixed_source_sacrifice_sequence(effects):
+    return (bool(effects) and SOURCE_SACRIFICE_FIELD in effects[0]
+            and (len(effects) == 1 or uses_opponent_threshold_search(effects)))
+
+
+def _opponent_threshold_search_dependencies(program):
+    from ..continuous_conditions import (
+        FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, FixedPublicStateConditionKind,
+        FixedPublicStateConditionSpec, FixedPublicStateFact,
+    )
+    from ..player_maximum_model import OPPONENT_CREATURE_THRESHOLD_CAPABILITY
+    from ..replacement.immutable import FrozenMap, thaw_value
+
+    if ((program.event, program.active_zone) != ("step.begin", "battlefield")
+            or program.cost_schema is not None or program.handlers or not isinstance(program.event_condition, Mapping)):
+        raise ValueError("Opponent threshold search requires its original unpriced battlefield upkeep")
+    raw = thaw_value(FrozenMap(program.event_condition))
+    conditions = raw.get("all")
+    schedule = {"all": [
+        {"field": "player", "op": "eq", "value": "$source.controller"},
+        {"field": "step", "op": "eq", "value": "upkeep"},
+    ]}
+    if set(raw) != {"all"} or not isinstance(conditions, list) or len(conditions) != 2 or conditions[0] != schedule:
+        raise ValueError("Opponent threshold search requires its controller's upkeep")
+    public = conditions[1]
+    if (not isinstance(public, Mapping) or set(public) != {"field", "op", "value", "condition"}
+            or public["field"] != FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD
+            or public["op"] != "truthy" or public["value"] is not True):
+        raise ValueError("Opponent threshold search requires an intervening public condition")
+    condition = FixedPublicStateConditionSpec.from_dict(public["condition"])
+    if (condition.kind is not FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST
+            or condition.fact is not FixedPublicStateFact.OPPONENT_CREATURE_COUNT_MAXIMUM):
+        raise ValueError("Opponent threshold search needs its independent per-opponent creature count")
+    required = fixed_source_sacrifice_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required:
+        raise ValueError("Opponent threshold search requires its original sacrifice and simultaneous search sequence")
+    return (*required, OPPONENT_CREATURE_THRESHOLD_CAPABILITY,
+            "trigger.condition.fixed_public_state", "trigger.effect.fixed_event", "trigger.placement.apnap")
+
+
 def fixed_source_sacrifice_runtime_dependencies(program):
+    from .effect_shape_walkers import nested_effects
+
+    if uses_opponent_threshold_search(nested_effects((program.effects, program.handlers))):
+        return _opponent_threshold_search_dependencies(program)
+
     required = set()
     versions = set()
 

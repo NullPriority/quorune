@@ -21,6 +21,8 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.rules.casting.assist_frame import AssistCastFrame
+from quorune.rules.casting.spell_mana_payments import capture_spell_mana_payment
+from quorune.rules.mana_pool_payment import PoolManaUnit
 from quorune.turn_history import current_turn_history_events
 from scripts.build_test_database import build_fixture_database
 import test_blight
@@ -173,7 +175,13 @@ class AssistRuntimeTests(unittest.TestCase):
         self._act(session, "B", "assist:contribute", assist_amount=1)
         self._frame(session, "caster_payment")
         session = self.replay(session, load=True)
-        self._act(session, "A", "assist:pay")
+        with patch("quorune.rules.casting.spell_mana_payments.capture_spell_mana_payment",
+                   wraps=capture_spell_mana_payment) as capture:
+            self._act(session, "A", "assist:pay")
+        self.assertEqual([
+            ("B", {PoolManaUnit("U"): 1}),
+            ("A", {PoolManaUnit("W"): 2, PoolManaUnit("C"): 1}),
+        ], [(call.kwargs["player"], dict(call.kwargs["paid"].units)) for call in capture.call_args_list])
         self.assertTrue(session.state.cards[plains.object_id].tapped)
         self.assertTrue(session.state.cards[reef.object_id].tapped)
         self.assertEqual(life, session.state.players["B"].life)

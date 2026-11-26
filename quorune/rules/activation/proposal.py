@@ -20,6 +20,7 @@ from ...creature_power_damage import (
     creature_power_damage_source_available,
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
 )
+from ...errors import GameRuleError
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...replacement.immutable import thaw_value
 from ...station import station_candidates, station_cost_choice
@@ -27,6 +28,7 @@ from ...targets import available_modes
 from ..action_proposals import ActionOffer, ActivationProposal, freeze_json
 from ..activation_costs import activation_choice_candidates
 from ..modal_selection import canonical_modes
+from ..random_activation_target import choose_random_activated_target, has_random_activation_target
 from .model import (
     ActivationProposalError,
     ActivationProposalRequest,
@@ -384,11 +386,18 @@ def build_activation_proposal(
     from ...activation_x import chosen_activation_x
     try: announced_x = chosen_activation_x(ability, response)
     except ValueError as exc: raise ActivationProposalError(str(exc),reason='invalid_activation_x') from exc
-    supplied_fingerprint = response.get("proposal_fingerprint")
-    if supplied_fingerprint:
-        advertised = build_activation_offer(
-            host, request.actor, source, ability
+    semantic_key = host._semantic_key_for_ability(source, ability)
+    program = host.semantics.get(semantic_key)
+    random_target = has_random_activation_target(program)
+    if random_target and response.get("targets"):
+        raise ActivationProposalError(
+            "This activation chooses its target at random", reason="random_target_override",
         )
+    supplied_fingerprint = response.get("proposal_fingerprint")
+    advertised = None
+    if supplied_fingerprint or random_target:
+        advertised = build_activation_offer(host, request.actor, source, ability)
+    if supplied_fingerprint:
         expiry_revision = int(
             response.get(
                 "expiry_revision",
@@ -409,8 +418,6 @@ def build_activation_proposal(
             )
     _validate_activation_cost_contract(host, request, source, ability)
     _validate_activation_timing_costs(host, request, source, ability)
-    semantic_key = host._semantic_key_for_ability(source, ability)
-    program = host.semantics.get(semantic_key)
     target_schema = (
         thaw_value(ability.target_schema)
         if ability.target_schema is not None
@@ -422,10 +429,20 @@ def build_activation_proposal(
             target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
     except ValueError as exc:
         raise ActivationProposalError(str(exc), reason="invalid_announced_target_count") from exc
+    target_submission = response.get("targets")
+    if random_target:
+        if advertised.offer is None:
+            raise ActivationProposalError(
+                "Random activation has no available target or payment", status=advertised.status,
+                reason=advertised.reason,
+            )
+        target_submission = [choose_random_activated_target(
+            host, request.actor, source, ability, advertised.random_target_refs,
+        )]
     targets, target_groups = host._validate_semantic_targets(
         request.actor,
         program,
-        host._normalize_target_submission(response.get("targets")),
+        host._normalize_target_submission(target_submission),
         modes=list(request.modes),
         acting_source=ability_targeting_source(host,source), source_ref=source.ref,
         target_schema=target_schema,
@@ -453,6 +470,11 @@ def build_activation_proposal(
     requirements, announced_x, mana_option, price_details = _collect_activation_payment(
         host, request.actor, source, ability, response, tuple(targets),
     )
+    from ..hand_artifact_mana import artifact_hand_activation_details
+    try:
+        artifact_hand_details = artifact_hand_activation_details(host, request.actor, source, ability, response)
+    except GameRuleError as exc:
+        raise ActivationProposalError(str(exc), reason="invalid_artifact_hand_mana_selection") from exc
     proposal = ActivationProposal(
         seat=request.actor,
         source_ref=source.ref,
@@ -476,6 +498,7 @@ def build_activation_proposal(
                 "builtin_context": context,
                 **({'announced_x':announced_x} if announced_x is not None else {}),
                 **price_details,
+                **artifact_hand_details,
                 **(
                     {
                         "mana_cost_option": mana_option.to_dict(),
@@ -505,7 +528,22 @@ def _activation_mana_option_label(option: Any) -> str:
     return "Pay " + ", ".join(parts)
 
 
-def _activation_choice_schema(
+def _activation_choice_schema(host, seat, source, ability, hint):
+    choices = _activation_intrinsic_choice_schema(host, seat, source, ability, hint)
+    if not (hint.get("m") or hint.get("mana_options") or ability.chooses_activation_x):
+        return choices
+    from ...mana_restrictions import ability_mana_spend_context
+    from ..hand_artifact_mana import artifact_hand_mana_payment_fields
+
+    cost_type = str(host._effective_card_data(source).get("type_line") or "")
+    fields = artifact_hand_mana_payment_fields(
+        host, seat, spend_context=ability_mana_spend_context(cost_type, source_zone=source.zone),
+        exclude_sources={source.object_id} if ability.tap_source or ability.untap_source else set(),
+    )
+    return {**(choices or {}), **fields} if fields else choices
+
+
+def _activation_intrinsic_choice_schema(
     host: ActivationProposalHost,
     seat: str,
     source: Any,
@@ -513,9 +551,22 @@ def _activation_choice_schema(
     hint: Mapping[str, Any],
 ) -> dict[str, Any] | None:
     from ..selected_counter_costs import selected_counter_cost_choice_schema
-    counter_choice = selected_counter_cost_choice_schema(ability, hint)
-    from .source_counter_choices import source_counter_cost_choice_schema
-    cost_choice = counter_choice if counter_choice is not None else source_counter_cost_choice_schema(source, ability)
+    from ...artifact_hand_mana_model import ARTIFACT_HAND_MANA_REVEAL_FIELD, is_artifact_hand_mana
+    if is_artifact_hand_mana(ability):
+        from ..hand_artifact_mana import artifact_hand_mana_choice
+        return {ARTIFACT_HAND_MANA_REVEAL_FIELD: artifact_hand_mana_choice(host, seat)}
+    from ..forage import forage_choice_schema, has_forage_cost
+
+    forage = has_forage_cost(ability)
+    if forage:
+        cost_choice = forage_choice_schema(host, seat)
+        if cost_choice is None or not ability.mana_ability:
+            return cost_choice
+    else:
+        counter_choice = selected_counter_cost_choice_schema(ability, hint, host=host, actor=seat)
+        from .source_counter_choices import source_counter_cost_choice_schema
+
+        cost_choice = counter_choice if counter_choice is not None else source_counter_cost_choice_schema(source, ability)
     if ability.mana_ability:
         from ...triggered_mana import triggered_mana_offer_schema
         from ...triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
@@ -523,7 +574,7 @@ def _activation_choice_schema(
         triggered_choice = triggered_mana_offer_schema(host, seat, source, ability)
         if triggered_choice is not None:
             return {**(cost_choice or {}), TRIGGERED_MANA_OPTION_FIELD: triggered_choice}
-    if cost_choice is not None:
+    if cost_choice is not None and not forage:
         return cost_choice
     if ability.mana_ability:
         from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
@@ -533,6 +584,7 @@ def _activation_choice_schema(
         modes = host._mana_modes_for_ability(seat, source, ability)
         if len(modes) > 1:
             return {
+                **(cost_choice or {}),
                 "mana_output": {
                     "type": "mana_bundle",
                     "label": "Mana to add",
@@ -602,9 +654,10 @@ def build_activation_offer(
         return ActivationProposalResult(exc.status, exc.reason)
     semantic_key = host._semantic_key_for_ability(source, selected)
     program = host.semantics.get(semantic_key)
+    random_target = has_random_activation_target(program)
     if (
         program is not None
-        and host.state.config.semantic_policy == "trusted_only"
+        and (random_target or host.state.config.semantic_policy == "trusted_only")
         and not host.semantic_program_is_current_trusted(program)
     ):
         return ActivationProposalResult("unresolved", "semantic_policy_requires_trusted")
@@ -663,8 +716,14 @@ def build_activation_offer(
     fetch_types = selected.library_search_types
     if fetch_types:
         hint["search_types"] = list(fetch_types)
+    random_refs = tuple(public_schema["legal_refs"]) if random_target and public_schema else ()
     from .pricing import activation_priced_offer_payload
-    payload, public_schema = activation_priced_offer_payload(host, seat, source, selected, hint, public_schema, program=program)
+    try:
+        payload, public_schema = activation_priced_offer_payload(host, seat, source, selected, hint, public_schema, program=program)
+    except ValueError:
+        if not random_target:
+            raise
+        return ActivationProposalResult("unpayable", "random_activation_payment_unavailable")
     if selected.mana_cost_options:
         payload["cost_options"] = [
             {
@@ -693,7 +752,10 @@ def build_activation_offer(
     if selected.chooses_activation_x:
         from .graveyard_copy import announced_activation_choice
 
-        choice_schema = {**(choice_schema or {}), "x": announced_activation_choice(public_schema)}
+        x_choice = announced_activation_choice(public_schema)
+        if selected.loyalty_x:
+            x_choice["maximum"] = source.counters.get("loyalty", 0)
+        choice_schema = {**(choice_schema or {}), "x": x_choice}
     if selected.variable_colored_reveal_price is not None:
         from .variable_colored_reveal import variable_colored_reveal_offer
 
@@ -710,7 +772,8 @@ def build_activation_offer(
         if isinstance(unbound_target_schema, Mapping) and 'count_parameter' in unbound_target_schema:
             from ...target_cardinality import link_announced_public_bounds
             public_schema = link_announced_public_bounds(public_schema, unbound_target_schema['count_parameter'])
-        payload["target_schema"] = public_schema
+        if not random_target:
+            payload["target_schema"] = public_schema
     offer = ActionOffer(
         action_id=f"activate:{source.ref}:{selected.ability_id}",
         action="activate",
@@ -719,7 +782,7 @@ def build_activation_offer(
         expiry_revision=host.state.revision,
         payload=freeze_json(payload),
     )
-    return ActivationProposalResult("payable", "payable", offer=offer)
+    return ActivationProposalResult("payable", "payable", offer=offer, random_target_refs=random_refs)
 
 
 __all__ = [

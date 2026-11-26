@@ -5,13 +5,21 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
-from .characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantityReduction
+from .cast_origin_replacement import (
+    CAST_ORIGIN_REPLACEMENT_VERSIONS, CastOriginCondition, validate_cast_origin_replacement,
+    is_main_phase_cast_replacement, validate_main_phase_cast_replacement,
+)
+from .characteristic_fragments import (
+    CharacteristicQuantityReduction, CharacteristicQuantityScope, CharacteristicQuantitySpec,
+)
 from .continuous_conditions import (
     FixedPublicStateConditionKind,
     FixedPublicStateConditionSpec,
     FixedPublicStateFact,
 )
 from .damage_prevention_scope import public_combat_prevention_replacement_side
+from .monarch_counter_doubling_condition import MONARCH_COUNTER_DOUBLING_VERSION, validate_monarch_counter_doubling
+from .object_predicate import ObjectQuerySpec
 from .replacement.immutable import FrozenMap
 from .spell_mana_conditions import ManaSpentCondition, PAID_MANA_CONDITION_CAPABILITY, PAID_MANA_CONDITION_MECHANIC
 from .declared_cost_conditions import DeclaredCastCostCondition
@@ -29,6 +37,9 @@ RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
 RESOLUTION_ALTERNATIVE_SCHEMA_VERSION = 13
 CONDITIONAL_COPY_REFERENCE_SCHEMA_VERSION = 15
 GREATEST_POWER_TARGET_DISCARD_VERSION = 19
+MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION = 33
+MONARCH_KNIGHT_DAMAGE_MECHANICS = ("declared-effect-amount", "cr-120-damage", "public-query-effect-amount")
+MONARCH_KNIGHT_PREFIX_MECHANICS = ("cr-111-tokens",)
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
 PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_target_self_replacement'
@@ -233,11 +244,33 @@ def _card_only_graveyard_count(quantity) -> bool:
         and not quantity.terms and not quantity.mana_colors)
 
 
+CONTROLLER_BASIC_LAND_TYPES = CharacteristicQuantitySpec(
+    scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+    query=ObjectQuerySpec(zones=("battlefield",), types_all=("land",)),
+    schema_version=2,
+    reduction=CharacteristicQuantityReduction.DISTINCT_BASIC_LAND_TYPES,
+)
+THREE_BASIC_LAND_TYPES_CONDITION = FixedPublicStateConditionSpec(
+    FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+    amount=3,
+    quantity=CONTROLLER_BASIC_LAND_TYPES,
+    schema_version=2,
+)
+FIVE_BASIC_LAND_TYPES_CONDITION = FixedPublicStateConditionSpec(
+    FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
+    amount=5,
+    quantity=CONTROLLER_BASIC_LAND_TYPES,
+    schema_version=2,
+)
+
+
 def resolution_condition_is_closed(
     condition: FixedPublicStateConditionSpec, *, allow_keyword_count: bool = False,
 ) -> bool:
-    """Exclude object-relative bindings; this boundary binds only the controller."""
+    """Bind the condition to the resolving controller."""
 
+    if condition in (THREE_BASIC_LAND_TYPES_CONDITION, FIVE_BASIC_LAND_TYPES_CONDITION):
+        return True
     if condition.kind in {
         FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
         FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
@@ -293,11 +326,60 @@ def _validate_greatest_power_target_discard(effect, condition, children):
         raise ValueError("Conditional opponent discard requires one private hand choice by the target")
 
 
+def _validate_monarch_knight_damage(effect):
+    from .query_effect_amount_model import PublicQueryAmountSpec
+
+    monarch = FixedPublicStateConditionSpec(FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH)
+    opponents = FrozenMap({"groups": [{"kind": "players", "relation": "opponents"}]})
+    creatures = CharacteristicQuantitySpec(
+        scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+        query=ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)),
+    )
+    if (type(effect.get("schema_version")) is not int or effect.get("op") != RESOLUTION_CONDITION_OPERATION
+            or set(effect) != {"op", "schema_version", "player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids"}
+            or type(effect["player"]) is not str or not effect["player"]
+            or not isinstance(effect["condition"], Mapping) or FrozenMap(effect["condition"]) != FrozenMap(monarch.to_dict())
+            or tuple(effect["mechanic_ids"]) != MONARCH_KNIGHT_DAMAGE_MECHANICS
+            or tuple(effect["prefix_mechanic_ids"]) != MONARCH_KNIGHT_PREFIX_MECHANICS
+            or not isinstance(effect["effects"], (list, tuple)) or len(effect["effects"]) != 1):
+        raise ValueError("Monarch damage requires its exact resolving controller and ordered prefix")
+    damage, = effect["effects"]
+    symbolic = effect["player"] == "$controller"
+    damage_fields = {"op", "source", "amount", "groups"}
+    if not symbolic:
+        damage_fields.add("source_snapshot")
+    if (not isinstance(damage, Mapping) or set(damage) != damage_fields
+            or damage["op"] != "damage_fixed_set" or FrozenMap({"groups": damage["groups"]}) != opponents):
+        raise ValueError("Monarch damage requires the original source and a single opponent batch")
+    source, amount = damage["source"], damage["amount"]
+    if symbolic:
+        spec = PublicQueryAmountSpec.from_dict(amount)
+        if source != "$source" or spec.schema_version != 2 or spec.coefficient != 1 or spec.quantity != creatures:
+            raise ValueError("Monarch damage needs the declared live creature count")
+    else:
+        from .damage_source import DamageSourceSnapshot
+
+        if (effect["player"].startswith("$") or type(source) is not str or not source or source.startswith("$")
+                or type(amount) is not int or amount < 0
+                or DamageSourceSnapshot.from_dict(damage["source_snapshot"]).ref != source):
+            raise ValueError("The original source and live creature count must be bound at resolution")
+    return monarch, (damage,)
+
+
+
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition | PaidSacrificeCharacteristicCondition | CastOriginCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get("schema_version") in {MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION, MONARCH_COUNTER_DOUBLING_VERSION}:
+        validator = _validate_monarch_knight_damage if effect["schema_version"] == MONARCH_KNIGHT_ENTRY_DAMAGE_VERSION else validate_monarch_counter_doubling
+        return validator(effect)
+    if is_main_phase_cast_replacement(effect):
+        condition, alternate, _target = validate_main_phase_cast_replacement(effect, bound=type(effect.get("cast_fact")) is bool)
+        return condition, alternate
+    if effect.get("schema_version") in CAST_ORIGIN_REPLACEMENT_VERSIONS:
+        return validate_cast_origin_replacement(effect, bound=type(effect.get("cast_fact")) is bool)
     if effect.get('schema_version') == 18:
         from .paid_alternative_cast_model import validate_paid_alternative_instruction
         return validate_paid_alternative_instruction(effect,allow_bound=True)

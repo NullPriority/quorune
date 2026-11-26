@@ -12,11 +12,13 @@ import test_source_attack_alone as native
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.expend_model import EXPEND_CAPABILITY as CAPABILITY,SpellManaPaymentEvent,SPELL_MANA_PAYMENT_EVENT
+from quorune.mana_spend_rules import NONCAST_MANA_PAYMENT_RESTRICTION
 from quorune.model import TurnHistory,TurnHistoryEvent
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.casting.spell_mana_payments import current_spell_mana_paid,capture_spell_mana_payment
+from quorune.rules.mana_pool_payment import MANA_POOL_PAYMENT_FIELD, ManaPoolAllocation, PoolManaUnit
 from quorune.turn_history import reset_turn_history,roll_turn_history
 from scripts.build_test_database import build_fixture_database
 
@@ -69,8 +71,11 @@ class ExpendModelCompilerTests(unittest.TestCase):
     def test_zero_or_legacy_payment_does_not_fabricate_an_occurrence(self):
         state=SimpleNamespace(turn_sequence=3,turn_history=TurnHistory(turn_sequence=3,spell_mana_history_version=1))
         host=SimpleNamespace(state=state,_record_turn_history=lambda *a,**k:self.fail('No positive payment'),_dispatch_semantic_event=lambda *a,**k:self.fail('No crossing'))
-        self.assertEqual([],capture_spell_mana_payment(host,player='A',spent={'C':0}));state.turn_history=TurnHistory(turn_sequence=3)
-        self.assertEqual([],capture_spell_mana_payment(host,player='A',spent={'G':9}));self.assertFalse(state.turn_history.events)
+        self.assertEqual([], capture_spell_mana_payment(host, player="A", paid=ManaPoolAllocation(())))
+        state.turn_history = TurnHistory(turn_sequence=3)
+        paid = ManaPoolAllocation(((PoolManaUnit("G"), 9),))
+        self.assertEqual([], capture_spell_mana_payment(host, player="A", paid=paid))
+        self.assertFalse(state.turn_history.events)
 
     def test_expend_grammar_keeps_player_and_before_after_predicates_and_complete_bodies(self):
         registry=load_default_capability_registry()
@@ -179,6 +184,51 @@ class ExpendNativeTests(unittest.TestCase):
         result=session.act('pilot:A',{'action_id':offered['id'],'pay':'auto','reserve':{'C':3,'U':1}});self.assertTrue(result.ok,result.summary);self.assertEqual(0,self.trigger_count(session,source));self.assertIsNone(self.resolve(session));self.assertEqual(1,self.paid(session,'A'))
         self.cast_for(session,'A',free,reserve={'C':3,'U':1});self.assertEqual(0,self.trigger_count(session,source));self.assertIsNone(self.resolve(session));self.assertEqual(1,self.paid(session,'A'))
         self.cast(session,'A',spell,['A']);self.assertEqual(1,self.trigger_count(session,source));self.assertIsNone(self.resolve(session));self.assertEqual(5,self.paid(session,'A'));self.replay(session,load=True)
+
+    def test_cast_receives_the_verified_units_and_counts_from_each_payment_path(self):
+        restricted = PoolManaUnit("C", restriction="creature_spell_only")
+        snow = PoolManaUnit("C", snow=True)
+        retained = PoolManaUnit("C", retention="end_of_combat")
+        forbidden = PoolManaUnit("C", restriction=NONCAST_MANA_PAYMENT_RESTRICTION)
+        ordinary = PoolManaUnit("C")
+        red = PoolManaUnit("R")
+        for explicit in (False, True):
+            with self.subTest(explicit=explicit):
+                session = self.session(700645045 + int(explicit))
+                spell = self.add(session.engine, "Hill Giant", zone="hand")
+                self.assert_closed(session, spell)
+                session.engine._add_mana_to_pool("A", {"C": 1, "R": 1})
+                session.engine._add_mana_to_pool("A", {"C": 2}, restriction=restricted.restriction)
+                session.engine._add_mana_to_pool("A", {"C": 1}, snow_source=True)
+                session.engine._add_mana_to_pool("A", {"C": 1}, retention=retained.retention)
+                session.engine._add_mana_to_pool("A", {"C": 1}, restriction=forbidden.restriction)
+                self.prepare(session)
+                self.checkpoint(session)
+                offered = self.action(session, "A", spell)
+                with patch("quorune.rules.casting.spell_mana_payments.capture_spell_mana_payment",
+                           wraps=capture_spell_mana_payment) as capture:
+                    if explicit:
+                        before = authoritative_state_hash(session.state)
+                        bad = {forbidden.key: 1, ordinary.key: 1, snow.key: 1, red.key: 1}
+                        rejected = session.act("pilot:A", {
+                            "action_id": offered["id"], MANA_POOL_PAYMENT_FIELD: bad,
+                        })
+                        self.assertFalse(rejected.ok)
+                        self.assertEqual(before, authoritative_state_hash(session.state))
+                        capture.assert_not_called()
+                        expected = {restricted: 1, snow: 1, retained: 1, red: 1}
+                        payment = {MANA_POOL_PAYMENT_FIELD: {unit.key: count for unit, count in expected.items()}}
+                    else:
+                        expected = {restricted: 2, ordinary: 1, red: 1}
+                        payment = {"pay": "auto"}
+                    result = session.act("pilot:A", {"action_id": offered["id"], **payment})
+                    self.assertTrue(result.ok, result.summary)
+                    capture.assert_called_once()
+                    self.assertEqual("A", capture.call_args.kwargs["player"])
+                    self.assertEqual(expected, dict(capture.call_args.kwargs["paid"].units))
+                self.assertEqual(4, self.paid(session, "A"))
+                self.assertIsNone(self.resolve(session))
+                self.replay(session, load=True)
 
     def test_failed_cast_after_real_payment_rolls_back_journal_and_collected_occurrence(self):
         session=self.session(700645050);source=self.add(session.engine,'Teapot Slinger');spell=self.add(session.engine,'Hill Giant',zone='hand')

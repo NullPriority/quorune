@@ -10,10 +10,25 @@ from .oracle_source_text import without_ability_word_label
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 
 
+_FOOD_CREATURE_GRANT = re.compile(
+    r'Other creatures are Food artifacts in addition to their other types and have '
+    r'"(?P<child>\{2\}, \{T\}, Sacrifice this permanent: You gain 3 life\.)"\.?', re.IGNORECASE,
+)
+
+
 def subtype_composite_shell(text):
     text = without_ability_word_label(' '.join(text.strip().split()))
     if text is None:
         return None
+    if match := _FOOD_CREATURE_GRANT.fullmatch(text):
+        from ..semantic_runtime.subtype_composite_grants import food_creature_type_instructions
+
+        predicate = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        target = {"kind": "fixed_query", "controller": "any", "exclude_source": True,
+                  "predicate": predicate.to_dict()}
+        modifier = _attached_modifier()
+        modifier["type_operations"] = food_creature_type_instructions()
+        return target, modifier, (match["child"],)
     match = re.fullmatch(r'(?P<subject>.+?) (?:is|are) (?:an? )?(?P<subtype>[A-Za-z][A-Za-z\'-]*(?: Lord)?) '
         r'in addition to (?:its|their) other (?P<family>creature )?types and (?:has|have) (?P<quotes>.+?)\.?', text, re.I)
     if match is None or re.fullmatch(r'"[^"]+"(?:\s*(?:,\s*(?:and\s+)?|and\s+)"[^"]+"){0,3}', match['quotes']) is None:

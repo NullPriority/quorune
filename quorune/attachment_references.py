@@ -56,6 +56,7 @@ class AttachmentReferenceSpec:
     relation: AttachmentReferenceKind
     required_card_type: str
     schema_version: int = 1
+    required_color: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.relation, AttachmentReferenceKind):
@@ -66,10 +67,16 @@ class AttachmentReferenceSpec:
             raise AttachmentReferenceError(
                 "Attachment reference card type is unsupported"
             )
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise AttachmentReferenceError(
                 "Attachment reference schema version is unsupported"
             )
+        if self.schema_version == 3:
+            if (self.relation is not AttachmentReferenceKind.EQUIPPED or self.required_card_type != "creature"
+                    or type(self.required_color) is not str or self.required_color not in frozenset("WUBRG")):
+                raise AttachmentReferenceError("A colored attachment reference requires an equipped creature and one color")
+        elif self.required_color is not None:
+            raise AttachmentReferenceError("This attachment reference version has no color requirement")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -77,11 +84,15 @@ class AttachmentReferenceSpec:
             "relation": self.relation.value,
             "required_card_type": self.required_card_type,
             "schema_version": self.schema_version,
+            **({"required_color": self.required_color} if self.schema_version == 3 else {}),
         }
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "AttachmentReferenceSpec":
-        if not isinstance(value, Mapping) or set(value) != _SPEC_FIELDS:
+        fields = _SPEC_FIELDS
+        if isinstance(value, Mapping) and value.get("schema_version") == 3:
+            fields = fields | {"required_color"}
+        if not isinstance(value, Mapping) or set(value) != fields:
             raise AttachmentReferenceError(
                 "Attachment reference fields are invalid"
             )
@@ -99,6 +110,7 @@ class AttachmentReferenceSpec:
             relation=relation,
             required_card_type=value.get("required_card_type"),
             schema_version=value.get("schema_version"),
+            required_color=value.get("required_color"),
         )
 
 
@@ -248,14 +260,14 @@ def required_attachment_relation(
 
 def attachment_information_capabilities(value):
     return (ATTACHMENT_INFORMATION_CAPABILITY,) if any(
-        spec.schema_version == 2 for spec in attachment_reference_specs(value)
+        spec.schema_version in {2, 3} for spec in attachment_reference_specs(value)
     ) else ()
 
 
 def attachment_information_payload_dependencies(value):
     if isinstance(value, Mapping) and value.get('kind')=='source_attachment':
         spec=AttachmentReferenceSpec.from_dict(value)
-        return (ATTACHMENT_INFORMATION_CAPABILITY,) if spec.schema_version==2 else ()
+        return (ATTACHMENT_INFORMATION_CAPABILITY,) if spec.schema_version in {2, 3} else ()
     return ()
 
 

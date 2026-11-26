@@ -13,7 +13,10 @@ import random
 import uuid
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Iterable, Iterator, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Mapping, Sequence
+
+if TYPE_CHECKING:
+    from .cost_payments import ManaCostPayment
 
 from .abilities import (
     ActivatedAbility,
@@ -41,6 +44,7 @@ from .card_programs.validation import (
     program_source_is_current,
 )
 from .rules.activation_costs import activation_choice_candidates
+from .rules.spell_self_exile import conditional_terminal_spell_destination
 from .characteristic_evaluation import (
     type_parts,
 )
@@ -176,7 +180,8 @@ from .selection.storm import SPELL_COPY_TRIGGER_KEYS, StormTargetChoiceOwnerMixi
 from .selection.exile_cast import OneShotExileCastChoiceOwnerMixin
 from .selection.public_choice import PublicChoiceOwnerMixin
 from . import turn_counter_coordination
-from .impulse_access import temporary_play_permission_is_current
+from .impulse_access import current_temporary_play_permission
+from .opponent_library_exile import current_opponent_library_exile_play_permission, opponent_library_exile_spend_context
 from . import untap_step_coordination
 from . import haste
 from .combat_evasion_engine_adapter import engine_combat_evasion_verdict
@@ -218,7 +223,8 @@ from .stack_counter import (
     stack_item_can_be_countered,
 )
 from .stack_resolution import (
-    arbiter_resolution_program_key, bind_ability_resolution_ordinals, complete_stack_resolution,
+    arbiter_resolution_effects,
+    arbiter_resolution_program_key, complete_stack_resolution, prepare_resolving_stack_effects,
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
@@ -238,6 +244,7 @@ from .model import (
     YieldPolicy,
 )
 from .turn_history import (
+    record_committed_land_play,
     opponent_was_dealt_damage_this_turn, reset_turn_history,
     record_creature_attack_history,
 )
@@ -362,6 +369,7 @@ from .state_based_actions import (
 )
 from .state_based_execution import (
     commit_game_draw,
+    commit_game_win,
     synchronize_state_based_observers,
     commit_state_based_principal_changes,
     commit_state_based_counter_removals,
@@ -472,8 +480,8 @@ class CommanderEngine(
         if ("continuous.control.fixed_resolution" in program.capability_dependencies
                 and self.state.control_history_version != control_history.CONTROL_HISTORY_VERSION):
             return False
-        if ("history.spell_resolution.names" in program.capability_dependencies
-                and self.state.spell_resolution_name_ledger is None):
+        from .spell_resolution_name_codec import has_required_spell_name_history
+        if not has_required_spell_name_history(self.state, program.capability_dependencies):
             return False
         current_programs = self.semantics.programs_for_oracle(
             program.oracle_id or ""
@@ -796,6 +804,9 @@ class CommanderEngine(
                 [value for value in (previous, seat) if value is not None]
             ),
         )
+        from .rules.monarch_transition import dispatch_committed_monarch_transition
+
+        dispatch_committed_monarch_transition(self, seat, previous)
         return seat
 
     def _monarch_trigger(
@@ -2356,7 +2367,7 @@ class CommanderEngine(
         spend_context: str | None = None,
         snow_required: int = 0,
         preserve_source_id: str | None = None,
-    ) -> tuple[dict[str, int], list[dict[str, Any]]]:
+    ) -> ManaCostPayment:
         from .cost_payments import pay_for_cost
 
         return pay_for_cost(self, seat, requirements, response, exclude_sources=exclude_sources,
@@ -2387,16 +2398,15 @@ class CommanderEngine(
         seat: str,
         card: CardInstance,
     ) -> Mapping[str, Any] | None:
-        permission = card.annotations.get("temporary_play_permission")
-        if not isinstance(permission, Mapping):
-            return None
-        if not temporary_play_permission_is_current(
-            self.state,
-            seat,
-            card,
-            permission,
-        ):
-            return None
+        permission = current_temporary_play_permission(self.state, seat, card)
+        opponent_library_permission = current_opponent_library_exile_play_permission(self.state, seat, card)
+        if permission is None:
+            return opponent_library_permission
+        if opponent_library_permission is not None:
+            return {
+                **permission, "allow_land": True, "allow_spell": True,
+                "without_mana_cost": bool(permission.get("without_mana_cost") and permission.get("allow_spell", True)),
+            }
         return permission
 
     def _compiled_land_play_permission(
@@ -2520,6 +2530,7 @@ class CommanderEngine(
         life_paid = life_before - player.life
         consume_land_play_permission(self, seat, selected_permission, played_card=card,
                                      type_line=land_play_face_type_line(record, face))
+        record_committed_land_play(self, seat, card.logical_object_id)
         self._log(
             seat,
             "land.play",
@@ -2540,7 +2551,7 @@ class CommanderEngine(
             "player": seat,
             "from": origin,
             **physical_card_event_context(self.state, card),
-        })
+        }, played_land_reference=card.ref)
         if resolving is not None:
             return
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
@@ -2602,6 +2613,7 @@ class CommanderEngine(
         ignore_priority: bool = False,
         ignore_timing: bool = False,
         during_resolution: bool = False,
+        authorized_hand_incarnation: str | None = None,
     ) -> None:
         request = CastProposalRequest.from_submission(
             seat,
@@ -2613,6 +2625,7 @@ class CommanderEngine(
             ignore_priority=ignore_priority,
             ignore_timing=ignore_timing,
             during_resolution=during_resolution,
+            authorized_hand_incarnation=authorized_hand_incarnation,
         )
         try:
             proposal = build_cast_proposal(self, request)
@@ -3158,6 +3171,7 @@ class CommanderEngine(
                 or ""
             )
         )
+        spend_context = opponent_library_exile_spend_context(self.state, seat, card, spend_context)
         maximum = -1
         for value in range(limit + 1):
             options, _ = self._compiled_printed_cost_options(
@@ -3255,6 +3269,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ] | None = None,
         trigger_batch: list[StackItem] | None = None,
+        target_announcement_subtypes: tuple[str, ...] | None = None,
     ) -> list[str]:
         from .rules.city_blessing import synchronize_citys_blessing
         synchronize_citys_blessing(self,reason='before semantic trigger discovery')
@@ -3266,6 +3281,7 @@ class CommanderEngine(
             source_zones=source_zones,
             source_characteristics=source_characteristics,
             trigger_batch=trigger_batch,
+            target_announcement_subtypes=target_announcement_subtypes,
         )
         from .state_trigger_model import STATE_TRIGGER_EVENT
         if event != STATE_TRIGGER_EVENT:
@@ -3806,7 +3822,7 @@ class CommanderEngine(
             )
             self._grant_priority(self.state.active_player)
             return
-        effects = [dict(effect) for effect in response.get("effects") or []]
+        effects = arbiter_resolution_effects(response.get("effects"))
         destination = response.get("destination", item.default_destination)
         note = str(response.get("note") or "")
         key = arbiter_resolution_program_key(self, item, action=action, requested_key=response.get("semantic_key"))
@@ -3845,7 +3861,7 @@ class CommanderEngine(
         control_effects.begin_control_duration_resolution(self, item)
         self._continue_resolution(
             stack_ref=item.ref,
-            effects=bind_ability_resolution_ordinals(self, item, effects),
+            effects=prepare_resolving_stack_effects(self, item, effects),
             destination=destination,
             note=note,
             instruction_pointer=0,
@@ -3909,7 +3925,7 @@ class CommanderEngine(
         item.context["currently_resolving"] = True
         index = 0
         while index < len(effects):
-            effect = prepare_stack_resolution_effect(self, item, effects[index])
+            effect = prepare_stack_resolution_effect(self, item, effects[index], instruction_pointer=instruction_pointer + index)
             if effect is None:
                 index += 1
                 continue
@@ -3999,6 +4015,7 @@ class CommanderEngine(
         # stack object. Intrinsic as-enters counters are self-replacements in
         # this same immutable event tree, so a counter-replacement ordering
         # choice can suspend without replaying prior instructions.
+        destination = conditional_terminal_spell_destination(self, item, destination)
         entry_preparation = prepare_resolving_entry_replacement(
             self,
             item=item,
@@ -4010,14 +4027,11 @@ class CommanderEngine(
         )
         if entry_preparation.suspended:
             return
-        entry_destination = entry_preparation.destination
-        prepared_entry = entry_preparation.replacement
-
         complete_stack_resolution(
             self,
             item=item,
-            destination=entry_destination,
-            prepared_replacement=prepared_entry,
+            destination=entry_preparation.destination,
+            prepared_replacement=entry_preparation.replacement,
         )
         self._log(item.controller, "stack.resolve", f"Resolved {item.ref} {item.label}.", {"stack": item.ref, "effects": effects, "destination": destination, "note": note}, importance=2, changed_players=[item.controller])
         if self._stabilize():
@@ -4996,18 +5010,11 @@ class CommanderEngine(
         tuple[DeclarationCost, ...],
         tuple[tuple[CardInstance, str, str], ...],
     ]:
-        planeswalkers = self._attackable_planeswalkers(active)
-        battles = self._attackable_battles(active)
-        planeswalker_ids = {walker["id"] for walker in planeswalkers}
-        defenders = [
-            *[seat for seat in self.active_seats if seat != active],
-            *[walker["id"] for walker in planeswalkers],
-            *[
-                battle["id"]
-                for battle in battles
-                if battle["id"] not in planeswalker_ids
-            ],
-        ]
+        from .rules.next_turn_attack_restrictions import attack_declaration_targets
+
+        defenders = attack_declaration_targets(
+            self, active, self._attackable_planeswalkers(active), self._attackable_battles(active),
+        )
         domains: dict[str, tuple[str, ...]] = {}
         requirements: list[DeclarationRequirement] = []
         for object_id in self.state.players[active].zones["battlefield"]:
@@ -5224,9 +5231,10 @@ class CommanderEngine(
             return
         planeswalker_defenders = self._attackable_planeswalkers(active)
         battle_defenders = self._attackable_battles(active)
-        permanent_defender_ids = {
-            walker["id"] for walker in planeswalker_defenders
-        }
+        from .rules.next_turn_attack_restrictions import attack_declaration_targets
+
+        defenders = attack_declaration_targets(self, active, planeswalker_defenders, battle_defenders)
+        defender_refs = set(defenders)
         from .rules.banding import banding_offer
         attack_banding = banding_offer(self, candidates)
         self.permissions.issue(
@@ -5240,24 +5248,9 @@ class CommanderEngine(
                     **({'banding': attack_banding} if attack_banding else {}),
                     **({'enlist':rows} if (rows:=enlist_offer_rows(self,active,candidates)) else {}),
                     **({'exert':rows} if (rows:=exert_offer_rows(self,active,candidates)) else {}),
-                    "defenders": [
-                        *[
-                            seat
-                            for seat in self.active_seats
-                            if seat != active
-                        ],
-                        *[
-                            walker["id"]
-                            for walker in planeswalker_defenders
-                        ],
-                        *[
-                            battle["id"]
-                            for battle in battle_defenders
-                            if battle["id"] not in permanent_defender_ids
-                        ],
-                    ],
-                    "planeswalker_defenders": planeswalker_defenders,
-                    "battle_defenders": battle_defenders,
+                    "defenders": defenders,
+                    "planeswalker_defenders": [row for row in planeswalker_defenders if row["id"] in defender_refs],
+                    "battle_defenders": [row for row in battle_defenders if row["id"] in defender_refs],
                     "declaration_constraints": problem.projection(),
                     "declaration_costs": [
                         cost.to_dict() for cost in costs
@@ -5519,12 +5512,13 @@ class CommanderEngine(
         spent = normalize_mana_bundle(None)
         activations: list[dict[str, Any]] = []
         if sum(requirements.values()):
-            spent, activations = self._pay_for_cost(
+            mana_payment = self._pay_for_cost(
                 active,
                 requirements,
                 response,
                 spend_context="combat_declaration",
             )
+            spent, activations = mana_payment.spent, mana_payment.activations
         committed = attack_transitions.commit_engine_attack_declaration(
             self, controller=active, chosen=chosen, bands=bands
         )
@@ -5728,12 +5722,13 @@ class CommanderEngine(
         spent = normalize_mana_bundle(None)
         activations: list[dict[str, Any]] = []
         if sum(requirements.values()):
-            spent, activations = self._pay_for_cost(
+            mana_payment = self._pay_for_cost(
                 defender,
                 requirements,
                 response,
                 spend_context="combat_declaration",
             )
+            spent, activations = mana_payment.spent, mana_payment.activations
         committed = block_triggers.commit_engine_block_declaration(
             self,
             controller=defender,
@@ -6146,6 +6141,11 @@ class CommanderEngine(
             changed_players=result.changed_players,
         )
         if self._semantic_pause_annotation() is not None:
+            return True
+        if result.combat_prevention_draws:
+            from .drawing.coordinator import begin_draw_batch
+
+            begin_draw_batch(self, result.combat_prevention_draws, continuation={"kind": "combat_damage"})
             return True
         return self._stabilize()
 
@@ -6796,11 +6796,7 @@ class CommanderEngine(
             if seat in remaining
         ]
         if len(remaining) == 1:
-            self.state.game_over = True
-            self.state.winner = remaining[0]
-            self.state.priority_player = None
-            self.permissions.invalidate_current()
-            self._log(remaining[0], "game.win", f"{remaining[0]} won the game.", importance=3, changed_players=remaining)
+            commit_game_win(self, remaining[0])
         elif not remaining:
             commit_game_draw(self, reason="All remaining players lost simultaneously.")
         elif self.state.priority_player in unique:

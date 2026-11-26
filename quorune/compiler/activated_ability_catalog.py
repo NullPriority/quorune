@@ -20,6 +20,7 @@ from ..fixed_mana_abilities import (
     fixed_mana_modes_from_effect,
 )
 from ..replacement.immutable import FrozenMap
+from ..rules.capabilities import CapabilityRegistry
 from ..semantic_runtime.activated_abilities import (
     ACTIVATED_ABILITY_CATALOG_HANDLER_ID,
     activated_ability_catalog_descriptor,
@@ -54,7 +55,10 @@ from ..target_controller_information import TARGET_CONTROLLER_INFORMATION_MECHAN
 from .activated_costs import parse_compiled_activated_abilities
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
-from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation, fixed_blight_activation
+from .activated_counter_costs import (
+    fixed_selected_counter_activation, fixed_any_source_counter_activation,
+    fixed_blight_activation, fixed_source_counter_placement_activation,
+)
 from .activation_mana_costs import fixed_complex_activation_mana_cost
 from .power_up_templates import fixed_power_up_ability
 
@@ -109,12 +113,19 @@ def _specialize_compiled_ability(
     source_name: str,
 ) -> ActivatedAbility:
     from .activation_x_costs import announced_x_activation_cost
+    from .activated_mill_costs import fixed_mill_activation_cost
+
     ability = announced_x_activation_cost(fixed_power_up_ability(ability))
-    ability = fixed_any_source_counter_activation(ability)
+    ability = fixed_mill_activation_cost(ability)
+    ability = fixed_source_counter_placement_activation(fixed_any_source_counter_activation(ability))
     ability = fixed_complex_activation_mana_cost(ability)
     ability = fixed_blight_activation(fixed_selected_counter_activation(
         fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability))
     ))
+    from .land_play_mana_nodes import compile_land_play_mana
+
+    if land_play := compile_land_play_mana(ability):
+        return land_play.to_activated_ability()
     candidates = tuple(
         spec.to_activated_ability()
         for spec in (
@@ -242,6 +253,8 @@ def _ability_id(program: SemanticProgram) -> str | None:
     prefix, separator, value = program.ability_id.partition(":")
     if prefix != "ability" or not separator or not value:
         return None
+    if program.provenance.get("template_id") == "loot-graveyard-owner-transform-v1":
+        return value.removesuffix(":loot-transform")
     return value
 
 
@@ -351,11 +364,15 @@ def with_compiled_activated_ability_catalog(
     ir: Any,
     rulings_hash: str,
     authored_by: str,
+    capability_registry: CapabilityRegistry | None = None,
+    capability_profile: str = "traditional",
 ) -> tuple[SemanticProgram, ...]:
     """Attach catalogs using the invocation's pinned whole-source boundary."""
     return with_activated_ability_catalog(
         record,
         programs,
+        capability_registry=capability_registry,
+        capability_profile=capability_profile,
         carrier_provenance={
             CARD_PROGRAM_ADMISSION_FIELD: CompleteCardProgramAdmission.from_oracle_ir(ir).to_dict(),
             "source_oracle_hash": ir.oracle_hash,
@@ -372,6 +389,8 @@ def with_activated_ability_catalog(
     *,
     reference_programs: Iterable[SemanticProgram] = (),
     carrier_provenance: Mapping[str, Any] | None = None,
+    capability_registry: CapabilityRegistry | None = None,
+    capability_profile: str = "traditional",
 ) -> tuple[SemanticProgram, ...]:
     """Attach closed discovery descriptors to represented activations.
 
@@ -420,6 +439,8 @@ def with_activated_ability_catalog(
             catalog=catalog,
             programs=result,
             provenance=carrier_provenance,
+            capability_registry=capability_registry,
+            capability_profile=capability_profile,
         )
     return tuple(result)
 
@@ -430,7 +451,9 @@ def _catalog_provenance(
     references: tuple[SemanticProgram, ...],
     carrier_provenance: Mapping[str, Any] | None,
 ) -> Mapping[str, Any]:
-    if not ability.chooses_activation_x and ability.ability_local_mana_reduction is None:
+    from ..rules.forage import has_forage_cost
+
+    if not has_forage_cost(ability) and not ability.chooses_activation_x and ability.ability_local_mana_reduction is None:
         return program.provenance
     reference = next((value for value in references if value.key == program.key), None)
     source = reference.provenance if reference is not None else carrier_provenance or {}
@@ -446,6 +469,8 @@ def _append_catalog_carriers(
     catalog: Mapping[str, tuple[ActivatedAbility, ...]],
     programs: list[SemanticProgram],
     provenance: Mapping[str, Any],
+    capability_registry: CapabilityRegistry | None,
+    capability_profile: str,
 ) -> None:
     required = {
         "source_oracle_hash",
@@ -464,10 +489,16 @@ def _append_catalog_carriers(
         for program in programs
         for ability in activated_abilities_from_program(program)
     }
+    from ..rules.attachment_actions import EQUIP_SEMANTIC_KEY
+    from ..rules.commander_keyword_grants import commander_permanent_query_dependencies
+    from ..rules.forage import has_forage_cost
+
     for face_id, abilities in catalog.items():
         for ability in abilities:
-            if ability.ability_local_mana_reduction is not None or ability.variable_colored_reveal_price is not None:
-                continue  # The price binds to its complete cost and effect program.
+            if (has_forage_cost(ability) or ability.loyalty_x or ability.ability_local_mana_reduction is not None
+                    or ability.variable_colored_reveal_price is not None
+                    or ability.source_counter_placement_cost is not None):
+                continue  # The price requires its exact resolving program.
             if (
                 _ability_source_slot(
                     record,
@@ -478,6 +509,12 @@ def _append_catalog_carriers(
                 in represented
             ):
                 continue
+            dependencies = ()
+            closure = None
+            if capability_registry is not None and ability.builtin_semantic_key == EQUIP_SEMANTIC_KEY:
+                dependencies = commander_permanent_query_dependencies(ability.target_schema or {})
+                if dependencies:
+                    closure = capability_registry.closure(dependencies, profile=capability_profile).to_dict()
             programs.append(
                 SemanticProgram(
                     key=(
@@ -500,6 +537,8 @@ def _append_catalog_carriers(
                         "template_id": "activated-ability-catalog-v1",
                     },
                     handlers=[activated_ability_catalog_descriptor(ability)],
+                    capability_dependencies=list(dependencies),
+                    capability_closure=closure,
                 )
             )
 

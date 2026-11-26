@@ -11,6 +11,22 @@ if TYPE_CHECKING:
 
 PRIORITY_CONCESSION_STABILIZATION_VERSION_FIELD = "priority_concession_stabilization_version"
 PRIORITY_CONCESSION_RESUME_FIELD = "priority_concession_resume_from"
+TURN_CONTROL_LIFETIME_VERSION_FIELD = "turn_control_lifetime_version"
+FIXED_NEXT_TURN_CONTROL_MECHANIC = "fixed-control-target-players-next-turn"
+FIXED_NEXT_TURN_CONTROL_CAPABILITY = "turn.control.target_players_next_turn"
+NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD = "next_turn_control_lifetime_version"
+
+
+def read_turn_control_lifetime_version(
+    fields: Mapping[str, Any], field: str = TURN_CONTROL_LIFETIME_VERSION_FIELD,
+) -> int | None:
+    """Version one retains the grant until the next actual turn begins."""
+    if field not in fields:
+        return None
+    version = fields[field]
+    if type(version) is not int or version != 1:
+        raise ValueError("Unsupported turn-control lifetime version")
+    return version
 
 
 def read_priority_concession_stabilization_version(value: Mapping[str, Any]) -> int | None:

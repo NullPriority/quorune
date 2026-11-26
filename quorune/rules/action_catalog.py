@@ -13,6 +13,8 @@ from ..station import (
     station_cost_choice,
 )
 from ..util import unique_preserving_order
+from ..model import CardInstance, GameState
+from ..zone_object_state import face_down_exile_viewers
 from ..characteristic_read_frames import characteristic_read_method
 from .action_proposals import (
     ActionOffer,
@@ -191,7 +193,9 @@ def _land_offers(
         if face_name:
             payload["face"] = face_name
         life_amount = host._land_entry_life_amount(record, face) if record else 0
-        if life_amount:
+        from ..semantic_runtime.life_prohibitions import life_payment_prohibited
+
+        if life_amount and not life_payment_prohibited(host, seat):
             payload.setdefault("choice_schema", {})["pay_life"] = {
                 "type": "boolean",
                 "label": f"Pay {life_amount} life to enter untapped",
@@ -428,8 +432,89 @@ def build_priority_action_catalog(
     }
 
 
+def concealed_face_down_exile_cards(state: GameState, actor: str) -> tuple[CardInstance, ...]:
+    return tuple(
+        card
+        for player in state.players.values()
+        for object_id in player.zones["exile"]
+        if (card := state.cards[object_id]).face_down
+        and card.zone == "exile"
+        and actor not in face_down_exile_viewers(state, card)
+    )
+
+
+def _offer_uses_concealed_source(row: Any, concealed: frozenset[str]) -> bool:
+    if isinstance(row, str):
+        return row in concealed
+    if not isinstance(row, Mapping):
+        return False
+    for field in ("card", "source", "s"):
+        source = row.get(field)
+        if isinstance(source, str):
+            return source in concealed
+    operation, _, parameters = str(row.get("id") or "").partition(":")
+    if operation in {"activate", "play-land", "cast"} or operation.startswith("cast-"):
+        return parameters.split(":", 1)[0] in concealed
+    return False
+
+
+def visible_decision_payload(
+    state: GameState, actor: str, payload: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Project retained offers without changing the decision used by replay."""
+
+    result = dict(payload)
+    concealed_refs = {
+        identity: card.ref
+        for card in concealed_face_down_exile_cards(state, actor)
+        for identity in (card.ref, card.object_id)
+    }
+    if not concealed_refs:
+        return result
+    concealed = frozenset(concealed_refs)
+
+    def filter_offers(context: Mapping[str, Any], fields: tuple[str, ...]) -> dict[str, Any]:
+        result = dict(context)
+        for field in fields:
+            rows = result.get(field)
+            if isinstance(rows, (list, tuple)):
+                result[field] = [
+                    row for row in rows if not _offer_uses_concealed_source(row, concealed)
+                ]
+        return result
+
+    result = filter_offers(result, ("legal_actions",))
+    legal = result.get("legal")
+    if isinstance(legal, Mapping):
+        legal = filter_offers(
+            legal, ("actions", "cast", "lands", "abilities", "mana_abilities", "special_actions"),
+        )
+        diagnostics = legal.get("diagnostic")
+        if isinstance(diagnostics, Mapping):
+            legal["diagnostic"] = filter_offers(
+                diagnostics, ("unpayable", "unresolved_cost_semantics"),
+            )
+        result["legal"] = legal
+
+    def opaque_choice(row: Any) -> Any:
+        if isinstance(row, Mapping):
+            for field in ("id", "ref", "object_id"):
+                identity = row.get(field)
+                if isinstance(identity, str) and identity in concealed:
+                    return {"id": concealed_refs[identity], "name": "?"}
+        return row
+
+    for field in ("cards", "candidates", "objects", "options", "search_cards"):
+        rows = result.get(field)
+        if isinstance(rows, (list, tuple)):
+            result[field] = [opaque_choice(row) for row in rows]
+    return result
+
+
 __all__ = [
     "ActionCatalogHost",
     "action_offer_signature_facts",
     "build_priority_action_catalog",
+    "concealed_face_down_exile_cards",
+    "visible_decision_payload",
 ]

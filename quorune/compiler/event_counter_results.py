@@ -15,6 +15,24 @@ PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
 PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'
 
 
+def counter_placement_blocking_result(binding, body):
+    from ..counter_placement_event_model import COUNTER_PLACEMENT_EVENT
+    from ..replacement.immutable import FrozenMap
+    from ..rules.counter_placement_blocking import (
+        COUNTER_PLACEMENT_BLOCKING_MECHANICS, COUNTER_PLACEMENT_BLOCKING_TEMPLATE,
+        counter_placement_blocking_condition, counter_placement_blocking_effect,
+    )
+
+    if ((binding.event.value, binding.active_zone) != (COUNTER_PLACEMENT_EVENT, "battlefield")
+            or binding.variant != "counter_placement_one_or_more"
+            or " ".join(body.split()).casefold()
+            != "until end of turn, that creature can't be blocked by creatures your opponents control."
+            or FrozenMap(binding.event_condition or {}) != FrozenMap(counter_placement_blocking_condition())):
+        return None
+    return (COUNTER_PLACEMENT_BLOCKING_TEMPLATE, (counter_placement_blocking_effect(),), None,
+            COUNTER_PLACEMENT_BLOCKING_MECHANICS), True
+
+
 def event_counter_threshold_result(binding, body, *, effect_template, card_name):
     if binding.variant != "enchanted_creature_attacks" or binding.event_condition != {
         "field": "source_attachment_target_ref", "op": "eq", "value": "$context.card",
@@ -40,6 +58,28 @@ def event_counter_threshold_result(binding, body, *, effect_template, card_name)
 
 
 def public_event_counter_set_result(binding,body,*,effect_template,card_name,accepted_variants=()):
+    if blocking := counter_placement_blocking_result(binding, body):
+        return blocking
+    if binding.variant == "one_or_more_qualified_attack" and re.fullmatch(
+        r"Put a \+1/\+1 counter on each of them\.", body.strip(), re.I,
+    ) is not None:
+        from ..rules.attack_batches import declared_attack_counter_condition, declared_attack_counter_effect
+
+        try:
+            declared_attack_counter_condition(binding.event_condition)
+        except ValueError:
+            return None
+        from ..rules.public_event_counter_set_shapes import PUBLIC_SET_EVENT_MECHANIC
+
+        return ("fixed-declared-attack-group-counters-v1", (declared_attack_counter_effect(),),
+                None, ("cr-122-counters", PUBLIC_SET_EVENT_MECHANIC)), True
+    if (binding.variant == "artifact_any_graveyard" and binding.event.value == "artifact.graveyard"
+            and binding.active_zone == "battlefield" and binding.event_condition is None):
+        from .counter_resolution_effect_templates import source_and_controlled_subtype_counter_template
+
+        source_subtype = source_and_controlled_subtype_counter_template(body, card_name)
+        if source_subtype is not None:
+            return source_subtype, True
     if binding.variant not in accepted_variants or re.search(r'\bcounters?\b',body,re.I) is None:return None
     compiled=effect_template(body,card_name=card_name)
     if compiled[0] is None:return None
@@ -69,6 +109,16 @@ def public_event_target_counter_result(binding, body, *, effect_template, card_n
 
 def public_event_source_counter_result(binding, body, *, effect_template, card_name, accepted_variants=(), allow_source_pronoun=False):
     """Bind one printed fixed source result independently from the event object."""
+    if binding.variant == "one_or_more_controlled_tokens_enter" and re.fullmatch(
+        r"Put that many \+1/\+1 counters on this creature\.", body.strip(), re.I,
+    ) is not None:
+        from ..rules.aggregated_arrival_counters import (
+            MATCHED_ARRIVAL_MECHANIC, matching_arrival_counter_effect, matching_token_arrival_condition,
+        )
+
+        if binding.event.value == "permanent.enter" and matching_token_arrival_condition(binding.event_condition):
+            return ("matching-token-arrival-source-counter-v1", (matching_arrival_counter_effect(),),
+                    None, ("cr-122-counters", MATCHED_ARRIVAL_MECHANIC)), True
     if binding.variant not in accepted_variants or re.search(r'\bcounters?\b', body, re.I) is None:
         return None
     if allow_source_pronoun:

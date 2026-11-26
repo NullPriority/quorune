@@ -6,7 +6,13 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
-from .morph import MORPH_FACE_DOWN_ANNOTATION, MORPH_FACE_DOWN_VALUES
+from .activation_mana_cost import ActivationManaCostOption, fixed_complex_activation_mana_options
+from .morph import (
+    CLOAK_CHARACTERISTIC_METHOD,
+    MORPH_FACE_DOWN_ANNOTATION,
+    MORPH_FACE_DOWN_VALUES,
+    face_down_characteristics,
+)
 from .util import mana_cost_to_vector
 
 MANIFEST_CAPABILITY = 'keyword_action.manifest.card'
@@ -19,6 +25,7 @@ MANIFEST_COUNTERS_OPERATION = "place_manifest_result_counters"
 MANIFEST_COUNTERS_CAPABILITY = "keyword_action.manifest.result_counters"
 MANIFEST_TOP_TWO_CAPABILITY = "keyword_action.manifest.top_two"
 MANIFEST_MARKER = 'manifested_card'
+CLOAK_MARKER = 'cloaked_card'
 
 
 @dataclass(frozen=True, slots=True)
@@ -26,25 +33,52 @@ class ManifestTurnUpSpec:
     cost_text: str
     requirements_dict: Mapping[str, int]
     method: str = 'manifest'
+    mana_cost_options: tuple[ActivationManaCostOption, ...] = ()
 
 
 def manifest_characteristics():
     return dict(MORPH_FACE_DOWN_VALUES)
 
 
-def prepare_manifest_entry_replacement(host, card, *, controller, characteristics, selections):
+def library_face_down_annotations(*, cloaked: bool) -> dict[str, Any]:
+    marker = CLOAK_MARKER if cloaked else MANIFEST_MARKER
+    characteristics = cloak_characteristics() if cloaked else manifest_characteristics()
+    return {marker: {"schema_version": 1}, MORPH_FACE_DOWN_ANNOTATION: characteristics}
+
+
+def prepare_manifest_entry_replacement(host, card, *, controller, characteristics, selections, cloaked=False):
     from copy import deepcopy
     from .semantic_runtime.zone_replacements import capture_zone_change_replacement_snapshot, prepare_zone_change_replacement_snapshot
     from .zone_trigger_events import ZoneTransitionKind
     prospective = deepcopy(card)
     prospective.face_down = True
-    prospective.annotations[MORPH_FACE_DOWN_ANNOTATION] = manifest_characteristics()
-    prospective.annotations[MANIFEST_MARKER] = {'schema_version': 1}
+    prospective.annotations.update(library_face_down_annotations(cloaked=cloaked))
     snapshot = capture_zone_change_replacement_snapshot(host, ((card.object_id, 'battlefield'),),
         destination_controllers={card.object_id: controller}, entry_characteristics={card.object_id: characteristics},
         face_down_entry_objects={card.object_id: prospective}, requested_tapped={card.object_id: False},
         entry_pay_life={card.object_id: False}, transition_kinds={card.object_id: ZoneTransitionKind.ORDINARY})
     return prepare_zone_change_replacement_snapshot(snapshot, selections=selections)[card.object_id]
+
+
+def cloak_characteristics():
+    return face_down_characteristics(CLOAK_CHARACTERISTIC_METHOD)
+
+
+def has_cloak_mask(card: Any) -> bool:
+    marker = card.annotations.get(CLOAK_MARKER)
+    return (
+        card.face_down
+        and MANIFEST_MARKER not in card.annotations
+        and isinstance(marker, Mapping)
+        and set(marker) == {"schema_version"}
+        and type(marker["schema_version"]) is int
+        and marker["schema_version"] == 1
+        and card.annotations.get(MORPH_FACE_DOWN_ANNOTATION) == cloak_characteristics()
+    )
+
+
+def is_cloaked(card: Any) -> bool:
+    return card.zone == "battlefield" and has_cloak_mask(card)
 
 
 def is_manifested(card: Any) -> bool:
@@ -65,7 +99,13 @@ def manifest_turn_up_spec(host: Any, seat: str, card: Any):
     return spec if _manifest_source_is_complete(host,record.oracle_id) else None
 
 
-def _fixed_manifest_price(type_line,cost,*,type_parts):
+def cloak_turn_up_spec(host: Any, seat: str, card: Any):
+    if not is_cloaked(card) or card.controller != seat or card.phased_out:
+        return None
+    return physical_manifest_turn_up_spec(host, card, method="cloak")
+
+
+def _fixed_manifest_price(type_line,cost,*,type_parts,method="manifest"):
     if 'creature' not in type_parts(type_line)[0]:return None
     if not cost or re.fullmatch(r'(?:\{(?:[0-9]+|[WUBRGCX])\})+', cost, re.I) is None:
         return None
@@ -74,7 +114,18 @@ def _fixed_manifest_price(type_line,cost,*,type_parts):
     requirements, complex_symbols = mana_cost_to_vector(ordinary)
     if complex_symbols:
         return None
-    return ManifestTurnUpSpec(cost_text=ordinary,requirements_dict=requirements)
+    return ManifestTurnUpSpec(cost_text=ordinary,requirements_dict=requirements,method=method)
+
+
+def _printed_cloak_price(type_line, cost, *, type_parts):
+    if 'creature' not in type_parts(type_line)[0] or not re.fullmatch(r'(?:\{[A-Z0-9/]+\})+', cost):
+        return None
+    ordinary = cost.replace('{X}', '{0}')
+    requirements, symbols = mana_cost_to_vector(ordinary)
+    options = fixed_complex_activation_mana_options(requirements, symbols)
+    if symbols and not options:
+        return None
+    return ManifestTurnUpSpec(ordinary, requirements, 'cloak', options)
 
 
 def _manifest_source_is_complete(host,oracle_id):
@@ -88,7 +139,7 @@ def _manifest_source_is_complete(host,oracle_id):
         profile=host.state.config.review_profile)['strict_capability_ready']
 
 
-def physical_manifest_turn_up_spec(host,card):
+def physical_manifest_turn_up_spec(host,card,*,method="manifest"):
     """Read the physical creature card's printed front, independently of copy/type effects."""
     if card.is_token or card.object_kind!='card':return None
     record=host.card_db.by_oracle_id(card.oracle_id)
@@ -99,7 +150,8 @@ def physical_manifest_turn_up_spec(host,card):
     else:
         if record.layout!='normal':return None
         type_line=record.type_line;cost=record.mana_cost or ''
-    spec=_fixed_manifest_price(type_line,cost,type_parts=host._type_parts)
+    price = _printed_cloak_price if method == 'cloak' else _fixed_manifest_price
+    spec = price(type_line, cost, type_parts=host._type_parts)
     return spec if spec is not None and _manifest_source_is_complete(host,record.oracle_id) else None
 
 

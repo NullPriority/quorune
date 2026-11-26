@@ -10,6 +10,7 @@ from ...activation_x import chosen_activation_x
 from ...replacement.immutable import FrozenMap
 from .cost_modifiers import current_activation_cost_modifiers, ability_local_mana_reductions
 from .targeted_costs import activation_modifier_witnesses
+from .model import ActivationProposalError
 
 
 LOWEST_COST = 'Lowest legal cost'
@@ -19,13 +20,21 @@ _ORDER_CHOICES = {LOWEST_COST: 'minimum_first', MINIMUM_COST: 'unrestricted_firs
 
 def _ordinary_prices(host, seat, source, ability, modifiers, response=None):
     value = 0 if response is None else chosen_activation_x(ability, response)
+    if ability.loyalty_x and value > source.counters.get("loyalty", 0):
+        raise ActivationProposalError(
+            "The source has fewer loyalty counters than the announced cost",
+            status="unpayable",
+            reason="loyalty_cost_unpayable",
+        )
     base = base_activation_requirements(ability, announced_x=value or 0)
     coefficient = ability.generic_reduction_per_legendary_creature
     reduction = coefficient * max(0, host._legendary_creatures_controlled(seat)) if coefficient else 0
     prices = activation_cost_prices(base, modifiers,
         own_reductions=(ActivationManaReduction(FrozenMap({'GENERIC': reduction})),
             *ability_local_mana_reductions(host, seat, source, ability)))
-    return prices, value, modifiers
+    from ..chosen_color_draw_price import priced_in_chosen_color
+
+    return priced_in_chosen_color(host, source, ability, prices), value, modifiers
 
 
 def ordinary_activation_prices(host, seat, source, ability, response=None, *, targets=None):
@@ -33,7 +42,7 @@ def ordinary_activation_prices(host, seat, source, ability, response=None, *, ta
     variants = (_ordinary_prices(host, seat, source, ability, witness.modifiers, response)
         for witness in activation_modifier_witnesses(host, seat, source, ability, modifiers,
             targets=targets, response=response))
-    return min(variants, key=lambda variant: min(price.requirements['GENERIC'] for price in variant[0]))
+    return min(variants, key=lambda variant: min(price.requirements["GENERIC"] for price in variant[0]))
 
 
 def select_ordinary_activation_price(host, seat, source, ability, response=None, *, targets=None):
@@ -102,9 +111,13 @@ def _ordinary_witness_price_is_payable(host, seat, source, ability, requirements
         from ..waterbend_payments import activation_waterbend_plan
         return activation_waterbend_plan(host, seat, source, ability, requirements, {}, hint=True) is not None
     from ...mana_restrictions import ability_mana_spend_context
+    from ..chosen_color_draw_price import draw_spend_context
+
+    context = ability_mana_spend_context(str(host._effective_card_data(source).get("type_line") or ""),
+                                        source_zone=source.zone)
     return host._cost_is_affordable(seat, requirements,
         exclude_sources={source.object_id} if ability.tap_source else set(),
-        spend_context=ability_mana_spend_context(str(host._effective_card_data(source).get('type_line') or '')))
+        spend_context=draw_spend_context(host, source, ability, context))
 
 
 def _payable_witness_prices(host, seat, source, ability, witness):
@@ -149,13 +162,14 @@ def activation_target_price_preview(host, seat, source, ability, public_schema):
 
 def activation_priced_offer_payload(host, seat, source, ability, hint, public_schema, *, program=None):
     from .offer_payload import activation_offer_payload
-    from ..announced_graveyard_copy import is_announced_graveyard_copy_program
+    from .graveyard_copy import has_exact_announced_activation_target
 
-    if is_announced_graveyard_copy_program(program):
+    if has_exact_announced_activation_target(program):
         return activation_offer_payload(source, ability, hint), public_schema
     projection = activation_target_price_preview(host, seat, source, ability, public_schema)
     if projection is None:
-        if not ability.mana_cost_options and (getattr(ability, 'ability_local_mana_reduction', None) is not None
+        if not ability.mana_cost_options and (hint.get("chosen_payment_color") is not None
+                or getattr(ability, 'ability_local_mana_reduction', None) is not None
                 or any(getattr(value, 'schema_version', None) == 3
                        for value in current_activation_cost_modifiers(host, seat, source, ability))):
             price, _value, _modifiers = select_ordinary_activation_price(host, seat, source, ability)

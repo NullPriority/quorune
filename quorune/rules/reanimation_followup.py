@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed battlefield entry riders and the resulting delayed departure."""
+"""Special reanimation entry riders and their linked battlefield departures."""
 
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass
@@ -16,7 +16,10 @@ REANIMATION_FOLLOWUP_CAPABILITY = "zone.reanimate.fixed_haste_and_departure"
 REANIMATION_FOLLOWUP_MECHANIC = "fixed-target-reanimation-haste-and-departure"
 REANIMATION_FOLLOWUP_VERSION = 4
 REANIMATION_EXILE_REPLACEMENT_VERSION = 5
-REANIMATION_FOLLOWUP_VERSIONS = (REANIMATION_FOLLOWUP_VERSION, REANIMATION_EXILE_REPLACEMENT_VERSION)
+REANIMATION_SACRIFICE_ONLY_VERSION = 8
+REANIMATION_FOLLOWUP_VERSIONS = (
+    REANIMATION_FOLLOWUP_VERSION, REANIMATION_EXILE_REPLACEMENT_VERSION, REANIMATION_SACRIFICE_ONLY_VERSION,
+)
 LINKED_DEPARTURE_VERSION = 3
 
 DEPARTURE_DESTINATIONS = {"exile": "exile", "sacrifice": "graveyard", "bounce": "hand"}
@@ -69,6 +72,31 @@ class BattlefieldEntryFollowup:
         return cls(**value)
 
 
+class DelayedReanimationSacrifice:
+    """The exact delayed sacrifice with no battlefield-entry modifier."""
+
+    __slots__ = ()
+    departure = "sacrifice"
+    end_step = "next"
+
+    def to_dict(self):
+        return {"departure": self.departure, "end_step": self.end_step}
+
+    @classmethod
+    def from_dict(cls, value):
+        spec = cls()
+        if not isinstance(value, Mapping) or dict(value) != spec.to_dict():
+            raise ValueError("Delayed reanimation sacrifice requires its exact next-end-step result")
+        return spec
+
+    @staticmethod
+    def target_schema():
+        return {
+            "zones": ["graveyard"], "categories": ["card"], "owner_relation": "you",
+            "types_any": ["creature"], "count": 1,
+        }
+
+
 def validate_reanimation_followup(effect, *, materialized=False):
     fields = _REANIMATION_FIELDS | ({"target_snapshot"} if materialized else set())
     allowed = fields | (_RUNTIME_FIELDS if materialized else set())
@@ -83,6 +111,10 @@ def validate_reanimation_followup(effect, *, materialized=False):
             raise ValueError("Linked reanimation requires a bound target and controller")
     elif effect["card"] != "$target.0" or effect["controller"] not in ("$controller", "$target.owner.0"):
         raise ValueError("Linked reanimation requires its declared target and controller")
+    if effect["schema_version"] == REANIMATION_SACRIFICE_ONLY_VERSION:
+        if effect["tapped"] or not materialized and effect["controller"] != "$controller":
+            raise ValueError("Delayed sacrifice requires the exact untapped return under the spell controller")
+        return DelayedReanimationSacrifice.from_dict(effect["followup"])
     return BattlefieldEntryFollowup.from_dict(effect["followup"],
         exile_on_leave=effect["schema_version"] == REANIMATION_EXILE_REPLACEMENT_VERSION)
 
@@ -131,12 +163,14 @@ def linked_departure_intent(effect, *, actor, reason):
 
 
 def battlefield_entry_followup_capabilities(followup):
+    common = ("trigger.delayed.fixed_object_action", "trigger.placement.apnap", "zone.change.destination_replacement")
+    if isinstance(followup, DelayedReanimationSacrifice):
+        return (*common, "choice.affected_player.fixed_sacrifice")
     duration = ("continuous.resolution.fixed_keyword_zone_object" if followup.haste_duration == "zone_object"
         else "continuous.resolution.fixed_characteristics_until_end_of_turn")
     departure = {"exile": "permanent.exile.effect", "sacrifice": "choice.affected_player.fixed_sacrifice",
         "bounce": "permanent.return.owner_hand"}[followup.departure]
-    return ("trigger.delayed.fixed_object_action", "trigger.placement.apnap", "zone.change.destination_replacement",
-        "combat.attack.haste", "activation.tap_untap_cost.haste", duration, departure)
+    return (*common, "combat.attack.haste", "activation.tap_untap_cost.haste", duration, departure)
 
 
 def linked_departure_exile_replacements(state):
@@ -154,14 +188,32 @@ def linked_departure_exile_replacements(state):
             operations=(SetField("destination", "exile"),), label="Exile the returned permanent instead")
 
 
-def commit_battlefield_entry_followup(host, card, *, previous_zone_counter, actor, source, followup):
-    if (card.zone != "battlefield" or card.phased_out or card.zone_change_counter != previous_zone_counter + 1):
-        return
+def reanimation_entry_handler(effect):
+    """Select an entry variant with its own subject-binding authority."""
+    from .opposing_death_delayed_return import reanimation_death_occurrence_owner
+    from .ordered_graveyard_reanimation import apply_ordered_graveyard_reanimation, is_ordered_graveyard_reanimation
+    from .enchanted_departure_return import apply_enchanted_departure_return, is_enchanted_departure_return
+    from .granted_death_role_return import (
+        apply_granted_death_role_return, is_granted_death_role_return,
+        apply_granted_self_death_return, is_granted_self_death_return,
+    )
+
+    if is_granted_self_death_return(effect):
+        return apply_granted_self_death_return
+    if is_granted_death_role_return(effect):
+        return apply_granted_death_role_return
+    if is_ordered_graveyard_reanimation(effect):
+        return apply_ordered_graveyard_reanimation
+    if is_enchanted_departure_return(effect):
+        return apply_enchanted_departure_return
+    return reanimation_death_occurrence_owner(effect)
+
+
+def _commit_reanimation_entry_modifiers(host, card, source, followup):
     from ..continuous_effect_state import (
         ContinuousEffectDuration, ContinuousOperation, Layer, ResolutionContinuousComponent,
         commit_continuous_effect, create_resolution_continuous_effect_components,
     )
-    from ..trigger_processing import schedule_delayed_trigger
 
     components = [ResolutionContinuousComponent(Layer.ABILITY, "6", (ContinuousOperation("add_ability", "Haste"),))]
     if followup.power_boost:
@@ -174,12 +226,27 @@ def commit_battlefield_entry_followup(host, card, *, previous_zone_counter, acto
             effect_id=host._next_ref("RX"), source_id=source.card_ref or source.stack_ref,
             subject=ContinuousObjectIdentity(card.object_id, card.logical_object_id),
         ))
+
+def commit_battlefield_entry_followup(
+    host, card, *, previous_zone_counter, actor, source, followup, schedule_without_arrival=False,
+):
+    entered = (card is not None and card.zone == "battlefield"
+               and not card.phased_out and card.zone_change_counter == previous_zone_counter + 1)
+    if not entered and not schedule_without_arrival:
+        return
+    from ..trigger_processing import schedule_delayed_trigger
+
+    if entered and isinstance(followup, BattlefieldEntryFollowup):
+        _commit_reanimation_entry_modifiers(host, card, source, followup)
     condition = {"phase": "ending", "step": "end_step"}
     if followup.end_step == "controllers_next":
         condition["player"] = "controller"
     label = {"exile": "Delayed exile", "sacrifice": "Delayed sacrifice", "bounce": "Delayed return to hand"}[followup.departure]
-    effect = {"op": RESOLVE_OBJECT_ACTION, "schema_version": LINKED_DEPARTURE_VERSION, "action": followup.departure,
-        "object": {"ref": card.ref, "object_id": card.object_id, "zone_change_counter": card.zone_change_counter}}
+    effects = []
+    if entered:
+        subject = {"ref": card.ref, "object_id": card.object_id, "zone_change_counter": card.zone_change_counter}
+        effects.append({"op": RESOLVE_OBJECT_ACTION, "schema_version": LINKED_DEPARTURE_VERSION,
+                        "action": followup.departure, "object": subject})
     schedule_delayed_trigger(host, controller=actor, label=label, event_kind="step.begin", condition=condition,
-        stack_template={"label": label, "context": {"dynamic_effects": [effect]}},
+        stack_template={"label": label, "context": {"dynamic_effects": effects}},
         source_object_id=source.object_id, source_logical_object_id=source.logical_object_id, once=True)

@@ -23,7 +23,10 @@ def _scope(effect, actor):
         raise SemanticChoiceError(str(exc)) from exc
 
 
-def _candidates(query, predicate):
+def _candidates(query, scope):
+    predicate = scope.predicate
+    if scope.schema_version == 2 and not predicate.types_any:
+        return ()
     return tuple(sorted(
         (row.ref, row.logical_object_id)
         for row in query.objects(zones=("battlefield",), controller=predicate.controller)
@@ -33,7 +36,7 @@ def _candidates(query, predicate):
 
 def prepare_controlled_return(effect, context):
     scope = _scope(effect, context.actor)
-    candidates = _candidates(context.query, scope.predicate)
+    candidates = _candidates(context.query, scope)
     if not candidates:
         return SemanticChoicePreparation(
             request=None, continuation_effect=FrozenMap(effect),
@@ -71,7 +74,7 @@ def complete_controlled_return(continuation, response, query):
         raise SemanticChoiceError("Controlled return continuation is malformed")
     actor = effect["_choice_actor"]
     scope = _scope({"op": effect["op"], CONTROLLED_RETURN_FIELD: effect[CONTROLLED_RETURN_FIELD]}, actor)
-    current = _candidates(query, scope.predicate)
+    current = _candidates(query, scope)
     saved = thaw_value(effect["_return_candidates"])
     if saved != thaw_value(current) or actor not in query.active_seats:
         raise SemanticChoiceError("Controlled return candidates or controller changed")

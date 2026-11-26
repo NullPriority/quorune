@@ -16,10 +16,18 @@ from ..rules.graveyard_copy_cast_model import ExileGraveyardCopiesIntent, decode
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..discard_result_model import DiscardWholeHandsResultIntent, decode_discard_result_identity
 from ..hand_library_redraw_model import HandLibraryRedrawIntent
-from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
+from ..semantic_runtime.counter_movement_intent import (
+    COUNTER_MOVEMENT_INTENT_TYPES, CounterMovementIntent, DistributeSourceCountersIntent,
+    decode_counter_distribution_identity, decode_counter_movement_identity,
+)
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
 from ..semantic_runtime.graveyard_exile_result_intent import (
     GraveyardExileLifeResultIntent, validate_graveyard_exile_life_result_identity,
+)
+from ..semantic_runtime.counted_sacrifice_token_intent import (
+    COUNTED_SACRIFICE_TOKEN_INTENT_KIND, COUNTED_SACRIFICE_QUANTITY_INTENT_KIND,
+    CountedSacrificeTokenIntent, CountedSacrificeQuantityIntent,
+    validate_counted_sacrifice_token_identity, validate_counted_sacrifice_quantity_identity,
 )
 from ..semantic_runtime.targeted_power_sacrifice_life_intent import (
     TargetedPowerSacrificeLifeIntent, validate_targeted_power_sacrifice_life_identity,
@@ -332,6 +340,8 @@ def _library_selection_intent_identity(
             "source_stack_ref": intent.source_stack_ref,
             "looked_are_public": intent.looked_are_public,
             "selected_are_public": intent.selected_are_public,
+            **({"require_graveyard_order": True} if intent.require_graveyard_order else {}),
+            **({"graveyard_orders": intent.graveyard_orders.to_dict()} if intent.graveyard_orders is not None else {}),
         },
     )
 
@@ -356,6 +366,8 @@ def _simultaneous_move_intent_identity(
         identity["library_order"] = intent.library_order.to_dict()
     if intent.discard_effect_origin is not None:
         identity["discard_effect_origin"] = intent.discard_effect_origin.to_dict()
+    if intent.entry_life_payment_refs:
+        identity["entry_life_payment_refs"] = list(intent.entry_life_payment_refs)
     return "move_objects_simultaneously", identity
 
 
@@ -420,6 +432,23 @@ def _life_intent_identity(intent: Any) -> tuple[str, dict[str, Any]] | None:
     return None
 
 
+def _counter_batch_intent_identity(intent: PlaceCounterBatchIntent) -> dict[str, Any]:
+    value = {
+        "actor": intent.actor,
+        "object_ref": intent.object_ref,
+        "placements": [
+            {"counter": row.counter_name, "amount": row.amount} for row in intent.placements
+        ],
+        _REASON_FIELD: intent.reason,
+        "source_ref": intent.source_ref,
+    }
+    if intent.paired_source_ref is not None:
+        value["paired_source"] = {"schema_version": 1, "ref": intent.paired_source_ref}
+    if intent.recipient_identity is not None:
+        value["recipient_identity"] = intent.recipient_identity
+    return value
+
+
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
     if life_identity := _life_intent_identity(intent):
@@ -435,6 +464,10 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     if isinstance(intent, HandLibraryRedrawIntent):return 'hand_library_redraw', intent.identity()
     if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
     if isinstance(intent,GraveyardExileLifeResultIntent):return 'graveyard_exile_life_result',intent.identity()
+    if isinstance(intent, CountedSacrificeTokenIntent):
+        return COUNTED_SACRIFICE_TOKEN_INTENT_KIND, intent.identity()
+    if isinstance(intent, CountedSacrificeQuantityIntent):
+        return COUNTED_SACRIFICE_QUANTITY_INTENT_KIND, intent.identity()
     if isinstance(intent, TargetedPowerSacrificeLifeIntent):
         return "targeted_power_sacrifice_life", intent.identity()
     if isinstance(intent, CHAMPION_INTENT_TYPES):return champion_intent_identity(intent)
@@ -443,25 +476,12 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
 
     if isinstance(intent, PlaceCountersIntent):
         return "place_counters", counter_intent_identity(intent)
-    if isinstance(intent, MoveCountersIntent):
+    if isinstance(intent, DistributeSourceCountersIntent):
+        return "distribute_source_counters", intent.identity()
+    if isinstance(intent, COUNTER_MOVEMENT_INTENT_TYPES):
         return "move_counters", intent.identity()
     if isinstance(intent, PlaceCounterBatchIntent):
-        return (
-            "place_counter_batch",
-            {
-                "actor": intent.actor,
-                "object_ref": intent.object_ref,
-                "placements": [
-                    {
-                        "counter": placement.counter_name,
-                        "amount": placement.amount,
-                    }
-                    for placement in intent.placements
-                ],
-                _REASON_FIELD: intent.reason,
-                "source_ref": intent.source_ref,
-            },
-        )
+        return "place_counter_batch", _counter_batch_intent_identity(intent)
     if isinstance(intent, PlaceCountersOnSetIntent):
         return (
             "place_counters_on_set",
@@ -516,6 +536,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
                 ],
                 _REASON_FIELD: intent.reason,
                 "source_ref": intent.source_ref,
+                **({"choose_phase_out": True} if intent.choose_phase_out else {}),
             },
         )
     if isinstance(intent, CreateTokenIntent):
@@ -550,8 +571,8 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
                     ],
                 }
             )
-        if intent.manifest_entry:
-            identity['manifest_entry'] = True
+        if intent.library_face_down_entry:
+            identity['cloak_entry' if intent.cloak_entry else 'manifest_entry'] = True
         return (
             "zone_move",
             identity,
@@ -778,8 +799,16 @@ def _validate_surveil_intent_identity(
 def _validate_library_selection_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) != (
-        _LIBRARY_SELECTION_FIELDS
+    from ..graveyard_arrival_order_model import GraveyardArrivalOrders
+    from ..linked_library_imprint_model import LIBRARY_IMPRINT_DESTINATION
+    from ..private_opponent_library_cast_model import PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION
+
+    if (
+        not isinstance(value, Mapping)
+        or not _LIBRARY_SELECTION_FIELDS <= set(value) <= (
+            _LIBRARY_SELECTION_FIELDS | {"require_graveyard_order", "graveyard_orders"}
+        )
+        or "require_graveyard_order" in value and value["require_graveyard_order"] is not True
     ):
         raise SemanticChoiceError(
             "Library selection intent identity fields are malformed"
@@ -794,7 +823,9 @@ def _validate_library_selection_intent_identity(
     if (
         not isinstance(raw, Mapping)
         or set(raw) != expected_fields
-        or 'selected_destination' in raw and raw['selected_destination'] not in {'library_top','battlefield'}
+        or 'selected_destination' in raw and raw['selected_destination'] not in {
+            'library_top', 'battlefield', LIBRARY_IMPRINT_DESTINATION, PRIVATE_OPPONENT_LIBRARY_CAST_DESTINATION,
+        }
         or not isinstance(raw["looked"], (list, tuple))
     ):
         raise SemanticChoiceError(
@@ -822,6 +853,9 @@ def _validate_library_selection_intent_identity(
             source_stack_ref=value["source_stack_ref"],
             looked_are_public=value["looked_are_public"],
             selected_are_public=value["selected_are_public"],
+            require_graveyard_order=value.get("require_graveyard_order", False),
+            graveyard_orders=GraveyardArrivalOrders.from_dict(value["graveyard_orders"])
+            if "graveyard_orders" in value else None,
         )
     except (LibrarySelectionError, TypeError, ValueError) as exc:
         raise SemanticChoiceError(
@@ -834,6 +868,13 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind in (COUNTED_SACRIFICE_TOKEN_INTENT_KIND, COUNTED_SACRIFICE_QUANTITY_INTENT_KIND):
+        decoder = (validate_counted_sacrifice_token_identity if kind == COUNTED_SACRIFICE_TOKEN_INTENT_KIND
+                   else validate_counted_sacrifice_quantity_identity)
+        try:
+            return decoder(value)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     if kind == "targeted_power_sacrifice_life":
         try:
             return validate_targeted_power_sacrifice_life_identity(value)
@@ -908,9 +949,10 @@ def validate_semantic_intent_identity(
         return _validate_life_change_intent_identity(value)
     if kind == "place_counters":
         return validate_counter_intent_identity(value)
-    if kind == "move_counters":
+    if kind in {"move_counters", "distribute_source_counters"}:
         try:
-            return decode_counter_movement_identity(value)
+            decoder = decode_counter_movement_identity if kind == "move_counters" else decode_counter_distribution_identity
+            return decoder(value)
         except (TypeError, ValueError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
     if kind == "place_counter_batch":
@@ -940,9 +982,11 @@ def _validate_zone_move_intent_identity(value):
     if not isinstance(value, Mapping):
         raise SemanticChoiceError("Zone-move intent identity must be an object")
     manifest_entry = value.get('manifest_entry', False)
-    if type(manifest_entry) is not bool:
-        raise SemanticChoiceError('Manifest intent entry flag must be boolean')
-    actual = set(value) - {'manifest_entry'}
+    cloak_entry = value.get('cloak_entry', False)
+    if (type(manifest_entry) is not bool or type(cloak_entry) is not bool
+            or manifest_entry and cloak_entry or 'cloak_entry' in value and not cloak_entry):
+        raise SemanticChoiceError('A face-down zone intent requires one valid entry method')
+    actual = set(value) - {'manifest_entry', 'cloak_entry'}
     if (
         actual != _ZONE_MOVE_FIELDS
         and actual != _ZONE_MOVE_EFFECT_ENTRY_FIELDS
@@ -1008,11 +1052,11 @@ def _validate_zone_move_intent_identity(value):
         "semantic_events": value["semantic_events"],
         "optional_if_missing": value["optional_if_missing"],
     }
-    if manifest_entry:
+    if manifest_entry or cloak_entry:
         if (value['expected_zones'] != ['library'] or destination != 'battlefield' or new_controller != actor
                 or type(value.get('expected_zone_change_counter')) is not int):
-            raise SemanticChoiceError('Manifest intent library/controller binding is malformed')
-        result['manifest_entry'] = True
+            raise SemanticChoiceError('Face-down intent library/controller binding is malformed')
+        result['cloak_entry' if cloak_entry else 'manifest_entry'] = True
     if actual == _ZONE_MOVE_EFFECT_ENTRY_FIELDS:
         incarnation = value["expected_zone_change_counter"]
         if incarnation is not None and (
@@ -1064,7 +1108,10 @@ def _validate_simultaneous_move_intent_identity(
         except (TypeError, ValueError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
     from ..discard_effect_origin import DiscardEffectOrigin
 
-    if not isinstance(value, Mapping) or set(value) - {"library_order", "discard_effect_origin"} not in {
+    from ..public_zone_moves import PublicBattlefieldController
+
+    optional = {"library_order", "discard_effect_origin", "entry_life_payment_refs"}
+    if not isinstance(value, Mapping) or set(value) - optional not in {
         frozenset(_SIMULTANEOUS_MOVE_FIELDS),
         frozenset(_SIMULTANEOUS_MOVE_TRANSITION_FIELDS),
     }:
@@ -1085,12 +1132,17 @@ def _validate_simultaneous_move_intent_identity(
             ),
             library_order=LibraryArrivalOrder.from_dict(value["library_order"]) if "library_order" in value else None,
             discard_effect_origin=DiscardEffectOrigin.from_dict(value["discard_effect_origin"]) if "discard_effect_origin" in value else None,
+            battlefield_controller=PublicBattlefieldController.ACTOR if "entry_life_payment_refs" in value else None,
+            entry_life_payment_refs=tuple(value.get("entry_life_payment_refs", ())),
         )
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(
             "Simultaneous-move intent identity is malformed"
         ) from exc
-    return semantic_intent_identity(intent)[1]
+    canonical = semantic_intent_identity(intent)[1]
+    if "entry_life_payment_refs" in value and canonical.get("entry_life_payment_refs") != value["entry_life_payment_refs"]:
+        raise SemanticChoiceError("Simultaneous-move entry-payment identity is not canonical")
+    return canonical
 
 
 def _validate_life_change_intent_identity(
@@ -1126,10 +1178,20 @@ def _validate_life_change_intent_identity(
 def _validate_counter_batch_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
-    if not isinstance(value, Mapping) or set(value) != _COUNTER_BATCH_INTENT_FIELDS:
+    if not isinstance(value, Mapping) or set(value) - {"paired_source", "recipient_identity"} != _COUNTER_BATCH_INTENT_FIELDS:
         raise SemanticChoiceError(
             "Counter batch intent identity fields are malformed"
         )
+    paired_source = None
+    if "paired_source" in value:
+        binding = value["paired_source"]
+        if (not isinstance(binding, Mapping) or set(binding) != {"schema_version", "ref"}
+                or type(binding["schema_version"]) is not int or binding["schema_version"] != 1
+                or type(binding["ref"]) is not str or not binding["ref"]):
+            raise SemanticChoiceError("Paired counter batch source identity is malformed")
+        paired_source = binding["ref"]
+    if "recipient_identity" in value and (type(value["recipient_identity"]) is not str or not value["recipient_identity"]):
+        raise SemanticChoiceError("Counter batch recipient identity must be nonempty")
     raw_placements = value["placements"]
     if not isinstance(raw_placements, (list, tuple)):
         raise SemanticChoiceError(
@@ -1153,21 +1215,14 @@ def _validate_counter_batch_intent_identity(
             placements=placements,
             reason=value[_REASON_FIELD],
             source_ref=value["source_ref"],
+            paired_source_ref=paired_source,
+            recipient_identity=value.get("recipient_identity"),
         )
     except (KeyError, TypeError, ValueError) as exc:
         raise SemanticChoiceError(
             "Counter batch intent identity is malformed"
         ) from exc
-    return {
-        "actor": intent.actor,
-        "object_ref": intent.object_ref,
-        "placements": [
-            {"counter": row.counter_name, "amount": row.amount}
-            for row in intent.placements
-        ],
-        _REASON_FIELD: intent.reason,
-        "source_ref": intent.source_ref,
-    }
+    return _counter_batch_intent_identity(intent)
 
 
 def _validate_proliferate_intent_identity(
@@ -1178,9 +1233,10 @@ def _validate_proliferate_intent_identity(
             "Proliferate intent identity must be an object"
         )
     actual = set(value)
-    if actual != _PROLIFERATE_FIELDS:
-        missing = sorted(_PROLIFERATE_FIELDS - actual)
-        unknown = sorted(actual - _PROLIFERATE_FIELDS)
+    expected = _PROLIFERATE_FIELDS | ({"choose_phase_out"} if "choose_phase_out" in value else set())
+    if actual != expected:
+        missing = sorted(expected - actual)
+        unknown = sorted(actual - expected)
         details = [
             *(f"missing {name}" for name in missing),
             *(f"unknown {name}" for name in unknown),
@@ -1188,6 +1244,8 @@ def _validate_proliferate_intent_identity(
         raise SemanticChoiceError(
             "Proliferate intent identity fields: " + "; ".join(details)
         )
+    if "choose_phase_out" in value and value["choose_phase_out"] is not True:
+        raise SemanticChoiceError("An absent Proliferate phase-out choice must be omitted")
     actor = value["actor"]
     reason = value[_REASON_FIELD]
     source = value["source_ref"]
@@ -1245,23 +1303,21 @@ def _validate_proliferate_intent_identity(
         "subjects": subjects,
         _REASON_FIELD: reason,
         "source_ref": source,
+        **({"choose_phase_out": True} if "choose_phase_out" in value else {}),
     }
 
 
 def _validate_create_token_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    plan = None
     if isinstance(value, Mapping) and 'token_cleanup' in value:
         from ..created_token_cleanup import CreatedTokenCleanupPlan
         try:
             plan = CreatedTokenCleanupPlan.from_dict(value['token_cleanup'])
-            base = _validate_create_token_intent_identity({key: child for key, child in value.items() if key != 'token_cleanup'})
-            if (base['copy_of'] is not None or base.get('copy_snapshot') is not None
-                    or any(base.get(key, False) for key in ('sacrifice_at_end_step', 'sacrifice_on_controller_end_step', 'exile_at_end_of_combat'))):
-                raise ValueError('Typed cleanup conflicts with a legacy token lifecycle')
-            return {**base, 'token_cleanup': plan.to_dict()}
         except (TypeError, ValueError, KeyError) as exc:
             raise SemanticChoiceError('Token cleanup intent identity is malformed') from exc
+        value = {key: child for key, child in value.items() if key != 'token_cleanup'}
     if not isinstance(value, Mapping) or set(value) not in {
         frozenset(_CREATE_TOKEN_FIELDS_V1),
         frozenset(_CREATE_TOKEN_FIELDS),
@@ -1311,6 +1367,7 @@ def _validate_create_token_intent_identity(
             exile_at_end_of_combat=value.get(
                 "exile_at_end_of_combat", False
             ),
+            token_cleanup=plan,
         )
     except (TypeError, ValueError) as exc:
         raise SemanticChoiceError(
@@ -1338,6 +1395,8 @@ def _validate_create_token_intent_identity(
         identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
     if intent.attacking_groups:
         identity["attacking_groups"] = list(intent.attacking_groups)
+    if intent.token_cleanup is not None:
+        identity['token_cleanup'] = intent.token_cleanup.to_dict()
     return identity
 
 
@@ -1356,7 +1415,7 @@ def with_replacement_selections(
     | DiscoverCleanupIntent
     | IncubateIntent
     | PlaceCountersIntent
-    | MoveCountersIntent
+    | CounterMovementIntent
     | LifeChangeIntent
     | PlaceCounterBatchIntent
     | PlaceCountersOnSetIntent
@@ -1393,7 +1452,7 @@ def with_replacement_selections(
             LifeChangeIntent,
             LifeLossBatchIntent,
             LifeGainCostBatchIntent,
-            MoveCountersIntent,
+            *COUNTER_MOVEMENT_INTENT_TYPES,
             PlaceCounterBatchIntent,
             PlaceCountersOnSetIntent,
             PlaceCountersOnTargetsIntent,

@@ -43,3 +43,17 @@ class CreateRegenerationShieldIntent:
             raise ValueError(
                 "Regeneration intents require actor, object, optional incarnation, and reason"
             )
+
+
+
+@dataclass(frozen=True, slots=True)
+class CreateRegenerationShieldSetIntent:
+    actor: str
+    shields: tuple[CreateRegenerationShieldIntent, ...]
+
+    def __post_init__(self) -> None:
+        if (not isinstance(self.shields, tuple) or not self.shields
+                or any(not isinstance(shield, CreateRegenerationShieldIntent) or shield.actor != self.actor
+                       or shield.logical_object_id is None for shield in self.shields)
+                or len({shield.object_ref for shield in self.shields}) != len(self.shields)):
+            raise ValueError("A regeneration shield set requires distinct incarnations for its original controller")

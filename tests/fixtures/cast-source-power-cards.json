@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "source": "Scryfall Oracle and Wizards rulings for the typed source-power cast witness",
+  "cards": [
+    {
+      "object": "card",
+      "id": "94a020df-714b-4465-bfa2-ac15f27d8412",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "multiverse_ids": [
+        671132
+      ],
+      "mtgo_id": 128929,
+      "tcgplayer_id": 559733,
+      "cardmarket_id": 778947,
+      "name": "Pollywog Prodigy",
+      "lang": "en",
+      "released_at": "2024-08-02",
+      "uri": "https://api.scryfall.com/cards/94a020df-714b-4465-bfa2-ac15f27d8412",
+      "scryfall_uri": "https://scryfall.com/card/blc/15/pollywog-prodigy?utm_source=api",
+      "layout": "normal",
+      "highres_image": true,
+      "image_status": "highres_scan",
+      "image_updated_at": "2026-07-13T02:45:33Z",
+      "image_uris": {
+        "small": "https://cards.scryfall.io/small/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.jpg?1783910733",
+        "normal": "https://cards.scryfall.io/normal/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.jpg?1783910733",
+        "large": "https://cards.scryfall.io/large/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.jpg?1783910733",
+        "png": "https://cards.scryfall.io/png/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.png?1783910733",
+        "art_crop": "https://cards.scryfall.io/art_crop/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.jpg?1783910733",
+        "border_crop": "https://cards.scryfall.io/border_crop/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.jpg?1783910733",
+        "thumb": "https://cards.scryfall.io/thumb/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.webp?1783910733",
+        "grid": "https://cards.scryfall.io/grid/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.webp?1783910733",
+        "display": "https://cards.scryfall.io/display/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.webp?1783910733",
+        "art": "https://cards.scryfall.io/art/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.webp?1783910733",
+        "crop": "https://cards.scryfall.io/crop/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.webp?1783910733",
+        "jpeg": "https://cards.scryfall.io/normal/front/9/4/94a020df-714b-4465-bfa2-ac15f27d8412.jpg?1783910733"
+      },
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Creature — Frog Wizard",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhenever an opponent casts a noncreature spell with mana value less than this creature's power, draw a card.",
+      "power": "1",
+      "toughness": "3",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Evolve"
+      ],
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "games": [
+        "paper",
+        "mtgo"
+      ],
+      "reserved": false,
+      "game_changer": false,
+      "foil": false,
+      "nonfoil": true,
+      "finishes": [
+        "nonfoil"
+      ],
+      "oversized": false,
+      "promo": false,
+      "reprint": false,
+      "variation": false,
+      "set_id": "c0f860b9-a2d0-4fd7-bfac-a49ac60c84f1",
+      "set": "blc",
+      "set_name": "Bloomburrow Commander",
+      "set_type": "commander",
+      "set_uri": "https://api.scryfall.com/sets/c0f860b9-a2d0-4fd7-bfac-a49ac60c84f1",
+      "set_search_uri": "https://api.scryfall.com/cards/search?order=set&q=e%3Ablc&unique=prints",
+      "scryfall_set_uri": "https://scryfall.com/sets/blc?utm_source=api",
+      "rulings_uri": "https://api.scryfall.com/cards/94a020df-714b-4465-bfa2-ac15f27d8412/rulings",
+      "prints_search_uri": "https://api.scryfall.com/cards/search?order=released&q=oracleid%3A99a3cea9-f4ab-4da3-a085-c09dc93fc8cb&unique=prints",
+      "collector_number": "15",
+      "digital": false,
+      "rarity": "rare",
+      "card_back_id": "0aeebaf5-8c7d-4636-9e82-8c27447861f7",
+      "artist": "Caroline Gariba",
+      "artist_ids": [
+        "61a4c572-3d1b-4b71-aeb0-1a5a6b82c524"
+      ],
+      "illustration_id": "ddf55c9d-0dff-4ec2-a137-0871f2eb192c",
+      "border_color": "black",
+      "frame": "2015",
+      "security_stamp": "oval",
+      "full_art": false,
+      "textless": false,
+      "booster": false,
+      "story_spotlight": false,
+      "edhrec_rank": 1309,
+      "preview": {
+        "source": "TCGplayer",
+        "source_uri": "https://infinite.tcgplayer.com/article/Our-EXCLUSIVE-Bloomburrow-Commander-Precon-Preview-Family-Matters/db16627b-2ee4-45d3-9608-14924d166916",
+        "previewed_at": "2024-07-18"
+      },
+      "prices": {
+        "usd": "5.74",
+        "usd_foil": null,
+        "usd_etched": null,
+        "eur": "7.60",
+        "eur_foil": null,
+        "tix": "4.72"
+      },
+      "related_uris": {
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=671132&printed=false",
+        "tcgplayer_infinite_articles": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Farticles&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Farticles%3FproductLineName%3Dmagic%26q%3DPollywog%2BProdigy",
+        "tcgplayer_infinite_decks": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&trafcat=tcgplayer.com%2Fsearch%2Fdecks&u=https%3A%2F%2Fwww.tcgplayer.com%2Fsearch%2Fdecks%3FproductLineName%3Dmagic%26q%3DPollywog%2BProdigy",
+        "edhrec": "https://edhrec.com/route/?cc=Pollywog+Prodigy"
+      },
+      "purchase_uris": {
+        "tcgplayer": "https://partner.tcgplayer.com/c/4931599/1830156/21018?subId1=api&u=https%3A%2F%2Fwww.tcgplayer.com%2Fproduct%2F559733%3Fpage%3D1",
+        "cardmarket": "https://www.cardmarket.com/en/Magic/Products?idProduct=778947&referrer=scryfall&utm_campaign=card_prices&utm_medium=text&utm_source=scryfall",
+        "cardhoarder": "https://www.cardhoarder.com/cards/128929?affiliate_id=scryfall&ref=card-profile&utm_campaign=affiliate&utm_medium=card&utm_source=scryfall"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "When comparing the stats of the two creatures for evolve, you always compare power to power and toughness to toughness."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "If evolve triggers, the stat comparison will happen again when the ability tries to resolve. If neither stat of the new creature is greater, the ability will do nothing. If the creature that entered the battlefield leaves the battlefield before evolve tries to resolve, use its last known power and toughness to compare the stats."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "Whenever a creature you control enters check its power and toughness against the power and toughness of the creature with evolve. If neither stat of the new creature is greater, evolve won't trigger at all."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "Pollywog Prodigy's last ability resolves before the spell that caused it to trigger. It resolves even if that spell is countered."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "Once Pollywog Prodigy's last ability has triggered, it doesn't matter what happens to Pollywog Prodigy after that. Reducing its power or removing it from the battlefield won't stop the ability from resolving."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "When comparing the stats as the evolve ability resolves, it's possible that the stat that's greater changes from power to toughness or vice versa. If this happens, the ability will still resolve and you'll put a +1/+1 counter on the creature with evolve. For example, if you control a 2/2 creature with evolve and a 1/3 creature you control enters , its toughness is greater, so evolve will trigger. In response, the 1/3 creature gets +2/-2. When the evolve trigger tries to resolve, its power is greater. You'll put a +1/+1 counter on the creature with evolve."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "If multiple creatures enter at the same time, evolve may trigger multiple times, although the stat comparison will take place each time one of those abilities tries to resolve. For example, if you control a 2/2 creature with evolve and two 3/3 creatures you control enter, evolve will trigger twice. The first ability will resolve and put a +1/+1 counter on the creature with evolve. When the second ability tries to resolve, neither the power nor the toughness of the new creature is greater than that of the creature with evolve, so that ability does nothing."
+    },
+    {
+      "object": "ruling",
+      "oracle_id": "99a3cea9-f4ab-4da3-a085-c09dc93fc8cb",
+      "source": "wotc",
+      "published_at": "2024-07-26",
+      "comment": "If a creature enters with +1/+1 counters on it, consider those counters when determining if evolve will trigger. For example, a 1/1 creature that enters with two +1/+1 counters on it will cause the evolve ability of a 2/2 creature to trigger."
+    }
+  ]
+}

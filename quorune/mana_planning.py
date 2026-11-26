@@ -97,7 +97,7 @@ def ordered_mana_selection(
     """Find a legal funding order, with one committed mode per source."""
     contexts = {mode.price.spend_context for source in sources for mode in source.modes if mode.price}
     triggered = any(mode.triggered_mana for source in sources for mode in source.modes)
-    sacrificed_sources = {source.object_id for source in sources if any(mode.sacrifices_source for mode in source.modes)}
+    sacrificed_sources = {source.object_id for source in sources if any(mode.consumes_source for mode in source.modes)}
     order_matters = triggered or any(provider in sacrificed_sources for source in sources for mode in source.modes
                                     for provider, _ in mode.tap_mana_multipliers)
     if not contexts and not order_matters:
@@ -136,7 +136,7 @@ def ordered_mana_selection(
                 for mode in modes:
                     for payment in available_mode_payments(mode, pool, allows):
                         next_pool = _pool_after_step(pool, source, mode, payment, allows, departed)
-                        next_departed = departed | {source.object_id} if mode.sacrifices_source else departed
+                        next_departed = departed | {source.object_id} if mode.consumes_source else departed
                         selected = visit(next_pool, remaining - {index}, (*steps, (source, mode, payment)), next_departed)
                         if selected is not None:
                             return selected

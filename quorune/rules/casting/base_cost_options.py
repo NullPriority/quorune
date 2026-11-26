@@ -15,6 +15,29 @@ if TYPE_CHECKING:
     from .costs import CastCostHost
 
 
+def initial_cast_base_authority(host, seat, card, alternative_base, *, force_without_mana_cost,
+                                suppress_source_costs, resolving_exile_authority):
+    from ...opponent_library_exile import opponent_library_exile_cast_mode
+    from .disturb_costs import disturb_back_cast_permission, with_more_than_meets_the_eye_base
+    from .library_top_life import LIBRARY_TOP_LIFE_PRICE_FIELD
+
+    temporary_permission = host._temporary_play_permission(seat, card)
+    intrinsic_disturb = (disturb_back_cast_permission(host, seat, card)
+                         and not (force_without_mana_cost or suppress_source_costs or alternative_base is not None))
+    alternative_base = with_more_than_meets_the_eye_base(
+        host, card, alternative_base,
+        suppressed=force_without_mana_cost or suppress_source_costs or intrinsic_disturb,
+    )
+    library_life_base = alternative_base is not None and LIBRARY_TOP_LIFE_PRICE_FIELD in alternative_base
+    cast_without_mana, separately_payable = opponent_library_exile_cast_mode(
+        host.state, seat, card, temporary_permission,
+        force_without_mana_cost=force_without_mana_cost, alternative_base=alternative_base,
+        intrinsic_disturb=intrinsic_disturb, resolving_exile_authority=resolving_exile_authority,
+        library_life_base=library_life_base,
+    )
+    return temporary_permission, intrinsic_disturb, alternative_base, cast_without_mana, separately_payable
+
+
 def _flashback_base_options(
     host: CastCostHost,
     seat: str,

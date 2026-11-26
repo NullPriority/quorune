@@ -52,6 +52,7 @@ from .replacement import (
     ReplacementEffect,
     ReplacementEventBatch,
 )
+from .replacement.operations import UNPREVENTABLE_DAMAGE_ATTEMPTS
 from .semantic_runtime.life_replacements import (
     collect_life_change_replacement_effects,
 )
@@ -87,6 +88,7 @@ class PreventionApplication:
     prevented_amount: int
     damage_event_ids: tuple[str, ...]
     damage_source_controllers: tuple[str, ...]
+    unpreventable_amount: int = 0
 
 
 @dataclass(frozen=True, slots=True)
@@ -185,11 +187,20 @@ def prevention_applications(
 
 def _applied_prevention_aftermath(events, sources) -> tuple[PreventionApplication, ...]:
     amounts: dict[str, int] = {}
+    attempts: dict[str, int] = {}
     event_ids: dict[str, list[str]] = {}
     source_controllers: dict[str, set[str]] = {}
     applied: set[str] = set()
     for event in events:
         by_effect = event.payload.get("prevention_applied") or {}
+        attempted = event.payload.get(UNPREVENTABLE_DAMAGE_ATTEMPTS, {})
+        if not isinstance(attempted, Mapping):
+            raise PreventionAftermathError("Unpreventable damage amount data is malformed")
+        for effect_id, amount in attempted.items():
+            if effect_id in sources:
+                if type(amount) is not int or amount < 1:
+                    raise PreventionAftermathError("Unpreventable damage amount is malformed")
+                attempts[effect_id] = attempts.get(effect_id, 0) + amount
         if not isinstance(by_effect, Mapping):
             raise PreventionAftermathError(
                 "Resolved prevention application data is malformed"
@@ -222,6 +233,7 @@ def _applied_prevention_aftermath(events, sources) -> tuple[PreventionApplicatio
             effect_id=effect_id,
             source_id=sources[effect_id][0],
             prevented_amount=amounts.get(effect_id, 0),
+            unpreventable_amount=attempts.get(effect_id, 0),
             damage_event_ids=tuple(sorted(set(event_ids.get(effect_id, ())))),
             damage_source_controllers=tuple(
                 sorted(source_controllers.get(effect_id, ()))
@@ -249,7 +261,10 @@ def prevention_aftermath_requests(
     for application in applications:
         _, controller, aftermath_effects = sources[application.effect_id]
         for index, aftermath in enumerate(aftermath_effects):
-            amount = aftermath.amount(application.prevented_amount)
+            damage_amount = application.prevented_amount
+            if isinstance(aftermath, PlaceCountersPreventionAftermath) and aftermath.counts_unpreventable:
+                damage_amount += application.unpreventable_amount
+            amount = aftermath.amount(damage_amount)
             if amount == 0:
                 continue
             result_event_id: str | None = None

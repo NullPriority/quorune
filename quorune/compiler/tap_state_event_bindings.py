@@ -15,6 +15,9 @@ TAP_STATE_EVENT_VARIANT = "public_tap_state_transition"
 TAP_STATE_EVENT_PLAYER_MECHANIC = "tap-state-event-player-result"
 EVENT_CONTROLLER_REFERENCE = "$context.controller"
 TAP_STATE_EVENT_VARIANTS = frozenset({TAP_STATE_EVENT_VARIANT, "source_" + TAP_STATE_EVENT_VARIANT})
+_SOURCE_ATTACK_NEXT_UNTAP = re.compile(
+    r"It doesn['’]t untap during its controller['’]s next untap step\.", re.IGNORECASE,
+)
 _TRANSITION = re.compile(
     r"^(?:When|Whenever) (?P<subject>.+?) becomes (?P<state>tapped|untapped)"
     r"(?P<turn> during your turn)?, (?P<body>.+)$",
@@ -112,15 +115,37 @@ def tap_state_event_player_effect_template(
     )
 
 
+def monarch_became_binding_spec(material_line, *, card_name=None):
+    from ..rules.monarch_transition import (
+        MONARCH_BECAME_CAPABILITY, MONARCH_BECAME_EVENT, MONARCH_BECAME_TEMPLATE,
+        MONARCH_BECAME_VARIANT, MONARCH_CONTROLLER_CONDITION,
+    )
+    from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+
+    match = re.fullmatch(
+        r"Whenever you become the monarch, (?P<body>target player sacrifices a creature(?: of their choice)?\.)",
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    return FixedPublicEventBindingSpec(
+        event=MONARCH_BECAME_EVENT, variant=MONARCH_BECAME_VARIANT, body=match["body"],
+        template_id=MONARCH_BECAME_TEMPLATE, mechanic="trigger-event-normalized-public-action",
+        condition=dict(MONARCH_CONTROLLER_CONDITION), capabilities=(MONARCH_BECAME_CAPABILITY,),
+    )
+
+
 def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     """Keep established public grammar precedence before the tap extension."""
     from .fixed_public_event_trigger_bindings import fixed_public_event_binding_spec
-    from .fixed_public_action_event_bindings import fixed_public_action_event_binding_spec
+    from .fixed_public_action_event_bindings import _point_combat_spec, fixed_public_action_event_binding_spec
     from .fixed_public_multi_event_bindings import fixed_public_multi_event_binding_spec
     from .room_bindings import eerie_binding_spec
     from .target_announcement_bindings import target_announcement_binding_spec
-    from .event_card_return_templates import (self_death_return_binding, source_departure_library_binding,
-                                               source_death_land_exile_binding)
+    from .event_card_return_templates import (
+        self_death_return_binding, source_departure_hand_return_binding, source_departure_library_binding,
+        source_death_land_exile_binding,
+    )
     from .counter_placement_event_bindings import counter_placement_event_binding_spec
     from .scheduled_player_triggers import scheduled_player_binding_spec
     from .source_damage_death_bindings import source_damage_death_binding
@@ -131,7 +156,13 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
     from .explore_event_bindings import explore_event_binding_spec
     from .mutate_event_bindings import mutate_event_binding_spec
     from .unblocked_attacker_bindings import unblocked_attacker_binding_spec
-    for parser in (source_death_land_exile_binding, source_departure_library_binding, unblocked_attacker_binding_spec,fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
+    from .attacking_token_results import attacking_entry_copy_binding
+
+    if entry := attacking_entry_copy_binding(material_line, card_name=card_name):
+        return entry
+    if points := _point_combat_spec(material_line):
+        return points
+    for parser in (monarch_became_binding_spec, source_death_land_exile_binding, source_departure_hand_return_binding, source_departure_library_binding, unblocked_attacker_binding_spec,fixed_public_event_binding_spec, fixed_public_action_event_binding_spec,
                    tap_state_event_binding_spec, counter_placement_event_binding_spec, eerie_binding_spec, fixed_public_multi_event_binding_spec, target_announcement_binding_spec, self_death_return_binding, scheduled_player_binding_spec, source_damage_death_binding,token_creation_event_binding_spec,crime_event_binding_spec,chosen_color_event_binding_spec,chosen_type_event_binding_spec,explore_event_binding_spec,mutate_event_binding_spec):
         value = parser(material_line, card_name=card_name)
         if value is not None:
@@ -140,6 +171,17 @@ def public_trigger_binding_spec(material_line: str, *, card_name: str | None):
 
 
 def tap_state_bound_result(binding, body: str, *, effect_template, card_name: str):
+    from ..rules.tap_state_capability_shapes import SOURCE_ATTACK_CONDITION
+    from .tap_state_templates import SourceTapStateEffectTemplate, TapStateAction
+
+    if (
+        (binding.event.value, binding.variant, binding.active_zone)
+        == ("creature.attacks", "source_attacks", "battlefield")
+        and binding.event_condition == SOURCE_ATTACK_CONDITION
+        and body == binding.body
+        and _SOURCE_ATTACK_NEXT_UNTAP.fullmatch(body)
+    ):
+        return SourceTapStateEffectTemplate(TapStateAction.PROHIBIT_NEXT_UNTAP, "creature").compiled(), False
     if binding.variant not in TAP_STATE_EVENT_VARIANTS:
         return None
     from .per_player_query_life import source_tap_opponent_poison_threshold_life_result

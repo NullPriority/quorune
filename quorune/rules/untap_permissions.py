@@ -42,25 +42,30 @@ def commit_source_untap_restraint(host, pending, subjects):
     if pending.source is None or not subjects:
         return
     from ..continuous_effect_state import commit_continuous_effect
-    from ..control_effects import prepare_tapped_source_duration
+    from ..control_effects import prepare_controlled_source_untap_duration, prepare_tapped_source_duration
 
-    history = prepare_tapped_source_duration(
-        host.state, pending.source, pending.history, pending.resolution_timestamp,
-    )
+    controller = pending.duration_controller
+    if controller is None:
+        history = prepare_tapped_source_duration(
+            host.state, pending.source, pending.history, pending.resolution_timestamp,
+        )
+    else:
+        history = prepare_controlled_source_untap_duration(
+            host.state, pending.source, pending.history, pending.resolution_timestamp, controller,
+        )
     if history is not None:
         commit_continuous_effect(host.state, ResolvedSourceUntapRestraint(
             effect_id=host._next_ref("CE"), timestamp=host._next_zone_timestamp(),
             duration_source=pending.source, duration_history=history, locked_objects=subjects,
+            duration_controller=controller,
         ))
 
 
 def resolved_restraint_step_participations(host):
-    from ..control_effects import tapped_source_duration_is_current
+    from ..control_effects import source_untap_restraint_is_current
 
     for effect in host.state.continuous_effects or ():
-        if not isinstance(effect, ResolvedSourceUntapRestraint) or not tapped_source_duration_is_current(
-            host.state, effect.duration_source, effect.duration_history,
-        ):
+        if not isinstance(effect, ResolvedSourceUntapRestraint) or not source_untap_restraint_is_current(host.state, effect):
             continue
         source = host.state.cards[effect.source_id]
         for subject in effect.locked_objects:

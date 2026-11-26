@@ -17,7 +17,16 @@ DAMAGE_DEATH_EXILE_KIND = 'resolution_damage_death_exile'
 
 class DamageDeathExileScope(StrEnum):
     TARGET = 'target_incarnation'
+    TARGET_CREATURE_OR_PLANESWALKER = 'target_creature_or_planeswalker_incarnation'
     DEALT_CREATURES = 'dealt_creature_incarnations'
+
+    @property
+    def original_target_types(self) -> tuple[str, ...]:
+        if self is DamageDeathExileScope.TARGET:
+            return ("creature",)
+        if self is DamageDeathExileScope.TARGET_CREATURE_OR_PLANESWALKER:
+            return ("creature", "planeswalker")
+        return ()
 
 
 def damage_death_exile_scope(effect):

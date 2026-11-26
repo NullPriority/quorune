@@ -10,7 +10,11 @@ from ..linked_exile_return_model import (
     LinkedExileReturnSpec, LINKED_ABILITY_BINDING_PREFIX, LINKED_ABILITY_TIMING,
     LINKED_BATCH_DEPARTURE_RETURN_VERSION, LINKED_FADING_EXILE_VERSION,
     LINKED_FADING_HAND_BINDING, LinkedFadingScope,
-    LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION,
+    LINKED_PUBLIC_ALL_CREATURES_END_STEP_VERSION, LINKED_PUBLIC_SET_END_STEP_VERSION,
+    LINKED_PUBLIC_SET_NEXT_COMBAT_VERSION, LinkedPublicSetScope,
+    LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION, LINKED_TYPE_ENTRY_COUNTERS_VERSION,
+    LINKED_CREATURE_ENTRY_COUNTER_VERSION,
+    linked_type_entry_counter_target_schema,
 )
 from ..rules.linked_batch_departure_return import linked_batch_departure_target_schema
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
@@ -31,6 +35,17 @@ _INSTRUCTION = re.compile(
     r"(?P<late> at the beginning of (?:the next|your next) end step)?\.?(?P<tail>.*)$",
     re.IGNORECASE,
 )
+_TYPE_ENTRY_COUNTER_RETURN = (
+    "exile any number of target creatures and/or planeswalkers you control. "
+    "at the beginning of the next end step, return each of them to the battlefield under its owner's control. "
+    "each of them enters with an additional +1/+1 counter on it if it's a creature and an additional loyalty "
+    "counter on it if it's a planeswalker."
+)
+_SINGLE_CREATURE_ENTRY_COUNTER_RETURN = (
+    "exile target permanent you control. return that card to the battlefield under its owner's control "
+    "at the beginning of the next end step. if it enters as a creature, it enters with an additional "
+    "+1/+1 counter on it."
+)
 _COUNTS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
 _LINKED_LEAVE_BODY = re.compile(r"return the exiled card to the battlefield under its owner['’]s control\.", re.I)
 
@@ -39,7 +54,11 @@ def linked_face_ability_compilers(record, material_rows, effect_template, compil
                                   card_name, card_types, permanent, trigger_node, match_source):
     """Assemble linked source abilities against the prepared face rows."""
     from .entry_x_results import entry_result_trigger_node_compiler
+    from .linked_loyalty_exile_templates import linked_loyalty_activation_compiler
 
+    compile_ability = linked_loyalty_activation_compiler(
+        compile_ability, material_rows=material_rows, card_name=card_name, card_types=card_types,
+    )
     trigger_compiler = entry_result_trigger_node_compiler(
         record, trigger_node=trigger_node, ordinary_effect=effect_template,
         match_source=match_source, material_rows=material_rows,
@@ -47,6 +66,26 @@ def linked_face_ability_compilers(record, material_rows, effect_template, compil
     trigger_compiler = linked_ability_trigger_compiler(
         trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
         card_name=card_name, match_source=match_source, permanent=permanent,
+    )
+    from .linked_library_imprint import linked_artifact_library_trigger_compiler, linked_library_imprint_trigger_compiler
+
+    trigger_compiler = linked_library_imprint_trigger_compiler(
+        trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
+        card_name=card_name, match_source=match_source, permanent=permanent,
+    )
+    trigger_compiler = linked_artifact_library_trigger_compiler(
+        trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
+        card_name=card_name, match_source=match_source, permanent=permanent,
+    )
+
+    from .faction_trigger_templates import faction_face_ability_compiler
+
+    compile_ability = faction_face_ability_compiler(compile_ability, material_rows=material_rows, card_types=card_types)
+
+    from .private_opponent_library_cast_templates import private_opponent_library_cast_trigger_compiler
+
+    trigger_compiler = private_opponent_library_cast_trigger_compiler(
+        trigger_compiler, permanent=permanent, trigger_node=trigger_node, match_source=match_source,
     )
     return linked_fading_compilers(
         compile_ability, trigger_compiler, trigger_node=trigger_node, material_rows=material_rows,
@@ -195,9 +234,68 @@ def scope_linked_return_bindings(value: Any, scope: str) -> Any:
     return value
 
 
+_PUBLIC_END_STEP_SET_TEXT = {
+    ("exile all creatures. at the beginning of the next end step, return those cards to the battlefield "
+     "under their owners' control."): LinkedPublicSetScope.ALL_CREATURES,
+    ("exile each creature you control. return those cards to the battlefield under their owner's control "
+     "at the beginning of the next end step."): LinkedPublicSetScope.CONTROLLED_CREATURES,
+    ("exile all nonland permanents target player controls. return the exiled cards to the battlefield "
+     "under their owner's control at the beginning of the next end step."): LinkedPublicSetScope.TARGET_PLAYER_NONLANDS,
+}
+
+
+_NEXT_COMBAT_HASTE_TEXT = (
+    "exile all creatures you control. at the beginning of the next combat, return those cards to the battlefield "
+    "under their owner's control and those creatures gain haste until end of turn."
+)
+
+
+def _public_set_return_template(normalized):
+    text = normalized.casefold().replace("’", "'")
+    if text == _NEXT_COMBAT_HASTE_TEXT:
+        spec = LinkedExileReturnSpec(
+            timing="next_combat", keywords=("Haste",), schema_version=LINKED_PUBLIC_SET_NEXT_COMBAT_VERSION,
+        )
+        template = "linked-public-creatures-next-combat-v1"
+    else:
+        scope = _PUBLIC_END_STEP_SET_TEXT.get(text)
+        if scope is None:
+            return None
+        version = (LINKED_PUBLIC_ALL_CREATURES_END_STEP_VERSION if scope is LinkedPublicSetScope.ALL_CREATURES
+                   else LINKED_PUBLIC_SET_END_STEP_VERSION)
+        spec = LinkedExileReturnSpec(timing="next_end_step", schema_version=version, public_end_step_scope=scope)
+        template = "linked-public-set-next-end-step-v1"
+    scope = spec.public_set_scope
+    binding = "blink:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24]
+    common = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": binding, "spec": spec.to_dict()}
+    effects = ({**common, "phase": "exile", "cards": scope.player_reference}, {**common, "phase": "return"})
+    schema = scope.target_schema()
+    mechanics = (LINKED_EXILE_RETURN_MECHANIC, *(("cr-115-targets",) if schema else ()))
+    return template, effects, schema, mechanics
+
+
+def prospective_entry_linked_return_template(text):
+    normalized = " ".join(text.split())
+    body = normalized.casefold().replace("’", "'")
+    if body == _TYPE_ENTRY_COUNTER_RETURN:
+        version = LINKED_TYPE_ENTRY_COUNTERS_VERSION
+    elif body == _SINGLE_CREATURE_ENTRY_COUNTER_RETURN:
+        version = LINKED_CREATURE_ENTRY_COUNTER_VERSION
+    else:
+        return None
+    spec = LinkedExileReturnSpec(timing="next_end_step", schema_version=version)
+    binding = "blink:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24]
+    common = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": binding, "spec": spec.to_dict()}
+    effects = ({**common, "phase": "exile", "cards": "$targets"}, {**common, "phase": "return"})
+    return ("linked-exile-return-prospective-entry-counters-v1", effects,
+            linked_type_entry_counter_target_schema(version), (LINKED_EXILE_RETURN_MECHANIC, "cr-115-targets"))
+
+
 def linked_exile_return_effect_template(text: str, *, card_name: str,
                                       source_is_permanent: bool | None = None) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     normalized = " ".join(text.strip().removeprefix("• ").split())
+    if prospective := prospective_entry_linked_return_template(normalized):
+        return prospective
     if normalized.casefold().startswith("you may "):
         inner = linked_exile_return_effect_template(normalized[8:], card_name=card_name, source_is_permanent=source_is_permanent)
         if inner is None:
@@ -207,7 +305,13 @@ def linked_exile_return_effect_template(text: str, *, card_name: str,
         wrapper = {"op": "offer_optional_effect", "player": "$controller",
                    "effects": [dict(effect) for effect in effects]}
         return template, (wrapper,), schema, ("fixed-optional-effect-choice", *mechanics)
-    match = _INSTRUCTION.fullmatch(normalized)
+    if public_set := _public_set_return_template(normalized):
+        return public_set
+    parse_text = normalized
+    if normalized.casefold() == ("exile target creature. return the exiled card to the battlefield "
+                                 "under its owner's control at the beginning of the next end step."):
+        parse_text = "Exile target creature. Return that card to the battlefield under its owner's control at the beginning of the next end step."
+    match = _INSTRUCTION.fullmatch(parse_text)
     if match is None or match["early"] and match["late"]:
         return None
     subject = match["subject"]

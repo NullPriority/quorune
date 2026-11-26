@@ -15,6 +15,9 @@ from ..rules.hand_inspection import (
 from ..rules.optional_draw_discard import (
     is_source_shared_type_draw_discard, validate_source_shared_type_draw_discard,
 )
+from ..rules.optional_targeted_control import is_optional_targeted_control, validate_optional_targeted_control
+from ..rules.source_upkeep_handoff import uses_source_upkeep_handoff
+from .source_upkeep_handoff import complete_source_upkeep_handoff, prepare_source_upkeep_handoff
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..linked_exile_return_model import validate_linked_instruction
 from ..library_search_model import FixedCountedLibrarySearchTemplate, is_counted_library_search
@@ -51,7 +54,7 @@ def _represented_payment_player_selection(effect, *, actor, query):
     if not owned:raise SemanticChoiceError('Optional affected-player selection is outside its closed primitive')
 
 
-def _represented_targeted_player_discard(effect, *, actor, query):
+def _represented_targeted_player_discard(effect, *, actor, query, allow_targeted_four=False):
     from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
     players=effect.get('players');target=effect.get('target')
     if (effect.get('actor')!=actor or not isinstance(players,(list,tuple)) or len(players)!=1
@@ -60,8 +63,9 @@ def _represented_targeted_player_discard(effect, *, actor, query):
     symbolic={**effect,'actor':'$controller','players':['$target.0'],'target':'$target.0'}
     schema={'zones':['player'],'categories':['player'],'player_relation':'any','count':1}
     if not fixed_affected_player_discard_node_capabilities(effects=(symbolic,),target_schema=schema,
-            mechanic_ids=('fixed-affected-player-discard','cr-402-hand','cr-115-targets')):
-        raise SemanticChoiceError('Optional targeted discard lacks its closed result owner')
+            mechanic_ids=('fixed-affected-player-discard','cr-402-hand','cr-115-targets'),
+            allow_targeted_four=allow_targeted_four):
+        raise SemanticChoiceError('Targeted discard lacks its closed result owner')
 
 
 def _represented_effect(
@@ -78,6 +82,16 @@ def _represented_effect(
         )
     if operation == OPTIONAL_EFFECT_OPERATION:
         raise SemanticChoiceError("Optional effects cannot nest")
+    from ..linked_library_imprint_model import (
+        uses_linked_artifact_library_instruction, validate_linked_artifact_library_instruction,
+    )
+
+    if uses_linked_artifact_library_instruction(effect):
+        try:
+            validate_linked_artifact_library_instruction(effect)
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return
     if DEFENDING_HAND_OBSERVATION_VERSION_FIELD in effect:
         defender = effect.get("target")
         if defender not in query.seats or not is_defending_hand_observation(
@@ -145,6 +159,17 @@ def _represented_effect(
             except ValueError as exc:
                 raise SemanticChoiceError(str(exc)) from exc
             return
+    from ..library_search_model import (
+        COMMITTED_ATTACKING_EXILE_SEARCH_VERSION, validate_committed_attacking_exile_search,
+    )
+    if operation == "search" and effect.get("schema_version") == COMMITTED_ATTACKING_EXILE_SEARCH_VERSION:
+        try:
+            validate_committed_attacking_exile_search(effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        if effect["searching_player"] != actor:
+            raise SemanticChoiceError("The original affected player must choose whether to search")
+        return
     if operation == "search" and is_counted_library_search(effect):
         try:
             FixedCountedLibrarySearchTemplate.from_effect(effect)
@@ -186,18 +211,39 @@ def _represented_effect(
         ) from exc
 
 
+def optional_choice_uses_draw_permission(effect: Mapping[str, Any]) -> bool:
+    from ..permanent_event_state_model import optional_draw_proliferate_is_closed
+    from ..rules.optional_draw_discard import is_entry_exempt_draw_discard
+
+    from ..rules.draw_step_drawing_settlement import DRAW_STEP_SETTLEMENT_VERSION_FIELD
+
+    operation = effect.get("op")
+    return (operation == "offer_draw" or is_source_shared_type_draw_discard(effect)
+            or is_entry_exempt_draw_discard(effect)
+            or (operation == "choose_option" and DRAW_STEP_SETTLEMENT_VERSION_FIELD in effect)
+            or (operation == "offer_optional_effect" and optional_draw_proliferate_is_closed(
+                effect.get("effects"), player=effect.get("player"),
+            )))
+
+
 def _validated_effects(
     effect: Mapping[str, Any],
     *,
     actor: str,
     query: SemanticChoiceQuery,
 ) -> tuple[str, tuple[FrozenMap, ...]]:
+    from ..rules.entry_creature_type_mana import is_optional_entry_shared_type_mana, validate_bound_entry_shared_type_mana
+    from ..rules.optional_draw_discard import is_entry_exempt_draw_discard, validate_entry_exempt_draw_discard
+
     shared_source = is_source_shared_type_draw_discard(effect)
+    targeted_control = is_optional_targeted_control(effect)
+    shared_entrant_mana = is_optional_entry_shared_type_mana(effect)
+    entry_exempt = is_entry_exempt_draw_discard(effect)
     expected = {"op", "player", "effects"}
     graveyard_return = (
         isinstance(effect, Mapping) and effect.get("schema_version") == OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION
     )
-    if shared_source or graveyard_return:
+    if shared_source or graveyard_return or targeted_control or shared_entrant_mana or entry_exempt:
         expected.add("schema_version")
     if not isinstance(effect, Mapping) or set(effect) != expected:
         raise SemanticChoiceError("Optional effect fields are malformed")
@@ -213,6 +259,25 @@ def _validated_effects(
             "Optional effect must be issued to its active controller"
         )
     values = effect.get("effects")
+    if entry_exempt:
+        try:
+            return player, tuple(FrozenMap(value) for value in validate_entry_exempt_draw_discard(effect, actor=player))
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+    if shared_entrant_mana:
+        try:
+            child = validate_bound_entry_shared_type_mana(effect, player)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        return player, (FrozenMap(child),)
+    if targeted_control:
+        try:
+            target = validate_optional_targeted_control(effect, actor=player, resolved=True)
+        except (ValueError, TypeError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
+        if query.object(target, zones=("battlefield",)) is None:
+            raise SemanticChoiceError("The original optional control target is unavailable")
+        return player, tuple(FrozenMap(value) for value in values)
     if graveyard_return:
         try:
             validate_optional_graveyard_target_return(effect, player=player, resolved=True)
@@ -240,10 +305,13 @@ def _validated_effects(
             raise SemanticChoiceError(str(exc)) from exc
     from ..rules.optional_draw_discard import optional_draw_discard_is_closed
     draw_discard=optional_draw_discard_is_closed(values,player=player)
+    from ..permanent_event_state_model import optional_draw_proliferate_is_closed
+
+    draw_proliferate = optional_draw_proliferate_is_closed(values, player=player)
     if (
         not isinstance(values, Sequence)
         or isinstance(values, (str, bytes))
-        or (len(values) != 1 and not linked_pair and not draw_discard)
+        or (len(values) != 1 and not linked_pair and not draw_discard and not draw_proliferate)
         or any(not isinstance(value, Mapping) for value in values)
     ):
         raise SemanticChoiceError(
@@ -302,16 +370,34 @@ class OptionalEffectHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        from ..rules.entry_creature_type_mana import is_optional_entry_shared_type_mana
+        from ..rules.optional_draw_discard import is_entry_exempt_draw_discard
+
+        if uses_source_upkeep_handoff(effect):
+            return prepare_source_upkeep_handoff(effect, context)
+        if is_optional_targeted_control(effect) and context.actor != context.stack_controller:
+            raise SemanticChoiceError("The resolving controller owns the optional control choice")
+        if is_optional_entry_shared_type_mana(effect) and context.actor != context.stack_controller:
+            raise SemanticChoiceError("The resolving controller owns the optional mana choice")
         player, effects = _validated_effects(
             effect,
             actor=context.actor,
             query=context.query,
         )
         shared_source = is_source_shared_type_draw_discard(effect)
-        if shared_source and not context.query.draw_permission(player).allows_complete_draw(effects[0]["count"]):
+        if ((shared_source or is_entry_exempt_draw_discard(effect))
+                and not context.query.draw_permission(player).allows_complete_draw(effects[0]["count"])):
             return SemanticChoicePreparation(
                 request=None, continuation_effect=FrozenMap(effect),
                 auto_continue=AutoContinue("The player cannot legally choose that draw"),
+            )
+        from ..rules.announced_destruction_controller_tokens import uses_optional_graveyard_controller_tokens
+
+        if (len(effects) == 1 and uses_optional_graveyard_controller_tokens(effects[0])
+                and not effects[0]["cards"]):
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("The optional destruction has no announced target"),
             )
         if effect.get("schema_version") == OPTIONAL_GRAVEYARD_TARGET_RETURN_VERSION and not effects[0]["cards"]:
             return SemanticChoicePreparation(
@@ -356,11 +442,21 @@ class OptionalEffectHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        from ..rules.entry_creature_type_mana import is_optional_entry_shared_type_mana
+        from ..rules.optional_draw_discard import is_entry_exempt_draw_discard
+
+        if uses_source_upkeep_handoff(continuation.effect):
+            return complete_source_upkeep_handoff(continuation, response, query)
         actor = continuation.effect.get("player")
         if type(actor) is not str:
             raise SemanticChoiceError(
                 "Optional effect continuation chooser is malformed"
             )
+        if is_optional_targeted_control(continuation.effect) and actor != continuation.semantic_frame.controller:
+            raise SemanticChoiceError("The original resolving controller owns the optional control choice")
+        shared_entrant_mana = is_optional_entry_shared_type_mana(continuation.effect)
+        if shared_entrant_mana and actor != continuation.semantic_frame.controller:
+            raise SemanticChoiceError("The original resolving controller owns the optional mana choice")
         _player, effects = _validated_effects(
             continuation.effect,
             actor=actor,
@@ -372,12 +468,22 @@ class OptionalEffectHandler:
         if choice == "apply" and _unavailable_defending_hand(effects, query):
             raise SemanticChoiceError("The defending player is no longer in the game")
         if choice=='apply' and _prohibited_optional_library_search(effects,actor,query):raise SemanticChoiceError('The optional library search cannot be chosen')
+        from ..permanent_event_state_model import optional_draw_proliferate_is_closed
+
+        if (choice == "apply" and optional_draw_proliferate_is_closed(effects, player=actor)
+                and not query.draw_permission(actor).allows_complete_draw(1)):
+            raise SemanticChoiceError("The player can no longer legally choose that draw")
         if choice == "apply" and is_source_shared_type_draw_discard(continuation.effect):
             count = effects[0]["count"]
             if not query.draw_permission(actor).allows_complete_draw(count):
                 raise SemanticChoiceError("The player can no longer legally choose that draw")
             if count == 0:
                 effects = effects[1:]
+        if (choice == "apply" and is_entry_exempt_draw_discard(continuation.effect)
+                and not query.draw_permission(actor).allows_complete_draw(1)):
+            raise SemanticChoiceError("The player can no longer legally choose that draw")
+        if shared_entrant_mana and effects[0]["amount"] == 0:
+            effects = ()
         return SemanticChoiceCompletion(
             prepend_effects=effects if choice == "apply" else ()
         )

@@ -137,11 +137,12 @@ def event_spell_copy_runtime_dependencies(program):
     stack_copy = False
     direct_token = False
     artifact_copy = False
+    exile_cast_copy = None
     fixed_source_target = False
     creature_set = False
 
     def visit(value):
-        nonlocal stack_copy, direct_token, artifact_copy, fixed_source_target, creature_set
+        nonlocal stack_copy, direct_token, artifact_copy, exile_cast_copy, fixed_source_target, creature_set
         if isinstance(value, Mapping):
             if CAST_CREATURE_SET_COPY_FIELD in value:
                 creature_set = True
@@ -150,9 +151,12 @@ def event_spell_copy_runtime_dependencies(program):
             elif value.get("op") == "copy_stack_item" and "copy_source" in value:
                 if PERMANENT_SPELL_COPY_FIELD in value:
                     spec = PermanentSpellCopySpec.from_dict(value[PERMANENT_SPELL_COPY_FIELD])
-                    if spec.kind != "artifact" or dict(value) != spec.effects[0]:
-                        raise ValueError("Artifact copy must retain the exact original creature spell")
-                    artifact_copy = True
+                    if spec.kind not in {"artifact", "exile_cast_grant"} or dict(value) != spec.effects[0]:
+                        raise ValueError("A cast-event copy must retain its exact original spell instruction")
+                    if spec.kind == "artifact":
+                        artifact_copy = True
+                    else:
+                        exile_cast_copy = spec
                 elif not any(dict(value) == event_spell_copy_effect(retain_targets_only=retain) for retain in (False,True)):
                     raise ValueError("Event spell-copy instruction has a closed source reference")
                 stack_copy = True
@@ -186,6 +190,10 @@ def event_spell_copy_runtime_dependencies(program):
             raise ValueError("Direct cast spell copy must be the complete trigger result")
         return (*required, "trigger.event.normalized_spell_cast", "trigger.effect.fixed_event",
                 "trigger.placement.apnap")
+    if exile_cast_copy is not None:
+        from .exile_spell_copy_grant import validate_exile_cast_copy_program
+
+        return validate_exile_cast_copy_program(program, exile_cast_copy)
     if artifact_copy:
         payment = program.effects[0]
         if (len(program.effects) != 1 or payment.get("op") != "offer_optional_effect"

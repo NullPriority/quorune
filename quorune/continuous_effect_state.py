@@ -3,6 +3,9 @@ from .damage_death_exile_model import ResolvedDamageDeathExile
 from .linked_departure_exile_model import ResolvedLinkedDepartureExile
 from .life_gain_permission import ResolvedLifeGainProhibition
 from .damage_prevention_permission import ResolvedDamagePreventionProhibition
+from .game_hand_size_model import ResolvedNoMaximumHandSize
+from .turn_match_outcome_model import ResolvedTurnMatchOutcomeProtection
+from .all_player_turn_rule_model import ResolvedAllPlayerTurnRule
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -18,14 +21,17 @@ from .continuous_effects import (
 from .declaration_rule_effects import (
     ContinuousJournalEffect,
     ResolutionDeclarationRuleEffect,
+    ResolvedActivationProhibition,
 )
 from .as_unblocked_rule import AsUnblockedAssignmentRule
 from .toughness_assignment_rule import ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import ResolvedBlockCapacityRule
-from .temporary_cast_rule_model import ResolvedCastRestriction
+from .temporary_cast_rule_model import ResolvedCastRestriction, ResolvedNextTurnSorceryTiming
 from .draw_redirect_model import ResolvedDrawRedirect
+from .next_draw_replacement_model import ResolvedNextDrawReplacement
 from .next_spell_cost_model import ResolvedNextSpellCostReduction
 from .protected_attack_payment_model import ResolvedProtectedAttackPayment
+from .next_turn_attack_restriction_model import ResolvedNextTurnAttackRestriction
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
@@ -38,6 +44,7 @@ from .keyword_prohibition import prepare_resolution_keyword_exclusions
 from .source_continuity import SourceContinuitySnapshot
 from .source_tap_effect import RUNTIME_SOURCE_CONTINUITY_FIELD, SOURCE_TAP_EFFECT_FIELD
 from .source_untap_rule_model import ResolvedSourceUntapRestraint
+from .sacrifice_prohibition_model import ResolvedSacrificeProhibition
 
 
 class ContinuousEffectStateError(ValueError):
@@ -51,6 +58,7 @@ class ResolutionContinuousComponent:
     layer: Layer
     sublayer: str
     operations: tuple[ContinuousOperation, ...]
+    applies: ObjectQuerySpec | None = None
 
     def __post_init__(self) -> None:
         try:
@@ -67,6 +75,18 @@ class ResolutionContinuousComponent:
             raise ContinuousEffectStateError(
                 "Resolution continuous components require typed operations"
             )
+        if self.applies is not None:
+            from .continuous_type_dependencies import CREATURE_SUBTYPE_BATTLEFIELD_QUERY
+            from .creature_subtypes import canonical_creature_subtype
+
+            if (
+                self.applies != CREATURE_SUBTYPE_BATTLEFIELD_QUERY
+                or self.layer is not Layer.TYPE or self.sublayer != "4" or len(operations) != 1
+                or operations[0].op != "add_types" or operations[0].field != "subtypes"
+                or not isinstance(operations[0].value, tuple)
+                or any(canonical_creature_subtype(word) is None for word in operations[0].value)
+            ):
+                raise ContinuousEffectStateError("A scoped resolution component requires fixed additive creature subtypes")
         object.__setattr__(self, "operations", operations)
 
 
@@ -189,7 +209,10 @@ def commit_continuous_effect(
         effect,
         (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint,
          ResolvedLinkedDepartureExile, ResolvedNextSpellCostReduction,
-         ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition, ResolvedProtectedAttackPayment, ResolvedDrawRedirect),
+         ResolvedLifeGainProhibition, ResolvedDamagePreventionProhibition, ResolvedProtectedAttackPayment, ResolvedDrawRedirect,
+         ResolvedActivationProhibition, ResolvedNextDrawReplacement, ResolvedTurnMatchOutcomeProtection,
+         ResolvedAllPlayerTurnRule, ResolvedSacrificeProhibition, ResolvedNoMaximumHandSize,
+         ResolvedNextTurnSorceryTiming, ResolvedNextTurnAttackRestriction),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -200,6 +223,11 @@ def commit_continuous_effect(
             "Continuous-effect state is unavailable"
         )
     _require_expiry_player(state, getattr(effect, "expires_on_next_turn_of", None))
+    if (isinstance(effect, ResolutionDeclarationRuleEffect) and effect.block_opponents_of is not None
+            and effect.block_opponents_of not in state.players):
+        raise ContinuousEffectStateError("Opponent blocking rule lost its original controller")
+    if isinstance(effect, ResolvedNextTurnAttackRestriction):
+        effect.validate_players(state.players, live=True)
     if any(current.effect_id == effect.effect_id for current in journal):
         raise ContinuousEffectStateError(
             "Continuous-effect identity is already committed"
@@ -570,6 +598,8 @@ def create_resolution_continuous_effect_components(
         raise ContinuousEffectStateError(
             "Resolution continuous components require unique layer positions"
         )
+    if duration is not ContinuousEffectDuration.ZONE_OBJECT and any(value.applies is not None for value in values):
+        raise ContinuousEffectStateError("Scoped resolution components require a locked battlefield incarnation")
     identities = tuple(
         ContinuousObjectIdentity(
             object_id=card.object_id,
@@ -595,7 +625,7 @@ def create_resolution_continuous_effect_components(
             operations=component.operations,
             origin=ContinuousEffectOrigin.RESOLUTION,
             duration=duration,
-            applies=ObjectQuerySpec(zones=("battlefield",)),
+            applies=component.applies or ObjectQuerySpec(zones=("battlefield",)),
             locked_objects=identities,
             expires_on_next_turn_of=expires_on_next_turn_of,
             duration_source=duration_source,
@@ -640,6 +670,7 @@ def create_resolution_declaration_rule_effect(
     live_query: ObjectQuerySpec | None = None,
     expires_on_next_turn_of: str | None = None,
     forbid_activations: bool = False,
+    block_opponents_of: str | None = None,
 ) -> ResolutionDeclarationRuleEffect | None:
     """Commit a declaration rule with locked recipients or one live query."""
 
@@ -666,6 +697,7 @@ def create_resolution_declaration_rule_effect(
         live_query=live_query,
         expires_on_next_turn_of=expires_on_next_turn_of,
         forbid_activations=forbid_activations,
+        block_opponents_of=block_opponents_of,
     )
     committed = commit_continuous_effect(host.state, effect)
     if not isinstance(committed, ResolutionDeclarationRuleEffect):
@@ -741,8 +773,11 @@ def fixed_target_color_effects(state: Any, card: Any) -> tuple[ContinuousEffect,
 
 
 def stack_resolution_effects(state: Any, card: Any) -> tuple[ContinuousEffect, ...]:
+    from .rules.exile_spell_copy_grant import exile_spell_copy_grant_effect
+
     return tuple(effect for effect in active_resolution_effects(state, card)
-                 if is_fixed_target_color_effect(effect) or _is_paid_mana_haste_effect(effect))
+                 if is_fixed_target_color_effect(effect) or _is_paid_mana_haste_effect(effect)
+                 or exile_spell_copy_grant_effect(effect))
 
 
 def active_resolution_declaration_rule_effects(
@@ -774,6 +809,8 @@ def active_resolution_declaration_rule_effects(
 
 
 def expire_zone_departure_effects(state: Any, card: Any) -> None:
+    from .rules.exile_spell_copy_grant import exile_spell_copy_grant_effect
+
     journal = state.continuous_effects
     if not journal:
         return
@@ -786,6 +823,7 @@ def expire_zone_departure_effects(state: Any, card: Any) -> None:
         or (
             is_fixed_target_color_effect(effect)
             or _is_paid_mana_haste_effect(effect)
+            or exile_spell_copy_grant_effect(effect)
             or isinstance(effect, ContinuousEffect)
             and effect.duration is ContinuousEffectDuration.UNTIL_RECIPIENT_CONTROLLER_UNTAP
         ) and identity in effect.locked_objects
@@ -799,7 +837,8 @@ def expire_end_of_turn_continuous_effects(state: Any) -> int:
     retained = [
         effect
         for effect in journal
-        if effect.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN
+        if (not effect.expires_at_cleanup(state) if isinstance(effect, ResolvedNextTurnAttackRestriction)
+            else effect.duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN)
     ]
     expired = len(journal) - len(retained)
     journal[:] = retained

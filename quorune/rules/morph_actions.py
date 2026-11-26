@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import replace
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from ..cost_payments import ManaCostPayment
 
 from ..compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ..counter_placement import (
@@ -15,6 +18,7 @@ from ..counter_placement import (
 )
 from ..errors import GameRuleError
 from ..face_up_effect_model import TURN_FACE_UP_ACTOR_CAPABILITY, TURN_FACE_UP_ACTOR_FIELD, TURN_FACE_UP_EVENT
+from ..life_state import LifeStateError, pay_life_cost
 from ..mana_undo import clear_mana_undo_stack
 from ..morph import (
     current_face_up_has_face_down_method,
@@ -23,6 +27,7 @@ from ..morph import (
     MorphError,
     validate_morph_face_down_state,
 )
+from ..printed_mana_cost_model import PRINTED_PHYREXIAN_LIFE_FIELD, cast_snow_payment_kwargs, printed_phyrexian_life_payment
 from ..zone_object_state import ZoneObjectStateError
 from ..zone_transitions import ZoneTransitionOwner
 from .action_proposals import ActionOffer, freeze_json
@@ -61,6 +66,7 @@ class MorphActionHost(Protocol):
         requirements: Mapping[str, int],
         *,
         spend_context: Any = None,
+        snow_required: int = 0,
     ) -> bool: ...
 
     def _pay_for_cost(
@@ -70,7 +76,8 @@ class MorphActionHost(Protocol):
         response: Mapping[str, Any],
         *,
         spend_context: Any = None,
-    ) -> tuple[dict[str, int], list[dict[str, Any]]]: ...
+        snow_required: int = 0,
+    ) -> ManaCostPayment: ...
 
     def _log(
         self,
@@ -98,24 +105,27 @@ def _eligible_spec(host: MorphActionHost, seat: str, card: Any, *, method: str |
         option=selected_composed_turn_up_option(host,seat,card,method=method,source_key=face_up_ability)
         return option.spec if option is not None else None
     if face_up_ability is not None:return None
-    from ..manifest import manifest_turn_up_spec, is_manifested
+    from ..manifest import cloak_turn_up_spec, is_cloaked, is_manifested, manifest_turn_up_spec
     from ..morph import is_turned_face_down_by_effect
 
     manifested = is_manifested(card)
+    cloaked = is_cloaked(card)
     effect_face_down = is_turned_face_down_by_effect(card)
     if manifested and method in {None, 'manifest'}:
         return manifest_turn_up_spec(host, seat, card)
+    if cloaked and method in {None, 'cloak'}:
+        return cloak_turn_up_spec(host, seat, card)
     if (
         card.zone != "battlefield"
         or card.controller != seat
         or card.phased_out
         or card.object_kind != "card" and not (effect_face_down and card.is_token)
         or not card.face_down
-        or not effect_face_down and card.annotations.get("copy_overrides") is not None
+        or not (effect_face_down or cloaked) and card.annotations.get("copy_overrides") is not None
     ):
         return None
     marker = card.annotations.get("face_down_method")
-    if not manifested and not effect_face_down:
+    if not (manifested or cloaked or effect_face_down):
         method = marker.get("kind") if isinstance(marker, Mapping) else None
     if method not in FACE_DOWN_CAST_METHODS:
         return None
@@ -123,12 +133,12 @@ def _eligible_spec(host: MorphActionHost, seat: str, card: Any, *, method: str |
         host,
         card,
         method=method,
-        use_copiable_source=effect_face_down,
+        use_copiable_source=effect_face_down or cloaked,
     )
     if spec is None:
         return None
     try:
-        if not manifested and not effect_face_down:
+        if not (manifested or cloaked or effect_face_down):
             validate_morph_face_down_state(card, spec)
         if not current_face_up_has_face_down_method(
             host,
@@ -170,7 +180,7 @@ def _composed_offer_and_spec(host,seat,card,*,method,mana_cost_option,face_up_ab
 
 
 def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_option, face_up_ability=None, extra_source=False):
-    from ..manifest import is_manifested
+    from ..manifest import is_cloaked, is_manifested
     from ..morph import is_turned_face_down_by_effect
     from .nonmana_morph_costs import nonmana_morph_offer_fields
 
@@ -180,31 +190,43 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
 
     options = getattr(spec, 'mana_cost_options', ())
     requirements = spec.requirements_dict
+    symbol_costs = {}
     if options:
         option = next((value for value in options
             if type(mana_cost_option) is str and value.option_id == mana_cost_option), None)
         if option is None:
             return None
         requirements = dict(option.requirements)
+        if option.life_payment:
+            if host.state.players[seat].life < option.life_payment:
+                return None
+            symbol_costs[PRINTED_PHYREXIAN_LIFE_FIELD] = option.life_payment
+        if option.snow_payment:
+            symbol_costs['snow'] = option.snow_payment
     elif mana_cost_option is not None:
         return None
     if not host._cost_is_affordable(
         seat,
         requirements,
         spend_context=None,
+        **cast_snow_payment_kwargs(symbol_costs),
     ):
         return None
+    price = spec.cost_text
+    if options:
+        price = ''.join(f'{{{requirements[key]}}}' if key == 'GENERIC' else f'{{{key}}}' * requirements[key]
+                        for key in ('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C') if requirements[key])
+        price += '{S}' * symbol_costs.get('snow', 0)
+        if life := printed_phyrexian_life_payment(symbol_costs):
+            price += f' and {life} life' if price else f'{life} life'
     return ActionOffer(
         action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None
-            and (is_manifested(card) or is_turned_face_down_by_effect(card)) else '')
+            and (is_manifested(card) or is_cloaked(card) or is_turned_face_down_by_effect(card)) else '')
             + (f':{mana_cost_option}' if mana_cost_option is not None else '')
             + (f':ability:{face_up_ability}' if extra_source else ''),
         action="turn_face_up",
         seat=seat,
-        label=f"Turn {card.printed_name} face up — " + (
-            ''.join(f'{{{requirements[key]}}}' if key == 'GENERIC' else f'{{{key}}}' * requirements[key]
-                for key in ('GENERIC', 'W', 'U', 'B', 'R', 'G', 'C') if requirements[key])
-            if options else spec.cost_text),
+        label=f"Turn {card.printed_name} face up — {price}",
         expiry_revision=host.state.revision,
         payload=freeze_json(
             {
@@ -216,6 +238,7 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
                 "method": spec.method,
                 **({'face_up_ability':face_up_ability} if face_up_ability is not None else {}),
                 **({'mana_cost_option': mana_cost_option} if options else {}),
+                **symbol_costs,
                 **nonmana_fields,
             }
         ),
@@ -233,9 +256,10 @@ def build_turn_face_up_offers(host, seat, card):
                     face_up_ability=choice.source_key,extra_source=index>0)
                 if offer is not None:offers.append(offer)
         return tuple(offers)
-    from ..manifest import is_manifested
+    from ..manifest import is_cloaked, is_manifested
     from ..morph import is_turned_face_down_by_effect
-    methods = ('manifest', *FACE_DOWN_CAST_METHODS) if is_manifested(card) else (
+    library_method = 'manifest' if is_manifested(card) else 'cloak' if is_cloaked(card) else None
+    methods = (library_method, *FACE_DOWN_CAST_METHODS) if library_method else (
         FACE_DOWN_CAST_METHODS if is_turned_face_down_by_effect(card) else (None,))
     offers = []
     for method in methods:
@@ -297,14 +321,23 @@ def commit_turn_face_up(
         response,copy_selections=split_face_up_copy_payment(card,response)
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
-    requirements = offer.to_dict()['requirements']
+    price = offer.to_dict()
+    requirements = price['requirements']
     clear_mana_undo_stack(host.state.players[seat].stats)
-    spent, activations = host._pay_for_cost(
+    mana_payment = host._pay_for_cost(
         seat,
         requirements,
         response,
         spend_context=None,
+        **cast_snow_payment_kwargs(price),
     )
+    spent, activations = mana_payment.spent, mana_payment.activations
+    life_paid = printed_phyrexian_life_payment(price)
+    if life_paid:
+        try:
+            pay_life_cost(host, seat, life_paid)
+        except LifeStateError as exc:
+            raise GameRuleError(str(exc)) from exc
     from .nonmana_morph_costs import pay_nonmana_morph_cost, morph_zone_cost
     incarnation = card.logical_object_id
     pay_nonmana_morph_cost(host, seat, card, spec, response)
@@ -362,10 +395,10 @@ def commit_turn_face_up(
         except CounterPlacementError as exc:
             raise GameRuleError(str(exc)) from exc
     elif response.get("_mana_replacement_selections") and morph_zone_cost(spec) is None:
-        from ..mana_mode_effects import mana_damage_event_belongs_to_payment
+        from ..mana_mode_effects import mana_result_event_belongs_to_payment
 
         journal = response["_mana_replacement_selections"]
-        if not copy_selections or not all(mana_damage_event_belongs_to_payment(event_id, response["_mana_payment_id"])
+        if not copy_selections or not all(mana_result_event_belongs_to_payment(event_id, response["_mana_payment_id"])
                 for event_id in journal):
             raise GameRuleError("Turn-face-up replacement selections require Megamorph")
     host._log(
@@ -377,6 +410,7 @@ def commit_turn_face_up(
             "method": spec.method,
             "requirements": requirements,
             "payment": {key: value for key, value in spent.items() if value},
+            **({'life_paid': life_paid} if life_paid else {}),
             "mana_sources": [
                 activation.get("source_ref") or activation.get("source")
                 for activation in activations

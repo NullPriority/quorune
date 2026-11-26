@@ -18,6 +18,7 @@ from .continuous_effect_state import (
 from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
 from .impulse_access import expire_next_end_step_play_permissions, expire_temporary_play_permissions
+from .opponent_library_exile import expire_opponent_library_exile_play_permissions
 from .turn_skip_model import ScheduledTurnSkip, TurnBoundary, TurnSkipScope, TurnSkipSpec
 from .rules.land_play_permissions import (
     reset_additional_land_play_permissions,
@@ -30,10 +31,14 @@ from .model import (
     YieldPolicy,
 )
 from .turn_history import roll_turn_history
-from .turn_priority_model import apnap_participants
+from .turn_priority_model import (
+    NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD, TURN_CONTROL_LIFETIME_VERSION_FIELD,
+    apnap_participants, read_turn_control_lifetime_version,
+)
 from .trigger_processing import (
     clear_pending_trigger_batches,
     expire_next_cast_copy_triggers,
+    expire_target_death_return_triggers,
     matching_delayed_triggers,
 )
 from .util import unique_preserving_order
@@ -56,6 +61,7 @@ TURN_STEPS: tuple[tuple[str, str], ...] = (
 
 _COMBAT_START_INDEX = TURN_STEPS.index(("combat", "beginning_combat"))
 _COMBAT_END_INDEX = TURN_STEPS.index(("postcombat_main", "main"))
+_END_TURN_CLEANUP_PENDING = "end_turn_cleanup_pending"
 
 
 class TurnStepHost(Protocol):
@@ -92,6 +98,10 @@ class TurnStepHost(Protocol):
         *,
         reason: str,
     ) -> None: ...
+
+    def _move_cards_simultaneously(
+        self, changes: Sequence[tuple[str, str]], *, reason: str,
+    ) -> Sequence[Any]: ...
 
     def move_card(
         self,
@@ -402,6 +412,11 @@ class TurnStepOwner:
             if self.state.current_turn is not None
             else None
         )
+        if previous_active_player in self.state.players:
+            previous_stats = self.state.players[previous_active_player].stats
+            if read_turn_control_lifetime_version(previous_stats) is not None:
+                previous_stats.pop(TURN_CONTROL_LIFETIME_VERSION_FIELD)
+                previous_stats.pop("turn_controlled_by", None)
         self._advance_normal_rotation(entry)
         self.state.current_turn = entry
         self.state.active_player = entry.player
@@ -409,6 +424,7 @@ class TurnStepOwner:
         expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
         expire_next_cast_copy_triggers(self._host)
+        expire_target_death_return_triggers(self._host)
         self._bind_turn_skips(entry.player)
         if self.state.turn_history is not None:
             self.state.turn_history = roll_turn_history(
@@ -422,6 +438,9 @@ class TurnStepOwner:
             "protection_from_everything_until_next_turn",
             None,
         )
+        lifetime = read_turn_control_lifetime_version(player.stats, NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD)
+        player.stats.pop(NEXT_TURN_CONTROL_LIFETIME_VERSION_FIELD, None)
+        player.stats.pop(TURN_CONTROL_LIFETIME_VERSION_FIELD, None)
         next_turn_controller = player.stats.pop(
             "next_turn_controlled_by",
             None,
@@ -431,6 +450,8 @@ class TurnStepOwner:
             and next_turn_controller != entry.player
         ):
             player.stats["turn_controlled_by"] = next_turn_controller
+            if lifetime is not None:
+                player.stats[TURN_CONTROL_LIFETIME_VERSION_FIELD] = lifetime
         else:
             player.stats.pop("turn_controlled_by", None)
         player.turns_begun += 1
@@ -472,6 +493,9 @@ class TurnStepOwner:
         held_triggers: Sequence[StackItem] = (),
         boundary_replacement: str | None = None,
     ) -> None:
+        pending_end = next((row for row in self.state.annotations if row.get("kind") == _END_TURN_CLEANUP_PENDING), None)
+        if pending_end is not None and not self._finish_pending_turn_end(pending_end):
+            return
         if not 0 <= self.state.phase_index < len(TURN_STEPS):
             raise StateInvariantError(
                 f"Invalid turn-step index {self.state.phase_index}"
@@ -532,8 +556,10 @@ class TurnStepOwner:
                     if seat != active
                 ],
             )
+        from .rad_counters import collect_rad_trigger
+
         self._host._enter_step(
-            held_triggers=held_triggers,
+            held_triggers=(*held_triggers, *collect_rad_trigger(self._host, active, phase, step)),
             phase=phase,
             step=step,
             active=active,
@@ -650,6 +676,8 @@ class TurnStepOwner:
 
     def finish_cleanup(self) -> None:
         active = self.state.active_player
+        active_stats = self.state.players[active].stats if active in self.state.players else None
+        lifetime = read_turn_control_lifetime_version(active_stats) if active_stats is not None else None
         in_cleanup_step = (self.state.phase, self.state.step) == (
             "ending",
             "cleanup",
@@ -692,6 +720,7 @@ class TurnStepOwner:
             self.state,
             active_player=active,
         )
+        expire_opponent_library_exile_play_permissions(self.state, active_player=active)
         from .entry_results import expire_copy_scope
         from .replacement.face_status_copy import CopyExpiry
 
@@ -739,11 +768,9 @@ class TurnStepOwner:
             f"{active} completed cleanup.",
             importance=0,
         )
-        if active in self.state.players:
-            self.state.players[active].stats.pop(
-                "turn_controlled_by",
-                None,
-            )
+        if active_stats is not None and (lifetime is None or self.state.game_over):
+            active_stats.pop("turn_controlled_by", None)
+            active_stats.pop(TURN_CONTROL_LIFETIME_VERSION_FIELD, None)
         if self.state.game_over:
             self.remove_cleanup_frames()
             return
@@ -798,33 +825,59 @@ class TurnStepOwner:
             self.remove_cleanup_frames()
         self.begin_turn(self.select_next_turn())
 
-    def end_turn_now(self, *, actor: str, reason: str) -> None:
-        """Perform the represented special action sequence for ending a turn."""
+    def _finish_pending_turn_end(self, pending: dict[str, Any]) -> bool:
+        """Resume the pre-cleanup state-based check after a required choice."""
+        if (pending != {"kind": _END_TURN_CLEANUP_PENDING, "schema_version": 1, "turn_sequence": self.state.turn_sequence}
+                or type(pending["schema_version"]) is not int or type(pending["turn_sequence"]) is not int
+                or self.state.stack or self.state.priority_player is not None):
+            raise StateInvariantError("The pending turn ending no longer matches the current turn")
+        if self._host._stabilize() and not self.state.game_over:
+            return False
+        self.state.annotations.remove(pending)
+        if self.state.game_over:
+            return False
+        self._host._clear_mana(reason="step or phase ended")
+        if self.state.phase == "combat":
+            self._host._finish_combat_phase()
+        self.state.extra_combat_phases = 0
+        self.state.additional_beginning_phases = None
+        self.state.phase_index = TURN_STEPS.index(("ending", "cleanup"))
+        return True
 
-        exiled_cards: list[str] = []
-        for stack_item in list(self.state.stack):
-            if not stack_item.card_object_id:
-                continue
-            card = self.state.cards.get(stack_item.card_object_id)
-            if card is None or card.zone != "stack":
-                continue
-            self._host.move_card(
-                card.object_id,
-                "exile",
-                reason=reason,
-                log=False,
-                semantic_events=False,
-            )
-            exiled_cards.append(card.object_id)
+    def end_turn_now(self, *, actor: str, reason: str, check_state_actions: bool = False) -> None:
+        """End the current turn through stack exile and cleanup."""
+        stack = tuple(self.state.stack)
+        exiled_cards = [
+            item.card_object_id for item in stack
+            if item.card_object_id and (card := self.state.cards.get(item.card_object_id)) is not None
+            and card.zone == "stack"
+        ]
+        if check_state_actions:
+            from .combat_entry_activations import cleanup_ninjutsu_reveal
+            from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
+            from .spell_resolution_names import finish_spell_resolution_names
+
+            clear_pending_trigger_batches(self._host)
+            self._host._move_cards_simultaneously([(object_id, "exile") for object_id in exiled_cards], reason=reason)
+            for item in stack:
+                cleanup_ninjutsu_reveal(self._host, item)
+                cleanup_stack_cost_hand_reveals(self._host, item)
+                finish_spell_resolution_names(self._host, item)
+            self.remove_cleanup_frames()
+        else:
+            for object_id in exiled_cards:
+                self._host.move_card(object_id, "exile", reason=reason, log=False, semantic_events=False)
         removed_stack = [item.ref for item in self.state.stack]
         self.state.stack.clear()
-        clear_pending_trigger_batches(self._host)
+        if not check_state_actions:
+            clear_pending_trigger_batches(self._host)
         self._host.permissions.invalidate_current()
         self.state.priority_player = None
         self.state.priority_passes = []
-        self.state.combat = self.state.combat.fresh()
-        self.state.extra_combat_phases = 0
-        self.state.additional_beginning_phases = None
+        if not check_state_actions:
+            self.state.combat = self.state.combat.fresh()
+            self.state.extra_combat_phases = 0
+            self.state.additional_beginning_phases = None
         self._host._log(
             actor,
             "turn.ended",
@@ -840,7 +893,10 @@ class TurnStepOwner:
             importance=3,
             changed_objects=exiled_cards,
         )
-        self.state.phase_index = TURN_STEPS.index(
-            ("ending", "cleanup")
-        )
+        if check_state_actions:
+            self.state.annotations.append({
+                "kind": _END_TURN_CLEANUP_PENDING, "schema_version": 1, "turn_sequence": self.state.turn_sequence,
+            })
+        else:
+            self.state.phase_index = TURN_STEPS.index(("ending", "cleanup"))
         self.enter_step()

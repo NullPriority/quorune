@@ -338,8 +338,13 @@ def _permission_events(events, permissions):
         raise LifeChangeError('Life changes require a typed gain-permission snapshot')
     allowed, suppressed = [], []
     for event in events:
-        if event.payload.get('direction') == 'gain' and not permissions.allows_gain(event.affected_player):
-            suppressed.append(replace(event, payload={**event.payload, 'amount': 0}))
+        direction = event.payload.get("direction")
+        player = event.affected_player
+        denied = (direction == "gain" and not permissions.allows_gain(player)) or (
+            direction == "loss" and not permissions.allows_loss(player)
+        )
+        if denied:
+            suppressed.append(replace(event, payload={**event.payload, "amount": 0}))
         else:
             allowed.append(event)
     return tuple(allowed), tuple(suppressed)
@@ -490,11 +495,20 @@ def commit_life_change_batch(
     prepared: PreparedLifeChangeBatch,
     *,
     log_replacements: bool = True,
+    radiation_counter_plan=None,
 ) -> LifeChangeCommit:
     """Commit one replay-validated life batch through the typed state owner."""
 
     validate_life_change_batch(host, prepared)
+    if radiation_counter_plan is not None:
+        from .counter_state import validate_counter_changes
+
+        validate_counter_changes(host, radiation_counter_plan)
     transitions = apply_life_changes(host, prepared.plan)
+    if radiation_counter_plan is not None:
+        from .rad_counters import commit_rad_removal
+
+        commit_rad_removal(host, radiation_counter_plan)
     if log_replacements:
         effects = {effect.effect_id: effect for effect in prepared.effects}
         events = {event.event_id: event for event in prepared.events}

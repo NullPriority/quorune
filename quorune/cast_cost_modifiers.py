@@ -11,10 +11,35 @@ from .object_predicate import ObjectQueryError, ObjectQuerySpec
 
 CHOSEN_TYPE_CAST_COST_HANDLER_ID = "modification.cast-cost.chosen-creature-type.v1"
 CHOSEN_TYPE_CAST_COST_CAPABILITY = "casting.cost.modifier.chosen_creature_type"
+SPELL_MANA_FLOOR_HANDLER_ID = "modification.cast-cost.untapped-mana-floor.v1"
+SPELL_MANA_FLOOR_CAPABILITY = "casting.cost.minimum_mana.untapped_source"
+SPELL_MANA_FLOOR_TEMPLATE = "untapped-spell-mana-floor-v1"
 
 
 class CastCostModifierError(ValueError):
     """A public spell-cost modifier descriptor is malformed."""
+
+
+@dataclass(frozen=True, slots=True)
+class FixedSpellManaFloorSpec:
+    """One exact minimum applied to the final mana component before payment."""
+
+    minimum_mana: int = 3
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if (type(self.schema_version) is not int or self.schema_version != 1
+                or type(self.minimum_mana) is not int or self.minimum_mana != 3):
+            raise CastCostModifierError("The untapped spell minimum requires its versioned three-mana floor")
+
+    def to_dict(self) -> dict[str, int]:
+        return {"minimum_mana": self.minimum_mana, "schema_version": self.schema_version}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> FixedSpellManaFloorSpec:
+        if not isinstance(value, Mapping) or set(value) != {"minimum_mana", "schema_version"}:
+            raise CastCostModifierError("The untapped spell minimum has a closed cost descriptor")
+        return cls(value["minimum_mana"], value["schema_version"])
 
 
 class CastCostAffectedController(str, Enum):

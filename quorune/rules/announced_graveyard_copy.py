@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
+from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY, exact_mana_only_x_activation_cost
 from ..replacement.immutable import FrozenMap, thaw_value
 from .graveyard_card_targets import PublicGraveyardCardTargetKind, PublicGraveyardCardTargetSpec
 
@@ -82,25 +82,9 @@ def announced_graveyard_copy_runtime_dependencies(program):
         effects=program.effects, target_schema=program.target_schema, mechanic_ids=("cr-115-targets",),
     )
     if (not required or program.event != "activate" or program.active_zone != "battlefield"
-            or not _closed_announced_graveyard_copy_cost(program.cost_schema)):
+            or not exact_mana_only_x_activation_cost(program.cost_schema)):
         raise ValueError("Announced graveyard copy requires one ordinary X battlefield activation")
     return required
-
-
-def _closed_announced_graveyard_copy_cost(cost) -> bool:
-    expected = {
-        "text": "{X}", "mana": dict.fromkeys(("GENERIC", *"WUBRGC"), 0),
-        "complex_symbols": [], "tap_source": False, "untap_source": False,
-        "discard_source": False, "sacrifice_source": False, "exile_source": False,
-        "life_payment": 0, "energy_payment": 0, "loyalty_delta": None,
-        "source_counter_removal_cost": None, "choices": [], "uncompiled_costs": [],
-        "announced_x_symbols": 1,
-    }
-    if not isinstance(cost, Mapping):
-        return False
-    mana = cost.get("mana")
-    return (isinstance(mana, Mapping) and all(type(amount) is int for amount in mana.values())
-            and type(cost.get("announced_x_symbols")) is int and thaw_value(cost) == expected)
 
 
 def is_closed_announced_graveyard_copy_program(program) -> bool:

@@ -26,6 +26,38 @@ CREATURE_SELF_DAMAGE_SET_DEPENDENCIES = (
 )
 
 
+CREATURE_CONTROLLER_DAMAGE_SET_VERSION = 6
+CREATURE_CONTROLLER_DAMAGE_SET_KIND = "controller_set"
+CREATURE_CONTROLLER_DAMAGE_SET_CAPABILITY = "damage.creature_controller.simultaneous_fixed_set"
+CREATURE_CONTROLLER_DAMAGE_SET_DEPENDENCIES = (
+    CREATURE_CONTROLLER_DAMAGE_SET_CAPABILITY,
+    "damage.amount.positive",
+    "damage.result.player_life",
+)
+
+
+def creature_controller_damage_set_effect() -> dict[str, Any]:
+    return {"op": CREATURE_POWER_DAMAGE_OPERATION, "schema_version": CREATURE_CONTROLLER_DAMAGE_SET_VERSION,
+            "kind": CREATURE_CONTROLLER_DAMAGE_SET_KIND, "amount": 1}
+
+
+def is_creature_controller_damage_set(effect: Mapping[str, Any]) -> bool:
+    return effect.get("op") == CREATURE_POWER_DAMAGE_OPERATION and (
+        effect.get("kind") == CREATURE_CONTROLLER_DAMAGE_SET_KIND
+        or effect.get("schema_version") == CREATURE_CONTROLLER_DAMAGE_SET_VERSION
+    )
+
+
+def validate_creature_controller_damage_set(effect: Mapping[str, Any], *, resolved: bool = False) -> None:
+    actual = dict(effect)
+    if resolved:
+        for field in ("reason", "_runtime_source", "_replacement_event_ids", "_replacement_selections"):
+            actual.pop(field, None)
+    if (type(actual.get("schema_version")) is not int or type(actual.get("amount")) is not int
+            or actual != creature_controller_damage_set_effect()):
+        raise ValueError("Creature-controller damage requires the exact untargeted fixed-one set")
+
+
 def creature_self_damage_set_effect() -> dict[str, Any]:
     return {
         "op": CREATURE_POWER_DAMAGE_OPERATION,
@@ -55,6 +87,9 @@ def creature_power_damage_runtime_dependencies(effect: Mapping[str, Any]) -> tup
     if is_creature_self_damage_set(effect):
         validate_creature_self_damage_set(effect)
         return CREATURE_SELF_DAMAGE_SET_DEPENDENCIES
+    if is_creature_controller_damage_set(effect):
+        validate_creature_controller_damage_set(effect)
+        return CREATURE_CONTROLLER_DAMAGE_SET_DEPENDENCIES
     if creature_power_damage_multiplier(effect) == 2:
         return (CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,)
     return ()

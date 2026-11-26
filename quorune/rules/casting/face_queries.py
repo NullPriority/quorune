@@ -110,9 +110,12 @@ def offered_cast_methods(host,card):
     from ...cast_face_offers import complete_cast_face_offers
     face_layouts={'split','modal_dfc'}|({'adventure'} if complete_cast_face_offers(host.state) else set())
     faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in face_layouts else (None,)
-    from .disturb_costs import compiled_disturb_spec
-    disturb=compiled_disturb_spec(host,card) if card.zone=='graveyard' else None
-    if disturb is not None:faces=(*faces,disturb.back_face)
+    from .disturb_costs import compiled_disturb_spec, compiled_more_than_meets_the_eye_spec
+    back_face_cast = compiled_more_than_meets_the_eye_spec(host, card)
+    if back_face_cast is None and card.zone == 'graveyard':
+        back_face_cast = compiled_disturb_spec(host, card)
+    if back_face_cast is not None:
+        faces = (*faces, back_face_cast.back_face)
     from ..prototype import compiled_prototype_spec
     prototype=(('prototype',None),) if compiled_prototype_spec(host,card) is not None else ()
     from ..fuse import compiled_fuse_spec
@@ -120,10 +123,29 @@ def offered_cast_methods(host,card):
     return tuple((None,name) for name in faces)+prototype+fuse+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
 
 
-def candidate_zone_cast_permission(host,seat,card):
+def face_down_library_top_cast_permission(host, seat, card, method):
+    from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
+    from ...morph import FACE_DOWN_CAST_METHODS
+    from ...semantic_runtime.action_permissions import controller_has_face_down_library_top_spell_permission
+
+    return (
+        card.zone == 'library' and method in FACE_DOWN_CAST_METHODS
+        and compiled_fixed_mana_face_down_method_spec(host, card, method=method) is not None
+        and controller_has_face_down_library_top_spell_permission(host, seat, card)
+    )
+
+
+def candidate_zone_cast_permission(host, seat, card):
     from .disturb_costs import cast_view_zone_permission
-    if cast_view_zone_permission(host,seat,card):return True
-    return any(cast_view_zone_permission(host,seat,selected_cast_card_view(host,card,name,method)) for method,name in offered_cast_methods(host,card) if method=='prototype' or method is None and name is not None)
+
+    if cast_view_zone_permission(host, seat, card):
+        return True
+    return any(
+        cast_view_zone_permission(host, seat, selected_cast_card_view(host, card, name, method))
+        if method == 'prototype' or method is None and name is not None
+        else face_down_library_top_cast_permission(host, seat, card, method)
+        for method, name in offered_cast_methods(host, card)
+    )
 
 
 def selected_cast_card_view(host,card,face_name=None,cast_method=None):
@@ -198,16 +220,34 @@ def build_cast_cost_options(
 
     if resolving_library_authority and (card.zone!='library' or not force_without_mana_cost or not ignore_timing):
         raise ValueError('Resolving library authority requires its explicit free resolution cast')
+    life_price_options = ()
+    if card.zone == "library" and alternative_base is None and not force_without_mana_cost:
+        life_price_options = _library_top_life_variants(
+            host, seat, card, submission, build, face_down=suppress_source_costs,
+        )
     minimum = 0 if resolving_library_authority else _static_library_top_minimum_x(host, seat, card, face_down=suppress_source_costs)
     if not (hint and minimum and submission.get('x') is None):
-        return build(submission, minimum_library_x=minimum)
+        return (*build(submission, minimum_library_x=minimum), *life_price_options)
     static = build({**submission, 'x': minimum}, minimum_library_x=minimum, source_grant_only=False)
     from .turn_cast_grants import current_turn_cast_grants
 
     if not current_turn_cast_grants(host, seat, card, cast_type_line=cast_type_line):
-        return static
+        return (*static, *life_price_options)
     grants = build(submission, minimum_library_x=minimum, source_grant_only=True)
-    return (*static, *grants)
+    return (*static, *grants, *life_price_options)
+
+
+def _library_top_life_variants(host, seat, card, submission, build, *, face_down):
+    from ..turn_cast_grant_model import TURN_CAST_GRANT_FIELD
+    from .library_top_life import library_top_life_cost_options
+
+    bases = library_top_life_cost_options(host, seat, card, submission, face_down=face_down)
+    return tuple(
+        option
+        for base in bases
+        for option in build(submission, minimum_library_x=0, alternative_base=base)
+        if TURN_CAST_GRANT_FIELD not in option.to_dict()
+    )
 
 
 def bind_library_top_cost_option(option, submission, *, has_x, minimum, source_grant_only):
@@ -237,7 +277,13 @@ def bind_library_top_cost_option(option, submission, *, has_x, minimum, source_g
 
 def validate_library_top_cast_commit(host, seat, card, option, response, *, face_down=False):
     from ..turn_cast_grant_model import TURN_CAST_GRANT_FIELD
+    from .library_top_life import LIBRARY_TOP_LIFE_PRICE_FIELD, validate_library_top_life_price
 
+    if LIBRARY_TOP_LIFE_PRICE_FIELD in option:
+        if TURN_CAST_GRANT_FIELD in option:
+            raise ValueError("A library-top life price may only use its own source")
+        validate_library_top_life_price(host, seat, card, option, response, face_down=face_down)
+        return
     if card.zone != 'library' or TURN_CAST_GRANT_FIELD in option:
         return
     minimum = _static_library_top_minimum_x(host, seat, card, face_down=face_down)

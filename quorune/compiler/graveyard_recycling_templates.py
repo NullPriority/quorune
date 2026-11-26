@@ -2,7 +2,8 @@
 from dataclasses import dataclass
 from . import regex_working_set as re
 from ..graveyard_recycling_model import (
-    GraveyardRecyclingSpec, GRAVEYARD_RECYCLING_OPERATION, SOURCE_GRAVEYARD_RECYCLING_VERSION,
+    GraveyardRecyclingSpec, GRAVEYARD_RECYCLING_OPERATION, RANDOM_GRAVEYARD_BOTTOM_VERSION,
+    SOURCE_GRAVEYARD_RECYCLING_VERSION, random_graveyard_bottom_target_schema,
 )
 
 
@@ -19,6 +20,9 @@ class GraveyardRecyclingTemplate:
         player = {'controller': '$controller', 'target_player': '$target.0', 'all_players': 'all'}[self.spec.scope]
         schema = {'zones': ['player'], 'categories': ['player'], 'player_relation': 'any', 'count': 1} if targeted else None
         recycling = {'op': GRAVEYARD_RECYCLING_OPERATION, 'recycling': self.spec.to_dict(), 'player': player}
+        if self.spec.random_bottom:
+            return ('whole-graveyard-random-bottom-v4', (recycling,), random_graveyard_bottom_target_schema(),
+                    ('fixed-owner-zone-move', 'cr-115-targets'))
         if self.spec.include_source:
             from .life_templates import fixed_life_effect_template
 
@@ -33,6 +37,11 @@ class GraveyardRecyclingTemplate:
 
 def graveyard_recycling_template(text):
     normalized = ' '.join(text.strip().split())
+    if re.fullmatch(
+        r'Up to one target player puts all the cards from their graveyard '
+        r'on the bottom of their library in a random order\.?', normalized, re.I,
+    ):
+        return GraveyardRecyclingTemplate(GraveyardRecyclingSpec('target_player', RANDOM_GRAVEYARD_BOTTOM_VERSION))
     if normalized.casefold().replace("’", "'") == (
         "you gain 5 life. shuffle this artifact and your graveyard into their owner's library."
     ):

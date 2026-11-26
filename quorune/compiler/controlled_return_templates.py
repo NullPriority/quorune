@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import replace
 from . import regex_working_set as re
 
-from ..rules.controlled_return import CONTROLLED_RETURN_MECHANIC, ControlledReturn
+from ..rules.controlled_return import CONTROLLED_RETURN_MECHANIC, ControlledReturn, shared_entry_return_condition
 from .fixed_entry_return_requirements import _controlled_quality_query
 
 _CONTROLLED_RETURN = re.compile(
@@ -14,6 +14,10 @@ _CONTROLLED_RETURN = re.compile(
     re.IGNORECASE,
 )
 _UP_TO = {"up to one": 1, "up to two": 2, "up to three": 3}
+_SHARED_ENTRY_RETURN = re.compile(
+    r"You may return another permanent you control that shares a permanent type with it to its owner['’]s hand\.?",
+    re.IGNORECASE,
+)
 
 
 def controlled_return_scope(text: str, *, source_is_permanent: bool | None) -> ControlledReturn | None:
@@ -40,3 +44,13 @@ def controlled_return_template(text: str, *, source_is_permanent: bool | None):
     if scope is None:
         return None
     return "bounded-controlled-return-v1", (scope.effect(),), None, (CONTROLLED_RETURN_MECHANIC,)
+
+
+def controlled_return_trigger_template(binding, body: str):
+    if (_SHARED_ENTRY_RETURN.fullmatch(" ".join(body.split()))
+            and (binding.event.value, binding.active_zone) == ("permanent.enter", "battlefield")
+            and binding.event_condition == shared_entry_return_condition()):
+        return "shared-entry-permanent-type-return-v1", (ControlledReturn.shared_entry().effect(),), None, (
+            CONTROLLED_RETURN_MECHANIC,
+        )
+    return controlled_return_template(body, source_is_permanent=binding.active_zone == "battlefield")

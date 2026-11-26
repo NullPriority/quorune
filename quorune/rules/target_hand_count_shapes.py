@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """One selected public player is the owner of the queried hand cardinality."""
 
+from collections.abc import Mapping
+
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..replacement.immutable import FrozenMap
 from ..scalar_effect_amount_model import (
@@ -45,6 +47,17 @@ def target_hand_count_dependencies(effects,target_schema,mechanics):
 
 
 def target_hand_count_runtime_dependencies(program):
+    schema = program.target_schema
+    if (
+        not program.effects and TARGET_HAND_COUNT_MECHANIC in program.coverage
+        and isinstance(schema, Mapping) and isinstance(schema.get("modes"), Mapping)
+    ):
+        from .modal_node_capabilities import modal_schema_runtime_dependencies
+
+        required = modal_schema_runtime_dependencies(schema)
+        if TARGET_HAND_COUNT_CAPABILITY not in required:
+            raise ValueError("Modal hand count requires a closed branch amount and its direct target")
+        return (TARGET_HAND_COUNT_CAPABILITY, SCALAR_AMOUNT_CAPABILITY, "target.revalidate_resolution")
     template = UPKEEP_TARGET_HAND_LIFE_TEMPLATE.replace("fixed-counter-", "fixed-typed-effect-", 1)
     expected = FrozenMap(upkeep_target_hand_life_effect())
     effect = FrozenMap(program.effects[0]) if len(program.effects) == 1 else None

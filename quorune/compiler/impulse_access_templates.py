@@ -77,6 +77,48 @@ def fixed_impulse_access_effect_template(
     return FixedImpulseAccessTemplate(count=count, duration=duration.value)
 
 
+def shuffled_top_free_play_activation(ability, text, *, public_timing):
+    if " ".join(text.casefold().split()) != (
+        "shuffle your library, then exile the top card. until end of turn, "
+        "you may play that card without paying its mana cost."
+    ):
+        return None
+    if ability.zones != ("battlefield",) or ability.mana_ability or ability.sorcery_speed or ability.activation_conditions:
+        return None
+
+    from ..library_order_model import SHUFFLE_MECHANIC
+    from ..rules.impulse_access_capability_shapes import (
+        SHUFFLED_TOP_FREE_PLAY_MECHANIC, shuffled_top_free_play_effects, shuffled_top_free_play_price_is_closed,
+    )
+    from .activated_costs import activated_ability_cost
+
+    if not shuffled_top_free_play_price_is_closed(activated_ability_cost(ability, public_timing=public_timing)):
+        return None
+    return (
+        "shuffle-top-free-play-activation-v1", shuffled_top_free_play_effects(), None,
+        (SHUFFLED_TOP_FREE_PLAY_MECHANIC, SHUFFLE_MECHANIC, IMPULSE_ACCESS_MECHANIC_ID),
+    )
+
+
+def shuffled_top_free_play_activation_gate(**scope):
+    from ..rules.impulse_access_capability_shapes import (
+        SHUFFLED_TOP_FREE_PLAY_CAPABILITY, SHUFFLED_TOP_FREE_PLAY_MECHANIC,
+        shuffled_top_free_play_activation_dependencies,
+    )
+    from .dependency_gate import DependencyGate, explicit_capabilities_gate
+
+    if SHUFFLED_TOP_FREE_PLAY_MECHANIC not in scope["mechanics"]:
+        return None
+    required = shuffled_top_free_play_activation_dependencies(
+        scope["effects"], scope["target_schema"], scope["active_zone"], scope["cost_schema"],
+    )
+    if not required:
+        return DependencyGate(blockers=(f"capability:{SHUFFLED_TOP_FREE_PLAY_CAPABILITY}",))
+    return explicit_capabilities_gate(
+        required, capability_registry=scope["capability_registry"], capability_profile=scope["capability_profile"],
+    )
+
+
 __all__ = [
     "fixed_impulse_access_effect_template",
     "FixedImpulseAccessTemplate",

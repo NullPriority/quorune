@@ -82,7 +82,7 @@ function initialField(field: ChoiceField): JsonValue | undefined {
       return target !== undefined && power > 0 ? [{ source, target, amount: power }] : [];
     });
   }
-  if (["object_map", "assignment_map", "targets"].includes(control)) return {};
+  if (["object_map", "quantity_map", "assignment_map", "targets"].includes(control)) return {};
   if (control === "select" && field.required) {
     return record(list(field.options)[0]).value;
   }
@@ -558,6 +558,20 @@ function fieldErrors(field: ChoiceField, values: ChoiceValues, compatibility: st
         errors.push(`${String(rule.label ?? group)} allows at most ${rule.maximum} card(s).`);
       }
     }
+  } else if (control === "quantity_map") {
+    const amounts = Object.entries(record(value));
+    const refs = new Set(list(field.options).map((option) => stringValue(record(option).value)));
+    const exact = field.exact_total;
+    const budget = Number(exact ?? field.maximum_total);
+    const total = amounts.reduce((sum, [, amount]) => sum + Number(amount), 0);
+    const eachMaximum = Number(field.maximum_each ?? budget);
+    const valid = value !== null && typeof value === "object" && !Array.isArray(value)
+      && amounts.every(([ref, amount]) => refs.has(ref) && typeof amount === "number"
+        && Number.isInteger(amount) && amount >= Number(field.minimum_each ?? 0) && amount <= eachMaximum)
+      && (exact === undefined ? total <= budget : total === budget);
+    if (!valid) errors.push(exact === undefined
+      ? `${label} allows up to ${budget} in total.`
+      : `${label} requires a total of ${budget}.`);
   } else if (control === "object_map") {
     const count = Object.keys(record(value)).length;
     if (field.minimum !== undefined && count < Number(field.minimum)) {

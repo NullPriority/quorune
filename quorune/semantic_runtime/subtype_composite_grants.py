@@ -5,6 +5,8 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass
 
+from ..ability_fragments import GrantedActivatedAbilitySpec, ability_fragment_from_dict
+from ..continuous_effect_model import ContinuousOperation
 from ..object_predicate import ObjectQuerySpec
 from ..type_subtype_vocabulary import CARD_TYPE_SUBTYPES
 from .attached_continuous import _attached_characteristics_node
@@ -16,6 +18,28 @@ from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler
 
 SUBTYPE_COMPOSITE_GRANT_HANDLER = 'continuous.characteristics.subtype-composite-grant.v3'
 SUBTYPE_COMPOSITE_GRANT_CAPABILITY = 'continuous.ability.fixed_subtype_composite_grant'
+OTHER_CREATURES_FOOD_GRANT_CAPABILITY = "continuous.ability.other_creatures_food_grant"
+FOOD_CREATURE_TYPE_OPERATIONS = (
+    ContinuousOperation("add_types", ("Artifact",), field="card_types"),
+    ContinuousOperation("add_types", ("Food",), field="subtypes"),
+)
+
+
+def food_creature_type_instructions():
+    return [{"op": item.op, "field": item.field, "values": list(item.value)} for item in FOOD_CREATURE_TYPE_OPERATIONS]
+
+
+def _validate_food_creature_grant(target, predicate, node):
+    if (target["kind"] != "fixed_query" or target["controller"] != "any" or target["exclude_source"] is not True
+            or predicate != ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+            or len(node.add_ability_fragments) != 1):
+        raise SemanticNodeError("Food artifact conversion requires other creatures and one closed granted activation")
+    granted = ability_fragment_from_dict(node.add_ability_fragments[0])
+    if not isinstance(granted, GrantedActivatedAbilitySpec) or granted != GrantedActivatedAbilitySpec(
+        granted.ability_id, granted.semantic_key, granted.cost_text, granted.effect_text,
+        mana=(("GENERIC", 2),), tap_source=True, sacrifice_source=True, schema_version=2,
+    ):
+        raise SemanticNodeError("The Food activation requires fixed mana, tap and self-sacrifice")
 
 
 @dataclass(frozen=True, slots=True)
@@ -51,6 +75,9 @@ class FixedSubtypeCompositeGrantHandler(FixedCharacteristicSettingsHandler):
             raise SemanticNodeError('Attached subtype composites require one ordinary subject')
         if not full.type_operations or full.remove_all_abilities:
             raise SemanticNodeError('Subtype composites require additive subtype operations')
+        if full.type_operations == FOOD_CREATURE_TYPE_OPERATIONS:
+            _validate_food_creature_grant(target, predicate, full)
+            return target, predicate, full
         supported = set()
         for kind in predicate.types_all:
             if kind in {'creature', 'kindred', 'artifact'}:
@@ -60,3 +87,9 @@ class FixedSubtypeCompositeGrantHandler(FixedCharacteristicSettingsHandler):
                     or not operation.value or any(str(value).casefold() not in supported for value in operation.value)):
                 raise SemanticNodeError('Added subtypes must correspond to a guaranteed receiver type')
         return target, predicate, full
+
+    def required_capabilities(self, descriptor):
+        _, _, node = self.validate(descriptor)
+        if node.type_operations == FOOD_CREATURE_TYPE_OPERATIONS:
+            return (*self.capability_dependencies, OTHER_CREATURES_FOOD_GRANT_CAPABILITY)
+        return self.capability_dependencies

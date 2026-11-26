@@ -4,10 +4,12 @@ from copy import deepcopy
 from hashlib import sha256
 from typing import Any, Mapping, Protocol
 
+from .entry_control_exchange_model import ENTRY_EXCHANGE_TARGET_FIELD
 from .linked_ability_exile_model import LINKED_ABILITY_EXILE_ANNOTATION, LinkedAbilityExile
 from .mandatory_loop_model import MandatoryLinkedLoopWatch
 from .public_history_query_model import PUBLIC_HISTORY_QUERY_CAPABILITY
 from .rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
+from .rules.modal_selection import OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY, has_distinct_turn_trigger_modes
 from .target_source import stack_targeting_source
 from .targets import TargetGroup
 from .util import stable_json
@@ -226,6 +228,24 @@ def _observe_linked_loop(host, item, program, schema):
     return repeated
 
 
+def _can_decline_trigger_modes(program) -> bool:
+    return program is not None and OPTIONAL_COMBAT_TRIGGER_MODAL_CAPABILITY in program.capability_dependencies
+
+
+def remove_declined_optional_trigger(host: TriggerTargetingHost, item, program) -> bool:
+    """Remove a declined modal trigger during placement under CR 603.3c."""
+    if item.modes or not _can_decline_trigger_modes(program):
+        return False
+    host.state.stack.remove(item)
+    host._log(
+        item.controller, "stack.trigger.removed",
+        f"Removed {item.ref}: {item.label}; no modes were chosen.",
+        {"stack": item.ref, "reason": "no_modes_chosen"},
+        importance=2,
+    )
+    return True
+
+
 def begin_pending_trigger_target_selection(
     host: TriggerTargetingHost,
     *,
@@ -250,11 +270,27 @@ def begin_pending_trigger_target_selection(
             if not target_schema:
                 item.context.pop("trigger_target_selection_pending", None)
                 continue
+            distinct_turn_modes = has_distinct_turn_trigger_modes(target_schema)
+            if distinct_turn_modes and not target_schema["modes"]:
+                host.state.stack.remove(item)
+                host._log(
+                    item.controller, "stack.trigger.removed",
+                    f"Removed {item.ref}: {item.label}; no unused modes remained.",
+                    {"stack": item.ref, log_reason_field: "no_unused_modes"}, importance=2,
+                )
+                removed_invalid_trigger = True
+                break
+            chooser = item.controller
+            if ENTRY_EXCHANGE_TARGET_FIELD in target_schema:
+                from .rules.entry_control_exchange import entry_exchange_target_chooser
+                chooser = entry_exchange_target_chooser(target_schema)
+                if chooser not in host.active_seats:
+                    chooser = None
             public_schema = host._public_target_schema(
                 item.controller,
                 target_schema,
                 acting_source=stack_targeting_source(host,item), source_ref=host._stack_source_ref(item),
-            )
+            ) if chooser is not None else None
             if _observe_linked_loop(host, item, program, public_schema):
                 return True
             if public_schema is None:
@@ -277,12 +313,14 @@ def begin_pending_trigger_target_selection(
             host.permissions.issue(
                 kind="semantic.target",
                 role=decision_role,
-                actors=[item.controller],
+                actors=[chooser],
                 allowed_actions=["choose"],
                 payload_by_actor={
-                    item.controller: {
+                    chooser: {
                         "stack": item.ref,
-                        "prompt": f"Choose legal targets for {item.label}.",
+                        "prompt": (f"Choose modes for {item.label}."
+                                   if distinct_turn_modes or _can_decline_trigger_modes(program)
+                                   else f"Choose legal targets for {item.label}."),
                         "target_schema": public_schema,
                         "legal_actions": [
                             {
@@ -295,7 +333,7 @@ def begin_pending_trigger_target_selection(
                 },
                 continuation={
                     "selection": host._target_selection_continuation(
-                        actor=item.controller,
+                        actor=chooser,
                         item=item,
                         public_schema=public_schema,
                         trigger_creation=True,

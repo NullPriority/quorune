@@ -10,10 +10,37 @@ EVENT_OPTIONAL_DRAW_TEMPLATE = 'fixed-defending-player-optional-draw-v1'
 def fixed_event_optional_draw_result(binding, body, *, effect_template, card_name):
     from .event_creature_controller_results import dead_creature_controller_optional_draw_result
     if death := dead_creature_controller_optional_draw_result(binding, body):return death
+    from ..permanent_event_state_model import any_counter_combat_damage_condition
+
+    if ((binding.event.value, binding.active_zone, binding.variant)
+            == ("damage.dealt", "battlefield", "one_or_more_controlled_creatures_combat_damage_player")
+            and binding.event_condition == any_counter_combat_damage_condition()
+            and re.fullmatch(r"you may draw a card and proliferate\.?", " ".join(body.split()), re.I)):
+        from .proliferate_templates import ProliferateEffectTemplate
+        from .draw_templates import fixed_draw_effect_template
+        from .optional_effect_templates import FIXED_OPTIONAL_EFFECT_MECHANIC, FixedOptionalEffectTemplate
+
+        _, draw, _, draw_mechanics = fixed_draw_effect_template("Draw a card.")
+        proliferate = ProliferateEffectTemplate()
+        optional = FixedOptionalEffectTemplate(
+            component_template_id="optional-draw-and-proliferate-v1",
+            _component_effects=(*draw, *proliferate.effects), _target_schema=None,
+            mechanic_ids=(FIXED_OPTIONAL_EFFECT_MECHANIC, *draw_mechanics, *proliferate.mechanics),
+        )
+        return optional.compiled(), False
     from ..rules.event_optional_draw_shapes import (
         DAMAGE_DEALER_DRAW_VARIANT, DAMAGE_DEALER_DRAW_VERSION, damage_dealer_draw_condition,
-        cast_opponent_optional_draw_effect,
+        cast_opponent_optional_draw_effect, controller_end_step_condition, table_draw_attack_restriction_effect,
     )
+
+    if ((binding.event.value, binding.active_zone, binding.variant) == ("step.begin", "battlefield", "your end step")
+            and binding.event_condition == controller_end_step_condition()
+            and re.fullmatch(
+                r"each player may draw a card\. Each opponent who does can['’]t attack you "
+                r"or permanents you control during their next turn\.?", " ".join(body.split()), re.I,
+            )):
+        return (("table-optional-draw-attack-restriction-v1", (table_draw_attack_restriction_effect(),),
+                 None, (EVENT_OPTIONAL_DRAW_MECHANIC,)), True)
 
     if binding.event.value == "spell.cast" and binding.active_zone == "battlefield":
         from ..rules.event_outcome_shapes import noncreature_cast_condition

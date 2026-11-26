@@ -4,13 +4,13 @@ from dataclasses import dataclass
 
 from ...replacement.immutable import FrozenMap, thaw_value
 from ...defined_token_faces import DEFINED_TOKEN_TRANSFORM_KEY
+from ..attachment_actions import EQUIP_SEMANTIC_KEY, PLANESWALKER_EQUIP_RESULT, PLANESWALKER_EQUIP_SEMANTIC_KEY
 
 
 _HISTORICAL_GAIN_LIFE_KEY = "builtin:food"
 _EXPLORE_KEYS = frozenset(
     {"builtin:explore-target", "builtin:map-explore"}
 )
-_EQUIP_KEY = "builtin:equip"
 _JUNK_IMPULSE_KEY = "builtin:fixed-impulse-access:1:turn"
 
 
@@ -90,7 +90,18 @@ def builtin_activation_resolution(
             ),
             note="Built-in Junk impulse access resolved",
         )
-    if semantic_key == _EQUIP_KEY:
+    if semantic_key == PLANESWALKER_EQUIP_SEMANTIC_KEY:
+        return BuiltinActivationResolution(
+            effects=(FrozenMap({
+                "op": "attach",
+                "equipment": "$source.zone_object",
+                "creature": "$target.0",
+                "reason": "Equip",
+                PLANESWALKER_EQUIP_RESULT: 1,
+            }),),
+            note="Built-in Equip planeswalker ability resolved",
+        )
+    if semantic_key == EQUIP_SEMANTIC_KEY:
         return BuiltinActivationResolution(
             effects=(
                 FrozenMap(

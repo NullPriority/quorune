@@ -7,7 +7,8 @@ from .immutable import FrozenMap, freeze_value, thaw_value
 from ..entry_designations import ENTRY_CARD_NAME_OPERATION, EntryCardNameChoice
 from .amplify import AmplifyEntryOperation
 from .counted_entry_counters import (
-    ENTRY_COUNTER_TRANSFER_OPERATION, CreateCountedEntryCounters, TransferEntryCounters,
+    CHOSEN_ENTRY_COUNTER_TRANSFER_OPERATION, ENTRY_COUNTER_TRANSFER_OPERATION,
+    ChosenTransferEntryCounters, CreateCountedEntryCounters, TransferEntryCounters,
 )
 from .tribute import OpenTributeEntryChoice,CompleteTributeEntryChoice
 from ..devour import DevourSpec,DevourObject,DevourProposal
@@ -121,6 +122,7 @@ class GraveyardCopyEntryOperation:
 
 ENTRY_OBJECT_SELECTION_OPERATIONS = (
     DevourEntryOperation, AmplifyEntryOperation, GraveyardCopyEntryOperation, LinkedGraveyardEntryOperation,
+    ChosenTransferEntryCounters,
 )
 
 
@@ -184,15 +186,30 @@ class HalveCounterPlacementAmount:
         return {"op": "halve_counter_placement_amount"}
 
 
+TRACK_UNPREVENTABLE_AMOUNT_VERSION = 5
+UNPREVENTABLE_DAMAGE_ATTEMPTS = "unpreventable_damage_attempts"
+
+
 @dataclass(frozen=True, slots=True)
 class PreventAmount:
     amount: int | None = None
     schema_version: int = OPERATION_SCHEMA_VERSION
     damage_remaining: int | None = None
     life_gain_player: str | None = None
+    draw_for_combat_players: bool = False
 
     def __post_init__(self) -> None:
-        if self.life_gain_player is not None or self.schema_version == 3:
+        if type(self.draw_for_combat_players) is not bool:
+            raise ReplacementOperationError("Combat prevention draws require a Boolean marker")
+        if self.schema_version == TRACK_UNPREVENTABLE_AMOUNT_VERSION:
+            if (type(self.schema_version) is not int or self.draw_for_combat_players
+                    or self.amount is not None or self.damage_remaining is not None or self.life_gain_player is not None):
+                raise ReplacementOperationError("Unpreventable tracking requires complete prevention and its own version")
+        elif self.draw_for_combat_players or self.schema_version == 4:
+            if (type(self.schema_version) is not int or self.schema_version != 4 or not self.draw_for_combat_players
+                    or self.amount is not None or self.damage_remaining is not None or self.life_gain_player is not None):
+                raise ReplacementOperationError("Combat prevention draws require complete prevention and their exact version")
+        elif self.life_gain_player is not None or self.schema_version == 3:
             if (
                 type(self.schema_version) is not int or self.schema_version != 3
                 or type(self.life_gain_player) is not str or not self.life_gain_player
@@ -214,7 +231,15 @@ class PreventAmount:
             return max(0, available - self.damage_remaining)
         return available if self.amount is None else self.amount
 
+    @property
+    def tracks_unpreventable_amount(self) -> bool:
+        return self.schema_version == TRACK_UNPREVENTABLE_AMOUNT_VERSION
+
     def to_dict(self) -> dict[str, Any]:
+        if self.tracks_unpreventable_amount:
+            return {"op": "prevent", "schema_version": TRACK_UNPREVENTABLE_AMOUNT_VERSION}
+        if self.draw_for_combat_players:
+            return {"op": "prevent", "schema_version": 4, "draw_for_combat_players": True}
         if self.life_gain_player is not None:
             return {"op": "prevent", "schema_version": self.schema_version, "life_gain_player": self.life_gain_player}
         if self.damage_remaining is not None:
@@ -284,6 +309,7 @@ class RedirectDamage:
     target_combat_partners: tuple[str,...] = ()
     target_colors: tuple[str,...] = ()
     target_supertypes: tuple[str,...] = ()
+    maximum_damage: int | None = None
 
     def __post_init__(self) -> None:
         from ..damage_scope_facts import canonical_damage_scope_facts,canonical_damage_partner_identities
@@ -305,6 +331,10 @@ class RedirectDamage:
             raise ReplacementOperationError(
                 "Damage redirection requires a player or permanent snapshot"
             )
+        if self.maximum_damage is not None and (
+            type(self.maximum_damage) is not int or self.maximum_damage != 1 or target_kind != "permanent"
+        ):
+            raise ReplacementOperationError("Finite redirection requires one damage and a permanent recipient")
         object_id = str(self.target_object_id or "") or None
         logical_id = str(self.target_logical_object_id or "") or None
         owner = str(self.target_owner or "") or None
@@ -332,6 +362,7 @@ class RedirectDamage:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            **({"maximum_damage": self.maximum_damage} if self.maximum_damage is not None else {}),
             **({'target_scope_facts':list(self.target_scope_facts)} if self.target_scope_facts else {}),
             **({'target_combat_partners':list(self.target_combat_partners)} if self.target_combat_partners else {}),
             **({'target_colors':list(self.target_colors)} if self.target_colors else {}),
@@ -634,6 +665,59 @@ class MultiplyTokenCreation:
 
 
 @dataclass(frozen=True, slots=True)
+class ReplaceCreatureTokenDefinition:
+    """Substitute the definition of each current creature member of a creation."""
+
+    name: str
+    characteristics: FrozenMap
+    handler_id: str
+    source_ref: str
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        for field_name in ("name", "handler_id", "source_ref"):
+            value = getattr(self, field_name)
+            if type(value) is not str or not value.strip():
+                raise ReplacementOperationError("Token definition replacement requires nonempty identity fields")
+        if not isinstance(self.characteristics, Mapping):
+            raise ReplacementOperationError("Token definition replacement requires characteristic data")
+        characteristics = FrozenMap(self.characteristics)
+        if type(characteristics.get("type_line")) is not str:
+            raise ReplacementOperationError("Token definition replacement requires a replacement type line")
+        object.__setattr__(self, "characteristics", characteristics)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "op": "replace_creature_token_definition",
+            "name": self.name,
+            "characteristics": thaw_value(self.characteristics),
+            "handler_id": self.handler_id,
+            "source_ref": self.source_ref,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class ReplacePredefinedArtifactTokenSet:
+    """Replace each matching definition with the fixed predefined artifact set."""
+
+    handler_id: str
+    source_ref: str
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        if any(type(value) is not str or not value.strip()
+               for value in (self.handler_id, self.source_ref)):
+            raise ReplacementOperationError("Predefined token substitution requires component and source IDs")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "op": "replace_predefined_artifact_token_set",
+            "handler_id": self.handler_id,
+            "source_ref": self.source_ref,
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class ReserveZoneChange:
     objects: tuple[str, ...] = ()
     from_field: str | None = None
@@ -674,6 +758,21 @@ class CapResultLifeLoss:
 
     def to_dict(self) -> dict[str, Any]:
         return {"op": "cap_result_life_loss", "minimum": self.minimum}
+
+
+@dataclass(frozen=True, slots=True)
+class ReplaceDrawWithScheduledResult:
+    """Change one draw into the result of a specific scheduled replacement."""
+
+    grant_id: str
+    schema_version: int = OPERATION_SCHEMA_VERSION
+
+    def __post_init__(self) -> None:
+        if type(self.grant_id) is not str or not self.grant_id:
+            raise ReplacementOperationError("A scheduled draw result requires its committed grant")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"op": "replace_draw_with_scheduled_result", "grant_id": self.grant_id}
 
 
 @dataclass(frozen=True, slots=True)
@@ -797,6 +896,7 @@ ReplacementOperation: TypeAlias = (
     | CreateAffectedObjectCounter
     | CreateCountedEntryCounters
     | TransferEntryCounters
+    | ChosenTransferEntryCounters
     | RevealForOwnerLibraryShuffle
     | AddAffectedObjectCounter
     | ApplyEntryCounterReplacement
@@ -804,9 +904,12 @@ ReplacementOperation: TypeAlias = (
     | GrantAffectedObjectKeyword
     | CreateAdditionalToken
     | MultiplyTokenCreation
+    | ReplaceCreatureTokenDefinition
+    | ReplacePredefinedArtifactTokenSet
     | ReserveZoneChange
     | CapResultLifeLoss
     | PreventDraw
+    | ReplaceDrawWithScheduledResult
     | CreateResultDraws
     | DiscardInsteadOfDraw
     | DredgeDraw
@@ -834,6 +937,7 @@ _TYPED_OPERATION_TYPES = (
     CreateAffectedObjectCounter,
     CreateCountedEntryCounters,
     TransferEntryCounters,
+    ChosenTransferEntryCounters,
     RevealForOwnerLibraryShuffle,
     AddAffectedObjectCounter,
     ApplyEntryCounterReplacement,
@@ -841,9 +945,12 @@ _TYPED_OPERATION_TYPES = (
     GrantAffectedObjectKeyword,
     CreateAdditionalToken,
     MultiplyTokenCreation,
+    ReplaceCreatureTokenDefinition,
+    ReplacePredefinedArtifactTokenSet,
     ReserveZoneChange,
     CapResultLifeLoss,
     PreventDraw,
+    ReplaceDrawWithScheduledResult,
     CreateResultDraws,
     DiscardInsteadOfDraw,
     DredgeDraw,
@@ -1019,7 +1126,9 @@ def _redirect_damage_from_dict(
     *,
     operation: str,
 ) -> RedirectDamage:
-    optional={key:value[key] for key in ('target_scope_facts','target_combat_partners','target_colors','target_supertypes') if key in value}
+    optional = {key: value[key] for key in (
+        'target_scope_facts', 'target_combat_partners', 'target_colors', 'target_supertypes', 'maximum_damage',
+    ) if key in value}
     value={key:val for key,val in value.items() if key not in optional}
     _exact_fields(
         value,
@@ -1045,6 +1154,7 @@ def _redirect_damage_from_dict(
             "Damage redirection type fields must be arrays"
         )
     return RedirectDamage(
+        maximum_damage=_integer(optional['maximum_damage'], field='maximum redirected damage') if 'maximum_damage' in optional else None,
         target_scope_facts=optional.get('target_scope_facts',()),
         target_combat_partners=optional.get('target_combat_partners',()),
         target_colors=optional.get('target_colors',()),
@@ -1075,6 +1185,7 @@ def _redirect_damage_from_dict(
 _ZONE_OUTCOME_OPERATION_DECODERS = {
     SELF_GRAVEYARD_SHUFFLE_OPERATION: RevealForOwnerLibraryShuffle.from_dict,
     ENTRY_COUNTER_TRANSFER_OPERATION: TransferEntryCounters.from_dict,
+    CHOSEN_ENTRY_COUNTER_TRANSFER_OPERATION: ChosenTransferEntryCounters.from_dict,
     "create_counted_entry_counters": CreateCountedEntryCounters.from_dict,
 }
 
@@ -1092,6 +1203,48 @@ def _result_draws_from_dict(
     return CreateResultDraws(
         _integer(value["count"], field="result draw count", minimum=1),
         recipient=recipient,
+    )
+
+
+def _draw_operation_from_dict(value: Mapping[str, Any], operation: str) -> ReplacementOperation | None:
+    op = operation
+    if op == "prevent_draw":
+        _exact_fields(value, {"op"}, operation=op)
+        return PreventDraw()
+    if op == "replace_draw_with_scheduled_result":
+        _exact_fields(value, {"op", "grant_id"}, operation=op)
+        return ReplaceDrawWithScheduledResult(value["grant_id"])
+    if op == "create_result_draws":
+        return _result_draws_from_dict(value, operation=op)
+    if op == "discard_instead_of_draw":
+        _exact_fields(value, {"op"}, operation=op)
+        return DiscardInsteadOfDraw()
+    if op == "dredge_draw":
+        return _dredge_draw_from_dict(value, operation=op)
+    return None
+
+
+def _prevent_amount_from_dict(value):
+    op = "prevent"
+    if value.get("schema_version") == TRACK_UNPREVENTABLE_AMOUNT_VERSION:
+        _exact_fields(value, {"op", "schema_version"}, operation=op)
+        return PreventAmount(schema_version=value["schema_version"])
+    if "draw_for_combat_players" in value or value.get("schema_version") == 4:
+        _exact_fields(value, {"op", "schema_version", "draw_for_combat_players"}, operation=op)
+        return PreventAmount(schema_version=value["schema_version"], draw_for_combat_players=value["draw_for_combat_players"])
+    if "life_gain_player" in value or value.get("schema_version") == 3:
+        _exact_fields(value, {"op", "schema_version", "life_gain_player"}, operation=op)
+        return PreventAmount(schema_version=value["schema_version"], life_gain_player=value["life_gain_player"])
+    if "schema_version" in value or "damage_remaining" in value:
+        _exact_fields(value, {"op", "schema_version", "damage_remaining"}, operation=op)
+        remaining = _integer(value["damage_remaining"], field="damage remaining", minimum=1)
+        return PreventAmount(schema_version=value["schema_version"], damage_remaining=remaining)
+    expected = {"op", "amount"} if "amount" in value else {"op"}
+    _exact_fields(value, expected, operation=op)
+    return PreventAmount(
+        _integer(value["amount"], field="prevent amount", minimum=0)
+        if "amount" in value
+        else None
     )
 
 
@@ -1145,20 +1298,7 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         _exact_fields(value, {"op"}, operation=op)
         return HalveCounterPlacementAmount()
     if op == "prevent":
-        if "life_gain_player" in value or value.get("schema_version") == 3:
-            _exact_fields(value, {"op", "schema_version", "life_gain_player"}, operation=op)
-            return PreventAmount(schema_version=value["schema_version"], life_gain_player=value["life_gain_player"])
-        if "schema_version" in value or "damage_remaining" in value:
-            _exact_fields(value, {"op", "schema_version", "damage_remaining"}, operation=op)
-            remaining = _integer(value["damage_remaining"], field="damage remaining", minimum=1)
-            return PreventAmount(schema_version=value["schema_version"], damage_remaining=remaining)
-        expected = {"op", "amount"} if "amount" in value else {"op"}
-        _exact_fields(value, expected, operation=op)
-        return PreventAmount(
-            _integer(value["amount"], field="prevent amount", minimum=0)
-            if "amount" in value
-            else None
-        )
+        return _prevent_amount_from_dict(value)
     if op == "prevent_using_shield":
         _exact_fields(
             value,
@@ -1216,6 +1356,15 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         return _additional_token_from_dict(value, operation=op)
     if op == "multiply_token_creation":
         return _token_multiplier_from_dict(value, operation=op)
+    if op == "replace_creature_token_definition":
+        _exact_fields(value, {"op", "name", "characteristics", "handler_id", "source_ref"}, operation=op)
+        return ReplaceCreatureTokenDefinition(
+            name=value["name"], characteristics=value["characteristics"],
+            handler_id=value["handler_id"], source_ref=value["source_ref"],
+        )
+    if op == "replace_predefined_artifact_token_set":
+        _exact_fields(value, {"op", "handler_id", "source_ref"}, operation=op)
+        return ReplacePredefinedArtifactTokenSet(value["handler_id"], value["source_ref"])
     if op == "reserve_zone_change":
         if "objects" in value:
             _exact_fields(value, {"op", "objects"}, operation=op)
@@ -1232,16 +1381,9 @@ def operation_from_dict(value: Mapping[str, Any]) -> ReplacementOperation:
         return CapResultLifeLoss(
             _integer(value["minimum"], field="result life floor minimum")
         )
-    if op == "prevent_draw":
-        _exact_fields(value, {"op"}, operation=op)
-        return PreventDraw()
-    if op == "create_result_draws":
-        return _result_draws_from_dict(value, operation=op)
-    if op == "discard_instead_of_draw":
-        _exact_fields(value, {"op"}, operation=op)
-        return DiscardInsteadOfDraw()
-    if op == "dredge_draw":
-        return _dredge_draw_from_dict(value, operation=op)
+    draw_operation = _draw_operation_from_dict(value, op)
+    if draw_operation is not None:
+        return draw_operation
     raise ReplacementOperationError(
         f"Unsupported replacement operation {op!r}"
     )

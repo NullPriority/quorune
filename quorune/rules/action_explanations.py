@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..semantic_runtime.action_permissions import land_play_permission_options
+from ..zone_object_state import face_down_exile_viewers
 from .action_catalog import ActionCatalogHost
 
 
@@ -56,6 +57,8 @@ def projected_action_explanations(
         for object_id in object_ids:
             card = host.state.cards[object_id]
             if card.owner != seat:
+                continue
+            if zone == _EXILE_ZONE and card.face_down and seat not in face_down_exile_viewers(host.state, card):
                 continue
             if zone == 'library':
                 from ..semantic_runtime.action_permissions import library_top_visibility

@@ -107,10 +107,54 @@ def _face_status_copy_nodes(*, record, face_id, node_id, line, material_line, sp
     return parent,replace(child,kind=plan.node_kind)
 
 
+def _retained_legend_partner_copy(*, record, face_id, node_id, line, material_line, span, source_name,
+                                  capability_registry, capability_profile, material_line_for):
+    from ..commander_pairing import CommanderPairingKind, pairing_kind_for_material_line
+    from ..entry_copy import EntryCopySpec, RETAINED_LEGEND_PARTNER_COPY_QUERY
+    from ..rules.source_references import SourceReferenceSpec
+    from ..token_copy_recipes import (
+        RETAINED_LEGEND_PARTNER_VERSION, TokenCopyExceptionSpec, retained_legend_rule_fragment,
+    )
+    from .legend_rule_templates import legend_rule_exemption_spec
+
+    match = re.fullmatch(
+        r"You may have (?P<source>.+?) enter as a copy of another creature you control, "
+        r"except it has (?P<retained>.+?)['’]s other abilities\.?",
+        " ".join(material_line.split()), re.I,
+    )
+    if match is None or face_id != 'front' or record.layout != 'normal' or record.faces:
+        return None
+    source = SourceReferenceSpec(source_name)
+    if not source.matches(match["source"]) or not source.matches(match["retained"]):
+        return None
+    printed = tuple(material_line_for(text) for text in record.oracle_text.splitlines() if text.strip())
+    if len(printed) != 3 or printed[0] != material_line:
+        return None
+    legend = legend_rule_exemption_spec(printed[1])
+    if legend != retained_legend_rule_fragment() or pairing_kind_for_material_line(printed[2]) != CommanderPairingKind.PARTNER:
+        return None
+    exception = TokenCopyExceptionSpec(
+        schema_version=RETAINED_LEGEND_PARTNER_VERSION, add_keywords=("Partner",),
+        add_ability_fragments=(ability_fragment_to_dict(legend),),
+    )
+    spec = EntryCopySpec(RETAINED_LEGEND_PARTNER_COPY_QUERY, exception)
+    return entry_copy_node(node_id=node_id, line=line, material_line=material_line, span=span,
+                           source_name=source_name, capability_registry=capability_registry,
+                           capability_profile=capability_profile, residuals=[], spec=spec)
+
+
 def entry_copy_ability_nodes(*,record,face_id,node_id,line,material_line,span,
         source_name,trusted_mechanics,capability_registry,capability_profile,
         compile_inner,effect_template,trigger_effect_template,material_line_for,keyword_node_compiler):
     if capability_registry is None:return None
+    if material_line.casefold().rstrip(".").endswith(" other abilities"):
+        retained = _retained_legend_partner_copy(
+            record=record, face_id=face_id, node_id=node_id, line=line, material_line=material_line, span=span,
+            source_name=source_name, capability_registry=capability_registry, capability_profile=capability_profile,
+            material_line_for=material_line_for,
+        )
+        if retained is not None and retained.exact:
+            return (retained,)
     if "doesn't copy" in material_line.casefold().replace("’", "'"):
         from .color_retaining_copy import retained_color_copy_nodes
 

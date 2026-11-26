@@ -8,8 +8,10 @@ from ..drawing.model import (
     RevealDrawnCard,
     drawn_card_action_from_dict,
 )
+from ..rules.faction_trigger_model import CountFactionDraw, FACTION_DRAW_OBSERVER_FIELD
 from ..fractional_quantity_model import HalfQuantitySpec
 from ..query_effect_amount_model import OPPONENT_HAND_MILL_KIND, OpponentHandMillCount
+from ..selected_graveyard_mill_count import SELECTED_GRAVEYARD_MILL_KIND, SelectedGraveyardMillCount
 from ..target_cardinality import ordered_selected_players
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import (
@@ -61,6 +63,10 @@ class DrawHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        from ..rules.die_roll_draw import ROLL_FIELD
+
+        if ROLL_FIELD in effect:
+            raise SemanticNodeError("A single d20 draw must be bound by its resolving instruction")
         node = DrawNode(
             player=context.query.require_known_seat(
                 str(effect.get("player") or context.actor)
@@ -105,8 +111,11 @@ class MillHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        if set(effect) - {"op", "player", "players", "scope", "count", "reason"}:
+        if set(effect) - {"op", "player", "players", "scope", "count", "reason", "_replacement_selections", "followup"}:
             raise SemanticNodeError("Mill effects have a closed schema")
+        selections = effect.get("_replacement_selections", ())
+        if not isinstance(selections, (list, tuple)):
+            raise SemanticNodeError("Mill replacement selections require a sequence")
         if "scope" in effect and (
             effect["scope"] not in {"all_active_players","controller_opponents"} or "player" in effect
         ):
@@ -118,10 +127,15 @@ class MillHandler:
                 raise SemanticNodeError("Mill has conflicting recipient scopes")
             recipients = _selected_players(effect, context)
         raw_count = effect.get("count", 1)
+        followup = _mill_followup(effect, raw_count, context)
         live_count = isinstance(raw_count, Mapping) and raw_count.get("kind") == OPPONENT_HAND_MILL_KIND
         try:
             if live_count:
                 count = OpponentHandMillCount.from_dict(raw_count, scope=effect.get("scope"))
+            elif isinstance(raw_count, Mapping) and raw_count.get("kind") == SELECTED_GRAVEYARD_MILL_KIND:
+                if "players" not in effect:
+                    raise ValueError("Graveyard-count Mill needs the original selected players")
+                count = SelectedGraveyardMillCount.from_dict(raw_count)
             elif isinstance(raw_count, Mapping):
                 count = HalfQuantitySpec.from_dict(raw_count)
             else:
@@ -143,9 +157,33 @@ class MillHandler:
                     count=count,
                     reason=_reason(effect, context),
                     batch_players=recipients if "scope" in effect or "players" in effect else (),
+                    replacement_selections=tuple(selections),
+                    followup=followup,
                 ),
             ),
         )
+
+
+def _mill_followup(effect, count, context):
+    if "followup" not in effect:
+        return None
+    from ..rad_counter_model import RAD_EFFECT_FIELD
+    from ..rad_counters import RadMillFollowup
+    from ..rules.milled_creature_tokens import MilledCreatureTokens
+
+    try:
+        result = effect["followup"]
+        if isinstance(result, Mapping) and RAD_EFFECT_FIELD in result:
+            if (set(effect) - {"_replacement_selections"} != {"op", "player", "count", "reason", "followup"}
+                    or effect["player"] != context.actor or context.source is None
+                    or context.source.object_id is not None or type(count) is not int or count <= 0):
+                raise ValueError("Radiation Mill requires its original sourceless controller")
+            return RadMillFollowup.from_dict(result)
+        if effect.get("scope") != "all_active_players" or type(count) is not int or "count" not in effect:
+            raise ValueError("The committed creature result requires all-player Mill and its resolved count")
+        return MilledCreatureTokens.from_dict(effect["followup"])
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
 
 
 def _selected_players(effect, context):
@@ -171,9 +209,21 @@ class DrawEachPlayerHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        observers = ()
+        if FACTION_DRAW_OBSERVER_FIELD in effect:
+            try:
+                observer = CountFactionDraw.from_dict(effect[FACTION_DRAW_OBSERVER_FIELD])
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            if (observer.controller != context.actor or effect.get("scope") != "controller_opponents"
+                    or _count(effect) != 1 or effect.get("private") is not True):
+                raise SemanticNodeError("The faction observer requires its original private opponent draw")
+            observers = (observer,)
         if "scope" in effect:
             shared = effect["scope"] == "controller_and_opponents"
             fields = {"op", "scope", "count", "private", "reason"}
+            if observers:
+                fields.add(FACTION_DRAW_OBSERVER_FIELD)
             if shared:
                 fields.add("controller_count")
             if ((not shared and effect["scope"] != "controller_opponents")
@@ -203,6 +253,7 @@ class DrawEachPlayerHandler:
                     count=effect.get("controller_count", node.count) if seat == context.actor else node.count,
                     reason=node.reason,
                     private=True,
+                    post_draw_actions=observers,
                 )
                 for seat in players
             ),
@@ -258,7 +309,9 @@ class DrawWithActionsHandler:
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
-        if actions != (
+        faction = (len(actions) == 1 and isinstance(actions[0], CountFactionDraw)
+                   and actions[0].controller == context.actor and effect.get("private") is True)
+        if not faction and actions != (
             RevealDrawnCard(),
             DiscardDrawnCardUnlessType(card_type="land"),
         ):

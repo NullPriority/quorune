@@ -748,11 +748,15 @@ def fixed_zone_change_cost_candidates(
         from .casting.source_placement import prospective_sacrifice_read_host
         host = prospective_sacrifice_read_host(host, actor, exclude_object_id)
 
+    from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
     rows = []
     for object_id in host.state.players[actor].zones[cost.origin_zone]:
         if object_id == exclude_object_id:
             continue
         card = host.state.cards[object_id]
+        if cost.operation == SACRIFICE_ONE_COST and sacrifice_is_prohibited(host.state, card):
+            continue
         effective = host._effective_card_data(card)
         rows.append(
             object_query_result(
@@ -811,9 +815,13 @@ def legacy_additional_cost_candidates(
             )
         )
     }
+    from ..sacrifice_prohibition_model import sacrifice_is_prohibited
+
     candidates: list[str] = []
     for object_id in host.state.players[actor].zones.get(zone, []):
         card = host.state.cards[object_id]
+        if kind == "sacrifice" and sacrifice_is_prohibited(host.state, card):
+            continue
         if zone == "battlefield":
             if card.controller != actor or card.phased_out:
                 continue

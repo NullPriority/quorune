@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed typed descriptors and history query for ordinary fixed-mana Echo."""
+"""Closed Echo payment descriptors and the shared control-history query."""
 
 from dataclasses import dataclass
 import re
@@ -13,11 +13,15 @@ from .util import mana_cost_to_vector
 
 ECHO_MECHANIC_ID = "echo"
 ECHO_CONTROL_CONDITION_FIELD = "source_echo_control_condition"
+DISCARD_ECHO_CAPABILITY = "trigger.keyword.echo.discard_one"
+DISCARD_ECHO_VERSION = 2
+DISCARD_ECHO_TEMPLATE = "fixed-discard-echo-v1"
 _ORDINARY_COST = r"(?:\{(?:0|[1-9]\d*|[WUBRGC])\})+"
 _ORDINARY_ECHO = re.compile(
     rf"^Echo\s+(?P<cost>{_ORDINARY_COST})\.?$",
     re.IGNORECASE,
 )
+_DISCARD_ECHO = re.compile(r"Echo\s*[—–-]\s*discard a card\.?", re.IGNORECASE)
 
 
 class EchoError(ValueError):
@@ -106,6 +110,47 @@ def compile_fixed_mana_echo(material_line: str) -> FixedManaEchoSpec | None:
         cost_text=cost_text,
         mana_cost=FrozenMap(mana_cost),
     )
+
+
+def echo_upkeep_condition() -> dict[str, Any]:
+    return {"all": [
+        {"field": "step", "op": "eq", "value": "upkeep"},
+        {"field": ECHO_CONTROL_CONDITION_FIELD, "op": "truthy"},
+    ]}
+
+
+def discard_echo_payment(player: str):
+    from .fixed_effect_payment import FixedEffectPaymentSpec
+    from .object_predicate import ObjectQuerySpec
+
+    return FixedEffectPaymentSpec(
+        "discard", predicate=ObjectQuerySpec(zones=("hand",), owner=player, known_to_actor=True),
+    )
+
+
+def discard_echo_effect(player: str = "$controller", source: str = "$source") -> dict[str, Any]:
+    return {
+        "op": "echo_upkeep",
+        "schema_version": DISCARD_ECHO_VERSION,
+        "player": player,
+        "source": source,
+        "payment": discard_echo_payment(player).to_dict(),
+    }
+
+
+def compile_discard_echo(material_line: str) -> dict[str, Any] | None:
+    if _DISCARD_ECHO.fullmatch(material_line.strip()) is None:
+        return None
+    return discard_echo_effect()
+
+
+def validate_discard_echo_effect(effect: Mapping[str, Any], *, player: str, source: str):
+    from .fixed_effect_payment import FixedEffectPaymentSpec
+
+    expected = discard_echo_effect(player, source)
+    if type(effect.get("schema_version")) is not int or thaw_value(FrozenMap(effect)) != expected:
+        raise EchoError("Discard Echo requires the controller's exact one-card payment and source")
+    return FixedEffectPaymentSpec.from_dict(effect["payment"])
 
 
 def echo_control_condition_holds(

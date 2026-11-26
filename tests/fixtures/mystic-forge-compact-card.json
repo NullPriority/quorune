@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "source": "Pinned Mystic Forge Oracle and ruling rows for compact CI",
+  "cards": [
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "name": "Mystic Forge",
+      "mana_cost": "{4}",
+      "type_line": "Artifact",
+      "oracle_text": "You may look at the top card of your library any time.\nYou may cast artifact spells and colorless spells from the top of your library.\n{T}, Pay 1 life: Exile the top card of your library.",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "restricted"
+      },
+      "cmc": 4.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "Because you never \"cast\" a land card, Mystic Forge doesn't allow you to play an artifact land from the top of your library."
+    },
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "Mystic Forge lets you look at the top card of your library whenever you want (with one restriction\u2014see below), even if you don't have priority. This action doesn't use the stack. Knowing what that card is becomes part of the information you have access to, just like you can look at the cards in your hand."
+    },
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "You still pay all costs for a spell you cast from your library, including additional costs. You may also pay alternative costs."
+    },
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the spells you cast from your library."
+    },
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "If the top card of your library changes while you're casting a spell, playing a land, or activating an ability, you can't look at the new top card until you finish doing so. This means that if you cast the top card of your library, you can't look at the next one until you're done paying for that spell."
+    },
+    {
+      "oracle_id": "994bc16d-fdc6-475c-96df-beeb4d5aa03e",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "If the top card of your library has a morph ability, you can cast it face down from the top of your library, even if it's normally not a colorless card."
+    }
+  ]
+}

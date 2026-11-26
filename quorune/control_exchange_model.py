@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from enum import StrEnum
 
+from .entry_control_exchange_model import ENTRY_EXCHANGE_CAPABILITY
 from .target_forms import (
     SHARED_PERMANENT_TYPE_PAIR_CAPABILITY, SHARED_PERMANENT_TYPE_PAIR_FIELD,
     SharedPermanentTypePair, SharedPermanentTypeScope,
@@ -28,6 +29,7 @@ class PermanentControlExchange(StrEnum):
     SOURCE_AND_NONLAND = "source_and_nonland"
     SHARED_PERMANENT_TYPE = "shared_permanent_type"
     SHARED_ARTIFACT_OR_CREATURE_TYPE = "shared_artifact_or_creature_type"
+    ENTRY_SHARED_TYPE = "entry_shared_type"
 
     @property
     def type_pair(self):
@@ -39,12 +41,16 @@ class PermanentControlExchange(StrEnum):
 
     @property
     def capability_dependencies(self):
+        if self is self.ENTRY_SHARED_TYPE:
+            return (*PERMANENT_CONTROL_EXCHANGE_DEPENDENCIES, ENTRY_EXCHANGE_CAPABILITY)
         if self.type_pair is not None:
             return (*PERMANENT_CONTROL_EXCHANGE_DEPENDENCIES, SHARED_PERMANENT_TYPE_PAIR_CAPABILITY)
         return PERMANENT_CONTROL_EXCHANGE_DEPENDENCIES
 
     def target_schema(self):
         permanent = {"zones": ["battlefield"], "categories": ["permanent"], "count": 1}
+        if self is self.ENTRY_SHARED_TYPE:
+            return permanent
         if self is self.SOURCE_AND_NONLAND:
             return {**permanent, "types_none": ["land"]}
         if self is self.CONTROLLER_AND_OPPONENT_LAND:
@@ -76,6 +82,8 @@ class PermanentControlExchange(StrEnum):
 
     @property
     def references(self):
+        if self is self.ENTRY_SHARED_TYPE:
+            return "$event.entry_object", "$target.0"
         if self is self.SOURCE_AND_NONLAND:
             return "$source.zone_object", "$target.0"
         return "$target.0", "$target.1"

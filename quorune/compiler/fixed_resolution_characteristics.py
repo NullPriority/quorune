@@ -16,9 +16,13 @@ from ..resolution_characteristic_model import (
     DERIVED_CHARACTERISTIC_INSTRUCTION_VERSION, RECIPIENT_MANA_VALUE,
     SUBTYPE_GRANT_INSTRUCTION_VERSION, DerivedResolutionCharacteristicsSpec,
     FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec, IndefiniteSourceAnimationSpec,
+    controlled_subtype_creature_query,
     INDEFINITE_SOURCE_ANIMATION_VERSION, INDEFINITE_SOURCE_ANIMATION_MECHANIC,
     INDEFINITE_ENCHANTMENT_FORM_VERSION, INDEFINITE_ENCHANTMENT_FORM_MECHANIC,
     FixedResolutionCardTypeAdditionSpec, TARGET_CARD_TYPE_ADDITION_VERSION, TARGET_CARD_TYPE_ADDITION_MECHANIC,
+    TargetPlayerCreatureOverwriteSpec, TARGET_PLAYER_CREATURE_OVERWRITE_VERSION,
+    target_player_creature_overwrite_query, target_player_creature_overwrite_schema,
+    TargetCreatureAbilityLossSpec, TARGET_CREATURE_ABILITY_LOSS_VERSION, target_creature_ability_loss_schema,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
@@ -62,6 +66,12 @@ def _chosen_creature_type_result_template(text: str):
     if normalized == "choose a creature type. draw a card for each permanent you control of that type.":
         result = ChosenCreatureTypeResult.CONTROLLED_PERMANENT_DRAW
         mechanics = ("cr-121-drawing-a-card",)
+    elif normalized == (
+        "choose a creature type. reveal cards from the top of your library until you reveal a creature card of that type. "
+        "put that card onto the battlefield and shuffle the rest into your library."
+    ):
+        result = ChosenCreatureTypeResult.REVEAL_UNTIL_ENTRY
+        mechanics = ()
     elif normalized == "choose a creature type. creatures that aren't of the chosen type get -3/-3 until end of turn.":
         result = ChosenCreatureTypeResult.NONMATCHING_CREATURE_STATS
         mechanics = ("cr-611-continuous-effects",)
@@ -105,30 +115,41 @@ def _chosen_subtype_template(text, *, source_is_permanent, source_attachment_rel
 
 
 def fixed_attached_stat_effect_template(text: str, *, source_attachment_relation: AttachmentReferenceKind | None):
-    if source_attachment_relation is not AttachmentReferenceKind.ENCHANTED:
+    subject = {
+        AttachmentReferenceKind.ENCHANTED: "enchanted creature",
+        AttachmentReferenceKind.EQUIPPED: "equipped creature",
+    }.get(source_attachment_relation)
+    if subject is None:
         return None
     match = re.fullmatch(
-        r"Enchanted creature gets ([+-]\d+)/([+-]\d+) until end of turn\.", text.strip(), re.I,
+        rf"{subject} gets ([+-]\d+)/([+-]\d+) until end of turn\.", text.strip(), re.I,
     )
     if match is None:
         return None
     power, toughness = map(int, match.groups())
     if not (power or toughness):
         return None
-    # The last enchanted object can remain on the battlefield as a noncreature.
-    reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+    # A last-known attachment can identify a permanent that has since changed type.
+    reference = AttachmentReferenceSpec(source_attachment_relation, "permanent", schema_version=2)
     effect = {"op": "modify_stats_until_end_of_turn", "card": reference.to_dict(), "power": power, "toughness": toughness}
     return "fixed-attached-stats-until-end-of-turn-v1", (effect,), None, ("cr-611-continuous-effects",)
 
 
 def fixed_attached_keyword_effect_template(text: str, *, source_attachment_relation: AttachmentReferenceKind | None):
-    if source_attachment_relation is not AttachmentReferenceKind.ENCHANTED:
+    material = text.strip()
+    if source_attachment_relation is AttachmentReferenceKind.EQUIPPED:
+        if material.casefold() != "equipped creature gains hexproof until end of turn.":
+            return None
+        source_kind, keywords = "artifact", ("Hexproof",)
+    elif source_attachment_relation is AttachmentReferenceKind.ENCHANTED:
+        match = re.fullmatch(r"Enchanted creature gains (.+?) until end of turn\.", material, re.I)
+        if match is None or (keywords := _keyword_list(match[1])) is None:
+            return None
+        source_kind = "enchantment"
+    else:
         return None
-    match = re.fullmatch(r"Enchanted creature gains (.+?) until end of turn\.", text.strip(), re.I)
-    if match is None or (keywords := _keyword_list(match[1])) is None:
-        return None
-    template = FixedSourceCharacteristicsTemplate(source_kind="enchantment", keywords=keywords)
-    reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+    template = FixedSourceCharacteristicsTemplate(source_kind=source_kind, keywords=keywords)
+    reference = AttachmentReferenceSpec(source_attachment_relation, "permanent", schema_version=2)
     effect = {**template.effects[0], "card": reference.to_dict()}
     mechanics = ("cr-611-continuous-effects", *(keyword.casefold() for keyword in keywords))
     return "fixed-attached-keywords-until-end-of-turn-v1", (effect,), None, mechanics
@@ -247,6 +268,40 @@ def _indefinite_enchantment_form(text, *, source_name, source_is_permanent, sour
         ("cr-611-continuous-effects", INDEFINITE_ENCHANTMENT_FORM_MECHANIC))
 
 
+_TARGET_PLAYER_CREATURE_FORMS = {
+    "until end of turn, each creature target player controls loses all abilities and becomes a blue frog "
+    "with base power and toughness 1/1.": "blue_frog",
+    "until end of turn, creatures target player controls lose all abilities and have base power and toughness 0/2.": "zero_two",
+}
+
+
+def _target_player_creature_overwrite_template(text):
+    form = _TARGET_PLAYER_CREATURE_FORMS.get(" ".join(text.casefold().split()))
+    if form is None:
+        return None
+    effect = {
+        "op": CHARACTERISTIC_OPERATION,
+        "schema_version": TARGET_PLAYER_CREATURE_OVERWRITE_VERSION,
+        "predicate": target_player_creature_overwrite_query().to_dict(),
+        "characteristics": TargetPlayerCreatureOverwriteSpec(form).to_dict(),
+    }
+    return ("fixed-target-player-creature-overwrite-v1", (effect,), target_player_creature_overwrite_schema(),
+            ("cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC, "cr-115-targets"))
+
+
+def _targeted_tap_then_ability_loss_template(text):
+    normalized = " ".join(text.casefold().split())
+    if normalized != "tap target creature an opponent controls. it loses all abilities until end of turn.":
+        return None
+    effects = (
+        {"op": "tap", "card": "$target.0"},
+        {"op": CHARACTERISTIC_OPERATION, "schema_version": TARGET_CREATURE_ABILITY_LOSS_VERSION,
+         "card": "$target.0", "characteristics": TargetCreatureAbilityLossSpec().to_dict()},
+    )
+    return ("targeted-tap-then-ability-loss-v1", effects, target_creature_ability_loss_schema(),
+            ("tap-and-untap", "cr-611-continuous-effects", PERMANENT_CHARACTERISTIC_MECHANIC, "cr-115-targets"))
+
+
 def fixed_resolution_characteristics_effect_template(
     text: str, *, source_name: str, source_is_permanent: bool | None,
     source_card_types: tuple[str, ...],
@@ -254,6 +309,8 @@ def fixed_resolution_characteristics_effect_template(
     cast_x_available: bool = False,
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
+    if fixed_form := _target_player_creature_overwrite_template(text) or _targeted_tap_then_ability_loss_template(text):
+        return fixed_form
     other = re.fullmatch(
         r"All other creatures get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+) until end of turn\.?",
         text.strip(), re.I,
@@ -422,9 +479,30 @@ _ADDITIVE_SUBTYPE = re.compile(
 )
 
 
-def _additive_subtype_result(body: str):
-    from ..creature_subtypes import canonical_creature_subtype
+_BASE_AND_ADDITIVE_SUBTYPE = re.compile(
+    r"each (?P<required>.+?) creature you control has base power and toughness (?P<p>[0-9]+)/(?P<t>[0-9]+)"
+    r" and becomes an? (?P<added>.+?) in addition to its other creature types",
+    re.IGNORECASE,
+)
 
+
+def _base_and_additive_subtype_result(match):
+    required = canonical_creature_subtype(match["required"])
+    added = canonical_creature_subtype(match["added"])
+    if required is None or added is None:
+        return None
+    spec = FixedResolutionSubtypeGrantSpec(
+        added.title(), base_power_toughness=(int(match["p"]), int(match["t"])),
+    )
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": SUBTYPE_GRANT_INSTRUCTION_VERSION,
+              "predicate": controlled_subtype_creature_query(required).to_dict(), "characteristics": spec.to_dict()}
+    return ("fixed-base-and-additive-subtype-v1", (effect,), None,
+            (PERMANENT_CHARACTERISTIC_MECHANIC, "cr-611-continuous-effects"))
+
+
+def _additive_subtype_result(body: str):
+    if match := _BASE_AND_ADDITIVE_SUBTYPE.fullmatch(body):
+        return _base_and_additive_subtype_result(match)
     match = _ADDITIVE_SUBTYPE.fullmatch(body)
     if match is None or (match["before"] is not None and match["after"] is not None):
         return None

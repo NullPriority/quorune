@@ -8,6 +8,17 @@ from typing import Any, Mapping
 PAID_MANA_CONDITION_CAPABILITY = 'resolution.effect.paid_mana_condition'
 PAID_MANA_CONDITION_MECHANIC = 'fixed-paid-mana-resolution-condition'
 CAST_MANA_UNITS_KIND = 'cast_mana_spent_units'
+ACTUAL_CAST_MANA_TOTAL_KIND = 'actual_cast_mana_total'
+
+
+def actual_cast_mana_total_reference():
+    return {'schema_version': 1, 'kind': ACTUAL_CAST_MANA_TOTAL_KIND}
+
+
+def validate_actual_cast_mana_total_reference(reference):
+    if (not isinstance(reference, Mapping) or dict(reference) != actual_cast_mana_total_reference()
+            or type(reference['schema_version']) is not int):
+        raise ValueError('Total mana spent requires the versioned actual spell payment reference')
 
 
 def validate_mana_type(value: Any) -> str:

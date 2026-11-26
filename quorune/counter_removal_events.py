@@ -39,7 +39,7 @@ def capture_counter_removal_events(
         zone, data, programs = _event_programs_for_source(
             host, source, COUNTER_REMOVAL_EVENT, source_zones=None, source_characteristics=None,
         )
-        if not any(_selected_event_subscription(p, COUNTER_REMOVAL_EVENT)[0] for p in programs):
+        if not any(_selected_event_subscription(program, COUNTER_REMOVAL_EVENT)[0] for program, _ in programs):
             continue
         sealed = dict(data)
         sealed["ability_fragments"] = [ability_fragment_to_dict(fragment)

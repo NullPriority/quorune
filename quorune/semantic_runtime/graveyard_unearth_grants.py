@@ -4,7 +4,6 @@ from collections.abc import Mapping
 from dataclasses import dataclass, replace
 
 from ..ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
-from ..characteristic_read_frames import memoized_characteristic_read
 from ..continuous_effect_model import ContinuousEffect, ContinuousEffectOrigin, ContinuousOperation, Layer
 from ..granted_activation_model import (
     GRANTED_UNEARTH_VERSION, GRAVEYARD_UNEARTH_GRANT_CAPABILITY, GrantedActivatedAbilitySpec,
@@ -72,28 +71,3 @@ class GraveyardUnearthGrantHandler:
             origin=ContinuousEffectOrigin.STATIC_ABILITY,
             applies=replace(query, owner=context.source_controller),
         ),)
-
-
-def graveyard_unearth_effects_for_card(host, card, *, maximum_layer=None):
-    if card.zone != "graveyard" or card.is_token or (maximum_layer is not None and maximum_layer < Layer.ABILITY):
-        return ()
-
-    def collect():
-        if not any(descriptor.get("handler_id") == GRAVEYARD_UNEARTH_GRANT_HANDLER
-                   for program in host.semantics.programs_for_event("characteristics.evaluate")
-                   for descriptor in program.handlers):
-            return ()
-        from ..card_programs.runtime import collect_card_program_continuous_effects
-
-        keys = host._effective_static_component_key_map()
-        return collect_card_program_continuous_effects(
-            host.state, host.semantics, host.semantic_program_is_current_trusted,
-            maximum_layer=Layer.ABILITY, static_component_resolver=lambda source: keys.get(source.object_id, ()),
-            early_static_component_resolver=host._static_component_keys_at_layer,
-            copied_static_source_resolver=host._copied_static_source_fragments,
-            ability_source_participation=host._static_component_presence_at_ability_start,
-            handler_ids=frozenset({GRAVEYARD_UNEARTH_GRANT_HANDLER}),
-        )
-
-    return tuple(effect for effect in memoized_characteristic_read(host, ("graveyard-unearth-grants",), collect)
-                 if effect.applies.owner == card.owner)

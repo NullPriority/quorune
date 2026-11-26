@@ -98,11 +98,38 @@ def _entry_player_counter_payment_result(binding, body):
     ), True
 
 
+def _opponent_caster_discard_payment_result(binding, body):
+    from ..rules.opponent_caster_discard_payment import (
+        CASTER_DISCARD_PAYMENT_MECHANICS, caster_discard_payment_effect, opponent_cast_discard_condition,
+    )
+
+    if ((binding.event.value, binding.active_zone) != ("spell.cast", "battlefield")
+            or body != binding.body or not opponent_cast_discard_condition(binding.event_condition)):
+        return None
+    match = re.fullmatch(r"That player loses ([1-9][0-9]*) life unless they discard a card[.]", body, re.I)
+    if match is None:
+        return None
+    return ("opponent-caster-discard-or-life-v1", (caster_discard_payment_effect(int(match[1])),),
+            None, CASTER_DISCARD_PAYMENT_MECHANICS)
+
+
 def fixed_event_player_choice_result(binding, body):
+    from ..rules.opponent_damage_source_sacrifice import (
+        OPPONENT_DAMAGE_SOURCE_SACRIFICE_MECHANICS, OPPONENT_DAMAGE_SOURCE_SACRIFICE_VARIANT,
+        opponent_damage_source_sacrifice_effect,
+    )
+
+    if binding.variant == OPPONENT_DAMAGE_SOURCE_SACRIFICE_VARIANT and body == binding.body:
+        return ("fixed-opponent-damage-source-sacrifice-v1", (opponent_damage_source_sacrifice_effect(),),
+                None, OPPONENT_DAMAGE_SOURCE_SACRIFICE_MECHANICS), False
     entry_payment = _entry_player_counter_payment_result(binding, body)
     if entry_payment is not None:
         return entry_payment
-    caster_choice = _spell_caster_land_return_result(binding, body) or _spell_caster_sacrifice_payment_result(binding, body)
+    caster_choice = (
+        _opponent_caster_discard_payment_result(binding, body)
+        or _spell_caster_land_return_result(binding, body)
+        or _spell_caster_sacrifice_payment_result(binding, body)
+    )
     if caster_choice is not None:
         return caster_choice, False
     match = _sacrifice_clause(body)

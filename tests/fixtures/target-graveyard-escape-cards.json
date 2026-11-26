@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall exact temporary targeted graveyard Escape rules",
+  "cards": [
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "name": "Confession Dial",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "When this artifact enters, surveil 3.\n{T}: Target legendary creature card in your graveyard gains escape until end of turn. The escape cost is equal to its mana cost plus exile three other cards from your graveyard. (You may cast it from your graveyard for its escape cost this turn.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2023-10-13",
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Surveil"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If a card has multiple abilities giving you permission to cast it, such as two escape abilities or an escape ability and a flashback ability, you choose which one to apply. The others have no effect."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell with escape, it immediately moves to the stack. Players can't take any other actions until you're done casting the spell."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If you cast a spell with its escape permission, you can't choose to apply any other alternative costs or to cast it without paying its mana cost. You may pay any optional additional costs the spell has, such as kicker costs. If it has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "If a spell you're casting with escape has an additional cost of discarding cards or sacrificing permanents, you may exile cards discarded or sacrificed this way to pay that part of its escape cost."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying (such as an escape cost), add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was and no matter whether an alternative cost was paid."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "Escape's permission doesn't change when you may cast the spell from your graveyard."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2023-10-13",
+      "source": "wotc",
+      "comment": "After an escaped permanent spell resolves, it enters the battlefield and will return to its owner's graveyard if it dies later."
+    },
+    {
+      "oracle_id": "6316158c-2f66-4dc4-b78c-c6ff7c39bb77",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "When you surveil, you may put all the cards you look at back on top of your library, you may put all of those cards into your graveyard, or you may put some of those cards on top and the rest of them into your graveyard."
+    }
+  ]
+}

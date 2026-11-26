@@ -25,6 +25,27 @@ this Aura into its owner's graveyard.
 The capability is inferred from the exact typed fragment. Earlier Enchant
 encodings use their original payloads for replay.
 
+A linked graveyard Aura changes its legal attachment domain when its
+trigger returns the enchanted card. The return uses the original ability
+controller and the committed battlefield incarnation. The ordinary Aura
+owner checks the untargeted attachment and protection. Its delayed
+sacrifice follows that incarnation, even if protection prevents attachment,
+and triggers when the original Aura departs. Earlier reviewed Game Record
+v3 effects retain their stored physical-object encoding.
+
+An announced X can bound each distinct mana value in a group of creature cards
+from the caster's graveyard. The group permits a zero-target declaration.
+The maximum is X plus one before the offer narrows it to the number of
+represented values. Selection uses the effective public graveyard front face,
+and resolution compares each surviving target with its original incarnation
+and value. The concrete group is retained with the stack item's existing
+target schema. The exact distinct-value return pairs it with one simultaneous
+battlefield entry for the legal survivors. The result receives the count of
+originally selected targets and uses the existing movement and replacement
+owners. The return seals the printed creature front of a modal double-faced
+card before the entry owner measures replacement effects. The fixed-count
+reanimation instruction retains its established encoding and behavior.
+
 The target-language owner relation `spell_owner` reads the acting spell's explicit
 owner, independently of the spell controller and target controller. Live spell
 copies use their existing noncard object ownership; unavailable ownership rejects
@@ -34,6 +55,13 @@ inference requires `target.object.same_spell_owner` for this relation even when
 annotations omit it. Human and Changeling targets remain excluded from Mutate.
 Changing a spell's controller preserves its owner. A copy receives its own owner
 from the player under whose control it is created.
+
+The targeted return of an opposing spell or nonland permanent uses one
+target slot. The same opponent relation applies on the stack and on the
+battlefield. A stack target resolves to its current spell card and leaves
+by the ordinary owner-hand zone transition, including when the spell is
+uncounterable. A moved spell copy ceases to exist through state-based
+actions. Invalid or departed targets follow ordinary target revalidation.
 
 Intrinsic Mutate cost metadata uses the existing ability-fragment registry and
 the shared fixed ordinary/hybrid mana expansion. Its copied fragment contains
@@ -88,6 +116,13 @@ from the fixed query's mana-value field, so the resolved X can exceed the
 literal query grammar's range. The set resolves through the ordinary
 simultaneous battlefield entry owner. Copies use their own controller's
 graveyard and the copied X.
+
+A tap activation that grants a cast for a targeted artifact checks the
+ability controller's own graveyard and retains the selected incarnation
+through ordinary revalidation. An artifact land is a legal target. The
+resolved grant authorizes only casting the selected card this turn with
+ordinary timing and payment. Leaving and returning to the graveyard
+creates a new object outside that permission.
 
 The spell that phases out up to X target creatures uses the ordinary
 announced cardinality. The caster can choose fewer than X targets. If Splice
@@ -380,11 +415,24 @@ object and may be a legal new target of its copy. Without an explicit new-target
 permission, the copy retains every original target choice and incarnation.
 
 Normalized becomes-target occurrences use those committed snapshots as well.
+
+A fixed tap activation with one random target samples the current legal target
+group during announcement. Its ordinary cost owner then prices the selected
+target. A failed payment rolls back the action, and repeating the same proposal
+uses the same draw. The offer exposes the activation without a target picker.
 A retained departed incarnation creates no occurrence on a returned permanent
 with the same public reference. Choosing that returned incarnation explicitly
 does create an occurrence; retargeting compares incarnations before suppressing
 an unchanged-target announcement. Copies retain their own stack occurrence and
 do not publish a cast event.
+
+The fixed two-mana counter trigger can observe an opponent targeting a Sliver
+creature controlled by the source's controller. Trigger discovery reads the
+recipient's effective creature type and Sliver subtype at the announcement,
+including Changeling. Each newly targeted creature has its own occurrence.
+The subtype is available to discovery only, so the version-one event envelope
+keeps its original fields. The trigger refers to the announcing stack object,
+and its current controller receives the payment choice at resolution.
 
 The current representation fails closed before copy commitment if one
 assignment would require different incarnations sharing the same public
@@ -594,3 +642,25 @@ Primary evidence is in `test_qualified_hexproof.py`, `test_hexproof_targeting.py
 effects that ignore either ability, hidden-zone targets, and unsupported
 ability-changing, copying, face-down, or merged-object
 keyword producers remain outside these trusted slices.
+
+A represented cast-entry trigger can grant its resolving controller protection from everything until the beginning of their next turn. The original cast receipt binds the trigger to that entry incarnation. The typed player protection applies to targeting and preventable damage for that duration. This descriptor leaves life total changes and permanent phasing to their own rules. Historical protection journals retain their recorded descriptor semantics.
+
+An untargeted battlefield activation can grant the same player protection. The
+versioned instruction binds the resolving activation and its controller even
+after a paid source move. The shared rules owners prevent targeting, Aura
+attachment and preventable damage until that player's next turn. Untargeted
+life loss and damage that cannot be prevented remain applicable.
+
+
+A grouped entry trigger can announce one optional creature per active player.
+The triggered object seals the roster. Each target stays in its original role
+through copies, retargeting and resolution. The destruction owner commits the
+still-legal targets in one batch. A qualifying destruction of a creature
+controlled by the resolving player requests two counters on the original live
+source. Destination replacement and prevention keep their separate outcomes.
+The reward uses the ordinary counter placement owner after destruction.
+
+A complete linked graveyard Aura face binds its cast and entry carriers to one
+linked Enchant descriptor. The original static Enchant and attached modifier
+retain their own source spans. Current registration checks both lifecycle
+carriers before superseding the historical reviewed pair.

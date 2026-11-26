@@ -90,6 +90,7 @@ class ActivationConditionKind(str, Enum):
     CLASS_LEVEL_EQUALS = "class_level_equals"
     SOURCE_ATTACKED_THIS_TURN = 'source_attacked_this_turn'
     SOURCE_ATTACHED_TO_CREATURE = "source_attached_to_creature"
+    SOURCE_NO_CHARGE_COUNTERS = "source_no_charge_counters"
     CONTROLLER_HAS_CITYS_BLESSING = 'controller_has_citys_blessing'
     CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN='controller_cast_instant_sorcery_this_turn'
     OPPONENT_LOST_LIFE_THIS_TURN='opponent_lost_life_this_turn'
@@ -495,6 +496,9 @@ def activation_restriction_spec(text: str, *, source_name: str | None = None) ->
         "as a sorcery and only once each turn": ActivationRestrictionSpec(
             sorcery_speed=True,
             activation_limit=ActivationLimit.ONCE_PER_TURN,
+        ),
+        "if there are no charge counters on this artifact": ActivationRestrictionSpec(
+            conditions=(ActivationCondition(ActivationConditionKind.SOURCE_NO_CHARGE_COUNTERS),),
         ),
         "during your turn": ActivationRestrictionSpec(
             conditions=(ActivationCondition(ActivationConditionKind.CONTROLLERS_TURN),)

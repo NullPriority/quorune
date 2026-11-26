@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Mapping
 
 from ..ability_fragments import StaticComponentSpec
+from ..all_player_turn_rule_model import AllPlayerTurnRule, has_all_player_turn_rule
 from ..qualified_hexproof import TURN_PLAYER_COLOR_HEXPROOF, color_hexproof_keywords
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from .component_registry import exact_fields
@@ -75,6 +76,8 @@ def current_player_target_keywords(host,seat):
     player=host.state.players.get(seat)
     if player is None:return frozenset()
     keywords = set(color_hexproof_keywords(player.stats.get(TURN_PLAYER_COLOR_HEXPROOF, ())))
+    if has_all_player_turn_rule(getattr(host.state, "continuous_effects", None), AllPlayerTurnRule.HEXPROOF):
+        keywords.add("hexproof")
     handler = PlayerTargetProtectionHandler()
     controller_turn = ControllerTurnPlayerHexproofHandler()
     for object_id in player.zones['battlefield']:

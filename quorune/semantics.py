@@ -520,6 +520,7 @@ class SemanticRegistry:
         self._event_program_cache: dict[str, tuple[SemanticProgram, ...]] | None = None
         self._oracle_lookup_identity = object()
         self._card_program_cache: dict[str, Any] | None = None
+        self._empty_card_programs: dict[str, Any] = {}
         self._runtime_handler_compatibility: dict[
             tuple[str, str, str], tuple[SemanticProgram, ...]
         ] = {}
@@ -561,6 +562,7 @@ class SemanticRegistry:
             # runtime built-ins prevents a newer package from silently changing
             # the semantics used to replay an older accepted-command prefix.
             self._programs.clear()
+            self._empty_card_programs.clear()
             self._card_program_cache = None
             # Historical Game Record v3 registries predate the explicit flag,
             # so absence retains their replay-only Oracle compatibility path.
@@ -590,6 +592,10 @@ class SemanticRegistry:
                     )
                 for program in card_program.abilities:
                     self._programs[program.key] = program
+            self._empty_card_programs.update(
+                (oracle_id, program) for oracle_id, program in parsed.items()
+                if not program.abilities and not program.residuals and program.trust_closure["trust_basis"] == "capability_closed"
+            )
             self._card_program_cache = parsed
         programs = raw.get("programs", raw)
         if not isinstance(programs, Mapping):
@@ -603,6 +609,7 @@ class SemanticRegistry:
                     f"for {key}"
                 )
             self._programs[str(key)] = program
+            self._empty_card_programs.pop(program.oracle_id, None)
         if serialized_card_programs is None:
             self._card_program_cache = None
 
@@ -639,6 +646,7 @@ class SemanticRegistry:
             for value in items:
                 program = SemanticProgram.from_dict(value)
                 self._programs[program.key] = program
+                self._empty_card_programs.pop(program.oracle_id, None)
             self._card_program_cache = None
             self.loaded_packs.append(
                 {
@@ -650,9 +658,9 @@ class SemanticRegistry:
                 }
             )
 
-    def save(self) -> None:
+    def save(self, *, return_payload: bool = False) -> dict[str, Any] | None:
         if not self.path:
-            return
+            return None
         self.path.parent.mkdir(parents=True, exist_ok=True)
         payload = {
             "schema_version": SEMANTIC_SCHEMA_VERSION,
@@ -673,6 +681,7 @@ class SemanticRegistry:
             json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8",
         )
         temporary.replace(self.path)
+        return payload if return_payload else None
 
     def get(self, key: str | None) -> SemanticProgram | None:
         if not key:
@@ -683,6 +692,7 @@ class SemanticRegistry:
         if not isinstance(program, SemanticProgram):
             program = SemanticProgram.from_dict(program)
         self._programs[program.key] = program
+        self._empty_card_programs.pop(program.oracle_id, None)
         self._card_program_cache = None
         self._invalidate_program_read_indexes()
         self.save()
@@ -802,6 +812,23 @@ class SemanticRegistry:
     def programs(self) -> list[SemanticProgram]:
         return [self._programs[key] for key in sorted(self._programs)]
 
+    def retain_empty_card_program(self, program: Any) -> None:
+        """Preserve compiled completeness for a card with no executable abilities."""
+        from .card_programs import CardProgram
+
+        if (
+            not isinstance(program, CardProgram)
+            or program.abilities
+            or program.residuals
+            or program.trust_closure["trust_basis"] != "capability_closed"
+            or self.programs_for_oracle(program.oracle_id)
+        ):
+            raise ValueError("An empty CardProgram must be complete and own no semantic abilities")
+        self._empty_card_programs[program.oracle_id] = program
+        self._card_program_cache = None
+        self._invalidate_program_read_indexes()
+        self.save()
+
     def card_programs(self) -> list[Any]:
         """Return deterministic CardProgram V2 groups used by this registry."""
 
@@ -810,7 +837,7 @@ class SemanticRegistry:
                 card_programs_from_semantic_programs,
             )
 
-            self._card_program_cache = card_programs_from_semantic_programs(
+            self._card_program_cache = self._empty_card_programs | card_programs_from_semantic_programs(
                 self._programs.values()
             )
         return [
@@ -829,7 +856,7 @@ class SemanticRegistry:
         # for snapshots and audits, but isolate the ordinary point lookup.
         programs = self.programs_for_oracle(oracle_id)
         if not programs:
-            return None
+            return self._empty_card_programs.get(oracle_id)
         from .card_programs.adapters import (
             card_program_from_semantic_programs,
         )

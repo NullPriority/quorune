@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source": "Synthetic source-bound low-power death return witness",
+  "cards": [
+    {
+      "oracle_id": "13a5d3a8-ec46-43cc-b047-0e67c11d5ceb",
+      "name": "Keeper of the Quiet",
+      "mana_cost": "{4}{B}",
+      "cmc": 5,
+      "type_line": "Legendary Creature — Spirit",
+      "oracle_text": "Whenever a creature with power 1 or less is put into your graveyard from the battlefield, you may return that card to the battlefield at the beginning of the next end step if this creature is still on the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "layout": "normal",
+      "legalities": {"commander": "legal"}
+    }
+  ],
+  "rulings": []
+}

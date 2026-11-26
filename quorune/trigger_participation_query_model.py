@@ -69,6 +69,9 @@ def trigger_participation_rule(name,subtype=None):
     if name=='legendary_creature_source':return TriggerParticipationRule(source_queries=(_q(types_all=('creature',),supertypes_all=('legendary',)),))
     if name=='shaman_or_another_wizard':return TriggerParticipationRule(source_queries=(_q(subtypes_any=('shaman',)),_q(subtypes_any=('wizard',))),exclusion='wizard_only')
     if name=='colorless_spell_or_another_permanent':return TriggerParticipationRule(source_queries=(_q(colorless=True),),exclusion='permanent_modifier',source_zones=('battlefield','stack'))
+    if name == "equipped_creature_source":
+        return TriggerParticipationRule(source_queries=(creature,), source_relation="any",
+                                        modifier_condition="equipment_on_source")
     if name=='equipped_source_or_attached_equipment':return TriggerParticipationRule(modifier_condition='equipped',exclusion='attached_source')
     if name=='prevent_creature_enters':return TriggerParticipationRule(entering,event_queries=(creature,),source_relation='any',outcome='prevent')
     if name=='prevent_artifact_creature_enters':return TriggerParticipationRule(entering,event_queries=(_q(types_any=('artifact','creature')),),source_relation='any',outcome='prevent')

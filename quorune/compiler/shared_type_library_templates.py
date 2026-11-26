@@ -2,6 +2,7 @@
 from . import regex_working_set as re
 from ..rules.shared_type_library_model import (
     SharedTypeLibraryResult, SHARED_TYPE_LIBRARY_MECHANIC, SHARED_TYPE_PLAY_MECHANIC, SHARED_TYPE_PLAY_OPERATION,
+    SHARED_TYPE_REVEAL_CAST_VERSION,
 )
 
 _LOOK = re.compile(
@@ -11,10 +12,24 @@ _LOOK = re.compile(
 )
 
 
+_REVEAL_AND_CAST = (
+    "reveal the top card of your library. if it's a creature card that shares a creature type "
+    "with a creature you control, you may cast it without paying its mana cost. "
+    "if you don't cast it, put it on the bottom of your library."
+)
+
+
 def shared_type_library_result_template(binding, body, *, compile_result):
     if binding.variant != "your upkeep" or binding.active_zone != "battlefield":
         return None
-    matched = _LOOK.fullmatch(" ".join(body.split()))
+    text = " ".join(body.split())
+    if text.casefold().replace("’", "'") == _REVEAL_AND_CAST:
+        result = SharedTypeLibraryResult(
+            ({"op": SHARED_TYPE_PLAY_OPERATION},), (SHARED_TYPE_PLAY_MECHANIC,), SHARED_TYPE_REVEAL_CAST_VERSION,
+        )
+        return ("public-top-shared-creature-cast-or-bottom-v1", (result.effect(),), None,
+                (SHARED_TYPE_LIBRARY_MECHANIC, SHARED_TYPE_PLAY_MECHANIC))
+    matched = _LOOK.fullmatch(text)
     if matched is None:
         return None
     if matched["result"].casefold() == "you may play that card without paying its mana cost.":

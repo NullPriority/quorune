@@ -5,17 +5,16 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass, replace
 
-from ...cost_payments import ExactManaReplacementReplay
+from ...artifact_hand_mana_model import ARTIFACT_HAND_MANA_REVEAL_FIELD, ARTIFACT_HAND_MANA_STEP, ArtifactHandManaStep
+from ...cost_payments import ExactManaReplacementReplay, available_payment_mana_steps, mana_step_replacement_event_id
 from ...errors import GameRuleError
-from ...mana import ManaStepInput
-from ...mana_planning import available_mode_payments
-from ...mana_mode_effects import mana_damage_event_belongs_to_payment, mana_sacrifice_payment_event_id
+from ...mana_mode_effects import mana_result_event_belongs_to_payment, mana_sacrifice_payment_event_id
 from ...replacement.immutable import FrozenMap, thaw_value
 from ...replacement.ordering import ReplacementChoiceRequired, replacement_choice_payload
 from ...semantic_runtime.mana_spending import current_mana_spending_policy
-from ...triggered_mana import triggered_mana_mode_label, triggered_mana_selection
 from ...util import pay_mana_from_pool
 from ..action_proposals import thaw_json
+from ..hand_artifact_mana import artifact_hand_mana_payment_steps
 from .assist_costs import ASSIST_HELPER_FIELD
 from .assist_frame import (
     ASSIST_CASTER_PAYMENT_FIELD, ASSIST_DECISION_KIND, ASSIST_FRAME_FIELD,
@@ -65,7 +64,8 @@ def prepare_assist_cast(host, proposal, selected_option, response):
         return None
     if raw is None:
         sealed = {key: value for key, value in response.items() if key not in {"proposal_fingerprint", "expiry_revision"}}
-        if any(key in sealed for key in ("mana", "payment", "snow_payment", "reserve", MANA_POOL_PAYMENT_FIELD)):
+        if (any(key in sealed for key in ("mana", "payment", "snow_payment", "reserve", MANA_POOL_PAYMENT_FIELD))
+                or artifact_hand_mana_payment_steps(sealed)):
             raise GameRuleError("Assist announces the helper before either mana window")
         if thaw_json(proposal.details).get("during_resolution"):
             raise GameRuleError("Assist requires the ordinary casting decision owner")
@@ -84,35 +84,28 @@ def prepare_assist_cast(host, proposal, selected_option, response):
 
 
 def _available_steps(host, seat, spend_context, excluded):
-    modes = {}
-    for source in host.available_mana_sources(seat, spend_context=spend_context):
-        if source.object_id in excluded:
-            continue
-        for mode in source.modes:
-            if mode.requires_choice or (mode.conditional and not mode.intermediate_only and not (
-                mode.restriction and host._mana_restriction_allows(mode.restriction, spend_context)
-            )):
-                continue
-            for payment in available_mode_payments(mode, host.state.players[seat], host._mana_restriction_allows):
-                step_input = ManaStepInput(*mode.price.key, payment) if mode.price else None
-                selection = triggered_mana_selection(mode.bundle, mode.triggered_mana)
-                step = AssistManaStep(seat, source.ref, mode.bundle, mode.tap_source, input=step_input,
-                                      triggered_mana_option=selection)
-                input_key = (*step_input.key, tuple(sorted(step_input.payment.items()))) if step_input else None
-                identity = (step.source, tuple(sorted(step.bundle.items())), step.tap_source, input_key, selection)
-                label = f"{source.name} ({triggered_mana_mode_label(mode)})" if selection is not None else source.name
-                modes.setdefault(identity, (step, label))
-    return tuple(modes.values())
+    return tuple(
+        (AssistManaStep.from_dict({"seat": seat, **activation, "replacements": {}}), label, schema)
+        for activation, label, schema in available_payment_mana_steps(host, seat, spend_context, excluded)
+    )
+
+
+def _same_assist_mana_mode(candidate, step):
+    if step.artifact_hand_reveal is None:
+        return candidate.activation() == step.activation()
+    return (candidate.artifact_hand_reveal is not None and candidate.seat == step.seat
+            and candidate.source == step.source
+            and candidate.artifact_hand_reveal.ability_id == step.artifact_hand_reveal.ability_id)
 
 
 def _apply_step(host, frame, step, index, spend_context, excluded):
     reserved = excluded if step.seat == frame.caster else set()
-    if not any(candidate.activation() == step.activation()
-               for candidate, _name in _available_steps(host, step.seat, spend_context, reserved)):
+    if not any(_same_assist_mana_mode(candidate, step)
+               for candidate, _name, _schema in _available_steps(host, step.seat, spend_context, reserved)):
         raise GameRuleError("The selected Assist mana mode is no longer available")
     payment_id = frame.step_payment_id(index)
     sacrifice_id = mana_sacrifice_payment_event_id(payment_id, step.source)
-    if any(event_id != sacrifice_id and not mana_damage_event_belongs_to_payment(event_id, payment_id)
+    if any(event_id != sacrifice_id and not mana_result_event_belongs_to_payment(event_id, payment_id)
            for event_id in step.replacements):
         raise GameRuleError("Assist replacement history names a different mana activation")
     replay = ExactManaReplacementReplay(thaw_value(step.replacements), payment_id, extra_event_ids={sacrifice_id})
@@ -134,7 +127,9 @@ def apply_assist_cast_mana(host, frame, proposal, card, response, *, spend_conte
     announcement = {
         "caster": frame.caster, "helper": frame.helper, "spell": host.display_name(card.object_id),
         "targets": list(proposal.targets), "stage": frame.stage,
-        "mana_activations": [{"seat": step.seat, **step.activation()} for step in frame.plans],
+        "mana_activations": [{"seat": step.seat, **{
+            key: value for key, value in step.activation().items() if key != ARTIFACT_HAND_MANA_STEP
+        }} for step in frame.plans],
     }
     if spliced_cards:
         announcement["spliced_cards"] = list(spliced_cards)
@@ -157,21 +152,22 @@ def commit_assist_cast_payment(host, frame, response, requirements, spend_contex
     generic = sum(helper_payment.values())
     if generic > requirements["GENERIC"]:
         raise GameRuleError("Assist cannot pay more than the generic price")
-    helper_spent, _ = host._pay_for_cost(
+    helper_paid = host._pay_for_cost(
         frame.helper, {"GENERIC": generic}, {"pay": "manual", "payment": helper_payment},
         spend_context=spend_context,
     )
-    caster_spent, _ = host._pay_for_cost(
+    caster_paid = host._pay_for_cost(
         frame.caster, {**requirements, "GENERIC": requirements["GENERIC"] - generic},
         {"pay": "manual", "payment": caster_payment}, spend_context=spend_context,
     )
     from .spell_mana_payments import capture_spell_mana_payment
 
-    payment_triggers = capture_spell_mana_payment(host, player=frame.helper, spent=helper_spent)
-    payment_triggers.extend(capture_spell_mana_payment(host, player=frame.caster, spent=caster_spent))
+    payment_triggers = capture_spell_mana_payment(host, player=frame.helper, paid=helper_paid.allocation)
+    payment_triggers.extend(capture_spell_mana_payment(host, player=frame.caster, paid=caster_paid.allocation))
+    helper_spent, caster_spent = helper_paid.spent, caster_paid.spent
     spent = {color: helper_spent.get(color, 0) + caster_spent.get(color, 0) for color in "WUBRGC"}
     activations = [{"seat": step.seat, **step.activation()} for step in frame.plans]
-    return spent, activations, payment_triggers
+    return spent, activations, payment_triggers, (helper_paid.allocation, caster_paid.allocation)
 
 
 def _preview(host, frame):
@@ -218,8 +214,8 @@ def issue_assist_choice(host, frame, view=None):
     if frame.stage.endswith("_mana"):
         actions = [
             {"id": f"assist:mana:{index}", "action": "choose", "label": f"Activate {name} for mana",
-             "assist_step": step.to_dict()}
-            for index, (step, name) in enumerate(view.modes)
+             "assist_step": step.to_dict(), **({"choice_schema": schema} if schema is not None else {})}
+            for index, (step, name, schema) in enumerate(view.modes)
         ]
         actions.append({"id": "assist:finish-mana", "action": "choose", "label": "Finish mana abilities",
                         "assist_finish_mana": True})
@@ -248,20 +244,7 @@ def issue_assist_choice(host, frame, view=None):
 
 
 def _origin_event_id(required, frame, step):
-    from ...replacement_decisions import _mana_damage_event_id
-
-    payment_id = frame.step_payment_id(len(frame.plans))
-    events = required.batch.events
-    if len(events) == 1 and events[0].kind == "zone.change":
-        event = events[0]
-        if (event.payload.get("origin") != "battlefield" or event.payload.get("object_ref") != step.source
-                or event.affected_object is None or event.affected_object.controller != step.seat):
-            raise GameRuleError("Assist sacrifice replacement changed its original payer or source")
-        return mana_sacrifice_payment_event_id(payment_id, step.source)
-    event_id = _mana_damage_event_id(required.batch)
-    if not mana_damage_event_belongs_to_payment(event_id, payment_id):
-        raise GameRuleError("Assist damage replacement belongs to another mana activation")
-    return event_id
+    return mana_step_replacement_event_id(required, step.seat, step.source, frame.step_payment_id(len(frame.plans)))
 
 
 def _try_assist_step(host, frame, step):
@@ -323,8 +306,18 @@ def complete_assist_choice(host, decision):
             _validate_choice_fields(response, "assist_finish_mana")
             issue_assist_choice(host, replace(frame, stage="caster_mana" if frame.stage == "helper_mana" else "helper_payment"))
             return
-        _validate_choice_fields(response, "assist_step")
+        _validate_choice_fields(response, "assist_step", ARTIFACT_HAND_MANA_REVEAL_FIELD)
         step = AssistManaStep.from_dict(response.get("assist_step"))
+        if ARTIFACT_HAND_MANA_REVEAL_FIELD in response:
+            if step.artifact_hand_reveal is None or step.artifact_hand_reveal.cards:
+                raise GameRuleError("Use one selection for the Assist artifact mana ability")
+            try:
+                selected = ArtifactHandManaStep(
+                    step.artifact_hand_reveal.ability_id, response[ARTIFACT_HAND_MANA_REVEAL_FIELD],
+                )
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            step = replace(step, artifact_hand_reveal=selected, bundle={"C": selected.colorless})
         if step.seat != frame.actor or step.replacements:
             raise GameRuleError("Assist mana commands cannot supply another payer or replacement history")
         _try_assist_step(host, frame, step)

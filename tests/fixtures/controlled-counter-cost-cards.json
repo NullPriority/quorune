@@ -47,7 +47,7 @@
       "produced_mana": [],
       "released_at": "2019-01-25",
       "toughness": "4",
-      "type_line": "Creature \u2014 Ogre Warrior"
+      "type_line": "Creature — Ogre Warrior"
     },
     {
       "cmc": 5.0,
@@ -98,7 +98,7 @@
       "produced_mana": [],
       "released_at": "2022-07-08",
       "toughness": "0",
-      "type_line": "Legendary Creature \u2014 Fungus Shaman"
+      "type_line": "Legendary Creature — Fungus Shaman"
     },
     {
       "oracle_id": "a1f3da21-af6d-450e-bf0b-985d158418e6",
@@ -149,6 +149,55 @@
       "card_faces": []
     },
     {
+      "oracle_id": "317169b8-9014-48e6-862b-ca21b706846e",
+      "name": "Hopeful Initiate",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Human Warlock",
+      "oracle_text": "Training (Whenever this creature attacks with another creature with greater power, put a +1/+1 counter on this creature.)\n{2}{W}, Remove two +1/+1 counters from among creatures you control: Destroy target artifact or enchantment.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Training"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "cmc": 5.0,
       "color_identity": [
         "B",
@@ -197,7 +246,7 @@
       "produced_mana": [],
       "released_at": "2013-05-03",
       "toughness": "5",
-      "type_line": "Creature \u2014 Gorgon"
+      "type_line": "Creature — Gorgon"
     },
     {
       "cmc": 4.0,
@@ -246,7 +295,7 @@
       "produced_mana": [],
       "released_at": "2026-03-06",
       "toughness": "3",
-      "type_line": "Legendary Creature \u2014 Fish Mutant"
+      "type_line": "Legendary Creature — Fish Mutant"
     },
     {
       "cmc": 3.0,
@@ -295,7 +344,7 @@
       "produced_mana": [],
       "released_at": "2017-09-29",
       "toughness": "3",
-      "type_line": "Creature \u2014 Merfolk Shaman"
+      "type_line": "Creature — Merfolk Shaman"
     },
     {
       "cmc": 3.0,
@@ -342,7 +391,7 @@
       "produced_mana": [],
       "released_at": "1998-06-15",
       "toughness": "0",
-      "type_line": "Creature \u2014 Spike"
+      "type_line": "Creature — Spike"
     },
     {
       "cmc": 2.0,
@@ -389,11 +438,23 @@
       "produced_mana": [],
       "released_at": "2025-08-01",
       "toughness": "2",
-      "type_line": "Creature \u2014 Human Cleric"
+      "type_line": "Creature — Human Cleric"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
   "rulings": [
+    {
+      "oracle_id": "317169b8-9014-48e6-862b-ca21b706846e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "A creature's training ability triggers only when both that creature and a creature with greater power are declared as attackers. Increasing a creature's power after attackers are declared won't cause a training ability to trigger."
+    },
+    {
+      "oracle_id": "317169b8-9014-48e6-862b-ca21b706846e",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "Once a creature's training ability has triggered, destroying the other attacking creature or reducing its power won't stop the creature with training from getting a +1/+1 counter."
+    },
     {
       "comment": "Mutagen tokens are a kind of predefined token. Each one is a colorless artifact with the artifact subtype Mutagen and the ability \"{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.\"",
       "oracle_id": "698098b8-b8e4-4e88-b13a-6b039579d192",
@@ -431,7 +492,7 @@
       "source": "wotc"
     },
     {
-      "comment": "Sunstar Chaplain\u2019s first ability will check as your end step starts to see if you control two or more tapped creatures. If you don\u2019t, the ability won\u2019t trigger at all. You won\u2019t be able to tap anything during your end step in time to have the ability trigger. If you don\u2019t control two or more tapped creatures when the ability resolves, the ability won\u2019t do anything.",
+      "comment": "Sunstar Chaplain’s first ability will check as your end step starts to see if you control two or more tapped creatures. If you don’t, the ability won’t trigger at all. You won’t be able to tap anything during your end step in time to have the ability trigger. If you don’t control two or more tapped creatures when the ability resolves, the ability won’t do anything.",
       "oracle_id": "de6b26e4-8700-490f-9df2-dac430463274",
       "published_at": "2025-07-25",
       "source": "wotc"

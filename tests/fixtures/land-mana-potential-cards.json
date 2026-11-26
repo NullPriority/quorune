@@ -1,0 +1,206 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Reflecting Pool",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "oracle_text": "{T}: Add one mana of any type that a land you control could produce.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2022-06-10",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Primal Beyond",
+      "oracle_id": "541744d9-449d-420a-a5a1-2fffba18450f",
+      "oracle_text": "As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast an Elemental spell or activate an ability of an Elemental.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-01-23",
+      "toughness": null,
+      "type_line": "Land"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Vivid Crag",
+      "oracle_id": "d8e2efe0-33a4-4303-9e83-ac42ea5df8cb",
+      "oracle_text": "This land enters tapped with two charge counters on it.\n{T}: Add {R}.\n{T}, Remove a charge counter from this land: Add one mana of any color.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2018-06-08",
+      "toughness": null,
+      "type_line": "Land"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Any replacement effects are considered by Reflecting Pool when determining the types of mana a land can produce.",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any change to a land's type or splicing of text into a land can affect the types of mana a land can produce.",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Multiple Reflecting Pools won't help each other produce mana. If you control a Reflecting Pool, and all other lands you control either lack mana abilities or are other Reflecting Pools, you may still activate Reflecting Pool's ability — it just won't produce any mana.",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The types of mana are white, blue, black, red, green, and colorless.",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Reflecting Pool checks the effects of all mana-producing abilities of lands you control, but it doesn't check their costs. For example, Vivid Crag says \"{T}, Remove a charge counter from Vivid Crag: Add one mana of any color.\" If you control Vivid Crag and Reflecting Pool, you can tap Reflecting Pool for any color of mana. It doesn't matter whether Vivid Crag has a charge counter on it, and it doesn't matter whether it's untapped.",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Reflecting Pool doesn't care about any restrictions or riders your lands put on the mana they produce, such as Pillar of the Paruns and Hall of the Bandit Lord do. It just cares about types of mana.",
+      "oracle_id": "67f43ac6-2a58-4b53-b5d7-0330e2a252e2",
+      "published_at": "2008-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana can't be spent to activate activated abilities of Elemental sources that aren't on the battlefield (such as the reinforce ability of an Elemental card in your hand).",
+      "oracle_id": "541744d9-449d-420a-a5a1-2fffba18450f",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can use the mana produced by Primal Beyond's last ability to pay an alternative cost (such as evoke) or additional cost incurred while casting an Elemental spell. It's not limited to just that spell's mana cost.",
+      "oracle_id": "541744d9-449d-420a-a5a1-2fffba18450f",
+      "published_at": "2008-04-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for native land mana potential cases"
+}

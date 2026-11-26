@@ -65,6 +65,8 @@ class ScalarChoice:
     optional: bool = False
     nonempty: bool = False
     max_length: int | None = None
+    minimum: int | None = None
+    maximum: int | None = None
 
     def __post_init__(self) -> None:
         _string(self.field_name, field_name="scalar field_name")
@@ -78,6 +80,11 @@ class ScalarChoice:
                 field_name="scalar max_length",
                 minimum=1,
             )
+        if self.minimum is not None or self.maximum is not None:
+            if (self.value_type != "integer" or self.legal_values
+                    or type(self.minimum) is not int or type(self.maximum) is not int
+                    or self.minimum < 0 or self.maximum < self.minimum):
+                raise SemanticChoiceError("Integer choices require ordered nonnegative bounds")
         object.__setattr__(
             self,
             "legal_values",
@@ -96,6 +103,8 @@ class ScalarChoice:
             result["nonempty"] = True
         if self.max_length is not None:
             result["max_length"] = self.max_length
+        if self.minimum is not None:
+            result.update(minimum=self.minimum, maximum=self.maximum, default=self.minimum)
         return result
 
 
@@ -384,13 +393,19 @@ class ManaBundleChoice:
 class DistributionChoice:
     field_name: str
     legal_refs: tuple[str, ...]
-    exact_total: int
+    exact_total: int | None = None
     minimum_each: int = 0
     maximum_each: int | None = None
+    maximum_total: int | None = None
 
     def __post_init__(self) -> None:
         _string(self.field_name, field_name="distribution field_name")
-        _integer(self.exact_total, field_name="distribution total")
+        if (self.exact_total is None) == (self.maximum_total is None):
+            raise SemanticChoiceError("A distribution needs one exact or maximum total")
+        budget = self.exact_total if self.maximum_total is None else self.maximum_total
+        _integer(budget, field_name="distribution total")
+        if any(type(ref) is not str or not ref for ref in self.legal_refs) or len(set(self.legal_refs)) != len(self.legal_refs):
+            raise SemanticChoiceError("Distribution recipients must be distinct nonempty references")
         _integer(self.minimum_each, field_name="distribution minimum")
         if self.maximum_each is not None:
             _integer(
@@ -401,6 +416,13 @@ class DistributionChoice:
                 raise SemanticChoiceError(
                     "Distribution minimum exceeds maximum"
                 )
+
+    def choice_schema(self) -> dict[str, Any]:
+        bound = {"exact_total": self.exact_total} if self.maximum_total is None else {"maximum_total": self.maximum_total}
+        return {
+            "field": self.field_name, "shape": "quantity_map", "legal_refs": list(self.legal_refs),
+            "minimum_each": self.minimum_each, "maximum_each": self.maximum_each, **bound,
+        }
 
 
 @dataclass(frozen=True, slots=True)

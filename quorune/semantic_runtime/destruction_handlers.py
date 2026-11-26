@@ -8,6 +8,7 @@ from ..affected_permanents import (
     PermanentControllerRelation,
 )
 from ..rules.destruction_result_model import DestructionFollowup
+from ..rules.nonbasic_land_source_untap import decode_single_destruction_followup
 from ..rules.qualified_destruction import (
     SOURCE_INCARNATION_EXCLUSION_FIELD, is_relative_power_destruction_set,
     relative_power_destruction_instruction, source_incarnation_excluding_destruction,
@@ -67,7 +68,7 @@ class DestroyPermanentHandler:
             reference_field="card",
             family_label="Destroy",
             allow_replacement_selections=True,
-            additional_allowed_fields=("regeneration_prohibited",),
+            additional_allowed_fields=("regeneration_prohibited", "followup"),
         )
         has_regeneration_prohibition = "regeneration_prohibited" in effect
         regeneration_prohibited = effect.get("regeneration_prohibited", False)
@@ -75,6 +76,14 @@ class DestroyPermanentHandler:
             raise SemanticNodeError(
                 "Destroy regeneration prohibition must be true when present"
             )
+        followup = None
+        if "followup" in effect:
+            try:
+                if has_regeneration_prohibition:
+                    raise ValueError("This follow-up requires ordinary destruction")
+                followup = decode_single_destruction_followup(effect["followup"])
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
         return IntentPlan(
             operation=self.operation,
             handler_id=self.handler_id,
@@ -85,6 +94,7 @@ class DestroyPermanentHandler:
                     reason=fields.reason,
                     regeneration_prohibited=regeneration_prohibited,
                     replacement_selections=fields.replacement_selections,
+                    followup=followup,
                 ),
             ),
         )

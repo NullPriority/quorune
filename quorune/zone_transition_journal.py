@@ -3,6 +3,7 @@ from __future__ import annotations
 """Privacy-preserving event journals for committed zone transitions."""
 
 from .errors import GameRuleError
+from .model import CardInstance
 from .replacement.operations import SetField
 from .self_graveyard_exile_model import SELF_GRAVEYARD_SHUFFLE_RESULT, RevealForOwnerLibraryShuffle
 from .zone_transition_model import (
@@ -84,6 +85,52 @@ def finish_self_graveyard_shuffles(owner, obligations, *, physical_components=No
         owner.shuffle_library(player, reason="self graveyard replacement", excluded_object_ids=copies)
 
 
+def journal_prevented_token_move(
+    host: ZoneTransitionHost, card: CardInstance, origin: str, destination: str, *, log: bool,
+) -> None:
+    _journal_prevented_zone_move(
+        host, card, origin, destination, rule="111.8",
+        cause="a token that left the battlefield cannot move again", log=log,
+    )
+
+
+def journal_prevented_nonpermanent_move(
+    host: ZoneTransitionHost, card: CardInstance, origin: str, destination: str, *, log: bool,
+) -> None:
+    _journal_prevented_zone_move(
+        host, card, origin, destination, rule="400.4a",
+        cause="an instant or sorcery card cannot enter the battlefield", log=log,
+    )
+
+
+def _journal_prevented_zone_move(
+    host: ZoneTransitionHost,
+    card: CardInstance,
+    origin: str,
+    destination: str,
+    *,
+    rule: str,
+    cause: str,
+    log: bool,
+) -> None:
+    if not log:
+        return
+    host._log(
+        None,
+        "zone.move.prevented",
+        f"{card.ref} remained in {origin}; {cause}.",
+        {
+            "object": card.ref,
+            "from": origin,
+            "requested_destination": destination,
+            "rule": rule,
+        },
+        importance=2,
+        changed_objects=[card.object_id],
+        changed_players=[card.owner],
+    )
+
+
 def journal_zone_move(
     host: ZoneTransitionHost,
     plan: ZoneMovePlan,
@@ -92,6 +139,7 @@ def journal_zone_move(
     reveal_to: tuple[str, ...],
     reason: str,
     log: bool,
+    unviewed_library_exile: bool = False,
 ) -> None:
     card = plan.card
     if plan.reveal_face_down_departure:
@@ -103,15 +151,21 @@ def journal_zone_move(
         )
     if not log:
         return
+    from .private_opponent_library_cast_model import (
+        has_private_opponent_library_cast_designation, private_opponent_library_exile_viewer,
+    )
+
+    private_cast_exile = card.face_down and has_private_opponent_library_cast_designation(card)
+    private_cast_viewer = private_opponent_library_exile_viewer(host.state, card) if private_cast_exile else None
     identity_became_hidden = (
         card.zone in HIDDEN_ZONES and not plan.origin_identity_public
     )
     identity_remains_face_down = bool(
         card.face_down
         and card.zone in {"battlefield", "exile", "stack", "command"}
-        and not plan.origin_identity_public
+        and (unviewed_library_exile or not plan.origin_identity_public)
     )
-    if identity_became_hidden or identity_remains_face_down:
+    if private_cast_exile or identity_became_hidden or identity_remains_face_down:
         host._log(
             None,
             "zone.move",
@@ -135,14 +189,15 @@ def journal_zone_move(
                 JOURNAL_REASON_FIELD: reason,
                 "tapped": card.tapped,
             },
-            visibility=sorted(
-                {
+            visibility=(
+                ["analyst", *([private_cast_viewer] if private_cast_viewer is not None else [])]
+                if private_cast_exile or unviewed_library_exile else sorted({
                     card.owner,
                     card.controller,
                     "analyst",
                     *card.known_to,
                     *reveal_to,
-                }
+                })
             ),
             changed_objects=[card.object_id],
             changed_players=[card.owner, card.controller],

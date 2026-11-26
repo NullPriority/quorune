@@ -84,8 +84,11 @@ def _intent_data(intent):
         values.pop("effect_generated")
     if isinstance(intent, typed.QueueReflexiveTriggerIntent) and intent.paid_creature is None:
         values.pop("paid_creature")
-    if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent) and intent.library_order is None:
-        values.pop("library_order")
+    if isinstance(intent, typed.MoveObjectsSimultaneouslyIntent):
+        if intent.library_order is None:
+            values.pop("library_order")
+        if not intent.entry_life_payment_refs:
+            values.pop("entry_life_payment_refs")
     if isinstance(intent, typed.ReturnGraveyardCardToOwnerHandIntent) and intent.scope is GraveyardReturnScope.OWN:
         values.pop("scope")
     return _data(values)
@@ -152,8 +155,14 @@ def decode_remaining_completion(value):
             expected_fields.remove("effect_generated")
         if cls is typed.QueueReflexiveTriggerIntent and "paid_creature" not in values:
             expected_fields.remove("paid_creature")
-        if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent) and "library_order" not in values:
-            expected_fields.remove("library_order")
+        if issubclass(cls, typed.MoveObjectsSimultaneouslyIntent):
+            from ..public_zone_moves import PublicBattlefieldController
+
+            expected_fields -= {"library_order", "entry_life_payment_refs"} - values.keys()
+            if "entry_life_payment_refs" in values:
+                if values.get("battlefield_controller") != PublicBattlefieldController.ACTOR.value:
+                    raise SemanticChoiceError("Saved entry payment must be for entries under the actor")
+                values = {**values, "battlefield_controller": PublicBattlefieldController.ACTOR}
         if cls is typed.ReturnGraveyardCardToOwnerHandIntent and "scope" not in values:
             expected_fields.remove("scope")
         if set(values) != expected_fields:

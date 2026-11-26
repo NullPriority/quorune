@@ -9,6 +9,7 @@ from .creature_subtypes import canonical_creature_subtype
 
 PERMANENT_TYPES = ('artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker')
 HISTORIC_QUERY_KIND = 'hand_entry_query_union'
+CREATURE_OR_LAND_QUERY_KIND = "hand_entry_creature_or_land"
 
 
 def historic_hand_entry_queries() -> tuple[ObjectQuerySpec, ...]:
@@ -24,6 +25,20 @@ def historic_hand_entry_query_descriptor() -> dict[str, Any]:
         'kind': HISTORIC_QUERY_KIND,
         'schema_version': 1,
         'alternatives': [query.canonical_dict() for query in historic_hand_entry_queries()],
+    }
+
+
+def creature_or_land_hand_entry_queries() -> tuple[ObjectQuerySpec, ...]:
+    return (
+        ObjectQuerySpec(zones=("hand",), types_all=("creature",)),
+        ObjectQuerySpec(zones=("hand",), types_all=("land",)),
+    )
+
+
+def creature_or_land_hand_entry_query_descriptor() -> dict[str, Any]:
+    return {
+        "kind": CREATURE_OR_LAND_QUERY_KIND, "schema_version": 1,
+        "alternatives": [query.canonical_dict() for query in creature_or_land_hand_entry_queries()],
     }
 
 
@@ -54,6 +69,15 @@ def decode_hand_entry_queries(value: Mapping[str, Any]) -> tuple[ObjectQuerySpec
     from .rules.permanent_subtype_hand_queries import PERMANENT_SUBTYPE_HAND_KIND, decode_permanent_subtype_hand_query
     if value.get('kind')==PERMANENT_SUBTYPE_HAND_KIND:
         return (decode_permanent_subtype_hand_query(value),)
+    if value.get("kind") == CREATURE_OR_LAND_QUERY_KIND:
+        if (set(value) != {"kind", "schema_version", "alternatives"}
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1
+                or not isinstance(value["alternatives"], (list, tuple))):
+            raise ValueError("Creature-or-land hand entry requires a closed versioned query")
+        queries = tuple(ObjectQuerySpec.from_dict(raw) for raw in value["alternatives"])
+        if queries != creature_or_land_hand_entry_queries():
+            raise ValueError("Creature-or-land hand entry must keep both exact queries")
+        return queries
     if value.get('kind') == HISTORIC_QUERY_KIND:
         if (
             set(value) != {'kind', 'schema_version', 'alternatives'}

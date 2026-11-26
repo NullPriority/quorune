@@ -9,6 +9,7 @@ from .life_change import (
 )
 from .model import StackItem
 from .replacement.immutable import FrozenMap
+from .rules.event_subscriptions import DRAW_EXCEPT_FIRST_OWN_STEP_EVENT
 from .trigger_processing import enqueue_trigger_batch
 from .turn_history import record_first_life_gain
 
@@ -199,6 +200,8 @@ def dispatch_life_loss_records(
 def player_result_runtime_dependencies(program, subscriptions) -> tuple[str, ...]:
     """Bind the committed draw and life results used by a typed program."""
     required = first_life_gain_runtime_dependencies(program, subscriptions)
+    if subscriptions is not None and subscriptions.subscription_for(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT) is not None:
+        return (*required, "trigger.event.normalized_card_draw")
     if program.event == "card.second_draw" and program.provenance.get("template_id") in {
         "fixed-counter-public-second-draw-trigger-v1",
         "fixed-typed-effect-public-second-draw-trigger-v1",
@@ -235,9 +238,9 @@ def dispatch_card_draw_event(
             trigger_batch=pending,
         )
     if not event.is_first_own_draw_step_draw:
-        dispatched.append("card.draw_except_first_draw_step")
+        dispatched.append(DRAW_EXCEPT_FIRST_OWN_STEP_EVENT)
         host._dispatch_semantic_event(
-            "card.draw_except_first_draw_step",
+            DRAW_EXCEPT_FIRST_OWN_STEP_EVENT,
             context,
             trigger_batch=pending,
         )

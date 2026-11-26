@@ -122,6 +122,19 @@ class LibraryArrivalOrder:
 
 
 @dataclass(frozen=True, slots=True)
+class RandomGraveyardBottomOrder(LibraryArrivalOrder):
+    """Recomputed private order for a whole graveyard resolution batch."""
+
+    def __post_init__(self) -> None:
+        LibraryArrivalOrder.__post_init__(self)
+        if self.position != "bottom":
+            raise ValueError("Random graveyard placement requires the library bottom")
+
+    def to_dict(self) -> dict[str, Any]:
+        raise ValueError("Random graveyard order is derived within the zone transaction")
+
+
+@dataclass(frozen=True, slots=True)
 class DepartedLibraryArrivalOrder(LibraryArrivalOrder):
     """The owner's private order for a surviving public departure group."""
 

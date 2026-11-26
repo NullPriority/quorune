@@ -183,6 +183,51 @@ jobs:
           cache: pip
       - name: Install package and validation dependencies
         run: python -m pip install -e . -r requirements-dev.txt
+      - id: fingerprint-database-key
+        name: Resolve governed card snapshot identity
+        run: python scripts/cloud_generated_artifacts.py database-key
+      - id: fingerprint-database-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cloud-pinned.sqlite3
+            local/cloud-generated/bulk
+          key: pinned-card-database-v1-${{ steps.fingerprint-database-key.outputs.database_fingerprint }}
+      - id: fingerprint-database-artifact
+        if: steps.fingerprint-database-cache.outputs.cache-hit != 'true'
+        name: Find an existing verified-card database artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_NAME: pinned-card-database-v1-${{ steps.fingerprint-database-key.outputs.database_fingerprint }}
+        run: |
+          run_id=$(python scripts/find_reusable_workflow_artifact.py --name "$ARTIFACT_NAME")
+          echo "run_id=$run_id" >> "$GITHUB_OUTPUT"
+      - if: steps.fingerprint-database-artifact.outputs.run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: pinned-card-database-v1-${{ steps.fingerprint-database-key.outputs.database_fingerprint }}
+          path: data
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.fingerprint-database-artifact.outputs.run_id }}
+      - name: Rebuild the exact card snapshot on a cache miss
+        if: steps.fingerprint-database-cache.outputs.cache-hit != 'true' && steps.fingerprint-database-artifact.outputs.run_id == ''
+        run: >-
+          python scripts/bootstrap_data.py --from-rules-manifest
+          --rules-manifest rules/manifest.json
+          --output data/cloud-pinned.sqlite3 --download-dir local/cloud-generated/bulk
+      - id: card-fingerprint-audit
+        name: Require current card-program fingerprints
+        run: |
+          python scripts/cloud_generated_artifacts.py validate-database --db data/cloud-pinned.sqlite3
+          python scripts/audit_card_program_fingerprints.py --db data/cloud-pinned.sqlite3 --output local/card-program-fingerprints.json
+      - name: Publish complete card-program fingerprint audit
+        if: always() && hashFiles('local/card-program-fingerprints.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: card-program-fingerprints-${{ github.run_id }}-${{ github.run_attempt }}
+          path: local/card-program-fingerprints.json
+          if-no-files-found: error
+          retention-days: 14
       - name: Build compact offline card database
         run: >-
           python scripts/build_test_database.py build-ci

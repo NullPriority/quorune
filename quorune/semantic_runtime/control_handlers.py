@@ -95,6 +95,44 @@ class FixedControlSetHandler:
             validate_two_controller_creature_transfer,
         )
 
+        from ..rules.targeted_control_set import (
+            TARGETED_CONTROL_SET_RECEIVERS, TARGETED_CONTROL_SET_STEPS, TARGETED_CONTROL_SET_VERSION,
+            validate_targeted_control_set,
+        )
+
+        from ..rules.attached_temporary_control import (
+            ATTACHED_CONTROL_RECEIVERS, ATTACHED_TEMPORARY_CONTROL_STEPS, ATTACHED_TEMPORARY_CONTROL_VERSION,
+            validate_attached_temporary_control,
+        )
+
+        if ATTACHED_TEMPORARY_CONTROL_VERSION in effect:
+            try:
+                attachment = validate_attached_temporary_control(effect, actor=context.actor, resolved=True)
+                if attachment is None:
+                    return IntentPlan(self.operation, self.handler_id, ())
+                intent = GainControlSetIntent(
+                    actor=context.actor, predicate=ATTACHED_CONTROL_RECEIVERS, controller=context.actor,
+                    duration=ContinuousEffectDuration.UNTIL_END_OF_TURN, source=_source(context),
+                    steps=ATTACHED_TEMPORARY_CONTROL_STEPS, reason=effect.get("reason", context.default_reason),
+                    target_refs=(attachment,),
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(self.operation, self.handler_id, (intent,))
+        if TARGETED_CONTROL_SET_VERSION in effect:
+            try:
+                selected = validate_targeted_control_set(effect, resolved=True)
+                if effect["controller"] != context.actor:
+                    raise ValueError("Announced creature control requires its resolving controller")
+                intent = GainControlSetIntent(
+                    actor=context.actor, predicate=TARGETED_CONTROL_SET_RECEIVERS, controller=context.actor,
+                    duration=ContinuousEffectDuration.UNTIL_END_OF_TURN, source=_source(context),
+                    steps=TARGETED_CONTROL_SET_STEPS, reason=effect.get("reason", context.default_reason),
+                    target_refs=selected,
+                )
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(self.operation, self.handler_id, (intent,))
         if TWO_CONTROLLER_CREATURE_TRANSFER_FIELD in effect:
             try:
                 original = _source(context)

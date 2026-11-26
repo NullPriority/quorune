@@ -201,6 +201,149 @@ class ProliferateEngineTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
 
+    def _cast_ripples(self, session):
+        from common import register_current_fixture_programs
+
+        engine=session.engine
+        record=self.database.lookup("Ripples of Potential",fuzzy=False)
+        register_current_fixture_programs(self.database,engine.semantics,(record,),
+                                          profile=engine.state.config.review_profile)
+        card=CardInstance(object_id="fixture:ripples-spell",ref="ripples-spell",oracle_id=record.oracle_id,
+            printed_name=record.name,owner="A",controller="A",zone="hand",zone_timestamp=engine._next_zone_timestamp(),
+            known_to=["A"])
+        engine.state.cards[card.object_id]=card
+        engine.state.players["A"].zones["hand"].append(card.object_id)
+        engine.state.config.auto_pass_empty_priority=False
+        engine.state.active_player="A"
+        engine.state.started=True
+        engine.state.phase="precombat_main"
+        engine.state.step="main"
+        engine.state.players["A"].mana_pool.update({"C":1,"U":1})
+        engine._grant_priority("A")
+        engine.pump()
+        session.initial_checkpoint=checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        accepted=session.act("pilot:A",{"action_id":f"cast:{card.ref}","pay":"auto"})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual([],session.state.stack[-1].targets)
+        for _ in range(20):
+            pending=session.state.pending_decision
+            if pending.kind=="semantic.choice":
+                self.assertEqual(["A"],pending.actors)
+                return card
+            self.assertEqual("priority",pending.kind)
+            passed=session.act(session.pending_principals()[0],{"action_id":"pass"})
+            self.assertTrue(passed.ok,passed.summary)
+        self.fail("Ripples did not reach the Proliferate choice")
+
+    def _replay_ripples(self, session, *, reload=False):
+        from quorune.session import CommanderSession
+
+        expected=authoritative_state_hash(session.state)
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary)/"ripples-exact"
+            session.save(directory)
+            replay=replay_record(directory,self.database,verify=True)
+            self.assertTrue(replay["ok"],replay)
+            self.assertEqual(expected,replay["final_state_hash"])
+            if reload:
+                session=CommanderSession.load(self.database,directory)
+                self.assertEqual(expected,authoritative_state_hash(session.state))
+        return session
+
+    def _phase_choice_refs(self, session):
+        decision=session.state.pending_decision
+        self.assertEqual(("semantic.choice",["A"]),(decision.kind,decision.actors))
+        payload=decision.payload_by_actor["A"]
+        self.assertIn("phase out",payload["prompt"])
+        return payload["legal_actions"][0]["choice_schema"]["legal_refs"]
+
+    def test_actual_ripples_phases_only_positively_counted_controlled_incarnations_and_replays(self):
+        session=self.session(7013430,players=4)
+        engine=session.engine
+        own=self.add_permanent(engine,owner="A",name="Sol Ring",ref="ripples-own-positive")
+        borrowed=self.add_permanent(engine,owner="B",name="Ichor Wellspring",ref="ripples-borrowed-positive")
+        foreign=self.add_permanent(engine,owner="B",name="Sol Ring",ref="ripples-opponent-positive")
+        untouched=self.add_permanent(engine,owner="A",name="Mind Stone",ref="ripples-unchosen")
+        engine.state.players["B"].zones["battlefield"].remove(borrowed.object_id)
+        engine.state.players["A"].zones["battlefield"].append(borrowed.object_id)
+        borrowed.controller="A"
+        own.counters.update({"charge":1,"stun":1})
+        for card in (borrowed,foreign,untouched):
+            card.counters["charge"]=1
+        engine.state.players["C"].poison=1
+        spell=self._cast_ripples(session)
+        selected=self.choose(session,"A",[foreign.ref,own.ref,borrowed.ref,"C"])
+        self.assertTrue(selected.ok,selected.summary)
+        self.assertEqual({own.ref,borrowed.ref},set(self._phase_choice_refs(session)))
+        self.assertEqual({"charge":2,"stun":2},own.counters)
+        self.assertEqual(2,foreign.counters["charge"])
+        self.assertEqual(2,session.state.players["C"].poison)
+        self.assertEqual(1,untouched.counters["charge"])
+        session=self._replay_ripples(session,reload=True)
+        before=authoritative_state_hash(session.state)
+        for actor,refs in (("B",[own.ref]),("A",[foreign.ref]),("A",[untouched.ref]),
+                           ("A",["C"]),("A",[own.ref,own.ref])):
+            self.assertFalse(self.choose(session,actor,refs).ok)
+            self.assertEqual(before,authoritative_state_hash(session.state))
+        passed=self.choose(session,"A",[borrowed.ref,own.ref])
+        self.assertTrue(passed.ok,passed.summary)
+        self.assertTrue(session.state.cards[own.object_id].phased_out)
+        self.assertTrue(session.state.cards[borrowed.object_id].phased_out)
+        self.assertFalse(session.state.cards[foreign.object_id].phased_out)
+        self.assertFalse(session.state.cards[untouched.object_id].phased_out)
+        self.assertEqual("graveyard",session.state.cards[spell.object_id].zone)
+        self._replay_ripples(session)
+
+    def test_actual_ripples_counter_prevention_and_zero_choices_have_no_false_recipients(self):
+        for selected in (False,True):
+            with self.subTest(selected=selected):
+                session=self.session(7013431+int(selected))
+                target=self.add_permanent(session.engine,owner="A",name="Sol Ring",ref="ripples-prevention-target")
+                target.counters["charge"]=1
+                self.add_permanent(session.engine,owner="B",name="Solemnity",ref="ripples-prevent-counters")
+                spell=self._cast_ripples(session)
+                self.assertIn(target.ref,session.state.pending_decision.payload_by_actor["A"]["options"])
+                issued=self.choose(session,"A",[target.ref] if selected else [])
+                self.assertTrue(issued.ok,issued.summary)
+                self.assertEqual(1,session.state.cards[target.object_id].counters["charge"])
+                self.assertFalse(session.state.cards[target.object_id].phased_out)
+                self.assertEqual("graveyard",session.state.cards[spell.object_id].zone)
+                self._replay_ripples(session)
+
+    def test_actual_ripples_resumes_replacement_batch_before_the_phase_choice_and_can_decline(self):
+        session=self.session(7013433)
+        engine=session.engine
+        target=self.add_permanent(engine,owner="A",name="Sol Ring",ref="ripples-replacement-target")
+        target.counters["charge"]=1
+        self.add_permanent(engine,owner="A",name="Doubling Season",ref="ripples-double")
+        self.add_permanent(engine,owner="A",name="Doc Samson, Super Psychiatrist",ref="ripples-add")
+        self._cast_ripples(session)
+        result=self.choose(session,"A",[target.ref])
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual("replacement.order",session.state.pending_decision.kind)
+        self.assertEqual(1,session.state.cards[target.object_id].counters["charge"])
+        session=self._replay_ripples(session,reload=True)
+        for _ in range(5):
+            if session.state.pending_decision.kind!="replacement.order":
+                break
+            self.choose_replacement(session,session.state.pending_decision.actors[0])
+        self.assertEqual([target.ref],list(self._phase_choice_refs(session)))
+        self.assertGreater(session.state.cards[target.object_id].counters["charge"],2)
+        declined=self.choose(session,"A",[])
+        self.assertTrue(declined.ok,declined.summary)
+        self.assertFalse(session.state.cards[target.object_id].phased_out)
+        self._replay_ripples(session)
+
+    def test_ripples_counter_result_omission_is_detected_by_actual_phase_choice(self):
+        from unittest.mock import patch
+        from quorune.rules.committed_quantity_followups import CommittedQuantityFollowup
+
+        with patch("quorune.rules.proliferate_phase_out.committed_proliferate_phase_choice",
+                   return_value=CommittedQuantityFollowup(())), self.assertRaises(AssertionError):
+            self.test_actual_ripples_phases_only_positively_counted_controlled_incarnations_and_replays()
+
     def test_proliferate_choice_increases_each_existing_counter_kind_once(self):
         session = self.session(7013401)
         engine = session.engine

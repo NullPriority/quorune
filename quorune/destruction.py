@@ -304,6 +304,7 @@ class DestructionResult:
     shielded_object_ids: tuple[str, ...]
     regenerated_object_ids: tuple[str, ...]
     indestructible_object_ids: tuple[str, ...]
+    died_object_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         groups = (
@@ -329,6 +330,11 @@ class DestructionResult:
             raise DestructionError(
                 "Destruction result identities must be canonically ordered"
             )
+        if (not isinstance(self.died_object_ids, tuple)
+                or any(type(value) is not str or not value for value in self.died_object_ids)
+                or not set(self.died_object_ids).issubset(self.destroyed_object_ids)
+                or self.died_object_ids != tuple(sorted(set(self.died_object_ids)))):
+            raise DestructionError("Graveyard outcomes require distinct committed destruction identities")
 
 
 def request_for_card(card: Any) -> DestructionRequest:
@@ -682,21 +688,27 @@ def _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_re
         clear_damage_for_permanents(host, damage_clears)
         damage_clears = ()
     if not changes:
-        return
+        return ()
     selections = tuple(thaw_value(value) for value in plan.replacement_selections)
     if prepared_replacements is not None or damage_clears:
         from .zone_transitions import ZoneTransitionOwner
 
-        ZoneTransitionOwner(host).move_cards_simultaneously(
+        return ZoneTransitionOwner(host).move_cards_simultaneously(
             changes, reason=plan.reason, log=False, transition_kinds=transition_kinds,
             prepared_replacements=prepared_replacements, damage_clears=damage_clears,
             replacement_selections=selections if prepared_replacements is None else (),
         )
-    else:
-        host._move_cards_simultaneously(
-            changes, reason=plan.reason, log=False, transition_kinds=transition_kinds,
-            replacement_selections=selections,
-        )
+    return host._move_cards_simultaneously(
+        changes, reason=plan.reason, log=False, transition_kinds=transition_kinds,
+        replacement_selections=selections,
+    )
+
+
+def _committed_graveyard_deaths(plan, moved):
+    origins = {entry.object_id: entry.logical_object_id for entry in plan.entries
+               if entry.disposition is DestructionDisposition.DESTROY}
+    return tuple(sorted(card.object_id for card in moved if card.zone == "graveyard"
+                        and card.object_id in origins and card.logical_object_id != origins[card.object_id]))
 
 
 def commit_destruction_plan(
@@ -706,6 +718,7 @@ def commit_destruction_plan(
     companion_changes: Sequence[tuple[str, str]] = (),
     companion_transition_kinds: Mapping[str, ZoneTransitionKind] | None = None,
     prepared_zone_replacements: Mapping[str, PreparedZoneChange] | None = None,
+    record_graveyard_outcomes: bool = False,
 ) -> DestructionResult:
     """Commit one preflighted destruction family through canonical owners."""
 
@@ -736,7 +749,8 @@ def commit_destruction_plan(
         )
     if prepared_zone_replacements is not None and set(prepared_zone_replacements) != {object_id for object_id,_ in changes}:
         raise DestructionError('Prepared destruction zone plans do not cover the complete batch')
-    _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_zone_replacements)
+    moved = _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_zone_replacements)
+    died = _committed_graveyard_deaths(plan, moved) if record_graveyard_outcomes else ()
     apply_counter_changes(host, plan.shield_counter_plan)
 
     shielded: list[str] = []
@@ -824,6 +838,7 @@ def commit_destruction_plan(
         shielded_object_ids=tuple(shielded),
         regenerated_object_ids=tuple(regenerated),
         indestructible_object_ids=tuple(indestructible),
+        died_object_ids=died,
     )
 
 
@@ -835,6 +850,7 @@ def destroy_permanent_refs(
     reason: str,
     regeneration_prohibited: bool = False,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
+    record_graveyard_outcomes: bool = False,
 ) -> DestructionResult:
     cards = tuple(
         host._resolve_object(actor, ref, zones={"battlefield"})
@@ -851,6 +867,7 @@ def destroy_permanent_refs(
             regeneration_prohibited=regeneration_prohibited,
             replacement_selections=replacement_selections,
         ),
+        record_graveyard_outcomes=record_graveyard_outcomes,
     )
 
 

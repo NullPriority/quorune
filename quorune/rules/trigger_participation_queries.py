@@ -41,6 +41,10 @@ def participation_rule_matches(spec,modifier,modifier_characteristics,ability_so
     if rule.source_queries and not any(object_matches_query(source,q) for q in rule.source_queries):return False
     if rule.modifier_condition=='equipped':
         if not modifier_characteristics.get('_trigger_participation_equipped'):return False
+    if rule.modifier_condition == "equipment_on_source":
+        attachment = _facts(modifier, modifier_characteristics)
+        if modifier.attached_to != ability_source.object_id or "equipment" not in attachment.subtypes or "artifact" not in attachment.types:
+            return False
     same=modifier.object_id==ability_source.object_id
     if rule.exclusion=='modifier' and same:return False
     if rule.exclusion=='wizard_only' and same and 'shaman' not in source.subtypes:return False

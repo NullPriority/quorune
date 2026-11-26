@@ -10,6 +10,11 @@ class TemporaryAttackRequirementTemplate:
     schema_version: int = 1
 
     def compiled(self):
+        if self.schema_version == 5:
+            from ..rules.temporary_attack_requirements import live_opponent_attack_effect
+
+            return ("live-opponent-attack-requirements-v1", (live_opponent_attack_effect(timed=False),),
+                    None, ("cr-611-continuous-effects", "cr-508-declare-attackers-step"))
         spec = TemporaryAttackRequirementSpec(schema_version=self.schema_version)
         target_schema = spec.target_schema()
         mechanics = ("cr-611-continuous-effects", "cr-508-declare-attackers-step")
@@ -29,6 +34,9 @@ class TemporaryAttackRequirementTemplate:
 
 
 def temporary_attack_requirement_template(text, *, source_attachment_relation=None):
+    if text.casefold() == ("creatures your opponents control attack each combat if able "
+                           "and attack a player other than you if able this turn."):
+        return TemporaryAttackRequirementTemplate(5)
     if re.fullmatch(r"Target creature an opponent controls attacks you this turn if able\.?", text, re.I):
         return TemporaryAttackRequirementTemplate(4)
     target = re.fullmatch(r"Target creature(?P<opponent> an opponent controls)? attacks this turn if able\.?", text, re.I)

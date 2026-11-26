@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Scryfall Oracle/rulings subset for offline tests",
+  "cards": [
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "name": "Mindleecher",
+      "mana_cost": "{4}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Creature — Nightmare",
+      "oracle_text": "Mutate {4}{B} (If you cast this spell for its mutate cost, put it over or under target non-Human creature you own. They mutate into the creature on top plus all abilities from under it.)\nFlying\nWhenever this creature mutates, exile the top card of each opponent's library face down. You may look at and play those cards for as long as they remain exiled.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Mutate"
+      ],
+      "produced_mana": [],
+      "layout": "mutate",
+      "released_at": "2020-04-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Mindleecher doesn’t change when you can cast the exiled cards. For example, if you exile a creature card without flash, you can cast it only during your main phase when the stack is empty."
+    },
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any spells or permanents you control from Mindleecher are exiled, and any cards remaining in exile remain face down indefinitely. No player may look at them."
+    },
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You may look at and play those cards even if Mindleecher leaves the battlefield. If another player gains control of Mindleecher, that player can’t look at or play the cards, and you still can."
+    },
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You pay the costs for the exiled cards if you cast them. You may pay alternative costs such as mutate rather than a card’s mana cost."
+    },
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You can play lands this way only if you have remaining land plays available for the turn."
+    },
+    {
+      "oracle_id": "4864cc98-4fde-4010-81e9-ea4944347e7e",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Casting the card causes it to leave exile. You can’t cast it multiple times."
+    }
+  ]
+}

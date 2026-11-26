@@ -3,6 +3,7 @@ from __future__ import annotations
 """Shared structural target validation, including server-pinned copy choices."""
 
 from dataclasses import dataclass, replace
+from math import isfinite
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..errors import GameRuleError
@@ -16,14 +17,17 @@ def _cost_representatives(host, plan, candidates, eligible_sets, required, extra
     limit = sum(group.min_targets for group in plan.groups) + extra_targets + 1
     owner_matters = any(group.same_owner for group in plan.groups)
     controller_matters = bool(plan.same_player_groups) or any(group.distinct_controllers for group in plan.groups)
+    mana_value_matters = any(group.distinct_mana_values for group in plan.groups)
     signatures = {}
     for ref in dict.fromkeys(ref for refs in candidates.values() for ref in refs):
         pair = plan.shared_permanent_type_pair
-        snapshot = host._target_snapshot(ref) if owner_matters or controller_matters or pair is not None else {}
+        needs_snapshot = owner_matters or controller_matters or mana_value_matters or pair is not None
+        snapshot = host._target_snapshot(ref) if needs_snapshot else {}
         signatures[ref] = (tuple(ref in values for values in eligible_sets),
             tuple(ref in candidates[group.group_id] for group in plan.groups),
             snapshot.get('owner') if owner_matters else None,
             snapshot.get('controller') if controller_matters else None,
+            graveyard_target_mana_value(snapshot) if mana_value_matters else None,
             _permanent_type_profile(snapshot, pair.scope) if pair is not None else None)
     result = {}
     for group in plan.groups:
@@ -157,7 +161,7 @@ def _independent_requirement_counts(host, plan, candidates, required_refs):
             continue
         minimum = max(1, group.min_targets)
         maximum = _offered_group_maximum(group, refs)
-        if group.same_owner or group.distinct_controllers:
+        if group.same_owner or group.distinct_controllers or group.distinct_mana_values:
             # A legal tuple that includes the required object witnesses each
             # smaller positive count by keeping that object.
             local_plan = replace(plan, groups=(group,))
@@ -239,6 +243,44 @@ def public_target_schema_for_witnesses(schema, witnesses):
 
 class TargetSnapshotQuery(Protocol):
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
+
+
+def graveyard_target_mana_value(snapshot: Mapping[str, Any]) -> int | None:
+    value = snapshot.get("mana_value")
+    if snapshot.get("zone") != "graveyard" or snapshot.get("category") != "card":
+        return None
+    if type(value) is int:
+        return value if value >= 0 else None
+    if type(value) is float and isfinite(value) and value >= 0 and value.is_integer():
+        return int(value)
+    return None
+
+
+def target_mana_value_matches_snapshot(host, group, ref, snapshot) -> bool:
+    if not group.distinct_mana_values:
+        return True
+    object_id = snapshot.get("object_id")
+    incarnation = snapshot.get("zone_change_counter")
+    if type(object_id) is not str or not object_id or type(incarnation) is not int or incarnation < 0:
+        return False
+    original = graveyard_target_mana_value(snapshot)
+    return original is not None and original == graveyard_target_mana_value(host._target_snapshot(ref))
+
+
+def _validate_distinct_mana_values(host, group, chosen, copy_targets) -> None:
+    if not group.distinct_mana_values:
+        return
+    retained = copy_targets.retained_groups.get(group.group_id, ()) if copy_targets is not None else ()
+    from .target_query import target_identity_matches_snapshot
+
+    values = set()
+    for ref in chosen:
+        if ref in retained and not target_identity_matches_snapshot(host, ref, copy_targets.retained_snapshots[ref]):
+            continue
+        value = graveyard_target_mana_value(host._target_snapshot(ref))
+        if value is None or value in values:
+            raise GameRuleError("Selected graveyard creatures must have different mana values")
+        values.add(value)
 
 
 def target_controller_matches_snapshot(host,group,ref,snapshot):
@@ -389,6 +431,7 @@ def validate_grouped_target_assignment(
         if any(ref not in legal for ref in chosen):
             raise GameRuleError("Selected target is not legal for this target group")
         _distinct_target_controllers(host,group,chosen,copy_targets)
+        _validate_distinct_mana_values(host, group, chosen, copy_targets)
         if group.same_owner and chosen:
             owners = [snapshot(ref).get("owner") for ref in chosen]
             if any(type(owner) is not str or not owner for owner in owners) or len(set(owners)) != 1:

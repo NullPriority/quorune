@@ -36,11 +36,24 @@ in layer four. The same recipients get the fixed keyword and stat changes
 in layers six and seven. The query excludes phased-out and hidden objects,
 and checks current control again on each characteristic evaluation.
 
+A paid sorcery-speed activation can make one controlled artifact a copy of
+another distinct controlled artifact until end of turn. It keeps the
+ordered target roles and removes Legendary from the model's copiable
+values. Both target incarnations must be legal at resolution. Current
+records carry the typed copy descriptor and earlier records retain the
+unversioned result.
+
 A controller energy result can read the committed amount from its source's
 combat damage to a player. The binding checks the original source incarnation
 and reads damage after prevention and replacement. Counter placement uses
 the existing controller replacement owner and stays independent of later
 changes to the source.
+
+A fixed mill can precede a bounded creature return from the resolving
+controller's graveyard. The optional untargeted choice uses the current
+graveyard after mill replacements finish. It seals the selected card's
+incarnation and returns that card through the existing battlefield entry
+owner. A short or empty library leaves the optional choice available.
 
 A direct token result from a permanent's own cast trigger reads the exact
 spell occurrence and its current or recorded departure copiable values.
@@ -52,6 +65,13 @@ entry, death or departure event. This is the same typed `event_object` recipe
 as an explicit event-object reference. Resolution uses that incarnation's
 current copiable values or immediate departure information. Spell-cast
 references and unbound pronouns remain outside this production.
+
+A fixed artifact, instant, or sorcery cast predicate checks the committed
+spell types and distinguishes the source controller from every opponent. A
+printed once-per-turn clause limits each ability separately at trigger time.
+The cast-event spell copy uses the original spell's current or departure
+information and allows target changes when printed. The cast-event counter
+uses the exact original stack reference without announcing a target.
 
 Enchanted-creature token copies use recipe version three with an explicit
 version-two source attachment reference. The resolving ability controller
@@ -101,6 +121,13 @@ departure. Ordinary single-token and simultaneous batch encodings are retained.
 Source-pinned reviewed trigger views retire only when complete branch definitions,
 chooser, targets and trigger contracts agree with the normally admitted current
 program. Presentation IDs and prompts may differ; result instructions may not.
+
+A meld front can carry a standalone partner-name reminder. The compiler
+recognizes this form only in the meld layout. The reminder grants no meld
+operation. If a source-pinned reviewed modal entry trigger and empty
+permanent spell both match the strict typed front, the current registry
+uses the typed front while existing Game Records retain their recorded
+trigger keys and mode choices.
 
 Mixed own-graveyard card targets serialize canonical
 `characteristic_forms_any` leaves under the ordinary graveyard-card target
@@ -217,6 +244,10 @@ library of a player still in the game. The reveal uses the front face of a
 double-faced card. The resulting land and nonland counts drive the supported
 instructions in printed order before the ordinary APNAP draws. A draw
 replacement can change a later draw without changing the reveal results.
+An ordinary battlefield activation can schedule control of one target player
+during that player's next actual turn. The typed result requires the exact
+player target and lifetime scope before the activation catalog can admit it.
+
 An activated ability that adds mana and instructs a draw uses the stack
 under CR 605.1a.
 
@@ -434,6 +465,11 @@ consults display text. Fixed public declaration conditions reuse the shared
 public-state condition descriptor, while attached all-ability and nonmana
 activation prohibitions remain typed current fragments rather than runtime
 text. Source-controller restrictions retain their originating static source.
+
+The paid void-counter play ability resolves through an untargeted exile-card choice.
+Its chosen current incarnation receives ordinary spell or land play permission
+through the current turn, with the printed mana-cost waiver and ordinary
+additional costs. Choosing a face-down card requires existing look permission.
 
 ## Residual and override policy
 

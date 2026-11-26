@@ -5,12 +5,17 @@ from __future__ import annotations
 from collections import Counter
 from . import regex_working_set as re
 from ..abilities import _mana_spend_restriction
+from ..mana_spend_rules import NONCAST_MANA_PAYMENT_RESTRICTION
 
 FIXED_RESOLUTION_MANA_MECHANIC = 'fixed-resolution-mana'
 FIXED_RESOLUTION_MANA_CAPABILITY = 'mana.production.fixed_resolution'
 
 
 def fixed_resolution_mana_effect_template(text: str):
+    from ..rules.turn_retained_resolution_mana import PRINTED_EFFECT, effect
+
+    if " ".join(text.replace("’", "'").split()).casefold() == PRINTED_EFFECT:
+        return "fixed-turn-retained-red-mana-v1", (effect(),), None, (FIXED_RESOLUTION_MANA_MECHANIC,)
     choice=re.fullmatch(r'Add (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) mana (?P<selection>of any (?:one )?color|in any combination of colors)\.?',text.strip(),re.I)
     if choice is not None:
         from .fixed_numbers import fixed_number
@@ -20,7 +25,12 @@ def fixed_resolution_mana_effect_template(text: str):
         spec=ResolutionManaChoiceSpec('combination' if choice['selection'].casefold().startswith('in ') else 'one_color',amount)
         return 'fixed-resolution-mana-choice-v2',(spec.effect(),),None,(FIXED_RESOLUTION_MANA_MECHANIC,)
     restriction = None
-    if '. Spend this mana only to ' in text:
+    noncast = re.fullmatch(r"(?P<body>Add (?:\{[WUBRGC]\})+)\. This mana can['’]t be spent to cast spells\.",
+                           text.strip(), re.I)
+    if noncast is not None:
+        text = noncast['body']
+        restriction = NONCAST_MANA_PAYMENT_RESTRICTION
+    elif '. Spend this mana only to ' in text:
         body, _tail = text.split('. Spend this mana only to ', 1)
         restriction = _mana_spend_restriction(text)
         if restriction is None:

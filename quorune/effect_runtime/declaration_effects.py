@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 from dataclasses import replace
 from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation
-from ..declaration_rule_effects import declaration_group_query_is_closed
+from ..declaration_rule_effects import OPPONENT_BLOCKING_PROHIBITION_KIND, declaration_group_query_is_closed
 from ..continuous_effect_state import create_resolution_declaration_rule_effect, ContinuousEffectStateError
 from ..continuous_effect_model import ContinuousEffectError
 
@@ -53,6 +53,10 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
     expiry_player = actor if next_turn else None
+    from ..rules.temporary_attack_requirements import LIVE_OPPONENT_ATTACK_RULE, commit_live_opponent_attack_rule
+
+    if effect.get("restriction") == LIVE_OPPONENT_ATTACK_RULE:
+        return commit_live_opponent_attack_rule(host, effect, actor=actor, next_turn=next_turn, reason=reason)
     from ..rules.source_optional_unblockable import is_source_optional_unblockable, prepare_source_optional_unblockable
     if is_source_optional_unblockable(effect):
         try:
@@ -82,6 +86,12 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
         if 'card' not in effect:
             raise GameRuleError('Resolved declaration requirements need one locked subject')
         if effect['card'] is None:
+            return []
+    opponent_scope = effect.get("restriction") == OPPONENT_BLOCKING_PROHIBITION_KIND
+    if opponent_scope:
+        if "card" not in effect or next_turn or actor not in host.active_seats:
+            raise GameRuleError("Opponent blocking requires an original controller and one locked subject this turn")
+        if effect["card"] is None:
             return []
     from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
     if isinstance(effect.get('restriction'), Mapping) and effect['restriction'].get('kind') == SOURCE_BLOCK_PAIR_KIND:
@@ -140,6 +150,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
             kind=effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
             expires_on_next_turn_of=expiry_player,
             attack_defender=actor,
+            block_opponents_of=actor if opponent_scope else None,
         )
     except TemporaryDeclarationRestrictionError as exc:
         raise GameRuleError(str(exc)) from exc

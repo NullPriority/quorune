@@ -62,11 +62,14 @@ class FixedOptionalEffectTemplate:
     mechanic_ids: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        from ..permanent_event_state_model import optional_draw_proliferate_is_closed
+
         if (
             not self.component_template_id
             or (
                 len(self._component_effects) != 1
                 and not optional_draw_discard_is_closed(self._component_effects, player="$controller")
+                and not (self._target_schema is None and optional_draw_proliferate_is_closed(self._component_effects))
                 and not _optional_source_departure_pair_is_closed(
                     self._component_effects, self._target_schema, self.mechanic_ids,
                 )
@@ -130,6 +133,38 @@ class FixedOptionalEffectTemplate:
         )
 
 
+def optional_targeted_control_trigger_result(binding, body):
+    from ..rules.optional_targeted_control import (
+        OPTIONAL_TARGETED_CONTROL_MECHANICS, optional_targeted_control_condition_matches,
+        optional_targeted_control_effect, optional_targeted_control_schema,
+    )
+
+    if ((binding.event.value, binding.variant, binding.active_zone) != ("step.begin", "your upkeep", "battlefield")
+            or body != binding.body or not optional_targeted_control_condition_matches(binding.event_condition)
+            or " ".join(body.split()).casefold() !=
+            "you may gain control of target permanent until end of turn. if you do, untap it and it gains haste until end of turn."):
+        return None
+    return ("optional-targeted-temporary-control-v6", (optional_targeted_control_effect(),),
+            optional_targeted_control_schema(), OPTIONAL_TARGETED_CONTROL_MECHANICS), False
+
+
+def optional_shared_entrant_type_mana_trigger_result(binding, body):
+    from ..rules.entry_creature_type_mana import (
+        all_creature_entry_condition, optional_entry_shared_type_mana_effect,
+    )
+
+    if ((binding.event.value, binding.variant, binding.active_zone) !=
+            ("creature.enter", "creature:any:including_source:any_object", "battlefield")
+            or not all_creature_entry_condition(binding.event_condition)
+            or body != binding.body or " ".join(body.split()).casefold() != (
+                "you may add an amount of {c} equal to the number of creatures you control "
+                "that share a creature type with it."
+            )):
+        return None
+    return ("optional-entry-shared-creature-type-mana-v1", (optional_entry_shared_type_mana_effect(),), None,
+            (FIXED_OPTIONAL_EFFECT_MECHANIC,)), False
+
+
 def optional_shared_source_type_trigger_result(binding, body):
     if (binding.variant != "source_enters_or_attacks" or binding.active_zone != "battlefield"
             or body != binding.body or " ".join(body.split()).casefold() != (
@@ -152,6 +187,28 @@ def optional_shared_source_type_trigger_result(binding, body):
     }
     return ("optional-shared-source-type-draw-discard-v2", (effect,), None,
             (FIXED_OPTIONAL_EFFECT_MECHANIC, "cr-121-drawing-a-card", *discard_mechanics)), False
+
+
+def optional_entry_exempt_discard_trigger_result(binding, body):
+    from ..rules.optional_draw_discard import ENTRY_EXEMPT_DRAW_DISCARD_VERSION
+    from .fixed_controller_effect_sequences import fixed_controller_effect_clause
+
+    if ((binding.event.value, binding.variant, binding.active_zone)
+            != ("damage.dealt.self", "source_combat_damage_player", "battlefield")
+            or body != binding.body or " ".join(body.split()).casefold() != (
+                "you may draw a card. if you do, discard a card unless this creature entered this turn."
+            )):
+        return None
+    draw, draw_mechanics = fixed_controller_effect_clause("Draw a card.")
+    discard, discard_mechanics = fixed_controller_effect_clause("Discard a card.")
+    effect = {
+        "op": OPTIONAL_EFFECT_OPERATION,
+        "player": "$controller",
+        "schema_version": ENTRY_EXEMPT_DRAW_DISCARD_VERSION,
+        "effects": [draw, discard],
+    }
+    return ("optional-entry-exempt-draw-discard-v8", (effect,), None,
+            (FIXED_OPTIONAL_EFFECT_MECHANIC, *draw_mechanics, *discard_mechanics))
 
 
 def fixed_optional_effect_template(
@@ -179,6 +236,9 @@ def fixed_optional_effect_template(
         body = "Your life total becomes the number of charge counters on this artifact."
     elif re.fullmatch(r"have two target players exchange life totals\.", body, re.I):
         body = "Two target players exchange life totals."
+    opponent_loss = re.fullmatch(r"have each opponent lose (?P<count>[1-9][0-9]*) life\.", body, re.I)
+    if opponent_loss is not None:
+        body = f"Each opponent loses {opponent_loss['count']} life."
     have_result = _OPTIONAL_HAVE_RESULT.fullmatch(body)
     if have_result is not None:
         verb = {"deal": "deals", "gain": "gains", "get": "gets", "lose": "loses",

@@ -7,7 +7,9 @@ from collections import Counter
 from dataclasses import replace
 from typing import Mapping, Sequence
 
+from ..characteristic_fragments import CHOSEN_COLOR_DEFINITION_TEMPLATE
 from ..entry_designations import (
+    LINKED_COLOR_PROTECTION_CAPABILITIES, LINKED_COLOR_PROTECTION_TEMPLATE,
     CHOSEN_CHARACTERISTICS_CAPABILITY,
     CHOSEN_COLOR_TARGET_PREDICATE, CHOSEN_CREATURE_TYPE_TARGET_PREDICATE,
     CHOSEN_CHARACTERISTICS_HANDLER_ID,
@@ -115,7 +117,27 @@ def scope_entry_designation_faces(
     return tuple(_scope_linked_entry_targets(
         _scope_linked_entry_targets(face, "creature_type", CHOSEN_CREATURE_TYPE_TARGET_PREDICATE),
         "color", CHOSEN_COLOR_TARGET_PREDICATE,
-    ) for face in result)
+    ) for face in map(_scope_entry_color_characteristic, result))
+
+
+def _scope_entry_color_characteristic(face: OracleFaceIR) -> OracleFaceIR:
+    from ..triggered_mana_model import SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE
+
+    consumers = [node for node in face.nodes if node.template_id in {
+        CHOSEN_COLOR_DEFINITION_TEMPLATE, LINKED_COLOR_PROTECTION_TEMPLATE, SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE,
+    }]
+    if not consumers:
+        return face
+    choices = [node for node in face.nodes if any(
+        descriptor.get("handler_id") == ENTRY_DESIGNATION_HANDLER_ID
+        and descriptor.get("designation") == "color"
+        for descriptor in node.handlers
+    )]
+    return _scope_linked_entry_pair(
+        face, choices, consumers,
+        reason="This chosen-color ability requires one exact same-face entry choice",
+        blocker="linked entry color ownership",
+    )
 
 
 def _scope_entry_opponent_pair(face: OracleFaceIR) -> OracleFaceIR:
@@ -321,12 +343,30 @@ def source_chosen_creature_type_target_template(text: str):
 def entry_designation_handler(text: str, *, source_name: str):
     from .entry_color_composition import composed_entry_color_designation_handler
 
-    return (composed_entry_color_designation_handler(text, source_name=source_name)
+    return (_entry_faction_handler(text)
+            or composed_entry_color_designation_handler(text, source_name=source_name)
             or _counted_entry_opponent_handler(text)
             or _linked_entry_opponent_handler(text)
             or _entry_card_name_handler(text)
             or _counted_creature_type_entry_handler(text)
             or _plain_entry_designation_handler(text, source_name=source_name))
+
+
+def _entry_faction_handler(text: str):
+    if " ".join(text.casefold().split()) != "as this enchantment enters, choose brotherhood or enclave.":
+        return None
+    from ..entry_designations import ENTRY_FACTION_CAPABILITY
+
+    return (
+        "intrinsic-entry-faction-v1",
+        {
+            "handler_id": ENTRY_DESIGNATION_HANDLER_ID,
+            "schema_version": 1,
+            "event": "zone.change",
+            "designation": "faction",
+        },
+        (ENTRY_DESIGNATION_CAPABILITY, ENTRY_FACTION_CAPABILITY),
+    )
 
 
 def _entry_card_name_handler(text: str):
@@ -447,6 +487,12 @@ def chosen_characteristics_handler(text: str, *, source_name: str = 'source'):
             LINKED_PLAYER_PROTECTION_TEMPLATE, linked_player_protection_descriptor(),
             LINKED_PLAYER_PROTECTION_CAPABILITIES,
         )
+    source = SourceReferenceSpec(source_name).regex_pattern
+    if re.fullmatch(rf"(?:this creature|{source}) has protection from the chosen color\.", text, re.I):
+        from ..semantic_runtime.chosen_characteristics import linked_color_protection_descriptor
+
+        return (LINKED_COLOR_PROTECTION_TEMPLATE, linked_color_protection_descriptor(),
+                LINKED_COLOR_PROTECTION_CAPABILITIES)
     return (conditional_chosen_characteristics_handler(text, source_name=source_name)
             or _fixed_chosen_characteristics_handler(text))
 

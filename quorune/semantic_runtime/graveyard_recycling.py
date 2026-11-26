@@ -11,7 +11,7 @@ from .zone_move_intent import _freeze_replacement_selections
 @dataclass(frozen=True, slots=True)
 class GraveyardRecyclingIntent:
     actor: str
-    player: str
+    player: str | None
     recycling: GraveyardRecyclingSpec
     reason: str
     replacement_selections: tuple = ()
@@ -19,13 +19,15 @@ class GraveyardRecyclingIntent:
 
     def __post_init__(self):
         if (not isinstance(self.recycling, GraveyardRecyclingSpec)
-                or any(type(v) is not str or not v for v in (self.actor, self.player, self.reason))
+                or any(type(v) is not str or not v for v in (self.actor, self.reason))
+                or (self.player is not None or not self.recycling.random_bottom)
+                    and (type(self.player) is not str or not self.player)
                 or self.recycling.scope == 'all_players' and self.player != 'all'
                 or self.recycling.scope == 'controller' and self.player != self.actor):
             raise ValueError('Graveyard recycling intent needs its exact player relation')
-        if (self.recycling.include_source and not isinstance(self.source_context, SemanticSourceContext)
-                or not self.recycling.include_source and self.source_context is not None):
-            raise ValueError("Source recycling requires its original activation frame")
+        if (self.recycling.requires_source_context and not isinstance(self.source_context, SemanticSourceContext)
+                or not self.recycling.requires_source_context and self.source_context is not None):
+            raise ValueError('This recycling instruction requires its original resolution frame')
         object.__setattr__(self, 'replacement_selections', _freeze_replacement_selections(
             self.replacement_selections, family='Graveyard recycling'))
 
@@ -47,10 +49,12 @@ class GraveyardRecyclingHandler:
         try:
             spec = GraveyardRecyclingSpec.from_dict(effect['recycling'])
             context.query.require_active_seat(context.actor)
-            if spec.scope != 'all_players': context.query.require_active_seat(effect['player'])
+            player = effect['player']
+            if spec.scope != 'all_players' and (player is not None or not spec.random_bottom):
+                context.query.require_active_seat(player)
             intent = GraveyardRecyclingIntent(
-                context.actor, effect['player'], spec, str(effect.get('reason') or context.default_reason),
-                effect.get('_replacement_selections', ()), context.source if spec.include_source else None,
+                context.actor, player, spec, str(effect.get('reason') or context.default_reason),
+                effect.get('_replacement_selections', ()), context.source if spec.requires_source_context else None,
             )
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc

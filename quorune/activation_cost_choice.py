@@ -20,6 +20,7 @@ class CostChoice:
     tap_schema_version: int | None = None
     return_schema_version: int | None = None
     sacrifice_schema_version: int | None = None
+    predicate_union: FrozenMap | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.kind, str) or not self.kind.strip():
@@ -51,6 +52,22 @@ class CostChoice:
                     or self.kind!='sacrifice_one' or self.predicate is None or self.card_type is not None
                     or self.return_schema_version is not None or self.tap_schema_version is not None):
                 raise ValueError('Keyword sacrifice choices require their explicit version and typed predicate')
+        if self.predicate_union is not None:
+            from .sacrifice_union_model import COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION, SacrificePredicateUnion
+
+            union = SacrificePredicateUnion.from_dict(self.predicate_union)
+            if (union.schema_version != COLORED_OR_ARTIFACT_CREATURE_UNION_VERSION
+                    or self.kind != "sacrifice_one" or self.count != 1 or self.predicate is None
+                    or any(value is not None for value in (self.tap_schema_version, self.return_schema_version,
+                                                           self.sacrifice_schema_version))):
+                raise ValueError("An activation sacrifice union requires its isolated typed creature cost")
+            object.__setattr__(self, "predicate_union", FrozenMap(union.to_dict()))
+        if self.kind == "forage" and (
+            self.count != 1 or self.zone != "battlefield" or self.card_type is not None or self.another
+            or any(value is not None for value in (self.predicate, self.tap_schema_version,
+                self.return_schema_version, self.sacrifice_schema_version, self.predicate_union))
+        ):
+            raise ValueError("Forage is one closed selected-cost choice")
         from .rules.selected_counter_costs import SELECTED_COUNTER_COST_CAPABILITIES, validate_selected_counter_choice
         if self.kind in SELECTED_COUNTER_COST_CAPABILITIES:
             validate_selected_counter_choice(self)
@@ -102,13 +119,13 @@ class CostChoice:
         contract = FIXED_ZONE_CHANGE_COST_CONTRACTS.get(operation)
         if contract is None:
             return None
+        version = self.sacrifice_schema_version or self.return_schema_version or 1
+        if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND:
+            version = 2
+        elif self.predicate_union is not None:
+            version = 5
         descriptor = {
-                "schema_version": (
-                    2
-                    if self.kind
-                    == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND
-                    else self.sacrifice_schema_version or self.return_schema_version or 1
-                ),
+                "schema_version": version,
                 "kind": ZONE_CHANGE_COST_KIND,
                 "operation": operation,
                 "count": self.count,
@@ -117,6 +134,8 @@ class CostChoice:
             }
         if self.kind == FIXED_UNBLOCKED_ATTACKER_RETURN_COST_KIND:
             descriptor["unblocked_attacker"] = True
+        if self.predicate_union is not None:
+            descriptor["predicate_union"] = thaw_value(self.predicate_union)
         return FixedZoneChangeAdditionalCost.from_descriptor(descriptor)
 
     def fixed_tap_cost(self) -> Any | None:
@@ -158,6 +177,8 @@ class CostChoice:
             result['return_schema_version'] = self.return_schema_version
         if self.sacrifice_schema_version is not None:
             result['sacrifice_schema_version'] = self.sacrifice_schema_version
+        if self.predicate_union is not None:
+            result["predicate_union"] = thaw_value(self.predicate_union)
         return result
 
     def to_dict(self) -> dict[str, Any]:
@@ -178,6 +199,8 @@ class CostChoice:
             result['return_schema_version'] = self.return_schema_version
         if self.sacrifice_schema_version is not None:
             result['sacrifice_schema_version'] = self.sacrifice_schema_version
+        if self.predicate_union is not None:
+            result["predicate_union"] = thaw_value(self.predicate_union)
         return result
 
     @classmethod
@@ -190,6 +213,7 @@ class CostChoice:
             frozenset((*expected, "predicate", "tap_schema_version")),
             frozenset((*expected, 'predicate', 'return_schema_version')),
             frozenset((*expected, 'predicate', 'sacrifice_schema_version')),
+            frozenset((*expected, "predicate", "predicate_union")),
         }:
             raise ValueError("cost choices use a closed schema")
         if "counter_amount" in value and value["counter_amount"] is None:
@@ -200,6 +224,8 @@ class CostChoice:
             raise ValueError('Explicit return-cost versions must be nonnull')
         if 'sacrifice_schema_version' in value and value['sacrifice_schema_version'] is None:
             raise ValueError('Explicit sacrifice-cost versions must be nonnull')
+        if "predicate_union" in value and value["predicate_union"] is None:
+            raise ValueError("A sacrifice predicate union must be nonnull")
         if "predicate" in value and value["predicate"] is None:
             raise ValueError(
                 "typed cost choice predicates must be nonnull objects"
@@ -214,6 +240,7 @@ class CostChoice:
             tap_schema_version=value.get("tap_schema_version"),
             return_schema_version=value.get('return_schema_version'),
             sacrifice_schema_version=value.get('sacrifice_schema_version'),
+            predicate_union=value.get("predicate_union"),
             predicate=(
                 FrozenMap(value["predicate"])
                 if "predicate" in value

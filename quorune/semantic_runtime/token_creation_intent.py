@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 from ..created_token_cleanup import CreatedTokenCleanupPlan
+from ..created_token_cleanup_model import CreatedTokenCleanupSpec
 from ..replacement.immutable import FrozenMap
 from .zone_move_intent import _freeze_replacement_selections
 
@@ -27,12 +28,23 @@ class CreateTokenIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     token_cleanup: CreatedTokenCleanupPlan | None = None
 
+    @property
+    def source_bound_haste_copy(self) -> bool:
+        return self.token_cleanup is not None and self.copy_of is not None
+
     def __post_init__(self) -> None:
         if self.token_cleanup is not None and (
                 not isinstance(self.token_cleanup, CreatedTokenCleanupPlan)
-                or self.copy_of is not None or self.copy_snapshot is not None
-                or self.sacrifice_at_end_step or self.sacrifice_on_controller_end_step or self.exile_at_end_of_combat):
-            raise ValueError('Typed token cleanup cannot mix with copy recipes or legacy lifecycle flags')
+                or self.copy_snapshot is not None or self.sacrifice_at_end_step
+                or self.sacrifice_on_controller_end_step or self.exile_at_end_of_combat):
+            raise ValueError('Typed token cleanup cannot mix with retained snapshots or legacy lifecycle flags')
+        if self.source_bound_haste_copy and (
+            self.token_cleanup.spec != CreatedTokenCleanupSpec("sacrifice", "next_end_step")
+            or self.controller != self.actor or self.quantity != 1 or self.name or self.characteristics
+            or tuple(self.temporary_keywords) != ("Haste",) or self.tapped or self.attacking_assignments
+            or self.attacking_groups
+        ):
+            raise ValueError("A source-bound haste copy requires a single current model and next-end-step sacrifice")
         if any(
             type(value) is not str or not value
             for value in (self.actor, self.controller, self.reason)

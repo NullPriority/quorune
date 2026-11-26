@@ -10,6 +10,7 @@ from . import regex_working_set as re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..apnap_object_payment import OTHER_PLAYER_SACRIFICE_SCOPE, OTHER_PLAYER_SACRIFICE_TYPES
 from ..power_sacrifice_model import (
     ATTACK_SACRIFICE_STAT_TEMPLATE, ENTRY_SACRIFICE_POWER_DRAW_TEMPLATE, GreatestPowerSacrificeSpec,
     attack_sacrifice_stat_effect, entry_sacrifice_power_life_draw_effect,
@@ -33,9 +34,16 @@ MOST_LANDS_ATTACK_SACRIFICE_MECHANIC = 'most-lands-attack-sacrifice'
 _SACRIFICE_MECHANIC = "sacrifice"
 _TARGETS_MECHANIC = "cr-115-targets"
 _INSTRUCTION = re.compile(
-    r"^(?:(?P<subject>target player|target opponent|each player|each opponent|you) )?"
+    r"^(?:(?P<subject>target player|target opponent|each other player|each player|each opponent|you) )?"
     rf"(?P<verb>sacrifices?) (?P<count>another|an|{FIXED_COUNT_PATTERN}) (?P<object>.+?)\.?$",
     re.IGNORECASE,
+)
+
+
+_GREATEST_MANA_VALUE_INSTRUCTION = re.compile(
+    r"Each opponent sacrifices a creature or planeswalker with the greatest mana value "
+    r"among creatures and planeswalkers they control\.?",
+    re.I,
 )
 
 
@@ -52,6 +60,7 @@ class AffectedPlayerSacrificeSubject(str, Enum):
     TARGET_OPPONENT = "target_opponent"
     EACH_PLAYER = "each_player"
     EACH_OPPONENT = "each_opponent"
+    EACH_OTHER_PLAYER = "each_other_player"
     MOST_LANDS = "most_lands"
 
     @property
@@ -75,6 +84,7 @@ _SUBJECTS = {
     "target opponent": AffectedPlayerSacrificeSubject.TARGET_OPPONENT,
     "each player": AffectedPlayerSacrificeSubject.EACH_PLAYER,
     "each opponent": AffectedPlayerSacrificeSubject.EACH_OPPONENT,
+    "each other player": AffectedPlayerSacrificeSubject.EACH_OTHER_PLAYER,
 }
 
 
@@ -248,9 +258,15 @@ class FixedAffectedPlayerSacrificeTemplate:
                 else AffectedPlayerSacrificeSubject.EACH_OPPONENT
             )
             or self.greatest_power.target_player not in (None, "$target.0") or self.count != 1
-            or self.exclude_source or self.predicate != ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))
+            or self.exclude_source or self.predicate != self.greatest_power.predicate
         ):
             raise ValueError('Greatest-power sacrifice keeps its exact affected creature selection')
+        if self.subject is AffectedPlayerSacrificeSubject.EACH_OTHER_PLAYER and (
+            self.count != 1 or self.exclude_source
+            or self.predicate not in tuple(ObjectQuerySpec(zones=("battlefield",), types_all=(category,))
+                                           for category in OTHER_PLAYER_SACRIFICE_TYPES)
+        ):
+            raise ValueError("Other-player sacrifice requires one fixed type and no exclusions")
         if self.subject is AffectedPlayerSacrificeSubject.MOST_LANDS and (
             self.count != 2 or self.predicate != LAND_COUNT_METRIC.predicate() or self.exclude_source
         ):
@@ -259,6 +275,8 @@ class FixedAffectedPlayerSacrificeTemplate:
     @property
     def template_id(self) -> str:
         if self.greatest_power is not None:
+            if self.greatest_power.mana_value:
+                return "fixed-opponent-greatest-mana-value-sacrifice-v3"
             if self.greatest_power.target_player is not None:
                 return "fixed-target-greatest-power-sacrifice-life-v2"
             return ('fixed-opponent-life-loss-greatest-power-sacrifice-v1' if self.greatest_power.lost_life_only
@@ -279,6 +297,7 @@ class FixedAffectedPlayerSacrificeTemplate:
             AffectedPlayerSacrificeSubject.CONTROLLER: ["$controller"],
             AffectedPlayerSacrificeSubject.EACH_PLAYER: "all",
             AffectedPlayerSacrificeSubject.EACH_OPPONENT: "opponents",
+            AffectedPlayerSacrificeSubject.EACH_OTHER_PLAYER: OTHER_PLAYER_SACRIFICE_SCOPE,
             AffectedPlayerSacrificeSubject.MOST_LANDS: land_count_maximizers_reference(),
         }.get(self.subject, ["$target.0"])
         effect: dict[str, Any] = {
@@ -366,6 +385,185 @@ def _targeted_greatest_power_sacrifice_life_template(normalized: str) -> FixedAf
     return None
 
 
+def keep_by_type_template(text):
+    from ..rules.keep_permanents_by_type import KEEP_PERMANENTS_BY_TYPE_TEMPLATE, KeepPermanentsByType
+
+    material = " ".join(text.split()).casefold()
+    variants = {
+        ("each player chooses an artifact, a creature, an enchantment, and a planeswalker from among the "
+         "nonland permanents they control, then sacrifices the rest."): "nonland_self_choice",
+        ("for each player, you choose from among the permanents that player controls an artifact, a creature, "
+         "an enchantment, and a planeswalker. then each player sacrifices all other nonland permanents they control."):
+            "nonland_controller_choice",
+        ("each player chooses from among the permanents they control an artifact, a creature, an enchantment, "
+         "and a land, then sacrifices the rest."): "land_self_choice",
+    }
+    mode = variants.get(material)
+    if mode is None:
+        return None
+    return (
+        KEEP_PERMANENTS_BY_TYPE_TEMPLATE, (KeepPermanentsByType(mode).effect(),), None,
+        (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice"),
+    )
+
+
+def counted_sacrifice_damage_template(text, *, card_name):
+    from ..rules.any_number_sacrifice import ANY_NUMBER_SACRIFICE_TEMPLATE, any_number_sacrifice_effect
+    from ..rules.committed_sacrifice_damage import committed_sacrifice_damage_recipe, committed_sacrifice_damage_target_schema
+    from ..rules.source_references import SourceReferenceSpec
+
+    material = " ".join(text.split())
+    match = re.fullmatch(
+        r"Sacrifice any number of (?P<domain>mountains|creatures)\. "
+        r"(?P<source>.+?) deals that much damage to (?P<target>target player or planeswalker|any target)\.",
+        material, re.I,
+    )
+    if match is None or not (match["source"].casefold() in ("this spell", "it")
+                             or card_name and SourceReferenceSpec(card_name).matches(match["source"])):
+        return None
+    domain = match["domain"].casefold()
+    target = "target player or planeswalker" if domain == "mountains" else "any target"
+    if match["target"].casefold() != target:
+        return None
+    recipe = committed_sacrifice_damage_recipe(domain)
+    return (
+        ANY_NUMBER_SACRIFICE_TEMPLATE, (any_number_sacrifice_effect(domain, recipe),),
+        committed_sacrifice_damage_target_schema(recipe),
+        (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", "cr-120-damage", "cr-115-targets"),
+    )
+
+
+def any_number_sacrifice_template(text):
+    from ..rules.any_number_sacrifice import ANY_NUMBER_SACRIFICE_TEMPLATE, any_number_sacrifice_effect
+
+    material = " ".join(text.split()).casefold()
+    life_text = "sacrifice any number of permanents. you gain 2 life for each permanent sacrificed this way."
+    if material == life_text:
+        domain = "permanents"
+        followup = {"op": "life", "player": "$controller", "delta": 2}
+    elif material == "sacrifice any number of lands, then add that much {c}.":
+        domain = "lands"
+        followup = {"op": "mana", "player": "$controller", "color": "C", "amount": 1}
+    else:
+        domains = {
+            "sacrifice any number of artifacts, creatures, and/or lands. draw a card for each permanent sacrificed this way.":
+                "artifact_creature_land",
+            "sacrifice any number of permanents you control, then draw that many cards.": "permanents",
+            "sacrifice any number of other permanents, then draw that many cards.": "other_permanents",
+            "sacrifice any number of artifacts, enchantments, and/or tokens, then draw that many cards.":
+                "artifact_enchantment_token",
+        }
+        domain = domains.get(material)
+        if domain is None:
+            return None
+        followup = {"op": "draw", "player": "$controller", "count": 1, "private": True}
+    return (ANY_NUMBER_SACRIFICE_TEMPLATE, (any_number_sacrifice_effect(domain, followup),), None,
+            (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice"))
+
+
+def committed_sacrifice_hand_entry_template(text):
+    from .hand_entry_collection_templates import private_hand_collection_template
+    from ..private_hand_entry_model import decode_private_hand_collection
+    from ..rules.any_number_sacrifice import (
+        COMMITTED_SACRIFICE_HAND_ENTRY_TEMPLATE, any_number_sacrifice_effect,
+    )
+
+    normalized = " ".join(text.strip().split())
+    prefix = re.match(r"(?:You )?sacrifice a creature\. If you do, draw a card, then ",
+                      normalized, re.IGNORECASE)
+    if prefix is None:
+        return None
+    collection = private_hand_collection_template(normalized[prefix.end():])
+    if collection is None:
+        return None
+    _template, (effect,), _targets, _mechanics = collection
+    if not decode_private_hand_collection(effect).one_of_each:
+        return None
+    return (COMMITTED_SACRIFICE_HAND_ENTRY_TEMPLATE, (any_number_sacrifice_effect("creatures", effect),),
+            None, ("fixed-affected-player-sacrifice", "sacrifice"))
+
+
+def counted_sacrifice_token_template(text):
+    from ..rules.counted_sacrifice_tokens import COUNTED_SACRIFICE_TOKEN_TEMPLATE, counted_sacrifice_tokens_effect
+    from .oracle_source_text import without_parenthetical_reminder
+    from .token_templates import fixed_token_creation_effect_template
+
+    material = " ".join(without_parenthetical_reminder(text).split()).casefold()
+    other_player_followup = ". you create a 2/2 black zombie creature token for each creature sacrificed this way."
+    if material in (
+        "each other player sacrifices a creature" + other_player_followup,
+        "each other player sacrifices a creature of their choice" + other_player_followup,
+    ):
+        scope, definition = OTHER_PLAYER_SACRIFICE_SCOPE, "Create a 2/2 black Zombie creature token."
+    elif material == ("each opponent sacrifices a creature of their choice. create a food token "
+                      "for each creature sacrificed this way."):
+        scope, definition = "opponents", "Create a Food token."
+    else:
+        return None
+    token = fixed_token_creation_effect_template(definition)
+    if token is None:
+        return None
+    _template, (result,), _schema, mechanics = token.compiled()
+    return (COUNTED_SACRIFICE_TOKEN_TEMPLATE, (counted_sacrifice_tokens_effect(scope, result),), None,
+            (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", *mechanics))
+
+
+def target_sacrifice_toughness_template(text):
+    from ..rules.target_sacrifice_toughness import (
+        TARGET_SACRIFICE_TOUGHNESS_TEMPLATE, target_sacrifice_toughness_effect, target_sacrifice_toughness_schema,
+    )
+
+    material = " ".join(text.split())
+    target_result = re.fullmatch(
+        r"Target player sacrifices a creature(?: of their choice)?, then gains life equal to that creature['’]s toughness\.",
+        material, re.I,
+    )
+    controller_result = re.fullmatch(
+        r"Target (?P<relation>player|opponent) sacrifices a creature(?: of their choice)?\. "
+        r"You gain life equal to that creature['’]s toughness\.",
+        material, re.I,
+    )
+    if target_result is not None:
+        relation, recipient = "any", "target"
+    elif controller_result is not None:
+        relation = "opponent" if controller_result["relation"].casefold() == "opponent" else "any"
+        recipient = "controller"
+    else:
+        return None
+    return (
+        TARGET_SACRIFICE_TOUGHNESS_TEMPLATE, (target_sacrifice_toughness_effect(relation, recipient),),
+        target_sacrifice_toughness_schema(relation),
+        (FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice", "cr-115-targets", "cr-119-life"),
+    )
+
+
+def sacrifice_discard_fallback_template(text):
+    expected = (
+        "each player sacrifices a creature or planeswalker of their choice. "
+        "each player who can't discards a card."
+    )
+    if " ".join(text.split()).casefold().replace("\u2019", "'") != expected:
+        return None
+    from ..rules.sacrifice_discard_fallback import sacrifice_discard_fallback_effect
+
+    return ("sacrifice-creature-planeswalker-or-private-discard-v1", (sacrifice_discard_fallback_effect(),), None,
+            ("fixed-affected-player-sacrifice", "fixed-affected-player-discard", "sacrifice"))
+
+
+def ordered_type_sacrifice_template(text):
+    expected = (
+        "choose an order for artifacts, creatures, and lands. each player sacrifices one permanent "
+        "of their choice of the first type, sacrifices two of their choice of the second type, "
+        "then sacrifices three of their choice of the third type."
+    )
+    if " ".join(text.split()).casefold() != expected:
+        return None
+    from ..rules.ordered_type_sacrifice import ordered_type_sacrifice_effect
+
+    return ("fixed-ordered-type-sacrifices-v1", (ordered_type_sacrifice_effect(),), None,
+            ("fixed-affected-player-sacrifice", "sacrifice"))
+
+
 def fixed_affected_player_sacrifice_effect_template(
     text: str,
 ) -> FixedAffectedPlayerSacrificeTemplate | None:
@@ -375,6 +573,11 @@ def fixed_affected_player_sacrifice_effect_template(
     targeted = _targeted_greatest_power_sacrifice_life_template(normalized)
     if targeted is not None:
         return targeted
+    if _GREATEST_MANA_VALUE_INSTRUCTION.fullmatch(normalized):
+        spec = GreatestPowerSacrificeSpec(mana_value=True)
+        return FixedAffectedPlayerSacrificeTemplate(
+            AffectedPlayerSacrificeSubject.EACH_OPPONENT, 1, spec.predicate, greatest_power=spec,
+        )
     greatest = _GREATEST_INSTRUCTION.fullmatch(normalized)
     if greatest is not None:
         return FixedAffectedPlayerSacrificeTemplate(
@@ -402,12 +605,15 @@ def fixed_affected_player_sacrifice_effect_template(
     predicate = _predicate(phrase, count=count)
     if predicate is None:
         return None
-    return FixedAffectedPlayerSacrificeTemplate(
-        subject=_SUBJECTS[subject],
-        count=count,
-        predicate=predicate,
-        exclude_source=exclude_source,
-    )
+    try:
+        return FixedAffectedPlayerSacrificeTemplate(
+            subject=_SUBJECTS[subject],
+            count=count,
+            predicate=predicate,
+            exclude_source=exclude_source,
+        )
+    except ValueError:
+        return None
 
 
 _ENTRY_SACRIFICE_POWER_VARIANT = "source_entry_selected_sacrifice_power"

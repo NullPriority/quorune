@@ -217,6 +217,10 @@ class ReplacementContinuation:
         if resume_kind in {"state_based_destruction", "state_based_zone_change"}:
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
+        if resume_kind == "scheduled_draw_result":
+            from ..drawing.scheduled_draw_coordination import decode_scheduled_draw_replacement
+
+            return decode_scheduled_draw_replacement(cls, value, batch, effects)
         if resume_kind == "draw_discard_or_mill":
             from ..drawing.discard_coordination import decode_draw_discard_replacement
 
@@ -334,6 +338,9 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
         "state_based_zone_change": (_STATE_BASED_DESTRUCTION_FIELDS | {'state_based_destruction_selections'}, "state-based zone continuation"),
         'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
+        "scheduled_draw_result": ({"replacement_resume_kind", "scheduled_draw", "object_refs",
+            "replacement_selections", "replacement_batch", "replacement_effects"},
+            "scheduled draw result continuation"),
         "draw_discard_or_mill": ({"replacement_resume_kind", "draw_discard", "selected_card",
             "replacement_selections", "replacement_batch", "replacement_effects"},
             "draw discard or mill continuation"),
@@ -853,14 +860,16 @@ def _priority_action_cost_event_ids(
     response: Mapping[str, Any],
     seat: str,
 ) -> set[str]:
-    from ..rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, WholeZoneCostFrame
+    from ..rules.mana_life_result import mana_life_replacement_event
+    from ..rules.casting.whole_zone_cost_frame import WHOLE_ZONE_COST_FRAME_FIELD, whole_zone_cost_event_ids
 
+    from ..rules.mana_point_result import mana_point_replacement_event
+
+    mana_result = mana_life_replacement_event(batch, response, seat) or mana_point_replacement_event(batch, response, seat)
+    if mana_result is not None:
+        return {mana_result.event_id}
     if WHOLE_ZONE_COST_FRAME_FIELD in response:
-        if action != "cast":
-            raise ReplacementEffectError("Only a cast can carry an automatic zone cost")
-        frame = WholeZoneCostFrame.from_dict(response[WHOLE_ZONE_COST_FRAME_FIELD])
-        frame.validate_response(response)
-        return frame.replacement_event_ids(batch, seat=seat)
+        return whole_zone_cost_event_ids(batch, response, action=action, seat=seat)
     if action == 'activate' and len(batch.events) > 1:
         refs=_activation_batch_cost_refs(response)
         if (
@@ -934,8 +943,14 @@ def _priority_action_cost_event_ids(
             from ..rules.selected_counter_costs import (
                 blight_activation_cost_event_is_valid, is_blight_activation_cost_event,
             )
+            from ..rules.activation.counter_costs import (
+                is_source_counter_placement_event, source_counter_placement_event_is_valid,
+            )
+
             if is_blight_activation_cost_event(event, response):
                 action_valid = blight_activation_cost_event_is_valid(batch, effects, response, seat=seat)
+            elif is_source_counter_placement_event(event, response):
+                action_valid = source_counter_placement_event_is_valid(batch, effects, response, seat=seat)
             else:
                 action_valid = payload.get("counter_name") == "loyalty"
         elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
@@ -1020,6 +1035,9 @@ def _prior_casting_zone_cost_event_ids(batch, response, *, seat):
         if len(batch.events) != 1 or not _casting_zone_cost_event_is_valid(batch.events[0], response, seat=seat):
             raise ReplacementEffectError("The replacement no longer belongs to the ordered cast")
         event = batch.events[0]
+        if frame.event_ids is not None:
+            event_ids = frame.through_pending_escape_event(event)
+            return set(journal).intersection(event_ids) if isinstance(journal, Mapping) else set()
         refs = frame.through_pending_payment(event)
         return _selected_zone_cost_journal_ids(journal, event, refs) if isinstance(journal, Mapping) else set()
     if not isinstance(journal,Mapping) or len(batch.events)!=1 or batch.events[0].kind!='zone.change':return set()
@@ -1088,6 +1106,10 @@ def _decode_mana_continuation(
         )
     _validate_mana_frame(frame, seat)
     _validate_priority_response(action, response)
+    from ..rules.mana_life_result import mana_life_event_belongs_to_payment, mana_life_replacement_event
+    from ..rules.mana_point_result import mana_point_event_belongs_to_payment, mana_point_replacement_event
+    from ..mana_mode_effects import mana_result_event_belongs_to_payment
+
     prior_mana_event_ids = set()
     damage_proposal_ids = _decode_damage_proposal_ids(value, batch)
     if resume_kind == "face_up_copy":
@@ -1149,11 +1171,20 @@ def _decode_mana_continuation(
     if action == "activate":
         from ..rules.selected_counter_costs import blight_prior_mana_replacement_event_ids
 
-        prior_mana_event_ids = blight_prior_mana_replacement_event_ids(response)
+        prior_mana_event_ids.update(blight_prior_mana_replacement_event_ids(response))
     elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
         from ..rules.casting.blight_costs import blight_cast_prior_mana_event_ids
 
-        prior_mana_event_ids = blight_cast_prior_mana_event_ids(response)
+        prior_mana_event_ids.update(blight_cast_prior_mana_event_ids(response))
+    journal = response.get("_mana_replacement_selections")
+    if isinstance(journal, Mapping):
+        payment_id = response["_mana_payment_id"]
+        if (mana_life_replacement_event(batch, response, seat) is not None
+                or mana_point_replacement_event(batch, response, seat) is not None):
+            prior_mana_event_ids.update(key for key in journal if mana_result_event_belongs_to_payment(key, payment_id))
+        else:
+            prior_mana_event_ids.update(key for key in journal if mana_life_event_belongs_to_payment(key, payment_id)
+                                        or mana_point_event_belongs_to_payment(key, payment_id))
     event_ids.update(prior_mana_event_ids)
     _validate_replacement_journal(
         response,
@@ -1328,7 +1359,10 @@ def _decode_semantic_intent_continuation(
             "library_selection",
             "move_objects_simultaneously",
             "move_counters",
+            "distribute_source_counters",
             "targeted_power_sacrifice_life",
+            "counted_sacrifice_token",
+            "counted_sacrifice_quantity",
             "exploit_sacrifice",
             "place_counter_batch",
             "place_counters",

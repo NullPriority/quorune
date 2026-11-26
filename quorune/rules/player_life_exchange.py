@@ -128,7 +128,7 @@ def plan_player_life_exchange(
         raise ValueError("Exchange requires two integer life totals")
     if one == two:
         return ()
-    recipient = first if one < two else second
-    if not gain_permissions.allows_gain(recipient):
+    recipient, payer = (first, second) if one < two else (second, first)
+    if not gain_permissions.allows_gain(recipient) or not gain_permissions.allows_loss(payer):
         return None
     return LifeChange(first, two - one), LifeChange(second, one - two)

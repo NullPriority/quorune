@@ -169,11 +169,10 @@ class DrawStepRuleTests(unittest.TestCase):
             },
         )
         self.assertTrue(result.ok, result.summary)
+        sylvan_trigger, = (program for program in engine.semantics.programs_for_oracle(sylvan.oracle_id)
+                            if program.event == "step.begin")
         self.assertEqual(
-            {
-                "Sylvan Library draw-step trigger",
-                "CR 504 delayed draw-step trigger",
-            },
+            {sylvan_trigger.label, "CR 504 delayed draw-step trigger"},
             {item.label for item in engine.state.stack},
         )
         self.assertEqual("B", engine.state.priority_player)

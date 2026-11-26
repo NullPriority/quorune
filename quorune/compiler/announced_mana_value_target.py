@@ -6,8 +6,12 @@ from dataclasses import replace
 
 from ..rules.announced_mana_value_target import (
     announced_mana_value_capability,
+    declare_activation_mana_value_equality,
+    exact_artifact_destruction_price,
     declare_announced_mana_value_limit,
     declare_own_graveyard_mana_value_limit,
+    distinct_graveyard_reanimation_effect,
+    distinct_own_graveyard_mana_value_schema,
     project_announced_target_program,
 )
 from . import regex_working_set as re
@@ -15,10 +19,32 @@ from .exile_templates import targeted_exile_effect_template
 from .fixed_control_templates import fixed_control_effect_template
 
 
+def _distinct_graveyard_return_template(text):
+    if re.fullmatch(
+        r"Return from your graveyard to the battlefield any number of target creature cards "
+        r"that each have a different mana value X or less[.]?",
+        text, re.IGNORECASE,
+    ) is None:
+        return None
+    from .fixed_homogeneous_target_sets import FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC
+    from .reanimation_templates import FIXED_TARGET_REANIMATION_MECHANIC, FIXED_TARGET_REANIMATION_SET_MECHANIC
+
+    return (
+        _TEMPLATE_PREFIX + "fixed-graveyard-reanimation-set-v1",
+        (distinct_graveyard_reanimation_effect(),),
+        distinct_own_graveyard_mana_value_schema(),
+        (FIXED_TARGET_REANIMATION_MECHANIC, FIXED_TARGET_REANIMATION_SET_MECHANIC,
+         FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC, "cr-115-targets"),
+    )
+
+
 def announced_mana_value_target_template(text: str, *, has_cast_x: bool):
     if not has_cast_x:
         return None
     normalized = " ".join(text.strip().split())
+    distinct = _distinct_graveyard_return_template(normalized)
+    if distinct is not None:
+        return distinct
     if re.fullmatch(
         r"return target creature card with mana value X or less from your graveyard to the battlefield\.?",
         normalized, re.IGNORECASE,
@@ -53,11 +79,29 @@ def announced_mana_value_target_template(text: str, *, has_cast_x: bool):
     )
 
 
+def announced_activation_mana_value_target_template(ability, text: str):
+    if (ability.zones != ("battlefield",) or ability.sorcery_speed or ability.activation_conditions
+            or re.fullmatch(r"Destroy target noncreature artifact with mana value X[.]?", text.strip(), re.I) is None):
+        return None
+    from .activated_costs import activated_ability_cost
+    from .destruction_templates import targeted_destruction_effect_template
+
+    if not exact_artifact_destruction_price(activated_ability_cost(ability)):
+        return None
+    template = targeted_destruction_effect_template("Destroy target noncreature artifact with mana value 0.")
+    if template is None:
+        return None
+    name, effects, target, mechanics = template.compiled()
+    return _TEMPLATE_PREFIX + name, effects, declare_activation_mana_value_equality(target), mechanics
+
+
 _TEMPLATE_PREFIX = "announced-mana-value-target-v1+"
 
 
-def announced_target_spell_compiler(fallback):
+def announced_target_spell_compiler(fallback, *, distinct_graveyard_only=False):
     def compile_spell(text: str, **context):
+        if distinct_graveyard_only:
+            return _distinct_graveyard_return_template(" ".join(text.strip().split())) or fallback(text, **context)
         return announced_mana_value_target_template(text, has_cast_x=True) or fallback(text, **context)
     return compile_spell
 

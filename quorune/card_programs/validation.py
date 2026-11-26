@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from ..util import stable_json
 
 if TYPE_CHECKING:
-    from ..carddb import CardDatabase
+    from ..carddb import CardDatabase, CardRecord
     from ..semantics import SemanticProgram, SemanticRegistry
 
 
@@ -33,6 +33,32 @@ def canonical_program_fingerprint(
     if canonical is None or canonical.to_dict() != program.to_dict():
         return None
     return card_program.fingerprint
+
+
+def reviewed_dungeon_room_oracle_matches(
+    record: "CardRecord", program: "SemanticProgram", current_oracle_hash: str,
+) -> bool:
+    """Recognize an exact reviewed source for the same sealed dungeon room."""
+    from ..dungeon_catalog import DUNGEON_CATALOG
+    from ..dungeon_progress import DUNGEON_ROOM_EVENT, DungeonRoomRef
+
+    if program.event != DUNGEON_ROOM_EVENT or program.active_zone != "command":
+        return False
+    try:
+        room = DungeonRoomRef.from_dict(program.provenance.get("dungeon_room"))
+    except (TypeError, ValueError):
+        return False
+    definition = DUNGEON_CATALOG[room.dungeon]
+    return (
+        record.name == definition.source_name
+        and record.layout == "double_faced_token"
+        and program.oracle_id == record.oracle_id
+        and program.key == room.program_key
+        and program.ability_id == f"room:front:{room.index}"
+        and program.label == definition.rooms[room.index].label
+        and program.provenance.get("source_oracle_hash") == definition.source_oracle_hash
+        and current_oracle_hash in definition.equivalent_oracle_hashes
+    )
 
 
 def program_source_is_current(
@@ -66,6 +92,9 @@ def program_source_is_current(
         ).encode("utf-8")
     ).hexdigest()
     return (
-        program.provenance.get("source_oracle_hash") == oracle_hash
-        and program.provenance.get("source_rulings_hash") == rulings_hash
+        program.provenance.get("source_rulings_hash") == rulings_hash
+        and (
+            program.provenance.get("source_oracle_hash") == oracle_hash
+            or reviewed_dungeon_room_oracle_matches(record, program, oracle_hash)
+        )
     )

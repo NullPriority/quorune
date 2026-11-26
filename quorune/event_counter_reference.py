@@ -11,8 +11,39 @@ from .face_up_effect_model import TURN_FACE_UP_EVENT
 EVENT_COUNTER_OBJECT='$event.counter_object'
 EVENT_ENTRY_OBJECT='$event.entry_object'
 EVENT_COUNTER_CONTEXT='event_counter_recipient'
+DAMAGE_DEALER_PERMANENT = "$event.damage_dealer_permanent"
+DAMAGE_DEALER_PERMANENT_CONTEXT = "damage_dealer_permanent"
 BLOCK_COUNTERPART_OBJECT = '$event.block_counterpart'
 BLOCK_COUNTERPART_CONTEXT = 'block_counterpart_recipient'
+
+
+def attached_attack_counter_context_matches(*, event, active_zone, event_condition):
+    """Check the normalized attachment and one declared-attacker occurrence."""
+    return event == "creature.attacks" and active_zone == "battlefield" and event_condition == {
+        "field": "source_attachment_target_ref",
+        "op": "eq",
+        "value": "$context.card",
+    }
+
+
+def _uses_event_counter_reference(value, references):
+    if isinstance(value, Mapping):
+        return any(_uses_event_counter_reference(child, references) for child in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_uses_event_counter_reference(child, references) for child in value)
+    return value in references
+
+
+def uses_modal_event_counter_recipient(target_schema):
+    """Inspect branch instructions before the controller announces a mode."""
+    if not isinstance(target_schema, Mapping):
+        return False
+    modes = target_schema.get("modes")
+    return isinstance(modes, Mapping) and any(
+        isinstance(mode, Mapping)
+        and _uses_event_counter_reference(mode.get("effects"), (EVENT_COUNTER_OBJECT,))
+        for mode in modes.values()
+    )
 
 
 def event_counter_recipient_context(program,event,context):
@@ -35,23 +66,28 @@ def event_counter_recipient_context(program,event,context):
                    for row in transition.assignments):
             raise ValueError('Block counterpart is not the selected blocking pair')
         return {BLOCK_COUNTERPART_CONTEXT: {'reference': other.reference, 'logical_object_id': other.logical_object_id}}
-    def contains(value):
-        if isinstance(value,Mapping):return any(contains(v) for v in value.values())
-        if isinstance(value,(list,tuple)):return any(contains(v) for v in value)
-        return value in (EVENT_COUNTER_OBJECT,'$event.permanent_object')
-    if not contains(program.effects):return {}
+    if _uses_event_counter_reference(program.effects, (DAMAGE_DEALER_PERMANENT,)):
+        if event != 'damage.dealt':
+            raise ValueError('An original damage dealer requires its committed damage occurrence')
+        dealer = event_object_identity(event, context) if context.get('source_zone') == 'battlefield' else None
+        return {DAMAGE_DEALER_PERMANENT_CONTEXT: dealer}
+    if not (
+        _uses_event_counter_reference(program.effects, (EVENT_COUNTER_OBJECT, "$event.permanent_object"))
+        or uses_modal_event_counter_recipient(program.target_schema)
+    ):
+        return {}
     return {EVENT_COUNTER_CONTEXT:event_object_identity(event,context)}
 
 
 def event_object_identity(event,context):
     """Seal the existing single public occurrence without a result-family dependency."""
     reference=context.get('card');identity=None
-    if event in {'creature.enter','permanent.enter'}:identity=context.get('card_object_identity')
+    if event in {'creature.enter','permanent.enter','counter.put'}:identity=context.get('card_object_identity')
     elif event=='damage.dealt':identity=context.get('source_logical_object_id')
     elif event in {'damage.received','combat.damage.received'}:
         if context.get('target_kind')!='permanent':raise ValueError('Received event object must be a permanent')
         identity=context.get('target_logical_object_id')
-    elif event in {'permanent.tap','permanent.untap'}:identity=context.get('card_object_identity')
+    elif event in {'permanent.tap','permanent.untap','land.tapped_for_mana'}:identity=context.get('card_object_identity')
     elif event in {TRANSFORM_EVENT, TURN_FACE_UP_EVENT}:identity=context.get("logical_object_id")
     elif event=='creature.attacks':
         from .attack_transition_model import AttackTransitionEvent
@@ -90,6 +126,14 @@ def resolve_block_counterpart_recipient(host, item):
 
 
 def resolve_sealed_event_object_value(host, item, value):
+    if value == "$event.declared_attack_counter_members":
+        from .rules.attack_batches import DECLARED_ATTACK_COUNTER_FIELD, validate_declared_attack_counter_members
+
+        return True, validate_declared_attack_counter_members(item.context.get(DECLARED_ATTACK_COUNTER_FIELD))
+    if value == "$event.matched_arrival_count":
+        from .rules.aggregated_arrival_counters import matched_arrival_identities
+
+        return True, len(matched_arrival_identities(item.context))
     if value in {"$event.counter_threshold_count", "$source.depletion_counter_count"}:
         from .rules.event_counter_threshold import current_source_depletion_count, event_counter_threshold_count
 
@@ -99,6 +143,11 @@ def resolve_sealed_event_object_value(host, item, value):
         return True,_resolve_public_incarnation(host,item.context.get(DAMAGE_PERMANENT_CONTEXT))
     if value == BLOCK_COUNTERPART_OBJECT:
         return True, resolve_block_counterpart_recipient(host, item)
+    if value == DAMAGE_DEALER_PERMANENT:
+        if item.context.get("event") != "damage.dealt" or DAMAGE_DEALER_PERMANENT_CONTEXT not in item.context:
+            raise ValueError("An original damage dealer requires its sealed damage occurrence")
+        dealer = item.context[DAMAGE_DEALER_PERMANENT_CONTEXT]
+        return True, _resolve_public_incarnation(host, dealer) if dealer is not None else None
     if value in {EVENT_ENTRY_OBJECT, EVENT_COUNTER_OBJECT, '$event.permanent_object'}:
         resolver = resolve_entry_event_counter_recipient if value == EVENT_ENTRY_OBJECT else resolve_event_counter_recipient
         return True, resolver(host, item)

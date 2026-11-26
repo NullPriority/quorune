@@ -6,11 +6,14 @@ from . import regex_working_set as re
 from collections import Counter
 
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..chosen_color_mana_model import ChosenColorManaOutput
 from ..fixed_mana_abilities import FixedManaMode
 from ..triggered_mana_model import (
     FIXED_TRIGGERED_MANA_EVENT,
     FIXED_TRIGGERED_MANA_FIELD,
     MANA_LAND_SUBTYPES,
+    SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY,
+    SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE,
     FixedTriggeredManaSpec,
     TriggeredManaChoice,
 )
@@ -43,6 +46,26 @@ _ATTACHED_COLOR = re.compile(
 _MONARCH_COLOR = re.compile(
     rf"(?:When|Whenever) you tap a land for mana while you['’]re the monarch, add {_COLOR_OUTPUT}", re.I,
 )
+
+
+def _source_chosen_spec(material_line):
+    if material_line.casefold() == (
+        "whenever enchanted forest is tapped for mana, "
+        "its controller adds an additional one mana of the chosen color."
+    ):
+        return FixedTriggeredManaSpec("attached", "forest", ChosenColorManaOutput(1))
+    if material_line.casefold() == (
+        "whenever a basic land is tapped for mana of the chosen color, "
+        "its controller adds an additional one mana of that color."
+    ):
+        return FixedTriggeredManaSpec("any", "land", ChosenColorManaOutput(1), basic_only=True)
+    return None
+
+
+def _triggered_mana_template(spec):
+    if spec.capability == SOURCE_CHOSEN_TRIGGERED_MANA_CAPABILITY:
+        return SOURCE_CHOSEN_TRIGGERED_MANA_TEMPLATE
+    return "chosen-triggered-mana-v2" if isinstance(spec.output, TriggeredManaChoice) else "fixed-triggered-mana-v1"
 
 
 def _fixed_spec(material_line):
@@ -80,7 +103,7 @@ def _choice_spec(material_line):
 
 
 def fixed_triggered_mana_node(*, node_id, line, material_line, span, capability_registry, capability_profile, residuals):
-    spec = _fixed_spec(material_line) or _choice_spec(material_line)
+    spec = _fixed_spec(material_line) or _choice_spec(material_line) or _source_chosen_spec(material_line)
     if spec is None:
         return None
     gate = explicit_capabilities_gate((spec.capability,), capability_registry=capability_registry,
@@ -91,8 +114,7 @@ def fixed_triggered_mana_node(*, node_id, line, material_line, span, capability_
     return OracleNode(
         node_id=node_id, kind="triggered_ability", text=line, span=span, active_zone="battlefield",
         event=FIXED_TRIGGERED_MANA_EVENT, event_condition={FIXED_TRIGGERED_MANA_FIELD: spec.to_dict()},
-        lowerable=True, exact=not residual_ids, template_id=("chosen-triggered-mana-v2" if isinstance(spec.output, TriggeredManaChoice)
-                                                           else "fixed-triggered-mana-v1"),
+        lowerable=True, exact=not residual_ids, template_id=_triggered_mana_template(spec),
         runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,), residual_ids=residual_ids,
         capability_dependencies=gate.capabilities, capability_closure=closure.reachable if closure else (),
         capability_profile=closure.profile if closure else None, capability_fingerprint=closure.fingerprint if closure else None,

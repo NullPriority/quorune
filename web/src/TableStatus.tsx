@@ -7,14 +7,42 @@ function asRecord(value: JsonValue): Record<string, JsonValue> {
 
 
 export function CommanderDamage({ seat, value }: { seat: string; value: JsonValue }) {
-  const sources = Array.isArray(value) ? value.map(asRecord) : [];
-  const summary = sources.length
-    ? sources.map((source) => `${String(source.amount ?? 0)} from ${String(source.n ?? "commander")}`).join(" · ")
-    : "0";
+  const sources = (Array.isArray(value) ? value.map(asRecord) : [])
+    .filter((source) => typeof source.amount === "number" && source.amount > 0);
+  if (!sources.length) return null;
+
   return (
-    <div className="commander-damage" data-testid={`commander-damage-${seat}`}>
-      <span>Commander damage</span>
-      <strong>{summary}</strong>
+    <span className="commander-damage" role="group" aria-label="Commander damage received" data-testid={"commander-damage-" + seat}>
+      {sources.map((source, index) => {
+        const owner = typeof source.owner === "string" ? source.owner : "";
+        const name = String(source.n ?? "Commander");
+        const amount = String(source.amount);
+        return (
+          <span
+            key={String(source.cid ?? index)}
+            className="commander-damage-chip"
+            data-seat-accent={owner || undefined}
+            data-commander-id={String(source.cid ?? "")}
+            role="group"
+            tabIndex={0}
+            aria-label={amount + " commander damage from " + name + (owner ? ", Seat " + owner : "")}
+          >
+            <strong className="commander-damage-amount">{amount}</strong>
+            <span className="commander-damage-tooltip" aria-hidden="true">{name}</span>
+          </span>
+        );
+      })}
+    </span>
+  );
+}
+
+
+export function PlayerIdentity({ seat, mine, damage }: { seat: string; mine: boolean; damage: JsonValue }) {
+  return (
+    <div className="player-name">
+      <strong>Seat {seat}</strong>
+      {mine && <span className="you-chip">You</span>}
+      <CommanderDamage seat={seat} value={damage} />
     </div>
   );
 }

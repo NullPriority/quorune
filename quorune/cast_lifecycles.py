@@ -36,6 +36,7 @@ from .zone_object_keyword_model import normalized_zone_object_keyword
 from .zone_trigger_events import ZoneTransitionKind
 
 
+FIXED_CAST_LIFECYCLE_MECHANICS = ("buyback", "dash", "retrace", "warp")
 FIXED_CAST_LIFECYCLE_CAPABILITY_ID = "casting.lifecycle.fixed_public"
 FIXED_ZONE_CAST_LIFECYCLE_CAPABILITY_ID = "casting.lifecycle.fixed_zone_cast"
 FIXED_CAST_LIFECYCLE_HANDLER_ID = "casting.lifecycle.fixed-public.v1"
@@ -168,11 +169,25 @@ def _validate_fixed_zone_cast_spec(spec: Any) -> None:
     validate_fixed_zone_cast_spec(spec)
 
 
+GRANTED_ESCAPE_LIFECYCLE_VERSION = 6
+GRANTED_ESCAPE_EXILE_COUNT = 3
+GRANTED_ESCAPE_CAPABILITY = "casting.lifecycle.source_granted_escape"
+GRANTED_ESCAPE_HANDLER_ID = "permission.cast.source-granted-escape.v1"
+GRANTED_ESCAPE_USE_FIELD = "source_escape_grant"
+
+
+def granted_escape_descriptor() -> dict[str, Any]:
+    return {
+        "handler_id": GRANTED_ESCAPE_HANDLER_ID, "schema_version": 1, "event": "cast.cost",
+        "requires_complete_card_program": True, "exile_other_cards": GRANTED_ESCAPE_EXILE_COUNT,
+    }
+
+
 @dataclass(frozen=True, slots=True)
 class FixedCastLifecycleSpec:
-    ability_id: str
-    line_index: int
-    oracle_line: str
+    ability_id: str | None
+    line_index: int | None
+    oracle_line: str | None
     kind: FixedCastLifecycleKind
     cost_text: str | None
     mana_cost: FrozenMap | None
@@ -182,6 +197,15 @@ class FixedCastLifecycleSpec:
     additional_costs: tuple[FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is int and self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            if (self.kind is not FixedCastLifecycleKind.ESCAPE or type(self.exile_count) is not int
+                    or self.exile_count != GRANTED_ESCAPE_EXILE_COUNT or self.additional_costs
+                    or any(field is not None for field in (
+                        self.ability_id, self.line_index, self.oracle_line, self.cost_text,
+                        self.mana_cost, self.counter_count,
+                    ))):
+                raise FixedCastLifecycleError("Granted Escape requires the printed spell price and three other cards")
+            return
         if type(self.schema_version) is not int or self.schema_version not in {
             1,
             2,
@@ -192,7 +216,7 @@ class FixedCastLifecycleSpec:
             raise FixedCastLifecycleError(
                 "Unsupported fixed cast-lifecycle schema version"
             )
-        if _ABILITY_ID.fullmatch(self.ability_id) is None:
+        if type(self.ability_id) is not str or _ABILITY_ID.fullmatch(self.ability_id) is None:
             raise FixedCastLifecycleError(
                 "Fixed cast-lifecycle ability ID must be abN"
             )
@@ -302,6 +326,12 @@ class FixedCastLifecycleSpec:
         cls,
         value: Mapping[str, Any],
     ) -> "FixedCastLifecycleSpec":
+        if isinstance(value, Mapping) and value.get("schema_version") == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            if (set(value) != {"schema_version", "kind", "exile_count"}
+                    or type(value["schema_version"]) is not int or value["kind"] != FixedCastLifecycleKind.ESCAPE.value):
+                raise FixedCastLifecycleError("Granted Escape has a closed printed-price receipt")
+            return cls(None, None, None, FixedCastLifecycleKind.ESCAPE, None, None,
+                       exile_count=value["exile_count"], schema_version=value["schema_version"])
         legacy = {
             "schema_version",
             "ability_id",
@@ -352,6 +382,8 @@ class FixedCastLifecycleSpec:
         )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            return {"schema_version": self.schema_version, "kind": self.kind.value, "exile_count": self.exile_count}
         value = {
             "schema_version": self.schema_version,
             "ability_id": self.ability_id,
@@ -374,6 +406,8 @@ class FixedCastLifecycleSpec:
         return value
 
     def fixed_cost_option(self) -> dict[str, Any]:
+        if self.schema_version == GRANTED_ESCAPE_LIFECYCLE_VERSION:
+            raise FixedCastLifecycleError("Granted Escape uses the current selected spell's printed price")
         if self.kind in {
             FixedCastLifecycleKind.AFTERMATH,
             FixedCastLifecycleKind.RETRACE,

@@ -57,6 +57,7 @@ from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .mana_source_counter_payment_model import (
+    LAND_MANA_TAP_VERSION, land_mana_tap_event_fields, read_land_mana_tap_event_version,
     mana_source_counter_payment_fields,read_mana_source_counter_payment_version,
     mana_cost_order_fields,read_mana_cost_order_version,
 )
@@ -110,6 +111,8 @@ from .face_down_characteristics_model import (
     FACE_DOWN_DEPARTURE_REVEAL_VERSION, face_down_characteristics_version, face_down_departure_reveal_version,
 )
 from .library_selection_knowledge_model import library_selection_knowledge_version
+from .ability_fragment_primitives import SAGA_INTRINSIC_ABILITY_VERSION, saga_intrinsic_ability_version
+from .rad_counter_model import RAD_TRIGGER_VERSION, RAD_VERSION_FIELD, rad_trigger_version, read_rad_trigger_version
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION, characteristic_query_boundary_version
 from .stack_resolution_authority_model import (
     COPIED_SPELL_ENTRY_AUTHORITY_VERSION,
@@ -120,7 +123,7 @@ from .stack_resolution_authority_model import (
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
-from .banding_model import ninjutsu_band_retention_version, normalize_attack_bands
+from .banding_model import entry_attack_publication_version, ninjutsu_band_retention_version, normalize_attack_bands
 from .counter_placement_event_model import counter_quantity_provenance_version
 
 CONTROL_HISTORY_VERSION = 2
@@ -382,6 +385,8 @@ class CardInstance:
             payload.pop("source_continuity")
         if self.phasing_record is None:
             payload.pop("phasing_record")
+        else:
+            payload["phasing_record"] = self.phasing_record.to_dict()
         if self.commander_designation_id is None:
             # Preserve byte-for-byte historical checkpoint payloads. The
             # GameState identity-version marker distinguishes new records.
@@ -1091,6 +1096,9 @@ class GameState:
     face_down_characteristics_version: int | None = 1
     face_down_departure_reveal_version: int | None = FACE_DOWN_DEPARTURE_REVEAL_VERSION
     library_selection_knowledge_version: int | None = 1
+    land_mana_tap_event_version: int | None = LAND_MANA_TAP_VERSION
+    saga_intrinsic_ability_version: int | None = SAGA_INTRINSIC_ABILITY_VERSION
+    rad_trigger_version: int | None = RAD_TRIGGER_VERSION
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
     stack_resolution_authority_version: int | None = COPIED_SPELL_ENTRY_AUTHORITY_VERSION
     token_copy_value_version: int | None = 1
@@ -1099,6 +1107,7 @@ class GameState:
     permanent_event_state_version: int | None = ZONE_EVENT_NUMERICS_VERSION
     battle_cry_resolution_version: int | None = 1
     ninjutsu_band_retention_version: int | None = 1
+    attacking_entry_publication_version: int | None = 1
     ward_discard_order_version: int | None = 1
     block_characteristics_version: int | None = 1
     unblocked_attacker_event_version: int | None = CURRENT_UNBLOCKED_ATTACKER_EVENT_VERSION
@@ -1130,11 +1139,16 @@ class GameState:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
     def _turn_schedule_fields(self) -> dict[str, Any]:
+        saga_intrinsic_ability_version(self.saga_intrinsic_ability_version)
+        rad_version = rad_trigger_version(self.rad_trigger_version)
         departed_turn_version = self._departed_turn_boundary_version(self.departed_turn_boundary_version)
         return {
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
+            **({"saga_intrinsic_ability_version": self.saga_intrinsic_ability_version}
+               if self.saga_intrinsic_ability_version is not None else {}),
+            **({RAD_VERSION_FIELD: rad_version} if rad_version is not None else {}),
             **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
             **({PRIORITY_CONCESSION_RESUME_FIELD: self.priority_concession_resume_from}
                if self.priority_concession_resume_from is not None else {}),
@@ -1162,6 +1176,7 @@ class GameState:
             "permanent_event_state_version": permanent_event_state_version(self.permanent_event_state_version),
             "battle_cry_resolution_version": battle_cry_resolution_version(self.battle_cry_resolution_version),
             "ninjutsu_band_retention_version": ninjutsu_band_retention_version(self.ninjutsu_band_retention_version),
+            "attacking_entry_publication_version": entry_attack_publication_version(self.attacking_entry_publication_version),
             "ward_discard_order_version": ward_discard_order_version(self.ward_discard_order_version),
             "unearth_leave_replacement_version": unearth_leave_replacement_version(self.unearth_leave_replacement_version),
             "block_characteristics_version": block_characteristics_version(self.block_characteristics_version),
@@ -1240,6 +1255,7 @@ class GameState:
             "players": {seat: player.to_dict() for seat, player in self.players.items()},
             "cards": {object_id: card.to_dict() for object_id, card in self.cards.items()},
             **({"tap_state_event_version": self.tap_state_event_version} if self.tap_state_event_version is not None else {}),
+            **land_mana_tap_event_fields(self.land_mana_tap_event_version),
             **({"soulbond_pairs": [pair.to_dict() for pair in canonical_pair_book(self.soulbond_pairs)]}
                if self.soulbond_pairs is not None else {}),
             "deck_names": dict(self.deck_names),
@@ -1397,6 +1413,9 @@ class GameState:
                 data.get("face_down_departure_reveal_version"),
             ),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),
+            land_mana_tap_event_version=read_land_mana_tap_event_version(data),
+            saga_intrinsic_ability_version=saga_intrinsic_ability_version(data.get("saga_intrinsic_ability_version")),
+            rad_trigger_version=read_rad_trigger_version(data),
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),
             stack_resolution_authority_version=stack_resolution_authority_version(data.get("stack_resolution_authority_version")),
             token_copy_value_version=token_copy_value_version(data.get('token_copy_value_version')),
@@ -1424,6 +1443,7 @@ class GameState:
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
             battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
             ninjutsu_band_retention_version=ninjutsu_band_retention_version(data.get('ninjutsu_band_retention_version')),
+            attacking_entry_publication_version=entry_attack_publication_version(data.get('attacking_entry_publication_version')),
             ward_discard_order_version=ward_discard_order_version(data.get("ward_discard_order_version")),
             block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
             unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
@@ -1529,6 +1549,10 @@ class GameState:
     def _continuous_effects_from_dict(
         data: Any, players: Mapping[str, Any],
     ) -> list[ContinuousJournalEffect]:
+        from .game_hand_size_model import ResolvedNoMaximumHandSize
+        from .next_turn_attack_restriction_model import ResolvedNextTurnAttackRestriction
+        from .turn_match_outcome_model import ResolvedTurnMatchOutcomeProtection
+
         if not isinstance(data, list):
             raise ValueError("continuous_effects must be an array")
         effects = [continuous_journal_effect_from_dict(effect) for effect in data]
@@ -1536,6 +1560,12 @@ class GameState:
             expiry_player = getattr(effect, "expires_on_next_turn_of", None)
             if expiry_player is not None and expiry_player not in players:
                 raise ValueError("Continuous effect names an unknown expiry player")
+            if isinstance(effect, ResolvedTurnMatchOutcomeProtection) and effect.controller not in players:
+                raise ValueError("Turn outcome protection names an unknown resolving player")
+            if isinstance(effect, ResolvedNoMaximumHandSize) and effect.controller not in players:
+                raise ValueError("Game-duration hand-size rule names an unknown player")
+            if isinstance(effect, ResolvedNextTurnAttackRestriction):
+                effect.validate_players(players)
         return effects
 
     def save(self, path: str | Path) -> None:

@@ -1,0 +1,59 @@
+{
+  "cards": [
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "not_legal",
+        "competitivebrawl": "not_legal",
+        "duel": "not_legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "not_legal",
+        "modern": "not_legal",
+        "oathbreaker": "not_legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "not_legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Gandalf, Party Guest",
+      "oracle_id": "11e30c21-41a8-4f2f-b37a-db10656b7cad",
+      "oracle_text": "At the beginning of combat on your turn, you may cast an instant or sorcery spell with mana value X or less from your hand without paying its mana cost, where X is twice the number of legendary Wizards you control.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Avatar Wizard"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings subset for offline tests"
+}

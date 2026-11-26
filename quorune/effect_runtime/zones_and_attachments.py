@@ -7,8 +7,9 @@ from ..attachments import attach_objects, detach_object
 from ..attachment_source_return import apply_attachment_source_return
 from ..rules.reconfigure import source_has_reconfigure, commit_reconfigure_attachment_effect
 from ..rules.attachment_actions import (
-    ENTRY_ATTACHMENT_VERSION, TARGETED_EQUIPMENT_VERSION, equipment_attachment_is_legal,
-    validate_entry_equipment_attachment, validate_targeted_equipment_attachment,
+    ENTRY_ATTACHMENT_VERSION, PLANESWALKER_EQUIP_RESULT, PLANESWALKER_EQUIP_SEMANTIC_KEY,
+    TARGETED_EQUIPMENT_VERSION, equipment_attachment_is_legal,
+    resolve_targeted_equipment_attachment, validate_entry_equipment_attachment,
 )
 from ..aura import legal_aura_target_refs
 from ..continuous_effects import ContinuousOperation, Layer
@@ -29,6 +30,7 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..model import CardInstance
 from ..milling import mill_cards, MillRequest
 from ..linked_exile_return import resolve_linked_exile_return, return_linked_exiled_objects
+from .library_top_exile import apply_exile_top_library_card
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..targets import TargetGroup
 from ..public_zone_moves import (
@@ -37,7 +39,7 @@ from ..public_zone_moves import (
 from ..rules.reanimation_followup import REANIMATION_FOLLOWUP_VERSIONS
 from ..util import unique_preserving_order
 from ..zone_trigger_events import ZoneTransitionKind
-from .linked_zone_movement import apply_move_if_in_zone
+from .linked_zone_movement import apply_move_if_in_zone, commit_resolved_zone_movement
 from .recover import apply_recover_source_result
 
 _EXILE_ZONE = "exile"
@@ -101,13 +103,25 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..rules.linked_hand_mana_model import PAIR
+
     op = operation
+    if op == "exile" and PAIR in effect:
+        from .linked_hand_mana import apply_linked_hand_imprint
+
+        return apply_linked_hand_imprint(host, effect, actor=actor, reason=reason)
     if op == "move" and "attacking_entry" in effect:
         from ..rules.attacking_card_entry import apply_attacking_entry_move
 
         return apply_attacking_entry_move(host, effect, actor=actor, reason=reason)
     if op == "exile" and STACK_SPELL_EXILE_FIELD in effect:
         return _apply_stack_spell_exile(host, effect, actor=actor, reason=reason)
+    from ..rules.opponent_spell_or_permanent_return import ENTRY_FIELD, FIELD as OPPONENT_RETURN_FIELD
+
+    if op == "move" and (OPPONENT_RETURN_FIELD in effect or ENTRY_FIELD in effect):
+        from .opponent_spell_or_permanent_return import apply_opponent_spell_or_permanent_return
+
+        return apply_opponent_spell_or_permanent_return(host, effect, actor=actor, reason=reason)
     graveyard_library_target = GRAVEYARD_LIBRARY_TARGET_FIELD in effect
     if graveyard_library_target:
         version = effect[GRAVEYARD_LIBRARY_TARGET_FIELD]
@@ -164,44 +178,19 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         discard_origin = authorized_legacy_discard_origin(host.state, effect, controller=actor)
     except ValueError as exc:
         raise GameRuleError(str(exc)) from exc
-    moved = host.move_card(
-        card.object_id,
-        destination,
-        **({"discard_effect_origin": discard_origin} if discard_origin is not None else {}),
-        **({"putting_player": actor}
-               if destination == "battlefield" and card.zone != "battlefield" else {}),
-        controller=effect.get("controller"),
-        tapped=(
-            bool(effect["tapped"])
-            if "tapped" in effect
-            else None
-        ),
-        position=(
-            effect["position"]
-            if effect.get("position") is not None
-            else "top"
-        ),
-        reason=reason,
-        semantic_events=True,
-        transition_kind=(
-            ZoneTransitionKind.DISCARD
-            if op == "discard"
-            else ZoneTransitionKind.SACRIFICE
-            if op == "sacrifice"
-            else ZoneTransitionKind.ORDINARY
-        ),
-        replacement_selections=tuple(
-            effect.get("_replacement_selections") or ()
-        ),
-        aura_target_ref=(
-            str(effect["_aura_target_ref"])
-            if effect.get("_aura_target_ref") is not None
-            else None
-        ),
+    moved = commit_resolved_zone_movement(
+        host, card, effect, destination=destination, reason=reason, discard_origin=discard_origin,
+        putting_player=actor if destination == "battlefield" and card.zone != "battlefield" else None,
+        transition_kind=(ZoneTransitionKind.DISCARD if op == "discard" else ZoneTransitionKind.SACRIFICE
+                         if op == "sacrifice" else ZoneTransitionKind.ORDINARY),
     )
     if followup is not None:
+        from ..rules.hand_entry_followup import HandEntrySubtypeLife, committed_hand_entry_life
         from ..rules.reanimation_followup import commit_battlefield_entry_followup
 
+        if isinstance(followup, HandEntrySubtypeLife):
+            return committed_hand_entry_life(host, moved, previous_zone_counter=previous_zone_counter,
+                actor=actor, source=source, followup=followup)
         commit_battlefield_entry_followup(host, moved, previous_zone_counter=previous_zone_counter,
             actor=actor, source=source, followup=followup)
     return moved
@@ -290,7 +279,23 @@ def _apply_reanimate_attached_creature_aura(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    if "aura_incarnation" in effect:
+        from ..aura.runtime import reanimate_graveyard_attachment
+
+        try:
+            source = ResolutionEffectSource.from_effect(effect)
+        except ContinuousEffectStateError as exc:
+            raise GameRuleError(str(exc)) from exc
+        aura = host.state.cards.get(source.object_id)
+        if (
+            aura is None or aura.zone != "battlefield" or aura.phased_out
+            or aura.ref != effect.get("aura")
+            or aura.logical_object_id != effect["aura_incarnation"]
+        ):
+            return None
+        return reanimate_graveyard_attachment(host, aura, actor=actor, reason=reason, effect=effect)
+
+    # A saved Game Record v3 can supply the earlier reviewed effect body.
     aura = host._resolve_object(
         actor,
         str(effect["aura"]),
@@ -416,6 +421,35 @@ def _attachment_target_is_legal(
     )
 
 
+def _planeswalker_equip_is_current(host, effect, *, equipment, target, actor):
+    source = ResolutionEffectSource.from_effect(effect)
+    stack = host.state.stack
+    item = stack[-1] if stack else None
+    if (type(effect[PLANESWALKER_EQUIP_RESULT]) is not int or effect[PLANESWALKER_EQUIP_RESULT] != 1
+            or set(effect) != {"op", "equipment", "creature", "reason", PLANESWALKER_EQUIP_RESULT, "_runtime_source"}
+            or item is None or item.ref != source.stack_ref or item.kind != "activated_ability"
+            or item.semantic_key != PLANESWALKER_EQUIP_SEMANTIC_KEY or item.controller != actor
+            or item.context.get("currently_resolving") is not True):
+        raise GameRuleError("Equip planeswalker requires its resolving ability")
+    return (
+        source.object_id == item.source_object_id == equipment.object_id
+        and source.logical_object_id == equipment.logical_object_id
+        and item.targets == [target.ref]
+        and target.controller == actor
+        and not equipment.phased_out and not target.phased_out
+    )
+
+
+def _resolution_attachment_is_legal(host, effect, attachment, target, *, kind, actor):
+    if PLANESWALKER_EQUIP_RESULT not in effect:
+        return _attachment_target_is_legal(host, attachment, target, attachment_kind=kind)
+    return (
+        _planeswalker_equip_is_current(host, effect, equipment=attachment, target=target, actor=actor)
+        and kind == "equipment"
+        and equipment_attachment_is_legal(host, attachment, target, recipient_type="planeswalker")
+    )
+
+
 def _apply_attach_instruction(host, effect, *, actor, operation, reason):
     from ..manifest import MANIFEST_ATTACHMENT_RESULT
 
@@ -429,7 +463,7 @@ def _apply_attach_instruction(host, effect, *, actor, operation, reason):
             raise GameRuleError(str(exc)) from exc
     if TARGETED_EQUIPMENT_VERSION in effect:
         try:
-            attachment, recipient = validate_targeted_equipment_attachment(effect, resolved=True)
+            attachment, recipient = resolve_targeted_equipment_attachment(host, effect, actor=actor)
         except ValueError as exc:
             raise GameRuleError(str(exc)) from exc
         if attachment is None or recipient is None:
@@ -520,12 +554,7 @@ def _apply_attach(
         attachment,
         effect.get("attachment_kind"),
     )
-    if not _attachment_target_is_legal(
-        host,
-        attachment,
-        creature,
-        attachment_kind=attachment_kind,
-    ):
+    if not _resolution_attachment_is_legal(host, effect, attachment, creature, kind=attachment_kind, actor=actor):
         if legacy_equipment_shape and not isinstance(effect.get('_runtime_source'), Mapping):
             raise GameRuleError(
                 "Attach requires an Equipment and a creature"
@@ -685,7 +714,17 @@ def _apply_exchange_artifact_zones(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    del operation
+    typed = "schema_version" in effect
+    if typed and (
+        type(effect["schema_version"]) is not int or effect["schema_version"] != 1
+        or set(effect) - {"op", "schema_version", "battlefield_card", "graveyard_card",
+                          "_replacement_selections", "reason", "_runtime_source"}
+        or not {"battlefield_card", "graveyard_card"} <= set(effect)
+        or any(effect[key] is not None and (type(effect[key]) is not str or not effect[key])
+               for key in ("battlefield_card", "graveyard_card"))
+    ):
+        raise GameRuleError("Artifact sacrifice and return requires both authorized target slots")
     battlefield_ref = effect.get("battlefield_card")
     graveyard_ref = effect.get("graveyard_card")
     if not battlefield_ref or not graveyard_ref:
@@ -723,8 +762,22 @@ def _apply_exchange_artifact_zones(
         "artifact" not in battlefield_types
         or "artifact" not in graveyard_types
         or battlefield_card.controller != graveyard_card.owner
+        or typed and (battlefield_card.phased_out or not graveyard_card.is_card_object
+                      or battlefield_card.controller not in host.active_seats)
     ):
         return None
+    movement = {}
+    if typed:
+        controller = battlefield_card.controller
+        selections = effect.get("_replacement_selections", ())
+        if not isinstance(selections, (list, tuple)):
+            raise GameRuleError("Artifact sacrifice and return replacement choices are malformed")
+        movement = {
+            "transition_kinds": {battlefield_card.object_id: ZoneTransitionKind.SACRIFICE},
+            "destination_controllers": {graveyard_card.object_id: controller},
+            "putting_players": {graveyard_card.object_id: controller},
+            "replacement_selections": tuple(selections),
+        }
     host._move_cards_simultaneously(
         [
             (battlefield_card.object_id, "graveyard"),
@@ -732,6 +785,7 @@ def _apply_exchange_artifact_zones(
         ],
         reason=reason,
         log=True,
+        **movement,
     )
     return [battlefield_card.ref, graveyard_card.ref]
 
@@ -791,8 +845,16 @@ def _apply_reanimate(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..event_card_return import current_death_source_return_effect
+    from ..rules.reanimation_followup import reanimation_entry_handler
+
+    if (entry_handler := reanimation_entry_handler(effect)) is not None:
+        return entry_handler(host, effect, actor=actor, reason=reason)
     if 'attachment_return' in effect or effect.get('schema_version') == 7:
         return apply_attachment_source_return(host, effect, actor=actor, operation=operation, reason=reason)
+    effect = current_death_source_return_effect(host, effect)
+    if effect is None:
+        return None
     followup = None
     if effect.get("schema_version") in REANIMATION_FOLLOWUP_VERSIONS:
         from ..continuous_effect_state import ResolutionEffectSource
@@ -1057,7 +1119,10 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     reason: str,
 ) -> Any:
     from ..rules.same_name_creature_modifiers import SAME_NAME_STAT_VERSION_FIELD, resolve_same_name_creature_stats
+    from ..rules.target_player_stat_untap import TARGET_PLAYER_STAT_UNTAP_VERSION
 
+    if TARGET_PLAYER_STAT_UNTAP_VERSION in effect:
+        return _apply_target_player_stats_then_untap(host, effect, actor=actor, reason=reason)
     if SAME_NAME_STAT_VERSION_FIELD in effect:
         try:
             spec, affected = resolve_same_name_creature_stats(host, effect)
@@ -1081,6 +1146,10 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
         raise GameRuleError("Next-turn expiry requires the resolution effect journal")
     expiry_player = actor if next_turn else None
     keywords = _fixed_characteristic_keywords(effect)
+    from ..rules.fixed_resolution_characteristic_shapes import (
+        EACH_COLOR_PROTECTION_FIELD, fixed_set_each_color_protection_is_closed,
+    )
+
     raw_predicate = effect.get("predicate")
     if raw_predicate is not None:
         try:
@@ -1105,18 +1174,48 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
             zones=("battlefield",),
             types_all=(required_type,),
         )
+    fragments = ()
+    if EACH_COLOR_PROTECTION_FIELD in effect:
+        if (next_turn or host.state.continuous_effects is None or not keywords
+                or not fixed_set_each_color_protection_is_closed(effect, predicate, controller=actor)):
+            raise GameRuleError("Protection from each color requires a closed resolution creature set")
+        from ..ability_fragments import ProtectionQualityKind, ProtectionSpec, ability_fragment_to_dict
+
+        fragments = tuple(
+            ability_fragment_to_dict(ProtectionSpec(ProtectionQualityKind.COLOR, color))
+            for color in "WUBRG"
+        )
     try:
         affected = matching_battlefield_objects(host, predicate)
     except ContinuousEffectStateError as exc:
         raise GameRuleError(str(exc)) from exc
     return _commit_temporary_stat_set(
         host, effect, affected, actor=actor, power_delta=power_delta, toughness_delta=toughness_delta,
-        keywords=keywords, expiry_player=expiry_player,
+        keywords=keywords, expiry_player=expiry_player, fragments=fragments,
     )
 
 
+def _apply_target_player_stats_then_untap(host, effect, *, actor, reason):
+    from ..public_tap_state_sets import commit_public_tap_state_snapshot, snapshot_public_tap_state
+    from ..rules.target_player_stat_untap import decode_target_player_stat_untap
+
+    try:
+        spec, player = decode_target_player_stat_untap(effect, resolved=True)
+        if player not in host.affected_permanent_active_seats():
+            return []
+        affected = matching_battlefield_objects(host, spec.receivers(player))
+        snapshot = snapshot_public_tap_state(affected)
+        changed = _commit_temporary_stat_set(
+            host, effect, affected, actor=actor, power_delta=spec.power, toughness_delta=spec.toughness,
+        )
+        commit_public_tap_state_snapshot(host, snapshot, actor=actor, tapped=False, reason=reason)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return changed
+
+
 def _commit_temporary_stat_set(host, effect, affected, *, actor, power_delta, toughness_delta,
-                              keywords=(), expiry_player=None):
+                              keywords=(), expiry_player=None, fragments=()):
     affected_ids = [card.object_id for card in affected]
     if host.state.continuous_effects is not None:
         try:
@@ -1140,16 +1239,16 @@ def _commit_temporary_stat_set(host, effect, affected, *, actor, power_delta, to
                     ),
                     expires_on_next_turn_of=expiry_player,
                 )
-            if keywords:
+            if keywords or fragments:
                 create_resolution_continuous_effect(
                     host,
                     source=source,
                     targets=affected,
                     layer=Layer.ABILITY,
                     sublayer="6",
-                    operations=tuple(
-                        ContinuousOperation("add_ability", keyword)
-                        for keyword in keywords
+                    operations=(
+                        *(ContinuousOperation("add_ability", keyword) for keyword in keywords),
+                        *(ContinuousOperation("add_ability_fragment", fragment) for fragment in fragments),
                     ),
                     expires_on_next_turn_of=expiry_player,
                 )
@@ -1294,27 +1393,28 @@ def _apply_shuffle_into_library(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
-    card = host._resolve_object(
-        actor,
-        str(effect["card"]),
-        zones={
-            "battlefield",
-            "graveyard",
-            "exile",
-            "stack",
-        },
-    )
-    owner = card.owner
-    moved = host.move_card(
-        card.object_id,
-        "library",
-        reason=reason,
-        semantic_events=True,
-        replacement_selections=tuple(effect.get("_replacement_selections") or ()),
-    )
+    from ..rules.death_counter_shuffle import DEATH_COUNTER_SHUFFLE_FIELD, resolve_departure_shuffle
+
+    if DEATH_COUNTER_SHUFFLE_FIELD in effect:
+        departure = resolve_departure_shuffle(host.state, host.active_seats, effect)
+        if departure is None:
+            return None
+        owner, card = departure
+    else:
+        card = host._resolve_object(actor, str(effect["card"]), zones={"battlefield", "graveyard", "exile", "stack"})
+        owner = card.owner
+
+    moved = None
+    if card is not None:
+        moved = host.move_card(
+            card.object_id,
+            "library",
+            reason=reason,
+            semantic_events=True,
+            replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        )
     host.shuffle_library(owner, reason=reason)
-    return moved.ref
+    return moved.ref if moved is not None else None
 
 
 
@@ -1442,50 +1542,6 @@ def _apply_reveal_top_permanent(
     return card.ref
 
 
-def _apply_exile_top_library_card(
-    host: Any,
-    effect: Mapping[str, Any],
-    *,
-    actor: str,
-    operation: str,
-    reason: str,
-) -> Any:
-    del operation
-    if set(effect) not in (
-        {"op", "player"},
-        {"op", "player", "_runtime_source"},
-    ):
-        raise GameRuleError("Top-library exile effect is malformed")
-    seat = str(effect.get("player") or "")
-    if seat not in host.active_seats:
-        raise GameRuleError("Top-library exile player is unavailable")
-    library = host.state.players[seat].zones["library"]
-    if not library:
-        return None
-    card = host.state.cards[library[-1]]
-    moved = host.move_card(
-        card.object_id,
-        "exile",
-        reason=reason,
-        semantic_events=True,
-    )
-    host._log(
-        actor,
-        "library.ingest",
-        f"{seat} moved the top card of their library to {moved.zone}.",
-        {
-            "player": seat,
-            "object": moved.ref,
-            "destination": moved.zone,
-            "reason": reason,
-        },
-        importance=2,
-        changed_objects=[card.object_id],
-        changed_players=[seat],
-    )
-    return moved.ref
-
-
 HANDLERS = {
     'recover_source_result': apply_recover_source_result,
     'linked_exile_return': resolve_linked_exile_return,
@@ -1504,7 +1560,7 @@ HANDLERS = {
     'exile_all': _apply_exile_all,
     'exile_graveyard': _apply_exile_graveyard,
     'exile_opponent_graveyards': _apply_exile_opponent_graveyards,
-    'exile_top_library_card': _apply_exile_top_library_card,
+    'exile_top_library_card': apply_exile_top_library_card,
     'mill': _apply_mill,
     'move': _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice,
     'move_if_in_zone': apply_move_if_in_zone,

@@ -302,8 +302,11 @@ def payable_activation_mana_options(
         else set()
     )
     spend_context = ability_mana_spend_context(
-        str(host._effective_card_data(source).get("type_line") or "")
+        str(host._effective_card_data(source).get("type_line") or ""), source_zone=source.zone,
     )
+    from .life_state import available_life_for_payment
+
+    available = available_life_for_payment(host, seat)
     return tuple(
         option
         for option in current_activation_mana_options(
@@ -313,8 +316,7 @@ def payable_activation_mana_options(
             source,
             modifiers=modifiers,
         )
-        if host.state.players[seat].life
-        >= base_life + option.life_payment
+        if available >= base_life + option.life_payment
         and host._cost_is_affordable(
             seat,
             option.requirements,

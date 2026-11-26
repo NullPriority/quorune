@@ -153,6 +153,8 @@ class TriggerMultiplierSpec:
 
 class WardSacrificeScope(str, Enum):
     CREATURE = "creature"
+    FOOD_ARTIFACT = "food_artifact"
+    TWO_PERMANENTS = "two_permanents"
     PERMANENT_WITH_POSITIVE_MANA_VALUE = "permanent_with_positive_mana_value"
 
 
@@ -236,6 +238,8 @@ class WardSpec:
 
     @property
     def capability_id(self) -> str:
+        if self.sacrifice_scope is WardSacrificeScope.TWO_PERMANENTS:
+            return "trigger.keyword.ward.two_permanents"
         if self.sacrifice_scope is not None:
             return "trigger.keyword.ward.fixed_sacrifice"
         return (

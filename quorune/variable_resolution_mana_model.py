@@ -4,9 +4,15 @@ from collections.abc import Mapping
 from .query_effect_amount_model import PublicQueryAmountSpec,PUBLIC_QUERY_AMOUNT_KIND
 from .scalar_effect_amount_model import ScalarEffectAmountSpec,SCALAR_AMOUNT_KIND
 from .replacement.immutable import FrozenMap,thaw_value
+from .target_player_query_amount_model import TargetPlayerQueryAmountSpec
 
 VARIABLE_RESOLUTION_MANA_CAPABILITY='mana.production.variable_resolution_choice'
 MANA_COLORS=tuple('WUBRG')
+OPTIONAL_TARGET_MANA_CHOICE_VERSION = 4
+
+
+def is_optional_target_mana_choice(value):
+    return value.get("op") == "choose_mana" and value.get("schema_version") == OPTIONAL_TARGET_MANA_CHOICE_VERSION
 
 
 @dataclass(frozen=True,slots=True)
@@ -14,6 +20,7 @@ class VariableResolutionManaChoiceSpec:
     selection: str
     colors: tuple[str,...]
     amount: object
+    optional: bool = False
 
     def __post_init__(self):
         if not isinstance(self.colors,(list,tuple)) or type(self.selection) is not str:
@@ -22,8 +29,14 @@ class VariableResolutionManaChoiceSpec:
         if (self.selection not in {'one_color','combination'} or not self.colors
                 or self.colors!=tuple(sorted(set(self.colors))) or not set(self.colors)<=set(MANA_COLORS)):
             raise ValueError('Variable resolution mana requires a closed canonical color selection')
+        if type(self.optional) is not bool or self.optional and (
+            self.selection != "one_color" or self.colors != tuple(sorted(MANA_COLORS))
+        ):
+            raise ValueError("Optional target mana requires exactly one ordinary color or decline")
         if isinstance(self.amount,Mapping):
-            if self.amount.get('kind')==PUBLIC_QUERY_AMOUNT_KIND:PublicQueryAmountSpec.from_dict(self.amount)
+            if self.optional:
+                TargetPlayerQueryAmountSpec.from_dict(self.amount)
+            elif self.amount.get('kind')==PUBLIC_QUERY_AMOUNT_KIND:PublicQueryAmountSpec.from_dict(self.amount)
             elif self.amount.get('kind')==SCALAR_AMOUNT_KIND:ScalarEffectAmountSpec.from_dict(self.amount)
             else:raise ValueError('Variable resolution mana requires an existing public amount expression')
             object.__setattr__(self,'amount',FrozenMap(self.amount))
@@ -31,7 +44,8 @@ class VariableResolutionManaChoiceSpec:
             raise ValueError('Resolved variable mana amount must be a nonnegative integer')
 
     def effect(self):
-        return {'op':'choose_mana','schema_version':3,'player':'$controller','source':'$source',
+        return {'op':'choose_mana','schema_version':OPTIONAL_TARGET_MANA_CHOICE_VERSION if self.optional else 3,
+            'player':'$controller','source':'$source',
             'selection':self.selection,'colors':list(self.colors),'amount':thaw_value(self.amount) if isinstance(self.amount,Mapping) else self.amount}
 
     @classmethod
@@ -39,10 +53,10 @@ class VariableResolutionManaChoiceSpec:
         fields={'op','schema_version','player','source','selection','colors','amount'}
         if continuation:fields|={'_choice_actor','_source_ref'}
         if (not isinstance(value,Mapping) or set(value)!=fields or value['op']!='choose_mana'
-                or type(value['schema_version']) is not int or value['schema_version']!=3
+                or type(value['schema_version']) is not int or value['schema_version'] not in {3, OPTIONAL_TARGET_MANA_CHOICE_VERSION}
                 or any(type(value[k]) is not str or not value[k] for k in ('player','source'))):
-            raise ValueError('Variable resolution mana choice has a closed version-three shape')
-        spec=cls(value['selection'],value['colors'],value['amount'])
+            raise ValueError('Variable resolution mana choice has a closed versioned shape')
+        spec=cls(value['selection'],value['colors'],value['amount'],optional=is_optional_target_mana_choice(value))
         if (resolved and type(spec.amount) is not int) or (not resolved and not isinstance(spec.amount,Mapping)):
             raise ValueError('Variable mana expression and sealed resolution amount cannot be interchanged')
         return spec

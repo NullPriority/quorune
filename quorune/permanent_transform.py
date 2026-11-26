@@ -293,6 +293,24 @@ def _commit_transform_faces(host,card,faces):
         transform_count=card.transform_count,controller=card.controller)
 
 
+def prepare_optional_source_transform(host, item, raw_effect, effect):
+    """Keep historical wrappers and narrow only the versioned transform option."""
+    from .rules.transform_capability_shapes import (
+        OPTIONAL_SOURCE_TRANSFORM_VERSION, optional_source_transform_child,
+    )
+
+    if raw_effect.get("schema_version") != OPTIONAL_SOURCE_TRANSFORM_VERSION:
+        return effect
+    optional_source_transform_child(raw_effect, player="$controller")
+    child = optional_source_transform_child(effect, player=item.controller, resolved=True)
+    card = host.state.cards.get(item.source_object_id)
+    if card is None or card.ref != child["card"] or _prepared_transform_faces(
+        host, card, expected_transform_count=child["expected_transform_count"], day_night_instruction=False,
+    ) is None:
+        return None
+    return {key: value for key, value in effect.items() if key != "schema_version"}
+
+
 def transform_permanent(host,card,*,expected_transform_count,day_night_instruction):
     """Commit one face change while retaining the logical incarnation."""
     faces=_prepared_transform_faces(host,card,expected_transform_count=expected_transform_count,
@@ -310,9 +328,12 @@ def commit_transform_batch(
     day_night_instruction: bool,
     expected_transform_counts: Mapping[str, int] | None = None,
     trigger_batch: list[StackItem] | None = None,
+    conversion: bool = False,
 ) -> tuple[PermanentTransformResult, ...]:
-    """Transform a simultaneous set, then expose normalized events."""
+    """Change a simultaneous set's faces, then expose normalized events."""
 
+    if type(conversion) is not bool or conversion and day_night_instruction:
+        raise PermanentTransformError("A conversion is distinct from day and night")
     if type(reason) is not str or not reason:
         raise PermanentTransformError("Transform reason must be nonempty")
     expected = dict(expected_transform_counts or {})
@@ -352,8 +373,8 @@ def commit_transform_batch(
     for result in results:
         host._log(
             result.controller,
-            "permanent.transform",
-            f"{result.card_ref} transformed into {result.current_face}.",
+            "permanent.convert" if conversion else "permanent.transform",
+            f"{result.card_ref} {'converted' if conversion else 'transformed'} into {result.current_face}.",
             {
                 "object": result.card_ref,
                 "from_face": result.previous_face,
@@ -393,6 +414,7 @@ def commit_transform_batch(
                 "to_face": result.current_face,
                 "transform_count": result.transform_count,
                 "reason": reason,
+                **({"conversion": True} if conversion else {}),
                 **characteristics.get(result.object_id, {}),
             },
             sources=sources,

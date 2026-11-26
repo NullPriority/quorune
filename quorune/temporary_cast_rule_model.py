@@ -83,3 +83,49 @@ class ResolvedCastRestriction:
 
     @property
     def fingerprint(self):return immutable_fingerprint(self.to_dict())
+
+
+NEXT_TURN_SORCERY_TIMING_KIND = "resolution_next_turn_sorcery_timing"
+
+
+@dataclass(frozen=True, slots=True)
+class ResolvedNextTurnSorceryTiming:
+    """A casting permission on one player until that player's next turn."""
+
+    effect_id: str
+    source_id: str
+    timestamp: int
+    controller: str
+
+    def __post_init__(self):
+        if (any(type(value) is not str or not value for value in (self.effect_id, self.source_id, self.controller))
+                or type(self.timestamp) is not int or self.timestamp < 0):
+            raise ContinuousEffectError("Next-turn sorcery timing requires identity, timestamp and controller")
+
+    @property
+    def duration(self) -> ContinuousEffectDuration:
+        return ContinuousEffectDuration.UNTIL_NEXT_TURN
+
+    @property
+    def expires_on_next_turn_of(self) -> str:
+        return self.controller
+
+    def to_dict(self):
+        return {
+            "effect_kind": NEXT_TURN_SORCERY_TIMING_KIND, "schema_version": 1,
+            "effect_id": self.effect_id, "source_id": self.source_id,
+            "timestamp": self.timestamp, "controller": self.controller,
+        }
+
+    @classmethod
+    def from_dict(cls, value):
+        fields = {"effect_kind", "schema_version", "effect_id", "source_id", "timestamp", "controller"}
+        if (not isinstance(value, Mapping) or set(value) != fields
+                or value["effect_kind"] != NEXT_TURN_SORCERY_TIMING_KIND
+                or type(value["schema_version"]) is not int or value["schema_version"] != 1):
+            raise ContinuousEffectError("Next-turn sorcery timing journal fields are closed")
+        return cls(value["effect_id"], value["source_id"], value["timestamp"], value["controller"])
+
+    @property
+    def fingerprint(self) -> str:
+        return immutable_fingerprint(self.to_dict())

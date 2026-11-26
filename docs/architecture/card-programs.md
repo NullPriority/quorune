@@ -49,6 +49,9 @@ Deck registration retains complete rules-derived abilities through the normal
 semantic registry. An intrinsic basic-land mana program therefore participates
 in the same preflight binding and saved registry as compiled Oracle abilities,
 even when the printed mana reminder supplies no executable Oracle body.
+A subsequent compile emits the same rules-derived ability once when the
+retained declaration agrees with the current source and rules shape.
+Conflicting or stale declarations stop compilation with a card-program error.
 
 A reviewed ability may replace generated output only for the same stable
 semantic key. Ambiguous ability identity, conflicting nonempty hashes, stale
@@ -133,6 +136,17 @@ proof. The existing token compiler owns that complete definition, including
 quantity, type, text and mana ability profile. Changed characteristics, creation
 state, quantities, recipients or additional operations remain unequal.
 
+Activated mana that mirrors land production reads current effective land
+abilities and computes the least fixed point of supported mana types. Counting
+an output ignores the counted source’s costs and spend restrictions. The exact
+opponent-land wording selects an ordinary color. The exact controlled-land
+wording can also select colorless. Its source-counter form replaces one mana
+with three of the chosen type when the source has a +1/+1 counter. The same
+current quantity drives listed modes and activation validation before external
+tap-mana multipliers. An empty set still allows the source to tap for zero.
+Mana-type-changing replacement programs require their own runtime support
+before strict admission.
+
 Current typed modal activations can supersede catalog-only reviewed views only
 through `modal_catalog_equivalence.py`. It requires matching source hashes,
 ability identity and runtime role, exact catalog cost fields, one-mode
@@ -142,6 +156,13 @@ assembly precedence changes. Typed modal schemas independently require every
 branch owner, and an ordered branch retains its own instruction-list scope.
 The comparison copies payloads before normalization and never mutates either
 snapshot.
+
+An untargeted Equipment stat mode captures the source attachment when the
+activation is announced. Resolution reads the current attached object or the
+last attachment of the original Equipment incarnation if it left the
+battlefield. The modifier stays with the resolved object through cleanup.
+Other modes use their own target requirements and settle through the same
+activation and payment path.
 
 Compiler-declared complete-source boundaries can also belong to ordinary
 effect programs. Their provenance explicitly requires the generated whole-card
@@ -185,6 +206,10 @@ body fingerprints to its price. Both executable programs must be present and
 current. The cast selects the derived program through its validated cost
 option, preserving ordinary spell characteristics and an empty mode list.
 Copies retain that selected program through the existing stack-copy owner.
+A controlled artifact-source ability copy can supersede its exact reviewed
+activation shape when the current source, cost, timing and usage restriction
+match. The current activation uses typed current or last-known source
+information. Historical records keep the reviewed target encoding.
 
 Fixed Cleave uses the same source-correlated program boundary with its own
 bracket-derived body, price and semantic identity. Each form retains its actual
@@ -208,8 +233,10 @@ Fixed counted library searches use a shared immutable schema consumed by the
 compiler, capability shapes and private search owner. The compiler admits
 unqualified quantities, closed characteristic qualities, one literal card name
 as query data, and fixed mana-value comparisons. It preserves each instruction's
-reveal policy and shuffle order. A stated hidden-zone quality allows failure to
-find; an unqualified quantity requires as many cards as possible. Multiple hand
+reveal policy and shuffle order. A singular top placement can refer to the
+found card as `it`, `that card`, or `the card`. A stated hidden-zone quality
+allows failure to find. An unqualified quantity requires as many cards as
+possible. Multiple hand
 results move through the simultaneous zone owner and retain independent
 commander replacement choices. A found top-card result remains in the library,
 is excluded from the shuffle, and is placed on top without changing its logical
@@ -245,6 +272,12 @@ single-payment Boolean and from Offspring/Squad copy decisions. Spell copies
 retain casting decisions; permanent copies and later noncast entries receive
 no paid history. Unknown cost variants, instances and linked results remain
 residual. This adds no runtime Oracle parser or second component registry.
+
+A distributed two-counter activation reuses the selected-creature payment
+owner. The player can select one controlled creature with two +1/+1
+counters or two controlled creatures with at least one each. The quote
+shows which choices can pay by themselves. The server binds the live
+incarnations and removes the full allocation through one counter plan.
 
 Mandatory fixed mana per extra target uses a complete-source cast-cost
 component rather than a repeat-payment casting choice. The typed descriptor
@@ -419,6 +452,12 @@ compiled program after the grant ends. Fixed source modifiers use the existing
 logical-object owner, and grant carrier metadata does not bypass the inner
 effect's ordinary shape and capability checks.
 
+A nonrepeating modal branch can grant one fixed-output tap mana ability to a
+target land until end of turn. The modal program keeps the branch's target group
+and the source span of its independently compiled mana child. The recipient's
+current controller uses normal mana-activation legality, and the continuous
+effect expires during cleanup.
+
 Explicit abilities in supported fixed creature-token definitions use the same
 boundary. The compiler lowers the token shell and each independently exact
 quoted child together, stores only typed copiable fragments on the created
@@ -472,3 +511,50 @@ See [ADR 0005](../adr/0005-card-program-v2.md),
 Fixed-subtype transformation currently requires a direct resolution instruction.
 Nested optional, conditional, payment and modal carriers fail runtime admission
 until their timestamp suspension has a represented continuation.
+
+
+## Paid Kicker and modal choices
+
+The ordinary casting option keeps the one-mode limit. The already priced
+Kicker option allows any number of distinct printed modes, including zero.
+The selected casting option supplies the effective group schema before target
+validation. The resolving spell and any copy retain its chosen modes and
+target groups. Independent branches run in printed order.
+
+The greatest-power life branch reads the targeted player's current creature
+membership and characteristics during resolution. A creature modified by an
+earlier mode contributes its updated power. An empty group or a negative
+greatest power produces zero life gain.
+
+## Escalate and creature tap payments
+
+The Escalate casting option binds the chosen modes and their target groups.
+Each mode after the first adds one controlled untapped creature to the
+ordinary fixed tap payment. The payer can select a creature that entered
+this turn. The payment reserves distinct creature incarnations and keeps
+those creatures out of the mana payment. The spell resolves its selected
+modes in printed order through their existing effect owners.
+
+## Pawprint mode selections
+
+A supported Pawprint spell keeps its three printed mode definitions and
+builds the cast option from the selected instances. The budget weighs
+the definitions at one, two, and three pawprints and allows up to five.
+Repeated instances receive distinct mode and target-group IDs. A cast
+retains those IDs in printed order so subsequent resolution and copies
+use the same occurrences. The ordinary cast price applies even when the
+player selects zero modes.
+
+One permanent can fill two target slots. A move uses the announced
+incarnation once, and a legal later mode can still draw for the
+permanent's last-known controller. A target that became illegal before
+resolution supplies neither its move nor its recipient.
+
+The resolving controller can choose one controlled creature for a counter
+followed by two temporary keywords. The choice captures its battlefield
+incarnation. Counter replacement runs before the keyword grants. An empty
+creature set advances to the next selected mode.
+
+The artifact-or-enchantment choice runs during resolution. Each selected
+instance offers its own type choice and sends the current matching
+permanents to simultaneous destruction.

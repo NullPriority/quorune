@@ -11,6 +11,10 @@ from ..resolution_characteristic_model import (
 
 def _movement_result_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     from ..rules.graveyard_exile_branches import graveyard_exile_branch_payload_dependencies
+    from ..opponent_discard_entry_model import OPPONENT_DISCARD_ENTRY_HANDLER, OpponentDiscardEntrySpec
+
+    if value.get("handler_id") == OPPONENT_DISCARD_ENTRY_HANDLER:
+        return OpponentDiscardEntrySpec.from_descriptor(value).dependencies
     from ..rules.graveyard_exile_tokens import graveyard_exile_token_payload_dependencies
     from ..rules.graveyard_exile_type_outcomes import graveyard_exile_type_outcome_payload_dependencies
     from ..rules.targeted_graveyard_outcomes import targeted_graveyard_outcome_payload_dependencies
@@ -41,13 +45,16 @@ def _temporary_play_permission_payload_dependencies(value: Mapping[str, Any]) ->
     return ()
 
 
-def _fixed_destruction_result_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
-    """Read chosen and delayed destruction envelopes before ordinary operations."""
+def _destruction_regeneration_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Read typed regeneration or destruction before ordinary operations."""
+    from ..regeneration import controlled_creature_regeneration_dependencies, is_controlled_creature_regeneration
     from ..rules.destruction_result_model import (
         CREATURE_TYPE_DESTRUCTION_DEPENDENCIES, CREATURE_TYPE_DESTRUCTION_FIELD,
         ChosenCreatureTypeDestruction, NEXT_END_STEP_DESTRUCTION_DEPENDENCIES,
         NEXT_END_STEP_DESTRUCTION_FIELD, validate_next_end_step_destruction,
     )
+    if is_controlled_creature_regeneration(value):
+        return controlled_creature_regeneration_dependencies(value)
     if CREATURE_TYPE_DESTRUCTION_FIELD in value:
         ChosenCreatureTypeDestruction.from_effect(value)
         return CREATURE_TYPE_DESTRUCTION_DEPENDENCIES
@@ -76,11 +83,44 @@ def _turn_phase_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...
     return ()
 
 
+def _library_placement_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Validate the closed fixed-library placement instruction family."""
+    from ..rules.one_revealed_card_placement import (
+        ENTER_REVEALED_TOP_OPERATION, OneRevealedCardPlacement, PLACE_REVEALED_TOP_OPERATION,
+        REVEAL_ONE_TOP_CAPABILITIES, REVEAL_ONE_TOP_OPERATION,
+    )
+    if value.get("op") == REVEAL_ONE_TOP_OPERATION:
+        OneRevealedCardPlacement.from_effect(value)
+        return REVEAL_ONE_TOP_CAPABILITIES
+    if value.get("op") in {PLACE_REVEALED_TOP_OPERATION, ENTER_REVEALED_TOP_OPERATION}:
+        raise ValueError("Top-card placement requires the committed reveal result")
+    if value.get('op') == 'fixed_library_selection':
+        from ..rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
+        owners = fixed_library_selection_node_capabilities(effects=(value,), target_schema=None, mechanic_ids=('fixed-library-selection',))
+        if not owners:raise ValueError('Fixed library selection requires its complete owned descriptor')
+        return owners
+    return ()
+
+
+def _destruction_payload_dependencies(value):
+    from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
+    from ..rules.controlled_destruction_source_counters import (
+        controlled_destruction_source_counter_dependencies, uses_controlled_destruction_source_counters,
+    )
+
+    if uses_controlled_destruction_source_counters(value):
+        return controlled_destruction_source_counter_dependencies(value)
+    return qualified_destruction_payload_dependencies(value)
+
+
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
     from ..counter_placement_targets import controlled_creature_counter_choice_dependencies
     if counter_choice := controlled_creature_counter_choice_dependencies(value):
         return counter_choice
+    from ..rules.permanent_resolution_choices import permanent_type_destruction_payload_dependencies
+    if destruction_choice := permanent_type_destruction_payload_dependencies(value):
+        return destruction_choice
     if movement_result := _movement_result_payload_dependencies(value):return movement_result
     from ..rules.shared_type_library import shared_type_library_payload_dependencies
     if shared_type := shared_type_library_payload_dependencies(value):
@@ -126,11 +166,8 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         return optional_target_result_payload_dependencies(value)
     from ..rules.compound_target_sets import compound_target_payload_dependencies
     if compound := compound_target_payload_dependencies(value):return compound
-    if value.get('op') == 'fixed_library_selection':
-        from ..rules.library_selection_capability_shapes import fixed_library_selection_node_capabilities
-        owners = fixed_library_selection_node_capabilities(effects=(value,), target_schema=None, mechanic_ids=('fixed-library-selection',))
-        if not owners:raise ValueError('Fixed library selection requires its complete owned descriptor')
-        return owners
+    if placement := _library_placement_payload_dependencies(value):
+        return placement
     if 'mana_value_filter' in value:
         from ..mana_value_filter import ManaValueFilter
         return ManaValueFilter.from_dict(value['mana_value_filter']).capability_dependencies
@@ -149,11 +186,13 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..dungeon_progress import venture_payload_dependencies
     from ..initiative_model import initiative_payload_dependencies
     from ..rules.manifest_shapes import manifest_result_payload_dependencies
+    from ..rules.cloak_shapes import cloak_payload_dependencies
     from ..rules.event_counter_threshold import event_counter_threshold_payload_dependencies
     if owned_choice := (bounded_hand_cast_payload_dependencies(value)
                         or distinct_sacrifice_payload_dependencies(value) or captured_draw_cast_payload_dependencies(value)
                         or venture_payload_dependencies(value) or initiative_payload_dependencies(value)
-                        or manifest_result_payload_dependencies(value) or event_counter_threshold_payload_dependencies(value)):
+                        or manifest_result_payload_dependencies(value) or cloak_payload_dependencies(value)
+                        or event_counter_threshold_payload_dependencies(value)):
         return owned_choice
     if CHOSEN_IMPULSE_GRANT_FIELD in value:
         raise ValueError("Chosen impulse grants are produced only by an authoritative exile choice")
@@ -200,8 +239,7 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     if value.get("op") == SUSPECT_OPERATION:
         from ..rules.suspect_shapes import suspect_descriptor_dependencies
         return suspect_descriptor_dependencies(value)
-    from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
-    destruction = qualified_destruction_payload_dependencies(value)
+    destruction = _destruction_payload_dependencies(value)
     if value.get("op") == "destroy_all" and "followup" in value:
         from ..rules.destruction_result_model import DestructionFollowup
 
@@ -223,6 +261,9 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
     from ..rules.revealed_library_top import REVEAL_TOP_OPERATION, RevealedLibraryTopSpec
     if value.get("op") == REVEAL_TOP_OPERATION:
         return RevealedLibraryTopSpec.from_effect(value).capability_dependencies
+    from ..rules.revealed_creature_statistics import REVEALED_CREATURE_OPERATION, revealed_creature_dependencies
+    if value.get("op") == REVEALED_CREATURE_OPERATION:
+        return revealed_creature_dependencies(value)
     return ()
 
 
@@ -264,7 +305,10 @@ def _damage_payload_dependencies(value, mechanics):
 
 
 def _zone_choice_payload_dependencies(value):
-    from ..apnap_object_payment import apnap_object_payment_dependencies
+    from ..apnap_object_payment import APNAP_OBJECT_PAYMENT_CAPABILITY, apnap_object_payment_dependencies
+    from ..rules.opponent_caster_discard_payment import (
+        CASTER_DISCARD_PAYMENT_CAPABILITY, uses_caster_discard_payment, validate_caster_discard_payment,
+    )
     from ..library_search_model import counted_search_bound_dependencies
     from ..public_zone_moves import own_graveyard_type_return_dependencies
     from ..resolution_characteristic_model import chosen_creature_type_result_dependencies
@@ -272,7 +316,12 @@ def _zone_choice_payload_dependencies(value):
     from ..reveal_until_library_selection_model import reveal_until_selection_payload_dependencies
     from ..variable_library_selection_model import variable_library_selection_payload_dependencies
 
-    return (*apnap_object_payment_dependencies(value),
+    if uses_caster_discard_payment(value):
+        validate_caster_discard_payment(value)
+        payment = APNAP_OBJECT_PAYMENT_CAPABILITY, CASTER_DISCARD_PAYMENT_CAPABILITY
+    else:
+        payment = apnap_object_payment_dependencies(value)
+    return (*payment,
             *own_graveyard_type_return_dependencies(value),
             *chosen_creature_type_result_dependencies(value),
             *chosen_source_counter_anthem_dependencies(value),
@@ -406,7 +455,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies
         returned=graveyard_self_return_dependencies(value)
         if returned:return returned
-        if destruction_result := _fixed_destruction_result_payload_dependencies(value):
+        if destruction_result := _destruction_regeneration_payload_dependencies(value):
             return destruction_result
         action_result = _owned_operation_payload_dependencies(value)
         if action_result:
@@ -446,7 +495,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if history:
             return tuple(sorted({*history,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.modal_node_capabilities import modal_schema_runtime_dependencies
-        modal=modal_schema_runtime_dependencies(value)
+        from ..pawprint_modes import PAWPRINT_MECHANIC
+        modal = modal_schema_runtime_dependencies(value, allow_pawprint_draw=PAWPRINT_MECHANIC in mechanics)
         if modal:
             return tuple(sorted({*modal,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.all_kind_counter_shapes import all_kind_counter_payload_dependencies

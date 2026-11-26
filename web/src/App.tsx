@@ -21,6 +21,7 @@ import {
   executableChoices,
   initialChoices,
 } from "./choices";
+import { deckSubmissionNotice } from "./deckSubmissionNotice";
 import type { DecisionPacket, JsonValue, LegalAction } from "./generated/protocol";
 import { asList, asRecord, cardName, CardInspector, CardTile } from "./CardSurface";
 import { ingestPacket, type ProjectedView } from "./protocol";
@@ -291,21 +292,15 @@ function RoomView({
         savedDeckId || undefined,
       );
       setLegalityReview(null);
-      const preview = result.format_legality.status === "preview_override_confirmed";
       if (result.preflight.data_integrity_issue) {
         const { deck_id: id, name, commanders } = result.deck;
         setSavedDecks((decks) => [{ id, name, commanders }, ...decks.filter((deck) => deck.id !== id)]);
         setMessage("Draft saved. Review the card data before starting a game with this deck.");
         setMessageKind("warning");
-      } else if (!result.preflight.trusted_only_ready) {
-        setMessage("Deck accepted. Review the listed cards before you play.");
-        setMessageKind("warning");
-      } else if (preview) {
-        setMessage("Deck validated with the preview cards you confirmed.");
-        setMessageKind("warning");
       } else {
-        setMessage("Deck validated and submitted.");
-        setMessageKind("success");
+        const notice = deckSubmissionNotice(result);
+        setMessage(notice.message);
+        setMessageKind(notice.kind);
       }
       setRoom((await api.room(room.room_id)).room);
     } catch (caught) {

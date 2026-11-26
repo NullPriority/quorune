@@ -4,6 +4,176 @@
   "source": "Pinned qualified regeneration carriers and a noncreature Kindred subtype boundary",
   "cards": [
     {
+      "oracle_id": "b582b696-17fa-4eea-8124-293f9bd3a208",
+      "name": "Mad Auntie",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature \u2014 Goblin Shaman",
+      "oracle_text": "Other Goblin creatures you control get +1/+1.\n{T}: Regenerate another target Goblin.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Regenerate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-06-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Regenerate"
+      ],
+      "layout": "normal",
+      "loyalty": null,
+      "mana_cost": "{1}{G}{G}",
+      "name": "Ezuri, Renegade Leader",
+      "oracle_id": "6734497c-16f0-4c4b-ba24-337333511fc6",
+      "oracle_text": "{G}: Regenerate another target Elf.\n{2}{G}{G}{G}: Elf creatures you control get +3/+3 and gain trample until end of turn.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2018-04-06",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Elf Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Boggart Shenanigans",
+      "oracle_id": "997d2f38-5a50-451e-bd48-e36dcb24d967",
+      "oracle_text": "Whenever another Goblin you control is put into a graveyard from the battlefield, you may have this enchantment deal 1 damage to target player or planeswalker.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-12-05",
+      "toughness": null,
+      "type_line": "Kindred Enchantment \u2014 Goblin"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Elvish Mystic",
+      "oracle_id": "3f3b2c10-21f8-4e13-be83-4ef3fa36e123",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-08-14",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Elf Druid"
+    },
+    {
       "oracle_id": "34b2f465-0b15-428a-a1c2-bcd41af07d01",
       "name": "Boneknitter",
       "mana_cost": "{1}{B}",

@@ -10,6 +10,9 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
+from .saga_printed_cost_search import printed_mana_cost_artifact_search_template
+from .source_tap_duration import controlled_saga_untap_restraint_template
+from .phasing_nodes import controlled_saga_phase_out_template
 
 
 SAGA_CHAPTER_TRIGGER_MECHANIC = "trigger-event-saga-chapter"
@@ -37,6 +40,7 @@ def ordinary_saga_chapter_nodes(
     capability_profile: str,
     residuals: list[OracleResidual],
     effect_template: EffectCompiler,
+    grant: tuple[CompiledEffectTemplate, tuple[OracleNode, ...], tuple[str, ...]] | None = None,
 ) -> tuple[OracleNode, ...] | None:
     """Lower one ordinary printed chapter into one node per event threshold."""
 
@@ -46,7 +50,17 @@ def ordinary_saga_chapter_nodes(
     printed_saga = "saga" in {value.casefold() for value in printed_subtypes}
     declared = tuple(declared_chapters)
     chapter_set_closed = bool(declared) and set(parsed.chapters).issubset(declared)
-    template, effects, target_schema, mechanics = effect_template(
+    prepared = None
+    children = ()
+    grant_dependencies = ()
+    if grant is not None and printed_saga and chapter_set_closed:
+        prepared, children, grant_dependencies = grant
+    if prepared is None and printed_saga and parsed.chapters == (1, 2):
+        prepared = (controlled_saga_untap_restraint_template(parsed.body)
+                    or controlled_saga_phase_out_template(parsed.body))
+    if prepared is None and printed_saga and chapter_set_closed:
+        prepared = printed_mana_cost_artifact_search_template(parsed.body)
+    template, effects, target_schema, mechanics = prepared or effect_template(
         parsed.body,
         card_name=card_name,
     )
@@ -63,6 +77,7 @@ def ordinary_saga_chapter_nodes(
         trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
+        explicit_capabilities=grant_dependencies,
     )
     if not recognized:
         blocker = (
@@ -108,7 +123,7 @@ def ordinary_saga_chapter_nodes(
         else ()
     )
     closure = gate.closure
-    return tuple(
+    triggers = tuple(
         OracleNode(
             node_id=(
                 node_id
@@ -145,6 +160,7 @@ def ordinary_saga_chapter_nodes(
         )
         for index, chapter in enumerate(parsed.chapters)
     )
+    return (*triggers, *children)
 
 
 __all__ = [

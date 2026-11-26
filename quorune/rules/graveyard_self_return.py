@@ -3,6 +3,7 @@ from collections.abc import Mapping
 
 from ..dungeon_progress import DUNGEON_COMPLETED_EVENT
 from ..life_change import FIRST_LIFE_GAIN_EVENT
+from ..replacement.immutable import thaw_value
 
 
 GRAVEYARD_SELF_RETURN_CAPABILITY='zone.return.triggered_self_graveyard_hand'
@@ -15,7 +16,7 @@ GRAVEYARD_SELF_RETURN_EVENTS = frozenset({
     "artifact.enter", "enchantment.enter", "permanent.sacrificed", FIRST_LIFE_GAIN_EVENT, "card.second_draw",
     DUNGEON_COMPLETED_EVENT,
 })
-GRAVEYARD_SELF_ENTRY_EVENTS = GRAVEYARD_SELF_RETURN_EVENTS | {'player.committed_crime'}
+GRAVEYARD_SELF_ENTRY_EVENTS = GRAVEYARD_SELF_RETURN_EVENTS | {'player.committed_crime', 'creature.dies'}
 
 
 def graveyard_self_return_dependencies(effect):
@@ -76,6 +77,30 @@ def _opponent_life_gain_paid_return_dependencies(program, found):
     return (GRAVEYARD_SELF_RETURN_CAPABILITY, "trigger.event.normalized_life_gain")
 
 
+def owned_other_creature_death_condition():
+    return {"all": [
+        {"field": "owner", "op": "eq", "value": "$source.owner"},
+        {"field": "card", "op": "ne", "value": "$source.ref"},
+    ]}
+
+
+def _owned_other_creature_paid_entry_dependencies(program, found):
+    from ..mana import mana_cost_to_vector
+
+    payment = thaw_value(program.effects[0]) if len(program.effects) == 1 else None
+    cost, _ = mana_cost_to_vector("{B}")
+    result = {"op":"self_zone_move", "origin":"graveyard", "destination":"battlefield", "tapped":False,
+              "source_form":"card", GRAVEYARD_SELF_ENTRY_VERSION:1}
+    if (found != {GRAVEYARD_SELF_ENTRY_CAPABILITY}
+            or program.active_zone != "graveyard" or thaw_value(program.event_condition) != owned_other_creature_death_condition()
+            or program.target_schema is not None or program.cost_schema is not None or program.handlers
+            or "one_or_more_event_batch" in program.coverage
+            or payment != {"op":"offer_optional_mana_payment", "player":"$controller", "cost":cost, "effects":[result]}
+            or any(type(amount) is not int for amount in payment["cost"].values())):
+        raise ValueError("Graveyard death return requires another owned creature and one optional black mana payment")
+    return (GRAVEYARD_SELF_ENTRY_CAPABILITY, "trigger.event.normalized_zone_change")
+
+
 def graveyard_self_return_runtime_dependencies(program):
     found=set()
     has_graveyard_hand_move = False
@@ -98,4 +123,6 @@ def graveyard_self_return_runtime_dependencies(program):
         from ..card_programs.admission import program_has_declared_complete_source_admission
         if not program_has_declared_complete_source_admission(program):
             raise ValueError('Triggered battlefield self-return requires complete source admission')
+        if program.event == "creature.dies":
+            return _owned_other_creature_paid_entry_dependencies(program, found)
     return tuple(sorted(found))

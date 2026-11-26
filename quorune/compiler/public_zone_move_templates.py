@@ -9,12 +9,14 @@ from typing import Any, Mapping
 from ..object_predicate import ObjectQuerySpec
 from ..creature_subtypes import canonical_creature_subtype
 from ..public_zone_moves import (
+    FixedMixedZoneExileSpec, MixedZoneExileScope,
     PUBLIC_AURA_ENTRY_VERSION,
     public_graveyard_power_return_spec,
     own_graveyard_type_return_choice_effect,
     PublicBattlefieldController,
     PublicZoneDestination,
     PublicZoneMoveSetSpec,
+    same_turn_graveyard_return_spec, targeted_same_turn_graveyard_return_schema,
     PublicZoneOrigin,
     PublicZoneRelationAxis,
     PublicZoneSeatRelation,
@@ -108,7 +110,10 @@ class PublicZoneMoveSetTemplate:
         if not isinstance(self.spec, PublicZoneMoveSetSpec):
             raise ValueError("Public zone move requires a typed affected set")
         schema = dict(self.target_schema) if self.target_schema is not None else None
-        targeted = self.spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER or self.spec.same_name_target is not None
+        targeted = (
+            self.spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
+            or self.spec.same_name_target is not None or self.spec.target_refs is not None
+        )
         if targeted is not (schema is not None):
             raise ValueError(
                 "Public zone-move target schema contradicts its affected set"
@@ -250,6 +255,28 @@ def public_graveyard_card_exile_template(
     )
 
 
+_SAME_TURN_RETURN_SEATS = {
+    ("return to the battlefield all permanent cards in your graveyard that were put there "
+     "from the battlefield this turn."): PublicZoneSeatRelation.ACTOR,
+    ("each player returns to the battlefield all artifact, creature, enchantment, and land cards "
+     "in their graveyard that were put there from the battlefield this turn."): PublicZoneSeatRelation.ANY,
+}
+
+
+def _same_turn_graveyard_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    normalized = " ".join(text.casefold().split())
+    if normalized == (
+        "choose up to two target permanent cards in your graveyard that were put there from the battlefield "
+        "this turn. return them to the battlefield tapped."
+    ):
+        return PublicZoneMoveSetTemplate(
+            same_turn_graveyard_return_spec(PublicZoneSeatRelation.ACTOR, targeted=True),
+            target_schema=targeted_same_turn_graveyard_return_schema(),
+        )
+    relation = _SAME_TURN_RETURN_SEATS.get(normalized)
+    return PublicZoneMoveSetTemplate(same_turn_graveyard_return_spec(relation)) if relation is not None else None
+
+
 def _graveyard_set_template(text: str) -> PublicZoneMoveSetTemplate | None:
     normalized = " ".join(text.strip().split()).casefold().rstrip(".")
     relation = None
@@ -340,6 +367,15 @@ def _battlefield_exile_template(text: str) -> PublicZoneMoveSetTemplate | None:
 
 
 def _battlefield_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
+    if re.fullmatch(r"Return each creature without a \+1/\+1 counter on it to its owner['’]s hand[.]?",
+                    " ".join(text.split()), re.IGNORECASE):
+        from .qualified_destruction_queries import creature_counter_absence_query
+
+        return PublicZoneMoveSetTemplate(PublicZoneMoveSetSpec(
+            query=creature_counter_absence_query("+1/+1"),
+            origin=PublicZoneOrigin.BATTLEFIELD,
+            destination=PublicZoneDestination.OWNER_HAND,
+        ))
     exception = re.fullmatch(
         r"return all creatures to their owners['’] hands except for "
         r"(?P<subtypes>.+)",
@@ -444,6 +480,25 @@ def _graveyard_public_move_template(
     text: str,
 ) -> PublicZoneMoveSetTemplate | None:
     normalized = " ".join(text.strip().split())
+    colors = re.fullmatch(
+        r"Each player returns all (?P<first>white|blue|black|red|green) and all "
+        r"(?P<second>white|blue|black|red|green) creature cards from their graveyard to the battlefield\.",
+        normalized, re.IGNORECASE,
+    )
+    if colors is not None:
+        symbols = {"white": "W", "blue": "U", "black": "B", "red": "R", "green": "G"}
+        color_union = tuple(sorted({symbols[colors[key].casefold()] for key in ("first", "second")}))
+        if len(color_union) != 2:
+            return None
+        return PublicZoneMoveSetTemplate(spec=PublicZoneMoveSetSpec(
+            query=ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), colors_any=color_union, token=False),
+            origin=PublicZoneOrigin.GRAVEYARD,
+            destination=PublicZoneDestination.BATTLEFIELD,
+            relation_axis=PublicZoneRelationAxis.OWNER,
+            seat_relation=PublicZoneSeatRelation.ANY,
+            battlefield_controller=PublicBattlefieldController.OWNER,
+            schema_version=PUBLIC_AURA_ENTRY_VERSION,
+        ))
     ordered_hand = re.fullmatch(
         r"Return to your hand all (?:(?P<subject>.+?) )?cards in your graveyard\.?",
         normalized,
@@ -592,21 +647,68 @@ def chosen_color_permanent_return_template(text: str) -> ChosenColorPermanentRet
     return ChosenColorPermanentReturnTemplate()
 
 
+class ChosenTypeTapStateTemplate:
+    """One original target followed by an exact type and tap-state choice."""
+
+    def compiled(self):
+        from ..rules.public_zone_move_capability_shapes import (
+            CHOSEN_TYPE_TAP_STATE_MECHANICS, CHOSEN_TYPE_TAP_STATE_TARGET,
+            CHOSEN_TYPE_TAP_STATE_TEMPLATE, chosen_type_tap_state_effect,
+        )
+
+        return (
+            CHOSEN_TYPE_TAP_STATE_TEMPLATE, (chosen_type_tap_state_effect(),),
+            dict(CHOSEN_TYPE_TAP_STATE_TARGET), CHOSEN_TYPE_TAP_STATE_MECHANICS,
+        )
+
+
+def chosen_type_tap_state_template(text: str) -> ChosenTypeTapStateTemplate | None:
+    if " ".join(text.casefold().split()) != (
+        "choose artifact, creature, or land. tap all untapped permanents of the chosen type target player "
+        "controls, or untap all tapped permanents of that type that player controls."
+    ):
+        return None
+    return ChosenTypeTapStateTemplate()
+
+
+@dataclass(frozen=True, slots=True)
+class FixedMixedZoneExileTemplate:
+    scope: MixedZoneExileScope
+
+    def compiled(self):
+        return "fixed-mixed-zone-exile-v1", (FixedMixedZoneExileSpec(self.scope).effect(),), None, ("exile",)
+
+
+def _fixed_mixed_zone_exile_template(text: str) -> FixedMixedZoneExileTemplate | None:
+    normalized = " ".join(text.casefold().split())
+    if normalized == "exile all cards from all hands and graveyards.":
+        return FixedMixedZoneExileTemplate(MixedZoneExileScope.HANDS_AND_GRAVEYARDS)
+    if normalized == ("exile all artifacts, creatures, and lands from the battlefield, "
+                      "all cards from all graveyards, and all cards from all hands."):
+        return FixedMixedZoneExileTemplate(MixedZoneExileScope.ARTIFACTS_CREATURES_LANDS_HANDS_AND_GRAVEYARDS)
+    return None
+
+
 def public_zone_move_effect_template(
     text: str,
 ) -> (
     PublicGraveyardCardExileTemplate
     | PublicZoneMoveSetTemplate
+    | FixedMixedZoneExileTemplate
     | OwnGraveyardTypeReturnTemplate
     | FixedPublicTapStateSetTemplate
     | ChosenColorPermanentReturnTemplate
+    | ChosenTypeTapStateTemplate
     | None
 ):
     return (
-        chosen_color_permanent_return_template(text)
+        _fixed_mixed_zone_exile_template(text)
+        or chosen_type_tap_state_template(text)
+        or chosen_color_permanent_return_template(text)
         or _same_name_zone_move_template(text)
         or _own_graveyard_type_return_template(text)
         or public_graveyard_card_exile_template(text)
+        or _same_turn_graveyard_return_template(text)
         or _graveyard_set_template(text)
         or _graveyard_power_return_template(text)
         or _graveyard_public_move_template(text)

@@ -1,0 +1,119 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Elvish Spirit Guide",
+      "oracle_id": "6b0e23cf-7d68-4329-86db-7adc26abd86b",
+      "oracle_text": "Exile this creature from your hand: Add {G}.",
+      "power": "2",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Creature — Elf Spirit"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Simian Spirit Guide",
+      "oracle_id": "44e0ffa3-8915-4c1f-8f1a-4aeea1365f07",
+      "oracle_text": "Exile this card from your hand: Add {R}.",
+      "power": "2",
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2021-03-19",
+      "toughness": "2",
+      "type_line": "Creature — Ape Spirit"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a spell or ability's cost includes returning a creature to your hand and paying mana, you can't activate Simian Spirit Guide's mana ability after returning it to your hand. This is because mana abilities must be activated before you begin paying costs.",
+      "oracle_id": "44e0ffa3-8915-4c1f-8f1a-4aeea1365f07",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability's cost includes returning a creature to your hand and paying mana, you can't activate Elvish Spirit Guide's mana ability after returning it to your hand. This is because mana abilities must be activated before you begin paying costs.",
+      "oracle_id": "6b0e23cf-7d68-4329-86db-7adc26abd86b",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

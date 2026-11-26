@@ -8,6 +8,7 @@ import re
 from typing import Any, Mapping, Protocol, Sequence
 
 from .characteristic_evaluation import type_parts
+from .ability_fragment_primitives import INTRINSIC_ABILITIES_REMOVED, current_saga_intrinsic_abilities
 from .ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .counter_placement import (
     CounterPlacementCommitPlan,
@@ -138,16 +139,18 @@ def represented_chapter_numbers(
 
     numbers: set[int] = set()
     characteristics: Mapping[str, Any] | None = None
+    check_intrinsic_ability_loss = current_saga_intrinsic_abilities(host.state)
     for program in host.semantics.programs_for_oracle(copiable_oracle_id(card)):
         match = _CHAPTER_EVENT.fullmatch(str(program.event or ""))
         if match is None or not host.semantic_program_is_current_trusted(program):
             continue
-        if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage:
+        requires_component = CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
+        if requires_component or check_intrinsic_ability_loss:
             if characteristics is None:
                 characteristics = host._effective_card_data(card)
-            if not program_has_current_ability_fragments(
-                program,
-                characteristics,
+            lost_intrinsic_abilities = characteristics.get(INTRINSIC_ABILITIES_REMOVED) is True
+            if (requires_component or lost_intrinsic_abilities) and not program_has_current_ability_fragments(
+                program, characteristics,
             ):
                 continue
         numbers.add(int(match.group("number")))
@@ -166,6 +169,12 @@ def _trusted_chapter_numbers(
         and host.semantic_program_is_current_trusted(program)
     }
     return tuple(sorted(numbers))
+
+
+def _lore_turn_chapters(host, card):
+    if current_saga_intrinsic_abilities(host.state):
+        return represented_chapter_numbers(host, card)
+    return _trusted_chapter_numbers(host, card)
 
 
 def _chapter_item_matches_incarnation(
@@ -293,11 +302,13 @@ def capture_saga_lore_turn_action(
             continue
         if not _is_current_saga(host, card):
             continue
-        chapters = _trusted_chapter_numbers(host, card)
+        chapters = _lore_turn_chapters(host, card)
         if not chapters:
-            raise SagaProgressionError(
-                "Saga progression requires trusted typed chapter programs"
-            )
+            if not _trusted_chapter_numbers(host, card):
+                raise SagaProgressionError(
+                    "Saga progression requires trusted typed chapter programs"
+                )
+            continue
         before = int(card.counters.get("lore", 0))
         if before < 0:
             raise SagaProgressionError("Saga lore counters cannot be negative")
@@ -442,7 +453,7 @@ def commit_saga_lore_turn_action(
             or card.logical_object_id != subject.logical_object_id
             or card.controller != subject.controller
             or not _is_current_saga(host, card)
-            or _trusted_chapter_numbers(host, card) != subject.chapters
+            or _lore_turn_chapters(host, card) != subject.chapters
         ):
             raise SagaProgressionError(
                 "Saga turn-action snapshot changed before commit"

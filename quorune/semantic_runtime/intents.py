@@ -2,9 +2,8 @@ from __future__ import annotations
 from ..bounded_hand_cast_model import ResolveBoundedHandCastIntent
 from ..stack_spell_copy_model import PermanentSpellCopySpec
 
-from ..fractional_quantity_model import HalfQuantitySpec
-from ..query_effect_amount_model import OpponentHandMillCount
 from ..city_blessing_model import AscendIntent
+from ..counter_placement_sets import validate_counter_set_recipient_authority
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
@@ -13,7 +12,7 @@ from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
-from ..hand_library_redraw_model import HandLibraryRedrawIntent, HandLibraryArrivalOrder
+from ..hand_library_redraw_model import HandLibraryRedrawIntent
 from ..drawing.captured_hand import RevealCapturedDrawsIntent, ResolveCapturedDrawCastIntent
 from ..dungeon_progress import VentureProgressIntent
 from ..initiative_model import TakeInitiativeIntent
@@ -25,52 +24,68 @@ from ..target_land_type_model import TargetLandTypeSettingIntent
 from ..source_sacrifice_model import FixedSourceSacrificeIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..draw_redirect_model import TemporaryDrawRedirectIntent
+from ..next_draw_replacement_model import ScheduleNextDrawResultIntent
+from ..game_hand_size_model import NoMaximumForGameIntent
 from ..protected_attack_payment_model import TemporaryProtectedAttackPaymentIntent
+from ..next_turn_attack_restriction_model import NextTurnAttackRestrictionIntent
 from ..extra_combat_model import ScheduleExtraCombatIntent
 from ..additional_beginning_model import ScheduleAdditionalBeginningIntent
 from ..rules.token_mill_repeat import TokenMillRepeatIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..next_player_untap_model import ProhibitNextPlayerUntapIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
-from ..library_order_model import DepartedLibraryArrivalOrder, LibraryArrivalOrder
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import (
-    ZoneMoveIntent, ExilePublicGraveyardCardIntent, MovePublicZoneSetIntent, _freeze_replacement_selections,
+    MillCardsIntent, ZoneMoveIntent, ExilePublicGraveyardCardIntent, MovePublicZoneSetIntent,
+    MoveObjectsSimultaneouslyIntent, _freeze_replacement_selections,
 )
-from .counter_movement_intent import MoveCountersIntent
+from .counter_movement_intent import CounterMovementIntent
 from .connive_intent import ConniveCompletedIntent
 from .ring_intent import BeginRingTemptationIntent, CompleteRingBearerIntent
-from .creation_intents import CreateCompiledEmblemIntent, CreateRegenerationShieldIntent
+from .creation_intents import (
+    CreateCompiledEmblemIntent, CreateRegenerationShieldIntent, CreateRegenerationShieldSetIntent,
+)
 from .champion_intent import ChampionExileIntent, ReturnLinkedAbilityExileIntent
 from .energy_payment import PayEnergyIntent
-from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
+from ..reflexive_trigger_model import QueueReflexiveTriggerIntent, QueueRevealUntilReflexiveIntent
 from ..source_untap_rule_model import PendingSourceUntapRestraint
 
 from dataclasses import dataclass, field
-from typing import Any, Literal, Mapping, TypeAlias
+from typing import Any, Literal, Mapping, TYPE_CHECKING, TypeAlias
 
 from ..affected_permanents import AffectedPermanentSetSpec
 from ..rules.destruction_result_model import DestructionFollowup
+from ..rules.artifact_destruction_treasure import ArtifactDestructionTreasure
+from ..rules.destroyed_creature_copy import DestroyedCreatureCopy
+from ..rules.nonbasic_land_source_untap import NonbasicLandSourceUntap
+from ..rules.target_controller_library_reveal import TargetControllerLibraryReveal
+from ..rules.announced_destruction_controller_tokens import AnnouncedDestructionControllerTokens
+from ..rules.controlled_destruction_source_counters import ControlledDestructionSourceCounters
 from ..rules.revealed_library_top import RevealedLibraryTopSpec
-from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
+from ..public_zone_moves import PublicZoneMoveSetSpec
 from ..drawing.model import DrawCardsIntent
 from ..announced_damage import AllocatedDamageRecipient
 from ..fixed_damage_set_model import FixedDamageSetSpec, dealt_life_gain_group_is_closed
 from ..damage_death_exile_model import DamageDeathExileScope
-from ..impulse_access_model import ImpulseAccessDuration, impulse_access_count_is_legal
+from ..fractional_quantity_model import HalfQuantitySpec
+from ..impulse_access_model import (
+    ImpulseAccessDuration, impulse_access_request_count_is_legal, impulse_access_play_policy_is_legal,
+)
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..rules.library_scry import ScryArrangement
-from ..rules.library_selection import LibrarySelectionArrangement
+from .library_selection_intent import LibrarySelectionIntent
 from ..rules.ripple_resolution_model import ResolveRippleCastIntent,RippleBottomIntent
 from ..rules.library_surveillance import SurveilArrangement
 from ..rules.hand_inspection import InspectHandIntent
 from .colored_hand_reveal import RevealColoredHandCardsIntent
 from ..zone_trigger_events import ZoneTransitionKind
-from ..discard_effect_origin import DiscardEffectOrigin
 from .composition_intent import CompositionIntent,ResumeCompositionOrderIntent
 from .context import SemanticSourceContext
+
+if TYPE_CHECKING:
+    from ..stack_counter import CounterActivationProhibition
 from .madness_intent import MadnessChoiceIntent
 from .miracle_intent import MiracleCastChoiceIntent
 from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
@@ -85,44 +100,11 @@ _REASON_FIELD = "reason"
 
 
 @dataclass(frozen=True, slots=True)
-class MillCardsIntent:
-    actor: str
-    player: str
-    count: int | HalfQuantitySpec | OpponentHandMillCount
-    reason: str
-    batch_players: tuple[str, ...] = ()
-
-    def __post_init__(self) -> None:
-        if any(
-            type(value) is not str or not value
-            for value in (self.actor, self.player, self.reason)
-        ):
-            raise ValueError(
-                "Mill intents require an actor, player, and reason"
-            )
-        if not isinstance(self.count, (HalfQuantitySpec, OpponentHandMillCount)) and (
-                type(self.count) is not int or self.count < 0):
-            raise ValueError("Mill intents require a nonnegative count or a closed quantity")
-        if not isinstance(self.batch_players, (list, tuple)):
-            raise ValueError("Mill batch recipients require a typed sequence")
-        players = tuple(self.batch_players)
-        if (
-            any(type(player) is not str or not player for player in players)
-            or len(set(players)) != len(players)
-            or players and self.player != self.actor
-        ):
-            raise ValueError("Mill batch recipients must be distinct typed players")
-        if isinstance(self.count, OpponentHandMillCount) and (not players or self.actor in players):
-            raise ValueError("Hand-count Mill intents require an opponent batch")
-        object.__setattr__(self, "batch_players", players)
-
-
-@dataclass(frozen=True, slots=True)
 class ImpulseAccessIntent:
     actor: str
     player: str
-    count: int
-    duration: ImpulseAccessDuration
+    count: int | HalfQuantitySpec
+    duration: ImpulseAccessDuration | None
     reason: str
     schema_version: int = 1
 
@@ -134,12 +116,10 @@ class ImpulseAccessIntent:
             raise ValueError(
                 "Impulse-access intents require an actor, player, and reason"
             )
-        if not impulse_access_count_is_legal(self.count, self.schema_version):
+        if not impulse_access_request_count_is_legal(self.count, self.schema_version):
             raise ValueError("Impulse-access intent count is invalid for its version")
-        if not isinstance(self.duration, ImpulseAccessDuration):
-            raise ValueError(
-                "Impulse-access intents require a typed duration"
-            )
+        if not impulse_access_play_policy_is_legal(self.actor, self.player, self.duration, self.schema_version):
+            raise ValueError("Impulse-access intents require their typed supplier and play policy")
 
 
 @dataclass(frozen=True, slots=True)
@@ -210,6 +190,7 @@ class DestroyPermanentIntent:
     reason: str
     regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    followup: ArtifactDestructionTreasure | NonbasicLandSourceUntap | DestroyedCreatureCopy | TargetControllerLibraryReveal | None = None
 
     def __post_init__(self) -> None:
         if not all((self.actor, self.object_ref, self.reason)):
@@ -220,6 +201,11 @@ class DestroyPermanentIntent:
             raise ValueError(
                 "Destruction regeneration prohibition must be boolean"
             )
+        if self.followup is not None and (
+            not isinstance(self.followup, (ArtifactDestructionTreasure, NonbasicLandSourceUntap, DestroyedCreatureCopy, TargetControllerLibraryReveal))
+            or self.regeneration_prohibited
+        ):
+            raise ValueError("Destruction results require their typed ordinary destruction follow-up")
         object.__setattr__(
             self,
             "replacement_selections",
@@ -282,6 +268,7 @@ class DestroyPermanentTargetsIntent:
     reason: str
     regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    followup: AnnouncedDestructionControllerTokens | ControlledDestructionSourceCounters | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -298,6 +285,12 @@ class DestroyPermanentTargetsIntent:
             or type(self.regeneration_prohibited) is not bool
         ):
             raise ValueError("Target-set destruction intent is malformed")
+        if self.followup is not None and (
+            not isinstance(self.followup, (AnnouncedDestructionControllerTokens, ControlledDestructionSourceCounters))
+            or self.regeneration_prohibited or isinstance(self.followup, AnnouncedDestructionControllerTokens)
+            and self.followup.requires_graveyard and len(self.object_refs) > 3
+        ):
+            raise ValueError("Destruction rewards require a typed ordinary target-set result")
         object.__setattr__(self, "object_refs", tuple(self.object_refs))
         object.__setattr__(
             self,
@@ -475,7 +468,7 @@ class AddManaIntent:
 @dataclass(frozen=True, slots=True)
 class SetCardDesignationIntent:
     object_ref: str
-    designation: Literal["chosen_name", "chosen_creature_type", "chosen_color"]
+    designation: Literal["chosen_name", "chosen_creature_type", "chosen_color", "chosen_faction", "last_noted_mana_type"]
     value: str
     actor: str
     reason: str
@@ -486,6 +479,8 @@ class SetCardDesignationIntent:
             "chosen_name",
             "chosen_creature_type",
             "chosen_color",
+            "chosen_faction",
+            "last_noted_mana_type",
         }:
             raise ValueError("Card designation kind is unsupported")
         if any(
@@ -508,6 +503,15 @@ class SetCardDesignationIntent:
             )
         if self.designation == "chosen_color" and self.value not in tuple("WUBRG"):
             raise ValueError("A chosen color must be one WUBRG symbol")
+        if self.designation == "last_noted_mana_type":
+            from ..rules.noted_mana import NOTED_MANA_TYPES
+
+            if self.value not in NOTED_MANA_TYPES:
+                raise ValueError("Noted mana requires one ordinary mana type")
+        if self.designation == "chosen_faction":
+            from ..entry_designations import EntryDesignationKind, validate_designation
+
+            validate_designation(EntryDesignationKind.FACTION, self.value)
 
 
 @dataclass(frozen=True, slots=True)
@@ -624,77 +628,6 @@ class ExploreCompletedIntent:
 
 
 @dataclass(frozen=True, slots=True)
-class MoveObjectsSimultaneouslyIntent:
-    actor: str
-    object_refs: tuple[str, ...]
-    expected_zones: tuple[str, ...]
-    destination: str
-    reason: str
-    transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY
-    owned_only: bool = False
-    controlled_only: bool = False
-    replacement_selections: tuple[str | FrozenMap, ...] = ()
-    battlefield_controller: PublicBattlefieldController | None = None
-    battlefield_tapped: bool = False
-    library_order: LibraryArrivalOrder | None = None
-    discard_effect_origin: DiscardEffectOrigin | None = None
-
-    def __post_init__(self) -> None:
-        if (
-            type(self.actor) is not str
-            or not self.actor
-            or not isinstance(self.object_refs, (list, tuple))
-            or any(type(value) is not str or not value for value in self.object_refs)
-            or len(self.object_refs) != len(set(self.object_refs))
-            or not isinstance(self.expected_zones, (list, tuple))
-            or not self.expected_zones
-            or any(
-                type(value) is not str or not value
-                for value in self.expected_zones
-            )
-            or len(self.expected_zones) != len(set(self.expected_zones))
-            or type(self.destination) is not str
-            or not self.destination
-            or type(self.reason) is not str
-            or not self.reason
-            or not isinstance(self.transition_kind, ZoneTransitionKind)
-            or type(self.owned_only) is not bool
-            or type(self.controlled_only) is not bool
-            or type(self.battlefield_tapped) is not bool
-            or self.battlefield_controller is not None and (
-                not isinstance(self.battlefield_controller,PublicBattlefieldController) or self.destination!='battlefield')
-            or self.battlefield_controller is None and self.battlefield_tapped
-        ):
-            raise ValueError("Simultaneous object-move intent is malformed")
-        if self.discard_effect_origin is not None and (
-            not isinstance(self.discard_effect_origin, DiscardEffectOrigin)
-            or self.transition_kind is not ZoneTransitionKind.DISCARD
-            or tuple(self.expected_zones) != ("hand",) or self.destination != "graveyard"
-        ):
-            raise ValueError("A resolving discard origin belongs only to a requested hand discard")
-        if self.library_order is not None and (
-            not isinstance(self.library_order, LibraryArrivalOrder)
-            or not isinstance(self.library_order, (DepartedLibraryArrivalOrder, HandLibraryArrivalOrder)) and self.library_order.chooser != self.actor
-            or self.destination != "library"
-            or tuple(self.expected_zones) != self.library_order.origin_zones
-            or self.transition_kind is not ZoneTransitionKind.ORDINARY
-            or self.controlled_only
-            or set(self.library_order.members) != set(self.object_refs)
-        ):
-            raise ValueError("Ordered library movement requires the exact graveyard batch")
-        object.__setattr__(self, "object_refs", tuple(self.object_refs))
-        object.__setattr__(self, "expected_zones", tuple(self.expected_zones))
-        object.__setattr__(
-            self,
-            "replacement_selections",
-            _freeze_replacement_selections(
-                tuple(self.replacement_selections),
-                family="Simultaneous object move",
-            ),
-        )
-
-
-@dataclass(frozen=True, slots=True)
 class ChooseOneRestBottomRandomIntent:
     actor: str
     player: str
@@ -799,6 +732,9 @@ class RevealLibraryCardsIntent:
     refs_top_first: tuple[str, ...]
     reason: str
     public: bool = False
+    announce_public_top: bool = False
+    announce_public_prefix: bool = False
+    retain_public_top_visibility: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -815,6 +751,17 @@ class MoveLibraryCardsToBottomIntent:
     refs: tuple[str, ...]
     looked_count: int
     reason: str
+    random_source_stack_ref: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.random_source_stack_ref is not None and (
+            type(self.random_source_stack_ref) is not str or not self.random_source_stack_ref
+            or self.actor != self.player or not self.refs
+            or type(self.looked_count) is not int or not len(self.refs) <= self.looked_count <= 5
+            or any(type(ref) is not str or not ref for ref in self.refs)
+            or len(self.refs) != len(set(self.refs))
+        ):
+            raise ValueError("Random library bottom placement needs its original source and remainder")
 
 
 @dataclass(frozen=True, slots=True)
@@ -868,51 +815,6 @@ class SurveilLibraryIntent:
 
 
 @dataclass(frozen=True, slots=True)
-class LibrarySelectionIntent:
-    actor: str
-    player: str
-    arrangement: LibrarySelectionArrangement
-    reason: str
-    source_stack_ref: str
-    looked_are_public: bool
-    selected_are_public: bool
-    replacement_selections: tuple[str | FrozenMap, ...] = ()
-
-    def __post_init__(self) -> None:
-        if any(
-            type(value) is not str or not value
-            for value in (
-                self.actor,
-                self.player,
-                self.reason,
-                self.source_stack_ref,
-            )
-        ):
-            raise ValueError(
-                "Library selection intents require complete metadata"
-            )
-        if not isinstance(self.arrangement, LibrarySelectionArrangement):
-            raise TypeError(
-                "Library selection intents require an immutable arrangement"
-            )
-        if (
-            type(self.looked_are_public) is not bool
-            or type(self.selected_are_public) is not bool
-        ):
-            raise ValueError(
-                "Library selection visibility must be a boolean"
-            )
-        object.__setattr__(
-            self,
-            "replacement_selections",
-            _freeze_replacement_selections(
-                tuple(self.replacement_selections),
-                family="Library selection",
-            ),
-        )
-
-
-@dataclass(frozen=True, slots=True)
 class ReorderLibraryTopIntent:
     actor: str
     player: str
@@ -931,8 +833,11 @@ class PayManaCostIntent:
     message: str
     details: FrozenMap
     changed_object_ref: str | None = None
+    pool_payment: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.pool_payment is not None and not isinstance(self.pool_payment, FrozenMap):
+            object.__setattr__(self, "pool_payment", FrozenMap(self.pool_payment))
         if not isinstance(self.requirements, FrozenMap):
             object.__setattr__(
                 self,
@@ -981,6 +886,7 @@ class RemoveCountersIntent:
     amount: int
     reason: str
     source_ref: str | None = None
+    gain_life_from_removed: bool = False
 
     def __post_init__(self) -> None:
         normalized = (
@@ -1005,6 +911,9 @@ class RemoveCountersIntent:
             raise ValueError(
                 "Counter-removal intent source must be a nonempty reference"
             )
+        if (type(self.gain_life_from_removed) is not bool or self.gain_life_from_removed
+                and (self.source_ref != self.object_ref or normalized != "+1/+1")):
+            raise ValueError("Life from counter removal requires the original source's +1/+1 counters")
         object.__setattr__(self, "counter_name", normalized)
 
 
@@ -1062,6 +971,9 @@ class PlaceCounterBatchIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    paired_source_ref: str | None = None
+    recipient_identity: str | None = None
+    source_departure: bool = False
 
     def __post_init__(self) -> None:
         if any(
@@ -1075,14 +987,28 @@ class PlaceCounterBatchIntent:
             type(self.source_ref) is not str or not self.source_ref
         ):
             raise ValueError("Counter batch source must be a nonempty reference")
-        placements = tuple(self.placements)
-        if not 2 <= len(placements) <= 3 or any(
-            not isinstance(value, CounterPlacementAmount)
-            for value in placements
+        if self.paired_source_ref is not None and (
+            type(self.paired_source_ref) is not str or not self.paired_source_ref
+            or self.paired_source_ref == self.object_ref or self.paired_source_ref != self.source_ref
         ):
-            raise ValueError(
-                "Counter batch intents require two or three typed placements"
-            )
+            raise ValueError("The paired source must be a distinct original battlefield reference")
+        placements = tuple(self.placements)
+        if type(self.source_departure) is not bool or (
+            self.source_departure and self.paired_source_ref is not None
+        ):
+            raise ValueError("A source departure requires a typed, unpaired counter batch")
+        if self.recipient_identity is not None and (
+            type(self.recipient_identity) is not str
+            or not self.recipient_identity
+            or self.paired_source_ref is not None
+        ):
+            raise ValueError("A departure counter batch pins one original controlled recipient")
+        if self.recipient_identity is not None or self.source_departure:
+            allowed_count = bool(placements)
+        else:
+            allowed_count = 2 <= len(placements) <= 3
+        if not allowed_count or any(not isinstance(value, CounterPlacementAmount) for value in placements):
+            raise ValueError("Counter batch placements do not match their exact source shape")
         names = [value.counter_name for value in placements]
         if len(names) != len(set(names)):
             raise ValueError("Counter batch kinds must be distinct")
@@ -1096,6 +1022,12 @@ class PlaceCounterBatchIntent:
             ),
         )
 
+    @property
+    def object_refs(self) -> tuple[str, ...]:
+        if self.paired_source_ref is None:
+            return (self.object_ref,)
+        return (self.object_ref, self.paired_source_ref)
+
 
 @dataclass(frozen=True, slots=True)
 class PlaceCountersOnSetIntent:
@@ -1107,6 +1039,8 @@ class PlaceCountersOnSetIntent:
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     paired_loyalty_source: tuple[str, str] | None = None
+    source_and_subtype_identity: tuple[str, str] | None = None
+    declared_attack_members: tuple[tuple[str, str], ...] | None = None
 
     def __post_init__(self) -> None:
         normalized = (
@@ -1139,13 +1073,8 @@ class PlaceCountersOnSetIntent:
             raise ValueError(
                 "Source-excluding counter sets require a source"
             )
-        identity = self.paired_loyalty_source
-        if identity is not None and (
-            not isinstance(identity, tuple) or len(identity) != 2
-            or any(type(value) is not str or not value for value in identity)
-            or self.source_ref is None or normalized != "+1/+1" or type(self.amount) is not int or self.amount != 1
-        ):
-            raise ValueError("Paired loyalty requires its original source and one fixed +1/+1 placement")
+        members = validate_counter_set_recipient_authority(self, normalized)
+        object.__setattr__(self, "declared_attack_members", members)
         object.__setattr__(self, "counter_name", normalized)
         object.__setattr__(
             self,
@@ -1281,8 +1210,20 @@ class CounterStackIntent:
     counter_destination: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     source_controller: str | None = None
+    ability_source_loss: SemanticSourceContext | None = None
+    activation_prohibition: CounterActivationProhibition | None = None
 
     def __post_init__(self) -> None:
+        if self.activation_prohibition is not None:
+            from ..stack_counter import CounterActivationProhibition
+
+            if (not isinstance(self.activation_prohibition, CounterActivationProhibition)
+                    or self.ability_source_loss is not None or self.counter_destination is not None):
+                raise ValueError("The resolved activation prohibition requires one ordinary counter instruction")
+        if self.ability_source_loss is not None and (
+            not isinstance(self.ability_source_loss, SemanticSourceContext) or self.counter_destination is not None
+        ):
+            raise ValueError("Countered ability source loss requires a typed plain-counter source")
         if self.source_controller is not None and (type(self.source_controller) is not str or not self.source_controller):
             raise ValueError("Counter source controller must be a player identity")
         if self.counter_destination is not None:
@@ -1300,6 +1241,12 @@ class EliminatePlayersIntent:
     actor: str
     players: tuple[str, ...]
     reason: str
+
+
+@dataclass(frozen=True, slots=True)
+class WinGameIntent:
+    actor: str
+    player: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -1364,6 +1311,12 @@ class CopyControlledTokensIntent:
     chosen_token_ref: str
     source_stack_ref: str
     reason: str
+
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2):
+            raise ValueError("Controlled-token copies require a supported intent version")
 
 
 @dataclass(frozen=True, slots=True)
@@ -1482,8 +1435,11 @@ class ProliferateIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    choose_phase_out: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.choose_phase_out) is not bool:
+            raise ValueError("Proliferate phase-out selection must be Boolean")
         if any(
             type(value) is not str or not value
             for value in (self.actor, self.reason)
@@ -1527,6 +1483,7 @@ class ProliferateIntent:
 SemanticIntent: TypeAlias = (
     DrawCardsIntent | ControlIntent
     | QueueReflexiveTriggerIntent
+    | QueueRevealUntilReflexiveIntent
     | MillCardsIntent
     | BecomeMonarchIntent
     | VentureProgressIntent
@@ -1537,6 +1494,7 @@ SemanticIntent: TypeAlias = (
     | SetPermanentsTappedIntent
     | UntapAllCreaturesIntent
     | CreateRegenerationShieldIntent
+    | CreateRegenerationShieldSetIntent
     | DestroyPermanentIntent
     | CompositionIntent
     | DestroyPermanentSetIntent
@@ -1595,7 +1553,7 @@ SemanticIntent: TypeAlias = (
     | PayManaCostIntent
     | PlaceCountersIntent
     | RemoveCountersIntent
-    | MoveCountersIntent
+    | CounterMovementIntent
     | RemoveAllCountersIntent
     | PlaceCounterBatchIntent
     | PlaceCountersOnSetIntent
@@ -1603,6 +1561,7 @@ SemanticIntent: TypeAlias = (
     | PlacePlayerCountersIntent
     | CounterStackIntent
     | EliminatePlayersIntent
+    | WinGameIntent
     | CopyStackItemIntent
     | RetargetStackItemIntent
     | CreateTokenIntent
@@ -1620,8 +1579,9 @@ SemanticIntent: TypeAlias = (
     | GraveyardRecyclingIntent
     | TargetLandTypeSettingIntent
     | FixedSourceSacrificeIntent
-    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent
+    | TemporaryCastRestrictionIntent | TemporaryDrawRedirectIntent | ScheduleNextDrawResultIntent | NoMaximumForGameIntent
     | TemporaryProtectedAttackPaymentIntent
+    | NextTurnAttackRestrictionIntent
     | ScheduleTurnSkipIntent
     | ScheduleExtraCombatIntent
     | ScheduleAdditionalBeginningIntent

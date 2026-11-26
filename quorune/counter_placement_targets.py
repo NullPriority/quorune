@@ -57,8 +57,13 @@ def controlled_creature_counter_choice_dependencies(
         return ()
     from .replacement.immutable import thaw_value
 
+    from .rules.permanent_resolution_choices import COUNTER_KEYWORDS_VERSION, controlled_counter_keywords_dependencies
+
     data = thaw_value(value)
-    if data.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD) == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION:
+    version = data.get(CONTROLLED_CREATURE_COUNTER_CHOICE_FIELD)
+    if version == COUNTER_KEYWORDS_VERSION:
+        return controlled_counter_keywords_dependencies(data)
+    if version == OPPONENT_CREATURE_COUNTER_CHOICE_VERSION:
         expected = opponent_creature_counter_choice_effect(
             resolved_player if resolved_player is not None else "$target.0",
         )

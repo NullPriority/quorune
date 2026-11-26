@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..permanent_event_state_model import supported_countered_combat_optional_result
+
 TRIGGER_ONCE_PER_TURN_CAPABILITY = "trigger.usage.once_per_turn"
 DEPARTURE_TRIGGER_LIMIT_CAPABILITY = 'trigger.usage.departure_incarnation'
 OPTIONAL_RESULT_LIMIT_CAPABILITY = 'trigger.usage.once_per_turn_optional_result'
@@ -41,9 +43,9 @@ class TriggerLimitSpec:
     source_scope: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
             raise ValueError("Unsupported trigger-limit schema version")
-        expected_kind = OPTIONAL_RESULT_LIMIT_KIND if self.schema_version == 3 else 'once_per_turn'
+        expected_kind = OPTIONAL_RESULT_LIMIT_KIND if self.schema_version in {3, 4, 5} else 'once_per_turn'
         if self.kind != expected_kind:
             raise ValueError("Unsupported trigger usage limit")
         expected_scope = 'event_incarnation' if self.schema_version == 2 else None
@@ -73,6 +75,14 @@ def trigger_limit_capabilities(value: Mapping[str,Any]) -> tuple[str,...]:
     spec=TriggerLimitSpec.from_dict(value)
     if spec.schema_version == 3:
         return (OPTIONAL_RESULT_LIMIT_CAPABILITY,)
+    if spec.schema_version == 5:
+        from .target_player_query_amounts import MAIN_PHASE_OPPONENT_MANA_CAPABILITY
+
+        return (OPTIONAL_RESULT_LIMIT_CAPABILITY, MAIN_PHASE_OPPONENT_MANA_CAPABILITY)
+    if spec.schema_version == 4:
+        from ..permanent_event_state_model import COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY
+
+        return (OPTIONAL_RESULT_LIMIT_CAPABILITY, COUNTERED_COMBAT_DRAW_PROLIFERATE_CAPABILITY)
     return (TRIGGER_ONCE_PER_TURN_CAPABILITY,*((DEPARTURE_TRIGGER_LIMIT_CAPABILITY,) if spec.schema_version==2 else ()))
 
 
@@ -118,8 +128,13 @@ def validate_program_trigger_limit(program: Any) -> None:
     spec=TriggerLimitSpec.from_dict(program.trigger_limit)
     permitted=(departure_trigger_limit_event(program.event,program.event_condition) if spec.schema_version==2
         else supported_trigger_limit_subscriptions(program.event,program.event_condition))
-    if spec.schema_version == 3 and not supported_optional_result_limit(program):
+    if (spec.schema_version == 3 and not supported_optional_result_limit(program)
+            or spec.schema_version == 4 and not supported_countered_combat_optional_result(program)):
         raise ValueError('Optional result limits require one supported controller choice')
+    if spec.schema_version == 5:
+        from .target_player_query_amounts import main_phase_opponent_mana_program_requirements
+
+        main_phase_opponent_mana_program_requirements(program)
     if program.active_zone != "battlefield" or not permitted:
         raise ValueError('Trigger limits require a supported '+(
             'event-incarnation battlefield departure' if spec.schema_version==2 else 'nondeparture battlefield event'))
@@ -131,10 +146,15 @@ def event_source_incarnation_context(source: Any, program: Any) -> dict[str, str
     """Bind the physical source for triggers that resolve against its current incarnation."""
     from ..attack_batch_model import DECLARED_ATTACK_POWER_COVERAGE
     from .color_retaining_copy import is_closed_retained_color_upkeep_program
+    from .graveyard_aura_entry import GRAVEYARD_AURA_ENTRY_TEMPLATE
     from .persistent_self_copy_trigger import is_closed_persistent_self_copy_trigger
 
-    if ("source_entry_cast_intervening" in program.coverage
+    from .modal_selection import has_distinct_turn_trigger_modes
+
+    if (has_distinct_turn_trigger_modes(program.target_schema)
+            or "source_entry_cast_intervening" in program.coverage
             or DECLARED_ATTACK_POWER_COVERAGE in program.coverage
+            or program.provenance.get("template_id") == GRAVEYARD_AURA_ENTRY_TEMPLATE
             or is_closed_retained_color_upkeep_program(program)
             or is_closed_persistent_self_copy_trigger(program)):
         return {"source_logical_object_id": source.logical_object_id}
@@ -169,25 +189,28 @@ class TriggerUsagePlan:
     allows_multipliers: bool = False
 
 
-def _optional_result_available(state: Any, source_identity: str, program_key: str) -> bool:
+def _optional_result_available(state: Any, source_identity: str, program_key: str, *, controller: str | None = None) -> bool:
     from ..turn_history import current_turn_history_events
 
     if state.turn_history is None:
         raise ValueError('Optional trigger result requires authoritative turn history')
     events = current_turn_history_events(state.turn_history, turn_sequence=state.turn_sequence,
                                         kind=OPTIONAL_RESULT_USED_HISTORY)
-    return not any(event.object_incarnation == source_identity and event.target == program_key for event in events)
+    return not any(event.object_incarnation == source_identity and event.target == program_key
+                   and (controller is None or event.actor == controller) for event in events)
 
 
 def optional_result_usage_binding(host: Any, item: Any) -> Mapping[str, Any] | None:
     program = host.semantics.get(item.semantic_key)
     if program is None or program.trigger_limit is None:
         return None
-    if TriggerLimitSpec.from_dict(program.trigger_limit).schema_version != 3:
+    spec = TriggerLimitSpec.from_dict(program.trigger_limit)
+    if spec.schema_version not in {3, 4, 5}:
         return None
     validate_program_trigger_limit(program)
     binding = _pending_usage(item)
-    if (item.kind != 'triggered_ability' or binding is None or binding['ability_id'] != program.ability_id
+    allowed = {"triggered_ability", "triggered_ability_copy"} if spec.schema_version == 5 else {"triggered_ability"}
+    if (item.kind not in allowed or binding is None or binding['ability_id'] != program.ability_id
             or binding['logical_object_id'] != item.context.get('source_logical_object_id')
             or binding['turn_sequence'] > host.state.turn_sequence):
         raise ValueError('Optional trigger result lost its event-source usage identity')
@@ -195,11 +218,12 @@ def optional_result_usage_binding(host: Any, item: Any) -> Mapping[str, Any] | N
     if (object_id != binding['object_id'] or not incarnation.isascii() or not incarnation.isdecimal()
             or len(incarnation) > 1 and incarnation.startswith('0')):
         raise ValueError('Optional trigger result source incarnation is malformed')
-    return binding
+    return {**binding, "controller": item.controller} if spec.schema_version in {4, 5} else binding
 
 
 def optional_result_usage_available(state: Any, binding: Mapping[str, Any]) -> bool:
-    return _optional_result_available(state, binding['logical_object_id'], binding['program_key'])
+    return _optional_result_available(state, binding['logical_object_id'], binding['program_key'],
+                                      controller=binding.get("controller"))
 
 
 def commit_optional_result_usage(host: Any, item: Any, actor: str) -> None:
@@ -217,8 +241,9 @@ def trigger_usage_plan(state: Any, source: Any, program: Any, pending: Any) -> T
     from ..activation_usage import trigger_usage_available
     spec=TriggerLimitSpec.from_dict(program.trigger_limit)
     validate_program_trigger_limit(program)
-    if spec.schema_version == 3:
-        if not _optional_result_available(state, source.logical_object_id, program.key):
+    if spec.schema_version in {3, 4, 5}:
+        controller = source.controller if spec.schema_version in {4, 5} else None
+        if not _optional_result_available(state, source.logical_object_id, program.key, controller=controller):
             return None
         return TriggerUsagePlan(None, allows_multipliers=True)
     live=state.cards.get(source.object_id)

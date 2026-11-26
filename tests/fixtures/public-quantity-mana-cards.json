@@ -47,7 +47,7 @@
       ],
       "released_at": "2024-11-15",
       "toughness": null,
-      "type_line": "Land — Gate"
+      "type_line": "Land \u2014 Gate"
     },
     {
       "cmc": 0.0,
@@ -97,7 +97,7 @@
       ],
       "released_at": "2022-06-10",
       "toughness": null,
-      "type_line": "Legendary Land — Gate"
+      "type_line": "Legendary Land \u2014 Gate"
     },
     {
       "cmc": 2.0,
@@ -292,7 +292,7 @@
       ],
       "released_at": "2021-07-23",
       "toughness": "1",
-      "type_line": "Creature — Elf Druid"
+      "type_line": "Creature \u2014 Elf Druid"
     },
     {
       "cmc": 6.0,
@@ -334,14 +334,14 @@
       "mana_cost": "{6}",
       "name": "Cradle Clearcutter",
       "oracle_id": "225f53ef-da42-47a0-b773-d2aad3338c72",
-      "oracle_text": "Prototype {2}{G} — 1/3 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\n{T}: Add an amount of {G} equal to this creature's power.",
+      "oracle_text": "Prototype {2}{G} \u2014 1/3 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\n{T}: Add an amount of {G} equal to this creature's power.",
       "power": "3",
       "produced_mana": [
         "G"
       ],
       "released_at": "2022-11-18",
       "toughness": "6",
-      "type_line": "Artifact Creature — Golem"
+      "type_line": "Artifact Creature \u2014 Golem"
     },
     {
       "cmc": 4.0,
@@ -488,7 +488,7 @@
       ],
       "released_at": "2024-06-14",
       "toughness": "1",
-      "type_line": "Creature — Elf Druid"
+      "type_line": "Creature \u2014 Elf Druid"
     },
     {
       "cmc": 0.0,
@@ -537,7 +537,7 @@
       ],
       "released_at": "2024-11-15",
       "toughness": null,
-      "type_line": "Land — Gate"
+      "type_line": "Land \u2014 Gate"
     },
     {
       "cmc": 0.0,
@@ -682,7 +682,7 @@
       ],
       "released_at": "2003-10-02",
       "toughness": "2",
-      "type_line": "Creature — Elf Druid"
+      "type_line": "Creature \u2014 Elf Druid"
     },
     {
       "cmc": 2.0,
@@ -929,7 +929,7 @@
       ],
       "released_at": "2023-01-13",
       "toughness": "2",
-      "type_line": "Creature — Construct",
+      "type_line": "Creature \u2014 Construct",
       "mana_value": 0
     },
     {
@@ -979,7 +979,7 @@
       ],
       "released_at": "2023-01-13",
       "toughness": "3",
-      "type_line": "Creature — Construct"
+      "type_line": "Creature \u2014 Construct"
     },
     {
       "cmc": 0,
@@ -1079,6 +1079,343 @@
       "released_at": "2023-01-13",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "e3174070-542f-429e-9149-b572f6614537",
+      "name": "Soldevi Adnate",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature \u2014 Human Cleric",
+      "oracle_text": "{T}, Sacrifice a black or artifact creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "1996-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "10f274f9-9044-447b-81c9-d4906ad9e6be",
+      "name": "Illuminor Szeras",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Legendary Artifact Creature \u2014 Necron",
+      "oracle_text": "Secrets of the Soul \u2014 {T}, Sacrifice another creature: Add an amount of {B} equal to the sacrificed creature's mana value.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Secrets of the Soul"
+      ],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature \u2014 Thopter"
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature \u2014 Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cb6465f9-dcf8-4258-aa18-661ad252b58b",
+      "name": "Priest of Yawgmoth",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature \u2014 Phyrexian Human Cleric",
+      "oracle_text": "{T}, Sacrifice an artifact: Add an amount of {B} equal to the sacrificed artifact's mana value.",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "1994-03-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "84dc18f0-8225-4b40-a165-b10321e41769",
+      "name": "Nykthos, Shrine to Nyx",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Legendary Land",
+      "oracle_text": "{T}: Add {C}.\n{2}, {T}: Choose a color. Add an amount of mana of that color equal to your devotion to that color. (Your devotion to a color is the number of mana symbols of that color in the mana costs of permanents you control.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "C",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2013-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1172,6 +1509,90 @@
       "oracle_id": "ad1712d8-809f-410c-8b91-ffe6fb8a69a1",
       "published_at": "2013-04-15",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "10f274f9-9044-447b-81c9-d4906ad9e6be",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Use the mana value of the sacrificed creature as it last existed on the battlefield to determine the amount of {B} to add."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Clone's ability doesn't target the chosen creature."
+    },
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately."
+    },
+    {
+      "oracle_id": "84dc18f0-8225-4b40-a165-b10321e41769",
+      "source": "wotc",
+      "published_at": "2013-09-15",
+      "comment": "The second ability is a mana ability. It doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "84dc18f0-8225-4b40-a165-b10321e41769",
+      "source": "wotc",
+      "published_at": "2013-09-15",
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+    },
+    {
+      "oracle_id": "84dc18f0-8225-4b40-a165-b10321e41769",
+      "source": "wotc",
+      "published_at": "2013-09-15",
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time."
+    },
+    {
+      "oracle_id": "84dc18f0-8225-4b40-a165-b10321e41769",
+      "source": "wotc",
+      "published_at": "2013-09-15",
+      "comment": "Numeric mana symbols ({0}, {1}, and so on) in mana costs of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "84dc18f0-8225-4b40-a165-b10321e41769",
+      "source": "wotc",
+      "published_at": "2013-09-15",
+      "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color."
     }
   ],
   "schema_version": 1,

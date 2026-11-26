@@ -23,6 +23,9 @@ from .spell_additional_cost_templates import (
 )
 from ..rules.capabilities import CapabilityRegistry
 from .paid_sacrifice_amount_templates import paid_sacrifice_amount_template
+from .paid_revealed_creature_templates import (
+    mandatory_creature_reveal_template, paid_revealed_creature_gate, paid_revealed_creature_template,
+)
 from .paid_sacrifice_condition_templates import paid_sacrifice_condition_template
 from .colored_hand_credit_template import colored_hand_credit_template
 from .mandatory_selected_zone_costs import fixed_discard_sacrifice_template
@@ -195,7 +198,9 @@ def _additional_cost_result_node(
     def compile_fixed(body):
         return effect_template(body, card_name=card_name)
 
-    paid = paid_sacrifice_amount_template(
+    paid = paid_revealed_creature_template(
+        rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
+    ) or paid_sacrifice_amount_template(
         rows[1][1], cost_schema=cost.cost_schema, source_name=card_name,
         compile_fixed=compile_fixed,
     ) or paid_sacrifice_condition_template(
@@ -226,14 +231,16 @@ def _additional_cost_result_node(
     ))
     from ..waterbend import WATERBEND_COMPOSITION_MECHANIC
     if cost.cost_schema.get('additional_costs',[{}])[0].get('kind')=='waterbend':mechanics=(*mechanics,WATERBEND_COMPOSITION_MECHANIC)
-    gate = dependency_gate(
+    dependency_context = dict(
         mechanics=mechanics,
         effects=effects,
         target_schema=target_schema,
-        trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile,
         cost_schema=cost.cost_schema,
+    )
+    gate = paid_revealed_creature_gate(**dependency_context) or dependency_gate(
+        **dependency_context, trusted_mechanics=trusted_mechanics,
     )
     residual_ids = (
         (
@@ -326,7 +333,7 @@ def typed_additional_cost_spell_node(
         cost = fixed_life_payment_additional_cost_template(first_clause)
         cost_mechanics = ()
     if cost is None:
-        cost = fixed_alternative_additional_cost_template(first_clause)
+        cost = mandatory_creature_reveal_template(first_clause) or fixed_alternative_additional_cost_template(first_clause)
         cost_mechanics = ()
     if cost is None and not first_clause.casefold().startswith(
         _ADDITIONAL_COST_PREFIX

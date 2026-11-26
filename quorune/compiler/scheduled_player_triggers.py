@@ -19,7 +19,7 @@ from ..entry_designations import (
 )
 from ..power_sacrifice_model import CONTROLLER_SACRIFICE_LIFE_TEMPLATE, controller_sacrifice_toughness_life_effect
 from ..rules.affected_player_sacrifice_capability_shapes import upkeep_sacrifice_life_condition
-from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_MECHANIC
+from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_MECHANIC, upkeep_source_counter_draw_effect
 from .affected_player_sacrifice_templates import FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from .fixed_controller_effect_sequences import _clauses
@@ -46,6 +46,55 @@ _ADDITIONAL_BEGINNING = re.compile(
     r"(?P<body>there is an additional beginning phase after this phase[.]?)",
     re.I,
 )
+
+
+_OPPONENT_MAIN_MANA = re.compile(
+    r"At the beginning of each of your main phases, if you haven['’]t added mana with this ability this turn, "
+    r"you may add X mana of any one color, where X is the number of "
+    r"(?P<type>Plains|Islands|Swamps|Mountains|Forests) target opponent controls\.?",
+    re.I,
+)
+
+
+def main_phase_opponent_mana_node(*, node_id, line, material_line, span, card_name,
+                                  capability_registry, capability_profile, residuals):
+    match = _OPPONENT_MAIN_MANA.fullmatch(material_line.strip())
+    if match is None:
+        return None
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from ..rules.target_player_query_amounts import (
+        MAIN_PHASE_OPPONENT_MANA_LIMIT_VERSION, MAIN_PHASE_OPPONENT_MANA_TEMPLATE,
+        main_phase_opponent_mana_condition, main_phase_opponent_mana_effect,
+        main_phase_opponent_mana_requirements, main_phase_opponent_mana_target_schema,
+    )
+    from ..rules.trigger_limits import OPTIONAL_RESULT_LIMIT_KIND, TriggerLimitSpec
+    from .dependency_gate import explicit_capabilities_gate
+    from .ir_model import OracleNode, append_residual
+
+    subtype = match["type"].casefold()
+    subtype = subtype if subtype == "plains" else subtype.removesuffix("s")
+    effects = (main_phase_opponent_mana_effect(subtype),)
+    targets = main_phase_opponent_mana_target_schema()
+    required = main_phase_opponent_mana_requirements(effects, targets)
+    gate = explicit_capabilities_gate(required, capability_registry=capability_registry, capability_profile=capability_profile)
+    pending = ()
+    if gate.blockers:
+        pending = (append_residual(residuals, kind="dependency_contract", text=line, span=span,
+            reason="Optional main-phase mana requires its target, public count and successful-result authority",
+            blockers=gate.blockers),)
+    closure = gate.closure
+    return OracleNode(
+        node_id=node_id, kind="triggered_ability", text=line, span=span,
+        active_zone="battlefield", event="step.begin", event_condition=main_phase_opponent_mana_condition(),
+        trigger_limit=TriggerLimitSpec(MAIN_PHASE_OPPONENT_MANA_LIMIT_VERSION, OPTIONAL_RESULT_LIMIT_KIND).to_dict(),
+        lowerable=True, exact=not pending, template_id=MAIN_PHASE_OPPONENT_MANA_TEMPLATE,
+        effects=effects, target_schema=targets,
+        mechanics=("cr-603-handling-triggered-abilities", "cr-115-targets"),
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE, "fixed_typed_event_effect_trigger"),
+        residual_ids=pending, capability_dependencies=gate.capabilities,
+        capability_closure=closure.reachable if closure else (), capability_profile=closure.profile if closure else None,
+        capability_fingerprint=closure.fingerprint if closure else None,
+    )
 
 
 def scheduled_player_binding_spec(text, *, card_name=None):
@@ -119,10 +168,17 @@ def scheduled_player_result(binding, body, *, effect_template, card_name):
             True,
         )
     if binding.event.value == "step.begin" and binding.variant == "your upkeep" and body == binding.body:
+        from .upkeep_power_counter_results import upkeep_power_counter_result
+        if power_balance := upkeep_power_counter_result(body, card_name=card_name):
+            return power_balance, True
+
         from .damage_templates import upkeep_other_controlled_creatures_damage_template
+        from .upkeep_hand_difference_templates import controller_upkeep_hand_surplus_result
 
         if damage := upkeep_other_controlled_creatures_damage_template(body):
             return damage, True
+        if life := controller_upkeep_hand_surplus_result(binding, body, effect_template=effect_template, card_name=card_name):
+            return life
     from .target_hand_amount_templates import upkeep_target_hand_life_result
 
     if hand_life := upkeep_target_hand_life_result(binding, body):
@@ -133,6 +189,22 @@ def scheduled_player_result(binding, body, *, effect_template, card_name):
     if binding.variant not in SCHEDULED_PLAYER_VARIANTS:return None
     if creature_return := _scheduled_creature_return_result(binding, body):
         return creature_return
+    if (binding.variant == "each_player_upkeep" and body == binding.body and re.fullmatch(
+            r"That player draws a card for each \+1/\+1 counter on this creature\.", body, re.I)):
+        return ("scheduled-upkeep-source-counter-draw-v1", (upkeep_source_counter_draw_effect(),), None,
+                (SCHEDULED_PLAYER_MECHANIC,)), True
+    if (binding.variant == "each_player_upkeep" and body == binding.body
+            and re.fullmatch(r"That player sacrifices a permanent of their choice for each soot counter on this artifact\.", body, re.I)):
+        from ..rules.upkeep_source_counter_sacrifice import upkeep_source_counter_sacrifice_effect
+
+        return ("upkeep-source-counter-sacrifice-v1", (upkeep_source_counter_sacrifice_effect(),), None,
+                (SCHEDULED_PLAYER_MECHANIC, FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC, "sacrifice")), True
+    if (binding.variant == "each_player_upkeep" and body == binding.body
+            and body.casefold() == "that player untaps a land they control."):
+        from ..untargeted_untap_model import UNTARGETED_UNTAP_MECHANIC, scheduled_land_untap_effect
+
+        return ("scheduled-player-land-untap-v2", (scheduled_land_untap_effect(),), None,
+                (SCHEDULED_PLAYER_MECHANIC, UNTARGETED_UNTAP_MECHANIC, "tap-and-untap")), True
     from .scheduled_life_return import scheduled_life_return_result
     if life_return := scheduled_life_return_result(binding, body):
         return life_return

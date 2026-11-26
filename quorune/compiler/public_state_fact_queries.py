@@ -154,6 +154,27 @@ def fixed_graveyard_condition_query(
 def fixed_public_condition_query_extension(
     normalized: str,
 ) -> FixedPublicStateConditionSpec | None:
+    nonowner = re.fullmatch(
+        rf"you control (?P<count>{FIXED_COUNT_PATTERN}) or more permanents you don['’]t own",
+        normalized,
+        re.IGNORECASE,
+    )
+    if nonowner is not None:
+        amount = fixed_number(nonowner["count"])
+        if amount > 0:
+            return _query_condition(
+                amount=amount,
+                scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+                query=ObjectQuerySpec(zones=("battlefield",), controlled_by_nonowner=True),
+            )
+    if normalized.casefold() == "there are three or more basic land types among lands you control":
+        from ..resolution_conditions import THREE_BASIC_LAND_TYPES_CONDITION
+
+        return THREE_BASIC_LAND_TYPES_CONDITION
+    if normalized.casefold() == "there are five basic land types among lands you control":
+        from ..resolution_conditions import FIVE_BASIC_LAND_TYPES_CONDITION
+
+        return FIVE_BASIC_LAND_TYPES_CONDITION
     nonartifact = re.fullmatch(
         r"you control no nonartifact, non(?P<color>white|blue|black|red|green) creatures", normalized, re.I,
     )
@@ -353,6 +374,12 @@ def fixed_public_fact_condition(
     numeric = fixed_source_numeric_condition(normalized, source_pattern=source_pattern)
     if numeric is not None:
         return numeric
+    door_count = re.fullmatch(
+        r"there are (?P<count>two|[1-9][0-9]*) or more unlocked doors among Rooms you control",
+        normalized, re.IGNORECASE,
+    )
+    if door_count is not None:
+        return _condition(FixedPublicStateFact.CONTROLLER_UNLOCKED_ROOM_DOORS, amount=_amount(door_count["count"]))
     distinct = re.fullmatch(
         r"there are (?P<count>four|five|[0-9]+) or more "
         r"(?P<field>card types|mana values) among cards in your graveyard",

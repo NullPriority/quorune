@@ -6,6 +6,8 @@ from . import regex_working_set as re
 
 from ..characteristic_evaluation import type_parts
 from ..rules.capabilities import CapabilityRegistry
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..rules.match_outcome_restrictions import MATCH_OUTCOME_RESTRICTION_TEMPLATE, compile_match_outcome_component
 from .declaration_nodes import (
     declaration_static_node,
     fixed_static_declaration_grant_handler,
@@ -37,6 +39,17 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     Synthetic token abilities use the record-free dispatcher below and cannot
     acquire a printed additional-cost instance from their creating card.
     """
+    from .battlefield_activation_grant_nodes import battlefield_activation_grant_node
+
+    grant = battlefield_activation_grant_node(source_name=face_name or record.name, node_id=node_id,
+        line=line, material_line=material_line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if grant is not None:
+        return grant
+    from .boast_allowance_nodes import boast_allowance_node
+    if allowance := boast_allowance_node(node_id=node_id, line=line, material_line=material_line, span=span,
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals):
+        return allowance
     from .bargain_nodes import bargain_reduction_node
     reduction=bargain_reduction_node(record=record,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
@@ -60,12 +73,17 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
     if replicate is not None:
         return replicate
-    from .disturb_nodes import disturb_static_node
-    disturb = disturb_static_node(record=record, face_name=face_name, node_id=node_id, line=line,
+    from .disturb_nodes import fixed_face_pair_cast_static_node
+    face_cast = fixed_face_pair_cast_static_node(record=record, face_name=face_name, node_id=node_id, line=line,
         material_line=material_line, span=span, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals)
-    if disturb is not None:
-        return disturb
+    if face_cast is not None:
+        return face_cast
+    from .opponent_discard_entry_nodes import opponent_discard_entry_node
+    if discard_entry := opponent_discard_entry_node(type_line=type_line, node_id=node_id, line=line,
+            material_line=material_line, span=span, capability_registry=capability_registry,
+            capability_profile=capability_profile, residuals=residuals):
+        return discard_entry
     from .self_graveyard_exile_nodes import self_graveyard_exile_node
     source_exile = self_graveyard_exile_node(source_name=face_name or record.name,
         node_id=node_id, line=line, material_line=material_line, span=span,
@@ -97,6 +115,18 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     if recipients is not None:
         return recipients
     card_types, subtypes, _supertypes = type_parts(type_line)
+    if "artifact" in card_types and "equipment" in subtypes:
+        from .attached_combat_strike import equipped_combat_strike_template
+
+        combat_strike = equipped_combat_strike_template(material_line)
+        if combat_strike is not None:
+            return runtime_handler_node(
+                node_id=node_id, line=line, span=span, compiled=combat_strike,
+                kind="static_ability", event="characteristics.evaluate",
+                runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+                dependency_reason="Equipped first strike requires live attachment, block and subtype authorities.",
+                capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+            )
     return closed_static_or_replacement_node(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=face_name or record.name, card_types=card_types,
         permanent_card_types=permanent_card_types, source_is_class='class' in subtypes,
@@ -113,6 +143,16 @@ def closed_static_or_replacement_node(
     """Give exact owners their full source before generic label fallback."""
     material = without_ability_word_label(material_line)
     if material is None:return None
+    outcome = compile_match_outcome_component(material)
+    if outcome is not None and permanent_card_types.intersection(card_types):
+        return runtime_handler_node(
+            node_id=node_id, line=line, span=span,
+            compiled=(MATCH_OUTCOME_RESTRICTION_TEMPLATE, outcome.descriptor(), outcome.dependencies),
+            kind="static_ability", event="characteristics.evaluate",
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason="Match outcome restrictions require their live source and outcome owner.",
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals,
+        )
     arguments=dict(node_id=node_id,line=line,span=span,source_name=source_name,
         card_types=card_types,permanent_card_types=permanent_card_types,
         source_is_class=source_is_class,capability_registry=capability_registry,
@@ -156,11 +196,11 @@ def _closed_static_body_node(
         source_name=source_name,card_types=card_types,permanent_card_types=permanent_card_types,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if restriction is not None:return restriction
 
-    from .entry_reveal_templates import entry_reveal_node
-    revealed_entry=entry_reveal_node(node_id=node_id,line=line,material_line=material_line,
-        span=span,source_name=source_name,capability_registry=capability_registry,
-        capability_profile=capability_profile,residuals=residuals)
-    if revealed_entry is not None:return revealed_entry
+    from .private_entry_hand_templates import private_entry_hand_node
+    if hand_entry := private_entry_hand_node(node_id=node_id, line=line, material_line=material_line, span=span,
+        source_name=source_name, card_types=card_types, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals):
+        return hand_entry
 
     from .linked_graveyard_entry_templates import entry_copy_or_linked_exile_node
 

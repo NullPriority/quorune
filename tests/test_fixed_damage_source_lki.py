@@ -164,7 +164,8 @@ class FixedDamageSourceLkiRuntimeTests(unittest.TestCase):
         path = Path(cls.temporary.name).resolve() / 'fixed-damage-source-lki.sqlite3'
         build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
             ROOT / 'tests/fixtures/event-player-subject-cards.json',
-            ROOT / 'tests/fixtures/fixed-damage-source-lki-cards.json'], path)
+            ROOT / 'tests/fixtures/fixed-damage-source-lki-cards.json',
+            ROOT / 'tests/fixtures/own-death-random-damage-cards.json'], path)
         cls.db = CardDatabase(path); cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Damage source LKI witness', [DeckEntry('Generic Bound Commander', 1, 'commander'),
             DeckEntry('Generic Bound Plains', 30)], ['Generic Bound Commander'])
@@ -172,6 +173,96 @@ class FixedDamageSourceLkiRuntimeTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.db.close(); cls.temporary.cleanup()
+
+    def _resolve_own_death_damage_witness(self, recipient_name):
+        from quorune.rules.stack_damage_sources import SOURCE_DAMAGE_CONTEXT
+
+        game = self.session(12061101)
+        source = self.add(game.engine, "Smokecoil Echo", ref="departing-source")
+        spell = self.add(game.engine, "Copperbreak", zone="hand")
+        recipient = (self.add(game.engine, recipient_name, seat="D", ref="opponent-creature")
+                     if recipient_name is not None else None)
+        own = self.add(game.engine, "Smokecoil Echo", ref="own-ineligible-creature")
+        private_card = self.add(game.engine, "Bramble Sentinel", seat="C", zone="hand", ref="hidden-recipient")
+        for card in (source, spell, recipient):
+            if card is not None:
+                self.assert_closed(game, card)
+        game.state.config.semantic_policy = "trusted_only"
+        self.prepare(game, mana={"R": 1})
+        self.checkpoint(game)
+        original = source.logical_object_id
+        self.cast(game, "A", spell, [source.ref])
+        for _ in range(20):
+            pending = game.state.stack[-1] if game.state.stack else None
+            if pending is not None and pending.kind == "triggered_ability":
+                break
+            result = game.act(game.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        else:
+            self.fail("The source-death ability did not enter the stack")
+
+        pending = game.state.stack[-1]
+        self.assertEqual("A", pending.controller)
+        self.assertEqual((), tuple(pending.targets))
+        self.assertEqual("creature.dies", pending.context["event"])
+        snapshot = pending.context[SOURCE_DAMAGE_CONTEXT]
+        self.assertEqual((source.object_id, original, ["R"]),
+                         (snapshot["object_id"], snapshot["logical_object_id"], snapshot["colors"]))
+        self.assertNotEqual(original, game.state.cards[source.object_id].logical_object_id)
+        self.assertNotIn(private_card.ref, json.dumps(game.packet("pilot:B", full=True)))
+        game = self.replay(game, load=True)
+        self.assertIsNone(self.resolve(game))
+        self.assertFalse(game.state.stack)
+        self.assertEqual(0, game.state.cards[own.object_id].marked_damage)
+        self.assertNotIn(private_card.ref, json.dumps(game.packet("pilot:B", full=True)))
+        return game, recipient
+
+    def test_own_death_random_creature_damage_is_untargeted_and_replays(self):
+        game, recipient = self._resolve_own_death_damage_witness("Bramble Sentinel")
+        self.assertEqual(3, game.state.cards[recipient.object_id].marked_damage, "hexproof creature receives the chosen damage")
+        self.replay(game, load=True)
+
+    def test_own_death_random_creature_damage_obeys_protection_and_empty_sets(self):
+        game, recipient = self._resolve_own_death_damage_witness("Glintwood Warden")
+        self.assertEqual(0, game.state.cards[recipient.object_id].marked_damage)
+        self.replay(game, load=True)
+        empty, _ = self._resolve_own_death_damage_witness(None)
+        self.replay(empty, load=True)
+
+    def test_random_creature_damage_requires_its_exact_death_scope_and_capability(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.random_opponent_damage import RANDOM_OPPONENT_DAMAGE_CAPABILITY
+        from test_controller_creature_keyword_absence import register_card
+
+        report, semantics = register_card(self.db, self.registry, "Smokecoil Echo")
+        self.assertTrue(report["strict_capability_ready"], report["blockers"])
+        card = self.db.lookup("Smokecoil Echo", fuzzy=False)
+        program, = (owner for owner in semantics.programs_for_oracle(card.oracle_id)
+                    if RANDOM_OPPONENT_DAMAGE_CAPABILITY in owner.capability_dependencies)
+        dependencies = tuple(value for value in program.capability_dependencies
+                             if value != RANDOM_OPPONENT_DAMAGE_CAPABILITY)
+        weakened = replace(program, capability_dependencies=dependencies,
+                          capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        cases = (
+            (weakened, "capability:undeclared_runtime_dependency:" + RANDOM_OPPONENT_DAMAGE_CAPABILITY),
+            (replace(program, event="permanent.enter.self"), "runtime_random_opponent_damage:invalid:"),
+        )
+        for candidate, expected in cases:
+            binding = bind_semantic_program_runtime(candidate, capability_registry=self.registry, profile="commander_review")
+            self.assertFalse(binding["strict"])
+            self.assertTrue(any(reason.startswith(expected) for reason in binding["blockers"]), binding["blockers"])
+
+    def test_disabling_random_selection_breaks_the_native_damage_witness(self):
+        from quorune.rules import random_opponent_damage
+
+        witness = type(self)("test_own_death_random_creature_damage_is_untargeted_and_replays")
+        result = unittest.TestResult()
+        with patch.object(random_opponent_damage, "sample_identity_rows", return_value=()):
+            witness.run(result)
+        self.assertFalse(result.errors)
+        self.assertEqual(1, len(result.failures))
+        self.assertIn("hexproof creature receives the chosen damage", result.failures[0][1])
 
     def test_original_crook_damage_uses_current_or_departed_source_controller_and_lifelink(self):
         for depart in (False, True):

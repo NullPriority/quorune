@@ -214,6 +214,55 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ninjutsu"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Moon-Circuit Hacker",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "oracle_text": "Ninjutsu {U} ({U}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, you may draw a card. If you do, discard a card unless this creature entered this turn.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "1",
+      "type_line": "Enchantment Creature \u2014 Human Ninja"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -252,6 +301,48 @@
       "comment": "You can draw a maximum of one card on each player's turn. Subsequent card draws are ignored.",
       "oracle_id": "1463795b-ec0c-44d6-ae1a-55f78d9843ec",
       "published_at": "2014-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ninjutsu ability can be activated during the declare blockers step, combat damage step, or end of combat step. In most cases (see below), if you wait until the combatdamage step or end of combat step, it will be after combat damage has been dealt, so the Ninja won't deal combat damage.",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature in combat has first strike or double strike, you can activate the ninjutsu ability during the first-strike combat damage step. The Ninja will deal combat damage during the regular combat damage step, even if it has first strike.",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although the Ninja is attacking, it was never declared as an attacking creature (for purposes of abilities that trigger whenever a creature attacks, for example).",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Puff of smoke not included.",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ninjutsu ability can be activated only after blockers have been declared. Before then, attacking creatures are neither blocked nor unblocked.",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "As you activate a ninjutsu ability, you reveal the Ninja card in your hand and return the attacking creature. The Ninja card stays revealed and isn't put onto the battlefield until the ability resolves. If it leaves your hand before then, it won't enter the battlefield at all.",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The creature with ninjutsu enters the battlefield attacking the same player or planeswalker that the returned creature was attacking. This is a rule specific to ninjutsu; in other cases, when a creature is put onto the battlefield attacking, that creature's controller chooses which player or planeswalker it's attacking.",
+      "oracle_id": "7cd8b017-8d59-4b55-bb9a-8d8e492ef1ac",
+      "published_at": "2022-02-18",
       "source": "wotc"
     }
   ],

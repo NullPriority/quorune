@@ -11,7 +11,7 @@ from .card_program_faces import program_matches_face
 from .card_programs.admission import program_has_complete_card_program_admission
 from .semantic_runtime.action_permissions import (
     ActionPermissionKind,ActionPermissionSourceContext,default_action_permission_registry,
-    OPENING_HAND_BATTLEFIELD_HANDLER_ID,
+    OPENING_HAND_BATTLEFIELD_HANDLER_ID, OPENING_HAND_LUCK_HANDLER_ID,
 )
 from .opening_reveal_model import OPENING_REVEAL_HANDLER
 from .zone_transitions import ZoneTransitionOwner
@@ -21,6 +21,12 @@ from .aura import AuraEntryChoiceRequired
 from .enchant_spec import TypedEnchantSpec,AuraEnchantSubject
 
 
+_ACTION_KINDS = {
+    ActionPermissionKind.OPENING_HAND_BATTLEFIELD: "battlefield",
+    ActionPermissionKind.OPENING_HAND_REVEAL: "reveal",
+    ActionPermissionKind.OPENING_HAND_LUCK: "luck",
+}
+
 
 def _permissions(host,card,seat):
     if card.zone!='hand' or card.owner!=seat or card.face_down or card.is_token:
@@ -29,7 +35,9 @@ def _permissions(host,card,seat):
     if record is None:return ()
     programs=tuple(host.semantics.runtime_handler_programs_for_oracle(record.oracle_id,
         active_zone='hand',event='action.permission'))
-    handler_ids={OPENING_HAND_BATTLEFIELD_HANDLER_ID,OPENING_REVEAL_HANDLER}
+    handler_ids = {OPENING_HAND_BATTLEFIELD_HANDLER_ID, OPENING_REVEAL_HANDLER}
+    if seat != host.state.turn_order[0]:
+        handler_ids.add(OPENING_HAND_LUCK_HANDLER_ID)
     if not any(any(d.get('handler_id') in handler_ids for d in p.handlers) for p in programs):return ()
     registry=default_action_permission_registry()
     result=[]
@@ -46,8 +54,7 @@ def _permissions(host,card,seat):
 
 
 def _permission_for_subject(host,card,subject):
-    expected=ActionPermissionKind.OPENING_HAND_REVEAL if subject.action_kind=='reveal' else ActionPermissionKind.OPENING_HAND_BATTLEFIELD
-    return next((p for p in _permissions(host,card,subject.player) if p.kind is expected
+    return next((p for p in _permissions(host,card,subject.player) if _ACTION_KINDS[p.kind] == subject.action_kind
         and (not subject.semantic_key or p.source_semantic_key==subject.semantic_key)),None)
 
 
@@ -55,11 +62,11 @@ def begin_opening_hand_actions(host):
     if host.state.started:raise GameRuleError('Opening-hand actions cannot begin after the first turn')
     seats=tuple(host.state.turn_order)
     subjects=tuple(OpeningHandSubject(c.object_id,c.logical_object_id,c.ref,seat,
-        'reveal' if p.kind is ActionPermissionKind.OPENING_HAND_REVEAL else 'battlefield',p.source_semantic_key)
+        _ACTION_KINDS[p.kind],p.source_semantic_key)
         for seat in seats for oid in host.state.players[seat].zones['hand'] for c in (host.state.cards[oid],)
         for p in _permissions(host,c,seat))
     if not subjects:return False
-    version=2 if any(s.action_kind=='reveal' for s in subjects) else 1
+    version=2 if any(s.action_kind!='battlefield' for s in subjects) else 1
     if version==1:
         unique={s.object_id:replace(s,semantic_key='') for s in subjects};subjects=tuple(unique.values())
     frame=OpeningHandFrame(seats,subjects,version=version);frame.validate_state(host)
@@ -115,6 +122,12 @@ def _issue_next(host,frame):
 
 
 def complete_opening_hand_action(host,decision):
+    if set(decision.continuation) == {"opening_luck_exile"}:
+        from .rules.opening_hand_luck import complete_opening_luck_exile
+
+        frame = complete_opening_luck_exile(host, decision)
+        _issue_next(host, frame)
+        return
     if set(decision.continuation)!={'opening_hand'}:raise GameRuleError('Opening-hand continuation fields changed')
     frame=OpeningHandFrame.from_dict(decision.continuation['opening_hand']);frame.validate_state(host)
     if frame.index==len(frame.seats) or decision.actors!=[frame.seats[frame.index]]:
@@ -156,7 +169,7 @@ def _entry(value):
         raise GameRuleError('Opening-hand entry fields changed')
     frame=OpeningHandFrame.from_dict(value['frame'])
     subject=OpeningHandSubject.from_dict(value['subject'],frame.version)
-    if frame.index==len(frame.seats) or subject.action_kind!='battlefield' or subject not in frame.subjects or subject.player!=frame.seats[frame.index]:
+    if frame.index==len(frame.seats) or subject.action_kind not in {'battlefield', 'luck'} or subject not in frame.subjects or subject.player!=frame.seats[frame.index]:
         raise GameRuleError('Opening-hand entry no longer belongs to the chooser')
     if value['aura_target'] is not None and (type(value['aura_target']) is not str or not value['aura_target']):
         raise GameRuleError('Opening-hand Aura subject is malformed')
@@ -168,9 +181,14 @@ def _place(host,entry,selections=()):
     if subject not in _current_subjects(host,frame):raise GameRuleError('Opening-hand entry source changed')
     try:
         with host.transaction():
-            ZoneTransitionOwner(host).move_card(subject.object_id,'battlefield',controller=subject.player,
-                putting_player=subject.player, aura_target_ref=entry['aura_target'],reason='opening-hand battlefield action',semantic_events=True,
-                replacement_selections=selections)
+            if subject.action_kind == "luck":
+                from .rules.opening_hand_luck import put_opening_luck_card_on_battlefield
+
+                put_opening_luck_card_on_battlefield(host, subject, selections)
+            else:
+                ZoneTransitionOwner(host).move_card(subject.object_id,'battlefield',controller=subject.player,
+                    putting_player=subject.player, aura_target_ref=entry['aura_target'],reason='opening-hand battlefield action',semantic_events=True,
+                    replacement_selections=selections)
     except ReplacementChoiceRequired as required:
         host.permissions.issue(kind='replacement.order',role='pilot',actors=[required.pending.choice.chooser],
             allowed_actions=['choose'],payload_by_actor={required.pending.choice.chooser:
@@ -192,8 +210,15 @@ def _place(host,entry,selections=()):
         return
     current=host.state.cards.get(subject.object_id)
     unchanged_hand=current is not None and current.zone=='hand' and current.logical_object_id==subject.logical_object_id
-    _issue_next(host,frame if unchanged_hand else replace(frame,subjects=tuple(s for s in frame.subjects
-        if not (s.object_id==subject.object_id and s.logical_object_id==subject.logical_object_id))))
+    if not unchanged_hand:
+        frame = replace(frame, subjects=tuple(s for s in frame.subjects
+            if not (s.object_id == subject.object_id and s.logical_object_id == subject.logical_object_id)))
+    if subject.action_kind == "luck" and current is not None and current.zone == "battlefield":
+        from .rules.opening_hand_luck import issue_opening_luck_exile
+
+        if issue_opening_luck_exile(host, frame, current):
+            return
+    _issue_next(host, frame)
 
 
 def decode_opening_hand_entry(continuation_type,value,batch,effects):
