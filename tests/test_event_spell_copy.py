@@ -924,8 +924,11 @@ class DirectCastSpellTokenReferenceTests(unittest.TestCase):
         }
         recipe=TokenCopyRecipeSpec("event_spell",TokenCopyExceptionSpec(remove_legendary=True),schema_version=4)
         effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
-        program=SimpleNamespace(effects=(effect,),coverage=(),event="spell.cast",active_zone="stack",
-                                target_schema=None,event_condition=cast_spell_token_condition())
+        program = SemanticProgram(
+            key="fixture:cast-token-copy", label="Fixture cast token copy",
+            effects=[effect], event="spell.cast", active_zone="stack",
+            event_condition=cast_spell_token_condition(),
+        )
         occurrence={"stack":spell.ref,"logical_object_id":card.logical_object_id}
         captured=event_spell_copy_trigger_context(host,program,"spell.cast",occurrence)
         self.assertEqual(card.oracle_id,captured[CAST_SPELL_TOKEN_ORACLE_CONTEXT])
@@ -975,24 +978,27 @@ class DirectCastSpellTokenReferenceTests(unittest.TestCase):
         from quorune.event_spell_copy_model import cast_spell_token_condition
         from quorune.rules.event_spell_copy import event_spell_copy_runtime_dependencies
         from quorune.rules.token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY
+        from quorune.semantics import SemanticProgram
         from quorune.token_copy_recipes import TokenCopyExceptionSpec, TokenCopyRecipeSpec
 
         recipe=TokenCopyRecipeSpec("event_spell",TokenCopyExceptionSpec(remove_legendary=True),schema_version=4)
         effect={"op":"create_token","controller":"$controller","quantity":1,"copy_spec":recipe.to_dict()}
         host,card,spell=copy_host()
         host.characteristics.update(type_line="Creature")
-        values=dict(effects=(effect,),coverage=(),event="spell.cast",active_zone="stack",target_schema=None,
-                    event_condition=cast_spell_token_condition())
-        program=SimpleNamespace(**values)
+        program = SemanticProgram(
+            key="fixture:cast-token-subscription", label="Fixture cast token subscription",
+            effects=[effect], event="spell.cast", active_zone="stack",
+            event_condition=cast_spell_token_condition(),
+        )
         self.assertIn(CAST_PERMANENT_TOKEN_COPY_CAPABILITY,event_spell_copy_runtime_dependencies(program))
         actual=event_spell_copy_trigger_context(host,program,"spell.cast",
             {"stack":spell.ref,"logical_object_id":card.logical_object_id})
         self.assertEqual(spell.ref,EventSpellCopySource.from_dict(actual[KEY]).item().ref)
         for earlier in ({"event":"resolve"},{"active_zone":"battlefield"},{"event_condition":None},
-                        {"target_schema":{}},{"effects":(event_spell_copy_effect(),effect)},
-                        {"effects":({"op":"offer_optional_effect","effects":[effect]},)}):
+                        {"target_schema":{}},{"effects":[event_spell_copy_effect(),effect]},
+                        {"effects":[{"op":"offer_optional_effect","effects":[effect]}]}):
             with self.subTest(earlier=earlier),self.assertRaises(ValueError):
-                event_spell_copy_runtime_dependencies(SimpleNamespace(**{**values,**earlier}))
+                event_spell_copy_runtime_dependencies(replace(program, **earlier))
 
     def test_compiler_lowers_one_complete_self_cast_declaration_with_explicit_authority(self):
         from quorune.rules.token_creation_capability_shapes import CAST_PERMANENT_TOKEN_COPY_CAPABILITY

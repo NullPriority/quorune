@@ -157,16 +157,17 @@ def _creature_set_spell_copy_node(*, source_name, node_id, line, material_line, 
 
 def _cast_copy_trigger_node(*, node_id, line, span, condition, effect, active_zone, template_id,
                      dependencies, dependency_reason, capability_registry, capability_profile, residuals, mechanics=None):
-    from types import SimpleNamespace
-
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
     from ..fixed_token_production import FIXED_TOKEN_PRODUCTION_MECHANIC_ID
+    from ..semantics import SemanticProgram
     from .dependency_gate import explicit_capabilities_gate
     from .ir_model import OracleNode, append_residual
 
-    scope = SimpleNamespace(effects=(effect,),event="spell.cast",event_condition=condition,
-                            target_schema=None,active_zone=active_zone,coverage=())
-    gate = explicit_capabilities_gate(dependencies(scope),
+    program = SemanticProgram(
+        key=node_id, label=line, effects=[effect], active_zone=active_zone,
+        event="spell.cast", event_condition=condition,
+    )
+    gate = explicit_capabilities_gate(dependencies(program),
         capability_registry=capability_registry,capability_profile=capability_profile)
     blocked = (append_residual(residuals,kind="dependency_contract",text=line,span=span,
         reason=dependency_reason,blockers=gate.blockers),) if gate.blockers else ()

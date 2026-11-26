@@ -246,6 +246,17 @@ def build_plan(
                 "tests.test_cipher_player_results.CipherPlayerResultTests."
                 "test_actual_undercity_plague_orders_life_discard_sacrifice_before_encoding_and_copies",
             ))
+        if {
+            "quorune/compiler/commander_cast_copy_nodes.py", "quorune/rules/cast_spell_suspend.py",
+            "quorune/rules/event_spell_copy.py", "quorune/semantics.py",
+            "tests/test_event_spell_copy.py",
+        }.intersection(paths):
+            retained_program_checks.extend((
+                "tests.test_event_spell_copy.DirectCastSpellTokenReferenceTests."
+                "test_compiler_lowers_one_complete_self_cast_declaration_with_explicit_authority",
+                "tests.test_event_spell_copy.DirectCastSpellTokenReferenceTests."
+                "test_direct_token_capture_requires_the_exact_self_cast_subscription",
+            ))
         if retained_program_checks:
             steps.append(QuickStep(
                 "retained-program-owner-contract",
