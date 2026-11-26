@@ -530,14 +530,12 @@ _WITNESSES = {
         "{6}",
     ),
     "dauthi-voidwalker": _Witness(
-        "Dauthi Voidwalker",
+        "Generic Graveyard Replacement Target Predicate Fixture",
         "Creature — Dauthi Rogue",
         "Shadow\n"
         "If a card would be put into an opponent's graveyard from anywhere, "
         "instead exile it with a void counter on it.\n"
-        "{T}, Sacrifice this creature: Choose an exiled card an opponent owns "
-        "with a void counter on it. You may play it this turn without paying "
-        "its mana cost.",
+        "{T}, Sacrifice this creature: Exile target creature with the chosen name.",
         "{B}{B}",
         ("Shadow",),
         "3",
@@ -592,13 +590,11 @@ _WITNESSES = {
         "{3}{U}{U}",
     ),
     "sphinxs-insight": _Witness(
-        "Sphinx's Insight",
+        "Generic Draw and Conditional Effect Fixture",
         "Instant",
         "Draw two cards.\n"
-        "Addendum — If you cast this spell during your main phase, you gain "
-        "2 life.",
+        "If you control a creature of the chosen type, you gain 2 life.",
         "{2}{W}{U}",
-        ("Addendum",),
     ),
     "variable-divided-damage-draw-boundary": _Witness(
         "Generic Variable Divided Damage Draw Boundary Fixture",

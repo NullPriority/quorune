@@ -207,6 +207,15 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 "capability.zone.change.self_graveyard_owner_shuffle",
                 "capability.zone.change.destination_replacement",
             }),
+            (self.db.lookup("Dauthi Voidwalker", fuzzy=False), {
+                "capability.zone.change.destination_replacement",
+                "capability.zone.permission.opponent_void_counter_card_play",
+            }),
+            (self.db.lookup("Sphinx's Insight", fuzzy=False), {
+                "capability.zone.draw.library_to_hand",
+                "capability.resolution.effect.fixed_public_self_replacement",
+                "capability.resolution.effect.public_condition",
+            }),
         )
         registry = load_default_capability_registry()
         profile = "commander_review"
@@ -1079,6 +1088,8 @@ class HighRiskPromotionSentinelTests(unittest.TestCase):
                 fixtures / 'graveyard-salvage-cards.json',
                 fixtures / 'public-condition-combat-prevention-replacement-cards.json',
                 fixtures / 'self-graveyard-reveal-and-owner-shuffle-cards.json',
+                fixtures / 'void-counter-play-cards.json',
+                fixtures / 'fixed-main-phase-addendum-results-cards.json',
             ],
             path,
         )
